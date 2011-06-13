@@ -4,3 +4,6 @@
 /illacommon/native
 /illacommon/rsc
 /illacommon/*.zip
+/keys
+/bin
+/setup
