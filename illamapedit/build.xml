@@ -32,7 +32,7 @@ the Illarion Mapeditor. If not, see <http://www.gnu.org/licenses/>.
         <move file="${jar}" tofile="${mapedit.bin}" />
 	</target>
 
-    <target name="build_mapedit_res" description="create the resource of the illarion mapeditor" depends="check_keys_available, init, buildTasks" if="${keys.exist}">
+    <target name="build_mapedit_res" description="create the resource of the illarion mapeditor" depends="check_optional_dirs, init, buildTasks" if="keys.exist">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
                 <file name="${mapedit.jar}" />
@@ -76,8 +76,8 @@ the Illarion Mapeditor. If not, see <http://www.gnu.org/licenses/>.
                 <fileset refid="substance-flamingo" />
                 <fileset refid="swingx" />
 				<pathelement location="${common.bin}" />
-				<pathelement location="${graphicsifc.bin}" />
-				<pathelement location="${inputifc.bin}" />
+				<pathelement location="${graphics.bin}" />
+				<pathelement location="${input.bin}" />
 				<pathelement path="${java.home}/lib" />
 			</classpath>
 		</javac>

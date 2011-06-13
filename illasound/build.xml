@@ -62,7 +62,7 @@ the Illarion Sound Interface. If not, see <http://www.gnu.org/licenses/>.
         <delete dir="${classes}"/>
     </target>
 	
-	<target name="build_sound_res" description="create the resource of the sound library" depends="check_keys_available, init, buildTasks" if="${keys.exist}">
+	<target name="build_sound_res" description="create the resource of the sound library" depends="check_optional_dirs, init, buildTasks" if="keys.exist">
 	        <resourceprepare targetdir="${signedcompiled}" usepack200="true">
 	            <filelist dir="${compiled}">
 	                <file name="${sound.jar}" />

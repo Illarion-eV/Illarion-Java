@@ -71,7 +71,7 @@ the Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
         <delete dir="${classes}"/>
     </target>
 	
-	<target name="build_graphics_res" description="create the resource of the graphics library" depends="check_keys_available, init, buildTasks" if="${keys.exist}">
+	<target name="build_graphics_res" description="create the resource of the graphics library" depends="check_optional_dirs, init, buildTasks" if="keys.exist">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
                 <file name="${graphics.jar}" />

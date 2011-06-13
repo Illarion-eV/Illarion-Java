@@ -1,9 +1,12 @@
 
 **/classes
+**/antclasses
+**/*.jar
 /illacommon/lib
 /illacommon/native
 /illacommon/rsc
 /illacommon/*.zip
+/illacommon/local*
 /keys
 /bin
 /setup

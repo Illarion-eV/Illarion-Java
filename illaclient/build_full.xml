@@ -40,10 +40,10 @@
         <ant antfile="${client}/build.xml" target="build_client" />    	
         <ant antfile="${mapedit}/build.xml" target="build_mapedit" />        
         <ant antfile="${easynpc}/build.xml" target="build_easynpc" />
-    	
-        <ant antfile="${download}/build.xml" target="build_download" />
 
         <ant antfile="${build}/build.xml" target="build_buildutil" />
+    	
+        <ant antfile="${download}/build.xml" target="build_download" />
 
         <ant antfile="${client}/build.xml" target="build_client_res" />
     	<ant antfile="${mapedit}/build.xml" target="build_mapedit_res" />
@@ -51,9 +51,9 @@
 
         <ant antfile="${common}/build.xml" target="build_common_res" />
     	
-        <ant antfile="${graphicsimpl}/build.xml" target="build_graphics_res" />
-        <ant antfile="${soundimpl}/build.xml" target="build_sound_res" />
-        <ant antfile="${inputimpl}/build.xml" target="build_input_res" />
+        <ant antfile="${graphics}/build.xml" target="build_graphics_res" />
+        <ant antfile="${sound}/build.xml" target="build_sound_res" />
+        <ant antfile="${input}/build.xml" target="build_input_res" />
     </target>
     
     <target name="build_libraries" description="Build only the libraries" depends="fetch_libs">
@@ -70,12 +70,12 @@
     
     <target name="build_resources" description="Build all resources" depends="fetch_libs,download_resources,create_resources" />
 	
-	<target name="download_resources" depends="check_keys_available" unless="${keys.exist}">
+	<target name="download_resources" depends="check_optional_dirs" if="not.keys.config.exist">
 		<ant antfile="${common}/build.xml" target="download_resources" />
 	</target>
 	
-	<target name="create_resources" depends="check_keys_available" if="${keys.exist}">
-        <ant antfile="${config}/build.xml" target="build_fonts" />
+	<target name="create_resources" depends="check_optional_dirs" if="keys.config.exist">
+        <ant antfile="${common}/build.xml" target="build_fonts" />
         <ant antfile="${common}/build.xml" target="rsc_books" />
         <ant antfile="${common}/build.xml" target="rsc_gui" />
         <ant antfile="${common}/build.xml" target="rsc_items" />

@@ -31,7 +31,7 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
 		<move file="${jar}" tofile="${client.bin}" />
 	</target>
 
-	<target name="build_client_res" description="create the resource of the illarion client" depends="check_keys_available, init, buildTasks" if="${keys.exist}">
+	<target name="build_client_res" description="create the resource of the illarion client" depends="check_optional_dirs, init, buildTasks" if="keys.exist">
 		<resourceprepare targetdir="${signedcompiled}" usepack200="true">
 			<filelist dir="${compiled}">
 				<file name="${client.jar}" />
@@ -71,9 +71,9 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
                 <fileset refid="trove" />
                 <fileset refid="javolution" />
 				<pathelement location="${common.bin}" />
-				<pathelement location="${graphicsifc.bin}" />
-				<pathelement location="${soundifc.bin}" />
-				<pathelement location="${inputifc.bin}" />
+				<pathelement location="${graphics.bin}" />
+				<pathelement location="${sound.bin}" />
+				<pathelement location="${input.bin}" />
 				<pathelement path="${java.home}/lib" />
 			</classpath>
 		</javac>

@@ -15,84 +15,57 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 -->
-<project name="Illarion Build Imports">
-	<!-- Folder with the stuff to sign the jars -->
-	<property name="sign" location="../keys" />
+<project name="Illarion Build Imports" basedir=".">
+    <property file="../illacommon/local.location.properties" />
+	<property file="../illacommon/location.properties" />
 
-    <import file="${sign}/build_keys.xml" optional="true" />
-	
-	<!-- Folder of the final deploying client -->
-	<property name="setup" location="../setup" />
-	<property name="setuplib" location="../setup/lib" />
-
-	<!-- Folger where to locate the JavaDoc documentation -->
-	<property name="javadoc" location="../javadoc" />
-
-	<!--
-        Folder of the plain compiled binaries of the client, unobfuscated and
-        unsigned
-    -->
-	<property name="compiled" location="../bin" />
-    <property name="signedcompiled" location="${compiled}/signed" />
+	<import file="${sign}/build_keys.xml" optional="true" />
 
 	<!-- Base folders -->
-	<property name="client" location="../illaclient" />
 	<property name="client.jar" value="illarion_client.jar" />
+	<property name="client.bin" location="${compiled}/${client.jar}" />
 	<property name="client.res" value="illarion_client.illares" />
 	<property name="client.res.deploy" location="${setup}/${client.res}" />
-	<property name="client.bin" location="${compiled}/${client.jar}" />
 
-	<property name="common" location="../illacommon" />
 	<property name="common.jar" value="illarion_common.jar" />
+	<property name="common.bin" location="${compiled}/${common.jar}" />
 	<property name="common.res" value="illarion_common.illares" />
 	<property name="common.res.deploy" location="${setup}/${common.res}" />
-	<property name="common.bin" location="${compiled}/${common.jar}" />
 
-	<property name="config" location="../illaconfig" />
 	<property name="config.jar" value="illaconfig.jar" />
 	<property name="config.bin" location="${config}/data/${config.jar}" />
 
-    <property name="build" location="../illabuild" />
-    <property name="build.jar" value="illabuild.jar" />
-    <property name="build.bin" location="${compiled}/${build.jar}" />
+	<property name="build.jar" value="illabuild.jar" />
+	<property name="build.bin" location="${compiled}/${build.jar}" />
 
-	<property name="easynpc" location="../illaeasynpc" />
 	<property name="easynpc.jar" value="illarion_easynpc.jar" />
 	<property name="easynpc.res" value="illarion_easynpc.illares" />
 	<property name="easynpc.res.deploy" location="${setup}/${easynpc.res}" />
 	<property name="easynpc.bin" location="${compiled}/${easynpc.jar}" />
 
-	<property name="mapedit" location="../illamapedit" />
 	<property name="mapedit.jar" value="illarion_mapeditor.jar" />
 	<property name="mapedit.res" value="illarion_mapeditor.illares" />
 	<property name="mapedit.res.deploy" location="${setup}/${mapedit.res}" />
 	<property name="mapedit.bin" location="${compiled}/${mapedit.jar}" />
 
-	<property name="graphics" location="../illagraphics" />
 	<property name="graphics.jar" value="illarion_graphics.jar" />
 	<property name="graphics.bin" location="${compiled}/${graphics.jar}" />
-
 	<property name="graphics.res" value="illarion_graphics.illares" />
 	<property name="graphics.res.deploy" location="${setup}/${graphics.res}" />
 
-	<property name="input" location="../illainput" />
 	<property name="input.jar" value="illarion_input.jar" />
 	<property name="input.bin" location="${compiled}/${input.jar}" />
-
 	<property name="input.res" value="illarion_input.illares" />
 	<property name="input.res.deploy" location="${setup}/${input.res}" />
 
-	<property name="sound" location="../illasound" />
 	<property name="sound.jar" value="illarion_sound.jar" />
 	<property name="sound.bin" location="${compiled}/${sound.jar}" />
-
 	<property name="sound.res" value="illarion_sound.illares" />
 	<property name="sound.res.deploy" location="${setup}/${sound.res}" />
 
-	<property name="download" location="../illadownload" />
 	<property name="download.jar" value="illarion_download.jar" />
-    <property name="download.bin" location="${compiled}/${download.jar}" />
-    <property name="download.deploy" location="${setup}/${download.jar}" />
+	<property name="download.bin" location="${compiled}/${download.jar}" />
+	<property name="download.deploy" location="${setup}/${download.jar}" />
 
 	<!-- Client informations -->
 	<property name="client.version" value="1.22 delta" />
@@ -139,10 +112,10 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<property name="download.vendor" value="Illarion e.V." />
 	<property name="download.name" value="Illarion Webstart download display" />
 
-    <!-- Config informations -->
-    <property name="config.version" value="1.06" />
-    <property name="config.vendor" value="Illarion e.V." />
-    <property name="config.name" value="Illarion Config-Tool" />
+	<!-- Config informations -->
+	<property name="config.version" value="1.06" />
+	<property name="config.vendor" value="Illarion e.V." />
+	<property name="config.name" value="Illarion Config-Tool" />
 
 	<!-- Compile informations -->
 	<property name="build.compiler" value="javac1.6" />
@@ -210,13 +183,13 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<patternset refid="jogl.pattern" />
 	</fileset>
 
-    <patternset id="joal.pattern">
-        <include name="joal*.jar" />
-        <exclude name="*natives*" />
-    </patternset>
-    <fileset id="newt" dir="${common}/lib/joal">
-        <patternset refid="joal.pattern" />
-    </fileset>
+	<patternset id="joal.pattern">
+		<include name="joal*.jar" />
+		<exclude name="*natives*" />
+	</patternset>
+	<fileset id="newt" dir="${common}/lib/joal">
+		<patternset refid="joal.pattern" />
+	</fileset>
 
 	<patternset id="gluegen.pattern">
 		<include name="gluegen*.jar" />
@@ -278,14 +251,14 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<patternset refid="substance-flamingo.pattern" />
 	</fileset>
 
-    <!-- Substance SwingX component suite 6.1 -->
-    <!-- https://substance-swingx.dev.java.net/ -->
-    <patternset id="substance-swingx.pattern">
-        <include name="substance-swingx.jar" />
-    </patternset>
-    <fileset id="substance-swingx" dir="${common}/lib/substance-swingx">
-        <patternset refid="substance-swingx.pattern" />
-    </fileset>
+	<!-- Substance SwingX component suite 6.1 -->
+	<!-- https://substance-swingx.dev.java.net/ -->
+	<patternset id="substance-swingx.pattern">
+		<include name="substance-swingx.jar" />
+	</patternset>
+	<fileset id="substance-swingx" dir="${common}/lib/substance-swingx">
+		<patternset refid="substance-swingx.pattern" />
+	</fileset>
 
 	<!-- Trident Animation Library 1.2 -->
 	<!-- http://kenai.com/projects/trident/pages/Home -->
@@ -296,14 +269,14 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<patternset refid="trident.pattern" />
 	</fileset>
 
-    <!-- SwingX 1.6.2 -->
-    <!-- http://swinglabs.org/index.jsp -->
-    <patternset id="swingx.pattern">
-        <include name="swingx*.jar" />
-    </patternset>
-    <fileset id="swingx" dir="${common}/lib/swingx">
-        <patternset refid="swingx.pattern" />
-    </fileset>
+	<!-- SwingX 1.6.2 -->
+	<!-- http://swinglabs.org/index.jsp -->
+	<patternset id="swingx.pattern">
+		<include name="swingx*.jar" />
+	</patternset>
+	<fileset id="swingx" dir="${common}/lib/swingx">
+		<patternset refid="swingx.pattern" />
+	</fileset>
 
 	<!-- JSyntaxPane 0.9.5 b29 -->
 	<!-- http://code.google.com/p/jsyntaxpane/ -->
@@ -411,21 +384,21 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</patternset>
 		<patternset id="only.linux.32">
 			<exclude name="*.win*" />
-            <exclude name="*-win*" />
+			<exclude name="*-win*" />
 			<exclude name="*osx*" />
 			<exclude name="*solaris*" />
 			<exclude name="*amd64*" />
 		</patternset>
 		<patternset id="only.linux.64">
 			<exclude name="*.win*" />
-            <exclude name="*-win*" />
+			<exclude name="*-win*" />
 			<exclude name="*osx*" />
 			<exclude name="*solaris*" />
 			<exclude name="*i586*" />
 		</patternset>
 		<patternset id="only.macosx">
 			<exclude name="*.win*" />
-            <exclude name="*-win*" />
+			<exclude name="*-win*" />
 			<exclude name="*linux*" />
 			<exclude name="*x11*" />
 			<exclude name="*solaris*" />
@@ -434,21 +407,43 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</patternset>
 		<patternset id="only.sunos.32">
 			<exclude name="*.win*" />
-            <exclude name="*-win*" />
+			<exclude name="*-win*" />
 			<exclude name="*linux*" />
 			<exclude name="*osx*" />
 			<exclude name="*amd64*" />
 		</patternset>
 		<patternset id="only.sunos.64">
 			<exclude name="*.win*" />
-            <exclude name="*-win*" />
+			<exclude name="*-win*" />
 			<exclude name="*linux*" />
 			<exclude name="*osx*" />
 			<exclude name="*i586*" />
 		</patternset>
 	</target>
-	
-	<target name="check_keys_available">
-		   <available file="${sign}/build_keys.xml" property="keys.exist" />
+
+	<target name="check_optional_dirs">
+		<available filepath="${sign}" file="${sign}" property="keys.exist" type="dir" />
+		<available filepath="${config}" file="${config}" property="config.exist" type="dir" />
+		<condition property="not.keys.exist">
+			<not>
+				<isset property="keys.exist" />
+			</not>
+		</condition>
+		<condition property="not.config.exist">
+			<not>
+				<isset property="config.exist" />
+			</not>
+		</condition>
+		<condition property="keys.config.exist">
+			<and>
+				<isset property="keys.exist" />
+				<isset property="config.exist" />
+			</and>
+		</condition>
+		<condition property="not.keys.config.exist">
+			<not>
+				<isset property="keys.config.exist" />
+			</not>
+		</condition>
 	</target>
 </project>

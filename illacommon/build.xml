@@ -37,7 +37,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<delete file="${jar}" />
 	</target>
 
-	<target name="build_common_res" description="create the resource of the common library" depends="check_keys_available, init, buildTasks" if="${keys.exist}">
+	<target name="build_common_res" description="create the resource of the common library" depends="check_optional_dirs, init, buildTasks" if="keys.exist">
 		<resourceprepare targetdir="${signedcompiled}" usepack200="true">
 			<filelist dir="${compiled}">
 				<file name="${common.jar}" />
@@ -67,7 +67,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepage_gluegen" description="prepare the GLUEGEN bundle" depends="check_keys_available,init_libs,buildTasks,native_build_pattern" if="${keys.exist}">
+	<target name="prepage_gluegen" description="prepare the GLUEGEN bundle" depends="check_optional_dirs,init_libs,buildTasks,native_build_pattern" if="keys.exist">
 		<patternset id="gluegen.natives">
 			<include name="gluegen-rt-natives*.jar" />
 		</patternset>
@@ -150,7 +150,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_javolution" description="prepare the JAVOLUTION bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="prepare_javolution" description="prepare the JAVOLUTION bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="javolution" />
 		</resourceprepare>
@@ -178,7 +178,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_jogl" description="prepare the JOGL bundle"  depends="check_keys_available,init_libs,buildTasks,native_build_pattern" if="${keys.exist}">
+	<target name="prepare_jogl" description="prepare the JOGL bundle"  depends="check_optional_dirs,init_libs,buildTasks,native_build_pattern" if="keys.exist">
 		<patternset id="jogl.natives">
 			<include name="jogl-natives*.jar" />
 			<include name="nativewindow-natives*.jar" />
@@ -279,7 +279,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_jsyntaxpane" description="prepare the JSYNTAXPANE bundle"  depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="prepare_jsyntaxpane" description="prepare the JSYNTAXPANE bundle"  depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="jsyntaxpane" />
 		</resourceprepare>
@@ -307,7 +307,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_log4j" description="prepare the LOG4J bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="prepare_log4j" description="prepare the LOG4J bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="log4j" />
 		</resourceprepare>
@@ -335,7 +335,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_lwjgl" description="prepare the LWJGL bundle" depends="check_keys_available,init_libs,buildTasks,native_build_pattern" if="${keys.exist}">
+	<target name="prepare_lwjgl" description="prepare the LWJGL bundle" depends="check_optional_dirs,init_libs,buildTasks,native_build_pattern" if="keys.exist">
 		<jar jarfile="${common}/lwjgl-natives-windows-i586.jar">
 			<fileset dir="${native}/win32">
 				<include name="lwjgl.dll" />
@@ -544,7 +544,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_substance" description="prepare the SUBSTANCE bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="prepare_substance" description="prepare the SUBSTANCE bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
 		<property name="use.pack200" value="false" />
 
 		<resourceprepare targetdir="${signedlibs}" usepack200="${use.pack200}">
@@ -586,7 +586,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_tabsplitter" description="prepare the TABSPLITTER bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="prepare_tabsplitter" description="prepare the TABSPLITTER bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="tabsplitter" />
 		</resourceprepare>
@@ -614,7 +614,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_trove" description="prepare the TROVE bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="prepare_trove" description="prepare the TROVE bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="trove" />
 		</resourceprepare>
@@ -642,7 +642,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_vorbisspi" description="prepare the TROVE bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="prepare_vorbisspi" description="prepare the TROVE bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="vorbisspi" />
 		</resourceprepare>
@@ -770,7 +770,11 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
         <delete file="${common}/rsc-all.zip" />
     </target>
 	
-	<target name="extract_resources">
+	<target name="resource_file_present">
+		<available file="${common}/rsc-all.zip" property="rsc_all.avaiable" />
+	</target>
+	
+	<target name="extract_resources" depends="resource_file_present" if="${rsc_all.avaiable}">
         <mkdir dir="${resources}" />
         <unzip dest="${resources}" src="${common}/rsc-all.zip" overwrite="true" />
     </target>
@@ -828,7 +832,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<delete dir="${classes}" />
 	</target>
     
-    <target name="build_fonts" description="build the fonts" depends="buildTasks">
+    <target name="build_fonts" description="build the fonts" depends="check_optional_dirs,buildTasks" if="${config.exist}">
         <property name="characters" value="256" /> <!-- ISO-8859-1 -->
         <!--<property name="characters" value="65535" />--> <!-- UTF-8 -->
 
@@ -845,7 +849,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
             fontSize="14" fontType="normal" />
     </target>
 
-	<target name="rsc_gui" description="Build the GUI resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="rsc_gui" description="Build the GUI resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist" >
 		<texconvert generatetransparency="true" target="${resources}/rsc_gui.jar">
 			<fileset dir="${config}">
 				<include name="data/gui/*.png" />
@@ -883,7 +887,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="rsc_books" description="Build the book resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="rsc_books" description="Build the book resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
 		<texconvert generatetransparency="false" target="${resources}/rsc_books.jar">
 			<fileset dir="${config}">
 				<include name="data/books/*.xml" />
@@ -920,7 +924,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="rsc_items" description="Build the Item resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="rsc_items" description="Build the Item resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
 		<texconvert generatetransparency="true" target="${resources}/rsc_items.jar" dumpimages="false">
 			<fileset dir="${config}">
 				<include name="data/items/*.png" />
@@ -957,7 +961,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="rsc_tiles" description="Build the Tiles resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="rsc_tiles" description="Build the Tiles resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
 		<texconvert generatetransparency="false" target="${resources}/rsc_tiles.jar">
 			<fileset dir="${config}">
 				<include name="data/tiles/*.png" />
@@ -994,7 +998,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="rsc_chars" description="Build the Chars resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="rsc_chars" description="Build the Chars resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
 		<texconvert generatetransparency="false" target="${resources}/rsc_chars.jar">
 			<fileset dir="${config}">
 				<include name="data/chars/*.png" />
@@ -1031,7 +1035,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="rsc_effects" description="Build the Effects resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="rsc_effects" description="Build the Effects resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
 		<texconvert generatetransparency="false" target="${resources}/rsc_effects.jar">
 			<fileset dir="${config}">
 				<include name="data/effects/*.png" />
@@ -1068,7 +1072,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="rsc_sound" description="Build the Sound resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="rsc_sound" description="Build the Sound resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
 		<jar destfile="${resources}/rsc_sounds.jar" level="4">
 			<fileset dir="${config}">
 				<include name="data/sounds/*.ogg" />
@@ -1105,8 +1109,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="rsc_tables" description="Build the Table resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
-		<texconvert generatetransparency="false" target="${resources}/rsc_tables.jar" privateKey="${common}/private.key">
+	<target name="rsc_tables" description="Build the Table resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
+		<texconvert generatetransparency="false" target="${resources}/rsc_tables.jar" privateKey="${sign}/private.key">
 			<filelist dir="${config}">
 				<file name="data/Books.tbl" />
 				<file name="data/Songs.tbl" />
@@ -1150,7 +1154,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="rsc_manual" description="Build the Manual resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+	<target name="rsc_manual" description="Build the Manual resources" depends="init_libs,buildTasks">
 		<copy todir="${resources}">
 			<filelist dir="${client}">
 				<file name="manual_de.pdf" />

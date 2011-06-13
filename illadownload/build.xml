@@ -28,7 +28,7 @@ the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
 	<property name="classes" location="${download}/antclasses" />
 	<property name="jar" location="${download}/${download.jar}" />
 
-	<target name="build_download" description="Build the download jar" depends="init, buildTasks, compile_download">
+	<target name="build_download" description="Build the download jar" depends="check_optional_dirs, init, buildTasks, compile_download" if="keys.exist">
 		<move file="${jar}" tofile="${download.bin}" />
 
 		<resourceprepare targetdir="${signedcompiled}" usepack200="true">
@@ -54,7 +54,7 @@ the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
 		</verifyjar>
 
 		<copy file="${signedcompiled}/${download.jar}" tofile="${download.deploy}" />
-		<p200ant srcfile="${download.deploy}" destdir="${setup}" />
+		<pack200 srcfile="${download.deploy}" destdir="${setup}" />
 	</target>
 
 	<target name="compile_download" depends="proguard">
@@ -78,6 +78,11 @@ the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
 			<zipgroupfileset refid="lzma" />
 			<zipgroupfileset refid="swingx" />
 			<zipfileset src="${common.bin}" />
+            <zipfileset src="${graphics.bin}">
+			    <exclude name="illarion/graphics/lwjgl/**" />
+                <exclude name="illarion/graphics/jogl/**" />
+                <exclude name="illarion/graphics/generic/**" />
+			</zipfileset>
 			<metainf dir="${download}">
 				<include name="*.txt" />
 			</metainf>
@@ -111,7 +116,6 @@ the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
 			
 			<injar file="${jar}" />
 			<outjar file="${download}/tmp" />
-			<libraryjar file="${graphicsifc.bin}" />
 			<libraryjar refid="javolution" />
 			<libraryjar refid="trove" />
 			<libraryjar refid="log4j" />
