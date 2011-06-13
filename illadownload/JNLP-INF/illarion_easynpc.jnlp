@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
+<jnlp codebase="http://illarion.org/~nitram/downloads" href="illarion_easynpc.jnlp" version="1.00" spec="6.0+">
+    <information>
+        <title>Illarion EasyNPC Editor</title>
+        <vendor>Illarion e.V.</vendor>
+        <homepage href="http://illarion.org" />
+        <description>EasyNPC Editor for the roleplaying game Illarion</description>
+        <description kind="one-line">EasyNPC Editor for Illarion</description>
+        <description kind="tooltip">Illarion EasyNPC Editor</description>
+        <icon href="jnlp_ico/illarion_easynpc16.png" height="16" width="16" kind="default" />
+        <icon href="jnlp_ico/illarion_easynpc32.png" height="32" width="32" kind="default" />
+        <icon href="jnlp_ico/illarion_easynpc48.png" height="48" width="48" kind="default" />
+        <icon href="jnlp_ico/illarion_easynpc64.png" height="64" width="64" kind="default" />
+        <icon href="jnlp_ico/illarion_easynpc128.png" height="128" width="128" kind="default" />
+        <icon href="jnlp_ico/illarion_easynpc256.png" height="256" width="256" kind="default" />
+        <icon href="jnlp_ico/illarion_easynpc.ico" height="64" width="64" kind="shortcut" />
+        <icon href="jnlp_ico/illarion_easynpc.icns" height="64" width="64" kind="shortcut" />
+        <offline-allowed />
+        <shortcut online="true">
+            <desktop />
+            <menu submenu="Illarion"></menu>
+        </shortcut>
+    </information>
+    <information locale="de">
+        <title>Illarion EasyNPC Editor</title>
+        <vendor>Illarion e.V.</vendor>
+        <description>Der EasyNPC Editor für das Rollenspiel Illarion</description>
+        <description kind="one-line">EasyNPC Editor von Illarion</description>
+    </information>
+    <security>
+        <all-permissions />
+    </security>
+    <update check="always" policy="always" />
+    <resources>
+        <!--Java Requirements-->
+        <java version="1.6.0_24" href="http://java.sun.com/products/autodl/j2se" />
+        <java version="1.6+" href="http://java.sun.com/products/autodl/j2se" />
+        <java version="1.6+" />
+        
+        <jar href="illarion_download.jar" download="eager" main="true" />
+        <property name="illarion.download.launch" value="easynpc" />
+    </resources>
+    <application-desc main-class="illarion.download.install.Installation"></application-desc>
+</jnlp>

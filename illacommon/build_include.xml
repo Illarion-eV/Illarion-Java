@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE project SYSTEM "../illacommon/build.dtd">
+<!-- This file is part of the Illarion Common Library.
+
+The Illarion Common Library is free software: you can redistribute i
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation, either version 3 of the License,
+or (at your option) any later version.
+
+The Illarion Common Library is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+-->
+<project name="Illarion Build Imports">
+	<!-- Folder with the stuff to sign the jars -->
+	<property name="sign" location="../keys" />
+
+    <import file="${sign}/build_keys.xml" optional="true" />
+	
+	<!-- Folder of the final deploying client -->
+	<property name="setup" location="../setup" />
+	<property name="setuplib" location="../setup/lib" />
+
+	<!-- Folger where to locate the JavaDoc documentation -->
+	<property name="javadoc" location="../javadoc" />
+
+	<!--
+        Folder of the plain compiled binaries of the client, unobfuscated and
+        unsigned
+    -->
+	<property name="compiled" location="../bin" />
+    <property name="signedcompiled" location="${compiled}/signed" />
+
+	<!-- Base folders -->
+	<property name="client" location="../illaclient" />
+	<property name="client.jar" value="illarion_client.jar" />
+	<property name="client.res" value="illarion_client.illares" />
+	<property name="client.res.deploy" location="${setup}/${client.res}" />
+	<property name="client.bin" location="${compiled}/${client.jar}" />
+
+	<property name="common" location="../illacommon" />
+	<property name="common.jar" value="illarion_common.jar" />
+	<property name="common.res" value="illarion_common.illares" />
+	<property name="common.res.deploy" location="${setup}/${common.res}" />
+	<property name="common.bin" location="${compiled}/${common.jar}" />
+
+	<property name="config" location="../illaconfig" />
+	<property name="config.jar" value="illaconfig.jar" />
+	<property name="config.bin" location="${config}/data/${config.jar}" />
+
+    <property name="build" location="../illabuild" />
+    <property name="build.jar" value="illabuild.jar" />
+    <property name="build.bin" location="${compiled}/${build.jar}" />
+
+	<property name="easynpc" location="../illaeasynpc" />
+	<property name="easynpc.jar" value="illarion_easynpc.jar" />
+	<property name="easynpc.res" value="illarion_easynpc.illares" />
+	<property name="easynpc.res.deploy" location="${setup}/${easynpc.res}" />
+	<property name="easynpc.bin" location="${compiled}/${easynpc.jar}" />
+
+	<property name="mapedit" location="../illamapedit" />
+	<property name="mapedit.jar" value="illarion_mapeditor.jar" />
+	<property name="mapedit.res" value="illarion_mapeditor.illares" />
+	<property name="mapedit.res.deploy" location="${setup}/${mapedit.res}" />
+	<property name="mapedit.bin" location="${compiled}/${mapedit.jar}" />
+
+	<property name="graphics" location="../illagraphics" />
+	<property name="graphics.jar" value="illarion_graphics.jar" />
+	<property name="graphics.bin" location="${compiled}/${graphics.jar}" />
+
+	<property name="graphics.res" value="illarion_graphics.illares" />
+	<property name="graphics.res.deploy" location="${setup}/${graphics.res}" />
+
+	<property name="input" location="../illainput" />
+	<property name="input.jar" value="illarion_input.jar" />
+	<property name="input.bin" location="${compiled}/${input.jar}" />
+
+	<property name="input.res" value="illarion_input.illares" />
+	<property name="input.res.deploy" location="${setup}/${input.res}" />
+
+	<property name="sound" location="../illasound" />
+	<property name="sound.jar" value="illarion_sound.jar" />
+	<property name="sound.bin" location="${compiled}/${sound.jar}" />
+
+	<property name="sound.res" value="illarion_sound.illares" />
+	<property name="sound.res.deploy" location="${setup}/${sound.res}" />
+
+	<property name="download" location="../illadownload" />
+	<property name="download.jar" value="illarion_download.jar" />
+    <property name="download.bin" location="${compiled}/${download.jar}" />
+    <property name="download.deploy" location="${setup}/${download.jar}" />
+
+	<!-- Client informations -->
+	<property name="client.version" value="1.22 delta" />
+	<property name="client.vendor" value="Illarion e.V." />
+	<property name="client.name" value="Illarion Client" />
+
+	<!-- Common informations -->
+	<property name="common.version" value="1.22" />
+	<property name="common.vendor" value="Illarion e.V." />
+	<property name="common.name" value="Illarion Common Library" />
+
+	<!-- Resources informations -->
+	<property name="resources.version" value="1.22" />
+	<property name="resources.vendor" value="Illarion e.V." />
+	<property name="resources.name" value="Illarion Resources" />
+
+	<!-- Graphics informations -->
+	<property name="graphics.version" value="2.00" />
+	<property name="graphics.vendor" value="Illarion e.V." />
+	<property name="graphics.name" value="Illarion Graphic Engine" />
+
+	<!-- Sound informations -->
+	<property name="sounds.version" value="2.00" />
+	<property name="sounds.vendor" value="Illarion e.V." />
+	<property name="sounds.name" value="Illarion Sound Engine" />
+
+	<!-- Input informations -->
+	<property name="input.version" value="2.00" />
+	<property name="input.vendor" value="Illarion e.V." />
+	<property name="input.name" value="Illarion Input Engine" />
+
+	<!-- MapEditor informations -->
+	<property name="mapedit.version" value="1.01" />
+	<property name="mapedit.vendor" value="Illarion e.V." />
+	<property name="mapedit.name" value="Illarion Mapeditor" />
+
+	<!-- EasyNPC Editor informations -->
+	<property name="easynpc.version" value="1.02" />
+	<property name="easynpc.vendor" value="Illarion e.V." />
+	<property name="easynpc.name" value="Illarion easyNPC Editor" />
+
+	<!-- Download informations -->
+	<property name="download.version" value="1.00" />
+	<property name="download.vendor" value="Illarion e.V." />
+	<property name="download.name" value="Illarion Webstart download display" />
+
+    <!-- Config informations -->
+    <property name="config.version" value="1.06" />
+    <property name="config.vendor" value="Illarion e.V." />
+    <property name="config.name" value="Illarion Config-Tool" />
+
+	<!-- Compile informations -->
+	<property name="build.compiler" value="javac1.6" />
+	<property name="build.debug" value="on" />
+	<property name="build.debuglevel" value="lines,vars,source" />
+	<property name="source.version" value="1.6" />
+	<property name="target.version" value="1.6" />
+	<property name="source.encoding" value="UTF-8" />
+	<property name="build.index" value="false" />
+
+	<!-- Generate the timestamp of the current compile time -->
+	<tstamp />
+
+	<!-- Libraries -->
+	<!-- Vorbis SPI 1.0.3 -->
+	<!-- http://www.javazoom.net/vorbisspi/vorbisspi.html -->
+	<patternset id="vorbisspi.pattern">
+		<include name="jogg.jar" />
+		<include name="jorbis.jar" />
+		<include name="vorbisspi.jar" />
+		<include name="tritonus_share.jar" />
+	</patternset>
+	<fileset id="vorbisspi" dir="${common}/lib/vorbisspi">
+		<patternset refid="vorbisspi.pattern" />
+	</fileset>
+
+	<!-- Log4j 1.2.15 -->
+	<!-- http://logging.apache.org/log4j/1.2/index.html -->
+	<patternset id="log4j.pattern">
+		<include name="log4j.jar" />
+	</patternset>
+	<fileset id="log4j" dir="${common}/lib/log4j">
+		<patternset refid="log4j.pattern" />
+	</fileset>
+
+	<!-- Javolution 5.5.1 -->
+	<!-- http://javolution.org/ -->
+	<patternset id="javolution.pattern">
+		<include name="javolution.jar" />
+	</patternset>
+	<fileset id="javolution" dir="${common}/lib/javolution">
+		<patternset refid="javolution.pattern" />
+	</fileset>
+
+	<!-- LWJGL 2.6 -->
+	<!-- http://www.lwjgl.org/ -->
+	<patternset id="lwjgl.pattern">
+		<include name="lwjgl.jar" />
+		<include name="lwjgl*.jar" />
+		<exclude name="*natives*" />
+	</patternset>
+	<fileset id="lwjgl" dir="${common}/lib/lwjgl">
+		<patternset refid="lwjgl.pattern" />
+	</fileset>
+
+	<!-- JOGL 2.0.0 b224 -->
+	<!-- http://jogamp.org/ -->
+	<patternset id="jogl.pattern">
+		<include name="jogl*.jar" />
+		<exclude name="*test*" />
+		<exclude name="*sdk*" />
+		<exclude name="*natives*" />
+	</patternset>
+	<fileset id="jogl" dir="${common}/lib/jogl">
+		<patternset refid="jogl.pattern" />
+	</fileset>
+
+    <patternset id="joal.pattern">
+        <include name="joal*.jar" />
+        <exclude name="*natives*" />
+    </patternset>
+    <fileset id="newt" dir="${common}/lib/joal">
+        <patternset refid="joal.pattern" />
+    </fileset>
+
+	<patternset id="gluegen.pattern">
+		<include name="gluegen*.jar" />
+		<exclude name="*natives*" />
+	</patternset>
+	<fileset id="gluegen" dir="${common}/lib/gluegen">
+		<patternset refid="gluegen.pattern" />
+	</fileset>
+
+	<patternset id="nativewindow.pattern">
+		<include name="nativewindow*.jar" />
+		<exclude name="*natives*" />
+	</patternset>
+	<fileset id="nativewindow" dir="${common}/lib/nativewindow">
+		<patternset refid="nativewindow.pattern" />
+	</fileset>
+
+	<patternset id="newt.pattern">
+		<include name="newt*.jar" />
+		<exclude name="*natives*" />
+	</patternset>
+	<fileset id="newt" dir="${common}/lib/newt">
+		<patternset refid="newt.pattern" />
+	</fileset>
+
+	<!-- GNU Trove 3.0.0 -->
+	<!-- http://trove4j.sourceforge.net/ -->
+	<patternset id="trove.pattern">
+		<include name="trove.jar" />
+	</patternset>
+	<fileset id="trove" dir="${common}/lib/trove">
+		<patternset refid="trove.pattern" />
+	</fileset>
+
+	<!-- Substance Look and Feel 6.1 -->
+	<!-- https://substance.dev.java.net/ -->
+	<patternset id="substance.pattern">
+		<include name="substance.jar" />
+	</patternset>
+	<fileset id="substance" dir="${common}/lib/substance">
+		<patternset refid="substance.pattern" />
+	</fileset>
+
+	<!-- Flamingo Swing component suite 5.0 -->
+	<!-- https://flamingo.dev.java.net/ -->
+	<patternset id="flamingo.pattern">
+		<include name="flamingo.jar" />
+	</patternset>
+	<fileset id="flamingo" dir="${common}/lib/flamingo">
+		<patternset refid="flamingo.pattern" />
+	</fileset>
+
+	<!-- Substance Flamingo component suite 6.1 -->
+	<!-- https://substance-flamingo.dev.java.net/ -->
+	<patternset id="substance-flamingo.pattern">
+		<include name="substance-flamingo.jar" />
+	</patternset>
+	<fileset id="substance-flamingo" dir="${common}/lib/substance-flamingo">
+		<patternset refid="substance-flamingo.pattern" />
+	</fileset>
+
+    <!-- Substance SwingX component suite 6.1 -->
+    <!-- https://substance-swingx.dev.java.net/ -->
+    <patternset id="substance-swingx.pattern">
+        <include name="substance-swingx.jar" />
+    </patternset>
+    <fileset id="substance-swingx" dir="${common}/lib/substance-swingx">
+        <patternset refid="substance-swingx.pattern" />
+    </fileset>
+
+	<!-- Trident Animation Library 1.2 -->
+	<!-- http://kenai.com/projects/trident/pages/Home -->
+	<patternset id="trident.pattern">
+		<include name="trident.jar" />
+	</patternset>
+	<fileset id="trident" dir="${common}/lib/trident">
+		<patternset refid="trident.pattern" />
+	</fileset>
+
+    <!-- SwingX 1.6.2 -->
+    <!-- http://swinglabs.org/index.jsp -->
+    <patternset id="swingx.pattern">
+        <include name="swingx*.jar" />
+    </patternset>
+    <fileset id="swingx" dir="${common}/lib/swingx">
+        <patternset refid="swingx.pattern" />
+    </fileset>
+
+	<!-- JSyntaxPane 0.9.5 b29 -->
+	<!-- http://code.google.com/p/jsyntaxpane/ -->
+	<patternset id="jsyntaxpane.pattern">
+		<include name="jsyntaxpane.jar" />
+	</patternset>
+	<fileset id="jsyntaxpane" dir="${common}/lib/jsyntaxpane">
+		<patternset refid="jsyntaxpane.pattern" />
+	</fileset>
+
+	<!-- Tabsplitter -->
+	<!-- http://javadude.com/tools/tabsplitter/index.html -->
+	<patternset id="tabsplitter.pattern">
+		<include name="tabsplitter.jar" />
+	</patternset>
+	<fileset id="tabsplitter" dir="${common}/lib/tabsplitter">
+		<patternset refid="tabsplitter.pattern" />
+	</fileset>
+
+	<!-- LZMA SDK 9.20 -->
+	<!-- http://www.7-zip.org/sdk.html -->
+	<patternset id="lzma.pattern">
+		<include name="lzma.jar" />
+	</patternset>
+	<fileset id="lzma" dir="${common}/lib/lzma">
+		<patternset refid="lzma.pattern" />
+	</fileset>
+
+	<!-- Standard Window Toolkit (SWT) 3.6.1 -->
+	<!-- http://www.eclipse.org/swt/ -->
+	<patternset id="swt.pattern">
+		<include name="swt.jar" />
+	</patternset>
+	<fileset id="swt" dir="${common}/lib/swt">
+		<patternset refid="swt.pattern" />
+	</fileset>
+
+	<!-- and finally some functions that are used in all build scripts -->
+	<!--
+        deploy a jar file stores in ${target} to all needed locations and sign
+        it also. The source file is removed by this function.
+    -->
+	<target name="deploy">
+		<signjar alias="${storealias}" jar="${target}" storepass="${storepass}" keystore="${keystore}" signedjar="${target}" storetype="${storetype}" />
+		<verifyjar jar="${target}" alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}" />
+		<mkdir dir="${setup}" />
+
+		<copy file="${target}" todir="${setup}" />
+		<delete file="${target}" />
+	</target>
+
+	<target name="init">
+		<mkdir dir="${compiled}" />
+		<mkdir dir="${signedcompiled}" />
+	</target>
+
+	<!-- Install the proguard task -->
+	<target name="proguard">
+		<!-- Create the proguard task -->
+		<taskdef resource="proguard/ant/task.properties" classpath="${common}/lib/proguard/proguard.jar" />
+	</target>
+
+	<!-- Create Contrib Tasks -->
+	<target name="contrib">
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+			<classpath>
+				<pathelement location="${common}/lib/ant-contrib-1.0b3.jar" />
+				<pathelement location="${common}/lib/bcel-5.1.jar" />
+				<pathelement location="${common}/lib/commons-httpclient-3.0.1.jar" />
+				<pathelement location="${common}/lib/commons-logging-1.0.4.jar" />
+				<pathelement location="${common}/lib/ivy-1.3.1.jar" />
+			</classpath>
+		</taskdef>
+	</target>
+
+	<!-- Create config tool Tasks -->
+	<target name="buildTasks">
+		<taskdef resource="illarion/build/illabuild.properties">
+			<classpath>
+				<pathelement location="${build.bin}" />
+				<pathelement location="${common.bin}" />
+				<pathelement location="${graphics.bin}" />
+				<fileset refid="log4j" />
+				<fileset refid="lzma" />
+				<fileset refid="javolution" />
+				<fileset refid="trove" />
+			</classpath>
+		</taskdef>
+	</target>
+
+	<target name="native_build_pattern">
+		<patternset id="only.windows.32">
+			<exclude name="*linux*" />
+			<exclude name="*x11*" />
+			<exclude name="*osx*" />
+			<exclude name="*solaris*" />
+			<exclude name="*amd64*" />
+		</patternset>
+		<patternset id="only.windows.64">
+			<exclude name="*linux*" />
+			<exclude name="*x11*" />
+			<exclude name="*osx*" />
+			<exclude name="*solaris*" />
+			<exclude name="*i586*" />
+		</patternset>
+		<patternset id="only.linux.32">
+			<exclude name="*.win*" />
+            <exclude name="*-win*" />
+			<exclude name="*osx*" />
+			<exclude name="*solaris*" />
+			<exclude name="*amd64*" />
+		</patternset>
+		<patternset id="only.linux.64">
+			<exclude name="*.win*" />
+            <exclude name="*-win*" />
+			<exclude name="*osx*" />
+			<exclude name="*solaris*" />
+			<exclude name="*i586*" />
+		</patternset>
+		<patternset id="only.macosx">
+			<exclude name="*.win*" />
+            <exclude name="*-win*" />
+			<exclude name="*linux*" />
+			<exclude name="*x11*" />
+			<exclude name="*solaris*" />
+			<exclude name="*i586*" />
+			<exclude name="*amd64*" />
+		</patternset>
+		<patternset id="only.sunos.32">
+			<exclude name="*.win*" />
+            <exclude name="*-win*" />
+			<exclude name="*linux*" />
+			<exclude name="*osx*" />
+			<exclude name="*amd64*" />
+		</patternset>
+		<patternset id="only.sunos.64">
+			<exclude name="*.win*" />
+            <exclude name="*-win*" />
+			<exclude name="*linux*" />
+			<exclude name="*osx*" />
+			<exclude name="*i586*" />
+		</patternset>
+	</target>
+	
+	<target name="check_keys_available">
+		   <available file="${sign}/build_keys.xml" property="keys.exist" />
+	</target>
+</project>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE project SYSTEM "../illacommon/build.dtd">
+<!-- This file is part of the Illarion Sound Engine.
+
+The Illarion Sound Engine is free software: you can redistribute i
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation, either version 3 of the License,
+or (at your option) any later version.
+
+The Illarion Sound Engine is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+the Illarion Sound Interface. If not, see <http://www.gnu.org/licenses/>.
+-->
+<project name="Illarion Sound Engine" default="build_sound" basedir=".">
+	<description>
+		   Build the Illarion Sound Engine
+	</description>
+    
+    <import file="../illacommon/build_include.xml"/>
+
+	<property name="src" location="${sound}/src" />
+	<property name="classes" location="${sound}/antclasses" />
+	<property name="jar" location="${sound}/${sound.jar}" />
+
+	<target name="build_sound" description="build sound engine jar file" depends="init, compile_sound">
+        <move file="${jar}" tofile="${sound.bin}" />
+	</target>
+    
+    <target name="compile_sound">
+        <delete dir="${classes}"/>
+        <mkdir dir="${classes}"/>
+        
+        <javac srcdir="${src}" destdir="${classes}" source="${source.version}"
+        	target="${target.version}" encoding="${source.encoding}"
+        	compiler="${build.compiler}" debug="${build.debug}"
+        	debuglevel="${build.debuglevel}">
+            <classpath>
+                <fileset refid="log4j" />
+                <fileset refid="trove" />
+                <fileset refid="javolution" />
+                <fileset refid="lwjgl" />
+                <pathelement location="${common.bin}" />
+                <pathelement path="${java.home}/lib" />
+            </classpath>
+        </javac>
+        <jar jarfile="${jar}" basedir="${classes}" includes="illarion/sound/**" index="${build.index}">
+            <metainf dir="${sound}">
+                <include name="*.txt" />
+            </metainf>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}" />
+                <attribute name="Implementation-Vendor" value="${sounds.vendor}" />
+                <attribute name="Implementation-Title" value="${sounds.name}" />
+                <attribute name="Implementation-Version" value="${sounds.version}" />
+            </manifest>
+        </jar>
+        <delete dir="${classes}"/>
+    </target>
+	
+	<target name="build_sound_res" description="create the resource of the sound library" depends="check_keys_available, init, buildTasks" if="${keys.exist}">
+	        <resourceprepare targetdir="${signedcompiled}" usepack200="true">
+	            <filelist dir="${compiled}">
+	                <file name="${sound.jar}" />
+	            </filelist>
+	        </resourceprepare>
+
+	        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}" storetype="${storetype}">
+	            <path>
+	                <filelist dir="${signedcompiled}">
+	                    <file name="${sound.jar}" />
+	                </filelist>
+	            </path>
+	        </signjar>
+
+	        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+	            <path>
+	                <filelist dir="${signedcompiled}">
+	                    <file name="${sound.jar}" />
+	                </filelist>
+	            </path>
+	        </verifyjar>
+	        
+	        <resourcebuild target="${sound.res.deploy}" usepack200="true">
+	            <filelist dir="${signedcompiled}">
+                    <file name="${sound.jar}" />
+	            </filelist>
+	        </resourcebuild>
+	    </target>
+</project>

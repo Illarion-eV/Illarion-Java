@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/illacommon"/>
+	<classpathentry kind="lib" path="/illacommon/lib/gluegen/gluegen-gl.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/gluegen/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/javolution/javolution.jar" sourcepath="/illacommon/lib/javolution/javolution-sources.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.awt.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.core.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.egl.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.gldesktop.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.gles1.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.gles2.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.glu.gldesktop.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.glu.mipmap.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.glu.tess.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.os.win.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.util.awt.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.util.fixedfuncemu.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.util.gldesktop.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.util.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/log4j/log4j.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/lwjgl/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/lwjgl/lwjgl.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/nativewindow/nativewindow.awt.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/nativewindow/nativewindow.core.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/nativewindow/nativewindow.os.win.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.awt.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.core.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.event.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.hw.broadcomegl.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.hw.intelgdl.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.ogl.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.os.win.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/trove/trove.jar" sourcepath="/illacommon/lib/trove/trove-src.zip"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>

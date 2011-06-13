@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
+<jnlp codebase="http://illarion.org/~nitram/downloads" href="illarion_download.jnlp" version="1.00" spec="6.0+">
+	<information>
+		<title>Illarion Launcher</title>
+		<vendor>Illarion e.V.</vendor>
+		<homepage href="http://illarion.org" />
+		<description>The Updating and Installing Application of Illarion</description>
+		<description kind="one-line">Updating and Installation Application</description>
+		<description kind="tooltip">The Illarion Updater and Installer takes care for downloading the applications of Illarion and for installing them.</description>
+        <icon href="jnlp_ico/illarion_download16.png" height="16" width="16" kind="default" />
+        <icon href="jnlp_ico/illarion_download32.png" height="32" width="32" kind="default" />
+        <icon href="jnlp_ico/illarion_download48.png" height="48" width="48" kind="default" />
+        <icon href="jnlp_ico/illarion_download64.png" height="64" width="64" kind="default" />
+        <icon href="jnlp_ico/illarion_download128.png" height="128" width="128" kind="default" />
+        <icon href="jnlp_ico/illarion_download256.png" height="256" width="256" kind="default" />
+        <icon href="jnlp_ico/illarion_download.ico" height="64" width="64" kind="shortcut" />
+        <icon href="jnlp_ico/illarion_download.icns" height="64" width="64" kind="shortcut" />
+		<offline-allowed />
+		<shortcut online="true">
+			<desktop />
+			<menu submenu="Illarion"></menu>
+		</shortcut>
+	</information>
+	<information locale="de">
+		<title>Illarion Starter</title>
+		<vendor>Illarion e.V.</vendor>
+		<description>Das Download und Installationsprogramm von Illarion.</description>
+		<description kind="one-line">Illarion Starter</description>
+	</information>
+	<security>
+		<all-permissions />
+	</security>
+	<update check="always" policy="always" />
+	<resources>
+	    <!--Java Requirements-->
+        <java version="1.6.0_24" href="http://java.sun.com/products/autodl/j2se" />
+        <java version="1.6+" href="http://java.sun.com/products/autodl/j2se" />
+        <java version="1.6+" />
+        
+        <jar href="illarion_download.jar" download="eager" main="true" />
+    </resources>
+	<application-desc main-class="illarion.download.install.Installation"></application-desc>
+</jnlp>

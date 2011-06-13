@@ -1,0 +1,264 @@
+<project name="Illarion Client Full" default="build_all" basedir=".">
+    <description>
+           Build the full client.
+    </description>
+
+    <import file="../illacommon/build_include.xml" />
+
+    <!--
+        The large and great building target that builds the whole client.
+        Requires all projects to be checked out exactly in the same folder
+        structure as they are played in the client svn repo.
+        This build should only be triggered in case its needed to build
+        everything since it will take a very long time to finish.
+        
+        Ensure that the ANT Builder runs in the proper Java Development Kit.
+        To set the correct one use
+        Run -> External Tools -> External Tools Configurations...
+        There you are able to set the correct JRE in the tab with the same name
+        for every ant build script. Ensure that the ant build scripts are not
+        set to use the same JRE as the workspace. Else the build will fail for
+        sure.
+        
+        After the build is done, and that will take some time, all requirements
+        for the projects should be full filled. How ever in case there are still
+        error messages, just refresh the projects.
+    -->
+    <target name="build_all" description="Build the whole client">
+        <antcall target="build_source" />
+        <antcall target="build_libraries" />
+        <antcall target="build_resources" />
+    </target>
+    
+    <target name="build_source" description="Build only the source code" depends="fetch_libs">
+        <ant antfile="${common}/build.xml" target="build_common" />
+    	
+        <ant antfile="${graphics}/build.xml" target="build_graphics" />
+        <ant antfile="${input}/build.xml" target="build_input" />
+        <ant antfile="${sound}/build.xml" target="build_sound" />
+        
+        <ant antfile="${client}/build.xml" target="build_client" />    	
+        <ant antfile="${mapedit}/build.xml" target="build_mapedit" />        
+        <ant antfile="${easynpc}/build.xml" target="build_easynpc" />
+    	
+        <ant antfile="${download}/build.xml" target="build_download" />
+
+        <ant antfile="${build}/build.xml" target="build_buildutil" />
+
+        <ant antfile="${client}/build.xml" target="build_client_res" />
+    	<ant antfile="${mapedit}/build.xml" target="build_mapedit_res" />
+        <ant antfile="${easynpc}/build.xml" target="build_easynpc_res" />
+
+        <ant antfile="${common}/build.xml" target="build_common_res" />
+    	
+        <ant antfile="${graphicsimpl}/build.xml" target="build_graphics_res" />
+        <ant antfile="${soundimpl}/build.xml" target="build_sound_res" />
+        <ant antfile="${inputimpl}/build.xml" target="build_input_res" />
+    </target>
+    
+    <target name="build_libraries" description="Build only the libraries" depends="fetch_libs">
+        <ant antfile="${common}/build.xml" target="prepare_lwjgl" />
+        <ant antfile="${common}/build.xml" target="prepare_jogl" />
+        <ant antfile="${common}/build.xml" target="prepare_vorbisspi" />
+        <ant antfile="${common}/build.xml" target="prepare_log4j" />
+        <ant antfile="${common}/build.xml" target="prepare_trove" />
+        <ant antfile="${common}/build.xml" target="prepare_substance" />
+        <ant antfile="${common}/build.xml" target="prepare_jsyntaxpane" />
+        <ant antfile="${common}/build.xml" target="prepare_javolution" />
+        <ant antfile="${common}/build.xml" target="prepare_tabsplitter" />
+    </target>
+    
+    <target name="build_resources" description="Build all resources" depends="fetch_libs,download_resources,create_resources" />
+	
+	<target name="download_resources" depends="check_keys_available" unless="${keys.exist}">
+		<ant antfile="${common}/build.xml" target="download_resources" />
+	</target>
+	
+	<target name="create_resources" depends="check_keys_available" if="${keys.exist}">
+        <ant antfile="${config}/build.xml" target="build_fonts" />
+        <ant antfile="${common}/build.xml" target="rsc_books" />
+        <ant antfile="${common}/build.xml" target="rsc_gui" />
+        <ant antfile="${common}/build.xml" target="rsc_items" />
+        <ant antfile="${common}/build.xml" target="rsc_tiles" />
+        <ant antfile="${common}/build.xml" target="rsc_chars" />
+        <ant antfile="${common}/build.xml" target="rsc_effects" />
+        <ant antfile="${common}/build.xml" target="rsc_sound" />
+        <ant antfile="${common}/build.xml" target="rsc_tables" />
+        <ant antfile="${common}/build.xml" target="rsc_manual" />
+	</target>
+	
+	<target name="fetch_libs">
+		<ant antfile="${common}/build.xml" target="download_libraries" />
+	</target>
+    
+    <!--
+        This target builds the source of the client, compresses, optimizes and
+        obfuscates it using proguard. Please ensure that a correct link to the
+        proguard library is set in the build_include.xml in illacommon.
+        
+        Please use this build target carefully. Its possible that the client is
+        not runable with the binary created by this target. Also the stack
+        backtraces are unusable except by invers translating by hand using the
+        mapping file that is created.
+        
+        Only the source is build with this target and it will take a lot longer
+        then building the clean client.
+    -->
+    <target name="build_proguard" description="Build client with proguard">
+        <property name="storebinaries" value="true" />
+        
+        <antcall target="build_source" />
+        <antcall target="build_libraries" />
+        
+        <taskdef resource="proguard/ant/task.properties" classpath="${proguard}" />
+                
+        <proguard printmapping="${setup}/out.map" renamesourcefileattribute="s"
+            optimize="true" optimizationpasses="2000"
+            allowaccessmodification="true" mergeinterfacesaggressively="false"
+            skipnonpubliclibraryclasses="false"
+            skipnonpubliclibraryclassmembers="false" target="${target.version}"
+            overloadaggressively="true" obfuscate="true" shrink="true">
+            
+            <injar file="${compiled}/illarion.jar" filter="!META-INF/**,!**.html" />
+            <injar file="${compiled}/illarion_common.jar" filter="!META-INF/**,!**.html" />
+            <injar file="${compiled}/illarion_graphicsifc.jar" filter="!META-INF/**,!**.html" />
+            <injar file="${compiled}/illarion_graphicsimpl.jar" filter="!META-INF/**,!**.html" />
+            <injar file="${compiled}/illarion_inputifc.jar" filter="!META-INF/**,!**.html" />
+            <injar file="${compiled}/illarion_inputimpl.jar" filter="!META-INF/**,!**.html" />
+            <injar file="${compiled}/trove.jar" filter="!META-INF/**,!**.html" />
+            <injar file="${compiled}/jogg.jar" filter="!META-INF/**,!**.html" />
+            <injar file="${compiled}/jorbis.jar" filter="!META-INF/**,!**.html" />
+            <injar file="${compiled}/vorbisspi.jar" filter="!META-INF/**,!**.html" />
+            <injar file="${compiled}/log4j.jar" filter="!META-INF/**,!**.html,!**.gif,!**.dtd" />
+            <injar file="${compiled}/tritonus_share.jar" filter="!META-INF/**,!**.html" />
+            <outjar file="${setup}/illarion_pro.jar" />
+            
+            <!-- used libraries -->
+            <libraryjar path="${java.home}/lib" />
+            <libraryjar file="${lwjgl}" />
+            <libraryjar file="${lwjgl_util}" />
+            
+            <!-- keep some attributes that are usefull -->
+            <keepattribute name="LineNumberTable" />
+            <keepattribute name="SourceFile" />
+            
+            <!-- update the log4j logging settings -->
+            <adaptresourcefilecontents filter="logging.properties" />
+            
+            <!-- keep the client execution method -->
+            <keep access="public" name="illarion.client.IllaClient">
+                <method access="public static" type="void" name="main" parameters="java.lang.String[]" />
+            </keep>
+            
+            <!-- keep implementation names -->
+            <keep access="public" name="illarion.graphics.lwjgl.**">
+                <method access="public" />
+            </keep>
+            <keep access="public" name="illarion.input.lwjgl.**">
+                <method access="public" />
+            </keep>
+            
+            <!-- ensure that the vorbis spi is included correctly -->
+            <keep type="class" name="javazoom.spi.vorbis.sampled.file.VorbisAudioFileReader">
+                <constructor access="public" />
+            </keep>
+            <keep type="class" name="javazoom.spi.vorbis.sampled.convert.VorbisFormatConversionProvider">
+                <constructor access="public" />
+            </keep>
+            
+            <!-- keep the needed appenders and layouts of log4j -->
+            <keep name="org.apache.log4j.ConsoleAppender">
+                <method access="public" name="set*" />
+                <method access="public" name="get*" />
+            </keep>
+            <keep name="org.apache.log4j.RollingFileAppender">
+                <method access="public" name="set*" />
+                <method access="public" name="get*" />
+            </keep>
+            <keep name="org.apache.log4j.DailyRollingFileAppender">
+                <method access="public" name="set*" />
+                <method access="public" name="get*" />
+            </keep>
+            <keep name="org.apache.log4j.PatternLayout">
+                <method access="public" name="set*" />
+                <method access="public" name="get*" />
+            </keep>
+            
+            <!--
+                don't want about sinks and appenders in log4j that are not used
+                anyway.
+            -->
+            <dontwarn filter="org.apache.log4j.net.SMTPAppender" />
+            <dontwarn filter="org.apache.log4j.net.SMTPAppender**" />
+            <dontwarn filter="org.apache.log4j.net.JMSAppender" />
+            <dontwarn filter="org.apache.log4j.or.jms.MessageRenderer" />
+            <dontwarn filter="org.apache.log4j.net.JMSSink" />
+            <dontwarn filter="org.apache.log4j.jmx.Agent" />
+            
+            <!--
+                don't warn about shadown audio systems of tritonus, not used
+                anyway.
+            -->
+            <dontwarn filter="org.tritonus.share.sampled.AudioSystemShadow" />
+            
+            <keepnames implements="java.io.Serializable" name="com.shavenpuppy.jglib.**" />
+            
+            <!-- keep your fingers away from native methods -->
+            <keepclasseswithmembernames>
+                <method access="native" />
+            </keepclasseswithmembernames>
+            
+            <keepclassmembers implements="java.io.Serializable">
+                <field access="final" type="long" name="serialVersionUID" />
+                <field access="!static !transient" />
+                <method access="private" type="void" name="writeObject" parameters="java.io.ObjectOutputStream" />
+                <method access="private" type="void" name="readObject" parameters="java.io.ObjectInputStream" />
+                <method type="java.lang.Object" name="writeReplace" parameters="" />
+                <method type="java.lang.Object" name="readResolve" parameters="" />
+            </keepclassmembers>
+        </proguard>
+        
+        <delete file="${compiled}/*" />
+        <delete dir="${compiled}" />
+        <delete file="${setup}/illarion.jar" />
+        <delete file="${setup}/illarion_common.jar" />
+        <delete file="${setup}/illarion_graphicsifc.jar" />
+        <delete file="${setup}/illarion_graphicsimpl.jar" />
+        <delete file="${setup}/illarion_inputifc.jar" />
+        <delete file="${setup}/illarion_inputimpl.jar" />
+        <delete file="${setup}/trove.jar" />
+        <delete file="${setup}/jogg.jar" />
+        <delete file="${setup}/jorbis.jar" />
+        <delete file="${setup}/vorbisspi.jar" />
+        <delete file="${setup}/tritonus_share.jar" />
+        <delete file="${setup}/log4j.jar" />
+        <move tofile="./illarion.jar" file="${setup}/illarion_pro.jar"/>
+        
+        <jar jarfile="./illarion.jar" update="true" index="true" level="9">
+            <!-- Servies needed by the vorbisspi -->
+            <service type="javax.sound.sampled.spi.AudioFileReader" provider="javazoom.spi.vorbis.sampled.file.VorbisAudioFileReader"/>
+            <service type="javax.sound.sampled.spi.FormatConversionProvider" provider="javazoom.spi.vorbis.sampled.convert.VorbisFormatConversionProvider"/>
+            <!-- main manifest file for the main jar that is generated. -->
+            <manifest>
+                <attribute name="Main-Class" value="illarion.client.IllaClient" />
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Built-Date" value="${TODAY}" />
+                <attribute name="Implementation-Vendor" value="${client.vendor}" />
+                <attribute name="Implementation-Title" value="${client.name}" />
+                <attribute name="Implementation-Version" value="${client.version}" />
+            </manifest>
+            <!--
+                files that need to be added to the index, since they are used
+                together with this jar file all time.
+            -->
+            <indexjars>
+                <pathelement path="${setup}/lwjgl.jar"/>
+                <pathelement path="${setup}/lwjgl_util.jar"/>
+            </indexjars>
+        </jar>
+        
+        <antcall target="deploy">
+            <param name="target" value="./illarion.jar" />
+        </antcall>
+    </target>
+</project>

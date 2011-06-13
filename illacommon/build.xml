@@ -1,0 +1,1167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE project SYSTEM "../illacommon/build.dtd">
+<!-- This file is part of the Illarion Common Library.
+
+The Illarion Common Library is free software: you can redistribute i
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation, either version 3 of the License,
+or (at your option) any later version.
+
+The Illarion Common Library is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+-->
+<project name="Illarion Common" default="build_common" basedir=".">
+	<description>
+		   Build the collection of the common files into their jar file.
+	</description>
+
+	<import file="../illacommon/build_include.xml" />
+
+	<property name="src" location="${common}/src" />
+	<property name="classes" location="${common}/antclasses" />
+	<property name="jar" location="${common}/${common.jar}" />
+	<property name="native" location="${common}/native" />
+	<property name="resources" location="${common}/rsc" />
+	<property name="signedresources" location="${common}/rsc/sign" />
+	<property name="libs" location="${common}/lib" />
+	<property name="signedlibs" location="${common}/lib/signed" />
+	<property name="test" location="${common}/test" />
+
+	<target name="build_common" description="build common jar file" depends="init, compile_common">
+		<move file="${jar}" tofile="${common.bin}" />
+		<delete file="${jar}" />
+	</target>
+
+	<target name="build_common_res" description="create the resource of the common library" depends="check_keys_available, init, buildTasks" if="${keys.exist}">
+		<resourceprepare targetdir="${signedcompiled}" usepack200="true">
+			<filelist dir="${compiled}">
+				<file name="${common.jar}" />
+			</filelist>
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedcompiled}">
+					<file name="${common.jar}" />
+				</filelist>
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedcompiled}">
+					<file name="${common.jar}" />
+				</filelist>
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${common.res.deploy}" usepack200="true">
+			<filelist dir="${signedcompiled}">
+				<file name="${common.jar}" />
+			</filelist>
+		</resourcebuild>
+	</target>
+
+	<target name="prepage_gluegen" description="prepare the GLUEGEN bundle" depends="check_keys_available,init_libs,buildTasks,native_build_pattern" if="${keys.exist}">
+		<patternset id="gluegen.natives">
+			<include name="gluegen-rt-natives*.jar" />
+		</patternset>
+
+		<resourceprepare targetdir="${signedlibs}" usepack200="true">
+			<fileset dir="${libs}">
+				<patternset refid="gluegen.pattern" />
+			</fileset>
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="gluegen.pattern" />
+				</fileset>
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="gluegen.pattern" />
+				</fileset>
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setuplib}/gluegen-windows-i586.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="gluegen.pattern" />
+				<patternset refid="only.windows.32" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="gluegen.natives" />
+				<patternset refid="only.windows.32" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/gluegen-windows-amd64.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="gluegen.pattern" />
+				<patternset refid="only.windows.64" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="gluegen.natives" />
+				<patternset refid="only.windows.64" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/gluegen-linux-i586.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="gluegen.pattern" />
+				<patternset refid="only.linux.32" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="gluegen.natives" />
+				<patternset refid="only.linux.32" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/gluegen-linux-amd64.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="gluegen.pattern" />
+				<patternset refid="only.linux.64" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="gluegen.natives" />
+				<patternset refid="only.linux.64" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/gluegen-macosx-universal.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="gluegen.pattern" />
+				<patternset refid="only.macosx" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="gluegen.natives" />
+				<patternset refid="only.macosx" />
+			</nativefileset>
+		</resourcebuild>
+	</target>
+
+	<target name="prepare_javolution" description="prepare the JAVOLUTION bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<resourceprepare targetdir="${signedlibs}" usepack200="true">
+			<fileset refid="javolution" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="javolution.pattern" />
+				</fileset>
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="javolution.pattern" />
+				</fileset>
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setuplib}/javolution.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="javolution.pattern" />
+			</fileset>
+		</resourcebuild>
+	</target>
+
+	<target name="prepare_jogl" description="prepare the JOGL bundle"  depends="check_keys_available,init_libs,buildTasks,native_build_pattern" if="${keys.exist}">
+		<patternset id="jogl.natives">
+			<include name="jogl-natives*.jar" />
+			<include name="nativewindow-natives*.jar" />
+			<include name="newt-natives*.jar" />
+		</patternset>
+
+		<resourceprepare targetdir="${signedlibs}" usepack200="true">
+			<fileset dir="${libs}">
+				<patternset refid="jogl.pattern" />
+				<patternset refid="nativewindow.pattern" />
+				<patternset refid="newt.pattern" />
+			</fileset>
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="jogl.pattern" />
+					<patternset refid="nativewindow.pattern" />
+					<patternset refid="newt.pattern" />
+				</fileset>
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="jogl.pattern" />
+					<patternset refid="nativewindow.pattern" />
+					<patternset refid="newt.pattern" />
+				</fileset>
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setuplib}/jogl-windows-i586.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="jogl.pattern" />
+				<patternset refid="nativewindow.pattern" />
+				<patternset refid="newt.pattern" />
+				<patternset refid="only.windows.32" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="jogl.natives" />
+				<patternset refid="only.windows.32" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/jogl-windows-amd64.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="jogl.pattern" />
+				<patternset refid="nativewindow.pattern" />
+				<patternset refid="newt.pattern" />
+				<patternset refid="only.windows.64" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="jogl.natives" />
+				<patternset refid="only.windows.64" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/jogl-linux-i586.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="jogl.pattern" />
+				<patternset refid="nativewindow.pattern" />
+				<patternset refid="newt.pattern" />
+				<patternset refid="only.linux.32" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="jogl.natives" />
+				<patternset refid="only.linux.32" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/jogl-linux-amd64.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="jogl.pattern" />
+				<patternset refid="nativewindow.pattern" />
+				<patternset refid="newt.pattern" />
+				<patternset refid="only.linux.64" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="jogl.natives" />
+				<patternset refid="only.linux.64" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/jogl-macosx-universal.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="jogl.pattern" />
+				<patternset refid="nativewindow.pattern" />
+				<patternset refid="newt.pattern" />
+				<patternset refid="only.macosx" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="jogl.natives" />
+				<patternset refid="only.macosx" />
+			</nativefileset>
+		</resourcebuild>
+	</target>
+
+	<target name="prepare_jsyntaxpane" description="prepare the JSYNTAXPANE bundle"  depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<resourceprepare targetdir="${signedlibs}" usepack200="true">
+			<fileset refid="jsyntaxpane" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="jsyntaxpane.pattern" />
+				</fileset>
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="jsyntaxpane.pattern" />
+				</fileset>
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setuplib}/jsyntaxpane.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="jsyntaxpane.pattern" />
+			</fileset>
+		</resourcebuild>
+	</target>
+
+	<target name="prepare_log4j" description="prepare the LOG4J bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<resourceprepare targetdir="${signedlibs}" usepack200="true">
+			<fileset refid="log4j" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="log4j.pattern" />
+				</fileset>
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="log4j.pattern" />
+				</fileset>
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setuplib}/log4j.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="log4j.pattern" />
+			</fileset>
+		</resourcebuild>
+	</target>
+
+	<target name="prepare_lwjgl" description="prepare the LWJGL bundle" depends="check_keys_available,init_libs,buildTasks,native_build_pattern" if="${keys.exist}">
+		<jar jarfile="${common}/lwjgl-natives-windows-i586.jar">
+			<fileset dir="${native}/win32">
+				<include name="lwjgl.dll" />
+				<include name="OpenAL32.dll" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="LWJGL Team" />
+				<attribute name="Implementation-Title" value="LWJGL Natives Windows 32bit" />
+				<attribute name="Implementation-Version" value="2.6" />
+			</manifest>
+		</jar>
+
+		<jar jarfile="${common}/lwjgl-natives-windows-amd64.jar">
+			<fileset dir="${native}/win64">
+				<include name="lwjgl64.dll" />
+				<include name="OpenAL64.dll" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="LWJGL Team" />
+				<attribute name="Implementation-Title" value="LWJGL Natives Windows 64bit" />
+				<attribute name="Implementation-Version" value="2.6" />
+			</manifest>
+		</jar>
+
+		<jar jarfile="${common}/lwjgl-natives-linux-i586.jar">
+			<fileset dir="${native}/linux32">
+				<include name="liblwjgl.so" />
+				<include name="libopenal.so" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="LWJGL Team" />
+				<attribute name="Implementation-Title" value="LWJGL Natives Linux 32bit" />
+				<attribute name="Implementation-Version" value="2.6" />
+			</manifest>
+		</jar>
+
+		<jar jarfile="${common}/lwjgl-natives-linux-amd64.jar">
+			<fileset dir="${native}/linux64">
+				<include name="liblwjgl64.so" />
+				<include name="libopenal64.so" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="LWJGL Team" />
+				<attribute name="Implementation-Title" value="LWJGL Natives Linux 64bit" />
+				<attribute name="Implementation-Version" value="2.6" />
+			</manifest>
+		</jar>
+
+		<jar jarfile="${common}/lwjgl-natives-macosx-universal.jar">
+			<fileset dir="${native}/macosx">
+				<include name="liblwjgl.jnilib" />
+				<include name="openal.dylib" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="LWJGL Team" />
+				<attribute name="Implementation-Title" value="LWJGL Natives MacOS X" />
+				<attribute name="Implementation-Version" value="2.6" />
+			</manifest>
+		</jar>
+
+		<jar jarfile="${common}/lwjgl-natives-solaris-i586.jar">
+			<fileset dir="${native}/solaris32">
+				<include name="liblwjgl.so" />
+				<include name="libopenal.so" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="LWJGL Team" />
+				<attribute name="Implementation-Title" value="LWJGL Natives Solaris 32bit" />
+				<attribute name="Implementation-Version" value="2.6" />
+			</manifest>
+		</jar>
+
+		<jar jarfile="${common}/lwjgl-natives-solaris-amd64.jar">
+			<fileset dir="${native}/solaris64">
+				<include name="liblwjgl64.so" />
+				<include name="libopenal64.so" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="LWJGL Team" />
+				<attribute name="Implementation-Title" value="LWJGL Natives Solaris 64bit" />
+				<attribute name="Implementation-Version" value="2.6" />
+			</manifest>
+		</jar>
+
+		<patternset id="lwjgl.natives">
+			<include name="lwjgl-natives-*.jar" />
+		</patternset>
+
+		<move todir="${libs}">
+			<fileset dir="${common}">
+				<patternset refid="lwjgl.natives" />
+			</fileset>
+		</move>
+
+		<resourceprepare targetdir="${signedlibs}" usepack200="true">
+			<fileset dir="${libs}">
+				<patternset refid="lwjgl.pattern" />
+			</fileset>
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="lwjgl.pattern" />
+				</fileset>
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="lwjgl.pattern" />
+				</fileset>
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setuplib}/lwjgl-windows-i586.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="lwjgl.pattern" />
+				<patternset refid="only.windows.32" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="lwjgl.natives" />
+				<patternset refid="only.windows.32" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/lwjgl-windows-amd64.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="lwjgl.pattern" />
+				<patternset refid="only.windows.64" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="lwjgl.natives" />
+				<patternset refid="only.windows.64" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/lwjgl-linux-i586.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="lwjgl.pattern" />
+				<patternset refid="only.linux.32" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="lwjgl.natives" />
+				<patternset refid="only.linux.32" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/lwjgl-linux-amd64.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="lwjgl.pattern" />
+				<patternset refid="only.linux.64" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="lwjgl.natives" />
+				<patternset refid="only.linux.64" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/lwjgl-macosx-universal.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="lwjgl.pattern" />
+				<patternset refid="only.macosx" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="lwjgl.natives" />
+				<patternset refid="only.macosx" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/lwjgl-solaris-i586.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="lwjgl.pattern" />
+				<patternset refid="only.sunos.32" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="lwjgl.natives" />
+				<patternset refid="only.sunos.32" />
+			</nativefileset>
+		</resourcebuild>
+
+		<resourcebuild target="${setuplib}/lwjgl-solaris-amd64.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="lwjgl.pattern" />
+				<patternset refid="only.sunos.64" />
+			</fileset>
+			<nativefileset dir="${libs}">
+				<patternset refid="lwjgl.natives" />
+				<patternset refid="only.sunos.64" />
+			</nativefileset>
+		</resourcebuild>
+	</target>
+
+	<target name="prepare_substance" description="prepare the SUBSTANCE bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<property name="use.pack200" value="false" />
+
+		<resourceprepare targetdir="${signedlibs}" usepack200="${use.pack200}">
+			<fileset refid="substance" />
+			<fileset refid="substance-flamingo" />
+			<fileset refid="flamingo" />
+			<fileset refid="trident" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="substance.pattern" />
+					<patternset refid="substance-flamingo.pattern" />
+					<patternset refid="flamingo.pattern" />
+					<patternset refid="trident.pattern" />
+				</fileset>
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="substance.pattern" />
+					<patternset refid="substance-flamingo.pattern" />
+					<patternset refid="flamingo.pattern" />
+					<patternset refid="trident.pattern" />
+				</fileset>
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setuplib}/substance.illares" usepack200="${use.pack200}">
+			<fileset dir="${signedlibs}">
+				<patternset refid="substance.pattern" />
+				<patternset refid="substance-flamingo.pattern" />
+				<patternset refid="flamingo.pattern" />
+				<patternset refid="trident.pattern" />
+			</fileset>
+		</resourcebuild>
+	</target>
+
+	<target name="prepare_tabsplitter" description="prepare the TABSPLITTER bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<resourceprepare targetdir="${signedlibs}" usepack200="true">
+			<fileset refid="tabsplitter" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="tabsplitter.pattern" />
+				</fileset>
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="tabsplitter.pattern" />
+				</fileset>
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setuplib}/tabsplitter.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="tabsplitter.pattern" />
+			</fileset>
+		</resourcebuild>
+	</target>
+
+	<target name="prepare_trove" description="prepare the TROVE bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<resourceprepare targetdir="${signedlibs}" usepack200="true">
+			<fileset refid="trove" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="trove.pattern" />
+				</fileset>
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="trove.pattern" />
+				</fileset>
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setuplib}/trove.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="trove.pattern" />
+			</fileset>
+		</resourcebuild>
+	</target>
+
+	<target name="prepare_vorbisspi" description="prepare the TROVE bundle" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<resourceprepare targetdir="${signedlibs}" usepack200="true">
+			<fileset refid="vorbisspi" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="vorbisspi.pattern" />
+				</fileset>
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<fileset dir="${signedlibs}">
+					<patternset refid="vorbisspi.pattern" />
+				</fileset>
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setuplib}/vorbisspi.illares" usepack200="true">
+			<fileset dir="${signedlibs}">
+				<patternset refid="vorbisspi.pattern" />
+			</fileset>
+		</resourcebuild>
+	</target>
+
+	<target name="init_libs">
+        <mkdir dir="${setuplib}" />
+		<mkdir dir="${signedlibs}" />
+		<mkdir dir="${signedresources}" />
+	</target>
+
+	<target name="download_libraries" description="download and setup all the libraries needed">
+		<copy file="${common}/libs-all.zip" tofile="${common}/libs-all-old.zip" failonerror="no" preservelastmodified="on" />
+		<get dest="${common}/libs-all.zip" src="http://illarion.org/media/java/libs-all.zip" verbose="false" usetimestamp="true" ignoreerrors="true" />
+		<antcall target="extract_libs" />
+		<delete file="${common}/libs-all-old.zip" />
+	</target>
+
+	<target name="check_libs_uptodate">
+		<uptodate property="libs.uptodate" srcfile="${common}/libs-all.zip" targetfile="${common}/libs-all-old.zip" />
+	</target>
+
+	<target name="extract_libs" depends="check_libs_uptodate" unless="libs.uptodate">
+		<mkdir dir="${libs}" />
+		<unzip dest="${libs}" src="${common}/libs-all.zip" overwrite="true" />
+
+		<mkdir dir="${native}" />
+		<mkdir dir="${native}/linux32" />
+		<mkdir dir="${native}/linux64" />
+		<mkdir dir="${native}/macosx" />
+		<mkdir dir="${native}/solaris32" />
+		<mkdir dir="${native}/solaris64" />
+		<mkdir dir="${native}/win32" />
+		<mkdir dir="${native}/win64" />
+
+		<unjar dest="${native}/linux32" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<include name="**/*-linux-i586.jar" />
+			</fileset>
+		</unjar>
+
+		<unjar dest="${native}/linux64" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<include name="**/*-linux-amd64.jar" />
+			</fileset>
+		</unjar>
+
+		<unjar dest="${native}/macosx" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<include name="**/*-macosx-universal.jar" />
+			</fileset>
+		</unjar>
+
+		<unjar dest="${native}/solaris32" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<include name="**/*-solaris-i586.jar" />
+			</fileset>
+		</unjar>
+
+		<unjar dest="${native}/solaris64" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<include name="**/*-solaris-amd64.jar" />
+			</fileset>
+		</unjar>
+
+		<unjar dest="${native}/win32" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<include name="**/*-windows-i586.jar" />
+			</fileset>
+		</unjar>
+
+		<unjar dest="${native}/win64" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<include name="**/*-windows-amd64.jar" />
+			</fileset>
+		</unjar>
+	</target>
+	
+	<target name="download_resources" description="Download prebuild resources">
+        <get dest="${common}/rsc-all.zip" src="http://illarion.org/media/java/rsc-all.zip" verbose="false" ignoreerrors="true" />
+        <antcall target="extract_resources" />
+        <delete file="${common}/rsc-all.zip" />
+    </target>
+	
+	<target name="extract_resources">
+        <mkdir dir="${resources}" />
+        <unzip dest="${resources}" src="${common}/rsc-all.zip" overwrite="true" />
+    </target>
+	
+	<target name="create_library_bundle" description="Create the library ZIP-File that is downloaded during the build">
+		<delete file="${common}/libs-all.zip" failonerror="false" />
+		<zip destfile="${common}/libs-all.zip" update="false" compress="true">
+            <fileset dir="${libs}">
+                <include name="**/*.jar" />
+                <include name="**/*.zip" />
+                <include name="**/LICENSE.txt" />
+                <exclude name="signed/**" />
+            </fileset>
+		</zip>
+	</target>
+    
+    <target name="create_resource_bundle" description="Create the ZIP-File of the prepared resources that are deployed in case the required parts of the build environment to create them are missing.">
+        <delete file="${common}/rsc-all.zip" failonerror="false" />
+        <zip destfile="${common}/rsc-all.zip" update="false" compress="false">
+            <fileset dir="${resources}">
+                <include name="*.jar" />
+                <exclude name="signed/**" />
+            </fileset>
+        </zip>
+    </target>
+
+	<target name="compile_common">
+		<delete dir="${classes}" />
+		<mkdir dir="${classes}" />
+		<javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}" debuglevel="${build.debuglevel}">
+			<classpath>
+				<fileset refid="log4j" />
+				<fileset refid="swt" />
+				<fileset refid="javolution" />
+				<pathelement location="${graphicsifc.bin}" />
+				<fileset refid="trove" />
+				<fileset refid="tabsplitter" />
+				<fileset refid="lzma" />
+				<pathelement path="${java.home}/lib" />
+			</classpath>
+		</javac>
+		<jar jarfile="${jar}" basedir="${classes}" includes="illarion/common/**">
+            <metainf dir="${common}">
+                <include name="*.txt" />
+            </metainf>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${common.vendor}" />
+				<attribute name="Implementation-Title" value="${common.name}" />
+				<attribute name="Implementation-Version" value="${common.version}" />
+			</manifest>
+		</jar>
+		<jar jarfile="${jar}" basedir="${src}" includes="public.key" update="true" index="${build.index}" />
+		<delete dir="${classes}" />
+	</target>
+    
+    <target name="build_fonts" description="build the fonts" depends="buildTasks">
+        <property name="characters" value="256" /> <!-- ISO-8859-1 -->
+        <!--<property name="characters" value="65535" />--> <!-- UTF-8 -->
+
+        <fontbuild targetFolder="${config}/data/gui" outputName="menuFont"
+            charakterCount="${characters}" fontFile="${fonts}/BLKCHCRY.TTF"
+            fontSize="24" fontType="normal" />
+        
+        <fontbuild targetFolder="${config}/data/gui" outputName="textFont"
+            charakterCount="${characters}" fontFile="${fonts}/Ubuntu-R.ttf"
+            fontSize="16" fontType="normal" />
+        
+        <fontbuild targetFolder="${config}/data/gui" outputName="smallFont"
+            charakterCount="${characters}" fontFile="${fonts}/Ubuntu-R.ttf"
+            fontSize="14" fontType="normal" />
+    </target>
+
+	<target name="rsc_gui" description="Build the GUI resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<texconvert generatetransparency="true" target="${resources}/rsc_gui.jar">
+			<fileset dir="${config}">
+				<include name="data/gui/*.png" />
+				<include name="data/gui/**/*.png" />
+				<include name="data/gui/*.illaFont" />
+				<exclude name="**/.svn/**" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${resources.vendor}" />
+				<attribute name="Implementation-Title" value="${resources.name}" />
+				<attribute name="Implementation-Version" value="${resources.version}" />
+			</manifest>
+		</texconvert>
+
+		<resourceprepare targetdir="${signedresources}" usepack200="false">
+			<filelist dir="${resources}" files="rsc_gui.jar" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedresources}" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_gui.jar" />
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_gui.jar" />
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setup}/rsc_gui.illares" usepack200="false">
+			<filelist dir="${signedresources}" files="rsc_gui.jar" />
+		</resourcebuild>
+	</target>
+
+	<target name="rsc_books" description="Build the book resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<texconvert generatetransparency="false" target="${resources}/rsc_books.jar">
+			<fileset dir="${config}">
+				<include name="data/books/*.xml" />
+				<include name="data/books/**/*.xml" />
+				<exclude name="**/.svn/**" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${resources.vendor}" />
+				<attribute name="Implementation-Title" value="${resources.name}" />
+				<attribute name="Implementation-Version" value="${resources.version}" />
+			</manifest>
+		</texconvert>
+
+		<resourceprepare targetdir="${signedresources}" usepack200="false">
+			<filelist dir="${resources}" files="rsc_books.jar" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedresources}" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_books.jar" />
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_books.jar" />
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setup}/rsc_books.illares" usepack200="false">
+			<filelist dir="${signedresources}" files="rsc_books.jar" />
+		</resourcebuild>
+	</target>
+
+	<target name="rsc_items" description="Build the Item resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<texconvert generatetransparency="true" target="${resources}/rsc_items.jar" dumpimages="false">
+			<fileset dir="${config}">
+				<include name="data/items/*.png" />
+				<include name="data/items/**/*.png" />
+				<exclude name="**/.svn/**" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${resources.vendor}" />
+				<attribute name="Implementation-Title" value="${resources.name}" />
+				<attribute name="Implementation-Version" value="${resources.version}" />
+			</manifest>
+		</texconvert>
+
+		<resourceprepare targetdir="${signedresources}" usepack200="false">
+			<filelist dir="${resources}" files="rsc_items.jar" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedresources}" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_items.jar" />
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_items.jar" />
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setup}/rsc_items.illares" usepack200="false">
+			<filelist dir="${signedresources}" files="rsc_items.jar" />
+		</resourcebuild>
+	</target>
+
+	<target name="rsc_tiles" description="Build the Tiles resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<texconvert generatetransparency="false" target="${resources}/rsc_tiles.jar">
+			<fileset dir="${config}">
+				<include name="data/tiles/*.png" />
+				<include name="data/tiles/**/*.png" />
+				<exclude name="**/.svn/**" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${resources.vendor}" />
+				<attribute name="Implementation-Title" value="${resources.name}" />
+				<attribute name="Implementation-Version" value="${resources.version}" />
+			</manifest>
+		</texconvert>
+
+		<resourceprepare targetdir="${signedresources}" usepack200="false">
+			<filelist dir="${resources}" files="rsc_tiles.jar" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedresources}" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_tiles.jar" />
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_tiles.jar" />
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setup}/rsc_tiles.illares" usepack200="false">
+			<filelist dir="${signedresources}" files="rsc_tiles.jar" />
+		</resourcebuild>
+	</target>
+
+	<target name="rsc_chars" description="Build the Chars resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<texconvert generatetransparency="false" target="${resources}/rsc_chars.jar">
+			<fileset dir="${config}">
+				<include name="data/chars/*.png" />
+				<include name="data/chars/**/*.png" />
+				<exclude name="**/.svn/**" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${resources.vendor}" />
+				<attribute name="Implementation-Title" value="${resources.name}" />
+				<attribute name="Implementation-Version" value="${resources.version}" />
+			</manifest>
+		</texconvert>
+
+		<resourceprepare targetdir="${signedresources}" usepack200="false">
+			<filelist dir="${resources}" files="rsc_chars.jar" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedresources}" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_chars.jar" />
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_chars.jar" />
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setup}/rsc_chars.illares" usepack200="false">
+			<filelist dir="${signedresources}" files="rsc_chars.jar" />
+		</resourcebuild>
+	</target>
+
+	<target name="rsc_effects" description="Build the Effects resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<texconvert generatetransparency="false" target="${resources}/rsc_effects.jar">
+			<fileset dir="${config}">
+				<include name="data/effects/*.png" />
+				<include name="data/effects/**/*.png" />
+				<exclude name="**/.svn/**" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${resources.vendor}" />
+				<attribute name="Implementation-Title" value="${resources.name}" />
+				<attribute name="Implementation-Version" value="${resources.version}" />
+			</manifest>
+		</texconvert>
+
+		<resourceprepare targetdir="${signedresources}" usepack200="false">
+			<filelist dir="${resources}" files="rsc_effects.jar" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedresources}" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_effects.jar" />
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_effects.jar" />
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setup}/rsc_effects.illares" usepack200="false">
+			<filelist dir="${signedresources}" files="rsc_effects.jar" />
+		</resourcebuild>
+	</target>
+
+	<target name="rsc_sound" description="Build the Sound resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<jar destfile="${resources}/rsc_sounds.jar" level="4">
+			<fileset dir="${config}">
+				<include name="data/sounds/*.ogg" />
+				<include name="data/music/*.ogg" />
+				<exclude name="**/.svn/**" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${resources.vendor}" />
+				<attribute name="Implementation-Title" value="${resources.name}" />
+				<attribute name="Implementation-Version" value="${resources.version}" />
+			</manifest>
+		</jar>
+
+		<resourceprepare targetdir="${signedresources}" usepack200="false">
+			<filelist dir="${resources}" files="rsc_sounds.jar" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedresources}" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_sounds.jar" />
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_sounds.jar" />
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setup}/rsc_sounds.illares" usepack200="false">
+			<filelist dir="${signedresources}" files="rsc_sounds.jar" />
+		</resourcebuild>
+	</target>
+
+	<target name="rsc_tables" description="Build the Table resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<texconvert generatetransparency="false" target="${resources}/rsc_tables.jar" privateKey="${common}/private.key">
+			<filelist dir="${config}">
+				<file name="data/Books.tbl" />
+				<file name="data/Songs.tbl" />
+                <file name="data/Sounds.tbl" />
+				<file name="data/Effects.tbl" />
+				<file name="data/Cloth.tbl" />
+				<file name="data/Chars.tbl" />
+				<file name="data/Overlays.tbl" />
+				<file name="data/Tiles.tbl" />
+				<file name="data/Gui.tbl" />
+				<file name="data/Runes.tbl" />
+				<file name="data/Items.tbl" />
+			</filelist>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${resources.vendor}" />
+				<attribute name="Implementation-Title" value="${resources.name}" />
+				<attribute name="Implementation-Version" value="${resources.version}" />
+			</manifest>
+		</texconvert>
+
+		<resourceprepare targetdir="${signedresources}" usepack200="false">
+			<filelist dir="${resources}" files="rsc_tables.jar" />
+		</resourceprepare>
+
+		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedresources}" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_tables.jar" />
+			</path>
+		</signjar>
+
+		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+			<path>
+				<filelist dir="${signedresources}" files="rsc_tables.jar" />
+			</path>
+		</verifyjar>
+
+		<resourcebuild target="${setup}/rsc_tables.illares" usepack200="false">
+			<filelist dir="${signedresources}" files="rsc_tables.jar" />
+		</resourcebuild>
+	</target>
+
+	<target name="rsc_manual" description="Build the Manual resources" depends="check_keys_available,init_libs,buildTasks" if="${keys.exist}">
+		<copy todir="${resources}">
+			<filelist dir="${client}">
+				<file name="manual_de.pdf" />
+				<file name="manual_en.pdf" />
+			</filelist>
+		</copy>
+		<resourcebuild target="${setup}/manual.illares" usepack200="false">
+			<filelist dir="${client}">
+				<file name="manual_de.pdf" />
+				<file name="manual_en.pdf" />
+			</filelist>
+		</resourcebuild>
+	</target>
+</project>
