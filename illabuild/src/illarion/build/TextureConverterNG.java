@@ -384,9 +384,8 @@ public final class TextureConverterNG extends Task {
      */
     public void setTarget(final File file) {
         targetFile = file;
-        fileName =
-            file.getName().replace("raw_", "").replace("rsc_", "") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                .replace(".jar", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        fileName = file.getName().replace("raw_", "").replace("rsc_", "") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            .replace(".jar", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -395,7 +394,8 @@ public final class TextureConverterNG extends Task {
      * @param directory the directory of the file
      * @param filename the name of the file
      */
-    private void analyseAndOrderFile(final File directory, final String filename) {
+    private void analyseAndOrderFile(final File directory,
+        final String filename) {
         final String cleanFileName = filename.replace('\\', '/');
         final FileEntry entry = new FileEntry(directory, cleanFileName);
         // sort in the files to build the ToDo list
@@ -597,12 +597,6 @@ public final class TextureConverterNG extends Task {
                 pageTextDE.clear();
                 pageTextEN.clear();
 
-                // final SchemaFactory schemaFactory =
-                // SchemaFactory
-                // .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                // schemaFactory.setErrorHandler(new XMLErrorHandler());
-                // final Schema schemaXSD = schemaFactory.newSchema(schemaFile);
-                // final Validator validator = schemaXSD.newValidator();
                 final DocumentBuilderFactory DBF =
                     DocumentBuilderFactory.newInstance();
                 DBF.setIgnoringElementContentWhitespace(true);

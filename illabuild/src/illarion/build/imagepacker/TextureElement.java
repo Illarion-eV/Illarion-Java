@@ -16,12 +16,40 @@
  */
 package illarion.build.imagepacker;
 
+/**
+ * This interface defined in general elements that located on a texture along
+ * with all required informations about them.
+ * 
+ * @author Martin Karing
+ * @since 1.22
+ * @version 1.22
+ */
 public interface TextureElement {
+    /**
+     * Get the height of this texture element.
+     * 
+     * @return the height of the texture element
+     */
     int getHeight();
 
+    /**
+     * Get the width of this texture element.
+     * 
+     * @return the width of the texture element
+     */
     int getWidth();
 
+    /**
+     * The X coordinate of the origin of this texture element.
+     * 
+     * @return the x coordinate of this texture element
+     */
     int getX();
 
+    /**
+     * The Y coordinate of the origin of this texture element.
+     * 
+     * @return the y coordinate of this texture element
+     */
     int getY();
 }

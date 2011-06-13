@@ -18,71 +18,151 @@ package illarion.build.imagepacker;
 
 import java.util.ArrayList;
 
+/**
+ * This class is used to define the empty space on a texture atlas.
+ * 
+ * @author Martin Karing
+ * @since 1.22
+ * @version 1.22
+ */
 final class Space implements TextureElement {
+    /**
+     * This is the buffer used to store the unused instances of the space
+     * objects.
+     */
     private static final ArrayList<Space> BUFFER = new ArrayList<Space>();
 
+    /**
+     * The height of the space.
+     */
     private int height;
 
+    /**
+     * The width of the space.
+     */
     private int width;
+
+    /**
+     * The X coordinate of the space.
+     */
     private int x;
+
+    /**
+     * The y coordinate of the space.
+     */
     private int y;
 
-    private Space(final int x, final int y, final int height, final int width) {
-        setDim(x, y, height, width);
+    /**
+     * Private constructor to ensure that the only instances fetched are the
+     * once created by the {@link #getSpace(int, int, int, int)} function.
+     */
+    private Space() {
+        // nothing to do
     }
 
+    /**
+     * Get a space with a set size and location. This function will either
+     * create a new instance or reuse a old one.
+     * 
+     * @param x the x coordinate of this space
+     * @param y the y coordinate of this space
+     * @param height the height of this space
+     * @param width the width of this space
+     * @return the space instance that is filled with the required values
+     */
     public static Space getSpace(final int x, final int y, final int height,
         final int width) {
-        if (BUFFER.size() > 0) {
-            final Space retSpace = BUFFER.remove(BUFFER.size() - 1);
-            retSpace.setDim(x, y, height, width);
-            return retSpace;
+        Space retSpace = null;
+        if (BUFFER.isEmpty()) {
+            retSpace = new Space();
+        } else {
+            retSpace = BUFFER.remove(BUFFER.size() - 1);
         }
+        retSpace.setDim(x, y, height, width);
 
-        return new Space(x, y, height, width);
+        return retSpace;
     }
 
-    public boolean fitsInside(final Sprite s) {
+    /**
+     * Check if a sprite fits into the space.
+     * 
+     * @param s the sprite to test
+     * @return <code>true</code> in case the sprite fits into the space
+     */
+    public boolean fitsInside(final TextureElement s) {
         return ((s.getHeight() <= height) && (s.getWidth() <= width));
     }
 
+    /**
+     * Get the height of this space.
+     * 
+     * @return the height of this space
+     */
     @Override
     public int getHeight() {
         return height;
     }
 
+    /**
+     * Get the size of this space in pixels.
+     * 
+     * @return the size of this space
+     */
     public long getSize() {
         return height * width;
     }
 
+    /**
+     * Get the width of this space.
+     * 
+     * @return the width of this space
+     */
     @Override
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Get the X coordinate of the origin of this space.
+     * 
+     * @return the x coordinate of this space
+     */
     @Override
     public int getX() {
         return x;
     }
 
+    /**
+     * Get the Y coordinate of the origin of this space.
+     * 
+     * @return the y coordinate of this space
+     */
     @Override
     public int getY() {
         return y;
     }
 
+    /**
+     * Recycle this instance, so it can be reused later.
+     */
     public void recycle() {
         BUFFER.add(this);
     }
 
-    public int toInt() {
-        return width * height;
-    }
-
-    private void setDim(final int x, final int y, final int height,
-        final int width) {
-        this.x = x;
-        this.y = y;
-        this.height = height;
-        this.width = width;
+    /**
+     * Set the size of this space. This function is used to prepare the values
+     * that are required for this space.
+     * 
+     * @param posX the x coordinate of the origin of the space
+     * @param posY the y coordinate of the origin of the space
+     * @param spaceHeight the height of the space
+     * @param spaceWidth the width of the space
+     */
+    private void setDim(final int posX, final int posY, final int spaceHeight,
+        final int spaceWidth) {
+        x = posX;
+        y = posY;
+        height = spaceHeight;
+        width = spaceWidth;
     }
 }

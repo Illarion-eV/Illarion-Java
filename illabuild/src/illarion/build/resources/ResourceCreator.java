@@ -149,8 +149,9 @@ public final class ResourceCreator extends Task {
 
             try {
                 zOut =
-                    new ZipOutputStream(new BufferedOutputStream(
-                        new LzmaOutputStream(new FileOutputStream(targetFile))));
+                    new ZipOutputStream(
+                        new BufferedOutputStream(new LzmaOutputStream(
+                            new FileOutputStream(targetFile))));
                 zOut.setLevel(0);
                 zOut.setMethod(ZipEntry.DEFLATED);
 
