@@ -6,7 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/illagraphics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illainput"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illasound"/>
-	<classpathentry kind="lib" path="/illacommon/rsc/manual.jar"/>
 	<classpathentry kind="lib" path="/illacommon/rsc/rsc_gui.jar"/>
 	<classpathentry kind="lib" path="/illacommon/rsc/rsc_items.jar"/>
 	<classpathentry kind="lib" path="/illacommon/rsc/rsc_tables.jar"/>
