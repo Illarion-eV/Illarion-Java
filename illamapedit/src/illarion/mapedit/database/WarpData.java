@@ -65,33 +65,75 @@ public final class WarpData implements Externalizable {
         target = new Location();
     }
 
+    /**
+     * Get the location of this warp point in this map. The location object
+     * returned is newly created and can be recylced after the function is done
+     * with it
+     * 
+     * @param map the map the location assigned to is requested
+     * @return the location of the warp point in the map, the origin location in
+     *         case both target and origin are on the same map or
+     *         <code>null</code> in case the warp point is not on this map at
+     *         all
+     */
     public Location getMapLocation(final MapData map) {
         if (map.equals(originMap)) {
-            return origin;
+            return getOriginLocation();
         } else if (map.equals(targetMap)) {
-            return target;
+            return getTargetLocation();
         }
         return null;
     }
 
+    /**
+     * Get the location where the warp starts.
+     * 
+     * @return a new instance of a location object that contains the location
+     *         where the warp origins
+     */
     public Location getOriginLocation() {
         return getOriginLocation(Location.getInstance());
     }
 
+    /**
+     * Get the location where the warp starts.
+     * 
+     * @param loc the location instance that is supposed to store the origin
+     *            location of this warp field
+     * @return the same instance of location that is passed by the
+     *         <code>loc</code> parameter
+     */
     public Location getOriginLocation(final Location loc) {
         loc.set(origin);
         return loc;
     }
 
+    /**
+     * Get the location where the warp ends.
+     * 
+     * @return a new instance of a location object that contains the location
+     *         where the warp ends
+     */
     public Location getTargetLocation() {
         return getTargetLocation(Location.getInstance());
     }
 
+    /**
+     * Get the location where the warp ends.
+     * 
+     * @param loc the location instance that is supposed to store the target
+     *            location of this warp field
+     * @return the same instance of location that is passed by the
+     *         <code>loc</code> parameter
+     */
     public Location getTargetLocation(final Location loc) {
         loc.set(target);
         return loc;
     }
 
+    /**
+     * Read the data from a input stream.
+     */
     @SuppressWarnings("nls")
     @Override
     public void readExternal(final ObjectInput in) throws IOException,
@@ -110,22 +152,49 @@ public final class WarpData implements Externalizable {
         }
     }
 
+    /**
+     * Set the location where the warp points begins. The instance passed as
+     * parameter will only be used as data source and can be changed or used
+     * otherwise after the call of this function.
+     * 
+     * @param loc the location where the warp starts
+     */
     public void setOriginLocation(final Location loc) {
         origin.set(loc);
     }
 
+    /**
+     * Set the map where the warp starts.
+     * 
+     * @param map the map where the warp starts
+     */
     public void setOriginMap(final MapData map) {
         originMap = map;
     }
 
+    /**
+     * Set the location where the warp points ends. The instance passed as
+     * parameter will only be used as data source and can be changed or used
+     * otherwise after the call of this function.
+     * 
+     * @param loc the location where the warp ends
+     */
     public void setTargetLocation(final Location loc) {
         target.set(loc);
     }
 
+    /**
+     * Set the map where the warp ends.
+     * 
+     * @param map the map where the warp ends
+     */
     public void setTargetMap(final MapData map) {
         targetMap = map;
     }
 
+    /**
+     * Write the current version of the map data to a output stream.
+     */
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
         out.writeLong(serialVersionUID);

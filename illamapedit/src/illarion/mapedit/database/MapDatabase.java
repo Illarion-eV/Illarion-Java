@@ -124,19 +124,6 @@ public final class MapDatabase implements Externalizable {
         return retDb;
     }
 
-    public static void main(final String[] args) {
-        final MapDatabase db =
-            MapDatabase
-                .loadDatabase(new File(
-                    "C:\\Users\\Martin Karing\\Entwicklung\\maps\\trunk\\Testserver"));
-        try {
-            db.refreshFull(null);
-        } catch (final TaskCancelException e) {
-            // nothing
-        }
-        db.save();
-    }
-
     /**
      * Get the map that covers a specified location.
      * 
