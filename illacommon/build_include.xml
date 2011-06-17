@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE project SYSTEM "../illacommon/build.dtd">
 <!-- This file is part of the Illarion Common Library.
 
 The Illarion Common Library is free software: you can redistribute i
@@ -337,19 +336,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<target name="proguard">
 		<!-- Create the proguard task -->
 		<taskdef resource="proguard/ant/task.properties" classpath="${common}/lib/proguard/proguard.jar" />
-	</target>
-
-	<!-- Create Contrib Tasks -->
-	<target name="contrib">
-		<taskdef resource="net/sf/antcontrib/antcontrib.properties">
-			<classpath>
-				<pathelement location="${common}/lib/ant-contrib-1.0b3.jar" />
-				<pathelement location="${common}/lib/bcel-5.1.jar" />
-				<pathelement location="${common}/lib/commons-httpclient-3.0.1.jar" />
-				<pathelement location="${common}/lib/commons-logging-1.0.4.jar" />
-				<pathelement location="${common}/lib/ivy-1.3.1.jar" />
-			</classpath>
-		</taskdef>
 	</target>
 
 	<!-- Create config tool Tasks -->

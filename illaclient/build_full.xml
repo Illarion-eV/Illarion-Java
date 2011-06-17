@@ -1,4 +1,5 @@
-<project name="Illarion Client Full" default="build_all" basedir=".">
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Illarion Client Full" default="build_all">
     <description>
            Build the full client.
     </description>
