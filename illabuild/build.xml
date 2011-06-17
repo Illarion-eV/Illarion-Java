@@ -55,6 +55,12 @@ the Illarion Build Utility. If not, see <http://www.gnu.org/licenses/>.
             <fileset dir="${src}">
                 <include name="illarion/build/illabuild.properties"/>
             </fileset>
+            <zipfileset src="${common.bin}" />
+            <zipfileset src="${graphics.bin}">
+                <exclude name="illarion/graphics/lwjgl/**" />
+                <exclude name="illarion/graphics/jogl/**" />
+                <exclude name="illarion/graphics/generic/**" />
+            </zipfileset>
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Built-Date" value="${TODAY}" />

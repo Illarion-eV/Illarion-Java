@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License along with
 the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 -->
 <project name="Illarion Build Imports" basedir=".">
-    <property file="../illacommon/local.location.properties" />
+	<property file="../illacommon/local.location.properties" />
 	<property file="../illacommon/location.properties" />
 
 	<import file="${sign}/build_keys.xml" optional="true" />
@@ -131,14 +131,29 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<!-- Libraries -->
 	<!-- Vorbis SPI 1.0.3 -->
 	<!-- http://www.javazoom.net/vorbisspi/vorbisspi.html -->
+	<property name="vorbisspi.dir" location="${common}/lib/vorbisspi" />
 	<patternset id="vorbisspi.pattern">
+		<include name="vorbisspi.jar" />
+	</patternset>
+	<fileset id="vorbisspi" dir="${vorbisspi.dir}">
+		<patternset refid="vorbisspi.pattern" />
+	</fileset>
+
+	<property name="jorbis.dir" location="${common}/lib/jorbis" />
+	<patternset id="jorbis.pattern">
 		<include name="jogg.jar" />
 		<include name="jorbis.jar" />
-		<include name="vorbisspi.jar" />
+	</patternset>
+	<fileset id="jorbis" dir="${jorbis.dir}">
+		<patternset refid="jorbis.pattern" />
+	</fileset>
+
+	<property name="tritonus.dir" location="${common}/lib/tritonus" />
+	<patternset id="tritonus.pattern">
 		<include name="tritonus_share.jar" />
 	</patternset>
-	<fileset id="vorbisspi" dir="${common}/lib/vorbisspi">
-		<patternset refid="vorbisspi.pattern" />
+	<fileset id="tritonus" dir="${tritonus.dir}">
+		<patternset refid="tritonus.pattern" />
 	</fileset>
 
 	<!-- Log4j 1.2.15 -->
@@ -161,24 +176,27 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 
 	<!-- LWJGL 2.6 -->
 	<!-- http://www.lwjgl.org/ -->
+	<property name="lwjgl.dir" location="${common}/lib/lwjgl"/>
 	<patternset id="lwjgl.pattern">
 		<include name="lwjgl.jar" />
 		<include name="lwjgl*.jar" />
 		<exclude name="*natives*" />
 	</patternset>
-	<fileset id="lwjgl" dir="${common}/lib/lwjgl">
+	<fileset id="lwjgl" dir="${lwjgl.dir}">
 		<patternset refid="lwjgl.pattern" />
 	</fileset>
 
 	<!-- JOGL 2.0.0 b224 -->
 	<!-- http://jogamp.org/ -->
+    <property name="jogl.dir" location="${common}/lib/jogl"/>
 	<patternset id="jogl.pattern">
 		<include name="jogl*.jar" />
 		<exclude name="*test*" />
 		<exclude name="*sdk*" />
+		<exclude name="*all*" />
 		<exclude name="*natives*" />
 	</patternset>
-	<fileset id="jogl" dir="${common}/lib/jogl">
+	<fileset id="jogl" dir="${jogl.dir}">
 		<patternset refid="jogl.pattern" />
 	</fileset>
 
@@ -190,27 +208,32 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<patternset refid="joal.pattern" />
 	</fileset>
 
+	<property name="gluegen.dir" location="${common}/lib/gluegen"/>
 	<patternset id="gluegen.pattern">
 		<include name="gluegen*.jar" />
 		<exclude name="*natives*" />
 	</patternset>
-	<fileset id="gluegen" dir="${common}/lib/gluegen">
+	<fileset id="gluegen" dir="${gluegen.dir}">
 		<patternset refid="gluegen.pattern" />
 	</fileset>
 
+    <property name="nativewindow.dir" location="${common}/lib/nativewindow"/>
 	<patternset id="nativewindow.pattern">
 		<include name="nativewindow*.jar" />
+        <exclude name="*all*" />
 		<exclude name="*natives*" />
 	</patternset>
-	<fileset id="nativewindow" dir="${common}/lib/nativewindow">
+	<fileset id="nativewindow" dir="${nativewindow.dir}">
 		<patternset refid="nativewindow.pattern" />
 	</fileset>
 
+    <property name="newt.dir" location="${common}/lib/newt"/>
 	<patternset id="newt.pattern">
 		<include name="newt*.jar" />
+        <exclude name="*all*" />
 		<exclude name="*natives*" />
 	</patternset>
-	<fileset id="newt" dir="${common}/lib/newt">
+	<fileset id="newt" dir="${newt.dir}">
 		<patternset refid="newt.pattern" />
 	</fileset>
 
@@ -343,8 +366,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<taskdef resource="illarion/build/illabuild.properties">
 			<classpath>
 				<pathelement location="${build.bin}" />
-				<pathelement location="${common.bin}" />
-				<pathelement location="${graphics.bin}" />
 				<fileset refid="log4j" />
 				<fileset refid="lzma" />
 				<fileset refid="javolution" />

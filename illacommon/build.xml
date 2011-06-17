@@ -72,8 +72,9 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</patternset>
 
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
-			<fileset dir="${libs}">
-				<patternset refid="gluegen.pattern" />
+			<fileset refid="gluegen" />
+			<fileset dir="${gluegen.dir}">
+				<patternset refid="gluegen.natives" />
 			</fileset>
 		</resourceprepare>
 
@@ -81,6 +82,9 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<path>
 				<fileset dir="${signedlibs}">
 					<patternset refid="gluegen.pattern" />
+				</fileset>
+				<fileset dir="${signedlibs}">
+					<patternset refid="gluegen.natives" />
 				</fileset>
 			</path>
 		</signjar>
@@ -90,6 +94,9 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<fileset dir="${signedlibs}">
 					<patternset refid="gluegen.pattern" />
 				</fileset>
+				<fileset dir="${signedlibs}">
+					<patternset refid="gluegen.natives" />
+				</fileset>
 			</path>
 		</verifyjar>
 
@@ -98,7 +105,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="gluegen.pattern" />
 				<patternset refid="only.windows.32" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="gluegen.natives" />
 				<patternset refid="only.windows.32" />
 			</nativefileset>
@@ -109,7 +116,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="gluegen.pattern" />
 				<patternset refid="only.windows.64" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="gluegen.natives" />
 				<patternset refid="only.windows.64" />
 			</nativefileset>
@@ -120,7 +127,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="gluegen.pattern" />
 				<patternset refid="only.linux.32" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="gluegen.natives" />
 				<patternset refid="only.linux.32" />
 			</nativefileset>
@@ -131,7 +138,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="gluegen.pattern" />
 				<patternset refid="only.linux.64" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="gluegen.natives" />
 				<patternset refid="only.linux.64" />
 			</nativefileset>
@@ -142,7 +149,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="gluegen.pattern" />
 				<patternset refid="only.macosx" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="gluegen.natives" />
 				<patternset refid="only.macosx" />
 			</nativefileset>
@@ -185,10 +192,11 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</patternset>
 
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
-			<fileset dir="${libs}">
-				<patternset refid="jogl.pattern" />
-				<patternset refid="nativewindow.pattern" />
-				<patternset refid="newt.pattern" />
+			<fileset refid="jogl" />
+			<fileset refid="nativewindow" />
+			<fileset refid="newt" />
+			<fileset dir="${jogl.dir}">
+				<patternset refid="jogl.natives" />
 			</fileset>
 		</resourceprepare>
 
@@ -199,6 +207,9 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 					<patternset refid="nativewindow.pattern" />
 					<patternset refid="newt.pattern" />
 				</fileset>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="jogl.natives" />
+                </fileset>
 			</path>
 		</signjar>
 
@@ -209,6 +220,9 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 					<patternset refid="nativewindow.pattern" />
 					<patternset refid="newt.pattern" />
 				</fileset>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="jogl.natives" />
+                </fileset>
 			</path>
 		</verifyjar>
 
@@ -219,7 +233,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="newt.pattern" />
 				<patternset refid="only.windows.32" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="jogl.natives" />
 				<patternset refid="only.windows.32" />
 			</nativefileset>
@@ -232,7 +246,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="newt.pattern" />
 				<patternset refid="only.windows.64" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="jogl.natives" />
 				<patternset refid="only.windows.64" />
 			</nativefileset>
@@ -245,7 +259,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="newt.pattern" />
 				<patternset refid="only.linux.32" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="jogl.natives" />
 				<patternset refid="only.linux.32" />
 			</nativefileset>
@@ -258,7 +272,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="newt.pattern" />
 				<patternset refid="only.linux.64" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="jogl.natives" />
 				<patternset refid="only.linux.64" />
 			</nativefileset>
@@ -271,7 +285,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="newt.pattern" />
 				<patternset refid="only.macosx" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="jogl.natives" />
 				<patternset refid="only.macosx" />
 			</nativefileset>
@@ -437,15 +451,16 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<include name="lwjgl-natives-*.jar" />
 		</patternset>
 
-		<move todir="${libs}">
+		<move todir="${lwjgl.dir}">
 			<fileset dir="${common}">
 				<patternset refid="lwjgl.natives" />
 			</fileset>
 		</move>
 
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
-			<fileset dir="${libs}">
-				<patternset refid="lwjgl.pattern" />
+			<fileset refid="lwjgl" />
+			<fileset dir="${lwjgl.dir}">
+				<patternset refid="lwjgl.natives" />
 			</fileset>
 		</resourceprepare>
 
@@ -453,6 +468,9 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<path>
 				<fileset dir="${signedlibs}">
 					<patternset refid="lwjgl.pattern" />
+				</fileset>
+				<fileset dir="${signedlibs}">
+					<patternset refid="lwjgl.natives" />
 				</fileset>
 			</path>
 		</signjar>
@@ -462,6 +480,9 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<fileset dir="${signedlibs}">
 					<patternset refid="lwjgl.pattern" />
 				</fileset>
+				<fileset dir="${signedlibs}">
+					<patternset refid="lwjgl.natives" />
+				</fileset>
 			</path>
 		</verifyjar>
 
@@ -470,7 +491,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="lwjgl.pattern" />
 				<patternset refid="only.windows.32" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="lwjgl.natives" />
 				<patternset refid="only.windows.32" />
 			</nativefileset>
@@ -481,7 +502,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="lwjgl.pattern" />
 				<patternset refid="only.windows.64" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="lwjgl.natives" />
 				<patternset refid="only.windows.64" />
 			</nativefileset>
@@ -492,7 +513,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="lwjgl.pattern" />
 				<patternset refid="only.linux.32" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="lwjgl.natives" />
 				<patternset refid="only.linux.32" />
 			</nativefileset>
@@ -503,7 +524,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="lwjgl.pattern" />
 				<patternset refid="only.linux.64" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="lwjgl.natives" />
 				<patternset refid="only.linux.64" />
 			</nativefileset>
@@ -514,7 +535,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="lwjgl.pattern" />
 				<patternset refid="only.macosx" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="lwjgl.natives" />
 				<patternset refid="only.macosx" />
 			</nativefileset>
@@ -525,7 +546,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="lwjgl.pattern" />
 				<patternset refid="only.sunos.32" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="lwjgl.natives" />
 				<patternset refid="only.sunos.32" />
 			</nativefileset>
@@ -536,7 +557,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<patternset refid="lwjgl.pattern" />
 				<patternset refid="only.sunos.64" />
 			</fileset>
-			<nativefileset dir="${libs}">
+			<nativefileset dir="${signedlibs}">
 				<patternset refid="lwjgl.natives" />
 				<patternset refid="only.sunos.64" />
 			</nativefileset>
@@ -644,12 +665,16 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<target name="prepare_vorbisspi" description="prepare the TROVE bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="vorbisspi" />
+			<fileset refid="jorbis" />
+			<fileset refid="tritonus" />
 		</resourceprepare>
 
 		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
 			<path>
 				<fileset dir="${signedlibs}">
 					<patternset refid="vorbisspi.pattern" />
+                    <patternset refid="jorbis.pattern" />
+                    <patternset refid="tritonus.pattern" />
 				</fileset>
 			</path>
 		</signjar>
@@ -658,6 +683,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<path>
 				<fileset dir="${signedlibs}">
 					<patternset refid="vorbisspi.pattern" />
+                    <patternset refid="jorbis.pattern" />
+                    <patternset refid="tritonus.pattern" />
 				</fileset>
 			</path>
 		</verifyjar>
@@ -665,12 +692,14 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<resourcebuild target="${setuplib}/vorbisspi.illares" usepack200="true">
 			<fileset dir="${signedlibs}">
 				<patternset refid="vorbisspi.pattern" />
+                <patternset refid="jorbis.pattern" />
+                <patternset refid="tritonus.pattern" />
 			</fileset>
 		</resourcebuild>
 	</target>
 
 	<target name="init_libs">
-        <mkdir dir="${setuplib}" />
+		<mkdir dir="${setuplib}" />
 		<mkdir dir="${signedlibs}" />
 		<mkdir dir="${signedresources}" />
 	</target>
@@ -762,43 +791,43 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			</fileset>
 		</unjar>
 	</target>
-	
+
 	<target name="download_resources" description="Download prebuild resources">
-        <get dest="${common}/rsc-all.zip" src="http://illarion.org/media/java/rsc-all.zip" verbose="false" ignoreerrors="true" />
-        <antcall target="extract_resources" />
-        <delete file="${common}/rsc-all.zip" />
-    </target>
-	
+		<get dest="${common}/rsc-all.zip" src="http://illarion.org/media/java/rsc-all.zip" verbose="false" ignoreerrors="true" />
+		<antcall target="extract_resources" />
+		<delete file="${common}/rsc-all.zip" />
+	</target>
+
 	<target name="resource_file_present">
 		<available file="${common}/rsc-all.zip" property="rsc_all.avaiable" />
 	</target>
-	
+
 	<target name="extract_resources" depends="resource_file_present" if="${rsc_all.avaiable}">
-        <mkdir dir="${resources}" />
-        <unzip dest="${resources}" src="${common}/rsc-all.zip" overwrite="true" />
-    </target>
-	
+		<mkdir dir="${resources}" />
+		<unzip dest="${resources}" src="${common}/rsc-all.zip" overwrite="true" />
+	</target>
+
 	<target name="create_library_bundle" description="Create the library ZIP-File that is downloaded during the build">
 		<delete file="${common}/libs-all.zip" failonerror="false" />
 		<zip destfile="${common}/libs-all.zip" update="false" compress="true">
-            <fileset dir="${libs}">
-                <include name="**/*.jar" />
-                <include name="**/*.zip" />
-                <include name="**/LICENSE.txt" />
-                <exclude name="signed/**" />
-            </fileset>
+			<fileset dir="${libs}">
+				<include name="**/*.jar" />
+				<include name="**/*.zip" />
+				<include name="**/LICENSE.txt" />
+				<exclude name="signed/**" />
+			</fileset>
 		</zip>
 	</target>
-    
-    <target name="create_resource_bundle" description="Create the ZIP-File of the prepared resources that are deployed in case the required parts of the build environment to create them are missing.">
-        <delete file="${common}/rsc-all.zip" failonerror="false" />
-        <zip destfile="${common}/rsc-all.zip" update="false" compress="false">
-            <fileset dir="${resources}">
-                <include name="*.jar" />
-                <exclude name="signed/**" />
-            </fileset>
-        </zip>
-    </target>
+
+	<target name="create_resource_bundle" description="Create the ZIP-File of the prepared resources that are deployed in case the required parts of the build environment to create them are missing.">
+		<delete file="${common}/rsc-all.zip" failonerror="false" />
+		<zip destfile="${common}/rsc-all.zip" update="false" compress="false">
+			<fileset dir="${resources}">
+				<include name="*.jar" />
+				<exclude name="signed/**" />
+			</fileset>
+		</zip>
+	</target>
 
 	<target name="compile_common">
 		<delete dir="${classes}" />
@@ -816,9 +845,9 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			</classpath>
 		</javac>
 		<jar jarfile="${jar}" basedir="${classes}" includes="illarion/common/**">
-            <metainf dir="${common}">
-                <include name="*.txt" />
-            </metainf>
+			<metainf dir="${common}">
+				<include name="*.txt" />
+			</metainf>
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Built-Date" value="${TODAY}" />
@@ -830,23 +859,25 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<jar jarfile="${jar}" basedir="${src}" includes="public.key" update="true" index="${build.index}" />
 		<delete dir="${classes}" />
 	</target>
-    
-    <target name="build_fonts" description="build the fonts" depends="check_optional_dirs,buildTasks" if="${config.exist}">
-        <property name="characters" value="256" /> <!-- ISO-8859-1 -->
-        <!--<property name="characters" value="65535" />--> <!-- UTF-8 -->
 
-        <fontbuild targetFolder="${config}/data/gui" outputName="menuFont"
+	<target name="build_fonts" description="build the fonts" depends="check_optional_dirs,buildTasks" if="${config.exist}">
+		<property name="characters" value="256" />
+		<!-- ISO-8859-1 -->
+		<!--<property name="characters" value="65535" />-->
+		<!-- UTF-8 -->
+
+		<fontbuild targetFolder="${config}/data/gui" outputName="menuFont"
             charakterCount="${characters}" fontFile="${fonts}/BLKCHCRY.TTF"
             fontSize="24" fontType="normal" />
-        
-        <fontbuild targetFolder="${config}/data/gui" outputName="textFont"
+
+		<fontbuild targetFolder="${config}/data/gui" outputName="textFont"
             charakterCount="${characters}" fontFile="${fonts}/Ubuntu-R.ttf"
             fontSize="16" fontType="normal" />
-        
-        <fontbuild targetFolder="${config}/data/gui" outputName="smallFont"
+
+		<fontbuild targetFolder="${config}/data/gui" outputName="smallFont"
             charakterCount="${characters}" fontFile="${fonts}/Ubuntu-R.ttf"
             fontSize="14" fontType="normal" />
-    </target>
+	</target>
 
 	<target name="rsc_gui" description="Build the GUI resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist" >
 		<texconvert generatetransparency="true" target="${resources}/rsc_gui.jar">
@@ -1113,7 +1144,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<filelist dir="${config}">
 				<file name="data/Books.tbl" />
 				<file name="data/Songs.tbl" />
-                <file name="data/Sounds.tbl" />
+				<file name="data/Sounds.tbl" />
 				<file name="data/Effects.tbl" />
 				<file name="data/Cloth.tbl" />
 				<file name="data/Chars.tbl" />
