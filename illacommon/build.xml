@@ -865,6 +865,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<!-- ISO-8859-1 -->
 		<!--<property name="characters" value="65535" />-->
 		<!-- UTF-8 -->
+		<property name="fonts" location="${config}/data/fonts"/>
+
 
 		<fontbuild targetFolder="${config}/data/gui" outputName="menuFont"
             charakterCount="${characters}" fontFile="${fonts}/BLKCHCRY.TTF"

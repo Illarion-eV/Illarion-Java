@@ -370,6 +370,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<fileset refid="lzma" />
 				<fileset refid="javolution" />
 				<fileset refid="trove" />
+                <fileset refid="lwjgl" />
+                <fileset refid="jogl" />
 			</classpath>
 		</taskdef>
 	</target>
