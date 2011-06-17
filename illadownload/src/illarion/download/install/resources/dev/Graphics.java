@@ -83,9 +83,7 @@ public final class Graphics implements DevelopmentResource {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                "illarion_graphicsifc.jar")); //$NON-NLS-1$
-            cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                "illarion_graphicsimpl.jar")); //$NON-NLS-1$
+                "illarion_graphics.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }

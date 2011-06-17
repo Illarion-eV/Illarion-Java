@@ -83,9 +83,7 @@ public final class Sound implements DevelopmentResource {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                "illarion_soundifc.jar")); //$NON-NLS-1$
-            cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                "illarion_soundimpl.jar")); //$NON-NLS-1$
+                "illarion_sound.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }

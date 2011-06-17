@@ -83,9 +83,7 @@ public final class Input implements DevelopmentResource {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                "illarion_inputifc.jar")); //$NON-NLS-1$
-            cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                "illarion_inputimpl.jar")); //$NON-NLS-1$
+                "illarion_input.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
