@@ -137,8 +137,8 @@ public final class MapStorage implements LightingMap {
             lightTracer.pause();
             newMap.showMap();
             MapEditor.getDisplay().finishBatchMode();
-            MapEditor.getMainFrame().getRightToolbar().getMapSelector()
-                .addMap(newMap.getMapName());
+//            MapEditor.getMainFrame().getRightToolbar().getMapSelector()
+//                .addMap(newMap.getMapName());
             calculateMapSize();
         } finally {
             MapEditor.getDisplay().finishBatchMode();
@@ -176,7 +176,7 @@ public final class MapStorage implements LightingMap {
             tempRect.recycle();
         }
 
-        MapEditor.getMainFrame().getRenderArea().setVirtualSize(rect);
+//        MapEditor.getMainFrame().getRenderArea().setVirtualSize(rect);
         rect.recycle();
     }
 
@@ -207,7 +207,7 @@ public final class MapStorage implements LightingMap {
             return "Width and height must not be smaller then 1";
         }
         final String message = "Creating map: " + mapName;
-        MapEditor.getMainFrame().getMessageLine().addMessage(message);
+//        MapEditor.getMainFrame().getMessageLine().addMessage(message);
 
         final Location newMapLocation = Location.getInstance();
         newMapLocation.setSC(posX, posY, posZ);
@@ -232,12 +232,12 @@ public final class MapStorage implements LightingMap {
             lightTracer.pause();
             newMap.showMap();
             MapEditor.getDisplay().finishBatchMode();
-            MapEditor.getMainFrame().getRightToolbar().getMapSelector()
-                .addMap(mapName);
+//            MapEditor.getMainFrame().getRightToolbar().getMapSelector()
+//                .addMap(mapName);
             calculateMapSize();
         } finally {
             MapEditor.getDisplay().finishBatchMode();
-            MapEditor.getMainFrame().getMessageLine().removeMessage(message);
+//            MapEditor.getMainFrame().getMessageLine().removeMessage(message);
             lightTracer.start();
             lightTracer.renderLights();
         }
@@ -312,7 +312,7 @@ public final class MapStorage implements LightingMap {
         }
         final String message = "Loading map: " + mapName;
         try {
-            MapEditor.getMainFrame().getMessageLine().addMessage(message);
+//            MapEditor.getMainFrame().getMessageLine().addMessage(message);
             final Map newMap = new Map(mapName);
 
             synchronized (loadedMaps) {
@@ -330,15 +330,15 @@ public final class MapStorage implements LightingMap {
             newMap.showMap();
             MapEditor.getDisplay().finishBatchMode();
             calculateMapSize();
-            MapEditor.getMainFrame().getRightToolbar().getMapSelector()
-                .addMap(mapName);
+//            MapEditor.getMainFrame().getRightToolbar().getMapSelector()
+//                .addMap(mapName);
         } catch (final IllegalArgumentException ex) {
             LOGGER.error("Loading map failed", ex);
         } catch (final NullPointerException ex) {
             LOGGER.error("Loading map failed", ex);
         } finally {
             MapEditor.getDisplay().finishBatchMode();
-            MapEditor.getMainFrame().getMessageLine().removeMessage(message);
+//            MapEditor.getMainFrame().getMessageLine().removeMessage(message);
             lightTracer.start();
             lightTracer.renderLights();
         }
@@ -348,27 +348,27 @@ public final class MapStorage implements LightingMap {
     @SuppressWarnings("nls")
     public void renderLights() {
         final String message = "Rendering Lights";
-        MapEditor.getMainFrame().getMessageLine().addMessage(message);
+//        MapEditor.getMainFrame().getMessageLine().addMessage(message);
         synchronized (loadedMaps) {
             for (final Entry<String, Map> entry : loadedMaps.entrySet()) {
                 entry.getValue().renderLights();
             }
         }
         Graphics.getInstance().getRenderDisplay().getRenderArea().repaint();
-        MapEditor.getMainFrame().getMessageLine().removeMessage(message);
+//        MapEditor.getMainFrame().getMessageLine().removeMessage(message);
     }
 
     @Override
     @SuppressWarnings("nls")
     public void resetLights() {
         final String message = "Resetting Lights";
-        MapEditor.getMainFrame().getMessageLine().addMessage(message);
+//        MapEditor.getMainFrame().getMessageLine().addMessage(message);
         synchronized (loadedMaps) {
             for (final Entry<String, Map> entry : loadedMaps.entrySet()) {
                 entry.getValue().resetLights();
             }
         }
-        MapEditor.getMainFrame().getMessageLine().removeMessage(message);
+//        MapEditor.getMainFrame().getMessageLine().removeMessage(message);
     }
 
     /**
@@ -377,14 +377,14 @@ public final class MapStorage implements LightingMap {
     @SuppressWarnings("nls")
     public void saveAllMaps() {
         final String message = "Saving all maps";
-        MapEditor.getMainFrame().getMessageLine().addMessage(message);
+//        MapEditor.getMainFrame().getMessageLine().addMessage(message);
 
         synchronized (loadedMaps) {
             for (final Entry<String, Map> entry : loadedMaps.entrySet()) {
                 entry.getValue().save();
             }
         }
-        MapEditor.getMainFrame().getMessageLine().removeMessage(message);
+//        MapEditor.getMainFrame().getMessageLine().removeMessage(message);
     }
 
     @Override
@@ -408,7 +408,7 @@ public final class MapStorage implements LightingMap {
         }
         selectedMap = newSelectedMap;
         Graphics.getInstance().getRenderDisplay().getRenderArea().repaint();
-        MapEditor.getMainFrame().getMenubar().validateHistory();
+//        MapEditor.getMainFrame().getMenubar().validateHistory();
     }
 
     /**
@@ -421,7 +421,7 @@ public final class MapStorage implements LightingMap {
         }
 
         final String message = "Removing all maps";
-        MapEditor.getMainFrame().getMessageLine().addMessage(message);
+//        MapEditor.getMainFrame().getMessageLine().addMessage(message);
 
         while (!MapEditor.getDisplay().activateBatchMode()) {
             try {
@@ -435,15 +435,15 @@ public final class MapStorage implements LightingMap {
         synchronized (loadedMaps) {
             for (final Entry<String, Map> entry : loadedMaps.entrySet()) {
                 entry.getValue().hideMap();
-                MapEditor.getMainFrame().getRightToolbar().getMapSelector()
-                    .deleteMap(entry.getKey());
+//                MapEditor.getMainFrame().getRightToolbar().getMapSelector()
+//                    .deleteMap(entry.getKey());
             }
             loadedMaps.clear();
         }
 
         MapEditor.getDisplay().finishBatchMode();
         calculateMapSize();
-        MapEditor.getMainFrame().getMessageLine().removeMessage(message);
+//        MapEditor.getMainFrame().getMessageLine().removeMessage(message);
         setSelectedMap(null);
     }
 
@@ -467,7 +467,7 @@ public final class MapStorage implements LightingMap {
             return;
         }
         final String message = "Removing map: " + mapName;
-        MapEditor.getMainFrame().getMessageLine().addMessage(message);
+//        MapEditor.getMainFrame().getMessageLine().addMessage(message);
 
         while (!MapEditor.getDisplay().activateBatchMode()) {
             try {
@@ -492,8 +492,8 @@ public final class MapStorage implements LightingMap {
         }
         MapEditor.getDisplay().finishBatchMode();
         calculateMapSize();
-        MapEditor.getMainFrame().getRightToolbar().getMapSelector()
-            .deleteMap(mapName);
-        MapEditor.getMainFrame().getMessageLine().removeMessage(message);
+//        MapEditor.getMainFrame().getRightToolbar().getMapSelector()
+//            .deleteMap(mapName);
+//        MapEditor.getMainFrame().getMessageLine().removeMessage(message);
     }
 }

@@ -70,9 +70,9 @@ public final class MapOptimizer {
                     String.format(OPT_MSG, Integer.valueOf(stepCnt), tasks
                         .get(i).getName());
 
-                MapEditor.getMainFrame().getMessageLine().addMessage(msg);
+//                MapEditor.getMainFrame().getMessageLine().addMessage(msg);
                 tasks.get(i).optimize(map);
-                MapEditor.getMainFrame().getMessageLine().removeMessage(msg);
+//                MapEditor.getMainFrame().getMessageLine().removeMessage(msg);
             }
         }
 

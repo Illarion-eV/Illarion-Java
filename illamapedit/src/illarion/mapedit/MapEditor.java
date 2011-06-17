@@ -28,7 +28,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 import illarion.mapedit.crash.DefaultCrashHandler;
 import illarion.mapedit.graphics.MapDisplay;
-import illarion.mapedit.gui.awt.MainFrame;
+import illarion.mapedit.gui.swing.MainFrame;
 import illarion.mapedit.gui.awt.SaveChangedDialog;
 import illarion.mapedit.gui.awt.SplashScreen;
 import illarion.mapedit.input.InputHandler;
@@ -219,7 +219,7 @@ public final class MapEditor {
                 Graphics.getInstance().setEngine(
                     illarion.graphics.Engines.jogl);
                 Graphics.getInstance().getRenderDisplay()
-                    .setDisplayOptions("jogl.newt", Boolean.TRUE.toString());
+                    .setDisplayOptions("jogl.newt", Boolean.TRUE.toString()); //$NON-NLS-1$
                 InputManager.getInstance().setEngine(Engines.newt);
                 Graphics.getInstance().setQuality(Graphics.QUALITY_NORMAL);
 
@@ -227,6 +227,8 @@ public final class MapEditor {
 
                 instance.display = new MapDisplay();
                 instance.guiMain = new MainFrame();
+                instance.guiMain.initialize();
+                
                 instance.display.startRendering();
 
                 InputHandler.getInstance().start();

@@ -105,10 +105,10 @@ public final class TileFactory extends RecycleFactory<Tile> implements
      */
     @SuppressWarnings("nls")
     public void init() {
-        MapEditor.getMainFrame().getRightToolbar().getPartSelector()
-            .getTilesList().addGroup("Normal Tiles");
-        MapEditor.getMainFrame().getRightToolbar().getPartSelector()
-            .getTilesList().addGroup("Detail Tiles");
+//        MapEditor.getMainFrame().getRightToolbar().getPartSelector()
+//            .getTilesList().addGroup("Normal Tiles");
+//        MapEditor.getMainFrame().getRightToolbar().getPartSelector()
+//            .getTilesList().addGroup("Detail Tiles");
 
         new TableLoader("Tiles", this);
 
@@ -169,8 +169,8 @@ public final class TileFactory extends RecycleFactory<Tile> implements
         if (id > 34) {
             group = 1;
         }
-        MapEditor.getMainFrame().getRightToolbar().getPartSelector()
-            .getTilesList().addPart(group, tile);
+//        MapEditor.getMainFrame().getRightToolbar().getPartSelector()
+//            .getTilesList().addPart(group, tile);
 
         return true;
     }

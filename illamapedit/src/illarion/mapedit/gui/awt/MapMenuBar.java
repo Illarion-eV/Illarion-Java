@@ -189,7 +189,7 @@ public class MapMenuBar extends MenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                MapEditor.getMainFrame().getToolbar().setOtherTool("Copy");
+                //MapEditor.getMainFrame().getToolbar().setOtherTool("Copy");
                 tool.activateTool();
             }
         });
@@ -201,7 +201,7 @@ public class MapMenuBar extends MenuBar {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                MapEditor.getMainFrame().getToolbar().setOtherTool("Paste");
+                //MapEditor.getMainFrame().getToolbar().setOtherTool("Paste");
                 tool.activateTool();
             }
         });
@@ -228,10 +228,10 @@ public class MapMenuBar extends MenuBar {
             public void actionPerformed(final ActionEvent e) {
                 final Map map = MapStorage.getInstance().getSelectedMap();
                 if (map != null) {
-                    MapEditor.getMainFrame().getMessageLine().addMessage(msg);
+                   // MapEditor.getMainFrame().getMessageLine().addMessage(msg);
                     map.recalculateOverlays();
-                    MapEditor.getMainFrame().getMessageLine()
-                        .removeMessage(msg);
+                    //MapEditor.getMainFrame().getMessageLine()
+                    //    .removeMessage(msg);
                 }
             }
         });

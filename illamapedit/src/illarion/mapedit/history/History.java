@@ -88,7 +88,7 @@ public class History {
         while (undoList.size() > maxLength) {
             undoList.removeFirst();
         }
-        MapEditor.getMainFrame().getMenubar().validateHistory();
+        //MapEditor.getMainFrame().getMenubar().validateHistory();
     }
 
     /**
@@ -117,7 +117,7 @@ public class History {
             final HistoryEntry entry = redoList.removeLast();
             entry.redo();
             undoList.addLast(entry);
-            MapEditor.getMainFrame().getMenubar().validateHistory();
+            //MapEditor.getMainFrame().getMenubar().validateHistory();
         }
     }
 
@@ -129,7 +129,7 @@ public class History {
             final HistoryEntry entry = undoList.removeLast();
             entry.undo();
             redoList.addLast(entry);
-            MapEditor.getMainFrame().getMenubar().validateHistory();
+            //MapEditor.getMainFrame().getMenubar().validateHistory();
         }
     }
 }

@@ -190,8 +190,8 @@ public final class ItemFactory extends RecycleFactory<Item> implements
     @SuppressWarnings("nls")
     public void init() {
         for (int i = 0, n = ItemInfo.getGroupCount(); i < n; i++) {
-            MapEditor.getMainFrame().getRightToolbar().getPartSelector()
-                .getItemsList().addGroup(ItemInfo.getGroupName(i));
+//            MapEditor.getMainFrame().getRightToolbar().getPartSelector()
+//                .getItemsList().addGroup(ItemInfo.getGroupName(i));
         }
 
         new TableLoader("Items", this);
@@ -269,8 +269,8 @@ public final class ItemFactory extends RecycleFactory<Item> implements
 
             item.activate(itemID);
 
-            MapEditor.getMainFrame().getRightToolbar().getPartSelector()
-                .getItemsList().addPart(loader.getInt(TB_GROUP) - 1, item);
+//            MapEditor.getMainFrame().getRightToolbar().getPartSelector()
+//                .getItemsList().addPart(loader.getInt(TB_GROUP) - 1, item);
         } catch (final IllegalStateException ex) {
             LOGGER.error("Failed adding item to internal factory. ID: "
                 + Integer.toString(itemID) + " - Filename: " + name);

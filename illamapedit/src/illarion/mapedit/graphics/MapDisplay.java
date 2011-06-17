@@ -607,7 +607,7 @@ public final class MapDisplay implements RenderTask {
     public void setZoom(final float newZoom) {
         if (FastMath.abs(newZoom - zoom) > FastMath.FLT_EPSILON) {
             zoom = newZoom;
-            MapEditor.getMainFrame().getRenderArea().reportZoomChanged();
+            //MapEditor.getMainFrame().getRenderArea().reportZoomChanged();
             Graphics.getInstance().getRenderDisplay().getRenderArea()
                 .repaint();
         }
@@ -630,8 +630,8 @@ public final class MapDisplay implements RenderTask {
 
         final MapDisplay thisDisplay = this;
 
-        MapEditor.getMainFrame().getMessageLine()
-            .addMessage("Loading Textures");
+//        MapEditor.getMainFrame().getMessageLine()
+//            .addMessage("Loading Textures");
         Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
             private boolean waitedOnce = false;
 
@@ -649,23 +649,23 @@ public final class MapDisplay implements RenderTask {
                     waitedOnce = true;
                     return true;
                 }
-                MapEditor.getMainFrame().getMessageLine()
-                    .removeMessage("Loading Textures");
-
-                MapEditor.getMainFrame().getMessageLine()
-                    .addMessage("Loading Objects");
-                ItemFactory.getInstance().init();
-                OverlayFactory.getInstance().init();
-                TileFactory.getInstance().init();
-                MapEditor.getMainFrame().getMessageLine()
-                    .removeMessage("Loading Objects");
-
-                MapEditor.getMainFrame().getMessageLine()
-                    .addMessage("Optimizing Data");
-                AbstractEntity.cleanup();
-                TextureLoader.getInstance().cleanup();
-                MapEditor.getMainFrame().getMessageLine()
-                    .removeMessage("Optimizing Data");
+//                MapEditor.getMainFrame().getMessageLine()
+//                    .removeMessage("Loading Textures");
+//
+//                MapEditor.getMainFrame().getMessageLine()
+//                    .addMessage("Loading Objects");
+//                ItemFactory.getInstance().init();
+//                OverlayFactory.getInstance().init();
+//                TileFactory.getInstance().init();
+//                MapEditor.getMainFrame().getMessageLine()
+//                    .removeMessage("Loading Objects");
+//
+//                MapEditor.getMainFrame().getMessageLine()
+//                    .addMessage("Optimizing Data");
+//                AbstractEntity.cleanup();
+//                TextureLoader.getInstance().cleanup();
+//                MapEditor.getMainFrame().getMessageLine()
+//                    .removeMessage("Optimizing Data");
 
                 MapEditor.getMainFrame().invalidate();
                 MapEditor.getMainFrame().validate();

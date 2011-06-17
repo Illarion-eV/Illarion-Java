@@ -182,7 +182,7 @@ public final class SelectionManager {
             noSelection = false;
             Graphics.getInstance().getRenderDisplay().getRenderArea()
                 .repaint();
-            MapEditor.getMainFrame().getToolbar().setCurrentLocation(loc);
+            //MapEditor.getMainFrame().getToolbar().setCurrentLocation(loc);
         }
     }
 

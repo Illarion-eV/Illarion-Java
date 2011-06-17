@@ -59,7 +59,7 @@ public final class MainFrame extends JRibbonFrame {
     /**
      * Initialize the display frame for the map editor.
      */
-    MainFrame() {
+    public MainFrame() {
         super();
     }
 
@@ -79,7 +79,6 @@ public final class MainFrame extends JRibbonFrame {
         Graphics.getInstance().setQuality(Graphics.QUALITY_NORMAL);
 
         SwingUtilities.invokeLater(new Runnable() {
-            @SuppressWarnings("nls")
             @Override
             public void run() {
                 JFrame.setDefaultLookAndFeelDecorated(MapEditor.getConfig()
@@ -116,7 +115,7 @@ public final class MainFrame extends JRibbonFrame {
      * This method initializes this
      */
     @SuppressWarnings("nls")
-    void initialize() {
+    public void initialize() {
         setSize(new Dimension(500, 300));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

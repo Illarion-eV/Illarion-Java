@@ -69,6 +69,6 @@ public final class CopyStorage {
      */
     public void setCopiedMap(final CopyMap newCopiedMap) {
         copiedMap = newCopiedMap;
-        MapEditor.getMainFrame().getMenubar().validateInsert();
+//        MapEditor.getMainFrame().getMenubar().validateInsert();
     }
 }
