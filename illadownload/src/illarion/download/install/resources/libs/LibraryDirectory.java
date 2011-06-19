@@ -29,7 +29,7 @@ import illarion.download.install.resources.ResourceDirectory;
  * @since 1.00
  * @version 1.00
  */
-public final class LibraryDirectory implements ResourceDirectory {
+final class LibraryDirectory implements ResourceDirectory {
     /**
      * This is the singleton instance of this class.
      */

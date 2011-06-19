@@ -24,7 +24,6 @@ import java.util.Collection;
 import illarion.common.util.DirectoryManager;
 
 import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.dev.DevelopmentDirectory;
 import illarion.download.util.Lang;
 import illarion.download.util.OSDetection;
 
@@ -82,7 +81,7 @@ public final class LWJGL implements LibraryResource {
     public Collection<File> getClassPath() {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
-            cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
+            cp.add(new File(LibraryDirectory.getInstance().getDirectory(),
                 "lwjgl.jar")); //$NON-NLS-1$
             cp.add(new File(LibraryDirectory.getInstance().getDirectory(),
                 "lwjgl_util.jar")); //$NON-NLS-1$
