@@ -729,6 +729,7 @@ public final class People implements SessionMember, TableLoaderSink,
      * 
      * @param id the ID of the character that shall be removed
      */
+    @SuppressWarnings("nls")
     public void removeCharacter(final long id) {
         if ((playerChar != null) && (playerChar.getCharId() == id)) {
             throw new IllegalArgumentException("Can't remove player char");

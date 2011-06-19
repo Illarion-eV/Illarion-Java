@@ -686,9 +686,9 @@ public final class Char extends Interaction implements RecycleObject,
     public void reset() {
         // stop animation
         move.stop();
-        releaseAvatar();
-        resetLight();
         resetAnimation();
+        resetLight();
+        releaseAvatar();
 
         name = null;
         dX = 0;

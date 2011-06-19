@@ -27,6 +27,7 @@ import illarion.client.graphics.EffectFactory;
 import illarion.client.graphics.ItemFactory;
 import illarion.client.graphics.LoadingScreen;
 import illarion.client.graphics.MapDisplayManager;
+import illarion.client.graphics.MarkerFactory;
 import illarion.client.graphics.OverlayFactory;
 import illarion.client.graphics.RuneFactory;
 import illarion.client.graphics.TileFactory;
@@ -512,7 +513,7 @@ public final class Game implements SessionMember {
 
         LoadingScreen.getInstance().setCurrentlyLoading(
             LoadingScreen.LOADING_MENUS);
-        // MenuFactory.getInstance().init();
+        MarkerFactory.getInstance();
         LoadingScreen.getInstance()
             .setLoadingDone(LoadingScreen.LOADING_MENUS);
         if (!loadData) {
