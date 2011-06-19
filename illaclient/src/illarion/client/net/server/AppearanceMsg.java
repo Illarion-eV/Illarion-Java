@@ -284,8 +284,8 @@ public final class AppearanceMsg extends AbstractReply {
         ch.setWearingItem(AvatarClothManager.GROUP_TROUSERS, legsItemID);
         ch.setWearingItem(AvatarClothManager.GROUP_SHOES, feetItemID);
 
-        ch.setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, leftItemId);
-        ch.setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, rightItemId);
+        ch.setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, rightItemId);
+        ch.setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, leftItemId);
 
         TEMP_COLOR.set(skinColorRed, skinColorGreen, skinColorBlue);
         TEMP_COLOR.setAlpha(SpriteColor.COLOR_MAX);

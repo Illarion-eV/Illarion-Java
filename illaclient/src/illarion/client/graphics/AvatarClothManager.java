@@ -48,7 +48,7 @@ public final class AvatarClothManager {
     public static final int GROUP_COUNT; // NO_UCD
 
     /**
-     * The index of the group of items the avatar can wear in the left hand.
+     * The index of the group of items the avatar can wear in the right hand.
      * Tools weapons and similar things could be listed there.
      */
     public static final int GROUP_FIRST_HAND; // NO_UCD
@@ -65,7 +65,7 @@ public final class AvatarClothManager {
     public static final int GROUP_HAT; // NO_UCD
 
     /**
-     * The index of the group of items the avatar can wear in the right hand.
+     * The index of the group of items the avatar can wear in the left hand.
      * Tools weapons and similar things could be listed there.
      */
     public static final int GROUP_SECOND_HAND; // NO_UCD
