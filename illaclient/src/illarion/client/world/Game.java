@@ -43,7 +43,10 @@ import illarion.client.util.ChatHandler;
 import illarion.client.util.SessionManager;
 import illarion.client.util.SessionMember;
 
+import illarion.common.bug.CrashData;
+import illarion.common.bug.CrashReporter;
 import illarion.common.util.DebugTimer;
+import illarion.common.util.NoResourceException;
 import illarion.common.util.StoppableStorage;
 
 import illarion.graphics.Graphics;
@@ -395,7 +398,15 @@ public final class Game implements SessionMember {
         Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
             @Override
             public boolean render(final int delta) {
-                final boolean result = loadData();
+                boolean result = false;
+                try {
+                    result = loadData();
+                } catch (final NoResourceException e) {
+                    CrashReporter.getInstance().reportCrash(
+                        new CrashData(IllaClient.APPLICATION, IllaClient.VERSION,
+                            "crash.loadres", Thread.currentThread(), e)); //$NON-NLS-1$
+                    IllaClient.errorExit("crash.loadres"); //$NON-NLS-1$
+                }
 
                 ClientWindow.getInstance().getRenderDisplay().getRenderArea()
                     .repaint();

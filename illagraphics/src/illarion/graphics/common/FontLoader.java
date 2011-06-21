@@ -27,6 +27,8 @@ import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
 
+import illarion.common.util.NoResourceException;
+
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
 
@@ -157,7 +159,12 @@ public final class FontLoader {
             return null;
         }
 
-        font.prepareTextures(FONT_ROOT);
+        try {
+            font.prepareTextures(FONT_ROOT);
+        } catch (final Exception e) {
+            // Problem while preparing the textures.
+            throw new NoResourceException("Error while loading font", e);
+        }
 
         final RenderableFont loadedText = Graphics.getInstance().getFont(font);
         return loadedText;

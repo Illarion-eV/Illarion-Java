@@ -21,20 +21,49 @@ package illarion.common.util;
  * table loader fails at loading a resource.
  * 
  * @author Nop
+ * @author Martin Karing
+ * @since 0.92
+ * @version 1.22
  */
 public final class NoResourceException extends RuntimeException {
     /**
-     * The serialisation unique ID.
+     * The serialization unique ID.
      */
     private static final long serialVersionUID = 1L;
 
     /**
-     * The default constructor for this exception. It forwards the message of
-     * the exception to the super class runtime exception.
+     * Default constructor that creates this exception without any message.
+     */
+    public NoResourceException() {
+        super();
+    }
+
+    /**
+     * Create this message and give a readable cause for that message.
      * 
      * @param message the exception message
      */
     public NoResourceException(final String message) {
         super(message);
+    }
+
+    /**
+     * Create this exception with a readable reason and a text why it turned up.
+     * 
+     * @param message the exception message
+     * @param cause the exception this newly created exception was caused by
+     */
+    public NoResourceException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
+     * Create this exception without a readable reason but with a exception that
+     * caused this exception to raise up.
+     * 
+     * @param cause the exception this newly created exception was caused by
+     */
+    public NoResourceException(final Throwable cause) {
+        super(cause);
     }
 }
