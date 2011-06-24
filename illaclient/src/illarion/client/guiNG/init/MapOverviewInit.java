@@ -1,6 +1,8 @@
 /*
  * This file is part of the Illarion Client.
- * 
+ *
+ * Copyright © 2011 - Illarion e.V.
+ *
  * The Illarion Client is free software: you can redistribute i and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
