@@ -76,6 +76,7 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
     
     <target name="build_libraries" description="Build only the libraries" depends="fetch_libs">
         <ant antfile="${common}/build.xml" target="prepare_lwjgl" />
+        <ant antfile="${common}/build.xml" target="prepare_gluegen" />
         <ant antfile="${common}/build.xml" target="prepare_jogl" />
         <ant antfile="${common}/build.xml" target="prepare_vorbisspi" />
         <ant antfile="${common}/build.xml" target="prepare_log4j" />

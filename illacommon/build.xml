@@ -68,7 +68,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepage_gluegen" description="prepare the GLUEGEN bundle" depends="check_optional_dirs,init_libs,buildTasks,native_build_pattern" if="keys.exist">
+	<target name="prepare_gluegen" description="prepare the GLUEGEN bundle" depends="check_optional_dirs,init_libs,buildTasks,native_build_pattern" if="keys.exist">
 		<patternset id="gluegen.natives">
 			<include name="gluegen-rt-natives*.jar" />
 		</patternset>
@@ -718,6 +718,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	</target>
 
 	<target name="extract_libs" depends="check_libs_uptodate" unless="libs.uptodate">
+        <delete dir="${signedlibs}" failonerror="false" />
+		<delete dir="${libs}" failonerror="false" />
 		<mkdir dir="${libs}" />
 		<unzip dest="${libs}" src="${common}/libs-all.zip" overwrite="true" />
 

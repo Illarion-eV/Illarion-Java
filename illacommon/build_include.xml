@@ -445,16 +445,11 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<isset property="config.exist" />
 			</not>
 		</condition>
-		<condition property="keys.config.exist">
+		<condition property="keys.config.exist" else="not.keys.config.exist">
 			<and>
 				<isset property="keys.exist" />
 				<isset property="config.exist" />
 			</and>
-		</condition>
-		<condition property="not.keys.config.exist">
-			<not>
-				<isset property="keys.config.exist" />
-			</not>
 		</condition>
 	</target>
 </project>
