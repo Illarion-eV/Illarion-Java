@@ -22,6 +22,9 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
+import illarion.mapedit.database.MapDatabase;
+import illarion.mapedit.database.MapDatabaseManager;
+
 /**
  * Stored in this panel there will be the listing of all maps found in the
  * selected map directory.
@@ -30,13 +33,32 @@ import javax.swing.JPanel;
  * @since 1.01
  * @version 1.01
  */
-public final class MapsListing extends JPanel {
+public final class MapsListing extends JPanel implements MapDatabaseManager.Listener {
     /**
-     * 
+     * The serialization UID of the map listing widget.
      */
     private static final long serialVersionUID = 1L;
+    
+    /**
+     * The database that stores the stuff that is displayed on the screen.
+     */
+    private MapDatabase db;
 
+    /**
+     * Create the map listing object.
+     */
     public MapsListing() {
         super(new BorderLayout());
+        
+        MapDatabaseManager.getInstance().addListener(this);
+    }
+
+    /**
+     * In case the change of the database is reported, store the new database
+     * in this instance.
+     */
+    @Override
+    public void reportNewDatabase(MapDatabase newDb) {
+        db = newDb;
     }
 }
