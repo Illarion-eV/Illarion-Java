@@ -58,7 +58,7 @@ public final class AnimationManager implements SessionMember {
      */
     private AnimationManager() {
         animations = new FastTable<AbstractAnimation>();
-        addAnimations = new FastList<AbstractAnimation>();
+        addAnimations = new FastTable<AbstractAnimation>();
     }
 
     /**

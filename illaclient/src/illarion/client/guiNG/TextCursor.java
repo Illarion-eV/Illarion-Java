@@ -113,24 +113,20 @@ public final class TextCursor {
 
         switch (event.getEvent()) {
             case KeyboardEvent.EVENT_KEY_DOWN:
-                if (event.isRepeated()) {
-                    return false;
-                }
                 switch (event.getKey()) {
                     case KeyEvent.VK_C:
                         if (InputManager.getInstance().getKeyboardManager()
-                            .isKeyDown(KeyEvent.VK_CONTROL)) {
+                            .isKeyDown(KeyEvent.VK_CONTROL) && !event.isRepeated()) {
                             copyToClipboard();
                         }
                         return true;
 
                     case KeyEvent.VK_V:
                         if (InputManager.getInstance().getKeyboardManager()
-                            .isKeyDown(KeyEvent.VK_CONTROL)) {
+                            .isKeyDown(KeyEvent.VK_CONTROL) && !event.isRepeated()) {
                             copyFromClipboard();
                         }
                         return true;
-
                     case KeyEvent.VK_LEFT:
                         if (cursorPos > 0) {
                             --cursorPos;
@@ -163,7 +159,6 @@ public final class TextCursor {
                             target.setCursorPosition(cursorPos);
                         }
                         return true;
-
                     case KeyEvent.VK_ESCAPE:
                         target.cancelInput();
                         cursorPos = 0;
@@ -189,17 +184,17 @@ public final class TextCursor {
                 break; // KeyboardEvent.EVENT_KEY_UP
 
             case KeyboardEvent.EVENT_KEY_PRESSED:
-                final char character = event.getCharacter();
-
-                if (target.getTextFontSource().getGlyph(character).getId() != 0) {
-                    if ((target.getMaxLength() > target.getTextLength())
-                        && Character.isDefined(character)) {
-                        target.insertCharacter(character);
-                        ++cursorPos;
-                        target.setCursorPosition(cursorPos);
+                    final char character = event.getCharacter();
+    
+                    if (target.getTextFontSource().getGlyph(character).getId() != 0) {
+                        if ((target.getMaxLength() > target.getTextLength())
+                            && Character.isDefined(character) && !Character.isISOControl(character) && !Character.isIdentifierIgnorable(character)) {
+                            target.insertCharacter(character);
+                            ++cursorPos;
+                            target.setCursorPosition(cursorPos);
+                        }
+                        return true;
                     }
-                    return true;
-                }
                 break; // KeyboardEvent.EVENT_KEY_PRESSED
         } // switch (event.getEvent())
 

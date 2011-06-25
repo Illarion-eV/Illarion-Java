@@ -478,8 +478,7 @@ public final class ChatEditor extends Widget implements TextCursorTarget {
     @Override
     public void remove() {
         if (getCursorPosition() > 0) {
-            writtenText.deleteCharAt(getCursorPosition() - 1);
-            dirtyText = true;
+            removeAt(getCursorPosition() - 1);
         }
     }
 
@@ -490,7 +489,8 @@ public final class ChatEditor extends Widget implements TextCursorTarget {
      */
     @Override
     public void removeAt(final int idx) {
-        writtenText.deleteCharAt(idx);
+        final int removeCount = Character.charCount(writtenText.codePointAt(idx));
+        writtenText.delete(idx - removeCount + 1, idx + 1);
         dirtyText = true;
     }
 
