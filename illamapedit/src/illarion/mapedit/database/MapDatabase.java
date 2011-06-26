@@ -92,6 +92,11 @@ public final class MapDatabase implements Externalizable {
         if (!dbFile.exists() || !dbFile.isFile() || !dbFile.canRead()) {
             final MapDatabase retDb = new MapDatabase();
             retDb.setDirectory(dbDir);
+            try {
+                retDb.refreshFull(null);
+            } catch (TaskCancelException e) {
+                // ignore
+            }
             return retDb;
         }
 
@@ -140,6 +145,15 @@ public final class MapDatabase implements Externalizable {
             }
         }
         return null;
+    }
+    
+    /**
+     * Mark this database as the active one. Once this is done the database
+     * manager will inform all parts of the editor that there is a new database
+     * to maintain.
+     */
+    public void activate() {
+        MapDatabaseManager.getInstance().activateDb(this);
     }
 
     /**
