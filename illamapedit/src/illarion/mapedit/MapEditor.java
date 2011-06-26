@@ -1,8 +1,8 @@
 /*
  * This file is part of the Illarion Mapeditor.
- *
+ * 
  * Copyright © 2011 - Illarion e.V.
- *
+ * 
  * The Illarion Mapeditor is free software: you can redistribute i and/or modify
  * it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import illarion.mapedit.crash.DefaultCrashHandler;
+import illarion.mapedit.database.MapDatabaseManager;
 import illarion.mapedit.graphics.MapDisplay;
 import illarion.mapedit.gui.swing.MainFrame;
 import illarion.mapedit.gui.awt.SaveChangedDialog;
@@ -110,7 +111,8 @@ public final class MapEditor {
     public MapEditor() {
         final String folder = checkFolder();
         cfg = new ConfigSystem(folder + File.separator + "MapEdit.xcfgz");
-        cfg.setDefault("mapDir", new File(System.getProperty("user.home")));
+        cfg.setDefault(MapDatabaseManager.CFG_KEY_MAP_DIR,
+            new File(System.getProperty("user.home")));
         cfg.setDefault("hideTiles", false);
         cfg.setDefault("hideItems", false);
         cfg.setDefault("hideGrid", false);
@@ -213,36 +215,26 @@ public final class MapEditor {
     public static void main(final String[] args) {
         SplashScreen.getInstance().setVisible(true);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void run() {
-                instance = new MapEditor();
-                Graphics.getInstance().setEngine(
-                    illarion.graphics.Engines.jogl);
-                Graphics.getInstance().getRenderDisplay()
-                    .setDisplayOptions("jogl.newt", Boolean.TRUE.toString()); //$NON-NLS-1$
-                InputManager.getInstance().setEngine(Engines.newt);
-                Graphics.getInstance().setQuality(Graphics.QUALITY_NORMAL);
+        instance = new MapEditor();
+        CrashReporter.getInstance().setConfig(MapEditor.getConfig());
+        CrashReporter.getInstance().setMessageSource(Lang.getInstance());
 
-                Scheduler.getInstance().start();
+        MapDatabaseManager.getInstance().configChanged(getConfig(),
+            MapDatabaseManager.CFG_KEY_MAP_DIR);
 
-                instance.display = new MapDisplay();
-                instance.guiMain = new MainFrame();
-                instance.guiMain.initialize();
-                
-                instance.display.startRendering();
+        Graphics.getInstance().setEngine(illarion.graphics.Engines.jogl);
+        Graphics.getInstance().getRenderDisplay()
+            .setDisplayOptions("jogl.newt", Boolean.TRUE.toString()); //$NON-NLS-1$
+        InputManager.getInstance().setEngine(Engines.newt);
+        Graphics.getInstance().setQuality(Graphics.QUALITY_NORMAL);
+        Scheduler.getInstance().start();
+        instance.display = new MapDisplay();
 
-                InputHandler.getInstance().start();
-            }
-        });
-        // while (instance.guiMain.isVisible()) {
-        // try {
-        // Thread.sleep(1000);
-        // } catch (final InterruptedException ex) {
-        // // nothing needed to be done
-        // }
-        // }
+        instance.guiMain = MainFrame.createMainFrame();
+
+        instance.display.startRendering();
+
+        InputHandler.getInstance().start();
     }
 
     /**
