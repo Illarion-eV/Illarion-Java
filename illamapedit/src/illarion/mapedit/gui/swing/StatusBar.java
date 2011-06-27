@@ -75,7 +75,9 @@ public final class StatusBar extends JXStatusBar {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            ZoomManager.getInstance().changeZoom(changeBy);
+            if (e.getID() == ActionEvent.ACTION_PERFORMED) {
+                ZoomManager.getInstance().changeZoom(changeBy);
+            }
         }
     }
 
