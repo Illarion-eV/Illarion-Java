@@ -122,6 +122,8 @@ public final class MapEditor {
         cfg.setDefault("decorateWindows", true);
         cfg.setDefault("skin",
             "org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
+        
+        cfg.set(MapDatabaseManager.CFG_KEY_MAP_DIR, "C:/Users/Martin Karing/Entwicklung/maps/trunk/Testserver");
 
         CrashReporter.getInstance().setConfig(cfg);
         CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_AWT);

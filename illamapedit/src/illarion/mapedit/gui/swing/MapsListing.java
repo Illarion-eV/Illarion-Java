@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import org.jdesktop.swingx.JXTreeTable;
@@ -143,6 +144,7 @@ public final class MapsListing extends JPanel implements
     @Override
     public void reportNewDatabase(final MapDatabase newDb) {
         db = newDb;
+        model.loadDatabase(newDb);
     }
 
     /**
@@ -153,6 +155,11 @@ public final class MapsListing extends JPanel implements
             SwingUtilities.invokeLater(new ReloadDatabaseRunner(db));
         }
     }
+    
+    /**
+     * The tree table model that is used to display the map tree.
+     */
+    private MapsListingModel model;
 
     /**
      * This function causes the view on this element to be prepared properly.
@@ -163,11 +170,12 @@ public final class MapsListing extends JPanel implements
         add(buttonPanel, BorderLayout.NORTH);
 
         final JButton reloadButton =
-            new JButton(Utils.getIconFromResource("rebuild.png")); //$NON-NLS-1$
+            new JButton(Utils.getIconFromResource("reload.png")); //$NON-NLS-1$
         reloadButton.addActionListener(new ReloadButtonListener(this));
         buttonPanel.add(reloadButton);
         
-        final JXTreeTable mapListing = new JXTreeTable();
-        add(mapListing, BorderLayout.CENTER);
+        model = new MapsListingModel();
+        final JXTreeTable mapListing = new JXTreeTable(model);
+        add(new JScrollPane(mapListing), BorderLayout.CENTER);
     }
 }

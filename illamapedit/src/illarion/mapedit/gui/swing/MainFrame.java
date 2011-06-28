@@ -185,6 +185,9 @@ public final class MainFrame extends JRibbonFrame {
         content.add(Graphics.getInstance().getRenderDisplay().getRenderArea(),
             BorderLayout.CENTER);
         content.setBackground(Color.black);
+        
+        final MapsListing mapsListing = new MapsListing();
+        content.add(mapsListing, BorderLayout.WEST);
 
         invalidate();
         validate();

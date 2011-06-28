@@ -33,7 +33,6 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -129,6 +128,11 @@ public final class MapDatabase implements Externalizable {
         if (retDb == null) {
             retDb = new MapDatabase();
             retDb.setDirectory(dbDir);
+            try {
+                retDb.refreshFull(null);
+            } catch (TaskCancelException e) {
+                // ignore
+            }
             return retDb;
         }
         return retDb;
@@ -169,6 +173,15 @@ public final class MapDatabase implements Externalizable {
      */
     public Collection<MapData> getAllMaps() {
         return Collections.unmodifiableCollection(storage.values());
+    }
+    
+    /**
+     * Get the path to the directory this database was load from.
+     * 
+     * @return the path of the directory of the database
+     */
+    public String getDirectory() {
+        return dir.getAbsolutePath();
     }
 
     /**
