@@ -85,8 +85,6 @@ public final class Gluegen implements LibraryResource {
             final Collection<File> cp = new ArrayList<File>();
             cp.add(new File(LibraryDirectory.getInstance().getDirectory(),
                 "gluegen-rt.jar")); //$NON-NLS-1$
-            cp.add(new File(LibraryDirectory.getInstance().getDirectory(),
-                "gluegen-gl.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }

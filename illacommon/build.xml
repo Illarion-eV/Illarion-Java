@@ -722,78 +722,88 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<delete dir="${libs}" failonerror="false" />
 		<mkdir dir="${libs}" />
 		<unzip dest="${libs}" src="${common}/libs-all.zip" overwrite="true" />
+		<antcall target="extract_natives" />
+	</target>
+	
+	<target name="extract_natives">
+        <mkdir dir="${native}" />
+        <mkdir dir="${native}/linux32" />
+        <mkdir dir="${native}/linux64" />
+        <mkdir dir="${native}/macosx" />
+        <mkdir dir="${native}/solaris32" />
+        <mkdir dir="${native}/solaris64" />
+        <mkdir dir="${native}/win32" />
+        <mkdir dir="${native}/win64" />
 
-		<mkdir dir="${native}" />
-		<mkdir dir="${native}/linux32" />
-		<mkdir dir="${native}/linux64" />
-		<mkdir dir="${native}/macosx" />
-		<mkdir dir="${native}/solaris32" />
-		<mkdir dir="${native}/solaris64" />
-		<mkdir dir="${native}/win32" />
-		<mkdir dir="${native}/win64" />
+        <unjar dest="${native}/linux32" overwrite="true">
+            <patternset>
+                <exclude name="META-INF/" />
+            </patternset>
+            <fileset dir="${common}/lib">
+            	<exclude name="signed/" />
+                <include name="**/*-linux-i586.jar" />
+            </fileset>
+        </unjar>
 
-		<unjar dest="${native}/linux32" overwrite="true">
-			<patternset>
-				<exclude name="META-INF/" />
-			</patternset>
-			<fileset dir="${common}/lib">
-				<include name="**/*-linux-i586.jar" />
-			</fileset>
-		</unjar>
+        <unjar dest="${native}/linux64" overwrite="true">
+            <patternset>
+                <exclude name="META-INF/" />
+            </patternset>
+            <fileset dir="${common}/lib">
+                <exclude name="signed/" />
+                <include name="**/*-linux-amd64.jar" />
+            </fileset>
+        </unjar>
 
-		<unjar dest="${native}/linux64" overwrite="true">
-			<patternset>
-				<exclude name="META-INF/" />
-			</patternset>
-			<fileset dir="${common}/lib">
-				<include name="**/*-linux-amd64.jar" />
-			</fileset>
-		</unjar>
+        <unjar dest="${native}/macosx" overwrite="true">
+            <patternset>
+                <exclude name="META-INF/" />
+            </patternset>
+            <fileset dir="${common}/lib">
+                <exclude name="signed/" />
+                <include name="**/*-macosx-universal.jar" />
+            </fileset>
+        </unjar>
 
-		<unjar dest="${native}/macosx" overwrite="true">
-			<patternset>
-				<exclude name="META-INF/" />
-			</patternset>
-			<fileset dir="${common}/lib">
-				<include name="**/*-macosx-universal.jar" />
-			</fileset>
-		</unjar>
+        <unjar dest="${native}/solaris32" overwrite="true">
+            <patternset>
+                <exclude name="META-INF/" />
+            </patternset>
+            <fileset dir="${common}/lib">
+                <exclude name="signed/" />
+                <include name="**/*-solaris-i586.jar" />
+            </fileset>
+        </unjar>
 
-		<unjar dest="${native}/solaris32" overwrite="true">
-			<patternset>
-				<exclude name="META-INF/" />
-			</patternset>
-			<fileset dir="${common}/lib">
-				<include name="**/*-solaris-i586.jar" />
-			</fileset>
-		</unjar>
+        <unjar dest="${native}/solaris64" overwrite="true">
+            <patternset>
+                <exclude name="META-INF/" />
+            </patternset>
+            <fileset dir="${common}/lib">
+                <exclude name="signed/" />
+                <include name="**/*-solaris-amd64.jar" />
+            </fileset>
+        </unjar>
 
-		<unjar dest="${native}/solaris64" overwrite="true">
-			<patternset>
-				<exclude name="META-INF/" />
-			</patternset>
-			<fileset dir="${common}/lib">
-				<include name="**/*-solaris-amd64.jar" />
-			</fileset>
-		</unjar>
+        <unjar dest="${native}/win32" overwrite="true">
+            <patternset>
+                <exclude name="META-INF/" />
+            </patternset>
+            <fileset dir="${common}/lib">
+                <exclude name="signed/" />
+                <include name="**/*-windows-i586.jar" />
+            </fileset>
+        </unjar>
 
-		<unjar dest="${native}/win32" overwrite="true">
-			<patternset>
-				<exclude name="META-INF/" />
-			</patternset>
-			<fileset dir="${common}/lib">
-				<include name="**/*-windows-i586.jar" />
-			</fileset>
-		</unjar>
-
-		<unjar dest="${native}/win64" overwrite="true">
-			<patternset>
-				<exclude name="META-INF/" />
-			</patternset>
-			<fileset dir="${common}/lib">
-				<include name="**/*-windows-amd64.jar" />
-			</fileset>
-		</unjar>
+        <unjar dest="${native}/win64" overwrite="true">
+            <patternset>
+                <exclude name="META-INF/" />
+            </patternset>
+            <fileset dir="${common}/lib">
+                <exclude name="signed/" />
+                <include name="**/*-windows-amd64.jar" />
+            </fileset>
+        </unjar>
 	</target>
 
 	<target name="download_resources" description="Download prebuild resources">
