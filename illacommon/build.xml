@@ -192,6 +192,18 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<include name="nativewindow-natives*.jar" />
 			<include name="newt-natives*.jar" />
 		</patternset>
+		
+		<delete>
+        	<fileset dir="${signedlibs}">
+                <include name="jogl.jar"/>
+                <include name="nativewindow.jar"/>
+                <include name="newt.jar"/>
+        	    <include name="jogl*.jar"/>
+                <include name="nativewindow*.jar"/>
+                <include name="newt*.jar"/>
+        	</fileset>
+        </delete>
+
 
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="jogl" />
@@ -200,6 +212,12 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<fileset dir="${jogl.dir}">
 				<patternset refid="jogl.natives" />
 			</fileset>
+            <fileset dir="${nativewindow.dir}">
+                <patternset refid="jogl.natives" />
+            </fileset>
+            <fileset dir="${newt.dir}">
+                <patternset refid="jogl.natives" />
+            </fileset>
 		</resourceprepare>
 
 		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">

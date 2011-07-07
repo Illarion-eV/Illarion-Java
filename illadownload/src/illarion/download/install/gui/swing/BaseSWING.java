@@ -45,6 +45,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EtchedBorder;
 
+import illarion.download.install.resources.ResourceManager;
 import illarion.download.util.Lang;
 
 /**
@@ -134,6 +135,7 @@ public final class BaseSWING extends JFrame {
                     Lang.getMsg("illarion.download.install.gui.exit.confirm.text"),
                     Lang.getMsg("illarion.download.install.gui.exit.confirm.title"),
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                ResourceManager.getInstance().saveResourceDatabase();
                 System.exit(0);
             }
         }
