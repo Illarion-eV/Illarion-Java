@@ -396,9 +396,7 @@ public final class LightTracer extends Thread implements Stoppable {
                             lastTinyIndex++;
                         }
                     } else {
-                        setDirty(false);
                         lastTinyIndex = -1;
-                        continue;
                     }
                 } else {
                     try {
@@ -416,6 +414,8 @@ public final class LightTracer extends Thread implements Stoppable {
                     light.calculateShadows();
                 }
                 light.apply();
+            } else {
+                setDirty(false);
             }
         }
     }
