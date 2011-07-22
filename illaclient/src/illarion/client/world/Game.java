@@ -672,6 +672,7 @@ public final class Game implements SessionMember {
         musicBox = new MusicBox();
 
         net = new NetComm();
+        player = new Player(login);
         connect();
 
         if (!running) {
@@ -679,7 +680,6 @@ public final class Game implements SessionMember {
             return;
         }
 
-        player = new Player(login);
     }
 
     protected ParticleSystem getParticle() {
