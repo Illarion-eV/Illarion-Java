@@ -18,6 +18,8 @@
  */
 package illarion.client.world;
 
+import java.util.List;
+
 import javolution.util.FastTable;
 
 import org.apache.log4j.Logger;
@@ -501,10 +503,11 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      * @return the identifier of the color value for this tile
      */
     public int getMapColor() {
-        if (tile != null) {
-            return tile.getMapColor();
+        final Tile localTile = tile;
+        if (localTile == null) {
+            return 0;
         }
-        return 0;
+        return localTile.getMapColor();
     }
 
     /**
@@ -514,7 +517,11 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      * @return the costs for moving over this tile
      */
     public int getMovementCost() {
-        return tile.getMovementCost();
+        final Tile localTile = tile;
+        if (localTile == null) {
+            return Integer.MAX_VALUE;
+        }
+        return localTile.getMovementCost();
     }
 
     /**
@@ -524,11 +531,13 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      * @return the particle pool of this map tile
      */
     public ParticlePool getParticlePool() {
-        if (tilePool == null) {
-            tilePool = EffectPool.getInstance(this);
-            tilePool.setScreenPos(loc, Layers.EFFECTS);
+        EffectPool localPool = tilePool;
+        if (localPool == null) {
+            localPool = EffectPool.getInstance(this);
+            localPool.setScreenPos(loc, Layers.EFFECTS);
+            tilePool = localPool;
         }
-        return tilePool;
+        return localPool;
     }
 
     /**
@@ -556,10 +565,11 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      * @return the top tile or <code>null</code> in case there is none
      */
     public Item getTopItem() {
-        if (items != null) {
-            final int top = items.size() - 1;
+        final List<Item> localItems = items;
+        if (localItems != null) {
+            final int top = localItems.size() - 1;
             if (top >= 0) {
-                return items.get(top);
+                return localItems.get(top);
             }
         }
         return null;
@@ -599,18 +609,20 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      * @return true if the tile is obstacle
      */
     public boolean isObstacle() {
-        if (tileId == 0) {
+        final Tile localTile = tile;
+        if (localTile == null) {
             return true;
         }
 
-        boolean obstacle = tile.isObstacle();
+        boolean obstacle = localTile.isObstacle();
 
         // check items
-        if (items != null) {
-            final int count = items.size();
+        final List<Item> localItems = items;
+        if (localItems != null) {
+            final int count = localItems.size();
             Item item;
             for (int i = 0; i < count; i++) {
-                item = items.get(i);
+                item = localItems.get(i);
                 if (item.isObstacle()) {
                     return true;
                 } else if (item.isJesus()) {
@@ -638,10 +650,11 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      *         is hidden entirely.
      */
     public boolean isOpaque() {
-        if (tile == null) {
+        final Tile localTile = tile;
+        if (localTile == null) {
             return false;
         }
-        return tile.isOpapue();
+        return localTile.isOpapue();
     }
 
     /**
@@ -699,11 +712,12 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      */
     @SuppressWarnings("nls")
     public void removeTopItem() {
-        if (items == null) {
+        final List<Item> localItems = items;
+        if (localItems == null) {
             LOGGER.warn("error: remove top item on empty field");
             return;
         }
-        final int pos = items.size() - 1;
+        final int pos = localItems.size() - 1;
         if (pos < 0) {
             LOGGER.warn("error: remove top item on empty field");
             return;
@@ -715,11 +729,11 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
             elevationIndex = 0;
         }
 
-        items.get(pos).recycle();
-        items.remove(pos);
+        localItems.get(pos).recycle();
+        localItems.remove(pos);
         // enable numbers for next top item
         if ((pos - 1) >= 0) {
-            items.get(pos - 1).enableNumbers(true);
+            localItems.get(pos - 1).enableNumbers(true);
         } else {
             FastTable.recycle(items);
             items = null;
@@ -1017,11 +1031,12 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
 
         int newLightValue = 0;
 
-        if (items != null) {
-            final int count = items.size();
+        final List<Item> localItems = items;
+        if (localItems != null) {
+            final int count = localItems.size();
             Item item;
             for (int i = 0; i < count; i++) {
-                item = items.get(i);
+                item = localItems.get(i);
                 if (item.isLight()) {
                     newLightValue = item.getItemLight();
                     break;
@@ -1061,18 +1076,19 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
             return;
         }
 
-        final int amount = items.size() - itemNumber;
         Item item;
+        final List<Item> localItems = items;
+        final int amount = localItems.size() - itemNumber;
         for (int i = 0; i < amount; i++) {
             // recylce the removed items
-            item = items.get(itemNumber);
+            item = localItems.get(itemNumber);
             item.recycle();
 
             // keep deleting in the same place as the list becomes shorter
-            items.remove(itemNumber);
+            localItems.remove(itemNumber);
         }
 
-        if (items.isEmpty()) {
+        if (localItems.isEmpty()) {
             FastTable.recycle(items);
             items = null;
         }
@@ -1105,21 +1121,27 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
 
         if (show != showOld) {
             if (show) {
-                tile.show();
+                if (tile != null) {
+                    tile.show();
+                }
 
-                if (items != null) {
-                    final int count = items.size();
+                final List<Item> localItems = items;
+                if (localItems != null) {
+                    final int count = localItems.size();
                     for (int i = 0; i < count; i++) {
-                        items.get(i).show();
+                        localItems.get(i).show();
                     }
                 }
             } else {
-                tile.hide();
+                if (tile != null) {
+                    tile.hide();
+                }
 
-                if (items != null) {
-                    final int count = items.size();
+                final List<Item> localItems = items;
+                if (localItems != null) {
+                    final int count = localItems.size();
                     for (int i = 0; i < count; i++) {
-                        items.get(i).hide();
+                        localItems.get(i).hide();
                     }
                 }
             }
@@ -1137,9 +1159,10 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
     private void setItem(final int index, final int itemId, final int itemCount) {
         Item item = null;
         // look for present item in map tile
-        if (items != null) {
-            if (index < items.size()) {
-                item = items.get(index);
+        List<Item> localItems = items;
+        if (localItems != null) {
+            if (index < localItems.size()) {
+                item = localItems.get(index);
                 // just an update of present item
                 if (item.getId() == itemId) {
                     updateItem(item, itemCount, index);
@@ -1156,7 +1179,8 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
                 }
             }
         } else {
-            items = FastTable.newInstance();
+            localItems = FastTable.newInstance();
+            items = (FastTable<Item>) localItems;
         }
         // add a new item
         if (item == null) {
@@ -1170,9 +1194,9 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
 
             // add it to list
             if (index < items.size()) {
-                items.set(index, item);
+                localItems.set(index, item);
             } else if (index == items.size()) { // extend list by 1 row
-                items.add(item);
+                localItems.add(item);
             } else { // index mismatch
                 throw new IllegalArgumentException(
                     "update behind end of items list");
