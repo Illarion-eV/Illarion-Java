@@ -1,8 +1,8 @@
 /*
  * This file is part of the Illarion Download Manager.
- *
+ * 
  * Copyright © 2011 - Illarion e.V.
- *
+ * 
  * The Illarion Download Manager is free software: you can redistribute i and/or
  * modify it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or (at your
@@ -45,6 +45,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EtchedBorder;
 
+import illarion.download.install.resources.ResourceManager;
 import illarion.download.util.Lang;
 
 /**
@@ -134,6 +135,7 @@ public final class BaseSWING extends JFrame {
                     Lang.getMsg("illarion.download.install.gui.exit.confirm.text"),
                     Lang.getMsg("illarion.download.install.gui.exit.confirm.title"),
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                ResourceManager.getInstance().saveResourceDatabase();
                 System.exit(0);
             }
         }

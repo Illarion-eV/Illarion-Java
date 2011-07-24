@@ -19,6 +19,7 @@
 package illarion.client;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -45,7 +46,9 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.crypto.BadPaddingException;
@@ -60,6 +63,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -377,11 +381,15 @@ public final class LoginDialog extends AbstractDialog implements
             if (accLang.equals("de") && Lang.getInstance().isEnglish()) {
                 IllaClient.getCfg().set("locale", "de");
                 Lang.getInstance().recheckLocale();
-                buildWindow();
+
+                updateDisplayedTexts();
+                buildSizeAndLocation();
             } else if (accLang.equals("us") && Lang.getInstance().isGerman()) {
                 IllaClient.getCfg().set("locale", "en");
                 Lang.getInstance().recheckLocale();
-                buildWindow();
+
+                updateDisplayedTexts();
+                buildSizeAndLocation();
             }
 
             boolean foundSomething = false;
@@ -666,6 +674,7 @@ public final class LoginDialog extends AbstractDialog implements
         game = gameClass;
         frame = parent;
         ClientWindow.getInstance().setIcon(frame);
+        textMap = new HashMap<Component, String>();
 
         buildWindow();
     }
@@ -1157,7 +1166,7 @@ public final class LoginDialog extends AbstractDialog implements
         getContentPane().removeAll();
         super.init();
         // basic dialog contents
-        setTitle(Lang.getMsg("login.title"));
+        addTextComponent(this, "login.title");
         final JPanel content = (JPanel) getContentPane();
         ((BorderLayout) content.getLayout()).setHgap(HORIZONTAL_SPACES);
         ((BorderLayout) content.getLayout()).setVgap(VERTICAL_SPACES);
@@ -1181,7 +1190,8 @@ public final class LoginDialog extends AbstractDialog implements
         server = new JComboBox(getServerNames());
         server.setSelectedIndex(IllaClient.DEFAULT_SERVER.ordinal());
         if (IllaClient.MULTI_CLIENT) {
-            panel.add(new JLabel(Lang.getMsg("login.server")));
+            panel.add(addTextComponent(new JLabel(), "login.server"));
+            
             panel.add(server);
             server.addActionListener(new ActionListener() {
                 @Override
@@ -1192,11 +1202,12 @@ public final class LoginDialog extends AbstractDialog implements
                 }
             });
         }
-        panel.add(new JLabel(Lang.getMsg("login.login")));
+        panel.add(addTextComponent(new JLabel(), "login.login"));
+        
         login = new JTextField(IllaClient.getCfg().getString("lastLogin"));
         panel.add(login);
 
-        panel.add(new JLabel(Lang.getMsg("login.password")));
+        panel.add(addTextComponent(new JLabel(), "login.password"));
         password = new JPasswordField(MAX_PASSWORD_LENGTH);
         panel.add(password);
 
@@ -1209,7 +1220,7 @@ public final class LoginDialog extends AbstractDialog implements
         panel.add(new JLabel(" "));
         panel.add(new JLabel());
 
-        panel.add(new JLabel(Lang.getMsg("login.chars")));
+        panel.add(addTextComponent(new JLabel(), "login.chars"));
 
         charList = new CharList();
         charTable = new JTable(charList);
@@ -1241,7 +1252,7 @@ public final class LoginDialog extends AbstractDialog implements
         panel.add(scroll);
 
         panel.add(new JLabel());
-        reloadButton = new JButton(Lang.getMsg("login.chars.reload"));
+        reloadButton = addTextComponent(new JButton(), "login.chars.reload");
         reloadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -1272,7 +1283,7 @@ public final class LoginDialog extends AbstractDialog implements
         final JPanel links = new JPanel(new GridLayout(1, 5));
         center.add(links, BorderLayout.SOUTH);
 
-        final JButton webBtn = new JButton(Lang.getMsg("login.web"));
+        final JButton webBtn = addTextComponent(new JButton(), "login.web");
         webBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
@@ -1281,7 +1292,7 @@ public final class LoginDialog extends AbstractDialog implements
         });
         links.add(webBtn);
 
-        final JButton manualBtn = new JButton(Lang.getMsg("login.manual"));
+        final JButton manualBtn = addTextComponent(new JButton(), "login.manual");
         manualBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
@@ -1290,7 +1301,7 @@ public final class LoginDialog extends AbstractDialog implements
         });
         links.add(manualBtn);
 
-        final JButton forumBtn = new JButton(Lang.getMsg("login.forum"));
+        final JButton forumBtn = addTextComponent(new JButton(), "login.forum");
         forumBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
@@ -1299,11 +1310,10 @@ public final class LoginDialog extends AbstractDialog implements
         });
         links.add(forumBtn);
 
-        optionMessage =
-            new JLabel(Lang.getMsg("login.options.warning"),
-                SwingConstants.CENTER);
+        optionMessage = addTextComponent(new JLabel(), "login.options.warning");
+        optionMessage.setHorizontalAlignment(SwingConstants.CENTER);
 
-        final JButton optionBtn = new JButton(Lang.getMsg("login.options"));
+        final JButton optionBtn = addTextComponent(new JButton(), "login.options");
         optionBtn.addActionListener(new ActionListener() {
             @Override
             @SuppressWarnings("synthetic-access")
@@ -1318,7 +1328,7 @@ public final class LoginDialog extends AbstractDialog implements
         });
         links.add(optionBtn);
 
-        final JButton aboutBtn = new JButton(Lang.getMsg("login.about"));
+        final JButton aboutBtn = addTextComponent(new JButton(), "login.about");
         aboutBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
@@ -1328,7 +1338,6 @@ public final class LoginDialog extends AbstractDialog implements
         links.add(aboutBtn);
 
         // add the buttons
-        setButtonName(BUTTON_OK, Lang.getMsg("button.play"));
         setButtonEnabled(BUTTON_OK, false);
         setButtonName(BUTTON_CANCEL, Lang.getMsg("button.cancel"));
 
@@ -1343,14 +1352,61 @@ public final class LoginDialog extends AbstractDialog implements
         setDefaultButton(BUTTON_OK);
         updateCharacters();
 
+        updateDisplayedTexts();
+        buildSizeAndLocation();
+
+        IllaClient.getCfg().addListener(this);
+    }
+    
+    /**
+     * This function stores a text component in the required list and returns
+     * it. Its used to easily add the required components to the GUI.
+     * 
+     * @param comp the component that is added
+     * @param textKey the key in the translation file for this key
+     * @return the object that was entered as comp
+     */
+    private <T extends Component> T addTextComponent(final T comp, final String textKey) {
+        textMap.put(comp, textKey);
+        return comp;
+    }
+    
+    /**
+     * This map is used to store the components of the login display that store
+     * any text along with their key to the language system.
+     */
+    private Map<Component, String> textMap;
+    
+    /**
+     * Update the texts of all components stored in the map.
+     */
+    private void updateDisplayedTexts() {
+        for(Map.Entry<Component, String> entry : textMap.entrySet()) {
+            Component comp = entry.getKey();
+            if (comp instanceof JLabel) {
+                ((JLabel) comp).setText(Lang.getMsg(entry.getValue()));
+            } else if (comp instanceof JButton) {
+                ((JButton) comp).setText(Lang.getMsg(entry.getValue()));
+            } else if (comp instanceof JDialog) {
+                ((JDialog) comp).setTitle(Lang.getMsg(entry.getValue()));
+            }
+        }
+        
+
+        setButtonName(BUTTON_OK, Lang.getMsg("button.play")); //$NON-NLS-1$
+        setButtonName(BUTTON_CANCEL, Lang.getMsg("button.cancel")); //$NON-NLS-1$
+    }
+    
+    /**
+     * Set the size and the location of the login dialog properly.
+     */
+    private void buildSizeAndLocation() {
         setResizable(false);
         setPreferredSize(null);
         pack();
         final int maxDim = Math.max(getHeight(), getWidth());
         setPreferredSize(new Dimension((int) (maxDim * 1.15f), maxDim));
         center();
-
-        IllaClient.getCfg().addListener(this);
     }
 
     /**

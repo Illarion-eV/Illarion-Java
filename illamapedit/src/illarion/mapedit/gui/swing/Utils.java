@@ -24,6 +24,7 @@ import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.IcoWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -48,6 +49,11 @@ public final class Utils {
      */
     @SuppressWarnings("nls")
     private static final String ICON_ENDING = ".ico";
+    
+    /**
+     * The logger instance that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Utils.class);
 
     /**
      * Get a resizable icon from a resource. Depending on the type of icon its
@@ -60,6 +66,10 @@ public final class Utils {
 
         final URL resourceUrl =
             Utils.class.getClassLoader().getResource(resource);
+        if (resourceUrl == null) {
+            LOGGER.error("Failed to find: " + resource);
+            return null;
+        }
         if (resource.endsWith(ICON_ENDING)) {
             return IcoWrapperResizableIcon.getIcon(resourceUrl, DEFAULT_DIM);
         }

@@ -1,8 +1,8 @@
 /*
  * This file is part of the Illarion Mapeditor.
- *
+ * 
  * Copyright © 2011 - Illarion e.V.
- *
+ * 
  * The Illarion Mapeditor is free software: you can redistribute i and/or modify
  * it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -31,6 +31,8 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -126,6 +128,11 @@ public final class MapDatabase implements Externalizable {
         if (retDb == null) {
             retDb = new MapDatabase();
             retDb.setDirectory(dbDir);
+            try {
+                retDb.refreshFull(null);
+            } catch (TaskCancelException e) {
+                // ignore
+            }
             return retDb;
         }
         return retDb;
@@ -146,7 +153,37 @@ public final class MapDatabase implements Externalizable {
         }
         return null;
     }
+
+    /**
+     * Get the map that is stored with a specified name.
+     * 
+     * @param name the name of the map
+     * @return the map assigned to this name or <code>null</code> in case no map
+     *         is assigned to this name
+     */
+    public MapData getMap(final String name) {
+        return storage.get(name);
+    }
     
+    /**
+     * Get a collection of all maps stored in this database. The returned
+     * collection is read-only.
+     * 
+     * @return the view-collection of all maps stored in this database
+     */
+    public Collection<MapData> getAllMaps() {
+        return Collections.unmodifiableCollection(storage.values());
+    }
+    
+    /**
+     * Get the path to the directory this database was load from.
+     * 
+     * @return the path of the directory of the database
+     */
+    public String getDirectory() {
+        return dir.getAbsolutePath();
+    }
+
     /**
      * Mark this database as the active one. Once this is done the database
      * manager will inform all parts of the editor that there is a new database
