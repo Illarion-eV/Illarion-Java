@@ -1,8 +1,8 @@
 /*
  * This file is part of the Illarion Download Manager.
- *
+ * 
  * Copyright © 2011 - Illarion e.V.
- *
+ * 
  * The Illarion Download Manager is free software: you can redistribute i and/or
  * modify it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or (at your
@@ -35,7 +35,7 @@ import java.util.concurrent.Callable;
  * 
  * @author Martin Karing
  * @since 1.00
- * @version 1.00
+ * @version 1.01
  */
 public final class Download implements Callable<DownloadResult> {
     /**
@@ -110,7 +110,11 @@ public final class Download implements Callable<DownloadResult> {
 
     @Override
     public DownloadResult call() throws Exception {
-        final DownloadResult retVal = callImpl();
+        DownloadResult retVal;
+
+        while ((retVal = callImpl()) == null) {
+            // nothing to do here, just trigger the download again and again
+        }
         manager.reportDownloadFinished(this, retVal);
         return retVal;
     }
@@ -247,85 +251,108 @@ public final class Download implements Callable<DownloadResult> {
             transfered = target.length();
         }
 
-        final URLConnection connection = source.openConnection();
-        connection.setIfModifiedSince(lastModified);
-        connection.setUseCaches(true);
-        connection.setDoOutput(false);
-        connection.setDoInput(true);
+        URLConnection connection = null;
+        ReadableByteChannel inChannel = null;
+        FileChannel fileChannel = null;
+        long onlineFileLastMod = 0L;
+        try {
+            connection = source.openConnection();
+            connection.setIfModifiedSince(lastModified);
+            connection.setUseCaches(true);
+            connection.setDoOutput(false);
+            connection.setDoInput(true);
 
-        connection.connect();
+            connection.connect();
 
-        final long length = Math.max(0, connection.getContentLength());
-        manager.reportProgress(this, 0L, length);
+            final long length = Math.max(0, connection.getContentLength());
+            manager.reportProgress(this, 0L, length);
 
-        final long onlineFileLastMod = connection.getLastModified();
-        if ((transfered == length) && target.exists()
-            && (target.lastModified() >= onlineFileLastMod)) {
-            return new DownloadResult(DownloadResult.Results.downloaded,
-                "download.done", source, target, onlineFileLastMod);
-        }
+            onlineFileLastMod = connection.getLastModified();
+            if ((transfered == length) && target.exists()
+                && (target.lastModified() >= onlineFileLastMod)) {
+                return new DownloadResult(DownloadResult.Results.downloaded,
+                    "download.done", source, target, onlineFileLastMod);
+            }
 
-        if (connection instanceof HttpURLConnection) {
-            final HttpURLConnection httpConn = (HttpURLConnection) connection;
-            switch (httpConn.getResponseCode()) {
-                case HttpURLConnection.HTTP_NOT_MODIFIED:
-                    try {
-                        httpConn.getInputStream().close();
-                    } catch (final IOException ex) {
-                        // nothing to do
-                    }
-                    return new DownloadResult(
-                        DownloadResult.Results.notModified,
-                        "download.not_modified", source, target, lastModified);
-                case HttpURLConnection.HTTP_OK:
-                case HttpURLConnection.HTTP_PARTIAL:
+            if (connection instanceof HttpURLConnection) {
+                final HttpURLConnection httpConn =
+                    (HttpURLConnection) connection;
+                switch (httpConn.getResponseCode()) {
+                    case HttpURLConnection.HTTP_NOT_MODIFIED:
+                        try {
+                            httpConn.getInputStream().close();
+                        } catch (final IOException ex) {
+                            // nothing to do
+                        }
+                        return new DownloadResult(
+                            DownloadResult.Results.notModified,
+                            "download.not_modified", source, target,
+                            lastModified);
+                    case HttpURLConnection.HTTP_OK:
+                    case HttpURLConnection.HTTP_PARTIAL:
+                        break;
+                    default:
+                        try {
+                            httpConn.getInputStream().close();
+                        } catch (final IOException ex) {
+                            // nothing to do
+                        }
+                        return new DownloadResult(
+                            DownloadResult.Results.downloadFailed,
+                            "download.not_found", source, target, 0L);
+                }
+            }
+
+            if (target.exists() && !target.delete()) {
+                connection.getInputStream().close();
+                return new DownloadResult(
+                    DownloadResult.Results.downloadFailed,
+                    "download.invalid_target", source, target, 0L);
+            }
+
+            inChannel = Channels.newChannel(connection.getInputStream());
+            fileChannel = new FileOutputStream(target).getChannel();
+
+            long blockLength = length / 100;
+            if (blockLength < 1024) {
+                blockLength = 1024;
+            }
+
+            int noTransferCounter = 0;
+            long oldTransfered = transfered;
+            while (transfered < length) {
+                oldTransfered = transfered;
+                transfered +=
+                    fileChannel.transferFrom(inChannel, transfered,
+                        Math.min(length - transfered, blockLength));
+
+                if (oldTransfered != transfered) {
+                    manager.reportProgress(this, transfered, length);
+                } else {
+                    noTransferCounter++;
+                }
+
+                if (noTransferCounter == 50) {
+                    System.out.println("Restarting stalled download: " + name);
+                    // transfer seems stalled -> restarting
+                    return null;
+                }
+
+                if (canceled) {
                     break;
-                default:
-                    try {
-                        httpConn.getInputStream().close();
-                    } catch (final IOException ex) {
-                        // nothing to do
-                    }
-                    return new DownloadResult(
-                        DownloadResult.Results.downloadFailed,
-                        "download.not_found", source, target, 0L);
+                }
+            }
+        } finally {
+            if ((inChannel != null) && inChannel.isOpen()) {
+                inChannel.close();
+            }
+            if ((fileChannel != null) && fileChannel.isOpen()) {
+                fileChannel.close();
+            }
+            if ((connection != null) && (connection.getInputStream() != null)) {
+                connection.getInputStream().close();
             }
         }
-
-        if (target.exists() && !target.delete()) {
-            connection.getInputStream().close();
-            return new DownloadResult(DownloadResult.Results.downloadFailed,
-                "download.invalid_target", source, target, 0L);
-        }
-
-        final ReadableByteChannel inChannel =
-            Channels.newChannel(connection.getInputStream());
-        final FileChannel fileChannel =
-            new FileOutputStream(target).getChannel();
-
-        long blockLength = length / 100;
-        if (blockLength < 1024) {
-            blockLength = 1024;
-        }
-
-        long oldTransfered = transfered;
-        while (transfered < length) {
-            oldTransfered = transfered;
-            transfered +=
-                fileChannel.transferFrom(inChannel, transfered,
-                    Math.min(length - transfered, blockLength));
-
-            if (oldTransfered != transfered) {
-                manager.reportProgress(this, transfered, length);
-            }
-
-            if (canceled) {
-                break;
-            }
-        }
-
-        fileChannel.close();
-        inChannel.close();
 
         target.setLastModified(onlineFileLastMod + 1000);
 

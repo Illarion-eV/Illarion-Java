@@ -1,8 +1,8 @@
 /*
  * This file is part of the Illarion Download Manager.
- *
+ * 
  * Copyright © 2011 - Illarion e.V.
- *
+ * 
  * The Illarion Download Manager is free software: you can redistribute i and/or
  * modify it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or (at your
@@ -18,29 +18,24 @@
  */
 package illarion.download.install.resources;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import illarion.common.util.DirectoryManager;
 
+import illarion.download.install.resources.db.DBResource;
+import illarion.download.install.resources.db.ResourceCheckLevel;
+import illarion.download.install.resources.db.ResourceDatabase;
 import illarion.download.tasks.download.DownloadManager;
 
 /**
@@ -50,7 +45,7 @@ import illarion.download.tasks.download.DownloadManager;
  * 
  * @author Martin Karing
  * @since 1.00
- * @version 1.00
+ * @version 1.01
  */
 public final class ResourceManager {
     /**
@@ -79,7 +74,7 @@ public final class ResourceManager {
      * This database contains all resources that are already downloaded and
      * present in the database.
      */
-    private final Map<URL, Long> resourceDatabase;
+    private ResourceDatabase resourceDatabase;
 
     /**
      * This variable is used to store if the resource informations are dirty and
@@ -93,7 +88,7 @@ public final class ResourceManager {
      */
     private ResourceManager() {
         dependingResources = new ArrayList<Resource>();
-        resourceDatabase = new HashMap<URL, Long>();
+        resourceDatabase = new ResourceDatabase();
     }
 
     /**
@@ -128,6 +123,17 @@ public final class ResourceManager {
     }
 
     /**
+     * Report that a file was installed.
+     * 
+     * @param resourceURL the URL of the resource this file is assigned to
+     * @param file the file itself
+     */
+    public void reportFileInstalled(final URL resourceURL, final File file) {
+        resourceDatabase.addFile(resourceURL, file);
+        resourcesDirty = true;
+    }
+
+    /**
      * Report that a new resource is fully installed and note that information
      * in the resource database.
      * 
@@ -135,7 +141,7 @@ public final class ResourceManager {
      * @param lastChanged the time when this resource was last changed
      */
     public void reportResourceInstalled(final URL url, final long lastChanged) {
-        resourceDatabase.put(url, Long.valueOf(lastChanged));
+        resourceDatabase.addResource(url, lastChanged);
         resourcesDirty = true;
     }
 
@@ -158,32 +164,29 @@ public final class ResourceManager {
             return;
         }
 
-        BufferedWriter writer = null;
+        ObjectOutputStream out = null;
         try {
-            writer =
-                new BufferedWriter(new OutputStreamWriter(
-                    new GZIPOutputStream(new FileOutputStream(dbFile))));
-
-            for (final Entry<URL, Long> resource : resourceDatabase.entrySet()) {
-                writer.write(resource.getKey().toExternalForm());
-                writer.write('=');
-                writer.write(resource.getValue().toString());
-                writer.newLine();
-            }
+            out =
+                new ObjectOutputStream(new BufferedOutputStream(
+                    new FileOutputStream(dbFile)));
+            out.writeObject(resourceDatabase);
+            out.flush();
+            resourcesDirty = false;
+        } catch (final FileNotFoundException e) {
+            // file not found, should not happen
         } catch (final IOException e) {
-            /* Can't read/write file -> cancel */
-            return;
+            // failed, writing the file, its sad, but nothing to be done about
+            // that
         } finally {
-            if (writer != null) {
+            if (out != null) {
                 try {
-                    writer.close();
+                    out.close();
                 } catch (final IOException e) {
-                    // nothing to do
+                    // closing the file failed... ignore that.
                 }
+                out = null;
             }
         }
-
-        resourcesDirty = false;
     }
 
     /**
@@ -251,58 +254,39 @@ public final class ResourceManager {
     /**
      * This function is used to load the resource database.
      */
-    @SuppressWarnings("nls")
     private void loadResourceDatabase() {
         final File dbFile =
             new File(DirectoryManager.getInstance().getDataDirectory(),
                 RES_DB_FILE);
-        resourceDatabase.clear();
+
         resourcesDirty = false;
         if (!dbFile.exists()) {
             /* Database yet not created, so there are no files in there. */
             return;
         }
 
-        BufferedReader reader = null;
+        ObjectInputStream in = null;
         try {
-            reader =
-                new BufferedReader(new InputStreamReader(new GZIPInputStream(
-                    new FileInputStream(dbFile))));
-
-            final Pattern regexp =
-                Pattern.compile("([0-9A-Za-z-~\\\\\\:\\~\\=\\./_]+)=([0-9]+)");
-            String line = reader.readLine();
-            Matcher matcher;
-            while (line != null) {
-                matcher = regexp.matcher(line);
-                if (!matcher.find()) {
-                    line = reader.readLine();
-                    continue;
-                }
-                try {
-                    if (matcher.groupCount() >= 2) {
-                        resourceDatabase.put(new URL(matcher.group(1)),
-                            Long.valueOf(matcher.group(2)));
-                    }
-                } catch (final NumberFormatException ex) {
-                    /* Number invalid -> Ignore */
-                } catch (final MalformedURLException ex) {
-                    /* URL invalid -> ignore */
-                }
-                line = reader.readLine();
-            }
+            in =
+                new ObjectInputStream(new BufferedInputStream(
+                    new FileInputStream(dbFile)));
+            resourceDatabase = (ResourceDatabase) in.readObject();
         } catch (final FileNotFoundException e) {
-            /* File not around -> just cancel */
-            return;
+            // file not found, should not happen, but if, it does not matter
+            e.printStackTrace();
         } catch (final IOException e) {
-            /* Can't read/write file -> cancel */
-            return;
+            // reading error, nothing to be done about
+            e.printStackTrace();
+        } catch (final ClassNotFoundException e) {
+            // class not found, could be caused by a invalid version of the DB
+            // ignore it
+            e.printStackTrace();
         } finally {
-            if (reader != null) {
+            if (in != null) {
                 try {
-                    reader.close();
+                    in.close();
                 } catch (final IOException e) {
-                    // nothing to do
+                    // closing the stream failed, ignore that
                 }
             }
         }
@@ -320,9 +304,11 @@ public final class ResourceManager {
     private void scheduleDownloadImpl(final String name, final String dir,
         final URL url, final DownloadManager manager) {
         long timeout = 0L;
-        final Long newTimeout = resourceDatabase.get(url);
-        if (newTimeout != null) {
-            timeout = newTimeout.longValue();
+        if (resourceDatabase.containsResource(url)) {
+            final DBResource res = resourceDatabase.getResource(url);
+            if (res.checkFiles(ResourceCheckLevel.simpleCheck)) {
+                timeout = res.getLastModified();
+            }
         }
 
         final String fileName = url.getFile();

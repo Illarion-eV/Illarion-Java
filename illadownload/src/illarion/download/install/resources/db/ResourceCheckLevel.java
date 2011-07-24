@@ -16,21 +16,33 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.download.install.resources;
+package illarion.download.install.resources.db;
 
 /**
- * This interface defines the resource directory handlers that are used to
- * expose the directory of the resource groups.
+ * This enumerator contains the different levels of possible checks of the
+ * resources.
  * 
  * @author Martin Karing
  * @since 1.00
  * @version 1.00
  */
-public interface ResourceDirectory {
+public enum ResourceCheckLevel {
     /**
-     * Get the directory for the current resource group
-     * 
-     * @return the directory
+     * A more detailed check method. In addition to the simple check is only
+     * compares the last change time of the file with the one stored in the
+     * database.
      */
-    String getDirectory();
+    detailedCheck,
+
+    /**
+     * The full detailed check. Its the slowest one and in addition of the
+     * detailed check it also calculates and compares the checksum of the file.
+     */
+    fullCheck,
+
+    /**
+     * The simplest check to perform. It only checks if the file exists and
+     * nothing beyond.
+     */
+    simpleCheck;
 }

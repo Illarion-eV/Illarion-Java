@@ -1,8 +1,8 @@
 /*
  * This file is part of the Illarion Download Manager.
- *
+ * 
  * Copyright © 2011 - Illarion e.V.
- *
+ * 
  * The Illarion Download Manager is free software: you can redistribute i and/or
  * modify it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or (at your
@@ -22,9 +22,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
@@ -45,7 +48,7 @@ import illarion.download.tasks.download.DownloadResult;
  * 
  * @author Martin Karing
  * @since 1.00
- * @version 1.00
+ * @version 1.01
  */
 public final class Unpack implements Callable<UnpackResult> {
     /**
@@ -180,6 +183,8 @@ public final class Unpack implements Callable<UnpackResult> {
         final long fileSize = file.length();
         final long blockSize = Math.max(1024, fileSize / 100);
 
+        final List<File> installedFiles = new ArrayList<File>();
+
         ReadableByteChannel inChannel = null;
         FileChannel outChannel = null;
         JarOutputStream jOutStream = null;
@@ -224,6 +229,7 @@ public final class Unpack implements Callable<UnpackResult> {
                             entryName.length() - 5));
                     final Pack200.Unpacker p200unpacker =
                         Pack200Helper.getUnpacker();
+                    installedFiles.add(targetFileP200);
 
                     jOutStream =
                         new JarOutputStream(new FileOutputStream(
@@ -238,6 +244,8 @@ public final class Unpack implements Callable<UnpackResult> {
                     if (!targetFile.delete()) {
                         targetFile.deleteOnExit();
                     }
+                } else {
+                    installedFiles.add(targetFile);
                 }
 
                 currEntry = zIn.getNextEntry();
@@ -257,8 +265,14 @@ public final class Unpack implements Callable<UnpackResult> {
             }
         }
 
-        ResourceManager.getInstance().reportResourceInstalled(
-            downloadResult.getSource(), downloadResult.getLastModified());
+        final URL downloadURL = downloadResult.getSource();
+        ResourceManager.getInstance().reportResourceInstalled(downloadURL,
+            downloadResult.getLastModified());
+
+        for (final File currentFile : installedFiles) {
+            ResourceManager.getInstance().reportFileInstalled(downloadURL,
+                currentFile);
+        }
 
         return new UnpackResult(name, UnpackResult.Results.unpacked,
             "unpack.unpacked", file); //$NON-NLS-1$

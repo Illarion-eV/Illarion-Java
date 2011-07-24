@@ -1,8 +1,8 @@
 /*
  * This file is part of the Illarion Download Manager.
- *
+ * 
  * Copyright © 2011 - Illarion e.V.
- *
+ * 
  * The Illarion Download Manager is free software: you can redistribute i and/or
  * modify it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or (at your
@@ -37,10 +37,15 @@ import illarion.download.tasks.unpack.UnpackManager;
  * This class is used to control the installation chain.
  * 
  * @author Martin Karing
- * @version 1.00
+ * @version 1.01
  * @since 1.00
  */
 public final class Installation {
+    /**
+     * The text that contains the version string of this application.
+     */
+    public static final String VERSION = "1.01"; //$NON-NLS-1$
+
     /**
      * The GUI that is used to display the installation progress. While its
      * created here it does not mean by all needs that its really displayed.
