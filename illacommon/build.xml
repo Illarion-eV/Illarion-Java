@@ -892,7 +892,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<delete dir="${classes}" />
 	</target>
 
-	<target name="build_fonts" description="build the fonts" depends="check_optional_dirs,buildTasks" if="${config.exist}">
+	<target name="build_fonts" description="build the fonts" depends="check_optional_dirs,buildTasks">
 		<property name="characters" value="256" />
 		<!-- ISO-8859-1 -->
 		<!--<property name="characters" value="65535" />-->
