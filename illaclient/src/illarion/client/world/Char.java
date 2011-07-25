@@ -699,6 +699,7 @@ public final class Char extends Interaction implements RecycleObject,
         direction = 0;
         charId = 0;
         visible = false;
+        skinColor = null;
     }
 
     /**
@@ -982,14 +983,18 @@ public final class Char extends Interaction implements RecycleObject,
      * @param color the color that is used to color the skin
      */
     public void setSkinColor(final SpriteColor color) {
-        if (skinColor == null) {
-            skinColor = Graphics.getInstance().getSpriteColor();
+        if (color == null) {
+            skinColor = null;
+        } else {
+            if (skinColor == null) {
+                skinColor = Graphics.getInstance().getSpriteColor();
+            }
+            skinColor.set(color);
+            skinColor.setAlpha(color.getAlphai());
         }
         if (avatar != null) {
             avatar.changeBaseColor(color);
         }
-        skinColor.set(color);
-        skinColor.setAlpha(color.getAlphai());
     }
 
     /**

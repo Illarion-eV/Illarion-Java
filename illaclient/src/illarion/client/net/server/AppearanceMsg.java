@@ -293,6 +293,8 @@ public final class AppearanceMsg extends AbstractReply {
         TEMP_COLOR.setAlpha(SpriteColor.COLOR_MAX);
         if (skinColorRed != 255 || skinColorGreen != 255 || skinColorBlue != 255) {
         	ch.setSkinColor(TEMP_COLOR);
+        } else {
+            ch.setSkinColor(null);
         }
 
         TEMP_COLOR.set(hairColorRed, hairColorGreen, hairColorBlue);
