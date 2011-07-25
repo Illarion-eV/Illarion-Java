@@ -28,9 +28,25 @@ import java.util.regex.Pattern;
  * @since 1.00
  */
 public enum CalculationOperators {
+    /**
+     * The addition operator with all required data to detect it in a easyNPC
+     * script and to write it into a LUA script.
+     */
     @SuppressWarnings("nls")
-    add("+", "^\\s*(\\+[=]*)\\s*$"), @SuppressWarnings("nls")
-    set("=", "^\\s*=\\s*$"), @SuppressWarnings("nls")
+    add("+", "^\\s*(\\+[=]*)\\s*$"),
+    
+    /**
+     * The set operator with all required data to detect it in a easyNPC
+     * script and to write it into a LUA script.
+     */
+    @SuppressWarnings("nls")
+    set("=", "^\\s*=\\s*$"),
+    
+    /**
+     * The subtraction operator with all required data to detect it in a easyNPC
+     * script and to write it into a LUA script.
+     */
+    @SuppressWarnings("nls")
     subtract("-", "^\\s*(-[=]*)\\s*$");
 
     /**
