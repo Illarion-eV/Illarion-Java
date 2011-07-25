@@ -1,8 +1,8 @@
 /*
  * This file is part of the Illarion Client.
- *
+ * 
  * Copyright © 2011 - Illarion e.V.
- *
+ * 
  * The Illarion Client is free software: you can redistribute i and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -429,7 +429,6 @@ public final class People implements SessionMember, TableLoaderSink,
      * Settings if the ID of characters shall be shown or generic descriptors
      * like "Man", "Woman", etc.
      */
-    @SuppressWarnings("nls")
     private boolean showIDs;
 
     /**
@@ -470,6 +469,20 @@ public final class People implements SessionMember, TableLoaderSink,
     }
 
     /**
+     * This function checks a argument against <code>null</code> and throws a
+     * exception in case the argument is <code>null</code>
+     * 
+     * @param arg the argument to test
+     * @throws NullPointerException in case the argument is <code>null</code>.
+     */
+    @SuppressWarnings("nls")
+    private static void throwNullException(final Object arg) {
+        if (arg == null) {
+            throw new NullPointerException("Argument must not be null.");
+        }
+    }
+
+    /**
      * Get a character on the client screen. If the character is not available,
      * its created and the appearance is requested from the server.
      * 
@@ -477,33 +490,10 @@ public final class People implements SessionMember, TableLoaderSink,
      * @return the character that was requested
      */
     public Char accessCharacter(final long id) {
-        if ((playerChar != null) && (playerChar.getCharId() == id)) {
-            return playerChar;
-        }
-
-        Char chara;
-        charsLock.readLock().lock();
-        try {
-            chara = chars.get(id);
-        } finally {
-            charsLock.readLock().unlock();
-        }
-        // character not present: create it
+        final Char chara = getCharacter(id);
         if (chara == null) {
-            chara = Char.create();
-            chara.setCharId(id);
-            updateName(chara);
-
-            addCharacter(chara);
-
-            // request appearance from server if char is not known
-            final RequestAppearanceCmd cmd =
-                (RequestAppearanceCmd) CommandFactory.getInstance()
-                    .getCommand(CommandList.CMD_REQUEST_APPEARANCE);
-            cmd.request(id);
-            Game.getNet().sendCommand(cmd);
+            return createNewCharacter(id);
         }
-
         return chara;
     }
 
@@ -513,11 +503,9 @@ public final class People implements SessionMember, TableLoaderSink,
      * 
      * @param removeChar the character that is going to be removed
      */
-    @SuppressWarnings("nls")
     public void addCharacterToRemoveList(final Char removeChar) {
-        if (removeChar.equals(playerChar)) {
-            throw new IllegalArgumentException("Can't remove player character");
-        }
+        throwNullException(removeChar);
+        throwPlayerCharacter(removeChar);
         removalList.add(removeChar);
     }
 
@@ -547,6 +535,9 @@ public final class People implements SessionMember, TableLoaderSink,
      */
     @Override
     public void configChanged(final Config cfg, final String key) {
+        throwNullException(cfg);
+        throwNullException(key);
+
         if (key.equals(CFG_NAMEMODE_KEY)) {
             showMapNames = cfg.getInteger(CFG_NAMEMODE_KEY);
             chars.forEachValue(updateNameHelper);
@@ -579,7 +570,7 @@ public final class People implements SessionMember, TableLoaderSink,
      * @return the character or null if it does not exist
      */
     public Char getCharacter(final long id) {
-        if ((playerChar != null) && (playerChar.getCharId() == id)) {
+        if (isPlayerCharacter(id)) {
             return playerChar;
         }
 
@@ -598,7 +589,9 @@ public final class People implements SessionMember, TableLoaderSink,
      * @return the character or null if not found
      */
     public Char getCharacterAt(final Location loc) {
-        if ((playerChar != null) && playerChar.getLocation().equals(loc)) {
+        throwNullException(loc);
+
+        if (isPlayerCharacter(loc)) {
             return playerChar;
         }
 
@@ -652,6 +645,8 @@ public final class People implements SessionMember, TableLoaderSink,
      * @param name the name that the character shall get
      */
     public void introduce(final long id, final String name) {
+        throwNullException(name);
+
         // update character with his name
         final Char chara = getCharacter(id);
         if (chara != null) {
@@ -674,12 +669,15 @@ public final class People implements SessionMember, TableLoaderSink,
     /**
      * Show the dialog for naming a character and fill in the name of the
      * character in case its known already. The dialog is not shown for monsters
-     * and npcs.
+     * and NPCs.
      * 
      * @param chara The character that shall get named
      */
     @SuppressWarnings("nls")
     public void nameCharacter(final Char chara) {
+        throwNullException(chara);
+        throwPlayerCharacter(chara);
+
         final long charID = chara.getCharId();
 
         if (chara.canHaveName()) {
@@ -719,6 +717,8 @@ public final class People implements SessionMember, TableLoaderSink,
      */
     @Override
     public boolean processRecord(final int line, final TableLoader loader) {
+        throwNullException(loader);
+
         names.addName(loader.getLong(0), loader.getString(1));
 
         return true;
@@ -731,11 +731,9 @@ public final class People implements SessionMember, TableLoaderSink,
      * 
      * @param id the ID of the character that shall be removed
      */
-    @SuppressWarnings("nls")
     public void removeCharacter(final long id) {
-        if ((playerChar != null) && (playerChar.getCharId() == id)) {
-            throw new IllegalArgumentException("Can't remove player char");
-        }
+        throwPlayerCharacter(id);
+
         charsLock.writeLock().lock();
         try {
             final Char chara = chars.get(id);
@@ -758,7 +756,6 @@ public final class People implements SessionMember, TableLoaderSink,
      * 
      * @param chara The character that shall be reported
      */
-    @SuppressWarnings("nls")
     public void reportCharacter(final Char chara) {
         chara.getCharId();
 
@@ -882,11 +879,9 @@ public final class People implements SessionMember, TableLoaderSink,
      * 
      * @param chara the character that shall be added
      */
-    @SuppressWarnings("nls")
     protected void addCharacter(final Char chara) {
-        if (chara.equals(playerChar)) {
-            throw new IllegalArgumentException("Can't add player char.");
-        }
+        throwPlayerCharacter(chara);
+
         charsLock.writeLock().lock();
         try {
             chars.put(chara.getCharId(), chara);
@@ -946,6 +941,7 @@ public final class People implements SessionMember, TableLoaderSink,
         if (playerChar != null) {
             updateLightHelper.execute(playerChar);
         }
+
         charsLock.readLock().lock();
         try {
             chars.forEachValue(updateLightHelper);
@@ -966,6 +962,29 @@ public final class People implements SessionMember, TableLoaderSink,
         } else {
             chara.setName(getName(chara.getCharId()));
         }
+    }
+
+    /**
+     * This function creates a new character and requests the required
+     * informations from the server.
+     * 
+     * @param id the ID of the character to be created
+     * @return the created character
+     */
+    private Char createNewCharacter(final long id) {
+        final Char chara = Char.create();
+        chara.setCharId(id);
+        updateName(chara);
+
+        addCharacter(chara);
+
+        // request appearance from server if char is not known
+        final RequestAppearanceCmd cmd =
+            (RequestAppearanceCmd) CommandFactory.getInstance().getCommand(
+                CommandList.CMD_REQUEST_APPEARANCE);
+        cmd.request(id);
+        Game.getNet().sendCommand(cmd);
+        return chara;
     }
 
     /**
@@ -1026,6 +1045,56 @@ public final class People implements SessionMember, TableLoaderSink,
             }
         }
         return name;
+    }
+
+    /**
+     * Check if the location is the location of the player character.
+     * 
+     * @param id the location to check
+     * @return <code>true</code> in case the player character is set and its
+     *         location equals the location supplied by the argument
+     */
+    private boolean isPlayerCharacter(final Location loc) {
+        return ((playerChar != null) && (playerChar.getLocation().equals(loc)));
+    }
+
+    /**
+     * Check if the ID is the ID of the player character.
+     * 
+     * @param id the id to check
+     * @return <code>true</code> in case the player character is set and its ID
+     *         equals the ID supplied by the argument
+     */
+    private boolean isPlayerCharacter(final long id) {
+        return ((playerChar != null) && (playerChar.getCharId() == id));
+    }
+
+    /**
+     * This function throws a {@link java.lang.IllegalArgumentException} in case
+     * the character supplied with the argument is the player character.
+     * 
+     * @param chara the character to check
+     * @throws IllegalArgumentException in case the character in the argument is
+     *             the player character
+     */
+    private void throwPlayerCharacter(final Char chara) {
+        throwPlayerCharacter(chara.getCharId());
+    }
+
+    /**
+     * This function throws a {@link java.lang.IllegalArgumentException} in case
+     * the ID suppled by the argument is the ID of the player character
+     * 
+     * @param chara the ID to test
+     * @throws IllegalArgumentException in case the argument contains the ID of
+     *             the player character
+     */
+    @SuppressWarnings("nls")
+    private void throwPlayerCharacter(final long id) {
+        if (isPlayerCharacter(id)) {
+            throw new IllegalArgumentException(
+                "The player character can't be used here.");
+        }
     }
 
 }
