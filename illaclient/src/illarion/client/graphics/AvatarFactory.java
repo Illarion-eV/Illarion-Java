@@ -23,6 +23,8 @@ import org.apache.log4j.Logger;
 import illarion.common.util.RecycleFactory;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
+import illarion.graphics.Graphics;
+import illarion.graphics.SpriteColor;
 
 /**
  * The avatar factory loads and stores all graphical representations of
@@ -122,6 +124,26 @@ public final class AvatarFactory extends RecycleFactory<Avatar> implements
      * The table index that stores the visibility bonus of this avatar.
      */
     private static final int TB_VISIBLE = 10;
+    
+    /**
+     * The table intex that stores the red value of the avatar.
+     */
+    private static final int TB_RED = 16;
+    
+    /**
+     * The table intex that stores the green value of the avatar.
+     */
+    private static final int TB_GREEN = 17;
+    
+    /**
+     * The table intex that stores the blue value of the avatar.
+     */
+    private static final int TB_BLUE = 18;
+    
+    /**
+     * The table intex that stores the alpha value of the avatar.
+     */
+    private static final int TB_ALPHA = 19;
 
     /**
      * Constructor for the avatar factory. This sets up all storage tables that
@@ -183,14 +205,22 @@ public final class AvatarFactory extends RecycleFactory<Avatar> implements
         final String german = loader.getString(TB_GERMAN);
         final String english = loader.getString(TB_ENGLISH);
         final int animationID = loader.getInt(TB_ANIMATION);
+        final int skinRed = loader.getInt(TB_RED);
+        final int skinGreen = loader.getInt(TB_GREEN);
+        final int skinBlue = loader.getInt(TB_BLUE);
+        final int skinAlpha = loader.getInt(TB_ALPHA);
 
         final AvatarInfo info =
             AvatarInfo.get(appearance, visibleMod, german, english);
         info.reportAnimation(animationID);
-
+        
+        final SpriteColor tmp_color = Graphics.getInstance().getSpriteColor();
+        
+        tmp_color.set(skinRed, skinGreen, skinBlue);
+        
         final Avatar avatar =
             new Avatar(avatarId, filename, frameCount, stillFrame, offsetX,
-                offsetY, shadowOffset, info, mirror, null, direction);
+                offsetY, shadowOffset, info, mirror, tmp_color, direction);
 
         try {
             register(avatar);

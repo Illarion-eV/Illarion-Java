@@ -523,7 +523,7 @@ public final class TextureConverterNG extends Task {
 
             // write the table files
             writeTableFiles(outJar);
-            System.out.println("tablefiles done");
+            System.out.println("tablefiles done!!!");
 
             // write the texture files
             writeTextureFiles(outJar);
