@@ -67,6 +67,7 @@ public final class TextResponseCmd extends AbstractCommand {
     @Override
     public void encode(final NetCommWriter writer) {
         writer.writeUByte((short) dialogID);
+        writer.writeUByte((byte) 0xFF);
         writer.writeString(text);
     }
 
