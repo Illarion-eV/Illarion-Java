@@ -241,7 +241,7 @@ final class Sender extends Thread implements NetCommWriter {
         encoder.encode(encodingBuffer, buffer, true);
         final int lastIndex = buffer.position();
         buffer.position(startIndex);
-        writeUShort(buffer.position() - startIndex - 2);
+        writeUShort(lastIndex - startIndex - 2);
         buffer.position(lastIndex);
     }
 
