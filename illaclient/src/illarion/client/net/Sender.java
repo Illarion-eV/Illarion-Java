@@ -232,14 +232,17 @@ final class Sender extends Thread implements NetCommWriter {
     @Override
     public void writeString(final String value) {
         final int startIndex = buffer.position();
-        buffer.put((byte) 0);
+        buffer.putShort((short) 0);
 
         encodingBuffer.clear();
-        encodingBuffer.put(value, 0, Math.min(1 << Byte.SIZE, value.length()));
+        encodingBuffer.put(value, 0, Math.min(1 << Short.SIZE, value.length()));
         encodingBuffer.flip();
 
         encoder.encode(encodingBuffer, buffer, true);
-        buffer.put(startIndex, (byte) (buffer.position() - startIndex - 1));
+        final int lastIndex = buffer.position();
+        buffer.position(startIndex);
+        writeUShort(buffer.position() - startIndex - 2);
+        buffer.position(lastIndex);
     }
 
     /**

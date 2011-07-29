@@ -51,6 +51,7 @@ import illarion.client.net.server.SayMsg;
 import illarion.client.net.server.ShowcaseMsg;
 import illarion.client.net.server.SimpleMsg;
 import illarion.client.net.server.SkillMsg;
+import illarion.client.net.server.TextRequestMsg;
 import illarion.client.net.server.TurnCharMsg;
 import illarion.client.net.server.WeatherMsg;
 
@@ -125,6 +126,8 @@ public final class ReplyFactory extends RecycleFactory<AbstractReply> {
 
         register(new CharacterAnimationMsg());
         register(new BookMsg());
+        
+        register(new TextRequestMsg());
 
         finish();
     }

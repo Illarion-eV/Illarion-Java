@@ -177,7 +177,7 @@ final class Receiver extends Thread implements NetCommReader {
     @Override
     @SuppressWarnings("nls")
     public String readString() throws IOException {
-        final int len = readUByte();
+        final int len = readUShort();
 
         if (len > buffer.remaining()) {
             throw new IndexOutOfBoundsException(
