@@ -44,6 +44,11 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<property name="easynpc.res.deploy" location="${setup}/${easynpc.res}" />
 	<property name="easynpc.bin" location="${compiled}/${easynpc.jar}" />
 
+	<property name="easyquest.jar" value="illarion_easyquest.jar" />
+	<property name="easyquest.res" value="illarion_easyquest.illares" />
+	<property name="easyquest.res.deploy" location="${setup}/${easyquest.res}" />
+	<property name="easyquest.bin" location="${compiled}/${easyquest.jar}" />
+
 	<property name="mapedit.jar" value="illarion_mapeditor.jar" />
 	<property name="mapedit.res" value="illarion_mapeditor.illares" />
 	<property name="mapedit.res.deploy" location="${setup}/${mapedit.res}" />
@@ -107,6 +112,11 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<property name="easynpc.version" value="1.02" />
 	<property name="easynpc.vendor" value="Illarion e.V." />
 	<property name="easynpc.name" value="Illarion easyNPC Editor" />
+
+	<!-- EasyQuest Editor informations -->
+	<property name="easyquest.version" value="0.00001 alpha" />
+	<property name="easyquest.vendor" value="Illarion e.V." />
+	<property name="easyquest.name" value="Illarion easyQuest Editor" />
 
 	<!-- Download informations -->
 	<property name="download.version" value="1.00" />
@@ -187,7 +197,17 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<fileset id="lwjgl" dir="${lwjgl.dir}">
 		<patternset refid="lwjgl.pattern" />
 	</fileset>
-
+	
+	<!-- JGraph 1.7.1.6 -->
+	<!-- http://www.jgraph.com/ -->
+	<property name="jgraph.dir" location="${common}/lib/jgraph"/>
+	<patternset id="jgraph.pattern">
+		<include name="jgraphx.jar" />
+	</patternset>
+	<fileset id="jgraph" dir="${jgraph.dir}">
+		<patternset refid="jgraph.pattern" />
+	</fileset>
+	
 	<!-- JOGL 2.0.0 b224 -->
 	<!-- http://jogamp.org/ -->
     <property name="jogl.dir" location="${common}/lib/jogl"/>

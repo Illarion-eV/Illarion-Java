@@ -1,0 +1,1 @@
+java -cp ../bin/illarion_easyquest.jar;../illacommon/lib/jgraph/jgraphx.jar;../illacommon/lib/flamingo/flamingo.jar;../illacommon/lib/trident/trident.jar;../illacommon/lib/substance-flamingo/substance-flamingo.jar;../illacommon/lib/substance/substance.jar illarion.easyquest.gui.MainFrame

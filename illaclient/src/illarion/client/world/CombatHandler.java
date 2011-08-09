@@ -1,8 +1,8 @@
 /*
  * This file is part of the Illarion Client.
- *
+ * 
  * Copyright © 2011 - Illarion e.V.
- *
+ * 
  * The Illarion Client is free software: you can redistribute i and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -81,7 +81,8 @@ public final class CombatHandler {
      * @return <code>true</code> in case the character is the current target
      */
     public boolean isAttacking(final Char testChar) {
-        return ((testChar != null) && (testChar == attackedChar));
+        return ((testChar != null) && (isAttacking()) && (testChar
+            .equals(attackedChar)));
     }
 
     /**
@@ -99,19 +100,14 @@ public final class CombatHandler {
      * @param character the character that is now attacked
      */
     public void setAttackTarget(final Char character) {
+        standDown();
         if (character == attackedChar) {
-            standDown();
             return;
         }
-        standDown();
 
         if (character != null) {
             attackedChar = character;
-            final AttackCmd cmd =
-                (AttackCmd) CommandFactory.getInstance().getCommand(
-                    CommandList.CMD_ATTACK);
-            cmd.setTarget(character.getCharId());
-            Game.getNet().sendCommand(cmd);
+            sendAttackToServer(character.getCharId());
             character.setAttackMarker(true);
         }
     }
@@ -164,5 +160,19 @@ public final class CombatHandler {
     public boolean toggleCombatMode() {
         setCombatMode(!combatActive);
         return combatActive;
+    }
+
+    /**
+     * Send a attack command to the server that initiates a fight with the
+     * character that ID is set in the parameter.
+     * 
+     * @param id the ID of the character to fight
+     */
+    private void sendAttackToServer(final long id) {
+        final AttackCmd cmd =
+            (AttackCmd) CommandFactory.getInstance().getCommand(
+                CommandList.CMD_ATTACK);
+        cmd.setTarget(id);
+        Game.getNet().sendCommand(cmd);
     }
 }

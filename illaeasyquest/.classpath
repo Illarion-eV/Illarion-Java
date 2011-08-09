@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/illacommon"/>
+	<classpathentry kind="lib" path="/illacommon/lib/flamingo/flamingo.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/substance/substance.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/substance-flamingo/substance-flamingo.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/trident/trident.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jgraph/jgraphx.jar" sourcepath="/illacommon/lib/jgraph/jgraphx-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/illacommon/lib/jgraph/jgraphx-javadoc.zip!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="classes"/>
+</classpath>

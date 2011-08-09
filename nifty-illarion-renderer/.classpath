@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/illacommon"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/illagraphics"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/illainput"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/illasound"/>
+	<classpathentry kind="lib" path="/illacommon/lib/javolution/javolution.jar" sourcepath="/illacommon/lib/javolution/javolution-sources.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/log4j/log4j.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/nifty/nifty-1.3.jar" sourcepath="/illacommon/lib/nifty/nifty-1.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/illacommon/lib/nifty/nifty-1.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/illacommon/lib/trove/trove.jar" sourcepath="/illacommon/lib/trove/trove-src.zip"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>

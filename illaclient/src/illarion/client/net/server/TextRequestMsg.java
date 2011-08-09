@@ -52,7 +52,7 @@ public final class TextRequestMsg extends AbstractReply {
     /**
      * The ID of this request.
      */
-    private int requestId;
+    private long requestId;
 
     /**
      * Default constructor for the effect message.
@@ -85,7 +85,7 @@ public final class TextRequestMsg extends AbstractReply {
         title = reader.readString();
         multiLine = (reader.readByte() != 0);
         maxCharacters = reader.readUShort();
-        requestId = reader.readUByte();
+        requestId = reader.readUInt();
     }
 
     /**

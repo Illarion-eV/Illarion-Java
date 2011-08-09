@@ -33,7 +33,7 @@ public final class TextResponseCmd extends AbstractCommand {
     /**
      * The ID that was send by the server to initiate text input.
      */
-    private int dialogID;
+    private long dialogID;
 
     /**
      * The text that is send to the server.
@@ -66,7 +66,7 @@ public final class TextResponseCmd extends AbstractCommand {
      */
     @Override
     public void encode(final NetCommWriter writer) {
-        writer.writeUByte((short) dialogID);
+        writer.writeUInt(dialogID);
         writer.writeUByte((byte) 0xFF);
         writer.writeString(text);
     }
@@ -85,7 +85,7 @@ public final class TextResponseCmd extends AbstractCommand {
      * 
      * @param id the id of the dialog
      */
-    public void setDialogId(final int id) {
+    public void setDialogId(final long id) {
         dialogID = id;
     }
 

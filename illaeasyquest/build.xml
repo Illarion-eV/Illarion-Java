@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file is part of the Illarion easyQuest Editor.
+
+Copyright © 2011 - Illarion e.V.
+
+The Illarion easyQuest Editor is free software: you can redistribute i and/or
+modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+The Illarion easyQuest Editor is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
+-->
+<project name="Illarion easyQuest Editor" default="build_easyquest" basedir=".">
+	<description>
+           Build the Illarion easyQuest Editor.
+    </description>
+
+	<import file="../illacommon/build_include.xml" />
+
+	<property name="src" location="${easyquest}/src" />
+	<property name="res" location="${easyquest}/res" />
+	<property name="classes" location="${easyquest}/antclasses" />
+	<property name="jar" location="${easyquest}/${easyquest.jar}" />
+
+	<target name="build_easyquest" description="build easyquest editor jar file" depends="init, compile_easyquest">
+        <move file="${jar}" tofile="${easynpc.bin}" />
+	</target>
+
+    <target name="build_easyquest_res" description="create the resource of the illarion client" depends="check_optional_dirs, init, buildTasks" if="keys.exist">
+        <resourceprepare targetdir="${signedcompiled}" usepack200="true">
+            <filelist dir="${compiled}">
+                <file name="${easyquest.jar}" />
+            </filelist>
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}" storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${easyquest.jar}" />
+                </filelist>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${easyquest.jar}" />
+                </filelist>
+            </path>
+        </verifyjar>
+    	
+        <resourcebuild target="${easynpc.res.deploy}" usepack200="true">
+            <filelist dir="${signedcompiled}">
+                <file name="${easyquest.jar}" />
+            </filelist>
+        </resourcebuild>
+    </target>
+
+	<target name="compile_easyquest">
+		<delete dir="${classes}" />
+		<mkdir dir="${classes}" />
+
+		<javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}" debuglevel="${build.debuglevel}">
+			<classpath>
+				<fileset refid="substance" />
+                <fileset refid="trident" />
+                <fileset refid="flamingo" />
+                <fileset refid="substance-flamingo" />
+                <fileset refid="jgraph" />
+				<pathelement location="${common.bin}" />
+				<pathelement path="${java.home}/lib" />
+			</classpath>
+		</javac>
+
+		<jar jarfile="${jar}" basedir="${classes}" includes="illarion/easyquest/**">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${easyquest.vendor}" />
+				<attribute name="Implementation-Title" value="${easyquest.name}" />
+				<attribute name="Implementation-Version" value="${easyquest.version}" />
+			</manifest>
+		</jar>
+		<jar jarfile="${jar}" basedir="${src}" includes="logging.properties" update="true" />
+		<jar jarfile="${jar}" basedir="${res}" includes="*.png" update="true" />
+		<jar jarfile="${jar}" basedir="${src}" includes="messages_*.properties" update="true" index="${build.index}" />
+		<delete dir="${classes}" />
+	</target>
+</project>
