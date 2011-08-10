@@ -16,6 +16,8 @@ import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 
+import illarion.easyquest.Lang;
+
 public class MainFrame extends JRibbonFrame
 {
 
@@ -29,7 +31,9 @@ public class MainFrame extends JRibbonFrame
 
         final JCommandButton saveButton =
             new JCommandButton(Utils.getResizableIconFromResource("res/filesave.png"));
-        saveButton.setActionRichTooltip(new RichTooltip("Save", "Save the quest"));
+        saveButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
+            getClass(), "saveButtonTooltipTitle"), Lang.getMsg(getClass(),
+            "saveButtonTooltip")));
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {

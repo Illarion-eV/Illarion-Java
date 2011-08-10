@@ -7,6 +7,8 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 import org.pushingpixels.flamingo.api.common.JCommandButton.CommandButtonKind;
 
+import illarion.easyquest.Lang;
+
 final class MainMenu extends RibbonApplicationMenu {
 
     public MainMenu() {
@@ -15,7 +17,7 @@ final class MainMenu extends RibbonApplicationMenu {
         final RibbonApplicationMenuEntryPrimary newQuest =
             new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("res/filenew.png"),
-                "Neues Quest",
+                Lang.getMsg(getClass(), "newQuestButton"),
                 new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
@@ -27,7 +29,7 @@ final class MainMenu extends RibbonApplicationMenu {
         final RibbonApplicationMenuEntryPrimary openQuest =
             new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("res/fileopen.png"),
-                "Quest öffnen",
+                Lang.getMsg(getClass(), "openQuestButton"),
                 new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
@@ -41,7 +43,7 @@ final class MainMenu extends RibbonApplicationMenu {
         final RibbonApplicationMenuEntryPrimary saveQuest =
             new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("res/filesave.png"),
-                "Quest speichern",
+                Lang.getMsg(getClass(), "saveQuestButton"),
                 new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
@@ -51,11 +53,37 @@ final class MainMenu extends RibbonApplicationMenu {
                 }, CommandButtonKind.ACTION_ONLY);
         addMenuEntry(saveQuest);
         
+        final RibbonApplicationMenuEntryPrimary saveAllQuest =
+            new RibbonApplicationMenuEntryPrimary(
+                Utils.getResizableIconFromResource("res/save_all.png"),
+                Lang.getMsg(getClass(), "saveAllQuestButton"),
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
+                        
+                    }
+                }, CommandButtonKind.ACTION_ONLY);
+        addMenuEntry(saveAllQuest);
+
+        final RibbonApplicationMenuEntryPrimary saveAsQuest =
+            new RibbonApplicationMenuEntryPrimary(
+                Utils.getResizableIconFromResource("res/filesaveas.png"),
+                Lang.getMsg(getClass(), "saveAsQuestButton"),
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
+                        
+                    }
+                }, CommandButtonKind.ACTION_ONLY);
+        addMenuEntry(saveAsQuest);
+        
         addMenuSeparator();
         
         final RibbonApplicationMenuEntryPrimary exitButton =
             new RibbonApplicationMenuEntryPrimary(
-                Utils.getResizableIconFromResource("res/exit.png"), "Beenden", new ActionListener() {
+                Utils.getResizableIconFromResource("res/exit.png"),
+                Lang.getMsg(getClass(), "exitButton"),
+                new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
                         MainFrame.getInstance().closeWindow();

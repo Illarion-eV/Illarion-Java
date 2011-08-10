@@ -69,6 +69,8 @@ the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
 
 		<javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}" debuglevel="${build.debuglevel}">
 			<classpath>
+			    <fileset refid="javolution" />
+			    <fileset refid="log4j" />
 				<fileset refid="substance" />
                 <fileset refid="trident" />
                 <fileset refid="flamingo" />
