@@ -30,7 +30,7 @@ public class MainFrame extends JRibbonFrame
         getRibbon().setApplicationMenu(new MainMenu());
 
         final JCommandButton saveButton =
-            new JCommandButton(Utils.getResizableIconFromResource("res/filesave.png"));
+            new JCommandButton(Utils.getResizableIconFromResource("filesave.png"));
         saveButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
             getClass(), "saveButtonTooltipTitle"), Lang.getMsg(getClass(),
             "saveButtonTooltip")));

@@ -16,7 +16,7 @@ final class MainMenu extends RibbonApplicationMenu {
         
         final RibbonApplicationMenuEntryPrimary newQuest =
             new RibbonApplicationMenuEntryPrimary(
-                Utils.getResizableIconFromResource("res/filenew.png"),
+                Utils.getResizableIconFromResource("filenew.png"),
                 Lang.getMsg(getClass(), "newQuestButton"),
                 new ActionListener() {
                     @Override
@@ -28,7 +28,7 @@ final class MainMenu extends RibbonApplicationMenu {
 
         final RibbonApplicationMenuEntryPrimary openQuest =
             new RibbonApplicationMenuEntryPrimary(
-                Utils.getResizableIconFromResource("res/fileopen.png"),
+                Utils.getResizableIconFromResource("fileopen.png"),
                 Lang.getMsg(getClass(), "openQuestButton"),
                 new ActionListener() {
                     @Override
@@ -42,7 +42,7 @@ final class MainMenu extends RibbonApplicationMenu {
         
         final RibbonApplicationMenuEntryPrimary saveQuest =
             new RibbonApplicationMenuEntryPrimary(
-                Utils.getResizableIconFromResource("res/filesave.png"),
+                Utils.getResizableIconFromResource("filesave.png"),
                 Lang.getMsg(getClass(), "saveQuestButton"),
                 new ActionListener() {
                     @Override
@@ -55,7 +55,7 @@ final class MainMenu extends RibbonApplicationMenu {
         
         final RibbonApplicationMenuEntryPrimary saveAllQuest =
             new RibbonApplicationMenuEntryPrimary(
-                Utils.getResizableIconFromResource("res/save_all.png"),
+                Utils.getResizableIconFromResource("save_all.png"),
                 Lang.getMsg(getClass(), "saveAllQuestButton"),
                 new ActionListener() {
                     @Override
@@ -67,7 +67,7 @@ final class MainMenu extends RibbonApplicationMenu {
 
         final RibbonApplicationMenuEntryPrimary saveAsQuest =
             new RibbonApplicationMenuEntryPrimary(
-                Utils.getResizableIconFromResource("res/filesaveas.png"),
+                Utils.getResizableIconFromResource("filesaveas.png"),
                 Lang.getMsg(getClass(), "saveAsQuestButton"),
                 new ActionListener() {
                     @Override
@@ -81,7 +81,7 @@ final class MainMenu extends RibbonApplicationMenu {
         
         final RibbonApplicationMenuEntryPrimary exitButton =
             new RibbonApplicationMenuEntryPrimary(
-                Utils.getResizableIconFromResource("res/exit.png"),
+                Utils.getResizableIconFromResource("exit.png"),
                 Lang.getMsg(getClass(), "exitButton"),
                 new ActionListener() {
                     @Override
