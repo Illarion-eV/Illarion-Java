@@ -92,8 +92,8 @@ final class ClipboardBand extends JRibbonBand {
         cutButton.addActionListener(cutAction);
 
         addCommandButton(pasteButton, RibbonElementPriority.TOP);
-        addCommandButton(copyButton, RibbonElementPriority.MEDIUM);
-        addCommandButton(cutButton, RibbonElementPriority.MEDIUM);
+        addCommandButton(copyButton, RibbonElementPriority.TOP);
+        addCommandButton(cutButton, RibbonElementPriority.TOP);
 
         final List<RibbonBandResizePolicy> policies =
             new ArrayList<RibbonBandResizePolicy>();

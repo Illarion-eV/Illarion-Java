@@ -46,11 +46,11 @@ final class GraphBand extends JRibbonBand {
         super(Lang.getMsg(GraphBand.class, "title"), null);
 
         final JCommandToggleButton nodeButton =
-            new JCommandToggleButton(Lang.getMsg(getClass(), "node"),
-                Utils.getResizableIconFromResource("filenew.png"));
+            new JCommandToggleButton(Lang.getMsg(getClass(), "state"),
+                Utils.getResizableIconFromResource("state.png"));
         final JCommandToggleButton transitionButton =
             new JCommandToggleButton(Lang.getMsg(getClass(), "transition"),
-                Utils.getResizableIconFromResource("filenew.png"));
+                Utils.getResizableIconFromResource("transition.png"));
 
         nodeButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
             getClass(), "nodeTooltipTitle"), Lang.getMsg(
