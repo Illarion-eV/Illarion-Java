@@ -9,6 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
+import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
@@ -26,6 +27,11 @@ public class MainFrame extends JRibbonFrame
 	public MainFrame()
 	{
 		super("easyQuest Editor");
+		
+		final RibbonTask graphTask =
+            new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskQuest"),
+                new ClipboardBand());
+        getRibbon().addTask(graphTask);
 
         getRibbon().setApplicationMenu(new MainMenu());
 
