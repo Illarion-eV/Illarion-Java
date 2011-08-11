@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
+import org.pushingpixels.flamingo.api.common.CommandToggleButtonGroup;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
@@ -37,6 +38,9 @@ final class GraphBand extends JRibbonBand {
      * The serialization UID of this ribbon band.
      */
     private static final long serialVersionUID = 1L;
+    
+    private final JCommandToggleButton nodeButton;
+    private final JCommandToggleButton transitionButton;
 
     /**
      * Default constructor that prepares the buttons displayed on this band.
@@ -45,10 +49,10 @@ final class GraphBand extends JRibbonBand {
     public GraphBand() {
         super(Lang.getMsg(GraphBand.class, "title"), null);
 
-        final JCommandToggleButton nodeButton =
+        nodeButton =
             new JCommandToggleButton(Lang.getMsg(getClass(), "state"),
                 Utils.getResizableIconFromResource("state.png"));
-        final JCommandToggleButton transitionButton =
+        transitionButton =
             new JCommandToggleButton(Lang.getMsg(getClass(), "transition"),
                 Utils.getResizableIconFromResource("transition.png"));
 
@@ -62,7 +66,7 @@ final class GraphBand extends JRibbonBand {
         final ActionListener nodeAction = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-
+                
             }
         };
 
@@ -75,6 +79,10 @@ final class GraphBand extends JRibbonBand {
         
         nodeButton.addActionListener(nodeAction);
         transitionButton.addActionListener(transitionAction);
+        
+        CommandToggleButtonGroup graphElements = new CommandToggleButtonGroup();
+        graphElements.add(nodeButton);
+        graphElements.add(transitionButton);
 
         addCommandButton(nodeButton, RibbonElementPriority.TOP);
         addCommandButton(transitionButton, RibbonElementPriority.TOP);
