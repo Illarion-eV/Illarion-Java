@@ -28,6 +28,9 @@ public class MainFrame extends JRibbonFrame
 	{
 		super("easyQuest Editor");
 		
+		setApplicationIcon(Utils
+            .getResizableIconFromResource("easyquest.png"));
+		
 		final RibbonTask graphTask =
             new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskQuest"),
                 new ClipboardBand(), new GraphBand());
