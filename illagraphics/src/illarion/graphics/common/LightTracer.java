@@ -18,15 +18,15 @@
  */
 package illarion.graphics.common;
 
+import illarion.common.util.Location;
+import illarion.common.util.Stoppable;
+import illarion.common.util.StoppableStorage;
+
 import java.util.Iterator;
 
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
-
-import illarion.common.util.Location;
-import illarion.common.util.Stoppable;
-import illarion.common.util.StoppableStorage;
 
 /**
  * Manager class that handles the light. It stores the pre-calculated light rays
@@ -44,12 +44,6 @@ import illarion.common.util.StoppableStorage;
  */
 public final class LightTracer extends Thread implements Stoppable {
     /**
-     * The maximal radius of the light. So length of the light rays is between 1
-     * and the value of this constant.
-     */
-    public static final int MAX_RADIUS = 6;
-
-    /**
      * The current base level. Means the Z coordinate of the level the player is
      * currently on.
      */
@@ -59,6 +53,12 @@ public final class LightTracer extends Thread implements Stoppable {
      * The logger instance that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(LightTracer.class);
+
+    /**
+     * The maximal radius of the light. So length of the light rays is between 1
+     * and the value of this constant.
+     */
+    public static final int MAX_RADIUS = 6;
 
     /**
      * The storage of the pre-calculated rays.
@@ -71,6 +71,41 @@ public final class LightTracer extends Thread implements Stoppable {
         for (int i = 0; i < MAX_RADIUS; ++i) {
             RAYS[i] = new LightRays(i + 1);
         }
+    }
+
+    /**
+     * Get the current base level and so the current z level of the player
+     * location.
+     * 
+     * @return the z level of the player location
+     */
+    public static int getBaseLevel() {
+        return baseLevel;
+    }
+
+    /**
+     * Get the pre-calculated light rays for a given size of the light.
+     * 
+     * @param size the length of the ray that is needed
+     * @return the pre-calculated rays.
+     */
+    @SuppressWarnings("nls")
+    public static LightRays getRays(final int size) {
+        if ((size > 0) && (size <= MAX_RADIUS)) {
+            return RAYS[size - 1];
+        }
+
+        throw new IllegalArgumentException("invalid shadow ray size " + size);
+    }
+
+    /**
+     * Set the current base level. The base level always has to be the level the
+     * player character is on.
+     * 
+     * @param lvl the current z level of the player character location
+     */
+    public static void setBaseLevel(final int lvl) {
+        baseLevel = lvl;
     }
 
     /**
@@ -139,41 +174,6 @@ public final class LightTracer extends Thread implements Stoppable {
         tinyLights = new FastList<LightSource>();
         pause = false;
         running = false;
-    }
-
-    /**
-     * Get the current base level and so the current z level of the player
-     * location.
-     * 
-     * @return the z level of the player location
-     */
-    public static int getBaseLevel() {
-        return baseLevel;
-    }
-
-    /**
-     * Get the pre-calculated light rays for a given size of the light.
-     * 
-     * @param size the length of the ray that is needed
-     * @return the pre-calculated rays.
-     */
-    @SuppressWarnings("nls")
-    public static LightRays getRays(final int size) {
-        if ((size > 0) && (size <= MAX_RADIUS)) {
-            return RAYS[size - 1];
-        }
-
-        throw new IllegalArgumentException("invalid shadow ray size " + size);
-    }
-
-    /**
-     * Set the current base level. The base level always has to be the level the
-     * player character is on.
-     * 
-     * @param lvl the current z level of the player character location
-     */
-    public static void setBaseLevel(final int lvl) {
-        baseLevel = lvl;
     }
 
     /**
@@ -367,6 +367,17 @@ public final class LightTracer extends Thread implements Stoppable {
     }
 
     /**
+     * This method causes the light tracer to cancel all current calculations
+     * and restart them.
+     */
+    private void restart() {
+        doRestart = true;
+        synchronized (lightsListsLock) {
+            lightsListsLock.notify();
+        }
+    }
+
+    /**
      * This method runs until the running flag is turned to false and constantly
      * calculates the lights in case its needed.
      */
@@ -381,7 +392,7 @@ public final class LightTracer extends Thread implements Stoppable {
                 doRestart = false;
             }
             LightSource light = null;
-            boolean tidyLight = false;
+            final boolean tidyLight = false;
             synchronized (lightsListsLock) {
                 if (dirty && !pause) {
                     if (!tinyLights.isEmpty()
@@ -402,13 +413,13 @@ public final class LightTracer extends Thread implements Stoppable {
                     try {
                         lightsListsLock.wait();
                     } catch (final InterruptedException e) {
-                        LOGGER.debug("Light tracer woken up for unknown reasons",
-                            e);
+                        LOGGER.debug(
+                            "Light tracer woken up for unknown reasons", e);
                     }
-                    
+
                 }
             }
-            
+
             if (light != null) {
                 if (!tidyLight) {
                     light.calculateShadows();
@@ -428,6 +439,24 @@ public final class LightTracer extends Thread implements Stoppable {
         running = false;
         synchronized (lightsListsLock) {
             lightsListsLock.notify();
+        }
+    }
+
+    /**
+     * Update the dirty flag of the light tracer. This also triggers a
+     * recalculation of the entire map in case the flag becomes dirty.
+     * 
+     * @param newDirty the new value of the dirty flag
+     */
+    private void setDirty(final boolean newDirty) {
+        if (!dirty && newDirty) {
+            mapSource.resetLights();
+            dirty = true;
+        } else if (dirty && !newDirty) {
+            mapSource.renderLights();
+            dirty = false;
+        } else {
+            dirty = newDirty;
         }
     }
 
@@ -462,34 +491,5 @@ public final class LightTracer extends Thread implements Stoppable {
         running = true;
         super.start();
         StoppableStorage.getInstance().add(this);
-    }
-
-    /**
-     * This method causes the light tracer to cancel all current calculations
-     * and restart them.
-     */
-    private void restart() {
-        doRestart = true;
-        synchronized (lightsListsLock) {
-            lightsListsLock.notify();
-        }
-    }
-
-    /**
-     * Update the dirty flag of the light tracer. This also triggers a
-     * recalculation of the entire map in case the flag becomes dirty.
-     * 
-     * @param newDirty the new value of the dirty flag
-     */
-    private void setDirty(final boolean newDirty) {
-        if (!dirty && newDirty) {
-            mapSource.resetLights();
-            dirty = true;
-        } else if (dirty && !newDirty) {
-            mapSource.renderLights();
-            dirty = false;
-        } else {
-            dirty = newDirty;
-        }
     }
 }

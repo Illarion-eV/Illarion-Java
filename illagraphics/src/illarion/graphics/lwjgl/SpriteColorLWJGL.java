@@ -18,10 +18,10 @@
  */
 package illarion.graphics.lwjgl;
 
-import org.lwjgl.opengl.GL11;
-
 import illarion.graphics.SpriteColor;
 import illarion.graphics.generic.AbstractSpriteColor;
+
+import org.lwjgl.opengl.GL11;
 
 /**
  * Default class to handle colors inside the client.

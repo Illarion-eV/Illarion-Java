@@ -37,6 +37,22 @@ import org.apache.log4j.Logger;
  */
 public final class Graphics {
     /**
+     * The start of the path of to the classes that are included by reflection.
+     */
+    @SuppressWarnings("nls")
+    private static final String CLASS_PATH = "illarion.graphics.";
+
+    /**
+     * The singleton instance of this class that is used to access this class.
+     */
+    private static final Graphics INSTANCE = new Graphics();
+
+    /**
+     * The logger class that takes the log output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Graphics.class);
+
+    /**
      * This parameter makes the graphic interface disabling the speed limiting
      * functions so the game runs at a maximum game loop speed.
      */
@@ -74,20 +90,13 @@ public final class Graphics {
     public static final int QUALITY_NORMAL = 3;
 
     /**
-     * The start of the path of to the classes that are included by reflection.
+     * Get the singleton instance of this class.
+     * 
+     * @return the singleton instance of the graphics port.
      */
-    @SuppressWarnings("nls")
-    private static final String CLASS_PATH = "illarion.graphics.";
-
-    /**
-     * The singleton instance of this class that is used to access this class.
-     */
-    private static final Graphics INSTANCE = new Graphics();
-
-    /**
-     * The logger class that takes the log output of this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(Graphics.class);
+    public static Graphics getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * The singleton instance of the drawer class. This class is a utility class
@@ -139,12 +148,83 @@ public final class Graphics {
     }
 
     /**
-     * Get the singleton instance of this class.
+     * Create the instance of a object by using the interface class name and the
+     * implementation. The class will try to instantiate the needed class.
      * 
-     * @return the singleton instance of the graphics port.
+     * @param <T> the object type that is created by this class
+     * @param className the basic name of the class. The suffix of the
+     *            implementation is added to this name.
+     * @param implementation the implementation itself. It contains the name of
+     *            the class folder and the suffix of the class name
+     * @return the create instance or null
      */
-    public static Graphics getInstance() {
-        return INSTANCE;
+    private <T> T create(final Class<T> className, final Engines implementation) {
+        return create(className, implementation, null, null);
+    }
+
+    /**
+     * Create the instance of a object by using the interface class name and the
+     * implementation. The class will try to instantiate the needed class.
+     * 
+     * @param <T> the object type that is created by this class
+     * @param className the basic name of the class. The suffix of the
+     *            implementation is added to this name.
+     * @param implementation the implementation itself. It contains the name of
+     *            the class folder and the suffix of the class name
+     * @param parameterTypes a list with the types of the parameters needed for
+     *            the constructor. In case no parameters are needed its possible
+     *            to set this list to <code>null</code>
+     * @param parameters the actual values of the parameters needed for the
+     *            constructor. The amount of entries has to fit the amount in
+     *            the parameterTypes list
+     * @return the create instance or null
+     */
+    @SuppressWarnings({ "nls", "unchecked" })
+    private <T> T create(final Class<T> className,
+        final Engines implementation, final Class<?>[] parameterTypes,
+        final Object[] parameters) {
+        engineLocked = true;
+
+        T instance = null;
+        Class<T> clazz = null;
+
+        final TextBuilder builder = TextBuilder.newInstance();
+        builder.append(CLASS_PATH);
+        builder.append(implementation.getFolder());
+        builder.append('.');
+        builder.append(className.getSimpleName());
+        builder.append(implementation.getSuffix());
+
+        clazz = Reflection.getInstance().getClass(builder);
+        TextBuilder.recycle(builder);
+
+        if (clazz != null) {
+            try {
+                if ((parameterTypes == null) || (parameterTypes.length == 0)) {
+                    instance = clazz.newInstance();
+                } else {
+                    instance =
+                        clazz.getConstructor(parameterTypes).newInstance(
+                            parameters);
+                }
+            } catch (final InstantiationException ex) {
+                LOGGER.fatal("Failed to instantiate the class.", ex);
+            } catch (final IllegalAccessException ex) {
+                LOGGER.fatal("Failed to access the class.", ex);
+            } catch (final IllegalArgumentException ex) {
+                LOGGER.fatal("Illegal arguments for calling the constructor.",
+                    ex);
+            } catch (final SecurityException ex) {
+                LOGGER.fatal(
+                    "Secutiry problem while creating the new instance", ex);
+            } catch (final InvocationTargetException ex) {
+                LOGGER.fatal("Constructor created an exception", ex);
+            } catch (final NoSuchMethodException ex) {
+                LOGGER.fatal("Constructor not found", ex);
+            }
+        }
+
+        return instance;
     }
 
     /**
@@ -306,85 +386,5 @@ public final class Graphics {
      */
     public void setQuality(final int newQual) {
         quality = newQual;
-    }
-
-    /**
-     * Create the instance of a object by using the interface class name and the
-     * implementation. The class will try to instantiate the needed class.
-     * 
-     * @param <T> the object type that is created by this class
-     * @param className the basic name of the class. The suffix of the
-     *            implementation is added to this name.
-     * @param implementation the implementation itself. It contains the name of
-     *            the class folder and the suffix of the class name
-     * @return the create instance or null
-     */
-    private <T> T create(final Class<T> className, final Engines implementation) {
-        return create(className, implementation, null, null);
-    }
-
-    /**
-     * Create the instance of a object by using the interface class name and the
-     * implementation. The class will try to instantiate the needed class.
-     * 
-     * @param <T> the object type that is created by this class
-     * @param className the basic name of the class. The suffix of the
-     *            implementation is added to this name.
-     * @param implementation the implementation itself. It contains the name of
-     *            the class folder and the suffix of the class name
-     * @param parameterTypes a list with the types of the parameters needed for
-     *            the constructor. In case no parameters are needed its possible
-     *            to set this list to <code>null</code>
-     * @param parameters the actual values of the parameters needed for the
-     *            constructor. The amount of entries has to fit the amount in
-     *            the parameterTypes list
-     * @return the create instance or null
-     */
-    @SuppressWarnings({ "nls", "unchecked" })
-    private <T> T create(final Class<T> className,
-        final Engines implementation, final Class<?>[] parameterTypes,
-        final Object[] parameters) {
-        engineLocked = true;
-
-        T instance = null;
-        Class<T> clazz = null;
-
-        final TextBuilder builder = TextBuilder.newInstance();
-        builder.append(CLASS_PATH);
-        builder.append(implementation.getFolder());
-        builder.append('.');
-        builder.append(className.getSimpleName());
-        builder.append(implementation.getSuffix());
-
-        clazz = Reflection.getInstance().getClass(builder);
-        TextBuilder.recycle(builder);
-
-        if (clazz != null) {
-            try {
-                if ((parameterTypes == null) || (parameterTypes.length == 0)) {
-                    instance = clazz.newInstance();
-                } else {
-                    instance =
-                        clazz.getConstructor(parameterTypes).newInstance(
-                            parameters);
-                }
-            } catch (final InstantiationException ex) {
-                LOGGER.fatal("Failed to instantiate the class.", ex);
-            } catch (final IllegalAccessException ex) {
-                LOGGER.fatal("Failed to access the class.", ex);
-            } catch (final IllegalArgumentException ex) {
-                LOGGER.fatal("Illegal arguments for calling the constructor.",
-                    ex);
-            } catch (final SecurityException ex) {
-                LOGGER.fatal(
-                    "Secutiry problem while creating the new instance", ex);
-            } catch (final InvocationTargetException ex) {
-                LOGGER.fatal("Constructor created an exception", ex);
-            } catch (final NoSuchMethodException ex) {
-                LOGGER.fatal("Constructor not found", ex);
-            }
-        }
-
-        return instance;
     }
 }

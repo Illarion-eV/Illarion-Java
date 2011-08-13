@@ -18,14 +18,14 @@
  */
 package illarion.graphics.lwjgl.render;
 
+import illarion.graphics.SpriteColor;
+import illarion.graphics.lwjgl.DriverSettingsLWJGL;
+import illarion.graphics.lwjgl.TextureLWJGL;
+
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-
-import illarion.graphics.SpriteColor;
-import illarion.graphics.lwjgl.DriverSettingsLWJGL;
-import illarion.graphics.lwjgl.TextureLWJGL;
 
 /**
  * This texture render uses array pointers to render a texture.
@@ -40,6 +40,15 @@ public final class TextureRenderPointer extends AbstractTextureRender {
      */
     private static final TextureRenderPointer INSTANCE =
         new TextureRenderPointer();
+
+    /**
+     * Get the singleton instance of this class.
+     * 
+     * @return the singleton instance of the texture pointer render
+     */
+    public static TextureRenderPointer getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * The buffer that is used to store the texture coordinate data.
@@ -67,15 +76,6 @@ public final class TextureRenderPointer extends AbstractTextureRender {
     }
 
     /**
-     * Get the singleton instance of this class.
-     * 
-     * @return the singleton instance of the texture pointer render
-     */
-    public static TextureRenderPointer getInstance() {
-        return INSTANCE;
-    }
-
-    /**
      * Draw a texture using buffer pointers and draw arrays.
      * 
      * @param x the x coordinate of the texture
@@ -93,7 +93,8 @@ public final class TextureRenderPointer extends AbstractTextureRender {
         final float width, final float height, final TextureLWJGL texture,
         final SpriteColor color, final boolean mirror, final float rotation) {
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWTEXTUREPOINTER);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWTEXTUREPOINTER);
         DriverSettingsLWJGL.getInstance().bindTexture(texture.getTextureID());
 
         color.setActiveColor();

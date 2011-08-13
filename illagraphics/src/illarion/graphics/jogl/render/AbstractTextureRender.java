@@ -18,13 +18,13 @@
  */
 package illarion.graphics.jogl.render;
 
-import javax.media.opengl.glu.GLU;
-
-import org.apache.log4j.Logger;
-
 import illarion.graphics.SpriteColor;
 import illarion.graphics.jogl.GraphicsJOGLException;
 import illarion.graphics.jogl.TextureJOGL;
+
+import javax.media.opengl.glu.GLU;
+
+import org.apache.log4j.Logger;
 
 /**
  * The abstract texture render chooses the real texture render to use. The

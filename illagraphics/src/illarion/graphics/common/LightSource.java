@@ -18,12 +18,10 @@
  */
 package illarion.graphics.common;
 
-import javolution.util.FastList;
-
 import illarion.common.util.Location;
-
 import illarion.graphics.Graphics;
 import illarion.graphics.SpriteColor;
+import javolution.util.FastList;
 
 /**
  * This class handles a light source and contains its rays, the location and the
@@ -42,6 +40,64 @@ public final class LightSource {
     @SuppressWarnings("unchecked")
     private static final FastList<LightSource>[] CACHE =
         new FastList[LightTracer.MAX_RADIUS];
+
+    /**
+     * Retrieve a light from the cache or create a new one.
+     * 
+     * @param loc the location of the light source on the map
+     * @param encoding the encoding of the light source that has to be decoded
+     *            in order to receive the parameters of the light
+     * @return the prepared instance of the light source
+     */
+    @SuppressWarnings("nls")
+    public static LightSource createLight(final Location loc,
+        final int encoding) {
+        final int size = ((encoding / 10000) % 10) - 1;
+        if (size < 0) {
+            throw new IllegalArgumentException("empty light source");
+        }
+        if (size >= LightTracer.MAX_RADIUS) {
+            throw new IllegalArgumentException("light size too large");
+        }
+
+        if (CACHE[size] == null) {
+            return new LightSource(loc, encoding);
+        }
+
+        LightSource light = null;
+        synchronized (CACHE[size]) {
+            if (!CACHE[size].isEmpty()) {
+                light = CACHE[size].removeLast();
+            }
+        }
+
+        if (light == null) {
+            return new LightSource(loc, encoding);
+        }
+
+        light.lightCached = false;
+        light.init(loc, encoding);
+        light.resetShadows();
+        return light;
+    }
+
+    /**
+     * Release a light source and put it in the cache for later reuse.
+     * 
+     * @param light the light that shall be put into the cache.
+     */
+    public static void releaseLight(final LightSource light) {
+        final int size = light.size - 1;
+
+        if (CACHE[size] == null) {
+            CACHE[size] = new FastList<LightSource>();
+        }
+        synchronized (CACHE[size]) {
+            if (!CACHE[size].contains(light)) {
+                CACHE[size].add(light);
+            }
+        }
+    }
 
     /**
      * The brightness of the light. This acts like a general modifier on the
@@ -131,64 +187,6 @@ public final class LightSource {
     }
 
     /**
-     * Retrieve a light from the cache or create a new one.
-     * 
-     * @param loc the location of the light source on the map
-     * @param encoding the encoding of the light source that has to be decoded
-     *            in order to receive the parameters of the light
-     * @return the prepared instance of the light source
-     */
-    @SuppressWarnings("nls")
-    public static LightSource createLight(final Location loc,
-        final int encoding) {
-        final int size = ((encoding / 10000) % 10) - 1;
-        if (size < 0) {
-            throw new IllegalArgumentException("empty light source");
-        }
-        if (size >= LightTracer.MAX_RADIUS) {
-            throw new IllegalArgumentException("light size too large");
-        }
-
-        if (CACHE[size] == null) {
-            return new LightSource(loc, encoding);
-        }
-
-        LightSource light = null;
-        synchronized (CACHE[size]) {
-            if (!CACHE[size].isEmpty()) {
-                light = CACHE[size].removeLast();
-            }
-        }
-
-        if (light == null) {
-            return new LightSource(loc, encoding);
-        }
-
-        light.lightCached = false;
-        light.init(loc, encoding);
-        light.resetShadows();
-        return light;
-    }
-
-    /**
-     * Release a light source and put it in the cache for later reuse.
-     * 
-     * @param light the light that shall be put into the cache.
-     */
-    public static void releaseLight(final LightSource light) {
-        final int size = light.size - 1;
-
-        if (CACHE[size] == null) {
-            CACHE[size] = new FastList<LightSource>();
-        }
-        synchronized (CACHE[size]) {
-            if (!CACHE[size].contains(light)) {
-                CACHE[size].add(light);
-            }
-        }
-    }
-
-    /**
      * Apply shadow map to rendering target. So all calculated intensity values
      * are added to the map by this function.
      */
@@ -270,6 +268,39 @@ public final class LightSource {
     }
 
     /**
+     * Initializes the light source. So set the location to the correct one and
+     * update the color of the light source by decoding the encoded data.
+     * 
+     * @param newLoc the new location of this light source
+     * @param encoding the encoded data that defines the light source
+     */
+    @SuppressWarnings("nls")
+    private void init(final Location newLoc, final int encoding) {
+        if (newLoc == null) {
+            throw new IllegalArgumentException(
+                "The location of this light must not be NULL");
+        }
+        loc = newLoc;
+        int remEnc = encoding;
+
+        final float blue = (remEnc % 10) / 9.f;
+        remEnc /= 10;
+        final float green = (remEnc % 10) / 9.f;
+        remEnc /= 10;
+        final float red = (remEnc % 10) / 9.f;
+        remEnc /= 10;
+        color.set(red, green, blue);
+
+        bright = (remEnc % 10) / 9.f;
+        remEnc /= 10;
+        size = remEnc % 10;
+        remEnc /= 10;
+        invert = (remEnc == 1);
+
+        dirty = true;
+    }
+
+    /**
      * Check if this light source is dirty and needs further calculations or
      * not.
      * 
@@ -311,6 +342,18 @@ public final class LightSource {
     }
 
     /**
+     * Reset all recalculated values. This should be done before the light
+     * source object is put into the cache for later usage.
+     */
+    private void resetShadows() {
+        for (int i = 0; i < intensity.length; ++i) {
+            for (int j = 0; j < intensity.length; ++j) {
+                intensity[j][i] = 0;
+            }
+        }
+    }
+
+    /**
      * Set light intensity in shadow map and return opacity value.
      * 
      * @param x the X offset of the location thats intensity shall be set to the
@@ -343,51 +386,6 @@ public final class LightSource {
         if ((mapSource == null) || (mapSource != newMapSource)) {
             mapSource = newMapSource;
             dirty = true;
-        }
-    }
-
-    /**
-     * Initializes the light source. So set the location to the correct one and
-     * update the color of the light source by decoding the encoded data.
-     * 
-     * @param newLoc the new location of this light source
-     * @param encoding the encoded data that defines the light source
-     */
-    @SuppressWarnings("nls")
-    private void init(final Location newLoc, final int encoding) {
-        if (newLoc == null) {
-            throw new IllegalArgumentException(
-                "The location of this light must not be NULL");
-        }
-        loc = newLoc;
-        int remEnc = encoding;
-
-        final float blue = (remEnc % 10) / 9.f;
-        remEnc /= 10;
-        final float green = (remEnc % 10) / 9.f;
-        remEnc /= 10;
-        final float red = (remEnc % 10) / 9.f;
-        remEnc /= 10;
-        color.set(red, green, blue);
-
-        bright = (remEnc % 10) / 9.f;
-        remEnc /= 10;
-        size = remEnc % 10;
-        remEnc /= 10;
-        invert = (remEnc == 1);
-
-        dirty = true;
-    }
-
-    /**
-     * Reset all recalculated values. This should be done before the light
-     * source object is put into the cache for later usage.
-     */
-    private void resetShadows() {
-        for (int i = 0; i < intensity.length; ++i) {
-            for (int j = 0; j < intensity.length; ++j) {
-                intensity[j][i] = 0;
-            }
         }
     }
 }

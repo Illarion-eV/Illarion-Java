@@ -18,14 +18,14 @@
  */
 package illarion.graphics.lwjgl;
 
+import illarion.graphics.Graphics;
+import illarion.graphics.SpriteColor;
+import illarion.graphics.generic.AbstractDrawer;
+
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.SpriteColor;
-import illarion.graphics.generic.AbstractDrawer;
 
 /**
  * The LWJGL implementation of the drawer interface that is used to draw some
@@ -45,7 +45,7 @@ public final class DrawerLWJGL extends AbstractDrawer {
      * The float buffer that is used to draw the colors on the screen.
      */
     private final FloatBuffer colorBuffer = BufferUtils.createFloatBuffer(32);
-    
+
     /**
      * Draw a simple dot at a specified location on the screen.
      * 
@@ -58,7 +58,8 @@ public final class DrawerLWJGL extends AbstractDrawer {
     public void drawDot(final int x, final int y, final float size,
         final SpriteColor color) {
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWDOT);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWDOT);
         GL11.glPointSize(size / 2);
 
         color.setActiveColor();
@@ -85,7 +86,8 @@ public final class DrawerLWJGL extends AbstractDrawer {
     public void drawLine(final int x1, final int y1, final int x2,
         final int y2, final float width, final SpriteColor color) {
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWLINE);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWLINE);
 
         GL11.glLineWidth(width);
         color.setActiveColor();
@@ -121,7 +123,8 @@ public final class DrawerLWJGL extends AbstractDrawer {
         final int y2, final int x3, final int y3, final int x4, final int y4,
         final SpriteColor color) {
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWPOLY);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWPOLY);
         color.setActiveColor();
 
         buffer.clear();
@@ -154,7 +157,8 @@ public final class DrawerLWJGL extends AbstractDrawer {
         final int y2, final int x3, final int y3, final int x4, final int y4,
         final SpriteColor color) {
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWPOLY);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWPOLY);
         color.setActiveColor();
 
         buffer.clear();
@@ -183,7 +187,8 @@ public final class DrawerLWJGL extends AbstractDrawer {
     public void drawRectangle(final int x1, final int y1, final int x2,
         final int y2, final SpriteColor color) {
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWOTHER);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWOTHER);
         color.setActiveColor();
 
         buffer.clear();
@@ -196,7 +201,7 @@ public final class DrawerLWJGL extends AbstractDrawer {
         GL11.glVertexPointer(2, 0, buffer);
         GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
     }
-    
+
     /**
      * Draw a rectangle with different colors on each edge.
      * 
@@ -211,33 +216,35 @@ public final class DrawerLWJGL extends AbstractDrawer {
      *            rectangle
      */
     @Override
-    public void drawRectangle(final int x1, final int y1, final int x2, final int y2,
-        final SpriteColor topLeftColor, final SpriteColor topRightColor,
-        final SpriteColor bottomLeftColor, final SpriteColor bottomRightColor) {
+    public void drawRectangle(final int x1, final int y1, final int x2,
+        final int y2, final SpriteColor topLeftColor,
+        final SpriteColor topRightColor, final SpriteColor bottomLeftColor,
+        final SpriteColor bottomRightColor) {
 
-            DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWOTHERCOLOR);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWOTHERCOLOR);
 
-            buffer.clear();
-            colorBuffer.clear();
-            
-            buffer.put(x1).put(y1);
-            topLeftColor.storeRGBA(colorBuffer);
-            
-            buffer.put(x1).put(y2);
-            bottomLeftColor.storeRGBA(colorBuffer);
-            
-            buffer.put(x2).put(y1);
-            topRightColor.storeRGBA(colorBuffer);
-            
-            buffer.put(x2).put(y2);
-            bottomRightColor.storeRGBA(colorBuffer);
-            
-            buffer.flip();
-            colorBuffer.flip();
+        buffer.clear();
+        colorBuffer.clear();
 
-            GL11.glVertexPointer(2, 0, buffer);
-            GL11.glColorPointer(4, 0, colorBuffer);
-            GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
+        buffer.put(x1).put(y1);
+        topLeftColor.storeRGBA(colorBuffer);
+
+        buffer.put(x1).put(y2);
+        bottomLeftColor.storeRGBA(colorBuffer);
+
+        buffer.put(x2).put(y1);
+        topRightColor.storeRGBA(colorBuffer);
+
+        buffer.put(x2).put(y2);
+        bottomRightColor.storeRGBA(colorBuffer);
+
+        buffer.flip();
+        colorBuffer.flip();
+
+        GL11.glVertexPointer(2, 0, buffer);
+        GL11.glColorPointer(4, 0, colorBuffer);
+        GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
     }
 
     /**
@@ -255,7 +262,8 @@ public final class DrawerLWJGL extends AbstractDrawer {
     public void drawRectangleFrame(final int x1, final int y1, final int x2,
         final int y2, final float width, final SpriteColor color) {
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWOTHER);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWOTHER);
         color.setActiveColor();
 
         GL11.glLineWidth(width);
@@ -297,7 +305,8 @@ public final class DrawerLWJGL extends AbstractDrawer {
             return;
         }
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWOTHER);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWOTHER);
         color.setActiveColor();
 
         buffer.clear();
@@ -350,7 +359,8 @@ public final class DrawerLWJGL extends AbstractDrawer {
             return;
         }
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWLINE);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWLINE);
         color.setActiveColor();
 
         GL11.glLineWidth(width);
@@ -404,7 +414,8 @@ public final class DrawerLWJGL extends AbstractDrawer {
     public void drawTriangle(final int x1, final int y1, final int x2,
         final int y2, final int x3, final int y3, final SpriteColor color) {
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWOTHER);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWOTHER);
         color.setActiveColor();
 
         buffer.clear();
@@ -425,7 +436,8 @@ public final class DrawerLWJGL extends AbstractDrawer {
      */
     @Override
     public void drawTriangles(final FloatBuffer coords, final SpriteColor color) {
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWOTHER);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWOTHER);
         color.setActiveColor();
 
         GL11.glVertexPointer(2, 0, coords);

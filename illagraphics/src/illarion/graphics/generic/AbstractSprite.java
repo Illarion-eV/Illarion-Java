@@ -55,6 +55,31 @@ public abstract class AbstractSprite implements Sprite {
     }
 
     /**
+     * Get the count of drawn textures.
+     * 
+     * @return the count of drawn textures
+     */
+    public static int getDrawnObjects() {
+        return lastDrawnTex;
+    }
+
+    /**
+     * This function is supposed to be called, when ever a texture is drawn. Its
+     * used to generate the statistics.
+     */
+    protected static void reportDrawTexture() {
+        drawnTextures++;
+    }
+
+    /**
+     * Reset the count of drawn objects and update the readable value.
+     */
+    public static void resetDrawCount() {
+        lastDrawnTex = drawnTextures;
+        drawnTextures = 0;
+    }
+
+    /**
      * The horizontal align that is used at rendering this sprite.
      */
     private HAlign hAlignUsed;
@@ -114,31 +139,6 @@ public abstract class AbstractSprite implements Sprite {
     }
 
     /**
-     * Get the count of drawn textures.
-     * 
-     * @return the count of drawn textures
-     */
-    public static int getDrawnObjects() {
-        return lastDrawnTex;
-    }
-
-    /**
-     * Reset the count of drawn objects and update the readable value.
-     */
-    public static void resetDrawCount() {
-        lastDrawnTex = drawnTextures;
-        drawnTextures = 0;
-    }
-
-    /**
-     * This function is supposed to be called, when ever a texture is drawn. Its
-     * used to generate the statistics.
-     */
-    protected static void reportDrawTexture() {
-        drawnTextures++;
-    }
-
-    /**
      * Add a texture to the sprite. This texture needs to by a LWJGL
      * implementation of a texture.
      * 
@@ -170,6 +170,38 @@ public abstract class AbstractSprite implements Sprite {
         textures[textures.length - unsetTextures] =
             (AbstractTexture) newTexture;
         unsetTextures--;
+    }
+
+    /**
+     * Get the additional offset that is caused by the align of the sprite. This
+     * function returns the x share of the offset caused by the align.
+     * 
+     * @param width the width of the image that is drawn
+     * @return the x share of the offset caused by the sprite align
+     */
+    protected final int getAlignOffsetX(final int width) {
+        if (hAlignUsed == HAlign.center) {
+            return -(width >> 1);
+        } else if (hAlignUsed == HAlign.right) {
+            return -width;
+        }
+        return 0;
+    }
+
+    /**
+     * Get the additional offset that is caused by the align of the sprite. This
+     * function returns the y share of the offset caused by the align.
+     * 
+     * @param height the height of the image that is drawn
+     * @return the y share of the offset caused by the sprite align
+     */
+    protected final int getAlignOffsetY(final int height) {
+        if (vAlignUsed == VAlign.middle) {
+            return -(height >> 1);
+        } else if (vAlignUsed == VAlign.top) {
+            return -height;
+        }
+        return 0;
     }
 
     /**
@@ -238,6 +270,33 @@ public abstract class AbstractSprite implements Sprite {
     }
 
     /**
+     * Get the uncorrected offset of this sprite.
+     * 
+     * @return the raw sprite offset
+     */
+    protected final int getRawOffsetX() {
+        return offsetX;
+    }
+
+    /**
+     * Get the uncorrected offset of this sprite.
+     * 
+     * @return the raw sprite offset
+     */
+    protected final int getRawOffsetY() {
+        return offsetY;
+    }
+
+    /**
+     * Get the rotation that is applied to this sprite.
+     * 
+     * @return the rotation applied to this sprite
+     */
+    protected final float getRotation() {
+        return rotation;
+    }
+
+    /**
      * Get the offset in X direction of the sprite in case its rendered with a
      * set scaling value.
      * 
@@ -302,6 +361,16 @@ public abstract class AbstractSprite implements Sprite {
     }
 
     /**
+     * Get if the texture on the sprite is supposed to be displayed mirrored.
+     * 
+     * @return <code>true</code> in case the texture needs to be displayed
+     *         mirrored
+     */
+    protected final boolean isMirrored() {
+        return mirror;
+    }
+
+    /**
      * This function cleans up all textures of the sprite. So all textures get
      * removed from the sprite after this call. This should only be called in
      * case the sprite is not used anymore for sure.
@@ -362,74 +431,5 @@ public abstract class AbstractSprite implements Sprite {
     @Override
     public final void setRotation(final float degree) {
         rotation = degree;
-    }
-
-    /**
-     * Get the additional offset that is caused by the align of the sprite. This
-     * function returns the x share of the offset caused by the align.
-     * 
-     * @param width the width of the image that is drawn
-     * @return the x share of the offset caused by the sprite align
-     */
-    protected final int getAlignOffsetX(final int width) {
-        if (hAlignUsed == HAlign.center) {
-            return -(width >> 1);
-        } else if (hAlignUsed == HAlign.right) {
-            return -width;
-        }
-        return 0;
-    }
-
-    /**
-     * Get the additional offset that is caused by the align of the sprite. This
-     * function returns the y share of the offset caused by the align.
-     * 
-     * @param height the height of the image that is drawn
-     * @return the y share of the offset caused by the sprite align
-     */
-    protected final int getAlignOffsetY(final int height) {
-        if (vAlignUsed == VAlign.middle) {
-            return -(height >> 1);
-        } else if (vAlignUsed == VAlign.top) {
-            return -height;
-        }
-        return 0;
-    }
-
-    /**
-     * Get the uncorrected offset of this sprite.
-     * 
-     * @return the raw sprite offset
-     */
-    protected final int getRawOffsetX() {
-        return offsetX;
-    }
-
-    /**
-     * Get the uncorrected offset of this sprite.
-     * 
-     * @return the raw sprite offset
-     */
-    protected final int getRawOffsetY() {
-        return offsetY;
-    }
-
-    /**
-     * Get the rotation that is applied to this sprite.
-     * 
-     * @return the rotation applied to this sprite
-     */
-    protected final float getRotation() {
-        return rotation;
-    }
-
-    /**
-     * Get if the texture on the sprite is supposed to be displayed mirrored.
-     * 
-     * @return <code>true</code> in case the texture needs to be displayed
-     *         mirrored
-     */
-    protected final boolean isMirrored() {
-        return mirror;
     }
 }

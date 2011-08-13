@@ -18,6 +18,10 @@
  */
 package illarion.graphics.jogl.render;
 
+import illarion.graphics.SpriteColor;
+import illarion.graphics.jogl.DriverSettingsJOGL;
+import illarion.graphics.jogl.TextureJOGL;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -27,10 +31,6 @@ import javax.media.opengl.GL2ES1;
 import javax.media.opengl.glu.GLU;
 
 import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
-
-import illarion.graphics.SpriteColor;
-import illarion.graphics.jogl.DriverSettingsJOGL;
-import illarion.graphics.jogl.TextureJOGL;
 
 /**
  * This texture render uses array pointers to render a texture.
@@ -44,6 +44,21 @@ public final class TextureRenderPointer extends AbstractTextureRender {
      * The singleton instance of this class.
      */
     private static TextureRenderPointer instance;
+
+    /**
+     * Get the singleton instance of this class.
+     * 
+     * @return the singleton instance of the texture pointer render
+     */
+    public static TextureRenderPointer getInstance() {
+        if (instance == null) {
+            final GL gl = GLU.getCurrentGL();
+            if (gl.isGL2ES1() || gl.hasGLSL()) {
+                instance = new TextureRenderPointer();
+            }
+        }
+        return instance;
+    }
 
     /**
      * The buffer that is used to store the texture coordinate data.
@@ -76,21 +91,6 @@ public final class TextureRenderPointer extends AbstractTextureRender {
     }
 
     /**
-     * Get the singleton instance of this class.
-     * 
-     * @return the singleton instance of the texture pointer render
-     */
-    public static TextureRenderPointer getInstance() {
-        if (instance == null) {
-            final GL gl = GLU.getCurrentGL();
-            if (gl.isGL2ES1() || gl.hasGLSL()) {
-                instance = new TextureRenderPointer();
-            }
-        }
-        return instance;
-    }
-
-    /**
      * Draw a texture using buffer pointers and draw arrays.
      * 
      * @param x the x coordinate of the texture
@@ -116,8 +116,10 @@ public final class TextureRenderPointer extends AbstractTextureRender {
             gl = GLU.getCurrentGL().getGL2ES1();
         }
 
-        DriverSettingsJOGL.getInstance().enableMode(gl, DriverSettingsJOGL.Modes.DRAWTEXTUREPOINTER);
-        DriverSettingsJOGL.getInstance().bindTexture(gl, texture.getTextureID());
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWTEXTUREPOINTER);
+        DriverSettingsJOGL.getInstance().bindTexture(gl,
+            texture.getTextureID());
 
         color.setActiveColor();
         gl.glPushMatrix();

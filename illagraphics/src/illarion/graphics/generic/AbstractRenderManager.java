@@ -18,14 +18,14 @@
  */
 package illarion.graphics.generic;
 
+import illarion.graphics.RenderManager;
+import illarion.graphics.RenderTask;
+
 import java.util.List;
 
 import javolution.util.FastTable;
 
 import org.apache.log4j.Logger;
-
-import illarion.graphics.RenderManager;
-import illarion.graphics.RenderTask;
 
 /**
  * Generic render manager implementation that implements the parts of the render
@@ -72,14 +72,6 @@ public abstract class AbstractRenderManager implements RenderManager {
     }
 
     /**
-     * Set that the rendering started. After this the RenderTasks will be
-     * executed during the regular render cycles.
-     */
-    public final void renderStarted() {
-        renderStarted = true;
-    }
-
-    /**
      * Draw all graphics.
      * 
      * @param delta the time since the last render operation
@@ -115,5 +107,13 @@ public abstract class AbstractRenderManager implements RenderManager {
      */
     protected final boolean isRenderStarted() {
         return renderStarted;
+    }
+
+    /**
+     * Set that the rendering started. After this the RenderTasks will be
+     * executed during the regular render cycles.
+     */
+    public final void renderStarted() {
+        renderStarted = true;
     }
 }

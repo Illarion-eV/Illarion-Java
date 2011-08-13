@@ -18,11 +18,11 @@
  */
 package illarion.graphics.lwjgl.render;
 
-import org.lwjgl.opengl.GL11;
-
 import illarion.graphics.SpriteColor;
 import illarion.graphics.lwjgl.DriverSettingsLWJGL;
 import illarion.graphics.lwjgl.TextureLWJGL;
+
+import org.lwjgl.opengl.GL11;
 
 /**
  * This texture render uses the immediate methods to render a texture.
@@ -39,20 +39,20 @@ public final class TextureRenderImmediate extends AbstractTextureRender {
         new TextureRenderImmediate();
 
     /**
-     * Private constructor to avoid anything creating a instance of this
-     * renderer but singleton instance.
-     */
-    private TextureRenderImmediate() {
-        // nothing to do
-    }
-
-    /**
      * Get the singleton instance of this class.
      * 
      * @return the singleton instance of the immediate texture render
      */
     public static TextureRenderImmediate getInstance() {
         return INSTANCE;
+    }
+
+    /**
+     * Private constructor to avoid anything creating a instance of this
+     * renderer but singleton instance.
+     */
+    private TextureRenderImmediate() {
+        // nothing to do
     }
 
     /**
@@ -73,7 +73,8 @@ public final class TextureRenderImmediate extends AbstractTextureRender {
         final float width, final float height, final TextureLWJGL texture,
         final SpriteColor color, final boolean mirror, final float rotation) {
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWTEXTURE);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWTEXTURE);
         DriverSettingsLWJGL.getInstance().bindTexture(texture.getTextureID());
         color.setActiveColor();
 

@@ -356,6 +356,20 @@ public interface SpriteColor extends Cloneable {
     void setRed(int newRed);
 
     /**
+     * Store all color components but alpha in a float buffer.
+     * 
+     * @param buffer the buffer that is to hold the color values
+     */
+    void storeRGB(FloatBuffer buffer);
+
+    /**
+     * Store all color components in a float buffer.
+     * 
+     * @param buffer the buffer that is to hold the color values
+     */
+    void storeRGBA(FloatBuffer buffer);
+
+    /**
      * Subtract a value to each color component of this color. The value should
      * be between 0.f and 1.f
      * 
@@ -414,18 +428,4 @@ public interface SpriteColor extends Cloneable {
      * @param sub the value that is subtracted to the alpha value
      */
     void subAlpha(int sub);
-    
-    /**
-     * Store all color components in a float buffer.
-     * 
-     * @param buffer the buffer that is to hold the color values
-     */
-    void storeRGBA(FloatBuffer buffer);
-    
-    /**
-     * Store all color components but alpha in a float buffer.
-     * 
-     * @param buffer the buffer that is to hold the color values
-     */
-    void storeRGB(FloatBuffer buffer);
 }

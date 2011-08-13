@@ -147,6 +147,24 @@ public abstract class AbstractTexture implements Texture {
     }
 
     /**
+     * Calculate the relative values in this class. After calling this function
+     * all values that are relative to the size of the atlas are valid. Has to
+     * be called for sure before this values are read.
+     */
+    private void calculateRatio() {
+        if (texHeight != 0) {
+            relY2 = ((float) (y + height)) / texHeight;
+            relY1 = ((float) y) / texHeight;
+        }
+        if (texWidth != 0) {
+            relX2 = ((float) (x + width)) / texWidth;
+            relX1 = ((float) x) / texWidth;
+        }
+
+        textureDataChanged();
+    }
+
+    /**
      * Get the height of the original image.
      * 
      * @return The height of the original image.
@@ -365,22 +383,4 @@ public abstract class AbstractTexture implements Texture {
      * This function is called in case the informations of this textures change.
      */
     protected abstract void textureDataChanged();
-
-    /**
-     * Calculate the relative values in this class. After calling this function
-     * all values that are relative to the size of the atlas are valid. Has to
-     * be called for sure before this values are read.
-     */
-    private void calculateRatio() {
-        if (texHeight != 0) {
-            relY2 = ((float) (y + height)) / texHeight;
-            relY1 = ((float) y) / texHeight;
-        }
-        if (texWidth != 0) {
-            relX2 = ((float) (x + width)) / texWidth;
-            relX1 = ((float) x) / texWidth;
-        }
-
-        textureDataChanged();
-    }
 }

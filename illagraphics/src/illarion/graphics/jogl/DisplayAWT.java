@@ -18,6 +18,10 @@
  */
 package illarion.graphics.jogl;
 
+import illarion.graphics.Graphics;
+import illarion.graphics.RenderTask;
+import illarion.graphics.generic.AbstractTextureAtlas;
+
 import java.awt.Component;
 
 import javax.media.opengl.GL;
@@ -36,10 +40,6 @@ import org.apache.log4j.Logger;
 import com.jogamp.opengl.util.AnimatorBase;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.RenderTask;
-import illarion.graphics.generic.AbstractTextureAtlas;
 
 /**
  * This class defines the display canvas that is used to render the graphics in
@@ -136,6 +136,86 @@ public final class DisplayAWT extends GLCanvas implements Display,
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         manager.draw();
+    }
+
+    /**
+     * Display all informations about the currently activated OpenGL mode.
+     */
+    @SuppressWarnings("nls")
+    private void displayOpenGLStatusInfo() {
+        final GLCapabilitiesImmutable activeCaps = getChosenGLCapabilities();
+        doubleBuffered = activeCaps.getDoubleBuffered();
+
+        if (activeCaps.getHardwareAccelerated()) {
+            LOGGER.debug("OpenGL Hardware acceleration active");
+        } else {
+            LOGGER.warn("OpenGL Hardware acceleration inactive");
+        }
+        LOGGER.debug("Active Samples: "
+            + Integer.toString(activeCaps.getNumSamples()));
+
+        if (activeCaps.getGLProfile().isGLES1()) {
+            LOGGER.debug("OpenGL ES 1.x supported");
+        } else {
+            LOGGER.debug("OpenGL ES 1.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGLES2()) {
+            LOGGER.debug("OpenGL ES 2.x supported");
+        } else {
+            LOGGER.debug("OpenGL ES 2.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGL2()) {
+            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 supported");
+        } else {
+            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 not supported");
+        }
+        if (activeCaps.getGLProfile().isGL3()) {
+            LOGGER.debug("OpenGL 3.x supported");
+        } else {
+            LOGGER.debug("OpenGL 3.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGL4()) {
+            LOGGER.debug("OpenGL 4.x supported");
+        } else {
+            LOGGER.debug("OpenGL 4.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGL2GL3()) {
+            LOGGER.debug("OpenGL 2.x, 3.x supported");
+        } else {
+            LOGGER.debug("OpenGL 2.x, 3.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGL2ES1()) {
+            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 1.x supported");
+        } else {
+            LOGGER
+                .debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 1.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGL2ES2()) {
+            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 2.x supported");
+        } else {
+            LOGGER
+                .debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 2.x not supported");
+        }
+        if (activeCaps.getGLProfile().hasGLSL()) {
+            LOGGER.debug("OpenGL shader language supported");
+        } else {
+            LOGGER.debug("OpenGL shader language not supported");
+        }
+        if (activeCaps.getGLProfile().usesNativeGLES()) {
+            LOGGER.debug("OpenGL ES native supported");
+        } else {
+            LOGGER.debug("OpenGL ES native not supported");
+        }
+        if (activeCaps.getGLProfile().usesNativeGLES1()) {
+            LOGGER.debug("OpenGL ES 1.x native supported");
+        } else {
+            LOGGER.debug("OpenGL ES 1.x native not supported");
+        }
+        if (activeCaps.getGLProfile().usesNativeGLES2()) {
+            LOGGER.debug("OpenGL ES 2.x native supported");
+        } else {
+            LOGGER.debug("OpenGL ES 2.x native not supported");
+        }
     }
 
     /**
@@ -297,114 +377,6 @@ public final class DisplayAWT extends GLCanvas implements Display,
         }
     }
 
-    @Override
-    public void shutdown() {
-        destroy();
-    }
-
-    /**
-     * Overwritten update function to ensure the paint function is called.
-     * 
-     * @param g the graphics object that is used to draw
-     */
-    @Override
-    public void update(final java.awt.Graphics g) {
-        final GLContext context = getContext();
-        if (context == null) {
-            return;
-        }
-
-        boolean releaseContext = false;
-        if (!context.isCurrent()) {
-            context.makeCurrent();
-            releaseContext = true;
-        }
-        paint(g);
-        if (releaseContext) {
-            context.release();
-        }
-    }
-
-    /**
-     * Display all informations about the currently activated OpenGL mode.
-     */
-    @SuppressWarnings("nls")
-    private void displayOpenGLStatusInfo() {
-        final GLCapabilitiesImmutable activeCaps = getChosenGLCapabilities();
-        doubleBuffered = activeCaps.getDoubleBuffered();
-
-        if (activeCaps.getHardwareAccelerated()) {
-            LOGGER.debug("OpenGL Hardware acceleration active");
-        } else {
-            LOGGER.warn("OpenGL Hardware acceleration inactive");
-        }
-        LOGGER.debug("Active Samples: "
-            + Integer.toString(activeCaps.getNumSamples()));
-
-        if (activeCaps.getGLProfile().isGLES1()) {
-            LOGGER.debug("OpenGL ES 1.x supported");
-        } else {
-            LOGGER.debug("OpenGL ES 1.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGLES2()) {
-            LOGGER.debug("OpenGL ES 2.x supported");
-        } else {
-            LOGGER.debug("OpenGL ES 2.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2()) {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 supported");
-        } else {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 not supported");
-        }
-        if (activeCaps.getGLProfile().isGL3()) {
-            LOGGER.debug("OpenGL 3.x supported");
-        } else {
-            LOGGER.debug("OpenGL 3.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL4()) {
-            LOGGER.debug("OpenGL 4.x supported");
-        } else {
-            LOGGER.debug("OpenGL 4.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2GL3()) {
-            LOGGER.debug("OpenGL 2.x, 3.x supported");
-        } else {
-            LOGGER.debug("OpenGL 2.x, 3.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2ES1()) {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 1.x supported");
-        } else {
-            LOGGER
-                .debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 1.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2ES2()) {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 2.x supported");
-        } else {
-            LOGGER
-                .debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 2.x not supported");
-        }
-        if (activeCaps.getGLProfile().hasGLSL()) {
-            LOGGER.debug("OpenGL shader language supported");
-        } else {
-            LOGGER.debug("OpenGL shader language not supported");
-        }
-        if (activeCaps.getGLProfile().usesNativeGLES()) {
-            LOGGER.debug("OpenGL ES native supported");
-        } else {
-            LOGGER.debug("OpenGL ES native not supported");
-        }
-        if (activeCaps.getGLProfile().usesNativeGLES1()) {
-            LOGGER.debug("OpenGL ES 1.x native supported");
-        } else {
-            LOGGER.debug("OpenGL ES 1.x native not supported");
-        }
-        if (activeCaps.getGLProfile().usesNativeGLES2()) {
-            LOGGER.debug("OpenGL ES 2.x native supported");
-        } else {
-            LOGGER.debug("OpenGL ES 2.x native not supported");
-        }
-    }
-
     /**
      * Setup the viewport correctly in case it was changed.
      * 
@@ -447,6 +419,34 @@ public final class DisplayAWT extends GLCanvas implements Display,
 
         if (releaseContext) {
             drawable.getContext().release();
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        destroy();
+    }
+
+    /**
+     * Overwritten update function to ensure the paint function is called.
+     * 
+     * @param g the graphics object that is used to draw
+     */
+    @Override
+    public void update(final java.awt.Graphics g) {
+        final GLContext context = getContext();
+        if (context == null) {
+            return;
+        }
+
+        boolean releaseContext = false;
+        if (!context.isCurrent()) {
+            context.makeCurrent();
+            releaseContext = true;
+        }
+        paint(g);
+        if (releaseContext) {
+            context.release();
         }
     }
 }

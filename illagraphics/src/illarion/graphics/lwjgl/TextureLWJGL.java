@@ -18,10 +18,10 @@
  */
 package illarion.graphics.lwjgl;
 
-import org.lwjgl.opengl.GL11;
-
 import illarion.graphics.TextureAtlas;
 import illarion.graphics.generic.AbstractTexture;
+
+import org.lwjgl.opengl.GL11;
 
 /**
  * The implementation of the Texture for usage with LWJGL.

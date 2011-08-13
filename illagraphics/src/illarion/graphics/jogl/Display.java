@@ -18,9 +18,9 @@
  */
 package illarion.graphics.jogl;
 
-import javax.media.opengl.GLAutoDrawable;
-
 import illarion.graphics.RenderTask;
+
+import javax.media.opengl.GLAutoDrawable;
 
 /**
  * This display is the interface for the different display implementations.

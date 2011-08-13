@@ -18,9 +18,9 @@
  */
 package illarion.graphics.lwjgl;
 
-import org.lwjgl.opengl.GL11;
-
 import illarion.graphics.Graphics;
+
+import org.lwjgl.opengl.GL11;
 
 /**
  * This is a helper class for the LWJGL render to switch the current render

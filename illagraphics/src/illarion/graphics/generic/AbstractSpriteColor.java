@@ -18,12 +18,11 @@
  */
 package illarion.graphics.generic;
 
-import java.nio.FloatBuffer;
-
 import illarion.common.util.FastMath;
-
 import illarion.graphics.Graphics;
 import illarion.graphics.SpriteColor;
+
+import java.nio.FloatBuffer;
 
 /**
  * Generic sprite color implementation that implements the parts of the sprite
@@ -306,6 +305,18 @@ public abstract class AbstractSpriteColor implements SpriteColor {
             && (blue == target.getBluei()) && (alpha == target.getAlphai()));
     }
 
+    /**
+     * Check and fix the color if needed. Limit the color values to the given
+     * borders.
+     */
+    protected final void checkColor() {
+        red = FastMath.clamp(red, COLOR_MIN, COLOR_MAX);
+        green = FastMath.clamp(green, COLOR_MIN, COLOR_MAX);
+        blue = FastMath.clamp(blue, COLOR_MIN, COLOR_MAX);
+        alpha = FastMath.clamp(alpha, COLOR_MIN, COLOR_MAX);
+        dirty = false;
+    }
+
     @Override
     public AbstractSpriteColor clone() throws CloneNotSupportedException {
         return (AbstractSpriteColor) super.clone();
@@ -517,6 +528,15 @@ public abstract class AbstractSpriteColor implements SpriteColor {
         red = SpriteColor.COLOR_MAX - red;
         green = SpriteColor.COLOR_MAX - green;
         blue = SpriteColor.COLOR_MAX - blue;
+    }
+
+    /**
+     * Check if the color is currently dirty and needs to be cleaned up.
+     * 
+     * @return <code>true</code> in case the color is dirty
+     */
+    protected final boolean isDirty() {
+        return dirty;
     }
 
     /**
@@ -758,6 +778,26 @@ public abstract class AbstractSpriteColor implements SpriteColor {
     }
 
     /**
+     * Store the color excluding the alpha channel at the current position of a
+     * float buffer.
+     */
+    @Override
+    public void storeRGB(final FloatBuffer buffer) {
+        buffer.put(getRedf());
+        buffer.put(getGreenf());
+        buffer.put(getBluef());
+    }
+
+    /**
+     * Store the color at the current position of a float buffer.
+     */
+    @Override
+    public void storeRGBA(final FloatBuffer buffer) {
+        storeRGB(buffer);
+        buffer.put(getAlphaf());
+    }
+
+    /**
      * Subtract a value to each color component of this color. The value should
      * be between 0.f and 1.f
      * 
@@ -855,46 +895,5 @@ public abstract class AbstractSpriteColor implements SpriteColor {
     public final void subAlpha(final int sub) {
         alpha -= sub;
         dirty = true;
-    }
-
-    /**
-     * Check and fix the color if needed. Limit the color values to the given
-     * borders.
-     */
-    protected final void checkColor() {
-        red = FastMath.clamp(red, COLOR_MIN, COLOR_MAX);
-        green = FastMath.clamp(green, COLOR_MIN, COLOR_MAX);
-        blue = FastMath.clamp(blue, COLOR_MIN, COLOR_MAX);
-        alpha = FastMath.clamp(alpha, COLOR_MIN, COLOR_MAX);
-        dirty = false;
-    }
-
-    /**
-     * Check if the color is currently dirty and needs to be cleaned up.
-     * 
-     * @return <code>true</code> in case the color is dirty
-     */
-    protected final boolean isDirty() {
-        return dirty;
-    }
-
-    /**
-     * Store the color at the current position of a float buffer.
-     */
-    @Override
-    public void storeRGBA(final FloatBuffer buffer) {
-        storeRGB(buffer);
-        buffer.put(getAlphaf());
-    }
-
-    /**
-     * Store the color excluding the alpha channel at the current position of a
-     * float buffer.
-     */
-    @Override
-    public void storeRGB(final FloatBuffer buffer) {
-        buffer.put(getRedf());
-        buffer.put(getGreenf());
-        buffer.put(getBluef());
     }
 }

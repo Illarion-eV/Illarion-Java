@@ -18,6 +18,14 @@
  */
 package illarion.graphics.lwjgl;
 
+import illarion.common.util.Rectangle;
+import illarion.graphics.BlendingMode;
+import illarion.graphics.GraphicResolution;
+import illarion.graphics.Graphics;
+import illarion.graphics.RenderDisplay;
+import illarion.graphics.generic.AbstractSprite;
+import illarion.graphics.lwjgl.render.AbstractTextureRender;
+
 import java.awt.Canvas;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,15 +40,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
-
-import illarion.common.util.Rectangle;
-
-import illarion.graphics.BlendingMode;
-import illarion.graphics.GraphicResolution;
-import illarion.graphics.Graphics;
-import illarion.graphics.RenderDisplay;
-import illarion.graphics.generic.AbstractSprite;
-import illarion.graphics.lwjgl.render.AbstractTextureRender;
 
 /**
  * The LWJGL Render display implementation that allows accessing the LWJGL
@@ -76,6 +75,11 @@ public final class RenderDisplayLWJGL implements RenderDisplay { // NO_UCD
      */
     private final FastList<Rectangle> areaLimitsRaw =
         new FastList<Rectangle>();
+
+    /**
+     * The currently active blending mode.
+     */
+    private BlendingMode currentMode;
 
     /**
      * The list of found display types in the proper order.
@@ -134,6 +138,58 @@ public final class RenderDisplayLWJGL implements RenderDisplay { // NO_UCD
             }
         }
         GL11.glScalef(scale, scale, 1.f);
+    }
+
+    /**
+     * Clear the entire screen.
+     */
+    @Override
+    public void clearScreen() {
+        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+    }
+
+    /**
+     * Get all available display modes ordered by size.
+     * 
+     * @return the list of display modes ordered by size
+     */
+    @SuppressWarnings("nls")
+    private List<DisplayMode> getDisplayModes() {
+        if (displayModes != null) {
+            return displayModes;
+        }
+        try {
+            final DisplayMode[] modes = Display.getAvailableDisplayModes();
+            final List<DisplayMode> modesArray =
+                new ArrayList<DisplayMode>(modes.length);
+            for (final DisplayMode mode : modes) {
+                modesArray.add(mode);
+            }
+            Collections.sort(modesArray, new Comparator<DisplayMode>() {
+                @Override
+                public int compare(final DisplayMode o1, final DisplayMode o2) {
+                    if (o1.getBitsPerPixel() < o2.getBitsPerPixel()) {
+                        return -1;
+                    } else if (o1.getBitsPerPixel() > o2.getBitsPerPixel()) {
+                        return 1;
+                    }
+                    final int o1Size = o1.getWidth() * o1.getHeight();
+                    final int o2Size = o2.getWidth() * o2.getHeight();
+                    if (o1Size < o2Size) {
+                        return -1;
+                    } else if (o1Size > o2Size) {
+                        return 1;
+                    }
+                    return 0;
+                }
+            });
+            displayModes = modesArray;
+            return modesArray;
+        } catch (final LWJGLException e) {
+            LOGGER.error("Error fetching display modes", e);
+            return new ArrayList<DisplayMode>();
+        }
     }
 
     /**
@@ -314,6 +370,32 @@ public final class RenderDisplayLWJGL implements RenderDisplay { // NO_UCD
     }
 
     /**
+     * Set the render mode used by the display. This function does nothing in
+     * case the selected blending mode is already selected.
+     * 
+     * @param mode the new render mode
+     */
+    @Override
+    public void setBlendingMode(final BlendingMode mode) {
+        if (mode.equals(currentMode)) {
+            return;
+        }
+
+        GL11.glEnable(GL11.GL_BLEND);
+        switch (mode) {
+            case BLEND:
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA,
+                    GL11.GL_ONE_MINUS_SRC_ALPHA);
+                break;
+            case MULTIPLY:
+                GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_ZERO);
+                break;
+        }
+
+        currentMode = mode;
+    }
+
+    /**
      * Set the used screen resolution.
      * 
      * @param resolution the display settings to be used to render the screen.
@@ -375,6 +457,65 @@ public final class RenderDisplayLWJGL implements RenderDisplay { // NO_UCD
     @Override
     public void setDisplayOptions(final String key, final String value) {
         // nothing to do
+    }
+
+    /**
+     * Change the size of this display. The sole reason for this function is be
+     * in existence is to avoid the creating of synthetic methods.
+     * 
+     * @param width the new width
+     * @param height the new height
+     */
+    protected void setSize(final int width, final int height) {
+        resWidth = width;
+        resHeight = height;
+    }
+
+    /**
+     * Setup the openGL render environment. Such as the view port the matrix for
+     * the orthogonal view and so on.
+     */
+    protected void setupOpenGL() {
+        if (!Display.isCreated()) {
+            return;
+        }
+
+        // set the basic view port of the game. This should be the full size of
+        // the client window
+        GL11.glViewport(0, 0, resWidth, resHeight);
+
+        // enable alpha blending based on the picture alpha channel
+        setBlendingMode(BlendingMode.BLEND);
+
+        // disable death test, we work in 2D anyway, there is no depth
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+        // switch to projection matrix to set up the orthogonal view that we
+        // need
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+
+        // load the identity matrix to we have a clean start
+        GL11.glLoadIdentity();
+
+        // setup the orthogonal view
+        GLU.gluOrtho2D(0, resWidth, 0, resHeight);
+
+        // set clear color to black
+        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+        // sync frame (only works on windows)
+        if (Graphics.NO_SLOWDOWN) {
+            Display.setVSyncEnabled(false);
+        } else {
+            Display.setVSyncEnabled(true);
+        }
+
+        // clean up the screen
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+        // switch to model view matrix, so we can place the sprites correctly
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glLoadIdentity();
     }
 
     @Override
@@ -503,108 +644,6 @@ public final class RenderDisplayLWJGL implements RenderDisplay { // NO_UCD
     }
 
     /**
-     * Change the size of this display. The sole reason for this function is be
-     * in existence is to avoid the creating of synthetic methods.
-     * 
-     * @param width the new width
-     * @param height the new height
-     */
-    protected void setSize(final int width, final int height) {
-        resWidth = width;
-        resHeight = height;
-    }
-
-    /**
-     * Setup the openGL render environment. Such as the view port the matrix for
-     * the orthogonal view and so on.
-     */
-    protected void setupOpenGL() {
-        if (!Display.isCreated()) {
-            return;
-        }
-
-        // set the basic view port of the game. This should be the full size of
-        // the client window
-        GL11.glViewport(0, 0, resWidth, resHeight);
-
-        // enable alpha blending based on the picture alpha channel
-        setBlendingMode(BlendingMode.BLEND);
-
-        // disable death test, we work in 2D anyway, there is no depth
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-        // switch to projection matrix to set up the orthogonal view that we
-        // need
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-
-        // load the identity matrix to we have a clean start
-        GL11.glLoadIdentity();
-
-        // setup the orthogonal view
-        GLU.gluOrtho2D(0, resWidth, 0, resHeight);
-
-        // set clear color to black
-        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-        // sync frame (only works on windows)
-        if (Graphics.NO_SLOWDOWN) {
-            Display.setVSyncEnabled(false);
-        } else {
-            Display.setVSyncEnabled(true);
-        }
-
-        // clean up the screen
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
-        // switch to model view matrix, so we can place the sprites correctly
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        GL11.glLoadIdentity();
-    }
-
-    /**
-     * Get all available display modes ordered by size.
-     * 
-     * @return the list of display modes ordered by size
-     */
-    @SuppressWarnings("nls")
-    private List<DisplayMode> getDisplayModes() {
-        if (displayModes != null) {
-            return displayModes;
-        }
-        try {
-            final DisplayMode[] modes = Display.getAvailableDisplayModes();
-            final List<DisplayMode> modesArray =
-                new ArrayList<DisplayMode>(modes.length);
-            for (final DisplayMode mode : modes) {
-                modesArray.add(mode);
-            }
-            Collections.sort(modesArray, new Comparator<DisplayMode>() {
-                @Override
-                public int compare(final DisplayMode o1, final DisplayMode o2) {
-                    if (o1.getBitsPerPixel() < o2.getBitsPerPixel()) {
-                        return -1;
-                    } else if (o1.getBitsPerPixel() > o2.getBitsPerPixel()) {
-                        return 1;
-                    }
-                    final int o1Size = o1.getWidth() * o1.getHeight();
-                    final int o2Size = o2.getWidth() * o2.getHeight();
-                    if (o1Size < o2Size) {
-                        return -1;
-                    } else if (o1Size > o2Size) {
-                        return 1;
-                    }
-                    return 0;
-                }
-            });
-            displayModes = modesArray;
-            return modesArray;
-        } catch (final LWJGLException e) {
-            LOGGER.error("Error fetching display modes", e);
-            return new ArrayList<DisplayMode>();
-        }
-    }
-
-    /**
      * After a update of the sync frequency, update it to a new proper value at
      * or below the {@link #MAX_FREQUENCY} value.
      */
@@ -618,43 +657,4 @@ public final class RenderDisplayLWJGL implements RenderDisplay { // NO_UCD
         ((RenderManagerLWJGL) Graphics.getInstance().getRenderManager())
             .setTargetFPS(syncFreq);
     }
-
-    /**
-     * Clear the entire screen.
-     */
-	@Override
-	public void clearScreen() {
-	    GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-	}
-	
-	/**
-	 * The currently active blending mode.
-	 */
-	private BlendingMode currentMode;
-
-	/**
-	 * Set the render mode used by the display. This function does nothing in
-	 * case the selected blending mode is already selected.
-	 * 
-	 * @param mode the new render mode
-	 */
-	@Override
-	public void setBlendingMode(final BlendingMode mode) {
-		if (mode.equals(currentMode)) {
-			return;
-		}
-	
-        GL11.glEnable(GL11.GL_BLEND);
-		switch (mode) {
-		case BLEND:
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			break;
-		case MULTIPLY:
-			GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_ZERO);
-			break;
-		}
-		
-		currentMode = mode;
-	}
 }

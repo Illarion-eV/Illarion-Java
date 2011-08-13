@@ -18,11 +18,11 @@
  */
 package illarion.graphics.lwjgl.render;
 
-import org.apache.log4j.Logger;
-
 import illarion.graphics.SpriteColor;
 import illarion.graphics.lwjgl.GraphicsLWJGLException;
 import illarion.graphics.lwjgl.TextureLWJGL;
+
+import org.apache.log4j.Logger;
 
 /**
  * The abstract texture render chooses the real texture render to use. The

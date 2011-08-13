@@ -18,6 +18,10 @@
  */
 package illarion.graphics.jogl;
 
+import illarion.graphics.Graphics;
+import illarion.graphics.SpriteColor;
+import illarion.graphics.generic.AbstractDrawer;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -27,10 +31,6 @@ import javax.media.opengl.GL2ES1;
 import javax.media.opengl.glu.GLU;
 
 import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.SpriteColor;
-import illarion.graphics.generic.AbstractDrawer;
 
 /**
  * The JOGL implementation of the drawer interface that is used to draw some
@@ -272,10 +272,11 @@ public final class DrawerJOGL extends AbstractDrawer {
      *            rectangle
      */
     @Override
-    public void drawRectangle(final int x1, final int y1, final int x2, final int y2,
-        final SpriteColor topLeftColor, final SpriteColor topRightColor,
-        final SpriteColor bottomLeftColor, final SpriteColor bottomRightColor) {
-        
+    public void drawRectangle(final int x1, final int y1, final int x2,
+        final int y2, final SpriteColor topLeftColor,
+        final SpriteColor topRightColor, final SpriteColor bottomLeftColor,
+        final SpriteColor bottomRightColor) {
+
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
@@ -290,19 +291,19 @@ public final class DrawerJOGL extends AbstractDrawer {
 
             buffer.clear();
             colorBuffer.clear();
-            
+
             buffer.put(x1).put(y1);
             topLeftColor.storeRGBA(colorBuffer);
-            
+
             buffer.put(x1).put(y2);
             bottomLeftColor.storeRGBA(colorBuffer);
-            
+
             buffer.put(x2).put(y1);
             topRightColor.storeRGBA(colorBuffer);
-            
+
             buffer.put(x2).put(y2);
             bottomRightColor.storeRGBA(colorBuffer);
-            
+
             buffer.flip();
             colorBuffer.flip();
 

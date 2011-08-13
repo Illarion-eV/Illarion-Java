@@ -18,6 +18,10 @@
  */
 package illarion.graphics.common;
 
+import illarion.common.util.NoResourceException;
+import illarion.graphics.Graphics;
+import illarion.graphics.RenderableFont;
+
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,11 +33,6 @@ import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
 
-import illarion.common.util.NoResourceException;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.RenderableFont;
-
 /**
  * Class to load Fonts for the usage as OpenGL Font.
  * 
@@ -42,6 +41,22 @@ import illarion.graphics.RenderableFont;
  * @since 2.00
  */
 public final class FontLoader {
+
+    /**
+     * The root directory where the fonts are located.
+     */
+    @SuppressWarnings("nls")
+    private static final String FONT_ROOT = "data/gui/";
+
+    /**
+     * Singleton instance of the FontLoader.
+     */
+    private static final FontLoader INSTANCE = new FontLoader();
+
+    /**
+     * The logger instance that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(FontLoader.class);
 
     /**
      * The font name of the menu font.
@@ -62,20 +77,13 @@ public final class FontLoader {
     public static final String TEXT_FONT = "textFont";
 
     /**
-     * The root directory where the fonts are located.
+     * Get instance of singleton.
+     * 
+     * @return the instance of the singleton
      */
-    @SuppressWarnings("nls")
-    private static final String FONT_ROOT = "data/gui/";
-
-    /**
-     * Singleton instance of the FontLoader.
-     */
-    private static final FontLoader INSTANCE = new FontLoader();
-
-    /**
-     * The logger instance that takes care for the logging output of this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(FontLoader.class);
+    public static FontLoader getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * Storage of the loaded GL Fonts.
@@ -93,15 +101,6 @@ public final class FontLoader {
         fontTable.put(SMALL_FONT, loadFont(SMALL_FONT));
         fontTable.put(TEXT_FONT, loadFont(TEXT_FONT));
         fonts = fontTable;
-    }
-
-    /**
-     * Get instance of singleton.
-     * 
-     * @return the instance of the singleton
-     */
-    public static FontLoader getInstance() {
-        return INSTANCE;
     }
 
     /**

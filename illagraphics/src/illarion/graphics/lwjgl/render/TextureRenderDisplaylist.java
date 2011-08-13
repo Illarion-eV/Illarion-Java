@@ -18,11 +18,11 @@
  */
 package illarion.graphics.lwjgl.render;
 
-import org.lwjgl.opengl.GL11;
-
 import illarion.graphics.SpriteColor;
 import illarion.graphics.lwjgl.DriverSettingsLWJGL;
 import illarion.graphics.lwjgl.TextureLWJGL;
+
+import org.lwjgl.opengl.GL11;
 
 /**
  * This texture render is drawing the graphics by using display lists.
@@ -33,20 +33,20 @@ import illarion.graphics.lwjgl.TextureLWJGL;
  */
 public final class TextureRenderDisplaylist extends AbstractTextureRender {
     /**
-     * Private constructor so new instances are only fetched by the
-     * {@link #getInstance()} method.
-     */
-    private TextureRenderDisplaylist() {
-        // nothing to do
-    }
-
-    /**
      * Get a new instance of this class.
      * 
      * @return get a new instance of the display list render
      */
     public static TextureRenderDisplaylist getInstance() {
         return new TextureRenderDisplaylist();
+    }
+
+    /**
+     * Private constructor so new instances are only fetched by the
+     * {@link #getInstance()} method.
+     */
+    private TextureRenderDisplaylist() {
+        // nothing to do
     }
 
     /**
@@ -67,7 +67,8 @@ public final class TextureRenderDisplaylist extends AbstractTextureRender {
         final float width, final float height, final TextureLWJGL texture,
         final SpriteColor color, final boolean mirror, final float rotation) {
 
-        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWTEXTURE);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWTEXTURE);
         DriverSettingsLWJGL.getInstance().bindTexture(texture.getTextureID());
         color.setActiveColor();
         GL11.glPushMatrix();

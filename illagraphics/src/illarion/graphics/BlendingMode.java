@@ -27,13 +27,13 @@ package illarion.graphics;
  * @version 2.00
  */
 public enum BlendingMode {
-	/**
-	 * Blend the colors that overlay each other.
-	 */
-	BLEND,
-	
-	/**
-	 * Multiply the colors that overlay each other.
-	 */
-	MULTIPLY;
+    /**
+     * Blend the colors that overlay each other.
+     */
+    BLEND,
+
+    /**
+     * Multiply the colors that overlay each other.
+     */
+    MULTIPLY;
 }
