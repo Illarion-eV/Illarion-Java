@@ -1,5 +1,7 @@
 package illarion.easyquest.gui;
 
+import java.util.Hashtable;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +18,8 @@ import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
+import com.mxgraph.util.mxConstants;
+import com.mxgraph.view.mxStylesheet;
 
 import illarion.easyquest.Lang;
 
@@ -56,14 +60,29 @@ public class MainFrame extends JRibbonFrame
 		mxGraph graph = new mxGraph();
 		Object parent = graph.getDefaultParent();
 
+        mxStylesheet stylesheet = graph.getStylesheet();
+        Hashtable<String, Object> nodeStyle = new Hashtable<String, Object>();
+        nodeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+        nodeStyle.put(mxConstants.STYLE_ROUNDED, true);
+        nodeStyle.put(mxConstants.STYLE_OPACITY, 50);
+        nodeStyle.put(mxConstants.STYLE_FILLCOLOR, "#EFEFFF");
+        nodeStyle.put(mxConstants.STYLE_GRADIENTCOLOR, "#AFAFFF");
+        nodeStyle.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+        stylesheet.putCellStyle("NODE", nodeStyle);
+        Hashtable<String, Object> edgeStyle = new Hashtable<String, Object>();
+        edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);
+        edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 2.0);
+        edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
+        stylesheet.putCellStyle("EDGE", edgeStyle);
+
 		graph.getModel().beginUpdate();
 		try
 		{
 			Object v1 = graph.insertVertex(parent, null, "Hello", 20, 20, 80,
-					30);
+					30, "NODE");
 			Object v2 = graph.insertVertex(parent, null, "World!", 240, 150,
-					80, 30);
-			graph.insertEdge(parent, null, "Edge", v1, v2);
+					80, 30, "NODE");
+			graph.insertEdge(parent, null, "Edge", v1, v2, "EDGE");
 		}
 		finally
 		{
