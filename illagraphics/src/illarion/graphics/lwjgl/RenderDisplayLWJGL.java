@@ -35,6 +35,7 @@ import org.lwjgl.util.glu.GLU;
 
 import illarion.common.util.Rectangle;
 
+import illarion.graphics.BlendingMode;
 import illarion.graphics.GraphicResolution;
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderDisplay;
@@ -527,8 +528,7 @@ public final class RenderDisplayLWJGL implements RenderDisplay { // NO_UCD
         GL11.glViewport(0, 0, resWidth, resHeight);
 
         // enable alpha blending based on the picture alpha channel
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        setBlendingMode(BlendingMode.BLEND);
 
         // disable death test, we work in 2D anyway, there is no depth
         GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -618,4 +618,43 @@ public final class RenderDisplayLWJGL implements RenderDisplay { // NO_UCD
         ((RenderManagerLWJGL) Graphics.getInstance().getRenderManager())
             .setTargetFPS(syncFreq);
     }
+
+    /**
+     * Clear the entire screen.
+     */
+	@Override
+	public void clearScreen() {
+	    GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+	}
+	
+	/**
+	 * The currently active blending mode.
+	 */
+	private BlendingMode currentMode;
+
+	/**
+	 * Set the render mode used by the display. This function does nothing in
+	 * case the selected blending mode is already selected.
+	 * 
+	 * @param mode the new render mode
+	 */
+	@Override
+	public void setBlendingMode(final BlendingMode mode) {
+		if (mode.equals(currentMode)) {
+			return;
+		}
+	
+        GL11.glEnable(GL11.GL_BLEND);
+		switch (mode) {
+		case BLEND:
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			break;
+		case MULTIPLY:
+			GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_ZERO);
+			break;
+		}
+		
+		currentMode = mode;
+	}
 }

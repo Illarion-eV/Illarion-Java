@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
 
 import illarion.common.util.Rectangle;
 
+import illarion.graphics.BlendingMode;
 import illarion.graphics.GraphicResolution;
 import illarion.graphics.RenderDisplay;
 import illarion.graphics.generic.AbstractSprite;
@@ -644,4 +645,45 @@ public final class RenderDisplayJOGL implements RenderDisplay {
     private boolean useNEWT() {
         return useNewtCanvas;
     }
+
+    /**
+     * Clear the entire screen.
+     */
+	@Override
+	public void clearScreen() {
+        final GL gl = GLU.getCurrentGL();
+        gl.glClearColor(0.f, 0.f, 0.f, 0.f);
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+	}
+		
+	/**
+	 * The currently active blending mode.
+	 */
+	private BlendingMode currentMode;
+	
+	/**
+	 * Set the render mode used by the display. This function does nothing in
+	 * case the selected blending mode is already selected.
+	 * 
+	 * @param mode the new render mode
+	 */
+	@Override
+	public void setBlendingMode(BlendingMode mode) {
+		if (mode.equals(currentMode)) {
+			return;
+		}
+        final GL gl = GLU.getCurrentGL();
+        
+        gl.glEnable(GL.GL_BLEND);
+		switch (mode) {
+		case BLEND:
+			 gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+			break;
+		case MULTIPLY:
+			 gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_ZERO);
+			break;
+		}
+        
+		currentMode = mode;
+	}
 }

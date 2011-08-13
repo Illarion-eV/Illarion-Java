@@ -73,8 +73,8 @@ public final class TextureRenderImmediate extends AbstractTextureRender {
         final float width, final float height, final TextureLWJGL texture,
         final SpriteColor color, final boolean mirror, final float rotation) {
 
-        DriverSettingsLWJGL.getInstance()
-            .enableTexture(texture.getTextureID());
+        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWTEXTURE);
+        DriverSettingsLWJGL.getInstance().bindTexture(texture.getTextureID());
         color.setActiveColor();
 
         GL11.glPushMatrix();

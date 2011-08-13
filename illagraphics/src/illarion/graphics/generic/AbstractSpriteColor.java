@@ -18,6 +18,8 @@
  */
 package illarion.graphics.generic;
 
+import java.nio.FloatBuffer;
+
 import illarion.common.util.FastMath;
 
 import illarion.graphics.Graphics;
@@ -874,5 +876,25 @@ public abstract class AbstractSpriteColor implements SpriteColor {
      */
     protected final boolean isDirty() {
         return dirty;
+    }
+
+    /**
+     * Store the color at the current position of a float buffer.
+     */
+    @Override
+    public void storeRGBA(final FloatBuffer buffer) {
+        storeRGB(buffer);
+        buffer.put(getAlphaf());
+    }
+
+    /**
+     * Store the color excluding the alpha channel at the current position of a
+     * float buffer.
+     */
+    @Override
+    public void storeRGB(final FloatBuffer buffer) {
+        buffer.put(getRedf());
+        buffer.put(getGreenf());
+        buffer.put(getBluef());
     }
 }

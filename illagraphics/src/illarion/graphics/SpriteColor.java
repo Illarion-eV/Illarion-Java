@@ -18,6 +18,8 @@
  */
 package illarion.graphics;
 
+import java.nio.FloatBuffer;
+
 /**
  * Default class to handle colors inside the client. The colors are only limited
  * against 0. Its possible to raise the values above {@link #COLOR_MAX} what
@@ -412,4 +414,18 @@ public interface SpriteColor extends Cloneable {
      * @param sub the value that is subtracted to the alpha value
      */
     void subAlpha(int sub);
+    
+    /**
+     * Store all color components in a float buffer.
+     * 
+     * @param buffer the buffer that is to hold the color values
+     */
+    void storeRGBA(FloatBuffer buffer);
+    
+    /**
+     * Store all color components but alpha in a float buffer.
+     * 
+     * @param buffer the buffer that is to hold the color values
+     */
+    void storeRGB(FloatBuffer buffer);
 }

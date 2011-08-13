@@ -93,8 +93,8 @@ public final class TextureRenderPointer extends AbstractTextureRender {
         final float width, final float height, final TextureLWJGL texture,
         final SpriteColor color, final boolean mirror, final float rotation) {
 
-        DriverSettingsLWJGL.getInstance().enableTexturePointer(
-            texture.getTextureID());
+        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWTEXTUREPOINTER);
+        DriverSettingsLWJGL.getInstance().bindTexture(texture.getTextureID());
 
         color.setActiveColor();
         GL11.glPushMatrix();

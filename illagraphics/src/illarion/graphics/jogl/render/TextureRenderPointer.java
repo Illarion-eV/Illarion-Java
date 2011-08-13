@@ -115,8 +115,9 @@ public final class TextureRenderPointer extends AbstractTextureRender {
         } else {
             gl = GLU.getCurrentGL().getGL2ES1();
         }
-        DriverSettingsJOGL.getInstance().enableTexturePointer(gl,
-            texture.getTextureID());
+
+        DriverSettingsJOGL.getInstance().enableMode(gl, DriverSettingsJOGL.Modes.DRAWTEXTUREPOINTER);
+        DriverSettingsJOGL.getInstance().bindTexture(gl, texture.getTextureID());
 
         color.setActiveColor();
         gl.glPushMatrix();

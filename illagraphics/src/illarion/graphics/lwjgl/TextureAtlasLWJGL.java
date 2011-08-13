@@ -110,7 +110,8 @@ public final class TextureAtlasLWJGL extends AbstractTextureAtlas {
         setTextureID(texID);
 
         // bind texture ID
-        DriverSettingsLWJGL.getInstance().enableTexture(texID);
+        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWTEXTURE);
+        DriverSettingsLWJGL.getInstance().bindTexture(texID);
 
         // prepare texture data
         if (resizeable) { // Textures will be resized -> smoothing would be good
@@ -305,7 +306,8 @@ public final class TextureAtlasLWJGL extends AbstractTextureAtlas {
     @Override
     public void updateTextureArea(final int x, final int y, final int w,
         final int h, final ByteBuffer imageData) {
-        DriverSettingsLWJGL.getInstance().enableTexture(getTextureID());
+        DriverSettingsLWJGL.getInstance().enableMode(DriverSettingsLWJGL.Modes.DRAWTEXTURE);
+        DriverSettingsLWJGL.getInstance().bindTexture(getTextureID());
         GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, w, h, GL11.GL_RGBA,
             GL11.GL_UNSIGNED_BYTE, imageData);
         Util.checkGLError();

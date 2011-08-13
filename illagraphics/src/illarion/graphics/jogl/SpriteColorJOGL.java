@@ -18,6 +18,8 @@
  */
 package illarion.graphics.jogl;
 
+import java.nio.FloatBuffer;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.glu.GLU;

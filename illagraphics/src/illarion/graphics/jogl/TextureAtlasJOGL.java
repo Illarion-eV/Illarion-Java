@@ -249,7 +249,8 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
         final int h, final ByteBuffer imageData) {
 
         final GL gl = GLU.getCurrentGL();
-        DriverSettingsJOGL.getInstance().enableTexture(gl, getTextureID());
+        DriverSettingsJOGL.getInstance().enableMode(gl, DriverSettingsJOGL.Modes.DRAWTEXTURE);
+        DriverSettingsJOGL.getInstance().bindTexture(gl, getTextureID());
         gl.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, x, y, w, h, GL.GL_RGBA,
             GL.GL_UNSIGNED_BYTE, imageData);
     }
@@ -291,7 +292,8 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
 
         // bind texture ID
         final GL gl = GLU.getCurrentGL();
-        DriverSettingsJOGL.getInstance().enableTexture(gl, texID);
+        DriverSettingsJOGL.getInstance().enableMode(gl, DriverSettingsJOGL.Modes.DRAWTEXTURE);
+        DriverSettingsJOGL.getInstance().bindTexture(gl, getTextureID());
         // prepare texture data
         if (resizeable) { // Textures will be resized -> smoothing would be good
             if (quality <= Graphics.QUALITY_LOW) {
