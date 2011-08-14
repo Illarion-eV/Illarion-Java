@@ -22,6 +22,7 @@ import java.util.Hashtable;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
@@ -41,6 +42,10 @@ import illarion.easyquest.quest.Status;
  * @since 1.00
  */
 public final class Editor extends mxGraphComponent {
+
+    private File questFile;
+    
+    private boolean savedSinceLastChange = false;
 
     Editor(mxGraph g) {
         super(g);
@@ -104,13 +109,36 @@ public final class Editor extends mxGraphComponent {
     				{
     					System.out.println("cell="+graph.getLabel(cell));
     				}
-    				
-    				mxCodec codec = new mxCodec();
-		            String xml =
-				        mxUtils.getPrettyXml(codec.encode(graph.getModel()));
-				    System.out.println(xml);
     			}
 			}
 		});
     }
+    
+    public File getQuestFile() {
+        return questFile;
+    }
+    
+    public void setQuestFile(final File file) {
+        if (file != null) {
+            questFile = file;
+        }
+    }
+    
+    public void saved() {
+        savedSinceLastChange = false;
+    }
+    
+    public boolean changedSinceSave() {
+        return savedSinceLastChange;
+    }
+    
+    public void changedQuest() {
+        savedSinceLastChange = true;
+    }
+
+    public String getQuestXML() {
+        mxCodec codec = new mxCodec();
+        return mxUtils.getPrettyXml(codec.encode(getGraph().getModel()));
+    }
+
 }

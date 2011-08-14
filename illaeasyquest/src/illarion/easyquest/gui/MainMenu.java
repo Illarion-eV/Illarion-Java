@@ -47,8 +47,8 @@ final class MainMenu extends RibbonApplicationMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
-                        //Utils.saveEasyNPC(MainFrame.getInstance()
-                        //    .getCurrentScriptEditor());
+                        Utils.saveEasyQuest(MainFrame.getInstance()
+                            .getCurrentQuestEditor());
                     }
                 }, CommandButtonKind.ACTION_ONLY);
         addMenuEntry(saveQuest);

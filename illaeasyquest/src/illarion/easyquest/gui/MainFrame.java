@@ -48,9 +48,9 @@ public class MainFrame extends JRibbonFrame
             public boolean vetoTabClosing(final JTabbedPane pane,
                 final Component component) {
                 final Editor editor = (Editor) component;
-                //if (!editor.changedSinceSave()) {
-                //    return false;
-                //}
+                if (!editor.changedSinceSave()) {
+                    return false;
+                }
 
                 final Object[] options =
                     new Object[] {
@@ -71,7 +71,7 @@ public class MainFrame extends JRibbonFrame
                             options[0]);
 
                 if (result == JOptionPane.YES_OPTION) {
-                    // Utils.saveEasyQuest(editor);
+                    Utils.saveEasyQuest(editor);
                     return false;
                 }
                 return (result == JOptionPane.CANCEL_OPTION);
@@ -104,7 +104,7 @@ public class MainFrame extends JRibbonFrame
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-
+                Utils.saveEasyQuest(getCurrentQuestEditor());
             }
         });
         getRibbon().addTaskbarComponent(saveButton);
@@ -144,6 +144,14 @@ public class MainFrame extends JRibbonFrame
     protected static MainFrame getInstance() {
         return instance;
     }
+    
+    public Editor getCurrentQuestEditor() {
+        return getQuestEditor(tabbedEditorArea.getSelectedIndex());
+    }
+    
+    protected Editor getQuestEditor(final int index) {
+        return (Editor) tabbedEditorArea.getComponentAt(index);
+    }
 
     protected void closeWindow() {
 
@@ -169,4 +177,18 @@ public class MainFrame extends JRibbonFrame
         return editor;
     }
 
+    protected void setTabTitle(final Editor component, final String title) {
+        final int count = tabbedEditorArea.getComponentCount();
+        Editor currentComp;
+        for (int i = 0; i < count; i++) {
+            currentComp = (Editor) tabbedEditorArea.getComponent(i);
+            if (currentComp.equals(component)) {
+                setTabTitle(i, title);
+            }
+        }
+    }
+
+    private void setTabTitle(final int index, final String title) {
+        tabbedEditorArea.setTitleAt(index, title);
+    }
 }
