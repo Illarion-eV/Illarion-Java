@@ -21,7 +21,7 @@ final class MainMenu extends RibbonApplicationMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
-                        //MainFrame.getInstance().addNewScript();
+                        MainFrame.getInstance().addNewQuest();
                     }
                 }, CommandButtonKind.ACTION_ONLY);
         addMenuEntry(newQuest);
