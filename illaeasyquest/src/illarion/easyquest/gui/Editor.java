@@ -24,6 +24,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
+import org.w3c.dom.Document;
+
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.util.mxConstants;
@@ -134,6 +136,14 @@ public final class Editor extends mxGraphComponent {
     
     public void changedQuest() {
         savedSinceLastChange = true;
+    }
+
+    public void loadQuest(String quest) {
+		Document document = mxUtils.parseXml(quest);
+    	mxCodec codec = new mxCodec(document);
+        mxGraph graph = new mxGraph();
+		codec.decode(document.getDocumentElement(), graph.getModel());
+		setGraph(graph);
     }
 
     public String getQuestXML() {

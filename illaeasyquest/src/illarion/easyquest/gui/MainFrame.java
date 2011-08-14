@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
@@ -165,6 +166,10 @@ public class MainFrame extends JRibbonFrame
         return tabbedEditorArea.getTabCount();
     }
     
+    public void setCurrentTabTitle(final String title) {
+        setTabTitle(tabbedEditorArea.getSelectedIndex(), title);
+    }
+    
     @SuppressWarnings("nls")
     protected Editor addNewQuest() {
         final Editor editor = new Editor(new mxGraph());
@@ -175,6 +180,26 @@ public class MainFrame extends JRibbonFrame
             null, editor, null, tabbedEditorArea.getTabCount());
         tabbedEditorArea.setSelectedIndex(tabbedEditorArea.getTabCount() - 1);
         return editor;
+    }
+    
+    protected int alreadyOpen(final File file) {
+        final int count = tabbedEditorArea.getComponentCount();
+        Editor currentComp;
+        for (int i = 0; i < count; i++) {
+            currentComp = (Editor) tabbedEditorArea.getComponent(i);
+            if ((currentComp.getQuestFile() != null)
+                && currentComp.getQuestFile().equals(file)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    protected void setCurrentEditorTab(final int index) {
+        tabbedEditorArea.setSelectedIndex(index);
+
+        //UndoMonitor.getInstance().updateUndoRedo(
+        //    getScriptEditor(index).getUndoManager());
     }
 
     protected void setTabTitle(final Editor component, final String title) {

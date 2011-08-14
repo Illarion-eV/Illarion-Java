@@ -33,7 +33,7 @@ final class MainMenu extends RibbonApplicationMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
-                        //Utils.selectAndOpenScript();
+                        Utils.selectAndOpenQuest();
                     }
                 }, CommandButtonKind.ACTION_ONLY);
         addMenuEntry(openQuest);
