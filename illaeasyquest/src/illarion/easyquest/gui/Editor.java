@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion easyQuest Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright 2011 - Illarion e.V.
  *
  * The Illarion easyQuest Editor is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as published by
@@ -49,33 +49,10 @@ public final class Editor extends mxGraphComponent {
     
     private boolean savedSinceLastChange = false;
 
-    Editor(mxGraph g) {
-        super(g);
-        final mxGraph graph = new mxGraph() {
-		    public boolean isCellEditable(Object cell)
-			{
-				return false;
-			}
-		};
+    Editor(Graph graph) {
+        super(graph);
+        setup(graph);
 		Object parent = graph.getDefaultParent();
-
-        mxStylesheet stylesheet = graph.getStylesheet();
-        Hashtable<String, Object> nodeStyle = new Hashtable<String, Object>();
-        nodeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-        nodeStyle.put(mxConstants.STYLE_ROUNDED, true);
-        nodeStyle.put(mxConstants.STYLE_OPACITY, 50);
-        nodeStyle.put(mxConstants.STYLE_FILLCOLOR, "#EFEFFF");
-        nodeStyle.put(mxConstants.STYLE_GRADIENTCOLOR, "#AFAFFF");
-        nodeStyle.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-        stylesheet.putCellStyle("NODE", nodeStyle);
-        Hashtable<String, Object> edgeStyle = new Hashtable<String, Object>();
-        edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);
-        edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 2.0);
-        edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
-        stylesheet.putCellStyle("EDGE", edgeStyle);
-
-        mxCodecRegistry.register(new mxObjectCodec(new Status()));
-        mxCodecRegistry.addPackage(Status.class.getPackage().getName());
 
 		graph.getModel().beginUpdate();
 		try
@@ -94,14 +71,30 @@ public final class Editor extends mxGraphComponent {
 		{
 			graph.getModel().endUpdate();
 		}
-        
-        setGraph(graph);
-        
-        setEnterStopsCellEditing(true);
+    }
+    
+    private void setup(Graph g) {
+        final Graph graph = g;
+        mxStylesheet stylesheet = graph.getStylesheet();
+        Hashtable<String, Object> nodeStyle = new Hashtable<String, Object>();
+        nodeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+        nodeStyle.put(mxConstants.STYLE_ROUNDED, true);
+        nodeStyle.put(mxConstants.STYLE_OPACITY, 50);
+        nodeStyle.put(mxConstants.STYLE_FILLCOLOR, "#EFEFFF");
+        nodeStyle.put(mxConstants.STYLE_GRADIENTCOLOR, "#AFAFFF");
+        nodeStyle.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+        stylesheet.putCellStyle("NODE", nodeStyle);
+        Hashtable<String, Object> edgeStyle = new Hashtable<String, Object>();
+        edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);
+        edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 2.0);
+        edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
+        stylesheet.putCellStyle("EDGE", edgeStyle);
+
+        mxCodecRegistry.register(new mxObjectCodec(new Status()));
+        mxCodecRegistry.addPackage(Status.class.getPackage().getName());
         
         getGraphControl().addMouseListener(new MouseAdapter()
 		{
-		
 			public void mouseReleased(MouseEvent e)
 			{
 			    if (e.getClickCount() == 2) {
@@ -141,7 +134,8 @@ public final class Editor extends mxGraphComponent {
     public void loadQuest(String quest) {
 		Document document = mxUtils.parseXml(quest);
     	mxCodec codec = new mxCodec(document);
-        mxGraph graph = new mxGraph();
+        Graph graph = new Graph();
+        setup(graph);
 		codec.decode(document.getDocumentElement(), graph.getModel());
 		setGraph(graph);
     }

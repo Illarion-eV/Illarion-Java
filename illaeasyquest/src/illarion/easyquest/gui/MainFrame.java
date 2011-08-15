@@ -1,4 +1,22 @@
-package illarion.easyquest.gui;
+/*
+ * This file is part of the Illarion easyQuest Editor.
+ *
+ * Copyright 2011 - Illarion e.V.
+ *
+ * The Illarion easyQuest Editor is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * The Illarion easyQuest Editor is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
+ */
+ package illarion.easyquest.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -19,8 +37,6 @@ import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
-
-import com.mxgraph.view.mxGraph;
 
 import illarion.easyquest.Lang;
 
@@ -172,7 +188,7 @@ public class MainFrame extends JRibbonFrame
     
     @SuppressWarnings("nls")
     protected Editor addNewQuest() {
-        final Editor editor = new Editor(new mxGraph());
+        final Editor editor = new Editor(new Graph());
         editor.putClientProperty(
             SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY,
             Boolean.TRUE);
