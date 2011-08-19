@@ -1,32 +1,103 @@
-package illarion.easyquest.gui;
-
-import java.util.Hashtable;
+/*
+ * This file is part of the Illarion easyQuest Editor.
+ *
+ * Copyright 2011 - Illarion e.V.
+ *
+ * The Illarion easyQuest Editor is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * The Illarion easyQuest Editor is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
+ */
+ package illarion.easyquest.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.view.mxGraph;
-import com.mxgraph.util.mxConstants;
-import com.mxgraph.view.mxStylesheet;
+import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
 
 import illarion.easyquest.Lang;
 
 public class MainFrame extends JRibbonFrame
 {
+    
+    private final VetoableTabCloseListener editorTabListener =
+        new VetoableTabCloseListener() {
+            @Override
+            public void tabClosed(final JTabbedPane pane,
+                final Component component) {
+                //((Editor) component).cleanup();
+                if (pane.getTabCount() == 0) {
+                    addNewQuest();
+                }
+            }
+
+            @Override
+            public void tabClosing(final JTabbedPane pane,
+                final Component component) {
+                // nothing
+            }
+
+            @SuppressWarnings("nls")
+            @Override
+            public boolean vetoTabClosing(final JTabbedPane pane,
+                final Component component) {
+                final Editor editor = (Editor) component;
+                if (!editor.changedSinceSave()) {
+                    return false;
+                }
+
+                final Object[] options =
+                    new Object[] {
+                        Lang.getMsg(MainFrame.class,
+                            "UnsavedChanges.saveButton"),
+                        Lang.getMsg(MainFrame.class,
+                            "UnsavedChanges.discardButton"),
+                        Lang.getMsg(MainFrame.class,
+                            "UnsavedChanges.cancelButton") };
+                final int result =
+                    JOptionPane
+                        .showOptionDialog(MainFrame.getInstance(),
+                            Lang.getMsg(MainFrame.class,
+                                "UnsavedChanges.message"), Lang.getMsg(
+                                MainFrame.class, "UnsavedChanges.title"),
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.WARNING_MESSAGE, null, options,
+                            options[0]);
+
+                if (result == JOptionPane.YES_OPTION) {
+                    Utils.saveEasyQuest(editor);
+                    return false;
+                }
+                return (result == JOptionPane.CANCEL_OPTION);
+            }
+        };
 
     private static MainFrame instance;
+    
+    private final JTabbedPane tabbedEditorArea;
 
 	public MainFrame()
 	{
@@ -50,51 +121,22 @@ public class MainFrame extends JRibbonFrame
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-
+                Utils.saveEasyQuest(getCurrentQuestEditor());
             }
         });
         getRibbon().addTaskbarComponent(saveButton);
 
         final JPanel rootPanel = new JPanel(new BorderLayout());
+        tabbedEditorArea = new JTabbedPane(SwingConstants.TOP);
+        rootPanel.add(tabbedEditorArea, BorderLayout.CENTER);
+        SubstanceLookAndFeel.registerTabCloseChangeListener(tabbedEditorArea,
+            editorTabListener);
 
-		mxGraph graph = new mxGraph();
-		Object parent = graph.getDefaultParent();
-
-        mxStylesheet stylesheet = graph.getStylesheet();
-        Hashtable<String, Object> nodeStyle = new Hashtable<String, Object>();
-        nodeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-        nodeStyle.put(mxConstants.STYLE_ROUNDED, true);
-        nodeStyle.put(mxConstants.STYLE_OPACITY, 50);
-        nodeStyle.put(mxConstants.STYLE_FILLCOLOR, "#EFEFFF");
-        nodeStyle.put(mxConstants.STYLE_GRADIENTCOLOR, "#AFAFFF");
-        nodeStyle.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-        stylesheet.putCellStyle("NODE", nodeStyle);
-        Hashtable<String, Object> edgeStyle = new Hashtable<String, Object>();
-        edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);
-        edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 2.0);
-        edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
-        stylesheet.putCellStyle("EDGE", edgeStyle);
-
-		graph.getModel().beginUpdate();
-		try
-		{
-			Object v1 = graph.insertVertex(parent, null, "Hello", 20, 20, 80,
-					30, "NODE");
-			Object v2 = graph.insertVertex(parent, null, "World!", 240, 150,
-					80, 30, "NODE");
-			graph.insertEdge(parent, null, "Edge", v1, v2, "EDGE");
-		}
-		finally
-		{
-			graph.getModel().endUpdate();
-		}
-
-		mxGraphComponent graphComponent = new mxGraphComponent(graph);
-
-		final JScrollPane mainPanel = new JScrollPane(graphComponent);
-
-        rootPanel.add(mainPanel, BorderLayout.CENTER);
         getContentPane().add(rootPanel);
+		
+		if (getOpenTabs() == 0) {
+            addNewQuest();
+        }
 	}
 
 	public static void main(String[] args)
@@ -119,6 +161,14 @@ public class MainFrame extends JRibbonFrame
     protected static MainFrame getInstance() {
         return instance;
     }
+    
+    public Editor getCurrentQuestEditor() {
+        return getQuestEditor(tabbedEditorArea.getSelectedIndex());
+    }
+    
+    protected Editor getQuestEditor(final int index) {
+        return (Editor) tabbedEditorArea.getComponentAt(index);
+    }
 
     protected void closeWindow() {
 
@@ -128,4 +178,58 @@ public class MainFrame extends JRibbonFrame
         System.exit(0);
     }
 
+    public int getOpenTabs() {
+        return tabbedEditorArea.getTabCount();
+    }
+    
+    public void setCurrentTabTitle(final String title) {
+        setTabTitle(tabbedEditorArea.getSelectedIndex(), title);
+    }
+    
+    @SuppressWarnings("nls")
+    protected Editor addNewQuest() {
+        final Editor editor = new Editor(new Graph());
+        editor.putClientProperty(
+            SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY,
+            Boolean.TRUE);
+        tabbedEditorArea.insertTab(Lang.getMsg(getClass(), "newQuestTab"),
+            null, editor, null, tabbedEditorArea.getTabCount());
+        tabbedEditorArea.setSelectedIndex(tabbedEditorArea.getTabCount() - 1);
+        return editor;
+    }
+    
+    protected int alreadyOpen(final File file) {
+        final int count = tabbedEditorArea.getComponentCount();
+        Editor currentComp;
+        for (int i = 0; i < count; i++) {
+            currentComp = (Editor) tabbedEditorArea.getComponent(i);
+            if ((currentComp.getQuestFile() != null)
+                && currentComp.getQuestFile().equals(file)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    protected void setCurrentEditorTab(final int index) {
+        tabbedEditorArea.setSelectedIndex(index);
+
+        //UndoMonitor.getInstance().updateUndoRedo(
+        //    getScriptEditor(index).getUndoManager());
+    }
+
+    protected void setTabTitle(final Editor component, final String title) {
+        final int count = tabbedEditorArea.getComponentCount();
+        Editor currentComp;
+        for (int i = 0; i < count; i++) {
+            currentComp = (Editor) tabbedEditorArea.getComponent(i);
+            if (currentComp.equals(component)) {
+                setTabTitle(i, title);
+            }
+        }
+    }
+
+    private void setTabTitle(final int index, final String title) {
+        tabbedEditorArea.setTitleAt(index, title);
+    }
 }
