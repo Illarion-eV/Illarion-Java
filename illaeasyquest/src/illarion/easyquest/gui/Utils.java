@@ -112,9 +112,8 @@ final class Utils {
             }
             String quest = sb.toString();
 
-            Editor editor = MainFrame.getInstance().addNewQuest();
+            Editor editor = MainFrame.getInstance().addNewQuest(quest);
             editor.setQuestFile(file);
-    		editor.loadQuest(quest);
             
             MainFrame.getInstance().setCurrentTabTitle(file.getName());
             //Config.getInstance().addLastOpenedFile(file);

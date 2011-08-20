@@ -51,30 +51,27 @@ public final class Editor extends mxGraphComponent {
 
     Editor(Graph graph) {
         super(graph);
-        setup(graph);
-		Object parent = graph.getDefaultParent();
-
-		graph.getModel().beginUpdate();
-		try
+        mxCodecRegistry.register(new mxObjectCodec(new Status()));
+        mxCodecRegistry.addPackage(Status.class.getPackage().getName());
+        
+        final Graph g = graph;
+        getGraphControl().addMouseListener(new MouseAdapter()
 		{
-		    Status status = new Status();
-		    status.setLabel("New Quest Status");
-		    status.setNumber(0);
-		    status.setStart(true);
-			Object v1 = graph.insertVertex(parent, null, status, 20, 20, 120,
-					30, "NODE");
-			Object v2 = graph.insertVertex(parent, null, "World!", 240, 150,
-					80, 30, "NODE");
-			graph.insertEdge(parent, null, "Edge", v1, v2, "EDGE");
-		}
-		finally
-		{
-			graph.getModel().endUpdate();
-		}
+			public void mouseReleased(MouseEvent e)
+			{
+			    if (e.getClickCount() == 2) {
+    				Object cell = getCellAt(e.getX(), e.getY());
+    				
+    				if (cell != null)
+    				{
+    					System.out.println("cell="+g.getLabel(cell));
+    				}
+    			}
+			}
+		});
     }
     
-    private void setup(Graph g) {
-        final Graph graph = g;
+    private static void setup(Graph graph) {
         mxStylesheet stylesheet = graph.getStylesheet();
         Hashtable<String, Object> nodeStyle = new Hashtable<String, Object>();
         nodeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
@@ -89,24 +86,6 @@ public final class Editor extends mxGraphComponent {
         edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 2.0);
         edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
         stylesheet.putCellStyle("EDGE", edgeStyle);
-
-        mxCodecRegistry.register(new mxObjectCodec(new Status()));
-        mxCodecRegistry.addPackage(Status.class.getPackage().getName());
-        
-        getGraphControl().addMouseListener(new MouseAdapter()
-		{
-			public void mouseReleased(MouseEvent e)
-			{
-			    if (e.getClickCount() == 2) {
-    				Object cell = getCellAt(e.getX(), e.getY());
-    				
-    				if (cell != null)
-    				{
-    					System.out.println("cell="+graph.getLabel(cell));
-    				}
-    			}
-			}
-		});
     }
     
     public File getQuestFile() {
@@ -131,13 +110,16 @@ public final class Editor extends mxGraphComponent {
         savedSinceLastChange = true;
     }
 
-    public void loadQuest(String quest) {
-		Document document = mxUtils.parseXml(quest);
-    	mxCodec codec = new mxCodec(document);
+    public static Editor loadQuest(String quest) {
         Graph graph = new Graph();
         setup(graph);
-		codec.decode(document.getDocumentElement(), graph.getModel());
-		setGraph(graph);
+        if (quest != "")
+        {
+            Document document = mxUtils.parseXml(quest);
+        	mxCodec codec = new mxCodec(document);
+    		codec.decode(document.getDocumentElement(), graph.getModel());
+		}
+		return new Editor(graph);
     }
 
     public String getQuestXML() {

@@ -186,9 +186,9 @@ public class MainFrame extends JRibbonFrame
         setTabTitle(tabbedEditorArea.getSelectedIndex(), title);
     }
     
-    @SuppressWarnings("nls")
-    protected Editor addNewQuest() {
-        final Editor editor = new Editor(new Graph());
+
+    protected Editor addNewQuest(String quest) {
+        final Editor editor = Editor.loadQuest(quest);
         editor.putClientProperty(
             SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY,
             Boolean.TRUE);
@@ -196,6 +196,9 @@ public class MainFrame extends JRibbonFrame
             null, editor, null, tabbedEditorArea.getTabCount());
         tabbedEditorArea.setSelectedIndex(tabbedEditorArea.getTabCount() - 1);
         return editor;
+    }
+    protected Editor addNewQuest() {
+        return addNewQuest("");
     }
     
     protected int alreadyOpen(final File file) {
