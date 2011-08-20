@@ -18,7 +18,7 @@
  */
 package illarion.easyquest.gui;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -69,7 +69,7 @@ public final class Editor extends mxGraphComponent {
                             status.setNumber(0);
                             status.setStart(false);
                             g.insertVertex(parent, null, status, e.getX(), e.getY(), 120,
-                            30, "NODE");
+                            30);
                         } finally {
                             g.getModel().endUpdate();
                         }
@@ -92,19 +92,19 @@ public final class Editor extends mxGraphComponent {
     
     private static void setup(Graph graph) {
         mxStylesheet stylesheet = graph.getStylesheet();
-        Hashtable<String, Object> nodeStyle = new Hashtable<String, Object>();
+        Map<String, Object> nodeStyle = stylesheet.getDefaultVertexStyle();
         nodeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
         nodeStyle.put(mxConstants.STYLE_ROUNDED, true);
         nodeStyle.put(mxConstants.STYLE_OPACITY, 50);
         nodeStyle.put(mxConstants.STYLE_FILLCOLOR, "#EFEFFF");
         nodeStyle.put(mxConstants.STYLE_GRADIENTCOLOR, "#AFAFFF");
         nodeStyle.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-        stylesheet.putCellStyle("NODE", nodeStyle);
-        Hashtable<String, Object> edgeStyle = new Hashtable<String, Object>();
+        stylesheet.setDefaultVertexStyle(nodeStyle);
+        Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
         edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);
         edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 2.0);
         edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
-        stylesheet.putCellStyle("EDGE", edgeStyle);
+        stylesheet.setDefaultEdgeStyle(edgeStyle);
     }
     
     public File getQuestFile() {
