@@ -57,11 +57,30 @@ public final class Editor extends mxGraphComponent {
         final Graph g = graph;
         getGraphControl().addMouseListener(new MouseAdapter()
 		{
+		    public void mouseClicked(MouseEvent e) {
+		        if (e.getClickCount() == 1) {
+		            Object cell = getCellAt(e.getX(), e.getY());
+			        if (cell == null) {
+			            Object parent = g.getDefaultParent();
+			            g.getModel().beginUpdate();
+                        try {
+                            Status status = new Status();
+                            status.setLabel("New Quest Status");
+                            status.setNumber(0);
+                            status.setStart(false);
+                            g.insertVertex(parent, null, status, e.getX(), e.getY(), 120,
+                            30, "NODE");
+                        } finally {
+                            g.getModel().endUpdate();
+                        }
+			        }
+			    }
+			}
+			
 			public void mouseReleased(MouseEvent e)
 			{
 			    if (e.getClickCount() == 2) {
-    				Object cell = getCellAt(e.getX(), e.getY());
-    				
+			        Object cell = getCellAt(e.getX(), e.getY());
     				if (cell != null)
     				{
     					System.out.println("cell="+g.getLabel(cell));
