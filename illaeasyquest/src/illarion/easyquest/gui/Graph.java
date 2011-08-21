@@ -22,7 +22,12 @@ import com.mxgraph.view.mxGraph;
 
 import illarion.easyquest.Lang;
 
-public class Graph extends mxGraph {    
+public class Graph extends mxGraph {
+    public Graph()
+    {
+        setAlternateEdgeStyle("edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical");
+    }
+        
     public boolean isCellEditable(Object cell)
 	{
 		return false;
