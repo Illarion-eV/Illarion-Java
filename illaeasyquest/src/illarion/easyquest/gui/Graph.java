@@ -20,9 +20,29 @@ package illarion.easyquest.gui;
 
 import com.mxgraph.view.mxGraph;
 
-public class Graph extends mxGraph {
+import illarion.easyquest.Lang;
+
+public class Graph extends mxGraph {    
     public boolean isCellEditable(Object cell)
 	{
 		return false;
+	}
+	
+	public String getToolTipForCell(Object cell)
+	{
+		String tip = "<html>";
+
+		if (getModel().isEdge(cell))
+		{
+			tip += Lang.getMsg(getClass(), "edgeTooltip");
+		}
+		else
+		{
+			tip += Lang.getMsg(getClass(), "nodeTooltip");
+		}
+
+		tip += "</html>";
+
+		return tip;
 	}
 }

@@ -51,6 +51,9 @@ public final class Editor extends mxGraphComponent {
 
     Editor(Graph graph) {
         super(graph);
+        
+        setToolTips(true);
+        
         mxCodecRegistry.register(new mxObjectCodec(new Status()));
         mxCodecRegistry.addPackage(Status.class.getPackage().getName());
         
