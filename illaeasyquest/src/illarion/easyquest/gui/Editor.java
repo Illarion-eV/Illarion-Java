@@ -27,6 +27,7 @@ import java.io.File;
 import org.w3c.dom.Document;
 
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.handler.mxKeyboardHandler;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxUtils;
@@ -36,6 +37,7 @@ import com.mxgraph.io.mxCodecRegistry;
 import com.mxgraph.io.mxObjectCodec;
 
 import illarion.easyquest.quest.Status;
+import illarion.easyquest.EditorKeyboardHandler;
 
 /**
  * The editor is the area that displays the quest graph.
@@ -48,11 +50,15 @@ public final class Editor extends mxGraphComponent {
     private File questFile;
     
     private boolean savedSinceLastChange = false;
+    
+    private mxKeyboardHandler keyboardHandler;
 
     Editor(Graph graph) {
         super(graph);
         
         setToolTips(true);
+        
+        keyboardHandler = new EditorKeyboardHandler(this);
         
         mxCodecRegistry.register(new mxObjectCodec(new Status()));
         mxCodecRegistry.addPackage(Status.class.getPackage().getName());
