@@ -34,7 +34,7 @@ import illarion.client.util.Lang;
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
 import illarion.graphics.SpriteColor;
-import illarion.graphics.common.Font;
+import illarion.graphics.common.RenderedFont;
 import illarion.graphics.common.FontLoader;
 
 /**
@@ -271,7 +271,7 @@ public final class ReallyExit extends SolidColor {
         yesText.setColor(buttonFontColor);
         yesText.setAlign(Text.ALIGN_CENTER);
         yesText.setWidth(50);
-        yesText.setHeight(((Font) buttonFont.getSourceFont()).getStringBounds(
+        yesText.setHeight(((RenderedFont) buttonFont.getSourceFont()).getStringBounds(
             yesString, 0, yesString.length()).height);
         yesText.setRelPos(5, 0);
 
@@ -304,7 +304,7 @@ public final class ReallyExit extends SolidColor {
         noText.setColor(buttonFontColor);
         noText.setAlign(Text.ALIGN_CENTER);
         noText.setWidth(50);
-        noText.setHeight(((Font) buttonFont.getSourceFont()).getStringBounds(
+        noText.setHeight(((RenderedFont) buttonFont.getSourceFont()).getStringBounds(
             noString, 0, noString.length()).height);
         noText.setRelPos(5, 0);
 

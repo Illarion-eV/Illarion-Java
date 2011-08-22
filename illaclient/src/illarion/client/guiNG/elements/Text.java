@@ -22,7 +22,7 @@ import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
 import illarion.graphics.SpriteColor;
 import illarion.graphics.TextLine;
-import illarion.graphics.common.Font;
+import illarion.graphics.common.RenderedFont;
 
 /**
  * A widget that shows one line of text. It does not support line breaks. But it
@@ -91,7 +91,7 @@ public class Text extends Widget {
     /**
      * The source font object that is needed to calculate some values.
      */
-    private transient Font sourceFont;
+    private transient RenderedFont sourceFont;
 
     /**
      * The text that widget shall display.
@@ -204,7 +204,7 @@ public class Text extends Widget {
     public void setFont(final RenderableFont newFont) {
         if (font != newFont) {
             font = newFont;
-            sourceFont = (Font) font.getSourceFont();
+            sourceFont = (RenderedFont) font.getSourceFont();
             graphicalText.setFont(newFont);
             graphicalText.layout();
             updateOffset();
@@ -230,7 +230,7 @@ public class Text extends Widget {
      * @param newText the new text that shall be shown.
      */
     public void setText(final String newText) {
-        final String cleanedText = newText.replace(Font.NEWLINE, ' ');
+        final String cleanedText = newText.replace(RenderedFont.NEWLINE, ' ');
         if (!cleanedText.equals(text)) {
             text = cleanedText;
             graphicalText.setText(cleanedText);

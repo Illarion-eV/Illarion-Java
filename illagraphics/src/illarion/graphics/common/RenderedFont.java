@@ -35,7 +35,7 @@ import javolution.text.TextBuilder;
  * @version 2.00
  * @since 2.00
  */
-public final class Font implements FontData, Serializable {
+public final class RenderedFont implements FontData, Serializable {
     /**
      * A glyph defines the appearance and the placement of a single character of
      * the font. This data is needed to properly render a font line.
@@ -341,7 +341,7 @@ public final class Font implements FontData, Serializable {
      * @param map the character mapping of this font
      */
     @SuppressWarnings("nls")
-    public Font(final String fontName, final boolean boldFont,
+    public RenderedFont(final String fontName, final boolean boldFont,
         final boolean italicFont, final Glyph[] glyph, final int fontSize,
         final int fontAscent, final int fontDescent, final int fontLeading,
         final int[] map) {
@@ -450,6 +450,29 @@ public final class Font implements FontData, Serializable {
     @Override
     public void getGlyphes(final String text, final int start, final int end,
         final GlyphData[] dest, final int[] x) {
+        getGlyphes(text, start, end, 1.0f, dest, x);
+    }
+    
+    /**
+     * This function simply puts the references to the glyph instances of this
+     * font into a array. Make sure the array is large enough to store all the
+     * glyphes.
+     * 
+     * @param text the text that shall be rendered with the glyphes
+     * @param start the index of the first character of the text that shall be
+     *            rendered, the glyph for this character is placed at index 0 of
+     *            the glyph array
+     * @param end the index of the first character of the text that is not
+     *            anymore rendered
+     * @param size the scaling factor of the font glyphes
+     * @param dest the array of glyphes the references are stored in
+     * @param x the array of x coordinates where to render the glyphes, the y
+     *            coordinates are as a matter of fact always the same because
+     *            all letters are drawn in one line
+     */
+    @Override
+    public void getGlyphes(String text, int start, int end, float size,
+        GlyphData[] dest, int[] x) {
         if (dest == null) {
             throw new IllegalArgumentException(
                 "Destination for font glyphes may not be null.");
@@ -482,7 +505,7 @@ public final class Font implements FontData, Serializable {
             x[i - start] = penX;
 
             if ((currentChar != ' ') || foundNonSpace) {
-                penX += next.getAdvance() - next.getKerningAfter(last);
+                penX += next.getAdvance() * size - next.getKerningAfter(last);
                 foundNonSpace = true;
             }
             last = next;
@@ -539,6 +562,20 @@ public final class Font implements FontData, Serializable {
             throw new IllegalArgumentException("Text may not be null or empty");
         }
 
+        final Rectangle resultRect = getStringBoundsImpl(text, start, end);
+        final java.awt.Rectangle returnValue = resultRect.toNative();
+        resultRect.recycle();
+
+        return returnValue;
+    }
+    
+    private Rectangle getStringBoundsImpl(final String text,
+        final int start, final int end) {
+        
+        if ((text == null) || text.isEmpty()) {
+            throw new IllegalArgumentException("Text may not be null or empty");
+        }
+
         final Rectangle resultRect = Rectangle.getInstance();
         resultRect.set(0, 0, 0, 0);
 
@@ -565,11 +602,16 @@ public final class Font implements FontData, Serializable {
             penX += next.getAdvance() - kerning;
         }
         tempRect.recycle();
-
-        final java.awt.Rectangle returnValue = resultRect.toNative();
+        
+        return resultRect;
+    }
+    
+    @Override
+    public int getStringWidth(final String text) {
+        final Rectangle resultRect = getStringBoundsImpl(text, 0, text.length());
+        final int resultWidth = resultRect.getWidth();
         resultRect.recycle();
-
-        return returnValue;
+        return resultWidth;        
     }
 
     /**
@@ -698,5 +740,27 @@ public final class Font implements FontData, Serializable {
         for (final Glyph glyphe : glyphes) {
             glyphe.prepareTexture(path, name);
         }
+    }
+
+    /**
+     * Get the advancing of a character to the next character.
+     */
+    @Override
+    public Integer getCharacterAdvance(final char currentCharacter,
+        final char nextCharacter, final float size) {
+        int result = 0;        
+        final Glyph currentGlyph = getGlyphImpl(currentCharacter);
+        final Glyph nextGlyph = getGlyphImpl(nextCharacter);
+        
+        if (currentGlyph == null) {
+            return null;
+        }
+        
+        result += currentGlyph.getAdvance() * size;
+        if (nextGlyph != null) {
+            result += nextGlyph.getKerningAfter(currentGlyph);
+        }
+        
+        return result;
     }
 }

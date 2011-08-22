@@ -131,14 +131,14 @@ public final class FontLoader {
     @SuppressWarnings("nls")
     private RenderableFont loadFont(final String cfgName) {
         ObjectInputStream ois = null;
-        Font font = null;
+        RenderedFont font = null;
         try {
             ois =
                 new ObjectInputStream(new BufferedInputStream(FontLoader.class
                     .getClassLoader().getResourceAsStream(
                         FONT_ROOT + cfgName + ".illaFont")));
 
-            font = (Font) ois.readObject();
+            font = (RenderedFont) ois.readObject();
         } catch (final FileNotFoundException ex) {
             LOGGER.error("Can't find font file: " + cfgName, ex);
         } catch (final IOException ex) {

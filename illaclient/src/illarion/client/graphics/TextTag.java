@@ -29,7 +29,7 @@ import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
 import illarion.graphics.SpriteColor;
 import illarion.graphics.TextLine;
-import illarion.graphics.common.Font;
+import illarion.graphics.common.RenderedFont;
 import illarion.graphics.common.FontLoader;
 
 /**
@@ -58,14 +58,14 @@ public class TextTag implements RecycleObject {
      */
     private static final RenderableFont TEXT_TAG_FONT;
 
-    private static final Font TEXT_TAG_SOURCEFONT;
+    private static final RenderedFont TEXT_TAG_SOURCEFONT;
 
     static {
         BACK_COLOR.set(SpriteColor.COLOR_MIN);
         BACK_COLOR.setAlpha(0.3f);
         TEXT_TAG_FONT =
             FontLoader.getInstance().getFont(FontLoader.SMALL_FONT);
-        TEXT_TAG_SOURCEFONT = (Font) TEXT_TAG_FONT.getSourceFont();
+        TEXT_TAG_SOURCEFONT = (RenderedFont) TEXT_TAG_FONT.getSourceFont();
     }
 
     /**

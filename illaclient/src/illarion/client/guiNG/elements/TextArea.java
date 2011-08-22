@@ -26,7 +26,7 @@ import illarion.common.util.Rectangle;
 
 import illarion.graphics.RenderableFont;
 import illarion.graphics.SpriteColor;
-import illarion.graphics.common.Font;
+import illarion.graphics.common.RenderedFont;
 
 /**
  * The text area is a meta widget that combines multiple text widgets in order
@@ -89,7 +89,7 @@ public class TextArea extends Widget {
     /**
      * The source font object that is needed to perform some calculations.
      */
-    private transient Font sourceFont;
+    private transient RenderedFont sourceFont;
 
     /**
      * The text elements used to display the text. The amount of elements in
@@ -211,7 +211,7 @@ public class TextArea extends Widget {
      */
     public void setFont(final RenderableFont newFont) {
         font = newFont;
-        sourceFont = (Font) font.getSourceFont();
+        sourceFont = (RenderedFont) font.getSourceFont();
         dirtyText = true;
     }
 

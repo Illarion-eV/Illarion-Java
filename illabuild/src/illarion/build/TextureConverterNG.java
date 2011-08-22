@@ -387,7 +387,7 @@ public final class TextureConverterNG extends Task {
     public void setTarget(final File file) {
         targetFile = file;
         fileName = file.getName().replace("raw_", "").replace("rsc_", "") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            .replace(".jar", ""); //$NON-NLS-1$ //$NON-NLS-2$
+            .replace(".jar", "").replace(".tmp", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**

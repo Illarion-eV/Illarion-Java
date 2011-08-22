@@ -182,8 +182,7 @@ public final class IllarionRenderDevice implements RenderDevice {
     @Override
     public void renderQuad(final int x, final int y, final int width,
         final int height, final Color color) {
-        TEMP_COLOR[0].set(color.getRed(), color.getGreen(), color.getBlue());
-        TEMP_COLOR[0].setAlpha(color.getAlpha());
+        transferColorValues(color, TEMP_COLOR[0]);
         drawer.drawRectangle(x, y, x + width, y + height, TEMP_COLOR[0]);
     }
 
@@ -203,25 +202,26 @@ public final class IllarionRenderDevice implements RenderDevice {
     public void renderQuad(final int x, final int y, final int width,
         final int height, final Color topLeft, final Color topRight,
         final Color bottomRight, final Color bottomLeft) {
-        TEMP_COLOR[0].set(topLeft.getRed(), topLeft.getGreen(),
-            topLeft.getBlue());
-        TEMP_COLOR[0].setAlpha(topLeft.getAlpha());
-
-        TEMP_COLOR[1].set(topRight.getRed(), topRight.getGreen(),
-            topRight.getBlue());
-        TEMP_COLOR[1].setAlpha(topRight.getAlpha());
-
-        TEMP_COLOR[2].set(bottomRight.getRed(), bottomRight.getGreen(),
-            bottomRight.getBlue());
-        TEMP_COLOR[2].setAlpha(bottomRight.getAlpha());
-
-        TEMP_COLOR[3].set(bottomLeft.getRed(), bottomLeft.getGreen(),
-            bottomLeft.getBlue());
-        TEMP_COLOR[3].setAlpha(bottomLeft.getAlpha());
+        transferColorValues(topLeft, TEMP_COLOR[0]);
+        transferColorValues(topRight, TEMP_COLOR[1]);
+        transferColorValues(bottomRight, TEMP_COLOR[2]);
+        transferColorValues(bottomLeft, TEMP_COLOR[3]);
 
         drawer.drawRectangle(x, y, x + width, y + height, TEMP_COLOR[0],
             TEMP_COLOR[1], TEMP_COLOR[3], TEMP_COLOR[2]);
 
+    }
+    
+    /**
+     * This helper function is used to transfer the color values of a NiftyGUI
+     * color to a Illarion sprite color.
+     * 
+     * @param src the source nifty color
+     * @param tar the target Illarion color
+     */
+    private static void transferColorValues(final Color src, final SpriteColor tar) {
+        tar.set(src.getRed(), src.getGreen(), src.getBlue());
+        tar.setAlpha(src.getAlpha());
     }
 
     /*

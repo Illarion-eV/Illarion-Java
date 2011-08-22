@@ -161,6 +161,25 @@ public interface FontData {
      *            all letters are drawn in one line
      */
     void getGlyphes(String text, int start, int end, GlyphData[] dest, int[] x);
+    
+    /**
+     * This function simply puts the references to the glyph instances of this
+     * font into a array. Make sure the array is large enough to store all the
+     * glyphes.
+     * 
+     * @param text the text that shall be rendered with the glyphes
+     * @param start the index of the first character of the text that shall be
+     *            rendered, the glyph for this character is placed at index 0 of
+     *            the glyph array
+     * @param end the index of the first character of the text that is not
+     *            anymore rendered
+     * @param size the scaling factor of the font glyphes
+     * @param dest the array of glyphes the references are stored in
+     * @param x the array of x coordinates where to render the glyphes, the y
+     *            coordinates are as a matter of fact always the same because
+     *            all letters are drawn in one line
+     */
+    void getGlyphes(String text, int start, int end, float size, GlyphData[] dest, int[] x);
 
     /**
      * Gets the leading.
@@ -168,6 +187,27 @@ public interface FontData {
      * @return the leading value
      */
     int getLeading();
+
+    /**
+     * Get the width of a text in case its rendered with this font.
+     * 
+     * @param text the text to check
+     * @return the width of the text
+     */
+    int getStringWidth(String text);
+
+    /**
+     * Get the character advance along with the kerning for the cursor movement
+     * of one cursor to another.
+     * 
+     * @param currentCharacter the current character
+     * @param nextCharacter the next character
+     * @param size the font size
+     * @return the advance of the cursor or <code>null</code> in case it was
+     *         impossible to detect it
+     */
+    public Integer getCharacterAdvance(final char currentCharacter,
+        final char nextCharacter, final float size);
 
     /**
      * Gets the size.

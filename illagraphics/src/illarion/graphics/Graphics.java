@@ -18,6 +18,7 @@
  */
 package illarion.graphics;
 
+import java.awt.Font;
 import java.lang.reflect.InvocationTargetException;
 
 import javolution.lang.Reflection;
@@ -252,6 +253,18 @@ public final class Graphics {
     public RenderableFont getFont(final FontData font) {
         return create(RenderableFont.class, usedEngine,
             new Class<?>[] { FontData.class }, new Object[] { font });
+    }
+
+    /**
+     * Load a font that can be rendered in the client.
+     * 
+     * @param font the java font that is supposed to be loaded
+     * @return the loaded font
+     * @see illarion.graphics.RenderableFont
+     */
+    public RenderableFont getFont(final Font font) {
+        return create(RenderableFont.class, usedEngine,
+            new Class<?>[] { Font.class }, new Object[] { font });
     }
 
     /**

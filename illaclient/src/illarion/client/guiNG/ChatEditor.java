@@ -40,7 +40,7 @@ import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
 import illarion.graphics.Sprite;
 import illarion.graphics.SpriteColor;
-import illarion.graphics.common.Font;
+import illarion.graphics.common.RenderedFont;
 import illarion.graphics.common.FontLoader;
 
 /**
@@ -184,7 +184,7 @@ public final class ChatEditor extends Widget implements TextCursorTarget {
     /**
      * The source font object needed for some of the calculations.
      */
-    private transient Font textFontSource = (Font) FontLoader.getInstance()
+    private transient RenderedFont textFontSource = (RenderedFont) FontLoader.getInstance()
         .getFont(FontLoader.TEXT_FONT).getSourceFont();
 
     /**
@@ -411,7 +411,7 @@ public final class ChatEditor extends Widget implements TextCursorTarget {
      * @return the textFontSource of the chat editor
      */
     @Override
-    public Font getTextFontSource() {
+    public RenderedFont getTextFontSource() {
         return textFontSource;
     }
 
@@ -432,7 +432,7 @@ public final class ChatEditor extends Widget implements TextCursorTarget {
     @Override
     public void initWidget() {
         textFontSource =
-            (Font) FontLoader.getInstance().getFont(FontLoader.TEXT_FONT)
+            (RenderedFont) FontLoader.getInstance().getFont(FontLoader.TEXT_FONT)
                 .getSourceFont();
         textFont = FontLoader.getInstance().getFont(FontLoader.TEXT_FONT);
         super.initWidget();

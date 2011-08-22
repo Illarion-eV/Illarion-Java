@@ -18,7 +18,7 @@
  */
 package illarion.client.guiNG;
 
-import illarion.graphics.common.Font;
+import illarion.graphics.common.RenderedFont;
 
 /**
  * This interface is used for targets of the text cursor. All input a text
@@ -46,7 +46,7 @@ public interface TextCursorTarget {
      * 
      * @return the textFontSource of the chat editor
      */
-    public Font getTextFontSource();
+    public RenderedFont getTextFontSource();
 
     /**
      * Clear all characters from the underlying text.
