@@ -88,8 +88,6 @@ public class CellEditor implements mxICellEditor
     			nodeDialog.setName(value.getName());
     			nodeDialog.setStart(value.isStart());
     			nodeDialog.setVisible(true);
-    			
-    			evt.consume();
     		}
 		}
 	}

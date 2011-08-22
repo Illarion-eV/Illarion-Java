@@ -87,17 +87,6 @@ public final class Editor extends mxGraphComponent {
 			        }
 			    }
 			}
-			
-			public void mouseReleased(MouseEvent e)
-			{
-			    if (e.getClickCount() == 2) {
-			        Object cell = getCellAt(e.getX(), e.getY());
-    				if (cell != null)
-    				{
-    					System.out.println("cell="+((Status)((mxCell)cell).getValue()).getName());
-    				}
-    			}
-			}
 		});
     }
     
