@@ -84,7 +84,7 @@ public class CellEditor implements mxICellEditor
 			if (isVertex(cell))
 			{
 			    Status value = (Status)((mxCell)cell).getValue();
-    			nodeDialog.setLocationRelativeTo(null);
+    			nodeDialog.setLocationRelativeTo(MainFrame.getInstance());
     			nodeDialog.setName(value.getName());
     			nodeDialog.setStart(value.isStart());
     			nodeDialog.setVisible(true);
