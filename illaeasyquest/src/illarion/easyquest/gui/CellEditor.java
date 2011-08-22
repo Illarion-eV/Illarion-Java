@@ -28,6 +28,7 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.view.mxICellEditor;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.util.mxConstants;
 
 import illarion.easyquest.quest.Status;
 
@@ -108,6 +109,14 @@ public class CellEditor implements mxICellEditor
 				EventObject trig = trigger;
 				trigger = null;
 				Status value = getCurrentNodeValue();
+				if (value.isStart())
+				{
+				    ((mxCell)cell).setStyle(mxConstants.STYLE_STROKEWIDTH + "=3.0");
+				}
+				else
+				{
+				    ((mxCell)cell).setStyle("");
+				}
 				graphComponent.labelChanged(cell, value, trig);
 			}
 			else
