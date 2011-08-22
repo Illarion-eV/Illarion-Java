@@ -134,6 +134,8 @@ public class MainFrame extends JRibbonFrame
             editorTabListener);
 
         getContentPane().add(rootPanel);
+        
+        pack();
 		
 		if (getOpenTabs() == 0) {
             addNewQuest();
@@ -155,6 +157,7 @@ public class MainFrame extends JRibbonFrame
         	    instance = new MainFrame();
         		getInstance().setDefaultCloseOperation(JRibbonFrame.EXIT_ON_CLOSE);
         		getInstance().setSize(1204, 768);
+        		getInstance().setLocationRelativeTo(null);
         		getInstance().setVisible(true);
         	}
         });

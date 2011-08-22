@@ -19,8 +19,10 @@
 package illarion.easyquest.gui;
 
 import com.mxgraph.view.mxGraph;
+import com.mxgraph.model.mxCell;
 
 import illarion.easyquest.Lang;
+import illarion.easyquest.quest.Status;
 
 public class Graph extends mxGraph {
     public Graph()
@@ -44,5 +46,21 @@ public class Graph extends mxGraph {
 		tip += "</html>";
 
 		return tip;
+	}
+	
+	public String convertValueToString(Object cell)
+	{
+		if (cell instanceof mxCell)
+		{
+			Object value = ((mxCell) cell).getValue();
+
+			if (value instanceof Status)
+			{
+				Status status = (Status)value;
+                return status.getName();
+			}
+		}
+
+		return super.convertValueToString(cell);
 	}
 }

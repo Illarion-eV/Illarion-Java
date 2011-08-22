@@ -36,6 +36,8 @@ import com.mxgraph.io.mxCodec;
 import com.mxgraph.io.mxCodecRegistry;
 import com.mxgraph.io.mxObjectCodec;
 
+import com.mxgraph.model.mxCell;
+
 import illarion.easyquest.quest.Status;
 import illarion.easyquest.EditorKeyboardHandler;
 
@@ -75,8 +77,7 @@ public final class Editor extends mxGraphComponent {
 			            g.getModel().beginUpdate();
                         try {
                             Status status = new Status();
-                            status.setLabel("New Quest Status");
-                            status.setNumber(0);
+                            status.setName("New Quest Status");
                             status.setStart(false);
                             g.insertVertex(parent, null, status, e.getX(), e.getY(), 120,
                             30);
@@ -93,7 +94,7 @@ public final class Editor extends mxGraphComponent {
 			        Object cell = getCellAt(e.getX(), e.getY());
     				if (cell != null)
     				{
-    					System.out.println("cell="+g.getLabel(cell));
+    					System.out.println("cell="+((Status)((mxCell)cell).getValue()).getName());
     				}
     			}
 			}

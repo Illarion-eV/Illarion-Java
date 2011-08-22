@@ -22,22 +22,22 @@ import java.io.Serializable;
 
 public class Status implements Serializable {
 
-    private String label;
+    private String name;
     private boolean start;
     private int number;
 
     public Status() {
-        label = "";
+        name = "";
         start = false;
         number = -1;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setName(String name) {
+        this.name = name;
     }
     
-    public String getLabel() {
-        return label;
+    public String getName() {
+        return name;
     }
     
     public void setStart(boolean start) {
@@ -57,7 +57,7 @@ public class Status implements Serializable {
     }
     
     public final String toString() {
-        return getLabel();
+        return getName();
     }
     
 }
