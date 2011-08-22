@@ -27,6 +27,7 @@ import java.io.File;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
@@ -142,6 +143,7 @@ public class MainFrame extends JRibbonFrame
 	public static void main(String[] args)
 	{
 	    JRibbonFrame.setDefaultLookAndFeelDecorated(true);
+	    JDialog.setDefaultLookAndFeelDecorated(true);
 	    
 	    SwingUtilities.invokeLater(new Runnable() {
             @SuppressWarnings("synthetic-access")

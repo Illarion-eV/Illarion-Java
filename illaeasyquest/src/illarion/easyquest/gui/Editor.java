@@ -57,6 +57,7 @@ public final class Editor extends mxGraphComponent {
         super(graph);
         
         setToolTips(true);
+        setCellEditor(new CellEditor(this));
         
         keyboardHandler = new EditorKeyboardHandler(this);
         

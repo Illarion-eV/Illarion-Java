@@ -27,11 +27,6 @@ public class Graph extends mxGraph {
     {
         setAlternateEdgeStyle("edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical");
     }
-        
-    public boolean isCellEditable(Object cell)
-	{
-		return false;
-	}
 	
 	public String getToolTipForCell(Object cell)
 	{
