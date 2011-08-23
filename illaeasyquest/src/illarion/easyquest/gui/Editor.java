@@ -79,7 +79,7 @@ public final class Editor extends mxGraphComponent {
                             Status status = new Status();
                             status.setName("New Quest Status");
                             status.setStart(false);
-                            g.insertVertex(parent, null, status, e.getX(), e.getY(), 120,
+                            g.insertVertex(parent, null, status, e.getX()-60, e.getY()-15, 120,
                             30);
                         } finally {
                             g.getModel().endUpdate();
