@@ -111,7 +111,7 @@ public class CellEditor implements mxICellEditor
 				Status value = getCurrentNodeValue();
 				if (value.isStart())
 				{
-				    ((mxCell)cell).setStyle(mxConstants.STYLE_STROKEWIDTH + "=3.0");
+				    ((mxCell)cell).setStyle("StartStyle");
 				}
 				else
 				{

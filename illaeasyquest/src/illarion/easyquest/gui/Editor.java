@@ -19,6 +19,7 @@
 package illarion.easyquest.gui;
 
 import java.util.Map;
+import java.util.HashMap;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -105,6 +106,10 @@ public final class Editor extends mxGraphComponent {
         edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 2.0);
         edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
         stylesheet.setDefaultEdgeStyle(edgeStyle);
+        HashMap<String, Object> startStyle = new HashMap<String, Object>();
+        startStyle.put(mxConstants.STYLE_STROKEWIDTH, 3.0);
+        startStyle.put(mxConstants.STYLE_STROKECOLOR, "#0000F0");
+        stylesheet.putCellStyle("StartStyle", startStyle);
     }
     
     public File getQuestFile() {
