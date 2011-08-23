@@ -1,6 +1,8 @@
 require("questsystem.base")
 module("LookAtItem", package.seeall)
 
+-- Look at an item -- Einen Gegenstand ansehen
+
 local QUEST_NUMBER = 0
 local PRECONDITION_QUESTSTATE = 0
 local POSTCONDITION_QUESTSTATE = 0

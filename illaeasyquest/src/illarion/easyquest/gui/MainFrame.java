@@ -40,6 +40,7 @@ import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
 
 import illarion.easyquest.Lang;
+import illarion.easyquest.quest.TriggerTemplates;
 
 public class MainFrame extends JRibbonFrame
 {
@@ -144,6 +145,7 @@ public class MainFrame extends JRibbonFrame
 
 	public static void main(String[] args)
 	{
+	    TriggerTemplates.getInstance();
 	    JRibbonFrame.setDefaultLookAndFeelDecorated(true);
 	    JDialog.setDefaultLookAndFeelDecorated(true);
 	    
