@@ -23,6 +23,7 @@ import com.mxgraph.model.mxCell;
 
 import illarion.easyquest.Lang;
 import illarion.easyquest.quest.Status;
+import illarion.easyquest.quest.Trigger;
 
 public class Graph extends mxGraph {
     public Graph()
@@ -58,6 +59,11 @@ public class Graph extends mxGraph {
 			{
 				Status status = (Status)value;
                 return status.getName();
+			}
+			else if (value instanceof Trigger)
+			{
+			    Trigger trigger = (Trigger)value;
+			    return trigger.getName();
 			}
 		}
 

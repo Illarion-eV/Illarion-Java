@@ -40,6 +40,7 @@ import com.mxgraph.io.mxObjectCodec;
 import com.mxgraph.model.mxCell;
 
 import illarion.easyquest.quest.Status;
+import illarion.easyquest.quest.Trigger;
 import illarion.easyquest.EditorKeyboardHandler;
 
 /**
@@ -66,6 +67,8 @@ public final class Editor extends mxGraphComponent {
         
         mxCodecRegistry.register(new mxObjectCodec(new Status()));
         mxCodecRegistry.addPackage(Status.class.getPackage().getName());
+        mxCodecRegistry.register(new mxObjectCodec(new Trigger()));
+        mxCodecRegistry.addPackage(Trigger.class.getPackage().getName());
         
         final Graph g = graph;
         getGraphControl().addMouseListener(new MouseAdapter()

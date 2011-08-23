@@ -145,7 +145,6 @@ public class MainFrame extends JRibbonFrame
 
 	public static void main(String[] args)
 	{
-	    TriggerTemplates.getInstance();
 	    JRibbonFrame.setDefaultLookAndFeelDecorated(true);
 	    JDialog.setDefaultLookAndFeelDecorated(true);
 	    

@@ -31,6 +31,7 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxConstants;
 
 import illarion.easyquest.quest.Status;
+import illarion.easyquest.quest.Trigger;
 
 /**
  * To control this editor, use mxGraph.invokesStopCellEditing, mxGraph.
@@ -41,9 +42,10 @@ public class CellEditor implements mxICellEditor
 	protected mxGraphComponent graphComponent;
 
 	protected transient Object editingCell;
-	protected transient EventObject trigger;
+	protected transient EventObject triggerEvent;
 	
 	protected StatusDialog nodeDialog;
+	protected TriggerDialog triggerDialog;
 
 	public CellEditor(mxGraphComponent graphComponent)
 	{   
@@ -57,6 +59,20 @@ public class CellEditor implements mxICellEditor
             }
         });
         nodeDialog.addCancelListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stopEditing(true);
+            }
+        });
+        
+        triggerDialog = new TriggerDialog(MainFrame.getInstance());
+        triggerDialog.addOkayListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stopEditing(false);
+            }
+        });
+        triggerDialog.addCancelListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 stopEditing(true);
@@ -80,7 +96,7 @@ public class CellEditor implements mxICellEditor
 		if (state != null)
 		{
 			editingCell = cell;
-			trigger = evt;
+			triggerEvent = evt;
 			
 			if (isVertex(cell))
 			{
@@ -89,6 +105,13 @@ public class CellEditor implements mxICellEditor
     			nodeDialog.setName(value.getName());
     			nodeDialog.setStart(value.isStart());
     			nodeDialog.setVisible(true);
+    		}
+    		else
+    		{
+    		    Trigger value = (Trigger)((mxCell)cell).getValue();
+    		    triggerDialog.setLocationRelativeTo(MainFrame.getInstance());
+    			triggerDialog.setName(value.getName());
+    			triggerDialog.setVisible(true);
     		}
 		}
 	}
@@ -106,18 +129,27 @@ public class CellEditor implements mxICellEditor
 
 			if (!cancel)
 			{
-				EventObject trig = trigger;
-				trigger = null;
-				Status value = getCurrentNodeValue();
-				if (value.isStart())
-				{
-				    ((mxCell)cell).setStyle("StartStyle");
+				EventObject trig = triggerEvent;
+				triggerEvent = null;
+				
+				if (isVertex(cell))
+				{    
+    				Status value = getCurrentNodeValue();
+    				if (value.isStart())
+    				{
+    				    ((mxCell)cell).setStyle("StartStyle");
+    				}
+    				else
+    				{
+    				    ((mxCell)cell).setStyle("");
+    				}
+    				graphComponent.labelChanged(cell, value, trig);
+    			}
+    			else
+    			{
+    			    Trigger value = getCurrentEdgeValue();
+				    graphComponent.labelChanged(cell, value, trig);
 				}
-				else
-				{
-				    ((mxCell)cell).setStyle("");
-				}
-				graphComponent.labelChanged(cell, value, trig);
 			}
 			else
 			{
@@ -130,27 +162,30 @@ public class CellEditor implements mxICellEditor
             {
                 nodeDialog.setVisible(false);
             }
+            else
+            {
+                triggerDialog.setVisible(false);
+            }
+            
     		graphComponent.requestFocusInWindow();
 		}
 	}
-	
-	/**
-	 * Gets the initial editing value for the given cell.
-	 */
-	//protected Status getInitialValue(mxCellState state, EventObject trigger)
-	//{
-	//	return graphComponent.getEditingValue(state.getCell(), trigger);
-	//}
 
-	/**
-	 * Returns the current editing value.
-	 */
 	public Status getCurrentNodeValue()
 	{
 		Status result = new Status();
 	
         result.setName(nodeDialog.getName());
         result.setStart(nodeDialog.isStart());
+
+		return result;
+	}
+	
+    public Trigger getCurrentEdgeValue()
+	{
+		Trigger result = new Trigger();
+	
+        result.setName(triggerDialog.getName());
 
 		return result;
 	}
