@@ -18,6 +18,9 @@
  */
 package illarion.easyquest.quest;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.BufferedReader;
@@ -29,6 +32,8 @@ import illarion.easyquest.Lang;
 
 public class TriggerTemplates
 {
+    private List<TriggerTemplate> templates;
+    
     private static final TriggerTemplates instance = new TriggerTemplates();
     
     public static TriggerTemplates getInstance()
@@ -38,10 +43,11 @@ public class TriggerTemplates
     
     public TriggerTemplates()
     {
+        templates = new ArrayList<TriggerTemplate>();
         load();
     }
     
-    public void load()
+    private void load()
     {
         File dir = new File("res/template/trigger");
         FilenameFilter luaFilter = new FilenameFilter() {
@@ -49,25 +55,23 @@ public class TriggerTemplates
                 return name.endsWith(".lua");
             }
         };
-        File[] templates = dir.listFiles(luaFilter);
-        if (templates == null) {
+        File[] templateFiles = dir.listFiles(luaFilter);
+        if (templateFiles == null) {
             System.out.println("Trigger directory does not exist!");
         } else {
             boolean isGerman = Lang.getInstance().isGerman();
-            for (int i=0; i<templates.length; i++) {
+            for (int i=0; i<templateFiles.length; i++) {
                 String line = null;
                 boolean isHeader = true;
-                String name = null;
-                boolean foundNumber = false;
-                boolean foundPreCondition = false;
-                boolean foundPostCondition = false;
                 StringBuffer header = new StringBuffer();
                 StringBuffer body = new StringBuffer();
+                TriggerTemplate triggerTemplate = new TriggerTemplate(templateFiles[i].getName());
                 try
                 {
                     BufferedReader reader = new BufferedReader(
                             new InputStreamReader(new FileInputStream(
-                            templates[i]), "ISO-8859-1"));
+                            templateFiles[i]), "ISO-8859-1"));
+                    
                     while ((line = reader.readLine()) != null) {
                         if (isHeader && line.contains("function"))
                         {
@@ -84,36 +88,44 @@ public class TriggerTemplates
                                 String[] names = line.split("\\s*--\\s*");
                                 if (isGerman)
                                 {
-                                    name = names[2];
+                                    triggerTemplate.setTitle(names[2]);
                                 }
                                 else
                                 {
-                                    name = names[1];
+                                    triggerTemplate.setTitle(names[1]);
                                 }
-                                System.out.println("Trigger Name: "+name);
+                                //System.out.println("Trigger Name: "+names[1]);
                             }
                             else if (line.matches("local\\s+QUEST_NUMBER\\s*=\\s*0\\s*"))
                             {
-                                foundNumber = true;
-                                System.out.println("found number");
+                                triggerTemplate.foundQuestNumber();
+                                //System.out.println("found number");
                                 continue;
                             }
                             else if (line.matches("local\\s+PRECONDITION_QUESTSTATE\\s*=\\s*0\\s*"))
                             {
-                                foundPreCondition = true;
-                                System.out.println("found prior");
+                                triggerTemplate.foundPrior();
+                                //System.out.println("found prior");
                                 continue;
                             }
                             else if (line.matches("local\\s+POSTCONDITION_QUESTSTATE\\s*=\\s*0\\s*"))
                             {
-                                foundPostCondition = true;
-                                System.out.println("found posterior");
+                                triggerTemplate.foundPosterior();
+                                //System.out.println("found posterior");
                                 continue;
                             }                        
                             else if (line.matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*"))
                             {
                                 String[] param = line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
-                                System.out.println("Name: "+param[1]+"\nType: "+param[2]+"\nEN: "+param[3]+"\nDE: "+param[4]+"\n");
+                                if (isGerman)
+                                {
+                                    triggerTemplate.addParameter(new TriggerParameter(param[1], param[2], param[4]));
+                                }
+                                else
+                                {
+                                    triggerTemplate.addParameter(new TriggerParameter(param[1], param[2], param[3]));
+                                }
+                                //System.out.println("Name: "+param[1]+"\nType: "+param[2]+"\nEN: "+param[3]+"\nDE: "+param[4]+"\n");
                                 continue;
                             }
                         
@@ -124,8 +136,17 @@ public class TriggerTemplates
                             body.append(line+"\n");
                         }
                     }
+                    
+                    if (triggerTemplate.isComplete())
+                    {
+                        templates.add(triggerTemplate);
+                    }
+                    else
+                    {
+                        System.out.println("Syntax error in template " + templateFiles[i].getName());
+                    }
                 } catch (final IOException e1) {
-                    System.out.println("Error loading template " + templates[i].getName());
+                    System.out.println("Error loading template " + templateFiles[i].getName());
                 }
             }
         }
