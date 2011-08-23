@@ -53,4 +53,15 @@ public interface RenderableFont {
      */
     Integer getCharacterAdvance(char currentCharacter, char nextCharacter,
         float size);
+
+    /**
+     * Render a character sequence using this font.
+     * 
+     * @param text the text to render
+     * @param posX the x origin of the text
+     * @param posY the y origin of the text
+     * @param color the color of the text
+     * @param size the size of the text
+     */
+    void renderString(String text, int posX, int posY, SpriteColor color, float size);
 }

@@ -20,6 +20,7 @@ package illarion.graphics.lwjgl;
 
 import illarion.graphics.FontData;
 import illarion.graphics.RenderableFont;
+import illarion.graphics.SpriteColor;
 import illarion.graphics.lwjgl.font.FontLWJGL;
 import illarion.graphics.lwjgl.font.TextureFontLWJGL;
 
@@ -60,5 +61,11 @@ public final class RenderableFontLWJGL implements RenderableFont {
     public Integer getCharacterAdvance(char currentCharacter,
         char nextCharacter, float size) {
         return interalFont.getCharacterAdvance(currentCharacter, nextCharacter, size);
+    }
+
+    @Override
+    public void renderString(String text, int posX, int posY,
+        SpriteColor color, float size) {
+        interalFont.renderString(text, posX, posY, (SpriteColorLWJGL) color, size);
     }
 }

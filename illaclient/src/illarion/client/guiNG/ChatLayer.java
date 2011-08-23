@@ -156,7 +156,7 @@ public final class ChatLayer extends Widget {
                 Drawer.ROUNDED_BORDER_WIDTH + 1);
             text.setMaximalWidth(300);
             text.setFont(FontLoader.getInstance()
-                .getFont(FontLoader.TEXT_FONT));
+                .getFont(FontLoader.Fonts.text));
             text.setVisible(true);
             text.setColor(textColor);
         }

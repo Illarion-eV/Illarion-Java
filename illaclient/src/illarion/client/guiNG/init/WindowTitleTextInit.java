@@ -77,7 +77,7 @@ public final class WindowTitleTextInit implements WidgetInit {
                 "Init Class requires a Text widget");
         }
         final Text text = (Text) widget;
-        text.setFont(FontLoader.getInstance().getFont(FontLoader.SMALL_FONT));
+        text.setFont(FontLoader.getInstance().getFont(FontLoader.Fonts.small));
         final SpriteColor color = Graphics.getInstance().getSpriteColor();
         color.set(221, 198, 135);
         text.setColor(color);

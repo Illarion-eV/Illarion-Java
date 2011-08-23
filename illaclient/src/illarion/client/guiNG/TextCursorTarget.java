@@ -42,13 +42,6 @@ public interface TextCursorTarget {
     public void executeEnter();
 
     /**
-     * Returns the textFontSource of the chat editor
-     * 
-     * @return the textFontSource of the chat editor
-     */
-    public RenderedFont getTextFontSource();
-
-    /**
      * Clear all characters from the underlying text.
      */
     void clear();

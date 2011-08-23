@@ -232,9 +232,9 @@ public final class LoadingScreen implements RenderTask {
 
         if (dirty) {
             if (font == null) {
-                font = FontLoader.getInstance().getFont(FontLoader.MENU_FONT);
+                font = FontLoader.getInstance().getFont(FontLoader.Fonts.menu);
                 fontDone =
-                    FontLoader.getInstance().getFont(FontLoader.SMALL_FONT);
+                    FontLoader.getInstance().getFont(FontLoader.Fonts.small);
             }
             final int currLoadingLength = currList.size();
             int currentTextIndex = -1;

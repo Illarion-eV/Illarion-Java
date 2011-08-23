@@ -22,6 +22,7 @@ import java.awt.Font;
 
 import illarion.graphics.FontData;
 import illarion.graphics.RenderableFont;
+import illarion.graphics.SpriteColor;
 import illarion.graphics.jogl.font.FontJOGL;
 import illarion.graphics.jogl.font.JavaFontJOGL;
 import illarion.graphics.jogl.font.TextureFontJOGL;
@@ -72,5 +73,11 @@ public final class RenderableFontJOGL implements RenderableFont {
     public Integer getCharacterAdvance(char currentCharacter,
         char nextCharacter, float size) {
         return interalFont.getCharacterAdvance(currentCharacter, nextCharacter, size);
+    }
+
+    @Override
+    public void renderString(String text, int posX, int posY,
+        SpriteColor color, float size) {
+        interalFont.renderString(text, posX, posY, (SpriteColorJOGL) color, size);
     }
 }

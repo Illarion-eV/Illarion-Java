@@ -179,13 +179,7 @@ public final class ChatEditor extends Widget implements TextCursorTarget {
      * The font used to render the text.
      */
     private transient RenderableFont textFont = FontLoader.getInstance()
-        .getFont(FontLoader.TEXT_FONT);
-
-    /**
-     * The source font object needed for some of the calculations.
-     */
-    private transient RenderedFont textFontSource = (RenderedFont) FontLoader.getInstance()
-        .getFont(FontLoader.TEXT_FONT).getSourceFont();
+        .getFont(FontLoader.Fonts.text);
 
     /**
      * The widget used to display the text.
@@ -406,16 +400,6 @@ public final class ChatEditor extends Widget implements TextCursorTarget {
     }
 
     /**
-     * Returns the textFontSource of the chat editor
-     * 
-     * @return the textFontSource of the chat editor
-     */
-    @Override
-    public RenderedFont getTextFontSource() {
-        return textFontSource;
-    }
-
-    /**
      * The length of the text written into the editor.
      * 
      * @return the length of the text
@@ -431,10 +415,7 @@ public final class ChatEditor extends Widget implements TextCursorTarget {
      */
     @Override
     public void initWidget() {
-        textFontSource =
-            (RenderedFont) FontLoader.getInstance().getFont(FontLoader.TEXT_FONT)
-                .getSourceFont();
-        textFont = FontLoader.getInstance().getFont(FontLoader.TEXT_FONT);
+        textFont = FontLoader.getInstance().getFont(FontLoader.Fonts.text);
         super.initWidget();
     }
 
@@ -531,8 +512,7 @@ public final class ChatEditor extends Widget implements TextCursorTarget {
         super.setVisible(newVisible);
         if (!isVisible()) {
             setHeight(topLeftEdge.getHeight() * 2);
-            setWidth(textFontSource.getStringBounds(introTextSay, 0,
-                introTextSay.length()).width + textLineWidthBorder);
+            setWidth(textFont.getWidth(introTextSay) + textLineWidthBorder);
 
             if (TextCursor.getInstance().isTarget(this)) {
                 TextCursor.getInstance().disable();

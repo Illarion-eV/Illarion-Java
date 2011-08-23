@@ -142,7 +142,7 @@ public final class Journal extends ScrollArea implements ConfigChangeListener {
     /**
      * The font that is used to display the journal.
      */
-    private transient String usedFont = FontLoader.TEXT_FONT;
+    private transient FontLoader.Fonts usedFont = FontLoader.Fonts.text;
 
     /**
      * The public constructor for the journal that prepares the builds up all
@@ -242,11 +242,11 @@ public final class Journal extends ScrollArea implements ConfigChangeListener {
             maxEntries = cfg.getInteger(CFG_JOURNAL_LENGTH);
         } else if (CFG_JOURNAL_FONT.equals(key)) {
             final int fontID = cfg.getInteger(CFG_JOURNAL_FONT);
-            String newFont;
+            FontLoader.Fonts newFont;
             if (fontID == CFG_JOURNAL_FONT_LARGE) {
-                newFont = FontLoader.TEXT_FONT;
+                newFont = FontLoader.Fonts.text;
             } else {
-                newFont = FontLoader.SMALL_FONT;
+                newFont = FontLoader.Fonts.small;
             }
 
             if (!newFont.equals(usedFont)) {

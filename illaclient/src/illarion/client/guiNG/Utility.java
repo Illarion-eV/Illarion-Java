@@ -164,8 +164,8 @@ public final class Utility {
         titleBackground.setInitScript(greenBackInit);
 
         final RenderableFont titleFont =
-            FontLoader.getInstance().getFont(FontLoader.SMALL_FONT);
-        final int fontHeight = titleFont.getSourceFont().getAscent();
+            FontLoader.getInstance().getFont(FontLoader.Fonts.small);
+        final int fontHeight = titleFont.getHeight();
 
         final Text titleText = new Text();
         titleText.setHeight(fontHeight);

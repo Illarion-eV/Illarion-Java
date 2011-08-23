@@ -92,15 +92,15 @@ public final class IllarionRenderDevice implements RenderDevice {
         return imageFactory.getImage(filename, filterLinear);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * de.lessvoid.nifty.spi.render.RenderDevice#createFont(java.lang.String)
+    /**
+     * Get a font that is supposed to be used to render text in the GUI.
+     * 
+     * @param filename the name of the font
+     * @return the font
      */
     @Override
-    public RenderFont createFont(String filename) {
-        // TODO Auto-generated method stub
-        return null;
+    public RenderFont createFont(final String filename) {
+        return IllarionRenderFont.getFont(filename);
     }
 
     /**
@@ -253,18 +253,21 @@ public final class IllarionRenderDevice implements RenderDevice {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * de.lessvoid.nifty.spi.render.RenderDevice#renderFont(de.lessvoid.nifty
-     * .spi.render.RenderFont, java.lang.String, int, int,
-     * de.lessvoid.nifty.tools.Color, float)
+    /**
+     * Render a line of text to the screen using a specified font.
+     * 
+     * @param font the font to be used for the rendering
+     * @param text the text to be rendered
+     * @param x the x coordinate where the text it supposed to begin
+     * @param y the y coordinate where the text is supposed to begin
+     * @param fontColor the color the font is supposed to be rendered in
+     * @param size the size of the font
      */
     @Override
-    public void renderFont(RenderFont font, String text, int x, int y,
-        Color fontColor, float size) {
-        // TODO Auto-generated method stub
-
+    public void renderFont(final RenderFont font, final String text, final int x, final int y,
+        final Color fontColor, final float size) {
+        
+        ((IllarionRenderFont) font).renderString(text, x, y, fontColor, size);
     }
     
     /**

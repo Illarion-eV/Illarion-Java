@@ -898,8 +898,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<!--<property name="characters" value="65535" />-->
 		<!-- UTF-8 -->
 		<property name="fonts" location="${config}/data/fonts"/>
-
-
+	
 		<fontbuild targetFolder="${fonts}"
             charakterCount="${characters}" fontFile="${fonts}/BlackChancery.ttf"
             fontSize="24" fontType="normal" />
@@ -933,7 +932,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<fileset dir="${config}">
 				<include name="data/fonts/*.png" />
 				<include name="data/fonts/**/*.png" />
-                <include name="data/fonts/*.illaFont" />
+                <include name="data/fonts/**/*.illaFont" />
                 <include name="data/fonts/*.TTF" />
                 <include name="data/fonts/*.ttf" />
 				<exclude name="**/.svn/**" />

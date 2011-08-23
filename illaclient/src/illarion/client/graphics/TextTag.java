@@ -58,14 +58,11 @@ public class TextTag implements RecycleObject {
      */
     private static final RenderableFont TEXT_TAG_FONT;
 
-    private static final RenderedFont TEXT_TAG_SOURCEFONT;
-
     static {
         BACK_COLOR.set(SpriteColor.COLOR_MIN);
         BACK_COLOR.setAlpha(0.3f);
         TEXT_TAG_FONT =
-            FontLoader.getInstance().getFont(FontLoader.SMALL_FONT);
-        TEXT_TAG_SOURCEFONT = (RenderedFont) TEXT_TAG_FONT.getSourceFont();
+            FontLoader.getInstance().getFont(FontLoader.Fonts.small);
     }
 
     /**
@@ -240,8 +237,7 @@ public class TextTag implements RecycleObject {
      */
     public void setText(final String newText) {
         text = newText;
-        bounds =
-            TEXT_TAG_SOURCEFONT.getStringBounds(newText, 0, newText.length());
+        bounds = new Rectangle(TEXT_TAG_FONT.getWidth(newText), TEXT_TAG_FONT.getHeight());
         textTag.setText(newText);
         textTag.layout();
     }

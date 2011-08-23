@@ -89,11 +89,6 @@ public class Text extends Widget {
     private transient int offsetX = 0;
 
     /**
-     * The source font object that is needed to calculate some values.
-     */
-    private transient RenderedFont sourceFont;
-
-    /**
      * The text that widget shall display.
      */
     private String text;
@@ -204,7 +199,6 @@ public class Text extends Widget {
     public void setFont(final RenderableFont newFont) {
         if (font != newFont) {
             font = newFont;
-            sourceFont = (RenderedFont) font.getSourceFont();
             graphicalText.setFont(newFont);
             graphicalText.layout();
             updateOffset();
@@ -278,11 +272,10 @@ public class Text extends Widget {
         } else if (align == ALIGN_RIGHT) {
             offsetX =
                 super.getWidth()
-                    - sourceFont.getStringBounds(text, 0, text.length()).width;
+                    - font.getWidth(text);
         } else if (align == ALIGN_CENTER) {
             offsetX =
-                (super.getWidth() - sourceFont.getStringBounds(text, 0,
-                    text.length()).width) / 2;
+                (super.getWidth() - font.getWidth(text)) / 2;
         }
         graphicalText.setLocation(super.getRelX() + offsetX, super.getRelY());
     }

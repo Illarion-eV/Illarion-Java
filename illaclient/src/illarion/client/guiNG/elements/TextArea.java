@@ -87,11 +87,6 @@ public class TextArea extends Widget {
     private int maximalWidth;
 
     /**
-     * The source font object that is needed to perform some calculations.
-     */
-    private transient RenderedFont sourceFont;
-
-    /**
      * The text elements used to display the text. The amount of elements in
      * this list is not by all means the amount of lines really displayed.
      */
@@ -211,7 +206,6 @@ public class TextArea extends Widget {
      */
     public void setFont(final RenderableFont newFont) {
         font = newFont;
-        sourceFont = (RenderedFont) font.getSourceFont();
         dirtyText = true;
     }
 
@@ -296,9 +290,9 @@ public class TextArea extends Widget {
         }
 
         while (currentIndex < textLength) {
-            endPos =
-                sourceFont.getStringWrap(currentText, currentIndex,
-                    textLength, targetWidth);
+            endPos = 200;
+//                sourceFont.getStringWrap(currentText, currentIndex,
+//                    textLength, targetWidth);
             Text usedTextLine;
             if (textLines.size() > currentLines) {
                 usedTextLine = textLines.get(currentLines);
@@ -311,12 +305,8 @@ public class TextArea extends Widget {
             usedTextLine.setText(currentText.substring(currentIndex,
                 endPos + 1));
             usedTextLine.setCursorPos(-1);
-
-            final java.awt.Rectangle lineBounds =
-                sourceFont.getStringBounds(currentText, currentIndex,
-                    endPos + 1);
-            usedTextLine.setWidth(lineBounds.width);
-            usedTextLine.setHeight(lineBounds.height);
+            usedTextLine.setWidth(font.getWidth(currentText));
+            usedTextLine.setHeight(font.getHeight());
             addChild(usedTextLine);
 
             currentIndex = endPos + 1;
@@ -327,10 +317,10 @@ public class TextArea extends Widget {
             textLines.remove(textLines.size() - 1);
         }
 
-        int currentPen = sourceFont.getDescent();
+        int currentPen = 0;
         for (int i = currentLines - 1; i >= 0; --i) {
             textLines.get(i).setRelPos(0, currentPen);
-            currentPen += sourceFont.getAscent() + sourceFont.getDescent();
+            currentPen += font.getHeight();
         }
     }
 }

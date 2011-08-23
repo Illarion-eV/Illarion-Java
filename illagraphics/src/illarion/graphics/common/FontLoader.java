@@ -22,13 +22,15 @@ import illarion.common.util.NoResourceException;
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
 
+import java.awt.Font;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Map;
 
-import javolution.util.FastComparator;
+import javolution.text.TextBuilder;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
@@ -41,12 +43,66 @@ import org.apache.log4j.Logger;
  * @since 2.00
  */
 public final class FontLoader {
+    public static enum Fonts {
+        menu("menuFont", "BlackChancery", 24.f, "normal"), small("smallFont",
+            "Ubuntu", 14.f, "normal"), text("textFont", "Ubuntu", 16.f,
+            "normal");
+
+        private final String internalName;
+        private final String fontName;
+        private final float size;
+        private final String style;
+
+        private Fonts(final String name, final String font,
+            final float fontSize, final String fontStyle) {
+            internalName = name;
+            fontName = font;
+            size = fontSize;
+            style = fontStyle;
+        }
+
+        public String getName() {
+            return internalName;
+        }
+
+        public String getFontName() {
+            return fontName;
+        }
+
+        public String getFontTTFName() {
+            return fontName + ".ttf";
+        }
+
+        public String getFontDataName() {
+            final TextBuilder builder = TextBuilder.newInstance();
+            builder.append(fontName);
+            builder.append(File.separator);
+            builder.append(size, 0, false, false);
+            if (style.equals("italic")) {
+                builder.append("-italic");
+            } else if (style.equals("bold")) {
+                builder.append("-bold");
+            }
+            builder.append(".illaFont");
+            String result = builder.toString();
+            TextBuilder.recycle(builder);
+            return result;
+        }
+
+        public float getFontSize() {
+            return size;
+        }
+
+        public String getFontStyle() {
+            return style;
+        }
+    }
 
     /**
      * The root directory where the fonts are located.
      */
     @SuppressWarnings("nls")
-    private static final String FONT_ROOT = "data/gui/";
+    private static final String FONT_ROOT = "data/fonts/";
 
     /**
      * Singleton instance of the FontLoader.
@@ -57,24 +113,6 @@ public final class FontLoader {
      * The logger instance that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(FontLoader.class);
-
-    /**
-     * The font name of the menu font.
-     */
-    @SuppressWarnings("nls")
-    public static final String MENU_FONT = "menuFont";
-
-    /**
-     * The font name of the small font.
-     */
-    @SuppressWarnings("nls")
-    public static final String SMALL_FONT = "smallFont";
-
-    /**
-     * The font name of the text font.
-     */
-    @SuppressWarnings("nls")
-    public static final String TEXT_FONT = "textFont";
 
     /**
      * Get instance of singleton.
@@ -88,19 +126,16 @@ public final class FontLoader {
     /**
      * Storage of the loaded GL Fonts.
      */
-    private final Map<String, RenderableFont> fonts;
+    private final Map<Fonts, RenderableFont> fonts;
 
     /**
      * Default constructor.
      */
     private FontLoader() {
-        final FastMap<String, RenderableFont> fontTable =
-            new FastMap<String, RenderableFont>(3);
-        fontTable.setKeyComparator(FastComparator.STRING);
-        fontTable.put(MENU_FONT, loadFont(MENU_FONT));
-        fontTable.put(SMALL_FONT, loadFont(SMALL_FONT));
-        fontTable.put(TEXT_FONT, loadFont(TEXT_FONT));
-        fonts = fontTable;
+        fonts = new FastMap<Fonts, RenderableFont>(3);
+        fonts.put(Fonts.menu, loadFont(Fonts.menu));
+        fonts.put(Fonts.small, loadFont(Fonts.small));
+        fonts.put(Fonts.text, loadFont(Fonts.text));
     }
 
     /**
@@ -113,13 +148,41 @@ public final class FontLoader {
      * @return the font itself
      */
     public RenderableFont getFont(final String cfgName) {
-        RenderableFont font = fonts.get(cfgName);
-        if (font == null) {
-            font = loadFont(cfgName);
-            fonts.put(cfgName, font);
+        return getFont(toFontEnum(cfgName));
+    }
+
+    /**
+     * Load a font, using the name stored in the configuration. The font is
+     * loaded from the buffer of the class in case its loaded already. Else its
+     * loaded from the resources.
+     * 
+     * @param font the font to load
+     * @return the font itself
+     */
+    public RenderableFont getFont(final Fonts font) {
+        RenderableFont renderableFont = fonts.get(font);
+        if (renderableFont == null) {
+            renderableFont = loadFont(font);
+            fonts.put(font, renderableFont);
         }
 
-        return font;
+        return renderableFont;
+    }
+
+    /**
+     * This function transforms a name of a font into the fitting enumerator.
+     * 
+     * @param name the name of the font
+     * @return the fitting enumerator entry or <code>null</code> in case no
+     *         fitting entry was found
+     */
+    private static Fonts toFontEnum(final String name) {
+        for (Fonts font : Fonts.values()) {
+            if (font.getFontName().equals(name)) {
+                return font;
+            }
+        }
+        return null;
     }
 
     /**
@@ -129,22 +192,42 @@ public final class FontLoader {
      * @return the font itself
      */
     @SuppressWarnings("nls")
-    private RenderableFont loadFont(final String cfgName) {
+    private RenderableFont loadFont(final Fonts font) {
+        RenderableFont result;
+
+        result = loadJavaFont(font);
+        if (result != null) {
+            return result;
+        }
+
+        result = loadIllarionFont(font);
+        if (result != null) {
+            return result;
+        }
+
+        LOGGER.error("Failed to load font: " + font.getFontName());
+        return null;
+    }
+
+    private RenderableFont loadIllarionFont(final Fonts font) {
         ObjectInputStream ois = null;
-        RenderedFont font = null;
+        RenderedFont renderedFont = null;
+
         try {
             ois =
                 new ObjectInputStream(new BufferedInputStream(FontLoader.class
                     .getClassLoader().getResourceAsStream(
-                        FONT_ROOT + cfgName + ".illaFont")));
+                        FONT_ROOT + font.getFontDataName())));
 
-            font = (RenderedFont) ois.readObject();
+            renderedFont = (RenderedFont) ois.readObject();
         } catch (final FileNotFoundException ex) {
-            LOGGER.error("Can't find font file: " + cfgName, ex);
+            LOGGER
+                .debug("Can't find font file: " + font.getFontDataName(), ex);
         } catch (final IOException ex) {
-            LOGGER.error("Failed reading font file: " + cfgName, ex);
+            LOGGER.debug(
+                "Failed reading font file: " + font.getFontDataName(), ex);
         } catch (final ClassNotFoundException ex) {
-            LOGGER.error("Font file invalid: " + cfgName, ex);
+            LOGGER.debug("Font file invalid: " + font.getFontDataName(), ex);
         } finally {
             if (ois != null) {
                 try {
@@ -156,18 +239,51 @@ public final class FontLoader {
             }
         }
 
-        if (font == null) {
+        if (renderedFont == null) {
             return null;
         }
 
         try {
-            font.prepareTextures(FONT_ROOT);
+            renderedFont.prepareTextures(FONT_ROOT);
         } catch (final Exception e) {
             // Problem while preparing the textures.
             throw new NoResourceException("Error while loading font", e);
         }
 
-        final RenderableFont loadedText = Graphics.getInstance().getFont(font);
+        final RenderableFont loadedText =
+            Graphics.getInstance().getFont(renderedFont);
         return loadedText;
+    }
+
+    /**
+     * Load the font in the hardware accelerated TTF Format in case the graphic
+     * engine supports and the font is available in this format.
+     * 
+     * @param font the font to load
+     * @return the font in case it was load, else <code>null</code>
+     */
+    private RenderableFont loadJavaFont(final Fonts font) {
+        try {
+            Font javaFont =
+                Font.createFont(
+                    Font.TRUETYPE_FONT,
+                    FontLoader.class.getClassLoader().getResourceAsStream(
+                        FONT_ROOT + font.getFontTTFName()));
+
+            if (font.getFontStyle().equals("normal")) {
+                javaFont.deriveFont(Font.PLAIN, font.getFontSize());
+            } else if (font.getFontStyle().equals("italic")) {
+                javaFont.deriveFont(Font.ITALIC, font.getFontSize());
+            } else if (font.getFontStyle().equals("bold")) {
+                javaFont.deriveFont(Font.BOLD, font.getFontSize());
+            }
+
+            final RenderableFont loadedText =
+                Graphics.getInstance().getFont(javaFont);
+            return loadedText;
+        } catch (final Exception e) {
+            LOGGER.debug("Failed to load TTF Font:" + font.getFontTTFName());
+        }
+        return null;
     }
 }
