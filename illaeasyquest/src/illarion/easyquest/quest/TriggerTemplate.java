@@ -70,4 +70,9 @@ public class TriggerTemplate
         return (title != null) && hasQuestNumber && hasPrior && hasPosterior
             && (parameters.size() > 0);
     }
+    
+    public String toString()
+    {
+        return title;
+    }
 }

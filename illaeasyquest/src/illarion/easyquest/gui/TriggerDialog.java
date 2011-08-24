@@ -29,6 +29,8 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 
+import illarion.easyquest.quest.TriggerTemplates;
+
 public class TriggerDialog extends JDialog
 {
     
@@ -39,7 +41,7 @@ public class TriggerDialog extends JDialog
     
     public TriggerDialog(Frame owner)
     {
-        super(owner, "Status");
+        super(owner, "Trigger");
         
         final JPanel main = new JPanel();
 		final JPanel bottom = new JPanel();
@@ -48,6 +50,11 @@ public class TriggerDialog extends JDialog
 		trigger = new JComboBox();
 		okay = new JButton("OK");
 		cancel = new JButton("Abbrechen");
+		
+		for (int i=0; i<TriggerTemplates.getInstance().size(); ++i)
+		{
+		    trigger.addItem(TriggerTemplates.getInstance().getTemplate(i));
+		}
         
         setSize(240,130);
 		setResizable(false);

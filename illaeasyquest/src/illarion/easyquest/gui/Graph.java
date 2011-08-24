@@ -20,6 +20,7 @@ package illarion.easyquest.gui;
 
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGraphModel;
 
 import illarion.easyquest.Lang;
 import illarion.easyquest.quest.Status;
@@ -29,6 +30,14 @@ public class Graph extends mxGraph {
     public Graph()
     {
         setAlternateEdgeStyle("edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical");
+        setModel(new mxGraphModel() {
+            protected void cellAdded(Object cell) {
+                if (isEdge(cell))
+                {
+                    ((mxCell)cell).setValue(new Trigger());
+                }
+            }
+        });
     }
 	
 	public String getToolTipForCell(Object cell)

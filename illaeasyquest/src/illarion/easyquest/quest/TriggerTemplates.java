@@ -151,4 +151,14 @@ public class TriggerTemplates
             }
         }
     }
+    
+    public int size()
+    {
+        return templates.size();
+    }
+    
+    public TriggerTemplate getTemplate(int number)
+    {
+        return templates.get(number);
+    }
 }
