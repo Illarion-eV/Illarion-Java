@@ -124,11 +124,11 @@ public class TriggerTemplates
                                 String[] param = line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
                                 if (isGerman)
                                 {
-                                    triggerTemplate.addParameter(new TriggerParameter(param[1], param[2], param[4]));
+                                    triggerTemplate.addParameter(new TriggerTemplateParameter(param[1], param[2], param[4]));
                                 }
                                 else
                                 {
-                                    triggerTemplate.addParameter(new TriggerParameter(param[1], param[2], param[3]));
+                                    triggerTemplate.addParameter(new TriggerTemplateParameter(param[1], param[2], param[3]));
                                 }
                                 //System.out.println("Name: "+param[1]+"\nType: "+param[2]+"\nEN: "+param[3]+"\nDE: "+param[4]+"\n");
                                 continue;

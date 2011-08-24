@@ -18,13 +18,13 @@
  */
 package illarion.easyquest.quest;
 
-public class TriggerParameter
+public class TriggerTemplateParameter
 {
     private String name;
     private String type;
     private String description;
     
-    public TriggerParameter(String name, String type, String description)
+    public TriggerTemplateParameter(String name, String type, String description)
     {
         this.name = name;
         this.type = type;

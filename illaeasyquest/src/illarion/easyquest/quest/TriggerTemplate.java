@@ -28,7 +28,7 @@ public class TriggerTemplate
     private boolean hasQuestNumber;
     private boolean hasPrior;
     private boolean hasPosterior;
-    private List<TriggerParameter> parameters;
+    private List<TriggerTemplateParameter> parameters;
     
     public TriggerTemplate(String name)
     {
@@ -37,7 +37,7 @@ public class TriggerTemplate
         hasQuestNumber = false;
         hasPrior = false;
         hasPosterior = false;
-        parameters = new ArrayList<TriggerParameter>();
+        parameters = new ArrayList<TriggerTemplateParameter>();
     }
     
     public void setTitle(String title)
@@ -65,7 +65,7 @@ public class TriggerTemplate
         hasPosterior = true;
     }
     
-    public void addParameter(TriggerParameter parameter)
+    public void addParameter(TriggerTemplateParameter parameter)
     {
         parameters.add(parameter);
     }
