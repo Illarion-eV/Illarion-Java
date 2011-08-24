@@ -18,11 +18,10 @@
  */
 package illarion.client.gui;
 
-import org.illarion.nifty.renderer.render.IllarionSpriteRenderImage;
-
 import illarion.common.util.ObjectSource;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
+import illarion.graphics.Sprite;
 
 /**
  * This class is used to load and store the graphics that are needed for
@@ -32,7 +31,7 @@ import illarion.common.util.TableLoaderSink;
  * @since 1.22
  * @version 1.22
  */
-public final class GuiImageFactory implements ObjectSource<IllarionSpriteRenderImage>, TableLoaderSink {
+public final class GuiImageFactory implements ObjectSource<Sprite>, TableLoaderSink {
 
     /* (non-Javadoc)
      * @see illarion.common.util.TableLoaderSink#processRecord(int, illarion.common.util.TableLoader)
@@ -50,13 +49,13 @@ public final class GuiImageFactory implements ObjectSource<IllarionSpriteRenderI
     }
 
     @Override
-    public void disposeObject(String key, IllarionSpriteRenderImage object) {
+    public void disposeObject(String key, Sprite object) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public IllarionSpriteRenderImage getObject(String key) {
+    public Sprite getObject(String key) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -30,7 +30,7 @@ import de.lessvoid.nifty.spi.render.RenderImage;
  * @since 1.22/1.3
  * @version 1.22/1.3
  */
-public final class IllarionSpriteRenderImage implements RenderImage {
+final class IllarionSpriteRenderImage implements RenderImage {
     /**
      * The sprite that contains the actual image.
      */
