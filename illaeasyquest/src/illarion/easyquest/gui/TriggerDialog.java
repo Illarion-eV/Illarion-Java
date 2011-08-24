@@ -30,6 +30,7 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 
 import illarion.easyquest.quest.TriggerTemplates;
+import illarion.easyquest.quest.TriggerTemplate;
 
 public class TriggerDialog extends JDialog
 {
@@ -78,7 +79,17 @@ public class TriggerDialog extends JDialog
     public void setName(String value)
     {
         name.setText(value);
-    }	
+    }
+    
+    public String getType()
+    {
+        return ((TriggerTemplate)trigger.getSelectedItem()).getName();
+    }
+    
+    public void setType(String type)
+    {
+        trigger.setSelectedItem(TriggerTemplates.getInstance().getTemplate(type));
+    }
     
     public void addOkayListener(ActionListener listener)
     {

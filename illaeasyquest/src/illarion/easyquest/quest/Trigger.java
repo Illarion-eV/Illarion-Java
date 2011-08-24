@@ -23,9 +23,11 @@ import java.io.Serializable;
 public class Trigger implements Serializable {
 
     private String name;
+    private String type;
 
     public Trigger() {
         name = "";
+        type = null;
     }
 
     public void setName(String name) {
@@ -34,6 +36,14 @@ public class Trigger implements Serializable {
     
     public String getName() {
         return name;
+    }
+    
+    public void setType(String type) {
+        this.type = type;
+    }
+    
+    public String getType() {
+        return type;
     }
     
     public final String toString() {

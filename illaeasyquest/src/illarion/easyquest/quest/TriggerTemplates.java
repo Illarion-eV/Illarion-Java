@@ -20,6 +20,7 @@ package illarion.easyquest.quest;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -33,6 +34,7 @@ import illarion.easyquest.Lang;
 public class TriggerTemplates
 {
     private List<TriggerTemplate> templates;
+    private HashMap<String, TriggerTemplate> typeMap;
     
     private static final TriggerTemplates instance = new TriggerTemplates();
     
@@ -44,6 +46,7 @@ public class TriggerTemplates
     public TriggerTemplates()
     {
         templates = new ArrayList<TriggerTemplate>();
+        typeMap = new HashMap<String, TriggerTemplate>();
         load();
     }
     
@@ -65,7 +68,9 @@ public class TriggerTemplates
                 boolean isHeader = true;
                 StringBuffer header = new StringBuffer();
                 StringBuffer body = new StringBuffer();
-                TriggerTemplate triggerTemplate = new TriggerTemplate(templateFiles[i].getName());
+                String fileName = templateFiles[i].getName();
+                String uniqueName = fileName.substring(0, fileName.lastIndexOf('.'));
+                TriggerTemplate triggerTemplate = new TriggerTemplate(uniqueName);
                 try
                 {
                     BufferedReader reader = new BufferedReader(
@@ -140,6 +145,7 @@ public class TriggerTemplates
                     if (triggerTemplate.isComplete())
                     {
                         templates.add(triggerTemplate);
+                        typeMap.put(uniqueName, triggerTemplate);
                     }
                     else
                     {
@@ -160,5 +166,10 @@ public class TriggerTemplates
     public TriggerTemplate getTemplate(int number)
     {
         return templates.get(number);
+    }
+    
+    public TriggerTemplate getTemplate(String type)
+    {
+        return typeMap.get(type);
     }
 }

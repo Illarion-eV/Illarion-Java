@@ -45,6 +45,11 @@ public class TriggerTemplate
         this.title = title;
     }
     
+    public String getName()
+    {
+        return name;
+    }
+    
     public void foundQuestNumber()
     {
         hasQuestNumber = true;
@@ -73,6 +78,6 @@ public class TriggerTemplate
     
     public String toString()
     {
-        return title;
+        return name;
     }
 }
