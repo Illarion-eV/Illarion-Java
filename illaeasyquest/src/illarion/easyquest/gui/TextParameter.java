@@ -16,33 +16,19 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.easyquest.quest;
+package illarion.easyquest.gui;
 
-public class TriggerTemplateParameter
-{
-    private String name;
-    private String type;
-    private String description;
-    
-    public TriggerTemplateParameter(String name, String type, String description)
+import javax.swing.JTextField;
+
+public class TextParameter extends JTextField implements Parameter
+{    
+    public void setParameter(Object parameter)
     {
-        this.name = name;
-        this.type = type;
-        this.description = description;
+        setText((String)parameter);
     }
     
-    public String getName()
+    public Object getParameter()
     {
-        return name;
-    }
-    
-    public String getType()
-    {
-        return type;
-    }
-    
-    public String getDescription()
-    {
-        return description;
+        return getText();
     }
 }

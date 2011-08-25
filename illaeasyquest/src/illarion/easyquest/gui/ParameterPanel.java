@@ -16,33 +16,25 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.easyquest.quest;
+package illarion.easyquest.gui;
 
-public class TriggerTemplateParameter
+import java.awt.Component;
+
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+
+import illarion.easyquest.quest.TriggerTemplateParameter;
+
+public class ParameterPanel extends JPanel
 {
-    private String name;
-    private String type;
-    private String description;
+    private Component comp;
     
-    public TriggerTemplateParameter(String name, String type, String description)
+    public ParameterPanel(TriggerTemplateParameter parameter)
     {
-        this.name = name;
-        this.type = type;
-        this.description = description;
-    }
-    
-    public String getName()
-    {
-        return name;
-    }
-    
-    public String getType()
-    {
-        return type;
-    }
-    
-    public String getDescription()
-    {
-        return description;
+        JLabel description = new JLabel(parameter.getDescription()+":");
+        Component comp = new TextParameter();
+        
+        add(description);
+        add(comp);
     }
 }

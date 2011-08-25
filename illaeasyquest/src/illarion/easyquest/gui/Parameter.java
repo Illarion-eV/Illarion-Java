@@ -16,33 +16,10 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.easyquest.quest;
+package illarion.easyquest.gui;
 
-public class TriggerTemplateParameter
+public interface Parameter
 {
-    private String name;
-    private String type;
-    private String description;
-    
-    public TriggerTemplateParameter(String name, String type, String description)
-    {
-        this.name = name;
-        this.type = type;
-        this.description = description;
-    }
-    
-    public String getName()
-    {
-        return name;
-    }
-    
-    public String getType()
-    {
-        return type;
-    }
-    
-    public String getDescription()
-    {
-        return description;
-    }
+    public void setParameter(Object parameter);
+    public Object getParameter();
 }

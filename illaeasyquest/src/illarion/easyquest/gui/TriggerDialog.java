@@ -19,8 +19,11 @@
 package illarion.easyquest.gui;
 
 import java.awt.Frame;
-import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -44,7 +47,8 @@ public class TriggerDialog extends JDialog
     {
         super(owner, "Trigger");
         
-        final JPanel main = new JPanel();
+        final JPanel header = new JPanel();
+        final JPanel main = new JPanel(new GridLayout(0,1));
 		final JPanel bottom = new JPanel();
 		final JLabel label = new JLabel("Name:");
 		name = new JTextField(15);
@@ -56,19 +60,40 @@ public class TriggerDialog extends JDialog
 		{
 		    trigger.addItem(TriggerTemplates.getInstance().getTemplate(i));
 		}
+		
+		trigger.addItemListener(new ItemListener() {
+		    public void itemStateChanged(ItemEvent e) {
+		        if (e.getStateChange() == ItemEvent.SELECTED)
+		        {
+		            main.removeAll();
+		            TriggerTemplate template = (TriggerTemplate)e.getItem();
+		            for (int i=0; i<template.size(); ++i)
+            		{
+            		    main.add(new ParameterPanel(template.getParameter(i)));
+            		}
+            		pack();
+            		validate();
+		        }
+		    }
+		});
+		
+		trigger.setSelectedIndex(-1);
+		trigger.setSelectedIndex(0);
         
         setSize(240,130);
-		setResizable(false);
+		//setResizable(false);
 		
-		main.add(label, BorderLayout.NORTH);
-		main.add(name, BorderLayout.NORTH);
-		main.add(trigger, BorderLayout.CENTER);
+		header.add(label);
+		header.add(name);
 		
 		bottom.add(okay);
 		bottom.add(cancel);
 
-		add(main, BorderLayout.CENTER);
-		add(bottom, BorderLayout.SOUTH);
+        setLayout(new FlowLayout());
+		add(header);
+		add(trigger);
+		add(main);
+		add(bottom);
     }
    
     public String getName()

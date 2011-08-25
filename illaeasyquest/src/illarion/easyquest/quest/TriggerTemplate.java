@@ -50,6 +50,16 @@ public class TriggerTemplate
         return name;
     }
     
+    public int size()
+    {
+        return parameters.size();
+    }
+    
+    public TriggerTemplateParameter getParameter(int number)
+    {
+        return parameters.get(number);
+    }
+    
     public void foundQuestNumber()
     {
         hasQuestNumber = true;
