@@ -50,6 +50,7 @@ public class TriggerDialog extends JDialog
     private final JButton okay;
     private final JButton cancel;
     private final JPanel main;
+    private final JLabel labelId;
     
     public TriggerDialog(Frame owner)
     {
@@ -59,7 +60,7 @@ public class TriggerDialog extends JDialog
         main = new JPanel(new GridLayout(0,1,0,5));
 		final Box buttons = Box.createHorizontalBox();
 		final JLabel labelName = new JLabel("Name:");
-		final JLabel labelId = new JLabel("Objekt ID:");
+		labelId = new JLabel("Objekt ID:");
 		final JLabel labelType = new JLabel("Typ:");
 		name = new JTextField(17);
 		NumberFormat format = NumberFormat.getIntegerInstance();
@@ -86,6 +87,10 @@ public class TriggerDialog extends JDialog
             		{
             		    main.add(new ParameterPanel(template.getParameter(i)));
             		}
+            		String category = template.getCategory();
+            		String label = category.substring(0, 1).toUpperCase()
+            		    + category.substring(1) + " ID:";
+            		labelId.setText(label);
             		pack();
             		validate();
 		        }

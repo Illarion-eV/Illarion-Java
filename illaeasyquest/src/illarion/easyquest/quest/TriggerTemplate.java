@@ -25,6 +25,10 @@ public class TriggerTemplate
 {
     private String name;
     private String title;
+    private String category;
+    private String header;
+    private String body;
+    private String entryPoint;
     private boolean hasQuestNumber;
     private boolean hasPrior;
     private boolean hasPosterior;
@@ -34,6 +38,10 @@ public class TriggerTemplate
     {
         this.name = name;
         title = null;
+        category = null;
+        header = null;
+        body = null;
+        entryPoint = null;
         hasQuestNumber = false;
         hasPrior = false;
         hasPosterior = false;
@@ -48,6 +56,46 @@ public class TriggerTemplate
     public String getName()
     {
         return name;
+    }
+    
+    public String getCategory()
+    {
+        return category;
+    }
+    
+    public void setCategory(String category)
+    {
+        this.category = category;
+    }
+    
+    public String getHeader()
+    {
+        return header;
+    }
+    
+    public void setHeader(String header)
+    {
+        this.header = header;
+    }
+    
+    public String getBody()
+    {
+        return body;
+    }
+    
+    public void setBody(String body)
+    {
+        this.body = body;
+    }
+    
+    public String getEntryPoint()
+    {
+        return entryPoint;
+    }
+    
+    public void setEntryPoint(String entryPoint)
+    {
+        this.entryPoint = entryPoint;
     }
     
     public int size()
@@ -83,7 +131,8 @@ public class TriggerTemplate
     public boolean isComplete()
     {
         return (title != null) && hasQuestNumber && hasPrior && hasPosterior
-            && (parameters.size() > 0);
+            && (header != null) && (body != null) && (entryPoint != null)
+            && (category != null) && (parameters.size() > 0);
     }
     
     public String toString()

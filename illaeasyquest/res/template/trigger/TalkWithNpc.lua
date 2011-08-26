@@ -1,6 +1,7 @@
 require("questsystem.base")
 module("TalkWithNpc", package.seeall)
 
+-- category: npc
 -- Talk with an NPC -- Mit einem NPC sprechen
 
 local QUEST_NUMBER = 0

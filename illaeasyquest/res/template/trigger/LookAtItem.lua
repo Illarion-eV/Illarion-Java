@@ -1,6 +1,7 @@
 require("questsystem.base")
 module("LookAtItem", package.seeall)
 
+-- category: item
 -- Look at an item -- Einen Gegenstand ansehen
 
 local QUEST_NUMBER = 0

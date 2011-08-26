@@ -42,6 +42,8 @@ import com.mxgraph.model.mxCell;
 import illarion.easyquest.quest.Status;
 import illarion.easyquest.quest.Trigger;
 import illarion.easyquest.quest.Position;
+import illarion.easyquest.quest.TriggerTemplate;
+import illarion.easyquest.quest.TriggerTemplates;
 import illarion.easyquest.EditorKeyboardHandler;
 
 /**
@@ -156,5 +158,81 @@ public final class Editor extends mxGraphComponent {
         mxCodec codec = new mxCodec();
         return mxUtils.getPrettyXml(codec.encode(getGraph().getModel()));
     }
-
+    
+    public Map<String, String> getQuestLua(String questName)
+    {
+        String questtxt = "";
+        Map<String, String> quest = new HashMap<String, String>();
+        
+        Graph g = (Graph)getGraph();
+        Object[] edges = g.getChildEdges(g.getDefaultParent());
+        
+        int i = 1;
+        for (Object obj : edges)
+        {
+            mxCell edge = (mxCell)obj;
+            Trigger trigger = (Trigger)edge.getValue();
+            TriggerTemplate template =
+                TriggerTemplates.getInstance().getTemplate(trigger.getType());
+            
+            String scriptName = "trigger" + i;
+            mxCell source = (mxCell)edge.getSource();
+            mxCell target = (mxCell)edge.getTarget();
+            Status sourceState = (Status)source.getValue();
+            Status targetState = (Status)target.getValue();
+            String sourceId = sourceState.isStart() ? "0" : source.getId();
+            String targetId = targetState.isStart() ? "0" : target.getId();
+            Object[] parameters = trigger.getParameters();
+            
+            String t;
+            t = template.getHeader()
+              + "module(\"questsystem." + questName + "." + scriptName + "\", package.seeall)" + "\n"
+              + "\n"
+              + "local QUEST_NUMBER = " + "10000" + "\n" // TODO: Get quest number from somewhere
+              + "local PRECONDITION_QUESTSTATE = " + sourceId + "\n"
+              + "local POSTCONDITION_QUESTSTATE = " + targetId + "\n"
+              + "\n";
+            for (int j=0; j<template.size(); ++j)
+    		{
+    		    t = t + "local "
+    		          + template.getParameter(j).getName()
+    		          + " = "
+    		          + exportParameter(parameters[j])
+    		          + "\n";
+    		}
+    		t = t + "\n";
+    		t = t + template.getBody();
+    		
+    		quest.put(scriptName + ".lua", t);
+    		
+            questtxt = questtxt + template.getCategory() + ","
+                    + trigger.getObjectId() + ","
+                    + template.getEntryPoint() + ","
+                    + scriptName + "\n";
+              
+            i = i + 1;
+        }
+        
+        quest.put("quest.txt", questtxt);
+        
+        return quest;
+    }
+    
+    private String exportParameter(Object parameter)
+    {
+        if (parameter instanceof String)
+        {
+            String s = (String)parameter;
+            return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+        }
+        else if (parameter instanceof Position)
+        {
+            Position p = (Position)parameter;
+            return "position(" + p.getX() + ", " + p.getY() + ", " + p.getZ() + ")";
+        }
+        else
+        {
+            return "TYPE NOT SUPPORTED";
+        }
+    }
 }

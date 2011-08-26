@@ -78,14 +78,28 @@ public class TriggerTemplates
                             templateFiles[i]), "ISO-8859-1"));
                     
                     while ((line = reader.readLine()) != null) {
-                        if (isHeader && line.contains("function"))
+                        if (isHeader && line.matches("function .*"))
                         {
                             isHeader = false;
+                            String[] temp = line.split("function |\\(");
+                            String entryPoint = temp[1].trim();
+                            triggerTemplate.setEntryPoint(entryPoint);
                         }
                         if (isHeader)
                         {
                             if (line.isEmpty())
                             {
+                                continue;
+                            }
+                            else if (line.matches("module.*"))
+                            {
+                                continue;
+                            }
+                            else if (line.matches("--\\s*category:.*"))
+                            {
+                                String[] temp = line.split("--\\s*category:");
+                                String category = temp[1].trim();
+                                triggerTemplate.setCategory(category);
                                 continue;
                             }
                             else if (line.matches("--.*\\w+.*--.*\\w+.*"))
@@ -141,6 +155,9 @@ public class TriggerTemplates
                             body.append(line+"\n");
                         }
                     }
+                    
+                    triggerTemplate.setHeader(header.toString());
+                    triggerTemplate.setBody(body.toString());
                     
                     if (triggerTemplate.isComplete())
                     {
