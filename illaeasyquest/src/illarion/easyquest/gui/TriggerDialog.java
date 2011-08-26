@@ -140,7 +140,7 @@ public class TriggerDialog extends JDialog
     
     public long getId()
     {
-        return (Long)objectId.getValue();
+        return ((Number)objectId.getValue()).longValue();
     }
     
     public void setId(long value)
