@@ -111,6 +111,7 @@ public class CellEditor implements mxICellEditor
     		    Trigger value = (Trigger)((mxCell)cell).getValue();
     		    triggerDialog.setLocationRelativeTo(MainFrame.getInstance());
     			triggerDialog.setName(value.getName());
+    			triggerDialog.setId(value.getId());
     			if (value.getType() != null)
     			{
     			    triggerDialog.setType(value.getType());
@@ -155,12 +156,6 @@ public class CellEditor implements mxICellEditor
 				    graphComponent.labelChanged(cell, value, trig);
 				}
 			}
-			else
-			{
-				mxCellState state = graphComponent.getGraph().getView()
-						.getState(cell);
-				graphComponent.redraw(state);
-			}
 
             if (isVertex(cell))
             {
@@ -190,6 +185,7 @@ public class CellEditor implements mxICellEditor
 		Trigger result = new Trigger();
 	
         result.setName(triggerDialog.getName());
+        result.setId(triggerDialog.getId());
         result.setType(triggerDialog.getType());
 
 		return result;
@@ -201,7 +197,9 @@ public class CellEditor implements mxICellEditor
 	 */
 	public Object getEditingCell()
 	{
-		return editingCell;
+	    // Countering a jgraphx bug: http://forum.jgraph.com/questions/1991/how-to-prevent-custom-cell-editor-from-hiding-edited-cells-label/2016
+	    return null;
+		// return editingCell;
 	}
 
     private boolean isVertex(Object cell)

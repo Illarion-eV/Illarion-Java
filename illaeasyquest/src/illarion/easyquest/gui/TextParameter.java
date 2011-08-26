@@ -21,7 +21,17 @@ package illarion.easyquest.gui;
 import javax.swing.JTextField;
 
 public class TextParameter extends JTextField implements Parameter
-{    
+{
+    public TextParameter()
+    {
+        super();
+    }
+    
+    public TextParameter(int width)
+    {
+        super(width);
+    }
+    
     public void setParameter(Object parameter)
     {
         setText((String)parameter);

@@ -19,7 +19,7 @@
 package illarion.easyquest.gui;
 
 import java.awt.Frame;
-import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
@@ -31,6 +31,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
+import javax.swing.Box;
+import javax.swing.BorderFactory;
 
 import illarion.easyquest.quest.TriggerTemplates;
 import illarion.easyquest.quest.TriggerTemplate;
@@ -39,6 +41,7 @@ public class TriggerDialog extends JDialog
 {
     
     private JTextField name;
+    private JTextField objectId;
     private JComboBox trigger;
     private JButton okay;
     private JButton cancel;
@@ -47,11 +50,14 @@ public class TriggerDialog extends JDialog
     {
         super(owner, "Trigger");
         
-        final JPanel header = new JPanel();
+        final JPanel header = new JPanel(new GridLayout(0,2,5,5));
         final JPanel main = new JPanel(new GridLayout(0,1));
-		final JPanel bottom = new JPanel();
-		final JLabel label = new JLabel("Name:");
-		name = new JTextField(15);
+		final Box buttons = Box.createHorizontalBox();
+		final JLabel labelName = new JLabel("Name:");
+		final JLabel labelId = new JLabel("Objekt ID:");
+		final JLabel labelType = new JLabel("Typ:");
+		name = new JTextField(17);
+		objectId = new JTextField(17);
 		trigger = new JComboBox();
 		okay = new JButton("OK");
 		cancel = new JButton("Abbrechen");
@@ -80,20 +86,32 @@ public class TriggerDialog extends JDialog
 		trigger.setSelectedIndex(-1);
 		trigger.setSelectedIndex(0);
         
-        setSize(240,130);
-		//setResizable(false);
+		setResizable(false);
 		
-		header.add(label);
+		header.add(labelName);
 		header.add(name);
+		header.add(labelId);
+		header.add(objectId);
+		header.add(labelType);
+		header.add(trigger);
+		header.add(main);
+		header.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		
-		bottom.add(okay);
-		bottom.add(cancel);
+		buttons.add(Box.createHorizontalGlue());
+		buttons.add(okay);
+		buttons.add(Box.createHorizontalStrut(5));
+		buttons.add(cancel);
+		buttons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		
+		main.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		
+		getRootPane().setDefaultButton(okay);
 
-        setLayout(new FlowLayout());
-		add(header);
-		add(trigger);
-		add(main);
-		add(bottom);
+		add(header, BorderLayout.NORTH);
+		add(main, BorderLayout.CENTER);
+		add(buttons, BorderLayout.PAGE_END);
+		
+		pack();
     }
    
     public String getName()
@@ -106,10 +124,23 @@ public class TriggerDialog extends JDialog
         name.setText(value);
     }
     
+    public String getId()
+    {
+        return objectId.getText();
+    }
+    
+    public void setId(String value)
+    {
+        objectId.setText(value);
+    }
+    
     public String getType()
     {
         return ((TriggerTemplate)trigger.getSelectedItem()).getName();
     }
+    
+    
+    
     
     public void setType(String type)
     {

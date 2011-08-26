@@ -88,6 +88,6 @@ public class TriggerTemplate
     
     public String toString()
     {
-        return name;
+        return title;
     }
 }

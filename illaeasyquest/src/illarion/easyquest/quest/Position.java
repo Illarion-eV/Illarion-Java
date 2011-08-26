@@ -18,46 +18,16 @@
  */
 package illarion.easyquest.quest;
 
-import java.io.Serializable;
-
-public class Trigger implements Serializable {
-
-    private String name;
-    private String id;
-    private String type;
-
-    public Trigger() {
-        name = "";
-        id = "";
-        type = null;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+public class Position {
     
-    public String getName() {
-        return name;
-    }
+    public final short x;
+    public final short y;
+    public final short z;
     
-    public void setId(String id) {
-        this.id = id;
+    public Position (short x, short y, short z)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
-    
-    public String getId() {
-        return id;
-    }
-    
-    public void setType(String type) {
-        this.type = type;
-    }
-    
-    public String getType() {
-        return type;
-    }
-    
-    public final String toString() {
-        return getName();
-    }
-    
 }

@@ -19,6 +19,7 @@
 package illarion.easyquest.gui;
 
 import java.awt.Component;
+import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -32,9 +33,50 @@ public class ParameterPanel extends JPanel
     public ParameterPanel(TriggerTemplateParameter parameter)
     {
         JLabel description = new JLabel(parameter.getDescription()+":");
-        Component comp = new TextParameter();
+        String type = parameter.getType();
+        if (type.equals("TEXT"))
+        {
+            comp = new TextParameter(17);
+        }
+        else if (type.equals("POSITION"))
+        {
+            comp = new PositionParameter();
+        }
+        else
+        {
+            comp = null;
+        }
+     
+        setLayout(new GridLayout(1,2));
         
         add(description);
-        add(comp);
+        if (comp != null)
+        {
+            add(comp);
+        }
+        else
+        {
+            add(new JLabel("TYPE \"" + type + "\" NOT IMPLEMENTED"));
+        }
+    }
+    
+    public Object getParameter()
+    {
+        if (comp != null)
+        {
+            return ((Parameter)comp).getParameter();
+        }
+        else
+        {
+            return "TYPE NOT IMPLEMENTED";
+        }
+    }
+    
+    public void setParameter(Object parameter)
+    {
+        if (comp != null)
+        {
+            ((Parameter)comp).setParameter(parameter);
+        }
     }
 }
