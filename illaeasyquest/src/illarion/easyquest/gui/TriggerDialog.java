@@ -50,8 +50,8 @@ public class TriggerDialog extends JDialog
     {
         super(owner, "Trigger");
         
-        final JPanel header = new JPanel(new GridLayout(0,2,5,5));
-        final JPanel main = new JPanel(new GridLayout(0,1));
+        final JPanel header = new JPanel(new GridLayout(0,2,0,5));
+        final JPanel main = new JPanel(new GridLayout(0,1,0,5));
 		final Box buttons = Box.createHorizontalBox();
 		final JLabel labelName = new JLabel("Name:");
 		final JLabel labelId = new JLabel("Objekt ID:");
@@ -95,15 +95,15 @@ public class TriggerDialog extends JDialog
 		header.add(labelType);
 		header.add(trigger);
 		header.add(main);
-		header.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		header.setBorder(BorderFactory.createEmptyBorder(5,5,10,5));
 		
 		buttons.add(Box.createHorizontalGlue());
 		buttons.add(okay);
 		buttons.add(Box.createHorizontalStrut(5));
 		buttons.add(cancel);
-		buttons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		buttons.setBorder(BorderFactory.createEmptyBorder(20,5,5,5));
 		
-		main.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		main.setBorder(BorderFactory.createTitledBorder("Parameter"));
 		
 		getRootPane().setDefaultButton(okay);
 
