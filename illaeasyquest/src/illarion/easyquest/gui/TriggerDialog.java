@@ -18,6 +18,7 @@
  */
 package illarion.easyquest.gui;
 
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -40,18 +41,19 @@ import illarion.easyquest.quest.TriggerTemplate;
 public class TriggerDialog extends JDialog
 {
     
-    private JTextField name;
-    private JTextField objectId;
-    private JComboBox trigger;
-    private JButton okay;
-    private JButton cancel;
+    private final JTextField name;
+    private final JTextField objectId;
+    private final JComboBox trigger;
+    private final JButton okay;
+    private final JButton cancel;
+    private final JPanel main;
     
     public TriggerDialog(Frame owner)
     {
         super(owner, "Trigger");
         
         final JPanel header = new JPanel(new GridLayout(0,2,0,5));
-        final JPanel main = new JPanel(new GridLayout(0,1,0,5));
+        main = new JPanel(new GridLayout(0,1,0,5));
 		final Box buttons = Box.createHorizontalBox();
 		final JLabel labelName = new JLabel("Name:");
 		final JLabel labelId = new JLabel("Objekt ID:");
@@ -139,12 +141,31 @@ public class TriggerDialog extends JDialog
         return ((TriggerTemplate)trigger.getSelectedItem()).getName();
     }
     
-    
-    
-    
     public void setType(String type)
     {
         trigger.setSelectedItem(TriggerTemplates.getInstance().getTemplate(type));
+    }
+    
+    public Object[] getParameters()
+    {
+        int count = main.getComponentCount();
+        Object[] parameters = new Object[count];
+        for (int i=0; i<count; ++i)
+        {
+            Component c = main.getComponent(i);
+            parameters[i] = ((ParameterPanel)c).getParameter();
+        }
+        return parameters;
+    }
+    
+    public void setParameters(Object[] parameters)
+    {
+        int count = main.getComponentCount();
+        for (int i=0; i<count; ++i)
+        {
+            Component c = main.getComponent(i);
+            ((ParameterPanel)c).setParameter(parameters[i]);
+        }
     }
     
     public void addOkayListener(ActionListener listener)

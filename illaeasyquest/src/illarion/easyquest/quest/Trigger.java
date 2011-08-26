@@ -25,11 +25,13 @@ public class Trigger implements Serializable {
     private String name;
     private String id;
     private String type;
+    private Object[] parameters;
 
     public Trigger() {
         name = "";
         id = "";
         type = null;
+        parameters = null;
     }
 
     public void setName(String name) {
@@ -54,6 +56,14 @@ public class Trigger implements Serializable {
     
     public String getType() {
         return type;
+    }
+    
+    public void setParameters(Object[] parameters) {
+        this.parameters = parameters;
+    }
+    
+    public Object[] getParameters() {
+        return parameters;
     }
     
     public final String toString() {
