@@ -20,14 +20,51 @@ package illarion.easyquest.quest;
 
 public class Position {
     
-    public final short x;
-    public final short y;
-    public final short z;
+    private short x;
+    private short y;
+    private short z;
+    
+    public Position ()
+    {
+        x = 0;
+        y = 0;
+        z = 0;
+    }
     
     public Position (short x, short y, short z)
     {
         this.x = x;
         this.y = y;
+        this.z = z;
+    }
+    
+    public short getX()
+    {
+        return x;
+    }
+    
+    public void setX(short x)
+    {
+        this.x = x;
+    }
+    
+    public short getY()
+    {
+        return y;
+    }
+    
+    public void setY(short y)
+    {
+        this.y = y;
+    }
+    
+    public short getZ()
+    {
+        return z;
+    }
+    
+    public void setZ(short z)
+    {
         this.z = z;
     }
 }

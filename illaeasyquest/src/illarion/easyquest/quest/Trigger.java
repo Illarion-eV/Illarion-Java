@@ -23,13 +23,13 @@ import java.io.Serializable;
 public class Trigger implements Serializable {
 
     private String name;
-    private String id;
+    private long objectId;
     private String type;
     private Object[] parameters;
 
     public Trigger() {
         name = "";
-        id = "";
+        objectId = 0;
         type = null;
         parameters = null;
     }
@@ -42,12 +42,12 @@ public class Trigger implements Serializable {
         return name;
     }
     
-    public void setId(String id) {
-        this.id = id;
+    public void setObjectId(long id) {
+        objectId = id;
     }
     
-    public String getId() {
-        return id;
+    public long getObjectId() {
+        return objectId;
     }
     
     public void setType(String type) {

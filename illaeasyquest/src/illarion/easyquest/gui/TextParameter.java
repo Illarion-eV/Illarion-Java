@@ -34,7 +34,14 @@ public class TextParameter extends JTextField implements Parameter
     
     public void setParameter(Object parameter)
     {
-        setText((String)parameter);
+        if (parameter != null)
+        {
+            setText((String)parameter);
+        }
+        else
+        {
+            setText("");
+        }
     }
     
     public Object getParameter()

@@ -111,7 +111,7 @@ public class CellEditor implements mxICellEditor
     		    Trigger value = (Trigger)((mxCell)cell).getValue();
     		    triggerDialog.setLocationRelativeTo(MainFrame.getInstance());
     			triggerDialog.setName(value.getName());
-    			triggerDialog.setId(value.getId());
+    			triggerDialog.setId(value.getObjectId());
     			if (value.getType() != null)
     			{
     			    triggerDialog.setType(value.getType());
@@ -186,7 +186,7 @@ public class CellEditor implements mxICellEditor
 		Trigger result = new Trigger();
 	
         result.setName(triggerDialog.getName());
-        result.setId(triggerDialog.getId());
+        result.setObjectId(triggerDialog.getId());
         result.setType(triggerDialog.getType());
         result.setParameters(triggerDialog.getParameters());
 

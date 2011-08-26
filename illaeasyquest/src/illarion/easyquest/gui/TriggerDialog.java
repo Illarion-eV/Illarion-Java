@@ -18,6 +18,8 @@
  */
 package illarion.easyquest.gui;
 
+import java.text.NumberFormat;
+
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.BorderLayout;
@@ -30,6 +32,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.JFormattedTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.Box;
@@ -42,7 +45,7 @@ public class TriggerDialog extends JDialog
 {
     
     private final JTextField name;
-    private final JTextField objectId;
+    private final JFormattedTextField objectId;
     private final JComboBox trigger;
     private final JButton okay;
     private final JButton cancel;
@@ -59,7 +62,11 @@ public class TriggerDialog extends JDialog
 		final JLabel labelId = new JLabel("Objekt ID:");
 		final JLabel labelType = new JLabel("Typ:");
 		name = new JTextField(17);
-		objectId = new JTextField(17);
+		NumberFormat format = NumberFormat.getIntegerInstance();
+        format.setGroupingUsed(false);
+        objectId = new JFormattedTextField(format);
+        objectId.setHorizontalAlignment(JFormattedTextField.RIGHT);
+		objectId.setValue(new Long(0));
 		trigger = new JComboBox();
 		okay = new JButton("OK");
 		cancel = new JButton("Abbrechen");
@@ -126,14 +133,14 @@ public class TriggerDialog extends JDialog
         name.setText(value);
     }
     
-    public String getId()
+    public long getId()
     {
-        return objectId.getText();
+        return (Long)objectId.getValue();
     }
     
-    public void setId(String value)
+    public void setId(long value)
     {
-        objectId.setText(value);
+        objectId.setValue(new Long(value));
     }
     
     public String getType()
@@ -161,10 +168,22 @@ public class TriggerDialog extends JDialog
     public void setParameters(Object[] parameters)
     {
         int count = main.getComponentCount();
-        for (int i=0; i<count; ++i)
+        
+        if (parameters != null)
         {
-            Component c = main.getComponent(i);
-            ((ParameterPanel)c).setParameter(parameters[i]);
+            for (int i=0; i<count; ++i)
+            {
+                Component c = main.getComponent(i);
+                ((ParameterPanel)c).setParameter(parameters[i]);
+            }
+        }
+        else
+        {
+            for (int i=0; i<count; ++i)
+            {
+                Component c = main.getComponent(i);
+                ((ParameterPanel)c).setParameter(null);
+            }
         }
     }
     
