@@ -76,7 +76,7 @@ public final class Editor extends mxGraphComponent {
         getGraphControl().addMouseListener(new MouseAdapter()
 		{
 		    public void mouseClicked(MouseEvent e) {
-		        if (e.getClickCount() == 1) {
+		        if (e.getClickCount() == 2) {
 		            Object cell = getCellAt(e.getX(), e.getY());
 			        if (cell == null) {
 			            Object parent = g.getDefaultParent();
