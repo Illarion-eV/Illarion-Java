@@ -9,7 +9,7 @@ local PRECONDITION_QUESTSTATE = 0
 local POSTCONDITION_QUESTSTATE = 0
 
 local POSITION = POSITION -- Map position -- Position auf der Karte
-local RADIUS = NUMBER -- Radius -- Radius
+local RADIUS = INTEGER -- Radius -- Radius
 local TEXT_DE = TEXT -- German Text after movement -- Deutscher Text nach Bewegung
 local TEXT_EN = TEXT -- English Text after movement -- Englischer Text nach Bewegung
 
