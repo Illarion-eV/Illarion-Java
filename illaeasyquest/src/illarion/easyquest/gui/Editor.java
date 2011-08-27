@@ -227,6 +227,11 @@ public final class Editor extends mxGraphComponent {
             Position p = (Position)parameter;
             return "position(" + p.getX() + ", " + p.getY() + ", " + p.getZ() + ")";
         }
+        else if (parameter instanceof Long)
+        {
+            Long n = (Long)parameter;
+            return n.toString();
+        }
         else
         {
             return "TYPE NOT SUPPORTED";

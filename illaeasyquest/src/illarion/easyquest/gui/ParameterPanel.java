@@ -42,6 +42,10 @@ public class ParameterPanel extends JPanel
         {
             comp = new PositionParameter();
         }
+        else if (type.equals("INTEGER"))
+        {
+            comp = new IntegerParameter();
+        }
         else
         {
             comp = null;
