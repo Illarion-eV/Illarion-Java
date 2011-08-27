@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxKeyboardHandler;
+import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxUtils;
@@ -59,6 +60,7 @@ public final class Editor extends mxGraphComponent {
     private boolean savedSinceLastChange = false;
     
     private mxKeyboardHandler keyboardHandler;
+    private mxRubberband rubberband;
 
     Editor(Graph graph) {
         super(graph);
@@ -67,6 +69,7 @@ public final class Editor extends mxGraphComponent {
         setCellEditor(new CellEditor(this));
         
         keyboardHandler = new EditorKeyboardHandler(this);
+        rubberband = new mxRubberband(this);
         
         mxCodecRegistry.register(new mxObjectCodec(new Status()));
         mxCodecRegistry.addPackage(Status.class.getPackage().getName());
