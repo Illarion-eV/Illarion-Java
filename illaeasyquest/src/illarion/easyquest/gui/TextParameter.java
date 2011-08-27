@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion easyQuest Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright 2011 - Illarion e.V.
  *
  * The Illarion easyQuest Editor is free software: you can redistribute i and/or
  * modify it under the terms of the GNU General Public License as published by
@@ -16,48 +16,36 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.easyquest.quest;
+package illarion.easyquest.gui;
 
-import java.io.Serializable;
+import javax.swing.JTextField;
 
-public class Status implements Serializable {
-
-    private String name;
-    private boolean start;
-    private int number;
-
-    public Status() {
-        name = "";
-        start = false;
-        number = -1;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+public class TextParameter extends JTextField implements Parameter
+{
+    public TextParameter()
+    {
+        super();
     }
     
-    public String getName() {
-        return name;
+    public TextParameter(int width)
+    {
+        super(width);
     }
     
-    public void setStart(boolean start) {
-        this.start = start;
+    public void setParameter(Object parameter)
+    {
+        if (parameter != null)
+        {
+            setText((String)parameter);
+        }
+        else
+        {
+            setText("");
+        }
     }
     
-    public boolean isStart() {
-        return start;
+    public Object getParameter()
+    {
+        return getText();
     }
-    
-    public void setNumber(int number) {
-        this.number = number;
-    }
-    
-    public int getNumber() {
-        return number;
-    }
-    
-    public final String toString() {
-        return getName();
-    }
-    
 }

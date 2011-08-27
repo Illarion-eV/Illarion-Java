@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion easyQuest Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright 2011 - Illarion e.V.
  *
  * The Illarion easyQuest Editor is free software: you can redistribute i and/or
  * modify it under the terms of the GNU General Public License as published by
@@ -20,16 +20,18 @@ package illarion.easyquest.quest;
 
 import java.io.Serializable;
 
-public class Status implements Serializable {
+public class Trigger implements Serializable {
 
     private String name;
-    private boolean start;
-    private int number;
+    private long objectId;
+    private String type;
+    private Object[] parameters;
 
-    public Status() {
+    public Trigger() {
         name = "";
-        start = false;
-        number = -1;
+        objectId = 0;
+        type = null;
+        parameters = null;
     }
 
     public void setName(String name) {
@@ -40,20 +42,28 @@ public class Status implements Serializable {
         return name;
     }
     
-    public void setStart(boolean start) {
-        this.start = start;
+    public void setObjectId(long id) {
+        objectId = id;
     }
     
-    public boolean isStart() {
-        return start;
+    public long getObjectId() {
+        return objectId;
     }
     
-    public void setNumber(int number) {
-        this.number = number;
+    public void setType(String type) {
+        this.type = type;
     }
     
-    public int getNumber() {
-        return number;
+    public String getType() {
+        return type;
+    }
+    
+    public void setParameters(Object[] parameters) {
+        this.parameters = parameters;
+    }
+    
+    public Object[] getParameters() {
+        return parameters;
     }
     
     public final String toString() {

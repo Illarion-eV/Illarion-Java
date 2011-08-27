@@ -27,6 +27,7 @@ import java.io.File;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
@@ -39,6 +40,7 @@ import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
 
 import illarion.easyquest.Lang;
+import illarion.easyquest.quest.TriggerTemplates;
 
 public class MainFrame extends JRibbonFrame
 {
@@ -109,7 +111,7 @@ public class MainFrame extends JRibbonFrame
 		final RibbonTask graphTask =
             new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskQuest"),
                 new ClipboardBand(), new GraphBand());
-        getRibbon().addTask(graphTask);
+        // getRibbon().addTask(graphTask);
 
         getRibbon().setApplicationMenu(new MainMenu());
 
@@ -133,6 +135,8 @@ public class MainFrame extends JRibbonFrame
             editorTabListener);
 
         getContentPane().add(rootPanel);
+        
+        pack();
 		
 		if (getOpenTabs() == 0) {
             addNewQuest();
@@ -142,6 +146,7 @@ public class MainFrame extends JRibbonFrame
 	public static void main(String[] args)
 	{
 	    JRibbonFrame.setDefaultLookAndFeelDecorated(true);
+	    JDialog.setDefaultLookAndFeelDecorated(true);
 	    
 	    SwingUtilities.invokeLater(new Runnable() {
             @SuppressWarnings("synthetic-access")
@@ -153,6 +158,7 @@ public class MainFrame extends JRibbonFrame
         	    instance = new MainFrame();
         		getInstance().setDefaultCloseOperation(JRibbonFrame.EXIT_ON_CLOSE);
         		getInstance().setSize(1204, 768);
+        		getInstance().setLocationRelativeTo(null);
         		getInstance().setVisible(true);
         	}
         });
@@ -186,9 +192,9 @@ public class MainFrame extends JRibbonFrame
         setTabTitle(tabbedEditorArea.getSelectedIndex(), title);
     }
     
-    @SuppressWarnings("nls")
-    protected Editor addNewQuest() {
-        final Editor editor = new Editor(new Graph());
+
+    protected Editor addNewQuest(String quest) {
+        final Editor editor = Editor.loadQuest(quest);
         editor.putClientProperty(
             SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY,
             Boolean.TRUE);
@@ -196,6 +202,9 @@ public class MainFrame extends JRibbonFrame
             null, editor, null, tabbedEditorArea.getTabCount());
         tabbedEditorArea.setSelectedIndex(tabbedEditorArea.getTabCount() - 1);
         return editor;
+    }
+    protected Editor addNewQuest() {
+        return addNewQuest("");
     }
     
     protected int alreadyOpen(final File file) {

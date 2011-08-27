@@ -19,10 +19,72 @@
 package illarion.easyquest.gui;
 
 import com.mxgraph.view.mxGraph;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+
+import illarion.easyquest.Lang;
+import illarion.easyquest.quest.Status;
+import illarion.easyquest.quest.Trigger;
 
 public class Graph extends mxGraph {
-    public boolean isCellEditable(Object cell)
+    public Graph()
+    {
+        setAlternateEdgeStyle("edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical");
+        
+        addListener(mxEvent.ADD_CELLS, new mxIEventListener()
+		{
+			public void invoke(Object sender, mxEventObject evt)
+			{
+				Object[] cells = (Object[])evt.getProperty("cells");
+
+                for (Object cell : cells)
+                {
+					if (getModel().isEdge(cell))
+					{
+						((mxCell)cell).setValue(new Trigger());
+					}
+    			}
+			}
+		});
+    }
+	
+	public String getToolTipForCell(Object cell)
 	{
-		return false;
+		String tip = "<html>";
+
+		if (getModel().isEdge(cell))
+		{
+			tip += Lang.getMsg(getClass(), "edgeTooltip");
+		}
+		else
+		{
+			tip += Lang.getMsg(getClass(), "nodeTooltip");
+		}
+
+		tip += "</html>";
+
+		return tip;
+	}
+	
+	public String convertValueToString(Object cell)
+	{
+		if (cell instanceof mxCell)
+		{
+			Object value = ((mxCell) cell).getValue();
+
+			if (value instanceof Status)
+			{
+				Status status = (Status)value;
+                return status.getName();
+			}
+			else if (value instanceof Trigger)
+			{
+			    Trigger trigger = (Trigger)value;
+			    return trigger.getName();
+			}
+		}
+
+		return super.convertValueToString(cell);
 	}
 }

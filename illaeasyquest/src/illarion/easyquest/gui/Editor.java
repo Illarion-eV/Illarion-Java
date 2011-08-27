@@ -18,7 +18,8 @@
  */
 package illarion.easyquest.gui;
 
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.HashMap;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -27,6 +28,8 @@ import java.io.File;
 import org.w3c.dom.Document;
 
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.handler.mxKeyboardHandler;
+import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxUtils;
@@ -35,78 +38,83 @@ import com.mxgraph.io.mxCodec;
 import com.mxgraph.io.mxCodecRegistry;
 import com.mxgraph.io.mxObjectCodec;
 
-import illarion.easyquest.quest.Status;
+import com.mxgraph.model.mxCell;
 
-/**
- * The editor is the area that displays the quest graph.
- * 
- * @author Andreas Grob
- * @since 1.00
- */
+import illarion.easyquest.quest.Status;
+import illarion.easyquest.quest.Trigger;
+import illarion.easyquest.quest.Position;
+import illarion.easyquest.quest.TriggerTemplate;
+import illarion.easyquest.quest.TriggerTemplates;
+import illarion.easyquest.EditorKeyboardHandler;
+
 public final class Editor extends mxGraphComponent {
 
     private File questFile;
     
     private boolean savedSinceLastChange = false;
+    
+    private mxKeyboardHandler keyboardHandler;
+    private mxRubberband rubberband;
 
     Editor(Graph graph) {
         super(graph);
-        setup(graph);
-		Object parent = graph.getDefaultParent();
-
-		graph.getModel().beginUpdate();
-		try
+        
+        setToolTips(true);
+        setCellEditor(new CellEditor(this));
+        
+        keyboardHandler = new EditorKeyboardHandler(this);
+        rubberband = new mxRubberband(this);
+        
+        mxCodecRegistry.register(new mxObjectCodec(new Status()));
+        mxCodecRegistry.addPackage(Status.class.getPackage().getName());
+        mxCodecRegistry.register(new mxObjectCodec(new Trigger()));
+        mxCodecRegistry.addPackage(Trigger.class.getPackage().getName());
+        mxCodecRegistry.register(new mxObjectCodec(new Position()));
+        mxCodecRegistry.addPackage(Position.class.getPackage().getName());
+        
+        final Graph g = graph;
+        getGraphControl().addMouseListener(new MouseAdapter()
 		{
-		    Status status = new Status();
-		    status.setLabel("New Quest Status");
-		    status.setNumber(0);
-		    status.setStart(true);
-			Object v1 = graph.insertVertex(parent, null, status, 20, 20, 120,
-					30, "NODE");
-			Object v2 = graph.insertVertex(parent, null, "World!", 240, 150,
-					80, 30, "NODE");
-			graph.insertEdge(parent, null, "Edge", v1, v2, "EDGE");
-		}
-		finally
-		{
-			graph.getModel().endUpdate();
-		}
+		    public void mouseClicked(MouseEvent e) {
+		        if (e.getClickCount() == 2) {
+		            Object cell = getCellAt(e.getX(), e.getY());
+			        if (cell == null) {
+			            Object parent = g.getDefaultParent();
+			            g.getModel().beginUpdate();
+                        try {
+                            Status status = new Status();
+                            status.setName("New Quest Status");
+                            status.setStart(false);
+                            g.insertVertex(parent, null, status, e.getX()-60, e.getY()-15, 120,
+                            30);
+                        } finally {
+                            g.getModel().endUpdate();
+                        }
+			        }
+			    }
+			}
+		});
     }
     
-    private void setup(Graph g) {
-        final Graph graph = g;
+    private static void setup(Graph graph) {
         mxStylesheet stylesheet = graph.getStylesheet();
-        Hashtable<String, Object> nodeStyle = new Hashtable<String, Object>();
+        Map<String, Object> nodeStyle = stylesheet.getDefaultVertexStyle();
         nodeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
         nodeStyle.put(mxConstants.STYLE_ROUNDED, true);
         nodeStyle.put(mxConstants.STYLE_OPACITY, 50);
         nodeStyle.put(mxConstants.STYLE_FILLCOLOR, "#EFEFFF");
         nodeStyle.put(mxConstants.STYLE_GRADIENTCOLOR, "#AFAFFF");
         nodeStyle.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-        stylesheet.putCellStyle("NODE", nodeStyle);
-        Hashtable<String, Object> edgeStyle = new Hashtable<String, Object>();
+        stylesheet.setDefaultVertexStyle(nodeStyle);
+        Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
         edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);
         edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 2.0);
         edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
-        stylesheet.putCellStyle("EDGE", edgeStyle);
-
-        mxCodecRegistry.register(new mxObjectCodec(new Status()));
-        mxCodecRegistry.addPackage(Status.class.getPackage().getName());
-        
-        getGraphControl().addMouseListener(new MouseAdapter()
-		{
-			public void mouseReleased(MouseEvent e)
-			{
-			    if (e.getClickCount() == 2) {
-    				Object cell = getCellAt(e.getX(), e.getY());
-    				
-    				if (cell != null)
-    				{
-    					System.out.println("cell="+graph.getLabel(cell));
-    				}
-    			}
-			}
-		});
+        stylesheet.setDefaultEdgeStyle(edgeStyle);
+        HashMap<String, Object> startStyle = new HashMap<String, Object>();
+        startStyle.put(mxConstants.STYLE_STROKEWIDTH, 3.0);
+        startStyle.put(mxConstants.STYLE_STROKECOLOR, "#0000F0");
+        stylesheet.putCellStyle("StartStyle", startStyle);
     }
     
     public File getQuestFile() {
@@ -131,18 +139,97 @@ public final class Editor extends mxGraphComponent {
         savedSinceLastChange = true;
     }
 
-    public void loadQuest(String quest) {
-		Document document = mxUtils.parseXml(quest);
-    	mxCodec codec = new mxCodec(document);
+    public static Editor loadQuest(String quest) {
         Graph graph = new Graph();
         setup(graph);
-		codec.decode(document.getDocumentElement(), graph.getModel());
-		setGraph(graph);
+        if (quest != "")
+        {
+            Document document = mxUtils.parseXml(quest);
+        	mxCodec codec = new mxCodec(document);
+    		codec.decode(document.getDocumentElement(), graph.getModel());
+		}
+		return new Editor(graph);
     }
 
     public String getQuestXML() {
         mxCodec codec = new mxCodec();
         return mxUtils.getPrettyXml(codec.encode(getGraph().getModel()));
     }
-
+    
+    public Map<String, String> getQuestLua(String questName)
+    {
+        String questtxt = "";
+        Map<String, String> quest = new HashMap<String, String>();
+        
+        Graph g = (Graph)getGraph();
+        Object[] edges = g.getChildEdges(g.getDefaultParent());
+        
+        int i = 1;
+        for (Object obj : edges)
+        {
+            mxCell edge = (mxCell)obj;
+            Trigger trigger = (Trigger)edge.getValue();
+            TriggerTemplate template =
+                TriggerTemplates.getInstance().getTemplate(trigger.getType());
+            
+            String scriptName = "trigger" + i;
+            mxCell source = (mxCell)edge.getSource();
+            mxCell target = (mxCell)edge.getTarget();
+            Status sourceState = (Status)source.getValue();
+            Status targetState = (Status)target.getValue();
+            String sourceId = sourceState.isStart() ? "0" : source.getId();
+            String targetId = targetState.isStart() ? "0" : target.getId();
+            Object[] parameters = trigger.getParameters();
+            
+            String t;
+            t = template.getHeader()
+              + "module(\"questsystem." + questName + "." + scriptName + "\", package.seeall)" + "\n"
+              + "\n"
+              + "local QUEST_NUMBER = " + "10000" + "\n" // TODO: Get quest number from somewhere
+              + "local PRECONDITION_QUESTSTATE = " + sourceId + "\n"
+              + "local POSTCONDITION_QUESTSTATE = " + targetId + "\n"
+              + "\n";
+            for (int j=0; j<template.size(); ++j)
+    		{
+    		    t = t + "local "
+    		          + template.getParameter(j).getName()
+    		          + " = "
+    		          + exportParameter(parameters[j])
+    		          + "\n";
+    		}
+    		t = t + "\n";
+    		t = t + template.getBody();
+    		
+    		quest.put(scriptName + ".lua", t);
+    		
+            questtxt = questtxt + template.getCategory() + ","
+                    + trigger.getObjectId() + ","
+                    + template.getEntryPoint() + ","
+                    + scriptName + "\n";
+              
+            i = i + 1;
+        }
+        
+        quest.put("quest.txt", questtxt);
+        
+        return quest;
+    }
+    
+    private String exportParameter(Object parameter)
+    {
+        if (parameter instanceof String)
+        {
+            String s = (String)parameter;
+            return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+        }
+        else if (parameter instanceof Position)
+        {
+            Position p = (Position)parameter;
+            return "position(" + p.getX() + ", " + p.getY() + ", " + p.getZ() + ")";
+        }
+        else
+        {
+            return "TYPE NOT SUPPORTED";
+        }
+    }
 }

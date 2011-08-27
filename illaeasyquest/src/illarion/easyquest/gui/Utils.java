@@ -18,6 +18,8 @@
  */
 package illarion.easyquest.gui;
 
+import java.util.Map;
+
 import java.awt.Dimension;
 import java.awt.Image;
 import java.io.File;
@@ -72,6 +74,21 @@ final class Utils {
         editor.saved();
     }
     
+    protected static void exportEasyQuest(final Editor editor) {
+        final JFileChooser dirDiag = new JFileChooser();
+        dirDiag.setDialogTitle("Exportieren");
+        dirDiag.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        dirDiag.setAcceptAllFileFilterUsed(false);
+        //dirDiag.setCurrentDirectory(new File(Config.getInstance()
+        //    .getEasyQuestFolder()));
+        final int fileReturn =
+            dirDiag.showSaveDialog(MainFrame.getInstance());
+        if (fileReturn == JFileChooser.APPROVE_OPTION) {
+            final File targetDir = dirDiag.getSelectedFile();
+            exportEasyQuestImpl(editor.getQuestLua(targetDir.getName()), targetDir);
+        }
+    }
+    
     protected static void selectAndOpenQuest() {
         final JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
@@ -85,6 +102,7 @@ final class Utils {
                 return Lang.getMsg(Utils.class, "easyQuestFileType"); //$NON-NLS-1$
             }
         });
+        fileDiag.setAcceptAllFileFilterUsed(false);
         //fileDiag.setCurrentDirectory(new File(Config.getInstance()
         //    .getEasyNpcFolder()));
 
@@ -112,9 +130,8 @@ final class Utils {
             }
             String quest = sb.toString();
 
-            Editor editor = MainFrame.getInstance().addNewQuest();
+            Editor editor = MainFrame.getInstance().addNewQuest(quest);
             editor.setQuestFile(file);
-    		editor.loadQuest(quest);
             
             MainFrame.getInstance().setCurrentTabTitle(file.getName());
             //Config.getInstance().addLastOpenedFile(file);
@@ -137,6 +154,7 @@ final class Utils {
                 return Lang.getMsg(Utils.class, "easyQuestFileType"); //$NON-NLS-1$
             }
         });
+        fileDiag.setAcceptAllFileFilterUsed(false);
         //fileDiag.setCurrentDirectory(new File(Config.getInstance()
         //    .getEasyNpcFolder()));
         fileDiag.setSelectedFile(editor.getQuestFile());
@@ -179,6 +197,31 @@ final class Utils {
                 backupFile.renameTo(targetFile);
             }
             //LOGGER.error("Writing the easyNPC Script failed.", e); //$NON-NLS-1$
+        } finally {
+            if ( fw != null ) 
+                try { fw.close(); } catch ( IOException e ) { } 
+        }
+    }
+    
+    private static void exportEasyQuestImpl(final Map<String, String> quest,
+        final File targetDir) {
+        
+        FileWriter fw = null;
+        File file = null;
+        try {
+            for (Map.Entry<String, String> entry : quest.entrySet())
+            {
+                file = new File(targetDir, entry.getKey());
+                fw = new FileWriter(file);
+                fw.write(entry.getValue());
+                fw.close();
+                fw = null;
+                
+            }
+        } catch (final Exception e) {
+            System.out.println("Writing the easyQuest failed: " + e);
+            e.printStackTrace();
+            //LOGGER.error("Writing the easyQuest failed.", e); //$NON-NLS-1$
         } finally {
             if ( fw != null ) 
                 try { fw.close(); } catch ( IOException e ) { } 

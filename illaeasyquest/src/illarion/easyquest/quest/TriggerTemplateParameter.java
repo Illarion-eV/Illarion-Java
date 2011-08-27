@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion easyQuest Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright 2011 - Illarion e.V.
  *
  * The Illarion easyQuest Editor is free software: you can redistribute i and/or
  * modify it under the terms of the GNU General Public License as published by
@@ -18,46 +18,31 @@
  */
 package illarion.easyquest.quest;
 
-import java.io.Serializable;
-
-public class Status implements Serializable {
-
+public class TriggerTemplateParameter
+{
     private String name;
-    private boolean start;
-    private int number;
-
-    public Status() {
-        name = "";
-        start = false;
-        number = -1;
-    }
-
-    public void setName(String name) {
+    private String type;
+    private String description;
+    
+    public TriggerTemplateParameter(String name, String type, String description)
+    {
         this.name = name;
+        this.type = type;
+        this.description = description;
     }
     
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
     
-    public void setStart(boolean start) {
-        this.start = start;
+    public String getType()
+    {
+        return type;
     }
     
-    public boolean isStart() {
-        return start;
+    public String getDescription()
+    {
+        return description;
     }
-    
-    public void setNumber(int number) {
-        this.number = number;
-    }
-    
-    public int getNumber() {
-        return number;
-    }
-    
-    public final String toString() {
-        return getName();
-    }
-    
 }
