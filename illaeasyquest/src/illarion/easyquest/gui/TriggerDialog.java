@@ -40,6 +40,7 @@ import javax.swing.BorderFactory;
 
 import illarion.easyquest.quest.TriggerTemplates;
 import illarion.easyquest.quest.TriggerTemplate;
+import illarion.easyquest.Lang;
 
 public class TriggerDialog extends JDialog
 {
@@ -54,14 +55,15 @@ public class TriggerDialog extends JDialog
     
     public TriggerDialog(Frame owner)
     {
-        super(owner, "Trigger");
+        super(owner);
+        setTitle(Lang.getMsg(getClass(), "title"));
         
         final JPanel header = new JPanel(new GridLayout(0,2,0,5));
         main = new JPanel(new GridLayout(0,1,0,5));
 		final Box buttons = Box.createHorizontalBox();
-		final JLabel labelName = new JLabel("Name:");
-		labelId = new JLabel("Objekt ID:");
-		final JLabel labelType = new JLabel("Typ:");
+		final JLabel labelName = new JLabel(Lang.getMsg(getClass(), "name")+":");
+		labelId = new JLabel(Lang.getMsg(getClass(), "objectId")+":");
+		final JLabel labelType = new JLabel(Lang.getMsg(getClass(), "type")+":");
 		name = new JTextField(17);
 		NumberFormat format = NumberFormat.getIntegerInstance();
         format.setGroupingUsed(false);
@@ -69,14 +71,15 @@ public class TriggerDialog extends JDialog
         objectId.setHorizontalAlignment(JFormattedTextField.RIGHT);
 		objectId.setValue(new Long(0));
 		trigger = new JComboBox();
-		okay = new JButton("OK");
-		cancel = new JButton("Abbrechen");
+		okay = new JButton(Lang.getMsg(getClass(), "ok"));
+		cancel = new JButton(Lang.getMsg(getClass(), "cancel"));
 		
 		for (int i=0; i<TriggerTemplates.getInstance().size(); ++i)
 		{
 		    trigger.addItem(TriggerTemplates.getInstance().getTemplate(i));
 		}
 		
+		final TriggerDialog dialog = this;
 		trigger.addItemListener(new ItemListener() {
 		    public void itemStateChanged(ItemEvent e) {
 		        if (e.getStateChange() == ItemEvent.SELECTED)
@@ -89,7 +92,7 @@ public class TriggerDialog extends JDialog
             		}
             		String category = template.getCategory();
             		String label = category.substring(0, 1).toUpperCase()
-            		    + category.substring(1) + " ID:";
+            		    + category.substring(1) + " " + Lang.getMsg(dialog.getClass(), "id") + ":";
             		labelId.setText(label);
             		pack();
             		validate();
@@ -117,7 +120,7 @@ public class TriggerDialog extends JDialog
 		buttons.add(cancel);
 		buttons.setBorder(BorderFactory.createEmptyBorder(20,5,5,5));
 		
-		main.setBorder(BorderFactory.createTitledBorder("Parameter"));
+		main.setBorder(BorderFactory.createTitledBorder(Lang.getMsg(getClass(), "parameters")));
 		
 		getRootPane().setDefaultButton(okay);
 

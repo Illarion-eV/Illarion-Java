@@ -47,12 +47,6 @@ import illarion.easyquest.quest.TriggerTemplate;
 import illarion.easyquest.quest.TriggerTemplates;
 import illarion.easyquest.EditorKeyboardHandler;
 
-/**
- * The editor is the area that displays the quest graph.
- * 
- * @author Andreas Grob
- * @since 1.00
- */
 public final class Editor extends mxGraphComponent {
 
     private File questFile;

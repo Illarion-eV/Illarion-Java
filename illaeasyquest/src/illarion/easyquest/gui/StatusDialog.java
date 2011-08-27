@@ -29,6 +29,8 @@ import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 import javax.swing.JButton;
 
+import illarion.easyquest.Lang;
+
 public class StatusDialog extends JDialog
 {
     
@@ -39,15 +41,16 @@ public class StatusDialog extends JDialog
     
     public StatusDialog(Frame owner)
     {
-        super(owner, "Status");
+        super(owner);
+        setTitle(Lang.getMsg(getClass(), "title"));
         
         final JPanel main = new JPanel();
 		final JPanel bottom = new JPanel();
-		final JLabel label = new JLabel("Name:");
+		final JLabel label = new JLabel(Lang.getMsg(getClass(), "name")+":");
 		name = new JTextField(15);
-		start = new JCheckBox("Questbeginn");
-		okay = new JButton("OK");
-		cancel = new JButton("Abbrechen");
+		start = new JCheckBox(Lang.getMsg(getClass(), "start"));
+		okay = new JButton(Lang.getMsg(getClass(), "ok"));
+		cancel = new JButton(Lang.getMsg(getClass(), "cancel"));
         
         setSize(240,130);
 		setResizable(false);

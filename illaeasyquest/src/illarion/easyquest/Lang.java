@@ -28,14 +28,6 @@ import org.apache.log4j.Logger;
 
 import illarion.common.util.MessageSource;
 
-/**
- * Localized text handler. Loads the localized messages and returns them if
- * requested, regarding the language settings of the client.
- * 
- * @author Andreas Grob
- * @since 1.00
- * @version 1.00
- */
 @SuppressWarnings("nls")
 public final class Lang implements MessageSource {
     /**
@@ -149,7 +141,7 @@ public final class Lang implements MessageSource {
         try {
             return messages.getString(key);
         } catch (final MissingResourceException e) {
-            LOGGER.warn("Failed searching translated version of: " + key);
+            System.out.println("Failed searching translated version of: " + key);
             return "<" + key + ">";
         }
     }
