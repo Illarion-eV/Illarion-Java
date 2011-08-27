@@ -9,7 +9,11 @@ local PRECONDITION_QUESTSTATE = 0
 local POSTCONDITION_QUESTSTATE = 0
 
 local POSITION = POSITION -- Map position -- Position auf der Karte
+<<<<<<< HEAD
 local RADIUS = NUMBER -- Radius -- Radius
+=======
+local RADIUS = INTEGER -- Range to be within -- Wirkungsreichweite
+>>>>>>> 4876ade1001f0ff7b5e5cdecfe5822836fb400b0
 local LOOKAT_TEXT_DE = TEXT -- German LookAt Text -- Deutscher Text beim Anschauen
 local LOOKAT_TEXT_EN = TEXT -- English LookAt Text -- Englischer Text beim Anschauen
 
