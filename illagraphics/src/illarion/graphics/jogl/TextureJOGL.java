@@ -18,14 +18,13 @@
  */
 package illarion.graphics.jogl;
 
+import gnu.trove.list.array.TIntArrayList;
+import illarion.graphics.TextureAtlas;
+import illarion.graphics.generic.AbstractTexture;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
-
-import gnu.trove.list.array.TIntArrayList;
-
-import illarion.graphics.TextureAtlas;
-import illarion.graphics.generic.AbstractTexture;
 
 /**
  * The implementation of the Texture for usage with JOGL.
@@ -40,6 +39,34 @@ public final class TextureJOGL extends AbstractTexture {
      * display lists in case its needed.
      */
     private static TIntArrayList usedDisplayLists = new TIntArrayList();
+
+    /**
+     * Clean up all textures. After this is done none of the textures can be
+     * used anymore.
+     */
+    @SuppressWarnings("nls")
+    public static void dispose() {
+        final int n = usedDisplayLists.size();
+        if (n == 0) {
+            return;
+        }
+        final GL gl = GLU.getCurrentGL();
+        if (!gl.isGL2()) {
+            throw new GraphicsJOGLException(
+                "There are lists set but display lists are not useable",
+                gl.getGLProfile());
+        }
+        int minDisplayList = Integer.MAX_VALUE;
+        int maxDisplayList = Integer.MIN_VALUE;
+        for (int i = 0; i < n; i++) {
+            final int listID = usedDisplayLists.get(i);
+            minDisplayList = Math.min(minDisplayList, listID);
+            maxDisplayList = Math.max(maxDisplayList, listID);
+        }
+
+        gl.getGL2().glDeleteLists(minDisplayList,
+            (maxDisplayList - minDisplayList) + 1);
+    }
 
     /**
      * This variable stores if the display list needs to be refreshed.
@@ -87,34 +114,6 @@ public final class TextureJOGL extends AbstractTexture {
         final int newTexWidth, final int newTexHeight, final int newX,
         final int newY) {
         super(newWidth, newHeight, newTexWidth, newTexHeight, newX, newY);
-    }
-
-    /**
-     * Clean up all textures. After this is done none of the textures can be
-     * used anymore.
-     */
-    @SuppressWarnings("nls")
-    public static void dispose() {
-        final int n = usedDisplayLists.size();
-        if (n == 0) {
-            return;
-        }
-        final GL gl = GLU.getCurrentGL();
-        if (!gl.isGL2()) {
-            throw new GraphicsJOGLException(
-                "There are lists set but display lists are not useable",
-                gl.getGLProfile());
-        }
-        int minDisplayList = Integer.MAX_VALUE;
-        int maxDisplayList = Integer.MIN_VALUE;
-        for (int i = 0; i < n; i++) {
-            final int listID = usedDisplayLists.get(i);
-            minDisplayList = Math.min(minDisplayList, listID);
-            maxDisplayList = Math.max(maxDisplayList, listID);
-        }
-
-        gl.getGL2().glDeleteLists(minDisplayList,
-            (maxDisplayList - minDisplayList) + 1);
     }
 
     /**

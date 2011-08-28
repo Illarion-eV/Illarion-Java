@@ -18,14 +18,14 @@
  */
 package illarion.graphics.jogl;
 
+import illarion.graphics.Graphics;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2GL3;
 import javax.media.opengl.fixedfunc.GLPointerFunc;
 
 import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
-
-import illarion.graphics.Graphics;
 
 /**
  * This is a helper class for the LWJGL render to switch the current render
@@ -38,44 +38,320 @@ import illarion.graphics.Graphics;
  */
 public final class DriverSettingsJOGL {
     /**
+     * The different modes that are supported by this driver settings.
+     * 
+     * @author Martin Karing
+     * @since 2.00
+     * @version 2.00
+     */
+    public enum Modes {
+        /**
+         * This mode should be used in case single dots are supposed to be
+         * drawn.
+         */
+        DRAWDOT(new SettingsHandler() {
+            @Override
+            public void disableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                gl.glDisable(GL2ES1.GL_POINT_SMOOTH);
+                gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+            }
+
+            @Override
+            public void enableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                final int quality = Graphics.getInstance().getQuality();
+
+                if (quality >= Graphics.QUALITY_NORMAL) {
+                    gl.glEnable(GL2ES1.GL_POINT_SMOOTH);
+                    if (quality >= Graphics.QUALITY_HIGH) {
+                        gl.glHint(GL2ES1.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
+                    } else {
+                        gl.glHint(GL2ES1.GL_POINT_SMOOTH_HINT, GL.GL_FASTEST);
+                    }
+                } else {
+                    gl.glDisable(GL2ES1.GL_POINT_SMOOTH);
+                }
+                gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+            }
+        }),
+
+        /**
+         * This mode should be used in case lines are supposed to be drawn.
+         */
+        DRAWLINE(new SettingsHandler() {
+            @Override
+            public void disableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                gl.glDisable(GL.GL_LINE_SMOOTH);
+                gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+            }
+
+            @Override
+            public void enableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                final int quality = Graphics.getInstance().getQuality();
+                if (quality >= Graphics.QUALITY_NORMAL) {
+                    gl.glEnable(GL.GL_LINE_SMOOTH);
+                    if (quality >= Graphics.QUALITY_HIGH) {
+                        gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
+                    } else {
+                        gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_FASTEST);
+                    }
+                } else {
+                    gl.glDisable(GL.GL_LINE_SMOOTH);
+                }
+                gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+            }
+        }),
+
+        /**
+         * This mode should be used for any vertex array based shapes to draw.
+         * The difference to the polygon mode is that the smoothing is disabled.
+         */
+        DRAWOTHER(new SettingsHandler() {
+            @Override
+            public void disableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+            }
+
+            @Override
+            public void enableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+            }
+        }),
+
+        /**
+         * This mode should be used for any vertex array based shapes to draw.
+         * The difference to the polygon mode is that the smoothing is disabled.
+         * In addition this mode also enables the color array.
+         */
+        DRAWOTHERCOLOR(new SettingsHandler() {
+            @Override
+            public void disableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                gl.glDisableClientState(GLPointerFunc.GL_COLOR_ARRAY);
+                gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+            }
+
+            @Override
+            public void enableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                gl.glEnableClientState(GLPointerFunc.GL_COLOR_ARRAY);
+                gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+            }
+        }),
+
+        /**
+         * This mode should be used to draw a polygone with line smoothing.
+         */
+        DRAWPOLY(new SettingsHandler() {
+            @Override
+            public void disableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                gl.glDisable(GL2GL3.GL_POLYGON_SMOOTH);
+                gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+            }
+
+            @Override
+            public void enableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                final int quality = Graphics.getInstance().getQuality();
+                if (quality == Graphics.QUALITY_MAX) {
+                    if (gl.isGL2()) {
+                        gl.glEnable(GL2GL3.GL_POLYGON_SMOOTH);
+                        gl.glHint(GL2GL3.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
+                    } else {
+                        gl.glDisable(GL2GL3.GL_POLYGON_SMOOTH);
+                    }
+                }
+                gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+            }
+        }),
+
+        /**
+         * This mode should be used to draw a texture directly.
+         */
+        DRAWTEXTURE(new SettingsHandler() {
+            @Override
+            public void disableSettings(final GL gl) {
+                gl.glDisable(GL.GL_TEXTURE_2D);
+            }
+
+            @Override
+            public void enableSettings(final GL gl) {
+                gl.glEnable(GL.GL_TEXTURE_2D);
+            }
+        }),
+
+        /**
+         * This mode should be used to drawn a texture using a texture pointer.
+         */
+        DRAWTEXTUREPOINTER(new SettingsHandler() {
+            @Override
+            public void disableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                gl.glDisable(GL.GL_TEXTURE_2D);
+                gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+                gl.glDisableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
+            }
+
+            @Override
+            public void enableSettings(final GL usedGL) {
+                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
+                    return;
+                }
+
+                final GL2ES1 gl = getGL2ES1(usedGL);
+                gl.glEnable(GL.GL_TEXTURE_2D);
+                gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+                gl.glEnableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
+            }
+        });
+
+        /**
+         * The settings handler of this instance.
+         */
+        private final SettingsHandler setHandler;
+
+        /**
+         * Constructor of a modes instance that takes the required settings
+         * handler as parameter.
+         * 
+         * @param handler the handler
+         */
+        private Modes(final SettingsHandler handler) {
+            setHandler = handler;
+        }
+
+        /**
+         * Disable a mode.
+         * 
+         * @param gl the reference to the openGL interface required to disable
+         *            the mode
+         */
+        protected void disable(final GL gl) {
+            setHandler.disableSettings(gl);
+        }
+
+        /**
+         * Enable a mode.
+         * 
+         * @param gl the reference to the openGL interface required to enable
+         *            the mode
+         */
+        protected void enable(final GL gl) {
+            setHandler.enableSettings(gl);
+        }
+    }
+
+    /**
+     * This interface is used to enable and disable the different modes of this
+     * driver.
+     * 
+     * @author Martin Karing
+     * @since 2.00
+     * @version 2.00
+     */
+    private interface SettingsHandler {
+        /**
+         * Disable the settings that are controlled by this handler.
+         * 
+         * @param gl the reference to the openGL interface
+         */
+        public void disableSettings(GL gl);
+
+        /**
+         * Enable the settings that are controlled by this handler.
+         * 
+         * @param gl the reference to the openGL interface
+         */
+        public void enableSettings(GL gl);
+    }
+
+    /**
      * The singleton instance of this class.
      */
     private static final DriverSettingsJOGL INSTANCE =
         new DriverSettingsJOGL();
-    /**
-     * Driver settings constant for the modus drawing dots.
-     */
-    private static final int MODE_DRAWDOT = 1;
 
     /**
-     * Driver settings constant for the modus drawing lines.
+     * This helper function is used to get a GL2ES1 instance from a normal GL
+     * reference in case its possible in any way.
+     * 
+     * @param gl the reference to the openGL interface
+     * @return the GL2ES1 instance its case its possible to transform the
+     *         parameter into one.
      */
-    private static final int MODE_DRAWLINE = 2;
+    protected static GL2ES1 getGL2ES1(final GL gl) {
+        if (gl.hasGLSL()) {
+            return FixedFuncUtil.getFixedFuncImpl(gl);
+        } else if (gl.isGL2ES1()) {
+            return gl.getGL2ES1();
+        } else {
+            return null;
+        }
+    }
 
     /**
-     * Driver settings constant for the modus drawing other stuff.
+     * Get the singleton instance of this class.
+     * 
+     * @return the singleton instance of this helper class
      */
-    private static final int MODE_DRAWOTHER = 4;
-
-    /**
-     * Driver settings constant for the modus drawing polygons.
-     */
-    private static final int MODE_DRAWPOLY = 3;
-
-    /**
-     * Driver settings constant for the modus drawing textures.
-     */
-    private static final int MODE_TEXTURE = 0;
-
-    /**
-     * Driver settings constant for the modus drawing texture by pointers.
-     */
-    private static final int MODE_TEXTUREPOINTER = 5;
+    public static DriverSettingsJOGL getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * The currently used modus.
      */
-    private int currentMode = -1;
+    private Modes currentMode = null;
 
     /**
      * The currently activated texture.
@@ -90,213 +366,37 @@ public final class DriverSettingsJOGL {
     }
 
     /**
-     * Get the singleton instance of this class.
+     * Bind a new texture. Make sure to enable a texture mode before you call
+     * this function.
      * 
-     * @return the singleton instance of this helper class
+     * @param gl the reference to the openGL interface
+     * @param textureID the ID of the new texture
      */
-    public static DriverSettingsJOGL getInstance() {
-        return INSTANCE;
-    }
-
-    /**
-     * Setup OpenGL to render dots.
-     * 
-     * @param gl the openGL implementation used to render the graphics
-     */
-    public void enableDrawDot(final GL2ES1 gl) {
-        if (currentMode != MODE_DRAWDOT) {
-            disableLast(gl);
-            final int quality = Graphics.getInstance().getQuality();
-
-            if (quality >= Graphics.QUALITY_NORMAL) {
-                gl.glEnable(GL2ES1.GL_POINT_SMOOTH);
-                if (quality >= Graphics.QUALITY_HIGH) {
-                    gl.glHint(GL2ES1.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
-                } else {
-                    gl.glHint(GL2ES1.GL_POINT_SMOOTH_HINT, GL.GL_FASTEST);
-                }
-            } else {
-                gl.glDisable(GL2ES1.GL_POINT_SMOOTH);
-            }
-            gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
-            currentMode = MODE_DRAWDOT;
-        }
-    }
-
-    /**
-     * Setup OpenGL to render lines.
-     * 
-     * @param gl the openGL implementation used to render the graphics
-     */
-    public void enableDrawLine(final GL2ES1 gl) {
-        if (currentMode != MODE_DRAWLINE) {
-            disableLast(gl);
-            final int quality = Graphics.getInstance().getQuality();
-            if (quality >= Graphics.QUALITY_NORMAL) {
-                gl.glEnable(GL.GL_LINE_SMOOTH);
-                if (quality >= Graphics.QUALITY_HIGH) {
-                    gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
-                } else {
-                    gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_FASTEST);
-                }
-            } else {
-                gl.glDisable(GL.GL_LINE_SMOOTH);
-            }
-            gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
-            currentMode = MODE_DRAWLINE;
-        }
-    }
-
-    /**
-     * Setup OpenGL to render something generic.
-     * 
-     * @param gl the openGL implementation used to render the graphics
-     */
-    public void enableDrawOther(final GL2ES1 gl) {
-        if (currentMode != MODE_DRAWOTHER) {
-            disableLast(gl);
-            gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
-            currentMode = MODE_DRAWOTHER;
-        }
-    }
-
-    /**
-     * Setup OpenGL to render polygons.
-     * 
-     * @param gl the openGL implementation used to render the graphics
-     */
-    public void enableDrawPoly(final GL2ES1 gl) {
-        if (currentMode != MODE_DRAWPOLY) {
-            disableLast(gl);
-            final int quality = Graphics.getInstance().getQuality();
-            if (quality == Graphics.QUALITY_MAX) {
-                if (gl.isGL2()) {
-                    gl.glEnable(GL2GL3.GL_POLYGON_SMOOTH);
-                    gl.glHint(GL2GL3.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
-                } else {
-                    gl.glDisable(GL2GL3.GL_POLYGON_SMOOTH);
-                }
-            }
-            gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
-            currentMode = MODE_DRAWPOLY;
-        }
-    }
-
-    /**
-     * Setup OpenGL to render a texture.
-     * 
-     * @param gl the openGL implementation used to render the graphics
-     * @param textureID the ID of the texture that shall be bind
-     */
-    public void enableTexture(final GL gl, final int textureID) {
-        if (currentMode != MODE_TEXTURE) {
-            disableLast(gl);
-            gl.glEnable(GL.GL_TEXTURE_2D);
-            currentMode = MODE_TEXTURE;
+    public void bindTexture(final GL gl, final int textureID) {
+        if (currentTexture == textureID) {
+            return;
         }
 
-        if ((currentTexture != textureID) && (textureID > -1)) {
-            gl.glBindTexture(GL.GL_TEXTURE_2D, textureID);
-        }
+        gl.glBindTexture(GL.GL_TEXTURE_2D, textureID);
         currentTexture = textureID;
     }
 
     /**
-     * Setup OpenGL to render a texture by using texture pointers.
+     * Activate a new driver mode.
      * 
-     * @param gl the openGL implementation used to render the graphics
-     * @param textureID the ID of the texture that shall be bind
+     * @param gl the instance of the openGL interface
+     * @param newMode the new mode to enable
      */
-    public void enableTexturePointer(final GL2ES1 gl, final int textureID) {
-        if (currentMode != MODE_TEXTUREPOINTER) {
-            disableLast(gl);
-            gl.glEnable(GL.GL_TEXTURE_2D);
-            gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
-            gl.glEnableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
-            currentMode = MODE_TEXTUREPOINTER;
+    public void enableMode(final GL gl, final Modes newMode) {
+        if (currentMode == newMode) {
+            return;
         }
-
-        if ((currentTexture != textureID) && (textureID > -1)) {
-            gl.glBindTexture(GL.GL_TEXTURE_2D, textureID);
+        if (currentMode != null) {
+            currentMode.disable(gl);
         }
-        currentTexture = textureID;
-    }
-
-    /**
-     * Disable the last activated mode.
-     */
-    private void disableLast(final GL usedGL) {
-        switch (currentMode) {
-            case MODE_TEXTURE:
-                usedGL.glDisable(GL.GL_TEXTURE_2D);
-                break;
-
-            case MODE_TEXTUREPOINTER:
-                usedGL.glDisable(GL.GL_TEXTURE_2D);
-                if (usedGL.isGL2ES1() || usedGL.hasGLSL()) {
-                    final GL2ES1 gl;
-                    if (usedGL.hasGLSL()) {
-                        gl = FixedFuncUtil.getFixedFuncImpl(usedGL);
-                    } else {
-                        gl = usedGL.getGL2ES1();
-                    }
-                    gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
-                    gl.glDisableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
-                }
-                break;
-
-            case MODE_DRAWDOT:
-                if (usedGL.isGL2ES1() || usedGL.hasGLSL()) {
-                    final GL2ES1 gl;
-                    if (usedGL.hasGLSL()) {
-                        gl = FixedFuncUtil.getFixedFuncImpl(usedGL);
-                    } else {
-                        gl = usedGL.getGL2ES1();
-                    }
-                    gl.glDisable(GL2ES1.GL_POINT_SMOOTH);
-                    gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
-                }
-                break;
-
-            case MODE_DRAWLINE:
-                usedGL.glDisable(GL.GL_LINE_SMOOTH);
-                if (usedGL.isGL2ES1() || usedGL.hasGLSL()) {
-                    final GL2ES1 gl;
-                    if (usedGL.hasGLSL()) {
-                        gl = FixedFuncUtil.getFixedFuncImpl(usedGL);
-                    } else {
-                        gl = usedGL.getGL2ES1();
-                    }
-                    gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
-                }
-                break;
-
-            case MODE_DRAWPOLY:
-                if (usedGL.isGL2ES1() || usedGL.hasGLSL()) {
-                    final GL2ES1 gl;
-                    if (usedGL.hasGLSL()) {
-                        gl = FixedFuncUtil.getFixedFuncImpl(usedGL);
-                    } else {
-                        gl = usedGL.getGL2ES1();
-                    }
-                    if (gl.isGL2()) {
-                        gl.glDisable(GL2GL3.GL_POLYGON_SMOOTH);
-                    }
-                    gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
-                }
-                break;
-
-            case MODE_DRAWOTHER:
-                if (usedGL.isGL2ES1() || usedGL.hasGLSL()) {
-                    final GL2ES1 gl;
-                    if (usedGL.hasGLSL()) {
-                        gl = FixedFuncUtil.getFixedFuncImpl(usedGL);
-                    } else {
-                        gl = usedGL.getGL2ES1();
-                    }
-                    gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
-                }
-                break;
+        if (newMode != null) {
+            newMode.enable(gl);
         }
+        currentMode = newMode;
     }
 }

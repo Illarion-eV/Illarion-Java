@@ -147,6 +147,84 @@ public abstract class AbstractTextLine implements TextLine {
     private int[] x;
 
     /**
+     * Calculate the location of the cursor.
+     */
+    private void calculateCursorPos() {
+        if (!cursorDirty) {
+            return;
+        }
+        cursorDirty = false;
+
+        final int length = text.length();
+        int currX = 0;
+        for (int i = 0; i < length; i++) {
+            if (i == cursorPos) {
+                cursorX = currX;
+                return;
+            }
+            if (glyphes[i] == null) {
+                font.getSourceFont().getGlyph(' ').getAdvance();
+            } else {
+                currX += glyphes[i].getAdvance();
+            }
+        }
+
+        if (cursorPos == length) {
+            cursorX = currX;
+            return;
+        }
+    }
+
+    /**
+     * Calculate the marked area start and end coordinates in case its needed.
+     */
+    private void calculateMarkedPos() {
+        if (!markedDirty || !showMarked) {
+            return;
+        }
+        markedDirty = false;
+
+        final int length = text.length();
+        int currX = 0;
+        for (int i = 0; i < length; i++) {
+            if (i == markedStart) {
+                markedStartX = currX;
+            } else if (i == markedEnd) {
+                markedEndX = currX;
+            }
+            currX += glyphes[i].getAdvance();
+        }
+
+        if (length == markedEnd) {
+            markedEndX = currX;
+        }
+    }
+
+    /**
+     * Get the color that needs to be used when rendering the font.
+     * 
+     * @param index the glyph index that is currently rendered
+     * @return the sprite color that has to be used for rendering
+     */
+    private SpriteColor getFontColor(final int index) {
+        if (!showMarked) {
+            return color;
+        }
+
+        if ((index < markedStart) || (index >= markedEnd)) {
+            return color;
+        }
+
+        if (invertColor == null) {
+            invertColor = Graphics.getInstance().getSpriteColor();
+            invertColor.set(color);
+            invertColor.setAlpha(color.getAlphai());
+            invertColor.invert();
+        }
+        return invertColor;
+    }
+
+    /**
      * Update the layout in case its dirty. That updates the needed glyphes and
      * their coordinates.
      */
@@ -191,6 +269,40 @@ public abstract class AbstractTextLine implements TextLine {
             throw new GraphicsJOGLException("Failed at drawing text:" + text,
                 e);
         }
+    }
+
+    /**
+     * Draw the cursor to the needed location in case it needs to be displayed.
+     */
+    private void renderCursor() {
+        if (!showCursor) {
+            return;
+        }
+        Graphics
+            .getInstance()
+            .getDrawer()
+            .drawLine(lineX + cursorX,
+                lineY - font.getSourceFont().getDescent(), lineX + cursorX,
+                lineY + font.getSourceFont().getAscent(), 1.f, color);
+    }
+
+    /**
+     * Draw the marked area.
+     */
+    private void renderMarked() {
+        if (!showMarked) {
+            return;
+        }
+
+        final int oldAlpha = color.getAlphai();
+        color.setAlpha(0.7f);
+        Graphics
+            .getInstance()
+            .getDrawer()
+            .drawRectangle(lineX + markedStartX,
+                lineY - font.getSourceFont().getDescent(), lineX + markedEndX,
+                lineY + font.getSourceFont().getAscent(), color);
+        color.setAlpha(oldAlpha);
     }
 
     /**
@@ -347,117 +459,5 @@ public abstract class AbstractTextLine implements TextLine {
     @Override
     public final void toogleCursor() {
         showCursor = !showCursor;
-    }
-
-    /**
-     * Calculate the location of the cursor.
-     */
-    private void calculateCursorPos() {
-        if (!cursorDirty) {
-            return;
-        }
-        cursorDirty = false;
-
-        final int length = text.length();
-        int currX = 0;
-        for (int i = 0; i < length; i++) {
-            if (i == cursorPos) {
-                cursorX = currX;
-                return;
-            }
-            if (glyphes[i] == null) {
-                font.getSourceFont().getGlyph(' ').getAdvance();
-            } else {
-                currX += glyphes[i].getAdvance();
-            }
-        }
-
-        if (cursorPos == length) {
-            cursorX = currX;
-            return;
-        }
-    }
-
-    /**
-     * Calculate the marked area start and end coordinates in case its needed.
-     */
-    private void calculateMarkedPos() {
-        if (!markedDirty || !showMarked) {
-            return;
-        }
-        markedDirty = false;
-
-        final int length = text.length();
-        int currX = 0;
-        for (int i = 0; i < length; i++) {
-            if (i == markedStart) {
-                markedStartX = currX;
-            } else if (i == markedEnd) {
-                markedEndX = currX;
-            }
-            currX += glyphes[i].getAdvance();
-        }
-
-        if (length == markedEnd) {
-            markedEndX = currX;
-        }
-    }
-
-    /**
-     * Get the color that needs to be used when rendering the font.
-     * 
-     * @param index the glyph index that is currently rendered
-     * @return the sprite color that has to be used for rendering
-     */
-    private SpriteColor getFontColor(final int index) {
-        if (!showMarked) {
-            return color;
-        }
-
-        if ((index < markedStart) || (index >= markedEnd)) {
-            return color;
-        }
-
-        if (invertColor == null) {
-            invertColor = Graphics.getInstance().getSpriteColor();
-            invertColor.set(color);
-            invertColor.setAlpha(color.getAlphai());
-            invertColor.invert();
-        }
-        return invertColor;
-    }
-
-    /**
-     * Draw the cursor to the needed location in case it needs to be displayed.
-     */
-    private void renderCursor() {
-        if (!showCursor) {
-            return;
-        }
-        Graphics
-            .getInstance()
-            .getDrawer()
-            .drawLine(lineX + cursorX,
-                lineY - font.getSourceFont().getDescent(), lineX + cursorX,
-                lineY + font.getSourceFont().getAscent(), 1.f, color);
-    }
-
-    /**
-     * Draw the marked area.
-     */
-    private void renderMarked() {
-        if (!showMarked) {
-            return;
-        }
-
-        final int oldAlpha = color.getAlphai();
-        color.setAlpha(0.7f);
-        Graphics
-            .getInstance()
-            .getDrawer()
-            .drawRectangle(lineX + markedStartX,
-                lineY - font.getSourceFont().getDescent(), lineX + markedEndX,
-                lineY + font.getSourceFont().getAscent(), color);
-        color.setAlpha(oldAlpha);
     }
 }

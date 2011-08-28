@@ -20,7 +20,6 @@ package illarion.graphics.lwjgl;
 
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
-
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderTask;
 import illarion.graphics.generic.AbstractRenderManager;
@@ -99,6 +98,21 @@ public class RenderManagerLWJGL extends AbstractRenderManager implements
      */
     public void bind(final RenderDisplayLWJGL boundDisplay) {
         display = boundDisplay;
+    }
+
+    /**
+     * Draw all graphics.
+     */
+    private void draw() {
+        final long thisCall = System.currentTimeMillis();
+        final int delta = (int) (thisCall - lastCall);
+        lastCall = thisCall;
+
+        super.draw(delta);
+
+        if (display != null) {
+            display.update();
+        }
     }
 
     /**
@@ -181,21 +195,6 @@ public class RenderManagerLWJGL extends AbstractRenderManager implements
             renderThread = new Thread(this, "Render Thread"); //$NON-NLS-1$
             renderThread.setDaemon(true);
             renderThread.start();
-        }
-    }
-
-    /**
-     * Draw all graphics.
-     */
-    private void draw() {
-        final long thisCall = System.currentTimeMillis();
-        final int delta = (int) (thisCall - lastCall);
-        lastCall = thisCall;
-
-        super.draw(delta);
-
-        if (display != null) {
-            display.update();
         }
     }
 }

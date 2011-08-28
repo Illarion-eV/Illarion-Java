@@ -18,6 +18,11 @@
  */
 package illarion.graphics.common;
 
+import illarion.common.util.FastMath;
+import illarion.graphics.Graphics;
+import illarion.graphics.Texture;
+import illarion.graphics.TextureAtlas;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -28,12 +33,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javolution.context.ArrayFactory;
-
-import illarion.common.util.FastMath;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.Texture;
-import illarion.graphics.TextureAtlas;
 
 /**
  * A utility class for reading and writing the data from textures. This class
@@ -67,14 +66,6 @@ public final class TextureIO {
      * to the file system.
      */
     private static final int TEXTURE_WRITING_BUFFER_SIZE = 1000000;
-
-    /**
-     * Private constructor to avoid any instances created from this utility
-     * class.
-     */
-    private TextureIO() {
-        // nothing to be done
-    }
 
     /**
      * Read a texture atlas from a byte channel. This method does only check the
@@ -379,5 +370,13 @@ public final class TextureIO {
                 outChannel.write(transparencyData);
             }
         }
+    }
+
+    /**
+     * Private constructor to avoid any instances created from this utility
+     * class.
+     */
+    private TextureIO() {
+        // nothing to be done
     }
 }

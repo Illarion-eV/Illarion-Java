@@ -18,13 +18,13 @@
  */
 package illarion.graphics.jogl.render;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.glu.GLU;
-
 import illarion.graphics.SpriteColor;
 import illarion.graphics.jogl.DriverSettingsJOGL;
 import illarion.graphics.jogl.TextureJOGL;
+
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.glu.GLU;
 
 /**
  * This texture render is drawing the graphics by using display lists.
@@ -41,14 +41,6 @@ public final class TextureRenderDisplaylist extends AbstractTextureRender {
     private static TextureRenderDisplaylist instance;
 
     /**
-     * Private constructor so new instances are only fetched by the
-     * {@link #getInstance()} method.
-     */
-    private TextureRenderDisplaylist() {
-        // nothing to do
-    }
-
-    /**
      * Get a new instance of this class.
      * 
      * @return get a new instance of the display list render
@@ -61,6 +53,14 @@ public final class TextureRenderDisplaylist extends AbstractTextureRender {
             }
         }
         return instance;
+    }
+
+    /**
+     * Private constructor so new instances are only fetched by the
+     * {@link #getInstance()} method.
+     */
+    private TextureRenderDisplaylist() {
+        // nothing to do
     }
 
     /**
@@ -83,7 +83,9 @@ public final class TextureRenderDisplaylist extends AbstractTextureRender {
 
         final GL2 gl = GLU.getCurrentGL().getGL2();
 
-        DriverSettingsJOGL.getInstance().enableTexture(gl,
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWTEXTURE);
+        DriverSettingsJOGL.getInstance().bindTexture(gl,
             texture.getTextureID());
         color.setActiveColor();
         gl.glPushMatrix();

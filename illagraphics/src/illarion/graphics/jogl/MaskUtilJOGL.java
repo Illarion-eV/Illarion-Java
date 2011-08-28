@@ -18,10 +18,10 @@
  */
 package illarion.graphics.jogl;
 
+import illarion.graphics.MaskUtil;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
-
-import illarion.graphics.MaskUtil;
 
 /**
  * This is the JOGL implementation for the mask utility that can be used to

@@ -18,13 +18,13 @@
  */
 package illarion.graphics.jogl.render;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.glu.GLU;
-
 import illarion.graphics.SpriteColor;
 import illarion.graphics.jogl.DriverSettingsJOGL;
 import illarion.graphics.jogl.TextureJOGL;
+
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.glu.GLU;
 
 /**
  * This texture render uses the immediate methods to render a texture.
@@ -40,14 +40,6 @@ public final class TextureRenderImmediate extends AbstractTextureRender {
     private static TextureRenderImmediate instance;
 
     /**
-     * Private constructor to avoid anything creating a instance of this
-     * renderer but singleton instance.
-     */
-    private TextureRenderImmediate() {
-        // nothing to do
-    }
-
-    /**
      * Get the singleton instance of this class.
      * 
      * @return the singleton instance of the immediate texture render
@@ -60,6 +52,14 @@ public final class TextureRenderImmediate extends AbstractTextureRender {
             }
         }
         return instance;
+    }
+
+    /**
+     * Private constructor to avoid anything creating a instance of this
+     * renderer but singleton instance.
+     */
+    private TextureRenderImmediate() {
+        // nothing to do
     }
 
     /**
@@ -81,7 +81,9 @@ public final class TextureRenderImmediate extends AbstractTextureRender {
         final SpriteColor color, final boolean mirror, final float rotation) {
         final GL2 gl = GLU.getCurrentGL().getGL2();
 
-        DriverSettingsJOGL.getInstance().enableTexture(gl,
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWTEXTURE);
+        DriverSettingsJOGL.getInstance().bindTexture(gl,
             texture.getTextureID());
         color.setActiveColor();
         gl.glPushMatrix();

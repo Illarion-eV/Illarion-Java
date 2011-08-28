@@ -18,6 +18,10 @@
  */
 package illarion.graphics.generic;
 
+import illarion.graphics.Texture;
+import illarion.graphics.TextureAtlas;
+import illarion.graphics.TextureAtlasListener;
+
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -37,10 +41,6 @@ import java.util.Set;
 import javolution.util.FastMap;
 import javolution.util.FastTable;
 
-import illarion.graphics.Texture;
-import illarion.graphics.TextureAtlas;
-import illarion.graphics.TextureAtlasListener;
-
 /**
  * Generic texture atlas implementation that contains the implementation that is
  * shared by all library specific implementations.
@@ -56,6 +56,27 @@ public abstract class AbstractTextureAtlas implements TextureAtlas {
      */
     private static final List<AbstractTextureAtlas> existingAtlasObject =
         new FastTable<AbstractTextureAtlas>();
+
+    /**
+     * This removes all texture data from the video memory. After calling this
+     * function, no texture can be rendered anymore.
+     */
+    public static void dispose() {
+        while (!existingAtlasObject.isEmpty()) {
+            existingAtlasObject.get(0).removeTexture();
+        }
+    }
+
+    /**
+     * Get a byte buffer that was buffered before in order to avoid that it
+     * needs to be recreated. Don't forget to clear the returned buffer.
+     * 
+     * @param size the size of the buffer needed
+     * @return the byte buffer, either newly created or from the buffered ones
+     */
+    protected static ByteBuffer getByteBuffer(final int size) {
+        return ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
+    }
 
     /**
      * Flag that makes the texture atlas not removing the texture data after the
@@ -135,24 +156,14 @@ public abstract class AbstractTextureAtlas implements TextureAtlas {
     }
 
     /**
-     * This removes all texture data from the video memory. After calling this
-     * function, no texture can be rendered anymore.
-     */
-    public static void dispose() {
-        while (!existingAtlasObject.isEmpty()) {
-            existingAtlasObject.get(0).removeTexture();
-        }
-    }
-
-    /**
-     * Get a byte buffer that was buffered before in order to avoid that it
-     * needs to be recreated. Don't forget to clear the returned buffer.
+     * Add a texture to the buffer of textures.
      * 
-     * @param size the size of the buffer needed
-     * @return the byte buffer, either newly created or from the buffered ones
+     * @param name the name of the texture
+     * @param tex the texture itself
      */
-    protected static ByteBuffer getByteBuffer(final int size) {
-        return ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
+    protected final void addTextureToBuffer(final String name,
+        final Texture tex) {
+        textureBuffer.put(name, tex);
     }
 
     /**
@@ -370,6 +381,17 @@ public abstract class AbstractTextureAtlas implements TextureAtlas {
     }
 
     /**
+     * Check if this texture has some stored texture data that is ready to be
+     * activated.
+     * 
+     * @return <code>true</code> if there is texture data in the memory that is
+     *         ready to be transfered to the video memory
+     */
+    protected final boolean hasTextureData() {
+        return (textureData != null);
+    }
+
+    /**
      * This function returns <code>true</code> in case a transparency mask is
      * defined.
      */
@@ -385,6 +407,15 @@ public abstract class AbstractTextureAtlas implements TextureAtlas {
      */
     public final void increaseLoadCounter() {
         ++loadedCount;
+    }
+
+    /**
+     * Check if mipMaps are supposed to be generated.
+     * 
+     * @return <code>true</code> to generate mip maps
+     */
+    protected boolean isNoMipMaps() {
+        return noMipMaps;
     }
 
     /**
@@ -408,6 +439,48 @@ public abstract class AbstractTextureAtlas implements TextureAtlas {
 
         return ((transparencyMask.get(bufferIndex) & pixelMask) == pixelMask);
     }
+
+    /**
+     * Check if this texture is a grey scale texture.
+     * 
+     * @return <code>true</code> if this texture is a grey scale texture
+     */
+    protected final boolean isTextureGrey() {
+        return (textureType == TYPE_GREY);
+    }
+
+    /**
+     * Check if this texture is a grey scale texture with alpha.
+     * 
+     * @return <code>true</code> if this texture is a grey scale texture with
+     *         alpha
+     */
+    protected final boolean isTextureGreyAlpha() {
+        return (textureType == TYPE_GREY_ALPHA);
+    }
+
+    /**
+     * Check if this texture is a RGB texture.
+     * 
+     * @return <code>true</code> if this texture is a RGB texture
+     */
+    protected final boolean isTextureRGB() {
+        return (textureType == TYPE_RGB);
+    }
+
+    /**
+     * Check if this texture is a RGB texture with alpha.
+     * 
+     * @return <code>true</code> if this texture is a RGB texture with alpha
+     */
+    protected final boolean isTextureRGBA() {
+        return (textureType == TYPE_RGBA);
+    }
+
+    /**
+     * Remove the texture from the video ram of the graphic card.
+     */
+    protected abstract void removeFromVRam();
 
     /**
      * Remove the texture from the openGL system. After this function call the
@@ -466,6 +539,25 @@ public abstract class AbstractTextureAtlas implements TextureAtlas {
     @Override
     public final void setListener(final TextureAtlasListener newListener) {
         listener = newListener;
+    }
+
+    /**
+     * Set the new value of the noMipMaps flag. That flag will ensure that no
+     * mipMaps are created.
+     * 
+     * @param value <code>false</code> to ensure that no mipMaps are generated
+     */
+    protected void setNoMipMaps(final boolean value) {
+        noMipMaps = value;
+    }
+
+    /**
+     * Set the texture ID to a new value.
+     * 
+     * @param id the new value of the texture ID
+     */
+    protected final void setTextureID(final int id) {
+        textureID = id;
     }
 
     /**
@@ -543,97 +635,5 @@ public abstract class AbstractTextureAtlas implements TextureAtlas {
         }
 
         transparencyMask = mask;
-    }
-
-    /**
-     * Add a texture to the buffer of textures.
-     * 
-     * @param name the name of the texture
-     * @param tex the texture itself
-     */
-    protected final void addTextureToBuffer(final String name,
-        final Texture tex) {
-        textureBuffer.put(name, tex);
-    }
-
-    /**
-     * Check if this texture has some stored texture data that is ready to be
-     * activated.
-     * 
-     * @return <code>true</code> if there is texture data in the memory that is
-     *         ready to be transfered to the video memory
-     */
-    protected final boolean hasTextureData() {
-        return (textureData != null);
-    }
-
-    /**
-     * Check if mipMaps are supposed to be generated.
-     * 
-     * @return <code>true</code> to generate mip maps
-     */
-    protected boolean isNoMipMaps() {
-        return noMipMaps;
-    }
-
-    /**
-     * Check if this texture is a grey scale texture.
-     * 
-     * @return <code>true</code> if this texture is a grey scale texture
-     */
-    protected final boolean isTextureGrey() {
-        return (textureType == TYPE_GREY);
-    }
-
-    /**
-     * Check if this texture is a grey scale texture with alpha.
-     * 
-     * @return <code>true</code> if this texture is a grey scale texture with
-     *         alpha
-     */
-    protected final boolean isTextureGreyAlpha() {
-        return (textureType == TYPE_GREY_ALPHA);
-    }
-
-    /**
-     * Check if this texture is a RGB texture.
-     * 
-     * @return <code>true</code> if this texture is a RGB texture
-     */
-    protected final boolean isTextureRGB() {
-        return (textureType == TYPE_RGB);
-    }
-
-    /**
-     * Check if this texture is a RGB texture with alpha.
-     * 
-     * @return <code>true</code> if this texture is a RGB texture with alpha
-     */
-    protected final boolean isTextureRGBA() {
-        return (textureType == TYPE_RGBA);
-    }
-
-    /**
-     * Remove the texture from the video ram of the graphic card.
-     */
-    protected abstract void removeFromVRam();
-
-    /**
-     * Set the new value of the noMipMaps flag. That flag will ensure that no
-     * mipMaps are created.
-     * 
-     * @param value <code>false</code> to ensure that no mipMaps are generated
-     */
-    protected void setNoMipMaps(final boolean value) {
-        noMipMaps = value;
-    }
-
-    /**
-     * Set the texture ID to a new value.
-     * 
-     * @param id the new value of the texture ID
-     */
-    protected final void setTextureID(final int id) {
-        textureID = id;
     }
 }

@@ -18,11 +18,13 @@
  */
 package org.illarion.nifty.renderer.render;
 
+import illarion.graphics.BlendingMode;
+import illarion.graphics.Drawer;
+import illarion.graphics.Graphics;
+import illarion.graphics.RenderDisplay;
+import illarion.graphics.SpriteColor;
+
 import java.io.IOException;
-
-import illarion.common.util.ObjectSource;
-
-import illarion.graphics.Sprite;
 
 import de.lessvoid.nifty.render.BlendMode;
 import de.lessvoid.nifty.spi.render.MouseCursor;
@@ -47,14 +49,34 @@ public final class IllarionRenderDevice implements RenderDevice {
     private final RenderImageFactory imageFactory;
 
     /**
+     * This display that is used for rendering the graphics into.
+     */
+    private final RenderDisplay display;
+
+    /**
+     * The drawer instance that is used to draw primitives on the screen.
+     */
+    private final Drawer drawer;
+
+    /**
      * Constructor of the render device that takes the source of any new sprites
      * as parameter.
      * 
+     * @param disp the display that is used to render the GUI in
      * @param imgFactory the factory that supplies this device with the
      *            renderable images
      */
-    public IllarionRenderDevice(final RenderImageFactory imgFactory) {
+    public IllarionRenderDevice(final RenderDisplay disp,
+        final RenderImageFactory imgFactory) {
         imageFactory = imgFactory;
+        display = disp;
+        drawer = Graphics.getInstance().getDrawer();
+
+        TEMP_COLOR =
+            new SpriteColor[] { Graphics.getInstance().getSpriteColor(),
+                Graphics.getInstance().getSpriteColor(),
+                Graphics.getInstance().getSpriteColor(),
+                Graphics.getInstance().getSpriteColor() };
     }
 
     /**
@@ -65,13 +87,13 @@ public final class IllarionRenderDevice implements RenderDevice {
      *            else high-quality cubic filtering is used
      */
     @Override
-    public RenderImage createImage(final String filename, final boolean filterLinear) {
+    public RenderImage createImage(final String filename,
+        final boolean filterLinear) {
         return imageFactory.getImage(filename, filterLinear);
     }
 
     /*
      * (non-Javadoc)
-     * 
      * @see
      * de.lessvoid.nifty.spi.render.RenderDevice#createFont(java.lang.String)
      */
@@ -81,103 +103,129 @@ public final class IllarionRenderDevice implements RenderDevice {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Get the width of the area the GUI is rendered into.
      * 
-     * @see de.lessvoid.nifty.spi.render.RenderDevice#getWidth()
+     * @return the width in pixels
      */
     @Override
     public int getWidth() {
-        // TODO Auto-generated method stub
-        return 0;
+        return display.getWidth();
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Get the height of the area the GUI is rendered into.
      * 
-     * @see de.lessvoid.nifty.spi.render.RenderDevice#getHeight()
+     * @return the height in pixels
      */
     @Override
     public int getHeight() {
-        // TODO Auto-generated method stub
-        return 0;
+        return display.getHeight();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.lessvoid.nifty.spi.render.RenderDevice#beginFrame()
+    /**
+     * Start rendering a new frame.
      */
     @Override
     public void beginFrame() {
-        // TODO Auto-generated method stub
-
+        // nothing needs to be done
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.lessvoid.nifty.spi.render.RenderDevice#endFrame()
+    /**
+     * Finish rendering the frame.
      */
     @Override
     public void endFrame() {
-        // TODO Auto-generated method stub
-
+        disableClip();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.lessvoid.nifty.spi.render.RenderDevice#clear()
+    /**
+     * Clear the screen.
      */
     @Override
     public void clear() {
-        // TODO Auto-generated method stub
-
+        display.clearScreen();
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Set the blending mode.
      * 
-     * @see
-     * de.lessvoid.nifty.spi.render.RenderDevice#setBlendMode(de.lessvoid.nifty
-     * .render.BlendMode)
+     * @param renderMode the new blending mode
      */
     @Override
-    public void setBlendMode(BlendMode renderMode) {
-        // TODO Auto-generated method stub
-
+    public void setBlendMode(final BlendMode renderMode) {
+        switch (renderMode) {
+            case BLEND:
+                display.setBlendingMode(BlendingMode.BLEND);
+                break;
+            case MULIPLY:
+                display.setBlendingMode(BlendingMode.MULTIPLY);
+                break;
+        }
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Some instances of sprite colors that are required to send the proper
+     * color values to the illarion graphic engine.
+     */
+    private final SpriteColor TEMP_COLOR[];
+
+    /**
+     * Render a rectangle.
      * 
-     * @see de.lessvoid.nifty.spi.render.RenderDevice#renderQuad(int, int, int,
-     * int, de.lessvoid.nifty.tools.Color)
+     * @param x the x origin of the rectangle
+     * @param y the y origin of the rectangle
+     * @param width the width of the rectangle
+     * @param height the height of the rectangle
+     * @param color the color of the rectangle
      */
     @Override
-    public void renderQuad(int x, int y, int width, int height, Color color) {
-        // TODO Auto-generated method stub
-
+    public void renderQuad(final int x, final int y, final int width,
+        final int height, final Color color) {
+        TEMP_COLOR[0].set(color.getRed(), color.getGreen(), color.getBlue());
+        TEMP_COLOR[0].setAlpha(color.getAlpha());
+        drawer.drawRectangle(x, y, x + width, y + height, TEMP_COLOR[0]);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Render a rectangle.
      * 
-     * @see de.lessvoid.nifty.spi.render.RenderDevice#renderQuad(int, int, int,
-     * int, de.lessvoid.nifty.tools.Color, de.lessvoid.nifty.tools.Color,
-     * de.lessvoid.nifty.tools.Color, de.lessvoid.nifty.tools.Color)
+     * @param x the x origin of the rectangle
+     * @param y the y origin of the rectangle
+     * @param width the width of the rectangle
+     * @param height the height of the rectangle
+     * @param topLeft the color in the top left edge of the rectangle
+     * @param topRight the color in the top right edge of the rectangle
+     * @param bottomRight the color in the bottom right edge of the rectangle
+     * @param bottomLeft the color in the bottom left edge of the rectangle
      */
     @Override
-    public void renderQuad(int x, int y, int width, int height, Color topLeft,
-        Color topRight, Color bottomRight, Color bottomLeft) {
-        // TODO Auto-generated method stub
+    public void renderQuad(final int x, final int y, final int width,
+        final int height, final Color topLeft, final Color topRight,
+        final Color bottomRight, final Color bottomLeft) {
+        TEMP_COLOR[0].set(topLeft.getRed(), topLeft.getGreen(),
+            topLeft.getBlue());
+        TEMP_COLOR[0].setAlpha(topLeft.getAlpha());
+
+        TEMP_COLOR[1].set(topRight.getRed(), topRight.getGreen(),
+            topRight.getBlue());
+        TEMP_COLOR[1].setAlpha(topRight.getAlpha());
+
+        TEMP_COLOR[2].set(bottomRight.getRed(), bottomRight.getGreen(),
+            bottomRight.getBlue());
+        TEMP_COLOR[2].setAlpha(bottomRight.getAlpha());
+
+        TEMP_COLOR[3].set(bottomLeft.getRed(), bottomLeft.getGreen(),
+            bottomLeft.getBlue());
+        TEMP_COLOR[3].setAlpha(bottomLeft.getAlpha());
+
+        drawer.drawRectangle(x, y, x + width, y + height, TEMP_COLOR[0],
+            TEMP_COLOR[1], TEMP_COLOR[3], TEMP_COLOR[2]);
 
     }
 
     /*
      * (non-Javadoc)
-     * 
      * @see
      * de.lessvoid.nifty.spi.render.RenderDevice#renderImage(de.lessvoid.nifty
      * .spi.render.RenderImage, int, int, int, int,
@@ -192,7 +240,6 @@ public final class IllarionRenderDevice implements RenderDevice {
 
     /*
      * (non-Javadoc)
-     * 
      * @see
      * de.lessvoid.nifty.spi.render.RenderDevice#renderImage(de.lessvoid.nifty
      * .spi.render.RenderImage, int, int, int, int, int, int, int, int,
@@ -208,7 +255,6 @@ public final class IllarionRenderDevice implements RenderDevice {
 
     /*
      * (non-Javadoc)
-     * 
      * @see
      * de.lessvoid.nifty.spi.render.RenderDevice#renderFont(de.lessvoid.nifty
      * .spi.render.RenderFont, java.lang.String, int, int,
@@ -220,33 +266,38 @@ public final class IllarionRenderDevice implements RenderDevice {
         // TODO Auto-generated method stub
 
     }
+    
+    /**
+     * This variable stores if the clipping is currently enabled.
+     */
+    private boolean clippingActive = false;
 
     /*
      * (non-Javadoc)
-     * 
      * @see de.lessvoid.nifty.spi.render.RenderDevice#enableClip(int, int, int,
      * int)
      */
     @Override
     public void enableClip(int x0, int y0, int x1, int y1) {
-        // TODO Auto-generated method stub
-
+        disableClip();
+        display.setAreaLimit(x0, y0, x1 - x0, y1 - y0);
+        clippingActive = true;
     }
 
     /*
      * (non-Javadoc)
-     * 
      * @see de.lessvoid.nifty.spi.render.RenderDevice#disableClip()
      */
     @Override
     public void disableClip() {
-        // TODO Auto-generated method stub
-
+        if (clippingActive) {
+            display.unsetAreaLimit();
+            clippingActive = false;
+        }
     }
 
     /*
      * (non-Javadoc)
-     * 
      * @see
      * de.lessvoid.nifty.spi.render.RenderDevice#createMouseCursor(java.lang
      * .String, int, int)
@@ -260,7 +311,6 @@ public final class IllarionRenderDevice implements RenderDevice {
 
     /*
      * (non-Javadoc)
-     * 
      * @see
      * de.lessvoid.nifty.spi.render.RenderDevice#enableMouseCursor(de.lessvoid
      * .nifty.spi.render.MouseCursor)
@@ -273,7 +323,6 @@ public final class IllarionRenderDevice implements RenderDevice {
 
     /*
      * (non-Javadoc)
-     * 
      * @see de.lessvoid.nifty.spi.render.RenderDevice#disableMouseCursor()
      */
     @Override

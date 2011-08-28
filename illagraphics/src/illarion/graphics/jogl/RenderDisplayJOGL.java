@@ -18,6 +18,12 @@
  */
 package illarion.graphics.jogl;
 
+import illarion.common.util.Rectangle;
+import illarion.graphics.BlendingMode;
+import illarion.graphics.GraphicResolution;
+import illarion.graphics.RenderDisplay;
+import illarion.graphics.generic.AbstractSprite;
+
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -44,12 +50,6 @@ import javolution.lang.Reflection.Constructor;
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
-
-import illarion.common.util.Rectangle;
-
-import illarion.graphics.GraphicResolution;
-import illarion.graphics.RenderDisplay;
-import illarion.graphics.generic.AbstractSprite;
 
 /**
  * This class defines a render display using the JOGL tool set to display
@@ -115,6 +115,15 @@ public final class RenderDisplayJOGL implements RenderDisplay {
     private static final String OPTIONKEY_NEWT = "jogl.newt";
 
     /**
+     * Get the context that is used to render the graphics.
+     * 
+     * @return the used GL context.
+     */
+    public static GLAutoDrawable getGLAutoDrawable() {
+        return activeContext;
+    }
+
+    /**
      * The area limits that were set in place. They need to be stored in order
      * to roll them back one by one when resetting.
      */
@@ -132,6 +141,11 @@ public final class RenderDisplayJOGL implements RenderDisplay {
      * The canvas used to display the graphics.
      */
     private Component canvas;
+
+    /**
+     * The currently active blending mode.
+     */
+    private BlendingMode currentMode;
 
     /**
      * The height canvas is supposed to have.
@@ -163,15 +177,6 @@ public final class RenderDisplayJOGL implements RenderDisplay {
      * canvas instead of a AWT canvas.
      */
     private boolean useNewtCanvas = false;
-
-    /**
-     * Get the context that is used to render the graphics.
-     * 
-     * @return the used GL context.
-     */
-    public static GLAutoDrawable getGLAutoDrawable() {
-        return activeContext;
-    }
 
     @Override
     public void addInputListener(final Object listener) {
@@ -225,6 +230,16 @@ public final class RenderDisplayJOGL implements RenderDisplay {
             }
         }
         gl2.glScalef(scale, scale, 1.f);
+    }
+
+    /**
+     * Clear the entire screen.
+     */
+    @Override
+    public void clearScreen() {
+        final GL gl = GLU.getCurrentGL();
+        gl.glClearColor(0.f, 0.f, 0.f, 0.f);
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT);
     }
 
     /**
@@ -500,6 +515,32 @@ public final class RenderDisplayJOGL implements RenderDisplay {
         }
         areaLimits.addLast(newRect);
         areaLimitsRaw.addLast(newRectRaw);
+    }
+
+    /**
+     * Set the render mode used by the display. This function does nothing in
+     * case the selected blending mode is already selected.
+     * 
+     * @param mode the new render mode
+     */
+    @Override
+    public void setBlendingMode(final BlendingMode mode) {
+        if (mode.equals(currentMode)) {
+            return;
+        }
+        final GL gl = GLU.getCurrentGL();
+
+        gl.glEnable(GL.GL_BLEND);
+        switch (mode) {
+            case BLEND:
+                gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+                break;
+            case MULTIPLY:
+                gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_ZERO);
+                break;
+        }
+
+        currentMode = mode;
     }
 
     /**

@@ -18,6 +18,10 @@
  */
 package illarion.graphics.jogl;
 
+import illarion.graphics.Graphics;
+import illarion.graphics.RenderTask;
+import illarion.graphics.generic.AbstractTextureAtlas;
+
 import java.awt.Cursor;
 
 import javax.media.opengl.GL;
@@ -37,10 +41,6 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.util.AnimatorBase;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.RenderTask;
-import illarion.graphics.generic.AbstractTextureAtlas;
 
 /**
  * This Display canvas uses the NEWT windowing system to display the graphics.
@@ -87,20 +87,6 @@ public final class DisplayNewtAWT extends NewtCanvasAWT implements Display,
     }
 
     /**
-     * Constructor that allows setting the capabilities of this display as well
-     * as the size.
-     * 
-     * @param width width of the canvas
-     * @param height height of the canvas
-     * @param capabilities capabilities of the canvas
-     */
-    public DisplayNewtAWT(final int width, final int height,
-        final GLCapabilities capabilities) {
-        this(capabilities);
-        setSize(width, height);
-    }
-
-    /**
      * Private constructor that is needed to fetch the created window instance.
      * 
      * @param glWindow the window that is wrapped by this class
@@ -113,6 +99,20 @@ public final class DisplayNewtAWT extends NewtCanvasAWT implements Display,
         window.addGLEventListener(this);
         window.setAutoSwapBufferMode(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+    }
+
+    /**
+     * Constructor that allows setting the capabilities of this display as well
+     * as the size.
+     * 
+     * @param width width of the canvas
+     * @param height height of the canvas
+     * @param capabilities capabilities of the canvas
+     */
+    public DisplayNewtAWT(final int width, final int height,
+        final GLCapabilities capabilities) {
+        this(capabilities);
+        setSize(width, height);
     }
 
     @Override
@@ -140,6 +140,86 @@ public final class DisplayNewtAWT extends NewtCanvasAWT implements Display,
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         manager.draw();
+    }
+
+    /**
+     * Display all informations about the currently activated OpenGL mode.
+     */
+    @SuppressWarnings("nls")
+    private void displayOpenGLStatusInfo() {
+        final GLCapabilitiesImmutable activeCaps =
+            window.getChosenGLCapabilities();
+
+        if (activeCaps.getHardwareAccelerated()) {
+            LOGGER.debug("OpenGL Hardware acceleration active");
+        } else {
+            LOGGER.warn("OpenGL Hardware acceleration inactive");
+        }
+        LOGGER.debug("Active Samples: "
+            + Integer.toString(activeCaps.getNumSamples()));
+
+        if (activeCaps.getGLProfile().isGLES1()) {
+            LOGGER.debug("OpenGL ES 1.x supported");
+        } else {
+            LOGGER.debug("OpenGL ES 1.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGLES2()) {
+            LOGGER.debug("OpenGL ES 2.x supported");
+        } else {
+            LOGGER.debug("OpenGL ES 2.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGL2()) {
+            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 supported");
+        } else {
+            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 not supported");
+        }
+        if (activeCaps.getGLProfile().isGL3()) {
+            LOGGER.debug("OpenGL 3.x supported");
+        } else {
+            LOGGER.debug("OpenGL 3.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGL4()) {
+            LOGGER.debug("OpenGL 4.x supported");
+        } else {
+            LOGGER.debug("OpenGL 4.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGL2GL3()) {
+            LOGGER.debug("OpenGL 2.x, 3.x supported");
+        } else {
+            LOGGER.debug("OpenGL 2.x, 3.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGL2ES1()) {
+            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 1.x supported");
+        } else {
+            LOGGER
+                .debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 1.x not supported");
+        }
+        if (activeCaps.getGLProfile().isGL2ES2()) {
+            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 2.x supported");
+        } else {
+            LOGGER
+                .debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 2.x not supported");
+        }
+        if (activeCaps.getGLProfile().hasGLSL()) {
+            LOGGER.debug("OpenGL shader language supported");
+        } else {
+            LOGGER.debug("OpenGL shader language not supported");
+        }
+        if (activeCaps.getGLProfile().usesNativeGLES()) {
+            LOGGER.debug("OpenGL ES native supported");
+        } else {
+            LOGGER.debug("OpenGL ES native not supported");
+        }
+        if (activeCaps.getGLProfile().usesNativeGLES1()) {
+            LOGGER.debug("OpenGL ES 1.x native supported");
+        } else {
+            LOGGER.debug("OpenGL ES 1.x native not supported");
+        }
+        if (activeCaps.getGLProfile().usesNativeGLES2()) {
+            LOGGER.debug("OpenGL ES 2.x native supported");
+        } else {
+            LOGGER.debug("OpenGL ES 2.x native not supported");
+        }
     }
 
     /**
@@ -262,7 +342,6 @@ public final class DisplayNewtAWT extends NewtCanvasAWT implements Display,
 
     /*
      * (non-Javadoc)
-     * 
      * @see illarion.graphics.jogl.Display#setFPS(int)
      */
     @Override
@@ -280,103 +359,6 @@ public final class DisplayNewtAWT extends NewtCanvasAWT implements Display,
             animator.start();
         } else {
             setIgnoreRepaint(false);
-        }
-    }
-
-    @Override
-    public void shutdown() {
-        destroy();
-    }
-
-    /**
-     * Overwritten update function to ensure the paint function is called.
-     * 
-     * @param g the graphics object that is used to draw
-     */
-    @Override
-    public void update(final java.awt.Graphics g) {
-        // window.getContext().makeCurrent();
-        paint(g);
-        // window.getContext().release();
-    }
-
-    /**
-     * Display all informations about the currently activated OpenGL mode.
-     */
-    @SuppressWarnings("nls")
-    private void displayOpenGLStatusInfo() {
-        final GLCapabilitiesImmutable activeCaps =
-            window.getChosenGLCapabilities();
-
-        if (activeCaps.getHardwareAccelerated()) {
-            LOGGER.debug("OpenGL Hardware acceleration active");
-        } else {
-            LOGGER.warn("OpenGL Hardware acceleration inactive");
-        }
-        LOGGER.debug("Active Samples: "
-            + Integer.toString(activeCaps.getNumSamples()));
-
-        if (activeCaps.getGLProfile().isGLES1()) {
-            LOGGER.debug("OpenGL ES 1.x supported");
-        } else {
-            LOGGER.debug("OpenGL ES 1.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGLES2()) {
-            LOGGER.debug("OpenGL ES 2.x supported");
-        } else {
-            LOGGER.debug("OpenGL ES 2.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2()) {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 supported");
-        } else {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 not supported");
-        }
-        if (activeCaps.getGLProfile().isGL3()) {
-            LOGGER.debug("OpenGL 3.x supported");
-        } else {
-            LOGGER.debug("OpenGL 3.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL4()) {
-            LOGGER.debug("OpenGL 4.x supported");
-        } else {
-            LOGGER.debug("OpenGL 4.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2GL3()) {
-            LOGGER.debug("OpenGL 2.x, 3.x supported");
-        } else {
-            LOGGER.debug("OpenGL 2.x, 3.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2ES1()) {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 1.x supported");
-        } else {
-            LOGGER
-                .debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 1.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2ES2()) {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 2.x supported");
-        } else {
-            LOGGER
-                .debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 2.x not supported");
-        }
-        if (activeCaps.getGLProfile().hasGLSL()) {
-            LOGGER.debug("OpenGL shader language supported");
-        } else {
-            LOGGER.debug("OpenGL shader language not supported");
-        }
-        if (activeCaps.getGLProfile().usesNativeGLES()) {
-            LOGGER.debug("OpenGL ES native supported");
-        } else {
-            LOGGER.debug("OpenGL ES native not supported");
-        }
-        if (activeCaps.getGLProfile().usesNativeGLES1()) {
-            LOGGER.debug("OpenGL ES 1.x native supported");
-        } else {
-            LOGGER.debug("OpenGL ES 1.x native not supported");
-        }
-        if (activeCaps.getGLProfile().usesNativeGLES2()) {
-            LOGGER.debug("OpenGL ES 2.x native supported");
-        } else {
-            LOGGER.debug("OpenGL ES 2.x native not supported");
         }
     }
 
@@ -423,5 +405,22 @@ public final class DisplayNewtAWT extends NewtCanvasAWT implements Display,
         if (releaseContext) {
             drawable.getContext().release();
         }
+    }
+
+    @Override
+    public void shutdown() {
+        destroy();
+    }
+
+    /**
+     * Overwritten update function to ensure the paint function is called.
+     * 
+     * @param g the graphics object that is used to draw
+     */
+    @Override
+    public void update(final java.awt.Graphics g) {
+        // window.getContext().makeCurrent();
+        paint(g);
+        // window.getContext().release();
     }
 }

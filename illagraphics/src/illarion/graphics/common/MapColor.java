@@ -18,12 +18,12 @@
  */
 package illarion.graphics.common;
 
+import illarion.graphics.Graphics;
+import illarion.graphics.SpriteColor;
+
 import java.nio.ByteBuffer;
 
 import org.apache.log4j.Logger;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.SpriteColor;
 
 /**
  * Provides the color table for the small and the overview map.
@@ -78,14 +78,6 @@ public final class MapColor {
             GLCOLORS[i].set(COLORS[i][0], COLORS[i][1], COLORS[i][2]);
             GLCOLORS[i].setAlpha(SpriteColor.COLOR_MAX);
         }
-    }
-
-    /**
-     * Private constructor so nothing can create a instance of this utility
-     * class.
-     */
-    private MapColor() {
-        // nothing is allowed to create a instance of this class
     }
 
     /**
@@ -151,5 +143,13 @@ public final class MapColor {
         }
         // use calculated alpha values
         map.put(pos + COLOR_VALUES, (byte) alpha);
+    }
+
+    /**
+     * Private constructor so nothing can create a instance of this utility
+     * class.
+     */
+    private MapColor() {
+        // nothing is allowed to create a instance of this class
     }
 }

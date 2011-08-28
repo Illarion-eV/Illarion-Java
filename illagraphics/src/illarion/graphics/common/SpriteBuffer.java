@@ -18,16 +18,16 @@
  */
 package illarion.graphics.common;
 
+import illarion.graphics.Graphics;
+import illarion.graphics.Sprite;
+import illarion.graphics.Texture;
+
 import java.util.Iterator;
 import java.util.Map;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastComparator;
 import javolution.util.FastMap;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.Sprite;
-import illarion.graphics.Texture;
 
 /**
  * A function that stores the created sprites and orders them by name of the the
@@ -45,6 +45,15 @@ public final class SpriteBuffer {
     private static final SpriteBuffer INSTANCE = new SpriteBuffer();
 
     /**
+     * Get the singleton instance of the SpriteBuffer object.
+     * 
+     * @return the singleton instance object
+     */
+    public static SpriteBuffer getInstance() {
+        return INSTANCE;
+    }
+
+    /**
      * The storage tables that store the sprites that were generated already.
      */
     private Map<String, Sprite> storage;
@@ -58,15 +67,6 @@ public final class SpriteBuffer {
             new FastMap<String, Sprite>();
         storageMap.setKeyComparator(FastComparator.STRING);
         storage = storageMap;
-    }
-
-    /**
-     * Get the singleton instance of the SpriteBuffer object.
-     * 
-     * @return the singleton instance object
-     */
-    public static SpriteBuffer getInstance() {
-        return INSTANCE;
     }
 
     /**

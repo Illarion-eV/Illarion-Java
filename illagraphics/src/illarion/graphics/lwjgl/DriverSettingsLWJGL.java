@@ -18,9 +18,9 @@
  */
 package illarion.graphics.lwjgl;
 
-import org.lwjgl.opengl.GL11;
-
 import illarion.graphics.Graphics;
+
+import org.lwjgl.opengl.GL11;
 
 /**
  * This is a helper class for the LWJGL render to switch the current render
@@ -33,45 +33,228 @@ import illarion.graphics.Graphics;
  */
 public final class DriverSettingsLWJGL {
     /**
+     * The different modes that are supported by this driver settings.
+     * 
+     * @author Martin Karing
+     * @since 2.00
+     * @version 2.00
+     */
+    public enum Modes {
+        /**
+         * This mode should be used in case single dots are supposed to be
+         * drawn.
+         */
+        DRAWDOT(new SettingsHandler() {
+            @Override
+            public void disableSettings() {
+                GL11.glDisable(GL11.GL_POINT_SMOOTH);
+                GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+            }
+
+            @Override
+            public void enableSettings() {
+                final int quality = Graphics.getInstance().getQuality();
+
+                if (quality >= Graphics.QUALITY_NORMAL) {
+                    GL11.glEnable(GL11.GL_POINT_SMOOTH);
+                    if (quality >= Graphics.QUALITY_HIGH) {
+                        GL11.glHint(GL11.GL_POINT_SMOOTH_HINT, GL11.GL_NICEST);
+                    } else {
+                        GL11.glHint(GL11.GL_POINT_SMOOTH_HINT, GL11.GL_FASTEST);
+                    }
+                } else {
+                    GL11.glDisable(GL11.GL_POINT_SMOOTH);
+                }
+                GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+            }
+        }),
+
+        /**
+         * This mode should be used in case lines are supposed to be drawn.
+         */
+        DRAWLINE(new SettingsHandler() {
+            @Override
+            public void disableSettings() {
+                GL11.glDisable(GL11.GL_LINE_SMOOTH);
+                GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+            }
+
+            @Override
+            public void enableSettings() {
+                final int quality = Graphics.getInstance().getQuality();
+                if (quality >= Graphics.QUALITY_NORMAL) {
+                    GL11.glEnable(GL11.GL_LINE_SMOOTH);
+                    if (quality >= Graphics.QUALITY_HIGH) {
+                        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
+                    } else {
+                        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_FASTEST);
+                    }
+                } else {
+                    GL11.glDisable(GL11.GL_LINE_SMOOTH);
+                }
+                GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+            }
+        }),
+
+        /**
+         * This mode should be used for any vertex array based shapes to draw.
+         * The difference to the polygon mode is that the smoothing is disabled.
+         */
+        DRAWOTHER(new SettingsHandler() {
+            @Override
+            public void disableSettings() {
+                GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+            }
+
+            @Override
+            public void enableSettings() {
+                GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+            }
+        }),
+
+        /**
+         * This mode should be used for any vertex array based shapes to draw.
+         * The difference to the polygon mode is that the smoothing is disabled.
+         * In addition this mode also enables the color array.
+         */
+        DRAWOTHERCOLOR(new SettingsHandler() {
+            @Override
+            public void disableSettings() {
+                GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
+                GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+            }
+
+            @Override
+            public void enableSettings() {
+                GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+                GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+            }
+        }),
+
+        /**
+         * This mode should be used to draw a polygone with line smoothing.
+         */
+        DRAWPOLY(new SettingsHandler() {
+            @Override
+            public void disableSettings() {
+                GL11.glDisable(GL11.GL_POLYGON_SMOOTH);
+                GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+            }
+
+            @Override
+            public void enableSettings() {
+                final int quality = Graphics.getInstance().getQuality();
+                if (quality == Graphics.QUALITY_MAX) {
+                    GL11.glEnable(GL11.GL_POLYGON_SMOOTH);
+                    GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_NICEST);
+                }
+                GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+            }
+        }),
+
+        /**
+         * This mode should be used to draw a texture directly.
+         */
+        DRAWTEXTURE(new SettingsHandler() {
+            @Override
+            public void disableSettings() {
+                GL11.glDisable(GL11.GL_TEXTURE_2D);
+            }
+
+            @Override
+            public void enableSettings() {
+                GL11.glEnable(GL11.GL_TEXTURE_2D);
+            }
+        }),
+
+        /**
+         * This mode should be used to drawn a texture using a texture pointer.
+         */
+        DRAWTEXTUREPOINTER(new SettingsHandler() {
+            @Override
+            public void disableSettings() {
+                GL11.glDisable(GL11.GL_TEXTURE_2D);
+                GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+                GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+            }
+
+            @Override
+            public void enableSettings() {
+                GL11.glEnable(GL11.GL_TEXTURE_2D);
+                GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+                GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+            }
+        });
+
+        /**
+         * The settings handler of this instance.
+         */
+        private final SettingsHandler setHandler;
+
+        /**
+         * Constructor of a modes instance that takes the required settings
+         * handler as parameter.
+         * 
+         * @param handler the handler
+         */
+        private Modes(final SettingsHandler handler) {
+            setHandler = handler;
+        }
+
+        /**
+         * Disable a mode.
+         */
+        protected void disable() {
+            setHandler.disableSettings();
+        }
+
+        /**
+         * Enable a mode.
+         */
+        protected void enable() {
+            setHandler.enableSettings();
+        }
+    }
+
+    /**
+     * This interface is used to enable and disable the different modes of this
+     * driver.
+     * 
+     * @author Martin Karing
+     * @since 2.00
+     * @version 2.00
+     */
+    private interface SettingsHandler {
+        /**
+         * Disable the settings that are controlled by this handler.
+         */
+        public void disableSettings();
+
+        /**
+         * Enable the settings that are controlled by this handler.
+         */
+        public void enableSettings();
+    }
+
+    /**
      * The singleton instance of this class.
      */
     private static final DriverSettingsLWJGL INSTANCE =
         new DriverSettingsLWJGL();
 
     /**
-     * Driver settings constant for the modus drawing dots.
+     * Get the singleton instance of this class.
+     * 
+     * @return the singleton instance of this helper class
      */
-    private static final int MODE_DRAWDOT = 1;
-
-    /**
-     * Driver settings constant for the modus drawing lines.
-     */
-    private static final int MODE_DRAWLINE = 2;
-
-    /**
-     * Driver settings constant for the modus drawing other stuff.
-     */
-    private static final int MODE_DRAWOTHER = 4;
-
-    /**
-     * Driver settings constant for the modus drawing polygons.
-     */
-    private static final int MODE_DRAWPOLY = 3;
-
-    /**
-     * Driver settings constant for the modus drawing textures.
-     */
-    private static final int MODE_TEXTURE = 0;
-
-    /**
-     * Driver settings constant for the modus drawing texture by pointers.
-     */
-    private static final int MODE_TEXTUREPOINTER = 5;
+    public static DriverSettingsLWJGL getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * The currently used modus.
      */
-    private int currentMode = -1;
+    private Modes currentMode = null;
 
     /**
      * The currently activated texture.
@@ -86,147 +269,35 @@ public final class DriverSettingsLWJGL {
     }
 
     /**
-     * Get the singleton instance of this class.
+     * Bind a new texture. Make sure to enable a texture mode before you call
+     * this function.
      * 
-     * @return the singleton instance of this helper class
+     * @param textureID the ID of the new texture
      */
-    public static DriverSettingsLWJGL getInstance() {
-        return INSTANCE;
-    }
-
-    /**
-     * Setup OpenGL to render dots.
-     */
-    public void enableDrawDot() {
-        if (currentMode != MODE_DRAWDOT) {
-            disableLast();
-            final int quality = Graphics.getInstance().getQuality();
-            if (quality >= Graphics.QUALITY_NORMAL) {
-                GL11.glEnable(GL11.GL_POINT_SMOOTH);
-                if (quality >= Graphics.QUALITY_HIGH) {
-                    GL11.glHint(GL11.GL_POINT_SMOOTH_HINT, GL11.GL_NICEST);
-                } else {
-                    GL11.glHint(GL11.GL_POINT_SMOOTH_HINT, GL11.GL_FASTEST);
-                }
-            } else {
-                GL11.glDisable(GL11.GL_POINT_SMOOTH);
-            }
-            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            currentMode = MODE_DRAWDOT;
-        }
-    }
-
-    /**
-     * Setup OpenGL to render lines.
-     */
-    public void enableDrawLine() {
-        if (currentMode != MODE_DRAWLINE) {
-            disableLast();
-            final int quality = Graphics.getInstance().getQuality();
-            if (quality >= Graphics.QUALITY_NORMAL) {
-                GL11.glEnable(GL11.GL_LINE_SMOOTH);
-                if (quality >= Graphics.QUALITY_HIGH) {
-                    GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-                } else {
-                    GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_FASTEST);
-                }
-            } else {
-                GL11.glDisable(GL11.GL_LINE_SMOOTH);
-            }
-            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            currentMode = MODE_DRAWLINE;
-        }
-    }
-
-    /**
-     * Setup OpenGL to render something generic.
-     */
-    public void enableDrawOther() {
-        if (currentMode != MODE_DRAWOTHER) {
-            disableLast();
-            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            currentMode = MODE_DRAWOTHER;
-        }
-    }
-
-    /**
-     * Setup OpenGL to render polygons.
-     */
-    public void enableDrawPoly() {
-        if (currentMode != MODE_DRAWPOLY) {
-            disableLast();
-            final int quality = Graphics.getInstance().getQuality();
-            if (quality == Graphics.QUALITY_MAX) {
-                GL11.glEnable(GL11.GL_POLYGON_SMOOTH);
-                GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_NICEST);
-            } else {
-                GL11.glDisable(GL11.GL_POLYGON_SMOOTH);
-            }
-            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            currentMode = MODE_DRAWPOLY;
-        }
-    }
-
-    /**
-     * Setup OpenGL to render a texture.
-     * 
-     * @param textureID the ID of the texture that shall be bind
-     */
-    public void enableTexture(final int textureID) {
-        if (currentMode != MODE_TEXTURE) {
-            disableLast();
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            currentMode = MODE_TEXTURE;
+    public void bindTexture(final int textureID) {
+        if (currentTexture == textureID) {
+            return;
         }
 
-        if ((currentTexture != textureID) && (textureID > -1)) {
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
-        }
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
         currentTexture = textureID;
     }
 
     /**
-     * Setup OpenGL to render a texture by using texture pointers.
+     * Activate a new driver mode.
      * 
-     * @param textureID the ID of the texture that shall be bind
+     * @param newMode the new mode to enable
      */
-    public void enableTexturePointer(final int textureID) {
-        if (currentMode != MODE_TEXTUREPOINTER) {
-            disableLast();
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-            currentMode = MODE_TEXTUREPOINTER;
+    public void enableMode(final Modes newMode) {
+        if (currentMode == newMode) {
+            return;
         }
-
-        if ((currentTexture != textureID) && (textureID > -1)) {
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+        if (currentMode != null) {
+            currentMode.disable();
         }
-        currentTexture = textureID;
-    }
-
-    /**
-     * Disable the last activated mode.
-     */
-    private void disableLast() {
-        if (currentMode == MODE_TEXTURE) {
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-        } else if (currentMode == MODE_TEXTUREPOINTER) {
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-            GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-        } else if (currentMode == MODE_DRAWDOT) {
-            GL11.glDisable(GL11.GL_POINT_SMOOTH);
-            GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-        } else if (currentMode == MODE_DRAWLINE) {
-            GL11.glDisable(GL11.GL_LINE_SMOOTH);
-            GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-        } else if (currentMode == MODE_DRAWPOLY) {
-            GL11.glDisable(GL11.GL_POLYGON_SMOOTH);
-            GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-        } else if (currentMode == MODE_DRAWPOLY) {
-            GL11.glDisable(GL11.GL_POLYGON_SMOOTH);
-            GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+        if (newMode != null) {
+            newMode.enable();
         }
+        currentMode = newMode;
     }
 }

@@ -18,6 +18,9 @@
  */
 package illarion.graphics.lwjgl;
 
+import illarion.graphics.Graphics;
+import illarion.graphics.generic.AbstractTextureAtlas;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.nio.ByteBuffer;
@@ -29,9 +32,6 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.Util;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.generic.AbstractTextureAtlas;
 
 /**
  * TextureAtlas implementation for usage with LWJGL.
@@ -51,6 +51,18 @@ public final class TextureAtlasLWJGL extends AbstractTextureAtlas {
     }
 
     /**
+     * Get a new texture ID from the OpenGL system. This also registers the
+     * texture in the openGL environment, so it can be used right away.
+     * 
+     * @return the generated openGL texture ID
+     */
+    private static int getNewTextureID() {
+        texIDBuffer.rewind();
+        GL11.glGenTextures(texIDBuffer);
+        return texIDBuffer.get(0);
+    }
+
+    /**
      * The internal format of this texture atlas.
      */
     private int internalFormat = 0;
@@ -65,18 +77,6 @@ public final class TextureAtlasLWJGL extends AbstractTextureAtlas {
      */
     public TextureAtlasLWJGL() {
         super();
-    }
-
-    /**
-     * Get a new texture ID from the OpenGL system. This also registers the
-     * texture in the openGL environment, so it can be used right away.
-     * 
-     * @return the generated openGL texture ID
-     */
-    private static int getNewTextureID() {
-        texIDBuffer.rewind();
-        GL11.glGenTextures(texIDBuffer);
-        return texIDBuffer.get(0);
     }
 
     /**
@@ -110,7 +110,9 @@ public final class TextureAtlasLWJGL extends AbstractTextureAtlas {
         setTextureID(texID);
 
         // bind texture ID
-        DriverSettingsLWJGL.getInstance().enableTexture(texID);
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWTEXTURE);
+        DriverSettingsLWJGL.getInstance().bindTexture(texID);
 
         // prepare texture data
         if (resizeable) { // Textures will be resized -> smoothing would be good
@@ -259,6 +261,21 @@ public final class TextureAtlasLWJGL extends AbstractTextureAtlas {
     }
 
     /**
+     * Remove the texture from the video ram of the graphic card.
+     */
+    @Override
+    protected void removeFromVRam() {
+        final int texID = getTextureID();
+        if (texID != 0) {
+            texIDBuffer.rewind();
+            texIDBuffer.put(texID);
+
+            GL11.glDeleteTextures(texIDBuffer);
+            setTextureID(0);
+        }
+    }
+
+    /**
      * Generate a identifier for this texture as human readable version.
      * 
      * @return human readable identifier for this texture
@@ -305,24 +322,11 @@ public final class TextureAtlasLWJGL extends AbstractTextureAtlas {
     @Override
     public void updateTextureArea(final int x, final int y, final int w,
         final int h, final ByteBuffer imageData) {
-        DriverSettingsLWJGL.getInstance().enableTexture(getTextureID());
+        DriverSettingsLWJGL.getInstance().enableMode(
+            DriverSettingsLWJGL.Modes.DRAWTEXTURE);
+        DriverSettingsLWJGL.getInstance().bindTexture(getTextureID());
         GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, w, h, GL11.GL_RGBA,
             GL11.GL_UNSIGNED_BYTE, imageData);
         Util.checkGLError();
-    }
-
-    /**
-     * Remove the texture from the video ram of the graphic card.
-     */
-    @Override
-    protected void removeFromVRam() {
-        final int texID = getTextureID();
-        if (texID != 0) {
-            texIDBuffer.rewind();
-            texIDBuffer.put(texID);
-
-            GL11.glDeleteTextures(texIDBuffer);
-            setTextureID(0);
-        }
     }
 }

@@ -18,9 +18,9 @@
  */
 package illarion.graphics.jogl;
 
-import javax.media.opengl.GLProfile;
-
 import illarion.graphics.GraphicsException;
+
+import javax.media.opengl.GLProfile;
 
 /**
  * A exception that is triggered in case the JOGL port causes any problem.

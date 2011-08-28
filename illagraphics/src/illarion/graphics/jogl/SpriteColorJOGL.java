@@ -18,14 +18,14 @@
  */
 package illarion.graphics.jogl;
 
+import illarion.graphics.SpriteColor;
+import illarion.graphics.generic.AbstractSpriteColor;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.glu.GLU;
 
 import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
-
-import illarion.graphics.SpriteColor;
-import illarion.graphics.generic.AbstractSpriteColor;
 
 /**
  * Default class to handle colors inside the client.

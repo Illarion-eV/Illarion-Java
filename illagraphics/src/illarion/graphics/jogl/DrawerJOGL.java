@@ -18,6 +18,10 @@
  */
 package illarion.graphics.jogl;
 
+import illarion.graphics.Graphics;
+import illarion.graphics.SpriteColor;
+import illarion.graphics.generic.AbstractDrawer;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -27,10 +31,6 @@ import javax.media.opengl.GL2ES1;
 import javax.media.opengl.glu.GLU;
 
 import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.SpriteColor;
-import illarion.graphics.generic.AbstractDrawer;
 
 /**
  * The JOGL implementation of the drawer interface that is used to draw some
@@ -45,6 +45,13 @@ public final class DrawerJOGL extends AbstractDrawer {
      * The float buffer that is used to draw the element to the screen.
      */
     private final FloatBuffer buffer = ByteBuffer
+        .allocateDirect((Float.SIZE / 8) * 32).order(ByteOrder.nativeOrder())
+        .asFloatBuffer();
+
+    /**
+     * The float buffer that is used to draw the colors on the screen.
+     */
+    private final FloatBuffer colorBuffer = ByteBuffer
         .allocateDirect((Float.SIZE / 8) * 32).order(ByteOrder.nativeOrder())
         .asFloatBuffer();
 
@@ -69,7 +76,8 @@ public final class DrawerJOGL extends AbstractDrawer {
             } else {
                 gl2 = gl.getGL2ES1();
             }
-            DriverSettingsJOGL.getInstance().enableDrawDot(gl2);
+            DriverSettingsJOGL.getInstance().enableMode(gl,
+                DriverSettingsJOGL.Modes.DRAWDOT);
             gl2.glPointSize(size / 2);
             color.setActiveColor();
 
@@ -105,7 +113,8 @@ public final class DrawerJOGL extends AbstractDrawer {
             } else {
                 gl2 = gl.getGL2ES1();
             }
-            DriverSettingsJOGL.getInstance().enableDrawLine(gl2);
+            DriverSettingsJOGL.getInstance().enableMode(gl,
+                DriverSettingsJOGL.Modes.DRAWLINE);
             gl2.glLineWidth(width);
             color.setActiveColor();
 
@@ -150,7 +159,8 @@ public final class DrawerJOGL extends AbstractDrawer {
             } else {
                 gl2 = gl.getGL2ES1();
             }
-            DriverSettingsJOGL.getInstance().enableDrawPoly(gl2);
+            DriverSettingsJOGL.getInstance().enableMode(gl,
+                DriverSettingsJOGL.Modes.DRAWPOLY);
             color.setActiveColor();
 
             buffer.clear();
@@ -193,7 +203,8 @@ public final class DrawerJOGL extends AbstractDrawer {
             } else {
                 gl2 = gl.getGL2ES1();
             }
-            DriverSettingsJOGL.getInstance().enableDrawPoly(gl2);
+            DriverSettingsJOGL.getInstance().enableMode(gl,
+                DriverSettingsJOGL.Modes.DRAWPOLY);
             color.setActiveColor();
 
             buffer.clear();
@@ -204,6 +215,7 @@ public final class DrawerJOGL extends AbstractDrawer {
             buffer.flip();
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+            gl2.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
             gl2.glDrawArrays(GL.GL_LINE_LOOP, 0, 4);
         }
     }
@@ -230,7 +242,8 @@ public final class DrawerJOGL extends AbstractDrawer {
             } else {
                 gl2 = gl.getGL2ES1();
             }
-            DriverSettingsJOGL.getInstance().enableDrawOther(gl2);
+            DriverSettingsJOGL.getInstance().enableMode(gl,
+                DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();
 
             buffer.clear();
@@ -241,6 +254,61 @@ public final class DrawerJOGL extends AbstractDrawer {
             buffer.flip();
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+            gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+        }
+    }
+
+    /**
+     * Draw a rectangle with different colors on each edge.
+     * 
+     * @param x1 x coordinate of the first corner of the rectangle
+     * @param y1 y coordinate of the first corner of the rectangle
+     * @param x2 x coordinate of the second corner of the rectangle
+     * @param y2 y coordinate of the second corner of the rectangle
+     * @param topLeftColor the color on the top left node of the rectangle
+     * @param topRightColor the color on the top right node of the rectangle
+     * @param bottomLeftColor the color on the bottom left node of the rectangle
+     * @param bottomRightColor the color on the bottom right node of the
+     *            rectangle
+     */
+    @Override
+    public void drawRectangle(final int x1, final int y1, final int x2,
+        final int y2, final SpriteColor topLeftColor,
+        final SpriteColor topRightColor, final SpriteColor bottomLeftColor,
+        final SpriteColor bottomRightColor) {
+
+        final GL gl = GLU.getCurrentGL();
+
+        if (gl.isGL2ES1() || gl.hasGLSL()) {
+            final GL2ES1 gl2;
+            if (gl.hasGLSL()) {
+                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
+            } else {
+                gl2 = gl.getGL2ES1();
+            }
+            DriverSettingsJOGL.getInstance().enableMode(gl,
+                DriverSettingsJOGL.Modes.DRAWOTHERCOLOR);
+
+            buffer.clear();
+            colorBuffer.clear();
+
+            buffer.put(x1).put(y1);
+            topLeftColor.storeRGBA(colorBuffer);
+
+            buffer.put(x1).put(y2);
+            bottomLeftColor.storeRGBA(colorBuffer);
+
+            buffer.put(x2).put(y1);
+            topRightColor.storeRGBA(colorBuffer);
+
+            buffer.put(x2).put(y2);
+            bottomRightColor.storeRGBA(colorBuffer);
+
+            buffer.flip();
+            colorBuffer.flip();
+
+            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+            gl2.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
             gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
         }
     }
@@ -267,7 +335,8 @@ public final class DrawerJOGL extends AbstractDrawer {
             } else {
                 gl2 = gl.getGL2ES1();
             }
-            DriverSettingsJOGL.getInstance().enableDrawOther(gl2);
+            DriverSettingsJOGL.getInstance().enableMode(gl,
+                DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();
 
             gl2.glLineWidth(width);
@@ -319,7 +388,8 @@ public final class DrawerJOGL extends AbstractDrawer {
             } else {
                 gl2 = gl.getGL2ES1();
             }
-            DriverSettingsJOGL.getInstance().enableDrawOther(gl2);
+            DriverSettingsJOGL.getInstance().enableMode(gl,
+                DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();
 
             buffer.clear();
@@ -384,7 +454,8 @@ public final class DrawerJOGL extends AbstractDrawer {
             } else {
                 gl2 = gl.getGL2ES1();
             }
-            DriverSettingsJOGL.getInstance().enableDrawLine(gl2);
+            DriverSettingsJOGL.getInstance().enableMode(gl,
+                DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();
             gl2.glLineWidth(width);
 
@@ -447,7 +518,8 @@ public final class DrawerJOGL extends AbstractDrawer {
             } else {
                 gl2 = gl.getGL2ES1();
             }
-            DriverSettingsJOGL.getInstance().enableDrawOther(gl2);
+            DriverSettingsJOGL.getInstance().enableMode(gl,
+                DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();
 
             buffer.clear();
@@ -479,7 +551,8 @@ public final class DrawerJOGL extends AbstractDrawer {
             } else {
                 gl2 = gl.getGL2ES1();
             }
-            DriverSettingsJOGL.getInstance().enableDrawOther(gl2);
+            DriverSettingsJOGL.getInstance().enableMode(gl,
+                DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, coords);

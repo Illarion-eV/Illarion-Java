@@ -18,10 +18,10 @@
  */
 package illarion.graphics.lwjgl;
 
+import illarion.common.util.FastMath;
+
 import org.apache.log4j.Logger;
 import org.lwjgl.Sys;
-
-import illarion.common.util.FastMath;
 
 /**
  * The timer is used to calculate the frames per second and the time between

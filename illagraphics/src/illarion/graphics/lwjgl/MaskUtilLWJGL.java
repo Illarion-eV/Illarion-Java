@@ -18,9 +18,9 @@
  */
 package illarion.graphics.lwjgl;
 
-import org.lwjgl.opengl.GL11;
-
 import illarion.graphics.MaskUtil;
+
+import org.lwjgl.opengl.GL11;
 
 /**
  * This is the LWJGL implementation for the mask utility that can be used to

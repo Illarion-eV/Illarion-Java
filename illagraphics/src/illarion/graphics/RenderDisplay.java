@@ -53,6 +53,11 @@ public interface RenderDisplay {
     void applyScaling(float scale);
 
     /**
+     * Clear the entire screen.
+     */
+    void clearScreen();
+
+    /**
      * Get the height of the render display.
      * 
      * @return the height of the render display in pixel
@@ -144,6 +149,13 @@ public interface RenderDisplay {
      * @param height the height of the render area
      */
     void setAreaLimit(int x, int y, int width, int height);
+
+    /**
+     * Set the blending mode the display is supposed to operate with.
+     * 
+     * @param mode
+     */
+    void setBlendingMode(BlendingMode mode);
 
     /**
      * Set the used screen resolution.

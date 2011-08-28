@@ -18,6 +18,10 @@
  */
 package illarion.graphics.jogl;
 
+import illarion.graphics.Graphics;
+import illarion.graphics.RenderTask;
+import illarion.graphics.generic.AbstractTextureAtlas;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.nio.ByteBuffer;
@@ -30,10 +34,6 @@ import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2GL3;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.glu.GLU;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.RenderTask;
-import illarion.graphics.generic.AbstractTextureAtlas;
 
 /**
  * TextureAtlas implementation for usage with JOGL.
@@ -128,6 +128,19 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
     }
 
     /**
+     * Get a new texture ID from the OpenGL system. This also registers the
+     * texture in the openGL environment, so it can be used right away.
+     * 
+     * @return the generated openGL texture ID
+     */
+    private static int getNewTextureID() {
+        texIDBuffer.rewind();
+        final GL gl = GLU.getCurrentGL();
+        gl.glGenTextures(1, texIDBuffer);
+        return texIDBuffer.get(0);
+    }
+
+    /**
      * The internal format of this texture atlas.
      */
     private int internalFormat = 0;
@@ -142,19 +155,6 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
      */
     public TextureAtlasJOGL() {
         super();
-    }
-
-    /**
-     * Get a new texture ID from the OpenGL system. This also registers the
-     * texture in the openGL environment, so it can be used right away.
-     * 
-     * @return the generated openGL texture ID
-     */
-    private static int getNewTextureID() {
-        texIDBuffer.rewind();
-        final GL gl = GLU.getCurrentGL();
-        gl.glGenTextures(1, texIDBuffer);
-        return texIDBuffer.get(0);
     }
 
     /**
@@ -177,81 +177,6 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
 
         renderDisplay.renderTask(new ActivateTextureTask(this, resizeable,
             allowCompression));
-    }
-
-    /**
-     * Add a image definition to the storage that marks the locations of the
-     * image on the texture.
-     * 
-     * @param fileName the name of the image that works as the reference to the
-     *            image file
-     * @param x the x coordinate of the location of the image on the texture map
-     * @param y the y coordinate of the location of the image on the texture map
-     * @param w the width of the image
-     * @param h the height of the image
-     */
-    @Override
-    public void addImage(final String fileName, final int x, final int y,
-        final int w, final int h) {
-
-        final TextureJOGL tex =
-            new TextureJOGL(w, h, getTextureWidth(), getTextureHeight(), x, y);
-        tex.setParent(this);
-        addTextureToBuffer(fileName, tex);
-    }
-
-    /**
-     * Generate a identifier for this texture as human readable version.
-     * 
-     * @return human readable identifier for this texture
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public String toString() {
-        return "Texture: " + getFileName();
-    }
-
-    /**
-     * Change a area of the texture.
-     * 
-     * @param x the x coordinate of the origin of the area that is changed
-     * @param y the y coordinate of the origin of the area that is changed
-     * @param w the width of the area that is changed
-     * @param h the height of the area that is changed
-     * @param image the image that is drawn in the area
-     */
-    @Override
-    public void updateTextureArea(final int x, final int y, final int w,
-        final int h, final BufferedImage image) {
-
-        final byte[] imageByteData =
-            ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-
-        final ByteBuffer imageBuffer = getByteBuffer(imageByteData.length);
-        imageBuffer.clear();
-        imageBuffer.put(imageByteData, 0, imageByteData.length);
-        imageBuffer.flip();
-
-        updateTextureArea(x, y, w, h, imageBuffer);
-    }
-
-    /**
-     * Change a area of the texture.
-     * 
-     * @param x the x coordinate of the origin of the area that is changed
-     * @param y the y coordinate of the origin of the area that is changed
-     * @param w the width of the area that is changed
-     * @param h the height of the area that is changed
-     * @param imageData the image data that shall be updated
-     */
-    @Override
-    public void updateTextureArea(final int x, final int y, final int w,
-        final int h, final ByteBuffer imageData) {
-
-        final GL gl = GLU.getCurrentGL();
-        DriverSettingsJOGL.getInstance().enableTexture(gl, getTextureID());
-        gl.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, x, y, w, h, GL.GL_RGBA,
-            GL.GL_UNSIGNED_BYTE, imageData);
     }
 
     /**
@@ -291,7 +216,9 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
 
         // bind texture ID
         final GL gl = GLU.getCurrentGL();
-        DriverSettingsJOGL.getInstance().enableTexture(gl, texID);
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWTEXTURE);
+        DriverSettingsJOGL.getInstance().bindTexture(gl, getTextureID());
         // prepare texture data
         if (resizeable) { // Textures will be resized -> smoothing would be good
             if (quality <= Graphics.QUALITY_LOW) {
@@ -425,6 +352,27 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
     }
 
     /**
+     * Add a image definition to the storage that marks the locations of the
+     * image on the texture.
+     * 
+     * @param fileName the name of the image that works as the reference to the
+     *            image file
+     * @param x the x coordinate of the location of the image on the texture map
+     * @param y the y coordinate of the location of the image on the texture map
+     * @param w the width of the image
+     * @param h the height of the image
+     */
+    @Override
+    public void addImage(final String fileName, final int x, final int y,
+        final int w, final int h) {
+
+        final TextureJOGL tex =
+            new TextureJOGL(w, h, getTextureWidth(), getTextureHeight(), x, y);
+        tex.setParent(this);
+        addTextureToBuffer(fileName, tex);
+    }
+
+    /**
      * Remove the texture from the video ram of the graphic card.
      */
     @Override
@@ -439,5 +387,61 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
             gl.glDeleteTextures(1, texIDBuffer);
             setTextureID(0);
         }
+    }
+
+    /**
+     * Generate a identifier for this texture as human readable version.
+     * 
+     * @return human readable identifier for this texture
+     */
+    @SuppressWarnings("nls")
+    @Override
+    public String toString() {
+        return "Texture: " + getFileName();
+    }
+
+    /**
+     * Change a area of the texture.
+     * 
+     * @param x the x coordinate of the origin of the area that is changed
+     * @param y the y coordinate of the origin of the area that is changed
+     * @param w the width of the area that is changed
+     * @param h the height of the area that is changed
+     * @param image the image that is drawn in the area
+     */
+    @Override
+    public void updateTextureArea(final int x, final int y, final int w,
+        final int h, final BufferedImage image) {
+
+        final byte[] imageByteData =
+            ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+
+        final ByteBuffer imageBuffer = getByteBuffer(imageByteData.length);
+        imageBuffer.clear();
+        imageBuffer.put(imageByteData, 0, imageByteData.length);
+        imageBuffer.flip();
+
+        updateTextureArea(x, y, w, h, imageBuffer);
+    }
+
+    /**
+     * Change a area of the texture.
+     * 
+     * @param x the x coordinate of the origin of the area that is changed
+     * @param y the y coordinate of the origin of the area that is changed
+     * @param w the width of the area that is changed
+     * @param h the height of the area that is changed
+     * @param imageData the image data that shall be updated
+     */
+    @Override
+    public void updateTextureArea(final int x, final int y, final int w,
+        final int h, final ByteBuffer imageData) {
+
+        final GL gl = GLU.getCurrentGL();
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWTEXTURE);
+        DriverSettingsJOGL.getInstance().bindTexture(gl, getTextureID());
+        gl.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, x, y, w, h, GL.GL_RGBA,
+            GL.GL_UNSIGNED_BYTE, imageData);
     }
 }

@@ -1,20 +1,14 @@
 /*
- * This file is part of the Illarion Graphics Engine.
- *
- * Copyright © 2011 - Illarion e.V.
- *
- * The Illarion Graphics Engine is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Graphics Engine is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Graphics Engine. Copyright © 2011 -
+ * Illarion e.V. The Illarion Graphics Engine is free software: you can
+ * redistribute i and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version. The Illarion Graphics Engine
+ * is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+ * should have received a copy of the GNU General Public License along with the
+ * Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.graphics;
 
@@ -103,6 +97,23 @@ public interface Drawer {
      * @param color the color the rectangle is filled with
      */
     void drawRectangle(int x1, int y1, int x2, int y2, SpriteColor color);
+
+    /**
+     * Draw a rectangle that is filled with a color.
+     * 
+     * @param x1 x coordinate of the first corner of the rectangle
+     * @param y1 y coordinate of the first corner of the rectangle
+     * @param x2 x coordinate of the second corner of the rectangle
+     * @param y2 y coordinate of the second corner of the rectangle
+     * @param topLeftColor the color on the top left node of the rectangle
+     * @param topRightColor the color on the top right node of the rectangle
+     * @param bottomLeftColor the color on the bottom left node of the rectangle
+     * @param bottomRightColor the color on the bottom right node of the
+     *            rectangle
+     */
+    void drawRectangle(int x1, int y1, int x2, int y2,
+        SpriteColor topLeftColor, SpriteColor topRightColor,
+        SpriteColor bottomLeftColor, SpriteColor bottomRightColor);
 
     /**
      * Draw a rectangle frame, so just the border of the rectangle that is

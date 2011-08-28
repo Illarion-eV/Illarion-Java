@@ -18,14 +18,13 @@
  */
 package illarion.graphics.common;
 
+import illarion.common.util.Rectangle;
+import illarion.graphics.FontData;
+import illarion.graphics.Texture;
+
 import java.io.Serializable;
 
 import javolution.text.TextBuilder;
-
-import illarion.common.util.Rectangle;
-
-import illarion.graphics.FontData;
-import illarion.graphics.Texture;
 
 /**
  * This font class stores all definitions needed for a font. The
@@ -491,6 +490,20 @@ public final class Font implements FontData, Serializable {
     }
 
     /**
+     * Internal function to get a glyph. This is used to get glyphs without any
+     * casting needed.
+     * 
+     * @param i the character value of this glyph
+     * @return the glyph fitting to this character
+     */
+    private Glyph getGlyphImpl(final int i) {
+        if ((i < 0) || (i >= glyphes.length)) {
+            return glyphes[0];
+        }
+        return glyphes[i];
+    }
+
+    /**
      * Gets the leading.
      * 
      * @return the leading value
@@ -685,19 +698,5 @@ public final class Font implements FontData, Serializable {
         for (final Glyph glyphe : glyphes) {
             glyphe.prepareTexture(path, name);
         }
-    }
-
-    /**
-     * Internal function to get a glyph. This is used to get glyphs without any
-     * casting needed.
-     * 
-     * @param i the character value of this glyph
-     * @return the glyph fitting to this character
-     */
-    private Glyph getGlyphImpl(final int i) {
-        if ((i < 0) || (i >= glyphes.length)) {
-            return glyphes[0];
-        }
-        return glyphes[i];
     }
 }

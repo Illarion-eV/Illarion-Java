@@ -19,7 +19,6 @@
 package illarion.graphics.common;
 
 import illarion.common.util.Location;
-
 import illarion.graphics.SpriteColor;
 
 /**

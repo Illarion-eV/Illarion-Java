@@ -18,9 +18,9 @@
  */
 package illarion.graphics.common;
 
-import org.apache.log4j.Logger;
-
 import illarion.common.util.Location;
+
+import org.apache.log4j.Logger;
 
 /**
  * A ray node is one node on the path of a light to a destination. It knows all

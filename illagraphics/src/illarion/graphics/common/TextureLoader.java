@@ -18,6 +18,10 @@
  */
 package illarion.graphics.common;
 
+import illarion.graphics.Texture;
+import illarion.graphics.TextureAtlas;
+import illarion.graphics.TextureAtlasListener;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.Channels;
@@ -29,10 +33,6 @@ import javolution.util.FastMap;
 import javolution.util.FastTable;
 
 import org.apache.log4j.Logger;
-
-import illarion.graphics.Texture;
-import illarion.graphics.TextureAtlas;
-import illarion.graphics.TextureAtlasListener;
 
 /**
  * Utility class to load textures. It loads up the Atlas textures and supplies
@@ -103,6 +103,15 @@ public final class TextureLoader implements TextureAtlasListener {
     private static final String TEXTURE_FILENAME_ENDING = ".itx";
 
     /**
+     * Get the singleton instance of the texture loader.
+     * 
+     * @return the singleton instance of this class
+     */
+    public static TextureLoader getInstance() {
+        return INSTANCE;
+    }
+
+    /**
      * The current state of loading to ensure that the atlas files are loaded up
      * one by one.
      */
@@ -136,15 +145,6 @@ public final class TextureLoader implements TextureAtlasListener {
         textures =
             new FastMap<String, Map<String, Texture>>()
                 .setKeyComparator(FastComparator.STRING);
-    }
-
-    /**
-     * Get the singleton instance of the texture loader.
-     * 
-     * @return the singleton instance of this class
-     */
-    public static TextureLoader getInstance() {
-        return INSTANCE;
     }
 
     /**
@@ -391,6 +391,111 @@ public final class TextureLoader implements TextureAtlasListener {
     }
 
     /**
+     * Support function that receives the texture atlas list from the
+     * {@link #textureAtlases} map. The returned list is supposed to contain all
+     * texture atlas objects bound to this directory.
+     * 
+     * @param folder the directory
+     * @return the list of texture atlas objects
+     */
+    private List<TextureAtlas> getTextureAtlasList(final String folder) {
+        List<TextureAtlas> folderAtlas = textureAtlases.get(folder);
+        if (folderAtlas == null) {
+            folderAtlas =
+                new FastTable<TextureAtlas>()
+                    .setValueComparator(FastComparator.IDENTITY);
+            textureAtlases.put(folder, folderAtlas);
+        }
+        return folderAtlas;
+    }
+
+    /**
+     * Support function that receives the map of all textures that are stored at
+     * a specified directory. The returned map contains all textures that were
+     * load from the texture atlas objects.
+     * 
+     * @param folder the directory
+     * @return the map of texture objects
+     */
+    private Map<String, Texture> getTextureMap(final String folder) {
+        Map<String, Texture> folderTex = textures.get(folder);
+        if (folderTex == null) {
+            folderTex =
+                new FastMap<String, Texture>()
+                    .setKeyComparator(FastComparator.STRING);
+            textures.put(folder, folderTex);
+        }
+        return folderTex;
+    }
+
+    /**
+     * Load all atlas files from a directory.
+     * 
+     * @param resourceDir the directory the atlas files are searched in
+     * @param smooth true in case the atlas files shall be scaled smoothly,
+     *            false if not
+     * @param compress allow the system to compress the image in order to save
+     *            storage space
+     * @return false if there is still a atlas left to load, true in case all
+     *         are loaded up
+     */
+    @SuppressWarnings("nls")
+    private boolean loadFolderAtlasTextures(final String resourceDir,
+        final boolean smooth, final boolean compress,
+        final boolean discardTexData) {
+        String existingAtlasName;
+        String atlasName;
+        atlasName =
+            resourceDir + "atlas-" + textureIndex + TEXTURE_FILENAME_ENDING;
+        boolean alreadyUsed = false;
+
+        final List<TextureAtlas> folderAtlas =
+            getTextureAtlasList(resourceDir);
+        final Map<String, Texture> folderTex = getTextureMap(resourceDir);
+
+        for (int i = folderAtlas.size() - 1; i >= 0; --i) {
+            existingAtlasName = folderAtlas.get(i).getFileName();
+
+            if (existingAtlasName.equals(atlasName)) {
+                alreadyUsed = true;
+                break;
+            }
+        }
+
+        if (alreadyUsed) {
+            return false;
+        }
+
+        try {
+            TextureLoader.class.getClassLoader().getResources("data");
+        } catch (final IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        final InputStream textureInput =
+            TextureLoader.class.getClassLoader()
+                .getResourceAsStream(atlasName);
+
+        if (textureInput == null) {
+            return true;
+        }
+
+        try {
+            final TextureAtlas newTexture =
+                TextureIO.readTexture(Channels.newChannel(textureInput));
+            newTexture.setFileName(atlasName);
+            newTexture.setKeepTextureData(!discardTexData);
+            newTexture.activateTexture(smooth, compress);
+            newTexture.setListener(this);
+            folderAtlas.add(newTexture);
+            newTexture.getAllTextures(folderTex);
+        } catch (final IOException e) {
+            LOGGER.error("Unable to load texture: " + atlasName, e);
+        }
+        return false;
+    }
+
+    /**
      * Trigger preloading the atlas textures of all folders.
      * 
      * @return false in case there is still something left to load, true in case
@@ -497,110 +602,5 @@ public final class TextureLoader implements TextureAtlasListener {
                 return;
             }
         }
-    }
-
-    /**
-     * Support function that receives the texture atlas list from the
-     * {@link #textureAtlases} map. The returned list is supposed to contain all
-     * texture atlas objects bound to this directory.
-     * 
-     * @param folder the directory
-     * @return the list of texture atlas objects
-     */
-    private List<TextureAtlas> getTextureAtlasList(final String folder) {
-        List<TextureAtlas> folderAtlas = textureAtlases.get(folder);
-        if (folderAtlas == null) {
-            folderAtlas =
-                new FastTable<TextureAtlas>()
-                    .setValueComparator(FastComparator.IDENTITY);
-            textureAtlases.put(folder, folderAtlas);
-        }
-        return folderAtlas;
-    }
-
-    /**
-     * Support function that receives the map of all textures that are stored at
-     * a specified directory. The returned map contains all textures that were
-     * load from the texture atlas objects.
-     * 
-     * @param folder the directory
-     * @return the map of texture objects
-     */
-    private Map<String, Texture> getTextureMap(final String folder) {
-        Map<String, Texture> folderTex = textures.get(folder);
-        if (folderTex == null) {
-            folderTex =
-                new FastMap<String, Texture>()
-                    .setKeyComparator(FastComparator.STRING);
-            textures.put(folder, folderTex);
-        }
-        return folderTex;
-    }
-
-    /**
-     * Load all atlas files from a directory.
-     * 
-     * @param resourceDir the directory the atlas files are searched in
-     * @param smooth true in case the atlas files shall be scaled smoothly,
-     *            false if not
-     * @param compress allow the system to compress the image in order to save
-     *            storage space
-     * @return false if there is still a atlas left to load, true in case all
-     *         are loaded up
-     */
-    @SuppressWarnings("nls")
-    private boolean loadFolderAtlasTextures(final String resourceDir,
-        final boolean smooth, final boolean compress,
-        final boolean discardTexData) {
-        String existingAtlasName;
-        String atlasName;
-        atlasName =
-            resourceDir + "atlas-" + textureIndex + TEXTURE_FILENAME_ENDING;
-        boolean alreadyUsed = false;
-
-        final List<TextureAtlas> folderAtlas =
-            getTextureAtlasList(resourceDir);
-        final Map<String, Texture> folderTex = getTextureMap(resourceDir);
-
-        for (int i = folderAtlas.size() - 1; i >= 0; --i) {
-            existingAtlasName = folderAtlas.get(i).getFileName();
-
-            if (existingAtlasName.equals(atlasName)) {
-                alreadyUsed = true;
-                break;
-            }
-        }
-
-        if (alreadyUsed) {
-            return false;
-        }
-
-        try {
-            TextureLoader.class.getClassLoader().getResources("data");
-        } catch (final IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        final InputStream textureInput =
-            TextureLoader.class.getClassLoader()
-                .getResourceAsStream(atlasName);
-
-        if (textureInput == null) {
-            return true;
-        }
-
-        try {
-            final TextureAtlas newTexture =
-                TextureIO.readTexture(Channels.newChannel(textureInput));
-            newTexture.setFileName(atlasName);
-            newTexture.setKeepTextureData(!discardTexData);
-            newTexture.activateTexture(smooth, compress);
-            newTexture.setListener(this);
-            folderAtlas.add(newTexture);
-            newTexture.getAllTextures(folderTex);
-        } catch (final IOException e) {
-            LOGGER.error("Unable to load texture: " + atlasName, e);
-        }
-        return false;
     }
 }
