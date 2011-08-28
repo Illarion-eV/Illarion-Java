@@ -13,11 +13,11 @@ local RADIUS = INTEGER -- Radius -- Radius
 local TEXT_DE = TEXT -- German Text after movement -- Deutscher Text nach Bewegung
 local TEXT_EN = TEXT -- English Text after movement -- Englischer Text nach Bewegung
 
-function MoveItemBeforeMove(player, item, itemAfter)
-  if player:isInRangeToPosition(POSITION,RADIUS)
-      and questsystem.base.fulfilsPrecondition(player, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then
-    informNLS(player, TEXT_DE, TEXT_EN)
-    questsystem.base.setPostcondition(player, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
+function MoveItemBeforeMove(PLAYER, item, itemAfter)
+  if PLAYER:isInRangeToPosition(POSITION,RADIUS)
+      and questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then
+    informNLS(PLAYER, TEXT_DE, TEXT_EN)
+    questsystem.base.setPostcondition(PLAYER, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
     return true
   end
 
