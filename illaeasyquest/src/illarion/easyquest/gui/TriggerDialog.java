@@ -111,7 +111,6 @@ public class TriggerDialog extends JDialog
 		header.add(objectId);
 		header.add(labelType);
 		header.add(trigger);
-		header.add(main);
 		header.setBorder(BorderFactory.createEmptyBorder(5,5,10,5));
 		
 		buttons.add(Box.createHorizontalGlue());

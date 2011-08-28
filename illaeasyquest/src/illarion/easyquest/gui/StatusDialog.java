@@ -20,6 +20,7 @@ package illarion.easyquest.gui;
 
 import java.awt.Frame;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
@@ -28,16 +29,23 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 import javax.swing.JButton;
+import javax.swing.JSeparator;
+import javax.swing.Box;
+import javax.swing.BorderFactory;
 
+import illarion.easyquest.quest.HandlerTemplates;
+import illarion.easyquest.quest.HandlerTemplate;
+import illarion.easyquest.quest.Handler;
 import illarion.easyquest.Lang;
 
 public class StatusDialog extends JDialog
 {
     
-    private JTextField name;
-    private JCheckBox start;
-    private JButton okay;
-    private JButton cancel;
+    private final JTextField name;
+    private final JCheckBox start;
+    private final JPanel handlerPanels;
+    private final JButton okay;
+    private final JButton cancel;
     
     public StatusDialog(Frame owner)
     {
@@ -45,25 +53,32 @@ public class StatusDialog extends JDialog
         setTitle(Lang.getMsg(getClass(), "title"));
         
         final JPanel main = new JPanel();
-		final JPanel bottom = new JPanel();
+        handlerPanels = new JPanel(new GridLayout(0,1,0,5));
+		final Box buttons = Box.createHorizontalBox();
 		final JLabel label = new JLabel(Lang.getMsg(getClass(), "name")+":");
 		name = new JTextField(15);
 		start = new JCheckBox(Lang.getMsg(getClass(), "start"));
 		okay = new JButton(Lang.getMsg(getClass(), "ok"));
 		cancel = new JButton(Lang.getMsg(getClass(), "cancel"));
         
-        setSize(240,130);
 		setResizable(false);
 		
-		main.add(label, BorderLayout.NORTH);
-		main.add(name, BorderLayout.NORTH);
-		main.add(start, BorderLayout.CENTER);
-		
-		bottom.add(okay);
-		bottom.add(cancel);
+		buttons.add(Box.createHorizontalGlue());
+		buttons.add(okay);
+		buttons.add(Box.createHorizontalStrut(5));
+		buttons.add(cancel);
+		buttons.setBorder(BorderFactory.createEmptyBorder(20,5,5,5));
 
-		add(main, BorderLayout.CENTER);
-		add(bottom, BorderLayout.SOUTH);
+        main.add(label);
+        main.add(name);
+        main.add(start);
+        main.setBorder(BorderFactory.createEmptyBorder(5,5,10,5));
+
+        handlerPanels.setBorder(BorderFactory.createTitledBorder(Lang.getMsg(getClass(), "handlers")));
+
+		add(main, BorderLayout.NORTH);
+		add(handlerPanels, BorderLayout.CENTER);
+		add(buttons, BorderLayout.SOUTH);
     }
    
     public String getName()
@@ -84,7 +99,38 @@ public class StatusDialog extends JDialog
     public void setStart(boolean value)
     {
         start.setSelected(value);
-    }		
+    }
+    
+    public Handler[] getHandlers()
+    {
+        int count = handlerPanels.getComponentCount() - 1;
+        Handler[] handlers = new Handler[count];
+        for (int i=0; i<count; ++i)
+        {
+            HandlerPanel hp = (HandlerPanel)handlerPanels.getComponent(i);
+            handlers[i] = hp.getHandler();
+        }
+        return handlers;
+    }
+    
+    public void setHandlers(Handler[] handlers)
+    {
+        handlerPanels.removeAll();
+        
+        if (handlers != null)
+        {
+            int count = handlers.length;
+            for (int i=0; i<count; ++i)
+            {
+                handlerPanels.add(new HandlerPanel(handlers[i]));
+                handlerPanels.add(new JSeparator());
+            }
+        }
+
+        handlerPanels.add(new HandlerPanel(null));
+        pack();
+        validate();
+    }
     
     public void addOkayListener(ActionListener listener)
     {

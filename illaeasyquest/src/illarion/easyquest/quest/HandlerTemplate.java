@@ -18,17 +18,25 @@
  */
 package illarion.easyquest.quest;
 
-public class TriggerTemplateParameter
+import java.util.List;
+import java.util.ArrayList;
+
+public class HandlerTemplate
 {
     private String name;
-    private String type;
-    private String description;
+    private String title;
+    private List<TemplateParameter> parameters;
     
-    public TriggerTemplateParameter(String name, String type, String description)
+    public HandlerTemplate(String name)
     {
         this.name = name;
-        this.type = type;
-        this.description = description;
+        title = null;
+        parameters = new ArrayList<TemplateParameter>();
+    }
+    
+    public void setTitle(String title)
+    {
+        this.title = title;
     }
     
     public String getName()
@@ -36,13 +44,28 @@ public class TriggerTemplateParameter
         return name;
     }
     
-    public String getType()
+    public int size()
     {
-        return type;
+        return parameters.size();
     }
     
-    public String getDescription()
+    public TemplateParameter getParameter(int number)
     {
-        return description;
+        return parameters.get(number);
+    }
+    
+    public void addParameter(TemplateParameter parameter)
+    {
+        parameters.add(parameter);
+    }
+    
+    public boolean isComplete()
+    {
+        return (title != null) && (parameters.size() > 0);
+    }
+    
+    public String toString()
+    {
+        return title;
     }
 }

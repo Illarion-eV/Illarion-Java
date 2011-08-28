@@ -24,13 +24,13 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
-import illarion.easyquest.quest.TriggerTemplateParameter;
+import illarion.easyquest.quest.TemplateParameter;
 
 public class ParameterPanel extends JPanel
 {
     private Component comp;
     
-    public ParameterPanel(TriggerTemplateParameter parameter)
+    public ParameterPanel(TemplateParameter parameter)
     {
         JLabel description = new JLabel(parameter.getDescription()+":");
         String type = parameter.getType();

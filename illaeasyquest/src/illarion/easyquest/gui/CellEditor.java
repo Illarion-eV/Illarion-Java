@@ -104,6 +104,7 @@ public class CellEditor implements mxICellEditor
     			nodeDialog.setLocationRelativeTo(MainFrame.getInstance());
     			nodeDialog.setName(value.getName());
     			nodeDialog.setStart(value.isStart());
+    			nodeDialog.setHandlers(value.getHandlers());
     			nodeDialog.setVisible(true);
     		}
     		else
@@ -177,6 +178,7 @@ public class CellEditor implements mxICellEditor
 	
         result.setName(nodeDialog.getName());
         result.setStart(nodeDialog.isStart());
+        result.setHandlers(nodeDialog.getHandlers());
 
 		return result;
 	}

@@ -25,11 +25,13 @@ public class Status implements Serializable {
     private String name;
     private boolean start;
     private int number;
+    private Handler[] handlers;
 
     public Status() {
         name = "";
         start = false;
         number = -1;
+        handlers = null;
     }
 
     public void setName(String name) {
@@ -54,6 +56,14 @@ public class Status implements Serializable {
     
     public int getNumber() {
         return number;
+    }
+    
+    public void setHandlers(Handler[] handlers) {
+        this.handlers = handlers;
+    }
+    
+    public Handler[] getHandlers() {
+        return handlers;
     }
     
     public final String toString() {
