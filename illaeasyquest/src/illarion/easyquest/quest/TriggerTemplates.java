@@ -113,24 +113,21 @@ public class TriggerTemplates
                                 {
                                     triggerTemplate.setTitle(names[1]);
                                 }
-                                //System.out.println("Trigger Name: "+names[1]);
+                                continue;
                             }
                             else if (line.matches("local\\s+QUEST_NUMBER\\s*=\\s*0\\s*"))
                             {
                                 triggerTemplate.foundQuestNumber();
-                                //System.out.println("found number");
                                 continue;
                             }
                             else if (line.matches("local\\s+PRECONDITION_QUESTSTATE\\s*=\\s*0\\s*"))
                             {
                                 triggerTemplate.foundPrior();
-                                //System.out.println("found prior");
                                 continue;
                             }
                             else if (line.matches("local\\s+POSTCONDITION_QUESTSTATE\\s*=\\s*0\\s*"))
                             {
                                 triggerTemplate.foundPosterior();
-                                //System.out.println("found posterior");
                                 continue;
                             }                        
                             else if (line.matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*"))
@@ -144,7 +141,6 @@ public class TriggerTemplates
                                 {
                                     triggerTemplate.addParameter(new TriggerTemplateParameter(param[1], param[2], param[3]));
                                 }
-                                //System.out.println("Name: "+param[1]+"\nType: "+param[2]+"\nEN: "+param[3]+"\nDE: "+param[4]+"\n");
                                 continue;
                             }
                         
