@@ -38,9 +38,8 @@ import illarion.easyquest.quest.HandlerTemplate;
 
 public class HandlerPanel extends JPanel
 {
-    private final Handler handler;
     private final JComboBox handlerType;
-    private final JPanel parameters;
+    private final JPanel parameterPanels;
     private final JButton addHandler;
     private final JButton removeHandler;
     private final StatusDialog owner;
@@ -54,10 +53,9 @@ public class HandlerPanel extends JPanel
         setBorder(BorderFactory.createEmptyBorder(10,5,10,5));
         
         this.owner = owner;
-        this.handler = handler;
         
         handlerType = new JComboBox(HandlerTemplates.getInstance().getTemplates());
-        parameters = new JPanel(new GridLayout(0,1,0,5));
+        parameterPanels = new JPanel(new GridLayout(0,1,0,5));
         addHandler = new JButton("+");
         removeHandler = new JButton("-");
         
@@ -67,25 +65,27 @@ public class HandlerPanel extends JPanel
         header.add(addHandler);
         
         add(header);
-        add(parameters);
+        add(parameterPanels);
         
         final StatusDialog dialog = this.owner;
         handlerType.addItemListener(new ItemListener() {
 		    public void itemStateChanged(ItemEvent e) {
 		        if (e.getStateChange() == ItemEvent.SELECTED)
 		        {
-		            parameters.removeAll();
+		            parameterPanels.removeAll();
 		            HandlerTemplate template = (HandlerTemplate)e.getItem();
 		            for (int i=0; i<template.size(); ++i)
             		{
-            		    parameters.add(new ParameterPanel(template.getParameter(i)));
+            		    ParameterPanel parameter = new ParameterPanel(template.getParameter(i));
+           		        
+            		    parameterPanels.add(parameter);
             		}
             		dialog.pack();
             		dialog.validate();
 		        }
 		        else if (e.getStateChange() == ItemEvent.DESELECTED)
 		        {
-		            parameters.removeAll();
+		            parameterPanels.removeAll();
 		            dialog.pack();
 		            dialog.validate();
 		        }
@@ -93,6 +93,16 @@ public class HandlerPanel extends JPanel
 		});
 		
 		handlerType.setSelectedIndex(-1);
+		if (handler != null)
+		{
+		    handlerType.setSelectedItem(HandlerTemplates.getInstance().getTemplate(handler.getType()));
+		    Object[] parameters = handler.getParameters();
+		    for (int i=0; i<parameters.length; ++i)
+		    {
+		        ParameterPanel panel = (ParameterPanel)parameterPanels.getComponent(i);
+		        panel.setParameter(parameters[i]);
+		    }
+		}
 		
 		addHandler.addActionListener(new ActionListener() {
             @Override
@@ -117,6 +127,23 @@ public class HandlerPanel extends JPanel
     
     public Handler getHandler()
     {
+        Handler handler = null;
+        HandlerTemplate template = (HandlerTemplate)handlerType.getSelectedItem();
+        if (template != null)
+        {
+            int count = parameterPanels.getComponentCount();
+            Object[] parameters = new Object[count];
+            for (int i=0; i<count; ++i)
+            {
+                ParameterPanel p = (ParameterPanel)parameterPanels.getComponent(i);
+                parameters[i] = p.getParameter();
+            }
+        
+        
+            handler = new Handler();
+            handler.setType(template.getName());
+            handler.setParameters(parameters);
+        }
         return handler;
     }
 }

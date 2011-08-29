@@ -18,6 +18,9 @@
  */
 package illarion.easyquest.gui;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import java.awt.Frame;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -108,13 +111,17 @@ public class StatusDialog extends JDialog
     public Handler[] getHandlers()
     {
         int count = (handlerPanels.getComponentCount() + 1) / 2;
-        Handler[] handlers = new Handler[count];
+        List<Handler> handlers = new ArrayList<Handler>();
         for (int i=0; i<count; ++i)
         {
             HandlerPanel hp = (HandlerPanel)handlerPanels.getComponent(2*i);
-            handlers[i] = hp.getHandler();
+            Handler h = hp.getHandler();
+            if (h != null)
+            {
+                handlers.add(h);
+            }
         }
-        return handlers;
+        return handlers.toArray(new Handler[0]);
     }
     
     public void setHandlers(Handler[] handlers)

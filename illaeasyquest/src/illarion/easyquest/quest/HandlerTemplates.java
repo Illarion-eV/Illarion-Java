@@ -139,6 +139,6 @@ public class HandlerTemplates
     
     public HandlerTemplate[] getTemplates()
     {
-        return (HandlerTemplate[])templates.toArray(new HandlerTemplate[0]);
+        return templates.toArray(new HandlerTemplate[0]);
     }
 }
