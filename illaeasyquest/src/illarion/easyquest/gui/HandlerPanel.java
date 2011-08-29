@@ -83,11 +83,16 @@ public class HandlerPanel extends JPanel
             		dialog.pack();
             		dialog.validate();
 		        }
+		        else if (e.getStateChange() == ItemEvent.DESELECTED)
+		        {
+		            parameters.removeAll();
+		            dialog.pack();
+		            dialog.validate();
+		        }
 		    }
 		});
 		
 		handlerType.setSelectedIndex(-1);
-		handlerType.setSelectedIndex(0);
 		
 		addHandler.addActionListener(new ActionListener() {
             @Override
@@ -103,6 +108,11 @@ public class HandlerPanel extends JPanel
                 dialog.removeHandler(handlerPanel);
             }
         });
+    }
+    
+    public void clearSelection()
+    {
+        handlerType.setSelectedIndex(-1);
     }
     
     public Handler getHandler()

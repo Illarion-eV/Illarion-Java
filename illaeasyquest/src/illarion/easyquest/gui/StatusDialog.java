@@ -107,11 +107,11 @@ public class StatusDialog extends JDialog
     
     public Handler[] getHandlers()
     {
-        int count = handlerPanels.getComponentCount() - 1;
+        int count = (handlerPanels.getComponentCount() + 1) / 2;
         Handler[] handlers = new Handler[count];
         for (int i=0; i<count; ++i)
         {
-            HandlerPanel hp = (HandlerPanel)handlerPanels.getComponent(i);
+            HandlerPanel hp = (HandlerPanel)handlerPanels.getComponent(2*i);
             handlers[i] = hp.getHandler();
         }
         return handlers;
@@ -154,7 +154,24 @@ public class StatusDialog extends JDialog
     
     public void removeHandler(HandlerPanel handler)
     {
-        handlerPanels.remove(handler);
+        if (handlerPanels.getComponentCount() > 1)
+        {
+            int z = handlerPanels.getComponentZOrder(handler);
+            if (z != 0)
+            {
+                handlerPanels.remove(z-1);
+            }
+            else
+            {
+                handlerPanels.remove(z+1);
+            }
+            handlerPanels.remove(handler);
+        }
+        else
+        {
+            ((HandlerPanel)handlerPanels.getComponent(0)).clearSelection();
+        }
+        
         pack();
         validate();
     }
