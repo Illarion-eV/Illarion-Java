@@ -20,32 +20,89 @@ package illarion.easyquest.gui;
 
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.BorderLayout;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
+import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
 
 import illarion.easyquest.quest.Handler;
 import illarion.easyquest.quest.HandlerTemplates;
+import illarion.easyquest.quest.HandlerTemplate;
 
 public class HandlerPanel extends JPanel
 {
     private final Handler handler;
     private final JComboBox handlerType;
+    private final JPanel parameters;
     private final JButton addHandler;
     private final JButton removeHandler;
+    private final StatusDialog owner;
     
-    public HandlerPanel(Handler handler)
+    public HandlerPanel(StatusDialog owner, Handler handler)
     {
+        super();
+        
+        BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
+        setLayout(layout);
+        setBorder(BorderFactory.createEmptyBorder(10,5,10,5));
+        
+        this.owner = owner;
         this.handler = handler;
         
         handlerType = new JComboBox(HandlerTemplates.getInstance().getTemplates());
+        parameters = new JPanel(new GridLayout(0,1,0,5));
         addHandler = new JButton("+");
         removeHandler = new JButton("-");
         
-        add(handlerType);
-        add(removeHandler);
-        add(addHandler);
+        final JPanel header = new JPanel();
+        header.add(handlerType);
+        header.add(removeHandler);
+        header.add(addHandler);
+        
+        add(header);
+        add(parameters);
+        
+        final StatusDialog dialog = this.owner;
+        handlerType.addItemListener(new ItemListener() {
+		    public void itemStateChanged(ItemEvent e) {
+		        if (e.getStateChange() == ItemEvent.SELECTED)
+		        {
+		            parameters.removeAll();
+		            HandlerTemplate template = (HandlerTemplate)e.getItem();
+		            for (int i=0; i<template.size(); ++i)
+            		{
+            		    parameters.add(new ParameterPanel(template.getParameter(i)));
+            		}
+            		dialog.pack();
+            		dialog.validate();
+		        }
+		    }
+		});
+		
+		handlerType.setSelectedIndex(-1);
+		handlerType.setSelectedIndex(0);
+		
+		addHandler.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.addHandler();
+            }
+        });
+        
+        final HandlerPanel handlerPanel = this;
+        removeHandler.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.removeHandler(handlerPanel);
+            }
+        });
     }
     
     public Handler getHandler()

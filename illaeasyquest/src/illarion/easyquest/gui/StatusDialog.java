@@ -43,7 +43,7 @@ public class StatusDialog extends JDialog
     
     private final JTextField name;
     private final JCheckBox start;
-    private final JPanel handlerPanels;
+    private final Box handlerPanels;
     private final JButton okay;
     private final JButton cancel;
     
@@ -53,7 +53,7 @@ public class StatusDialog extends JDialog
         setTitle(Lang.getMsg(getClass(), "title"));
         
         final JPanel main = new JPanel();
-        handlerPanels = new JPanel(new GridLayout(0,1,0,5));
+        handlerPanels = Box.createVerticalBox();
 		final Box buttons = Box.createHorizontalBox();
 		final JLabel label = new JLabel(Lang.getMsg(getClass(), "name")+":");
 		name = new JTextField(15);
@@ -75,10 +75,14 @@ public class StatusDialog extends JDialog
         main.setBorder(BorderFactory.createEmptyBorder(5,5,10,5));
 
         handlerPanels.setBorder(BorderFactory.createTitledBorder(Lang.getMsg(getClass(), "handlers")));
+        
+        getRootPane().setDefaultButton(okay);
 
 		add(main, BorderLayout.NORTH);
 		add(handlerPanels, BorderLayout.CENTER);
 		add(buttons, BorderLayout.SOUTH);
+		
+		pack();
     }
    
     public String getName()
@@ -120,14 +124,37 @@ public class StatusDialog extends JDialog
         if (handlers != null)
         {
             int count = handlers.length;
-            for (int i=0; i<count; ++i)
+            
+            if (count > 0)
             {
-                handlerPanels.add(new HandlerPanel(handlers[i]));
-                handlerPanels.add(new JSeparator());
+                handlerPanels.add(new HandlerPanel(this, handlers[0]));
+                for (int i=1; i<count; ++i)
+                {
+                    handlerPanels.add(new JSeparator());
+                    handlerPanels.add(new HandlerPanel(this, handlers[i]));
+                }
             }
         }
-
-        handlerPanels.add(new HandlerPanel(null));
+        else
+        {
+            handlerPanels.add(new HandlerPanel(this, null));
+        }
+        
+        pack();
+        validate();
+    }
+    
+    public void addHandler()
+    {
+        handlerPanels.add(new JSeparator());
+        handlerPanels.add(new HandlerPanel(this, null));
+        pack();
+        validate();
+    }
+    
+    public void removeHandler(HandlerPanel handler)
+    {
+        handlerPanels.remove(handler);
         pack();
         validate();
     }
