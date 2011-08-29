@@ -20,6 +20,8 @@ package illarion.easyquest.gui;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -41,10 +43,12 @@ import com.mxgraph.io.mxObjectCodec;
 import com.mxgraph.model.mxCell;
 
 import illarion.easyquest.quest.Status;
+import illarion.easyquest.quest.Handler;
 import illarion.easyquest.quest.Trigger;
 import illarion.easyquest.quest.Position;
 import illarion.easyquest.quest.TriggerTemplate;
 import illarion.easyquest.quest.TriggerTemplates;
+import illarion.easyquest.quest.HandlerTemplates;
 import illarion.easyquest.EditorKeyboardHandler;
 
 public final class Editor extends mxGraphComponent {
@@ -180,15 +184,50 @@ public final class Editor extends mxGraphComponent {
             String sourceId = sourceState.isStart() ? "0" : source.getId();
             String targetId = targetState.isStart() ? "0" : target.getId();
             Object[] parameters = trigger.getParameters();
+            Handler[] handlers = targetState.getHandlers();
+            Set<String> handlerTypes = new HashSet<String>();
+            String handlerCode = "";
+            for (Handler handler : handlers)
+            {
+                String type = handler.getType();
+                Object[] handlerParameters = handler.getParameters();
+                int playerIndex = HandlerTemplates.getInstance().getTemplate(type).getPlayerIndex();
+                
+                handlerTypes.add(type);
+                
+                handlerCode = handlerCode + "handler." + type.toLowerCase() + "." + type + "(";
+                if (handlerParameters.length > 0)
+                {
+                    if (playerIndex == 0)
+                    {
+                        handlerCode = handlerCode + "PLAYER, ";
+                    }
+                    handlerCode = handlerCode + exportParameter(handlerParameters[0]);
+                    
+                    for (int j=1; j<handlerParameters.length; ++j)
+                    {
+                        if (playerIndex == j)
+                        {
+                            handlerCode = handlerCode + ", PLAYER";
+                        }
+                        handlerCode = handlerCode + ", " + exportParameter(handlerParameters[j]);
+                    }
+                }
+                handlerCode = handlerCode + "):execute()\n";
+            }
             
-            String t;
-            t = template.getHeader()
-              + "module(\"questsystem." + questName + "." + scriptName + "\", package.seeall)" + "\n"
-              + "\n"
-              + "local QUEST_NUMBER = " + "10000" + "\n" // TODO: Get quest number from somewhere
-              + "local PRECONDITION_QUESTSTATE = " + sourceId + "\n"
-              + "local POSTCONDITION_QUESTSTATE = " + targetId + "\n"
-              + "\n";
+            String t = "";
+            for (String type : handlerTypes)
+            {
+                t = t + "require(\"handler." + type.toLowerCase() + "\")\n";
+            }
+            t = t + template.getHeader()
+                  + "module(\"questsystem." + questName + "." + scriptName + "\", package.seeall)" + "\n"
+                  + "\n"
+                  + "local QUEST_NUMBER = " + "10000" + "\n" // TODO: Get quest number from somewhere
+                  + "local PRECONDITION_QUESTSTATE = " + sourceId + "\n"
+                  + "local POSTCONDITION_QUESTSTATE = " + targetId + "\n"
+                  + "\n";
             for (int j=0; j<template.size(); ++j)
     		{
     		    t = t + "local "
@@ -198,7 +237,9 @@ public final class Editor extends mxGraphComponent {
     		          + "\n";
     		}
     		t = t + "\n";
-    		t = t + template.getBody();
+    		t = t + template.getBodyBeforeHandler();
+    		t = t + handlerCode;
+    		t = t + template.getBodyAfterHandler();
     		
     		quest.put(scriptName + ".lua", t);
     		

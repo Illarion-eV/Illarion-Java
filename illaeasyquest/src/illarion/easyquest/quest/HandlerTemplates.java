@@ -67,6 +67,7 @@ public class HandlerTemplates
                 String line = null;
                 String fileName = templateFiles[i].getName();
                 String uniqueName = fileName.substring(0, fileName.lastIndexOf('.'));
+                int parameterCount = 0;
                 HandlerTemplate handlerTemplate = new HandlerTemplate(uniqueName);
                 try
                 {
@@ -103,6 +104,11 @@ public class HandlerTemplates
                             {
                                 handlerTemplate.addParameter(new TemplateParameter(param[1], param[2], param[3]));
                             }
+                            parameterCount = parameterCount + 1;
+                        }
+                        else if(line.matches("--\\s*PLAYER"))
+                        {
+                            handlerTemplate.addPlayerParameterAt(parameterCount);
                         }
                     }
                     

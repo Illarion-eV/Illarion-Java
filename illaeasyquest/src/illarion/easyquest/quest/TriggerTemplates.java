@@ -66,8 +66,10 @@ public class TriggerTemplates
             for (int i=0; i<templateFiles.length; i++) {
                 String line = null;
                 boolean isHeader = true;
+                boolean beforeHandler = true;
                 StringBuffer header = new StringBuffer();
-                StringBuffer body = new StringBuffer();
+                StringBuffer bodyBeforeHandler = new StringBuffer();
+                StringBuffer bodyAfterHandler = new StringBuffer();
                 String fileName = templateFiles[i].getName();
                 String uniqueName = fileName.substring(0, fileName.lastIndexOf('.'));
                 TriggerTemplate triggerTemplate = new TriggerTemplate(uniqueName);
@@ -148,12 +150,26 @@ public class TriggerTemplates
                         }
                         else
                         {
-                            body.append(line+"\n");
+                            if (beforeHandler)
+                            {
+                                if (line.matches("\\s*HANDLER\\(\\).*"))
+                                {
+                                    beforeHandler = false;
+                                    continue;
+                                }
+                                
+                                bodyBeforeHandler.append(line+"\n");
+                            }
+                            else
+                            {
+                                bodyAfterHandler.append(line+"\n");
+                            }
                         }
                     }
                     
                     triggerTemplate.setHeader(header.toString());
-                    triggerTemplate.setBody(body.toString());
+                    triggerTemplate.setBodyBeforeHandler(bodyBeforeHandler.toString());
+                    triggerTemplate.setBodyAfterHandler(bodyAfterHandler.toString());
                     
                     if (triggerTemplate.isComplete())
                     {

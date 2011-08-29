@@ -18,6 +18,9 @@ function receiveText(type, text, player)
       and player:getType() == Character.player
       and string.find(text, getNLS(player, NPC_TRIGGER_DE, NPC_TRIGGER_EN)) then
     thisNPC:talk(Character.say, getNLS(player, NPC_REPLY_DE, NPC_REPLY_EN))
+    
+    HANDLER()
+    
     questsystem.base.setPostcondition(player, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
 
     return true

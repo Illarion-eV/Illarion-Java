@@ -18,7 +18,9 @@
  */
 package illarion.easyquest.quest;
 
-public class Position {
+import java.io.Serializable;
+
+public class Position implements Serializable {
     
     private short x;
     private short y;

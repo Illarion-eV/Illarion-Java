@@ -26,12 +26,14 @@ public class HandlerTemplate
     private String name;
     private String title;
     private List<TemplateParameter> parameters;
+    private int playerParameterIndex;
     
     public HandlerTemplate(String name)
     {
         this.name = name;
         title = null;
         parameters = new ArrayList<TemplateParameter>();
+        playerParameterIndex = -1;
     }
     
     public void setTitle(String title)
@@ -57,6 +59,16 @@ public class HandlerTemplate
     public void addParameter(TemplateParameter parameter)
     {
         parameters.add(parameter);
+    }
+    
+    public void addPlayerParameterAt(int position)
+    {
+        playerParameterIndex = position;
+    }
+    
+    public int getPlayerIndex()
+    {
+        return playerParameterIndex;
     }
     
     public boolean isComplete()
