@@ -48,6 +48,7 @@ import illarion.easyquest.quest.Trigger;
 import illarion.easyquest.quest.Position;
 import illarion.easyquest.quest.TriggerTemplate;
 import illarion.easyquest.quest.TriggerTemplates;
+import illarion.easyquest.quest.HandlerTemplate;
 import illarion.easyquest.quest.HandlerTemplates;
 import illarion.easyquest.EditorKeyboardHandler;
 
@@ -191,7 +192,9 @@ public final class Editor extends mxGraphComponent {
             {
                 String type = handler.getType();
                 Object[] handlerParameters = handler.getParameters();
-                int playerIndex = HandlerTemplates.getInstance().getTemplate(type).getPlayerIndex();
+                HandlerTemplate handlerTemplate =
+                    HandlerTemplates.getInstance().getTemplate(type);
+                int playerIndex = handlerTemplate.getPlayerIndex();
                 
                 handlerTypes.add(type);
                 
@@ -202,7 +205,8 @@ public final class Editor extends mxGraphComponent {
                     {
                         handlerCode = handlerCode + "PLAYER, ";
                     }
-                    handlerCode = handlerCode + exportParameter(handlerParameters[0]);
+                    handlerCode = handlerCode + exportParameter(handlerParameters[0],
+                        handlerTemplate.getParameter(0).getType());
                     
                     for (int j=1; j<handlerParameters.length; ++j)
                     {
@@ -210,7 +214,9 @@ public final class Editor extends mxGraphComponent {
                         {
                             handlerCode = handlerCode + ", PLAYER";
                         }
-                        handlerCode = handlerCode + ", " + exportParameter(handlerParameters[j]);
+                        handlerCode = handlerCode + ", "
+                            + exportParameter(handlerParameters[j],
+                            handlerTemplate.getParameter(j).getType());
                     }
                 }
                 handlerCode = handlerCode + "):execute()\n";
@@ -233,7 +239,7 @@ public final class Editor extends mxGraphComponent {
     		    t = t + "local "
     		          + template.getParameter(j).getName()
     		          + " = "
-    		          + exportParameter(parameters[j])
+    		          + exportParameter(parameters[j], template.getParameter(j).getType())
     		          + "\n";
     		}
     		t = t + "\n";
@@ -256,22 +262,30 @@ public final class Editor extends mxGraphComponent {
         return quest;
     }
     
-    private String exportParameter(Object parameter)
+    private String exportParameter(Object parameter, String type)
     {
-        if (parameter instanceof String)
+        if (type.equals("TEXT"))
         {
             String s = (String)parameter;
             return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
         }
-        else if (parameter instanceof Position)
+        else if (type.equals("POSITION"))
         {
             Position p = (Position)parameter;
             return "position(" + p.getX() + ", " + p.getY() + ", " + p.getZ() + ")";
         }
-        else if (parameter instanceof Long)
+        else if (type.equals("INTEGER"))
         {
-            Long n = (Long)parameter;
-            return n.toString();
+            if (parameter instanceof Long)
+            {
+                Long n = (Long)parameter;
+                return n.toString();
+            }
+            else
+            {
+                String s = (String)parameter;
+                return s;
+            }
         }
         else
         {
