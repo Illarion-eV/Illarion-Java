@@ -21,6 +21,7 @@ package illarion.easyquest.gui;
 import java.text.NumberFormat;
 
 import javax.swing.text.NumberFormatter;
+import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.JFormattedTextField;
 
 public class IntegerParameter extends JFormattedTextField implements Parameter
@@ -32,7 +33,8 @@ public class IntegerParameter extends JFormattedTextField implements Parameter
         NumberFormat format = NumberFormat.getIntegerInstance();
         format.setGroupingUsed(false);
         NumberFormatter formatter = new NumberFormatter(format);
-        setFormatter(formatter);
+        DefaultFormatterFactory factory = new DefaultFormatterFactory(formatter);
+        setFormatterFactory(factory);
         setHorizontalAlignment(JFormattedTextField.RIGHT);
         setParameter(new Long(0));
     }
