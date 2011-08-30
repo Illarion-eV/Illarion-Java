@@ -128,18 +128,13 @@ public class StatusDialog extends JDialog
     {
         handlerPanels.removeAll();
         
-        if (handlers != null)
+        if (handlers != null && handlers.length > 0)
         {
-            int count = handlers.length;
-            
-            if (count > 0)
+            handlerPanels.add(new HandlerPanel(this, handlers[0]));
+            for (int i=1; i<handlers.length; ++i)
             {
-                handlerPanels.add(new HandlerPanel(this, handlers[0]));
-                for (int i=1; i<count; ++i)
-                {
-                    handlerPanels.add(new JSeparator());
-                    handlerPanels.add(new HandlerPanel(this, handlers[i]));
-                }
+                handlerPanels.add(new JSeparator());
+                handlerPanels.add(new HandlerPanel(this, handlers[i]));
             }
         }
         else
