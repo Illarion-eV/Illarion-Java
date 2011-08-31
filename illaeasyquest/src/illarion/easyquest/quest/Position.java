@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion easyQuest Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright 2011 - Illarion e.V.
  *
  * The Illarion easyQuest Editor is free software: you can redistribute i and/or
  * modify it under the terms of the GNU General Public License as published by
@@ -20,54 +20,53 @@ package illarion.easyquest.quest;
 
 import java.io.Serializable;
 
-public class Status implements Serializable {
-
-    private String name;
-    private boolean start;
-    private int number;
-    private Handler[] handlers;
-
-    public Status() {
-        name = "";
-        start = false;
-        number = -1;
-        handlers = null;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+public class Position implements Serializable {
+    
+    private short x;
+    private short y;
+    private short z;
+    
+    public Position ()
+    {
+        x = 0;
+        y = 0;
+        z = 0;
     }
     
-    public String getName() {
-        return name;
+    public Position (short x, short y, short z)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
     
-    public void setStart(boolean start) {
-        this.start = start;
+    public short getX()
+    {
+        return x;
     }
     
-    public boolean isStart() {
-        return start;
+    public void setX(short x)
+    {
+        this.x = x;
     }
     
-    public void setNumber(int number) {
-        this.number = number;
+    public short getY()
+    {
+        return y;
     }
     
-    public int getNumber() {
-        return number;
+    public void setY(short y)
+    {
+        this.y = y;
     }
     
-    public void setHandlers(Handler[] handlers) {
-        this.handlers = handlers;
+    public short getZ()
+    {
+        return z;
     }
     
-    public Handler[] getHandlers() {
-        return handlers;
+    public void setZ(short z)
+    {
+        this.z = z;
     }
-    
-    public final String toString() {
-        return getName();
-    }
-    
 }

@@ -19,6 +19,9 @@
 package illarion.easyquest.gui;
 
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -28,6 +31,7 @@ import org.w3c.dom.Document;
 
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxKeyboardHandler;
+import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxUtils;
@@ -39,14 +43,15 @@ import com.mxgraph.io.mxObjectCodec;
 import com.mxgraph.model.mxCell;
 
 import illarion.easyquest.quest.Status;
+import illarion.easyquest.quest.Handler;
+import illarion.easyquest.quest.Trigger;
+import illarion.easyquest.quest.Position;
+import illarion.easyquest.quest.TriggerTemplate;
+import illarion.easyquest.quest.TriggerTemplates;
+import illarion.easyquest.quest.HandlerTemplate;
+import illarion.easyquest.quest.HandlerTemplates;
 import illarion.easyquest.EditorKeyboardHandler;
 
-/**
- * The editor is the area that displays the quest graph.
- * 
- * @author Andreas Grob
- * @since 1.00
- */
 public final class Editor extends mxGraphComponent {
 
     private File questFile;
@@ -54,6 +59,7 @@ public final class Editor extends mxGraphComponent {
     private boolean savedSinceLastChange = false;
     
     private mxKeyboardHandler keyboardHandler;
+    private mxRubberband rubberband;
 
     Editor(Graph graph) {
         super(graph);
@@ -62,15 +68,20 @@ public final class Editor extends mxGraphComponent {
         setCellEditor(new CellEditor(this));
         
         keyboardHandler = new EditorKeyboardHandler(this);
+        rubberband = new mxRubberband(this);
         
         mxCodecRegistry.register(new mxObjectCodec(new Status()));
         mxCodecRegistry.addPackage(Status.class.getPackage().getName());
+        mxCodecRegistry.register(new mxObjectCodec(new Trigger()));
+        mxCodecRegistry.addPackage(Trigger.class.getPackage().getName());
+        mxCodecRegistry.register(new mxObjectCodec(new Position()));
+        mxCodecRegistry.addPackage(Position.class.getPackage().getName());
         
         final Graph g = graph;
         getGraphControl().addMouseListener(new MouseAdapter()
 		{
 		    public void mouseClicked(MouseEvent e) {
-		        if (e.getClickCount() == 1) {
+		        if (e.getClickCount() == 2) {
 		            Object cell = getCellAt(e.getX(), e.getY());
 			        if (cell == null) {
 			            Object parent = g.getDefaultParent();
@@ -79,7 +90,7 @@ public final class Editor extends mxGraphComponent {
                             Status status = new Status();
                             status.setName("New Quest Status");
                             status.setStart(false);
-                            g.insertVertex(parent, null, status, e.getX(), e.getY(), 120,
+                            g.insertVertex(parent, null, status, e.getX()-60, e.getY()-15, 120,
                             30);
                         } finally {
                             g.getModel().endUpdate();
@@ -105,6 +116,10 @@ public final class Editor extends mxGraphComponent {
         edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 2.0);
         edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
         stylesheet.setDefaultEdgeStyle(edgeStyle);
+        HashMap<String, Object> startStyle = new HashMap<String, Object>();
+        startStyle.put(mxConstants.STYLE_STROKEWIDTH, 3.0);
+        startStyle.put(mxConstants.STYLE_STROKECOLOR, "#0000F0");
+        stylesheet.putCellStyle("StartStyle", startStyle);
     }
     
     public File getQuestFile() {
@@ -145,5 +160,136 @@ public final class Editor extends mxGraphComponent {
         mxCodec codec = new mxCodec();
         return mxUtils.getPrettyXml(codec.encode(getGraph().getModel()));
     }
-
+    
+    public Map<String, String> getQuestLua(String questName)
+    {
+        String questtxt = "";
+        Map<String, String> quest = new HashMap<String, String>();
+        
+        Graph g = (Graph)getGraph();
+        Object[] edges = g.getChildEdges(g.getDefaultParent());
+        
+        int i = 1;
+        for (Object obj : edges)
+        {
+            mxCell edge = (mxCell)obj;
+            Trigger trigger = (Trigger)edge.getValue();
+            TriggerTemplate template =
+                TriggerTemplates.getInstance().getTemplate(trigger.getType());
+            
+            String scriptName = "trigger" + i;
+            mxCell source = (mxCell)edge.getSource();
+            mxCell target = (mxCell)edge.getTarget();
+            Status sourceState = (Status)source.getValue();
+            Status targetState = (Status)target.getValue();
+            String sourceId = sourceState.isStart() ? "0" : source.getId();
+            String targetId = targetState.isStart() ? "0" : target.getId();
+            Object[] parameters = trigger.getParameters();
+            Handler[] handlers = targetState.getHandlers();
+            Set<String> handlerTypes = new HashSet<String>();
+            String handlerCode = "";
+            for (Handler handler : handlers)
+            {
+                String type = handler.getType();
+                Object[] handlerParameters = handler.getParameters();
+                HandlerTemplate handlerTemplate =
+                    HandlerTemplates.getInstance().getTemplate(type);
+                int playerIndex = handlerTemplate.getPlayerIndex();
+                
+                handlerTypes.add(type);
+                
+                handlerCode = handlerCode + "handler." + type.toLowerCase() + "." + type + "(";
+                if (handlerParameters.length > 0)
+                {
+                    if (playerIndex == 0)
+                    {
+                        handlerCode = handlerCode + "PLAYER, ";
+                    }
+                    handlerCode = handlerCode + exportParameter(handlerParameters[0],
+                        handlerTemplate.getParameter(0).getType());
+                    
+                    for (int j=1; j<handlerParameters.length; ++j)
+                    {
+                        if (playerIndex == j)
+                        {
+                            handlerCode = handlerCode + ", PLAYER";
+                        }
+                        handlerCode = handlerCode + ", "
+                            + exportParameter(handlerParameters[j],
+                            handlerTemplate.getParameter(j).getType());
+                    }
+                }
+                handlerCode = handlerCode + "):execute()\n";
+            }
+            
+            String t = "";
+            for (String type : handlerTypes)
+            {
+                t = t + "require(\"handler." + type.toLowerCase() + "\")\n";
+            }
+            t = t + template.getHeader()
+                  + "module(\"questsystem." + questName + "." + scriptName + "\", package.seeall)" + "\n"
+                  + "\n"
+                  + "local QUEST_NUMBER = " + "10000" + "\n" // TODO: Get quest number from somewhere
+                  + "local PRECONDITION_QUESTSTATE = " + sourceId + "\n"
+                  + "local POSTCONDITION_QUESTSTATE = " + targetId + "\n"
+                  + "\n";
+            for (int j=0; j<template.size(); ++j)
+    		{
+    		    t = t + "local "
+    		          + template.getParameter(j).getName()
+    		          + " = "
+    		          + exportParameter(parameters[j], template.getParameter(j).getType())
+    		          + "\n";
+    		}
+    		t = t + "\n";
+    		t = t + template.getBodyBeforeHandler();
+    		t = t + handlerCode;
+    		t = t + template.getBodyAfterHandler();
+    		
+    		quest.put(scriptName + ".lua", t);
+    		
+            questtxt = questtxt + template.getCategory() + ","
+                    + trigger.getObjectId() + ","
+                    + template.getEntryPoint() + ","
+                    + scriptName + "\n";
+              
+            i = i + 1;
+        }
+        
+        quest.put("quest.txt", questtxt);
+        
+        return quest;
+    }
+    
+    private String exportParameter(Object parameter, String type)
+    {
+        if (type.equals("TEXT"))
+        {
+            String s = (String)parameter;
+            return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+        }
+        else if (type.equals("POSITION"))
+        {
+            Position p = (Position)parameter;
+            return "position(" + p.getX() + ", " + p.getY() + ", " + p.getZ() + ")";
+        }
+        else if (type.equals("INTEGER"))
+        {
+            if (parameter instanceof Long)
+            {
+                Long n = (Long)parameter;
+                return n.toString();
+            }
+            else
+            {
+                String s = (String)parameter;
+                return s;
+            }
+        }
+        else
+        {
+            return "TYPE NOT SUPPORTED";
+        }
+    }
 }

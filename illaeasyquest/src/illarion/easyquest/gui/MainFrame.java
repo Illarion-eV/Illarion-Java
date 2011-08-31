@@ -40,6 +40,7 @@ import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
 
 import illarion.easyquest.Lang;
+import illarion.easyquest.quest.TriggerTemplates;
 
 public class MainFrame extends JRibbonFrame
 {
@@ -110,7 +111,7 @@ public class MainFrame extends JRibbonFrame
 		final RibbonTask graphTask =
             new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskQuest"),
                 new ClipboardBand(), new GraphBand());
-        getRibbon().addTask(graphTask);
+        // getRibbon().addTask(graphTask);
 
         getRibbon().setApplicationMenu(new MainMenu());
 

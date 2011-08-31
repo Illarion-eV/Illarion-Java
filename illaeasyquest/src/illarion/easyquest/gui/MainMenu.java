@@ -97,6 +97,21 @@ final class MainMenu extends RibbonApplicationMenu {
         
         addMenuSeparator();
         
+        final RibbonApplicationMenuEntryPrimary exportQuest =
+            new RibbonApplicationMenuEntryPrimary(
+                Utils.getResizableIconFromResource("fileexport.png"),
+                Lang.getMsg(getClass(), "exportQuestButton"),
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
+                        Utils.exportEasyQuest(MainFrame.getInstance()
+                            .getCurrentQuestEditor());
+                    }
+                }, CommandButtonKind.ACTION_ONLY);
+        addMenuEntry(exportQuest);
+        
+        addMenuSeparator();
+        
         final RibbonApplicationMenuEntryPrimary exitButton =
             new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("exit.png"),
