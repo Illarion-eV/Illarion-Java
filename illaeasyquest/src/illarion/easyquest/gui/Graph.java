@@ -22,6 +22,7 @@ import com.mxgraph.view.mxGraph;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxConstants;
 
 import illarion.easyquest.Lang;
 import illarion.easyquest.quest.Status;
@@ -38,17 +39,66 @@ public class Graph extends mxGraph {
 		{
 			public void invoke(Object sender, mxEventObject evt)
 			{
-				Object[] cells = (Object[])evt.getProperty("cells");
+				Object[] cells = (Object[])evt.getProperty("cells"); 
 
-                for (Object cell : cells)
+                for (Object cellObject : cells)
                 {
-					if (getModel().isEdge(cell))
+                    mxCell cell = (mxCell)cellObject;
+					if (cell.isEdge())
 					{
-						((mxCell)cell).setValue(new Trigger());
+						cell.setValue(new Trigger());
+						
+						if (cell.getSource() == null || cell.getTarget() == null)
+						{
+						    cell.setStyle(mxConstants.STYLE_STROKECOLOR + "=#FF0000");
+						}
 					}
     			}
 			}
 		});
+		
+		addListener(mxEvent.CELLS_ADDED, new mxIEventListener()
+		{
+			public void invoke(Object sender, mxEventObject evt)
+			{
+				Object[] cells = (Object[])evt.getProperty("cells"); 
+
+                for (Object cellObject : cells)
+                {
+                    mxCell cell = (mxCell)cellObject;
+					if (cell.isEdge())
+					{						
+						if (cell.getSource() == null || cell.getTarget() == null)
+						{
+						    cell.setStyle(mxConstants.STYLE_STROKECOLOR + "=#FF0000");
+						}
+					}
+    			}
+			}
+		});
+		
+		final Graph g = this;
+		addListener(mxEvent.CELL_CONNECTED, new mxIEventListener()
+		{
+			public void invoke(Object sender, mxEventObject evt)
+			{    
+			    mxCell edge = (mxCell)evt.getProperty("edge");
+			    
+			    mxCell source = (mxCell)edge.getSource();
+			    mxCell target = (mxCell)edge.getTarget();
+			    
+			    Object[] cells = {edge};
+			    if (source == null || target == null)
+			    {
+			        g.setCellStyle(mxConstants.STYLE_STROKECOLOR + "=#FF0000", cells);
+			    }
+			    else
+			    {
+			        g.setCellStyle("", cells);
+			    }
+			}
+		});
+	    
     }
 	
 	public String getToolTipForCell(Object cell)
