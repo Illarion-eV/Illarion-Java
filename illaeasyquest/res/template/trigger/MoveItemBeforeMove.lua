@@ -10,13 +10,12 @@ local POSTCONDITION_QUESTSTATE = 0
 
 local POSITION = POSITION -- Map position -- Position auf der Karte
 local RADIUS = INTEGER -- Radius -- Radius
-local TEXT_DE = TEXT -- German Text before movement -- Deutscher Text vor Bewegung
-local TEXT_EN = TEXT -- English Text before movement -- Englischer Text vor Bewegung
+
 
 function MoveItemBeforeMove(PLAYER, item, itemAfter)
   if PLAYER:isInRangeToPosition(POSITION,RADIUS)
       and questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then
-    informNLS(PLAYER, TEXT_DE, TEXT_EN)
+    -- informNLS(PLAYER, TEXT_DE, TEXT_EN)
     
     HANDLER()
     
@@ -34,3 +33,6 @@ function informNLS(player, textDe, textEn)
     player:inform(player, item, textEn)
   end
 end
+
+-- local TEXT_DE = TEXT -- German Text before movement -- Deutscher Text vor Bewegung
+-- local TEXT_EN = TEXT -- English Text before movement -- Englischer Text vor Bewegung
