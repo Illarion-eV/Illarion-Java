@@ -163,7 +163,7 @@ public final class Editor extends mxGraphComponent {
 
     public String getQuestXML() {
         mxCodec codec = new mxCodec();
-        return mxUtils.getPrettyXml(codec.encode(getGraph().getModel()));
+        return mxUtils.getXml(codec.encode(getGraph().getModel()));
     }
     
     public Map<String, String> getQuestLua(String questName)
