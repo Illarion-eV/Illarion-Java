@@ -75,17 +75,20 @@ final class Utils {
     }
     
     protected static void exportEasyQuest(final Editor editor) {
-        final JFileChooser dirDiag = new JFileChooser();
-        dirDiag.setDialogTitle("Exportieren");
-        dirDiag.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        dirDiag.setAcceptAllFileFilterUsed(false);
-        //dirDiag.setCurrentDirectory(new File(Config.getInstance()
-        //    .getEasyQuestFolder()));
-        final int fileReturn =
-            dirDiag.showSaveDialog(MainFrame.getInstance());
-        if (fileReturn == JFileChooser.APPROVE_OPTION) {
-            final File targetDir = dirDiag.getSelectedFile();
-            exportEasyQuestImpl(editor.getQuestLua(targetDir.getName()), targetDir);
+        if (editor.validQuest())
+        {
+            final JFileChooser dirDiag = new JFileChooser();
+            dirDiag.setDialogTitle("Exportieren");
+            dirDiag.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            dirDiag.setAcceptAllFileFilterUsed(false);
+            //dirDiag.setCurrentDirectory(new File(Config.getInstance()
+            //    .getEasyQuestFolder()));
+            final int fileReturn =
+                dirDiag.showSaveDialog(MainFrame.getInstance());
+            if (fileReturn == JFileChooser.APPROVE_OPTION) {
+                final File targetDir = dirDiag.getSelectedFile();
+                exportEasyQuestImpl(editor.getQuestLua(targetDir.getName()), targetDir);
+            }
         }
     }
     
