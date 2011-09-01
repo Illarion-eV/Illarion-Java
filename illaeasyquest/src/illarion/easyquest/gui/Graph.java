@@ -30,6 +30,7 @@ import illarion.easyquest.quest.Trigger;
 public class Graph extends mxGraph {
     public Graph()
     {
+        super();
         setAlternateEdgeStyle("edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical");
         setAllowLoops(true);
         
