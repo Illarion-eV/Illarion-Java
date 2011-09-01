@@ -31,6 +31,7 @@ public class Graph extends mxGraph {
     public Graph()
     {
         setAlternateEdgeStyle("edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical");
+        setAllowLoops(true);
         
         addListener(mxEvent.ADD_CELLS, new mxIEventListener()
 		{
