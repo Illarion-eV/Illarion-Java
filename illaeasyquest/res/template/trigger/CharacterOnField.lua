@@ -9,13 +9,12 @@ local PRECONDITION_QUESTSTATE = 0
 local POSTCONDITION_QUESTSTATE = 0
 
 local POSITION = POSITION -- Map position -- Position auf der Karte
-local TEXT_DE = TEXT -- German Use Text -- Deutscher Text beim Benutzen
-local TEXT_EN = TEXT -- English Use Text -- Englischer Text beim Benutzen
+
 
 function CharacterOnField( PLAYER )
   if PLAYER:isInRangeToPosition(POSITION,RADIUS)
       and questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then
-    informNLS(PLAYER, TEXT_DE, TEXT_EN)
+    -- informNLS(PLAYER, TEXT_DE, TEXT_EN)
     
     HANDLER()
     
@@ -33,3 +32,7 @@ function informNLS(player, textDe, textEn)
     player:inform(player, item, textEn)
   end
 end
+
+
+-- local TEXT_DE = TEXT -- German Use Text -- Deutscher Text beim Benutzen
+-- local TEXT_EN = TEXT -- English Use Text -- Englischer Text beim Benutzen

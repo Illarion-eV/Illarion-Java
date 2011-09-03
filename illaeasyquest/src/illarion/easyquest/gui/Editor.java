@@ -27,6 +27,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
+import javax.swing.JOptionPane;
+
 import org.w3c.dom.Document;
 
 import com.mxgraph.swing.mxGraphComponent;
@@ -51,6 +53,8 @@ import illarion.easyquest.quest.TriggerTemplates;
 import illarion.easyquest.quest.HandlerTemplate;
 import illarion.easyquest.quest.HandlerTemplates;
 import illarion.easyquest.EditorKeyboardHandler;
+
+import illarion.easyquest.Lang;
 
 public final class Editor extends mxGraphComponent {
 
@@ -95,6 +99,7 @@ public final class Editor extends mxGraphComponent {
                         } finally {
                             g.getModel().endUpdate();
                         }
+                        e.consume();
 			        }
 			    }
 			}
@@ -158,7 +163,7 @@ public final class Editor extends mxGraphComponent {
 
     public String getQuestXML() {
         mxCodec codec = new mxCodec();
-        return mxUtils.getPrettyXml(codec.encode(getGraph().getModel()));
+        return mxUtils.getXml(codec.encode(getGraph().getModel()));
     }
     
     public Map<String, String> getQuestLua(String questName)
@@ -291,5 +296,55 @@ public final class Editor extends mxGraphComponent {
         {
             return "TYPE NOT SUPPORTED";
         }
+    }
+    
+    public boolean validQuest()
+    {
+        String errors = "";
+        Graph graph = (Graph)getGraph();
+        Object parent = graph.getDefaultParent();
+        Object[] edges = graph.getChildEdges(parent);
+        Object[] nodes = graph.getChildVertices(parent);
+        
+        int countStart = 0;
+        for (Object node : nodes)
+        {
+            mxCell cell = (mxCell)node;
+            Status status = (Status)cell.getValue();
+            if (status.isStart())
+            {
+                countStart = countStart + 1;
+            }
+        }
+        if (countStart != 1) {
+            errors = errors + Lang.getMsg(Editor.class, "startNumberError") + " " + countStart + ".\n";
+        }
+        
+        int countUnconnected = 0;
+        for (Object edge : edges)
+        {
+            mxCell cell = (mxCell)edge;
+            mxCell source = (mxCell)cell.getSource();
+            mxCell target = (mxCell)cell.getTarget();
+            if (source == null || target == null)
+            {
+                countUnconnected = countUnconnected + 1;
+            }
+        }
+        if (countUnconnected > 0) {
+            errors = errors + Lang.getMsg(Editor.class, "unconnectedError") + " " + countUnconnected + ".\n";
+        }
+        
+        if (errors.length() != 0)
+        {
+            JOptionPane.showMessageDialog(MainFrame.getInstance(),
+                errors,
+                Lang.getMsg(Editor.class, "exportFailed"),
+                JOptionPane.ERROR_MESSAGE);
+                
+            return false;
+        }
+        
+        return true;
     }
 }
