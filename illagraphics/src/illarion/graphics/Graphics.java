@@ -287,9 +287,11 @@ public final class Graphics {
      * @param sprite the sprite that is used to display the mouse cursor
      * @return the mouse cursor instance
      */
-    public MouseCursor getMouseCursor(final Sprite sprite) {
-        return create(MouseCursor.class, usedEngine,
-            new Class<?>[] { Sprite.class }, new Object[] { sprite });
+    public MouseCursor getMouseCursor(final Sprite sprite, final int hotspotX,
+        final int hotspotY) {
+        return create(MouseCursor.class, usedEngine, new Class<?>[] {
+            Sprite.class, int.class, int.class }, new Object[] { sprite,
+            Integer.valueOf(hotspotX), Integer.valueOf(hotspotY) });
     }
 
     /**
