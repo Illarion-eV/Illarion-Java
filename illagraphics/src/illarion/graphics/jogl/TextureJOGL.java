@@ -19,6 +19,7 @@
 package illarion.graphics.jogl;
 
 import gnu.trove.list.array.TIntArrayList;
+import illarion.graphics.Texture;
 import illarion.graphics.TextureAtlas;
 import illarion.graphics.generic.AbstractTexture;
 
@@ -176,5 +177,22 @@ public final class TextureJOGL extends AbstractTexture {
     @Override
     protected void textureDataChanged() {
         displayListDirty = true;
+    }
+
+    @Override
+    public Texture getSubTexture(int x, int y, int width, int height) {
+        final TextureJOGL result = new TextureJOGL(width, height, getTextureWidth(), getTextureHeight(), getImageX() + x, getImageY() + y);
+        result.setParent(getParent());
+        return result;
+    }
+
+    @Override
+    public void cleanup() {
+        if (displayListID != -1) {
+            final GL gl = GLU.getCurrentGL();
+            gl.getGL2().glDeleteLists(displayListID, 1);
+            displayListID = -1;
+            usedDisplayLists.remove(displayListID);
+        }
     }
 }

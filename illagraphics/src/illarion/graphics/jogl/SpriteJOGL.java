@@ -47,6 +47,16 @@ public final class SpriteJOGL extends AbstractSprite {
         super(frames);
         texRender = AbstractTextureRender.getInstance();
     }
+    
+    /**
+     * Create a identical copy of the sprite that can be altered later.
+     * 
+     * @param org the original sprite
+     */
+    public SpriteJOGL(final SpriteJOGL org) {
+        super(org);
+        texRender = org.texRender;
+    }
 
     /**
      * Add a texture to the sprite. This texture needs to by a LWJGL

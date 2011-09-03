@@ -17,7 +17,7 @@
  * the Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.graphics.lwjgl;
-
+import illarion.graphics.Texture;
 import illarion.graphics.TextureAtlas;
 import illarion.graphics.generic.AbstractTexture;
 
@@ -131,5 +131,20 @@ public final class TextureLWJGL extends AbstractTexture {
     @Override
     protected void textureDataChanged() {
         displayListDirty = true;
+    }
+
+    @Override
+    public Texture getSubTexture(int x, int y, int width, int height) {
+        final TextureLWJGL result = new TextureLWJGL(width, height, getTextureWidth(), getTextureHeight(), getImageX() + x, getImageY() + y);
+        result.setParent(getParent());
+        return result;
+    }
+
+    @Override
+    public void cleanup() {
+        if (displayListID != -1) {
+            GL11.glDeleteLists(displayListID, 1);
+            displayListID = -1;
+        }
     }
 }
