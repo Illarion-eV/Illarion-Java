@@ -32,6 +32,7 @@ import illarion.graphics.Graphics;
 
 import illarion.input.MouseEventReceiver;
 import illarion.input.MouseManager;
+import illarion.input.generic.MouseEventMulticast;
 
 /**
  * This is the JAVA implementation of the mouse manager. Its supposed to handle
@@ -486,7 +487,11 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
      */
     @Override
     public void registerEventHandler(final MouseEventReceiver event) {
-        receiver = event;
+        if (receiver == null) {
+            receiver = event;
+        } else {
+            receiver = new MouseEventMulticast(receiver, event);
+        }
     }
 
     /**

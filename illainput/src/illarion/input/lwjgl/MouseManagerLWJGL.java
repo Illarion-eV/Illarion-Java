@@ -38,6 +38,7 @@ import illarion.graphics.RenderTask;
 import illarion.input.MouseEvent;
 import illarion.input.MouseEventReceiver;
 import illarion.input.MouseManager;
+import illarion.input.generic.MouseEventMulticast;
 
 /**
  * The LWJGL implementation of the mouse manager offers the client to get the
@@ -274,14 +275,16 @@ public final class MouseManagerLWJGL extends Thread implements MouseManager,
     }
 
     /**
-     * Add a event to this manager. All event handlers are notified about the
-     * clicks done with the mouse.
-     * 
-     * @param event the event handler that shall be registered to the manager
+     * Set the receiver that is from now on supposed to get all updates of the
+     * mouse.
      */
     @Override
     public void registerEventHandler(final MouseEventReceiver event) {
-        receiver = event;
+        if (receiver == null) {
+            receiver = event;
+        } else {
+            receiver = new MouseEventMulticast(receiver, event);
+        }
     }
 
     /**

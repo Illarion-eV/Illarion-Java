@@ -33,6 +33,8 @@ public interface KeyboardEventReceiver {
      * KeyboardEvent back into the buffer for reuse.
      * 
      * @param event the keyboard event that is handed over in this run
+     * @return <code>true</code> in case the event was handled and is not
+     *         supposed to be send to any further event receivers
      */
-    void handleKeyboardEvent(KeyboardEvent event);
+    boolean handleKeyboardEvent(KeyboardEvent event);
 }

@@ -28,6 +28,7 @@ import illarion.graphics.Graphics;
 import illarion.input.KeyboardEvent;
 import illarion.input.KeyboardEventReceiver;
 import illarion.input.KeyboardManager;
+import illarion.input.generic.KeyboardEventMulticast;
 
 /**
  * The keyboard manager that uses the native java implementation to handle the
@@ -552,7 +553,11 @@ public final class KeyboardManagerJAVA implements KeyboardManager, KeyListener {
      */
     @Override
     public void registerEventHandler(final KeyboardEventReceiver event) {
-        receiver = event;
+        if (receiver == null) {
+            receiver = event;
+        } else {
+            receiver = new KeyboardEventMulticast(receiver, event);
+        }
     }
 
     /**

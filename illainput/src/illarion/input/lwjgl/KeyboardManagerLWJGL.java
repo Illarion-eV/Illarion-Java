@@ -34,6 +34,7 @@ import illarion.graphics.RenderTask;
 import illarion.input.KeyboardEvent;
 import illarion.input.KeyboardEventReceiver;
 import illarion.input.KeyboardManager;
+import illarion.input.generic.KeyboardEventMulticast;
 
 /**
  * The keyboard LWJGL implementation offers the client the possibility to be
@@ -546,13 +547,18 @@ public final class KeyboardManagerLWJGL extends Thread implements
     }
 
     /**
-     * Register a event handler that is notified about a keyboard event.
+     * Set the event handler that receivers all input this keyboard manager
+     * fetched.
      * 
-     * @param event the event handler that is registered to the manager
+     * @param event the event receiver that shall be used from now on
      */
     @Override
     public void registerEventHandler(final KeyboardEventReceiver event) {
-        receiver = event;
+        if (receiver == null) {
+            receiver = event;
+        } else {
+            receiver = new KeyboardEventMulticast(receiver, event);
+        }
     }
 
     /**
