@@ -18,17 +18,16 @@
  */
 package illarion.input.java;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 import gnu.trove.list.array.TIntArrayList;
-
 import illarion.graphics.Graphics;
-
 import illarion.input.KeyboardEvent;
 import illarion.input.KeyboardEventReceiver;
 import illarion.input.KeyboardManager;
 import illarion.input.generic.KeyboardEventMulticast;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * The keyboard manager that uses the native java implementation to handle the
@@ -39,22 +38,6 @@ import illarion.input.generic.KeyboardEventMulticast;
  * @since 2.00
  */
 public final class KeyboardManagerJAVA implements KeyboardManager, KeyListener {
-    /**
-     * The last character that was detected. This is used to trigger repeated
-     * events.
-     */
-    private char lastChar = (char) -1;
-
-    /**
-     * List of keys that are pressed down.
-     */
-    private final TIntArrayList pressedKeys = new TIntArrayList();
-
-    /**
-     * The receiver of all keyboard events.
-     */
-    private KeyboardEventReceiver receiver;
-
     /**
      * Translate the value of a key from the Illarion value to the Java value.
      * 
@@ -468,6 +451,36 @@ public final class KeyboardManagerJAVA implements KeyboardManager, KeyListener {
     }
 
     /**
+     * This is a list of the keyboard events that got received and have to be
+     * published during the polling.
+     */
+    private final LinkedBlockingDeque<KeyboardEvent> eventList;
+
+    /**
+     * The last character that was detected. This is used to trigger repeated
+     * events.
+     */
+    private char lastChar = (char) -1;
+
+    /**
+     * List of keys that are pressed down.
+     */
+    private final TIntArrayList pressedKeys;
+
+    /**
+     * The receiver of all keyboard events.
+     */
+    private KeyboardEventReceiver receiver;
+
+    /**
+     * Default constructor to initialize the variables.
+     */
+    public KeyboardManagerJAVA() {
+        eventList = new LinkedBlockingDeque<KeyboardEvent>();
+        pressedKeys = new TIntArrayList();
+    }
+
+    /**
      * Clear the keyboard manager and remove included receiver.
      */
     @Override
@@ -502,9 +515,7 @@ public final class KeyboardManagerJAVA implements KeyboardManager, KeyListener {
         event.setEventData(translateKeysJavaIllarion(e.getKeyCode()),
             KeyboardEvent.EVENT_KEY_DOWN, false, (char) 0);
         pressedKeys.add(e.getKeyCode());
-        if (receiver != null) {
-            receiver.handleKeyboardEvent(event);
-        }
+        storeEvent(event);
     }
 
     /**
@@ -522,9 +533,7 @@ public final class KeyboardManagerJAVA implements KeyboardManager, KeyListener {
         if (index >= 0) {
             pressedKeys.removeAt(index);
         }
-        if (receiver != null) {
-            receiver.handleKeyboardEvent(event);
-        }
+        storeEvent(event);
         lastChar = (char) -1;
     }
 
@@ -540,8 +549,27 @@ public final class KeyboardManagerJAVA implements KeyboardManager, KeyListener {
         event.setEventData(KeyboardEvent.VK_UNDEFINED,
             KeyboardEvent.EVENT_KEY_PRESSED, repeated, e.getKeyChar());
         lastChar = e.getKeyChar();
+        storeEvent(event);
+    }
+
+    @Override
+    public void poll() {
         if (receiver != null) {
-            receiver.handleKeyboardEvent(event);
+            KeyboardEvent event = null;
+            while ((event = eventList.pollFirst()) != null) {
+                receiver.handleKeyboardEvent(event);
+                event.recycle();
+            }
+        } else {
+            pollToNull();
+        }
+    }
+
+    @Override
+    public void pollToNull() {
+        KeyboardEvent event = null;
+        while ((event = eventList.pollFirst()) != null) {
+            event.recycle();
         }
     }
 
@@ -582,4 +610,16 @@ public final class KeyboardManagerJAVA implements KeyboardManager, KeyListener {
         Graphics.getInstance().getRenderDisplay().addInputListener(this);
     }
 
+    /**
+     * This private function is used to store the keyboard events properly in
+     * the lists used for this purpose.
+     * 
+     * @param event the event to store in the list for later publishing
+     */
+    private void storeEvent(final KeyboardEvent event) {
+        while (eventList.size() > 100) {
+            eventList.pollFirst();
+        }
+        eventList.offerLast(event);
+    }
 }

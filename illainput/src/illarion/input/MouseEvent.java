@@ -31,6 +31,12 @@ import javolution.util.FastList;
  */
 public final class MouseEvent {
     /**
+     * The buffer that stores the mouse events that are currently not in use.
+     */
+    private static final FastList<MouseEvent> BUFFER =
+        new FastList<MouseEvent>();
+
+    /**
      * Indicates mouse button #1; used by {@link #getKey()}. This is the primary
      * mouse button. So the left one for right handed mouses and the right for
      * left handed mouses.
@@ -103,10 +109,19 @@ public final class MouseEvent {
     public static final int NOBUTTON = 0;
 
     /**
-     * The buffer that stores the mouse events that are currently not in use.
+     * Get a instances of the mouse event. Either a unused one from the buffer
+     * or a new instance.
+     * 
+     * @return a instance of the mouse event that is free to use now
      */
-    private static final FastList<MouseEvent> BUFFER =
-        new FastList<MouseEvent>();
+    public static MouseEvent get() {
+        synchronized (BUFFER) {
+            if (BUFFER.isEmpty()) {
+                return new MouseEvent();
+            }
+            return BUFFER.removeFirst();
+        }
+    }
 
     /**
      * The delta of the mouse wheel in case it was used in this event.
@@ -139,21 +154,6 @@ public final class MouseEvent {
      */
     private MouseEvent() {
         // nothing to do
-    }
-
-    /**
-     * Get a instances of the mouse event. Either a unused one from the buffer
-     * or a new instance.
-     * 
-     * @return a instance of the mouse event that is free to use now
-     */
-    public static MouseEvent get() {
-        synchronized (BUFFER) {
-            if (BUFFER.isEmpty()) {
-                return new MouseEvent();
-            }
-            return BUFFER.removeFirst();
-        }
     }
 
     /**

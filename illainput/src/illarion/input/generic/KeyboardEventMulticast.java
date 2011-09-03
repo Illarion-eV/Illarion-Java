@@ -34,25 +34,26 @@ public final class KeyboardEventMulticast implements KeyboardEventReceiver {
      * The first receiver to receive the event.
      */
     private final KeyboardEventReceiver receiver1;
-    
+
     /**
      * The second receiver to receive the event.
      */
     private final KeyboardEventReceiver receiver2;
-    
+
     /**
      * Create a new event multicast.
      * 
      * @param r1 the receiver to receive the event first
      * @param r2 the receiver to receive the event second
      */
-    public KeyboardEventMulticast(final KeyboardEventReceiver r1, final KeyboardEventReceiver r2) {
+    public KeyboardEventMulticast(final KeyboardEventReceiver r1,
+        final KeyboardEventReceiver r2) {
         receiver1 = r1;
         receiver2 = r2;
     }
 
     @Override
-    public boolean handleKeyboardEvent(KeyboardEvent event) {
+    public boolean handleKeyboardEvent(final KeyboardEvent event) {
         boolean result;
         result = receiver1.handleKeyboardEvent(event);
         if (!result) {

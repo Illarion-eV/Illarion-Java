@@ -18,23 +18,16 @@
  */
 package illarion.input.lwjgl;
 
-import javolution.util.FastList;
+import illarion.graphics.Graphics;
+import illarion.input.KeyboardEvent;
+import illarion.input.KeyboardEventReceiver;
+import illarion.input.KeyboardManager;
+import illarion.input.generic.KeyboardEventMulticast;
 
 import org.apache.log4j.Logger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
-
-import illarion.common.util.Stoppable;
-import illarion.common.util.StoppableStorage;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.RenderTask;
-
-import illarion.input.KeyboardEvent;
-import illarion.input.KeyboardEventReceiver;
-import illarion.input.KeyboardManager;
-import illarion.input.generic.KeyboardEventMulticast;
 
 /**
  * The keyboard LWJGL implementation offers the client the possibility to be
@@ -44,49 +37,12 @@ import illarion.input.generic.KeyboardEventMulticast;
  * @version 2.00
  * @since 2.00
  */
-public final class KeyboardManagerLWJGL extends Thread implements
-    KeyboardManager, Stoppable {
+public final class KeyboardManagerLWJGL implements KeyboardManager {
     /**
      * Logger instance that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger
         .getLogger(KeyboardManagerLWJGL.class);
-
-    /**
-     * The storage that contains the current state of all buttons as it was last
-     * reported.
-     */
-    private final boolean[] buttonState = new boolean[Keyboard.KEYBOARD_SIZE];
-
-    /**
-     * The storage that contains all the keyboard data that was yet not handled.
-     */
-    private final FastList<KeyboardData> data = new FastList<KeyboardData>();
-
-    /**
-     * This variable stores if the manager is currently running.
-     */
-    private boolean managerRunning = false;
-
-    /**
-     * The storage of events that are triggered in case of changes of the key
-     * states.
-     */
-    private KeyboardEventReceiver receiver;
-
-    /**
-     * The running flag. In case this is set to <code>false</code> the loop will
-     * exit at the next run.
-     */
-    private volatile boolean running = true;
-
-    /**
-     * Create the class and the underlying thread with the proper settings.
-     */
-    @SuppressWarnings("nls")
-    public KeyboardManagerLWJGL() {
-        super("KeyboardManager - LWJGL");
-    }
 
     /**
      * Translate the value of a key from the Illarion value to the LWJGL value.
@@ -501,6 +457,23 @@ public final class KeyboardManagerLWJGL extends Thread implements
     }
 
     /**
+     * The storage that contains the current state of all buttons as it was last
+     * reported.
+     */
+    private final boolean[] buttonState = new boolean[Keyboard.KEYBOARD_SIZE];
+
+    /**
+     * This variable stores if the manager is currently running.
+     */
+    private boolean managerRunning = false;
+
+    /**
+     * The storage of events that are triggered in case of changes of the key
+     * states.
+     */
+    private KeyboardEventReceiver receiver;
+
+    /**
      * Clean the keyboard manager and remove all event handler from the manager.
      */
     @Override
@@ -546,6 +519,52 @@ public final class KeyboardManagerLWJGL extends Thread implements
         return !isKeyDown(key);
     }
 
+    @Override
+    public void poll() {
+        if (receiver == null) {
+            pollToNull();
+            return;
+        }
+
+        Keyboard.poll();
+        while (Keyboard.next()) {
+            final int orgKeyCode = Keyboard.getEventKey();
+            final int keyCode = translateKeysLWJGLIllarion(orgKeyCode);
+
+            final boolean pressed = Keyboard.getEventKeyState();
+            final boolean repeated = Keyboard.isRepeatEvent();
+            final char eventChar = Keyboard.getEventCharacter();
+
+            final KeyboardEvent event = KeyboardEvent.get();
+            if (pressed && !repeated) {
+                event.setEventData(keyCode, KeyboardEvent.EVENT_KEY_DOWN,
+                    false, eventChar);
+                receiver.handleKeyboardEvent(event);
+                buttonState[orgKeyCode] = true;
+            }
+            if (pressed) {
+                event.setEventData(keyCode, KeyboardEvent.EVENT_KEY_PRESSED,
+                    repeated, eventChar);
+                receiver.handleKeyboardEvent(event);
+            }
+            if (!pressed && !repeated) {
+                event.setEventData(keyCode, KeyboardEvent.EVENT_KEY_UP, false,
+                    eventChar);
+                receiver.handleKeyboardEvent(event);
+                buttonState[orgKeyCode] = false;
+            }
+            event.recycle();
+        }
+    }
+
+    @Override
+    public void pollToNull() {
+        Keyboard.poll();
+        while (Keyboard.next()) {
+            // clean the buffer
+        }
+    }
+
     /**
      * Set the event handler that receivers all input this keyboard manager
      * fetched.
@@ -562,73 +581,6 @@ public final class KeyboardManagerLWJGL extends Thread implements
     }
 
     /**
-     * The main loop of the thread managing the input.
-     */
-    @Override
-    @SuppressWarnings("nls")
-    public void run() {
-        while (running) {
-            KeyboardData keyboardEvent = null;
-            synchronized (data) {
-                if (data.isEmpty()) {
-                    try {
-                        data.wait();
-                    } catch (final InterruptedException e) {
-                        LOGGER.warn("Keyboard manager worken up unexpected");
-                    }
-                    continue;
-                }
-
-                keyboardEvent = data.removeFirst();
-            }
-
-            if (receiver == null) {
-                continue;
-            }
-
-            final int orgKeyCode = keyboardEvent.getKey();
-            final int keyCode = translateKeysLWJGLIllarion(orgKeyCode);
-
-            final boolean pressed = keyboardEvent.getState();
-            final boolean repeated = keyboardEvent.isRepeated();
-            final char eventChar = keyboardEvent.getCharacter();
-
-            if (pressed && !repeated) {
-                final KeyboardEvent event = KeyboardEvent.get();
-                event.setEventData(keyCode, KeyboardEvent.EVENT_KEY_DOWN,
-                    false, eventChar);
-                receiver.handleKeyboardEvent(event);
-                buttonState[orgKeyCode] = true;
-            }
-            if (pressed) {
-                final KeyboardEvent event = KeyboardEvent.get();
-                event.setEventData(keyCode, KeyboardEvent.EVENT_KEY_PRESSED,
-                    repeated, eventChar);
-                receiver.handleKeyboardEvent(event);
-            }
-            if (!pressed && !repeated) {
-                final KeyboardEvent event = KeyboardEvent.get();
-                event.setEventData(keyCode, KeyboardEvent.EVENT_KEY_UP, false,
-                    eventChar);
-                receiver.handleKeyboardEvent(event);
-                buttonState[orgKeyCode] = false;
-            }
-        }
-        managerRunning = false;
-    }
-
-    /**
-     * Stop the thread at the next loop.
-     */
-    @Override
-    public void saveShutdown() {
-        running = false;
-        synchronized (data) {
-            data.notify();
-        }
-    }
-
-    /**
      * Destroy the keyboard manager and clear the handler. After this is done
      * the keyboard handler is not working at all anymore.
      */
@@ -640,9 +592,6 @@ public final class KeyboardManagerLWJGL extends Thread implements
         clear();
         Keyboard.destroy();
         managerRunning = false;
-        synchronized (data) {
-            data.notify();
-        }
     }
 
     /**
@@ -676,47 +625,8 @@ public final class KeyboardManagerLWJGL extends Thread implements
             Keyboard.enableRepeatEvents(true);
         }
 
-        Keyboard.poll();
-        while (Keyboard.next()) {
-            // clean the buffer
-        }
+        pollToNull();
 
-        // Updates need to be called by the graphic loop, else everything messes
-        // up.
-        Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
-            @Override
-            @SuppressWarnings("synthetic-access")
-            public boolean render(final int delta) {
-                if (managerRunning) {
-                    updateKeyboardData();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        StoppableStorage.getInstance().add(this);
-        start();
         managerRunning = true;
-    }
-
-    /**
-     * Update the data of the keyboard.
-     */
-    protected void updateKeyboardData() {
-        Keyboard.poll();
-
-        synchronized (data) {
-            synchronized (KeyboardData.LOCK) {
-                while (Keyboard.next()) {
-                    final KeyboardData dataBlock = KeyboardData.get();
-                    dataBlock.set(Keyboard.getEventKey(),
-                        Keyboard.getEventKeyState(), Keyboard.isRepeatEvent(),
-                        Keyboard.getEventCharacter());
-                    data.addLast(dataBlock);
-                }
-            }
-            data.notify();
-        }
     }
 }

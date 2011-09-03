@@ -51,6 +51,15 @@ public final class InputManager {
     private static final Logger LOGGER = Logger.getLogger(InputManager.class);
 
     /**
+     * Get the singleton instance of this class.
+     * 
+     * @return the singleton instance of the graphics port.
+     */
+    public static InputManager getInstance() {
+        return INSTANCE;
+    }
+
+    /**
      * This value is set true in case anything was created using the set engine.
      * In this case the method to change the engine will throw a error right
      * away.
@@ -81,54 +90,6 @@ public final class InputManager {
      */
     private InputManager() {
         // nothing to do
-    }
-
-    /**
-     * Get the singleton instance of this class.
-     * 
-     * @return the singleton instance of the graphics port.
-     */
-    public static InputManager getInstance() {
-        return INSTANCE;
-    }
-
-    /**
-     * Get the keyboard manager of the current implementation.
-     * 
-     * @return the keyboard manager of the current implementation
-     */
-    public KeyboardManager getKeyboardManager() {
-        if (keyboardInstance == null) {
-            keyboardInstance = create(KeyboardManager.class, usedEngine);
-        }
-        return keyboardInstance;
-    }
-
-    /**
-     * Get the mouse manager of the current implementation.
-     * 
-     * @return the mouse manager of the current implementation
-     */
-    public MouseManager getMouseManager() {
-        if (mouseInstance == null) {
-            mouseInstance = create(MouseManager.class, usedEngine);
-        }
-        return mouseInstance;
-    }
-
-    /**
-     * Change the engine used to display the graphics.
-     * 
-     * @param newEngine the new engine to use
-     * @throws IllegalStateException in case the graphics environment already
-     *             created a object with the set engine
-     */
-    @SuppressWarnings("nls")
-    public void setEngine(final Engines newEngine) {
-        if (engineLocked) {
-            throw new IllegalStateException("Engine can't be changed anymore.");
-        }
-        usedEngine = newEngine;
     }
 
     /**
@@ -209,5 +170,44 @@ public final class InputManager {
         }
 
         return instance;
+    }
+
+    /**
+     * Get the keyboard manager of the current implementation.
+     * 
+     * @return the keyboard manager of the current implementation
+     */
+    public KeyboardManager getKeyboardManager() {
+        if (keyboardInstance == null) {
+            keyboardInstance = create(KeyboardManager.class, usedEngine);
+        }
+        return keyboardInstance;
+    }
+
+    /**
+     * Get the mouse manager of the current implementation.
+     * 
+     * @return the mouse manager of the current implementation
+     */
+    public MouseManager getMouseManager() {
+        if (mouseInstance == null) {
+            mouseInstance = create(MouseManager.class, usedEngine);
+        }
+        return mouseInstance;
+    }
+
+    /**
+     * Change the engine used to display the graphics.
+     * 
+     * @param newEngine the new engine to use
+     * @throws IllegalStateException in case the graphics environment already
+     *             created a object with the set engine
+     */
+    @SuppressWarnings("nls")
+    public void setEngine(final Engines newEngine) {
+        if (engineLocked) {
+            throw new IllegalStateException("Engine can't be changed anymore.");
+        }
+        usedEngine = newEngine;
     }
 }

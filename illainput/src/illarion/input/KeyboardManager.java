@@ -54,6 +54,18 @@ public interface KeyboardManager {
     boolean isKeyUp(int key);
 
     /**
+     * Calling this function causes all events that got collected since the last
+     * call of this function to be send to the receivers.
+     */
+    void poll();
+
+    /**
+     * Remove all events that got collected and clean up the stack of events by
+     * this.
+     */
+    void pollToNull();
+
+    /**
      * Register a keyboard event handler to the manager. At each change of the
      * keyboard states this handler will be notified about the change.
      * 

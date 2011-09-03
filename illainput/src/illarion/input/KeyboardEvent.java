@@ -30,15 +30,21 @@ import javolution.util.FastList;
  */
 public final class KeyboardEvent {
     /**
+     * The buffer that stores the currently unused keyboard event instances.
+     */
+    private static final FastList<KeyboardEvent> BUFFER =
+        new FastList<KeyboardEvent>();
+
+    /**
      * The event code in case a button is pressed down.
      */
     public static final int EVENT_KEY_DOWN = 0;
-
     /**
      * The event in case a button is pressed down. This can be fired again and
      * again until the key is released again.
      */
     public static final int EVENT_KEY_PRESSED = 2;
+
     /**
      * The event code in case a button is released.
      */
@@ -823,10 +829,19 @@ public final class KeyboardEvent {
     public static final int VK_Z = 0x5A;
 
     /**
-     * The buffer that stores the currently unused keyboard event instances.
+     * Get a instances of the keyboard event. Either a unused one from the
+     * buffer or a new instance.
+     * 
+     * @return a instance of the keyboard event that is free to use now
      */
-    private static final FastList<KeyboardEvent> BUFFER =
-        new FastList<KeyboardEvent>();
+    public static KeyboardEvent get() {
+        synchronized (BUFFER) {
+            if (BUFFER.isEmpty()) {
+                return new KeyboardEvent();
+            }
+            return BUFFER.removeFirst();
+        }
+    }
 
     /**
      * The character of the key that triggered this event.
@@ -860,21 +875,6 @@ public final class KeyboardEvent {
      */
     private KeyboardEvent() {
         // nothing to do
-    }
-
-    /**
-     * Get a instances of the keyboard event. Either a unused one from the
-     * buffer or a new instance.
-     * 
-     * @return a instance of the keyboard event that is free to use now
-     */
-    public static KeyboardEvent get() {
-        synchronized (BUFFER) {
-            if (BUFFER.isEmpty()) {
-                return new KeyboardEvent();
-            }
-            return BUFFER.removeFirst();
-        }
     }
 
     /**
