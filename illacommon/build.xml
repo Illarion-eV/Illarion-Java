@@ -913,7 +913,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	</target>
 
 	<target name="rsc_gui" description="Build the GUI resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist" >
-		<texconvert generatetransparency="true" target="${resources}/rsc_gui.tmp">
+		<texconvert generatetransparency="true" target="${resources}/rsc_gui.tmp" dumpimages="false">
 			<fileset dir="${config}">
 				<include name="data/gui/*.png" />
 				<include name="data/gui/**/*.png" />

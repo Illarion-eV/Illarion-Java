@@ -18,10 +18,12 @@
  */
 package illarion.client.gui;
 
+import javolution.util.FastMap;
 import illarion.common.util.ObjectSource;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 import illarion.graphics.Sprite;
+import illarion.graphics.common.SpriteBuffer;
 
 /**
  * This class is used to load and store the graphics that are needed for
@@ -31,33 +33,52 @@ import illarion.graphics.Sprite;
  * @since 1.22
  * @version 1.22
  */
-public final class GuiImageFactory implements ObjectSource<Sprite>, TableLoaderSink {
+public final class GuiImageFactory implements ObjectSource<Sprite>,
+    TableLoaderSink {
+    private static final int TB_FRAME = 2;
+    private static final int TB_NAME = 1;
+    private static final int TB_OFFX = 3;
+    private static final int TB_OFFY = 4;
+    private static final String PATH = "data/gui/";
 
-    /* (non-Javadoc)
-     * @see illarion.common.util.TableLoaderSink#processRecord(int, illarion.common.util.TableLoader)
-     */
-    @Override
-    public boolean processRecord(int line, TableLoader loader) {
-        // TODO Auto-generated method stub
-        return false;
+    final FastMap<String, Sprite> sprites;
+
+    public GuiImageFactory() {
+        sprites = new FastMap<String, Sprite>();
+
+        new TableLoader("Gui", this);
     }
 
     @Override
-    public boolean containsObject(String key) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void disposeObject(String key, Sprite object) {
-        // TODO Auto-generated method stub
+    public boolean processRecord(final int line, final TableLoader loader) {
+        final String name = loader.getString(TB_NAME);
         
+        sprites.put(
+            name,
+            SpriteBuffer.getInstance().getSprite(PATH, name,
+                loader.getInt(TB_FRAME), loader.getInt(TB_OFFX),
+                loader.getInt(TB_OFFY), Sprite.HAlign.left, Sprite.VAlign.top,
+                true, false));
+        
+        return true;
     }
 
     @Override
-    public Sprite getObject(String key) {
-        // TODO Auto-generated method stub
-        return null;
+    public boolean containsObject(final String key) {
+        return sprites.containsKey(key);
+    }
+
+    @Override
+    public void disposeObject(final String key, final Sprite object) {
+        if (!containsObject(key)) {
+            return;
+        }
+        sprites.remove(key);
+    }
+
+    @Override
+    public Sprite getObject(final String key) {
+        return sprites.get(key);
     }
 
 }

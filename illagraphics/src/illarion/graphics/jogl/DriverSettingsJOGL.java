@@ -376,8 +376,11 @@ public final class DriverSettingsJOGL {
         if (currentTexture == textureID) {
             return;
         }
-
-        gl.glBindTexture(GL.GL_TEXTURE_2D, textureID);
+        
+        if (textureID != -1) {
+            gl.glBindTexture(GL.GL_TEXTURE_2D, textureID);
+        }
+        
         currentTexture = textureID;
     }
 

@@ -398,6 +398,8 @@ public final class Game implements SessionMember {
             LoadingScreen.LOADING_GRAPHICS);
 
         Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
+            private boolean loadGui = false;
+
             @Override
             public boolean render(final int delta) {
                 boolean result = false;
@@ -405,7 +407,8 @@ public final class Game implements SessionMember {
                     result = loadData();
                 } catch (final NoResourceException e) {
                     CrashReporter.getInstance().reportCrash(
-                        new CrashData(IllaClient.APPLICATION, IllaClient.VERSION,
+                        new CrashData(IllaClient.APPLICATION,
+                            IllaClient.VERSION,
                             "crash.loadres", Thread.currentThread(), e)); //$NON-NLS-1$
                     IllaClient.errorExit("crash.loadres"); //$NON-NLS-1$
                 }
@@ -419,6 +422,14 @@ public final class Game implements SessionMember {
             private boolean loadData() {
                 if (!loadData) {
                     return false;
+                }
+
+                if (!loadGui) {
+                    illarion.client.gui.GUI newGui =
+                        new illarion.client.gui.GUI();
+                    newGui.prepare();
+                    newGui.showLogin();
+                    loadGui = true;
                 }
 
                 if (!TextureLoader.getInstance().preloadAtlasTextures()) {

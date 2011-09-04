@@ -94,13 +94,14 @@ public final class InputHandler extends Thread implements
      * of the thread.
      */
     @Override
-    public void handleKeyboardEvent(final KeyboardEvent event) {
+    public boolean handleKeyboardEvent(final KeyboardEvent event) {
         synchronized (keyboardEvents) {
             keyboardEvents.addLast(event);
         }
         synchronized (this) {
             notify();
         }
+        return true;
     }
 
     /**
@@ -108,13 +109,14 @@ public final class InputHandler extends Thread implements
      * the thread.
      */
     @Override
-    public void handleMouseEvent(final MouseEvent event) {
+    public boolean handleMouseEvent(final MouseEvent event) {
         synchronized (mouseEvents) {
             mouseEvents.addLast(event);
         }
         synchronized (this) {
             notify();
         }
+        return true;
     }
 
     /**

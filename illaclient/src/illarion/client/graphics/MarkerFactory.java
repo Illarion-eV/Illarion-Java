@@ -124,9 +124,9 @@ public class MarkerFactory extends RecycleFactory<Marker> implements
     private MarkerFactory() {
         super();
 
-        new TableLoader("Gui", this);
+        //new TableLoader("Gui", this);
 
-        mapDefault(CRSR_MAGIC, 1);
+        //mapDefault(CRSR_MAGIC, 1);
         finish();
     }
 

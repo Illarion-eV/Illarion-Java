@@ -397,6 +397,7 @@ public abstract class AbstractSprite implements Sprite {
         for (final AbstractTexture texture : textures) {
             texture.remove();
             texture.cleanup();
+            unsetTextures++;
         }
     }
 

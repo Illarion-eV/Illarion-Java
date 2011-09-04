@@ -25,6 +25,7 @@ import illarion.graphics.TextureAtlasListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.List;
 import java.util.Map;
 
@@ -352,14 +353,14 @@ public final class TextureLoader implements TextureAtlasListener {
                 continue;
             }
 
-            textureInput =
-                getClass().getClassLoader().getResourceAsStream(atlasName);
-
-            if (textureInput == null) {
-                break;
-            }
-
             try {
+                textureInput =
+                    getClass().getClassLoader().getResourceAsStream(atlasName);
+    
+                if (textureInput == null) {
+                    break;
+                }
+
                 final TextureAtlas newTexture =
                     TextureIO.readTexture(Channels.newChannel(textureInput));
                 newTexture.setFileName(atlasName);
@@ -380,6 +381,15 @@ public final class TextureLoader implements TextureAtlasListener {
                     return null;
                 }
                 return getTexture(DEFAULT_IMAGE, false, true);
+            } finally {
+                if (textureInput != null) {
+                    try {
+                        textureInput.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
             }
         }
 

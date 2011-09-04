@@ -159,7 +159,10 @@ public final class FontLoader {
      * @param font the font to load
      * @return the font itself
      */
-    public RenderableFont getFont(final Fonts font) {
+    public RenderableFont getFont(Fonts font) {
+        if (font == null) {
+            font = Fonts.text;
+        }
         RenderableFont renderableFont = fonts.get(font);
         if (renderableFont == null) {
             renderableFont = loadFont(font);
@@ -178,7 +181,7 @@ public final class FontLoader {
      */
     private static Fonts toFontEnum(final String name) {
         for (Fonts font : Fonts.values()) {
-            if (font.getFontName().equals(name)) {
+            if (font.getName().equals(name)) {
                 return font;
             }
         }
@@ -206,6 +209,10 @@ public final class FontLoader {
         }
 
         LOGGER.error("Failed to load font: " + font.getFontName());
+
+        if (font != Fonts.text) {
+            return loadFont(Fonts.text);
+        }
         return null;
     }
 
@@ -271,11 +278,12 @@ public final class FontLoader {
                         FONT_ROOT + font.getFontTTFName()));
 
             if (font.getFontStyle().equals("normal")) {
-                javaFont.deriveFont(Font.PLAIN, font.getFontSize());
+                javaFont = javaFont.deriveFont(Font.PLAIN, font.getFontSize());
             } else if (font.getFontStyle().equals("italic")) {
-                javaFont.deriveFont(Font.ITALIC, font.getFontSize());
+                javaFont =
+                    javaFont.deriveFont(Font.ITALIC, font.getFontSize());
             } else if (font.getFontStyle().equals("bold")) {
-                javaFont.deriveFont(Font.BOLD, font.getFontSize());
+                javaFont = javaFont.deriveFont(Font.BOLD, font.getFontSize());
             }
 
             final RenderableFont loadedText =

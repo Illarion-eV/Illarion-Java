@@ -14,6 +14,8 @@ import javax.media.opengl.glu.GLU;
 import com.jogamp.opengl.util.awt.TextRenderer;
 
 import illarion.common.util.FastMath;
+import illarion.graphics.Graphics;
+import illarion.graphics.RenderDisplay;
 import illarion.graphics.jogl.SpriteColorJOGL;
 
 public class JavaFontJOGL implements FontJOGL {
@@ -28,7 +30,9 @@ public class JavaFontJOGL implements FontJOGL {
         final Graphics2D gl2d = (Graphics2D) tempImage.getGraphics();
         gl2d.setFont(font);
         metrics = gl2d.getFontMetrics();
-        renderer = new TextRenderer(font);
+        renderer = new TextRenderer(font, true);
+        renderer.setSmoothing(true);
+        renderer.setUseVertexArrays(true);
     }
 
     @Override
@@ -38,7 +42,7 @@ public class JavaFontJOGL implements FontJOGL {
 
     @Override
     public int getHeight() {
-        return metrics.getAscent() + metrics.getDescent();
+        return metrics.getHeight();
     }
 
     @Override
@@ -61,25 +65,21 @@ public class JavaFontJOGL implements FontJOGL {
         }
 
         final GL2ES1 gl2 = gl.getGL2ES1();
-        gl2.glPushMatrix();
-        gl2.glTranslatef(posX, posY, 0);
+        gl2.glPushMatrix();        
+        RenderDisplay display = Graphics.getInstance().getRenderDisplay();
 
-        Rectangle2D bounds = renderer.getBounds(text);
-
-        renderer.beginRendering((int) FastMath.ceil(bounds.getWidth()),
-            (int) FastMath.ceil(bounds.getHeight()));
+        renderer.beginRendering(display.getWidth(), display.getHeight());
 
         gl2.glPushMatrix();
         gl2.glScalef(size, size, 1.f);
 
         renderer.setColor(color.getRedf(), color.getGreenf(),
             color.getBluef(), color.getAlphaf());
-        renderer.draw(text, 0, 0);
+        renderer.draw(text, posX, posY);
 
         gl2.glPopMatrix();
 
         renderer.endRendering();
-
         gl2.glPopMatrix();
     }
 

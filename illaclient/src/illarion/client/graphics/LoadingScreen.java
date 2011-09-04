@@ -220,59 +220,59 @@ public final class LoadingScreen implements RenderTask {
     @Override
     @SuppressWarnings("nls")
     public boolean render(final int delta) {
-        if (loadingDone) {
-            doneList = null;
-            currList = null;
-            font = null;
-            fontDone = null;
-            color = null;
-            textLines = null;
-            return false;
-        }
-
-        if (dirty) {
-            if (font == null) {
-                font = FontLoader.getInstance().getFont(FontLoader.Fonts.menu);
-                fontDone =
-                    FontLoader.getInstance().getFont(FontLoader.Fonts.small);
-            }
-            final int currLoadingLength = currList.size();
-            int currentTextIndex = -1;
-            int cursorY = 20;
-            for (int i = currLoadingLength - 1; i > -1; i--) {
-                currentTextIndex++;
-                final TextLine line = getTextLine(currentTextIndex);
-                line.setFont(font);
-                line.setText(Lang.getMsg(LOADING_STRING
-                    + Integer.toString(currList.get(i))));
-                line.setLocation(110, cursorY);
-                line.setColor(color);
-                line.setCursorVisible(false);
-                cursorY += 30;
-                line.layout();
-            }
-
-            final int doneLoadingLength = doneList.size();
-            for (int i = doneLoadingLength - 1; i > -1; i--) {
-                currentTextIndex++;
-                final TextLine line = getTextLine(currentTextIndex);
-                line.setFont(fontDone);
-                line.setText(Lang.getMsg(LOADING_STRING
-                    + Integer.toString(doneList.get(i)))
-                    + Lang.getMsg(LOADING_STRING + "done"));
-                line.setLocation(110, cursorY);
-                line.setColor(color);
-                line.setCursorVisible(false);
-                cursorY += 15;
-                line.layout();
-            }
-            dirty = false;
-        }
-
-        final int lines = textLines.size();
-        for (int i = 0; i < lines; i++) {
-            textLines.get(i).render();
-        }
+//        if (loadingDone) {
+//            doneList = null;
+//            currList = null;
+//            font = null;
+//            fontDone = null;
+//            color = null;
+//            textLines = null;
+//            return false;
+//        }
+//
+//        if (dirty) {
+//            if (font == null) {
+//                font = FontLoader.getInstance().getFont(FontLoader.Fonts.menu);
+//                fontDone =
+//                    FontLoader.getInstance().getFont(FontLoader.Fonts.small);
+//            }
+//            final int currLoadingLength = currList.size();
+//            int currentTextIndex = -1;
+//            int cursorY = 20;
+//            for (int i = currLoadingLength - 1; i > -1; i--) {
+//                currentTextIndex++;
+//                final TextLine line = getTextLine(currentTextIndex);
+//                line.setFont(font);
+//                line.setText(Lang.getMsg(LOADING_STRING
+//                    + Integer.toString(currList.get(i))));
+//                line.setLocation(110, cursorY);
+//                line.setColor(color);
+//                line.setCursorVisible(false);
+//                cursorY += 30;
+//                line.layout();
+//            }
+//
+//            final int doneLoadingLength = doneList.size();
+//            for (int i = doneLoadingLength - 1; i > -1; i--) {
+//                currentTextIndex++;
+//                final TextLine line = getTextLine(currentTextIndex);
+//                line.setFont(fontDone);
+//                line.setText(Lang.getMsg(LOADING_STRING
+//                    + Integer.toString(doneList.get(i)))
+//                    + Lang.getMsg(LOADING_STRING + "done"));
+//                line.setLocation(110, cursorY);
+//                line.setColor(color);
+//                line.setCursorVisible(false);
+//                cursorY += 15;
+//                line.layout();
+//            }
+//            dirty = false;
+//        }
+//
+//        final int lines = textLines.size();
+//        for (int i = 0; i < lines; i++) {
+//            textLines.get(i).render();
+//        }
 
         return true;
     }
