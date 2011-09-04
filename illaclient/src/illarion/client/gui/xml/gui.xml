@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+    <useStyles filename="nifty-illarion-style.xml" />
+    <useControls filename="nifty-default-controls.xml" />
+    <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
+        <layer id="layer" backgroundColor="#000" childLayout="center">
+            <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
+                <image filename="guiSprite://illarion_title" imageMode="normal" align="center"  />
+                <panel height="30px" />
+                <panel childLayout="horizontal" visibleToMouse="true">
+                    <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
+                        <text font="textFont" text="Account Name:" />
+                    </panel>
+                    <control name="textfield" maxLength="20" />
+                </panel>
+                <panel childLayout="horizontal" visibleToMouse="true">
+                    <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
+                        <text font="textFont" text="Password:" />
+                    </panel>
+                    <control name="textfield" maxLength="20" passwordChar="*" />
+                </panel>
+            </panel>
+        </layer>
+    </screen>
+</nifty>
