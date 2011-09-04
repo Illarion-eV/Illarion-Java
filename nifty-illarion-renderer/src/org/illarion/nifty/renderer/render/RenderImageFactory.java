@@ -35,7 +35,7 @@ public final class RenderImageFactory {
      * The text that is the header of a sprite image reference.
      */
     @SuppressWarnings("nls")
-    private static final String HEADER_GUI_SPRITE = "guiSprite:";
+    private static final String HEADER_GUI_SPRITE = "guiSprite://";
 
     /**
      * This instance is a source for sprite objects that is needed to fetch

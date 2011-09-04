@@ -257,8 +257,8 @@ public final class IllarionRenderDevice implements RenderDevice {
     public void renderImage(final RenderImage image, final int x, final int y,
         final int width, final int height, final Color color,
         final float imageScale) {
-        // TODO Auto-generated method stub
-
+        
+        ((IllarionRenderImage) image).renderImage(x, y, width, height, color, imageScale);
     }
 
     /*
@@ -273,8 +273,7 @@ public final class IllarionRenderDevice implements RenderDevice {
         final int w, final int h, final int srcX, final int srcY,
         final int srcW, final int srcH, final Color color, final float scale,
         final int centerX, final int centerY) {
-        // TODO Auto-generated method stub
-
+        ((IllarionRenderImage) image).renderImage(x, y, w, h, srcX, srcY, srcW, srcH, color, scale, centerX, centerY);
     }
 
     /**

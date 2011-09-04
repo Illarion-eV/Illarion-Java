@@ -55,7 +55,7 @@ final class IllarionSpriteRenderImage implements IllarionRenderImage {
 
     static {
         TEMP_COLOR = Graphics.getInstance().getSpriteColor();
-        TEMP_SPRITE = Graphics.getInstance().getSprite(0);
+        TEMP_SPRITE = Graphics.getInstance().getSprite(1);
         TEMP_SPRITE.setAlign(Sprite.HAlign.center, Sprite.VAlign.middle);
     }
 
@@ -130,15 +130,16 @@ final class IllarionSpriteRenderImage implements IllarionRenderImage {
         final int h, final int srcX, final int srcY, final int srcW,
         final int srcH, final Color color, final float scale,
         final int centerX, final int centerY) {
+        
         TEMP_COLOR.set(color.getRed(), color.getGreen(), color.getBlue());
         TEMP_COLOR.setAlpha(color.getAlpha());
 
         TEMP_SPRITE.addTexture(internalSprite.getTexture(0).getSubTexture(
             srcX, srcY, srcW, srcH));
-        TEMP_SPRITE.setOffset(centerX, centerY);
+        TEMP_SPRITE.setOffset(centerX - x, centerY - y);
 
-        TEMP_SPRITE.draw(x, y, TEMP_COLOR, (int) (w * scale),
-            (int) (w * scale));
+        TEMP_SPRITE.draw(x, y, (int) (w * scale),
+            (int) (h * scale), TEMP_COLOR);
 
         TEMP_SPRITE.remove();
     }
