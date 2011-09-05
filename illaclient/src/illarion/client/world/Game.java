@@ -598,7 +598,7 @@ public final class Game implements SessionMember {
         LoadingScreen.getInstance().setCurrentlyLoading(
             LoadingScreen.READY_TO_GO);
 
-        ClientWindow.getInstance().getRenderDisplay().stopRendering();
+        //ClientWindow.getInstance().getRenderDisplay().stopRendering();
         ClientWindow.getInstance().getRenderDisplay().getRenderArea()
             .repaint();
         DebugTimer.mark("Loading the client done in"); //$NON-NLS-1$

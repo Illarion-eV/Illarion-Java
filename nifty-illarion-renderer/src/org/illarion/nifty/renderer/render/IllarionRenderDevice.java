@@ -186,7 +186,10 @@ public final class IllarionRenderDevice implements RenderDevice {
     public void enableClip(final int x0, final int y0, final int x1,
         final int y1) {
         disableClip();
-        display.setAreaLimit(x0, y0, x1 - x0, y1 - y0);
+        
+        int height = Graphics.getInstance().getRenderDisplay().getHeight();
+        
+        display.setAreaLimit(x0, height - y1, x1 - x0, y1 - y0);
         clippingActive = true;
     }
 

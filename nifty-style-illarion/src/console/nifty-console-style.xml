@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <nifty-styles>
-  <registerMouseCursor id="textFieldCursor" filename="textfield/mouse-cursor-textfield" hotspotX="3" hotspotY="12"/>
+  <registerMouseCursor id="textFieldCursor" filename="guiSprite://textfield/mouse-cursor-textfield" hotspotX="3" hotspotY="12"/>
 
   <!-- console panel style -->
   <style id="nifty-console-panel">
@@ -43,7 +43,7 @@
     </effect>
   </style>
   <style id="nifty-console-textfield#text">
-    <attributes font="console.fnt" selectionColor="#f00f" visibleToMouse="false" align="left" textHAlign="left" textVAlign="center" valign="center"/>
+    <attributes font="textfont" selectionColor="#f00f" visibleToMouse="false" align="left" textHAlign="left" textVAlign="center" valign="center"/>
   </style>
   <style id="nifty-console-textfield#cursor-panel">
     <attributes childLayout="absolute" />
@@ -51,7 +51,7 @@
   <style id="nifty-console-textfield#cursor">
     <attributes filename="console_cursor_empty"/>
     <effect>
-      <onActive name="imageOverlayPulsate" period="250" timeType="infinite" pulsateType="rectangle" filename="console_cursor" post="true"/>
+      <onActive name="imageOverlayPulsate" period="250" timeType="infinite" pulsateType="rectangle" filename="guiSprite://console_cursor" post="true"/>
     </effect>
   </style>
 

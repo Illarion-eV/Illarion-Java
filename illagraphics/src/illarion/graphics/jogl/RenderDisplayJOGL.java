@@ -492,29 +492,8 @@ public final class RenderDisplayJOGL implements RenderDisplay {
 
         final GL2ES1 gl2 = gl.getGL2ES1();
 
-        final Rectangle newRect = Rectangle.getInstance();
-        final Rectangle newRectRaw = Rectangle.getInstance();
-
-        newRect.set(x, y, width, height);
-        newRectRaw.set(x, y, width, height);
-
-        if (areaLimits.isEmpty()) {
-            gl2.glEnable(GL.GL_SCISSOR_TEST);
-        } else {
-            newRect.intersect(areaLimits.getLast());
-        }
-        gl2.glPushMatrix();
-        gl2.glScissor(newRect.getLeft(), newRect.getBottom(),
-            newRect.getWidth(), newRect.getHeight());
-        if (!areaLimits.isEmpty()) {
-            final Rectangle lastRect = areaLimitsRaw.getLast();
-            gl2.glTranslatef(newRectRaw.getX() - lastRect.getX(),
-                newRectRaw.getY() - lastRect.getY(), 0);
-        } else {
-            gl2.glTranslatef(newRectRaw.getX(), newRectRaw.getY(), 0);
-        }
-        areaLimits.addLast(newRect);
-        areaLimitsRaw.addLast(newRectRaw);
+        gl2.glEnable(GL.GL_SCISSOR_TEST);
+        gl2.glScissor(x, y, width, height);
     }
 
     /**
@@ -664,16 +643,7 @@ public final class RenderDisplayJOGL implements RenderDisplay {
             return;
         }
         final GL2ES1 gl2 = gl.getGL2ES1();
-        areaLimits.removeLast().recycle();
-        areaLimitsRaw.removeLast().recycle();
-        if (areaLimits.isEmpty()) {
-            gl2.glDisable(GL.GL_SCISSOR_TEST);
-        } else {
-            final Rectangle lastRect = areaLimits.getLast();
-            gl2.glScissor(lastRect.getLeft(), lastRect.getBottom(),
-                lastRect.getWidth(), lastRect.getHeight());
-        }
-        gl2.glPopMatrix();
+        gl2.glDisable(GL.GL_SCISSOR_TEST);
     }
 
     /**

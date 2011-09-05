@@ -16,6 +16,7 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import illarion.common.util.FastMath;
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderDisplay;
+import illarion.graphics.jogl.DriverSettingsJOGL;
 import illarion.graphics.jogl.SpriteColorJOGL;
 
 public class JavaFontJOGL implements FontJOGL {
@@ -67,6 +68,7 @@ public class JavaFontJOGL implements FontJOGL {
         final GL2ES1 gl2 = gl.getGL2ES1();
         gl2.glPushMatrix();        
         RenderDisplay display = Graphics.getInstance().getRenderDisplay();
+        DriverSettingsJOGL.getInstance().bindTexture(gl, -1);
 
         renderer.beginRendering(display.getWidth(), display.getHeight());
 

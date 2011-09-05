@@ -47,6 +47,10 @@ public final class IllarionMouseCursor implements MouseCursor {
         final int hotspotY) {
         internalCursor =
             Graphics.getInstance().getMouseCursor(sprite, hotspotX, hotspotY);
+        
+        if (internalCursor == null) {
+            throw new NullPointerException();
+        }
     }
 
     /**
