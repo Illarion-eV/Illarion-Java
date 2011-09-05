@@ -77,7 +77,7 @@ public class JavaFontJOGL implements FontJOGL {
 
         renderer.setColor(color.getRedf(), color.getGreenf(),
             color.getBluef(), color.getAlphaf());
-        renderer.draw(text, posX, posY);
+        renderer.draw(text, posX, display.getHeight() - getHeight() + metrics.getDescent() - posY);
 
         gl2.glPopMatrix();
 

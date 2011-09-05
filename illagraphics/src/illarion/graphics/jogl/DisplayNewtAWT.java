@@ -397,8 +397,10 @@ public final class DisplayNewtAWT extends NewtCanvasAWT implements Display,
         gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
         gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         gl.glLoadIdentity();
-        GLU.createGLU().gluOrtho2D(0, drawable.getWidth(), 0,
-            drawable.getHeight());
+
+        gl.glOrtho(0, drawable.getWidth(), drawable.getHeight(), 0, -9999, 9999);
+//        GLU.createGLU().gluOrtho2D(0, drawable.getWidth(), 0,
+//            drawable.getHeight());
         gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         gl.glLoadIdentity();
 

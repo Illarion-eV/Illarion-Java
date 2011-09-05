@@ -140,10 +140,10 @@ public final class TextureRenderPointer extends AbstractTextureRender {
         }
 
         textureBuffer.rewind();
-        textureBuffer.put(texture.getRelX1()).put(texture.getRelY2());
         textureBuffer.put(texture.getRelX1()).put(texture.getRelY1());
-        textureBuffer.put(texture.getRelX2()).put(texture.getRelY2());
+        textureBuffer.put(texture.getRelX1()).put(texture.getRelY2());
         textureBuffer.put(texture.getRelX2()).put(texture.getRelY1());
+        textureBuffer.put(texture.getRelX2()).put(texture.getRelY2());
         textureBuffer.flip();
 
         gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, textureBuffer);
