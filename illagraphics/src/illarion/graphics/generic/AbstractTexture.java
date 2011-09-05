@@ -299,6 +299,7 @@ public abstract class AbstractTexture implements Texture {
         if (parent != null) {
             parent.decreaseLoadCounter();
             parent.checkUsed();
+            parent = null;
         }
     }
 
@@ -357,7 +358,11 @@ public abstract class AbstractTexture implements Texture {
             throw new IllegalArgumentException(
                 "Invalid implementation of the texture atlas");
         }
+        if (parent != null) {
+            parent.decreaseLoadCounter();
+        }
         parent = (AbstractTextureAtlas) parentAtlas;
+        parent.increaseLoadCounter();
     }
 
     /**
