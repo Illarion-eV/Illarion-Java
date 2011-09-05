@@ -19,6 +19,10 @@
                     </panel>
                     <control name="textfield" maxLength="20" passwordChar="*" />
                 </panel>
+                <panel height="30px" />
+                <panel childLayout="center" visibleToMouse="true" align="center">
+                    <control id="loginBtn" name="button" label="Einloggen" align="center" valign="center" />
+                </panel>
             </panel>
         </layer>
     </screen>

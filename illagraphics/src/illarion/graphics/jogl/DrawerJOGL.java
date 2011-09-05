@@ -27,6 +27,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.glu.GLU;
 
@@ -248,13 +249,13 @@ public final class DrawerJOGL extends AbstractDrawer {
 
             buffer.clear();
             buffer.put(x1).put(y1);
-            buffer.put(x1).put(y2);
             buffer.put(x2).put(y1);
             buffer.put(x2).put(y2);
+            buffer.put(x1).put(y2);
             buffer.flip();
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
-            gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+            gl2.glDrawArrays(GL2.GL_QUADS, 0, 4);
         }
     }
 
