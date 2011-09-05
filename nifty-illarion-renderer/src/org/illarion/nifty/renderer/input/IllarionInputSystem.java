@@ -283,6 +283,7 @@ public final class IllarionInputSystem implements InputSystem,
     @Override
     public boolean handleKeyboardEvent(final KeyboardEvent event) {
         final boolean isKeyDown =
+            (event.getEvent() == KeyboardEvent.EVENT_KEY_PRESSED) ||
             (event.getEvent() == KeyboardEvent.EVENT_KEY_DOWN);
         boolean isShiftDown = false;
         boolean isControlDown = false;
