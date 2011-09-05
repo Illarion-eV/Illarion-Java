@@ -122,7 +122,7 @@ public final class Book extends Widget {
      * The font used to render the text.
      */
     private transient final RenderableFont textFont = FontLoader.getInstance()
-        .getFont(FontLoader.TEXT_FONT);
+        .getFont(FontLoader.Fonts.text);
 
     /**
      * Setup the book so a text can be assigned.

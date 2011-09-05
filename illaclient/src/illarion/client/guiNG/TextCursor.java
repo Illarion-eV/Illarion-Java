@@ -186,15 +186,15 @@ public final class TextCursor {
             case KeyboardEvent.EVENT_KEY_PRESSED:
                     final char character = event.getCharacter();
     
-                    if (target.getTextFontSource().getGlyph(character).getId() != 0) {
-                        if ((target.getMaxLength() > target.getTextLength())
-                            && Character.isDefined(character) && !Character.isISOControl(character) && !Character.isIdentifierIgnorable(character)) {
-                            target.insertCharacter(character);
-                            ++cursorPos;
-                            target.setCursorPosition(cursorPos);
-                        }
-                        return true;
-                    }
+//                    if (target.getTextFontSource().getGlyph(character).getId() != 0) {
+//                        if ((target.getMaxLength() > target.getTextLength())
+//                            && Character.isDefined(character) && !Character.isISOControl(character) && !Character.isIdentifierIgnorable(character)) {
+//                            target.insertCharacter(character);
+//                            ++cursorPos;
+//                            target.setCursorPosition(cursorPos);
+//                        }
+//                        return true;
+//                    }
                 break; // KeyboardEvent.EVENT_KEY_PRESSED
         } // switch (event.getEvent())
 

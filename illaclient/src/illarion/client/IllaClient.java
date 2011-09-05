@@ -464,10 +464,11 @@ public final class IllaClient {
                 requestedReconnect = false;
 
                 Scheduler.getInstance().start();
+                
                 // create the login dialog in a separated thread so we can
                 // update
                 // the display with the main thread
-                displayLoginScreen(args);
+                //displayLoginScreen(args);
 
                 // slowdown time to we get a few display renders before the slow
                 // graphic loading part starts

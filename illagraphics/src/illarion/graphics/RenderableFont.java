@@ -28,9 +28,40 @@ package illarion.graphics;
  */
 public interface RenderableFont {
     /**
-     * Get the underlying FontData object that provides the data for this font.
+     * Get width in pixel of given text.
      * 
-     * @return the font data object
+     * @param text the text to measure
+     * @return the pixel width of the given text
      */
-    FontData getSourceFont();
+    int getWidth(String text);
+
+    /**
+     * The height of the font in pixel.
+     * 
+     * @return font height in pixel
+     */
+    int getHeight();
+
+    /**
+     * Return the advance of the given character including kerning information.
+     * 
+     * @param currentCharacter current character
+     * @param nextCharacter next character
+     * @param size font size
+     * @return width of the character or null when no information for the
+     *         character is available
+     */
+    Integer getCharacterAdvance(char currentCharacter, char nextCharacter,
+        float size);
+
+    /**
+     * Render a character sequence using this font.
+     * 
+     * @param text the text to render
+     * @param posX the x origin of the text
+     * @param posY the y origin of the text
+     * @param color the color of the text
+     * @param size the size of the text
+     */
+    void renderString(String text, int posX, int posY, SpriteColor color, float size);
 }

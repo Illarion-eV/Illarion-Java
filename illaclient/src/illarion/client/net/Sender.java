@@ -155,7 +155,7 @@ final class Sender extends Thread implements NetCommWriter {
                 buffer.putShort((short) crc);
                 buffer.position(0);
 
-                if (true || IllaClient.isDebug(Debug.net)) {
+                if (IllaClient.isDebug(Debug.net)) {
                     NetComm.dump("snd => ", buffer);
                     buffer.flip();
                 }

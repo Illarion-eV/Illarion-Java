@@ -18,11 +18,9 @@
  */
 package org.illarion.nifty.renderer.render;
 
-import de.lessvoid.nifty.spi.render.RenderImage;
-
 import illarion.common.util.ObjectSource;
-
 import illarion.graphics.Sprite;
+import de.lessvoid.nifty.spi.render.RenderImage;
 
 /**
  * This factory takes care for the proper creation of render images for the GUI
@@ -34,16 +32,16 @@ import illarion.graphics.Sprite;
  */
 public final class RenderImageFactory {
     /**
+     * The text that is the header of a sprite image reference.
+     */
+    @SuppressWarnings("nls")
+    private static final String HEADER_GUI_SPRITE = "guiSprite://";
+
+    /**
      * This instance is a source for sprite objects that is needed to fetch
      * sprites to create render images.
      */
     private final ObjectSource<Sprite> spriteSource;
-
-    /**
-     * The text that is the header of a sprite image reference.
-     */
-    @SuppressWarnings("nls")
-    private static final String HEADER_GUI_SPRITE = "guiSprite:";
 
     /**
      * Constructor of the render device that takes the source of any new sprites
@@ -53,6 +51,23 @@ public final class RenderImageFactory {
      */
     public RenderImageFactory(final ObjectSource<Sprite> sprites) {
         spriteSource = sprites;
+    }
+
+    /**
+     * Check if the reference string is a GUI sprite string and fetch the
+     * required image in case it is.
+     * 
+     * @param ref the reference string of the image
+     * @return the image in case the string fits or <code>null</code> in case no
+     *         fitting image was found or the string did not fit the syntax of a
+     *         GUI sprite
+     */
+    private RenderImage checkAndGetSpriteImage(final String ref) {
+        final Sprite sprite = getSprite(ref);
+        if (sprite != null) {
+            return new IllarionSpriteRenderImage(sprite);
+        }
+        return null;
     }
 
     /**
@@ -75,22 +90,17 @@ public final class RenderImageFactory {
     }
 
     /**
-     * Check if the reference string is a GUI sprite string and fetch the
-     * required image in case it is.
+     * Get the sprite in case the string is a proper sprite reference string.
      * 
-     * @param ref the reference string of the image
-     * @return the image in case the string fits or <code>null</code> in case no
-     *         fitting image was found or the string did not fit the syntax of a
-     *         GUI sprite
+     * @param ref the reference string
+     * @return the sprite or <code>null</code>
      */
-    private RenderImage checkAndGetSpriteImage(final String ref) {
+    public Sprite getSprite(final String ref) {
         if (ref.startsWith(HEADER_GUI_SPRITE)) {
             final Sprite sprite =
                 spriteSource.getObject(ref.substring(HEADER_GUI_SPRITE
                     .length()));
-            if (sprite != null) {
-                return new IllarionSpriteRenderImage(sprite);
-            }
+            return sprite;
         }
         return null;
     }

@@ -33,6 +33,8 @@ public interface MouseEventReceiver {
      * MouseEvent back into the buffer for reuse.
      * 
      * @param event the keyboard event that is handed over in this run
+     * @return <code>true</code> in case the event was handled and no further
+     *         receivers are supposed to be notified about this event
      */
-    void handleMouseEvent(MouseEvent event);
+    boolean handleMouseEvent(MouseEvent event);
 }

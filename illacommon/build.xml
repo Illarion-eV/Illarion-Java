@@ -192,17 +192,17 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<include name="nativewindow-natives*.jar" />
 			<include name="newt-natives*.jar" />
 		</patternset>
-		
+
 		<delete>
-        	<fileset dir="${signedlibs}">
-                <include name="jogl.jar"/>
-                <include name="nativewindow.jar"/>
-                <include name="newt.jar"/>
-        	    <include name="jogl*.jar"/>
-                <include name="nativewindow*.jar"/>
-                <include name="newt*.jar"/>
-        	</fileset>
-        </delete>
+			<fileset dir="${signedlibs}">
+				<include name="jogl.jar"/>
+				<include name="nativewindow.jar"/>
+				<include name="newt.jar"/>
+				<include name="jogl*.jar"/>
+				<include name="nativewindow*.jar"/>
+				<include name="newt*.jar"/>
+			</fileset>
+		</delete>
 
 
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
@@ -212,12 +212,12 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<fileset dir="${jogl.dir}">
 				<patternset refid="jogl.natives" />
 			</fileset>
-            <fileset dir="${nativewindow.dir}">
-                <patternset refid="jogl.natives" />
-            </fileset>
-            <fileset dir="${newt.dir}">
-                <patternset refid="jogl.natives" />
-            </fileset>
+			<fileset dir="${nativewindow.dir}">
+				<patternset refid="jogl.natives" />
+			</fileset>
+			<fileset dir="${newt.dir}">
+				<patternset refid="jogl.natives" />
+			</fileset>
 		</resourceprepare>
 
 		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
@@ -227,9 +227,9 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 					<patternset refid="nativewindow.pattern" />
 					<patternset refid="newt.pattern" />
 				</fileset>
-                <fileset dir="${signedlibs}">
-                    <patternset refid="jogl.natives" />
-                </fileset>
+				<fileset dir="${signedlibs}">
+					<patternset refid="jogl.natives" />
+				</fileset>
 			</path>
 		</signjar>
 
@@ -240,9 +240,9 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 					<patternset refid="nativewindow.pattern" />
 					<patternset refid="newt.pattern" />
 				</fileset>
-                <fileset dir="${signedlibs}">
-                    <patternset refid="jogl.natives" />
-                </fileset>
+				<fileset dir="${signedlibs}">
+					<patternset refid="jogl.natives" />
+				</fileset>
 			</path>
 		</verifyjar>
 
@@ -693,8 +693,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<path>
 				<fileset dir="${signedlibs}">
 					<patternset refid="vorbisspi.pattern" />
-                    <patternset refid="jorbis.pattern" />
-                    <patternset refid="tritonus.pattern" />
+					<patternset refid="jorbis.pattern" />
+					<patternset refid="tritonus.pattern" />
 				</fileset>
 			</path>
 		</signjar>
@@ -703,8 +703,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<path>
 				<fileset dir="${signedlibs}">
 					<patternset refid="vorbisspi.pattern" />
-                    <patternset refid="jorbis.pattern" />
-                    <patternset refid="tritonus.pattern" />
+					<patternset refid="jorbis.pattern" />
+					<patternset refid="tritonus.pattern" />
 				</fileset>
 			</path>
 		</verifyjar>
@@ -712,8 +712,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<resourcebuild target="${setuplib}/vorbisspi.illares" usepack200="true">
 			<fileset dir="${signedlibs}">
 				<patternset refid="vorbisspi.pattern" />
-                <patternset refid="jorbis.pattern" />
-                <patternset refid="tritonus.pattern" />
+				<patternset refid="jorbis.pattern" />
+				<patternset refid="tritonus.pattern" />
 			</fileset>
 		</resourcebuild>
 	</target>
@@ -736,92 +736,92 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	</target>
 
 	<target name="extract_libs" depends="check_libs_uptodate" unless="libs.uptodate">
-        <delete dir="${signedlibs}" failonerror="false" />
+		<delete dir="${signedlibs}" failonerror="false" />
 		<delete dir="${libs}" failonerror="false" />
 		<mkdir dir="${libs}" />
 		<unzip dest="${libs}" src="${common}/libs-all.zip" overwrite="true" />
 		<antcall target="extract_natives" />
 	</target>
-	
+
 	<target name="extract_natives">
-        <mkdir dir="${native}" />
-        <mkdir dir="${native}/linux32" />
-        <mkdir dir="${native}/linux64" />
-        <mkdir dir="${native}/macosx" />
-        <mkdir dir="${native}/solaris32" />
-        <mkdir dir="${native}/solaris64" />
-        <mkdir dir="${native}/win32" />
-        <mkdir dir="${native}/win64" />
+		<mkdir dir="${native}" />
+		<mkdir dir="${native}/linux32" />
+		<mkdir dir="${native}/linux64" />
+		<mkdir dir="${native}/macosx" />
+		<mkdir dir="${native}/solaris32" />
+		<mkdir dir="${native}/solaris64" />
+		<mkdir dir="${native}/win32" />
+		<mkdir dir="${native}/win64" />
 
-        <unjar dest="${native}/linux32" overwrite="true">
-            <patternset>
-                <exclude name="META-INF/" />
-            </patternset>
-            <fileset dir="${common}/lib">
-            	<exclude name="signed/" />
-                <include name="**/*-linux-i586.jar" />
-            </fileset>
-        </unjar>
+		<unjar dest="${native}/linux32" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<exclude name="signed/" />
+				<include name="**/*-linux-i586.jar" />
+			</fileset>
+		</unjar>
 
-        <unjar dest="${native}/linux64" overwrite="true">
-            <patternset>
-                <exclude name="META-INF/" />
-            </patternset>
-            <fileset dir="${common}/lib">
-                <exclude name="signed/" />
-                <include name="**/*-linux-amd64.jar" />
-            </fileset>
-        </unjar>
+		<unjar dest="${native}/linux64" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<exclude name="signed/" />
+				<include name="**/*-linux-amd64.jar" />
+			</fileset>
+		</unjar>
 
-        <unjar dest="${native}/macosx" overwrite="true">
-            <patternset>
-                <exclude name="META-INF/" />
-            </patternset>
-            <fileset dir="${common}/lib">
-                <exclude name="signed/" />
-                <include name="**/*-macosx-universal.jar" />
-            </fileset>
-        </unjar>
+		<unjar dest="${native}/macosx" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<exclude name="signed/" />
+				<include name="**/*-macosx-universal.jar" />
+			</fileset>
+		</unjar>
 
-        <unjar dest="${native}/solaris32" overwrite="true">
-            <patternset>
-                <exclude name="META-INF/" />
-            </patternset>
-            <fileset dir="${common}/lib">
-                <exclude name="signed/" />
-                <include name="**/*-solaris-i586.jar" />
-            </fileset>
-        </unjar>
+		<unjar dest="${native}/solaris32" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<exclude name="signed/" />
+				<include name="**/*-solaris-i586.jar" />
+			</fileset>
+		</unjar>
 
-        <unjar dest="${native}/solaris64" overwrite="true">
-            <patternset>
-                <exclude name="META-INF/" />
-            </patternset>
-            <fileset dir="${common}/lib">
-                <exclude name="signed/" />
-                <include name="**/*-solaris-amd64.jar" />
-            </fileset>
-        </unjar>
+		<unjar dest="${native}/solaris64" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<exclude name="signed/" />
+				<include name="**/*-solaris-amd64.jar" />
+			</fileset>
+		</unjar>
 
-        <unjar dest="${native}/win32" overwrite="true">
-            <patternset>
-                <exclude name="META-INF/" />
-            </patternset>
-            <fileset dir="${common}/lib">
-                <exclude name="signed/" />
-                <include name="**/*-windows-i586.jar" />
-            </fileset>
-        </unjar>
+		<unjar dest="${native}/win32" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<exclude name="signed/" />
+				<include name="**/*-windows-i586.jar" />
+			</fileset>
+		</unjar>
 
-        <unjar dest="${native}/win64" overwrite="true">
-            <patternset>
-                <exclude name="META-INF/" />
-            </patternset>
-            <fileset dir="${common}/lib">
-                <exclude name="signed/" />
-                <include name="**/*-windows-amd64.jar" />
-            </fileset>
-        </unjar>
+		<unjar dest="${native}/win64" overwrite="true">
+			<patternset>
+				<exclude name="META-INF/" />
+			</patternset>
+			<fileset dir="${common}/lib">
+				<exclude name="signed/" />
+				<include name="**/*-windows-amd64.jar" />
+			</fileset>
+		</unjar>
 	</target>
 
 	<target name="download_resources" description="Download prebuild resources">
@@ -898,27 +898,25 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<!--<property name="characters" value="65535" />-->
 		<!-- UTF-8 -->
 		<property name="fonts" location="${config}/data/fonts"/>
-
-
-		<fontbuild targetFolder="${config}/data/gui" outputName="menuFont"
-            charakterCount="${characters}" fontFile="${fonts}/BLKCHCRY.TTF"
+	
+		<fontbuild targetFolder="${fonts}"
+            charakterCount="${characters}" fontFile="${fonts}/BlackChancery.ttf"
             fontSize="24" fontType="normal" />
 
-		<fontbuild targetFolder="${config}/data/gui" outputName="textFont"
-            charakterCount="${characters}" fontFile="${fonts}/Ubuntu-R.ttf"
+		<fontbuild targetFolder="${fonts}"
+            charakterCount="${characters}" fontFile="${fonts}/Ubuntu.ttf"
             fontSize="16" fontType="normal" />
 
-		<fontbuild targetFolder="${config}/data/gui" outputName="smallFont"
-            charakterCount="${characters}" fontFile="${fonts}/Ubuntu-R.ttf"
+		<fontbuild targetFolder="${fonts}"
+            charakterCount="${characters}" fontFile="${fonts}/Ubuntu.ttf"
             fontSize="14" fontType="normal" />
 	</target>
 
 	<target name="rsc_gui" description="Build the GUI resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist" >
-		<texconvert generatetransparency="true" target="${resources}/rsc_gui.jar">
+		<texconvert generatetransparency="true" target="${resources}/rsc_gui.tmp" dumpimages="false">
 			<fileset dir="${config}">
 				<include name="data/gui/*.png" />
 				<include name="data/gui/**/*.png" />
-				<include name="data/gui/*.illaFont" />
 				<exclude name="**/.svn/**" />
 			</fileset>
 			<manifest>
@@ -929,6 +927,42 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<attribute name="Implementation-Version" value="${resources.version}" />
 			</manifest>
 		</texconvert>
+
+		<texconvert generatetransparency="false" target="${resources}/rsc_fonts.tmp">
+			<fileset dir="${config}">
+				<include name="data/fonts/*.png" />
+				<include name="data/fonts/**/*.png" />
+                <include name="data/fonts/**/*.illaFont" />
+                <include name="data/fonts/*.TTF" />
+                <include name="data/fonts/*.ttf" />
+				<exclude name="**/.svn/**" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${resources.vendor}" />
+				<attribute name="Implementation-Title" value="${resources.name}" />
+				<attribute name="Implementation-Version" value="${resources.version}" />
+			</manifest>
+		</texconvert>
+		
+		<jar destfile="${resources}/rsc_gui.jar">
+			<zipfileset src="${resources}/rsc_gui.tmp" />
+			<zipfileset src="${resources}/rsc_fonts.tmp" />
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Built-Date" value="${TODAY}" />
+                <attribute name="Implementation-Vendor" value="${resources.vendor}" />
+                <attribute name="Implementation-Title" value="${resources.name}" />
+                <attribute name="Implementation-Version" value="${resources.version}" />
+            </manifest>
+		</jar>
+		
+		<delete>
+        	<fileset dir="${resources}">
+        	    <include name="rsc_*.tmp"/>
+        	</fileset>
+        </delete>
 
 		<resourceprepare targetdir="${signedresources}" usepack200="false">
 			<filelist dir="${resources}" files="rsc_gui.jar" />

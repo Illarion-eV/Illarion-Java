@@ -98,4 +98,21 @@ public interface Texture {
      * @param parentAtlas the parent texture atlas
      */
     void setParent(TextureAtlas parentAtlas);
+    
+    /**
+     * This function is used to create a texture that represents a part of this
+     * texture.
+     * 
+     * @param x the x coordinate of that image
+     * @param y the y coordinate of that image
+     * @param width the width of the new image
+     * @param height the height of the new image
+     * @return the new image
+     */
+    Texture getSubTexture(int x, int y, int width, int height);
+    
+    /**
+     * Clean up all resources that were load for this texture in special.
+     */
+    void cleanup();
 }

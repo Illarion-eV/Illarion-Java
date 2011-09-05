@@ -34,7 +34,7 @@ import illarion.client.util.Lang;
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
 import illarion.graphics.SpriteColor;
-import illarion.graphics.common.Font;
+import illarion.graphics.common.RenderedFont;
 import illarion.graphics.common.FontLoader;
 
 /**
@@ -244,7 +244,7 @@ public final class ReallyExit extends SolidColor {
         text.setWidth(window.getWidth() - 30);
         text.setAlign(Text.ALIGN_CENTER);
         text.setRelPos(15, 57);
-        text.setFont(FontLoader.getInstance().getFont(FontLoader.TEXT_FONT));
+        text.setFont(FontLoader.getInstance().getFont(FontLoader.Fonts.text));
         text.setColor(Colors.black.getColor());
         text.setText(Lang.getMsg("exit.reallyExit.message"));
 
@@ -259,7 +259,7 @@ public final class ReallyExit extends SolidColor {
             - (yesButton.getWidth() >> 1), 10);
 
         final RenderableFont buttonFont =
-            FontLoader.getInstance().getFont(FontLoader.TEXT_FONT);
+            FontLoader.getInstance().getFont(FontLoader.Fonts.text);
         final SpriteColor buttonFontColor =
             Graphics.getInstance().getSpriteColor();
         buttonFontColor.set(221, 198, 135);
@@ -271,8 +271,7 @@ public final class ReallyExit extends SolidColor {
         yesText.setColor(buttonFontColor);
         yesText.setAlign(Text.ALIGN_CENTER);
         yesText.setWidth(50);
-        yesText.setHeight(((Font) buttonFont.getSourceFont()).getStringBounds(
-            yesString, 0, yesString.length()).height);
+        yesText.setHeight(buttonFont.getHeight());
         yesText.setRelPos(5, 0);
 
         final ImageRepeated yesBackground = new ImageRepeated();
@@ -304,8 +303,7 @@ public final class ReallyExit extends SolidColor {
         noText.setColor(buttonFontColor);
         noText.setAlign(Text.ALIGN_CENTER);
         noText.setWidth(50);
-        noText.setHeight(((Font) buttonFont.getSourceFont()).getStringBounds(
-            noString, 0, noString.length()).height);
+        noText.setHeight(buttonFont.getHeight());
         noText.setRelPos(5, 0);
 
         final ImageRepeated noBackground = new ImageRepeated();

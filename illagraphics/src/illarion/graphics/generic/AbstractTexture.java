@@ -223,7 +223,7 @@ public abstract class AbstractTexture implements Texture {
     public final float getRelX1() {
         return relX1;
     }
-
+    
     /**
      * Get the X coordinate plus the width of the texture as relative value to
      * the image it is located on.

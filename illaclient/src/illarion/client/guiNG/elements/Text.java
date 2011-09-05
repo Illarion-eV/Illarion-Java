@@ -22,7 +22,7 @@ import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
 import illarion.graphics.SpriteColor;
 import illarion.graphics.TextLine;
-import illarion.graphics.common.Font;
+import illarion.graphics.common.RenderedFont;
 
 /**
  * A widget that shows one line of text. It does not support line breaks. But it
@@ -87,11 +87,6 @@ public class Text extends Widget {
      * The offset of the text placement that is calculated by the align.
      */
     private transient int offsetX = 0;
-
-    /**
-     * The source font object that is needed to calculate some values.
-     */
-    private transient Font sourceFont;
 
     /**
      * The text that widget shall display.
@@ -204,7 +199,6 @@ public class Text extends Widget {
     public void setFont(final RenderableFont newFont) {
         if (font != newFont) {
             font = newFont;
-            sourceFont = (Font) font.getSourceFont();
             graphicalText.setFont(newFont);
             graphicalText.layout();
             updateOffset();
@@ -230,7 +224,7 @@ public class Text extends Widget {
      * @param newText the new text that shall be shown.
      */
     public void setText(final String newText) {
-        final String cleanedText = newText.replace(Font.NEWLINE, ' ');
+        final String cleanedText = newText.replace(RenderedFont.NEWLINE, ' ');
         if (!cleanedText.equals(text)) {
             text = cleanedText;
             graphicalText.setText(cleanedText);
@@ -278,11 +272,10 @@ public class Text extends Widget {
         } else if (align == ALIGN_RIGHT) {
             offsetX =
                 super.getWidth()
-                    - sourceFont.getStringBounds(text, 0, text.length()).width;
+                    - font.getWidth(text);
         } else if (align == ALIGN_CENTER) {
             offsetX =
-                (super.getWidth() - sourceFont.getStringBounds(text, 0,
-                    text.length()).width) / 2;
+                (super.getWidth() - font.getWidth(text)) / 2;
         }
         graphicalText.setLocation(super.getRelX() + offsetX, super.getRelY());
     }

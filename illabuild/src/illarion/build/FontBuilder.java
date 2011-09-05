@@ -52,7 +52,7 @@ import org.apache.tools.ant.Task;
 
 import illarion.common.util.FastMath;
 
-import illarion.graphics.common.Font;
+import illarion.graphics.common.RenderedFont;
 
 /**
  * The task of this utility class is it to prepare the fonts that can be used in
@@ -90,11 +90,6 @@ public final class FontBuilder extends Task {
     private int fontType;
 
     /**
-     * The name of the font that is created.
-     */
-    private String outputFontName;
-
-    /**
      * The target folder for the object file and the image folder.
      */
     private File targetFolder;
@@ -130,7 +125,6 @@ public final class FontBuilder extends Task {
         int fontSize = 0;
         String fontType = null;
         int characters = 256;
-        String outputName = null;
         String outputFolder = null;
 
         for (int i = 0; i < (args.length - 1); i += 2) {
@@ -142,8 +136,6 @@ public final class FontBuilder extends Task {
                 fontType = args[i + 1];
             } else if (args[i].equals("--characters")) {
                 characters = Integer.parseInt(args[i + 1]);
-            } else if (args[i].equals("--outputName")) {
-                outputName = args[i + 1];
             } else if (args[i].equals("--outputFolder")) {
                 outputFolder = args[i + 1];
             }
@@ -156,7 +148,6 @@ public final class FontBuilder extends Task {
             builder.setFontName(fontName);
             builder.setFontType(fontType);
             builder.setFontSize(fontSize);
-            builder.setOutputName(outputName);
             builder.validate();
             builder.buildFont();
         } catch (final Exception e) {
@@ -278,15 +269,6 @@ public final class FontBuilder extends Task {
     }
 
     /**
-     * Set the name of the font that is created.
-     * 
-     * @param name the name of the font created
-     */
-    public void setOutputName(final String name) {
-        outputFontName = name;
-    }
-
-    /**
      * The target directory.
      * 
      * @param dir the working and target directory where the fonts are stored
@@ -305,13 +287,6 @@ public final class FontBuilder extends Task {
      */
     @SuppressWarnings("nls")
     private void buildFont() throws Exception {
-        final File targetImageFolder =
-            new File(targetFolder.getAbsolutePath() + File.separatorChar
-                + outputFontName);
-        final File targetFile =
-            new File(targetFolder.getAbsolutePath() + File.separatorChar
-                + outputFontName + ".illaFont");
-
         final java.awt.Font javaFont;
 
         if (fontName != null) {
@@ -324,11 +299,26 @@ public final class FontBuilder extends Task {
         } else {
             return;
         }
+        
+        final File targetFontFolder =
+            new File(targetFolder, javaFont.getName());
+        String imageFolder = Integer.toString(fontSize);
+        if ((fontType & java.awt.Font.BOLD) > 0) {
+            imageFolder += "-bold";
+        } else if ((fontType & java.awt.Font.ITALIC) > 0) {
+            imageFolder += "-italic";
+        }
+
+        final File targetFile =
+            new File(targetFontFolder, imageFolder + ".illaFont");
+        final File targetImageFolder =
+            new File(targetFontFolder, imageFolder);
+        
         // create the directory for the font
         if (targetImageFolder.exists()) {
             deleteDirectory(targetImageFolder);
         }
-        targetImageFolder.mkdir();
+        targetImageFolder.mkdirs();
         if (targetFile.exists()) {
             targetFile.delete();
         }
@@ -356,7 +346,7 @@ public final class FontBuilder extends Task {
         }
 
         final int numGlyphs = Math.min(characters, javaFont.getNumGlyphs());
-        final Font.Glyph[] glyph = new Font.Glyph[numGlyphs];
+        final RenderedFont.Glyph[] glyph = new RenderedFont.Glyph[numGlyphs];
 
         final Map<Integer, File> fileNames = new HashMap<Integer, File>();
 
@@ -440,7 +430,7 @@ public final class FontBuilder extends Task {
             }
 
             glyph[i] =
-                new Font.Glyph(i, bounds.x, (-(bounds.height + bounds.y)),
+                new RenderedFont.Glyph(i, bounds.x, (-(bounds.height + bounds.y)),
                     FastMath.floor(glyphAdvance), kerning, imageName);
         }
 
@@ -455,8 +445,8 @@ public final class FontBuilder extends Task {
             }
         }
 
-        final Font newFont =
-            new Font(outputFontName, javaFont.isBold(), javaFont.isItalic(),
+        final RenderedFont newFont =
+            new RenderedFont(javaFont.getName(), javaFont.isBold(), javaFont.isItalic(),
                 glyph, javaFont.getSize(), metrics.getAscent(),
                 metrics.getDescent(), metrics.getLeading(), mapping);
 
@@ -467,7 +457,7 @@ public final class FontBuilder extends Task {
         oos.flush();
         oos.close();
 
-        System.out.println("Building font \"" + outputFontName + "\" done.");
+        System.out.println("Building font \"" + javaFont.getName() + "\" ("+imageFolder+") done.");
         System.out.println();
     }
 
@@ -481,9 +471,6 @@ public final class FontBuilder extends Task {
     private void validate() throws BuildException {
         if (targetFolder == null) {
             throw new BuildException("Target folder is not set.");
-        }
-        if (outputFontName == null) {
-            throw new BuildException("Output font name is not set.");
         }
         if ((fontName == null) && (fontFile == null)) {
             throw new BuildException(

@@ -18,9 +18,13 @@
  */
 package org.illarion.nifty.renderer.render;
 
+import illarion.graphics.Graphics;
 import illarion.graphics.Sprite;
+import illarion.graphics.SpriteColor;
 
-import de.lessvoid.nifty.spi.render.RenderImage;
+import org.apache.log4j.Logger;
+
+import de.lessvoid.nifty.tools.Color;
 
 /**
  * This class is a image that can be displayed by the Nifty-GUI. It holds a
@@ -30,12 +34,45 @@ import de.lessvoid.nifty.spi.render.RenderImage;
  * @since 1.22/1.3
  * @version 1.22/1.3
  */
-public final class IllarionSpriteRenderImage implements RenderImage {
+final class IllarionSpriteRenderImage implements IllarionRenderImage {
+    /**
+     * The instance of the logger that is used to write out the data.
+     */
+    private static final Logger LOGGER = Logger
+        .getLogger(IllarionSpriteRenderImage.class);
+
+    /**
+     * The sprite color that is used to transfer the nifty color data to the
+     * illarion render environment.
+     */
+    private static final SpriteColor TEMP_COLOR;
+
+    /**
+     * This contains a sprite instance that is used for some render operations
+     * temporarily.
+     */
+    private static final Sprite TEMP_SPRITE;
+
+    static {
+        TEMP_COLOR = Graphics.getInstance().getSpriteColor();
+        TEMP_SPRITE = Graphics.getInstance().getSprite(1);
+        TEMP_SPRITE.setAlign(Sprite.HAlign.center, Sprite.VAlign.middle);
+    }
+
     /**
      * The sprite that contains the actual image.
      */
     private final Sprite internalSprite;
-    
+
+    /**
+     * Create a copy of another render image.
+     * 
+     * @param org the image to copy
+     */
+    public IllarionSpriteRenderImage(final IllarionSpriteRenderImage org) {
+        internalSprite = org.internalSprite;
+    }
+
     /**
      * Create a render image that encapsulates a sprite.
      * 
@@ -47,24 +84,16 @@ public final class IllarionSpriteRenderImage implements RenderImage {
         }
         internalSprite = sprite;
     }
-    
-    /**
-     * Create a copy of another render image.
-     * 
-     * @param org the image to copy
-     */
-    public IllarionSpriteRenderImage(final IllarionSpriteRenderImage org) {
-        internalSprite = org.internalSprite;
-    }
 
     /**
-     * Get the width of the image.
-     * 
-     * @return the width of the image
+     * Remove this image as its not used anymore.
      */
     @Override
-    public int getWidth() {
-        return internalSprite.getWidth();
+    public void dispose() {
+        /*
+         * Disposing a image does nothing as the images are stored in the
+         * internal storage for later usage.
+         */
     }
 
     /**
@@ -78,14 +107,41 @@ public final class IllarionSpriteRenderImage implements RenderImage {
     }
 
     /**
-     * Remove this image as its not used anymore.
+     * Get the width of the image.
+     * 
+     * @return the width of the image
      */
     @Override
-    public void dispose() {
-        /*
-         * Disposing a image does nothing as the images are stored in the
-         * internal storage for later usage.
-         */
+    public int getWidth() {
+        return internalSprite.getWidth();
+    }
+
+    @Override
+    public void renderImage(final int x, final int y, final int width,
+        final int height, final Color color, final float imageScale) {
+        TEMP_COLOR.set(color.getRed(), color.getGreen(), color.getBlue());
+        TEMP_COLOR.setAlpha(color.getAlpha());
+        internalSprite.draw(x, y, TEMP_COLOR, (int) (width * imageScale),
+            (int) (height * imageScale));
+    }
+
+    @Override
+    public void renderImage(final int x, final int y, final int w,
+        final int h, final int srcX, final int srcY, final int srcW,
+        final int srcH, final Color color, final float scale,
+        final int centerX, final int centerY) {
+        
+        TEMP_COLOR.set(color.getRed(), color.getGreen(), color.getBlue());
+        TEMP_COLOR.setAlpha(color.getAlpha());
+
+        TEMP_SPRITE.addTexture(internalSprite.getTexture(0).getSubTexture(
+            srcX, srcY, srcW, srcH));
+        TEMP_SPRITE.setOffset(centerX - x, centerY - y);
+
+        TEMP_SPRITE.draw(x, y, (int) (w * scale),
+            (int) (h * scale), TEMP_COLOR);
+
+        TEMP_SPRITE.remove();
     }
 
 }

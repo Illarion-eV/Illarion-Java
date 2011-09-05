@@ -19,9 +19,10 @@
 package illarion.graphics.lwjgl;
 
 import illarion.graphics.FontData;
+import illarion.graphics.RenderableFont;
 import illarion.graphics.SpriteColor;
-import illarion.graphics.generic.AbstractRenderableFont;
-import illarion.graphics.lwjgl.render.AbstractTextureRender;
+import illarion.graphics.lwjgl.font.FontLWJGL;
+import illarion.graphics.lwjgl.font.TextureFontLWJGL;
 
 /**
  * This class defines all informations for a OpenGL image based font.
@@ -30,11 +31,12 @@ import illarion.graphics.lwjgl.render.AbstractTextureRender;
  * @version 2.00
  * @since 2.00
  */
-public final class RenderableFontLWJGL extends AbstractRenderableFont {
+public final class RenderableFontLWJGL implements RenderableFont {
+
     /**
      * The texture render that takes care for drawing the glyph textures.
      */
-    private final AbstractTextureRender texRender;
+    private final FontLWJGL interalFont;
 
     /**
      * Constructor for connecting with a font definitions file.
@@ -42,29 +44,28 @@ public final class RenderableFontLWJGL extends AbstractRenderableFont {
      * @param font the font that is rendered
      */
     public RenderableFontLWJGL(final FontData font) {
-        super(font);
-        texRender = AbstractTextureRender.getInstance();
+        interalFont = new TextureFontLWJGL(font);
     }
 
-    /**
-     * Draw a glyph to the screen. Only the offset of the glyph is considered
-     * due this rendering action. The influence of the kerning is not considered
-     * by the function and must by included in the location of the pen before
-     * rendering the glyph.
-     * 
-     * @param glyph the glyph that is supposed to be rendered
-     * @param penX the x coordinate of the pen
-     * @param penY the y coordinate of the pen
-     * @param color the sprite color that is used to draw the texture
-     */
     @Override
-    public void renderGlyph(final FontData.GlyphData glyph, final int penX,
-        final int penY, final SpriteColor color) {
-        final TextureLWJGL texture = (TextureLWJGL) glyph.getTexture();
-        if (texture != null) {
-            texRender.drawTexture(penX + glyph.getX(), penY + glyph.getY(),
-                0.f, texture.getImageWidth(), texture.getImageHeight(),
-                texture, color, false, 0.f);
-        }
+    public int getWidth(String text) {
+        return interalFont.getWidth(text);
+    }
+
+    @Override
+    public int getHeight() {
+        return interalFont.getHeight();
+    }
+
+    @Override
+    public Integer getCharacterAdvance(char currentCharacter,
+        char nextCharacter, float size) {
+        return interalFont.getCharacterAdvance(currentCharacter, nextCharacter, size);
+    }
+
+    @Override
+    public void renderString(String text, int posX, int posY,
+        SpriteColor color, float size) {
+        interalFont.renderString(text, posX, posY, (SpriteColorLWJGL) color, size);
     }
 }

@@ -137,6 +137,23 @@ public abstract class AbstractSprite implements Sprite {
         offsetY = 0;
         mirror = false;
     }
+    
+    /**
+     * Copy constructor creates a new sprite that is at the time of coping
+     * identical to the original sprite. How ever its possible to change the
+     * sprite later.
+     * 
+     * @param org the original sprite
+     */
+    protected AbstractSprite(final AbstractSprite org) {
+        hAlignUsed = org.hAlignUsed;
+        vAlignUsed = org.vAlignUsed;
+        textures = org.textures.clone();
+        unsetTextures = org.unsetTextures;
+        offsetX = org.offsetX;
+        offsetY = org.offsetY;
+        mirror = org.mirror;
+    }
 
     /**
      * Add a texture to the sprite. This texture needs to by a LWJGL
@@ -379,6 +396,8 @@ public abstract class AbstractSprite implements Sprite {
     public final void remove() {
         for (final AbstractTexture texture : textures) {
             texture.remove();
+            texture.cleanup();
+            unsetTextures++;
         }
     }
 

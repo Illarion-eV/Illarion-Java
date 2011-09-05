@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="illarion/client/test/" kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illacommon"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illagraphics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illainput"/>
@@ -26,7 +26,8 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/illacommon/lib/nifty/nifty-default-controls-1.3-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/illacommon/lib/nifty/nifty-style-black-1.3.jar" sourcepath="/illacommon/lib/nifty/nifty-style-black-1.3-sources.jar"/>
 	<classpathentry kind="src" path="/nifty-illarion-renderer"/>
+	<classpathentry kind="lib" path="/illacommon/lib/xpp3/xpp3_min-1.1.4c.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/nifty-style-illarion"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

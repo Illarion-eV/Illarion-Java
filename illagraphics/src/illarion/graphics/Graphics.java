@@ -18,6 +18,7 @@
  */
 package illarion.graphics;
 
+import java.awt.Font;
 import java.lang.reflect.InvocationTargetException;
 
 import javolution.lang.Reflection;
@@ -245,6 +246,18 @@ public final class Graphics {
     /**
      * Load a font that can be rendered in the client.
      * 
+     * @param font the java font that is supposed to be loaded
+     * @return the loaded font
+     * @see illarion.graphics.RenderableFont
+     */
+    public RenderableFont getFont(final Font font) {
+        return create(RenderableFont.class, usedEngine,
+            new Class<?>[] { Font.class }, new Object[] { font });
+    }
+
+    /**
+     * Load a font that can be rendered in the client.
+     * 
      * @param font the font data that is used for the font to load
      * @return the loaded font
      * @see illarion.graphics.RenderableFont
@@ -266,6 +279,19 @@ public final class Graphics {
             maskInstance = create(MaskUtil.class, usedEngine);
         }
         return maskInstance;
+    }
+
+    /**
+     * Create a new mouse cursor instance that is based on a sprite.
+     * 
+     * @param sprite the sprite that is used to display the mouse cursor
+     * @return the mouse cursor instance
+     */
+    public MouseCursor getMouseCursor(final Sprite sprite, final int hotspotX,
+        final int hotspotY) {
+        return create(MouseCursor.class, usedEngine, new Class<?>[] {
+            Sprite.class, int.class, int.class }, new Object[] { sprite,
+            Integer.valueOf(hotspotX), Integer.valueOf(hotspotY) });
     }
 
     /**
