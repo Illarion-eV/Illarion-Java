@@ -19,6 +19,9 @@
 package illarion.graphics;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.InputStream;
+import java.io.PipedInputStream;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -120,28 +123,12 @@ public interface TextureAtlas {
     Texture getTexture(String name);
 
     /**
-     * Get the byte data of the texture. The required format depends on the type
-     * of the texture. So its one, two, three or four byte per pixel. The image
-     * data needs to be uncompressed.
-     * 
-     * @return the byte data of the texture
-     */
-    ByteBuffer getTextureData();
-
-    /**
      * Get the height of the atlas texture.
      * 
      * @return the height of the atlas texture
      */
     int getTextureHeight();
-
-    /**
-     * Get a unique identifier of the texture.
-     * 
-     * @return the ID number of the texture
-     */
-    int getTextureID();
-
+    
     /**
      * Get the texture as a buffered image. This will only work before the image
      * data is discarded. Make sure to disable the discarding before its
@@ -314,4 +301,14 @@ public interface TextureAtlas {
      * @param imageData the byte data of the image
      */
     void updateTextureArea(int x, int y, int w, int h, ByteBuffer imageData);
+
+    void writeTextureDataToFile(File file);
+
+    void loadTextureData(File dataFile);
+
+    void loadTextureData(InputStream dataStream);
+
+    void loadTextureData(InputStream dataStream, String string);
+    
+    void enable();
 }

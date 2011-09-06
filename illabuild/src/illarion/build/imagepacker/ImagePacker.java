@@ -28,9 +28,12 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -50,6 +53,7 @@ import illarion.common.util.FastMath;
 
 import illarion.graphics.Graphics;
 import illarion.graphics.TextureAtlas;
+import illarion.graphics.common.SubTextureCoord;
 
 /**
  * A image packer that sorts the images by its types and places them in a good
@@ -112,7 +116,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
     /**
      * Maximal texture size in both directions in pixel.
      */
-    private static final int MAX_SIZE = 1024;
+    private static final int MAX_SIZE = 2048;
 
     /**
      * The format for the first line of the informations printed for each
@@ -156,23 +160,28 @@ public final class ImagePacker implements Comparator<TextureElement> {
     private static final String TEXTURE_INFO_LINE4_TRANS_FORMAT =
         "Additional Transparency Informations: %1$s Bytes";
 
+     static final int TYPE_RGB = 0;
+     static final int TYPE_RGBA = 1;
+     static final int TYPE_GREY = 2;
+    static final int TYPE_GREY_ALPHA = 3;
+
     static {
         colorModels = new ComponentColorModel[4];
-        colorModels[TextureAtlas.TYPE_RGBA] =
+        colorModels[TYPE_RGBA] =
             new ComponentColorModel(
                 ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8,
                     8, 8 }, true, false, Transparency.TRANSLUCENT,
                 DataBuffer.TYPE_BYTE);
-        colorModels[TextureAtlas.TYPE_RGB] =
+        colorModels[TYPE_RGB] =
             new ComponentColorModel(
                 ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8,
                     8 }, false, false, Transparency.OPAQUE,
                 DataBuffer.TYPE_BYTE);
-        colorModels[TextureAtlas.TYPE_GREY] =
+        colorModels[TYPE_GREY] =
             new ComponentColorModel(
                 ColorSpace.getInstance(ColorSpace.CS_GRAY), new int[] { 8 },
                 false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
-        colorModels[TextureAtlas.TYPE_GREY_ALPHA] =
+        colorModels[TYPE_GREY_ALPHA] =
             new ComponentColorModel(
                 ColorSpace.getInstance(ColorSpace.CS_GRAY),
                 new int[] { 8, 8 }, true, false, Transparency.TRANSLUCENT,
@@ -276,10 +285,10 @@ public final class ImagePacker implements Comparator<TextureElement> {
     @SuppressWarnings("unchecked")
     public ImagePacker() {
         images = new List[4];
-        images[TextureAtlas.TYPE_RGB] = new ArrayList<Sprite>();
-        images[TextureAtlas.TYPE_RGBA] = new ArrayList<Sprite>();
-        images[TextureAtlas.TYPE_GREY] = new ArrayList<Sprite>();
-        images[TextureAtlas.TYPE_GREY_ALPHA] = new ArrayList<Sprite>();
+        images[TYPE_RGB] = new ArrayList<Sprite>();
+        images[TYPE_RGBA] = new ArrayList<Sprite>();
+        images[TYPE_GREY] = new ArrayList<Sprite>();
+        images[TYPE_GREY_ALPHA] = new ArrayList<Sprite>();
     }
 
     /**
@@ -330,38 +339,38 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
         int targetBitsPerPixel = 4;
         switch (targetType) {
-            case TextureAtlas.TYPE_RGBA:
+            case TYPE_RGBA:
                 targetBitsPerPixel = 4;
                 break;
-            case TextureAtlas.TYPE_RGB:
+            case TYPE_RGB:
                 targetBitsPerPixel = 3;
                 break;
-            case TextureAtlas.TYPE_GREY_ALPHA:
+            case TYPE_GREY_ALPHA:
                 targetBitsPerPixel = 2;
                 break;
-            case TextureAtlas.TYPE_GREY:
+            case TYPE_GREY:
                 targetBitsPerPixel = 1;
                 break;
         }
 
         int sourceBitsPerPixel = 4;
         switch (sourceType) {
-            case TextureAtlas.TYPE_RGBA:
+            case TYPE_RGBA:
                 sourceBitsPerPixel = 4;
                 break;
-            case TextureAtlas.TYPE_RGB:
+            case TYPE_RGB:
                 sourceBitsPerPixel = 3;
                 break;
-            case TextureAtlas.TYPE_GREY_ALPHA:
+            case TYPE_GREY_ALPHA:
                 sourceBitsPerPixel = 2;
                 break;
-            case TextureAtlas.TYPE_GREY:
+            case TYPE_GREY:
                 sourceBitsPerPixel = 1;
                 break;
         }
 
         if ((sourceBitsPerPixel > targetBitsPerPixel)
-            || ((sourceType == TextureAtlas.TYPE_RGB) && (targetType == TextureAtlas.TYPE_GREY_ALPHA))) {
+            || ((sourceType == TYPE_RGB) && (targetType == TYPE_GREY_ALPHA))) {
             throw new IllegalArgumentException("Incompatible image types");
         }
 
@@ -374,8 +383,8 @@ public final class ImagePacker implements Comparator<TextureElement> {
                     (x * sourceBitsPerPixel)
                         + (y * sourceWidth * sourceBitsPerPixel);
 
-                if (targetType == TextureAtlas.TYPE_RGBA) {
-                    if (sourceType == TextureAtlas.TYPE_RGBA) {
+                if (targetType == TYPE_RGBA) {
+                    if (sourceType == TYPE_RGBA) {
                         targetImage[locTarget] = sourceImage[locSource];
                         targetImage[locTarget + 1] =
                             sourceImage[locSource + 1];
@@ -383,48 +392,52 @@ public final class ImagePacker implements Comparator<TextureElement> {
                             sourceImage[locSource + 2];
                         targetImage[locTarget + 3] =
                             sourceImage[locSource + 3];
-                    } else if (sourceType == TextureAtlas.TYPE_RGB) {
+                    } else if (sourceType == TYPE_RGB) {
                         targetImage[locTarget] = sourceImage[locSource];
                         targetImage[locTarget + 1] =
                             sourceImage[locSource + 1];
                         targetImage[locTarget + 2] =
                             sourceImage[locSource + 2];
                         targetImage[locTarget + 3] = -1;
-                    } else if (sourceType == TextureAtlas.TYPE_GREY_ALPHA) {
+                    } else if (sourceType == TYPE_GREY_ALPHA) {
                         targetImage[locTarget] = sourceImage[locSource];
                         targetImage[locTarget + 1] = sourceImage[locSource];
                         targetImage[locTarget + 2] = sourceImage[locSource];
                         targetImage[locTarget + 3] =
                             sourceImage[locSource + 1];
-                    } else if (sourceType == TextureAtlas.TYPE_GREY) {
+                    } 
+                    else if (sourceType == TYPE_GREY) {
                         targetImage[locTarget] = sourceImage[locSource];
                         targetImage[locTarget + 1] = sourceImage[locSource];
                         targetImage[locTarget + 2] = sourceImage[locSource];
                         targetImage[locTarget + 3] = -1;
                     }
-                } else if (targetType == TextureAtlas.TYPE_RGB) {
-                    if (sourceType == TextureAtlas.TYPE_RGB) {
+                } else if (targetType == TYPE_RGB) {
+                    if (sourceType == TYPE_RGB) {
                         targetImage[locTarget] = sourceImage[locSource];
                         targetImage[locTarget + 1] =
                             sourceImage[locSource + 1];
                         targetImage[locTarget + 2] =
                             sourceImage[locSource + 2];
-                    } else if (sourceType == TextureAtlas.TYPE_GREY) {
+                    }
+                    else if (sourceType == TYPE_GREY) {
                         targetImage[locTarget] = sourceImage[locSource];
                         targetImage[locTarget + 1] = sourceImage[locSource];
                         targetImage[locTarget + 2] = sourceImage[locSource];
                     }
-                } else if (targetType == TextureAtlas.TYPE_GREY_ALPHA) {
-                    if (sourceType == TextureAtlas.TYPE_GREY_ALPHA) {
+                } else if (targetType == TYPE_GREY_ALPHA) {
+                    if (sourceType == TYPE_GREY_ALPHA) {
                         targetImage[locTarget] = sourceImage[locSource];
                         targetImage[locTarget + 1] =
                             sourceImage[locSource + 1];
-                    } else if (sourceType == TextureAtlas.TYPE_GREY) {
+                    } 
+                    else if (sourceType == TYPE_GREY) {
                         targetImage[locTarget] = sourceImage[locSource];
                         targetImage[locTarget + 1] = -1;
                     }
-                } else if (targetType == TextureAtlas.TYPE_GREY) {
-                    if (sourceType == TextureAtlas.TYPE_GREY) {
+                }
+                else if (targetType == TYPE_GREY) {
+                    if (sourceType == TYPE_GREY) {
                         targetImage[locTarget] = sourceImage[locSource];
                     }
                 }
@@ -441,13 +454,13 @@ public final class ImagePacker implements Comparator<TextureElement> {
     @SuppressWarnings("nls")
     private static String typeToName(final int type) {
         switch (type) {
-            case TextureAtlas.TYPE_GREY:
+            case TYPE_GREY:
                 return "Gray";
-            case TextureAtlas.TYPE_GREY_ALPHA:
+            case TYPE_GREY_ALPHA:
                 return "Gray+Alpha";
-            case TextureAtlas.TYPE_RGB:
+            case TYPE_RGB:
                 return "RGB";
-            case TextureAtlas.TYPE_RGBA:
+            case TYPE_RGBA:
                 return "RGBA";
             default:
                 return "unknown";
@@ -471,20 +484,17 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * @return true if we are all done, false if not
      */
     public boolean allDone() {
-        if ((images[TextureAtlas.TYPE_RGBA] != null)
-            && !images[TextureAtlas.TYPE_RGBA].isEmpty()) {
+        if ((images[TYPE_RGBA] != null) && !images[TYPE_RGBA].isEmpty()) {
             return false;
         }
-        if ((images[TextureAtlas.TYPE_RGB] != null)
-            && !images[TextureAtlas.TYPE_RGB].isEmpty()) {
+        if ((images[TYPE_RGB] != null) && !images[TYPE_RGB].isEmpty()) {
             return false;
         }
-        if ((images[TextureAtlas.TYPE_GREY_ALPHA] != null)
-            && !images[TextureAtlas.TYPE_GREY_ALPHA].isEmpty()) {
+        if ((images[TYPE_GREY_ALPHA] != null)
+            && !images[TYPE_GREY_ALPHA].isEmpty()) {
             return false;
         }
-        if ((images[TextureAtlas.TYPE_GREY] != null)
-            && !images[TextureAtlas.TYPE_GREY].isEmpty()) {
+        if ((images[TYPE_GREY] != null) && !images[TYPE_GREY].isEmpty()) {
             return false;
         }
         return true;
@@ -500,11 +510,14 @@ public final class ImagePacker implements Comparator<TextureElement> {
     /**
      * Pack the images provided
      * 
+     * @param coordList
+     * @param texture
      * @return The generated sprite sheet
      * @throws IOException Indicates a failure to write out files
      */
     @SuppressWarnings("nls")
-    public TextureAtlas packImages() throws IOException {
+    public void packImages(TextureAtlas texture,
+        Collection<SubTextureCoord> coordList) throws IOException {
         if (execService != null) {
             execService.shutdown();
             try {
@@ -520,29 +533,35 @@ public final class ImagePacker implements Comparator<TextureElement> {
             imageCount = 0;
         }
 
-        int targetType = TextureAtlas.TYPE_RGBA;
+        int targetType = TYPE_RGBA;
         if ((images[targetType] == null) || (images[targetType].size() == 0)) {
             images[targetType] = null;
-            targetType = TextureAtlas.TYPE_RGB;
+            targetType = TYPE_RGB;
         }
         if ((images[targetType] == null) || (images[targetType].size() == 0)) {
             images[targetType] = null;
-            targetType = TextureAtlas.TYPE_GREY_ALPHA;
+            targetType = TYPE_GREY_ALPHA;
         }
         if ((images[targetType] == null) || (images[targetType].size() == 0)) {
             images[targetType] = null;
-            targetType = TextureAtlas.TYPE_GREY;
+            targetType = TYPE_GREY;
         }
         if ((images[targetType] == null) || (images[targetType].size() == 0)) {
             images[targetType] = null;
-            return null;
+            return;
         }
         if (sortNeeded[targetType]) {
             Collections.sort(images[targetType], this);
             sortNeeded[targetType] = false;
         }
 
-        final Sprite firstImage = images[targetType].get(0);
+        int currType = targetType;
+        
+        if (currType == TYPE_GREY) {
+            targetType = TYPE_GREY_ALPHA;
+        }
+
+        final Sprite firstImage = images[currType].get(0);
         final int dimensions[] =
             getOptimalDimensions(firstImage.getWidth(),
                 firstImage.getHeight(), targetType);
@@ -553,17 +572,17 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
         ComponentColorModel glColorModel = null;
         int components = 0;
-        if (targetType == TextureAtlas.TYPE_RGBA) {
-            glColorModel = colorModels[TextureAtlas.TYPE_RGBA];
+        if (targetType == TYPE_RGBA) {
+            glColorModel = colorModels[TYPE_RGBA];
             components = 4;
-        } else if (targetType == TextureAtlas.TYPE_RGB) {
-            glColorModel = colorModels[TextureAtlas.TYPE_RGB];
+        } else if (targetType == TYPE_RGB) {
+            glColorModel = colorModels[TYPE_RGB];
             components = 3;
-        } else if (targetType == TextureAtlas.TYPE_GREY) {
-            glColorModel = colorModels[TextureAtlas.TYPE_GREY];
+        } else if (targetType == TYPE_GREY) {
+            glColorModel = colorModels[TYPE_GREY];
             components = 1;
-        } else if (targetType == TextureAtlas.TYPE_GREY_ALPHA) {
-            glColorModel = colorModels[TextureAtlas.TYPE_GREY_ALPHA];
+        } else if (targetType == TYPE_GREY_ALPHA) {
+            glColorModel = colorModels[TYPE_GREY_ALPHA];
             components = 2;
         }
 
@@ -578,17 +597,10 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
         Arrays.fill(imageByteData, (byte) 0);
 
-        int currType = targetType;
-
         int minHeight = height;
         int minWidth = width;
 
         long wastedPixel = 0;
-
-        final TextureAtlas texAtlas = Graphics.getInstance().getTextureAtlas();
-        texAtlas.setTextureType(targetType);
-
-        texAtlas.setDimensions(width, height);
 
         while (true) {
             final List<Sprite> curImages = images[currType];
@@ -618,7 +630,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                         spaces = spacesHeight;
                     } else {
                         System.err.println("ERROR selecting spaces!!!");
-                        return null;
+                        return;
                     }
                     j++;
                     if (spaces.isEmpty()) {
@@ -691,31 +703,31 @@ public final class ImagePacker implements Comparator<TextureElement> {
             images[currType].removeAll(usedImages);
 
             for (final Sprite currentImg : usedImages) {
-                texAtlas.addImage(currentImg.getName(), currentImg.getX(),
-                    currentImg.getY(), currentImg.getWidth(),
-                    currentImg.getHeight());
+                coordList.add(new SubTextureCoord(currentImg.getName(),
+                    currentImg.getX(), currentImg.getY(), currentImg
+                        .getWidth(), currentImg.getHeight()));
             }
             usedImages.clear();
 
-            if (targetType == TextureAtlas.TYPE_RGBA) {
-                if (currType == TextureAtlas.TYPE_RGBA) {
-                    currType = TextureAtlas.TYPE_RGB;
-                } else if (currType == TextureAtlas.TYPE_RGB) {
-                    currType = TextureAtlas.TYPE_GREY_ALPHA;
-                } else if (currType == TextureAtlas.TYPE_GREY_ALPHA) {
-                    currType = TextureAtlas.TYPE_GREY;
+            if (targetType == TYPE_RGBA) {
+                if (currType == TYPE_RGBA) {
+                    currType = TYPE_RGB;
+                } else if (currType == TYPE_RGB) {
+                    currType = TYPE_GREY_ALPHA;
+                } else if (currType == TYPE_GREY_ALPHA) {
+                    currType = TYPE_GREY;
                 } else {
                     break;
                 }
-            } else if (targetType == TextureAtlas.TYPE_RGB) {
-                if (currType == TextureAtlas.TYPE_RGB) {
-                    currType = TextureAtlas.TYPE_GREY;
+            } else if (targetType == TYPE_RGB) {
+                if (currType == TYPE_RGB) {
+                    currType = TYPE_GREY;
                 } else {
                     break;
                 }
-            } else if (targetType == TextureAtlas.TYPE_GREY_ALPHA) {
-                if (currType == TextureAtlas.TYPE_GREY_ALPHA) {
-                    currType = TextureAtlas.TYPE_GREY;
+            } else if (targetType == TYPE_GREY_ALPHA) {
+                if (currType == TYPE_GREY_ALPHA) {
+                    currType = TYPE_GREY;
                 } else {
                     break;
                 }
@@ -723,51 +735,63 @@ public final class ImagePacker implements Comparator<TextureElement> {
                 break;
             }
         }
-
-        texAtlas.setTextureImage(result);
-
-        boolean hasTransparencyMask = false;
-        int transparencyMaskSize = 0;
-        if (generateTransparancyMask && (targetType != TextureAtlas.TYPE_RGB)
-            && (targetType != TextureAtlas.TYPE_GREY)) {
-            hasTransparencyMask = true;
-            int expectedTransparencySize = (width * height) / 8;
-            if ((expectedTransparencySize * 8) < (width * height)) {
-                expectedTransparencySize++;
-            }
-
-            final ByteBuffer transparencyBuffer =
-                ByteBuffer.allocateDirect(expectedTransparencySize);
-            transparencyMaskSize = expectedTransparencySize;
-
-            boolean currentTransparent;
-            int currentTransBufferIndex;
-            byte transparencyMaskValue;
-            int setBitMask;
-            for (int i = 0; i < imageByteData.length; i += components) {
-                if (imageByteData[(i + components) - 1] == 0xFF) {
-                    currentTransparent = true;
-                } else {
-                    currentTransparent = false;
-                }
-
-                currentTransBufferIndex = (i / components / 8);
-                transparencyMaskValue =
-                    transparencyBuffer.get(currentTransBufferIndex);
-
-                setBitMask = 1 << (i % 8);
-                if (currentTransparent) {
-                    transparencyMaskValue |= setBitMask;
-                } else {
-                    transparencyMaskValue &= ~setBitMask;
-                }
-
-                transparencyBuffer.put(currentTransBufferIndex,
-                    transparencyMaskValue);
-            }
-
-            texAtlas.setTransparencyMask(transparencyBuffer);
+        
+        PipedInputStream pIn = new PipedInputStream(10000000);
+        PipedOutputStream pOut = new PipedOutputStream(pIn);
+        
+        ImageIO.write(result, "PNG", pOut);
+        
+        try {
+            texture.loadTextureData(pIn, "png");
+        } catch (Exception ex) {
+            
         }
+        
+        pIn.close();
+        pOut.close();
+
+//        boolean hasTransparencyMask = false;
+//        int transparencyMaskSize = 0;
+//        if (generateTransparancyMask && (targetType != TYPE_RGB)
+//            && (targetType != TYPE_GREY)) {
+//            hasTransparencyMask = true;
+//            int expectedTransparencySize = (width * height) / 8;
+//            if ((expectedTransparencySize * 8) < (width * height)) {
+//                expectedTransparencySize++;
+//            }
+//
+//            final ByteBuffer transparencyBuffer =
+//                ByteBuffer.allocateDirect(expectedTransparencySize);
+//            transparencyMaskSize = expectedTransparencySize;
+//
+//            boolean currentTransparent;
+//            int currentTransBufferIndex;
+//            byte transparencyMaskValue;
+//            int setBitMask;
+//            for (int i = 0; i < imageByteData.length; i += components) {
+//                if (imageByteData[(i + components) - 1] == 0xFF) {
+//                    currentTransparent = true;
+//                } else {
+//                    currentTransparent = false;
+//                }
+//
+//                currentTransBufferIndex = (i / components / 8);
+//                transparencyMaskValue =
+//                    transparencyBuffer.get(currentTransBufferIndex);
+//
+//                setBitMask = 1 << (i % 8);
+//                if (currentTransparent) {
+//                    transparencyMaskValue |= setBitMask;
+//                } else {
+//                    transparencyMaskValue &= ~setBitMask;
+//                }
+//
+//                transparencyBuffer.put(currentTransBufferIndex,
+//                    transparencyMaskValue);
+//            }
+//
+//            texAtlas.setTransparencyMask(transparencyBuffer);
+//        }
 
         for (final Space currSpace : spacesWidth) {
             wastedPixel += currSpace.getSize();
@@ -790,18 +814,18 @@ public final class ImagePacker implements Comparator<TextureElement> {
         System.out.println(String.format(TEXTURE_INFO_LINE1_FORMAT,
             Integer.toString(imageCountDumb), typeToName(targetType)));
         System.out.println(String.format(TEXTURE_INFO_LINE2_FORMAT,
-            Integer.toString(images[targetType].size())));
+            Integer.toString(images[currType].size())));
         System.out.println(String.format(TEXTURE_INFO_LINE3_FORMAT,
             Long.toString(wastedPixel), Long.toString(width * height),
             Long.toString((wastedPixel * 100) / (width * height)),
             Long.toString(wastedPixel * components)));
 
-        if (hasTransparencyMask) {
-            System.out.println(String.format(TEXTURE_INFO_LINE4_TRANS_FORMAT,
-                Integer.toString(transparencyMaskSize)));
-        } else {
-            System.out.println(TEXTURE_INFO_LINE4_NO_TRANS_FORMAT);
-        }
+//        if (hasTransparencyMask) {
+//            System.out.println(String.format(TEXTURE_INFO_LINE4_TRANS_FORMAT,
+//                Integer.toString(transparencyMaskSize)));
+//        } else {
+//            System.out.println(TEXTURE_INFO_LINE4_NO_TRANS_FORMAT);
+//        }
 
         for (int i = 0; i < spacesWidth.size(); ++i) {
             spacesWidth.get(i).recycle();
@@ -812,7 +836,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
         spacesWidth.clear();
         spacesHeight.clear();
 
-        return texAtlas;
+        //return texAtlas;
     }
 
     /**
@@ -841,13 +865,13 @@ public final class ImagePacker implements Comparator<TextureElement> {
         }
 
         System.out.println("RGBA Textures: "
-            + images[TextureAtlas.TYPE_RGBA].size());
+            + images[TYPE_RGBA].size());
         System.out.println("RGB Textures: "
-            + images[TextureAtlas.TYPE_RGB].size());
+            + images[TYPE_RGB].size());
         System.out.println("Gray Textures: "
-            + images[TextureAtlas.TYPE_GREY].size());
+            + images[TYPE_GREY].size());
         System.out.println("Gray+Alpha Textures: "
-            + images[TextureAtlas.TYPE_GREY_ALPHA].size());
+            + images[TYPE_GREY_ALPHA].size());
     }
 
     /**
@@ -903,7 +927,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                 return;
             }
 
-            final int spriteType = sprite.getType();
+            int spriteType = sprite.getType();
 
             synchronized (IMAGE_DATA_LOCK) {
                 pixelCount[spriteType] += sprite.getPixelCount();

@@ -18,9 +18,9 @@
  */
 package illarion.graphics.jogl;
 
+import illarion.graphics.Drawer;
 import illarion.graphics.Graphics;
 import illarion.graphics.SpriteColor;
-import illarion.graphics.generic.AbstractDrawer;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -41,7 +41,22 @@ import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
  * @version 2.00
  * @since 2.00
  */
-public final class DrawerJOGL extends AbstractDrawer {
+public final class DrawerJOGL implements Drawer {
+    /**
+     * The size of the border that is added in case a rectangle with rounded
+     * edges shall be drawn. This helper value stores the smaller triangle edge
+     * value.
+     */
+    protected static final int ROUNDED_BORDER_WIDTH_1 =
+        (ROUNDED_BORDER_WIDTH * 5) / 6;
+
+    /**
+     * The size of the border that is added in case a rectangle with rounded
+     * edges shall be drawn. This helper value stores the larger triangle edge
+     * value.
+     */
+    protected static final int ROUNDED_BORDER_WIDTH_2 =
+        (ROUNDED_BORDER_WIDTH * 1) / 2;
     /**
      * The float buffer that is used to draw the element to the screen.
      */

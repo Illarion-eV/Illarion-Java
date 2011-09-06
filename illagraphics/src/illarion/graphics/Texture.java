@@ -63,14 +63,6 @@ public interface Texture {
     TextureAtlas getParent();
 
     /**
-     * Get the ID of the atlas the texture this instance is pointing at is a
-     * part of.
-     * 
-     * @return the ID of the atlas
-     */
-    int getTextureID();
-
-    /**
      * Report that this texture is now in use.
      */
     void reportUsed();
@@ -115,4 +107,6 @@ public interface Texture {
      * Clean up all resources that were load for this texture in special.
      */
     void cleanup();
+    
+    void enable();
 }

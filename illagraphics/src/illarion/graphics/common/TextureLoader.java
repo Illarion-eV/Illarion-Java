@@ -20,12 +20,9 @@ package illarion.graphics.common;
 
 import illarion.graphics.Texture;
 import illarion.graphics.TextureAtlas;
-import illarion.graphics.TextureAtlasListener;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +40,7 @@ import org.apache.log4j.Logger;
  * @since 2.00
  * @version 2.00
  */
-public final class TextureLoader implements TextureAtlasListener {
+public final class TextureLoader {
 
     /**
      * The file name of the default image.
@@ -96,12 +93,6 @@ public final class TextureLoader implements TextureAtlasListener {
      * The error and debug logger of the client.
      */
     private static final Logger LOGGER = Logger.getLogger(TextureLoader.class);
-
-    /**
-     * The string each texture file ends with.
-     */
-    @SuppressWarnings("nls")
-    private static final String TEXTURE_FILENAME_ENDING = ".itx";
 
     /**
      * Get the singleton instance of the texture loader.
@@ -164,7 +155,7 @@ public final class TextureLoader implements TextureAtlasListener {
             e.getNext()) != end;) {
             directory = e.getValue();
             for (int i = directory.size() - 1; i >= 0; --i) {
-                directory.get(i).finish();
+                //directory.get(i).finish();
             }
         }
         textureAtlases = null;
@@ -253,15 +244,14 @@ public final class TextureLoader implements TextureAtlasListener {
                 + "and can't provide more textures");
         }
         Texture tex = null;
-        String atlasName = null;
         Map<String, Texture> folderTex = textures.get(resourceDir);
         final String texName =
-            resourceName.replace(TEXTURE_FILENAME_ENDING, EMPTY_STRING);
+            resourceName.replace("." + TextureIO.FORMAT, EMPTY_STRING).replace(".meta", EMPTY_STRING);
         if (folderTex != null) {
             tex = folderTex.get(texName);
 
             if (tex != null) {
-                tex.reportUsed();
+                //tex.reportUsed();
                 return tex;
             }
         }
@@ -270,22 +260,19 @@ public final class TextureLoader implements TextureAtlasListener {
         // not found in one of the atlas files, lets look around a little
         // further.
         InputStream textureInput = null;
-        if (!resourceName.endsWith(TEXTURE_FILENAME_ENDING)) {
-            textureInput =
+        InputStream metaInput = null;
+        textureInput =
                 getClass().getClassLoader().getResourceAsStream(
-                    resourceDir + resourceName + TEXTURE_FILENAME_ENDING);
-        } else {
-            textureInput =
-                getClass().getClassLoader().getResourceAsStream(
-                    resourceDir + resourceName);
-        }
+                    resourceDir + texName + "." + TextureIO.FORMAT);
+        metaInput =
+            getClass().getClassLoader().getResourceAsStream(
+                resourceDir + texName + ".meta");
 
         if (textureInput != null) {
             try {
                 final TextureAtlas newTexture =
-                    TextureIO.readTexture(Channels.newChannel(textureInput));
+                    TextureIO.readTexture(textureInput, metaInput);
                 newTexture.setFileName(resourceDir + resourceName);
-                newTexture.setKeepTextureData(!discardTexData);
 
                 folderAtlas = getTextureAtlasList(resourceDir);
                 folderTex = getTextureMap(resourceDir);
@@ -300,8 +287,7 @@ public final class TextureLoader implements TextureAtlasListener {
                             .setKeyComparator(FastComparator.STRING);
                     textures.put(resourceDir, folderTex);
                 }
-                newTexture.activateTexture(smooth, compress);
-                newTexture.setListener(this);
+                
                 folderAtlas.add(newTexture);
                 newTexture.getAllTextures(folderTex);
 
@@ -318,12 +304,15 @@ public final class TextureLoader implements TextureAtlasListener {
 
         int atlasCounter = -1;
         String existingAtlasName;
+        String atlasName = null;
+        String textureName = null;
+        String metaName = null;
         while (true) {
             ++atlasCounter;
 
-            atlasName =
-                resourceDir + "atlas-" + atlasCounter
-                    + TEXTURE_FILENAME_ENDING;
+            atlasName = resourceDir + "atlas-" + atlasCounter;
+            textureName = atlasName + "." + TextureIO.FORMAT;
+            metaName = atlasName + ".meta";
             boolean alreadyUsed = false;
 
             folderAtlas = getTextureAtlasList(resourceDir);
@@ -355,18 +344,16 @@ public final class TextureLoader implements TextureAtlasListener {
 
             try {
                 textureInput =
-                    getClass().getClassLoader().getResourceAsStream(atlasName);
+                    getClass().getClassLoader().getResourceAsStream(textureName);
+                metaInput =
+                    getClass().getClassLoader().getResourceAsStream(metaName);
     
                 if (textureInput == null) {
                     break;
                 }
 
-                final TextureAtlas newTexture =
-                    TextureIO.readTexture(Channels.newChannel(textureInput));
+                final TextureAtlas newTexture = TextureIO.readTexture(textureInput, metaInput);
                 newTexture.setFileName(atlasName);
-                newTexture.setKeepTextureData(!discardTexData);
-                newTexture.activateTexture(smooth, compress);
-                newTexture.setListener(this);
                 folderAtlas.add(newTexture);
                 newTexture.getAllTextures(folderTex);
 
@@ -454,9 +441,10 @@ public final class TextureLoader implements TextureAtlasListener {
         final boolean smooth, final boolean compress,
         final boolean discardTexData) {
         String existingAtlasName;
-        String atlasName;
-        atlasName =
-            resourceDir + "atlas-" + textureIndex + TEXTURE_FILENAME_ENDING;
+        String atlasName = resourceDir + "atlas-" + textureIndex;
+        String textureFile = atlasName + "." + TextureIO.FORMAT;
+        String metaFile = atlasName + ".meta";
+        
         boolean alreadyUsed = false;
 
         final List<TextureAtlas> folderAtlas =
@@ -484,19 +472,19 @@ public final class TextureLoader implements TextureAtlasListener {
         }
         final InputStream textureInput =
             TextureLoader.class.getClassLoader()
-                .getResourceAsStream(atlasName);
+                .getResourceAsStream(textureFile);
+        
+        final InputStream metaInput =
+            TextureLoader.class.getClassLoader()
+                .getResourceAsStream(metaFile);
 
         if (textureInput == null) {
             return true;
         }
 
         try {
-            final TextureAtlas newTexture =
-                TextureIO.readTexture(Channels.newChannel(textureInput));
+            final TextureAtlas newTexture = TextureIO.readTexture(textureInput, metaInput);
             newTexture.setFileName(atlasName);
-            newTexture.setKeepTextureData(!discardTexData);
-            newTexture.activateTexture(smooth, compress);
-            newTexture.setListener(this);
             folderAtlas.add(newTexture);
             newTexture.getAllTextures(folderTex);
         } catch (final IOException e) {
@@ -584,33 +572,33 @@ public final class TextureLoader implements TextureAtlasListener {
         }
     }
 
-    /**
-     * This function is called in case all references to a texture got removed.
-     * When this is done the textures get removed from the system.
-     * 
-     * @param atlas the texture atlas that is not in use anymore
-     */
-    @Override
-    public void reportDeath(final TextureAtlas atlas) {
-        atlas.removeTexture();
-
-        if (textureAtlases == null) {
-            return;
-        }
-
-        for (FastMap.Entry<String, List<TextureAtlas>> e =
-            textureAtlases.head(), end = textureAtlases.tail(); (e =
-            e.getNext()) != end;) {
-
-            final List<TextureAtlas> textureStorage = e.getValue();
-            final int index = textureStorage.indexOf(atlas);
-            if (index > -1) {
-                textureStorage.remove(index);
-                if (textureStorage.isEmpty()) {
-                    textureAtlases.remove(e.getKey());
-                }
-                return;
-            }
-        }
-    }
+//    /**
+//     * This function is called in case all references to a texture got removed.
+//     * When this is done the textures get removed from the system.
+//     * 
+//     * @param atlas the texture atlas that is not in use anymore
+//     */
+//    @Override
+//    public void reportDeath(final TextureAtlas atlas) {
+//        atlas.removeTexture();
+//
+//        if (textureAtlases == null) {
+//            return;
+//        }
+//
+//        for (FastMap.Entry<String, List<TextureAtlas>> e =
+//            textureAtlases.head(), end = textureAtlases.tail(); (e =
+//            e.getNext()) != end;) {
+//
+//            final List<TextureAtlas> textureStorage = e.getValue();
+//            final int index = textureStorage.indexOf(atlas);
+//            if (index > -1) {
+//                textureStorage.remove(index);
+//                if (textureStorage.isEmpty()) {
+//                    textureAtlases.remove(e.getKey());
+//                }
+//                return;
+//            }
+//        }
+//    }
 }
