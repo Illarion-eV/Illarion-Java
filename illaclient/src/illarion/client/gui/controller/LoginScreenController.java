@@ -6,22 +6,25 @@ import de.lessvoid.nifty.screen.ScreenController;
 
 public class LoginScreenController implements ScreenController {
 
+	private Nifty nifty;
+	
     @Override
     public void bind(Nifty nifty, Screen screen) {
-        // TODO Auto-generated method stub
-
+    	this.nifty = nifty;
     }
 
     @Override
     public void onStartScreen() {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onEndScreen() {
-        // TODO Auto-generated method stub
 
+    }
+    
+    public void login() {
+    	nifty.gotoScreen("charSelect");
     }
 
 }

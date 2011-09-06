@@ -5,25 +5,38 @@
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
         <layer id="layer" backgroundColor="#000" childLayout="center">
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
-                <image filename="guiSprite://illarion_title" imageMode="normal" align="center"  />
+                <image filename="guiSprite://illarion_title" imageMode="normal" align="center"/>
                 <panel height="30px" />
                 <panel childLayout="horizontal" visibleToMouse="true">
                     <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
                         <text font="textFont" text="Account Name:" />
                     </panel>
-                    <control name="textfield" maxLength="20" />
+                    <control name="textfield" id="nameTxt" maxLength="20" />
                 </panel>
                 <panel childLayout="horizontal" visibleToMouse="true">
                     <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
                         <text font="textFont" text="Password:" />
                     </panel>
-                    <control name="textfield" maxLength="20" passwordChar="*" />
+                    <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="*" />
                 </panel>
                 <panel height="30px" />
                 <panel childLayout="center" visibleToMouse="true" align="center">
-                    <control id="loginBtn" name="button" label="Einloggen" align="center" valign="center" />
+                    <control id="loginBtn" name="button" label="Einloggen" align="center" valign="center">
+                        <interact onClick="login()" />
+                    </control>
                 </panel>
+                
+                <effect><onEndScreen name="fade" start="#ff" end="#00" inherit="true" /></effect>
+                
             </panel>
         </layer>
+    </screen>
+    
+    <screen id="charSelect" controller="illarion.client.gui.controller.CharScreenController">
+    	<layer id="windows" childLayout="absolute">
+            <control id="window-3" name="window" title="Please Drag Me Too!" width="400px" height="200px" x="100px" y="200px" style="illarion-window">
+			    <text text="I'm Another Window!" style="base-font" color="#eeef" valign="center" width="100%" />
+			</control>
+		</layer>
     </screen>
 </nifty>
