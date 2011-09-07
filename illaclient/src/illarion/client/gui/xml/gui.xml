@@ -47,9 +47,6 @@
 	                <panel childLayout="center" visibleToMouse="true" align="center">
 	                    <control id="loginBtn" name="button" label="Einloggen" align="center" valign="center">
 	                        <interact onClick="login()" />
-	                        <effect>
-	                        	<onHover name="pulsate" width="100px"/>
-	                    	</effect>
 	                    </control>
 	                </panel>
 	                
