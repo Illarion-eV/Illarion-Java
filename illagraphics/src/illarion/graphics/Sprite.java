@@ -92,6 +92,28 @@ public interface Sprite {
     void addTexture(Texture newTexture);
 
     /**
+     * This is the draw function that is needed to drawn using the NiftyGUI. The
+     * sole purpose of this function is to draw with the NiftyGUI. There is no
+     * use to this function otherwise. Do not use it in the other parts of the
+     * application. It is likely that sprites are not drawn as excepted with
+     * outside of NiftyGUI in case this function is used.
+     * 
+     * @param x the x coordinate where the sprite is drawn
+     * @param y the y coordinate where the sprite is drawn
+     * @param w the width of the area the sprite is to be drawn in
+     * @param h the height of the area the sprite is to be drawn in
+     * @param centerX the x coordinate of the location that is used as center of
+     *            the scaling operations
+     * @param centerY the y coordinate of the location that is used as center of
+     *            the scaling operations
+     * @param scale the scaling factor
+     * @param color the color that is applied to the vertex the image is drawn
+     *            on
+     */
+    void drawNasty(int x, int y, int w, int h, int centerX, int centerY,
+        float scale, SpriteColor color);
+
+    /**
      * Simple drawing function that that draws a sprite at a special location
      * that is enlighten with the default light. The first frame is rendered at
      * all times and the frame is rendered with the same size as the textures so

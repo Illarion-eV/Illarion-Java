@@ -137,10 +137,7 @@ final class IllarionSpriteRenderImage implements IllarionRenderImage {
         TEMP_SPRITE.addTexture(internalSprite.getTexture(0).getSubTexture(
             srcX, srcY, srcW, srcH));
         
-        //TEMP_SPRITE.setOffset(x - centerX, y - centerY);
-
-        TEMP_SPRITE.draw(x, y, (int) (w * scale),
-            (int) (h * scale), TEMP_COLOR);
+        TEMP_SPRITE.drawNasty(x, y, w, h, centerX, centerY, scale, TEMP_COLOR);
 
         TEMP_SPRITE.remove();
     }
