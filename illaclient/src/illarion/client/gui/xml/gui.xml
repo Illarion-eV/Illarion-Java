@@ -18,7 +18,7 @@
 	    		<panel height="30px" />
 	        	<control name="progressbar" id="loading" align="center" valign="center" width="400px" height="28px">	
 		        	<effect>
-	                    <onEndScreen name="fade" start="#ff" end="#00" inherit="true" />
+	                    <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />
 	                </effect>
 	            </control>
 	        </panel>
@@ -56,7 +56,7 @@
 	            </panel>
                 
                 <effect>
-                    <onEndScreen name="fade" start="#ff" end="#00" inherit="true" />
+                    <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />
                 </effect>
             </panel>
         </layer>
