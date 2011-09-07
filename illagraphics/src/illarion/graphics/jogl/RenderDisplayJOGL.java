@@ -237,7 +237,7 @@ public final class RenderDisplayJOGL implements RenderDisplay {
     @Override
     public void clearScreen() {
         final GL gl = GLU.getCurrentGL();
-        gl.glClearColor(0.f, 0.f, 0.f, 0.f);
+        gl.glClearColor(0.f, 0.f, 0.f, 1.f);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
     }
 
