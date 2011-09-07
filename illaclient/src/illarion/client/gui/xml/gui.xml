@@ -10,13 +10,17 @@
 	    </image>
     </controlDefinition>
 	
-	<!-- a simple screen -->
+	<!-- loading screen -->
 	<screen id="start" controller="illarion.client.gui.controller.LoadScreenController">
 	    <layer id="layerprogress" backgroundColor="#000" childLayout="center" >
 	   		<panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical">
 	    		<image filename="guiSprite://illarion_title" imageMode="normal" align="center"/>
 	    		<panel height="30px" />
-	        	<control name="progressbar" id="loading" align="center" valign="center" width="400px" height="28px" />
+	        	<control name="progressbar" id="loading" align="center" valign="center" width="400px" height="28px">	
+		        	<effect>
+	                    <onEndScreen name="fade" start="#ff" end="#00" inherit="true" />
+	                </effect>
+	            </control>
 	        </panel>
 	    </layer>
 	</screen>
@@ -26,33 +30,33 @@
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
                 <image filename="guiSprite://illarion_title" imageMode="normal" align="center"/>
                 <panel height="30px" />
-                <panel childLayout="horizontal" visibleToMouse="true">
-                    <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
-                        <text font="textFont" text="Account Name:" />
-                    </panel>
-                    <control name="textfield" id="nameTxt" maxLength="20" />
-                    <effect>
+                <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
+	                <panel childLayout="horizontal" visibleToMouse="true">
+	                    <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
+	                        <text font="textFont" text="Account Name:" />
+	                    </panel>
+	                    <control name="textfield" id="nameTxt" maxLength="20" />
+	                </panel>
+	                <panel childLayout="horizontal" visibleToMouse="true">
+	                    <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
+	                        <text font="textFont" text="Password:" />
+	                    </panel>
+	                    <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="*" />
+	                </panel>
+	                <panel height="30px" />
+	                <panel childLayout="center" visibleToMouse="true" align="center">
+	                    <control id="loginBtn" name="button" label="Einloggen" align="center" valign="center">
+	                        <interact onClick="login()" />
+	                        <effect>
+	                        	<onHover name="pulsate" width="100px"/>
+	                    	</effect>
+	                    </control>
+	                </panel>
+	                
+	                <effect>
                     	<onStartScreen name="fade" start="#00" end="#ff" inherit="true" />
                     </effect>
-                </panel>
-                <panel childLayout="horizontal" visibleToMouse="true">
-                    <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
-                        <text font="textFont" text="Password:" />
-                    </panel>
-                    <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="*" />
-                    <effect>
-                    	<onStartScreen name="fade" start="#00" end="#ff" inherit="true" />
-                    </effect>
-                </panel>
-                <panel height="30px" />
-                <panel childLayout="center" visibleToMouse="true" align="center">
-                    <control id="loginBtn" name="button" label="Einloggen" align="center" valign="center">
-                        <interact onClick="login()" />
-                    </control>
-                    <effect>
-                    	<onStartScreen name="fade" start="#00" end="#ff" inherit="true" />
-                    </effect>
-                </panel>
+	            </panel>
                 
                 <effect>
                     <onEndScreen name="fade" start="#ff" end="#00" inherit="true" />
