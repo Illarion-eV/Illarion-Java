@@ -29,10 +29,7 @@ import illarion.input.MouseEvent;
  */
 public interface MouseEventReceiverComplex extends MouseEventReceiver {
     /**
-     * This function is called with the generated event. After this function is
-     * done with the event ensure that
-     * {@link illarion.input.MouseEvent#recycle()} is called to put the
-     * MouseEvent back into the buffer for reuse.
+     * This function is called with the generated event.
      * 
      * @param event the keyboard event that is handed over in this run
      * @return <code>true</code> in case the event was handled and no further
