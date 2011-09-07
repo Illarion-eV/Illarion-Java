@@ -21,8 +21,10 @@ package illarion.graphics.common;
 import illarion.graphics.Texture;
 import illarion.graphics.TextureAtlas;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -491,6 +493,37 @@ public final class TextureLoader {
             LOGGER.error("Unable to load texture: " + atlasName, e);
         }
         return false;
+    }
+    
+    public int getTotalAtlasCount() {
+        int result = getAtlasCount("data/chars/");
+        result += getAtlasCount("data/items/");
+        result += getAtlasCount("data/gui/");
+        result += getAtlasCount("data/tiles/");
+        result += getAtlasCount("data/effects/");
+        
+        return result;
+    }
+    
+    private int getAtlasCount(final String directory) {
+        InputStream in = null;
+        int result = 0;
+        try {
+            in = TextureLoader.class.getClassLoader().getResourceAsStream(directory + "atlas.count");
+            BufferedInputStream oIn = new BufferedInputStream(in);
+            result = oIn.read();
+        } catch (IOException e) {
+            // no texture count file found ... what ever
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                // closing failed, does not matter
+            }
+        }
+        return result;
     }
 
     /**

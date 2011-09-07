@@ -337,6 +337,7 @@ public final class ClientWindow implements ConfigChangeListener {
         IllarionLookAndFeel.setupLookAndFeel();
         // create canvas that shall show the openGL content
         display = Graphics.getInstance().getRenderDisplay();
+        display.getRenderArea().setBackground(Color.black);
 
         configChanged(IllaClient.getCfg(), CFG_RESOLUTION);
 

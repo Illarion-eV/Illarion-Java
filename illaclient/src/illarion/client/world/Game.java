@@ -48,6 +48,7 @@ import illarion.client.util.SessionMember;
 import illarion.common.bug.CrashData;
 import illarion.common.bug.CrashReporter;
 import illarion.common.util.DebugTimer;
+import illarion.common.util.LoadingManager;
 import illarion.common.util.NoResourceException;
 import illarion.common.util.StoppableStorage;
 
@@ -394,8 +395,10 @@ public final class Game implements SessionMember {
         windowHandler = ClientWindow.getInstance();
 
         // preload textures
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_GRAPHICS);
+        
+        int atlasCount = TextureLoader.getInstance().getTotalAtlasCount();
+        
+        LoadingManager.getInstance().setTotalCount(atlasCount + 16);
 
         Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
             private boolean loadGui = false;
@@ -423,6 +426,10 @@ public final class Game implements SessionMember {
                 if (!loadData) {
                     return false;
                 }
+                
+                Graphics.getInstance().getRenderDisplay().clearScreen();
+                
+                LoadingManager.getInstance().increaseCurrentCount();
 
                 if (!loadGui) {
                     illarion.client.gui.GUI newGui =
@@ -439,13 +446,19 @@ public final class Game implements SessionMember {
                 if (!loadData) {
                     return false;
                 }
+                
+                LoadingManager.getInstance().increaseCurrentCount();
 
                 weather = new Weather();
                 SessionManager.getInstance().addMember(weather);
+                
+                LoadingManager.getInstance().increaseCurrentCount();
 
                 GameFactory.getInstance().init();
                 map = new GameMap();
                 SessionManager.getInstance().addMember(map);
+                
+                LoadingManager.getInstance().increaseCurrentCount();
 
                 LoadingScreen.getInstance().setLoadingDone(
                     LoadingScreen.LOADING_GRAPHICS);
@@ -457,14 +470,12 @@ public final class Game implements SessionMember {
         if (!loadData) {
             return;
         }
-
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_ENVIRONMENT);
+        
+        LoadingManager.getInstance().increaseCurrentCount();
 
         SessionManager.getInstance().addMember(AnimationManager.getInstance());
 
-        LoadingScreen.getInstance().setLoadingDone(
-            LoadingScreen.LOADING_ENVIRONMENT);
+        LoadingManager.getInstance().increaseCurrentCount();
 
         do {
             try {
@@ -480,123 +491,80 @@ public final class Game implements SessionMember {
             return;
         }
 
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_TILES);
+        LoadingManager.getInstance().increaseCurrentCount();
+        
         TileFactory.getInstance().init();
-        LoadingScreen.getInstance()
-            .setLoadingDone(LoadingScreen.LOADING_TILES);
 
         if (!loadData) {
             return;
         }
 
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_OVERLAYS);
+        LoadingManager.getInstance().increaseCurrentCount();
         OverlayFactory.getInstance().init();
-        LoadingScreen.getInstance().setLoadingDone(
-            LoadingScreen.LOADING_OVERLAYS);
         if (!loadData) {
             return;
         }
 
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_ITEMS);
+        LoadingManager.getInstance().increaseCurrentCount();
         ItemFactory.getInstance().init();
-        LoadingScreen.getInstance()
-            .setLoadingDone(LoadingScreen.LOADING_ITEMS);
         if (!loadData) {
             return;
         }
 
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_AVATARS);
+        LoadingManager.getInstance().increaseCurrentCount();
         AvatarFactory.getInstance().init();
-        LoadingScreen.getInstance().setLoadingDone(
-            LoadingScreen.LOADING_AVATARS);
         if (!loadData) {
             return;
         }
 
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_CLOTHES);
+        LoadingManager.getInstance().increaseCurrentCount();
         new AvatarClothLoader().init();
-        LoadingScreen.getInstance().setLoadingDone(
-            LoadingScreen.LOADING_CLOTHES);
         if (!loadData) {
             return;
         }
 
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_EFFECTS);
+        LoadingManager.getInstance().increaseCurrentCount();
         EffectFactory.getInstance().init();
-        LoadingScreen.getInstance().setLoadingDone(
-            LoadingScreen.LOADING_EFFECTS);
         if (!loadData) {
             return;
         }
 
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_MENUS);
+        LoadingManager.getInstance().increaseCurrentCount();
         MarkerFactory.getInstance();
-        LoadingScreen.getInstance()
-            .setLoadingDone(LoadingScreen.LOADING_MENUS);
         if (!loadData) {
             return;
         }
 
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_RUNES);
+        LoadingManager.getInstance().increaseCurrentCount();
         RuneFactory.getInstance().init();
-        LoadingScreen.getInstance()
-            .setLoadingDone(LoadingScreen.LOADING_RUNES);
         if (!loadData) {
             return;
         }
 
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_SOUNDS);
+        LoadingManager.getInstance().increaseCurrentCount();
         SongFactory.getInstance().init();
         SoundFactory.getInstance().init();
 
         if (!loadData) {
             return;
         }
-        LoadingScreen.getInstance().setLoadingDone(
-            LoadingScreen.LOADING_SOUNDS);
-
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_FINAL);
-        if (!loadData) {
-            return;
-        }
+        
+        LoadingManager.getInstance().increaseCurrentCount();
         people = new People();
         SessionManager.getInstance().addMember(people);
         SessionManager.getInstance().addMember(
             illarion.client.guiNG.GUI.getInstance());
         SessionManager.getInstance().addMember(ChatHandler.getInstance());
-        LoadingScreen.getInstance()
-            .setLoadingDone(LoadingScreen.LOADING_FINAL);
 
-        do {
-            try {
-                Thread.sleep(50);
-            } catch (final InterruptedException ex) {
-                // no message needed.
-            }
-        } while (!LoadingScreen.getInstance().isLoadingDone(
-            LoadingScreen.LOADING_RUNES));
-
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.LOADING_OPTIMIZE);
+        LoadingManager.getInstance().increaseCurrentCount();
         // cleanup the system
         SpriteBuffer.getInstance().cleanup();
         TextureLoader.getInstance().cleanup();
         System.gc();
-        LoadingScreen.getInstance().setLoadingDone(
-            LoadingScreen.LOADING_OPTIMIZE);
 
         LoadingScreen.getInstance().setCurrentlyLoading(
             LoadingScreen.READY_TO_GO);
+        LoadingManager.getInstance().setFinished();
 
         //ClientWindow.getInstance().getRenderDisplay().stopRendering();
         ClientWindow.getInstance().getRenderDisplay().getRenderArea()

@@ -21,6 +21,7 @@ package illarion.graphics.jogl;
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderTask;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.media.opengl.GL;
@@ -87,6 +88,7 @@ public final class DisplayAWT extends GLCanvas implements Display,
             (RenderManagerJOGL) Graphics.getInstance().getRenderManager();
         addGLEventListener(this);
         setAutoSwapBufferMode(true);
+        setBackground(Color.black);
 
         doubleBuffered = false;
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -132,6 +134,7 @@ public final class DisplayAWT extends GLCanvas implements Display,
     @Override
     public void display(final GLAutoDrawable drawable) {
         final GL gl = drawable.getGL();
+        gl.glClearColor(0.f, 0.f, 0.f, 1.f);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         manager.draw();

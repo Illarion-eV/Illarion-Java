@@ -19,6 +19,7 @@
 package illarion.build;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -905,6 +906,21 @@ public final class TextureConverterNG extends Task {
                 e.printStackTrace();
                 throw new BuildException(e);
             }
+        }
+
+        BufferedOutputStream stream;
+        try {
+            outJar.putNextEntry(new JarEntry(folder + "atlas.count"));
+            stream = new BufferedOutputStream(outJar);
+            stream.write(altasFiles);
+            stream.flush();
+            outJar.closeEntry();
+        } catch (final IOException e) {
+            e.printStackTrace();
+            throw new BuildException(e);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            throw new BuildException(e);
         }
     }
 
