@@ -25,7 +25,7 @@ import illarion.mapedit.map.MapStorage;
 import illarion.common.util.Location;
 
 import illarion.input.MouseEvent;
-import illarion.input.MouseEventReceiver;
+import illarion.input.receiver.MouseEventReceiverComplex;
 
 /**
  * This class is used to receive the mouse events and forward them correctly to
@@ -34,7 +34,7 @@ import illarion.input.MouseEventReceiver;
  * @author Martin Karing
  * @since 0.99
  */
-final class MouseHandler implements MouseEventReceiver {
+final class MouseHandler implements MouseEventReceiverComplex {
     /**
      * Handle the incoming mouse event in case its needed.
      */

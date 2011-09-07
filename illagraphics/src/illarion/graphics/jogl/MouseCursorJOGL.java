@@ -15,95 +15,6 @@ import java.awt.event.MouseMotionListener;
  * @version 1.22
  */
 public final class MouseCursorJOGL implements MouseCursor {
-    /**
-     * This class is used to monitor the movement of the mouse in order to drawn
-     * the mouse at the proper location at the update events.
-     * 
-     * @author Martin Karing
-     * @since 1.22
-     */
-    private static final class MouseMonitor implements MouseMotionListener,
-        com.jogamp.newt.event.MouseListener {
-        /**
-         * The last recored X coordinate of the mouse location;
-         */
-        private int lastX;
-
-        /**
-         * The last recored Y coordinate of the mouse location;
-         */
-        private int lastY;
-
-        /**
-         * The public constructor, used to expose the class constructor to the
-         * surrounding class.
-         */
-        public MouseMonitor() {
-            // just to expose the constructor to the surrounding class
-        }
-
-        public int getLastX() {
-            return lastX;
-        }
-
-        public int getLastY() {
-            return lastY;
-        }
-
-        @Override
-        public void mouseClicked(final com.jogamp.newt.event.MouseEvent arg0) {
-            // nothing
-        }
-
-        @Override
-        public void mouseDragged(final com.jogamp.newt.event.MouseEvent arg0) {
-            // nothing
-        }
-
-        @Override
-        public void mouseDragged(final MouseEvent e) {
-            // nothing
-        }
-
-        @Override
-        public void mouseEntered(final com.jogamp.newt.event.MouseEvent arg0) {
-            // nothing
-        }
-
-        @Override
-        public void mouseExited(final com.jogamp.newt.event.MouseEvent arg0) {
-            // nothing
-        }
-
-        @Override
-        public void mouseMoved(final com.jogamp.newt.event.MouseEvent arg0) {
-            lastX = arg0.getX();
-            lastY = arg0.getY();
-        }
-
-        @Override
-        public void mouseMoved(final MouseEvent e) {
-            lastX = e.getX();
-            lastY = e.getY();
-        }
-
-        @Override
-        public void mousePressed(final com.jogamp.newt.event.MouseEvent arg0) {
-            // nothing
-        }
-
-        @Override
-        public void mouseReleased(final com.jogamp.newt.event.MouseEvent arg0) {
-            // nothing
-        }
-
-        @Override
-        public void mouseWheelMoved(final com.jogamp.newt.event.MouseEvent arg0) {
-            // nothing
-        }
-    }
-
-    private static MouseMonitor monitor;
 
     /**
      * Stores if the cursor is currently active and supposed to be drawn.
@@ -124,16 +35,6 @@ public final class MouseCursorJOGL implements MouseCursor {
         internalSprite.setOffset(-hotspotX, hotspotY);
 
         enabled = false;
-
-        if (monitor == null) {
-            synchronized (MouseCursorJOGL.class) {
-                if (monitor == null) {
-                    monitor = new MouseMonitor();
-                    Graphics.getInstance().getRenderDisplay()
-                        .addInputListener(monitor);
-                }
-            }
-        }
     }
 
     @Override
@@ -155,9 +56,9 @@ public final class MouseCursorJOGL implements MouseCursor {
     }
 
     @Override
-    public void update() {
+    public void update(final int x, final int y) {
         if (enabled) {
-            internalSprite.draw(monitor.getLastX(), monitor.getLastY());
+            internalSprite.draw(x, y);
         }
     }
 }

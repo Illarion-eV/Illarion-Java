@@ -19,7 +19,9 @@
 package illarion.input.generic;
 
 import illarion.input.MouseEvent;
-import illarion.input.MouseEventReceiver;
+import illarion.input.receiver.MouseEventReceiver;
+import illarion.input.receiver.MouseEventReceiverComplex;
+import illarion.input.receiver.MouseEventReceiverPrimitive;
 
 /**
  * This class is a multicast class for mouse events. It allows multiple receiver
@@ -29,7 +31,7 @@ import illarion.input.MouseEventReceiver;
  * @since 1.22
  * @version 1.22
  */
-public final class MouseEventMulticast implements MouseEventReceiver {
+public final class MouseEventMulticast implements MouseEventReceiverComplex, MouseEventReceiverPrimitive {
     /**
      * The first receiver to receive the event.
      */
@@ -55,11 +57,36 @@ public final class MouseEventMulticast implements MouseEventReceiver {
     @Override
     public boolean handleMouseEvent(final MouseEvent event) {
         boolean result;
-        result = receiver1.handleMouseEvent(event);
+        result = handleComplexEvent(receiver1, event);
         if (!result) {
-            result = receiver2.handleMouseEvent(event);
+            result = handleComplexEvent(receiver2, event);
+        }
+        return result;
+    }
+    
+    private static boolean handleComplexEvent(final MouseEventReceiver receiver, final MouseEvent event) {
+        if (receiver instanceof MouseEventReceiverComplex) {
+            return ((MouseEventReceiverComplex) receiver).handleMouseEvent(event);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleMouseEvent(final int mouseX, final int mouseY, final int wheelDelta,
+        final int button, final boolean buttonDown) {
+        boolean result;
+        result = handlePrimitiveEvent(receiver1, mouseX, mouseY, wheelDelta, button, buttonDown);
+        if (!result) {
+            result = handlePrimitiveEvent(receiver2, mouseX, mouseY, wheelDelta, button, buttonDown);
         }
         return result;
     }
 
+    private static boolean handlePrimitiveEvent(final MouseEventReceiver receiver, final int mouseX, final int mouseY, final int wheelDelta,
+        final int button, final boolean buttonDown) {
+        if (receiver instanceof MouseEventReceiverPrimitive) {
+            return ((MouseEventReceiverPrimitive) receiver).handleMouseEvent(mouseX, mouseY, wheelDelta, button, buttonDown);
+        }
+        return false;
+    }
 }

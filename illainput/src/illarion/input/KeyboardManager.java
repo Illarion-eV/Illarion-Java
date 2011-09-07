@@ -18,6 +18,9 @@
  */
 package illarion.input;
 
+import illarion.input.receiver.KeyboardEventReceiver;
+import illarion.input.receiver.KeyboardEventReceiverComplex;
+
 /**
  * The keyboard manager that handles the keyboard inputs and allows to register
  * Keyboard events that are fired then. Also its allows to check the current

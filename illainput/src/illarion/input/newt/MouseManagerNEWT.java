@@ -21,9 +21,10 @@ package illarion.input.newt;
 import illarion.common.util.FastMath;
 import illarion.common.util.Timer;
 import illarion.graphics.Graphics;
-import illarion.input.MouseEventReceiver;
 import illarion.input.MouseManager;
 import illarion.input.generic.MouseEventMulticast;
+import illarion.input.receiver.MouseEventReceiver;
+import illarion.input.receiver.MouseEventReceiverComplex;
 
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -126,7 +127,7 @@ public final class MouseManagerNEWT implements MouseManager, MouseListener {
      * The last move event that was recorded. This event is always published at
      * the very end of the polling calls.
      */
-    private illarion.input.MouseEvent lastMoveEvent;
+    //private illarion.input.MouseEvent lastMoveEvent;
 
     /**
      * The last X coordinate that was received from the mouse. <code>-1</code>
@@ -274,6 +275,16 @@ public final class MouseManagerNEWT implements MouseManager, MouseListener {
     @Override
     public int getMousePosY() {
         return lastY;
+    }
+
+    @Override
+    public int getNativeMousePosY() {
+        return fixY(lastY);
+    }
+
+    @Override
+    public int getNativeMousePosX() {
+        return lastX;
     }
 
     /**
@@ -545,15 +556,17 @@ public final class MouseManagerNEWT implements MouseManager, MouseListener {
         if (receiver != null) {
             illarion.input.MouseEvent event = null;
             while ((event = eventList.pollFirst()) != null) {
-                receiver.handleMouseEvent(event);
+                if (receiver instanceof MouseEventReceiverComplex) {
+                    ((MouseEventReceiverComplex) receiver).handleMouseEvent(event);
+                }
                 event.recycle();
             }
-            synchronized (this) {
-                if (lastMoveEvent != null) {
-                    receiver.handleMouseEvent(lastMoveEvent);
-                    lastMoveEvent.recycle();
-                }
-            }
+//            synchronized (this) {
+//                if (lastMoveEvent != null) {
+//                    receiver.handleMouseEvent(lastMoveEvent);
+//                    lastMoveEvent.recycle();
+//                }
+//            }
         } else {
             pollToNull();
         }
@@ -565,12 +578,12 @@ public final class MouseManagerNEWT implements MouseManager, MouseListener {
         while ((event = eventList.pollFirst()) != null) {
             event.recycle();
         }
-        synchronized (this) {
-            if (lastMoveEvent != null) {
-                lastMoveEvent.recycle();
-                lastMoveEvent = null;
-            }
-        }
+//        synchronized (this) {
+//            if (lastMoveEvent != null) {
+//                lastMoveEvent.recycle();
+//                lastMoveEvent = null;
+//            }
+//        }
     }
 
     /**
@@ -632,18 +645,18 @@ public final class MouseManagerNEWT implements MouseManager, MouseListener {
      * @param event the event to store in the list for later publishing
      */
     private void storeEvent(final illarion.input.MouseEvent event) {
-        if (event.getEvent() == illarion.input.MouseEvent.EVENT_LOCATION) {
-            synchronized (this) {
-                if (lastMoveEvent != null) {
-                    lastMoveEvent.recycle();
-                }
-                lastMoveEvent = event;
-            }
-        } else {
+//        if (event.getEvent() == illarion.input.MouseEvent.EVENT_LOCATION) {
+//            synchronized (this) {
+//                if (lastMoveEvent != null) {
+//                    lastMoveEvent.recycle();
+//                }
+//                lastMoveEvent = event;
+//            }
+//        } else {
             while (eventList.size() > 100) {
                 eventList.pollFirst();
             }
             eventList.offerLast(event);
-        }
+//        }
     }
 }

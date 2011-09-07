@@ -30,9 +30,9 @@ import illarion.common.util.Stoppable;
 
 import illarion.input.InputManager;
 import illarion.input.KeyboardEvent;
-import illarion.input.KeyboardEventReceiver;
 import illarion.input.MouseEvent;
-import illarion.input.MouseEventReceiver;
+import illarion.input.receiver.KeyboardEventReceiverComplex;
+import illarion.input.receiver.MouseEventReceiverComplex;
 
 /**
  * The input handler takes the input events from the input implementation and
@@ -43,7 +43,7 @@ import illarion.input.MouseEventReceiver;
  * @version 1.22
  */
 public final class InputHandler extends Thread implements
-    KeyboardEventReceiver, MouseEventReceiver, Stoppable {
+    KeyboardEventReceiverComplex, MouseEventReceiverComplex, Stoppable {
     /**
      * The logger instance that takes care for the logging output of this class.
      */

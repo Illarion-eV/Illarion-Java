@@ -137,7 +137,7 @@ public final class LoginDialog extends AbstractDialog implements
     }
 
     /**
-     * This class is a table model that is used to displaye the character list
+     * This class is a table model that is used to display the character list
      * on the login screen.
      * 
      * @author Martin Karing

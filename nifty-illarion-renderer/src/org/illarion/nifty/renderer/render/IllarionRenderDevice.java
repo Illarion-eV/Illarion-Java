@@ -174,6 +174,7 @@ public final class IllarionRenderDevice implements RenderDevice {
      */
     @Override
     public void disableMouseCursor() {
+        activeMouseCursor = null;
         Graphics.getInstance().getRenderDisplay().showCursor();
     }
 
@@ -192,6 +193,8 @@ public final class IllarionRenderDevice implements RenderDevice {
         display.setAreaLimit(x0, height - y1, x1 - x0, y1 - y0);
         clippingActive = true;
     }
+    
+    private IllarionMouseCursor activeMouseCursor = null;
 
     /*
      * (non-Javadoc)
@@ -201,7 +204,8 @@ public final class IllarionRenderDevice implements RenderDevice {
      */
     @Override
     public void enableMouseCursor(final MouseCursor mouseCursor) {
-        ((IllarionMouseCursor) mouseCursor).enable();
+        activeMouseCursor = (IllarionMouseCursor) mouseCursor;
+        activeMouseCursor.enable();
     }
 
     /**
@@ -209,6 +213,9 @@ public final class IllarionRenderDevice implements RenderDevice {
      */
     @Override
     public void endFrame() {
+        if (activeMouseCursor != null) {
+            activeMouseCursor.update();
+        }
         disableClip();
     }
 

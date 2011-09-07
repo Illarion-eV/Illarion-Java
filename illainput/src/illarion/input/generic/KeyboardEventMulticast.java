@@ -19,7 +19,9 @@
 package illarion.input.generic;
 
 import illarion.input.KeyboardEvent;
-import illarion.input.KeyboardEventReceiver;
+import illarion.input.receiver.KeyboardEventReceiver;
+import illarion.input.receiver.KeyboardEventReceiverComplex;
+import illarion.input.receiver.KeyboardEventReceiverPrimitive;
 
 /**
  * This class is a multicast class for Keyboard events. It allows multiple
@@ -29,7 +31,7 @@ import illarion.input.KeyboardEventReceiver;
  * @since 1.22
  * @version 1.22
  */
-public final class KeyboardEventMulticast implements KeyboardEventReceiver {
+public final class KeyboardEventMulticast implements KeyboardEventReceiverComplex, KeyboardEventReceiverPrimitive {
     /**
      * The first receiver to receive the event.
      */
@@ -55,11 +57,37 @@ public final class KeyboardEventMulticast implements KeyboardEventReceiver {
     @Override
     public boolean handleKeyboardEvent(final KeyboardEvent event) {
         boolean result;
-        result = receiver1.handleKeyboardEvent(event);
+        
+        result = sendComplexEvent(receiver1, event);
         if (!result) {
-            result = receiver2.handleKeyboardEvent(event);
+            result = sendComplexEvent(receiver2, event);
         }
         return result;
+    }
+    
+    private static boolean sendComplexEvent(final KeyboardEventReceiver receiver, final KeyboardEvent event) {
+        if (receiver instanceof KeyboardEventReceiverComplex) {
+            return ((KeyboardEventReceiverComplex) receiver).handleKeyboardEvent(event);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean handleKeyboardEvent(final int key, final char character, final boolean down) {
+        boolean result;
+        
+        result = sendPrimitiveEvent(receiver1, key, character, down);
+        if (!result) {
+            result = sendPrimitiveEvent(receiver2, key, character, down);
+        }
+        return result;
+    }
+    
+    private static boolean sendPrimitiveEvent(final KeyboardEventReceiver receiver, final int key, final char character, final boolean down) {
+        if (receiver instanceof KeyboardEventReceiverPrimitive) {
+            return ((KeyboardEventReceiverPrimitive) receiver).handleKeyboardEvent(key, character, down);
+        }
+        return false;
     }
 
 }

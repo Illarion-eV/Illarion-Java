@@ -18,6 +18,9 @@
  */
 package illarion.graphics.jogl;
 
+import javax.media.opengl.GL2;
+import javax.media.opengl.glu.GLU;
+
 import illarion.graphics.Graphics;
 import illarion.graphics.Sprite;
 import illarion.graphics.SpriteColor;
@@ -624,5 +627,33 @@ public final class SpriteJOGL implements Sprite {
             + (getOffsetY() * scale), 0, texWidth * scale, texHeight * scale,
             texture, usedColor, isMirrored(), getRotation());
         reportDrawTexture();
+    }
+
+    @Override
+    public void drawNasty(int x, int y, int w, int h, int centerX,
+        int centerY, float scale, SpriteColor color) {
+        final GL2 gl = GLU.getCurrentGL().getGL2();
+        
+        final TextureJOGL tex = getTexture(0);
+        
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWTEXTURE);
+        
+        tex.enable();
+        
+        gl.glPushMatrix();
+        gl.glTranslatef(centerX, centerY, 0.0f);
+        gl.glScalef(scale, scale, 1.0f);
+        gl.glTranslatef(-(centerX), -(centerY), 0.0f);
+
+        color.setActiveColor();
+        gl.glBegin(GL2.GL_QUADS);
+          gl.glTexCoord2f(tex.getRelX1(), tex.getRelY1()); gl.glVertex2i(x,     y);
+          gl.glTexCoord2f(tex.getRelX2(), tex.getRelY1()); gl.glVertex2i(x + w, y);
+          gl.glTexCoord2f(tex.getRelX2(), tex.getRelY2()); gl.glVertex2i(x + w, y + h);
+          gl.glTexCoord2f(tex.getRelX1(), tex.getRelY2()); gl.glVertex2i(x,     y + h);
+        gl.glEnd();
+
+        gl.glPopMatrix();
     }
 }
