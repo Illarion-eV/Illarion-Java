@@ -78,7 +78,7 @@ public final class GUI {
     }
     
     public void showLogin() {
-        niftyGui.gotoScreen("start");
+        niftyGui.gotoScreen("login");
     }
     
     public void shutdown() {

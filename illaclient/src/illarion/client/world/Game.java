@@ -383,26 +383,12 @@ public final class Game implements SessionMember {
     public String getLogin() {
         return login;
     }
-
-    /**
-     * Initialize the entire game. This method adds all required members to the
-     * session manager in order to maintain the sessions consistent.
-     */
-    @Override
-    public void initSession() {
-        DebugTimer.start();
-
-        windowHandler = ClientWindow.getInstance();
-
-        // preload textures
-        
+    
+    public void loadGameData() {
         int atlasCount = TextureLoader.getInstance().getTotalAtlasCount();
-        
         LoadingManager.getInstance().setTotalCount(atlasCount + 16);
-
+        
         Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
-            private boolean loadGui = false;
-
             @Override
             public boolean render(final int delta) {
                 boolean result = false;
@@ -431,14 +417,6 @@ public final class Game implements SessionMember {
                 
                 LoadingManager.getInstance().increaseCurrentCount();
 
-                if (!loadGui) {
-                    illarion.client.gui.GUI newGui =
-                        new illarion.client.gui.GUI();
-                    newGui.prepare();
-                    newGui.showLogin();
-                    loadGui = true;
-                }
-
                 if (!TextureLoader.getInstance().preloadAtlasTextures()) {
                     return true;
                 }
@@ -466,7 +444,7 @@ public final class Game implements SessionMember {
                 return false;
             }
         });
-
+        
         if (!loadData) {
             return;
         }
@@ -570,6 +548,30 @@ public final class Game implements SessionMember {
         ClientWindow.getInstance().getRenderDisplay().getRenderArea()
             .repaint();
         DebugTimer.mark("Loading the client done in"); //$NON-NLS-1$
+    }
+
+    /**
+     * Initialize the entire game. This method adds all required members to the
+     * session manager in order to maintain the sessions consistent.
+     */
+    @Override
+    public void initSession() {
+        DebugTimer.start();
+
+        windowHandler = ClientWindow.getInstance();
+
+        Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
+            @Override
+            public boolean render(final int delta) {
+                illarion.client.gui.GUI newGui =
+                    new illarion.client.gui.GUI();
+                newGui.prepare();
+                newGui.showLogin();
+                return false;
+            }
+        });
+
+        
     }
 
     /**
