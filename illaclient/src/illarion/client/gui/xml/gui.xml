@@ -2,6 +2,19 @@
 <nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
     <useStyles filename="nifty-illarion-style.xml" />
     <useControls filename="nifty-default-controls.xml" />
+    
+    <!-- progressbar control -->
+	<controlDefinition name="progressbar" controller="illarion.client.gui.controller.ProgressbarControl">
+	    <image filename="guiSprite://progressbar/progressbar-outer" imageMode="resize:15,2,15,15,15,2,15,2,15,2,15,15" />
+    </controlDefinition>
+	
+	<!-- a simple screen -->
+	<screen id="start">
+	    <layer id="layerprogress" childLayout="center">
+	        <control name="progressbar" align="center" valign="center" width="400px" height="300px" />
+	    </layer>
+	</screen>
+    
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
         <layer id="layer" backgroundColor="#000" childLayout="center">
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
