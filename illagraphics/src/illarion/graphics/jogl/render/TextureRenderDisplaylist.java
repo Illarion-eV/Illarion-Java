@@ -85,8 +85,9 @@ public final class TextureRenderDisplaylist extends AbstractTextureRender {
 
         DriverSettingsJOGL.getInstance().enableMode(gl,
             DriverSettingsJOGL.Modes.DRAWTEXTURE);
-        DriverSettingsJOGL.getInstance().bindTexture(gl,
-            texture.getTextureID());
+        texture.enable();
+//        DriverSettingsJOGL.getInstance().bindTexture(gl,
+//            texture.getTextureID());
         color.setActiveColor();
         gl.glPushMatrix();
 

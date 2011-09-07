@@ -21,11 +21,12 @@ package illarion.graphics.jogl;
 import gnu.trove.list.array.TIntArrayList;
 import illarion.graphics.Texture;
 import illarion.graphics.TextureAtlas;
-import illarion.graphics.generic.AbstractTexture;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
+
+import com.jogamp.opengl.util.texture.TextureCoords;
 
 /**
  * The implementation of the Texture for usage with JOGL.
@@ -34,7 +35,346 @@ import javax.media.opengl.glu.GLU;
  * @version 2.00
  * @since 2.00
  */
-public final class TextureJOGL extends AbstractTexture {
+public final class TextureJOGL implements Texture {
+    /**
+     * This variable stores the next unique ID a newly created texture will get.
+     */
+    private static int nextUID = 1;
+
+    /**
+     * The height of the image itself.
+     */
+    private int height = 0;
+
+    /**
+     * The parent texture atlas this texture was created from.
+     */
+    private TextureAtlasJOGL parent = null;
+
+    /**
+     * Texture coordinates.
+     */
+    private TextureCoords coords;
+
+    /**
+     * The height of the texture atlas that is the parent of this image.
+     */
+    private int texHeight = 0;
+
+    /**
+     * The width of the texture atlas that is the parent of this image.
+     */
+    private int texWidth = 0;
+
+    /**
+     * The unique texture ID of this texture.
+     */
+    private final int uid;
+
+    /**
+     * The width of the image itself.
+     */
+    private int width = 0;
+    /**
+     * The x coordinate of the location of the image.
+     */
+    private int x = 0;
+
+    /**
+     * The y coordinate of the location of the image.
+     */
+    private int y = 0;
+
+    /**
+     * Create a empty texture.
+     */
+    public TextureJOGL() {
+        uid = nextUID++;
+    }
+
+    /**
+     * Create a new texture with specified width and height and a texture size.
+     * Assumes that the X and Y coordinates of the image are at 0.
+     * 
+     * @param newWidth the width of the image
+     * @param newHeight the height of the image
+     * @param newTexWidth the width of the parent texture
+     * @param newTexHeight the height of the parent texture
+     */
+    public TextureJOGL(final int newWidth, final int newHeight,
+        final int newTexWidth, final int newTexHeight) {
+        this(newWidth, newHeight, newTexWidth, newTexHeight, 0, 0);
+    }
+
+    /**
+     * Create a new texture with specified width and height and a texture size.
+     * Also the position of the texture on the texture map is set.
+     * 
+     * @param newWidth the width of the image
+     * @param newHeight the height of the image
+     * @param newTexWidth the width of the parent texture
+     * @param newTexHeight the height of the parent texture
+     * @param newX the x coordinate of the image on the parent texture
+     * @param newY the y coordinate of the image on the parent texture
+     */
+    public TextureJOGL(final int newWidth, final int newHeight,
+        final int newTexWidth, final int newTexHeight, final int newX,
+        final int newY) {
+        this();
+
+        x = newX;
+        y = newY;
+
+        height = newHeight;
+        width = newWidth;
+        texWidth = newTexWidth;
+        texHeight = newTexHeight;
+
+        calculateRatio();
+    }
+    
+    public TextureJOGL(final TextureCoords texCoords, final int newTexWidth, final int newTexHeight) {
+        this();
+        
+        coords = texCoords;
+        texWidth = newTexWidth;
+        texHeight = newTexHeight;
+        
+        final int x1 = (int) (texWidth * coords.left());
+        final int x2 = (int) (texWidth * coords.right());
+        
+        final int y1 = (int) (texHeight * coords.top());
+        final int y2 = (int) (texHeight * coords.bottom());
+        
+        x = Math.min(x1, x2);
+        width = Math.max(x1, x2) - Math.min(x1, x2);
+        y = Math.min(y1, y2);
+        height = Math.max(y1, y2) - Math.min(y1, y2);
+    }
+
+    /**
+     * Calculate the relative values in this class. After calling this function
+     * all values that are relative to the size of the atlas are valid. Has to
+     * be called for sure before this values are read.
+     */
+    private void calculateRatio() {        
+        coords = new TextureCoords(((float) x) / texWidth,
+            ((float) y) / texHeight, ((float) (x + width)) / texWidth,
+            ((float) (y + height)) / texHeight);
+
+        textureDataChanged();
+    }
+
+    /**
+     * Get the height of the original image.
+     * 
+     * @return The height of the original image.
+     */
+    @Override
+    public final int getImageHeight() {
+        return height;
+    }
+
+    /**
+     * Get the width of the original image.
+     * 
+     * @return The width of the original image.
+     */
+    @Override
+    public final int getImageWidth() {
+        return width;
+    }
+
+    /**
+     * Get the x coordinate of the position of the image on the texture atlas.
+     * 
+     * @return the x coordinate of the image position
+     */
+    @Override
+    public final int getImageX() {
+        return x;
+    }
+
+    /**
+     * Get the y coordinate of the position of the image on the texture atlas.
+     * 
+     * @return the y coordinate of the image position
+     */
+    @Override
+    public final int getImageY() {
+        return y;
+    }
+
+    /**
+     * Get the texture atlas assigned to this texture.
+     * 
+     * @return the texture atlas assigned to this texture
+     */
+    @Override
+    public final TextureAtlas getParent() {
+        return parent;
+    }
+
+    /**
+     * Get the x coordinate of the texture relative to the size of the texture
+     * the image is located on.
+     * 
+     * @return the relative x coordinate.
+     */
+    public final float getRelX1() {
+        return coords.left();
+    }
+    
+    /**
+     * Get the X coordinate plus the width of the texture as relative value to
+     * the image it is located on.
+     * 
+     * @return the relative x coordinate plus the relative width
+     */
+    public final float getRelX2() {
+        return coords.right();
+    }
+
+    /**
+     * Get the y coordinate of the texture relative to the size of the texture
+     * the image is located on.
+     * 
+     * @return the relative y coordinate.
+     */
+    public final float getRelY1() {
+        return coords.bottom();
+    }
+
+    /**
+     * Get the Y coordinate plus the height of the texture as relative value to
+     * the image it is located on.
+     * 
+     * @return the relative y coordinate plus the relative height
+     */
+    public final float getRelY2() {
+        return coords.top();
+    }
+
+    /**
+     * Get the height of the parent texture this image is located on.
+     * 
+     * @return the height of the texture atlas
+     */
+    public final int getTextureHeight() {
+        return texHeight;
+    }
+
+    /**
+     * Get the width of the parent texture this image is located on.
+     * 
+     * @return the width of the texture atlas
+     */
+    public final int getTextureWidth() {
+        return texWidth;
+    }
+
+    /**
+     * Get the unique ID of this texture.
+     * 
+     * @return the unique ID of this texture.
+     */
+    public final int getUID() {
+        return uid;
+    }
+
+    /**
+     * Call this function in case this texture is not needed anymore and needs
+     * to be removed from the system.
+     */
+    public final void remove() {
+        if (parent != null) {
+            parent.decreaseLoadCounter();
+            parent.checkUsed();
+            parent = null;
+        }
+    }
+
+    @Override
+    public final void reportUsed() {
+        if (parent != null) {
+            parent.increaseLoadCounter();
+        }
+    }
+
+    /**
+     * Set the dimension of the image this texture instance defines.
+     * 
+     * @param newWidth The width of the image
+     * @param newHeight The height of the image
+     */
+    @Override
+    public final void setImageDimension(final int newWidth, final int newHeight) {
+        final boolean calculateNeeded =
+            ((width != newWidth) || (height != newHeight));
+        width = newWidth;
+        height = newHeight;
+
+        if (calculateNeeded) {
+            calculateRatio();
+        }
+    }
+
+    /**
+     * Set the location of the image on the texture atlas the image is located
+     * on.
+     * 
+     * @param newX the x coordinate of the image on the parent texture
+     * @param newY the y coordinate of the image on the parent texture
+     */
+    @Override
+    public final void setImageLocation(final int newX, final int newY) {
+        final boolean calculateNeeded = ((x != newX) || (y != newY));
+        x = newX;
+        y = newY;
+
+        if (calculateNeeded) {
+            calculateRatio();
+        }
+    }
+
+    /**
+     * Set the parent texture of this texture.
+     * 
+     * @param parentAtlas the parent texture atlas of this texture
+     */
+    @Override
+    @SuppressWarnings("nls")
+    public void setParent(final TextureAtlas parentAtlas) {
+        if (!(parentAtlas instanceof TextureAtlasJOGL)) {
+            throw new IllegalArgumentException(
+                "Invalid implementation of the texture atlas");
+        }
+        if (parent != null) {
+            parent.decreaseLoadCounter();
+        }
+        parent = (TextureAtlasJOGL) parentAtlas;
+        parent.increaseLoadCounter();
+    }
+
+    /**
+     * Set the dimension of the parent texture this image is located on.
+     * 
+     * @param newTexWidth the width of the parent texture
+     * @param newTexHeight the height of the parent texture
+     */
+    public final void setTextureDimension(final int newTexWidth,
+        final int newTexHeight) {
+        final boolean calculateNeeded =
+            ((texHeight != newTexHeight) || (texWidth != newTexWidth));
+    
+        texHeight = newTexHeight;
+        texWidth = newTexWidth;
+    
+        if (calculateNeeded) {
+            calculateRatio();
+        }
+    }
+    
     /**
      * A list of used display list IDs. This is used to clean up the prepared
      * display lists in case its needed.
@@ -80,44 +420,6 @@ public final class TextureJOGL extends AbstractTexture {
     private int displayListID = -1;
 
     /**
-     * Create a empty texture.
-     */
-    public TextureJOGL() {
-        super();
-    }
-
-    /**
-     * Create a new texture with specified width and height and a texture size.
-     * Assumes that the X and Y coordinates of the image are at 0.
-     * 
-     * @param newWidth the width of the image
-     * @param newHeight the height of the image
-     * @param newTexWidth the width of the parent texture
-     * @param newTexHeight the height of the parent texture
-     */
-    public TextureJOGL(final int newWidth, final int newHeight,
-        final int newTexWidth, final int newTexHeight) {
-        super(newWidth, newHeight, newTexWidth, newTexHeight);
-    }
-
-    /**
-     * Create a new texture with specified width and height and a texture size.
-     * Also the position of the texture on the texture map is set.
-     * 
-     * @param newWidth the width of the image
-     * @param newHeight the height of the image
-     * @param newTexWidth the width of the parent texture
-     * @param newTexHeight the height of the parent texture
-     * @param newX the x coordinate of the image on the parent texture
-     * @param newY the y coordinate of the image on the parent texture
-     */
-    public TextureJOGL(final int newWidth, final int newHeight,
-        final int newTexWidth, final int newTexHeight, final int newX,
-        final int newY) {
-        super(newWidth, newHeight, newTexWidth, newTexHeight, newX, newY);
-    }
-
-    /**
      * Get the ID of the display list needed to render this texture. In case
      * there is none, the display list is created and compiled automatically.
      * 
@@ -159,23 +461,7 @@ public final class TextureJOGL extends AbstractTexture {
         return displayListID;
     }
 
-    /**
-     * Set the parent texture of this texture.
-     * 
-     * @param parentAtlas the parent texture atlas of this texture
-     */
-    @Override
-    @SuppressWarnings("nls")
-    public void setParent(final TextureAtlas parentAtlas) {
-        if (!(parentAtlas instanceof TextureAtlasJOGL)) {
-            throw new IllegalArgumentException(
-                "Invalid implementation of the texture atlas");
-        }
-        super.setParent(parentAtlas);
-    }
-
-    @Override
-    protected void textureDataChanged() {
+    private void textureDataChanged() {
         displayListDirty = true;
     }
 
@@ -194,5 +480,10 @@ public final class TextureJOGL extends AbstractTexture {
             displayListID = -1;
             usedDisplayLists.remove(displayListID);
         }
+    }
+
+    @Override
+    public void enable() {
+        parent.enable();
     }
 }

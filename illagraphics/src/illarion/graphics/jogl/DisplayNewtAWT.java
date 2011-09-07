@@ -20,7 +20,6 @@ package illarion.graphics.jogl;
 
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderTask;
-import illarion.graphics.generic.AbstractTextureAtlas;
 
 import java.awt.Cursor;
 
@@ -235,7 +234,7 @@ public final class DisplayNewtAWT extends NewtCanvasAWT implements Display,
             animator = null;
         }
         TextureJOGL.dispose();
-        AbstractTextureAtlas.dispose();
+        TextureAtlasJOGL.dispose();
     }
 
     /**

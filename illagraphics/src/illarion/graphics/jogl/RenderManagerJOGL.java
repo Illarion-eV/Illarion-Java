@@ -18,8 +18,14 @@
  */
 package illarion.graphics.jogl;
 
+import java.util.List;
+
+import javolution.util.FastTable;
+
+import org.apache.log4j.Logger;
+
+import illarion.graphics.RenderManager;
 import illarion.graphics.RenderTask;
-import illarion.graphics.generic.AbstractRenderManager;
 
 /**
  * This render manager is supposed to ensure that all render tasks are rendered
@@ -29,7 +35,91 @@ import illarion.graphics.generic.AbstractRenderManager;
  * @version 2.00
  * @since 2.00
  */
-public class RenderManagerJOGL extends AbstractRenderManager {
+public class RenderManagerJOGL implements RenderManager {
+    /**
+     * The logger instance that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger
+        .getLogger(RenderManagerJOGL.class);
+
+    /**
+     * Flag to determine if the regular render cycle was started already.
+     */
+    private boolean renderStarted = false;
+
+    /**
+     * The list of tasks that need to be updated at every run.
+     */
+    private final List<RenderTask> taskList;
+
+    /**
+     * Constructor that setups the render thread correctly.
+     */
+    public RenderManagerJOGL() {
+        taskList = new FastTable<RenderTask>();
+    }
+
+    /**
+     * Add a task to the list of tasks that are rendered at each loop.
+     * 
+     * @param task the task to add
+     */
+    @Override
+    public void addTask(final RenderTask task) {
+        if (!isRenderStarted()) {
+            task.render(0);
+        } else {        
+            synchronized (taskList) {
+                taskList.add(task);
+            }
+        }
+    }
+
+    /**
+     * Draw all graphics.
+     * 
+     * @param delta the time since the last render operation
+     */
+    @SuppressWarnings("nls")
+    protected final void draw(final int delta) {
+        try {
+            synchronized (taskList) {
+                int count = taskList.size();
+                int curr = 0;
+                while (curr < count) {
+                    if (!taskList.get(curr).render(delta)) {
+                        taskList.remove(curr);
+                        --count;
+                    } else {
+                        ++curr;
+                    }
+                }
+            }
+        } catch (final NullPointerException ex) {
+            LOGGER.warn("Render Thread catched NullPointerException");
+            LOGGER.debug("Exception:", ex);
+        }
+
+        SpriteJOGL.resetDrawCount();
+    }
+
+    /**
+     * Check if the rendering got started already.
+     * 
+     * @return <code>true</code> in case it was reported that the rendering
+     *         started
+     */
+    protected final boolean isRenderStarted() {
+        return renderStarted;
+    }
+
+    /**
+     * Set that the rendering started. After this the RenderTasks will be
+     * executed during the regular render cycles.
+     */
+    public final void renderStarted() {
+        renderStarted = true;
+    }
     /**
      * The frames rendered since the last measure.
      */
@@ -49,27 +139,6 @@ public class RenderManagerJOGL extends AbstractRenderManager {
      * The last archived frames per second.
      */
     private int lastFPS = 60;
-
-    /**
-     * Constructor that setups the render thread correctly.
-     */
-    public RenderManagerJOGL() {
-        super();
-    }
-
-    /**
-     * Add a task to the list of tasks that are rendered at each loop.
-     * 
-     * @param task the task to add
-     */
-    @Override
-    public void addTask(final RenderTask task) {
-        if (!isRenderStarted()) {
-            task.render(0);
-        } else {
-            super.addTask(task);
-        }
-    }
 
     /**
      * Draw all graphics

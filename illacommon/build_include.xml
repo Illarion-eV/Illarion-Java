@@ -385,6 +385,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 
 	<!-- Create config tool Tasks -->
 	<target name="buildTasks">
+		<echo>java.library.path = ${java.library.path}</echo>
 		<taskdef resource="illarion/build/illabuild.properties">
 			<classpath>
 				<pathelement location="${build.bin}" />
@@ -394,6 +395,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<fileset refid="trove" />
                 <fileset refid="lwjgl" />
                 <fileset refid="jogl" />
+                <fileset refid="gluegen" />
+                <fileset refid="nativewindow" />
 			</classpath>
 		</taskdef>
 	</target>

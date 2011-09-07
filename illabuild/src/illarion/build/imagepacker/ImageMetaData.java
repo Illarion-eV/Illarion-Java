@@ -152,15 +152,15 @@ public final class ImageMetaData {
     public int getTextureType() {
         if (colorCount == 1) {
             if (transparency) {
-                return TextureAtlas.TYPE_GREY_ALPHA;
+                return ImagePacker.TYPE_GREY_ALPHA;
             }
-            return TextureAtlas.TYPE_GREY;
+            return ImagePacker.TYPE_GREY;
         }
         if (colorCount == 3) {
             if (transparency) {
-                return TextureAtlas.TYPE_RGBA;
+                return ImagePacker.TYPE_RGBA;
             }
-            return TextureAtlas.TYPE_RGB;
+            return ImagePacker.TYPE_RGB;
         }
         return -1;
     }

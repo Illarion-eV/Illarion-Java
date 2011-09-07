@@ -22,7 +22,6 @@ import illarion.common.util.Rectangle;
 import illarion.graphics.BlendingMode;
 import illarion.graphics.GraphicResolution;
 import illarion.graphics.RenderDisplay;
-import illarion.graphics.generic.AbstractSprite;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -259,7 +258,7 @@ public final class RenderDisplayJOGL implements RenderDisplay {
      */
     @Override
     public int getObjects() {
-        return AbstractSprite.getDrawnObjects();
+        return SpriteJOGL.getDrawnObjects();
     }
 
     /**

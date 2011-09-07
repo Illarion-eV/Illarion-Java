@@ -34,6 +34,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -61,7 +62,9 @@ import illarion.build.imagepacker.ImagePacker;
 
 import illarion.common.util.Crypto;
 
+import illarion.graphics.Graphics;
 import illarion.graphics.TextureAtlas;
+import illarion.graphics.common.SubTextureCoord;
 import illarion.graphics.common.TextureIO;
 
 /**
@@ -854,15 +857,52 @@ public final class TextureConverterNG extends Task {
         int altasFiles = 0;
         while (!packer.allDone()) {
             try {
-                final TextureAtlas resultAtlas = packer.packImages();
-                outJar.putNextEntry(new JarEntry(folder + "atlas-"
-                    + altasFiles + ".itx"));
-                TextureIO.writeTexture(Channels.newChannel(outJar),
-                    resultAtlas);
-                resultAtlas.removeTexture();
+                final Collection<SubTextureCoord> coordList = new ArrayList<SubTextureCoord>();
+                final TextureAtlas texture = Graphics.getInstance().getTextureAtlas();
+                packer.packImages(texture, coordList);
+                
+                File imageFile = File.createTempFile("tex", "." + illarion.graphics.common.TextureIO.FORMAT);
+                File metaFile = File.createTempFile("tex", ".meta");
+                imageFile.deleteOnExit();
+                metaFile.deleteOnExit();
+                
+                TextureIO.writeTexture(imageFile, metaFile, texture, coordList);
+                
+                outJar.putNextEntry(new JarEntry(folder + "atlas-" + altasFiles + "." + illarion.graphics.common.TextureIO.FORMAT));
+                
+                FileChannel inChan = new FileInputStream(imageFile).getChannel();
+                WritableByteChannel outChan = Channels.newChannel(outJar);
+                
+                long length = imageFile.length();
+                long transfered = 0;
+                while (transfered < length) {
+                    transfered += inChan.transferTo(transfered, length - transfered, outChan);
+                }
+                
                 outJar.closeEntry();
+                
+                outJar.putNextEntry(new JarEntry(folder + "atlas-" + altasFiles + ".meta"));
+                
+                inChan = new FileInputStream(metaFile).getChannel();
+                outChan = Channels.newChannel(outJar);
+                
+                length = metaFile.length();
+                transfered = 0;
+                while (transfered < length) {
+                    transfered += inChan.transferTo(transfered, length - transfered, outChan);
+                }
+                
+                outJar.closeEntry();
+                
+                texture.finish();
+                texture.removeTexture();
+                
                 altasFiles++;
             } catch (final IOException e) {
+                e.printStackTrace();
+                throw new BuildException(e);
+            } catch (final Exception e) {
+                e.printStackTrace();
                 throw new BuildException(e);
             }
         }
@@ -894,16 +934,50 @@ public final class TextureConverterNG extends Task {
 
             while (!packer.allDone()) {
                 try {
+
                     final String entryFileName =
-                        fileEntry.getFileName().replace(".png", "")
-                            .replace(folder, "").replace("nopack_", "");
-                    final TextureAtlas resultAtlas = packer.packImages();
-                    outJar.putNextEntry(new JarEntry(folder + entryFileName
-                        + ".itx"));
-                    TextureIO.writeTexture(Channels.newChannel(outJar),
-                        resultAtlas);
-                    resultAtlas.removeTexture();
+                    fileEntry.getFileName().replace(".png", "")
+                    .replace(folder, "").replace("nopack_", "");
+                
+                    final Collection<SubTextureCoord> coordList = new ArrayList<SubTextureCoord>();
+                    final TextureAtlas texture = Graphics.getInstance().getTextureAtlas();
+                    packer.packImages(texture, coordList);
+                    
+                    File imageFile = File.createTempFile("tex", "." + illarion.graphics.common.TextureIO.FORMAT);
+                    File metaFile = File.createTempFile("tex", ".meta");
+                    imageFile.deleteOnExit();
+                    metaFile.deleteOnExit();
+                    
+                    TextureIO.writeTexture(imageFile, metaFile, texture, coordList);
+                    
+                    outJar.putNextEntry(new JarEntry(folder + entryFileName + "." + illarion.graphics.common.TextureIO.FORMAT));
+                    
+                    FileChannel inChan = new FileInputStream(imageFile).getChannel();
+                    WritableByteChannel outChan = Channels.newChannel(outJar);
+                    
+                    long length = imageFile.length();
+                    long transfered = 0;
+                    while (transfered < length) {
+                        transfered += inChan.transferTo(transfered, length - transfered, outChan);
+                    }
+                    
                     outJar.closeEntry();
+                    
+                    outJar.putNextEntry(new JarEntry(folder + entryFileName + ".meta"));
+                    
+                    inChan = new FileInputStream(metaFile).getChannel();
+                    outChan = Channels.newChannel(outJar);
+                    
+                    length = metaFile.length();
+                    transfered = 0;
+                    while (transfered < length) {
+                        transfered += inChan.transferTo(transfered, length - transfered, outChan);
+                    }
+                    
+                    outJar.closeEntry();
+                    
+                    texture.finish();
+                    texture.removeTexture();
                 } catch (final IOException e) {
                     throw new BuildException(e);
                 }

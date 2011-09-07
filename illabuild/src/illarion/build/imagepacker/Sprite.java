@@ -251,6 +251,8 @@ public final class Sprite implements TextureElement {
         if (image != null) {
             return;
         }
+        
+        //System.out.println("Loading: " + name);
 
         final ImageInputStream imageInStream =
             ImageIO.createImageInputStream(entry.getFile());

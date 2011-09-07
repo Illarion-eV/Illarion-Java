@@ -253,17 +253,17 @@ public final class GameMiniMap implements SessionMember {
         atlas = Graphics.getInstance().getTextureAtlas();
         atlas.setDimensions(WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
 
-        atlas.addImage(TEX_NAME_WORLD, 0, 0, WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
-        atlas.addImage(TEX_NAME_MINI, 0, 0, minimapWidth, minimapHeight);
+//        atlas.addImage(TEX_NAME_WORLD, 0, 0, WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
+//        atlas.addImage(TEX_NAME_MINI, 0, 0, minimapWidth, minimapHeight);
 
         worldmapTexture = atlas.getTexture(TEX_NAME_WORLD);
         minimapTexture = atlas.getTexture(TEX_NAME_MINI);
 
         worldmap = Graphics.getInstance().getSprite(1);
-        worldmap.addTexture(worldmapTexture);
+        //worldmap.addTexture(worldmapTexture);
 
         minimap = Graphics.getInstance().getSprite(1);
-        minimap.addTexture(minimapTexture);
+        //minimap.addTexture(minimapTexture);
     }
 
     @Override
@@ -818,22 +818,22 @@ public final class GameMiniMap implements SessionMember {
         final int[] updateSize = updateAreas.removeFirst();
         final ByteBuffer updateBuffer = updateBuffers.removeFirst();
 
-        if (atlas.getTextureID() != 0) {
-            final long beforeTime = System.currentTimeMillis();
-            atlas.updateTextureArea(updateSize[0], updateSize[1],
-                updateSize[2], updateSize[3], updateBuffer);
-            LOGGER.info("Changing Minimap Texture took "
-                + Long.toString(System.currentTimeMillis() - beforeTime)
-                + "ms");
-        } else if ((updateSize[0] == 0) && (updateSize[1] == 0)
-            && (updateSize[2] == WORLDMAP_WIDTH)
-            && (updateSize[3] == WORLDMAP_HEIGHT)) {
-            atlas.setTextureImage(updateBuffer);
-            atlas.activateTexture(true, true);
-
-            worldmapTexture.setParent(atlas);
-            minimapTexture.setParent(atlas);
-        }
+//        if (atlas.getTextureID() != 0) {
+//            final long beforeTime = System.currentTimeMillis();
+//            atlas.updateTextureArea(updateSize[0], updateSize[1],
+//                updateSize[2], updateSize[3], updateBuffer);
+//            LOGGER.info("Changing Minimap Texture took "
+//                + Long.toString(System.currentTimeMillis() - beforeTime)
+//                + "ms");
+//        } else if ((updateSize[0] == 0) && (updateSize[1] == 0)
+//            && (updateSize[2] == WORLDMAP_WIDTH)
+//            && (updateSize[3] == WORLDMAP_HEIGHT)) {
+//            atlas.setTextureImage(updateBuffer);
+//            atlas.activateTexture(true, true);
+//
+//            worldmapTexture.setParent(atlas);
+//            minimapTexture.setParent(atlas);
+//        }
     }
 
     /**

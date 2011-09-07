@@ -20,20 +20,45 @@ package illarion.graphics.jogl;
 
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderTask;
-import illarion.graphics.generic.AbstractTextureAtlas;
+import illarion.graphics.Texture;
+import illarion.graphics.TextureAtlas;
+import illarion.graphics.TextureAtlasListener;
 
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GL2GL3;
 import javax.media.opengl.GLContext;
+import javax.media.opengl.GLException;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.glu.GLU;
+
+import com.jogamp.opengl.util.texture.TextureIO;
+
+import javolution.util.FastMap;
+import javolution.util.FastTable;
 
 /**
  * TextureAtlas implementation for usage with JOGL.
@@ -42,7 +67,7 @@ import javax.media.opengl.glu.GLU;
  * @version 2.00
  * @since 2.00
  */
-public final class TextureAtlasJOGL extends AbstractTextureAtlas {
+public final class TextureAtlasJOGL implements TextureAtlas {
     /**
      * This render task activates a texture with the specified parameters at the
      * next update of the render system.
@@ -103,6 +128,13 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
     }
 
     /**
+     * A list of all known texture atlas objects. Used to optimize the texture
+     * usage.
+     */
+    private static final List<TextureAtlasJOGL> existingAtlasObject =
+        new FastTable<TextureAtlasJOGL>();
+
+    /**
      * This is the string for the extension check that sees if the OpenGL 1.3
      * extension is available on this system.
      */
@@ -128,6 +160,27 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
     }
 
     /**
+     * This removes all texture data from the video memory. After calling this
+     * function, no texture can be rendered anymore.
+     */
+    public static void dispose() {
+        while (!existingAtlasObject.isEmpty()) {
+            existingAtlasObject.get(0).removeTexture();
+        }
+    }
+
+    /**
+     * Get a byte buffer that was buffered before in order to avoid that it
+     * needs to be recreated. Don't forget to clear the returned buffer.
+     * 
+     * @param size the size of the buffer needed
+     * @return the byte buffer, either newly created or from the buffered ones
+     */
+    protected static ByteBuffer getByteBuffer(final int size) {
+        return ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
+    }
+
+    /**
      * Get a new texture ID from the OpenGL system. This also registers the
      * texture in the openGL environment, so it can be used right away.
      * 
@@ -146,15 +199,89 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
     private int internalFormat = 0;
 
     /**
+     * Flag that makes the texture atlas not removing the texture data after the
+     * texture is activated.
+     */
+    private boolean keepTextureData;
+
+    /**
+     * The listener class the death of the texture atlas is reported to.
+     */
+    private TextureAtlasListener listener;
+
+    /**
+     * A counter to keep track how many instances of this texture are around.
+     * This is needed to find out if the texture can be deleted entirely.
+     */
+    private int loadedCount;
+
+    /**
+     * In some cases the texture atlas will create mip maps. This flag ensures
+     * that none are generated.
+     */
+    private boolean noMipMaps = false;
+
+    /**
+     * The file name this atlas was original loaded from.
+     */
+    private String ownFileName;
+
+    /**
      * The format of the original source data of this texture.
      */
     private int sourceFormat = 0;
 
     /**
+     * A buffer of the already loaded textures to avoid that a single graphic is
+     * loaded into multiple textures.
+     */
+    private Map<String, Texture> textureBuffer;
+
+    /**
+     * The image data of the texture made for openGL.
+     */
+    private com.jogamp.opengl.util.texture.TextureData textureData;
+
+    /**
+     * The texture that works in the background of the texture atlas.
+     */
+    private com.jogamp.opengl.util.texture.Texture texture;
+
+    /**
+     * The height of the texture atlas that is loaded in this instance.
+     */
+    private int textureHeight;
+
+    /**
+     * The OpenGL ID of this texture atlas. When using this texture this ID must
+     * be the active openGL texture ID.
+     */
+    private int textureID = 0;
+
+    /**
+     * The type of the texture that is used.
+     */
+    private int textureType;
+
+    /**
+     * The width of the texture atlas that is loaded in this instance.
+     */
+    private int textureWidth;
+
+    /**
+     * This byte buffer, in case its set, contains the bit mask that stores if a
+     * pixel of the texture is entirely transparent or not.
+     */
+    private ByteBuffer transparencyMask = null;
+
+    /**
      * Constructor to create a empty texture Atlas.
      */
     public TextureAtlasJOGL() {
-        super();
+        textureBuffer = new FastMap<String, Texture>();
+        textureType = TYPE_RGBA;
+        existingAtlasObject.add(this);
+        keepTextureData = false;
     }
 
     /**
@@ -198,157 +325,7 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
             throw new IllegalStateException("No texturedata loaded");
         }
 
-        final int quality = Graphics.getInstance().getQuality();
-
-        boolean releaseContext = false;
-        if (GLContext.getCurrent() == null) {
-            RenderDisplayJOGL.getGLAutoDrawable().getContext().makeCurrent();
-            releaseContext = true;
-        }
-
-        if (getTextureID() != 0) {
-            removeTexture();
-        }
-
-        // generate new texture ID
-        final int texID = getNewTextureID();
-        setTextureID(texID);
-
-        // bind texture ID
-        final GL gl = GLU.getCurrentGL();
-        DriverSettingsJOGL.getInstance().enableMode(gl,
-            DriverSettingsJOGL.Modes.DRAWTEXTURE);
-        DriverSettingsJOGL.getInstance().bindTexture(gl, getTextureID());
-        // prepare texture data
-        if (resizeable) { // Textures will be resized -> smoothing would be good
-            if (quality <= Graphics.QUALITY_LOW) {
-                gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-                    GL.GL_NEAREST);
-                gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-                    GL.GL_NEAREST);
-            } else if ((quality <= Graphics.QUALITY_NORMAL) || isNoMipMaps()) {
-                gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-                    GL.GL_LINEAR);
-                gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-                    GL.GL_LINEAR);
-            } else {
-
-                if (gl.isGL2ES1()
-                    && gl.isExtensionAvailable(GL_EXTENSION_OPENGL14)) {
-                    gl.glTexParameteri(GL.GL_TEXTURE_2D,
-                        GL2ES1.GL_GENERATE_MIPMAP, GL.GL_TRUE);
-                } else {
-                    setNoMipMaps(true);
-                }
-                if (!isNoMipMaps()) {
-                    gl.glTexParameteri(GL.GL_TEXTURE_2D,
-                        GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-                    gl.glTexParameteri(GL.GL_TEXTURE_2D,
-                        GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-                } else {
-                    gl.glTexParameteri(GL.GL_TEXTURE_2D,
-                        GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-                    gl.glTexParameteri(GL.GL_TEXTURE_2D,
-                        GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-                }
-            }
-        } else {
-            gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-                GL.GL_NEAREST);
-            gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-                GL.GL_NEAREST);
-        }
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S,
-            GL2.GL_CLAMP);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T,
-            GL2.GL_CLAMP);
-
-        if (gl.isGL2GL3() && gl.isExtensionAvailable(GL_EXTENSION_OPENGL13)) {
-            gl.glHint(GL2GL3.GL_TEXTURE_COMPRESSION_HINT, GL.GL_NICEST);
-        }
-
-        // setup texture compression
-        final boolean activateCompression =
-            gl.isExtensionAvailable(GL_EXTENSION_OPENGL13)
-                && ((allowCompression && (quality < Graphics.QUALITY_MAX)) || (quality <= Graphics.QUALITY_LOW));
-        if (isTextureRGBA()) {
-            internalFormat = GL.GL_RGBA;
-            sourceFormat = GL.GL_RGBA;
-            if (activateCompression && gl.isGL2GL3()) {
-                internalFormat = GL2GL3.GL_COMPRESSED_RGBA;
-            }
-        } else if (isTextureRGB()) {
-            internalFormat = GL.GL_RGB;
-            sourceFormat = GL.GL_RGB;
-            if (activateCompression && gl.isGL2GL3()) {
-                internalFormat = GL2GL3.GL_COMPRESSED_RGB;
-            }
-        } else if (isTextureGrey()) {
-            internalFormat = GL.GL_LUMINANCE;
-            sourceFormat = GL.GL_LUMINANCE;
-            if (activateCompression && gl.isGL2()) {
-                internalFormat = GL2.GL_COMPRESSED_LUMINANCE;
-            }
-        } else if (isTextureGreyAlpha()) {
-            internalFormat = GL.GL_LUMINANCE_ALPHA;
-            sourceFormat = GL.GL_LUMINANCE_ALPHA;
-            if (activateCompression && gl.isGL2()) {
-                internalFormat = GL2.GL_COMPRESSED_LUMINANCE_ALPHA;
-            }
-        }
-
-        final ByteBuffer texData = getTextureData();
-
-        final int texWidth = getTextureWidth();
-        final int texHeight = getTextureHeight();
-
-        // produce a texture from the byte buffer
-        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, internalFormat, texWidth,
-            texHeight, 0, sourceFormat, GL.GL_UNSIGNED_BYTE, texData);
-
-        if (activateCompression && gl.isGL2GL3()) {
-            texIDBuffer.rewind();
-            gl.getGL2GL3().glGetTexLevelParameteriv(GL.GL_TEXTURE_2D, 0,
-                GL2GL3.GL_TEXTURE_COMPRESSED, texIDBuffer);
-
-            texData.rewind();
-            if (texIDBuffer.get(0) == GL.GL_FALSE) {
-                int newInternalFormat = internalFormat;
-                if (internalFormat == GL2.GL_COMPRESSED_LUMINANCE_ALPHA) {
-                    newInternalFormat = GL2GL3.GL_COMPRESSED_RGBA;
-                } else if (internalFormat == GL2.GL_COMPRESSED_LUMINANCE) {
-                    newInternalFormat = GL2GL3.GL_COMPRESSED_RGB;
-                }
-                final int orgSize = texData.remaining();
-                if (newInternalFormat != internalFormat) {
-                    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, newInternalFormat,
-                        texWidth, texHeight, 0, sourceFormat,
-                        GL.GL_UNSIGNED_BYTE, texData);
-                    gl.getGL2GL3().glGetTexLevelParameteriv(GL.GL_TEXTURE_2D,
-                        0, GL2GL3.GL_TEXTURE_COMPRESSED_IMAGE_SIZE,
-                        texIDBuffer);
-                    final int newSize = texIDBuffer.get(0);
-                    if (newSize > orgSize) {
-                        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, internalFormat,
-                            texWidth, texHeight, 0, sourceFormat,
-                            GL.GL_UNSIGNED_BYTE, texData);
-                    }
-                }
-            }
-        }
-
-        if (gl.isGL2GL3()) {
-            texIDBuffer.rewind();
-            gl.getGL2GL3().glGetTexLevelParameteriv(GL.GL_TEXTURE_2D, 0,
-                GL2GL3.GL_TEXTURE_INTERNAL_FORMAT, texIDBuffer);
-            internalFormat = texIDBuffer.get();
-        }
-
-        discardImageData();
-
-        if (releaseContext) {
-            gl.getContext().release();
-        }
+        texture.bind();
     }
 
     /**
@@ -365,28 +342,490 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
     @Override
     public void addImage(final String fileName, final int x, final int y,
         final int w, final int h) {
-
-        final TextureJOGL tex =
-            new TextureJOGL(w, h, getTextureWidth(), getTextureHeight(), x, y);
+        
+        final TextureJOGL tex = new TextureJOGL(texture.getSubImageTexCoords(x, y, x + w, y + h), getTextureWidth(), getTextureHeight());
         tex.setParent(this);
         addTextureToBuffer(fileName, tex);
     }
 
     /**
-     * Remove the texture from the video ram of the graphic card.
+     * Add a texture to the buffer of textures.
+     * 
+     * @param name the name of the texture
+     * @param tex the texture itself
+     */
+    protected final void addTextureToBuffer(final String name,
+        final Texture tex) {
+        textureBuffer.put(name, tex);
+    }
+
+    /**
+     * Check if the texture atlas is still in use and if its not in use, report
+     * this to its listener.
      */
     @Override
-    protected void removeFromVRam() {
-        final int texID = getTextureID();
-        if (texID != 0) {
-            texIDBuffer.rewind();
-            texIDBuffer.put(texID);
-            final GL gl = GLU.getCurrentGL();
-            texIDBuffer.flip();
-
-            gl.glDeleteTextures(1, texIDBuffer);
-            setTextureID(0);
+    public final void checkUsed() {
+        if ((loadedCount == 0) && (listener != null)) {
+            listener.reportDeath(this);
         }
+    }
+
+    /**
+     * Decrease the counter that keeps track how many objects loaded this
+     * texture. Always run this when any texture referring to this texture atlas
+     * is deleted.
+     */
+    public final void decreaseLoadCounter() {
+        --loadedCount;
+    }
+
+    /**
+     * Remove the image data from the system.
+     */
+    @Override
+    public final void discardImageData() {
+        if (!keepTextureData) {
+            //textureData.destroy();
+            textureData = null;
+            texture = null;
+        }
+    }
+
+    /**
+     * Finalize the texture. This causes that no more textures can be obtained
+     * from the texture atlas. Call this for optimizing reasons after the
+     * loading of the textures is done.
+     */
+    @Override
+    public final void finish() {
+        textureBuffer = null;
+    }
+
+    /**
+     * Copy all textures stored in this texture atlas into one hash map.
+     * 
+     * @param target the hash map to receive all textures
+     */
+    @Override
+    public final void getAllTextures(final Map<String, Texture> target) {
+        target.putAll(textureBuffer);
+    }
+
+    /**
+     * Get the file name that atlas was loaded from.
+     * 
+     * @return the filename of the file this texture was loaded from.
+     * @see illarion.graphics.TextureAtlas#getFileName()
+     */
+    @Override
+    public final String getFileName() {
+        return ownFileName;
+    }
+
+    /**
+     * Get one of the textures that is stored in this texture atlas. The texture
+     * instance contains all data to render the image with the sprite class of
+     * this implementation.
+     * 
+     * @param name the name of the texture that is required
+     * @return null in case the searched image is not included in this texture-
+     *         atlas, a instance of Texture in case it is included that will
+     *         contain the needed data about this texture.
+     * @see illarion.graphics.TextureAtlas#getTexture(String)
+     */
+    @Override
+    public final Texture getTexture(final String name) {
+        final Texture returnVal = textureBuffer.get(name);
+        if (returnVal != null) {
+            increaseLoadCounter();
+        }
+
+        return returnVal;
+    }
+
+    @Override
+    public final void writeTextureDataToFile(final File file) {
+        try {
+            TextureIO.write(textureData, file);
+        } catch (GLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get the height of the texture that was loaded.
+     * 
+     * @return the height of the texture that was loaded
+     */
+    @Override
+    public final int getTextureHeight() {
+        return texture.getHeight();
+    }
+
+    /**
+     * Get the load texture data as a image.
+     * 
+     * @return the load texture data as image
+     */
+    @Override
+    @SuppressWarnings("nls")
+    public final BufferedImage getTextureImage() {
+        final Buffer texData = textureData.getBuffer();
+        if (texData == null) {
+            throw new IllegalStateException(
+                "Can't get Image after textureData was discarded");
+        }
+        ComponentColorModel colorModel;
+        WritableRaster raster;
+        if (isTextureRGBA()) {
+            colorModel =
+                new ComponentColorModel(
+                    ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8,
+                        8, 8, 8 }, true, false, Transparency.TRANSLUCENT,
+                    DataBuffer.TYPE_BYTE);
+            raster =
+                Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
+                    getTextureWidth(), getTextureHeight(), 4, null);
+        } else if (isTextureRGB()) {
+            colorModel =
+                new ComponentColorModel(
+                    ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8,
+                        8, 8 }, false, false, Transparency.OPAQUE,
+                    DataBuffer.TYPE_BYTE);
+            raster =
+                Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
+                    getTextureWidth(), getTextureHeight(), 3, null);
+        } else if (isTextureGreyAlpha()) {
+            colorModel =
+                new ComponentColorModel(
+                    ColorSpace.getInstance(ColorSpace.CS_GRAY), new int[] { 8,
+                        8 }, true, false, Transparency.TRANSLUCENT,
+                    DataBuffer.TYPE_BYTE);
+            raster =
+                Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
+                    getTextureWidth(), getTextureHeight(), 2, null);
+        } else if (isTextureGrey()) {
+            colorModel =
+                new ComponentColorModel(
+                    ColorSpace.getInstance(ColorSpace.CS_GRAY),
+                    new int[] { 8 }, false, false, Transparency.OPAQUE,
+                    DataBuffer.TYPE_BYTE);
+            raster =
+                Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
+                    getTextureWidth(), getTextureHeight(), 1, null);
+        } else {
+            return null;
+        }
+
+        texData.rewind();
+        ((ByteBuffer) texData).get(((DataBufferByte) raster.getDataBuffer()).getData());
+
+        return new BufferedImage(colorModel, raster, false,
+            new Hashtable<Object, Object>());
+    }
+
+    /**
+     * Get a set containing all texture names and definitions
+     * 
+     * @return all texture names and definitions
+     */
+    @Override
+    public final Set<Entry<String, Texture>> getTextures() {
+        return textureBuffer.entrySet();
+    }
+
+    /**
+     * Get the type of the texture.
+     * 
+     * @return the type of the texture
+     */
+    @Override
+    public final int getTextureType() {
+        return textureType;
+    }
+
+    /**
+     * Get the width of the texture that was loaded.
+     * 
+     * @return the width of the texture that was loaded
+     */
+    @Override
+    public final int getTextureWidth() {
+        return texture.getWidth();
+    }
+
+    /**
+     * This function returns the stored transparency mask or <code>null</code>
+     * in case the mask was not set.
+     */
+    @Override
+    public final ByteBuffer getTransparencyMask() {
+        return transparencyMask;
+    }
+
+    /**
+     * Check if this texture has some stored texture data that is ready to be
+     * activated.
+     * 
+     * @return <code>true</code> if there is texture data in the memory that is
+     *         ready to be transfered to the video memory
+     */
+    protected final boolean hasTextureData() {
+        return (textureData != null);
+    }
+
+    /**
+     * This function returns <code>true</code> in case a transparency mask is
+     * defined.
+     */
+    @Override
+    public final boolean hasTransparencyMask() {
+        return (transparencyMask != null);
+    }
+
+    /**
+     * Increase the counter that keeps track how many objects loaded this
+     * texture. Always run this when any texture referring to this texture atlas
+     * is created.
+     */
+    public final void increaseLoadCounter() {
+        ++loadedCount;
+    }
+
+    /**
+     * Check if mipMaps are supposed to be generated.
+     * 
+     * @return <code>true</code> to generate mip maps
+     */
+    protected boolean isNoMipMaps() {
+        return noMipMaps;
+    }
+
+    /**
+     * Check if a pixel at a specified location is transparent or not.
+     */
+    @Override
+    @SuppressWarnings("nls")
+    public final boolean isPixelTransparent(final int x, final int y) {
+        if (transparencyMask == null) {
+            return false;
+        }
+
+        if ((x < 0) || (y < 0) || (x >= textureWidth) || (y >= textureHeight)) {
+            throw new IllegalArgumentException("Coordinates out of range");
+        }
+
+        final int pixelIndex = x + (y * textureHeight);
+
+        final int bufferIndex = pixelIndex / 8;
+        final int pixelMask = 1 << (pixelIndex % 8);
+
+        return ((transparencyMask.get(bufferIndex) & pixelMask) == pixelMask);
+    }
+
+    /**
+     * Check if this texture is a grey scale texture.
+     * 
+     * @return <code>true</code> if this texture is a grey scale texture
+     */
+    protected final boolean isTextureGrey() {
+        return (textureType == TYPE_GREY);
+    }
+
+    /**
+     * Check if this texture is a grey scale texture with alpha.
+     * 
+     * @return <code>true</code> if this texture is a grey scale texture with
+     *         alpha
+     */
+    protected final boolean isTextureGreyAlpha() {
+        return (textureType == TYPE_GREY_ALPHA);
+    }
+
+    /**
+     * Check if this texture is a RGB texture.
+     * 
+     * @return <code>true</code> if this texture is a RGB texture
+     */
+    protected final boolean isTextureRGB() {
+        return (textureType == TYPE_RGB);
+    }
+
+    /**
+     * Check if this texture is a RGB texture with alpha.
+     * 
+     * @return <code>true</code> if this texture is a RGB texture with alpha
+     */
+    protected final boolean isTextureRGBA() {
+        return (textureType == TYPE_RGBA);
+    }
+
+    /**
+     * Remove the texture from the video ram of the graphic card.
+     */
+    protected void removeFromVRam() {
+        if (texture != null) {
+            //texture.destroy(GLU.getCurrentGL());
+        }
+    }
+
+    /**
+     * Remove the texture from the openGL system. After this function call the
+     * texture atlas is not usable anymore.
+     */
+    @Override
+    public final void removeTexture() {
+        existingAtlasObject.remove(this);
+        setKeepTextureData(false);
+        discardImageData();
+        removeFromVRam();
+    }
+
+    /**
+     * Set the dimensions of the texture atlas. The normal client should not use
+     * this, it needed to build the texture atlas by the config tool. If a
+     * texture is read from a file this values are set automatically.
+     * 
+     * @param newWidth the new value for the width of the texture
+     * @param newHeight the new value for the height of the texture
+     */
+    @Override
+    public final void setDimensions(final int newWidth, final int newHeight) {
+        textureWidth = newWidth;
+        textureHeight = newHeight;
+    }
+
+    /**
+     * Set the name of the file the Texture Atlas was loaded from.
+     * 
+     * @param newFileName the filename that shall be stored in this instance of
+     *            the texture atlas.
+     */
+    @Override
+    public final void setFileName(final String newFileName) {
+        ownFileName = newFileName;
+    }
+
+    /**
+     * Set the flag that makes the texture not discarding the texture data after
+     * activating the texture.
+     * 
+     * @param newKeepTextureData the new state of the flag
+     */
+    @Override
+    public final void setKeepTextureData(final boolean newKeepTextureData) {
+        keepTextureData = newKeepTextureData;
+    }
+
+    /**
+     * Set the listener class for this texture atlas that shall receive the
+     * notify of the death of this texture atlas in case it occurs.
+     * 
+     * @param newListener the listener class
+     */
+    @Override
+    public final void setListener(final TextureAtlasListener newListener) {
+        listener = newListener;
+    }
+
+    /**
+     * Set the new value of the noMipMaps flag. That flag will ensure that no
+     * mipMaps are created.
+     * 
+     * @param value <code>false</code> to ensure that no mipMaps are generated
+     */
+    protected void setNoMipMaps(final boolean value) {
+        noMipMaps = value;
+    }
+
+    /**
+     * Set the texture ID to a new value.
+     * 
+     * @param id the new value of the texture ID
+     */
+    protected final void setTextureID(final int id) {
+        textureID = id;
+    }
+
+    /**
+     * Set the image data of the texture. This is only needed in case the
+     * texture receives its data not from a texture file. The BufferedImage
+     * loaded into this function is automatically converted in the best format
+     * for rendering it using OpenGL.
+     * 
+     * @param imageData the image that shall be stored in this texture
+     */
+    @Override
+    public final void setTextureImage(final BufferedImage imageData) {
+        noMipMaps = true;
+
+        final byte[] imageByteData =
+            ((DataBufferByte) imageData.getRaster().getDataBuffer()).getData();
+
+        final ByteBuffer imageBuffer = getByteBuffer(imageByteData.length);
+        imageBuffer.put(imageByteData, 0, imageByteData.length);
+
+        imageBuffer.flip();
+
+        setTextureImage(imageBuffer);
+    }
+
+    /**
+     * Set the image data of the texture. This is only needed in case the
+     * texture receives its data not from a texture file. The BufferedImage
+     * loaded into this function is automatically converted in the best format
+     * for rendering it using OpenGL.
+     * 
+     * @param imageData the image that shall be stored in this texture
+     */
+    @SuppressWarnings("nls")
+    @Override
+    public final void setTextureImage(final ByteBuffer imageData) {
+        if (!imageData.hasRemaining()) {
+            throw new IllegalArgumentException(
+                "There is no data remaining in the buffer!");
+        }
+        textureData.setBuffer(imageData);
+    }
+
+    /**
+     * Set the texture type that shall be used.
+     * 
+     * @param type the new type that shall be used
+     */
+    @Override
+    public final void setTextureType(final int type) {
+        textureType = type;
+    }
+
+    /**
+     * This function set the transparency mask. It also performs the required
+     * checks to ensure that the transparency has the expected specifications.
+     */
+    @SuppressWarnings("nls")
+    @Override
+    public final void setTransparencyMask(final ByteBuffer mask) {
+        if (mask == null) {
+            throw new NullPointerException("mask must not be NULL");
+        }
+
+        int expectedSize = (textureHeight * textureWidth) / 8;
+        if ((expectedSize * 8) < (textureHeight * textureWidth)) {
+            expectedSize++;
+        }
+
+        if (mask.remaining() != expectedSize) {
+            throw new IllegalArgumentException("Size of the mask is: "
+                + Integer.toString(mask.remaining())
+                + " Bytes but was expected to be "
+                + Integer.toString(expectedSize) + " Bytes.");
+        }
+
+        transparencyMask = mask;
     }
 
     /**
@@ -440,8 +879,52 @@ public final class TextureAtlasJOGL extends AbstractTextureAtlas {
         final GL gl = GLU.getCurrentGL();
         DriverSettingsJOGL.getInstance().enableMode(gl,
             DriverSettingsJOGL.Modes.DRAWTEXTURE);
-        DriverSettingsJOGL.getInstance().bindTexture(gl, getTextureID());
+        texture.enable();
+        //DriverSettingsJOGL.getInstance().bindTexture(gl, getTextureID());
         gl.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, x, y, w, h, GL.GL_RGBA,
             GL.GL_UNSIGNED_BYTE, imageData);
+    }
+
+    @Override
+    public void loadTextureData(File dataFile) {
+        try {
+            String fileName = dataFile.getAbsolutePath();
+            int dotPos = dataFile.getAbsolutePath().lastIndexOf(".");
+            String extension = fileName.substring(dotPos);
+            textureData = TextureIO.newTextureData(GLProfile.getGL2ES1(), dataFile, true, extension);
+            texture = TextureIO.newTexture(textureData);
+        } catch (GLException e) {
+            // texture not created
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void loadTextureData(InputStream dataStream) {
+        loadTextureData(dataStream, illarion.graphics.common.TextureIO.FORMAT);
+    }
+
+    @Override
+    public void loadTextureData(InputStream dataStream, String string) {
+        try {
+            textureData = TextureIO.newTextureData(GLProfile.getGL2ES1(), dataStream, true, string);
+            textureData.flush();
+            texture = TextureIO.newTexture(textureData);
+            textureData.flush();
+            textureData = null;
+        } catch (GLException e) {
+            // texture not created
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void enable() {
+        texture.enable();
+        texture.bind();
     }
 }
