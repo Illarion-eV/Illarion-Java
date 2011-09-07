@@ -33,7 +33,7 @@ public interface MouseCursor {
      * Update the mouse cursor. For non-native cursors this function is needed
      * to render the cursor at the correct location.
      */
-    void update();
+    void update(int x, int y);
 
     /**
      * Enable the cursor. From now on this cursor is the active one and is

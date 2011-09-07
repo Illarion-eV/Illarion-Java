@@ -18,6 +18,9 @@
  */
 package illarion.input;
 
+import illarion.input.receiver.MouseEventReceiver;
+import illarion.input.receiver.MouseEventReceiverComplex;
+
 /**
  * The mouse manager that handles the mouse inputs and allows to register mouse
  * events that are fired then. Also its allows to check the current position of
@@ -49,6 +52,9 @@ public interface MouseManager {
      * @return the y coordinate of the position of the mouse pointer
      */
     int getMousePosY();
+    
+    int getNativeMousePosY();
+    int getNativeMousePosX();
 
     /**
      * Check if one key is pressed down. The state of the key at the last update

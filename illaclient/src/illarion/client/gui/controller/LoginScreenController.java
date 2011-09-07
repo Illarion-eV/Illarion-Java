@@ -23,7 +23,7 @@ import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 
-public class LoginScreenController implements ScreenController {
+public final class LoginScreenController implements ScreenController {
 
 	private Nifty nifty;
 	private TextField nameTxt;

@@ -16,7 +16,9 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Input Interface. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.input;
+package illarion.input.receiver;
+
+import illarion.input.KeyboardEvent;
 
 /**
  * This interface adds the function to classes to receive keyboard events.
@@ -25,7 +27,7 @@ package illarion.input;
  * @version 2.00
  * @since 2.00
  */
-public interface KeyboardEventReceiver {
+public interface KeyboardEventReceiverComplex extends KeyboardEventReceiver {
     /**
      * This function is called with the generated event. After this function is
      * done with the event ensure that

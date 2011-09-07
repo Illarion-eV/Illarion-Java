@@ -21,9 +21,10 @@ package illarion.input.java;
 import gnu.trove.list.array.TIntArrayList;
 import illarion.graphics.Graphics;
 import illarion.input.KeyboardEvent;
-import illarion.input.KeyboardEventReceiver;
 import illarion.input.KeyboardManager;
 import illarion.input.generic.KeyboardEventMulticast;
+import illarion.input.receiver.KeyboardEventReceiver;
+import illarion.input.receiver.KeyboardEventReceiverComplex;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -557,7 +558,9 @@ public final class KeyboardManagerJAVA implements KeyboardManager, KeyListener {
         if (receiver != null) {
             KeyboardEvent event = null;
             while ((event = eventList.pollFirst()) != null) {
-                receiver.handleKeyboardEvent(event);
+                if (receiver instanceof KeyboardEventReceiverComplex) {
+                    ((KeyboardEventReceiverComplex) receiver).handleKeyboardEvent(event);
+                }
                 event.recycle();
             }
         } else {

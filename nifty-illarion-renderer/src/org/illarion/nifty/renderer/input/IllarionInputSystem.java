@@ -21,17 +21,18 @@ package org.illarion.nifty.renderer.input;
 import illarion.graphics.Graphics;
 import illarion.input.InputManager;
 import illarion.input.KeyboardEvent;
-import illarion.input.KeyboardEventReceiver;
 import illarion.input.KeyboardManager;
 import illarion.input.MouseEvent;
-import illarion.input.MouseEventReceiver;
 import illarion.input.MouseManager;
+import illarion.input.receiver.KeyboardEventReceiverComplex;
+import illarion.input.receiver.MouseEventReceiverComplex;
+import illarion.input.receiver.MouseEventReceiverPrimitive;
 import de.lessvoid.nifty.NiftyInputConsumer;
 import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
 import de.lessvoid.nifty.spi.input.InputSystem;
 
 public final class IllarionInputSystem implements InputSystem,
-    MouseEventReceiver, KeyboardEventReceiver {
+    MouseEventReceiverPrimitive, KeyboardEventReceiverComplex {
 
     /**
      * Correct the y coordinate of the mouse location to meet the nifty
@@ -301,19 +302,13 @@ public final class IllarionInputSystem implements InputSystem,
     }
 
     @Override
-    public boolean handleMouseEvent(final MouseEvent event) {
-        switch (event.getEvent()) {
-            case MouseEvent.EVENT_KEY_UP:
-            case MouseEvent.EVENT_KEY_DOWN:
-            case MouseEvent.EVENT_WHEEL_CHANGE:
-            case MouseEvent.EVENT_LOCATION:
-                return currentConsumer.processMouseEvent(event.getPosX(),
-                    fixY(event.getPosY()), event.getDelta(),
-                    translateMouseButtonIllarionNifty(event.getKey()),
-                    event.getEvent() == MouseEvent.EVENT_KEY_DOWN);
-            default:
-                return false;
-        }
+    public boolean handleMouseEvent(int mouseX, int mouseY, int wheelDelta,
+        int button, boolean buttonDown) {
+        
+        return currentConsumer.processMouseEvent(mouseX,
+            fixY(mouseY), wheelDelta,
+            translateMouseButtonIllarionNifty(button),
+            buttonDown);
     }
 
     @Override

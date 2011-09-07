@@ -20,6 +20,8 @@ package org.illarion.nifty.renderer.render;
 
 import illarion.graphics.Graphics;
 import illarion.graphics.Sprite;
+import illarion.input.InputManager;
+import illarion.input.MouseManager;
 import de.lessvoid.nifty.spi.render.MouseCursor;
 
 /**
@@ -35,6 +37,8 @@ public final class IllarionMouseCursor implements MouseCursor {
      * cursor.
      */
     private final illarion.graphics.MouseCursor internalCursor;
+    
+    private final MouseManager manager;
 
     /**
      * Construct the mouse cursor.
@@ -47,6 +51,7 @@ public final class IllarionMouseCursor implements MouseCursor {
         final int hotspotY) {
         internalCursor =
             Graphics.getInstance().getMouseCursor(sprite, hotspotX, hotspotY);
+        manager = InputManager.getInstance().getMouseManager();
         
         if (internalCursor == null) {
             throw new NullPointerException();
@@ -80,7 +85,7 @@ public final class IllarionMouseCursor implements MouseCursor {
      * should be done at the very end of the frame display.
      */
     public void update() {
-        internalCursor.update();
+        internalCursor.update(manager.getNativeMousePosX(), manager.getNativeMousePosY());
     }
 
 }

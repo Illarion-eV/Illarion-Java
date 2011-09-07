@@ -21,9 +21,11 @@ package illarion.input.newt;
 import gnu.trove.list.array.TIntArrayList;
 import illarion.graphics.Graphics;
 import illarion.input.KeyboardEvent;
-import illarion.input.KeyboardEventReceiver;
 import illarion.input.KeyboardManager;
 import illarion.input.generic.KeyboardEventMulticast;
+import illarion.input.receiver.KeyboardEventReceiver;
+import illarion.input.receiver.KeyboardEventReceiverComplex;
+import illarion.input.receiver.KeyboardEventReceiverPrimitive;
 
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -558,7 +560,9 @@ public final class KeyboardManagerNEWT implements KeyboardManager, KeyListener {
         if (receiver != null) {
             KeyboardEvent event = null;
             while ((event = eventList.pollFirst()) != null) {
-                receiver.handleKeyboardEvent(event);
+                if (receiver instanceof KeyboardEventReceiverComplex) {
+                    ((KeyboardEventReceiverComplex) receiver).handleKeyboardEvent(event);
+                }
                 event.recycle();
             }
         } else {
