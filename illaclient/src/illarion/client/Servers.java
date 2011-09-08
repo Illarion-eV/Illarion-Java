@@ -32,7 +32,7 @@ public enum Servers {
      * server running at localhost using the same connection parameters like the
      * Testserver of Illarion.
      */
-    localserver("Local server", "localhost", 3012, 122),
+    localserver("Local server", "192.168.1.102", 3012, 122),
 
     /**
      * The Gameserver of Illarion. Normal players should connect to this server.

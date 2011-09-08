@@ -4,6 +4,7 @@
 package illarion.client.gui;
 
 import illarion.client.ClientWindow;
+import illarion.client.graphics.MapDisplayManager;
 import illarion.client.world.Game;
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderDisplay;
@@ -54,9 +55,15 @@ public final class MapImage implements DynamicImageSource {
         
         RenderDisplay display = Graphics.getInstance().getRenderDisplay();
         
+        MapDisplayManager mapRender = Game.getDisplay();
+        
+        if (mapRender == null) {
+            return;
+        }
+        
         display.setAreaLimit(x, y, w, h);
         display.applyOffset(-srcX, -srcY);
-        Game.getDisplay().render(Graphics.getInstance().getRenderManager().getCurrentDelta(), w, h);
+        mapRender.render(Graphics.getInstance().getRenderManager().getCurrentDelta(), w, h);
         display.resetOffset();
         display.unsetAreaLimit();
     }

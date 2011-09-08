@@ -39,13 +39,19 @@ import de.lessvoid.nifty.tools.TimeProvider;
  * @version 1.22
  */
 public final class GUI {
+    private static final GUI INSTANCE = new GUI();
+    
+    public static GUI getInstance() {
+        return INSTANCE;
+    }
+    
     /**
      * The primary nifty GUI instance that is used to control the rendering and
      * maintance of the entire GUI.
      */
     private final Nifty niftyGui;
 
-    public GUI() {
+    private GUI() {
         final RenderImageFactory imageFactory = new RenderImageFactory(new GuiImageFactory());
         imageFactory.addDynamicImage("gamemap", new MapImage());
         

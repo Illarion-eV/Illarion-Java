@@ -908,28 +908,28 @@ public final class GameMiniMap implements SessionMember {
     private void prepareUpdateFullImage() {
         LOGGER.info("Full Minimap Update triggered");
 
-        final ByteBuffer buffer =
-            ByteBuffer.allocateDirect(WORLDMAP_WIDTH * WORLDMAP_HEIGHT * 4);
-
-        synchronized (mapData) {
-            mapData.rewind();
-
-            try {
-                while (mapData.remaining() > 0) {
-                    decodeTile(mapData.getShort(), buffer);
-                }
-            } catch (final ArrayIndexOutOfBoundsException ex1) {
-                LOGGER.error(
-                    "Map data corrupted, discard map and load blank map", ex1);
-                loadEmptyMap();
-            }
-        }
-
-        buffer.flip();
-
-        updateBuffers.addLast(buffer);
-        updateAreas
-            .addLast(new int[] { 0, 0, WORLDMAP_WIDTH, WORLDMAP_HEIGHT });
+//        final ByteBuffer buffer =
+//            ByteBuffer.allocateDirect(WORLDMAP_WIDTH * WORLDMAP_HEIGHT * 4);
+//
+//        synchronized (mapData) {
+//            mapData.rewind();
+//
+//            try {
+//                while (mapData.remaining() > 0) {
+//                    decodeTile(mapData.getShort(), buffer);
+//                }
+//            } catch (final ArrayIndexOutOfBoundsException ex1) {
+//                LOGGER.error(
+//                    "Map data corrupted, discard map and load blank map", ex1);
+//                loadEmptyMap();
+//            }
+//        }
+//
+//        buffer.flip();
+//
+//        updateBuffers.addLast(buffer);
+//        updateAreas
+//            .addLast(new int[] { 0, 0, WORLDMAP_WIDTH, WORLDMAP_HEIGHT });
     }
 
     /**

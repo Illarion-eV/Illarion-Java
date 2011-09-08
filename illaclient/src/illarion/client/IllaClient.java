@@ -291,9 +291,7 @@ public final class IllaClient {
      */
     public static void fallbackToLogin(final String message) {
         if (Game.getInstance().isRunning()) {
-            errorMessage = message;
-            requestedReconnect = true;
-            INSTANCE.quitGame();
+            SessionManager.getInstance().endSession();
         }
     }
 

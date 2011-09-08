@@ -351,8 +351,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     }
 
     public void stopWalkTowards() {
-        GUI.getInstance().getMouseCursor()
-            .setCursor(MarkerFactory.CRSR_NORMAL);
+//        GUI.getInstance().getMouseCursor()
+//            .setCursor(MarkerFactory.CRSR_NORMAL);
         walkTowards = false;
     }
 

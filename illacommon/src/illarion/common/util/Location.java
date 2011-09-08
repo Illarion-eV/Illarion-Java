@@ -964,14 +964,14 @@ public class Location implements Externalizable, Reusable {
         if (!dirtySC) {
             dcX = (scX + scY) * (MapConstants.STEP_X + gap);
             dcY =
-                ((scX - scY) * (MapConstants.STEP_Y + gap))
-                    + (DISPLAY_Z_OFFSET_MOD * scZ * MapConstants.STEP_Y);
+                -(((scX - scY) * (MapConstants.STEP_Y + gap))
+                    + (DISPLAY_Z_OFFSET_MOD * scZ * MapConstants.STEP_Y));
             dcZ = (scX - scY - (scZ * Layers.LEVEL)) * Layers.DISTANCE;
 
             dirtyDC = false;
         } else if (!dirtyMC) {
             dcX = col * (MapConstants.STEP_X + gap);
-            dcY = row * (MapConstants.STEP_Y + gap);
+            dcY = -row * (MapConstants.STEP_Y + gap);
             dcZ = row * Layers.DISTANCE;
 
             dirtyDC = false;
@@ -992,7 +992,7 @@ public class Location implements Externalizable, Reusable {
             dirtyMC = false;
         } else if (!dirtyDC) {
             col = FastMath.round(dcX / (float) (MapConstants.STEP_X + gap));
-            row = FastMath.round(dcY / (float) (MapConstants.STEP_Y + gap));
+            row = FastMath.round(-dcY / (float) (MapConstants.STEP_Y + gap));
 
             dirtyMC = false;
         }
@@ -1014,10 +1014,10 @@ public class Location implements Externalizable, Reusable {
         } else if (!dirtyDC) {
             scX =
                 FastMath
-                    .round(((dcY / (float) (MapConstants.STEP_Y + gap)) + (dcX / (float) (MapConstants.STEP_X + gap))) / 2.f);
+                    .round(((-dcY / (float) (MapConstants.STEP_Y + gap)) + (dcX / (float) (MapConstants.STEP_X + gap))) / 2.f);
             scY =
                 FastMath
-                    .round(((dcX / (float) (MapConstants.STEP_X + gap)) - (dcY / (float) (MapConstants.STEP_Y + gap))) / 2.f);
+                    .round(((dcX / (float) (MapConstants.STEP_X + gap)) - (-dcY / (float) (MapConstants.STEP_Y + gap))) / 2.f);
             scZ = 0;
 
             dirtySC = false;

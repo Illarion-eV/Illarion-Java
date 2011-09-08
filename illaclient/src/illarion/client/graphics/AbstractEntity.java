@@ -18,6 +18,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.ClientWindow;
 import illarion.client.IllaClient;
 import illarion.client.world.Game;
 
@@ -461,13 +462,16 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         }
 
         localLight.setAlpha(getAlpha());
+        
+        final int renderLocX = displayX;
+        final int renderLocY = displayY;
 
         if ((baseColor == null) && (overWriteBaseColor == null)) {
             if (useScale) {
-                sprite.draw(displayX, displayY, localLight, currentFrame,
+                sprite.draw(renderLocX, renderLocY, localLight, currentFrame,
                     scale);
             } else {
-                sprite.draw(displayX, displayY, localLight, currentFrame);
+                sprite.draw(renderLocX, renderLocY, localLight, currentFrame);
             }
         } else {
             RENDERCOLOR.set(localLight);
@@ -484,10 +488,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
             }
 
             if (useScale) {
-                sprite.draw(displayX, displayY, RENDERCOLOR, currentFrame,
+                sprite.draw(renderLocX, renderLocY, RENDERCOLOR, currentFrame,
                     scale);
             } else {
-                sprite.draw(displayX, displayY, RENDERCOLOR, currentFrame);
+                sprite.draw(renderLocX, renderLocY, RENDERCOLOR, currentFrame);
             }
         }
         return true;

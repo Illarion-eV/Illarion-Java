@@ -2,6 +2,7 @@ package illarion.client.gui.controller;
 
 import illarion.client.Login;
 import illarion.client.util.SessionManager;
+import illarion.client.world.Game;
 import illarion.common.util.LoadingManager;
 import illarion.common.util.LoadingManager.LoadingMonitor;
 import de.lessvoid.nifty.Nifty;
@@ -32,13 +33,18 @@ public final class LoadScreenController implements ScreenController, LoadingMoni
     
     public void setProgress(final float progressValue) {
     	progress.setProgress(progressValue);
-    	if (progressValue >= 1.0f) {
+    	if (progressValue >= 0.99f) {
 
     	    if (SessionManager.getInstance().isStarted()) {
                 SessionManager.getInstance().startSession();
                 Login.getInstance().login();
+                
+                if (Game.getDisplay() != null) {
+                    nifty.gotoScreen("gamescreen");
+                } else {
+                    System.out.println("Display not ready");
+                }
     	    }
-    		nifty.gotoScreen("gamescreen");
     	}
     }
 
