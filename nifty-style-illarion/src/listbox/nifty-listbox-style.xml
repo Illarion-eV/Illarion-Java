@@ -21,6 +21,7 @@
     <interact onClick="listBoxItemClicked()" />
     <effect>
       <onCustom customKey="focus" name="colorBar" post="false" color="#444f" neverStopRendering="true" timeType="infinite" />
+      <onCustom customKey="focus" name="textColor" post="false" color="#ffff" neverStopRendering="true" timeType="infinite" />
       <onCustom customKey="select" name="colorBar" post="false" color="#444f" neverStopRendering="true" timeType="infinite" />
       <onCustom customKey="select" name="textColor" post="false" color="#fc0f" neverStopRendering="true" timeType="infinite" />
       <onHover name="colorBar" color="#444f" post="false" neverStopRendering="true" timeType="infinite" inset="1px"/>

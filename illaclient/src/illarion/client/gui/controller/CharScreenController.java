@@ -31,5 +31,6 @@ public class CharScreenController implements ScreenController {
 		listBox.addItem("a");
 		listBox.addItem("b");
 		listBox.addItem("c");
+		listBox.addItem("d");
 	}
 }
