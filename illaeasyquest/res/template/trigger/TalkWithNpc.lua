@@ -13,20 +13,35 @@ local NPC_TRIGGER_EN = TEXT -- English trigger text -- Auslösender englischer Te
 local NPC_REPLY_DE = TEXT -- German reply text -- Deutscher Antworttext
 local NPC_REPLY_EN = TEXT -- English reply text -- Englischer Antworttext
 
-function receiveText(type, text, player)
-  if questsystem.base.fulfilsPrecondition(player, QUEST_NUMBER, PRECONDITION_QUESTSTATE)
-      and player:getType() == Character.player
-      and string.find(text, getNLS(player, NPC_TRIGGER_DE, NPC_TRIGGER_EN)) then
-    thisNPC:talk(Character.say, getNLS(player, NPC_REPLY_DE, NPC_REPLY_EN))
-    
-    HANDLER()
-    
-    questsystem.base.setPostcondition(player, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
+function receiveText(type, text, PLAYER)
+    if questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE)
+    and player:getType() == Character.player then
+        if PLAYER:getPlayerLanguage() == Player.german then
+            NPC_TRIGGER=string.gsub(NPC_TRIGGER_DE,'([ ]+)',' .*');
+        else
+            NPC_TRIGGER=string.gsub(NPC_TRIGGER_EN,'([ ]+)',' .*');
+        end
 
-    return true
-  end
+        foundTrig=false
+        
+        for word in string.gmatch(NPC_TRIGGER, "[^|]+") do 
+            if string.find(text,word)~=nil then
+                foundTrig=true
+            end
+        end
 
-  return false
+        if foundTrig then
+      
+            thisNPC:talk(Character.say, getNLS(PLAYER, NPC_REPLY_DE, NPC_REPLY_EN))
+            
+            HANDLER()
+            
+            questsystem.base.setPostcondition(PLAYER, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
+        
+            return true
+        end
+    end
+    return false
 end
 
 function getNLS(player, textDe, textEn)

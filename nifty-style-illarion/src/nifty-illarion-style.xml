@@ -3,6 +3,7 @@
   <useStyles filename="fonts.xml" />
   <useStyles filename="panel/nifty-panel.xml" />
   <useStyles filename="button/nifty-button.xml" />
+  <useStyles filename="illabutton/illabutton.xml" />
   <useStyles filename="label/nifty-label.xml" />
   <useStyles filename="textfield/nifty-textfield.xml" />
   <useStyles filename="dropdown/nifty-drop-down.xml" />
