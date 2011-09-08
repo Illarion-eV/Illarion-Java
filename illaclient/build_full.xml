@@ -107,7 +107,7 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
 	</target>
 	
 	<target name="fetch_libs">
-		<ant antfile="${common}/build.xml" target="download_libraries" />
+		<!--<ant antfile="${common}/build.xml" target="download_libraries" />-->
 	</target>
     
     <!--

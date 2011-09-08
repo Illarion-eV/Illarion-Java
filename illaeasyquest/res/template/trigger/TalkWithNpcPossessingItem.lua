@@ -17,34 +17,49 @@ local NPC_REPLY_EN = TEXT -- English reply text (has item) -- Englischer Antwort
 local NPC_NOITEM_DE = TEXT -- German reply text (doesn't have item) -- Deutscher Antworttext (hat Gegenstand nicht)
 local NPC_NOITEM_EN = TEXT -- English reply text (doesn't have item) -- Englischer Antworttext (hat Gegenstand nicht)
 
-function receiveText(type, text, player)
-  if questsystem.base.fulfilsPrecondition(player, QUEST_NUMBER, PRECONDITION_QUESTSTATE)
-      and player:getType() == Character.player
-      and string.find(text, getNLS(player, NPC_TRIGGER_DE, NPC_TRIGGER_EN)) then
-    if player:countItem(ITEM_ID)>=ITEM_AMNT then
-      thisNPC:talk(Character.say, getNLS(player, NPC_REPLY_DE, NPC_REPLY_EN))
-        
-      HANDLER()
-        
-      questsystem.base.setPostcondition(player, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
-    
-      return true
-    else if (NPC_NOITEM_DE~="") then
-      thisNPC:talk(Character.say, getNLS(player, NPC_NOITEM_DE, NPC_NOITEM_EN))
-      
-      return true
-    else
-      return false
-    end
-  end
+function receiveText(type, text, PLAYER)
+    if questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE)
+    and PLAYER:getType() == Character.player then
+        if PLAYER:getPlayerLanguage() == Player.german then
+            NPC_TRIGGER=string.gsub(NPC_TRIGGER_DE,'([ ]+)',' .*');
+        else
+            NPC_TRIGGER=string.gsub(NPC_TRIGGER_EN,'([ ]+)',' .*');
+        end
 
-  return false
+        foundTrig=false
+        
+        for word in string.gmatch(NPC_TRIGGER, "[^|]+") do 
+            if string.find(text,word)~=nil then
+                foundTrig=true
+            end
+        end
+
+        if foundTrig then
+            if PLAYER:countItem(ITEM_ID)>=ITEM_AMNT then
+                thisNPC:talk(Character.say, getNLS(PLAYER, NPC_REPLY_DE, NPC_REPLY_EN))
+            
+                HANDLER()
+            
+                questsystem.base.setPostcondition(PLAYER, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
+        
+                return true
+            elseif (NPC_NOITEM_DE~="") then
+                thisNPC:talk(Character.say, getNLS(PLAYER, NPC_NOITEM_DE, NPC_NOITEM_EN))
+          
+                return true
+            else
+                return false
+            end
+        end
+    end
+
+    return false
 end
 
 function getNLS(player, textDe, textEn)
-  if player:getPlayerLanguage() == Player.german then
-    return textDe
-  else
-    return textEn
-  end
+    if player:getPlayerLanguage() == Player.german then
+        return textDe
+    else
+        return textEn
+    end
 end

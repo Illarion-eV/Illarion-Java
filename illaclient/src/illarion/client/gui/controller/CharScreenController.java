@@ -49,4 +49,8 @@ public class CharScreenController implements ScreenController {
         nifty.gotoScreen("loading");
         SessionManager.getInstance().loadSession();
 	}
+	
+	public void logout() {
+		nifty.gotoScreen("login");
+	}
 }

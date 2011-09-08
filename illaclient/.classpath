@@ -29,5 +29,6 @@
 	<classpathentry kind="src" path="/nifty-illarion-renderer"/>
 	<classpathentry kind="lib" path="/illacommon/lib/xpp3/xpp3_min-1.1.4c.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/nifty-style-illarion"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/nifty-controls-illarion"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
