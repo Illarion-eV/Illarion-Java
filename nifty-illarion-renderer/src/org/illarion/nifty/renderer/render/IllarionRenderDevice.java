@@ -253,6 +253,7 @@ public final class IllarionRenderDevice implements RenderDevice {
     public void renderFont(final RenderFont font, final String text,
         final int x, final int y, final Color fontColor, final float size) {
 
+        setBlendMode(BlendMode.BLEND);
         ((IllarionRenderFont) font).renderString(text, x, y, fontColor, size);
     }
 
@@ -267,7 +268,8 @@ public final class IllarionRenderDevice implements RenderDevice {
     public void renderImage(final RenderImage image, final int x, final int y,
         final int width, final int height, final Color color,
         final float imageScale) {
-        
+
+        setBlendMode(BlendMode.BLEND);
         ((IllarionRenderImage) image).renderImage(x, y, width, height, color, imageScale);
     }
 
@@ -283,6 +285,7 @@ public final class IllarionRenderDevice implements RenderDevice {
         final int w, final int h, final int srcX, final int srcY,
         final int srcW, final int srcH, final Color color, final float scale,
         final int centerX, final int centerY) {
+        setBlendMode(BlendMode.BLEND);
         ((IllarionRenderImage) image).renderImage(x, y, w, h, srcX, srcY, srcW, srcH, color, scale, centerX, centerY);
     }
 
@@ -299,6 +302,7 @@ public final class IllarionRenderDevice implements RenderDevice {
     public void renderQuad(final int x, final int y, final int width,
         final int height, final Color color) {
         transferColorValues(color, TEMP_COLOR[0]);
+        setBlendMode(BlendMode.BLEND);
         drawer.drawRectangle(x, y, x + width, y + height, TEMP_COLOR[0]);
     }
 
@@ -323,6 +327,7 @@ public final class IllarionRenderDevice implements RenderDevice {
         transferColorValues(bottomRight, TEMP_COLOR[2]);
         transferColorValues(bottomLeft, TEMP_COLOR[3]);
 
+        setBlendMode(BlendMode.BLEND);
         drawer.drawRectangle(x, y, x + width, y + height, TEMP_COLOR[0],
             TEMP_COLOR[1], TEMP_COLOR[3], TEMP_COLOR[2]);
 

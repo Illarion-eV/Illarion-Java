@@ -38,7 +38,23 @@ public class JavaFontJOGL implements FontJOGL {
 
     @Override
     public int getWidth(String text) {
-        return (int) renderer.getBounds(text).getWidth();
+        /*
+         * Fast method not working due moving characters when selecting
+         */
+        int length = 0;
+
+        for (int i=0; i<text.length(); i++) {
+          char currentCharacter = text.charAt(i);
+          char nextCharacter = text.charAt(i);
+
+          Integer w = getCharacterAdvance(currentCharacter, nextCharacter, 1.f);
+          if (w != null) {
+            length += w;
+          }
+        }
+        return length;
+        
+        //return (int) FastMath.floor(renderer.getBounds(text).getWidth());
     }
 
     @Override
