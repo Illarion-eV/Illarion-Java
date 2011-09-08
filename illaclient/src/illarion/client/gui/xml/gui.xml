@@ -18,9 +18,13 @@
 	    		<panel height="30px" />
 	        	<control name="progressbar" id="loading" align="center" valign="center" width="400px" height="28px">	
 		        	<effect>
-	                    <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />
+		        		<onStartScreen name="fade" start="#00" end="#ff" inherit="true" />    
 	                </effect>
 	            </control>
+	            
+	            <effect>
+	            	<onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />
+	            </effect>
 	        </panel>
 	    </layer>
 	</screen>
@@ -37,24 +41,27 @@
 	                    </panel>
 	                    <control name="textfield" id="nameTxt" maxLength="20" />
 	                </panel>
+	                
 	                <panel childLayout="horizontal" visibleToMouse="true">
 	                    <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
 	                        <text font="textFont" text="Password:" />
 	                    </panel>
 	                    <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="*" />
 	                </panel>
-	                <panel height="30px" />
-	                <panel height="300px" width="400px" childLayout="center" visibleToMouse="true" align="center" valign="center">
-	                    <panel childLayout="horizontal" visibleToMouse="true" align="center">
-		                	<control id="optionBtn" name="button" label="Optionen" align="center" valign="center">
-		                        <!-- <interact onClick="" /> -->
-		                    </control>
-		                    <control id="loginBtn" name="button" label="Einloggen" align="center" valign="center">
-		                        <interact onRelease="login()" />
-		                    </control>
-		                </panel>
-	                </panel>
 	                
+	                <panel height="30px" />
+
+                    <panel childLayout="horizontal" visibleToMouse="true">
+                        <panel width="90px" />
+	                	<control id="optionBtn" name="button" label="Optionen" width="100" height="35" >
+	                        <!-- <interact onRelease="" /> -->
+	                    </control>
+	                    <panel width="20px" />
+	                    <control id="loginBtn" name="button" label="Einloggen" width="100" height="35" >
+	                        <interact onRelease="login()" />
+	                    </control>
+	                </panel>
+
 	                <effect>
                     	<onStartScreen name="fade" start="#00" end="#ff" inherit="true" />
                     	<onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />
@@ -74,7 +81,7 @@
 	    				<control id="myListBox" name="listBox" vertical="optional" horizontal="optional" displayItems="5" selection="Single" />
 	    			</panel>
 	    			<panel height="30px" />
-	    			<control id="loginBtn" name="button" label="Spielen" align="center" valign="center">
+	    			<control id="loginBtn" name="button" label="Spielen" align="center" width="100" height="35" >
                         <interact onRelease="play()" />
                     </control>
 	    			
