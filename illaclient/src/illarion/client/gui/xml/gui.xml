@@ -44,20 +44,22 @@
 	                    <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="*" />
 	                </panel>
 	                <panel height="30px" />
-	                <panel childLayout="center" visibleToMouse="true" align="center">
-	                    <control id="loginBtn" name="button" label="Einloggen" align="center" valign="center">
-	                        <interact onClick="login()" />
-	                    </control>
+	                <panel height="300px" width="400px" childLayout="center" visibleToMouse="true" align="center" valign="center">
+	                    <panel childLayout="horizontal" visibleToMouse="true" align="center">
+		                	<control id="optionBtn" name="button" label="Optionen" align="center" valign="center">
+		                        <!-- <interact onClick="" /> -->
+		                    </control>
+		                    <control id="loginBtn" name="button" label="Einloggen" align="center" valign="center">
+		                        <interact onRelease="login()" />
+		                    </control>
+		                </panel>
 	                </panel>
 	                
 	                <effect>
                     	<onStartScreen name="fade" start="#00" end="#ff" inherit="true" />
+                    	<onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />
                     </effect>
 	            </panel>
-                
-                <effect>
-                    <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />
-                </effect>
             </panel>
         </layer>
     </screen>
@@ -66,9 +68,21 @@
     	<layer id="layer2" backgroundColor="#000" childLayout="center">
     		<panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
     			<image filename="guiSprite://illarion_title" imageMode="normal" align="center"/>
-    			<panel childLayout="center" visibleToMouse="true" align="center">
-    				<control id="myListBox" name="listBox" vertical="optional" horizontal="optional" displayItems="4" selection="Multiple" />
-    			</panel>
+    			<panel height="30px" />
+                <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
+	    			<panel childLayout="center" visibleToMouse="true" align="center">
+	    				<control id="myListBox" name="listBox" vertical="optional" horizontal="optional" displayItems="5" selection="Single" />
+	    			</panel>
+	    			<panel height="30px" />
+	    			<control id="loginBtn" name="button" label="Spielen" align="center" valign="center">
+                        <interact onRelease="play()" />
+                    </control>
+	    			
+	    			<effect>
+                    	<onStartScreen name="fade" start="#00" end="#ff" inherit="true" />
+                    	<onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />
+                    </effect>
+	    		</panel>
     		</panel>
 		</layer>
     </screen>

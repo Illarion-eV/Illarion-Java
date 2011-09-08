@@ -28,8 +28,14 @@ public class CharScreenController implements ScreenController {
 	
 	public void fillMyListBox() {
 		ListBox listBox = screen.findNiftyControl("myListBox", ListBox.class);
-		listBox.addItem("a");
-		listBox.addItem("b");
-		listBox.addItem("c");
+		listBox.addItem("Character One");
+		listBox.addItem("Character Two");
+		listBox.addItem("Character Three");
+		listBox.addItem("Character Four");
+		listBox.addItem("Character Five");
+	}
+	
+	public void play() {
+		
 	}
 }
