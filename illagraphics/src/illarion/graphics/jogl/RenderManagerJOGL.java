@@ -82,6 +82,7 @@ public class RenderManagerJOGL implements RenderManager {
      */
     @SuppressWarnings("nls")
     protected final void draw(final int delta) {
+        this.delta = delta;
         try {
             synchronized (taskList) {
                 int count = taskList.size();
@@ -157,6 +158,11 @@ public class RenderManagerJOGL implements RenderManager {
 
         draw(delta);
     }
+    
+    /**
+     * The current delta value.
+     */
+    private int delta;
 
     /**
      * Get the frames per second count archived by the render loop.
@@ -166,5 +172,10 @@ public class RenderManagerJOGL implements RenderManager {
     @Override
     public int getRealFPS() {
         return lastFPS;
+    }
+
+    @Override
+    public int getCurrentDelta() {
+        return delta;
     }
 }

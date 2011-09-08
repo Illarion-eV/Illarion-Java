@@ -740,4 +740,9 @@ public final class GameMap extends Interaction implements LightingMap,
             }
         }
     }
+
+    @Override
+    public void loadSession() {
+        // nothing to load
+    }
 }

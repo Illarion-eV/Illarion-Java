@@ -175,4 +175,15 @@ public final class CommandFactory extends RecycleFactory<AbstractCommand> {
             PoolContext.exit();
         }
     }
+
+    /**
+     * Get the AbstractCommand requested from this factory. This method is
+     * implemented in addition in order to ensure the execution in the
+     * PoolContext. Function returns the proper type.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends AbstractCommand> T getCommand(final int requestId, final Class<T> clazz) {
+        final AbstractCommand cmd = getCommand(requestId);
+        return (T) cmd;
+    }
 }

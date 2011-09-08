@@ -21,6 +21,7 @@ package illarion.client.net.server;
 import java.io.IOException;
 
 import illarion.client.IllaClient;
+import illarion.client.Login;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.util.Lang;
@@ -112,7 +113,7 @@ public final class DisconnectMsg extends AbstractReply {
         BUILDER.append("\n");
         BUILDER.append(Lang.getMsg("logout.char"));
         BUILDER.append(" ");
-        BUILDER.append(Game.getInstance().getLogin());
+        BUILDER.append(Login.getInstance().getSelectedCharacterName());
         IllaClient.fallbackToLogin(BUILDER.toString());
         return true;
     }

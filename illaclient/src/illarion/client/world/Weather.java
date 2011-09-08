@@ -1075,4 +1075,9 @@ public final class Weather implements SessionMember {
         }
 
     }
+
+    @Override
+    public void loadSession() {
+        // nothing to load
+    }
 }

@@ -18,7 +18,11 @@
  */
 package illarion.client;
 
+import illarion.client.net.CommandFactory;
+import illarion.client.net.CommandList;
+import illarion.client.net.client.LoginCmd;
 import illarion.client.util.Lang;
+import illarion.client.world.Game;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -87,7 +91,7 @@ public final class Login {
         return loginName;
     }
     
-    String getPassword() {
+    public String getPassword() {
         return password;
     }
     
@@ -227,6 +231,9 @@ public final class Login {
     }
     
     public void selectCharacter(final int index) {
+        if (index < 0) {
+            return;
+        }
         selectedChar = charList.get(index);
     }
     
@@ -241,5 +248,15 @@ public final class Login {
     
     public String getSelectedCharacterName() {
         return selectedChar.getName();
+    }
+    
+    public boolean login() {
+        if (selectedChar == null) {
+            return false;
+        }
+        
+        Game.getInstance().connect();
+        
+        return true;
     }
 }

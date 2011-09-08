@@ -126,6 +126,9 @@ public final class LoadingManager {
      * Increase the current count by one.
      */
     public void increaseCurrentCount() {
+        if (currentCount + 1 >= totalCount) {
+            totalCount = currentCount + 2;
+        }
         setCurrentCount(currentCount+1);
     }
     

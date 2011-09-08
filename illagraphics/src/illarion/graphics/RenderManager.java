@@ -39,4 +39,11 @@ public interface RenderManager {
      * @return the frames per second the main loop manages to display
      */
     int getRealFPS();
+    
+    /**
+     * Get the current delta value of the current rendering operation.
+     * 
+     * @return the current delta
+     */
+    int getCurrentDelta();
 }

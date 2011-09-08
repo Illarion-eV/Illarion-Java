@@ -791,19 +791,19 @@ public final class LoginDialog extends AbstractDialog implements
     @Override
     @SuppressWarnings("nls")
     public void actionOK() {
-        final String name =
-            (String) charTable.getValueAt(charTable.getSelectedRow(), 0);
-        game.setLogin(name, password.getText());
-        validLogin = true;
-
-        // save the login name
-        IllaClient.getCfg().set("lastLogin", login.getText());
-
-        // store password if requested
-        storePassword(savePassword.isSelected(), password.getText());
-
-        // this command must be last as it ends the modal dialog
-        setVisible(false);
+//        final String name =
+//            (String) charTable.getValueAt(charTable.getSelectedRow(), 0);
+//        game.setLogin(name, password.getText());
+//        validLogin = true;
+//
+//        // save the login name
+//        IllaClient.getCfg().set("lastLogin", login.getText());
+//
+//        // store password if requested
+//        storePassword(savePassword.isSelected(), password.getText());
+//
+//        // this command must be last as it ends the modal dialog
+//        setVisible(false);
     }
 
     /**

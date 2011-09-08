@@ -29,7 +29,6 @@ import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 
-import illarion.client.graphics.LoadingScreen;
 import illarion.client.world.Game;
 
 import illarion.common.config.Config;
@@ -317,9 +316,6 @@ public final class ClientWindow implements ConfigChangeListener {
     protected void init() {
         initWindow();
         initGraphics();
-
-        Graphics.getInstance().getRenderManager()
-            .addTask(LoadingScreen.getInstance());
     }
 
     /**

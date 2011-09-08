@@ -916,4 +916,10 @@ public final class GUI implements SessionMember {
         }
         rootNode = null;
     }
+
+    @Override
+    public void loadSession() {
+        // TODO Auto-generated method stub
+        
+    }
 }

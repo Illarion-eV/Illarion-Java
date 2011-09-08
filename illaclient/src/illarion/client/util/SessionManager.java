@@ -21,9 +21,13 @@ package illarion.client.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import javolution.context.ConcurrentContext;
+
 import org.apache.log4j.Logger;
 
 import illarion.common.util.StoppableStorage;
+import illarion.common.util.tasks.Task;
+import illarion.common.util.tasks.TaskExecutor;
 
 /**
  * This class to used to manage the sessions that are active in the client. It
@@ -167,6 +171,67 @@ public final class SessionManager {
         }
         StoppableStorage.getInstance().shutdown();
     }
+    
+    /**
+     * This function will be set 
+     */
+    private int loadingState = LOADING_NOT_DONE;
+    
+    private static final int LOADING_NOT_DONE = 0;
+    private static final int LOADING_IN_PROGRESS = 1;
+    private static final int LOADING_DONE = 2;
+    
+    private static final class LoadingRunnable implements Runnable {
+        private final SessionMember member;
+        
+        public LoadingRunnable(final SessionMember mem) {
+            member = mem;
+        }
+        
+        @Override
+        public void run() {
+            try {
+                member.loadSession();
+            } catch (final Exception ex) {
+                LOGGER.fatal("Error while starting session for member: "
+                    + member.toString(), ex);
+                return;
+            }
+        }
+        
+    }
+    
+    public void loadSession() {
+        if (loadingState != LOADING_NOT_DONE) {
+            return;
+        }
+        
+        loadingState = LOADING_IN_PROGRESS;
+        
+        TaskExecutor.getInstance().executeTask(new Task() {
+
+            @Override
+            public void run() {
+                final int count = members.size();
+                
+                ConcurrentContext.enter();
+                try {
+                    for (int i = 0; i < count; ++i) {
+                        ConcurrentContext.execute(new LoadingRunnable(members.get(i)));
+                    }
+                } finally {
+                    ConcurrentContext.exit();
+                }
+                
+                loadingState = LOADING_DONE;
+            }
+            
+        });
+    }
+    
+    public boolean isLoadingDone() {
+        return (loadingState == LOADING_DONE);
+    }
 
     /**
      * Start a new session for all members added to this manager.
@@ -226,5 +291,9 @@ public final class SessionManager {
                 break;
             }
         }
+    }
+
+    public boolean isStarted() {
+        return (sessionState != RUNNING);
     }
 }

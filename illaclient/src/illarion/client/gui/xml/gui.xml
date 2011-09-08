@@ -11,7 +11,7 @@
     </controlDefinition>
 	
 	<!-- loading screen -->
-	<screen id="start" controller="illarion.client.gui.controller.LoadScreenController">
+	<screen id="loading" controller="illarion.client.gui.controller.LoadScreenController">
 	    <layer id="layerprogress" backgroundColor="#000" childLayout="center" >
 	   		<panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical">
 	    		<image filename="guiSprite://illarion_title" imageMode="normal" align="center"/>
@@ -26,7 +26,9 @@
 	</screen>
     
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
+            
         <layer id="layer" backgroundColor="#000" childLayout="center">
+            
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
                 <image filename="guiSprite://illarion_title" imageMode="normal" align="center"/>
                 <panel height="30px" />
@@ -85,5 +87,11 @@
 	    		</panel>
     		</panel>
 		</layer>
+    </screen>
+    
+    <screen id="gamescreen" controller="illarion.client.gui.controller.GameScreenController">
+        <layer id="layer3" backgroundColor="#000" childLayout="center">
+            <image filename="dynamic://gamemap" imageMode="normal" align="center"/>
+        </layer>
     </screen>
 </nifty>

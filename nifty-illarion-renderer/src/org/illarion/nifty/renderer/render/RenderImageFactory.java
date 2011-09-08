@@ -18,9 +18,16 @@
  */
 package org.illarion.nifty.renderer.render;
 
+import java.util.Map;
+
+import javolution.util.FastComparator;
+import javolution.util.FastMap;
+
 import illarion.common.util.ObjectSource;
 import illarion.graphics.Sprite;
+import illarion.graphics.SpriteColor;
 import de.lessvoid.nifty.spi.render.RenderImage;
+import de.lessvoid.nifty.tools.Color;
 
 /**
  * This factory takes care for the proper creation of render images for the GUI
@@ -36,6 +43,23 @@ public final class RenderImageFactory {
      */
     @SuppressWarnings("nls")
     private static final String HEADER_GUI_SPRITE = "guiSprite://";
+    
+    /**
+     * The text that is the header of a dynamic image.
+     */
+    @SuppressWarnings("nls")
+    private static final String HEADER_DYNAMIC = "dynamic://";
+    
+    public static interface DynamicImageSource {
+        int getWidth();
+        int getHeight();
+        void renderImage(int x, int y, int width, int height, SpriteColor color,
+            float imageScale);
+        void renderImage(int x, int y, int w, int h, int srcX, int srcY,
+            int srcW, int srcH, SpriteColor color, float scale, int centerX, int centerY);
+    }
+    
+    private final Map<String, DynamicImageSource> dynamicImages;
 
     /**
      * This instance is a source for sprite objects that is needed to fetch
@@ -51,6 +75,15 @@ public final class RenderImageFactory {
      */
     public RenderImageFactory(final ObjectSource<Sprite> sprites) {
         spriteSource = sprites;
+        
+        FastMap<String, DynamicImageSource> imageMap = new FastMap<String, DynamicImageSource>();
+        imageMap.setKeyComparator(FastComparator.STRING);
+        
+        dynamicImages = imageMap;
+    }
+    
+    public void addDynamicImage(final String name, final DynamicImageSource image) {
+        dynamicImages.put(name, image);
     }
 
     /**
@@ -69,6 +102,14 @@ public final class RenderImageFactory {
         }
         return null;
     }
+    
+    private RenderImage checkAndGetDynamicImage(final String ref) {
+        final DynamicImageSource image = getDynamicImage(ref);
+        if (image != null) {
+            return new IllarionDynamicRenderImage(image);
+        }
+        return null;
+    }
 
     /**
      * Get a renderable image.
@@ -81,8 +122,12 @@ public final class RenderImageFactory {
     public RenderImage getImage(final String ref, final boolean linearFilter) {
         RenderImage ret;
         ret = checkAndGetSpriteImage(ref);
-
-        if (ref != null) {
+        if (ret != null) {
+            return ret;
+        }
+        
+        ret = checkAndGetDynamicImage(ref);
+        if (ret != null) {
             return ret;
         }
 
@@ -101,6 +146,13 @@ public final class RenderImageFactory {
                 spriteSource.getObject(ref.substring(HEADER_GUI_SPRITE
                     .length()));
             return sprite;
+        }
+        return null;
+    }
+    
+    public DynamicImageSource getDynamicImage(final String ref) {
+        if (ref.startsWith(HEADER_DYNAMIC)) {
+            return dynamicImages.get(ref.substring(HEADER_DYNAMIC.length()));
         }
         return null;
     }

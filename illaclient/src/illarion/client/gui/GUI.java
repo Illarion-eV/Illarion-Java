@@ -46,10 +46,12 @@ public final class GUI {
     private final Nifty niftyGui;
 
     public GUI() {
+        final RenderImageFactory imageFactory = new RenderImageFactory(new GuiImageFactory());
+        imageFactory.addDynamicImage("gamemap", new MapImage());
+        
         niftyGui =
             new Nifty(new IllarionRenderDevice(Graphics.getInstance()
-                .getRenderDisplay(), new RenderImageFactory(
-                new GuiImageFactory())), new SoundDevice() {
+                .getRenderDisplay(), imageFactory), new SoundDevice() {
                     
                     @Override
                     public void update(int delta) {

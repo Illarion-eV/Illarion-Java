@@ -580,8 +580,8 @@ public final class GameMiniMap implements SessionMember {
             minimapOriginY = WORLDMAP_HEIGHT - minimapHeight - 1;
         }
 
-        minimapTexture.setImageLocation(minimapOriginX, minimapOriginY);
-        minimap.setOffset(minimapOffsetX, minimapOffsetY);
+//        minimapTexture.setImageLocation(minimapOriginX, minimapOriginY);
+//        minimap.setOffset(minimapOffsetX, minimapOffsetY);
     }
 
     /**
@@ -966,5 +966,10 @@ public final class GameMiniMap implements SessionMember {
         }
         mapData.putShort(index, encodedTileValue);
         return true;
+    }
+
+    @Override
+    public void loadSession() {
+        // nothing to load
     }
 }

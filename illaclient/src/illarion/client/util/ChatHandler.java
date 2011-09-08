@@ -317,6 +317,11 @@ public final class ChatHandler implements Runnable, SessionMember {
         // nothing to do
     }
 
+    @Override
+    public void loadSession() {
+        // nothing to load
+    }
+
     @SuppressWarnings("nls")
     @Override
     public void run() {

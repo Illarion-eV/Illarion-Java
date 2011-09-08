@@ -131,4 +131,9 @@ public final class AnimationManager implements SessionMember {
         }
     }
 
+    @Override
+    public void loadSession() {
+        // nothing to load
+    }
+
 }

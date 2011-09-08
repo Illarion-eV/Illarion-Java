@@ -36,6 +36,13 @@ public interface SessionMember {
      * This method is called once when the client is started.
      */
     void initSession();
+    
+    /**
+     * This function will be called once the client is supposed to load its
+     * working data. It will be called only once at the first start of the
+     * client.
+     */
+    void loadSession();
 
     /**
      * This method is called once the client quits entirely in order to free the

@@ -34,7 +34,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import illarion.client.crash.DefaultCrashHandler;
-import illarion.client.graphics.LoadingScreen;
 import illarion.client.guiNG.GUI;
 import illarion.client.guiNG.Journal;
 import illarion.client.net.CommandFactory;
@@ -186,18 +185,7 @@ public final class IllaClient {
      * Components that got disabled during the integrity check.
      */
     private int disableComponents = 0;
-
-    /**
-     * Stores the information if the login is done or not.
-     */
-    private boolean loginDone = false;
-
-    /**
-     * Stores the information what the result of the login was (cancel or
-     * login).
-     */
-    private volatile boolean loginResult = false;
-
+    
     /**
      * The class loader of the this class. It is used to get the resource
      * streams that contain the resource data of the client.
@@ -367,6 +355,10 @@ public final class IllaClient {
     public static boolean isDebug(final Debug flag) {
         return (INSTANCE.debugLevel & (1 << flag.ordinal())) > 0;
     }
+    
+    public static void initChatLog() {
+        ChatLog.getInstance().init(tempProps);
+    }
 
     /**
      * Main function starts the client and sets up all data.
@@ -389,190 +381,123 @@ public final class IllaClient {
 
         // in case the server is now known, update the files if needed and
         // launch the client.
-        if (folder != null) {
-            INSTANCE.prepareConfig();
-            INSTANCE.initLogfiles();
-
-            if (!INSTANCE.integrityCheck()) {
-                System.exit(-1);
-            }
-
-            // Prepare the Engines
-            if ((INSTANCE.disableComponents & COMPONENT_JOGL) == COMPONENT_JOGL) {
-                if ((INSTANCE.disableComponents & COMPONENT_LWJGL) == COMPONENT_LWJGL) {
-                    LOGGER.fatal("No OpenGL avaiable.");
-                    System.exit(-1);
-                } else {
-                    Graphics.getInstance().setEngine(
-                        illarion.graphics.Engines.lwjgl);
-                    InputManager.getInstance().setEngine(
-                        illarion.input.Engines.lwjgl);
-                    getCfg().set("engine", 0);
-                }
-            } else {
-                if ((INSTANCE.disableComponents & COMPONENT_LWJGL) == COMPONENT_LWJGL) {
-                    Graphics.getInstance().setEngine(
-                        illarion.graphics.Engines.jogl);
-                    Graphics
-                        .getInstance()
-                        .getRenderDisplay()
-                        .setDisplayOptions("jogl.newt",
-                            Boolean.FALSE.toString());
-                    InputManager.getInstance().setEngine(
-                        illarion.input.Engines.java);
-                    getCfg().set("engine", 1);
-                } else {
-                    if (getCfg().getInteger("engine") == 0) {
-                        Graphics.getInstance().setEngine(
-                            illarion.graphics.Engines.lwjgl);
-                        InputManager.getInstance().setEngine(
-                            illarion.input.Engines.lwjgl);
-                    } else {
-                        Graphics.getInstance().setEngine(
-                            illarion.graphics.Engines.jogl);
-                        Graphics
-                            .getInstance()
-                            .getRenderDisplay()
-                            .setDisplayOptions("jogl.newt",
-                                Boolean.FALSE.toString());
-                        InputManager.getInstance().setEngine(
-                            illarion.input.Engines.java);
-                    }
-                }
-            }
-
-            CrashReporter.getInstance().setConfig(getCfg());
-
-            INSTANCE.setupGraphicQuality();
-
-            // show the main window
-            System.out.write(0xFF);
-            ClientWindow.getInstance().init();
-            INSTANCE.initInput();
-
-            // update read-me file if required
-            installFile("readme.txt");
-
-            // update manual files if required
-            installFile("manual_de.pdf");
-            installFile("manual_en.pdf");
-
-            boolean loadingDone = false;
-            boolean debugThread = false;
-
-            do {
-                requestedReconnect = false;
-
-                Scheduler.getInstance().start();
-                
-                // create the login dialog in a separated thread so we can
-                // update
-                // the display with the main thread
-                //displayLoginScreen(args);
-
-                // slowdown time to we get a few display renders before the slow
-                // graphic loading part starts
-                int slowdown = SLEEP_TEXTURE;
-                while (!INSTANCE.loginDone) {
-                    try {
-                        Thread.sleep(SLEEP_RENDER);
-                    } catch (final InterruptedException e) {
-                        e.notify();
-                    }
-
-                    if (!loadingDone) {
-                        if (slowdown == 0) {
-                            SessionManager.getInstance().addMember(
-                                Game.getInstance());
-
-                            LOGGER.info("Loading ressources and factories "
-                                + "done");
-
-                            loadingDone = true;
-                        } else if (slowdown > 0) {
-                            --slowdown;
-                        }
-                    }
-                }
-                INSTANCE.cfg.save();
-                if (isDebug(Debug.deadlock) && !debugThread) {
-                    new ThreadDeadlockDetector()
-                        .addListener(new DefaultDeadlockListener());
-                    debugThread = true;
-                }
-
-                if (!INSTANCE.loginResult) {
-                    INSTANCE.exitLWJGL();
-                    LOGGER.info("Client terminated on user request "
-                        + "before login.");
-                    LogManager.shutdown();
-                    StoppableStorage.getInstance().shutdown();
-                    startFinalKiller();
-                    return;
-                }
-
-                // establish connection
-                SessionManager.getInstance().startSession();
-
-                if (!Game.getInstance().isRunning()) {
-                    continue;
-                }
-
-                // init the talking log system
-                ChatLog.getInstance().init(tempProps);
-
-                // wait until the network starts working
-                while (Game.getInstance().isRunning()
-                    && !Game.getNet().receivedAnything()) {
-
-                    try {
-                        Thread.sleep(30);
-                    } catch (final InterruptedException e) {
-                        LOGGER.debug("Waiting for the server got interupted"
-                            + " unexpected");
-                    }
-                }
-
-                ClientWindow.getInstance().focus();
-
-                LoadingScreen.getInstance().setLoadingDone();
-                ClientWindow.getInstance().getRenderDisplay().hideCursor();
-                ClientWindow.getInstance().getRenderDisplay().startRendering();
-
-                /*
-                 * Main game loop, as long as the game is running this function
-                 * is not left
-                 */
-                Game.getInstance().gameLoop();
-
-                // Shut the game down correctly
-                SessionManager.getInstance().endSession();
-                ClientWindow.getInstance().getRenderDisplay().showCursor();
-                INSTANCE.cfg.save();
-            } while (requestedReconnect && !errorQuitting);
-
-            if (!errorQuitting) {
-                SessionManager.getInstance().shutdownSession();
-
-                INSTANCE.exitLWJGL();
-
-                LOGGER.info("Client terminated on user request.");
-                LogManager.shutdown();
-            } else {
-                INSTANCE.exitLWJGL();
-                while (true) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (final InterruptedException e) {
-                        // nothing
-                    }
-                }
-            }
+        if (folder == null) {
+            return;
         }
+        
+        INSTANCE.prepareConfig();
+        INSTANCE.initLogfiles();
 
-        CrashReporter.getInstance().waitForReport();
+        if (!INSTANCE.integrityCheck()) {
+            System.exit(-1);
+        }
+        
+        Graphics.getInstance().setEngine(illarion.graphics.Engines.jogl);
+        InputManager.getInstance().setEngine(illarion.input.Engines.java);
 
-        startFinalKiller();
+        CrashReporter.getInstance().setConfig(getCfg());
+
+        INSTANCE.setupGraphicQuality();
+
+        // show the main window
+        System.out.write(0xFF);
+        ClientWindow.getInstance().init();
+        INSTANCE.initInput();
+
+        // update read-me file if required
+        installFile("readme.txt");
+
+        // update manual files if required
+        installFile("manual_de.pdf");
+        installFile("manual_en.pdf");
+
+        boolean loadingDone = false;
+        boolean debugThread = false;
+        
+        Scheduler.getInstance().start();
+        SessionManager.getInstance().addMember(Game.getInstance());
+
+//            do {
+//                requestedReconnect = false;
+//
+//                
+//                if (isDebug(Debug.deadlock) && !debugThread) {
+//                    new ThreadDeadlockDetector()
+//                        .addListener(new DefaultDeadlockListener());
+//                    debugThread = true;
+//                }
+//
+//                if (!INSTANCE.loginResult) {
+//                    INSTANCE.exitLWJGL();
+//                    LOGGER.info("Client terminated on user request "
+//                        + "before login.");
+//                    LogManager.shutdown();
+//                    StoppableStorage.getInstance().shutdown();
+//                    startFinalKiller();
+//                    return;
+//                }
+//
+//                // establish connection
+//                //SessionManager.getInstance().startSession();
+//
+//                if (!Game.getInstance().isRunning()) {
+//                    continue;
+//                }
+//
+//                // init the talking log system
+//
+//                // wait until the network starts working
+//                while (Game.getInstance().isRunning()
+//                    && !Game.getNet().receivedAnything()) {
+//
+//                    try {
+//                        Thread.sleep(30);
+//                    } catch (final InterruptedException e) {
+//                        LOGGER.debug("Waiting for the server got interupted"
+//                            + " unexpected");
+//                    }
+//                }
+//
+//                ClientWindow.getInstance().focus();
+//
+//                LoadingScreen.getInstance().setLoadingDone();
+//                ClientWindow.getInstance().getRenderDisplay().hideCursor();
+//                ClientWindow.getInstance().getRenderDisplay().startRendering();
+//
+//                /*
+//                 * Main game loop, as long as the game is running this function
+//                 * is not left
+//                 */
+//                Game.getInstance().gameLoop();
+//
+//                // Shut the game down correctly
+//                SessionManager.getInstance().endSession();
+//                ClientWindow.getInstance().getRenderDisplay().showCursor();
+//                INSTANCE.cfg.save();
+//            } while (requestedReconnect && !errorQuitting);
+//
+//            if (!errorQuitting) {
+//                SessionManager.getInstance().shutdownSession();
+//
+//                INSTANCE.exitLWJGL();
+//
+//                LOGGER.info("Client terminated on user request.");
+//                LogManager.shutdown();
+//            } else {
+//                INSTANCE.exitLWJGL();
+//                while (true) {
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (final InterruptedException e) {
+//                        // nothing
+//                    }
+//                }
+//            }
+//        }
+//
+//        CrashReporter.getInstance().waitForReport();
+//
+//        startFinalKiller();
     }
 
     /**
@@ -614,28 +539,6 @@ public final class IllaClient {
     }
 
     /**
-     * Check if the login that was performed is okay or not.
-     * 
-     * @return true in case the login part is done and the user set up all
-     *         needed data to perform the login.
-     */
-    protected static boolean getLoginOkay() {
-        return INSTANCE.loginResult;
-    }
-
-    /**
-     * Update the values for the result of the update. This sets the login state
-     * to done and the result to the value of the parameter.
-     * 
-     * @param result true in case the login is fine, false in case something
-     *            went wrong
-     */
-    protected static void updateLoginResult(final boolean result) {
-        INSTANCE.loginDone = true;
-        INSTANCE.loginResult = result;
-    }
-
-    /**
      * This function determines the user data directory and requests the folder
      * to store the client data in case it is needed. It also performs checks to
      * see if the folder is valid.
@@ -655,30 +558,6 @@ public final class IllaClient {
 
         return DirectoryManager.getInstance().getUserDirectory()
             .getAbsolutePath();
-    }
-
-    /**
-     * Show the login screen.
-     * 
-     * @param args the arguments of the login screen that allow to log the
-     *            client in right away without showing the login selection
-     */
-    @SuppressWarnings("nls")
-    private static void displayLoginScreen(final String[] args) {
-        INSTANCE.loginDone = false;
-        final Thread loginScreenThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final boolean result =
-                    IllaClient.getInstance().prepareLogin(args);
-                updateLoginResult(result);
-                if (!result) {
-                    Game.getInstance().cancelInit();
-                }
-            }
-        }, "Login Screen");
-        loginScreenThread.setPriority(Thread.MAX_PRIORITY);
-        loginScreenThread.start();
     }
 
     /**
@@ -816,14 +695,6 @@ public final class IllaClient {
                 if (selectedServer == server.ordinal()) {
                     usedServer = server;
                 }
-            }
-
-            // set login info from parameters
-            if (quickstart) {
-                Game.getInstance().setLogin(args[loginIndex],
-                    args[loginIndex + 1]);
-                // use parameters only once
-                quickstart = false;
             }
 
             if (forceDebug > -1) {

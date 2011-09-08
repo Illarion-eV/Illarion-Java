@@ -1097,4 +1097,9 @@ public final class People implements SessionMember, TableLoaderSink,
         }
     }
 
+    @Override
+    public void loadSession() {
+        // nothing to load
+    }
+
 }

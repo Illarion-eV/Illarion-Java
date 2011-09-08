@@ -20,6 +20,7 @@ package illarion.client.world;
 
 import illarion.client.ClientWindow;
 import illarion.client.IllaClient;
+import illarion.client.Login;
 import illarion.client.crash.LightTracerCrashHandler;
 import illarion.client.graphics.AnimationManager;
 import illarion.client.graphics.Avatar;
@@ -27,7 +28,6 @@ import illarion.client.graphics.AvatarClothLoader;
 import illarion.client.graphics.AvatarFactory;
 import illarion.client.graphics.EffectFactory;
 import illarion.client.graphics.ItemFactory;
-import illarion.client.graphics.LoadingScreen;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.client.graphics.MarkerFactory;
 import illarion.client.graphics.OverlayFactory;
@@ -51,6 +51,8 @@ import illarion.common.util.DebugTimer;
 import illarion.common.util.LoadingManager;
 import illarion.common.util.NoResourceException;
 import illarion.common.util.StoppableStorage;
+import illarion.common.util.tasks.Task;
+import illarion.common.util.tasks.TaskExecutor;
 
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderTask;
@@ -85,11 +87,6 @@ public final class Game implements SessionMember {
     private boolean loaded;
 
     /**
-     * Login Name that was used to establish a connection.
-     */
-    private String login;
-
-    /**
      * Pointer to the current game map.
      */
     private GameMap map;
@@ -113,11 +110,6 @@ public final class Game implements SessionMember {
      * Pointer to the used particle system.
      */
     private ParticleSystem partSystem;
-
-    /**
-     * Plain text password that is used to establish a connection.
-     */
-    private String password;
 
     /**
      * Pointer to the handler of the currently known characters.
@@ -278,7 +270,8 @@ public final class Game implements SessionMember {
                     CommandList.CMD_LOGIN);
             cmd.setVersion(IllaClient.getInstance().getUsedServer()
                 .getClientVersion());
-            cmd.setLogin(login, password);
+            cmd.setLogin(Login.getInstance().getSelectedCharacterName(),
+                Login.getInstance().getPassword());
             net.sendCommand(cmd);
 
             final MapDimensionCmd cmd2 =
@@ -373,20 +366,14 @@ public final class Game implements SessionMember {
             windowHandler.updateFPS();
         }
     }
-
-    /**
-     * Get the login name (the character name) that is used to establish a
-     * connection.
-     * 
-     * @return the character name that is used for the login
-     */
-    public String getLogin() {
-        return login;
-    }
     
-    public void loadGameData() {
+    volatile boolean graphicLoaded = false;
+    
+    void loadGameDataImpl() {
         int atlasCount = TextureLoader.getInstance().getTotalAtlasCount();
         LoadingManager.getInstance().setTotalCount(atlasCount + 16);
+        
+        boolean graphicsDone = false;
         
         Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
             @Override
@@ -401,28 +388,16 @@ public final class Game implements SessionMember {
                             "crash.loadres", Thread.currentThread(), e)); //$NON-NLS-1$
                     IllaClient.errorExit("crash.loadres"); //$NON-NLS-1$
                 }
-
-                ClientWindow.getInstance().getRenderDisplay().getRenderArea()
-                    .repaint();
+                
                 return result;
             }
 
             @SuppressWarnings("synthetic-access")
-            private boolean loadData() {
-                if (!loadData) {
-                    return false;
-                }
-                
-                Graphics.getInstance().getRenderDisplay().clearScreen();
-                
+            private boolean loadData() {                
                 LoadingManager.getInstance().increaseCurrentCount();
 
                 if (!TextureLoader.getInstance().preloadAtlasTextures()) {
                     return true;
-                }
-
-                if (!loadData) {
-                    return false;
                 }
                 
                 LoadingManager.getInstance().increaseCurrentCount();
@@ -437,17 +412,12 @@ public final class Game implements SessionMember {
                 SessionManager.getInstance().addMember(map);
                 
                 LoadingManager.getInstance().increaseCurrentCount();
-
-                LoadingScreen.getInstance().setLoadingDone(
-                    LoadingScreen.LOADING_GRAPHICS);
+                
+                graphicLoaded = true;
 
                 return false;
             }
         });
-        
-        if (!loadData) {
-            return;
-        }
         
         LoadingManager.getInstance().increaseCurrentCount();
 
@@ -461,77 +431,42 @@ public final class Game implements SessionMember {
             } catch (final InterruptedException ex) {
                 // no message needed
             }
-        } while (!LoadingScreen.getInstance().isLoadingDone(
-            LoadingScreen.LOADING_GRAPHICS)
-            && loadData);
-
-        if (!loadData) {
-            return;
-        }
+        } while (!graphicLoaded);
 
         LoadingManager.getInstance().increaseCurrentCount();
         
         TileFactory.getInstance().init();
 
-        if (!loadData) {
-            return;
-        }
-
         LoadingManager.getInstance().increaseCurrentCount();
         OverlayFactory.getInstance().init();
-        if (!loadData) {
-            return;
-        }
 
         LoadingManager.getInstance().increaseCurrentCount();
         ItemFactory.getInstance().init();
-        if (!loadData) {
-            return;
-        }
 
         LoadingManager.getInstance().increaseCurrentCount();
         AvatarFactory.getInstance().init();
-        if (!loadData) {
-            return;
-        }
-
+        
         LoadingManager.getInstance().increaseCurrentCount();
         new AvatarClothLoader().init();
-        if (!loadData) {
-            return;
-        }
 
         LoadingManager.getInstance().increaseCurrentCount();
         EffectFactory.getInstance().init();
-        if (!loadData) {
-            return;
-        }
 
         LoadingManager.getInstance().increaseCurrentCount();
         MarkerFactory.getInstance();
-        if (!loadData) {
-            return;
-        }
 
         LoadingManager.getInstance().increaseCurrentCount();
         RuneFactory.getInstance().init();
-        if (!loadData) {
-            return;
-        }
 
         LoadingManager.getInstance().increaseCurrentCount();
         SongFactory.getInstance().init();
         SoundFactory.getInstance().init();
-
-        if (!loadData) {
-            return;
-        }
         
         LoadingManager.getInstance().increaseCurrentCount();
         people = new People();
         SessionManager.getInstance().addMember(people);
-        SessionManager.getInstance().addMember(
-            illarion.client.guiNG.GUI.getInstance());
+//        SessionManager.getInstance().addMember(
+//            illarion.client.guiNG.GUI.getInstance());
         SessionManager.getInstance().addMember(ChatHandler.getInstance());
 
         LoadingManager.getInstance().increaseCurrentCount();
@@ -539,16 +474,20 @@ public final class Game implements SessionMember {
         SpriteBuffer.getInstance().cleanup();
         TextureLoader.getInstance().cleanup();
         System.gc();
-
-        LoadingScreen.getInstance().setCurrentlyLoading(
-            LoadingScreen.READY_TO_GO);
+        
         LoadingManager.getInstance().setFinished();
-
-        //ClientWindow.getInstance().getRenderDisplay().stopRendering();
-        ClientWindow.getInstance().getRenderDisplay().getRenderArea()
-            .repaint();
+        
         DebugTimer.mark("Loading the client done in"); //$NON-NLS-1$
+        
+        loadingDone = true;
     }
+    
+    private volatile boolean loadingDone = false;
+    
+    public boolean loadingDone() {
+        return loadingDone;
+    }
+    
 
     /**
      * Initialize the entire game. This method adds all required members to the
@@ -559,6 +498,7 @@ public final class Game implements SessionMember {
         DebugTimer.start();
 
         windowHandler = ClientWindow.getInstance();
+        ClientWindow.getInstance().getRenderDisplay().startRendering();
 
         Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
             @Override
@@ -614,18 +554,6 @@ public final class Game implements SessionMember {
     }
 
     /**
-     * Set the login informations that are used to establish a connection the
-     * the Illarion server.
-     * 
-     * @param name The character name that is used for the login
-     * @param pw The plain text password that is used for the login
-     */
-    public void setLogin(final String name, final String pw) {
-        login = name;
-        password = pw;
-    }
-
-    /**
      * Set if the mainloop shall be running or quit after the next run.
      * 
      * @param newRunning set the new running state, if this is set to false the
@@ -653,8 +581,10 @@ public final class Game implements SessionMember {
         musicBox = new MusicBox();
 
         net = new NetComm();
-        player = new Player(login);
+        player = new Player(Login.getInstance().getSelectedCharacterName());
         connect();
+        
+        IllaClient.initChatLog();
 
         if (!running) {
             SessionManager.getInstance().cancelStart();
@@ -665,5 +595,10 @@ public final class Game implements SessionMember {
 
     protected ParticleSystem getParticle() {
         return partSystem;
+    }
+
+    @Override
+    public void loadSession() {
+        loadGameDataImpl();
     }
 }
