@@ -11,7 +11,7 @@
     </controlDefinition>
 	
 	<!-- loading screen -->
-	<screen id="start" controller="illarion.client.gui.controller.LoadScreenController">
+	<screen id="loading" controller="illarion.client.gui.controller.LoadScreenController">
 	    <layer id="layerprogress" backgroundColor="#000" childLayout="center" >
 	   		<panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical">
 	    		<image filename="guiSprite://illarion_title" imageMode="normal" align="center"/>
@@ -78,12 +78,21 @@
     			<panel height="30px" />
                 <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
 	    			<panel childLayout="center" visibleToMouse="true" align="center">
-	    				<control id="myListBox" name="listBox" vertical="optional" horizontal="optional" displayItems="5" selection="Single" />
+	    				<control id="myListBox" name="listBox" vertical="optional" horizontal="optional" displayItems="5" selection="Single" forceSelection="true" />
 	    			</panel>
+	    			
 	    			<panel height="30px" />
-	    			<control id="loginBtn" name="button" label="Spielen" align="center" width="100" height="35" >
-                        <interact onRelease="play()" />
-                    </control>
+	    			
+	    			<panel childLayout="horizontal" visibleToMouse="true">
+                        <panel width="90px" />
+	                	<control id="optionBtn" name="button" label="Ausloggen" width="100" height="35" >
+	                        <interact onRelease="logout()" />
+	                    </control>
+	                    <panel width="20px" />
+	                    <control id="playBtn" name="button" label="Spielen" width="100" height="35" >
+	                        <interact onRelease="play()" />
+	                    </control>
+	                </panel>
 	    			
 	    			<effect>
                     	<onStartScreen name="fade" start="#00" end="#ff" inherit="true" />

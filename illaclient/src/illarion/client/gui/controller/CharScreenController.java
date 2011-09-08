@@ -8,10 +8,12 @@ import de.lessvoid.nifty.controls.ListBox;
 
 public class CharScreenController implements ScreenController {
 
+	private Nifty nifty;;
 	private Screen screen;
 	
     @Override
     public void bind(Nifty nifty, Screen screen) {
+    	this.nifty = nifty;
     	this.screen = screen;
     	fillMyListBox();
     }
@@ -36,6 +38,10 @@ public class CharScreenController implements ScreenController {
 	}
 	
 	public void play() {
-		
+		nifty.gotoScreen("loading");
+	}
+	
+	public void logout() {
+		nifty.gotoScreen("login");
 	}
 }
