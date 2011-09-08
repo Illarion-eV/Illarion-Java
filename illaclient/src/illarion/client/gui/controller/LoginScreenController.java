@@ -1,5 +1,6 @@
 package illarion.client.gui.controller;
 
+import illarion.client.Login;
 import illarion.common.util.LoadingManager;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.ListBox;
@@ -32,7 +33,13 @@ public final class LoginScreenController implements ScreenController {
     }
     
     public void login() {
-    	//updateCharacters();
+        final Login login = Login.getInstance();
+        login.setLoginData(nameTxt.getText(), passwordTxt.getText());
+        login.requestCharacterList();
+        
+        if (login.hasError()) {
+            return;
+        }
     	nifty.gotoScreen("charSelect");
     }
 }

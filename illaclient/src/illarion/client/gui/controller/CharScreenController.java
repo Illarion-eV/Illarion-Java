@@ -1,6 +1,7 @@
 package illarion.client.gui.controller;
 
 
+import illarion.client.Login;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -27,9 +28,12 @@ public class CharScreenController implements ScreenController {
     }
 	
 	public void fillMyListBox() {
-		ListBox listBox = screen.findNiftyControl("myListBox", ListBox.class);
-		listBox.addItem("a");
-		listBox.addItem("b");
-		listBox.addItem("c");
+		@SuppressWarnings("unchecked")
+        ListBox<String> listBox = (ListBox<String>) screen.findNiftyControl("myListBox", ListBox.class);
+		
+		final Login login = Login.getInstance();
+		for (int i = 0; i < login.getCharacterCount(); i++) {
+		    listBox.addItem(login.getCharacterName(i));
+		}
 	}
 }

@@ -67,7 +67,7 @@
     		<panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
     			<image filename="guiSprite://illarion_title" imageMode="normal" align="center"/>
     			<panel childLayout="center" visibleToMouse="true" align="center">
-    				<control id="myListBox" name="listBox" vertical="optional" horizontal="optional" displayItems="4" selection="Multiple" />
+    				<control id="myListBox" name="listBox" vertical="optional" horizontal="optional" displayItems="4" selection="Single" />
     			</panel>
     		</panel>
 		</layer>
