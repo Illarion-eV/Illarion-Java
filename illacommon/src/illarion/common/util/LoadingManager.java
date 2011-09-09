@@ -76,7 +76,7 @@ public final class LoadingManager {
     /**
      * The current progress.
      */
-    private int currentCount;
+    private volatile int currentCount;
     
     /**
      * Set the monitor that is informed about the progress of the updates from

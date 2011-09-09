@@ -26,7 +26,7 @@ import illarion.common.util.TableLoaderSink;
  * Created: 20.08.2005 22:41:23
  */
 public class RuneFactory extends RecycleFactory<Rune> implements
-    TableLoaderSink {
+    TableLoaderSink, ResourceFactory {
     private static final RuneFactory instance = new RuneFactory();
 
     private static final int TB_ID = 0;

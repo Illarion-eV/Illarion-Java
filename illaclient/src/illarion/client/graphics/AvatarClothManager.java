@@ -126,6 +126,7 @@ public final class AvatarClothManager {
         }
         if (exsistingClothes[group] == null) {
             exsistingClothes[group] = new AvatarClothFactory();
+            exsistingClothes[group].init();
         }
         exsistingClothes[group].registerCloth(cloth);
     }

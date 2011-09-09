@@ -35,7 +35,7 @@ import illarion.graphics.SpriteColor;
  * @since 0.95
  */
 public final class ItemFactory extends RecycleFactory<Item> implements
-    TableLoaderSink {
+    TableLoaderSink, ResourceFactory {
     /**
      * The singleton instance of this factory.
      */

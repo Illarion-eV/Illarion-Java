@@ -27,7 +27,7 @@ import illarion.common.util.TableLoaderSink;
  * Created: 20.08.2005 22:41:23
  */
 public class TileFactory extends RecycleFactory<Tile> implements
-    TableLoaderSink {
+    TableLoaderSink, ResourceFactory {
     public static final int TB_COLOR = 5;
     public static final int TB_COST = 9;
     public static final int TB_FRAME = 2;
@@ -74,6 +74,7 @@ public class TileFactory extends RecycleFactory<Tile> implements
      * The init function preapares all prototyped that are needed to work with
      * this function.
      */
+    @Override
     public void init() {
         new TableLoader("Tiles", this);
         mapDefault(0, 1);

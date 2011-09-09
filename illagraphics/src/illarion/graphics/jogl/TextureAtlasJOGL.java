@@ -891,7 +891,7 @@ public final class TextureAtlasJOGL implements TextureAtlas {
             String fileName = dataFile.getAbsolutePath();
             int dotPos = dataFile.getAbsolutePath().lastIndexOf(".");
             String extension = fileName.substring(dotPos);
-            textureData = TextureIO.newTextureData(GLProfile.getGL2ES1(), dataFile, true, extension);
+            textureData = TextureIO.newTextureData(GLContext.getCurrentGL().getGLProfile(), dataFile, true, extension);
             texture = TextureIO.newTexture(textureData);
         } catch (GLException e) {
             // texture not created
@@ -909,7 +909,7 @@ public final class TextureAtlasJOGL implements TextureAtlas {
     @Override
     public void loadTextureData(InputStream dataStream, String string) {
         try {
-            textureData = TextureIO.newTextureData(GLProfile.getGL2ES1(), dataStream, true, string);
+            textureData = TextureIO.newTextureData(GLContext.getCurrentGL().getGLProfile(), dataStream, true, string);
             textureData.flush();
             texture = TextureIO.newTexture(textureData);
             textureData.flush();

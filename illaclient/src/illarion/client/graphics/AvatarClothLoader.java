@@ -33,7 +33,7 @@ import illarion.common.util.TableLoaderSink;
  * @author Martin Karing
  * @since 1.22
  */
-public final class AvatarClothLoader implements TableLoaderSink {
+public final class AvatarClothLoader implements TableLoaderSink, ResourceFactory {
     /**
      * The logger instance that takes care for the logging output of this class.
      */

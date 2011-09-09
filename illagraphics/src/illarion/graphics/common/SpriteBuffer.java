@@ -76,7 +76,6 @@ public final class SpriteBuffer {
      * and the HashMap that stores the buffered sprites.
      */
     public void cleanup() {
-        storage.clear();
         storage = null;
     }
 
