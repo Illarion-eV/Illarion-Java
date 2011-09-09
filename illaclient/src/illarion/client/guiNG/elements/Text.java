@@ -21,7 +21,7 @@ package illarion.client.guiNG.elements;
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
 import illarion.graphics.SpriteColor;
-import illarion.graphics.TextLine;
+//import illarion.graphics.TextLine;
 import illarion.graphics.common.RenderedFont;
 
 /**
@@ -81,7 +81,7 @@ public class Text extends Widget {
     /**
      * The text line implementation that is used to render the text.
      */
-    private transient TextLine graphicalText;
+//    private transient TextLine graphicalText;
 
     /**
      * The offset of the text placement that is calculated by the align.
@@ -114,13 +114,13 @@ public class Text extends Widget {
             if (cursorPos > -1) {
                 cursorDelta += delta;
                 if (cursorDelta >= CURSOR_TOGGLE_TIME) {
-                    graphicalText.toogleCursor();
+//                    graphicalText.toogleCursor();
                     cursorDelta %= CURSOR_TOGGLE_TIME;
                 }
             }
 
-            graphicalText.setLocation(getRelX() + offsetX, getRelY());
-            graphicalText.render();
+//            graphicalText.setLocation(getRelX() + offsetX, getRelY());
+//            graphicalText.render();
         }
         super.draw(delta);
     }
@@ -173,7 +173,7 @@ public class Text extends Widget {
      * @param newColor the new color that is used to render this text.
      */
     public void setColor(final SpriteColor newColor) {
-        graphicalText.setColor(newColor);
+//        graphicalText.setColor(newColor);
     }
 
     /**
@@ -183,12 +183,12 @@ public class Text extends Widget {
      */
     public void setCursorPos(final int newPos) {
         cursorPos = newPos;
-        if (cursorPos > -1) {
-            graphicalText.setCursorPosition(cursorPos);
-            graphicalText.setCursorVisible(true);
-        } else {
-            graphicalText.setCursorVisible(false);
-        }
+//        if (cursorPos > -1) {
+//            graphicalText.setCursorPosition(cursorPos);
+//            graphicalText.setCursorVisible(true);
+//        } else {
+//            graphicalText.setCursorVisible(false);
+//        }
     }
 
     /**
@@ -199,8 +199,8 @@ public class Text extends Widget {
     public void setFont(final RenderableFont newFont) {
         if (font != newFont) {
             font = newFont;
-            graphicalText.setFont(newFont);
-            graphicalText.layout();
+//            graphicalText.setFont(newFont);
+//            graphicalText.layout();
             updateOffset();
         }
     }
@@ -227,8 +227,8 @@ public class Text extends Widget {
         final String cleanedText = newText.replace(RenderedFont.NEWLINE, ' ');
         if (!cleanedText.equals(text)) {
             text = cleanedText;
-            graphicalText.setText(cleanedText);
-            graphicalText.layout();
+//            graphicalText.setText(cleanedText);
+//            graphicalText.layout();
             updateOffset();
         }
     }
@@ -252,9 +252,9 @@ public class Text extends Widget {
         cursorPos = -1;
         cursorDelta = 0;
 
-        if (graphicalText == null) {
-            graphicalText = Graphics.getInstance().getTextLine();
-        }
+//        if (graphicalText == null) {
+//            graphicalText = Graphics.getInstance().getTextLine();
+//        }
     }
 
     /**
@@ -277,6 +277,6 @@ public class Text extends Widget {
             offsetX =
                 (super.getWidth() - font.getWidth(text)) / 2;
         }
-        graphicalText.setLocation(super.getRelX() + offsetX, super.getRelY());
+//        graphicalText.setLocation(super.getRelX() + offsetX, super.getRelY());
     }
 }

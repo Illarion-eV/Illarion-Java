@@ -376,9 +376,9 @@ public final class ChatHandler implements Runnable, SessionMember {
             }
 
             ChatLog.getInstance().logMessage(chara, mode, resultText);
-            GUI.getInstance().getChatText()
-                .showText(resultText, chara, node.getLocation(), mode);
-            GUI.getInstance().getJournal().addText(resultText, chara, mode);
+//            GUI.getInstance().getChatText()
+//                .showText(resultText, chara, node.getLocation(), mode);
+//            GUI.getInstance().getJournal().addText(resultText, chara, mode);
 
             node.clean();
             synchronized (buffer) {

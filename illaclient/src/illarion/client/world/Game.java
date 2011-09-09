@@ -34,6 +34,7 @@ import illarion.client.graphics.OverlayFactory;
 import illarion.client.graphics.RuneFactory;
 import illarion.client.graphics.TileFactory;
 import illarion.client.graphics.particle.ParticleSystem;
+import illarion.client.gui.GUI;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetComm;
@@ -289,6 +290,8 @@ public final class Game implements SessionMember {
 
     @Override
     public void endSession() {
+        running = false;
+        
         if (net != null) {
             net.disconnect();
             net = null;
@@ -331,12 +334,13 @@ public final class Game implements SessionMember {
             }
         });
 
-        // GUI Update
+        // Graphics
         Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
             @Override
             public boolean render(final int delta) {
                 if (Game.getInstance().isRunning()) {
-                    illarion.client.guiNG.GUI.getInstance().draw(delta);
+                    Game.getDisplay().render(delta);
+                    GUI.getInstance().render(false);
                     return true;
                 }
                 return false;
@@ -355,21 +359,23 @@ public final class Game implements SessionMember {
             }
         });
 
-        while (running) {
-            try {
-                Thread.sleep(1000);
-            } catch (final InterruptedException ex) {
-                // no message needed
-            }
-
-            // update the fps display
-            windowHandler.updateFPS();
-        }
+//        while (running) {
+//            try {
+//                Thread.sleep(1000);
+//            } catch (final InterruptedException ex) {
+//                // no message needed
+//            }
+//
+//            // update the fps display
+//            windowHandler.updateFPS();
+//        }
     }
     
     volatile boolean graphicLoaded = false;
     
-    void loadGameDataImpl() {
+    private void loadGameDataImpl() {
+        DebugTimer.start();
+        
         int atlasCount = TextureLoader.getInstance().getTotalAtlasCount();
         LoadingManager.getInstance().setTotalCount(atlasCount + 16);
         
@@ -495,8 +501,6 @@ public final class Game implements SessionMember {
      */
     @Override
     public void initSession() {
-        DebugTimer.start();
-
         windowHandler = ClientWindow.getInstance();
         ClientWindow.getInstance().getRenderDisplay().startRendering();
 
@@ -581,14 +585,13 @@ public final class Game implements SessionMember {
 
         net = new NetComm();
         player = new Player(Login.getInstance().getSelectedCharacterName());
-        connect();
         
         IllaClient.initChatLog();
 
-        if (!running) {
-            SessionManager.getInstance().cancelStart();
-            return;
-        }
+//        if (!running) {
+//            SessionManager.getInstance().cancelStart();
+//            return;
+//        }
 
     }
 

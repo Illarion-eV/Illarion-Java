@@ -107,8 +107,10 @@
     </screen>
     
     <screen id="gamescreen" controller="illarion.client.gui.controller.GameScreenController">
+        <!--  
         <layer id="layer3" backgroundColor="#000" childLayout="center">
             <image filename="dynamic://gamemap" imageMode="normal" align="center"/>
         </layer>
+        -->
     </screen>
 </nifty>

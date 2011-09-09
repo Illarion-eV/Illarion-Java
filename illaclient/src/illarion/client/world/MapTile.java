@@ -1223,7 +1223,7 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
             objectOffset = elevation;
         }
         // position on tile with increasing z-order
-        item.setScreenPos(loc.getDcX(), loc.getDcY() + objectOffset,
+        item.setScreenPos(loc.getDcX(), loc.getDcY() - objectOffset,
             loc.getDcZ() - index, Layers.ITEM);
 
         // set the elevation for items that can carry

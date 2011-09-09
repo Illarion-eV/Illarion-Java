@@ -292,6 +292,7 @@ public final class IllaClient {
     public static void fallbackToLogin(final String message) {
         if (Game.getInstance().isRunning()) {
             SessionManager.getInstance().endSession();
+            illarion.client.gui.GUI.getInstance().showLogin();
         }
     }
 

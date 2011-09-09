@@ -1,6 +1,7 @@
 package illarion.client.gui.controller;
 
 import illarion.client.Login;
+import illarion.client.gui.GUI;
 import illarion.client.util.SessionManager;
 import illarion.client.world.Game;
 import illarion.common.util.LoadingManager;
@@ -40,7 +41,9 @@ public final class LoadScreenController implements ScreenController, LoadingMoni
                 Login.getInstance().login();
                 
                 if (Game.getDisplay() != null) {
+                    Game.getInstance().gameLoop();
                     nifty.gotoScreen("gamescreen");
+                    GUI.getInstance().setSelfRendering(false);
                 } else {
                     System.out.println("Display not ready");
                 }
