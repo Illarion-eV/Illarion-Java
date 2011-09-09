@@ -53,6 +53,8 @@
 	                    <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="*" />
 	                </panel>
 	                
+	                <control id="savePassword" name="checkbox" />
+	                
 	                <panel height="30px" />
 
                     <panel childLayout="horizontal" visibleToMouse="true">
@@ -140,11 +142,16 @@
 	    </layer>
     </screen>
     
-    <screen id="gamescreen" controller="illarion.client.gui.controller.GameScreenController">        
+    <screen id="gamescreen" controller="illarion.client.gui.controller.GameScreenController">
+    	<layer id="mainLayer" backgroundColor="#0000" childLayout="center">
+    		<panel height="100%" width="100%" align="left" valign="bottom" backgroundColor="#0000" childLayout="vertical" visibleToMouse="true">
+    			<text id="main" font="textFont" text="" />
+    		</panel>
+    	</layer>
         <layer id="chatLayer" backgroundColor="#0000" childLayout="center">
             <panel height="201px" width="610px" align="left" valign="bottom" backgroundColor="#0000" childLayout="vertical" visibleToMouse="true">
-	        	<panel height="191px" width="600px" align="right" valign="top" backgroundColor="#0007" childLayout="vertical" visibleToMouse="true">
-	        		<control id="chatLog" name="chatBox" vertical="on" horizontal="off" displayItems="7" selectionMode="Disabled" wrap="true" />
+	        	<panel height="191px" width="600px" align="right" valign="top" backgroundColor="#0000" childLayout="vertical" visibleToMouse="true">
+	        		<control name="chatBox" id="chatLog" vertical="on" horizontal="off" displayItems="7" selectionMode="Disabled" wrap="true" />
 	        		<control name="textfield" id="chatMsg" style="chat-textfield" maxLength="255" width="600px" height="30px"/>
 	        	</panel>
 	        </panel>

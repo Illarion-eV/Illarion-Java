@@ -4,6 +4,7 @@ import illarion.client.Login;
 import illarion.common.util.LoadingManager;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Button;
+import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
@@ -18,6 +19,7 @@ public final class LoginScreenController implements ScreenController {
     
 	private TextField nameTxt;
 	private TextField passwordTxt;
+	private CheckBox savePassword;
 	private Button loginBtn;
 	private ListBox<?> charList;
 //	private Label errorText;
@@ -32,6 +34,7 @@ public final class LoginScreenController implements ScreenController {
     	
     	nameTxt = screen.findNiftyControl("nameTxt", TextField.class);
     	passwordTxt = screen.findNiftyControl("passwordTxt", TextField.class);
+    	savePassword = screen.findNiftyControl("savePassword", CheckBox.class);
     	loginBtn = screen.findNiftyControl("loginBtn", Button.class);
     	charList = nifty.getScreen("charSelect").findNiftyControl("myListBox", ListBox.class);
 //    	errorText = screen.findNiftyControl("errorText", Label.class);
@@ -70,7 +73,7 @@ public final class LoginScreenController implements ScreenController {
     public void cancelLogin() {
 //        nifty.closePopup(popupLogin.getId());
 //        nifty.closePopup(popupError.getId());
-    }
+    }	
     
     public void options() {
     	nifty.gotoScreen("options");
