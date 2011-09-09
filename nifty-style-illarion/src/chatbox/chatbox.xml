@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty-styles>
+  <style id="chatbox">
+    <attributes backgroundImage="guiSprite://window/border" imageMode="resize:6,9,6,6,6,9,6,8,6,9,6,6" />
+  </style>
+  <style id="chatbox#scrollpanel">
+    <attributes focusable="true" padding="1px"/>
+    <effect overlay="true">
+      <onActive name="colorBar" color="#0007" post="false" neverStopRendering="true" timeType="infinite" />
+    </effect>
+  </style>
+  <style id="chatbox#bottom-right">
+    <attributes width="23px" height="23px" />
+  </style>
+  <style id="chatbox-item" base="nifty-label">
+    <attributes color="#ccc" width="100%" align="left" textVAlign="center" textHAlign="left" />
+    <effect>
+      <onHover name="colorBar" color="#0000000bb" neverStopRendering="true" timeType="infinite" />
+    </effect>
+  </style>
+
+</nifty-styles>

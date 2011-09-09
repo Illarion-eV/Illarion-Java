@@ -3,9 +3,11 @@
   <useStyles filename="fonts.xml" />
   <useStyles filename="panel/nifty-panel.xml" />
   <useStyles filename="button/nifty-button.xml" />
+  <useStyles filename="tab/illarion-tab.xml" />
   <useStyles filename="illabutton/illabutton.xml" />
   <useStyles filename="label/nifty-label.xml" />
   <useStyles filename="textfield/nifty-textfield.xml" />
+  <useStyles filename="textfield/chat-textfield.xml" />
   <useStyles filename="dropdown/nifty-drop-down.xml" />
   <useStyles filename="imageselect/nifty-image-select.xml" />
   <useStyles filename="checkbox/nifty-checkbox.xml" />
@@ -17,6 +19,7 @@
   <useStyles filename="chat-control/nifty-chat-control.xml" />
   <useStyles filename="menu/nifty-menu-style.xml" />
   <useStyles filename="listbox/nifty-listbox-style.xml" />
+  <useStyles filename="chatbox/chatbox.xml" />
   <useStyles filename="window/nifty-window.xml" />
   <useStyles filename="hint/nifty-hint.xml" />
 </nifty-styles>
