@@ -18,17 +18,15 @@
  */
 package illarion.client.sound;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javolution.util.FastTable;
-
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import illarion.client.graphics.ResourceFactory;
 import illarion.common.util.FastMath;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
+
+import java.util.List;
+
+import javolution.util.FastTable;
 
 /**
  * The song factory, so the main storage for background music. While this sounds
@@ -59,6 +57,15 @@ public final class SongFactory implements TableLoaderSink, ResourceFactory {
     private static final int TB_NAME = 1;
 
     /**
+     * Get the singleton instance of the sound factory.
+     * 
+     * @return the singleton instance
+     */
+    public static SongFactory getInstance() {
+        return INSTANCE;
+    }
+
+    /**
      * The storage for the songs and the variations of the songs.
      */
     private TIntObjectHashMap<List<String>> songs;
@@ -69,15 +76,6 @@ public final class SongFactory implements TableLoaderSink, ResourceFactory {
      */
     private SongFactory() {
         // nothing to do
-    }
-
-    /**
-     * Get the singleton instance of the sound factory.
-     * 
-     * @return the singleton instance
-     */
-    public static SongFactory getInstance() {
-        return INSTANCE;
     }
 
     /**
@@ -103,6 +101,7 @@ public final class SongFactory implements TableLoaderSink, ResourceFactory {
      * The initialization function prepares all prototyped that are needed to
      * work with this function.
      */
+    @Override
     @SuppressWarnings("nls")
     public void init() {
         songs = new TIntObjectHashMap<List<String>>();

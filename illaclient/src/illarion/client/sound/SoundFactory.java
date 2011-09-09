@@ -19,7 +19,6 @@
 package illarion.client.sound;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import illarion.client.graphics.ResourceFactory;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
@@ -51,6 +50,15 @@ public final class SoundFactory implements TableLoaderSink, ResourceFactory {
     private static final int TB_NAME = 1;
 
     /**
+     * Get the singleton instance of the sound factory.
+     * 
+     * @return the singleton instance of the sound factory
+     */
+    public static SoundFactory getInstance() {
+        return INSTANCE;
+    }
+
+    /**
      * The hash map that stores all sound effects avaiable.
      */
     private TIntObjectHashMap<String> sounds;
@@ -61,15 +69,6 @@ public final class SoundFactory implements TableLoaderSink, ResourceFactory {
      */
     private SoundFactory() {
         // nothing to do
-    }
-
-    /**
-     * Get the singleton instance of the sound factory.
-     * 
-     * @return the singleton instance of the sound factory
-     */
-    public static SoundFactory getInstance() {
-        return INSTANCE;
     }
 
     /**
@@ -90,6 +89,7 @@ public final class SoundFactory implements TableLoaderSink, ResourceFactory {
      * The initialization function prepares all prototyped that are needed to
      * work with this function.
      */
+    @Override
     @SuppressWarnings("nls")
     public void init() {
         sounds = new TIntObjectHashMap<String>();
