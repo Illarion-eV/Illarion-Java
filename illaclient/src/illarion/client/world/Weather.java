@@ -29,14 +29,12 @@ import illarion.client.graphics.AnimationUtility;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.client.graphics.particle.emitter.WeatherRainEmitter2;
 import illarion.client.sound.SoundFactory;
+import illarion.client.sound.SoundManager;
 import illarion.client.util.SessionMember;
 
 import illarion.graphics.Graphics;
 import illarion.graphics.Sprite;
 import illarion.graphics.SpriteColor;
-
-import illarion.sound.SoundManager;
-import illarion.sound.SoundSource;
 
 /**
  * Weather control class. Generated and stores all effects caused by the weather
@@ -942,14 +940,7 @@ public final class Weather implements SessionMember {
             if (nextThunder >= 0) {
                 if (nextThunder-- <= 0) {
                     // play thunder sound effect
-                    final SoundSource sound =
-                        SoundManager.getInstance().getSoundSource();
-                    sound.setSoundClip(SoundFactory.getInstance().getSound(
-                        THUNDER_SOUND_ID));
-                    sound.setEndOperation(SoundSource.OP_RECYCLE);
-                    sound.setType(SoundSource.TYPE_EFFECT);
-                    sound.setNoPosition();
-                    sound.start();
+                    SoundManager.getInstance().playEffect(THUNDER_SOUND_ID, Game.getPlayer().getLocation());
                     // Toolkit.getDefaultToolkit().beep();
                     nextThunder = -1;
                 }

@@ -26,6 +26,7 @@ import illarion.client.guiNG.GUI;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.MoveCmd;
+import illarion.client.sound.SoundManager;
 import illarion.client.util.Path;
 import illarion.client.util.PathNode;
 import illarion.client.util.PathReceiver;
@@ -33,8 +34,6 @@ import illarion.client.util.Pathfinder;
 
 import illarion.common.util.FastMath;
 import illarion.common.util.Location;
-
-import illarion.sound.SoundListener;
 
 /**
  * The player movement class takes and handles all move requests and orders that
@@ -154,12 +153,6 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     private final Char playerCharacter;
 
     /**
-     * The sound listener of the player that is required to be updated in case
-     * the location or the direction of the player character changes.
-     */
-    private final SoundListener playerListener;
-
-    /**
      * The variable stores if the location of the character got already updated
      * or not.
      */
@@ -196,7 +189,6 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         moveAnimation.addTarget(this, false);
         parentPlayer = parent;
         playerCharacter = parent.getCharacter();
-        playerListener = parent.getSoundListener();
     }
 
     /**
@@ -231,7 +223,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     public void acknowledgeTurn(final int direction) {
         requestedTurns[direction] = false;
         playerCharacter.setDirection(direction);
-        playerListener.setDirection(direction);
+        
+        SoundManager.getInstance().setListenerDirection(direction);
     }
 
     /**
@@ -536,7 +529,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             || playerCharacter.getLocation().equals(target)) {
             parentPlayer.updateLocation(target);
             playerCharacter.setLocation(target);
-            playerListener.setLocation(target);
+            SoundManager.getInstance().setListenerLocation(target);
             animationFinished(true);
             Game.getDisplay().animationFinished(true);
             walkTowards = false;
@@ -558,7 +551,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             newElevation, speed);
 
         parentPlayer.updateLocation(target);
-        playerListener.setLocation(target);
+        SoundManager.getInstance().setListenerLocation(target);
         Game.getMusicBox().updatePlayerLocation();
     }
 

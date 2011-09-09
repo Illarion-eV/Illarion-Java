@@ -18,6 +18,7 @@
  */
 package illarion.client.gui;
 
+import illarion.client.sound.NiftySoundDevice;
 import illarion.graphics.Graphics;
 
 import org.illarion.nifty.renderer.input.IllarionInputSystem;
@@ -40,21 +41,21 @@ import de.lessvoid.nifty.tools.TimeProvider;
  */
 public final class GUI {
     private static final GUI INSTANCE = new GUI();
-    
+
     public static GUI getInstance() {
         return INSTANCE;
     }
-    
+
     private boolean selfRender = false;
-    
+
     public void setSelfRendering(final boolean state) {
         selfRender = state;
     }
-    
+
     public boolean getSelfRendering() {
         return selfRender;
     }
-    
+
     /**
      * The primary nifty GUI instance that is used to control the rendering and
      * maintance of the entire GUI.
@@ -62,50 +63,32 @@ public final class GUI {
     private final Nifty niftyGui;
 
     private GUI() {
-        final RenderImageFactory imageFactory = new RenderImageFactory(new GuiImageFactory());
+        final RenderImageFactory imageFactory =
+            new RenderImageFactory(new GuiImageFactory());
         imageFactory.addDynamicImage("gamemap", new MapImage());
-        
+
         niftyGui =
             new Nifty(new IllarionRenderDevice(Graphics.getInstance()
-                .getRenderDisplay(), imageFactory), new SoundDevice() {
-                    
-                    @Override
-                    public void update(int delta) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public SoundHandle loadSound(SoundSystem soundSystem, String filename) {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public SoundHandle loadMusic(SoundSystem soundSystem, String filename) {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                }, new IllarionInputSystem(),
-                new TimeProvider());
+                .getRenderDisplay(), imageFactory), new NiftySoundDevice(),
+                new IllarionInputSystem(), new TimeProvider());
     }
-    
+
     public void prepare() {
         niftyGui.fromXmlWithoutStartScreen("illarion/client/gui/xml/gui.xml");
     }
-    
+
     public void render(final boolean clearScreen) {
         if (!niftyGui.update()) {
             niftyGui.render(clearScreen);
         }
     }
-    
+
     public void showLogin() {
         setSelfRendering(true);
         Graphics.getInstance().getRenderManager().addTask(new GuiRenderTask());
         niftyGui.gotoScreen("login");
     }
-    
+
     public void shutdown() {
         niftyGui.exit();
     }

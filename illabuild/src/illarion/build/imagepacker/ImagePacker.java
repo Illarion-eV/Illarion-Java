@@ -516,8 +516,9 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * @throws IOException Indicates a failure to write out files
      */
     @SuppressWarnings("nls")
-    public void packImages(TextureAtlas texture,
+    public boolean packImages(TextureAtlas texture,
         Collection<SubTextureCoord> coordList) throws IOException {
+        System.out.println("Generating new Texture");
         if (execService != null) {
             execService.shutdown();
             try {
@@ -548,7 +549,8 @@ public final class ImagePacker implements Comparator<TextureElement> {
         }
         if ((images[targetType] == null) || (images[targetType].size() == 0)) {
             images[targetType] = null;
-            return;
+            System.out.println("No more textures ... dropping out.");
+            return false;
         }
         if (sortNeeded[targetType]) {
             Collections.sort(images[targetType], this);
@@ -559,7 +561,11 @@ public final class ImagePacker implements Comparator<TextureElement> {
         
         if (currType == TYPE_GREY) {
             targetType = TYPE_GREY_ALPHA;
+        } else if (currType == TYPE_RGB) {
+            targetType = TYPE_RGBA;
         }
+
+        System.out.println("Selected Texture Type: " + currType);
 
         final Sprite firstImage = images[currType].get(0);
         final int dimensions[] =
@@ -630,7 +636,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                         spaces = spacesHeight;
                     } else {
                         System.err.println("ERROR selecting spaces!!!");
-                        return;
+                        return false;
                     }
                     j++;
                     if (spaces.isEmpty()) {
@@ -736,16 +742,23 @@ public final class ImagePacker implements Comparator<TextureElement> {
             }
         }
         
+        System.out.println("Setting up internal streams.");
+        
         PipedInputStream pIn = new PipedInputStream(10000000);
         PipedOutputStream pOut = new PipedOutputStream(pIn);
         
-        ImageIO.write(result, "PNG", pOut);
-        
+        System.out.println("Writing PNG to internal buffer.");
+        if (!ImageIO.write(result, "PNG", pOut)) {
+            throw new IllegalStateException("Can't write the Image! We are all doomed!");
+        }
+        System.out.println("PNG written");
+
         try {
             texture.loadTextureData(pIn, "png");
         } catch (Exception ex) {
-            
+            ex.printStackTrace();
         }
+        System.out.println("Texture Data generated.");
         
         pIn.close();
         pOut.close();
@@ -836,7 +849,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
         spacesWidth.clear();
         spacesHeight.clear();
 
-        //return texAtlas;
+        return true;
     }
 
     /**

@@ -24,9 +24,6 @@ import illarion.client.graphics.ResourceFactory;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 
-import illarion.sound.SoundClip;
-import illarion.sound.SoundManager;
-
 /**
  * This factory provides access to all known sound files.
  */
@@ -56,7 +53,7 @@ public final class SoundFactory implements TableLoaderSink, ResourceFactory {
     /**
      * The hash map that stores all sound effects avaiable.
      */
-    private TIntObjectHashMap<SoundClip> sounds;
+    private TIntObjectHashMap<String> sounds;
 
     /**
      * Private constructor to ensure that no instances but the singleton
@@ -82,7 +79,7 @@ public final class SoundFactory implements TableLoaderSink, ResourceFactory {
      * @return the sound effect or null in case it was not found or if the sound
      *         playback is disabled
      */
-    public SoundClip getSound(final int id) {
+    public String getSound(final int id) {
         if (sounds.contains(id)) {
             return sounds.get(id);
         }
@@ -95,7 +92,7 @@ public final class SoundFactory implements TableLoaderSink, ResourceFactory {
      */
     @SuppressWarnings("nls")
     public void init() {
-        sounds = new TIntObjectHashMap<SoundClip>();
+        sounds = new TIntObjectHashMap<String>();
         new TableLoader("Sounds", this);
 
         sounds.compact();
@@ -111,13 +108,10 @@ public final class SoundFactory implements TableLoaderSink, ResourceFactory {
      */
     @Override
     public boolean processRecord(final int line, final TableLoader loader) {
-        final SoundClip sound = SoundManager.getInstance().getSoundClip();
         final int clipID = loader.getInt(TB_ID);
-        sound.setId(clipID);
-        sound.loadEffect(SOUND_PATH + loader.getString(TB_NAME));
-        sound.setDataMode(SoundClip.MODE_STORE);
+        final String filename = SOUND_PATH + loader.getString(TB_NAME);
 
-        sounds.put(clipID, sound);
+        sounds.put(clipID, filename);
 
         return true;
     }

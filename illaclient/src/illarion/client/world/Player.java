@@ -28,6 +28,7 @@ import illarion.client.graphics.Avatar;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.RequestAppearanceCmd;
+import illarion.client.sound.SoundManager;
 import illarion.client.util.Lang;
 
 import illarion.common.config.Config;
@@ -37,9 +38,6 @@ import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.FastMath;
 import illarion.common.util.Location;
-
-import illarion.sound.SoundListener;
-import illarion.sound.SoundManager;
 
 /**
  * Main Class for the player controlled character.
@@ -126,12 +124,6 @@ public final class Player implements ConfigChangeListener {
     private final Char character;
 
     /**
-     * The sound listener that receives all sound effects the player characters
-     * hears.
-     */
-    private final SoundListener listener;
-
-    /**
      * The current location of the server map for the player.
      */
     private final Location loc = Location.getInstance();
@@ -183,7 +175,6 @@ public final class Player implements ConfigChangeListener {
                 .fallbackToLogin(Lang.getMsg("error.character_settings"));
             cfg = null;
             movementHandler = null;
-            listener = null;
             return;
         }
 
@@ -193,7 +184,6 @@ public final class Player implements ConfigChangeListener {
         Game.getPeople().setPlayerCharacter(character);
 
         // followed = null;
-        listener = SoundManager.getInstance().getSoundListener();
         movementHandler = new PlayerMovement(this);
 
         IllaClient.getCfg().addListener(CFG_SOUND_ON, this);
@@ -307,16 +297,6 @@ public final class Player implements ConfigChangeListener {
     }
 
     /**
-     * Get the sound listener of the player in order to perform the needed
-     * updates of its position and direction.
-     * 
-     * @return the sound listener of the player
-     */
-    public SoundListener getSoundListener() {
-        return listener;
-    }
-
-    /**
      * Check if the player character is currently looking at a specified
      * character.
      * 
@@ -392,7 +372,7 @@ public final class Player implements ConfigChangeListener {
             Game.getPeople().clipCharacters();
         }
 
-        listener.setLocation(newLoc);
+        SoundManager.getInstance().setListenerLocation(newLoc);
     }
 
     /**
@@ -562,12 +542,6 @@ public final class Player implements ConfigChangeListener {
                 IllaClient.getCfg().getInteger(CFG_MUSIC_VOL) / MAX_CLIENT_VOL;
         }
 
-        if ((effVol > FastMath.FLT_EPSILON) || (musVol > FastMath.FLT_EPSILON)) {
-            listener.setEffectVolume(effVol);
-            listener.setMusicVolume(musVol);
-            listener.activate();
-        } else {
-            listener.deactivate();
-        }
+        SoundManager.getInstance().setMasterVolume(musVol);
     }
 }

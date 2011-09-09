@@ -5,7 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/illacommon"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illagraphics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illainput"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/illasound"/>
 	<classpathentry kind="lib" path="/illacommon/rsc/rsc_gui.jar"/>
 	<classpathentry kind="lib" path="/illacommon/rsc/rsc_items.jar"/>
 	<classpathentry kind="lib" path="/illacommon/rsc/rsc_tables.jar"/>
@@ -30,5 +29,12 @@
 	<classpathentry kind="lib" path="/illacommon/lib/xpp3/xpp3_min-1.1.4c.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/nifty-style-illarion"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/nifty-controls-illarion"/>
+	<classpathentry kind="lib" path="/illacommon/lib/soundsystem/CodecJOrbis.jar" sourcepath="/illacommon/lib/soundsystem/CodecJOrbis-Sources.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/soundsystem/LibraryJavaSound.jar" sourcepath="/illacommon/lib/soundsystem/LibraryJavaSound-Sources.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/soundsystem/LibraryJOAL.jar" sourcepath="/illacommon/lib/soundsystem/LibraryJOAL-Sources.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/soundsystem/SoundSystem.jar" sourcepath="/illacommon/lib/soundsystem/SoundSystem-Source.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/joal/joal.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jorbis/jogg.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jorbis/jorbis.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

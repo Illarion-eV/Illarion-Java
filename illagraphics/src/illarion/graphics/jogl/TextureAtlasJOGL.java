@@ -446,6 +446,9 @@ public final class TextureAtlasJOGL implements TextureAtlas {
     @Override
     public final void writeTextureDataToFile(final File file) {
         try {
+            if (textureData == null) {
+                throw new NullPointerException("TextureData is null!");
+            }
             TextureIO.write(textureData, file);
         } catch (GLException e) {
             // TODO Auto-generated catch block
@@ -891,10 +894,11 @@ public final class TextureAtlasJOGL implements TextureAtlas {
             String fileName = dataFile.getAbsolutePath();
             int dotPos = dataFile.getAbsolutePath().lastIndexOf(".");
             String extension = fileName.substring(dotPos);
-            textureData = TextureIO.newTextureData(GLContext.getCurrentGL().getGLProfile(), dataFile, true, extension);
+            textureData = TextureIO.newTextureData(GLProfile.getGL2ES1(), dataFile, true, extension);
             texture = TextureIO.newTexture(textureData);
         } catch (GLException e) {
             // texture not created
+            e.printStackTrace();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -909,16 +913,17 @@ public final class TextureAtlasJOGL implements TextureAtlas {
     @Override
     public void loadTextureData(InputStream dataStream, String string) {
         try {
-            textureData = TextureIO.newTextureData(GLContext.getCurrentGL().getGLProfile(), dataStream, true, string);
-            textureData.flush();
-            texture = TextureIO.newTexture(textureData);
-            textureData.flush();
-            textureData = null;
-        } catch (GLException e) {
-            // texture not created
+            textureData = TextureIO.newTextureData(GLProfile.getGL2ES1(), dataStream, true, string);
+            if (textureData == null) {
+                throw new IllegalStateException("Loading the texture failed badly.");
+            }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+        try {
+            texture = TextureIO.newTexture(textureData);
+        } catch (GLException e) {
+            
         }
     }
 
@@ -926,5 +931,10 @@ public final class TextureAtlasJOGL implements TextureAtlas {
     public void enable() {
         texture.enable();
         texture.bind();
+    }
+
+    @Override
+    public void cleanup() {
+        textureData = null;
     }
 }

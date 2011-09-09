@@ -19,10 +19,7 @@
 package illarion.client.world;
 
 import illarion.client.sound.SongFactory;
-
-import illarion.sound.SoundClip;
-import illarion.sound.SoundManager;
-import illarion.sound.SoundSource;
+import illarion.client.sound.SoundManager;
 
 /**
  * This is the music box. What is does is playing music. This class handles the
@@ -45,11 +42,6 @@ public final class MusicBox {
      * The ID of the combat music.
      */
     private static final int COMBAT_TRACK = 1;
-
-    /**
-     * The sound source that is used to maintain the background music.
-     */
-    private final SoundSource backgroundMusic;
 
     /**
      * The current music track that is playing.
@@ -76,9 +68,6 @@ public final class MusicBox {
         overrideSoundId = NO_TRACK;
         fightingMusicPlaying = false;
         currentDefaultTrack = NO_TRACK;
-        backgroundMusic = SoundManager.getInstance().getSoundSource();
-        backgroundMusic.setEndOperation(SoundSource.OP_LOOP);
-        backgroundMusic.setType(SoundSource.TYPE_MUSIC);
     }
 
     /**
@@ -143,9 +132,7 @@ public final class MusicBox {
      * client instance.
      */
     void shutdownMusicBox() {
-        if (backgroundMusic.isPlaying()) {
-            backgroundMusic.stop();
-        }
+        SoundManager.getInstance().playBackground(null);
     }
 
     /**
@@ -157,18 +144,7 @@ public final class MusicBox {
      * @param id the ID of the sound track to play
      */
     private void setSoundTrack(final int id) {
-        if (backgroundMusic.isPlaying()) {
-            backgroundMusic.stop();
-        }
-
-        final SoundClip clip = SongFactory.getInstance().getSong(id);
-
-        if (clip == null) {
-            return;
-        }
-
-        backgroundMusic.setSoundClip(clip);
-        backgroundMusic.start();
+        SoundManager.getInstance().playBackground(id);
     }
 
     /**
@@ -184,5 +160,9 @@ public final class MusicBox {
             setSoundTrack(overrideSoundId);
         }
         setSoundTrack(currentDefaultTrack);
+    }
+
+    public boolean isPlaying(final int musicId) {
+        return (overrideSoundId != musicId);
     }
 }

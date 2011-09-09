@@ -860,7 +860,9 @@ public final class TextureConverterNG extends Task {
             try {
                 final Collection<SubTextureCoord> coordList = new ArrayList<SubTextureCoord>();
                 final TextureAtlas texture = Graphics.getInstance().getTextureAtlas();
-                packer.packImages(texture, coordList);
+                if (!packer.packImages(texture, coordList)) {
+                    break;
+                }
                 
                 File imageFile = File.createTempFile("tex", "." + illarion.graphics.common.TextureIO.FORMAT);
                 File metaFile = File.createTempFile("tex", ".meta");

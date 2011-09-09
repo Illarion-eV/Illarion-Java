@@ -71,6 +71,7 @@ public final class TextureIO {
         final TextureAtlas result = Graphics.getInstance().getTextureAtlas();
         try {
             result.loadTextureData(dataFile);
+            result.cleanup();
         } catch (Exception e1) {
             throw new IOException(e1);
         }
@@ -103,6 +104,7 @@ public final class TextureIO {
         final TextureAtlas result = Graphics.getInstance().getTextureAtlas();
         try {
             result.loadTextureData(dataStream);
+            result.cleanup();
         } catch (Exception e1) {
             throw new IOException(e1);
         }

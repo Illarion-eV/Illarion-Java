@@ -19,6 +19,9 @@
 package illarion.client.sound;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import javolution.util.FastTable;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -26,9 +29,6 @@ import illarion.client.graphics.ResourceFactory;
 import illarion.common.util.FastMath;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
-
-import illarion.sound.SoundClip;
-import illarion.sound.SoundManager;
 
 /**
  * The song factory, so the main storage for background music. While this sounds
@@ -46,7 +46,7 @@ public final class SongFactory implements TableLoaderSink, ResourceFactory {
      * Folder containing the sound effects.
      */
     @SuppressWarnings("nls")
-    private static final String SOUND_PATH = "data/music/";
+    public static final String SOUND_PATH = "data/music/";
 
     /**
      * The index position of the song id in a table record.
@@ -61,7 +61,7 @@ public final class SongFactory implements TableLoaderSink, ResourceFactory {
     /**
      * The storage for the songs and the variations of the songs.
      */
-    private TIntObjectHashMap<ArrayList<SoundClip>> songs;
+    private TIntObjectHashMap<List<String>> songs;
 
     /**
      * Constructor of the factory. Starts to loading of table file containing
@@ -89,10 +89,10 @@ public final class SongFactory implements TableLoaderSink, ResourceFactory {
      *         this id, the song is returned, in case there are multiple
      *         variations of this song, one is selected randomly and returned
      */
-    public SoundClip getSong(final int id) {
+    public String getSong(final int id) {
         if ((songs != null) && (songs.contains(id))) {
             // select a variant at random
-            final ArrayList<SoundClip> clipList = songs.get(id);
+            final List<String> clipList = songs.get(id);
             final int variant = FastMath.nextRandomInt(0, clipList.size() - 1);
             return songs.get(id).get(variant);
         }
@@ -105,7 +105,7 @@ public final class SongFactory implements TableLoaderSink, ResourceFactory {
      */
     @SuppressWarnings("nls")
     public void init() {
-        songs = new TIntObjectHashMap<ArrayList<SoundClip>>();
+        songs = new TIntObjectHashMap<List<String>>();
         new TableLoader("Songs", this);
 
         songs.compact();
@@ -122,20 +122,17 @@ public final class SongFactory implements TableLoaderSink, ResourceFactory {
      */
     @Override
     public boolean processRecord(final int line, final TableLoader loader) {
-        final SoundClip sound = SoundManager.getInstance().getSoundClip();
         final int clipID = loader.getInt(TB_ID);
-        sound.setId(clipID);
-        sound.loadEffect(SOUND_PATH + loader.getString(TB_NAME));
-        sound.setDataMode(SoundClip.MODE_STREAM);
+        final String clipName = SOUND_PATH + loader.getString(TB_NAME);
 
-        ArrayList<SoundClip> clipList;
+        List<String> clipList;
         if (!songs.contains(clipID)) {
-            clipList = new ArrayList<SoundClip>();
+            clipList = new FastTable<String>();
             songs.put(clipID, clipList);
         } else {
             clipList = songs.get(clipID);
         }
-        clipList.add(sound);
+        clipList.add(clipName);
 
         return true;
     }
