@@ -35,7 +35,7 @@ import illarion.graphics.SpriteColor;
  * @since 0.92
  */
 public final class AvatarFactory extends RecycleFactory<Avatar> implements
-    TableLoaderSink {
+    TableLoaderSink, ResourceFactory {
     /**
      * The ID of the avatar that is loaded by default in case the requested
      * avatar was not found.

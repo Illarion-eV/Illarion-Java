@@ -191,6 +191,11 @@ public final class Installation {
                     illarion.download.install.resources.dev.EasyNpcEditor
                         .getInstance());
                 return;
+            } else if (sysProp.equalsIgnoreCase("easyquest")) {
+                ResourceManager.getInstance().setMainResource(
+                    illarion.download.install.resources.dev.EasyQuestEditor
+                        .getInstance());
+                return;
             }
         }
         final AppSelectionSWING content = new AppSelectionSWING();

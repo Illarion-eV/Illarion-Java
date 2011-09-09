@@ -31,7 +31,7 @@ import illarion.common.util.TableLoaderSink;
  * @since 0.95
  */
 public final class EffectFactory extends RecycleFactory<Effect> implements
-    TableLoaderSink {
+    TableLoaderSink, ResourceFactory {
     /**
      * The ID of the effect that is shown in case the requested effect is not
      * defined.

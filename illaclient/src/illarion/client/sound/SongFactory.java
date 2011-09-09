@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
+import illarion.client.graphics.ResourceFactory;
 import illarion.common.util.FastMath;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
@@ -35,7 +36,7 @@ import illarion.sound.SoundManager;
  * independent from the RecycleFactory, because there is only one song at time
  * played anyway.
  */
-public final class SongFactory implements TableLoaderSink {
+public final class SongFactory implements TableLoaderSink, ResourceFactory {
     /**
      * The singleton instance of the SongFactory.
      */

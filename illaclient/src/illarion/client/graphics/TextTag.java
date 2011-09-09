@@ -28,7 +28,7 @@ import illarion.graphics.Drawer;
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
 import illarion.graphics.SpriteColor;
-import illarion.graphics.TextLine;
+//import illarion.graphics.TextLine;
 import illarion.graphics.common.RenderedFont;
 import illarion.graphics.common.FontLoader;
 
@@ -90,10 +90,10 @@ public class TextTag implements RecycleObject {
      */
     private String text;
 
-    /**
-     * The graphical text line that contains the text itself.
-     */
-    private transient TextLine textTag;
+//    /**
+//     * The graphical text line that contains the text itself.
+//     */
+//    private transient TextLine textTag;
 
     /**
      * Create a new instance of the text tag. This instance is created by the
@@ -114,9 +114,9 @@ public class TextTag implements RecycleObject {
      */
     @Override
     public void activate(final int id) {
-        textTag = Graphics.getInstance().getTextLine();
-        textTag.setColor(color);
-        textTag.setFont(TEXT_TAG_FONT);
+//        textTag = Graphics.getInstance().getTextLine();
+//        textTag.setColor(color);
+//        textTag.setFont(TEXT_TAG_FONT);
     }
 
     public void addToCamera(final int x, final int y) {
@@ -149,8 +149,8 @@ public class TextTag implements RecycleObject {
             + 2, y + dY + bounds.height, BACK_COLOR);
 
         color.setAlpha(SpriteColor.COLOR_MAX);
-        textTag.setLocation(x + dX, y + dY);
-        textTag.render();
+//        textTag.setLocation(x + dX, y + dY);
+//        textTag.render();
     }
 
     /**
@@ -204,7 +204,7 @@ public class TextTag implements RecycleObject {
         text = null;
         color = null;
         bounds = null;
-        textTag = null;
+//        textTag = null;
     }
 
     /**
@@ -214,9 +214,9 @@ public class TextTag implements RecycleObject {
      */
     public void setColor(final Colors newColor) {
         color = newColor.getColor();
-        if (textTag != null) {
-            textTag.setColor(color);
-        }
+//        if (textTag != null) {
+//            textTag.setColor(color);
+//        }
     }
 
     /**
@@ -238,7 +238,7 @@ public class TextTag implements RecycleObject {
     public void setText(final String newText) {
         text = newText;
         bounds = new Rectangle(TEXT_TAG_FONT.getWidth(newText), TEXT_TAG_FONT.getHeight());
-        textTag.setText(newText);
-        textTag.layout();
+//        textTag.setText(newText);
+//        textTag.layout();
     }
 }

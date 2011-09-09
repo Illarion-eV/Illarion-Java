@@ -26,7 +26,7 @@ import illarion.common.util.TableLoaderSink;
  * Created: 02.09.2005 22:25:11
  */
 public class MarkerFactory extends RecycleFactory<Marker> implements
-    TableLoaderSink {
+    TableLoaderSink, ResourceFactory {
     public static final int CHAR_SELECT = 12;
 
     public static final int CRSR_COMBAT = 2;
@@ -123,11 +123,6 @@ public class MarkerFactory extends RecycleFactory<Marker> implements
     @SuppressWarnings("nls")
     private MarkerFactory() {
         super();
-
-        //new TableLoader("Gui", this);
-
-        //mapDefault(CRSR_MAGIC, 1);
-        finish();
     }
 
     /**
@@ -169,6 +164,14 @@ public class MarkerFactory extends RecycleFactory<Marker> implements
         mark.activate(id);
 
         return true;
+    }
+
+    @Override
+    public void init() {
+        //new TableLoader("Gui", this);
+
+        //mapDefault(CRSR_MAGIC, 1);
+        finish();
     }
 
 }

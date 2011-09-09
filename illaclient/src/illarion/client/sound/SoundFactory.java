@@ -20,6 +20,7 @@ package illarion.client.sound;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
+import illarion.client.graphics.ResourceFactory;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 
@@ -29,7 +30,7 @@ import illarion.sound.SoundManager;
 /**
  * This factory provides access to all known sound files.
  */
-public final class SoundFactory implements TableLoaderSink {
+public final class SoundFactory implements TableLoaderSink, ResourceFactory {
 
     /**
      * The singleton instance of the sound factory.

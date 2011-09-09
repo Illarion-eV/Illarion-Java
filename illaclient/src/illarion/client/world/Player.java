@@ -25,6 +25,9 @@ import org.apache.log4j.Logger;
 
 import illarion.client.IllaClient;
 import illarion.client.graphics.Avatar;
+import illarion.client.net.CommandFactory;
+import illarion.client.net.CommandList;
+import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.util.Lang;
 
 import illarion.common.config.Config;
@@ -412,6 +415,10 @@ public final class Player implements ConfigChangeListener {
     public void setPlayerID(final long newPlayerId) {
         playerId = newPlayerId;
         character.setCharId(playerId);
+        
+        RequestAppearanceCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_REQUEST_APPEARANCE, RequestAppearanceCmd.class);
+        cmd.request(newPlayerId);
+        cmd.send();
         // character.setAppearance(appear);
 
         while (!Game.getPeople().isRunning()) {

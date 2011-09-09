@@ -140,11 +140,7 @@
 	    </layer>
     </screen>
     
-    <screen id="gamescreen" controller="illarion.client.gui.controller.GameScreenController">
-        <layer id="layer3" backgroundColor="#000" childLayout="center">
-            <image filename="dynamic://gamemap" imageMode="normal" align="center"/>
-        </layer>
-        
+    <screen id="gamescreen" controller="illarion.client.gui.controller.GameScreenController">        
         <layer id="chatLayer" backgroundColor="#0000" childLayout="center">
             <panel height="201px" width="610px" align="left" valign="bottom" backgroundColor="#0000" childLayout="vertical" visibleToMouse="true">
 	        	<panel height="191px" width="600px" align="right" valign="top" backgroundColor="#0007" childLayout="vertical" visibleToMouse="true">

@@ -361,19 +361,6 @@ public final class Graphics {
     }
 
     /**
-     * Get a instance of a text line. Such lines can be used to render text to
-     * the screen using a font implementation created with
-     * {@link #getFont(FontData)}. Those line have no alignment and do never
-     * contain more then one line.
-     * 
-     * @return the text line instance that is used to render a font
-     * @see illarion.graphics.TextLine
-     */
-    public TextLine getTextLine() {
-        return create(TextLine.class, usedEngine);
-    }
-
-    /**
      * Get a instance of a TextureAtlas. A handler for textures that include
      * multiple other texture objects and supplies the texture instances that
      * are used to access objects on the texture in special

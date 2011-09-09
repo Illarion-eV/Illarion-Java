@@ -45,6 +45,16 @@ public final class GUI {
         return INSTANCE;
     }
     
+    private boolean selfRender = false;
+    
+    public void setSelfRendering(final boolean state) {
+        selfRender = state;
+    }
+    
+    public boolean getSelfRendering() {
+        return selfRender;
+    }
+    
     /**
      * The primary nifty GUI instance that is used to control the rendering and
      * maintance of the entire GUI.
@@ -82,10 +92,17 @@ public final class GUI {
     
     public void prepare() {
         niftyGui.fromXmlWithoutStartScreen("illarion/client/gui/xml/gui.xml");
-        Graphics.getInstance().getRenderManager().addTask(new GuiRenderTask(niftyGui));
+    }
+    
+    public void render(final boolean clearScreen) {
+        if (!niftyGui.update()) {
+            niftyGui.render(clearScreen);
+        }
     }
     
     public void showLogin() {
+        setSelfRendering(true);
+        Graphics.getInstance().getRenderManager().addTask(new GuiRenderTask());
         niftyGui.gotoScreen("login");
     }
     

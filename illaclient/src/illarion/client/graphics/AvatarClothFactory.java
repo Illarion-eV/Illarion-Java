@@ -28,7 +28,7 @@ import illarion.common.util.RecycleFactory;
  * @author Martin Karing
  * @since 1.22
  */
-final class AvatarClothFactory extends RecycleFactory<AvatarCloth> {
+final class AvatarClothFactory extends RecycleFactory<AvatarCloth> implements ResourceFactory {
     /**
      * Default constructor for the avatar cloth factory. This creates also the
      * default cloth instance that is returned in case the requested item was
@@ -36,11 +36,6 @@ final class AvatarClothFactory extends RecycleFactory<AvatarCloth> {
      */
     public AvatarClothFactory() {
         super();
-
-        final AvatarCloth defaultCloth =
-            new AvatarCloth(0, null, 0, 0, 0, 0, false, null);
-        registerCloth(defaultCloth);
-        mapDefault(0, 1);
     }
 
     /**
@@ -51,5 +46,13 @@ final class AvatarClothFactory extends RecycleFactory<AvatarCloth> {
     protected void registerCloth(final AvatarCloth cloth) {
         cloth.setFactory(this);
         register(cloth);
+    }
+
+    @Override
+    public void init() {
+        final AvatarCloth defaultCloth =
+            new AvatarCloth(0, null, 0, 0, 0, 0, false, null);
+        registerCloth(defaultCloth);
+        mapDefault(0, 1);
     }
 }

@@ -389,6 +389,11 @@ public final class MapDisplayManager implements AnimatedMove {
             display.remove(item);
         }
     }
+    
+    public void render(final int delta) {
+        final ClientWindow window = ClientWindow.getInstance();
+        render(delta, window.getScreenWidth(), window.getScreenHeight());
+    }
 
     /**
      * Render all visible map items
@@ -416,7 +421,7 @@ public final class MapDisplayManager implements AnimatedMove {
             corridor.setCorridor(av);
         }
 
-        Camera.getInstance().setViewport(-offX, -offY, width, height);
+        Camera.getInstance().setViewport(-offX, -offY, width, height + 100);
 
         synchronized (display) {
             DisplayItem currentItem;

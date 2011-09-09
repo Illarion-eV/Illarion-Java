@@ -269,12 +269,7 @@ public final class SpriteJOGL implements Sprite {
      */
     @Override
     public final int getOffsetX() {
-        if (hAlignUsed == HAlign.center) {
-            return -(getWidth() >> 1) + offsetX;
-        } else if (hAlignUsed == HAlign.right) {
-            return -getWidth() + offsetX;
-        }
-        return offsetX;
+        return getAlignOffsetX(getWidth()) + offsetX;
     }
 
     /**
@@ -284,12 +279,7 @@ public final class SpriteJOGL implements Sprite {
      */
     @Override
     public final int getOffsetY() {
-        if (vAlignUsed == VAlign.middle) {
-            return -(getHeight() >> 1) + offsetY;
-        } else if (vAlignUsed == VAlign.top) {
-            return -getHeight() + offsetY;
-        }
-        return offsetY;
+        return getAlignOffsetY(getHeight()) + offsetY;
     }
 
     /**
@@ -543,7 +533,7 @@ public final class SpriteJOGL implements Sprite {
         }
 
         texRender.drawTexture(x + (getRawOffsetX() * wScale) + alignOffX, y
-            + (getRawOffsetY() * hScale) + alignOffY, 0, w, h, texture,
+            + ((getRawOffsetY() * hScale) + alignOffY) - getHeight(), 0, w, h, texture,
             usedColor, isMirrored(), getRotation());
         reportDrawTexture();
     }
@@ -589,7 +579,7 @@ public final class SpriteJOGL implements Sprite {
             usedColor = DEFAULT_LIGHT;
         }
 
-        texRender.drawTexture(x + getOffsetX(), y + getOffsetY(), 0, texWidth,
+        texRender.drawTexture(x + getOffsetX(), y - getOffsetY() - getHeight(), 0, texWidth,
             texHeight, texture, usedColor, isMirrored(), getRotation());
         reportDrawTexture();
     }
@@ -624,7 +614,7 @@ public final class SpriteJOGL implements Sprite {
         }
 
         texRender.drawTexture(x + (getOffsetX() * scale), y
-            + (getOffsetY() * scale), 0, texWidth * scale, texHeight * scale,
+            - (getOffsetY() * scale) - getHeight(), 0, texWidth * scale, texHeight * scale,
             texture, usedColor, isMirrored(), getRotation());
         reportDrawTexture();
     }

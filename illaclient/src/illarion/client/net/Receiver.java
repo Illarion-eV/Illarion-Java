@@ -257,7 +257,7 @@ final class Receiver extends Thread implements NetCommReader {
     public void run() {
         running = true;
         int minRequiredData = CommandList.HEADER_SIZE;
-
+    
         while (running) {
             try {
                 while (running && receiveData(minRequiredData)) {
@@ -266,27 +266,27 @@ final class Receiver extends Thread implements NetCommReader {
                         if (buffer.remaining() < CommandList.HEADER_SIZE) {
                             break;
                         }
-
+    
                         // identify command
                         final int id = readUByte();
                         final int xor = readUByte();
-
+    
                         // valid command id
                         if (id != (xor ^ COMMAND_XOR_MASK)) {
                             // delete only first byte from buffer, scanning for
                             // valid command
                             buffer.position(1);
                             buffer.compact();
-
+    
                             LOGGER.warn("Skipping invalid data [" + id + "]");
-
+    
                             continue;
                         }
-
+    
                         // read length and CRC
                         final int len = readUShort();
                         final int crc = readUShort();
-
+    
                         // wait for complete data
                         if (!dataComplete(len)) {
                             // scroll the cursor back and wait for more.
@@ -294,43 +294,43 @@ final class Receiver extends Thread implements NetCommReader {
                             minRequiredData = len + CommandList.HEADER_SIZE;
                             break;
                         }
-
+    
                         minRequiredData = CommandList.HEADER_SIZE;
-
+    
                         // check CRC
                         if (crc != NetComm.getCRC(buffer, len)) {
                             final int oldLimit = buffer.limit();
                             buffer.limit(len + CommandList.HEADER_SIZE);
                             buffer.position(CommandList.HEADER_SIZE);
                             NetComm.dump("Invalid CRC ", buffer);
-
+    
                             buffer.position(1);
                             buffer.limit(oldLimit);
                             buffer.compact();
                             buffer.flip();
                             continue;
                         }
-
+    
                         // decode
                         try {
                             final AbstractReply rpl =
                                 ReplyFactory.getInstance().getCommand(id);
-
+    
                             // explicitly set id for mapped commands
                             rpl.activate(id);
                             rpl.decode(this);
-
+    
                             if (IllaClient.isDebug(Debug.protocol)) {
                                 LOGGER.debug("REC: " + rpl.toString());
                             }
-
+    
                             // put decoded command in input queue
                             queue.put(rpl);
                         } catch (final IllegalArgumentException ex) {
                             LOGGER.error("Invalid command id received "
                                 + Integer.toHexString(id));
                         }
-
+    
                         buffer.compact();
                         buffer.flip();
                     }
