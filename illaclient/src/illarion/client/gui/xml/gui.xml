@@ -53,8 +53,16 @@
 	                    <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="*" />
 	                </panel>
 	                
-	                <control id="savePassword" name="checkbox" />
+	                <panel height="15px" />
 	                
+	                <panel childLayout="center" visibleToMouse="true" width="400px" height="*">
+		                <panel childLayout="horizontal" visibleToMouse="true" align="center">
+		                    <text font="textFont" text="Passwort merken" />
+		                    <panel width="10px" />
+		                	<control id="savePassword" name="checkbox" />
+		                </panel>
+		            </panel>
+		            
 	                <panel height="30px" />
 
                     <panel childLayout="horizontal" visibleToMouse="true">

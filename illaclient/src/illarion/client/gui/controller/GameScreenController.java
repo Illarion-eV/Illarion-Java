@@ -2,6 +2,7 @@ package illarion.client.gui.controller;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Label;
+import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
@@ -13,7 +14,9 @@ public class GameScreenController implements ScreenController, KeyInputHandler {
 	private Screen screen;
 	private Label main;
 	private TextField chatMsg;
+	private ListBox<String> chatLog;
 	
+	@SuppressWarnings("unchecked")
     @Override
     public void bind(Nifty nifty, Screen screen) {
     	this.screen = screen;
@@ -22,6 +25,7 @@ public class GameScreenController implements ScreenController, KeyInputHandler {
     	main.setFocus();
     	chatMsg = screen.findNiftyControl("chatMsg", TextField.class);
     	chatMsg.getElement().addInputHandler(this);
+    	chatLog = (ListBox<String>) screen.findNiftyControl("chatLog", ListBox.class);
     }
 
     @Override
