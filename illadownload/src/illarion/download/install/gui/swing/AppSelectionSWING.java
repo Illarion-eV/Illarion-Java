@@ -114,6 +114,7 @@ public final class AppSelectionSWING extends AbstractContentSWING {
         final int clientIconID = base.trackImage("client.png");
         final int mapeditIconID = base.trackImage("mapedit.png");
         final int easynpcIconID = base.trackImage("easynpc.png");
+        final int easyquestIconID = base.trackImage("easyquest.png");
 
         final Dimension launchButtonDim = new Dimension(120, 58);
 
@@ -138,26 +139,15 @@ public final class AppSelectionSWING extends AbstractContentSWING {
         contentPanel.add(headLabel, con);
         headLabel.setFont(headLabel.getFont().deriveFont(Font.BOLD, 14.f));
 
-        final JButton rsClient = new JButton();
-        rsClient.setHorizontalTextPosition(SwingConstants.RIGHT);
-        rsClient.setHorizontalAlignment(SwingConstants.LEFT);
-        rsClient.setIconTextGap(40);
-        rsClient.setPreferredSize(launchButtonDim);
-        rsClient.setSize(launchButtonDim);
+        final JButton rsClient = createLaunchButton();
         rsClient.setText(Lang
             .getMsg("illarion.download.intall.gui.AppSelection.rsClient"));
         rsClient.setEnabled(false);
 
         con.gridy = line++;
         contentPanel.add(rsClient, con);
-        rsClient.setFont(rsClient.getFont().deriveFont(20.f));
 
-        final JButton tsClient = new JButton();
-        tsClient.setHorizontalTextPosition(SwingConstants.RIGHT);
-        tsClient.setHorizontalAlignment(SwingConstants.LEFT);
-        tsClient.setIconTextGap(40);
-        tsClient.setPreferredSize(launchButtonDim);
-        tsClient.setSize(launchButtonDim);
+        final JButton tsClient = createLaunchButton();
         tsClient.setText(Lang
             .getMsg("illarion.download.intall.gui.AppSelection.tsClient"));
         tsClient.addActionListener(new ApplicationButtonListener(this,
@@ -165,14 +155,8 @@ public final class AppSelectionSWING extends AbstractContentSWING {
 
         con.gridy = line++;
         contentPanel.add(tsClient, con);
-        tsClient.setFont(tsClient.getFont().deriveFont(20.f));
 
-        final JButton easyEditor = new JButton();
-        easyEditor.setHorizontalTextPosition(SwingConstants.RIGHT);
-        easyEditor.setHorizontalAlignment(SwingConstants.LEFT);
-        easyEditor.setIconTextGap(40);
-        easyEditor.setPreferredSize(launchButtonDim);
-        easyEditor.setSize(launchButtonDim);
+        final JButton easyEditor = createLaunchButton();
         easyEditor.setText(Lang
             .getMsg("illarion.download.intall.gui.AppSelection.easyEditor"));
         easyEditor.addActionListener(new ApplicationButtonListener(this,
@@ -181,14 +165,18 @@ public final class AppSelectionSWING extends AbstractContentSWING {
 
         con.gridy = line++;
         contentPanel.add(easyEditor, con);
-        easyEditor.setFont(easyEditor.getFont().deriveFont(20.f));
 
-        final JButton mapEditor = new JButton();
-        mapEditor.setHorizontalTextPosition(SwingConstants.RIGHT);
-        mapEditor.setHorizontalAlignment(SwingConstants.LEFT);
-        mapEditor.setIconTextGap(40);
-        mapEditor.setPreferredSize(launchButtonDim);
-        mapEditor.setSize(launchButtonDim);
+        final JButton easyQuest = createLaunchButton();
+        easyQuest.setText(Lang
+            .getMsg("illarion.download.intall.gui.AppSelection.easyQuest"));
+        easyQuest.addActionListener(new ApplicationButtonListener(this,
+            illarion.download.install.resources.dev.EasyQuestEditor
+                .getInstance()));
+
+        con.gridy = line++;
+        contentPanel.add(easyQuest, con);
+
+        final JButton mapEditor = createLaunchButton();
         mapEditor.setText(Lang
             .getMsg("illarion.download.intall.gui.AppSelection.mapEditor"));
         mapEditor.addActionListener(new ApplicationButtonListener(this,
@@ -196,7 +184,6 @@ public final class AppSelectionSWING extends AbstractContentSWING {
 
         con.gridy = line++;
         contentPanel.add(mapEditor, con);
-        mapEditor.setFont(mapEditor.getFont().deriveFont(20.f));
 
         con.gridy = line++;
         con.gridx = 0;
@@ -217,6 +204,23 @@ public final class AppSelectionSWING extends AbstractContentSWING {
         if (base.waitForImage(easynpcIconID)) {
             easyEditor.setIcon(new ImageIcon(base.getImage("easynpc.png")));
         }
+
+        if (base.waitForImage(easyquestIconID)) {
+            easyQuest.setIcon(new ImageIcon(base.getImage("easyquest.png")));
+        }
+    }
+    
+    private JButton createLaunchButton() {
+        final Dimension launchButtonDim = new Dimension(120, 58);
+        final JButton button = new JButton();
+        button.setHorizontalTextPosition(SwingConstants.RIGHT);
+        button.setHorizontalAlignment(SwingConstants.LEFT);
+        button.setIconTextGap(40);
+        button.setPreferredSize(launchButtonDim);
+        button.setSize(launchButtonDim);
+        button.setFont(button.getFont().deriveFont(20.f));
+        
+        return button;
     }
 
     /**

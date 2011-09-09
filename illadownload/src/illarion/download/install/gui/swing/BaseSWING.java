@@ -181,7 +181,7 @@ public final class BaseSWING extends JFrame {
     /**
      * The height of the frame in pixels.
      */
-    public static final int WINDOW_HEIGHT = 545;
+    public static final int WINDOW_HEIGHT = 600;
 
     /**
      * The width of the frame in pixels.
