@@ -71,4 +71,8 @@ public final class LoginScreenController implements ScreenController {
 //        nifty.closePopup(popupLogin.getId());
 //        nifty.closePopup(popupError.getId());
     }
+    
+    public void options() {
+    	nifty.gotoScreen("options");
+    }
 }
