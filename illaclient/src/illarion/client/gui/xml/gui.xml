@@ -50,7 +50,7 @@
 	                    <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
 	                        <text font="textFont" text="Password:" />
 	                    </panel>
-	                    <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="*" />
+	                    <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="•" />
 	                </panel>
 	                
 	                <panel height="15px" />
@@ -63,7 +63,7 @@
 		                </panel>
 		            </panel>
 		            
-	                <panel height="30px" />
+	                <panel height="15px" />
 
                     <panel childLayout="horizontal" visibleToMouse="true">
                         <panel width="90px" />
