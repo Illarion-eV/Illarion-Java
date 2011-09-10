@@ -30,14 +30,14 @@ public class GameScreenController implements ScreenController,
     @Override
     public void bind(Nifty nifty, Screen screen) {
         this.screen = screen;
-        main = screen.findNiftyControl("main", Label.class);
-        main.setFocusable(true);
-        main.setFocus();
         chatMsg = screen.findNiftyControl("chatMsg", TextField.class);
         chatMsg.getElement().addInputHandler(this);
         chatLog =
             (ListBox<String>) screen
                 .findNiftyControl("chatLog", ListBox.class);
+        
+        screen.findElementByName("chatLog#scrollpanel#panel").setFocusable(false);
+        screen.findElementByName("chatLog#scrollpanel#vertical-scrollbar").setFocusable(false);
     }
 
     @Override
@@ -55,11 +55,8 @@ public class GameScreenController implements ScreenController,
         if (inputEvent == NiftyInputEvent.SubmitText) {
             if (chatMsg.hasFocus()) {
                 if (chatMsg.getText().length() == 0) {
-                    main.setFocus();
+                	screen.getFocusHandler().setKeyFocus(null);
                 } else {
-                    // Vilarions genialer Einfall:
-                    // chatMsg.setText("");
-                    // sendText(chatMsg.getText());
                     sendText(chatMsg.getText());
                     chatMsg.setText("");
                 }
@@ -155,6 +152,7 @@ public class GameScreenController implements ScreenController,
         }
 
         chatLog.addItem(textBuilder.toString());
+        chatLog.showItemByIndex(chatLog.itemCount() - 1);
         // send out the text
         TextBuilder.recycle(textBuilder);
     }
