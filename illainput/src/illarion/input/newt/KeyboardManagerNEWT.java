@@ -563,17 +563,21 @@ public final class KeyboardManagerNEWT implements KeyboardManager, KeyListener {
         if (!receivers.isEmpty()) {
             KeyboardEvent event = null;
             while ((event = eventList.pollFirst()) != null) {
-                for (KeyboardEventReceiver receiver : receivers) {
+                for (final KeyboardEventReceiver receiver : receivers) {
                     boolean result = false;
                     if (receiver instanceof KeyboardEventReceiverComplex) {
-                        result |= ((KeyboardEventReceiverComplex) receiver)
-                            .handleKeyboardEvent(event);
+                        result |=
+                            ((KeyboardEventReceiverComplex) receiver)
+                                .handleKeyboardEvent(event);
                     }
                     if (event.getEvent() != KeyboardEvent.EVENT_KEY_PRESSED) {
                         if (receiver instanceof KeyboardEventReceiverPrimitive) {
-                            result |= ((KeyboardEventReceiverPrimitive) receiver)
-                                .handleKeyboardEvent(event.getKey(), lastChar,
-                                    event.getEvent() == KeyboardEvent.EVENT_KEY_DOWN);
+                            result |=
+                                ((KeyboardEventReceiverPrimitive) receiver)
+                                    .handleKeyboardEvent(
+                                        event.getKey(),
+                                        lastChar,
+                                        event.getEvent() == KeyboardEvent.EVENT_KEY_DOWN);
                         }
                     }
                     if (result) {
@@ -640,5 +644,13 @@ public final class KeyboardManagerNEWT implements KeyboardManager, KeyListener {
             eventList.pollFirst();
         }
         eventList.offerLast(event);
+    }
+
+    /**
+     * Remove a event handler.
+     */
+    @Override
+    public void unregisterEventHandler(final KeyboardEventReceiver event) {
+        receivers.remove(event);
     }
 }

@@ -280,13 +280,13 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
     }
 
     @Override
-    public int getNativeMousePosY() {
-        return fixY(lastY);
+    public int getNativeMousePosX() {
+        return lastX;
     }
 
     @Override
-    public int getNativeMousePosX() {
-        return lastX;
+    public int getNativeMousePosY() {
+        return fixY(lastY);
     }
 
     /**
@@ -565,25 +565,27 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
         if (!receivers.isEmpty()) {
             illarion.input.MouseEvent event = null;
             while ((event = eventList.pollFirst()) != null) {
-                for (MouseEventReceiver receiver : receivers) {
+                for (final MouseEventReceiver receiver : receivers) {
                     boolean result = false;
                     if (receiver instanceof MouseEventReceiverPrimitive) {
                         int key = 0;
-                        if (event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_DOWN
-                            || event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_UP) {
+                        if ((event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_DOWN)
+                            || (event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_UP)) {
                             key = event.getKey();
                         }
-                        result |= ((MouseEventReceiverPrimitive) receiver)
-                            .handleMouseEvent(
-                                event.getPosX(),
-                                event.getPosY(),
-                                event.getDelta(),
-                                key,
-                                event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_DOWN);
+                        result |=
+                            ((MouseEventReceiverPrimitive) receiver)
+                                .handleMouseEvent(
+                                    event.getPosX(),
+                                    event.getPosY(),
+                                    event.getDelta(),
+                                    key,
+                                    event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_DOWN);
                     }
                     if (receiver instanceof MouseEventReceiverComplex) {
-                        result |= ((MouseEventReceiverComplex) receiver)
-                            .handleMouseEvent(event);
+                        result |=
+                            ((MouseEventReceiverComplex) receiver)
+                                .handleMouseEvent(event);
                     }
                     if (result) {
                         break;
@@ -672,5 +674,13 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
         }
         eventList.offerLast(event);
         // }
+    }
+
+    /**
+     * Remove a event handler.
+     */
+    @Override
+    public void unregisterEventHandler(final MouseEventReceiver event) {
+        receivers.remove(event);
     }
 }
