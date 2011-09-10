@@ -944,7 +944,9 @@ public final class People implements SessionMember, TableLoaderSink,
 
         charsLock.readLock().lock();
         try {
-            chars.forEachValue(updateLightHelper);
+            synchronized (GameMap.LIGHT_LOCK) {
+                chars.forEachValue(updateLightHelper);
+            }
         } finally {
             charsLock.readLock().unlock();
         }

@@ -84,7 +84,7 @@ public final class IllaClient {
      * The default server the client connects too. The client will always
      * connect to this server if {@link #MULTI_CLIENT} is set to false.
      */
-    static final Servers DEFAULT_SERVER = Servers.testserver;
+    static final Servers DEFAULT_SERVER = Servers.localserver;
 
     /**
      * The error and debug logger of the client.
@@ -760,6 +760,10 @@ public final class IllaClient {
         LOGGER.info("OS: " + System.getProperty("os.name") + " "
             + System.getProperty("os.version") + " "
             + System.getProperty("os.arch"));
+        
+        
+        java.util.logging.Logger.getLogger("de.lessvoid.nifty").setLevel(java.util.logging.Level.SEVERE);
+        java.util.logging.Logger.getLogger("javolution").setLevel(java.util.logging.Level.SEVERE);
     }
 
     /**
