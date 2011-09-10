@@ -37,6 +37,13 @@ public final class LoginScreenController implements ScreenController {
     	savePassword = screen.findNiftyControl("savePassword", CheckBox.class);
     	loginBtn = screen.findNiftyControl("loginBtn", Button.class);
     	charList = nifty.getScreen("charSelect").findNiftyControl("myListBox", ListBox.class);
+    	
+    	final Login login = Login.getInstance();
+        login.restoreLoginData();
+        nameTxt.setText(login.getLoginName());
+        passwordTxt.setText(login.getPassword());
+        savePassword.setChecked(login.storePassword());
+    	
 //    	errorText = screen.findNiftyControl("errorText", Label.class);
 //    	
 //    	popupLogin = screen.findElementByName("popupLoggingIn");
@@ -45,11 +52,7 @@ public final class LoginScreenController implements ScreenController {
 
     @Override
     public void onStartScreen() {
-        final Login login = Login.getInstance();
-        login.restoreLoginData();
-        nameTxt.setText(login.getLoginName());
-        passwordTxt.setText(login.getPassword());
-        savePassword.setChecked(login.storePassword());
+
     }
 
     @Override
