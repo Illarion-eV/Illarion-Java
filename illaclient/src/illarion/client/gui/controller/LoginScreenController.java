@@ -9,10 +9,12 @@ import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 
-public final class LoginScreenController implements ScreenController {
+public final class LoginScreenController implements ScreenController, KeyInputHandler {
 
 	private Nifty nifty;
     private Screen screen;
@@ -37,6 +39,9 @@ public final class LoginScreenController implements ScreenController {
     	savePassword = screen.findNiftyControl("savePassword", CheckBox.class);
     	loginBtn = screen.findNiftyControl("loginBtn", Button.class);
     	charList = nifty.getScreen("charSelect").findNiftyControl("myListBox", ListBox.class);
+    	
+    	nameTxt.getElement().addInputHandler(this);
+    	passwordTxt.getElement().addInputHandler(this);
     	
     	final Login login = Login.getInstance();
         login.restoreLoginData();
@@ -88,5 +93,14 @@ public final class LoginScreenController implements ScreenController {
     
     public void options() {
     	nifty.gotoScreen("options");
+    }
+    
+    @Override
+    public boolean keyEvent(NiftyInputEvent inputEvent) {
+        if (inputEvent == NiftyInputEvent.SubmitText) {
+        	login();
+            return true;
+        }
+        return false;
     }
 }
