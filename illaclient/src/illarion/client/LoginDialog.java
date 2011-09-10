@@ -39,6 +39,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -1341,8 +1342,6 @@ public final class LoginDialog extends AbstractDialog implements
         setButtonEnabled(BUTTON_OK, false);
         setButtonName(BUTTON_CANCEL, Lang.getMsg("button.cancel"));
 
-        // restore password, possibly enabling the ok button
-        restorePassword();
 
         optionMessage.setForeground(java.awt.Color.RED);
         optionMessage.setVisible(false);
@@ -1422,127 +1421,5 @@ public final class LoginDialog extends AbstractDialog implements
             serverNames[i] = servers[i].getServerName();
         }
         return serverNames;
-    }
-
-    /**
-     * Load the saved password from the configuration file and insert it to the
-     * password field on the login window.
-     */
-    @SuppressWarnings("nls")
-    private void restorePassword() {
-        savePassword.setSelected(IllaClient.getCfg()
-            .getBoolean("savePassword"));
-        if (savePassword.isSelected()) {
-            final String encoded =
-                IllaClient.getCfg().getString("fingerprint");
-            if (encoded != null) {
-                password.setText(shufflePassword(encoded, true));
-                keyTyped(null);
-            }
-        }
-    }
-
-    /**
-     * Shuffle the letters of the password around a bit.
-     * 
-     * @param pw the encoded password or the decoded password that stall be
-     *            shuffled
-     * @param decode false for encoding the password, true for decoding.
-     * @return the encoded or the decoded password
-     */
-    @SuppressWarnings("nls")
-    private String shufflePassword(final String pw, final boolean decode) {
-
-        try {
-            final Charset usedCharset = Charset.forName("UTF-8");
-            // creating the key
-            final DESKeySpec keySpec =
-                new DESKeySpec(IllaClient.getFile("").getBytes(usedCharset));
-            final SecretKeyFactory keyFactory =
-                SecretKeyFactory.getInstance("DES");
-            final SecretKey key = keyFactory.generateSecret(keySpec);
-
-            final Cipher cipher = Cipher.getInstance("DES");
-            if (decode) {
-                byte[] encrypedPwdBytes =
-                    Base64.decode(pw.getBytes(usedCharset));
-                cipher.init(Cipher.DECRYPT_MODE, key);
-                encrypedPwdBytes = cipher.doFinal(encrypedPwdBytes);
-                return new String(encrypedPwdBytes, usedCharset);
-            }
-
-            final byte[] cleartext = pw.getBytes(usedCharset);
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            return new String(Base64.encode(cipher.doFinal(cleartext)),
-                usedCharset);
-        } catch (final InvalidKeyException e) {
-            if (decode) {
-                LOGGER.warn("Decoding the password failed");
-            } else {
-                LOGGER.warn("Encoding the password failed");
-            }
-            return "";
-        } catch (final NoSuchAlgorithmException e) {
-            if (decode) {
-                LOGGER.warn("Decoding the password failed");
-            } else {
-                LOGGER.warn("Encoding the password failed");
-            }
-            return "";
-        } catch (final InvalidKeySpecException e) {
-            if (decode) {
-                LOGGER.warn("Decoding the password failed");
-            } else {
-                LOGGER.warn("Encoding the password failed");
-            }
-            return "";
-        } catch (final NoSuchPaddingException e) {
-            if (decode) {
-                LOGGER.warn("Decoding the password failed");
-            } else {
-                LOGGER.warn("Encoding the password failed");
-            }
-            return "";
-        } catch (final IllegalBlockSizeException e) {
-            if (decode) {
-                LOGGER.warn("Decoding the password failed");
-            } else {
-                LOGGER.warn("Encoding the password failed");
-            }
-            return "";
-        } catch (final BadPaddingException e) {
-            if (decode) {
-                LOGGER.warn("Decoding the password failed");
-            } else {
-                LOGGER.warn("Encoding the password failed");
-            }
-            return "";
-        } catch (final IllegalArgumentException e) {
-            if (decode) {
-                LOGGER.warn("Decoding the password failed");
-            } else {
-                LOGGER.warn("Encoding the password failed");
-            }
-            return "";
-        }
-    }
-
-    /**
-     * Store the password in the configuration file or remove the stored
-     * password from the configuration.
-     * 
-     * @param store store the password or remove it, true means that the
-     *            password is stored, false that it is removed
-     * @param pw the password that stall be stored to the configuration file
-     */
-    @SuppressWarnings("nls")
-    private void storePassword(final boolean store, final String pw) {
-        if (store) {
-            IllaClient.getCfg().set("savePassword", true);
-            IllaClient.getCfg().set("fingerprint", shufflePassword(pw, false));
-        } else {
-            IllaClient.getCfg().set("savePassword", false);
-            IllaClient.getCfg().remove("fingerprint");
-        }
     }
 }

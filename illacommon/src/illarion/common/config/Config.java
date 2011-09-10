@@ -139,6 +139,11 @@ public interface Config {
      *         <code>null</code> in case there is no value set for this key
      */
     String getString(String key);
+    
+    /**
+     * Save the current state of the configuration.
+     */
+    void save();
 
     /**
      * Remove one entry from the configuration. That causes that the value is

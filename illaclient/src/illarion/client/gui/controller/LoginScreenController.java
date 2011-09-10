@@ -45,6 +45,11 @@ public final class LoginScreenController implements ScreenController {
 
     @Override
     public void onStartScreen() {
+        final Login login = Login.getInstance();
+        login.restoreLoginData();
+        nameTxt.setText(login.getLoginName());
+        passwordTxt.setText(login.getPassword());
+        savePassword.setChecked(login.storePassword());
     }
 
     @Override
@@ -57,6 +62,9 @@ public final class LoginScreenController implements ScreenController {
         
         final Login login = Login.getInstance();
         login.setLoginData(nameTxt.getText(), passwordTxt.getText());
+        
+        login.storeData(savePassword.isChecked());
+        
         login.requestCharacterList();
         
 //        nifty.closePopup(popupLogin.getId());

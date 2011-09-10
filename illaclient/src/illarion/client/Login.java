@@ -18,19 +18,23 @@
  */
 package illarion.client;
 
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
-import illarion.client.net.client.LoginCmd;
 import illarion.client.util.Lang;
 import illarion.client.world.Game;
+import illarion.common.util.Base64;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -87,11 +91,34 @@ public final class Login {
         password = pass;
     }
     
-    String getLoginName() {
+    public void restoreLoginData() {
+        restoreLogin();
+        restorePassword();
+        restoreStorePassword();
+    }
+    
+    public void storeData(final boolean storePasswd) {
+        IllaClient.getCfg().set("lastLogin", loginName);
+        IllaClient.getCfg().set("savePassword", storePasswd);
+        if (storePasswd) {
+            storePassword(true, password);
+        } else {
+            storePassword(false, null);
+        }
+        IllaClient.getCfg().save();
+    }
+    
+    public String getLoginName() {
+        if (loginName == null) {
+            return "";
+        }
         return loginName;
     }
     
     public String getPassword() {
+        if (password == null) {
+            return "";
+        }
         return password;
     }
     
@@ -258,5 +285,101 @@ public final class Login {
         Game.getInstance().connect();
         
         return true;
+    }
+
+    /**
+     * Load the saved password from the configuration file and insert it to the
+     * password field on the login window.
+     */
+    @SuppressWarnings("nls")
+    private void restorePassword() {
+        final String encoded =
+            IllaClient.getCfg().getString("fingerprint");
+        if (encoded != null) {
+            password = shufflePassword(encoded, true);
+        }
+    }
+    
+    private boolean storePassword;
+    
+    private void restoreStorePassword() {
+        storePassword = IllaClient.getCfg().getBoolean("savePassword");
+    }
+    
+    public boolean storePassword() {
+        return storePassword;
+    }
+    
+    private void restoreLogin() {
+        loginName = IllaClient.getCfg().getString("lastLogin");
+    }
+
+    /**
+     * Shuffle the letters of the password around a bit.
+     * 
+     * @param pw the encoded password or the decoded password that stall be
+     *            shuffled
+     * @param decode false for encoding the password, true for decoding.
+     * @return the encoded or the decoded password
+     */
+    @SuppressWarnings("nls")
+    private String shufflePassword(final String pw, final boolean decode) {
+
+        try {
+            final Charset usedCharset = Charset.forName("UTF-8");
+            // creating the key
+            final DESKeySpec keySpec =
+                new DESKeySpec(IllaClient.getFile("").getBytes(usedCharset));
+            final SecretKeyFactory keyFactory =
+                SecretKeyFactory.getInstance("DES");
+            final SecretKey key = keyFactory.generateSecret(keySpec);
+
+            final Cipher cipher = Cipher.getInstance("DES");
+            if (decode) {
+                byte[] encrypedPwdBytes =
+                    Base64.decode(pw.getBytes(usedCharset));
+                cipher.init(Cipher.DECRYPT_MODE, key);
+                encrypedPwdBytes = cipher.doFinal(encrypedPwdBytes);
+                return new String(encrypedPwdBytes, usedCharset);
+            }
+
+            final byte[] cleartext = pw.getBytes(usedCharset);
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return new String(Base64.encode(cipher.doFinal(cleartext)),
+                usedCharset);
+        } catch (final GeneralSecurityException e) {
+            if (decode) {
+                LOGGER.warn("Decoding the password failed");
+            } else {
+                LOGGER.warn("Encoding the password failed");
+            }
+            return "";
+        } catch (final IllegalArgumentException e) {
+            if (decode) {
+                LOGGER.warn("Decoding the password failed");
+            } else {
+                LOGGER.warn("Encoding the password failed");
+            }
+            return "";
+        }
+    }
+
+    /**
+     * Store the password in the configuration file or remove the stored
+     * password from the configuration.
+     * 
+     * @param store store the password or remove it, true means that the
+     *            password is stored, false that it is removed
+     * @param pw the password that stall be stored to the configuration file
+     */
+    @SuppressWarnings("nls")
+    private void storePassword(final boolean store, final String pw) {
+        if (store) {
+            IllaClient.getCfg().set("savePassword", true);
+            IllaClient.getCfg().set("fingerprint", shufflePassword(pw, false));
+        } else {
+            IllaClient.getCfg().set("savePassword", false);
+            IllaClient.getCfg().remove("fingerprint");
+        }
     }
 }
