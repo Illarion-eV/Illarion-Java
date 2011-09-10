@@ -22,11 +22,14 @@ import illarion.common.util.FastMath;
 import illarion.common.util.Timer;
 import illarion.graphics.Graphics;
 import illarion.input.MouseManager;
-import illarion.input.generic.MouseEventMulticast;
 import illarion.input.receiver.MouseEventReceiver;
 import illarion.input.receiver.MouseEventReceiverComplex;
+import illarion.input.receiver.MouseEventReceiverPrimitive;
 
+import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
+
+import javolution.util.FastList;
 
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
@@ -149,7 +152,7 @@ public final class MouseManagerNEWT implements MouseManager, MouseListener {
     /**
      * The event receiver that is used to fetch all received mouse events.
      */
-    private MouseEventReceiver receiver;
+    private final List<MouseEventReceiver> receivers;
 
     /**
      * The click event that was recorded but yet not passed to the rest of the
@@ -165,6 +168,7 @@ public final class MouseManagerNEWT implements MouseManager, MouseListener {
         dragging = new boolean[MOUSE_KEYS + 1];
         keystate = new boolean[MOUSE_KEYS + 1];
         eventList = new LinkedBlockingDeque<illarion.input.MouseEvent>();
+        receivers = new FastList<MouseEventReceiver>();
         pointAtTimer = new Timer(500, new Runnable() {
             /**
              * Called by the timer in the set interval.
@@ -227,7 +231,7 @@ public final class MouseManagerNEWT implements MouseManager, MouseListener {
      */
     @Override
     public void clear() {
-        receiver = null;
+        receivers.clear();
     }
 
     /**
@@ -553,20 +557,35 @@ public final class MouseManagerNEWT implements MouseManager, MouseListener {
 
     @Override
     public void poll() {
-        if (receiver != null) {
+        if (!receivers.isEmpty()) {
             illarion.input.MouseEvent event = null;
             while ((event = eventList.pollFirst()) != null) {
-                if (receiver instanceof MouseEventReceiverComplex) {
-                    ((MouseEventReceiverComplex) receiver).handleMouseEvent(event);
+                for (MouseEventReceiver receiver : receivers) {
+                    boolean result = false;
+                    if (receiver instanceof MouseEventReceiverPrimitive) {
+                        int key = 0;
+                        if (event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_DOWN
+                            || event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_UP) {
+                            key = event.getKey();
+                        }
+                        result |= ((MouseEventReceiverPrimitive) receiver)
+                            .handleMouseEvent(
+                                event.getPosX(),
+                                event.getPosY(),
+                                event.getDelta(),
+                                key,
+                                event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_DOWN);
+                    }
+                    if (receiver instanceof MouseEventReceiverComplex) {
+                        result |= ((MouseEventReceiverComplex) receiver)
+                            .handleMouseEvent(event);
+                    }
+                    if (result) {
+                        break;
+                    }
                 }
                 event.recycle();
             }
-//            synchronized (this) {
-//                if (lastMoveEvent != null) {
-//                    receiver.handleMouseEvent(lastMoveEvent);
-//                    lastMoveEvent.recycle();
-//                }
-//            }
         } else {
             pollToNull();
         }
@@ -592,11 +611,7 @@ public final class MouseManagerNEWT implements MouseManager, MouseListener {
      */
     @Override
     public void registerEventHandler(final MouseEventReceiver event) {
-        if (receiver == null) {
-            receiver = event;
-        } else {
-            receiver = new MouseEventMulticast(receiver, event);
-        }
+        receivers.add(event);
     }
 
     /**

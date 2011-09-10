@@ -22,12 +22,14 @@ import gnu.trove.list.array.TIntArrayList;
 import illarion.graphics.Graphics;
 import illarion.input.KeyboardEvent;
 import illarion.input.KeyboardManager;
-import illarion.input.generic.KeyboardEventMulticast;
 import illarion.input.receiver.KeyboardEventReceiver;
 import illarion.input.receiver.KeyboardEventReceiverComplex;
 import illarion.input.receiver.KeyboardEventReceiverPrimitive;
 
+import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
+
+import javolution.util.FastList;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
@@ -473,7 +475,7 @@ public final class KeyboardManagerNEWT implements KeyboardManager, KeyListener {
     /**
      * The receiver of all keyboard events.
      */
-    private KeyboardEventReceiver receiver;
+    private final List<KeyboardEventReceiver> receivers;
 
     /**
      * Default constructor to initialize the variables.
@@ -481,6 +483,7 @@ public final class KeyboardManagerNEWT implements KeyboardManager, KeyListener {
     public KeyboardManagerNEWT() {
         eventList = new LinkedBlockingDeque<KeyboardEvent>();
         pressedKeys = new TIntArrayList();
+        receivers = new FastList<KeyboardEventReceiver>();
     }
 
     /**
@@ -488,7 +491,7 @@ public final class KeyboardManagerNEWT implements KeyboardManager, KeyListener {
      */
     @Override
     public void clear() {
-        receiver = null;
+        receivers.clear();
     }
 
     /**
@@ -557,12 +560,27 @@ public final class KeyboardManagerNEWT implements KeyboardManager, KeyListener {
 
     @Override
     public void poll() {
-        if (receiver != null) {
+        if (!receivers.isEmpty()) {
             KeyboardEvent event = null;
             while ((event = eventList.pollFirst()) != null) {
-                if (receiver instanceof KeyboardEventReceiverComplex) {
-                    ((KeyboardEventReceiverComplex) receiver).handleKeyboardEvent(event);
+                for (KeyboardEventReceiver receiver : receivers) {
+                    boolean result = false;
+                    if (receiver instanceof KeyboardEventReceiverComplex) {
+                        result |= ((KeyboardEventReceiverComplex) receiver)
+                            .handleKeyboardEvent(event);
+                    }
+                    if (event.getEvent() != KeyboardEvent.EVENT_KEY_PRESSED) {
+                        if (receiver instanceof KeyboardEventReceiverPrimitive) {
+                            result |= ((KeyboardEventReceiverPrimitive) receiver)
+                                .handleKeyboardEvent(event.getKey(), lastChar,
+                                    event.getEvent() == KeyboardEvent.EVENT_KEY_DOWN);
+                        }
+                    }
+                    if (result) {
+                        break;
+                    }
                 }
+
                 event.recycle();
             }
         } else {
@@ -586,11 +604,7 @@ public final class KeyboardManagerNEWT implements KeyboardManager, KeyListener {
      */
     @Override
     public void registerEventHandler(final KeyboardEventReceiver event) {
-        if (receiver == null) {
-            receiver = event;
-        } else {
-            receiver = new KeyboardEventMulticast(receiver, event);
-        }
+        receivers.add(event);
     }
 
     /**
