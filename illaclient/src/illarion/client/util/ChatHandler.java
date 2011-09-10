@@ -18,10 +18,12 @@
  */
 package illarion.client.util;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javolution.util.FastList;
+import javolution.util.FastTable;
 
 import org.apache.log4j.Logger;
 
@@ -255,6 +257,7 @@ public final class ChatHandler implements Runnable, SessionMember {
     private ChatHandler() {
         buffer = new FastList<TextNode>();
         dirtyList = new FastList<TextNode>();
+        receivers = new FastTable<ChatHandler.ChatReceiver>();
         running = false;
     }
 
@@ -379,13 +382,34 @@ public final class ChatHandler implements Runnable, SessionMember {
 //            GUI.getInstance().getChatText()
 //                .showText(resultText, chara, node.getLocation(), mode);
 //            GUI.getInstance().getJournal().addText(resultText, chara, mode);
-
+            sendMessagesToReceivers(resultText, chara, mode);
+            
             node.clean();
             synchronized (buffer) {
                 buffer.addLast(node);
             }
             node = null;
         }
+    }
+    
+    private final List<ChatReceiver> receivers;
+    
+    public void addChatReceiver(final ChatReceiver receiver) {
+        receivers.add(receiver);
+    }
+    
+    public void removeChatReceiver(final ChatReceiver receiver) {
+        receivers.remove(receiver);
+    }
+    
+    private void sendMessagesToReceivers(final String text, final Char chara, final SpeechMode mode) {
+        for (ChatReceiver receiver : receivers) {
+            receiver.handleText(text, chara, mode);
+        }
+    }
+    
+    public static interface ChatReceiver {
+        void handleText(String text, Char chara, SpeechMode mode);
     }
 
     /**
