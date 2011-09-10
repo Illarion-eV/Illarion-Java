@@ -34,8 +34,9 @@ public interface MouseEventReceiverPrimitive extends MouseEventReceiver {
      * @param mouseY the y coordinate where the mouse is currently
      * @param wheelDelta the delta the wheel got changed by
      * @param button the button of the mouse that was used
-     * @param buttonDown <code>true</code> in case 
+     * @param buttonDown <code>true</code> in case
      * @return <code>true</code> in case the event got consumed
      */
-    boolean handleMouseEvent(int mouseX, int mouseY, int wheelDelta, int button, boolean buttonDown);
+    boolean handleMouseEvent(int mouseX, int mouseY, int wheelDelta,
+        int button, boolean buttonDown);
 }

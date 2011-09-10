@@ -19,7 +19,6 @@
 package illarion.input;
 
 import illarion.input.receiver.MouseEventReceiver;
-import illarion.input.receiver.MouseEventReceiverComplex;
 
 /**
  * The mouse manager that handles the mouse inputs and allows to register mouse
@@ -52,9 +51,20 @@ public interface MouseManager {
      * @return the y coordinate of the position of the mouse pointer
      */
     int getMousePosY();
-    
-    int getNativeMousePosY();
+
+    /**
+     * Get the native x location of the mouse cursor.
+     * 
+     * @return the native x location of the mouse cursor
+     */
     int getNativeMousePosX();
+
+    /**
+     * Get the native y location of the mouse cursor.
+     * 
+     * @return the native y location of the mouse cursor
+     */
+    int getNativeMousePosY();
 
     /**
      * Check if one key is pressed down. The state of the key at the last update
@@ -107,4 +117,12 @@ public interface MouseManager {
      * ensure this is called while the correct window is active.
      */
     void startManager();
+
+    /**
+     * Remove a mouse event handle from the manager. Once called the event
+     * receiver will not receive any more events.
+     * 
+     * @param event the event receiver to remove
+     */
+    void unregisterEventHandler(MouseEventReceiver event);
 }
