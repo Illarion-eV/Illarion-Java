@@ -18,7 +18,8 @@ import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 
-public class GameScreenController implements ScreenController, KeyInputHandler, ChatReceiver {
+public class GameScreenController implements ScreenController,
+    KeyInputHandler, ChatReceiver {
 
     private Screen screen;
     private Label main;
