@@ -12,7 +12,7 @@
   </style>
   
   <style id="nifty-window#title" base="base-font">
-    <attributes width="*" height="20px" align="center" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false" color="#ffff" />
+    <attributes width="*" height="20px" align="right" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false" color="#ffff" />
   </style>
 
   <style id="nifty-window#content">
@@ -26,26 +26,26 @@
     </effect>
   </style>
   
-  <style id="illarion-window#frame">
+  <style id="inventory-window#frame">
     <attributes childLayout="vertical" valign="top" />
-    <effect>
+    <!-- <effect>
       <onActive name="border" post="true" color="#f226" border="2px" />
-    </effect>
+    </effect> -->
   </style>
 
-  <style id="illarion-window#bar">
-    <attributes width="100%" height="20px" padding="2px" backgroundImage="guiSprite://scrollbar/scrollbar" childLayout="horizontal" />
+  <style id="inventory-window#bar">
+    <attributes width="100px" align="right" height="20px" backgroundImage="guiSprite://inventory_bar" childLayout="horizontal" imageMode="resize:0,1,104,10,0,1,104,1,0,1,104,9" />
   </style>
   
-  <style id="illarion-window#title" base="base-font">
+  <style id="inventory-window#title" base="base-font">
     <attributes width="*" height="20px" align="center" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false" color="#ffff" />
   </style>
 
-  <style id="illarion-window#content">
-    <attributes width="100%" height="*" padding="8px" backgroundImage="guiSprite://background" childLayout="center" />
+  <style id="inventory-window#content">
+    <attributes width="100%" height="*" backgroundImage="guiSprite://inventory" childLayout="absolute" />
   </style>
 
-  <style id="illarion-window#close-button">
+  <style id="inventory-window#close-button">
     <attributes backgroundImage="guiSprite://window/window-close-button" width="14px" height="14px"  align="center" valign="center" />
     <effect>
       <onHover name="imageOverlayPulsate" filename="guiSprite://window/window-close-button-hover"  post="true" />
