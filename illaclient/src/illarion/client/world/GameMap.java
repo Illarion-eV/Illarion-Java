@@ -605,8 +605,9 @@ public final class GameMap extends Interaction implements LightingMap,
                 mapLock.readLock().unlock();
             }
 
-            Game.getPeople().updateLight();
         }
+        
+        Game.getPeople().updateLight();
     }
 
     /**

@@ -111,6 +111,7 @@ public final class SoundManager {
 
         SoundSystemConfig.setNumberStreamingChannels(5);
         SoundSystemConfig.setNumberNormalChannels(27);
+        SoundSystemConfig.setSoundFilesPackage("");
 
         system = new SoundSystem();
     }

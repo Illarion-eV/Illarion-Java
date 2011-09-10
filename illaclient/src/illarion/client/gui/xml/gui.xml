@@ -152,7 +152,7 @@
     
     <screen id="gamescreen" controller="illarion.client.gui.controller.GameScreenController">
     	<layer id="mainLayer" backgroundColor="#0000" childLayout="center">
-    		<panel height="100%" width="100%" align="left" valign="bottom" backgroundColor="#0000" childLayout="vertical" visibleToMouse="true">
+    		<panel height="100%" width="100%" align="left" valign="bottom" backgroundColor="#0000" childLayout="vertical" visibleToMouse="false">
     			<text id="main" font="textFont" text="" />
     		</panel>
     	</layer>

@@ -22,8 +22,10 @@ import illarion.graphics.Graphics;
 import illarion.graphics.Sprite;
 import illarion.graphics.Texture;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastComparator;
@@ -63,10 +65,10 @@ public final class SpriteBuffer {
      * Sprite buffer.
      */
     private SpriteBuffer() {
-        final FastMap<String, Sprite> storageMap =
-            new FastMap<String, Sprite>();
-        storageMap.setKeyComparator(FastComparator.STRING);
-        storage = storageMap;
+//        final FastMap<String, Sprite> storageMap =
+//            new FastMap<String, Sprite>();
+//        //storageMap.setKeyComparator(FastComparator.STRING);
+        storage = new ConcurrentHashMap<String, Sprite>();
     }
 
     /**
@@ -202,6 +204,14 @@ public final class SpriteBuffer {
                 retSprite.addTexture(tex);
             }
             TextBuilder.recycle(nameBuilder);
+        }
+        
+        if (spriteName == null) {
+            throw new NullPointerException("spriteName is null");
+        }
+        
+        if (retSprite == null) {
+            throw new NullPointerException("sprite is null");
         }
 
         storage.put(spriteName, retSprite);
