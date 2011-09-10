@@ -151,6 +151,7 @@ public class GameScreenController implements ScreenController, KeyInputHandler, 
         }
 
         chatLog.addItem(textBuilder.toString());
+        chatLog.showItemByIndex(chatLog.itemCount() - 1);
         // send out the text
         TextBuilder.recycle(textBuilder);
     }
