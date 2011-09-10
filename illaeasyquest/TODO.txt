@@ -1,0 +1,11 @@
+after rotate edge, no edit possible
+add undo manager
+show modified
+safety check on closing if modified
+add config (default folder)
+add recent files
+add save all
+add save as
+input quest id
+always move loop with node
+have multiple graph levels
