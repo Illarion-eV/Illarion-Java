@@ -84,16 +84,21 @@
         </layer>
 		<layer id="windows" childLayout="absolute">
 		  <control id="inventory" name="window" style="inventory-window" title="Inventar" width="248px" height="486px" x="400px">
-		  	<panel height="83px" width="45px" x="102px" y="67px">
-			  <control id="chest" name="droppable" height="100%" width="100%" visibleToMouse="true" childLayout="center">
+		  	<panel name="chestpanel" height="83px" width="45px" x="102px" y="67px" childLayout="center">
+		  		<interact onClick="displayLabel()" />
+			  <control id="chest" name="droppable" height="100%" width="100%" visibleToMouse="true" align="center" valign="center" childLayout="center">
 				  <effect>
 					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
 				  </effect>
+				   
 			  </control>
+			  <effect>
+			  	<onClick id="testHint" name="hint" hintStyle="illarion-hint" hintText="Hello World" offsetX="100" hintDelay="300" length="5000"/>
+			  </effect>
 			</panel>
 			  <control id="head" name="droppable" height="39px" width="45px" x="102px" y="12px" visibleToMouse="true">
 				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+					 <onClick name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
 				  </effect>
 			  </control>
 			  <control id="legs" name="droppable" height="64px" width="45px" x="102px" y="167px" visibleToMouse="true">
@@ -168,8 +173,9 @@
 			  </control>
 			  <control id="belt4" name="droppable" height="55px" width="62px" x="15px" y="397px" visibleToMouse="true">
 				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
+					 <!-- <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/> -->
+					 
+				  </effect>			  
 			  </control>
 			  <control id="belt5" name="droppable" height="55px" width="62px" x="94px" y="397px" visibleToMouse="true" >
 				  <effect>
@@ -182,9 +188,13 @@
 				  </effect>
 			  </control>
 
-			  <control id="myItem" name="draggable" height="55px" width="62px" align="center" valign="center" visibleToMouse="true" childLayout="vertical">
+			  <control id="myItem" name="draggable" height="55px" width="62px" align="center" valign="center" visibleToMouse="true" childLayout="center">
 					<panel width="100%" height="100%" backgroundColor="#ffff" />
 			  </control>
+			  
+			  <panel style="illarion-textpanel" width="*" height="30px" x="10px" y="20px" childLayout="center" font="textFont" text="my text is werrry guuuuud">
+			  		 <control id="myLbl" name="label" text="hello" width="50px" />
+			  </panel>
 			  
 		  </control>
 		  

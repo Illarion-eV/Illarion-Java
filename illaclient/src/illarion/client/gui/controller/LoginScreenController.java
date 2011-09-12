@@ -11,6 +11,8 @@ import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.tools.SizeValue;
+import de.lessvoid.nifty.effects.impl.Hint;
 
 public final class LoginScreenController implements ScreenController {
 
@@ -50,6 +52,12 @@ public final class LoginScreenController implements ScreenController {
         nameTxt.setText(login.getLoginName());
         passwordTxt.setText(login.getPassword());
         savePassword.setChecked(login.storePassword());
+
+        Element myLabel=screen.findElementByName("testHint");
+        myLabel.setConstraintX(new SizeValue("100px"));
+        myLabel.setConstraintY(new SizeValue("200px"));
+        
+        
     }
 
     @Override
@@ -76,6 +84,12 @@ public final class LoginScreenController implements ScreenController {
             return;
         }
     	nifty.gotoScreen("charSelect");
+    }
+    
+    public void displayLabel() {
+    	int myX=nifty.getNiftyMouse().getX();
+    	int myY=nifty.getNiftyMouse().getY();
+    	
     }
     
     public void cancelLogin() {
