@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.download.install.resources.dev;
+package illarion.download.install.resources.libs;
 
 import java.io.File;
 import java.net.URL;
@@ -24,24 +24,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.libs.JGraph;
-import illarion.download.install.resources.libs.Javolution;
-import illarion.download.install.resources.libs.Log4j;
-import illarion.download.install.resources.libs.Substance;
 import illarion.download.util.Lang;
 
 /**
- * This resource contains the Illarion easyNPC Editor.
+ * This resource contains the JGraph library.
  * 
  * @author Martin Karing
  * @since 1.00
  * @version 1.00
  */
-public final class EasyQuestEditor implements DevelopmentResource {
+public final class JGraph implements LibraryResource {
     /**
      * The singleton instance of this class.
      */
-    private static final EasyQuestEditor INSTANCE = new EasyQuestEditor();
+    private static final JGraph INSTANCE = new JGraph();
 
     /**
      * The files that are needed to be added to the class path for this
@@ -50,19 +46,20 @@ public final class EasyQuestEditor implements DevelopmentResource {
     private Collection<File> classpath;
 
     /**
-     * The dependencies of this resource.
-     */
-    private Collection<Resource> dependencies;
-
-    /**
      * The resources that are needed to be downloaded for this class.
      */
     private Collection<URL> resources;
 
     /**
+     * The arguments that are passed to the virtual machine in case this
+     * resource is part of the application.
+     */
+    private Collection<String> vmArguments;
+
+    /**
      * Private constructor to avoid instances but the singleton instance.
      */
-    private EasyQuestEditor() {
+    private JGraph() {
         // nothing to do
     }
 
@@ -83,8 +80,8 @@ public final class EasyQuestEditor implements DevelopmentResource {
     public Collection<File> getClassPath() {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
-            cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                "illarion_easyquest.jar")); //$NON-NLS-1$
+            cp.add(new File(LibraryDirectory.getInstance().getDirectory(),
+                "jgraphx.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -92,36 +89,26 @@ public final class EasyQuestEditor implements DevelopmentResource {
     }
 
     /**
-     * Get the dependencies of this resource.
+     * This resource does not depend on anything else. So this function returns
+     * <code>null</code> at all times
      */
     @Override
     public Collection<Resource> getDependencies() {
-        if (dependencies == null) {
-            final Collection<Resource> dep = new ArrayList<Resource>();
-            dep.add(Javolution.getInstance());
-            dep.add(Log4j.getInstance());
-            dep.add(Substance.getInstance());
-            dep.add(JGraph.getInstance());
-            dep.add(Common.getInstance());
-
-            dependencies = dep;
-        }
-        return dependencies;
+        return null;
     }
 
     /**
      * As this resource is not start able this function will throw a exception
      * upon a call.
      */
-    @SuppressWarnings("nls")
     @Override
     public String getLaunchClass() {
-        return "illarion.easyquest.gui.MainFrame";
+        throw new IllegalStateException();
     }
 
     @Override
     public String getName() {
-        return Lang.getMsg(EasyQuestEditor.class.getName());
+        return Lang.getMsg(JGraph.class.getName());
     }
 
     /**
@@ -142,8 +129,7 @@ public final class EasyQuestEditor implements DevelopmentResource {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {
-                res.add(new URL(ONLINE_PATH
-                    + "illarion_easyquest" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                res.add(new URL(ONLINE_PATH + "jgraph" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (final Exception e) {
                 // Catch everything and do nothing!
             }
@@ -167,7 +153,14 @@ public final class EasyQuestEditor implements DevelopmentResource {
      */
     @Override
     public Collection<String> getVMArguments() {
-        return null;
+        if (vmArguments == null) {
+            final Collection<String> vmArgs = new ArrayList<String>();
+            vmArgs.add("-Dillarion.components.avaiable.jgraph=true"); //$NON-NLS-1$
+
+            vmArguments = vmArgs;
+        }
+
+        return vmArguments;
     }
 
     /**
@@ -175,6 +168,6 @@ public final class EasyQuestEditor implements DevelopmentResource {
      */
     @Override
     public boolean isStartable() {
-        return true;
+        return false;
     }
 }

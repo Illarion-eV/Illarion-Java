@@ -340,6 +340,34 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
+    <target name="prepare_jgraph" description="prepare the JGraph bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="jgraph" />
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="jgraph.pattern" />
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="jgraph.pattern" />
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/jgraph.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="jgraph.pattern" />
+            </fileset>
+        </resourcebuild>
+    </target>
+
 	<target name="prepare_log4j" description="prepare the LOG4J bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="log4j" />
