@@ -845,7 +845,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<fileset dir="${libs}">
 				<include name="**/*.jar" />
 				<include name="**/*.zip" />
-				<include name="**/LICENSE.txt" />
+				<include name="**/*.txt" />
 				<exclude name="signed/**" />
 			</fileset>
 		</zip>

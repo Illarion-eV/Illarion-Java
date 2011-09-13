@@ -37,6 +37,7 @@ import illarion.client.graphics.RuneFactory;
 import illarion.client.graphics.TileFactory;
 import illarion.client.graphics.particle.ParticleSystem;
 import illarion.client.gui.GUI;
+import illarion.client.input.KeyboardInputHandler;
 import illarion.client.input.MouseInputHandler;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
@@ -593,6 +594,7 @@ public final class Game implements SessionMember {
         IllaClient.initChatLog();
 
         InputManager.getInstance().getMouseManager().registerEventHandler(new MouseInputHandler());
+        InputManager.getInstance().getKeyboardManager().registerEventHandler(new KeyboardInputHandler());
 
     }
 
