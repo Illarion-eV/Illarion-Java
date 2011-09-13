@@ -5,9 +5,9 @@
         <title>Illarion EasyQuest Editor</title>
         <vendor>Illarion e.V.</vendor>
         <homepage href="http://illarion.org" />
-        <description>EasyNPC Editor for the roleplaying game Illarion</description>
-        <description kind="one-line">EasyNPC Editor for Illarion</description>
-        <description kind="tooltip">Illarion EasyNPC Editor</description>
+        <description>EasyQuest Editor for the roleplaying game Illarion</description>
+        <description kind="one-line">EasyQuest Editor for Illarion</description>
+        <description kind="tooltip">Illarion EasyQuest Editor</description>
         <icon href="jnlp_ico/illarion_easyquest16.png" height="16" width="16" kind="default" />
         <icon href="jnlp_ico/illarion_easyquest32.png" height="32" width="32" kind="default" />
         <icon href="jnlp_ico/illarion_easyquest48.png" height="48" width="48" kind="default" />
@@ -23,10 +23,10 @@
         </shortcut>
     </information>
     <information locale="de">
-        <title>Illarion EasyNPC Editor</title>
+        <title>Illarion EasyQuest Editor</title>
         <vendor>Illarion e.V.</vendor>
-        <description>Der EasyNPC Editor für das Rollenspiel Illarion</description>
-        <description kind="one-line">EasyNPC Editor von Illarion</description>
+        <description>Der EasyQuest Editor für das Rollenspiel Illarion</description>
+        <description kind="one-line">EasyQuest Editor von Illarion</description>
     </information>
     <security>
         <all-permissions />

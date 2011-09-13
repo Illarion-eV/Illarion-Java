@@ -22,11 +22,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import illarion.easyquest.Lang;
@@ -50,30 +48,53 @@ public class HandlerTemplates
         load();
     }
     
+    private static InputStream getResource(final String name) {
+        final ClassLoader loader = TriggerTemplates.class.getClassLoader();
+        return loader.getResourceAsStream(name);
+    }
+    
+    private List<String> loadFileList() {
+        List<String> result = new ArrayList<String>();
+        BufferedReader bRead = null;
+        try {
+            bRead = new BufferedReader(new InputStreamReader((getResource("template/handler/filelist"))));
+            
+            String line = null;
+            while ((line = bRead.readLine()) != null) {
+                result.add(line);
+            }
+        } catch (IOException e) {
+            // reading failure
+        } finally {
+            if (bRead != null) {
+                try {
+                    bRead.close();
+                } catch (IOException e) {
+                    // does not matter
+                }
+            }
+        }
+        
+        return result;
+    }
+    
     private void load()
     {
-        File dir = new File("res/template/handler");
-        FilenameFilter luaFilter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".lua");
-            }
-        };
-        File[] templateFiles = dir.listFiles(luaFilter);
-        if (templateFiles == null) {
+        List<String> templateFiles = loadFileList();
+        if (templateFiles.isEmpty()) {
             System.out.println("Handler directory does not exist!");
         } else {
             boolean isGerman = Lang.getInstance().isGerman();
-            for (int i=0; i<templateFiles.length; i++) {
+            for (String rawFileName : templateFiles) {
+                String fileName = rawFileName.replace('\\', '/');
                 String line = null;
-                String fileName = templateFiles[i].getName();
                 String uniqueName = fileName.substring(0, fileName.lastIndexOf('.'));
                 int parameterCount = 0;
                 HandlerTemplate handlerTemplate = new HandlerTemplate(uniqueName);
                 try
                 {
                     BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(new FileInputStream(
-                            templateFiles[i]), "ISO-8859-1"));
+                            new InputStreamReader(getResource(fileName), "ISO-8859-1"));
                     
                     while ((line = reader.readLine()) != null) {
 
@@ -119,10 +140,10 @@ public class HandlerTemplates
                     }
                     else
                     {
-                        System.out.println("Syntax error in template " + templateFiles[i].getName());
+                        System.out.println("Syntax error in template " + fileName);
                     }
                 } catch (final IOException e1) {
-                    System.out.println("Error loading template " + templateFiles[i].getName());
+                    System.out.println("Error loading template " + fileName);
                 }
             }
         }
