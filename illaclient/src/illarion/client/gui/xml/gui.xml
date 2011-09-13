@@ -84,13 +84,12 @@
         </layer>
 		<layer id="windows" childLayout="absolute">
 		  <control id="inventory" name="window" style="inventory-window" title="Inventar" width="248px" height="486px" x="400px">
-		  	<panel height="83px" width="45px" x="102px" y="67px">
+		  	<panel height="83px" width="45px" x="102px" y="67px" childLayout="absolute">
 			  <control id="chest" name="droppable" height="100%" width="100%" visibleToMouse="true" childLayout="center">
 				  <effect>
 					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
 				  </effect>
 			  </control>
-			</panel>
 			  <control id="head" name="droppable" height="39px" width="45px" x="102px" y="12px" visibleToMouse="true">
 				  <effect>
 					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
@@ -186,6 +185,7 @@
 					<panel width="100%" height="100%" backgroundColor="#ffff" />
 			  </control>
 			  
+            </panel>
 		  </control>
 		  
 		</layer>
