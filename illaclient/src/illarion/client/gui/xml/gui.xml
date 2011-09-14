@@ -37,7 +37,7 @@
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
                 <image filename="guiSprite://illarion_title" imageMode="normal" align="center"/>
                 <panel height="30px" />
-                <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
+                <panel width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
 	                <panel childLayout="horizontal" visibleToMouse="true">
 	                    <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
 	                        <text font="textFont" text="Account Name:" />
@@ -54,23 +54,23 @@
 	                
 	                <panel height="15px" />
 	                
-	                <panel childLayout="center" visibleToMouse="true" width="400px" height="*">
-		                <panel childLayout="horizontal" visibleToMouse="true" align="center">
-		                    <text font="textFont" text="Passwort merken" />
-		                    <panel width="10px" />
-		                	<control id="savePassword" name="checkbox" />
+	                <panel childLayout="center" visibleToMouse="true">
+		                <panel childLayout="horizontal" visibleToMouse="true" align="center" height="30px">
+		                    <control name="label" text="Passwort merken" align="center"/>
+		                    <panel width="10px" align="center"/>
+		                	<control id="savePassword" name="checkbox" align="center"/>
 		                </panel>
 		            </panel>
 		            
-	                <panel height="15px" />
+		            <panel height="30px" />
 
                     <panel childLayout="horizontal" visibleToMouse="true">
-                        <panel width="90px" />
-                        <control id="loginBtn" name="illaButton" label="Einloggen" width="100" height="35" >
+                        <panel width="90px" height="35px"/>
+                        <control id="loginBtn" name="illaButton" label="Einloggen" width="100px" height="35px" >
 	                        <interact onRelease="login()" />
 	                    </control>
-	                    <panel width="20px" />
-	                    <control id="optionBtn" name="illaButton" label="Optionen" width="100" height="35" >
+	                    <panel width="20px" height="35px"/>
+	                    <control id="optionBtn" name="illaButton" label="Optionen" width="100px" height="35px" >
 	                        <interact onRelease="options()" />
 	                    </control>
 	                </panel>
@@ -84,16 +84,20 @@
         </layer>
 		<layer id="windows" childLayout="absolute">
 		  <control id="inventory" name="window" style="inventory-window" title="Inventar" width="248px" height="486px" x="400px">
+<<<<<<< HEAD
 		  	<panel name="chestpanel" height="83px" width="45px" x="102px" y="67px" childLayout="center">
 		  		<!-- <interact onClick="displayLabel()" /> -->
 			  <control id="chest" name="droppable" height="100%" width="100%" visibleToMouse="true" align="center" valign="center" childLayout="center">
+=======
+		  	<panel height="83px" width="45px" x="102px" y="67px" childLayout="absolute">
+			  <control id="chest" name="droppable" height="100%" width="100%" visibleToMouse="true" childLayout="center">
+>>>>>>> e03234034b8c675d888fbfc5a33b4debf4758a8b
 				  <effect>
 					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
 					 <onHover id="testHint" name="hint" hintStyle="illarion-hint" hintText="Hofer wars" hintDelay="300" length="5000"/>
 				  </effect>
 				   <interact onClick="getLabelX()" />
 			  </control>
-			</panel>
 			  <control id="head" name="droppable" height="39px" width="45px" x="102px" y="12px" visibleToMouse="true">
 				  <effect>
 					 <onClick name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
@@ -190,10 +194,14 @@
 					<panel width="100%" height="100%" backgroundColor="#ffff" />
 			  </control>
 			  
+<<<<<<< HEAD
 			  <panel style="illarion-textpanel" width="*" height="30px" x="10px" y="20px" childLayout="center" font="textFont" text="my text is werrry guuuuud">
 			  		 <control id="myLbl" name="label" text="hello" width="50px" />
 			  </panel>
 			  
+=======
+            </panel>
+>>>>>>> e03234034b8c675d888fbfc5a33b4debf4758a8b
 		  </control>
 		  
 		</layer>
@@ -266,7 +274,7 @@
     
     <screen id="gamescreen" controller="illarion.client.gui.controller.GameScreenController">
     	<layer id="mainLayer" backgroundColor="#0000" childLayout="center">
-    		<panel height="100%" width="100%" align="left" valign="bottom" backgroundColor="#0000" childLayout="vertical" visibleToMouse="true">
+    		<panel height="100%" width="100%" align="left" valign="bottom" backgroundColor="#0000" childLayout="vertical" visibleToMouse="false">
     			<text id="main" font="textFont" text="" />
     		</panel>
     	</layer>

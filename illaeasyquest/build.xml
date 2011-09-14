@@ -62,8 +62,28 @@ the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
             </filelist>
         </resourcebuild>
     </target>
+	
+	<target name="generate_filelists">
+		<delete file="${res}/template/handler/filelist" />
+        <delete file="${res}/template/trigger/filelist" />
+    	<fileset id="handlers_fs" dir="${res}/template/handler">
+    	    <include name="*.lua" />
+    	</fileset>
+        <fileset id="trigger_fs" dir="${res}/template/trigger">
+            <include name="*.lua" />
+        </fileset>
+    
+    	<pathconvert pathsep="${line.separator}" property="handlers" refid="handlers_fs">
+    		<map from="${basedir}/res/" to="" />
+        </pathconvert>
+        <pathconvert pathsep="${line.separator}" property="trigger" refid="trigger_fs">
+            <map from="${basedir}/res/" to="" />
+        </pathconvert>
+    	<echo file="${res}/template/handler/filelist">${handlers}</echo>
+        <echo file="${res}/template/trigger/filelist">${trigger}</echo>
+	</target>
 
-	<target name="compile_easyquest">
+	<target name="compile_easyquest" depends="generate_filelists">
 		<delete dir="${classes}" />
 		<mkdir dir="${classes}" />
 
@@ -91,7 +111,7 @@ the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
 			</manifest>
 		</jar>
 		<jar jarfile="${jar}" basedir="${src}" includes="logging.properties" update="true" />
-		<jar jarfile="${jar}" basedir="${res}" includes="*.png" update="true" />
+		<jar jarfile="${jar}" basedir="${res}" includes="*.png,**/*.lua,**/filelist" update="true" />
 		<jar jarfile="${jar}" basedir="${src}" includes="messages_*.properties" update="true" index="${build.index}" />
 		<delete dir="${classes}" />
 	</target>

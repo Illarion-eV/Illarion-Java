@@ -760,6 +760,10 @@ public final class IllaClient {
         LOGGER.info("OS: " + System.getProperty("os.name") + " "
             + System.getProperty("os.version") + " "
             + System.getProperty("os.arch"));
+        
+        
+        java.util.logging.Logger.getLogger("de.lessvoid.nifty").setLevel(java.util.logging.Level.SEVERE);
+        java.util.logging.Logger.getLogger("javolution").setLevel(java.util.logging.Level.SEVERE);
     }
 
     /**

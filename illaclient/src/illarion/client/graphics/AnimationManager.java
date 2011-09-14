@@ -88,8 +88,11 @@ public final class AnimationManager implements SessionMember {
         for (int i = 0; i < count; ++i) {
             final AbstractAnimation ani = animations.get(i);
             // execute those that are running
-            if (!ani.isRunning() || !ani.animate(delta)) {
-                animations.remove(i).animationFinished(true);
+            if (ani == null || !ani.isRunning() || !ani.animate(delta)) {
+                animations.remove(i);
+                if (ani !=  null) {
+                    ani.animationFinished(true);
+                }
                 --count;
                 --i;
             }

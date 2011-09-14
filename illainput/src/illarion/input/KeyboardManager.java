@@ -19,7 +19,6 @@
 package illarion.input;
 
 import illarion.input.receiver.KeyboardEventReceiver;
-import illarion.input.receiver.KeyboardEventReceiverComplex;
 
 /**
  * The keyboard manager that handles the keyboard inputs and allows to register
@@ -89,4 +88,12 @@ public interface KeyboardManager {
      * handler so ensure this is called while the correct window is active.
      */
     void startManager();
+
+    /**
+     * Remove a keyboard event handle from the manager. Once called the event
+     * receiver will not receive any more events.
+     * 
+     * @param event the event receiver to remove
+     */
+    void unregisterEventHandler(KeyboardEventReceiver event);
 }

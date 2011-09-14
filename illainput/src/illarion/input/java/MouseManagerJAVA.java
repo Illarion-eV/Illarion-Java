@@ -22,7 +22,6 @@ import illarion.common.util.FastMath;
 import illarion.common.util.Timer;
 import illarion.graphics.Graphics;
 import illarion.input.MouseManager;
-import illarion.input.generic.MouseEventMulticast;
 import illarion.input.receiver.MouseEventReceiver;
 import illarion.input.receiver.MouseEventReceiverComplex;
 import illarion.input.receiver.MouseEventReceiverPrimitive;
@@ -33,7 +32,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
+
+import javolution.util.FastList;
 
 /**
  * This is the JAVA implementation of the mouse manager. Its supposed to handle
@@ -128,12 +130,6 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
      */
     private final boolean[] keystate;
 
-//    /**
-//     * The last move event that was recorded. This event is always published at
-//     * the very end of the polling calls.
-//     */
-//    private illarion.input.MouseEvent lastMoveEvent;
-
     /**
      * The last X coordinate that was received from the mouse. <code>-1</code>
      * in case its outside of the render screen.
@@ -154,7 +150,7 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
     /**
      * The event receiver that is used to fetch all received mouse events.
      */
-    private MouseEventReceiver receiver;
+    private final List<MouseEventReceiver> receivers;
 
     /**
      * The click event that was recorded but yet not passed to the rest of the
@@ -170,6 +166,7 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
         dragging = new boolean[MOUSE_KEYS + 1];
         keystate = new boolean[MOUSE_KEYS + 1];
         eventList = new LinkedBlockingDeque<illarion.input.MouseEvent>();
+        receivers = new FastList<MouseEventReceiver>();
         pointAtTimer = new Timer(500, new Runnable() {
             /**
              * Called by the timer in the set interval.
@@ -232,7 +229,7 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
      */
     @Override
     public void clear() {
-        receiver = null;
+        receivers.clear();
     }
 
     /**
@@ -283,13 +280,13 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
     }
 
     @Override
-    public int getNativeMousePosY() {
-        return fixY(lastY);
+    public int getNativeMousePosX() {
+        return lastX;
     }
 
     @Override
-    public int getNativeMousePosX() {
-        return lastX;
+    public int getNativeMousePosY() {
+        return fixY(lastY);
     }
 
     /**
@@ -565,27 +562,40 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
 
     @Override
     public void poll() {
-        if (receiver != null) {
+        if (!receivers.isEmpty()) {
             illarion.input.MouseEvent event = null;
             while ((event = eventList.pollFirst()) != null) {
-                if (receiver instanceof MouseEventReceiverPrimitive) {
-                    int key = 0;
-                    if (event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_DOWN || event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_UP) {
-                        key = event.getKey();
+                for (final MouseEventReceiver receiver : receivers) {
+                    boolean result = false;
+                    if (event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_UP
+                        || event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_DOWN) {
+                        if (receiver instanceof MouseEventReceiverPrimitive) {
+                            int key = 0;
+                            if ((event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_DOWN)
+                                || (event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_UP)) {
+                                key = event.getKey();
+                            }
+                            result |=
+                                ((MouseEventReceiverPrimitive) receiver)
+                                    .handleMouseEvent(
+                                        event.getPosX(),
+                                        event.getPosY(),
+                                        event.getDelta(),
+                                        key,
+                                        event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_DOWN);
+                        }
                     }
-                    ((MouseEventReceiverPrimitive) receiver).handleMouseEvent(event.getPosX(), event.getPosY(), event.getDelta(), key, event.getEvent() == illarion.input.MouseEvent.EVENT_KEY_DOWN);
-                }
-                if (receiver instanceof MouseEventReceiverComplex) {
-                    ((MouseEventReceiverComplex) receiver).handleMouseEvent(event);
+                    if (receiver instanceof MouseEventReceiverComplex) {
+                        result |=
+                            ((MouseEventReceiverComplex) receiver)
+                                .handleMouseEvent(event);
+                    }
+                    if (result) {
+                        break;
+                    }
                 }
                 event.recycle();
             }
-//            synchronized (this) {
-//                if (lastMoveEvent != null) {
-//                    receiver.handleMouseEvent(lastMoveEvent);
-//                    lastMoveEvent.recycle();
-//                }
-//            }
         } else {
             pollToNull();
         }
@@ -597,12 +607,6 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
         while ((event = eventList.pollFirst()) != null) {
             event.recycle();
         }
-//        synchronized (this) {
-//            if (lastMoveEvent != null) {
-//                lastMoveEvent.recycle();
-//                lastMoveEvent = null;
-//            }
-//        }
     }
 
     /**
@@ -611,11 +615,7 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
      */
     @Override
     public void registerEventHandler(final MouseEventReceiver event) {
-        if (receiver == null) {
-            receiver = event;
-        } else {
-            receiver = new MouseEventMulticast(receiver, event);
-        }
+        receivers.add(event);
     }
 
     /**
@@ -664,18 +664,17 @@ public final class MouseManagerJAVA implements MouseManager, MouseListener,
      * @param event the event to store in the list for later publishing
      */
     private void storeEvent(final illarion.input.MouseEvent event) {
-//        if (event.getEvent() == illarion.input.MouseEvent.EVENT_LOCATION) {
-//            synchronized (this) {
-//                if (lastMoveEvent != null) {
-//                    lastMoveEvent.recycle();
-//                }
-//                lastMoveEvent = event;
-//            }
-//        } else {
-            while (eventList.size() > 100) {
-                eventList.pollFirst();
-            }
-            eventList.offerLast(event);
-//        }
+        while (eventList.size() > 100) {
+            eventList.pollFirst();
+        }
+        eventList.offerLast(event);
+    }
+
+    /**
+     * Remove a event handler.
+     */
+    @Override
+    public void unregisterEventHandler(final MouseEventReceiver event) {
+        receivers.remove(event);
     }
 }

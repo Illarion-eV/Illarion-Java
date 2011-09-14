@@ -25,6 +25,7 @@ import illarion.input.KeyboardManager;
 import illarion.input.MouseEvent;
 import illarion.input.MouseManager;
 import illarion.input.receiver.KeyboardEventReceiverComplex;
+import illarion.input.receiver.KeyboardEventReceiverPrimitive;
 import illarion.input.receiver.MouseEventReceiverComplex;
 import illarion.input.receiver.MouseEventReceiverPrimitive;
 import de.lessvoid.nifty.NiftyInputConsumer;
@@ -32,7 +33,7 @@ import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
 import de.lessvoid.nifty.spi.input.InputSystem;
 
 public final class IllarionInputSystem implements InputSystem,
-    MouseEventReceiverPrimitive, KeyboardEventReceiverComplex {
+    MouseEventReceiverPrimitive, KeyboardEventReceiverPrimitive {
 
     /**
      * Correct the y coordinate of the mouse location to meet the nifty
@@ -282,21 +283,18 @@ public final class IllarionInputSystem implements InputSystem,
     }
 
     @Override
-    public boolean handleKeyboardEvent(final KeyboardEvent event) {
-        final boolean isKeyDown =
-            (event.getEvent() == KeyboardEvent.EVENT_KEY_PRESSED) ||
-            (event.getEvent() == KeyboardEvent.EVENT_KEY_DOWN);
+    public boolean handleKeyboardEvent(int key, char character, boolean down) {
         boolean isShiftDown = false;
         boolean isControlDown = false;
-        if (isKeyDown) {
-            isShiftDown = (event.getKey() == KeyboardEvent.VK_SHIFT);
-            isControlDown = (event.getKey() == KeyboardEvent.VK_CONTROL);
+        if (down) {
+            isShiftDown = (key == KeyboardEvent.VK_SHIFT);
+            isControlDown = (key == KeyboardEvent.VK_CONTROL);
         }
-
+        
         final KeyboardInputEvent niftyEvent =
             new KeyboardInputEvent(
-                translateKeyboardIllarionNifty(event.getKey()),
-                event.getCharacter(), isKeyDown, isShiftDown, isControlDown);
+                translateKeyboardIllarionNifty(key),
+                character, down, isShiftDown, isControlDown);
 
         return currentConsumer.processKeyboardEvent(niftyEvent);
     }

@@ -12,6 +12,8 @@ import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
@@ -27,7 +29,7 @@ import de.lessvoid.nifty.loaderv2.NiftyLoader;
 import de.lessvoid.nifty.loaderv2.types.NiftyType;
 
 
-public final class LoginScreenController implements ScreenController {
+public final class LoginScreenController implements ScreenController, KeyInputHandler {
 
 	private Nifty nifty;
     private Screen screen;
@@ -53,6 +55,16 @@ public final class LoginScreenController implements ScreenController {
     	savePassword = screen.findNiftyControl("savePassword", CheckBox.class);
     	loginBtn = screen.findNiftyControl("loginBtn", Button.class);
     	charList = nifty.getScreen("charSelect").findNiftyControl("myListBox", ListBox.class);
+    	
+    	nameTxt.getElement().addInputHandler(this);
+    	passwordTxt.getElement().addInputHandler(this);
+    	
+    	final Login login = Login.getInstance();
+        login.restoreLoginData();
+        nameTxt.setText(login.getLoginName());
+        passwordTxt.setText(login.getPassword());
+        savePassword.setChecked(login.storePassword());
+    	
 //    	errorText = screen.findNiftyControl("errorText", Label.class);
 //    	
 //    	popupLogin = screen.findElementByName("popupLoggingIn");
@@ -61,6 +73,7 @@ public final class LoginScreenController implements ScreenController {
 
     @Override
     public void onStartScreen() {
+<<<<<<< HEAD
         final Login login = Login.getInstance();
         login.restoreLoginData();
         nameTxt.setText(login.getLoginName());
@@ -72,6 +85,9 @@ public final class LoginScreenController implements ScreenController {
         myLabel.setConstraintY(new SizeValue("200px"));*/
         
         
+=======
+
+>>>>>>> e03234034b8c675d888fbfc5a33b4debf4758a8b
     }
 
     @Override
@@ -158,5 +174,14 @@ public final class LoginScreenController implements ScreenController {
     
     public void options() {
     	nifty.gotoScreen("options");
+    }
+    
+    @Override
+    public boolean keyEvent(NiftyInputEvent inputEvent) {
+        if (inputEvent == NiftyInputEvent.SubmitText) {
+        	login();
+            return true;
+        }
+        return false;
     }
 }

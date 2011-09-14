@@ -145,8 +145,8 @@ public class TextTag implements RecycleObject {
             return;
         }
 
-        DRAWER.drawRectangle((x + dX) - 1, (y + dY) - 1, x + dX + bounds.width
-            + 2, y + dY + bounds.height, BACK_COLOR);
+//        DRAWER.drawRectangle((x + dX) - 1, (y + dY) - 1, x + dX + bounds.width
+//            + 2, y + dY + bounds.height, BACK_COLOR);
 
         color.setAlpha(SpriteColor.COLOR_MAX);
 //        textTag.setLocation(x + dX, y + dY);

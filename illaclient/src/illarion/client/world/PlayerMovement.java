@@ -22,7 +22,6 @@ import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.client.graphics.MarkerFactory;
 import illarion.client.graphics.MoveAnimation;
-import illarion.client.guiNG.GUI;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.MoveCmd;
@@ -393,36 +392,36 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         }
 
         if (relXOffset > MOUSE_ANGLE) {
-            GUI.getInstance().getMouseCursor()
-                .setCursor(MarkerFactory.CRSR_WALK_SE);
+//            GUI.getInstance().getMouseCursor()
+//                .setCursor(MarkerFactory.CRSR_WALK_SE);
             walkTowardsDir = Location.DIR_SOUTHEAST;
         } else if (relXOffset < -MOUSE_ANGLE) {
-            GUI.getInstance().getMouseCursor()
-                .setCursor(MarkerFactory.CRSR_WALK_NW);
+//            GUI.getInstance().getMouseCursor()
+//                .setCursor(MarkerFactory.CRSR_WALK_NW);
             walkTowardsDir = Location.DIR_NORTHWEST;
         } else if (relYOffset > MOUSE_ANGLE) {
-            GUI.getInstance().getMouseCursor()
-                .setCursor(MarkerFactory.CRSR_WALK_NE);
+//            GUI.getInstance().getMouseCursor()
+//                .setCursor(MarkerFactory.CRSR_WALK_NE);
             walkTowardsDir = Location.DIR_NORTHEAST;
         } else if (relYOffset < -MOUSE_ANGLE) {
-            GUI.getInstance().getMouseCursor()
-                .setCursor(MarkerFactory.CRSR_WALK_SW);
+//            GUI.getInstance().getMouseCursor()
+//                .setCursor(MarkerFactory.CRSR_WALK_SW);
             walkTowardsDir = Location.DIR_SOUTHWEST;
         } else if ((xOffset > 0) && (yOffset > 0)) {
-            GUI.getInstance().getMouseCursor()
-                .setCursor(MarkerFactory.CRSR_WALK_E);
+//            GUI.getInstance().getMouseCursor()
+//                .setCursor(MarkerFactory.CRSR_WALK_E);
             walkTowardsDir = Location.DIR_EAST;
         } else if ((xOffset > 0) && (yOffset < 0)) {
-            GUI.getInstance().getMouseCursor()
-                .setCursor(MarkerFactory.CRSR_WALK_S);
+//            GUI.getInstance().getMouseCursor()
+//                .setCursor(MarkerFactory.CRSR_WALK_S);
             walkTowardsDir = Location.DIR_SOUTH;
         } else if ((xOffset < 0) && (yOffset < 0)) {
-            GUI.getInstance().getMouseCursor()
-                .setCursor(MarkerFactory.CRSR_WALK_W);
+//            GUI.getInstance().getMouseCursor()
+//                .setCursor(MarkerFactory.CRSR_WALK_W);
             walkTowardsDir = Location.DIR_WEST;
         } else if ((xOffset < 0) && (yOffset > 0)) {
-            GUI.getInstance().getMouseCursor()
-                .setCursor(MarkerFactory.CRSR_WALK_N);
+//            GUI.getInstance().getMouseCursor()
+//                .setCursor(MarkerFactory.CRSR_WALK_N);
             walkTowardsDir = Location.DIR_NORTH;
         }
 
@@ -520,11 +519,11 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      */
     private void performMove(final int mode, final Location target,
         final int speed) {
-        final illarion.client.guiNG.ChatEditor editor =
-            illarion.client.guiNG.GUI.getInstance().getChatEditor();
-        if (editor.isVisible() && (editor.getTextLength() == 0)) {
-            editor.setVisible(false);
-        }
+//        final illarion.client.guiNG.ChatEditor editor =
+//            illarion.client.guiNG.GUI.getInstance().getChatEditor();
+//        if (editor.isVisible() && (editor.getTextLength() == 0)) {
+//            editor.setVisible(false);
+//        }
         if ((mode == MOVE_MODE_NONE)
             || playerCharacter.getLocation().equals(target)) {
             parentPlayer.updateLocation(target);

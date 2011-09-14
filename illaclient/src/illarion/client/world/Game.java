@@ -37,6 +37,8 @@ import illarion.client.graphics.RuneFactory;
 import illarion.client.graphics.TileFactory;
 import illarion.client.graphics.particle.ParticleSystem;
 import illarion.client.gui.GUI;
+import illarion.client.input.KeyboardInputHandler;
+import illarion.client.input.MouseInputHandler;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetComm;
@@ -62,6 +64,7 @@ import illarion.graphics.RenderTask;
 import illarion.graphics.common.LightTracer;
 import illarion.graphics.common.SpriteBuffer;
 import illarion.graphics.common.TextureLoader;
+import illarion.input.InputManager;
 
 /**
  * Main Game control class for the main loop. Created: 20.08.2005 16:01:50
@@ -590,10 +593,8 @@ public final class Game implements SessionMember {
 
         IllaClient.initChatLog();
 
-        // if (!running) {
-        // SessionManager.getInstance().cancelStart();
-        // return;
-        // }
+        InputManager.getInstance().getMouseManager().registerEventHandler(new MouseInputHandler());
+        InputManager.getInstance().getKeyboardManager().registerEventHandler(new KeyboardInputHandler());
 
     }
 

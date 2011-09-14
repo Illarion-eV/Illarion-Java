@@ -7,6 +7,7 @@
 /illacommon/rsc
 /illacommon/*.zip
 /illacommon/local*
+/illaeasyquest/res/template/*/filelist
 /keys
 /bin
 /setup

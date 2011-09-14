@@ -261,7 +261,8 @@ public final class TimerQueue implements Runnable {
         final Thread timerThread = new Thread(null, this, "TimerQueue");
         timerThread.setDaemon(true);
         timerThread.setPriority(Thread.NORM_PRIORITY);
-        timerThread.start();
+        
         running = true;
+        timerThread.start();
     }
 }
