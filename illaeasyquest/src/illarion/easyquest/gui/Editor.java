@@ -32,6 +32,7 @@ import javax.swing.JOptionPane;
 import org.w3c.dom.Document;
 
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.handler.mxCellMarker;
 import com.mxgraph.swing.handler.mxKeyboardHandler;
 import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.view.mxGraph;
@@ -67,6 +68,8 @@ public final class Editor extends mxGraphComponent {
 
     Editor(Graph graph) {
         super(graph);
+        
+        getConnectionHandler().getMarker().setHotspot(0.5f);
         
         setToolTips(true);
         setCellEditor(new CellEditor(this));
