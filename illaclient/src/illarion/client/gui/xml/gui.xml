@@ -85,16 +85,14 @@
 		<layer id="windows" childLayout="absolute">
 		  <control id="inventory" name="window" style="inventory-window" title="Inventar" width="248px" height="486px" x="400px">
 		  	<panel name="chestpanel" height="83px" width="45px" x="102px" y="67px" childLayout="center">
-		  		<interact onClick="displayLabel()" />
+		  		<!-- <interact onClick="displayLabel()" /> -->
 			  <control id="chest" name="droppable" height="100%" width="100%" visibleToMouse="true" align="center" valign="center" childLayout="center">
 				  <effect>
 					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+					 <onHover id="testHint" name="hint" hintStyle="illarion-hint" hintText="Hofer wars" hintDelay="300" length="5000"/>
 				  </effect>
-				   
+				   <interact onClick="getLabelX()" />
 			  </control>
-			  <effect>
-			  	<onClick id="testHint" name="hint" hintStyle="illarion-hint" hintText="Hello World" offsetX="100" hintDelay="300" length="5000"/>
-			  </effect>
 			</panel>
 			  <control id="head" name="droppable" height="39px" width="45px" x="102px" y="12px" visibleToMouse="true">
 				  <effect>
