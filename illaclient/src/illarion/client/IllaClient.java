@@ -84,7 +84,7 @@ public final class IllaClient {
      * The default server the client connects too. The client will always
      * connect to this server if {@link #MULTI_CLIENT} is set to false.
      */
-    static final Servers DEFAULT_SERVER = Servers.localserver;
+    static final Servers DEFAULT_SERVER = Servers.testserver;
 
     /**
      * The error and debug logger of the client.
