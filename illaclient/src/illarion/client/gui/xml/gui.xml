@@ -83,110 +83,117 @@
             </panel>
         </layer>
 		<layer id="windows" childLayout="absolute">
-		  <control id="inventory" name="window" style="inventory-window" title="Inventar" width="248px" height="486px" x="400px">
-		  	<panel height="83px" width="45px" x="102px" y="67px" childLayout="absolute">
-			  <control id="chest" name="droppable" height="100%" width="100%" visibleToMouse="true" childLayout="center">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="head" name="droppable" height="39px" width="45px" x="102px" y="12px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="legs" name="droppable" height="64px" width="45px" x="102px" y="167px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="feet" name="droppable" height="45px" width="45px" x="102px" y="247px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="lhand" name="droppable" height="55px" width="62px" x="22px" y="127px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="feet" name="droppable" height="45px" width="45px" x="102px" y="247px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="lfinger" name="droppable" height="39px" width="23px" x="22px" y="198px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="rfinger" name="droppable" height="39px" width="23px" x="60px" y="198px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="lfinger" name="droppable" height="39px" width="23px" x="22px" y="198px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="neck" name="droppable" height="28px" width="38px" x="165px" y="23px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="cloak" name="droppable" height="43px" width="64px" x="165px" y="67px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="rhand" name="droppable" height="55px" width="64px" x="165px" y="127px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="hands" name="droppable" height="39px" width="64px" x="165px" y="198px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="belt1" name="droppable" height="55px" width="62px" x="15px" y="326px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="belt2" name="droppable" height="55px" width="62px" x="94px" y="326px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="belt3" name="droppable" height="55px" width="62px" x="172px" y="326px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="belt4" name="droppable" height="55px" width="62px" x="15px" y="397px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="belt5" name="droppable" height="55px" width="62px" x="94px" y="397px" visibleToMouse="true" >
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
-			  <control id="belt6" name="droppable" height="55px" width="62px" x="172px" y="397px" visibleToMouse="true">
-				  <effect>
-					 <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
-				  </effect>
-			  </control>
+			<control id="inventory" name="window" style="inventory-window" title="Inventar" width="248px" height="486px" x="400px">
+		  		<panel name="chestpanel" height="83px" width="45px" x="102px" y="67px" childLayout="center">
+		  			<!-- <interact onClick="displayLabel()" /> -->
+			  		<control id="chest" name="droppable" height="100%" width="100%" visibleToMouse="true" align="center" valign="center" childLayout="center">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+					 		<onHover id="testHint" name="hint" hintStyle="illarion-hint" hintText="Hofer wars" hintDelay="300" length="5000"/>
+				  		</effect>
+				   		<interact onClick="createLabel()" />
+			  		</control>
+				  	<control id="head" name="droppable" height="39px" width="45px" x="102px" y="12px" visibleToMouse="true">
+					  	<effect>
+						<onClick name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+					  	</effect>
+				  	</control>
+			  		<control id="legs" name="droppable" height="64px" width="45px" x="102px" y="167px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="feet" name="droppable" height="45px" width="45px" x="102px" y="247px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="lhand" name="droppable" height="55px" width="62px" x="22px" y="127px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="feet" name="droppable" height="45px" width="45px" x="102px" y="247px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="lfinger" name="droppable" height="39px" width="23px" x="22px" y="198px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="rfinger" name="droppable" height="39px" width="23px" x="60px" y="198px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="lfinger" name="droppable" height="39px" width="23px" x="22px" y="198px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="neck" name="droppable" height="28px" width="38px" x="165px" y="23px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="cloak" name="droppable" height="43px" width="64px" x="165px" y="67px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="rhand" name="droppable" height="55px" width="64px" x="165px" y="127px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="hands" name="droppable" height="39px" width="64px" x="165px" y="198px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="belt1" name="droppable" height="55px" width="62px" x="15px" y="326px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="belt2" name="droppable" height="55px" width="62px" x="94px" y="326px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="belt3" name="droppable" height="55px" width="62px" x="172px" y="326px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="belt4" name="droppable" height="55px" width="62px" x="15px" y="397px" visibleToMouse="true">
+				  		<effect>
+					 		<!-- <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/> -->
+					 
+				  		</effect>			  
+			  		</control>
+			  		<control id="belt5" name="droppable" height="55px" width="62px" x="94px" y="397px" visibleToMouse="true" >
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
+			  		<control id="belt6" name="droppable" height="55px" width="62px" x="172px" y="397px" visibleToMouse="true">
+				  		<effect>
+					 		<onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+				  		</effect>
+			  		</control>
 
-			  <control id="myItem" name="draggable" height="55px" width="62px" align="center" valign="center" visibleToMouse="true" childLayout="vertical">
-					<panel width="100%" height="100%" backgroundColor="#ffff" />
-			  </control>
+			  		<control id="myItem" name="draggable" height="55px" width="62px" align="center" valign="center" visibleToMouse="true" childLayout="center">
+							<panel width="100%" height="100%" backgroundColor="#ffff" />
+			  		</control>
 			  
-            </panel>
-		  </control>
+			  		<panel style="illarion-textpanel" width="*" height="30px" x="10px" y="20px" childLayout="center" font="textFont" text="my text is werrry guuuuud">
+			  		 	<control id="myLbl" name="label" text="hello" width="50px" />
+			  		</panel>
+			  	</panel>
+		  	</control>
 		  
 		</layer>
     </screen>

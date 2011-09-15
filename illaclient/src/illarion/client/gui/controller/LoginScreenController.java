@@ -3,6 +3,9 @@ package illarion.client.gui.controller;
 import illarion.client.Login;
 import illarion.common.util.LoadingManager;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyIdCreator;
+import de.lessvoid.nifty.builder.ControlBuilder;
+import de.lessvoid.nifty.builder.LayerBuilder;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.Label;
@@ -13,11 +16,24 @@ import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.tools.SizeValue;
+import de.lessvoid.nifty.effects.impl.Hint;
+import de.lessvoid.nifty.effects.Effect;
+import de.lessvoid.nifty.effects.EffectEventId;
+import de.lessvoid.nifty.loaderv2.types.PanelType;
+import de.lessvoid.nifty.builder.PanelBuilder;
+import de.lessvoid.nifty.builder.EffectBuilder;
+import de.lessvoid.nifty.builder.ScreenBuilder;
+import de.lessvoid.nifty.builder.TextBuilder;
+import de.lessvoid.nifty.loaderv2.NiftyLoader;
+import de.lessvoid.nifty.loaderv2.types.NiftyType;
+
 
 public final class LoginScreenController implements ScreenController, KeyInputHandler {
 
 	private Nifty nifty;
     private Screen screen;
+    private PanelType panel;
     
 	private TextField nameTxt;
 	private TextField passwordTxt;
@@ -57,7 +73,15 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     @Override
     public void onStartScreen() {
+        final Login login = Login.getInstance();
+        login.restoreLoginData();
+        nameTxt.setText(login.getLoginName());
+        passwordTxt.setText(login.getPassword());
+        savePassword.setChecked(login.storePassword());
 
+       /* Element myLabel=screen.findElementByName("testHint");
+        myLabel.setConstraintX(new SizeValue("100px"));
+        myLabel.setConstraintY(new SizeValue("200px"));*/
     }
 
     @Override
@@ -84,6 +108,23 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             return;
         }
     	nifty.gotoScreen("charSelect");
+    }
+   
+    public void createLabel() {
+        PanelBuilder builder = new PanelBuilder() {{
+        	width("200px");
+            height("200px");
+            backgroundColor("#f00f");
+            valignCenter();
+            alignCenter();
+        }};
+        String myX=Integer.toString(nifty.getNiftyMouse().getX()) + "px";
+        String myY=Integer.toString(nifty.getNiftyMouse().getY()) + "px";
+        builder.x(myX);
+        builder.y(myY);
+        Element parent = screen.findElementByName("windows");
+        builder.build(nifty, screen, parent);
+        
     }
     
     public void cancelLogin() {

@@ -1,25 +1,5 @@
-require("base.class")
+-- Teach a rune to the player -- Dem Charakter eine Rune beibringen
 
-module("handler.teachrune", package.seeall)
-
-teachRune = base.class.class(function(tchrune, ply, mtype, rID)
-    tchrune.player=posi;
-    tchrune.magictype=mtype;
-    tchrune.runeID=rID;
-end);
-
-function teachRune:execute()
-
-
-    if (world:isItemOnField(self.pos)==true) then
-        item=world:getItemOnField(self.pos);
-        if (item.id==self.deleteItemId or self.deleteItemId==0) then
-            world:erase(item,1);
-            return 1;
-        else
-            return -2;
-        end
-    else
-        return -1;
-    end
-end
+-- PLAYER
+local MAGICTYPE = INTEGER -- Magic type (0=magery, 1=druidry) -- Magietypus (0=Magie, 1=Druiderei)
+local RUNE = INTEGER -- Rune -- Rune
