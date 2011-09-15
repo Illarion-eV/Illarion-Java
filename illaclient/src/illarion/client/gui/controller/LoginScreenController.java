@@ -73,7 +73,6 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     @Override
     public void onStartScreen() {
-<<<<<<< HEAD
         final Login login = Login.getInstance();
         login.restoreLoginData();
         nameTxt.setText(login.getLoginName());
@@ -83,11 +82,6 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
        /* Element myLabel=screen.findElementByName("testHint");
         myLabel.setConstraintX(new SizeValue("100px"));
         myLabel.setConstraintY(new SizeValue("200px"));*/
-        
-        
-=======
-
->>>>>>> e03234034b8c675d888fbfc5a33b4debf4758a8b
     }
 
     @Override
@@ -115,57 +109,23 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         }
     	nifty.gotoScreen("charSelect");
     }
- /*   
+   
     public void createLabel() {
-        final String hintControl = "nifty-default-hint";
-        final String hintStyle = "illarion-hint";
-        final String hintText = "dynamical hint";
-        final int hintDelay = 0;
-        final int offsetX = 200;
-        final int offsetY = 300;
-
-        // Create new Layer
-        final String hintLayerId = NiftyIdCreator.generate();
-        final String hintPanelId = hintLayerId + "-hint-panel";
-
-        Element myElement = new LayerBuilder(hintLayerId) {{
-          childLayoutAbsoluteInside();
-          visible(false);
-          control(new ControlBuilder(hintPanelId, hintControl) {{
-            parameter("hintText", hintText);
-            if (hintStyle != null) {
-              style(hintStyle);
-            }
-          }});
-        }}.build(nifty, nifty.getCurrentScreen(), nifty.getCurrentScreen().getRootElement());
-
-        layer(new LayerBuilder("content") {{
-        	backgroundColor("#fff0");
-        	childLayoutVertical();
-        	
-        	onStartScreenEffect(new FadeEffectBuilder() {{
-	        	startColor("#fff0");
-	        	endColor("#ffff");
-	        	length(1000);
-	        	startDelay(0);
-	        	inherit(true);
-	        	post(false);
-        	}});
-        	
-	        panel(new PanelBuilder() {{
-	            childLayoutVertical();
-	            backgroundColor("#8001");
-	            paddingLeft("7px");
-	            paddingRight("7px");
-	            paddingTop("4px");
-	            paddingBottom("4px");
-	            width("105px");
-	            onActiveEffect(new EffectBuilder("hint") {{
-	              effectParameter("color", "#0008");
-	        }});
-	    }});
+        PanelBuilder builder = new PanelBuilder() {{
+        	width("200px");
+            height("200px");
+            backgroundColor("#f00f");
+            valignCenter();
+            alignCenter();
+        }};
+        String myX=Integer.toString(nifty.getNiftyMouse().getX()) + "px";
+        String myY=Integer.toString(nifty.getNiftyMouse().getY()) + "px";
+        builder.x(myX);
+        builder.y(myY);
+        Element parent = screen.findElementByName("windows");
+        builder.build(nifty, screen, parent);
         
-    }*/
+    }
     
     public void cancelLogin() {
 //        nifty.closePopup(popupLogin.getId());
