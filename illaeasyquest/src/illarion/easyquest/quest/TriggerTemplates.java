@@ -28,14 +28,14 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 import javolution.util.FastComparator;
-import javolution.util.FastList;
 import javolution.util.FastMap;
+import javolution.util.FastTable;
 
 import illarion.easyquest.Lang;
 
 public class TriggerTemplates {
-    private List<TriggerTemplate> templates;
-    private Map<String, TriggerTemplate> typeMap;
+    private TriggerTemplate[] templates;
+    private final Map<String, TriggerTemplate> typeMap;
 
     private static final TriggerTemplates instance = new TriggerTemplates();
 
@@ -44,8 +44,6 @@ public class TriggerTemplates {
     }
 
     public TriggerTemplates() {
-        templates = new FastList<TriggerTemplate>();
-
         final FastMap<String, TriggerTemplate> localTypeMap =
             new FastMap<String, TriggerTemplate>();
         localTypeMap.setKeyComparator(FastComparator.STRING);
@@ -60,7 +58,7 @@ public class TriggerTemplates {
     }
 
     private List<String> loadFileList() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new FastTable<String>();
         BufferedReader bRead = null;
         try {
             bRead =
@@ -90,6 +88,8 @@ public class TriggerTemplates {
 
     private void load() {
         List<String> templateFiles = loadFileList();
+        FastTable<TriggerTemplate> templateList = FastTable.newInstance();
+        
         if (templateFiles.isEmpty()) {
             System.out.println("Trigger directory does not exist!");
         } else {
@@ -187,7 +187,7 @@ public class TriggerTemplates {
                         .toString());
 
                     if (triggerTemplate.isComplete()) {
-                        templates.add(triggerTemplate);
+                        templateList.add(triggerTemplate);
                         typeMap.put(uniqueName, triggerTemplate);
                     } else {
                         System.out.println("Syntax error in template "
@@ -198,14 +198,17 @@ public class TriggerTemplates {
                 }
             }
         }
+        
+        templates = templateList.toArray(new TriggerTemplate[templateList.size()]);
+        FastTable.recycle(templateList);
     }
 
     public int size() {
-        return templates.size();
+        return templates.length;
     }
 
     public TriggerTemplate getTemplate(int number) {
-        return templates.get(number);
+        return templates[number];
     }
 
     public TriggerTemplate getTemplate(String type) {

@@ -28,24 +28,31 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 import javolution.util.FastComparator;
-import javolution.util.FastList;
 import javolution.util.FastMap;
+import javolution.util.FastTable;
 
 import illarion.easyquest.Lang;
 
 public class HandlerTemplates {
-    private List<HandlerTemplate> templates;
-    private Map<String, HandlerTemplate> typeMap;
+    /**
+     * Internal storage for the templates.
+     */
+    private HandlerTemplate[] templates;
+    
+    /**
+     * Templates array that gets exposed to the rest of the application.
+     */
+    private HandlerTemplate[] publicTemplates;
+    
+    private final Map<String, HandlerTemplate> typeMap;
 
-    private static final HandlerTemplates instance = new HandlerTemplates();
+    private static final HandlerTemplates INSTANCE = new HandlerTemplates();
 
     public static HandlerTemplates getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
-    public HandlerTemplates() {
-        templates = new FastList<HandlerTemplate>();
-        
+    public HandlerTemplates() {        
         final FastMap<String, HandlerTemplate> localTypeMap =
             new FastMap<String, HandlerTemplate>();
         localTypeMap.setKeyComparator(FastComparator.STRING);
@@ -60,7 +67,7 @@ public class HandlerTemplates {
     }
 
     private List<String> loadFileList() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new FastTable<String>();
         BufferedReader bRead = null;
         try {
             bRead =
@@ -88,6 +95,8 @@ public class HandlerTemplates {
 
     private void load() {
         List<String> templateFiles = loadFileList();
+        FastTable<HandlerTemplate> templateList = FastTable.newInstance();
+        
         if (templateFiles.isEmpty()) {
             System.out.println("Handler directory does not exist!");
         } else {
@@ -138,7 +147,7 @@ public class HandlerTemplates {
                     }
 
                     if (handlerTemplate.isComplete()) {
-                        templates.add(handlerTemplate);
+                        templateList.add(handlerTemplate);
                         typeMap.put(uniqueName, handlerTemplate);
                     } else {
                         System.out.println("Syntax error in template "
@@ -149,14 +158,18 @@ public class HandlerTemplates {
                 }
             }
         }
+        
+        templates = templateList.toArray(new HandlerTemplate[templateList.size()]);
+        publicTemplates = templates.clone();
+        FastTable.recycle(templateList);
     }
 
     public int size() {
-        return templates.size();
+        return templates.length;
     }
 
     public HandlerTemplate getTemplate(int number) {
-        return templates.get(number);
+        return templates[number];
     }
 
     public HandlerTemplate getTemplate(String type) {
@@ -164,6 +177,7 @@ public class HandlerTemplates {
     }
 
     public HandlerTemplate[] getTemplates() {
-        return templates.toArray(new HandlerTemplate[0]);
+        System.arraycopy(templates, 0, publicTemplates, 0, templates.length);
+        return publicTemplates;
     }
 }
