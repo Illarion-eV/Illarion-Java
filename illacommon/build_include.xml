@@ -212,51 +212,11 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<!-- http://jogamp.org/ -->
     <property name="jogl.dir" location="${common}/lib/jogl"/>
 	<patternset id="jogl.pattern">
-		<include name="jogl*.jar" />
-		<exclude name="*test*" />
-		<exclude name="*sdk*" />
-		<exclude name="*all*" />
-		<exclude name="*natives*" />
+		<include name="jogl.all.jar" />
+        <include name="gluegen-rt.jar" />
 	</patternset>
 	<fileset id="jogl" dir="${jogl.dir}">
 		<patternset refid="jogl.pattern" />
-	</fileset>
-
-	<patternset id="joal.pattern">
-		<include name="joal*.jar" />
-		<exclude name="*natives*" />
-	</patternset>
-	<fileset id="newt" dir="${common}/lib/joal">
-		<patternset refid="joal.pattern" />
-	</fileset>
-
-	<property name="gluegen.dir" location="${common}/lib/gluegen"/>
-	<patternset id="gluegen.pattern">
-		<include name="gluegen*.jar" />
-		<exclude name="*natives*" />
-	</patternset>
-	<fileset id="gluegen" dir="${gluegen.dir}">
-		<patternset refid="gluegen.pattern" />
-	</fileset>
-
-    <property name="nativewindow.dir" location="${common}/lib/nativewindow"/>
-	<patternset id="nativewindow.pattern">
-		<include name="nativewindow*.jar" />
-        <exclude name="*all*" />
-		<exclude name="*natives*" />
-	</patternset>
-	<fileset id="nativewindow" dir="${nativewindow.dir}">
-		<patternset refid="nativewindow.pattern" />
-	</fileset>
-
-    <property name="newt.dir" location="${common}/lib/newt"/>
-	<patternset id="newt.pattern">
-		<include name="newt*.jar" />
-        <exclude name="*all*" />
-		<exclude name="*natives*" />
-	</patternset>
-	<fileset id="newt" dir="${newt.dir}">
-		<patternset refid="newt.pattern" />
 	</fileset>
 
 	<!-- GNU Trove 3.0.0 -->
@@ -395,8 +355,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<fileset refid="trove" />
                 <fileset refid="lwjgl" />
                 <fileset refid="jogl" />
-                <fileset refid="gluegen" />
-                <fileset refid="nativewindow" />
 			</classpath>
 		</taskdef>
 	</target>

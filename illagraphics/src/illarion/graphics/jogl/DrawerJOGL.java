@@ -86,12 +86,8 @@ public final class DrawerJOGL implements Drawer {
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2;
-            if (gl.hasGLSL()) {
-                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-            } else {
-                gl2 = gl.getGL2ES1();
-            }
+            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWDOT);
             gl2.glPointSize(size / 2);
@@ -123,12 +119,7 @@ public final class DrawerJOGL implements Drawer {
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2;
-            if (gl.hasGLSL()) {
-                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-            } else {
-                gl2 = gl.getGL2ES1();
-            }
+            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWLINE);
             gl2.glLineWidth(width);
@@ -169,12 +160,7 @@ public final class DrawerJOGL implements Drawer {
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2;
-            if (gl.hasGLSL()) {
-                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-            } else {
-                gl2 = gl.getGL2ES1();
-            }
+            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWPOLY);
             color.setActiveColor();
@@ -213,12 +199,7 @@ public final class DrawerJOGL implements Drawer {
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2;
-            if (gl.hasGLSL()) {
-                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-            } else {
-                gl2 = gl.getGL2ES1();
-            }
+            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWPOLY);
             color.setActiveColor();
@@ -252,12 +233,7 @@ public final class DrawerJOGL implements Drawer {
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2;
-            if (gl.hasGLSL()) {
-                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-            } else {
-                gl2 = gl.getGL2ES1();
-            }
+            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();
@@ -296,12 +272,7 @@ public final class DrawerJOGL implements Drawer {
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2;
-            if (gl.hasGLSL()) {
-                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-            } else {
-                gl2 = gl.getGL2ES1();
-            }
+            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHERCOLOR);
 
@@ -345,12 +316,7 @@ public final class DrawerJOGL implements Drawer {
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2;
-            if (gl.hasGLSL()) {
-                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-            } else {
-                gl2 = gl.getGL2ES1();
-            }
+            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();
@@ -398,12 +364,7 @@ public final class DrawerJOGL implements Drawer {
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2;
-            if (gl.hasGLSL()) {
-                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-            } else {
-                gl2 = gl.getGL2ES1();
-            }
+            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();
@@ -464,12 +425,7 @@ public final class DrawerJOGL implements Drawer {
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2;
-            if (gl.hasGLSL()) {
-                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-            } else {
-                gl2 = gl.getGL2ES1();
-            }
+            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();
@@ -528,12 +484,7 @@ public final class DrawerJOGL implements Drawer {
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2;
-            if (gl.hasGLSL()) {
-                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-            } else {
-                gl2 = gl.getGL2ES1();
-            }
+            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();
@@ -561,12 +512,7 @@ public final class DrawerJOGL implements Drawer {
         final GL gl = GLU.getCurrentGL();
 
         if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2;
-            if (gl.hasGLSL()) {
-                gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-            } else {
-                gl2 = gl.getGL2ES1();
-            }
+            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHER);
             color.setActiveColor();

@@ -378,33 +378,24 @@ public final class DisplayNewtAWT extends NewtCanvasAWT implements Display,
             drawable.getContext().makeCurrent();
             releaseContext = true;
         }
-        GL2ES1 gl = null;
 
-        if (drawable.getGLProfile().hasGLSL()) {
-            gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
-        } else if (drawable.getGLProfile().isGL2ES1()) {
-            gl = drawable.getGL().getGL2ES1();
-        } else {
+        try {
+            GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL());
+
+            gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
+            gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+            gl.glLoadIdentity();
+
+            gl.glOrtho(0, drawable.getWidth(), drawable.getHeight(), 0, -9999,
+                9999);
+            // GLU.createGLU().gluOrtho2D(0, drawable.getWidth(), 0,
+            // drawable.getHeight());
+            gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+            gl.glLoadIdentity();
+        } finally {
             if (releaseContext) {
                 drawable.getContext().release();
             }
-            throw new GraphicsJOGLException(
-                "Invalid GL profile. Failed to setup Viewport.",
-                drawable.getGLProfile());
-        }
-
-        gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
-        gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-        gl.glLoadIdentity();
-
-        gl.glOrtho(0, drawable.getWidth(), drawable.getHeight(), 0, -9999, 9999);
-//        GLU.createGLU().gluOrtho2D(0, drawable.getWidth(), 0,
-//            drawable.getHeight());
-        gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-        gl.glLoadIdentity();
-
-        if (releaseContext) {
-            drawable.getContext().release();
         }
     }
 

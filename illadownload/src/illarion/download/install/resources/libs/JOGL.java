@@ -49,11 +49,6 @@ public final class JOGL implements LibraryResource {
     private Collection<File> classpath;
 
     /**
-     * The dependencies of this resource.
-     */
-    private Collection<Resource> dependencies;
-
-    /**
      * The resources that are needed to be downloaded for this class.
      */
     private Collection<URL> resources;
@@ -90,37 +85,8 @@ public final class JOGL implements LibraryResource {
             final Collection<File> cp = new ArrayList<File>();
             final String dataDir =
                 LibraryDirectory.getInstance().getDirectory();
-            cp.add(new File(dataDir, "jogl.awt.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "jogl.core.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "jogl.egl.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "jogl.gldesktop.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "jogl.gles1.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "jogl.gles2.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "jogl.util.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "jogl.util.awt.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "jogl.util.fixedfuncemu.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "jogl.util.gldesktop.jar")); //$NON-NLS-1$
-
-            cp.add(new File(dataDir, "nativewindow.awt.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "nativewindow.core.jar")); //$NON-NLS-1$
-
-            cp.add(new File(dataDir, "newt.awt.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "newt.core.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "newt.event.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "newt.ogl.jar")); //$NON-NLS-1$
-
-            if (OSDetection.isWindows()) {
-                cp.add(new File(dataDir, "jogl.os.win.jar")); //$NON-NLS-1$
-                cp.add(new File(dataDir, "nativewindow.os.win.jar")); //$NON-NLS-1$
-                cp.add(new File(dataDir, "newt.os.win.jar")); //$NON-NLS-1$
-            } else if (OSDetection.isLinux()) {
-                cp.add(new File(dataDir, "jogl.os.x11.jar")); //$NON-NLS-1$
-                cp.add(new File(dataDir, "nativewindow.os.x11.jar")); //$NON-NLS-1$
-                cp.add(new File(dataDir, "newt.os.x11.jar")); //$NON-NLS-1$
-            } else if (OSDetection.isMacOSX()) {
-                cp.add(new File(dataDir, "jogl.os.osx.jar")); //$NON-NLS-1$
-                cp.add(new File(dataDir, "newt.os.osx.jar")); //$NON-NLS-1$
-            }
+            cp.add(new File(dataDir, "gluegen-rt.jar")); //$NON-NLS-1$
+            cp.add(new File(dataDir, "jogl.all.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -132,13 +98,7 @@ public final class JOGL implements LibraryResource {
      */
     @Override
     public Collection<Resource> getDependencies() {
-        if (dependencies == null) {
-            final Collection<Resource> dep = new ArrayList<Resource>();
-            dep.add(Gluegen.getInstance());
-
-            dependencies = dep;
-        }
-        return dependencies;
+        return null;
     }
 
     /**
@@ -226,6 +186,7 @@ public final class JOGL implements LibraryResource {
             }
 
             final Collection<String> vmArgs = new ArrayList<String>();
+            vmArgs.add("-Dillarion.components.avaiable.gluegen=true"); //$NON-NLS-1$
             vmArgs.add("-Dillarion.components.avaiable.jogl=true"); //$NON-NLS-1$
             vmArgs.add("-Dillarion.components.avaiable.nativewindow=true"); //$NON-NLS-1$
             vmArgs.add("-Dillarion.components.avaiable.newt=true"); //$NON-NLS-1$

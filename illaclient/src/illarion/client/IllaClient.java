@@ -762,7 +762,8 @@ public final class IllaClient {
             + System.getProperty("os.arch"));
         
         
-        java.util.logging.Logger.getLogger("de.lessvoid.nifty").setLevel(java.util.logging.Level.SEVERE);
+        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
+        java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
         java.util.logging.Logger.getLogger("javolution").setLevel(java.util.logging.Level.SEVERE);
     }
 

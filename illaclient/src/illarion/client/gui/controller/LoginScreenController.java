@@ -73,12 +73,6 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     @Override
     public void onStartScreen() {
-        final Login login = Login.getInstance();
-        login.restoreLoginData();
-        nameTxt.setText(login.getLoginName());
-        passwordTxt.setText(login.getPassword());
-        savePassword.setChecked(login.storePassword());
-
        /* Element myLabel=screen.findElementByName("testHint");
         myLabel.setConstraintX(new SizeValue("100px"));
         myLabel.setConstraintY(new SizeValue("200px"));*/

@@ -28,6 +28,7 @@ import java.nio.FloatBuffer;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
+import javax.media.opengl.GLContext;
 import javax.media.opengl.glu.GLU;
 
 import com.jogamp.opengl.util.glsl.fixedfunc.FixedFuncUtil;
@@ -108,19 +109,11 @@ public final class TextureRenderPointer extends AbstractTextureRender {
         final float width, final float height, final TextureJOGL texture,
         final SpriteColor color, final boolean mirror, final float rotation) {
 
-        final GL2ES1 gl;
-
-        if (GLU.getCurrentGL().hasGLSL()) {
-            gl = FixedFuncUtil.getFixedFuncImpl(GLU.getCurrentGL());
-        } else {
-            gl = GLU.getCurrentGL().getGL2ES1();
-        }
+        final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(GLContext.getCurrentGL());
 
         DriverSettingsJOGL.getInstance().enableMode(gl,
             DriverSettingsJOGL.Modes.DRAWTEXTUREPOINTER);
         texture.enable();
-//        DriverSettingsJOGL.getInstance().bindTexture(gl,
-//            texture.getTextureID());
 
         color.setActiveColor();
         gl.glPushMatrix();

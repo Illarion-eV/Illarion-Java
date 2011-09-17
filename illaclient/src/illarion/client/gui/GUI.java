@@ -75,6 +75,11 @@ public final class GUI {
 
     public void prepare() {
         niftyGui.fromXmlWithoutStartScreen("illarion/client/gui/xml/gui.xml");
+        niftyGui.addXml("illarion/client/gui/xml/login.xml");
+        niftyGui.addXml("illarion/client/gui/xml/options.xml");
+        niftyGui.addXml("illarion/client/gui/xml/charselect.xml");
+        niftyGui.addXml("illarion/client/gui/xml/loading.xml");
+        niftyGui.addXml("illarion/client/gui/xml/gamescreen.xml");
     }
 
     public void render(final boolean clearScreen) {

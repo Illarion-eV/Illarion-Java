@@ -10,7 +10,7 @@ class GuiRenderTask implements RenderTask {
     
     @Override
     public boolean render(int delta) {
-        GUI.getInstance().render(true);
+        GUI.getInstance().render(false);
         return GUI.getInstance().getSelfRendering();
     }
 

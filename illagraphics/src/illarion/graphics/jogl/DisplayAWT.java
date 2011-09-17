@@ -24,6 +24,7 @@ import illarion.graphics.RenderTask;
 import java.awt.Color;
 import java.awt.Component;
 
+import javax.media.opengl.DebugGL2ES1;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2ES1;
 import javax.media.opengl.GLAutoDrawable;
@@ -87,8 +88,6 @@ public final class DisplayAWT extends GLCanvas implements Display,
         manager =
             (RenderManagerJOGL) Graphics.getInstance().getRenderManager();
         addGLEventListener(this);
-        setAutoSwapBufferMode(true);
-        setBackground(Color.black);
 
         doubleBuffered = false;
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -138,6 +137,7 @@ public final class DisplayAWT extends GLCanvas implements Display,
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         manager.draw();
+        swapBuffers();
     }
 
     /**
@@ -253,8 +253,8 @@ public final class DisplayAWT extends GLCanvas implements Display,
             return;
         }
         displayOpenGLStatusInfo();
-        // drawable.setGL(new DebugGL(drawable.getGL()));
         setupViewport(drawable);
+        setAutoSwapBufferMode(false);
 
         boolean releaseContext = false;
         if (GLContext.getCurrent() == null) {
@@ -266,8 +266,8 @@ public final class DisplayAWT extends GLCanvas implements Display,
         gl.glEnable(GL.GL_BLEND);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-        // getContext().setSynchronized(true);
-        gl.setSwapInterval(0); // disable vsync
+        getContext().setSynchronized(true);
+        gl.setSwapInterval(1); // disable vsync
 
         if (releaseContext) {
             drawable.getContext().release();
@@ -396,32 +396,24 @@ public final class DisplayAWT extends GLCanvas implements Display,
             drawable.getContext().makeCurrent();
             releaseContext = true;
         }
-        GL2ES1 gl = null;
 
-        if (drawable.getGLProfile().hasGLSL()) {
-            gl = FixedFuncUtil.getFixedFuncImpl(drawable.getGL());
-        } else if (drawable.getGLProfile().isGL2ES1()) {
-            gl = drawable.getGL().getGL2ES1();
-        } else {
+        try {
+            final GL2ES1 gl =
+                FixedFuncUtil.wrapFixedFuncEmul(drawable.getGL());
+
+            gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
+            gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+            gl.glLoadIdentity();
+            gl.glOrtho(0, drawable.getWidth(), drawable.getHeight(), 0, -9999,
+                9999);
+            // GLU.createGLU().gluOrtho2D(0, drawable.getWidth(), 0,
+            // drawable.getHeight());
+            gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+            gl.glLoadIdentity();
+        } finally {
             if (releaseContext) {
                 drawable.getContext().release();
             }
-            throw new GraphicsJOGLException(
-                "Invalid GL profile. Failed to setup Viewport.",
-                drawable.getGLProfile());
-        }
-
-        gl.glViewport(0, 0, drawable.getWidth(), drawable.getHeight());
-        gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-        gl.glLoadIdentity();
-        gl.glOrtho(0, drawable.getWidth(), drawable.getHeight(), 0, -9999, 9999);
-//        GLU.createGLU().gluOrtho2D(0, drawable.getWidth(), 0,
-//            drawable.getHeight());
-        gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-        gl.glLoadIdentity();
-
-        if (releaseContext) {
-            drawable.getContext().release();
         }
     }
 

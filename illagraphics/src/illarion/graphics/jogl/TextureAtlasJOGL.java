@@ -35,11 +35,9 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -47,9 +45,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GL2ES1;
-import javax.media.opengl.GL2GL3;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
@@ -135,31 +130,6 @@ public final class TextureAtlasJOGL implements TextureAtlas {
         new FastTable<TextureAtlasJOGL>();
 
     /**
-     * This is the string for the extension check that sees if the OpenGL 1.3
-     * extension is available on this system.
-     */
-    @SuppressWarnings("nls")
-    private static final String GL_EXTENSION_OPENGL13 = "GL_VERSION_1_3";
-
-    /**
-     * This is the string for the extension check that sees if the OpenGL 1.4
-     * extension is available on this system.
-     */
-    @SuppressWarnings("nls")
-    private static final String GL_EXTENSION_OPENGL14 = "GL_VERSION_1_4";
-
-    /**
-     * The buffer that is used to get the generated texture IDs.
-     */
-    private static final IntBuffer texIDBuffer;
-
-    static {
-        texIDBuffer =
-            ByteBuffer.allocateDirect((Integer.SIZE / 8) * 4)
-                .order(ByteOrder.nativeOrder()).asIntBuffer();
-    }
-
-    /**
      * This removes all texture data from the video memory. After calling this
      * function, no texture can be rendered anymore.
      */
@@ -179,24 +149,6 @@ public final class TextureAtlasJOGL implements TextureAtlas {
     protected static ByteBuffer getByteBuffer(final int size) {
         return ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
     }
-
-    /**
-     * Get a new texture ID from the OpenGL system. This also registers the
-     * texture in the openGL environment, so it can be used right away.
-     * 
-     * @return the generated openGL texture ID
-     */
-    private static int getNewTextureID() {
-        texIDBuffer.rewind();
-        final GL gl = GLU.getCurrentGL();
-        gl.glGenTextures(1, texIDBuffer);
-        return texIDBuffer.get(0);
-    }
-
-    /**
-     * The internal format of this texture atlas.
-     */
-    private int internalFormat = 0;
 
     /**
      * Flag that makes the texture atlas not removing the texture data after the
@@ -227,11 +179,6 @@ public final class TextureAtlasJOGL implements TextureAtlas {
     private String ownFileName;
 
     /**
-     * The format of the original source data of this texture.
-     */
-    private int sourceFormat = 0;
-
-    /**
      * A buffer of the already loaded textures to avoid that a single graphic is
      * loaded into multiple textures.
      */
@@ -251,12 +198,6 @@ public final class TextureAtlasJOGL implements TextureAtlas {
      * The height of the texture atlas that is loaded in this instance.
      */
     private int textureHeight;
-
-    /**
-     * The OpenGL ID of this texture atlas. When using this texture this ID must
-     * be the active openGL texture ID.
-     */
-    private int textureID = 0;
 
     /**
      * The type of the texture that is used.
@@ -325,7 +266,7 @@ public final class TextureAtlasJOGL implements TextureAtlas {
             throw new IllegalStateException("No texturedata loaded");
         }
 
-        texture.bind();
+        texture.bind(GLContext.getCurrentGL());
     }
 
     /**
@@ -746,15 +687,6 @@ public final class TextureAtlasJOGL implements TextureAtlas {
     }
 
     /**
-     * Set the texture ID to a new value.
-     * 
-     * @param id the new value of the texture ID
-     */
-    protected final void setTextureID(final int id) {
-        textureID = id;
-    }
-
-    /**
      * Set the image data of the texture. This is only needed in case the
      * texture receives its data not from a texture file. The BufferedImage
      * loaded into this function is automatically converted in the best format
@@ -882,7 +814,7 @@ public final class TextureAtlasJOGL implements TextureAtlas {
         final GL gl = GLU.getCurrentGL();
         DriverSettingsJOGL.getInstance().enableMode(gl,
             DriverSettingsJOGL.Modes.DRAWTEXTURE);
-        texture.enable();
+        texture.enable(gl);
         //DriverSettingsJOGL.getInstance().bindTexture(gl, getTextureID());
         gl.glTexSubImage2D(GL.GL_TEXTURE_2D, 0, x, y, w, h, GL.GL_RGBA,
             GL.GL_UNSIGNED_BYTE, imageData);
@@ -929,8 +861,9 @@ public final class TextureAtlasJOGL implements TextureAtlas {
 
     @Override
     public void enable() {
-        texture.enable();
-        texture.bind();
+        final GL gl = GLContext.getCurrentGL();
+        texture.enable(gl);
+        texture.bind(gl);
     }
 
     @Override

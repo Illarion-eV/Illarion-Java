@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd
+                           http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+	<useStyles filename="nifty-illarion-style.xml" />
+	<useControls filename="nifty-default-controls.xml" />
+
+	<screen id="login"
+		controller="illarion.client.gui.controller.LoginScreenController">
+		<layer id="layer" backgroundColor="#000" childLayout="center">
+
+			<panel height="300px" width="400px" align="center" valign="center"
+				backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
+				<image filename="guiSprite://illarion_title" imageMode="normal"
+					align="center" />
+				<panel height="30px" />
+				<panel width="400px" align="center" valign="center"
+					backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
+					<panel childLayout="horizontal" visibleToMouse="true">
+						<panel childLayout="center" visibleToMouse="false" width="130px"
+							height="30px">
+							<text font="textFont" text="Account Name:" />
+						</panel>
+						<control name="textfield" id="nameTxt" maxLength="20" />
+					</panel>
+
+					<panel childLayout="horizontal" visibleToMouse="true">
+						<panel childLayout="center" visibleToMouse="false" width="130px"
+							height="30px">
+							<text font="textFont" text="Password:" />
+						</panel>
+						<control name="textfield" id="passwordTxt" maxLength="20"
+							passwordChar="•" />
+					</panel>
+
+					<panel height="15px" />
+
+					<panel childLayout="center" visibleToMouse="true">
+						<panel childLayout="horizontal" visibleToMouse="true" align="center"
+							height="30px">
+							<control name="label" text="Passwort merken" align="center" />
+							<panel width="10px" align="center" />
+							<control id="savePassword" name="checkbox" align="center" />
+						</panel>
+					</panel>
+
+					<panel height="30px" />
+					<panel childLayout="horizontal" visibleToMouse="true">
+						<panel width="90px" height="35px" />
+						<control id="loginBtn" name="illaButton" label="Einloggen"
+							width="100px" height="35px">
+							<interact onRelease="login()" />
+						</control>
+						<panel width="20px" height="35px" />
+						<control id="optionBtn" name="illaButton" label="Optionen"
+							width="100px" height="35px">
+							<interact onRelease="options()" />
+						</control>
+					</panel>
+				</panel>
+
+				<effect>
+					<onStartScreen name="fade" start="#00" end="#ff"
+						inherit="true" />
+					<onEndScreen name="fade" start="#ff" end="#00" length="500"
+						inherit="true" />
+				</effect>
+			</panel>
+		</layer>
+	</screen>
+</nifty>

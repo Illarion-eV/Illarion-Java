@@ -68,96 +68,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_gluegen" description="prepare the GLUEGEN bundle" depends="check_optional_dirs,init_libs,buildTasks,native_build_pattern" if="keys.exist">
-		<patternset id="gluegen.natives">
-			<include name="gluegen-rt-natives*.jar" />
-		</patternset>
-
-		<resourceprepare targetdir="${signedlibs}" usepack200="true">
-			<fileset refid="gluegen" />
-			<fileset dir="${gluegen.dir}">
-				<patternset refid="gluegen.natives" />
-			</fileset>
-		</resourceprepare>
-
-		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
-			<path>
-				<fileset dir="${signedlibs}">
-					<patternset refid="gluegen.pattern" />
-				</fileset>
-				<fileset dir="${signedlibs}">
-					<patternset refid="gluegen.natives" />
-				</fileset>
-			</path>
-		</signjar>
-
-		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
-			<path>
-				<fileset dir="${signedlibs}">
-					<patternset refid="gluegen.pattern" />
-				</fileset>
-				<fileset dir="${signedlibs}">
-					<patternset refid="gluegen.natives" />
-				</fileset>
-			</path>
-		</verifyjar>
-
-		<resourcebuild target="${setuplib}/gluegen-windows-i586.illares" usepack200="true">
-			<fileset dir="${signedlibs}">
-				<patternset refid="gluegen.pattern" />
-				<patternset refid="only.windows.32" />
-			</fileset>
-			<nativefileset dir="${signedlibs}">
-				<patternset refid="gluegen.natives" />
-				<patternset refid="only.windows.32" />
-			</nativefileset>
-		</resourcebuild>
-
-		<resourcebuild target="${setuplib}/gluegen-windows-amd64.illares" usepack200="true">
-			<fileset dir="${signedlibs}">
-				<patternset refid="gluegen.pattern" />
-				<patternset refid="only.windows.64" />
-			</fileset>
-			<nativefileset dir="${signedlibs}">
-				<patternset refid="gluegen.natives" />
-				<patternset refid="only.windows.64" />
-			</nativefileset>
-		</resourcebuild>
-
-		<resourcebuild target="${setuplib}/gluegen-linux-i586.illares" usepack200="true">
-			<fileset dir="${signedlibs}">
-				<patternset refid="gluegen.pattern" />
-				<patternset refid="only.linux.32" />
-			</fileset>
-			<nativefileset dir="${signedlibs}">
-				<patternset refid="gluegen.natives" />
-				<patternset refid="only.linux.32" />
-			</nativefileset>
-		</resourcebuild>
-
-		<resourcebuild target="${setuplib}/gluegen-linux-amd64.illares" usepack200="true">
-			<fileset dir="${signedlibs}">
-				<patternset refid="gluegen.pattern" />
-				<patternset refid="only.linux.64" />
-			</fileset>
-			<nativefileset dir="${signedlibs}">
-				<patternset refid="gluegen.natives" />
-				<patternset refid="only.linux.64" />
-			</nativefileset>
-		</resourcebuild>
-
-		<resourcebuild target="${setuplib}/gluegen-macosx-universal.illares" usepack200="true">
-			<fileset dir="${signedlibs}">
-				<patternset refid="gluegen.pattern" />
-				<patternset refid="only.macosx" />
-			</fileset>
-			<nativefileset dir="${signedlibs}">
-				<patternset refid="gluegen.natives" />
-				<patternset refid="only.macosx" />
-			</nativefileset>
-		</resourcebuild>
-	</target>
-
 	<target name="prepare_javolution" description="prepare the JAVOLUTION bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="javolution" />
@@ -188,34 +98,21 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 
 	<target name="prepare_jogl" description="prepare the JOGL bundle"  depends="check_optional_dirs,init_libs,buildTasks,native_build_pattern" if="keys.exist">
 		<patternset id="jogl.natives">
-			<include name="jogl-natives*.jar" />
-			<include name="nativewindow-natives*.jar" />
-			<include name="newt-natives*.jar" />
+            <include name="gluegen-rt-natives*.jar" />
+			<include name="jogl-all-natives*.jar" />
 		</patternset>
 
 		<delete>
 			<fileset dir="${signedlibs}">
-				<include name="jogl.jar"/>
-				<include name="nativewindow.jar"/>
-				<include name="newt.jar"/>
-				<include name="jogl*.jar"/>
-				<include name="nativewindow*.jar"/>
-				<include name="newt*.jar"/>
+                <include name="gluegen-rt.jar"/>
+				<include name="jogl.all.jar"/>
 			</fileset>
 		</delete>
 
 
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="jogl" />
-			<fileset refid="nativewindow" />
-			<fileset refid="newt" />
 			<fileset dir="${jogl.dir}">
-				<patternset refid="jogl.natives" />
-			</fileset>
-			<fileset dir="${nativewindow.dir}">
-				<patternset refid="jogl.natives" />
-			</fileset>
-			<fileset dir="${newt.dir}">
 				<patternset refid="jogl.natives" />
 			</fileset>
 		</resourceprepare>
@@ -224,8 +121,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<path>
 				<fileset dir="${signedlibs}">
 					<patternset refid="jogl.pattern" />
-					<patternset refid="nativewindow.pattern" />
-					<patternset refid="newt.pattern" />
 				</fileset>
 				<fileset dir="${signedlibs}">
 					<patternset refid="jogl.natives" />
@@ -237,8 +132,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<path>
 				<fileset dir="${signedlibs}">
 					<patternset refid="jogl.pattern" />
-					<patternset refid="nativewindow.pattern" />
-					<patternset refid="newt.pattern" />
 				</fileset>
 				<fileset dir="${signedlibs}">
 					<patternset refid="jogl.natives" />
@@ -249,8 +142,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<resourcebuild target="${setuplib}/jogl-windows-i586.illares" usepack200="true">
 			<fileset dir="${signedlibs}">
 				<patternset refid="jogl.pattern" />
-				<patternset refid="nativewindow.pattern" />
-				<patternset refid="newt.pattern" />
 				<patternset refid="only.windows.32" />
 			</fileset>
 			<nativefileset dir="${signedlibs}">
@@ -262,8 +153,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<resourcebuild target="${setuplib}/jogl-windows-amd64.illares" usepack200="true">
 			<fileset dir="${signedlibs}">
 				<patternset refid="jogl.pattern" />
-				<patternset refid="nativewindow.pattern" />
-				<patternset refid="newt.pattern" />
 				<patternset refid="only.windows.64" />
 			</fileset>
 			<nativefileset dir="${signedlibs}">
@@ -275,8 +164,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<resourcebuild target="${setuplib}/jogl-linux-i586.illares" usepack200="true">
 			<fileset dir="${signedlibs}">
 				<patternset refid="jogl.pattern" />
-				<patternset refid="nativewindow.pattern" />
-				<patternset refid="newt.pattern" />
 				<patternset refid="only.linux.32" />
 			</fileset>
 			<nativefileset dir="${signedlibs}">
@@ -288,8 +175,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<resourcebuild target="${setuplib}/jogl-linux-amd64.illares" usepack200="true">
 			<fileset dir="${signedlibs}">
 				<patternset refid="jogl.pattern" />
-				<patternset refid="nativewindow.pattern" />
-				<patternset refid="newt.pattern" />
 				<patternset refid="only.linux.64" />
 			</fileset>
 			<nativefileset dir="${signedlibs}">
@@ -301,8 +186,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<resourcebuild target="${setuplib}/jogl-macosx-universal.illares" usepack200="true">
 			<fileset dir="${signedlibs}">
 				<patternset refid="jogl.pattern" />
-				<patternset refid="nativewindow.pattern" />
-				<patternset refid="newt.pattern" />
 				<patternset refid="only.macosx" />
 			</fileset>
 			<nativefileset dir="${signedlibs}">

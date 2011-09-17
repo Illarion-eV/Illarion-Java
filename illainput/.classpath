@@ -4,18 +4,11 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illacommon"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illagraphics"/>
-	<classpathentry kind="lib" path="/illacommon/lib/gluegen/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="/illacommon/lib/javolution/javolution.jar" sourcepath="/illacommon/lib/javolution/javolution-sources.jar"/>
 	<classpathentry kind="lib" path="/illacommon/lib/lwjgl/lwjgl_util.jar"/>
-	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.awt.jar"/>
-	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.core.jar"/>
-	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.event.jar"/>
-	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.hw.broadcomegl.jar"/>
-	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.hw.intelgdl.jar"/>
-	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.ogl.jar"/>
-	<classpathentry kind="lib" path="/illacommon/lib/newt/newt.os.win.jar"/>
 	<classpathentry kind="lib" path="/illacommon/lib/trove/trove.jar" sourcepath="/illacommon/lib/trove/trove-src.zip"/>
 	<classpathentry kind="lib" path="/illacommon/lib/log4j/log4j.jar"/>
 	<classpathentry kind="lib" path="/illacommon/lib/lwjgl/lwjgl.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/jogl/jogl.all.jar" sourcepath="/illacommon/lib/jogl/jogl-java-src.zip"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

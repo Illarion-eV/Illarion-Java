@@ -154,12 +154,7 @@ public final class SpriteColorJOGL implements Cloneable, SpriteColor {
             return;
         }
 
-        final GL2ES1 gl2;
-        if (gl.hasGLSL()) {
-            gl2 = FixedFuncUtil.getFixedFuncImpl(gl);
-        } else {
-            gl2 = gl.getGL2ES1();
-        }
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
         gl2.glColor4f(getRedf(), getGreenf(), getBluef(), getAlphaf());
     }    /**
      * Value of the alpha value of the color. 0 is fully transparent,

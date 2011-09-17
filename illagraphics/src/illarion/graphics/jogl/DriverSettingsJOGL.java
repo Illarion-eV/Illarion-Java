@@ -56,7 +56,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisable(GL2ES1.GL_POINT_SMOOTH);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
             }
@@ -67,7 +67,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 final int quality = Graphics.getInstance().getQuality();
 
                 if (quality >= Graphics.QUALITY_NORMAL) {
@@ -94,7 +94,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisable(GL.GL_LINE_SMOOTH);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
             }
@@ -105,7 +105,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 final int quality = Graphics.getInstance().getQuality();
                 if (quality >= Graphics.QUALITY_NORMAL) {
                     gl.glEnable(GL.GL_LINE_SMOOTH);
@@ -132,7 +132,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
             }
 
@@ -142,7 +142,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
             }
         }),
@@ -159,7 +159,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisableClientState(GLPointerFunc.GL_COLOR_ARRAY);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
             }
@@ -170,7 +170,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glEnableClientState(GLPointerFunc.GL_COLOR_ARRAY);
                 gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
             }
@@ -186,7 +186,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisable(GL2GL3.GL_POLYGON_SMOOTH);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
             }
@@ -197,7 +197,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 final int quality = Graphics.getInstance().getQuality();
                 if (quality == Graphics.QUALITY_MAX) {
                     if (gl.isGL2()) {
@@ -236,7 +236,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisable(GL.GL_TEXTURE_2D);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
                 gl.glDisableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
@@ -248,7 +248,7 @@ public final class DriverSettingsJOGL {
                     return;
                 }
 
-                final GL2ES1 gl = getGL2ES1(usedGL);
+                final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glEnable(GL.GL_TEXTURE_2D);
                 gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
                 gl.glEnableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
@@ -320,24 +320,6 @@ public final class DriverSettingsJOGL {
      */
     private static final DriverSettingsJOGL INSTANCE =
         new DriverSettingsJOGL();
-
-    /**
-     * This helper function is used to get a GL2ES1 instance from a normal GL
-     * reference in case its possible in any way.
-     * 
-     * @param gl the reference to the openGL interface
-     * @return the GL2ES1 instance its case its possible to transform the
-     *         parameter into one.
-     */
-    protected static GL2ES1 getGL2ES1(final GL gl) {
-        if (gl.hasGLSL()) {
-            return FixedFuncUtil.getFixedFuncImpl(gl);
-        } else if (gl.isGL2ES1()) {
-            return gl.getGL2ES1();
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Get the singleton instance of this class.
