@@ -27,11 +27,11 @@ import illarion.easynpc.parsed.talk.consequences.ConsequenceWarp;
 import illarion.easynpc.parser.talk.ConsequenceParser;
 
 /**
- * This is the item consequence. Its able to parse a item condition out of the
+ * This is the warp consequence. Its able to parse a warp condition out of the
  * consequence collection string.
  * 
- * @author Martin Karing
- * @since 1.00
+ * @author Martin Polak
+ * @since 1.02
  * @version 1.02
  */
 public final class Warp extends ConsequenceParser {
