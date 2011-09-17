@@ -52,10 +52,6 @@ public final class DriverSettingsJOGL {
         DRAWDOT(new SettingsHandler() {
             @Override
             public void disableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisable(GL2ES1.GL_POINT_SMOOTH);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
@@ -63,10 +59,6 @@ public final class DriverSettingsJOGL {
 
             @Override
             public void enableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 final int quality = Graphics.getInstance().getQuality();
 
@@ -90,10 +82,6 @@ public final class DriverSettingsJOGL {
         DRAWLINE(new SettingsHandler() {
             @Override
             public void disableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisable(GL.GL_LINE_SMOOTH);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
@@ -101,10 +89,6 @@ public final class DriverSettingsJOGL {
 
             @Override
             public void enableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 final int quality = Graphics.getInstance().getQuality();
                 if (quality >= Graphics.QUALITY_NORMAL) {
@@ -128,20 +112,12 @@ public final class DriverSettingsJOGL {
         DRAWOTHER(new SettingsHandler() {
             @Override
             public void disableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
             }
 
             @Override
             public void enableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
             }
@@ -155,10 +131,6 @@ public final class DriverSettingsJOGL {
         DRAWOTHERCOLOR(new SettingsHandler() {
             @Override
             public void disableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisableClientState(GLPointerFunc.GL_COLOR_ARRAY);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
@@ -166,10 +138,6 @@ public final class DriverSettingsJOGL {
 
             @Override
             public void enableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glEnableClientState(GLPointerFunc.GL_COLOR_ARRAY);
                 gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
@@ -182,10 +150,6 @@ public final class DriverSettingsJOGL {
         DRAWPOLY(new SettingsHandler() {
             @Override
             public void disableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisable(GL2GL3.GL_POLYGON_SMOOTH);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
@@ -193,10 +157,6 @@ public final class DriverSettingsJOGL {
 
             @Override
             public void enableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 final int quality = Graphics.getInstance().getQuality();
                 if (quality == Graphics.QUALITY_MAX) {
@@ -232,10 +192,6 @@ public final class DriverSettingsJOGL {
         DRAWTEXTUREPOINTER(new SettingsHandler() {
             @Override
             public void disableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glDisable(GL.GL_TEXTURE_2D);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
@@ -244,10 +200,6 @@ public final class DriverSettingsJOGL {
 
             @Override
             public void enableSettings(final GL usedGL) {
-                if (!usedGL.isGL2ES1() && !usedGL.hasGLSL()) {
-                    return;
-                }
-
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
                 gl.glEnable(GL.GL_TEXTURE_2D);
                 gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
@@ -373,9 +325,9 @@ public final class DriverSettingsJOGL {
      * @param newMode the new mode to enable
      */
     public void enableMode(final GL gl, final Modes newMode) {
-        if (currentMode == newMode) {
-            return;
-        }
+//        if (currentMode == newMode) {
+//            return;
+//        }
         if (currentMode != null) {
             currentMode.disable(gl);
         }

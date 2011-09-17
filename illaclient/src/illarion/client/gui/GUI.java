@@ -18,8 +18,10 @@
  */
 package illarion.client.gui;
 
+import illarion.client.graphics.GuiImageFactory;
 import illarion.client.sound.NiftySoundDevice;
 import illarion.graphics.Graphics;
+import illarion.graphics.RenderTask;
 
 import org.illarion.nifty.renderer.input.IllarionInputSystem;
 import org.illarion.nifty.renderer.render.IllarionRenderDevice;
@@ -55,22 +57,29 @@ public final class GUI {
     public boolean getSelfRendering() {
         return selfRender;
     }
-
+    
     /**
      * The primary nifty GUI instance that is used to control the rendering and
      * maintance of the entire GUI.
      */
-    private final Nifty niftyGui;
+    private Nifty niftyGui;
 
     private GUI() {
+        
+    }
+    
+    public void init() {
+        final GuiImageFactory guiFactory = new GuiImageFactory();
+        guiFactory.init();
+
         final RenderImageFactory imageFactory =
-            new RenderImageFactory(new GuiImageFactory());
-        imageFactory.addDynamicImage("gamemap", new MapImage());
+            new RenderImageFactory(guiFactory);
 
         niftyGui =
             new Nifty(new IllarionRenderDevice(Graphics.getInstance()
-                .getRenderDisplay(), imageFactory), new NiftySoundDevice(),
-                new IllarionInputSystem(), new TimeProvider());
+                .getRenderDisplay(), imageFactory),
+                new NiftySoundDevice(), new IllarionInputSystem(),
+                new TimeProvider());
     }
 
     public void prepare() {

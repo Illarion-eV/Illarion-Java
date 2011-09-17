@@ -24,6 +24,7 @@ import javolution.util.FastTable;
 
 import org.apache.log4j.Logger;
 
+import illarion.graphics.Graphics;
 import illarion.graphics.RenderManager;
 import illarion.graphics.RenderTask;
 
@@ -35,7 +36,7 @@ import illarion.graphics.RenderTask;
  * @version 2.00
  * @since 2.00
  */
-public class RenderManagerJOGL implements RenderManager {
+public final class RenderManagerJOGL implements RenderManager {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
@@ -81,20 +82,30 @@ public class RenderManagerJOGL implements RenderManager {
      * @param delta the time since the last render operation
      */
     @SuppressWarnings("nls")
-    protected final void draw(final int delta) {
+    private void draw(final int delta) {
         this.delta = delta;
+
+        int location = 0;
+        
+        Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
         try {
+            Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
             synchronized (taskList) {
+                Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
                 int count = taskList.size();
                 int curr = 0;
+                Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
                 while (curr < count) {
+                    Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
                     if (!taskList.get(curr).render(delta)) {
                         taskList.remove(curr);
                         --count;
                     } else {
                         ++curr;
                     }
+                    Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
                 }
+                Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
             }
         } catch (final NullPointerException ex) {
             LOGGER.warn("Render Thread catched NullPointerException");
@@ -103,6 +114,9 @@ public class RenderManagerJOGL implements RenderManager {
 
         SpriteJOGL.resetDrawCount();
     }
+    
+
+    private static final SpriteColorJOGL TEMP_COLOR = new SpriteColorJOGL(1.f, 1.f, 1.f, 1.f);
 
     /**
      * Check if the rendering got started already.
@@ -110,7 +124,7 @@ public class RenderManagerJOGL implements RenderManager {
      * @return <code>true</code> in case it was reported that the rendering
      *         started
      */
-    protected final boolean isRenderStarted() {
+    private boolean isRenderStarted() {
         return renderStarted;
     }
 
@@ -118,7 +132,7 @@ public class RenderManagerJOGL implements RenderManager {
      * Set that the rendering started. After this the RenderTasks will be
      * executed during the regular render cycles.
      */
-    public final void renderStarted() {
+    public void renderStarted() {
         renderStarted = true;
     }
     /**

@@ -147,16 +147,12 @@ public final class SpriteColorJOGL implements Cloneable, SpriteColor {
 
         ACTIVE.set(this);
         ACTIVE.setAlpha(getAlphai());
-
-        final GL gl = GLU.getCurrentGL();
-
-        if (!gl.isGL2ES1() && !gl.hasGLSL()) {
-            return;
-        }
-
-        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(GLU.getCurrentGL());
         gl2.glColor4f(getRedf(), getGreenf(), getBluef(), getAlphaf());
-    }    /**
+    }    
+    
+    /**
      * Value of the alpha value of the color. 0 is fully transparent,
      * {@link #COLOR_MAX} is fully opaque.
      */

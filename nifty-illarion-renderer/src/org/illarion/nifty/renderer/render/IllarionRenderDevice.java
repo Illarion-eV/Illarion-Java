@@ -186,7 +186,6 @@ public final class IllarionRenderDevice implements RenderDevice {
     @Override
     public void enableClip(final int x0, final int y0, final int x1,
         final int y1) {
-        disableClip();
         
         int height = Graphics.getInstance().getRenderDisplay().getHeight();
         

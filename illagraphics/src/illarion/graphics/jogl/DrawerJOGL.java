@@ -85,7 +85,6 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-        if (gl.isGL2ES1() || gl.hasGLSL()) {
             final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
 
             DriverSettingsJOGL.getInstance().enableMode(gl,
@@ -99,7 +98,6 @@ public final class DrawerJOGL implements Drawer {
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
             gl2.glDrawArrays(GL.GL_POINTS, 0, 1);
-        }
     }
 
     /**
@@ -118,7 +116,6 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-        if (gl.isGL2ES1() || gl.hasGLSL()) {
             final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWLINE);
@@ -132,7 +129,6 @@ public final class DrawerJOGL implements Drawer {
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
             gl2.glDrawArrays(GL.GL_LINES, 0, 2);
-        }
     }
 
     /**
@@ -159,7 +155,6 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-        if (gl.isGL2ES1() || gl.hasGLSL()) {
             final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWPOLY);
@@ -174,7 +169,6 @@ public final class DrawerJOGL implements Drawer {
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
             gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
-        }
     }
 
     /**
@@ -198,7 +192,6 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-        if (gl.isGL2ES1() || gl.hasGLSL()) {
             final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWPOLY);
@@ -214,7 +207,6 @@ public final class DrawerJOGL implements Drawer {
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
             gl2.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
             gl2.glDrawArrays(GL.GL_LINE_LOOP, 0, 4);
-        }
     }
 
     /**
@@ -271,7 +263,6 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-        if (gl.isGL2ES1() || gl.hasGLSL()) {
             final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHERCOLOR);
@@ -297,7 +288,6 @@ public final class DrawerJOGL implements Drawer {
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
             gl2.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
             gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
-        }
     }
 
     /**
@@ -315,7 +305,6 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-        if (gl.isGL2ES1() || gl.hasGLSL()) {
             final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHER);
@@ -332,7 +321,6 @@ public final class DrawerJOGL implements Drawer {
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
             gl2.glDrawArrays(GL.GL_LINE_LOOP, 0, 4);
-        }
     }
 
     /**
@@ -363,7 +351,6 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-        if (gl.isGL2ES1() || gl.hasGLSL()) {
             final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHER);
@@ -408,7 +395,6 @@ public final class DrawerJOGL implements Drawer {
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
             gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 16);
-        }
     }
 
     @Override
@@ -424,7 +410,6 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-        if (gl.isGL2ES1() || gl.hasGLSL()) {
             final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHER);
@@ -461,7 +446,6 @@ public final class DrawerJOGL implements Drawer {
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
             gl2.glDrawArrays(GL.GL_LINE_LOOP, 0, 16);
-        }
     }
 
     /**
@@ -483,7 +467,6 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-        if (gl.isGL2ES1() || gl.hasGLSL()) {
             final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHER);
@@ -497,7 +480,6 @@ public final class DrawerJOGL implements Drawer {
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
             gl2.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
-        }
     }
 
     /**
@@ -511,7 +493,6 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-        if (gl.isGL2ES1() || gl.hasGLSL()) {
             final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
             DriverSettingsJOGL.getInstance().enableMode(gl,
                 DriverSettingsJOGL.Modes.DRAWOTHER);
@@ -519,6 +500,5 @@ public final class DrawerJOGL implements Drawer {
 
             gl2.glVertexPointer(2, GL.GL_FLOAT, 0, coords);
             gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, coords.remaining() >> 1);
-        }
     }
 }

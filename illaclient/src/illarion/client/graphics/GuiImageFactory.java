@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.gui;
+package illarion.client.graphics;
 
+import javolution.util.FastComparator;
 import javolution.util.FastMap;
 import illarion.common.util.ObjectSource;
 import illarion.common.util.TableLoader;
@@ -33,7 +34,7 @@ import illarion.graphics.common.SpriteBuffer;
  * @since 1.22
  * @version 1.22
  */
-public final class GuiImageFactory implements ObjectSource<Sprite>,
+public final class GuiImageFactory implements ObjectSource<Sprite>, ResourceFactory,
     TableLoaderSink {
     private static final int TB_FRAME = 2;
     private static final int TB_NAME = 1;
@@ -45,7 +46,12 @@ public final class GuiImageFactory implements ObjectSource<Sprite>,
 
     public GuiImageFactory() {
         sprites = new FastMap<String, Sprite>();
+        sprites.setKeyComparator(FastComparator.STRING);
 
+    }
+    
+    @Override
+    public void init() {
         new TableLoader("Gui", this);
     }
 
@@ -80,5 +86,4 @@ public final class GuiImageFactory implements ObjectSource<Sprite>,
     public Sprite getObject(final String key) {
         return sprites.get(key);
     }
-
 }

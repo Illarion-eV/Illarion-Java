@@ -508,18 +508,18 @@ public final class Game implements SessionMember {
     public void initSession() {
         windowHandler = ClientWindow.getInstance();
         ClientWindow.getInstance().getRenderDisplay().startRendering();
-
+        
         Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
             @Override
             public boolean render(final int delta) {
                 illarion.client.gui.GUI newGui =
                     illarion.client.gui.GUI.getInstance();
+                newGui.init();
                 newGui.prepare();
                 newGui.showLogin();
                 return false;
             }
         });
-
     }
 
     /**

@@ -135,9 +135,27 @@ public final class DisplayAWT extends GLCanvas implements Display,
         final GL gl = drawable.getGL();
         gl.glClearColor(0.f, 0.f, 0.f, 1.f);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        
+        Graphics.getInstance().getDrawer().drawRectangle(0, 0, 10, 10, TEMP_COLOR);
 
         manager.draw();
+        
+        Graphics.getInstance().getDrawer().drawRectangle(20, 0, 30, 10, TEMP_COLOR);
         swapBuffers();
+    }
+    
+    private static final SpriteColorJOGL TEMP_COLOR = new SpriteColorJOGL(1.f, 1.f, 1.f, 1.f);
+    
+    private static void printStatusInfo(final String intro, final String value) {
+        LOGGER.debug(String.format("%-60s%20s", intro, value));
+    }
+    
+    private static void printStatusInfo(final String intro, final boolean state, final String trueText, final String falseText) {
+        if (state) {
+            printStatusInfo(intro, trueText);
+        } else {
+            printStatusInfo(intro, falseText);
+        }
     }
 
     /**
@@ -148,76 +166,23 @@ public final class DisplayAWT extends GLCanvas implements Display,
         final GLCapabilitiesImmutable activeCaps = getChosenGLCapabilities();
         doubleBuffered = activeCaps.getDoubleBuffered();
 
-        if (activeCaps.getHardwareAccelerated()) {
-            LOGGER.debug("OpenGL Hardware acceleration active");
-        } else {
-            LOGGER.warn("OpenGL Hardware acceleration inactive");
-        }
-        LOGGER.debug("Active Samples: "
-            + Integer.toString(activeCaps.getNumSamples()));
-
-        if (activeCaps.getGLProfile().isGLES1()) {
-            LOGGER.debug("OpenGL ES 1.x supported");
-        } else {
-            LOGGER.debug("OpenGL ES 1.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGLES2()) {
-            LOGGER.debug("OpenGL ES 2.x supported");
-        } else {
-            LOGGER.debug("OpenGL ES 2.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2()) {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 supported");
-        } else {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 not supported");
-        }
-        if (activeCaps.getGLProfile().isGL3()) {
-            LOGGER.debug("OpenGL 3.x supported");
-        } else {
-            LOGGER.debug("OpenGL 3.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL4()) {
-            LOGGER.debug("OpenGL 4.x supported");
-        } else {
-            LOGGER.debug("OpenGL 4.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2GL3()) {
-            LOGGER.debug("OpenGL 2.x, 3.x supported");
-        } else {
-            LOGGER.debug("OpenGL 2.x, 3.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2ES1()) {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 1.x supported");
-        } else {
-            LOGGER
-                .debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 1.x not supported");
-        }
-        if (activeCaps.getGLProfile().isGL2ES2()) {
-            LOGGER.debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 2.x supported");
-        } else {
-            LOGGER
-                .debug("OpenGL 1.x, 2.x, 3.0 and OpenGL ES 2.x not supported");
-        }
-        if (activeCaps.getGLProfile().hasGLSL()) {
-            LOGGER.debug("OpenGL shader language supported");
-        } else {
-            LOGGER.debug("OpenGL shader language not supported");
-        }
-        if (activeCaps.getGLProfile().usesNativeGLES()) {
-            LOGGER.debug("OpenGL ES native supported");
-        } else {
-            LOGGER.debug("OpenGL ES native not supported");
-        }
-        if (activeCaps.getGLProfile().usesNativeGLES1()) {
-            LOGGER.debug("OpenGL ES 1.x native supported");
-        } else {
-            LOGGER.debug("OpenGL ES 1.x native not supported");
-        }
-        if (activeCaps.getGLProfile().usesNativeGLES2()) {
-            LOGGER.debug("OpenGL ES 2.x native supported");
-        } else {
-            LOGGER.debug("OpenGL ES 2.x native not supported");
-        }
+        printStatusInfo("OpenGL Hardware acceleration", activeCaps.getHardwareAccelerated(), "OK", "N.A.");
+        printStatusInfo("Active Samples", Integer.toString(activeCaps.getNumSamples()));
+        printStatusInfo("OpenGL double buffering", activeCaps.getDoubleBuffered(), "OK", "Disabled");
+        printStatusInfo("OpenGL on screen", activeCaps.isOnscreen(), "OK", "Disabled");
+        printStatusInfo("OpenGL pBuffer-to-Texture", activeCaps.isPBuffer(), "OK", "Disabled");
+        printStatusInfo("OpenGL ES 1.x support", activeCaps.getGLProfile().isGLES1(), "OK", "N.A.");
+        printStatusInfo("OpenGL ES 2.x support", activeCaps.getGLProfile().isGLES2(), "OK", "N.A.");
+        printStatusInfo("OpenGL 1.x, 2.x, 3.0 support", activeCaps.getGLProfile().isGL2(), "OK", "N.A.");
+        printStatusInfo("OpenGL 3.x support", activeCaps.getGLProfile().isGL3(), "OK", "N.A.");
+        printStatusInfo("OpenGL 4.x support", activeCaps.getGLProfile().isGL4(), "OK", "N.A.");
+        printStatusInfo("OpenGL 2.x, 3.x support", activeCaps.getGLProfile().isGL2GL3(), "OK", "N.A.");
+        printStatusInfo("OpenGL 1.x, 2.x, 3.0, ES 1.x support", activeCaps.getGLProfile().isGL2ES1(), "OK", "N.A.");
+        printStatusInfo("OpenGL 1.x, 2.x, 3.0, ES 2.x support", activeCaps.getGLProfile().isGL2ES2(), "OK", "N.A.");
+        printStatusInfo("OpenGL shader language support", activeCaps.getGLProfile().hasGLSL(), "OK", "N.A.");
+        printStatusInfo("OpenGL ES native support", activeCaps.getGLProfile().usesNativeGLES(), "OK", "N.A.");
+        printStatusInfo("OpenGL ES 1.x native support", activeCaps.getGLProfile().usesNativeGLES1(), "OK", "N.A.");
+        printStatusInfo("OpenGL ES 2.x native support", activeCaps.getGLProfile().usesNativeGLES2(), "OK", "N.A.");
     }
 
     /**
@@ -260,6 +225,7 @@ public final class DisplayAWT extends GLCanvas implements Display,
         if (GLContext.getCurrent() == null) {
             drawable.getContext().makeCurrent();
             releaseContext = true;
+            LOGGER.debug("Fetching temporary context.");
         }
 
         final GL gl = drawable.getGL();
