@@ -443,13 +443,13 @@ public final class TextureJOGL implements Texture {
             gl2.glNewList(displayListID, GL2.GL_COMPILE);
             gl2.glBegin(GL.GL_TRIANGLE_STRIP);
 
-            gl2.glTexCoord2d(getRelX1(), getRelY2());
-            gl2.glVertex2f(-0.5f, -0.5f);
             gl2.glTexCoord2d(getRelX1(), getRelY1());
+            gl2.glVertex2f(-0.5f, -0.5f);
+            gl2.glTexCoord2d(getRelX1(), getRelY2());
             gl2.glVertex2f(-0.5f, 0.5f);
-            gl2.glTexCoord2d(getRelX2(), getRelY2());
-            gl2.glVertex2f(0.5f, -0.5f);
             gl2.glTexCoord2d(getRelX2(), getRelY1());
+            gl2.glVertex2f(0.5f, -0.5f);
+            gl2.glTexCoord2d(getRelX2(), getRelY2());
             gl2.glVertex2f(0.5f, 0.5f);
 
             gl2.glEnd();

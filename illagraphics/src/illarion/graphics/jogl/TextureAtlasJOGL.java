@@ -828,6 +828,7 @@ public final class TextureAtlasJOGL implements TextureAtlas {
             String extension = fileName.substring(dotPos);
             textureData = TextureIO.newTextureData(GLProfile.getGL2ES1(), dataFile, true, extension);
             texture = TextureIO.newTexture(textureData);
+            enable();
         } catch (GLException e) {
             // texture not created
             e.printStackTrace();
@@ -854,6 +855,7 @@ public final class TextureAtlasJOGL implements TextureAtlas {
         }
         try {
             texture = TextureIO.newTexture(textureData);
+            enable();
         } catch (GLException e) {
             
         }

@@ -105,28 +105,16 @@ public final class TextureRenderImmediate extends AbstractTextureRender {
         }
 
         gl.glBegin(GL.GL_TRIANGLE_STRIP);
-
-        if (mirror) {
-            gl.glTexCoord2d(texture.getRelX2(), texture.getRelY2());
-            gl.glVertex2f(-0.5f, -0.5f);
-            gl.glTexCoord2d(texture.getRelX2(), texture.getRelY1());
-            gl.glVertex2f(-0.5f, 0.5f);
-            gl.glTexCoord2d(texture.getRelX1(), texture.getRelY2());
-            gl.glVertex2f(0.5f, -0.5f);
             gl.glTexCoord2d(texture.getRelX1(), texture.getRelY1());
-            gl.glVertex2f(0.5f, 0.5f);
-        } else {
-            gl.glTexCoord2d(texture.getRelX1(), texture.getRelY2());
             gl.glVertex2f(-0.5f, -0.5f);
-            gl.glTexCoord2d(texture.getRelX1(), texture.getRelY1());
+            gl.glTexCoord2d(texture.getRelX1(), texture.getRelY2());
             gl.glVertex2f(-0.5f, 0.5f);
-            gl.glTexCoord2d(texture.getRelX2(), texture.getRelY2());
-            gl.glVertex2f(0.5f, -0.5f);
             gl.glTexCoord2d(texture.getRelX2(), texture.getRelY1());
+            gl.glVertex2f(0.5f, -0.5f);
+            gl.glTexCoord2d(texture.getRelX2(), texture.getRelY2());
             gl.glVertex2f(0.5f, 0.5f);
-        }
-
         gl.glEnd();
+        
         gl.glPopMatrix();
     }
 

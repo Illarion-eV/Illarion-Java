@@ -85,19 +85,19 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
 
-            DriverSettingsJOGL.getInstance().enableMode(gl,
-                DriverSettingsJOGL.Modes.DRAWDOT);
-            gl2.glPointSize(size / 2);
-            color.setActiveColor();
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWDOT);
+        gl2.glPointSize(size / 2);
+        color.setActiveColor();
 
-            buffer.clear();
-            buffer.put(x).put(y);
-            buffer.flip();
+        buffer.clear();
+        buffer.put(x).put(y);
+        buffer.flip();
 
-            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
-            gl2.glDrawArrays(GL.GL_POINTS, 0, 1);
+        gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+        gl2.glDrawArrays(GL.GL_POINTS, 0, 1);
     }
 
     /**
@@ -116,19 +116,19 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
-            DriverSettingsJOGL.getInstance().enableMode(gl,
-                DriverSettingsJOGL.Modes.DRAWLINE);
-            gl2.glLineWidth(width);
-            color.setActiveColor();
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWLINE);
+        gl2.glLineWidth(width);
+        color.setActiveColor();
 
-            buffer.clear();
-            buffer.put(x1).put(y1);
-            buffer.put(x2).put(y2);
-            buffer.flip();
+        buffer.clear();
+        buffer.put(x1).put(y1);
+        buffer.put(x2).put(y2);
+        buffer.flip();
 
-            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
-            gl2.glDrawArrays(GL.GL_LINES, 0, 2);
+        gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+        gl2.glDrawArrays(GL.GL_LINES, 0, 2);
     }
 
     /**
@@ -155,20 +155,20 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
-            DriverSettingsJOGL.getInstance().enableMode(gl,
-                DriverSettingsJOGL.Modes.DRAWPOLY);
-            color.setActiveColor();
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWPOLY);
+        color.setActiveColor();
 
-            buffer.clear();
-            buffer.put(x1).put(y1);
-            buffer.put(x2).put(y2);
-            buffer.put(x3).put(y3);
-            buffer.put(x4).put(y4);
-            buffer.flip();
+        buffer.clear();
+        buffer.put(x1).put(y1);
+        buffer.put(x2).put(y2);
+        buffer.put(x3).put(y3);
+        buffer.put(x4).put(y4);
+        buffer.flip();
 
-            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
-            gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+        gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+        gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
     }
 
     /**
@@ -192,21 +192,21 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
-            DriverSettingsJOGL.getInstance().enableMode(gl,
-                DriverSettingsJOGL.Modes.DRAWPOLY);
-            color.setActiveColor();
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWPOLY);
+        color.setActiveColor();
 
-            buffer.clear();
-            buffer.put(x1).put(y1);
-            buffer.put(x2).put(y2);
-            buffer.put(x3).put(y3);
-            buffer.put(x4).put(y4);
-            buffer.flip();
+        buffer.clear();
+        buffer.put(x1).put(y1);
+        buffer.put(x2).put(y2);
+        buffer.put(x3).put(y3);
+        buffer.put(x4).put(y4);
+        buffer.flip();
 
-            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
-            gl2.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
-            gl2.glDrawArrays(GL.GL_LINE_LOOP, 0, 4);
+        gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+        gl2.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
+        gl2.glDrawArrays(GL.GL_LINE_LOOP, 0, 4);
     }
 
     /**
@@ -224,22 +224,20 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-        if (gl.isGL2ES1() || gl.hasGLSL()) {
-            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
-            DriverSettingsJOGL.getInstance().enableMode(gl,
-                DriverSettingsJOGL.Modes.DRAWOTHER);
-            color.setActiveColor();
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWOTHER);
+        color.setActiveColor();
 
-            buffer.clear();
-            buffer.put(x1).put(y1);
-            buffer.put(x2).put(y1);
-            buffer.put(x2).put(y2);
-            buffer.put(x1).put(y2);
-            buffer.flip();
+        buffer.clear();
+        buffer.put(x1).put(y1);
+        buffer.put(x2).put(y1);
+        buffer.put(x2).put(y2);
+        buffer.put(x1).put(y2);
+        buffer.flip();
 
-            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
-            gl2.glDrawArrays(GL2.GL_QUADS, 0, 4);
-        }
+        gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+        gl2.glDrawArrays(GL2.GL_QUADS, 0, 4);
     }
 
     /**
@@ -263,31 +261,31 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
-            DriverSettingsJOGL.getInstance().enableMode(gl,
-                DriverSettingsJOGL.Modes.DRAWOTHERCOLOR);
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWOTHERCOLOR);
 
-            buffer.clear();
-            colorBuffer.clear();
+        buffer.clear();
+        colorBuffer.clear();
 
-            buffer.put(x1).put(y1);
-            topLeftColor.storeRGBA(colorBuffer);
+        buffer.put(x1).put(y1);
+        topLeftColor.storeRGBA(colorBuffer);
 
-            buffer.put(x1).put(y2);
-            bottomLeftColor.storeRGBA(colorBuffer);
+        buffer.put(x1).put(y2);
+        bottomLeftColor.storeRGBA(colorBuffer);
 
-            buffer.put(x2).put(y1);
-            topRightColor.storeRGBA(colorBuffer);
+        buffer.put(x2).put(y1);
+        topRightColor.storeRGBA(colorBuffer);
 
-            buffer.put(x2).put(y2);
-            bottomRightColor.storeRGBA(colorBuffer);
+        buffer.put(x2).put(y2);
+        bottomRightColor.storeRGBA(colorBuffer);
 
-            buffer.flip();
-            colorBuffer.flip();
+        buffer.flip();
+        colorBuffer.flip();
 
-            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
-            gl2.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
-            gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+        gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+        gl2.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
+        gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
     }
 
     /**
@@ -305,22 +303,22 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
-            DriverSettingsJOGL.getInstance().enableMode(gl,
-                DriverSettingsJOGL.Modes.DRAWOTHER);
-            color.setActiveColor();
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWOTHER);
+        color.setActiveColor();
 
-            gl2.glLineWidth(width);
+        gl2.glLineWidth(width);
 
-            buffer.clear();
-            buffer.put(x1).put(y1);
-            buffer.put(x1).put(y2);
-            buffer.put(x2).put(y2);
-            buffer.put(x2).put(y1);
-            buffer.flip();
+        buffer.clear();
+        buffer.put(x1).put(y1);
+        buffer.put(x1).put(y2);
+        buffer.put(x2).put(y2);
+        buffer.put(x2).put(y1);
+        buffer.flip();
 
-            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
-            gl2.glDrawArrays(GL.GL_LINE_LOOP, 0, 4);
+        gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+        gl2.glDrawArrays(GL.GL_LINE_LOOP, 0, 4);
     }
 
     /**
@@ -351,50 +349,48 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
-            DriverSettingsJOGL.getInstance().enableMode(gl,
-                DriverSettingsJOGL.Modes.DRAWOTHER);
-            color.setActiveColor();
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWOTHER);
+        color.setActiveColor();
 
-            buffer.clear();
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH).put(y1);
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH).put(y2);
+        buffer.clear();
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH).put(y1);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH).put(y2);
 
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH_1).put(
-                y1 - ROUNDED_BORDER_WIDTH_2);
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH_1).put(
-                y2 + ROUNDED_BORDER_WIDTH_2);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH_1).put(
+            y1 - ROUNDED_BORDER_WIDTH_2);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH_1).put(
+            y2 + ROUNDED_BORDER_WIDTH_2);
 
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(
-                y1 - ROUNDED_BORDER_WIDTH_1);
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(
-                y2 + ROUNDED_BORDER_WIDTH_1);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(
+            y1 - ROUNDED_BORDER_WIDTH_1);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(
+            y2 + ROUNDED_BORDER_WIDTH_1);
 
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(
-                y1 - ROUNDED_BORDER_WIDTH);
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(
-                y2 + ROUNDED_BORDER_WIDTH);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(y1 - ROUNDED_BORDER_WIDTH);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(y2 + ROUNDED_BORDER_WIDTH);
 
-            buffer.put(x2).put(y1 - ROUNDED_BORDER_WIDTH);
-            buffer.put(x2).put(y2 + ROUNDED_BORDER_WIDTH);
+        buffer.put(x2).put(y1 - ROUNDED_BORDER_WIDTH);
+        buffer.put(x2).put(y2 + ROUNDED_BORDER_WIDTH);
 
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH_2).put(
-                y1 - ROUNDED_BORDER_WIDTH_1);
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH_2).put(
-                y2 + ROUNDED_BORDER_WIDTH_1);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH_2).put(
+            y1 - ROUNDED_BORDER_WIDTH_1);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH_2).put(
+            y2 + ROUNDED_BORDER_WIDTH_1);
 
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH_1).put(
-                y1 - ROUNDED_BORDER_WIDTH_2);
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH_1).put(
-                y2 + ROUNDED_BORDER_WIDTH_2);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH_1).put(
+            y1 - ROUNDED_BORDER_WIDTH_2);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH_1).put(
+            y2 + ROUNDED_BORDER_WIDTH_2);
 
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH).put(y1);
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH).put(y2);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH).put(y1);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH).put(y2);
 
-            buffer.flip();
+        buffer.flip();
 
-            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
-            gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 16);
+        gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+        gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 16);
     }
 
     @Override
@@ -410,42 +406,42 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
-            DriverSettingsJOGL.getInstance().enableMode(gl,
-                DriverSettingsJOGL.Modes.DRAWOTHER);
-            color.setActiveColor();
-            gl2.glLineWidth(width);
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWOTHER);
+        color.setActiveColor();
+        gl2.glLineWidth(width);
 
-            buffer.clear();
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH).put(y1);
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH).put(y2);
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH_1).put(
-                y2 + ROUNDED_BORDER_WIDTH_2);
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(
-                y2 + ROUNDED_BORDER_WIDTH_1);
-            buffer.put(x1).put(y2 + ROUNDED_BORDER_WIDTH);
-            buffer.put(x2).put(y2 + ROUNDED_BORDER_WIDTH);
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH_2).put(
-                y2 + ROUNDED_BORDER_WIDTH_1);
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH_1).put(
-                y2 + ROUNDED_BORDER_WIDTH_2);
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH).put(y2);
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH).put(y1);
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH_1).put(
-                y1 - ROUNDED_BORDER_WIDTH_2);
-            buffer.put(x2 + ROUNDED_BORDER_WIDTH_2).put(
-                y1 - ROUNDED_BORDER_WIDTH_1);
-            buffer.put(x2).put(y1 - ROUNDED_BORDER_WIDTH);
-            buffer.put(x1).put(y1 - ROUNDED_BORDER_WIDTH);
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(
-                y1 - ROUNDED_BORDER_WIDTH_1);
-            buffer.put(x1 - ROUNDED_BORDER_WIDTH_1).put(
-                y1 - ROUNDED_BORDER_WIDTH_2);
+        buffer.clear();
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH).put(y1);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH).put(y2);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH_1).put(
+            y2 + ROUNDED_BORDER_WIDTH_2);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(
+            y2 + ROUNDED_BORDER_WIDTH_1);
+        buffer.put(x1).put(y2 + ROUNDED_BORDER_WIDTH);
+        buffer.put(x2).put(y2 + ROUNDED_BORDER_WIDTH);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH_2).put(
+            y2 + ROUNDED_BORDER_WIDTH_1);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH_1).put(
+            y2 + ROUNDED_BORDER_WIDTH_2);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH).put(y2);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH).put(y1);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH_1).put(
+            y1 - ROUNDED_BORDER_WIDTH_2);
+        buffer.put(x2 + ROUNDED_BORDER_WIDTH_2).put(
+            y1 - ROUNDED_BORDER_WIDTH_1);
+        buffer.put(x2).put(y1 - ROUNDED_BORDER_WIDTH);
+        buffer.put(x1).put(y1 - ROUNDED_BORDER_WIDTH);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH_2).put(
+            y1 - ROUNDED_BORDER_WIDTH_1);
+        buffer.put(x1 - ROUNDED_BORDER_WIDTH_1).put(
+            y1 - ROUNDED_BORDER_WIDTH_2);
 
-            buffer.flip();
+        buffer.flip();
 
-            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
-            gl2.glDrawArrays(GL.GL_LINE_LOOP, 0, 16);
+        gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+        gl2.glDrawArrays(GL.GL_LINE_LOOP, 0, 16);
     }
 
     /**
@@ -467,19 +463,19 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
-            DriverSettingsJOGL.getInstance().enableMode(gl,
-                DriverSettingsJOGL.Modes.DRAWOTHER);
-            color.setActiveColor();
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWOTHER);
+        color.setActiveColor();
 
-            buffer.clear();
-            buffer.put(x1).put(y1);
-            buffer.put(x2).put(y2);
-            buffer.put(x3).put(y3);
-            buffer.flip();
+        buffer.clear();
+        buffer.put(x1).put(y1);
+        buffer.put(x2).put(y2);
+        buffer.put(x3).put(y3);
+        buffer.flip();
 
-            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
-            gl2.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
+        gl2.glVertexPointer(2, GL.GL_FLOAT, 0, buffer);
+        gl2.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
     }
 
     /**
@@ -493,12 +489,12 @@ public final class DrawerJOGL implements Drawer {
 
         final GL gl = GLU.getCurrentGL();
 
-            final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
-            DriverSettingsJOGL.getInstance().enableMode(gl,
-                DriverSettingsJOGL.Modes.DRAWOTHER);
-            color.setActiveColor();
+        final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(gl);
+        DriverSettingsJOGL.getInstance().enableMode(gl,
+            DriverSettingsJOGL.Modes.DRAWOTHER);
+        color.setActiveColor();
 
-            gl2.glVertexPointer(2, GL.GL_FLOAT, 0, coords);
-            gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, coords.remaining() >> 1);
+        gl2.glVertexPointer(2, GL.GL_FLOAT, 0, coords);
+        gl2.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, coords.remaining() >> 1);
     }
 }
