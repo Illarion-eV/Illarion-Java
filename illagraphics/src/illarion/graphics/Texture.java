@@ -107,6 +107,4 @@ public interface Texture {
      * Clean up all resources that were load for this texture in special.
      */
     void cleanup();
-    
-    void enable();
 }

@@ -627,9 +627,7 @@ public final class SpriteJOGL implements Sprite {
         final TextureJOGL tex = getTexture(0);
         
         DriverSettingsJOGL.getInstance().enableMode(gl,
-            DriverSettingsJOGL.Modes.DRAWTEXTURE);
-        
-        tex.enable();
+            DriverSettingsJOGL.Modes.DRAWTEXTURE, tex.getParent());
         
         gl.glPushMatrix();
         gl.glTranslatef(centerX, centerY, 0.0f);

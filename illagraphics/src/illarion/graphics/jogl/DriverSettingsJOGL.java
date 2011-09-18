@@ -18,6 +18,8 @@
  */
 package illarion.graphics.jogl;
 
+import java.lang.ref.WeakReference;
+
 import illarion.graphics.Graphics;
 
 import javax.media.opengl.GL;
@@ -177,12 +179,10 @@ public final class DriverSettingsJOGL {
         DRAWTEXTURE(new SettingsHandler() {
             @Override
             public void disableSettings(final GL gl) {
-                gl.glDisable(GL.GL_TEXTURE_2D);
             }
 
             @Override
             public void enableSettings(final GL gl) {
-                gl.glEnable(GL.GL_TEXTURE_2D);
             }
         }),
 
@@ -193,7 +193,6 @@ public final class DriverSettingsJOGL {
             @Override
             public void disableSettings(final GL usedGL) {
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
-                gl.glDisable(GL.GL_TEXTURE_2D);
                 gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
                 gl.glDisableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
             }
@@ -201,7 +200,6 @@ public final class DriverSettingsJOGL {
             @Override
             public void enableSettings(final GL usedGL) {
                 final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(usedGL);
-                gl.glEnable(GL.GL_TEXTURE_2D);
                 gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
                 gl.glEnableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
             }
@@ -285,37 +283,13 @@ public final class DriverSettingsJOGL {
     /**
      * The currently used modus.
      */
-    private Modes currentMode = null;
-
-    /**
-     * The currently activated texture.
-     */
-    private int currentTexture = -1;
+    private Modes currentMode;
 
     /**
      * Private constructor, to avoid any instances but the singleton instance.
      */
     private DriverSettingsJOGL() {
-        // nothing to do
-    }
-
-    /**
-     * Bind a new texture. Make sure to enable a texture mode before you call
-     * this function.
-     * 
-     * @param gl the reference to the openGL interface
-     * @param textureID the ID of the new texture
-     */
-    public void bindTexture(final GL gl, final int textureID) {
-        if (currentTexture == textureID) {
-            return;
-        }
-        
-        if (textureID != -1) {
-            gl.glBindTexture(GL.GL_TEXTURE_2D, textureID);
-        }
-        
-        currentTexture = textureID;
+        reset();
     }
 
     /**
@@ -325,9 +299,29 @@ public final class DriverSettingsJOGL {
      * @param newMode the new mode to enable
      */
     public void enableMode(final GL gl, final Modes newMode) {
-//        if (currentMode == newMode) {
-//            return;
-//        }
+        enableMode(gl, newMode, null);
+    }
+    
+    public void reset() {
+        currentMode = null;
+        activeTexture = null;
+    }
+
+    /**
+     * Activate a new driver mode.
+     * 
+     * @param gl the instance of the openGL interface
+     * @param newMode the new mode to enable
+     * @param texture the texture to bind to this new mode. This only has any
+     *            effect in case a texture mode is used
+     */
+    public void enableMode(final GL gl, final Modes newMode,
+        final TextureAtlasJOGL texture) {
+        enableTexture(gl, newMode, texture);
+        
+        if (currentMode == newMode) {
+            return;
+        }
         if (currentMode != null) {
             currentMode.disable(gl);
         }
@@ -335,5 +329,34 @@ public final class DriverSettingsJOGL {
             newMode.enable(gl);
         }
         currentMode = newMode;
+    }
+    
+    private WeakReference<TextureAtlasJOGL> activeTexture;
+    
+    private void enableTexture(final GL gl, final Modes mode, final TextureAtlasJOGL texture) {
+        TextureAtlasJOGL activeTexAtlas = null;
+        if (activeTexture != null) {
+            activeTexAtlas = activeTexture.get();
+        }
+        
+        if (mode != Modes.DRAWTEXTURE && mode != Modes.DRAWTEXTUREPOINTER) {
+            if (activeTexAtlas != null) {
+                activeTexAtlas.disable(gl);
+                activeTexture = null;
+            }
+            return;
+        }
+        
+        if (activeTexAtlas == texture) {
+            return;
+        }
+        
+        if (texture != null) {
+            texture.enable(gl);
+            activeTexture = new WeakReference<TextureAtlasJOGL>(texture);
+        } else if (activeTexAtlas != null) {
+            activeTexAtlas.disable(gl);
+            activeTexture = null;
+        }
     }
 }

@@ -211,7 +211,7 @@ public final class TextureJOGL implements Texture {
      * @return the texture atlas assigned to this texture
      */
     @Override
-    public final TextureAtlas getParent() {
+    public final TextureAtlasJOGL getParent() {
         return parent;
     }
 
@@ -480,10 +480,5 @@ public final class TextureJOGL implements Texture {
             displayListID = -1;
             usedDisplayLists.remove(displayListID);
         }
-    }
-
-    @Override
-    public void enable() {
-        parent.enable();
     }
 }
