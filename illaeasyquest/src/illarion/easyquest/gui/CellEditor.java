@@ -116,6 +116,7 @@ public class CellEditor implements mxICellEditor
     			    triggerDialog.setType(value.getType());
     			}
     			triggerDialog.setParameters(value.getParameters());
+    			triggerDialog.setConditions(value.getConditions());
     			triggerDialog.setVisible(true);
     		}
 		}
@@ -189,6 +190,7 @@ public class CellEditor implements mxICellEditor
         result.setObjectId(triggerDialog.getId());
         result.setType(triggerDialog.getType());
         result.setParameters(triggerDialog.getParameters());
+        result.setConditions(triggerDialog.getConditions());
 
 		return result;
 	}

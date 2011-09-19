@@ -21,36 +21,14 @@ package illarion.easyquest.quest;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class Trigger implements Serializable {
+public class Condition implements Serializable {
 
-    private String name;
-    private long objectId;
     private String type;
     private Object[] parameters;
-    private Condition[] conditions;
 
-    public Trigger() {
-        name = "";
-        objectId = 0;
+    public Condition() {
         type = null;
         parameters = null;
-        conditions = null;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public String getName() {
-        return name;
-    }
-    
-    public void setObjectId(long id) {
-        objectId = id;
-    }
-    
-    public long getObjectId() {
-        return objectId;
     }
     
     public void setType(String type) {
@@ -67,18 +45,6 @@ public class Trigger implements Serializable {
     
     public Object[] getParameters() {
         return parameters;
-    }
-    
-    public void setConditions(Condition[] conditions) {
-        this.conditions = conditions;
-    }
-    
-    public Condition[] getConditions() {
-        return conditions;
-    }
-    
-    public final String toString() {
-        return getName();
     }
     
 }

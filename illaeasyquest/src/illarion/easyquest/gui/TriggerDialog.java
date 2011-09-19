@@ -19,6 +19,8 @@
 package illarion.easyquest.gui;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.awt.Component;
 import java.awt.Frame;
@@ -31,6 +33,7 @@ import java.awt.event.ItemEvent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JFormattedTextField;
 import javax.swing.JComboBox;
@@ -38,6 +41,7 @@ import javax.swing.JButton;
 import javax.swing.Box;
 import javax.swing.BorderFactory;
 
+import illarion.easyquest.quest.Condition;
 import illarion.easyquest.quest.TriggerTemplates;
 import illarion.easyquest.quest.TriggerTemplate;
 import illarion.easyquest.Lang;
@@ -49,6 +53,7 @@ public class TriggerDialog extends JDialog
     private final JTextField name;
     private final JFormattedTextField objectId;
     private final JComboBox trigger;
+    private final Box conditionPanels;
     private final JButton okay;
     private final JButton cancel;
     private final JPanel main;
@@ -61,6 +66,8 @@ public class TriggerDialog extends JDialog
         
         final JPanel header = new JPanel(new GridLayout(0,2,0,5));
         main = new JPanel(new GridLayout(0,1,0,5));
+        conditionPanels = Box.createVerticalBox();
+        final Box body = Box.createVerticalBox();
 		final Box buttons = Box.createHorizontalBox();
 		final JLabel labelName = new JLabel(Lang.getMsg(getClass(), "name")+":");
 		labelId = new JLabel(Lang.getMsg(getClass(), "objectId")+":");
@@ -122,10 +129,15 @@ public class TriggerDialog extends JDialog
 		
 		main.setBorder(BorderFactory.createTitledBorder(Lang.getMsg(getClass(), "parameters")));
 		
+		conditionPanels.setBorder(BorderFactory.createTitledBorder(Lang.getMsg(getClass(), "conditions")));
+		
+		body.add(main);
+		body.add(conditionPanels);
+		
 		getRootPane().setDefaultButton(okay);
 
 		add(header, BorderLayout.NORTH);
-		add(main, BorderLayout.CENTER);
+		add(body, BorderLayout.CENTER);
 		add(buttons, BorderLayout.PAGE_END);
 		
 		pack();
@@ -193,6 +205,76 @@ public class TriggerDialog extends JDialog
                 ((ParameterPanel)c).setParameter(null);
             }
         }
+    }
+    
+    public Condition[] getConditions()
+    {
+        int count = (conditionPanels.getComponentCount() + 1) / 2;
+        List<Condition> conditions = new ArrayList<Condition>();
+        for (int i=0; i<count; ++i)
+        {
+            ConditionPanel cp = (ConditionPanel)conditionPanels.getComponent(2*i);
+            Condition c = cp.getCondition();
+            if (c != null)
+            {
+                conditions.add(c);
+            }
+        }
+        return conditions.toArray(new Condition[0]);
+    }
+    
+    public void setConditions(Condition[] conditions)
+    {
+        conditionPanels.removeAll();
+        
+        if (conditions != null && conditions.length > 0)
+        {
+            conditionPanels.add(new ConditionPanel(this, conditions[0]));
+            for (int i=1; i<conditions.length; ++i)
+            {
+                conditionPanels.add(new JSeparator());
+                conditionPanels.add(new ConditionPanel(this, conditions[i]));
+            }
+        }
+        else
+        {
+            conditionPanels.add(new ConditionPanel(this, null));
+        }
+        
+        pack();
+        validate();
+    }
+    
+    public void addCondition()
+    {
+        conditionPanels.add(new JSeparator());
+        conditionPanels.add(new ConditionPanel(this, null));
+        pack();
+        validate();
+    }
+    
+    public void removeCondition(ConditionPanel condition)
+    {
+        if (conditionPanels.getComponentCount() > 1)
+        {
+            int z = conditionPanels.getComponentZOrder(condition);
+            if (z != 0)
+            {
+                conditionPanels.remove(z-1);
+            }
+            else
+            {
+                conditionPanels.remove(z+1);
+            }
+            conditionPanels.remove(condition);
+        }
+        else
+        {
+            ((ConditionPanel)conditionPanels.getComponent(0)).clearSelection();
+        }
+        
+        pack();
+        validate();
     }
     
     public void addOkayListener(ActionListener listener)
