@@ -23,7 +23,6 @@ import java.util.ArrayList;
 
 import java.awt.Frame;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
@@ -36,11 +35,10 @@ import javax.swing.JSeparator;
 import javax.swing.Box;
 import javax.swing.BorderFactory;
 
-import illarion.easyquest.quest.HandlerTemplates;
-import illarion.easyquest.quest.HandlerTemplate;
 import illarion.easyquest.quest.Handler;
 import illarion.easyquest.Lang;
 
+@SuppressWarnings("serial")
 public class StatusDialog extends JDialog
 {
     

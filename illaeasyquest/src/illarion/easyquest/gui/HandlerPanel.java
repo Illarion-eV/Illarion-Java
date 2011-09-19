@@ -18,9 +18,7 @@
  */
 package illarion.easyquest.gui;
 
-import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.BorderLayout;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ActionEvent;
@@ -36,6 +34,7 @@ import illarion.easyquest.quest.Handler;
 import illarion.easyquest.quest.HandlerTemplates;
 import illarion.easyquest.quest.HandlerTemplate;
 
+@SuppressWarnings("serial")
 public class HandlerPanel extends JPanel
 {
     private final JComboBox handlerType;

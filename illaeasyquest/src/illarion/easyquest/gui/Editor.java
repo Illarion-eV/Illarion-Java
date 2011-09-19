@@ -32,10 +32,8 @@ import javax.swing.JOptionPane;
 import org.w3c.dom.Document;
 
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.swing.handler.mxCellMarker;
 import com.mxgraph.swing.handler.mxKeyboardHandler;
 import com.mxgraph.swing.handler.mxRubberband;
-import com.mxgraph.view.mxGraph;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxStylesheet;
@@ -57,14 +55,17 @@ import illarion.easyquest.EditorKeyboardHandler;
 
 import illarion.easyquest.Lang;
 
+@SuppressWarnings("serial")
 public final class Editor extends mxGraphComponent {
 
     private File questFile;
     
     private boolean savedSinceLastChange = false;
     
-    private mxKeyboardHandler keyboardHandler;
-    private mxRubberband rubberband;
+    @SuppressWarnings("unused")
+	private mxKeyboardHandler keyboardHandler;
+    @SuppressWarnings("unused")
+	private mxRubberband rubberband;
 
     Editor(Graph graph) {
         super(graph);

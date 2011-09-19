@@ -20,6 +20,7 @@ package illarion.easyquest.quest;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class Trigger implements Serializable {
 
     private String name;

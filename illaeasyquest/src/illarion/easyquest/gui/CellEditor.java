@@ -18,7 +18,6 @@
  */
 package illarion.easyquest.gui;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -28,7 +27,6 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.view.mxICellEditor;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.model.mxCell;
-import com.mxgraph.util.mxConstants;
 
 import illarion.easyquest.quest.Status;
 import illarion.easyquest.quest.Trigger;

@@ -33,7 +33,6 @@ public class TriggerTemplate
     private boolean hasQuestNumber;
     private boolean hasPrior;
     private boolean hasPosterior;
-    private boolean hasHandler;
     private List<TemplateParameter> parameters;
     
     public TriggerTemplate(String name)

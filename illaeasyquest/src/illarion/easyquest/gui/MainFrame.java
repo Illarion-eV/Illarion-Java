@@ -26,7 +26,6 @@ import java.io.File;
 
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.JTabbedPane;
@@ -40,8 +39,8 @@ import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
 
 import illarion.easyquest.Lang;
-import illarion.easyquest.quest.TriggerTemplates;
 
+@SuppressWarnings("serial")
 public class MainFrame extends JRibbonFrame
 {
     
@@ -108,6 +107,7 @@ public class MainFrame extends JRibbonFrame
 		setApplicationIcon(Utils
             .getResizableIconFromResource("easyquest.png"));
 		
+		@SuppressWarnings("unused")
 		final RibbonTask graphTask =
             new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskQuest"),
                 new ClipboardBand(), new GraphBand());

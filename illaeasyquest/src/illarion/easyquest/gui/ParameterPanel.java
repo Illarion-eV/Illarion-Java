@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 
 import illarion.easyquest.quest.TemplateParameter;
 
+@SuppressWarnings("serial")
 public class ParameterPanel extends JPanel
 {
     private Component comp;

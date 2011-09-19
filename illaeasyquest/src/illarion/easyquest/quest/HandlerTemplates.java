@@ -19,7 +19,6 @@
 package illarion.easyquest.quest;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
 import java.io.BufferedReader;

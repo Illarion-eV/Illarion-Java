@@ -42,6 +42,7 @@ import illarion.easyquest.quest.TriggerTemplates;
 import illarion.easyquest.quest.TriggerTemplate;
 import illarion.easyquest.Lang;
 
+@SuppressWarnings("serial")
 public class TriggerDialog extends JDialog
 {
     
