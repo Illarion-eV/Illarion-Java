@@ -15,7 +15,8 @@ function onDeath(MONSTER)
     debug ("*** IN ONDEATH")
     if monster.base.kills.lastAttacker[MONSTER.id]~=nil then
         PLAYER = monster.base.kills.lastAttacker[MONSTER.id]  -- get killer
-        if questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then     -- this one is really doing our quest
+        if ADDITIONALCONDITIONS(PLAYER)
+        and questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then     -- this one is really doing our quest
             if killList == nil then
                 killList = {};
             end
@@ -25,7 +26,7 @@ function onDeath(MONSTER)
             end
             killList[PLAYER.id][MONSTER:getMonsterType()]=killList[PLAYER.id][MONSTER:getMonsterType()]+1;
             if killList[PLAYER.id][MONSTER:getMonsterType()] == MONSTER_AMNT then
-                HANDLER()
+                HANDLER(PLAYER)
                 killList[PLAYER.id][MONSTER:getMonsterType()] = 0;
                 questsystem.base.setPostcondition(PLAYER, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
             end

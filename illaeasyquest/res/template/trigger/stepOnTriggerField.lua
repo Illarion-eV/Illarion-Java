@@ -11,9 +11,14 @@ local POSTCONDITION_QUESTSTATE = 0
 local POSITION = POSITION -- Map position -- Position auf der Karte
 
 function MoveToField( PLAYER )
+    if ADDITIONALCONDITIONS(PLAYER)
+    and uestsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then
     
-    HANDLER()
+        HANDLER(PLAYER)
     
-    questsystem.base.setPostcondition(PLAYER, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
-    return true
+        questsystem.base.setPostcondition(PLAYER, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
+        return true
+    end
+    
+    return false
 end

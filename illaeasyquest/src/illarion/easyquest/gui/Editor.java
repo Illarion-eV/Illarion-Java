@@ -43,6 +43,10 @@ import com.mxgraph.io.mxObjectCodec;
 
 import com.mxgraph.model.mxCell;
 
+import illarion.easyquest.quest.Condition;
+import illarion.easyquest.quest.ConditionTemplate;
+import illarion.easyquest.quest.ConditionTemplates;
+import illarion.easyquest.quest.IntegerRelation;
 import illarion.easyquest.quest.Status;
 import illarion.easyquest.quest.Handler;
 import illarion.easyquest.quest.Trigger;
@@ -196,6 +200,8 @@ public final class Editor extends mxGraphComponent {
             Object[] parameters = trigger.getParameters();
             Handler[] handlers = targetState.getHandlers();
             Set<String> handlerTypes = new HashSet<String>();
+            Condition[] conditions = trigger.getConditions();
+            
             String handlerCode = "";
             for (Handler handler : handlers)
             {
@@ -207,7 +213,7 @@ public final class Editor extends mxGraphComponent {
                 
                 handlerTypes.add(type);
                 
-                handlerCode = handlerCode + "handler." + type.toLowerCase() + "." + type + "(";
+                handlerCode = handlerCode + "    handler." + type.toLowerCase() + "." + type + "(";
                 if (handlerParameters.length > 0)
                 {
                     if (playerIndex == 0)
@@ -231,6 +237,42 @@ public final class Editor extends mxGraphComponent {
                 handlerCode = handlerCode + "):execute()\n";
             }
             
+            String conditionCode = "";
+            for (Condition condition : conditions)
+            {
+            	String type = condition.getType();
+            	Object[] conditionParameters = condition.getParameters();
+            	ConditionTemplate conditionTemplate =
+                    ConditionTemplates.getInstance().getTemplate(type);
+            	String conditionString = conditionTemplate.getCondition();
+            	for (int j=0; j<conditionParameters.length; ++j)
+            	{
+            		Object param = conditionParameters[j];
+            		String paramName = conditionTemplate.getParameter(j).getName();
+            		String paramType = conditionTemplate.getParameter(j).getType();
+            		String operator = null;
+            		String value = null;
+            		if (paramType.equals("INTEGERRELATION"))
+            		{
+            			IntegerRelation ir = (IntegerRelation)param;
+            			value = String.valueOf(ir.getInteger());
+            			operator = ir.getRelation().toLua();
+            		}
+            		conditionString = conditionString
+            			.replaceAll("OPERATOR_"+j, operator)
+            			.replaceAll(paramName, value);
+            	}
+            	if (!conditionCode.isEmpty())
+        		{
+        			conditionCode = conditionCode + "   and "; 
+        		}
+        		conditionCode = conditionCode + conditionString + "\n";
+            }
+            if (conditionCode.isEmpty())
+            {
+            	conditionCode = "true";
+            }
+            
             String t = "";
             for (String type : handlerTypes)
             {
@@ -252,9 +294,11 @@ public final class Editor extends mxGraphComponent {
     		          + "\n";
     		}
     		t = t + "\n";
-    		t = t + template.getBodyBeforeHandler();
-    		t = t + handlerCode;
-    		t = t + template.getBodyAfterHandler();
+    		t = t + template.getBody() + "\n\n";
+    		
+    		t = t + "function HANDLER(PLAYER)\n" + handlerCode + "end\n\n";
+    		t = t + "function ADDITIONALCONDITIONS(PLAYER)\nreturn " + conditionCode + "end"; 
+
     		
     		quest.put(scriptName + ".lua", t);
     		

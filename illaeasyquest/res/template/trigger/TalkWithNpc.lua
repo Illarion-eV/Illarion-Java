@@ -14,8 +14,9 @@ local NPC_REPLY_DE = TEXT -- German reply text -- Deutscher Antworttext
 local NPC_REPLY_EN = TEXT -- English reply text -- Englischer Antworttext
 
 function receiveText(type, text, PLAYER)
-    if questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE)
-    and player:getType() == Character.player then
+    if ADDITIONALCONDITIONS(PLAYER)
+    and player:getType() == Character.player
+    and questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then
         if PLAYER:getPlayerLanguage() == Player.german then
             NPC_TRIGGER=string.gsub(NPC_TRIGGER_DE,'([ ]+)',' .*');
         else
@@ -34,7 +35,7 @@ function receiveText(type, text, PLAYER)
       
             thisNPC:talk(Character.say, getNLS(PLAYER, NPC_REPLY_DE, NPC_REPLY_EN))
             
-            HANDLER()
+            HANDLER(PLAYER)
             
             questsystem.base.setPostcondition(PLAYER, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
         
