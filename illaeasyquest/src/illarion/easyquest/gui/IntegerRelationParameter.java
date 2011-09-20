@@ -20,10 +20,11 @@ package illarion.easyquest.gui;
 
 import illarion.easyquest.quest.IntegerRelation;
 import illarion.easyquest.quest.Relation;
-import illarion.easyquest.quest.Relation.Type;
 
 import java.awt.BorderLayout;
 import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.text.NumberFormatter;
 import javax.swing.text.DefaultFormatterFactory;
@@ -36,12 +37,20 @@ public class IntegerRelationParameter extends JPanel implements Parameter
 {
 	private JComboBox relation;
 	private JFormattedTextField integer;
-	private static final Relation EQUAL = new Relation(Type.EQUAL);
-	private static final Relation NOTEQUAL = new Relation(Type.NOTEQUAL);
-	private static final Relation LESSER = new Relation(Type.LESSER);
-	private static final Relation GREATER = new Relation(Type.GREATER);
-	private static final Relation LESSEROREQUAL = new Relation(Type.LESSEROREQUAL);
-	private static final Relation GREATEROREQUAL = new Relation(Type.GREATEROREQUAL);
+	private static final Relation EQUAL = new Relation(Relation.EQUAL);
+	private static final Relation NOTEQUAL = new Relation(Relation.NOTEQUAL);
+	private static final Relation LESSER = new Relation(Relation.LESSER);
+	private static final Relation GREATER = new Relation(Relation.GREATER);
+	private static final Relation LESSEROREQUAL = new Relation(Relation.LESSEROREQUAL);
+	private static final Relation GREATEROREQUAL = new Relation(Relation.GREATEROREQUAL);
+	private static final Map<Integer, Relation> relationMap = new HashMap<Integer, Relation>() {{ 
+		put(Relation.EQUAL, EQUAL);
+		put(Relation.NOTEQUAL, NOTEQUAL);
+		put(Relation.LESSER, LESSER);
+		put(Relation.GREATER, GREATER);
+		put(Relation.LESSEROREQUAL, LESSEROREQUAL);
+		put(Relation.GREATEROREQUAL, GREATEROREQUAL);
+	}};
     
     public IntegerRelationParameter()
     {
@@ -77,7 +86,7 @@ public class IntegerRelationParameter extends JPanel implements Parameter
         	rel = new IntegerRelation();
         }
         integer.setValue(new Long(rel.getInteger()));
-        relation.setSelectedItem(rel.getRelation());
+        relation.setSelectedItem(relationMap.get(rel.getRelation().getType()));
     }
     
     public Object getParameter()

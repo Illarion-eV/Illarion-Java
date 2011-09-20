@@ -23,28 +23,31 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Relation implements Serializable {
     
-    public enum Type {
-    	EQUAL, NOTEQUAL, LESSER, GREATER, LESSEROREQUAL, GREATEROREQUAL
-    }
+    public static final int EQUAL = 0;
+    public static final int NOTEQUAL = 1;
+    public static final int LESSER = 2;
+    public static final int GREATER = 3;
+    public static final int LESSEROREQUAL = 4;
+    public static final int GREATEROREQUAL = 5;
     
-    private Type type;
+    private int type;
     
     public Relation()
     {
-        type = Type.EQUAL;
+        type = EQUAL;
     }
     
-    public Relation(Type type)
+    public Relation(int type)
     {
         this.type = type;
     }
     
-    public Type getType()
+    public int getType()
     {
         return type;
     }
     
-    public void setType(Type type)
+    public void setType(int type)
     {
         this.type = type;
     }
