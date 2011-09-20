@@ -43,6 +43,10 @@ import com.mxgraph.io.mxObjectCodec;
 
 import com.mxgraph.model.mxCell;
 
+import illarion.easyquest.quest.Condition;
+import illarion.easyquest.quest.IntegerRelation;
+import illarion.easyquest.quest.Relation;
+import illarion.easyquest.quest.Relation.Type;
 import illarion.easyquest.quest.Status;
 import illarion.easyquest.quest.Handler;
 import illarion.easyquest.quest.Trigger;
@@ -84,6 +88,10 @@ public final class Editor extends mxGraphComponent {
         mxCodecRegistry.addPackage(Trigger.class.getPackage().getName());
         mxCodecRegistry.register(new mxObjectCodec(new Position()));
         mxCodecRegistry.addPackage(Position.class.getPackage().getName());
+        mxCodecRegistry.register(new mxObjectCodec(new Condition()));
+        mxCodecRegistry.register(new mxObjectCodec(new IntegerRelation()));
+        mxCodecRegistry.register(new mxObjectCodec(new Relation()));
+        mxCodecRegistry.register(new mxObjectCodec(Type.EQUAL));
         
         final Graph g = graph;
         getGraphControl().addMouseListener(new MouseAdapter()

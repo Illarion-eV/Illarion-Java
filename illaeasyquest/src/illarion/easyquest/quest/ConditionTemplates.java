@@ -131,11 +131,11 @@ public class ConditionTemplates {
                             if (isGerman) {
                                 conditionTemplate
                                     .addParameter(new TemplateParameter(
-                                        param[1], param[2], param[4]));
+                                        param[1], param[2] + "RELATION", param[4]));
                             } else {
                                 conditionTemplate
                                     .addParameter(new TemplateParameter(
-                                        param[1], param[2], param[3]));
+                                        param[1], param[2] + "RELATION", param[3]));
                             }
                         } else {
                         	String oldCondition = conditionTemplate.getCondition();

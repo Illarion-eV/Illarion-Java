@@ -47,6 +47,14 @@ public class ParameterPanel extends JPanel
         {
             comp = new IntegerParameter();
         }
+        else if (type.equals("INTEGERRELATION"))
+        {
+            comp = new IntegerRelationParameter();
+        }
+        else if (type.equals("TEXTRELATION"))
+        {
+            comp = new TextRelationParameter();
+        }
         else
         {
             comp = null;
