@@ -23,6 +23,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 import javax.swing.JPanel;
 import javax.swing.JComboBox;
@@ -52,8 +53,9 @@ public class ConditionPanel extends JPanel
         setBorder(BorderFactory.createEmptyBorder(10,5,10,5));
         
         this.owner = owner;
-        
-        conditionType = new JComboBox(ConditionTemplates.getInstance().getTemplates());
+        ConditionTemplate[] templates = ConditionTemplates.getInstance().getTemplates();
+        Arrays.sort(templates);
+        conditionType = new JComboBox(templates);
         parameterPanels = new JPanel(new GridLayout(0,1,0,5));
         addCondition = new JButton("+");
         removeCondition = new JButton("-");

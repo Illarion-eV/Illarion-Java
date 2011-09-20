@@ -21,7 +21,7 @@ package illarion.easyquest.quest;
 import java.util.List;
 import java.util.ArrayList;
 
-public class ConditionTemplate
+public class ConditionTemplate implements Comparable<ConditionTemplate>
 {
     private String name;
     private String title;
@@ -80,4 +80,9 @@ public class ConditionTemplate
     {
         return title;
     }
+
+	@Override
+	public int compareTo(ConditionTemplate o) {
+		return toString().compareTo(o.toString());
+	}
 }
