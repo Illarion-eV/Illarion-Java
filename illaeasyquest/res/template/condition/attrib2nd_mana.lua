@@ -1,4 +1,4 @@
--- Secondary Attribute: Mana -- Zweitrangiges Attribut: Mana
+-- Secondary Attribute: Mana -- Sekundäres Attribut: Mana
 
 local MANA = INTEGER -- Mana -- Mana
 

@@ -1,4 +1,4 @@
--- Secondary Attribute: Hit Points -- Zweitrangiges Attribut: Trefferpunkte
+-- Secondary Attribute: Hit Points -- Sekundäres Attribut: Trefferpunkte
 
 local HITPOINTS = INTEGER -- Hit Points -- Trefferpunkte
 

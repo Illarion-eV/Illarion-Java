@@ -1,4 +1,4 @@
--- Secondary Attribute: Gender -- Zweitrangiges Attribut: Geschlecht
+-- Secondary Attribute: Gender -- Sekundäres Attribut: Geschlecht
 
 local GENDER = INTEGER -- Gender -- Geschlecht
 

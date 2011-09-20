@@ -1,4 +1,4 @@
--- Secondary Attribute: Viewing Direction -- Zweitrangiges Attribut: Blickrichtung
+-- Secondary Attribute: Viewing Direction -- Sekundäres Attribut: Blickrichtung
 
 local FACETO = INTEGER -- Viewing Direction -- Blickrichtung
 

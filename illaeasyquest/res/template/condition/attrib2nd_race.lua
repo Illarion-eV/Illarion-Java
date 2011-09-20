@@ -1,4 +1,4 @@
--- Secondary Attribute: Race -- Zweitrangiges Attribut: Rasse
+-- Secondary Attribute: Race -- Sekundäres Attribut: Rasse
 
 local RACE = INTEGER -- Race -- Rasse
 

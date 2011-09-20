@@ -1,4 +1,4 @@
--- Secondary Attribute: Food Level -- Zweitrangiges Attribut: Sättigungsgrad
+-- Secondary Attribute: Food Level -- Sekundäres Attribut: Sättigungsgrad
 
 local FOOD = INTEGER -- Food Level -- Sättigungsgrad
 

@@ -1,4 +1,4 @@
--- Secondary Attribute: Degree of Poisoning -- Zweitrangiges Attribut: Vergiftungsgrad
+-- Secondary Attribute: Degree of Poisoning -- Sekundäres Attribut: Vergiftungsgrad
 
 local POISON = INTEGER -- Degree of Poisoning -- Vergiftungsgrad
 
