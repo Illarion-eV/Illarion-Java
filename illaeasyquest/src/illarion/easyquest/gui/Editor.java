@@ -18,6 +18,7 @@
  */
 package illarion.easyquest.gui;
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -35,6 +36,12 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxKeyboardHandler;
 import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.util.mxUndoManager;
+import com.mxgraph.util.mxUndoableEdit;
+import com.mxgraph.util.mxUndoableEdit.mxUndoableChange;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxStylesheet;
 import com.mxgraph.io.mxCodec;
@@ -70,6 +77,17 @@ public final class Editor extends mxGraphComponent {
 	private mxKeyboardHandler keyboardHandler;
     @SuppressWarnings("unused")
 	private mxRubberband rubberband;
+    
+    private mxUndoManager undoManager;
+    
+    private mxIEventListener undoHandler = new mxIEventListener()
+	{
+		public void invoke(Object source, mxEventObject evt)
+		{
+			undoManager.undoableEditHappened((mxUndoableEdit) evt
+					.getProperty("edit"));
+		}
+	};
 
     Editor(Graph graph) {
         super(graph);
@@ -81,6 +99,7 @@ public final class Editor extends mxGraphComponent {
         
         keyboardHandler = new EditorKeyboardHandler(this);
         rubberband = new mxRubberband(this);
+        undoManager = new mxUndoManager();
         
         mxCodecRegistry.register(new mxObjectCodec(new Status()));
         mxCodecRegistry.addPackage(Status.class.getPackage().getName());
@@ -90,6 +109,24 @@ public final class Editor extends mxGraphComponent {
         mxCodecRegistry.addPackage(Position.class.getPackage().getName());
         
         final Graph g = graph;
+        
+		g.getModel().addListener(mxEvent.UNDO, undoHandler);
+		g.getView().addListener(mxEvent.UNDO, undoHandler);
+
+		mxIEventListener undoHandler = new mxIEventListener()
+		{
+			public void invoke(Object source, mxEventObject evt)
+			{
+				List<mxUndoableChange> changes = ((mxUndoableEdit) evt
+						.getProperty("edit")).getChanges();
+				g.setSelectionCells(g
+						.getSelectionCellsForChanges(changes));
+			}
+		};
+
+		undoManager.addListener(mxEvent.UNDO, undoHandler);
+		undoManager.addListener(mxEvent.REDO, undoHandler);
+        
         getGraphControl().addMouseListener(new MouseAdapter()
 		{
 		    public void mouseClicked(MouseEvent e) {
@@ -134,6 +171,11 @@ public final class Editor extends mxGraphComponent {
         startStyle.put(mxConstants.STYLE_STROKECOLOR, "#0000F0");
         stylesheet.putCellStyle("StartStyle", startStyle);
     }
+    
+    public mxUndoManager getUndoManager()
+	{
+		return undoManager;
+	}
     
     public File getQuestFile() {
         return questFile;
