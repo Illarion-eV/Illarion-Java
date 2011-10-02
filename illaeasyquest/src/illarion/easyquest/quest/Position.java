@@ -20,6 +20,7 @@ package illarion.easyquest.quest;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class Position implements Serializable {
     
     private short x;

@@ -26,7 +26,6 @@ import java.io.File;
 
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.JTabbedPane;
@@ -40,8 +39,8 @@ import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
 
 import illarion.easyquest.Lang;
-import illarion.easyquest.quest.TriggerTemplates;
 
+@SuppressWarnings("serial")
 public class MainFrame extends JRibbonFrame
 {
     
@@ -108,6 +107,7 @@ public class MainFrame extends JRibbonFrame
 		setApplicationIcon(Utils
             .getResizableIconFromResource("easyquest.png"));
 		
+		@SuppressWarnings("unused")
 		final RibbonTask graphTask =
             new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskQuest"),
                 new ClipboardBand(), new GraphBand());
@@ -127,6 +127,32 @@ public class MainFrame extends JRibbonFrame
             }
         });
         getRibbon().addTaskbarComponent(saveButton);
+        
+        final JCommandButton undoButton =
+            new JCommandButton(Utils.getResizableIconFromResource("undo.png"));
+        undoButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
+            getClass(), "undoButtonTooltipTitle"), Lang.getMsg(getClass(),
+            "undoButtonTooltip")));
+        undoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                getCurrentQuestEditor().getUndoManager().undo();
+            }
+        });
+        getRibbon().addTaskbarComponent(undoButton);
+        
+        final JCommandButton redoButton =
+            new JCommandButton(Utils.getResizableIconFromResource("redo.png"));
+        redoButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
+            getClass(), "redoButtonTooltipTitle"), Lang.getMsg(getClass(),
+            "redoButtonTooltip")));
+        redoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            	getCurrentQuestEditor().getUndoManager().redo();
+            }
+        });
+        getRibbon().addTaskbarComponent(redoButton);
 
         final JPanel rootPanel = new JPanel(new BorderLayout());
         tabbedEditorArea = new JTabbedPane(SwingConstants.TOP);

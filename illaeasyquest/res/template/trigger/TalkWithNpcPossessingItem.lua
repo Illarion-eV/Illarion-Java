@@ -18,8 +18,9 @@ local NPC_NOITEM_DE = TEXT -- German reply text (doesn't have item) -- Deutscher
 local NPC_NOITEM_EN = TEXT -- English reply text (doesn't have item) -- Englischer Antworttext (hat Gegenstand nicht)
 
 function receiveText(type, text, PLAYER)
-    if questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE)
-    and PLAYER:getType() == Character.player then
+    if PLAYER:getType() == Character.player
+    and ADDITIONALCONDITIONS(PLAYER)
+    and questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then
         if PLAYER:getPlayerLanguage() == Player.german then
             NPC_TRIGGER=string.gsub(NPC_TRIGGER_DE,'([ ]+)',' .*');
         else
@@ -38,7 +39,7 @@ function receiveText(type, text, PLAYER)
             if PLAYER:countItem(ITEM_ID)>=ITEM_AMNT then
                 thisNPC:talk(Character.say, getNLS(PLAYER, NPC_REPLY_DE, NPC_REPLY_EN))
             
-                HANDLER()
+                HANDLER(PLAYER)
             
                 questsystem.base.setPostcondition(PLAYER, QUEST_NUMBER, POSTCONDITION_QUESTSTATE)
         

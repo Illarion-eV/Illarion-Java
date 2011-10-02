@@ -27,6 +27,7 @@ import javax.swing.JFormattedTextField;
 
 import illarion.easyquest.quest.Position;
 
+@SuppressWarnings("serial")
 public class PositionParameter extends JPanel implements Parameter
 {
     private final JFormattedTextField xField;

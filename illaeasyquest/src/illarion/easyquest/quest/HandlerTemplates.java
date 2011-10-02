@@ -19,7 +19,6 @@
 package illarion.easyquest.quest;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
 import java.io.BufferedReader;
@@ -62,7 +61,7 @@ public class HandlerTemplates {
     }
 
     private static InputStream getResource(final String name) {
-        final ClassLoader loader = TriggerTemplates.class.getClassLoader();
+        final ClassLoader loader = HandlerTemplates.class.getClassLoader();
         return loader.getResourceAsStream(name);
     }
 

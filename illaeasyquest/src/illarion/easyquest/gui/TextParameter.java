@@ -20,6 +20,7 @@ package illarion.easyquest.gui;
 
 import javax.swing.JTextField;
 
+@SuppressWarnings("serial")
 public class TextParameter extends JTextField implements Parameter
 {
     public TextParameter()

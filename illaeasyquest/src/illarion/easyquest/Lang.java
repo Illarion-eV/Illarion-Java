@@ -24,8 +24,6 @@ import java.util.ResourceBundle;
 
 import javolution.text.TextBuilder;
 
-import org.apache.log4j.Logger;
-
 import illarion.common.util.MessageSource;
 
 @SuppressWarnings("nls")
@@ -44,11 +42,6 @@ public final class Lang implements MessageSource {
      * The singleton instance of this class.
      */
     private static final Lang INSTANCE = new Lang();
-
-    /**
-     * The logger instance that handles the log output of this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(Lang.class);
 
     /**
      * The file name of the message bundles the client loads for the language.

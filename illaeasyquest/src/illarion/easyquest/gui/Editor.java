@@ -18,6 +18,7 @@
  */
 package illarion.easyquest.gui;
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -32,11 +33,15 @@ import javax.swing.JOptionPane;
 import org.w3c.dom.Document;
 
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.swing.handler.mxCellMarker;
 import com.mxgraph.swing.handler.mxKeyboardHandler;
 import com.mxgraph.swing.handler.mxRubberband;
-import com.mxgraph.view.mxGraph;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.util.mxUndoManager;
+import com.mxgraph.util.mxUndoableEdit;
+import com.mxgraph.util.mxUndoableEdit.mxUndoableChange;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxStylesheet;
 import com.mxgraph.io.mxCodec;
@@ -45,6 +50,10 @@ import com.mxgraph.io.mxObjectCodec;
 
 import com.mxgraph.model.mxCell;
 
+import illarion.easyquest.quest.Condition;
+import illarion.easyquest.quest.ConditionTemplate;
+import illarion.easyquest.quest.ConditionTemplates;
+import illarion.easyquest.quest.IntegerRelation;
 import illarion.easyquest.quest.Status;
 import illarion.easyquest.quest.Handler;
 import illarion.easyquest.quest.Trigger;
@@ -57,14 +66,28 @@ import illarion.easyquest.EditorKeyboardHandler;
 
 import illarion.easyquest.Lang;
 
+@SuppressWarnings("serial")
 public final class Editor extends mxGraphComponent {
 
     private File questFile;
     
     private boolean savedSinceLastChange = false;
     
-    private mxKeyboardHandler keyboardHandler;
-    private mxRubberband rubberband;
+    @SuppressWarnings("unused")
+	private mxKeyboardHandler keyboardHandler;
+    @SuppressWarnings("unused")
+	private mxRubberband rubberband;
+    
+    private mxUndoManager undoManager;
+    
+    private mxIEventListener undoHandler = new mxIEventListener()
+	{
+		public void invoke(Object source, mxEventObject evt)
+		{
+			undoManager.undoableEditHappened((mxUndoableEdit) evt
+					.getProperty("edit"));
+		}
+	};
 
     Editor(Graph graph) {
         super(graph);
@@ -76,6 +99,7 @@ public final class Editor extends mxGraphComponent {
         
         keyboardHandler = new EditorKeyboardHandler(this);
         rubberband = new mxRubberband(this);
+        undoManager = new mxUndoManager();
         
         mxCodecRegistry.register(new mxObjectCodec(new Status()));
         mxCodecRegistry.addPackage(Status.class.getPackage().getName());
@@ -85,6 +109,24 @@ public final class Editor extends mxGraphComponent {
         mxCodecRegistry.addPackage(Position.class.getPackage().getName());
         
         final Graph g = graph;
+        
+		g.getModel().addListener(mxEvent.UNDO, undoHandler);
+		g.getView().addListener(mxEvent.UNDO, undoHandler);
+
+		mxIEventListener undoHandler = new mxIEventListener()
+		{
+			public void invoke(Object source, mxEventObject evt)
+			{
+				List<mxUndoableChange> changes = ((mxUndoableEdit) evt
+						.getProperty("edit")).getChanges();
+				g.setSelectionCells(g
+						.getSelectionCellsForChanges(changes));
+			}
+		};
+
+		undoManager.addListener(mxEvent.UNDO, undoHandler);
+		undoManager.addListener(mxEvent.REDO, undoHandler);
+        
         getGraphControl().addMouseListener(new MouseAdapter()
 		{
 		    public void mouseClicked(MouseEvent e) {
@@ -129,6 +171,11 @@ public final class Editor extends mxGraphComponent {
         startStyle.put(mxConstants.STYLE_STROKECOLOR, "#0000F0");
         stylesheet.putCellStyle("StartStyle", startStyle);
     }
+    
+    public mxUndoManager getUndoManager()
+	{
+		return undoManager;
+	}
     
     public File getQuestFile() {
         return questFile;
@@ -195,6 +242,8 @@ public final class Editor extends mxGraphComponent {
             Object[] parameters = trigger.getParameters();
             Handler[] handlers = targetState.getHandlers();
             Set<String> handlerTypes = new HashSet<String>();
+            Condition[] conditions = trigger.getConditions();
+            
             String handlerCode = "";
             for (Handler handler : handlers)
             {
@@ -206,7 +255,7 @@ public final class Editor extends mxGraphComponent {
                 
                 handlerTypes.add(type);
                 
-                handlerCode = handlerCode + "handler." + type.toLowerCase() + "." + type + "(";
+                handlerCode = handlerCode + "    handler." + type.toLowerCase() + "." + type + "(";
                 if (handlerParameters.length > 0)
                 {
                     if (playerIndex == 0)
@@ -230,6 +279,42 @@ public final class Editor extends mxGraphComponent {
                 handlerCode = handlerCode + "):execute()\n";
             }
             
+            String conditionCode = "";
+            for (Condition condition : conditions)
+            {
+            	String type = condition.getType();
+            	Object[] conditionParameters = condition.getParameters();
+            	ConditionTemplate conditionTemplate =
+                    ConditionTemplates.getInstance().getTemplate(type);
+            	String conditionString = conditionTemplate.getCondition();
+            	for (int j=0; j<conditionParameters.length; ++j)
+            	{
+            		Object param = conditionParameters[j];
+            		String paramName = conditionTemplate.getParameter(j).getName();
+            		String paramType = conditionTemplate.getParameter(j).getType();
+            		String operator = null;
+            		String value = null;
+            		if (paramType.equals("INTEGERRELATION"))
+            		{
+            			IntegerRelation ir = (IntegerRelation)param;
+            			value = String.valueOf(ir.getInteger());
+            			operator = ir.getRelation().toLua();
+            		}
+            		conditionString = conditionString
+            			.replaceAll("OPERATOR_"+j, operator)
+            			.replaceAll(paramName, value);
+            	}
+            	if (!conditionCode.isEmpty())
+        		{
+        			conditionCode = conditionCode + "   and "; 
+        		}
+        		conditionCode = conditionCode + conditionString + "\n";
+            }
+            if (conditionCode.isEmpty())
+            {
+            	conditionCode = "true";
+            }
+            
             String t = "";
             for (String type : handlerTypes)
             {
@@ -251,9 +336,11 @@ public final class Editor extends mxGraphComponent {
     		          + "\n";
     		}
     		t = t + "\n";
-    		t = t + template.getBodyBeforeHandler();
-    		t = t + handlerCode;
-    		t = t + template.getBodyAfterHandler();
+    		t = t + template.getBody() + "\n\n";
+    		
+    		t = t + "function HANDLER(PLAYER)\n" + handlerCode + "end\n\n";
+    		t = t + "function ADDITIONALCONDITIONS(PLAYER)\nreturn " + conditionCode + "end"; 
+
     		
     		quest.put(scriptName + ".lua", t);
     		

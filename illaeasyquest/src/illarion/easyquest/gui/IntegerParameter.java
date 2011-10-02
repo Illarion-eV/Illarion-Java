@@ -24,6 +24,7 @@ import javax.swing.text.NumberFormatter;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.JFormattedTextField;
 
+@SuppressWarnings("serial")
 public class IntegerParameter extends JFormattedTextField implements Parameter
 {
     

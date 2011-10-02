@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 
 import illarion.easyquest.quest.TemplateParameter;
 
+@SuppressWarnings("serial")
 public class ParameterPanel extends JPanel
 {
     private Component comp;
@@ -45,6 +46,14 @@ public class ParameterPanel extends JPanel
         else if (type.equals("INTEGER"))
         {
             comp = new IntegerParameter();
+        }
+        else if (type.equals("INTEGERRELATION"))
+        {
+            comp = new IntegerRelationParameter();
+        }
+        else if (type.equals("TEXTRELATION"))
+        {
+            comp = new TextRelationParameter();
         }
         else
         {
