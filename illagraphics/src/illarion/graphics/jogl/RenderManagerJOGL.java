@@ -84,28 +84,19 @@ public final class RenderManagerJOGL implements RenderManager {
     @SuppressWarnings("nls")
     private void draw(final int delta) {
         this.delta = delta;
-
-        int location = 0;
         
-        Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
         try {
-            Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
             synchronized (taskList) {
-                Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
                 int count = taskList.size();
                 int curr = 0;
-                Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
                 while (curr < count) {
-                    Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
                     if (!taskList.get(curr).render(delta)) {
                         taskList.remove(curr);
                         --count;
                     } else {
                         ++curr;
                     }
-                    Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
                 }
-                Graphics.getInstance().getDrawer().drawRectangle(location, 20, location+10, 30, TEMP_COLOR);location+=10;
             }
         } catch (final NullPointerException ex) {
             LOGGER.warn("Render Thread catched NullPointerException");
@@ -114,9 +105,6 @@ public final class RenderManagerJOGL implements RenderManager {
 
         SpriteJOGL.resetDrawCount();
     }
-    
-
-    private static final SpriteColorJOGL TEMP_COLOR = new SpriteColorJOGL(1.f, 1.f, 1.f, 1.f);
 
     /**
      * Check if the rendering got started already.

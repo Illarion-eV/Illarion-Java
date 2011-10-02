@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.graphics;
+package illarion.client.resources;
 
+import illarion.client.graphics.AvatarCloth;
 import illarion.common.util.RecycleFactory;
 
 /**
@@ -28,14 +29,32 @@ import illarion.common.util.RecycleFactory;
  * @author Martin Karing
  * @since 1.22
  */
-final class AvatarClothFactory extends RecycleFactory<AvatarCloth> implements ResourceFactory {
+public final class ClothFactory extends RecycleFactory<AvatarCloth> implements
+    ResourceFactory<AvatarCloth> {
     /**
      * Default constructor for the avatar cloth factory. This creates also the
      * default cloth instance that is returned in case the requested item was
      * not created.
      */
-    public AvatarClothFactory() {
+    public ClothFactory() {
         super();
+    }
+
+    /**
+     * Prepare this factory for receiving its elements.
+     */
+    @Override
+    public void init() {
+        storeResource(AvatarCloth.getDefaultCloth());
+    }
+
+    /**
+     * Finish the loading and prepare the factory for normal operation.
+     */
+    @Override
+    public void loadingFinished() {
+        mapDefault(0, 1);
+        finish();
     }
 
     /**
@@ -44,15 +63,14 @@ final class AvatarClothFactory extends RecycleFactory<AvatarCloth> implements Re
      * @param cloth the cloth instance that shall be added
      */
     protected void registerCloth(final AvatarCloth cloth) {
-        cloth.setFactory(this);
-        register(cloth);
     }
 
+    /**
+     * Store a element in this factory.
+     */
     @Override
-    public void init() {
-        final AvatarCloth defaultCloth =
-            new AvatarCloth(0, null, 0, 0, 0, 0, false, null);
-        registerCloth(defaultCloth);
-        mapDefault(0, 1);
+    public void storeResource(final AvatarCloth resource) {
+        resource.setFactory(this);
+        register(resource);
     }
 }

@@ -18,6 +18,8 @@
  */
 package illarion.client.sound;
 
+import illarion.client.resources.SongFactory;
+import illarion.client.resources.SoundFactory;
 import illarion.client.world.Game;
 import illarion.common.util.Location;
 
@@ -151,7 +153,7 @@ public final class SoundManager {
      * @return the filename of the effect sound effect
      */
     private String getEffectPath(final int effectId) {
-        return SoundFactory.getInstance().getSound(effectId);
+        return SoundFactory.getInstance().getSound(effectId).getSoundFile();
     }
 
     /**
@@ -182,7 +184,7 @@ public final class SoundManager {
      *            song factory in order to play it
      */
     public void playBackground(final int songId) {
-        playBackground(SongFactory.getInstance().getSong(songId));
+        playBackground(SongFactory.getInstance().getSong(songId).getSongFile());
     }
 
     /**

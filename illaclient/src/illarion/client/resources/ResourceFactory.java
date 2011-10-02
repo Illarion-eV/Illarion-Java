@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.graphics;
+package illarion.client.resources;
 
 /**
  * This interface is shared by all resource factories and ensures that they
@@ -26,9 +26,22 @@ package illarion.client.graphics;
  * @since 1.22
  * @version 1.22
  */
-public interface ResourceFactory {
+public interface ResourceFactory<T> {
     /**
      * Initialize the factory.
      */
     void init();
+
+    /**
+     * This function is called once loading the data is finished. It can be used
+     * to optimize the storages to the current amount of data.
+     */
+    void loadingFinished();
+
+    /**
+     * Store a resource in this factory.
+     * 
+     * @param resource the resource to store
+     */
+    void storeResource(T resource);
 }

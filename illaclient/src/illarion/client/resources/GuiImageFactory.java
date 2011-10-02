@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.graphics;
+package illarion.client.resources;
 
+import illarion.client.graphics.GuiImage;
+import illarion.common.util.ObjectSource;
+import illarion.graphics.Sprite;
 import javolution.util.FastComparator;
 import javolution.util.FastMap;
-import illarion.common.util.ObjectSource;
-import illarion.common.util.TableLoader;
-import illarion.common.util.TableLoaderSink;
-import illarion.graphics.Sprite;
-import illarion.graphics.common.SpriteBuffer;
 
 /**
  * This class is used to load and store the graphics that are needed for
@@ -34,46 +32,33 @@ import illarion.graphics.common.SpriteBuffer;
  * @since 1.22
  * @version 1.22
  */
-public final class GuiImageFactory implements ObjectSource<Sprite>, ResourceFactory,
-    TableLoaderSink {
-    private static final int TB_FRAME = 2;
-    private static final int TB_NAME = 1;
-    private static final int TB_OFFX = 3;
-    private static final int TB_OFFY = 4;
-    private static final String PATH = "data/gui/";
+public final class GuiImageFactory implements ObjectSource<Sprite>,
+    ResourceFactory<GuiImage> {
+    /**
+     * The map that is used to store the values load into this factory.
+     */
+    final FastMap<String, GuiImage> sprites;
 
-    final FastMap<String, Sprite> sprites;
-
+    /**
+     * Create a new GUI image factory. This will prepare the internal data
+     * structures for operation.
+     */
     public GuiImageFactory() {
-        sprites = new FastMap<String, Sprite>();
+        sprites = new FastMap<String, GuiImage>();
         sprites.setKeyComparator(FastComparator.STRING);
-
-    }
-    
-    @Override
-    public void init() {
-        new TableLoader("Gui", this);
     }
 
-    @Override
-    public boolean processRecord(final int line, final TableLoader loader) {
-        final String name = loader.getString(TB_NAME);
-        
-        sprites.put(
-            name,
-            SpriteBuffer.getInstance().getSprite(PATH, name,
-                loader.getInt(TB_FRAME), loader.getInt(TB_OFFX),
-                loader.getInt(TB_OFFY), Sprite.HAlign.left, Sprite.VAlign.top,
-                true, false));
-        
-        return true;
-    }
-
+    /**
+     * Check if a key is assigned to a object in this object source.
+     */
     @Override
     public boolean containsObject(final String key) {
         return sprites.containsKey(key);
     }
 
+    /**
+     * Remove a object from this factory.
+     */
     @Override
     public void disposeObject(final String key, final Sprite object) {
         if (!containsObject(key)) {
@@ -82,8 +67,39 @@ public final class GuiImageFactory implements ObjectSource<Sprite>, ResourceFact
         sprites.remove(key);
     }
 
+    /**
+     * Get a object from this factory.
+     */
     @Override
     public Sprite getObject(final String key) {
-        return sprites.get(key);
+        final GuiImage image = sprites.get(key);
+
+        if (image == null) {
+            return null;
+        }
+        return sprites.get(key).getSprite();
+    }
+
+    /**
+     * Initialize the factory and prepare it for receiving data. In this case
+     * this function does nothing.
+     */
+    @Override
+    public void init() {
+    }
+
+    /**
+     * Finish the loading sequence and prepare the factory for normal operation.
+     */
+    @Override
+    public void loadingFinished() {
+    }
+
+    /**
+     * Store a resource in this factory.
+     */
+    @Override
+    public void storeResource(final GuiImage resource) {
+        sprites.put(resource.getImageName(), resource);
     }
 }

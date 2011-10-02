@@ -858,10 +858,21 @@ public final class TextureAtlasJOGL implements TextureAtlas {
         }
         try {
             texture = TextureIO.newTexture(textureData);
-            
+                        
             final GL gl = GLContext.getCurrentGL();
+
+            int glError = gl.glGetError();
+            if (glError != GL.GL_NO_ERROR) {
+                System.err.println("OpenGL Error: " + glError);
+            }
+            
             enable(gl);
             disable(gl);
+            
+            glError = gl.glGetError();
+            if (glError != GL.GL_NO_ERROR) {
+                System.err.println("OpenGL Error: " + glError);
+            }
         } catch (GLException e) {
             
         }

@@ -18,6 +18,7 @@
  */
 package illarion.graphics.jogl;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 
@@ -641,6 +642,11 @@ public final class SpriteJOGL implements Sprite {
           gl.glTexCoord2f(tex.getRelX2(), tex.getRelY2()); gl.glVertex2i(x + w, y + h);
           gl.glTexCoord2f(tex.getRelX1(), tex.getRelY2()); gl.glVertex2i(x,     y + h);
         gl.glEnd();
+        
+        int glError = gl.glGetError();
+        if (glError != GL.GL_NO_ERROR) {
+            System.err.println("OpenGL Error: " + glError);
+        }
 
         gl.glPopMatrix();
     }

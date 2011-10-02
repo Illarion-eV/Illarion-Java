@@ -20,6 +20,7 @@ package illarion.client.graphics;
 
 import java.awt.Rectangle;
 
+import illarion.client.resources.CharacterFactory;
 import illarion.client.util.Lang;
 import illarion.client.world.Game;
 
@@ -157,7 +158,7 @@ public final class Avatar extends AbstractEntity {
      * @param dir the direction the avatar is looking at
      */
     @SuppressWarnings("nls")
-    protected Avatar(final int avatarID, final String resName,
+    public Avatar(final int avatarID, final String resName,
         final int frames, final int still, final int offX, final int offY,
         final int shadowOffset, final AvatarInfo avatarInfo,
         final boolean mirror, final SpriteColor color, final int dir) {
@@ -222,7 +223,7 @@ public final class Avatar extends AbstractEntity {
      * @return a instance of the needed avatar type
      */
     public static Avatar create(final int avatarID) {
-        return AvatarFactory.getInstance().getCommand(avatarID);
+        return CharacterFactory.getInstance().getCommand(avatarID);
     }
 
     /**
@@ -454,7 +455,7 @@ public final class Avatar extends AbstractEntity {
             name.recycle();
             name = null;
         }
-        AvatarFactory.getInstance().recycle(this);
+        CharacterFactory.getInstance().recycle(this);
     }
 
     /**

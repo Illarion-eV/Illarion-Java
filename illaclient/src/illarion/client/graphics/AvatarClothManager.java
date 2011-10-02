@@ -18,6 +18,9 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.resources.ClothFactory;
+import illarion.client.resources.ItemFactory;
+
 /**
  * The Cloth manager stores all known clothes and their locations for each known
  * avatar. And allows accessing the cloth definitions.
@@ -100,14 +103,14 @@ public final class AvatarClothManager {
     /**
      * The storage for the known clothes of each group.
      */
-    private final AvatarClothFactory[] exsistingClothes;
+    private final ClothFactory[] exsistingClothes;
 
     /**
      * Constructor for this class. Each avatar needs one instance of this class
      * to get the paper dolling working.
      */
     public AvatarClothManager() {
-        exsistingClothes = new AvatarClothFactory[GROUP_COUNT];
+        exsistingClothes = new ClothFactory[GROUP_COUNT];
     }
 
     /**
@@ -125,10 +128,10 @@ public final class AvatarClothManager {
                 "Group needs to be between 0 and " + GROUP_COUNT);
         }
         if (exsistingClothes[group] == null) {
-            exsistingClothes[group] = new AvatarClothFactory();
+            exsistingClothes[group] = new ClothFactory();
             exsistingClothes[group].init();
         }
-        exsistingClothes[group].registerCloth(cloth);
+        exsistingClothes[group].storeResource(cloth);
     }
 
     /**
@@ -166,9 +169,9 @@ public final class AvatarClothManager {
      * called after the loading is done to optimize the internal storages.
      */
     public void finish() {
-        for (final AvatarClothFactory factory : exsistingClothes) {
+        for (final ClothFactory factory : exsistingClothes) {
             if (factory != null) {
-                factory.finish();
+                factory.loadingFinished();
             }
         }
     }

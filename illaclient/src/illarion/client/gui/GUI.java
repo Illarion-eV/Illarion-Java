@@ -18,7 +18,7 @@
  */
 package illarion.client.gui;
 
-import illarion.client.graphics.GuiImageFactory;
+import illarion.client.resources.GuiImageFactory;
 import illarion.client.sound.NiftySoundDevice;
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderTask;

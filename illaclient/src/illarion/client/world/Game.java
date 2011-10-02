@@ -25,16 +25,10 @@ import illarion.client.Login;
 import illarion.client.crash.LightTracerCrashHandler;
 import illarion.client.graphics.AnimationManager;
 import illarion.client.graphics.Avatar;
-import illarion.client.graphics.AvatarClothLoader;
-import illarion.client.graphics.AvatarFactory;
-import illarion.client.graphics.EffectFactory;
-import illarion.client.graphics.ItemFactory;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.client.graphics.MarkerFactory;
-import illarion.client.graphics.OverlayFactory;
-import illarion.client.graphics.ResourceFactory;
-import illarion.client.graphics.RuneFactory;
-import illarion.client.graphics.TileFactory;
+import illarion.client.graphics.Overlay;
+import illarion.client.graphics.Tile;
 import illarion.client.graphics.particle.ParticleSystem;
 import illarion.client.gui.GUI;
 import illarion.client.input.KeyboardInputHandler;
@@ -44,8 +38,26 @@ import illarion.client.net.CommandList;
 import illarion.client.net.NetComm;
 import illarion.client.net.client.LoginCmd;
 import illarion.client.net.client.MapDimensionCmd;
-import illarion.client.sound.SongFactory;
-import illarion.client.sound.SoundFactory;
+import illarion.client.resources.CharacterFactory;
+import illarion.client.resources.ClothFactoryRelay;
+import illarion.client.resources.EffectFactory;
+import illarion.client.resources.ItemFactory;
+import illarion.client.resources.OverlayFactory;
+import illarion.client.resources.ResourceFactory;
+import illarion.client.resources.RuneFactory;
+import illarion.client.resources.SongFactory;
+import illarion.client.resources.SoundFactory;
+import illarion.client.resources.TileFactory;
+import illarion.client.tableloader.CharacterLoader;
+import illarion.client.tableloader.ClothLoader;
+import illarion.client.tableloader.EffectLoader;
+import illarion.client.tableloader.ItemLoader;
+import illarion.client.tableloader.OverlayLoader;
+import illarion.client.tableloader.ResourceLoader;
+import illarion.client.tableloader.RuneLoader;
+import illarion.client.tableloader.SongLoader;
+import illarion.client.tableloader.SoundLoader;
+import illarion.client.tableloader.TileLoader;
 import illarion.client.util.ChatHandler;
 import illarion.client.util.SessionManager;
 import illarion.client.util.SessionMember;
@@ -443,20 +455,28 @@ public final class Game implements SessionMember {
                 // no message needed
             }
         } while (!graphicLoaded);
-        
+
         DebugTimer.mark("Loading the graphics done in"); //$NON-NLS-1$
 
         ConcurrentContext.execute(
-            new TableFactoryInitTask(TileFactory.getInstance()),
-            new TableFactoryInitTask(OverlayFactory.getInstance()),
-            new TableFactoryInitTask(ItemFactory.getInstance()),
-            new TableFactoryInitTask(AvatarFactory.getInstance()),
-            new TableFactoryInitTask(new AvatarClothLoader()),
-            new TableFactoryInitTask(EffectFactory.getInstance()),
-            new TableFactoryInitTask(MarkerFactory.getInstance()),
-            new TableFactoryInitTask(RuneFactory.getInstance()),
-            new TableFactoryInitTask(SongFactory.getInstance()),
-            new TableFactoryInitTask(SoundFactory.getInstance()));
+            new TableFactoryInitTask(new TileLoader().setTarget(TileFactory
+                .getInstance())),
+            new TableFactoryInitTask(new OverlayLoader()
+                .setTarget(OverlayFactory.getInstance())),
+            new TableFactoryInitTask(new ItemLoader().setTarget(ItemFactory
+                .getInstance())),
+            new TableFactoryInitTask(new CharacterLoader()
+                .setTarget(CharacterFactory.getInstance())),
+            new TableFactoryInitTask(new ClothLoader()
+                .setTarget(new ClothFactoryRelay())),
+            new TableFactoryInitTask(new EffectLoader()
+                .setTarget(EffectFactory.getInstance())),
+            new TableFactoryInitTask(new RuneLoader().setTarget(RuneFactory
+                .getInstance())),
+            new TableFactoryInitTask(new SongLoader().setTarget(SongFactory
+                .getInstance())),
+            new TableFactoryInitTask(new SoundLoader().setTarget(SoundFactory
+                .getInstance())));
 
         LoadingManager.getInstance().increaseCurrentCount();
         people = new People();
@@ -479,17 +499,16 @@ public final class Game implements SessionMember {
     }
 
     private static final class TableFactoryInitTask implements Runnable {
+        private final ResourceLoader<?> loader;
 
-        final ResourceFactory factory;
-
-        public TableFactoryInitTask(final ResourceFactory fact) {
-            factory = fact;
+        public TableFactoryInitTask(final ResourceLoader<?> load) {
+            loader = load;
         }
 
         @Override
         public void run() {
             LoadingManager.getInstance().increaseCurrentCount();
-            factory.init();
+            loader.load();
         }
 
     }
@@ -508,7 +527,7 @@ public final class Game implements SessionMember {
     public void initSession() {
         windowHandler = ClientWindow.getInstance();
         ClientWindow.getInstance().getRenderDisplay().startRendering();
-        
+
         Graphics.getInstance().getRenderManager().addTask(new RenderTask() {
             @Override
             public boolean render(final int delta) {
@@ -593,8 +612,10 @@ public final class Game implements SessionMember {
 
         IllaClient.initChatLog();
 
-        InputManager.getInstance().getMouseManager().registerEventHandler(new MouseInputHandler());
-        InputManager.getInstance().getKeyboardManager().registerEventHandler(new KeyboardInputHandler());
+        InputManager.getInstance().getMouseManager()
+            .registerEventHandler(new MouseInputHandler());
+        InputManager.getInstance().getKeyboardManager()
+            .registerEventHandler(new KeyboardInputHandler());
 
     }
 

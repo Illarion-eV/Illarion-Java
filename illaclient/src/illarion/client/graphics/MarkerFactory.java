@@ -18,6 +18,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.resources.ResourceFactory;
 import illarion.common.util.RecycleFactory;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
@@ -172,6 +173,18 @@ public class MarkerFactory extends RecycleFactory<Marker> implements
 
         //mapDefault(CRSR_MAGIC, 1);
         finish();
+    }
+
+    @Override
+    public void storeResource(Object resource) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void loadingFinished() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

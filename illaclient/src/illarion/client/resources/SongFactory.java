@@ -16,13 +16,11 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.sound;
+package illarion.client.resources;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
-import illarion.client.graphics.ResourceFactory;
+import illarion.client.sound.Song;
 import illarion.common.util.FastMath;
-import illarion.common.util.TableLoader;
-import illarion.common.util.TableLoaderSink;
 
 import java.util.List;
 
@@ -34,27 +32,11 @@ import javolution.util.FastTable;
  * independent from the RecycleFactory, because there is only one song at time
  * played anyway.
  */
-public final class SongFactory implements TableLoaderSink, ResourceFactory {
+public final class SongFactory implements ResourceFactory<Song> {
     /**
      * The singleton instance of the SongFactory.
      */
     private static final SongFactory INSTANCE = new SongFactory();
-
-    /**
-     * Folder containing the sound effects.
-     */
-    @SuppressWarnings("nls")
-    public static final String SOUND_PATH = "data/music/";
-
-    /**
-     * The index position of the song id in a table record.
-     */
-    private static final int TB_ID = 0;
-
-    /**
-     * The index position of the song name in a table record.
-     */
-    private static final int TB_NAME = 1;
 
     /**
      * Get the singleton instance of the sound factory.
@@ -68,7 +50,7 @@ public final class SongFactory implements TableLoaderSink, ResourceFactory {
     /**
      * The storage for the songs and the variations of the songs.
      */
-    private TIntObjectHashMap<List<String>> songs;
+    private TIntObjectHashMap<List<Song>> songs;
 
     /**
      * Constructor of the factory. Starts to loading of table file containing
@@ -87,10 +69,10 @@ public final class SongFactory implements TableLoaderSink, ResourceFactory {
      *         this id, the song is returned, in case there are multiple
      *         variations of this song, one is selected randomly and returned
      */
-    public String getSong(final int id) {
+    public Song getSong(final int id) {
         if ((songs != null) && (songs.contains(id))) {
             // select a variant at random
-            final List<String> clipList = songs.get(id);
+            final List<Song> clipList = songs.get(id);
             final int variant = FastMath.nextRandomInt(0, clipList.size() - 1);
             return songs.get(id).get(variant);
         }
@@ -98,41 +80,36 @@ public final class SongFactory implements TableLoaderSink, ResourceFactory {
     }
 
     /**
-     * The initialization function prepares all prototyped that are needed to
-     * work with this function.
+     * The initialization function prepares this factory to receive data.
      */
     @Override
     @SuppressWarnings("nls")
     public void init() {
-        songs = new TIntObjectHashMap<List<String>>();
-        new TableLoader("Songs", this);
-
-        songs.compact();
+        songs = new TIntObjectHashMap<List<Song>>();
     }
 
     /**
-     * Process a record of the table file containing the songs. Use the data to
-     * set up the instances of the songs.
-     * 
-     * @param line the line that is current processed
-     * @param loader the table loader that processes the file and provides the
-     *            data
-     * @return true at all times
+     * Optimize the table after the loading sequence has finished.
      */
     @Override
-    public boolean processRecord(final int line, final TableLoader loader) {
-        final int clipID = loader.getInt(TB_ID);
-        final String clipName = SOUND_PATH + loader.getString(TB_NAME);
+    public void loadingFinished() {
 
-        List<String> clipList;
+    }
+
+    /**
+     * Add a song to this factory.
+     */
+    @Override
+    public void storeResource(final Song resource) {
+        final int clipID = resource.getId();
+
+        List<Song> clipList;
         if (!songs.contains(clipID)) {
-            clipList = new FastTable<String>();
+            clipList = new FastTable<Song>();
             songs.put(clipID, clipList);
         } else {
             clipList = songs.get(clipID);
         }
-        clipList.add(clipName);
-
-        return true;
+        clipList.add(resource);
     }
 }

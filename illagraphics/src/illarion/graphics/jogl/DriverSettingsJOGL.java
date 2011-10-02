@@ -301,7 +301,11 @@ public final class DriverSettingsJOGL {
     public void enableMode(final GL gl, final Modes newMode) {
         enableMode(gl, newMode, null);
     }
-    
+
+    /**
+     * Reset the driver so any change causes that a newly selected mode is
+     * properly enabled for sure.
+     */
     public void reset() {
         currentMode = null;
         activeTexture = null;
@@ -318,10 +322,10 @@ public final class DriverSettingsJOGL {
     public void enableMode(final GL gl, final Modes newMode,
         final TextureAtlasJOGL texture) {
         enableTexture(gl, newMode, texture);
-        
-        if (currentMode == newMode) {
-            return;
-        }
+//
+//        if (currentMode == newMode) {
+//            return;
+//        }
         if (currentMode != null) {
             currentMode.disable(gl);
         }
@@ -330,15 +334,27 @@ public final class DriverSettingsJOGL {
         }
         currentMode = newMode;
     }
-    
+
+    /**
+     * The texture that was last activated.
+     */
     private WeakReference<TextureAtlasJOGL> activeTexture;
-    
-    private void enableTexture(final GL gl, final Modes mode, final TextureAtlasJOGL texture) {
+
+    /**
+     * This internal function takes care for enabling and disabling textures
+     * as needed.
+     * 
+     * @param gl the instance of the openGL interface
+     * @param newMode the new mode to enable
+     * @param texture the texture to bind
+     */
+    private void enableTexture(final GL gl, final Modes mode,
+        final TextureAtlasJOGL texture) {
         TextureAtlasJOGL activeTexAtlas = null;
         if (activeTexture != null) {
             activeTexAtlas = activeTexture.get();
         }
-        
+
         if (mode != Modes.DRAWTEXTURE && mode != Modes.DRAWTEXTUREPOINTER) {
             if (activeTexAtlas != null) {
                 activeTexAtlas.disable(gl);
@@ -346,11 +362,11 @@ public final class DriverSettingsJOGL {
             }
             return;
         }
-        
+
         if (activeTexAtlas == texture) {
             return;
         }
-        
+
         if (texture != null) {
             texture.enable(gl);
             activeTexture = new WeakReference<TextureAtlasJOGL>(texture);

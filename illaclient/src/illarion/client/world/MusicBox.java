@@ -18,7 +18,7 @@
  */
 package illarion.client.world;
 
-import illarion.client.sound.SongFactory;
+import illarion.client.resources.SongFactory;
 import illarion.client.sound.SoundManager;
 
 /**

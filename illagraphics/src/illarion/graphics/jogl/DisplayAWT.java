@@ -135,16 +135,16 @@ public final class DisplayAWT extends GLCanvas implements Display,
         final GL gl = drawable.getGL();
         gl.glClearColor(0.f, 0.f, 0.f, 1.f);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-        
-        Graphics.getInstance().getDrawer().drawRectangle(0, 0, 10, 10, TEMP_COLOR);
 
         manager.draw();
         
-        Graphics.getInstance().getDrawer().drawRectangle(20, 0, 30, 10, TEMP_COLOR);
         swapBuffers();
+        
+        int glError = gl.glGetError();
+        if (glError != GL.GL_NO_ERROR) {
+            System.err.println("OpenGL Error: " + glError);
+        }
     }
-    
-    private static final SpriteColorJOGL TEMP_COLOR = new SpriteColorJOGL(1.f, 1.f, 1.f, 1.f);
     
     private static void printStatusInfo(final String intro, final String value) {
         LOGGER.debug(String.format("%-60s%20s", intro, value));
