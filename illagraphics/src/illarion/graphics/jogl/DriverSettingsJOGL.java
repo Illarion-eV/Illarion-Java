@@ -322,10 +322,10 @@ public final class DriverSettingsJOGL {
     public void enableMode(final GL gl, final Modes newMode,
         final TextureAtlasJOGL texture) {
         enableTexture(gl, newMode, texture);
-//
-//        if (currentMode == newMode) {
-//            return;
-//        }
+
+        if (currentMode == newMode) {
+            return;
+        }
         if (currentMode != null) {
             currentMode.disable(gl);
         }

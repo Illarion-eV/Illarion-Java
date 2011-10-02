@@ -20,6 +20,7 @@ package illarion.client.gui;
 
 import illarion.client.resources.GuiImageFactory;
 import illarion.client.sound.NiftySoundDevice;
+import illarion.client.tableloader.GuiImageLoader;
 import illarion.graphics.Graphics;
 import illarion.graphics.RenderTask;
 
@@ -70,7 +71,7 @@ public final class GUI {
     
     public void init() {
         final GuiImageFactory guiFactory = new GuiImageFactory();
-        guiFactory.init();
+        new GuiImageLoader().setTarget(guiFactory).load();
 
         final RenderImageFactory imageFactory =
             new RenderImageFactory(guiFactory);
