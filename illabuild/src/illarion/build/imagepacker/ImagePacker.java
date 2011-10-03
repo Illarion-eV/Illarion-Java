@@ -26,14 +26,10 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
-import java.io.File;
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -43,17 +39,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.imageio.ImageIO;
-
 import org.apache.tools.ant.BuildException;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import illarion.build.TextureConverterNG;
 
 import illarion.common.util.FastMath;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.TextureAtlas;
-import illarion.graphics.common.SubTextureCoord;
 
 /**
  * A image packer that sorts the images by its types and places them in a good
@@ -142,24 +136,6 @@ public final class ImagePacker implements Comparator<TextureElement> {
     private static final String TEXTURE_INFO_LINE3_FORMAT =
         "Wasted %1$s of %2$s Pixels. (%3$s%% - %4$s Bytes)";
 
-    /**
-     * The format for the fourth line of the informations printed for each
-     * prepared texture atlas. This is used in case there are no additional
-     * transparency informations.
-     */
-    @SuppressWarnings("nls")
-    private static final String TEXTURE_INFO_LINE4_NO_TRANS_FORMAT =
-        "No additional transparency informations";
-
-    /**
-     * The format for the fourth line of the informations printed for each
-     * prepared texture atlas. This is used in case there are additional
-     * transparency informations.
-     */
-    @SuppressWarnings("nls")
-    private static final String TEXTURE_INFO_LINE4_TRANS_FORMAT =
-        "Additional Transparency Informations: %1$s Bytes";
-
      static final int TYPE_RGB = 0;
      static final int TYPE_RGBA = 1;
      static final int TYPE_GREY = 2;
@@ -189,29 +165,10 @@ public final class ImagePacker implements Comparator<TextureElement> {
     }
 
     /**
-     * This variable is set <code>true</code> in case the images that are
-     * created by this file packer are supposed to be written to the hard drive
-     * as pngs.
-     */
-    private boolean dumpImages = false;
-
-    /**
-     * This variable contains the base file name of the png's that are written
-     * to the hard drive.
-     */
-    private String dumpImagesBase;
-
-    /**
      * The executor service that runs the reading operation of the sprites
      * concurrent.
      */
     private ExecutorService execService;
-
-    /**
-     * In case this flag is turned to <code>true</code> the image packer will
-     * generate a transparency bitmask for the textures generated.
-     */
-    private boolean generateTransparancyMask = false;
 
     /**
      * This variable is used to synchronize the access to the analysis state
@@ -323,11 +280,11 @@ public final class ImagePacker implements Comparator<TextureElement> {
      *            bits per pixel are set up
      */
     @SuppressWarnings("nls")
-    private static void transferPixel(final byte[] sourceImage,
+    private static void transferPixel(final ByteBuffer sourceImage,
         final int sourceWidth, final int sourceHeight, final int sourceType,
         final byte[] targetImage, final int targetX, final int targetY,
         final int targetWidth, final int targetHeight, final int targetType) {
-
+        
         if ((targetX + sourceWidth) > targetWidth) {
             throw new IllegalArgumentException(
                 "Image outside of legal range (width).");
@@ -385,60 +342,37 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
                 if (targetType == TYPE_RGBA) {
                     if (sourceType == TYPE_RGBA) {
-                        targetImage[locTarget] = sourceImage[locSource];
-                        targetImage[locTarget + 1] =
-                            sourceImage[locSource + 1];
-                        targetImage[locTarget + 2] =
-                            sourceImage[locSource + 2];
-                        targetImage[locTarget + 3] =
-                            sourceImage[locSource + 3];
+                        sourceImage.get(targetImage, locTarget, 4);
                     } else if (sourceType == TYPE_RGB) {
-                        targetImage[locTarget] = sourceImage[locSource];
-                        targetImage[locTarget + 1] =
-                            sourceImage[locSource + 1];
-                        targetImage[locTarget + 2] =
-                            sourceImage[locSource + 2];
+                        sourceImage.get(targetImage, locTarget, 3);
                         targetImage[locTarget + 3] = -1;
                     } else if (sourceType == TYPE_GREY_ALPHA) {
-                        targetImage[locTarget] = sourceImage[locSource];
-                        targetImage[locTarget + 1] = sourceImage[locSource];
-                        targetImage[locTarget + 2] = sourceImage[locSource];
-                        targetImage[locTarget + 3] =
-                            sourceImage[locSource + 1];
+                        Arrays.fill(targetImage, locTarget, locTarget + 3, sourceImage.get(locSource));
+                        targetImage[locTarget + 3] = sourceImage.get(locSource + 1);
                     } 
                     else if (sourceType == TYPE_GREY) {
-                        targetImage[locTarget] = sourceImage[locSource];
-                        targetImage[locTarget + 1] = sourceImage[locSource];
-                        targetImage[locTarget + 2] = sourceImage[locSource];
+                        Arrays.fill(targetImage, locTarget, locTarget + 3, sourceImage.get(locSource));
                         targetImage[locTarget + 3] = -1;
                     }
                 } else if (targetType == TYPE_RGB) {
                     if (sourceType == TYPE_RGB) {
-                        targetImage[locTarget] = sourceImage[locSource];
-                        targetImage[locTarget + 1] =
-                            sourceImage[locSource + 1];
-                        targetImage[locTarget + 2] =
-                            sourceImage[locSource + 2];
+                        sourceImage.get(targetImage, locTarget, 3);
                     }
                     else if (sourceType == TYPE_GREY) {
-                        targetImage[locTarget] = sourceImage[locSource];
-                        targetImage[locTarget + 1] = sourceImage[locSource];
-                        targetImage[locTarget + 2] = sourceImage[locSource];
+                        Arrays.fill(targetImage, locTarget, locTarget + 3, sourceImage.get(locSource));
                     }
                 } else if (targetType == TYPE_GREY_ALPHA) {
                     if (sourceType == TYPE_GREY_ALPHA) {
-                        targetImage[locTarget] = sourceImage[locSource];
-                        targetImage[locTarget + 1] =
-                            sourceImage[locSource + 1];
+                        sourceImage.get(targetImage, locTarget, 2);
                     } 
                     else if (sourceType == TYPE_GREY) {
-                        targetImage[locTarget] = sourceImage[locSource];
+                        targetImage[locTarget] = sourceImage.get(locSource);
                         targetImage[locTarget + 1] = -1;
                     }
                 }
                 else if (targetType == TYPE_GREY) {
                     if (sourceType == TYPE_GREY) {
-                        targetImage[locTarget] = sourceImage[locSource];
+                        targetImage[locTarget] = sourceImage.get(locSource);
                     }
                 }
             }
@@ -516,8 +450,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * @throws IOException Indicates a failure to write out files
      */
     @SuppressWarnings("nls")
-    public boolean packImages(TextureAtlas texture,
-        Collection<SubTextureCoord> coordList) throws IOException {
+    public BufferedImage packImages(final Document targetDoc, final Node spriteDefTarget) throws IOException {
         System.out.println("Generating new Texture");
         if (execService != null) {
             execService.shutdown();
@@ -550,7 +483,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
         if ((images[targetType] == null) || (images[targetType].size() == 0)) {
             images[targetType] = null;
             System.out.println("No more textures ... dropping out.");
-            return false;
+            return null;
         }
         if (sortNeeded[targetType]) {
             Collections.sort(images[targetType], this);
@@ -558,12 +491,6 @@ public final class ImagePacker implements Comparator<TextureElement> {
         }
 
         int currType = targetType;
-        
-        if (currType == TYPE_GREY) {
-            targetType = TYPE_GREY_ALPHA;
-        } else if (currType == TYPE_RGB) {
-            targetType = TYPE_RGBA;
-        }
 
         System.out.println("Selected Texture Type: " + currType);
 
@@ -636,7 +563,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                         spaces = spacesHeight;
                     } else {
                         System.err.println("ERROR selecting spaces!!!");
-                        return false;
+                        return null;
                     }
                     j++;
                     if (spaces.isEmpty()) {
@@ -709,9 +636,15 @@ public final class ImagePacker implements Comparator<TextureElement> {
             images[currType].removeAll(usedImages);
 
             for (final Sprite currentImg : usedImages) {
-                coordList.add(new SubTextureCoord(currentImg.getName(),
-                    currentImg.getX(), currentImg.getY(), currentImg
-                        .getWidth(), currentImg.getHeight()));
+                final Element entryNode = targetDoc.createElement("sprite");
+                
+                entryNode.appendChild(createAttribute(targetDoc, "name", currentImg.getName()));
+                entryNode.appendChild(createAttribute(targetDoc, "x", currentImg.getX()));
+                entryNode.appendChild(createAttribute(targetDoc, "y", currentImg.getY()));
+                entryNode.appendChild(createAttribute(targetDoc, "height", currentImg.getHeight()));
+                entryNode.appendChild(createAttribute(targetDoc, "width", currentImg.getWidth()));
+                
+                spriteDefTarget.appendChild(entryNode);
             }
             usedImages.clear();
 
@@ -741,70 +674,6 @@ public final class ImagePacker implements Comparator<TextureElement> {
                 break;
             }
         }
-        
-        System.out.println("Setting up internal streams.");
-        
-        PipedInputStream pIn = new PipedInputStream(10000000);
-        PipedOutputStream pOut = new PipedOutputStream(pIn);
-        
-        System.out.println("Writing PNG to internal buffer.");
-        if (!ImageIO.write(result, "PNG", pOut)) {
-            throw new IllegalStateException("Can't write the Image! We are all doomed!");
-        }
-        System.out.println("PNG written");
-
-        try {
-            texture.loadTextureData(pIn, "png", true);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        System.out.println("Texture Data generated.");
-        
-        pIn.close();
-        pOut.close();
-
-//        boolean hasTransparencyMask = false;
-//        int transparencyMaskSize = 0;
-//        if (generateTransparancyMask && (targetType != TYPE_RGB)
-//            && (targetType != TYPE_GREY)) {
-//            hasTransparencyMask = true;
-//            int expectedTransparencySize = (width * height) / 8;
-//            if ((expectedTransparencySize * 8) < (width * height)) {
-//                expectedTransparencySize++;
-//            }
-//
-//            final ByteBuffer transparencyBuffer =
-//                ByteBuffer.allocateDirect(expectedTransparencySize);
-//            transparencyMaskSize = expectedTransparencySize;
-//
-//            boolean currentTransparent;
-//            int currentTransBufferIndex;
-//            byte transparencyMaskValue;
-//            int setBitMask;
-//            for (int i = 0; i < imageByteData.length; i += components) {
-//                if (imageByteData[(i + components) - 1] == 0xFF) {
-//                    currentTransparent = true;
-//                } else {
-//                    currentTransparent = false;
-//                }
-//
-//                currentTransBufferIndex = (i / components / 8);
-//                transparencyMaskValue =
-//                    transparencyBuffer.get(currentTransBufferIndex);
-//
-//                setBitMask = 1 << (i % 8);
-//                if (currentTransparent) {
-//                    transparencyMaskValue |= setBitMask;
-//                } else {
-//                    transparencyMaskValue &= ~setBitMask;
-//                }
-//
-//                transparencyBuffer.put(currentTransBufferIndex,
-//                    transparencyMaskValue);
-//            }
-//
-//            texAtlas.setTransparencyMask(transparencyBuffer);
-//        }
 
         for (final Space currSpace : spacesWidth) {
             wastedPixel += currSpace.getSize();
@@ -813,16 +682,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
             wastedPixel += currSpace.getSize();
         }
 
-        imageCountDumb++;
-        if (dumpImages) {
-            ImageIO.write(result, "png",
-                new File(dumpImagesBase + Integer.toString(imageCountDumb)
-                    + ".png"));
-        }
-
         result.flush();
-        raster = null;
-        result = null;
 
         System.out.println(String.format(TEXTURE_INFO_LINE1_FORMAT,
             Integer.toString(imageCountDumb), typeToName(targetType)));
@@ -833,13 +693,6 @@ public final class ImagePacker implements Comparator<TextureElement> {
             Long.toString((wastedPixel * 100) / (width * height)),
             Long.toString(wastedPixel * components)));
 
-//        if (hasTransparencyMask) {
-//            System.out.println(String.format(TEXTURE_INFO_LINE4_TRANS_FORMAT,
-//                Integer.toString(transparencyMaskSize)));
-//        } else {
-//            System.out.println(TEXTURE_INFO_LINE4_NO_TRANS_FORMAT);
-//        }
-
         for (int i = 0; i < spacesWidth.size(); ++i) {
             spacesWidth.get(i).recycle();
         }
@@ -849,7 +702,17 @@ public final class ImagePacker implements Comparator<TextureElement> {
         spacesWidth.clear();
         spacesHeight.clear();
 
-        return true;
+        return result;
+    }
+    
+    private Attr createAttribute(final Document doc, final String name, final int value) {
+        return createAttribute(doc, name, Integer.toString(value));
+    }
+    
+    private Attr createAttribute(final Document doc, final String name, final String value) {
+        final Attr result = doc.createAttribute(name);
+        result.setValue(value);
+        return result;
     }
 
     /**
@@ -870,10 +733,6 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
         if (imageCount > 0) {
             System.out.println(Integer.toString(imageCount) + " images read.");
-            if (ImageMetaDecoder.getLegacyCount() > 0) {
-                System.out.println("Legacy meta data calls needed: "
-                    + Integer.toString(ImageMetaDecoder.getLegacyCount()));
-            }
             imageCount = 0;
         }
 
@@ -885,42 +744,6 @@ public final class ImagePacker implements Comparator<TextureElement> {
             + images[TYPE_GREY].size());
         System.out.println("Gray+Alpha Textures: "
             + images[TYPE_GREY_ALPHA].size());
-    }
-
-    /**
-     * This function is used to set the base filename of the images that are
-     * written to the hard drive.
-     * 
-     * @param value the new base name
-     */
-    public void setDumpImageBaseName(final String value) {
-        dumpImagesBase = value;
-    }
-
-    /**
-     * This function is used to set the flag that determines of the images that
-     * are created are supposed to be written as png's to the hard drive.
-     * 
-     * @param value the new value of this flag
-     */
-    public void setDumpImages(final boolean value) {
-        dumpImages = value;
-    }
-
-    /**
-     * Set the value of the generate transparency mask flag. In case this flag
-     * is set <code>true</code> the image packer will generate a transparency
-     * bit mask for the generated texture that is stored along with the texture
-     * and can be used to determine the exact shape of the objects displayed on
-     * the texture. The size of the texture increases by around 1/40 for RGBA
-     * textures in case this flag is enabled. Also this mask is stored during
-     * the runtime of the client in the memory, this should only be activated
-     * for textures that require this feature.
-     * 
-     * @param value the new value of the flag
-     */
-    public void setGenerateTransparencyMask(final boolean value) {
-        generateTransparancyMask = value;
     }
 
     /**

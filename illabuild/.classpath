@@ -4,6 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/illacommon/lib/ant/ant.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illacommon"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/illagraphics"/>
+	<classpathentry kind="lib" path="/illacommon/lib/twl/PNGDecoder.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

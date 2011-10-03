@@ -14,7 +14,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/illacommon/lib/jogl/gluegen-rt.jar"/>
-	<classpathentry kind="lib" path="/illacommon/lib/slick/packulike.jar"/>
 	<classpathentry kind="lib" path="/illacommon/lib/slick/slick.jar" sourcepath="/illacommon/lib/slick/slick-sources.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

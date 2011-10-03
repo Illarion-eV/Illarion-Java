@@ -803,26 +803,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<delete dir="${classes}" />
 	</target>
 
-	<target name="build_fonts" description="build the fonts" depends="check_optional_dirs,buildTasks">
-		<property name="characters" value="256" />
-		<!-- ISO-8859-1 -->
-		<!--<property name="characters" value="65535" />-->
-		<!-- UTF-8 -->
-		<property name="fonts" location="${config}/data/fonts"/>
-	
-		<fontbuild targetFolder="${fonts}"
-            charakterCount="${characters}" fontFile="${fonts}/BlackChancery.ttf"
-            fontSize="24" fontType="normal" />
-
-		<fontbuild targetFolder="${fonts}"
-            charakterCount="${characters}" fontFile="${fonts}/Ubuntu.ttf"
-            fontSize="16" fontType="normal" />
-
-		<fontbuild targetFolder="${fonts}"
-            charakterCount="${characters}" fontFile="${fonts}/Ubuntu.ttf"
-            fontSize="14" fontType="normal" />
-	</target>
-
 	<target name="rsc_gui" description="Build the GUI resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist" >
 		<texconvert generatetransparency="true" target="${resources}/rsc_gui.tmp" dumpimages="false">
 			<fileset dir="${config}">

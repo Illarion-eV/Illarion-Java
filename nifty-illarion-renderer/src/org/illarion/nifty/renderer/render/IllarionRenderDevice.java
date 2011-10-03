@@ -174,8 +174,10 @@ public final class IllarionRenderDevice implements RenderDevice {
      */
     @Override
     public void disableMouseCursor() {
-        activeMouseCursor = null;
-        Graphics.getInstance().getRenderDisplay().showCursor();
+        if (activeMouseCursor != null) {
+            activeMouseCursor.disable();
+            activeMouseCursor = null;
+        }
     }
 
     /*

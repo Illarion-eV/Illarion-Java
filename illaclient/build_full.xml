@@ -94,7 +94,6 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
 	</target>
 	
 	<target name="create_resources" depends="check_optional_dirs" if="keys.config.exist">
-        <ant antfile="${common}/build.xml" target="build_fonts" />
         <ant antfile="${common}/build.xml" target="rsc_books" />
         <ant antfile="${common}/build.xml" target="rsc_gui" />
         <ant antfile="${common}/build.xml" target="rsc_items" />

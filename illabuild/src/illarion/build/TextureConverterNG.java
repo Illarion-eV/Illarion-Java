@@ -18,6 +18,7 @@
  */
 package illarion.build;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -35,15 +36,22 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 
+import javax.imageio.ImageIO;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -63,11 +71,6 @@ import illarion.build.imagepacker.ImagePacker;
 
 import illarion.common.util.Crypto;
 
-import illarion.graphics.Graphics;
-import illarion.graphics.TextureAtlas;
-import illarion.graphics.common.SubTextureCoord;
-import illarion.graphics.common.TextureIO;
-
 /**
  * This converter mainly converts the PNG image files into a format optimized
  * for OpenGL, in order to improve the speed of loading the client. It also put
@@ -79,6 +82,11 @@ import illarion.graphics.common.TextureIO;
  * @version 1.22
  */
 public final class TextureConverterNG extends Task {
+    /**
+     * The identifier of the texture format.
+     */
+    private static final String TEXTURE_FORMAT = "png";
+    
     /**
      * This is a small helper class used to ensure that the directory and the
      * name of the file remain separated in a specific manner.
@@ -196,11 +204,6 @@ public final class TextureConverterNG extends Task {
     private boolean showFileList = false;
 
     /**
-     * Write the image files outside of the archive for preview reasons.
-     */
-    private boolean showImages = false;
-
-    /**
      * The file names of the table files that were found but not handled yet.
      */
     private final List<FileEntry> tableFiles;
@@ -221,12 +224,6 @@ public final class TextureConverterNG extends Task {
      * pack and rather get a texture alone.
      */
     private final List<FileEntry> textureNoPackFiles;
-
-    /**
-     * This variable stores of the image builder is supposed to generate a
-     * transparency mask in addition.
-     */
-    private boolean transparency = false;
 
     /**
      * Constructor of the Texture converter. Sets up all needed variables for
@@ -266,12 +263,8 @@ public final class TextureConverterNG extends Task {
     public static void main(final String[] args) {
         final TextureConverterNG converter = new TextureConverterNG();
         for (final String arg : args) {
-            if (arg.contains("dump")) {
-                converter.setDumpImages(true);
-            } else if (arg.contains("filelist")) {
+            if (arg.contains("filelist")) {
                 converter.setDumpFilelist(true);
-            } else if (arg.contains("transparency")) {
-                converter.setGenerateTransparency(true);
             } else {
                 converter.setTarget(new File(arg));
             }
@@ -345,24 +338,6 @@ public final class TextureConverterNG extends Task {
      */
     public void setDumpFilelist(final boolean value) {
         showFileList = value;
-    }
-
-    /**
-     * Set if the generated images are supposed to be displayed or not.
-     * 
-     * @param value the new value of this flag
-     */
-    public void setDumpImages(final boolean value) {
-        showImages = value;
-    }
-
-    /**
-     * Set the flag that causes the generation of the transparency mask.
-     * 
-     * @param value the new value of this flag
-     */
-    public void setGenerateTransparency(final boolean value) {
-        transparency = value;
     }
 
     /**
@@ -826,6 +801,55 @@ public final class TextureConverterNG extends Task {
         }
         tableFiles.clear();
     }
+    
+    private int packTextures(final JarOutputStream outJar, final String folder, final ImagePacker packer, final String filename) {
+        int atlasFiles = 0;
+        String usedFileName;
+        while (!packer.allDone()) {
+            try {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document document = builder.newDocument();
+                Node rootNode = document.createElement("sprites");
+                document.appendChild(rootNode);                
+                
+                BufferedImage result = null;
+                if ((result = packer.packImages(document, rootNode)) == null) {
+                    break;
+                }
+                
+                if (filename == null) {
+                    usedFileName = folder + "atlas-" + atlasFiles;
+                } else {
+                    usedFileName = folder + filename;
+                }
+                
+                outJar.putNextEntry(new JarEntry(usedFileName + "." + TEXTURE_FORMAT));
+                ImageIO.write(result, TEXTURE_FORMAT, outJar);
+                outJar.closeEntry();
+                
+                outJar.putNextEntry(new JarEntry(usedFileName + atlasFiles + ".meta"));
+                // Prepare the DOM document for writing
+                Source source = new DOMSource(document);
+                Result xmlResult = new StreamResult(outJar);
+
+                // Write the DOM document to the file
+                Transformer xformer = TransformerFactory.newInstance().newTransformer();
+                xformer.transform(source, xmlResult);
+                outJar.closeEntry();
+                
+                atlasFiles++;
+            } catch (final IOException e) {
+                e.printStackTrace();
+                throw new BuildException(e);
+            } catch (final Exception e) {
+                e.printStackTrace();
+                throw new BuildException(e);
+            }
+        }
+        
+        return atlasFiles;
+    }
 
     /**
      * Pack the textures files together, convert them for OpenGL and store them
@@ -842,10 +866,6 @@ public final class TextureConverterNG extends Task {
         }
 
         final ImagePacker packer = new ImagePacker();
-        packer.setGenerateTransparencyMask(transparency);
-        packer.setDumpImages(showImages);
-        packer.setDumpImageBaseName(fileName);
-
         final String folder = "data/" + fileName + "/";
 
         for (final FileEntry fileEntry : textureFiles) {
@@ -855,66 +875,13 @@ public final class TextureConverterNG extends Task {
 
         packer.printTypeCounts();
 
-        int altasFiles = 0;
-        while (!packer.allDone()) {
-            try {
-                final Collection<SubTextureCoord> coordList = new ArrayList<SubTextureCoord>();
-                final TextureAtlas texture = Graphics.getInstance().getTextureAtlas();
-                if (!packer.packImages(texture, coordList)) {
-                    break;
-                }
-                
-                File imageFile = File.createTempFile("tex", "." + illarion.graphics.common.TextureIO.FORMAT);
-                File metaFile = File.createTempFile("tex", ".meta");
-                imageFile.deleteOnExit();
-                metaFile.deleteOnExit();
-                
-                TextureIO.writeTexture(imageFile, metaFile, texture, coordList);
-                
-                outJar.putNextEntry(new JarEntry(folder + "atlas-" + altasFiles + "." + illarion.graphics.common.TextureIO.FORMAT));
-                
-                FileChannel inChan = new FileInputStream(imageFile).getChannel();
-                WritableByteChannel outChan = Channels.newChannel(outJar);
-                
-                long length = imageFile.length();
-                long transfered = 0;
-                while (transfered < length) {
-                    transfered += inChan.transferTo(transfered, length - transfered, outChan);
-                }
-                
-                outJar.closeEntry();
-                
-                outJar.putNextEntry(new JarEntry(folder + "atlas-" + altasFiles + ".meta"));
-                
-                inChan = new FileInputStream(metaFile).getChannel();
-                outChan = Channels.newChannel(outJar);
-                
-                length = metaFile.length();
-                transfered = 0;
-                while (transfered < length) {
-                    transfered += inChan.transferTo(transfered, length - transfered, outChan);
-                }
-                
-                outJar.closeEntry();
-                
-                texture.finish();
-                texture.removeTexture();
-                
-                altasFiles++;
-            } catch (final IOException e) {
-                e.printStackTrace();
-                throw new BuildException(e);
-            } catch (final Exception e) {
-                e.printStackTrace();
-                throw new BuildException(e);
-            }
-        }
+        int atlasFiles = packTextures(outJar, folder, packer, null);
 
         BufferedOutputStream stream;
         try {
             outJar.putNextEntry(new JarEntry(folder + "atlas.count"));
             stream = new BufferedOutputStream(outJar);
-            stream.write(altasFiles);
+            stream.write(atlasFiles);
             stream.flush();
             outJar.closeEntry();
         } catch (final IOException e) {
@@ -941,65 +908,18 @@ public final class TextureConverterNG extends Task {
         }
 
         final ImagePacker packer = new ImagePacker();
-        packer.setGenerateTransparencyMask(transparency);
-        packer.setDumpImages(showImages);
-        packer.setDumpImageBaseName(fileName);
 
         final String folder = "data/" + fileName + "/";
 
         for (final FileEntry fileEntry : textureNoPackFiles) {
             packer.addImage(fileEntry.stripDirectory(folder));
-
-            while (!packer.allDone()) {
-                try {
-
-                    final String entryFileName =
-                    fileEntry.getFileName().replace(".png", "")
-                    .replace(folder, "").replace("nopack_", "");
-                
-                    final Collection<SubTextureCoord> coordList = new ArrayList<SubTextureCoord>();
-                    final TextureAtlas texture = Graphics.getInstance().getTextureAtlas();
-                    packer.packImages(texture, coordList);
-                    
-                    File imageFile = File.createTempFile("tex", "." + illarion.graphics.common.TextureIO.FORMAT);
-                    File metaFile = File.createTempFile("tex", ".meta");
-                    imageFile.deleteOnExit();
-                    metaFile.deleteOnExit();
-                    
-                    TextureIO.writeTexture(imageFile, metaFile, texture, coordList);
-                    
-                    outJar.putNextEntry(new JarEntry(folder + entryFileName + "." + illarion.graphics.common.TextureIO.FORMAT));
-                    
-                    FileChannel inChan = new FileInputStream(imageFile).getChannel();
-                    WritableByteChannel outChan = Channels.newChannel(outJar);
-                    
-                    long length = imageFile.length();
-                    long transfered = 0;
-                    while (transfered < length) {
-                        transfered += inChan.transferTo(transfered, length - transfered, outChan);
-                    }
-                    
-                    outJar.closeEntry();
-                    
-                    outJar.putNextEntry(new JarEntry(folder + entryFileName + ".meta"));
-                    
-                    inChan = new FileInputStream(metaFile).getChannel();
-                    outChan = Channels.newChannel(outJar);
-                    
-                    length = metaFile.length();
-                    transfered = 0;
-                    while (transfered < length) {
-                        transfered += inChan.transferTo(transfered, length - transfered, outChan);
-                    }
-                    
-                    outJar.closeEntry();
-                    
-                    texture.finish();
-                    texture.removeTexture();
-                } catch (final IOException e) {
-                    throw new BuildException(e);
-                }
-            }
+            
+            String filename = fileEntry.stripDirectory(folder).getFileName();
+            filename = filename.replace("notouch_", "");
+            filename = filename.substring(0, filename.lastIndexOf('.'));
+            
+            
+            packTextures(outJar, folder, packer, filename);
         }
         textureNoPackFiles.clear();
     }
