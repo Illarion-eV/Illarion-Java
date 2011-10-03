@@ -40,7 +40,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.tools.ant.BuildException;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -342,8 +341,10 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
                 if (targetType == TYPE_RGBA) {
                     if (sourceType == TYPE_RGBA) {
+                        sourceImage.position(locSource);
                         sourceImage.get(targetImage, locTarget, 4);
                     } else if (sourceType == TYPE_RGB) {
+                        sourceImage.position(locSource);
                         sourceImage.get(targetImage, locTarget, 3);
                         targetImage[locTarget + 3] = -1;
                     } else if (sourceType == TYPE_GREY_ALPHA) {
@@ -356,6 +357,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                     }
                 } else if (targetType == TYPE_RGB) {
                     if (sourceType == TYPE_RGB) {
+                        sourceImage.position(locSource);
                         sourceImage.get(targetImage, locTarget, 3);
                     }
                     else if (sourceType == TYPE_GREY) {
@@ -363,6 +365,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                     }
                 } else if (targetType == TYPE_GREY_ALPHA) {
                     if (sourceType == TYPE_GREY_ALPHA) {
+                        sourceImage.position(locSource);
                         sourceImage.get(targetImage, locTarget, 2);
                     } 
                     else if (sourceType == TYPE_GREY) {
@@ -638,11 +641,11 @@ public final class ImagePacker implements Comparator<TextureElement> {
             for (final Sprite currentImg : usedImages) {
                 final Element entryNode = targetDoc.createElement("sprite");
                 
-                entryNode.appendChild(createAttribute(targetDoc, "name", currentImg.getName()));
-                entryNode.appendChild(createAttribute(targetDoc, "x", currentImg.getX()));
-                entryNode.appendChild(createAttribute(targetDoc, "y", currentImg.getY()));
-                entryNode.appendChild(createAttribute(targetDoc, "height", currentImg.getHeight()));
-                entryNode.appendChild(createAttribute(targetDoc, "width", currentImg.getWidth()));
+                entryNode.setAttribute("name", currentImg.getName());
+                entryNode.setAttribute("x", Integer.toString(currentImg.getX()));
+                entryNode.setAttribute("y", Integer.toString(currentImg.getY()));
+                entryNode.setAttribute("height", Integer.toString(currentImg.getHeight()));
+                entryNode.setAttribute("width", Integer.toString(currentImg.getWidth()));
                 
                 spriteDefTarget.appendChild(entryNode);
             }
@@ -704,16 +707,6 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
         return result;
     }
-    
-    private Attr createAttribute(final Document doc, final String name, final int value) {
-        return createAttribute(doc, name, Integer.toString(value));
-    }
-    
-    private Attr createAttribute(final Document doc, final String name, final String value) {
-        final Attr result = doc.createAttribute(name);
-        result.setValue(value);
-        return result;
-    }
 
     /**
      * Print out informations about the detected texture groupings.
@@ -723,9 +716,9 @@ public final class ImagePacker implements Comparator<TextureElement> {
         if (execService != null) {
             execService.shutdown();
             try {
-                execService.awaitTermination(2, TimeUnit.HOURS);
+                execService.awaitTermination(2, TimeUnit.MINUTES);
             } catch (final InterruptedException e) {
-                // error while waiting!
+                e.printStackTrace();
                 throw new BuildException(e);
             }
             execService = null;
@@ -755,6 +748,10 @@ public final class ImagePacker implements Comparator<TextureElement> {
     protected void processAddImage(final TextureConverterNG.FileEntry fileEntry) {
         try {
             final Sprite sprite = new Sprite(fileEntry);
+            
+            if (sprite.getPixelCount() == 0) {
+                return;
+            }
 
             if ((sprite.getWidth() > MAX_SIZE)
                 || (sprite.getHeight() > MAX_SIZE)) {
@@ -781,6 +778,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
         } catch (final Exception e) {
             System.out.println("Failed reading image " //$NON-NLS-1$
                 + fileEntry.getFileName());
+            e.printStackTrace();
         }
     }
 

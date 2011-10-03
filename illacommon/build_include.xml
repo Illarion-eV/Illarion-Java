@@ -239,6 +239,15 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<patternset refid="trove.pattern" />
 	</fileset>
 
+    <!-- TWL PNG Decoder -->
+    <!-- http://twl.l33tlabs.org -->
+    <patternset id="twl.pattern">
+        <include name="PNGDecoder.jar" />
+    </patternset>
+    <fileset id="twl" dir="${common}/lib/twl">
+        <patternset refid="twl.pattern" />
+    </fileset>
+
 	<!-- Substance Look and Feel 6.1 -->
 	<!-- https://substance.dev.java.net/ -->
 	<patternset id="substance.pattern">
@@ -364,8 +373,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<fileset refid="lzma" />
 				<fileset refid="javolution" />
 				<fileset refid="trove" />
-                <fileset refid="lwjgl" />
-                <fileset refid="jogl" />
+                <fileset refid="twl" />
 			</classpath>
 		</taskdef>
 	</target>

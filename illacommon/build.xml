@@ -804,7 +804,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	</target>
 
 	<target name="rsc_gui" description="Build the GUI resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist" >
-		<texconvert generatetransparency="true" target="${resources}/rsc_gui.tmp" dumpimages="false">
+		<texconvert target="${resources}/rsc_gui.tmp">
 			<fileset dir="${config}">
 				<include name="data/gui/*.png" />
 				<include name="data/gui/**/*.png" />
@@ -819,7 +819,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			</manifest>
 		</texconvert>
 
-		<texconvert generatetransparency="false" target="${resources}/rsc_fonts.tmp">
+		<texconvert target="${resources}/rsc_fonts.tmp">
 			<fileset dir="${config}">
 				<include name="data/fonts/*.png" />
 				<include name="data/fonts/**/*.png" />
@@ -914,7 +914,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	</target>
 
 	<target name="rsc_items" description="Build the Item resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
-		<texconvert generatetransparency="true" target="${resources}/rsc_items.jar" dumpimages="false">
+		<texconvert target="${resources}/rsc_items.jar">
 			<fileset dir="${config}">
 				<include name="data/items/*.png" />
 				<include name="data/items/**/*.png" />
@@ -951,7 +951,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	</target>
 
 	<target name="rsc_tiles" description="Build the Tiles resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
-		<texconvert generatetransparency="false" target="${resources}/rsc_tiles.jar">
+		<texconvert target="${resources}/rsc_tiles.jar">
 			<fileset dir="${config}">
 				<include name="data/tiles/*.png" />
 				<include name="data/tiles/**/*.png" />
@@ -988,7 +988,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	</target>
 
 	<target name="rsc_chars" description="Build the Chars resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
-		<texconvert generatetransparency="false" target="${resources}/rsc_chars.jar">
+		<texconvert target="${resources}/rsc_chars.jar">
 			<fileset dir="${config}">
 				<include name="data/chars/*.png" />
 				<include name="data/chars/**/*.png" />
@@ -1025,7 +1025,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	</target>
 
 	<target name="rsc_effects" description="Build the Effects resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
-		<texconvert generatetransparency="false" target="${resources}/rsc_effects.jar">
+		<texconvert target="${resources}/rsc_effects.jar">
 			<fileset dir="${config}">
 				<include name="data/effects/*.png" />
 				<include name="data/effects/**/*.png" />

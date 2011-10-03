@@ -44,8 +44,8 @@ the Illarion Build Utility. If not, see <http://www.gnu.org/licenses/>.
 			compiler="${build.compiler}" debug="${build.debug}"
 			debuglevel="${build.debuglevel}">
 			<classpath>
+                <fileset refid="twl" />
 				<pathelement location="${common.bin}" />
-                <pathelement location="${graphics.bin}" />
 				<pathelement path="${java.home}/lib" />
 			</classpath>
 		</javac>
@@ -58,7 +58,6 @@ the Illarion Build Utility. If not, see <http://www.gnu.org/licenses/>.
                 <include name="illarion/build/illabuild.properties"/>
             </fileset>
             <zipfileset src="${common.bin}" />
-            <zipfileset src="${graphics.bin}" />
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Built-Date" value="${TODAY}" />

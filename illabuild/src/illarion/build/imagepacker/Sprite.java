@@ -18,10 +18,13 @@
  */
 package illarion.build.imagepacker;
 
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import javax.imageio.ImageIO;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
@@ -39,7 +42,7 @@ public final class Sprite implements TextureElement {
     /**
      * The decoder that is used to read the image data.
      */
-    private final PNGDecoder decoder;
+    private PNGDecoder decoder;
 
     /**
      * The name of the sprite
@@ -52,9 +55,14 @@ public final class Sprite implements TextureElement {
     private int x;
 
     /**
-     * The y position of the sprite
+     * The y position of the sprite.
      */
     private int y;
+    
+    /**
+     * The file this sprite was load from.
+     */
+    private final TextureConverterNG.FileEntry file;
 
     /**
      * Create a sprite based on a file
@@ -65,8 +73,27 @@ public final class Sprite implements TextureElement {
      */
     public Sprite(final TextureConverterNG.FileEntry fileEntry)
         throws FileNotFoundException, IOException {
-        decoder = new PNGDecoder(new FileInputStream(fileEntry.getFile()));
-        name = stripFileExtension(fileEntry.getFileName());;
+        PNGDecoder tempDecoder = null;
+        try {
+            tempDecoder = new PNGDecoder(new FileInputStream(fileEntry.getFile()));
+        } catch (IOException e) {
+            System.err.println("Error for image: " + fileEntry.getFileName() + ": " + e.getLocalizedMessage());
+        }
+        
+        if (tempDecoder != null) {
+            height = tempDecoder.getHeight();
+            width = tempDecoder.getWidth();
+        } else {
+            BufferedImage image = ImageIO.read(fileEntry.getFile());
+            height = image.getHeight();
+            width = image.getWidth();
+        }
+        decoder = tempDecoder;
+        getType();
+        name = stripFileExtension(fileEntry.getFileName());
+        file = fileEntry;
+        
+        decoder = null;
     }
 
     /**
@@ -102,6 +129,16 @@ public final class Sprite implements TextureElement {
 
         return true;
     }
+    
+    /**
+     * The height of the sprite.
+     */
+    private final int height;
+    
+    /**
+     * The width of the sprite.
+     */
+    private final int width;
 
     /**
      * Get the height of this sprite within the sheet
@@ -110,7 +147,7 @@ public final class Sprite implements TextureElement {
      */
     @Override
     public int getHeight() {
-        return decoder.getHeight();
+        return height;
     }
 
     /**
@@ -127,32 +164,32 @@ public final class Sprite implements TextureElement {
         if (imageData != null) {
             return imageData;
         }
-        int bits;
-        Format format;
-        if (decoder.isRGB()) {
-            if (decoder.hasAlphaChannel()) {
-                bits = 4;
-                format = Format.RGBA;
-            } else {
-                bits = 3;
-                format = Format.RGB;
-            }
-        } else {
-            if (decoder.hasAlphaChannel()) {
-                bits = 2;
-                format = Format.LUMINANCE_ALPHA;
-            } else {
-                bits = 1;
-                format = Format.LUMINANCE;
-            }
-        }
-        imageData =
-            ByteBuffer.allocateDirect(bits * decoder.getWidth()
-                * decoder.getHeight());
+        
         try {
-            decoder.decode(imageData, decoder.getWidth() * bits, format);
+            decoder = new PNGDecoder(new FileInputStream(file.getFile()));
         } catch (IOException e) {
-            System.err.println("Failed reading the image data.");
+        }
+        
+        if (decoder == null) {
+            imageData = ByteBuffer.allocateDirect(getHeight() * getWidth() * 2);
+            while (imageData.hasRemaining()) {
+                imageData.put((byte) 0);
+            }
+            imageData.flip();
+        } else {
+            Format format = decoder.decideTextureFormat(Format.LUMINANCE);
+            imageData =
+                ByteBuffer.allocateDirect(
+                    format.getNumComponents() * getWidth()
+                    * getHeight());
+            try {
+                decoder.decode(imageData, getWidth() * 
+                    format.getNumComponents(), format);
+            } catch (IOException e) {
+                System.err.println("Failed reading the image data.");
+            }
+            
+            decoder = null;
         }
         return imageData;
     }
@@ -174,6 +211,11 @@ public final class Sprite implements TextureElement {
     public long getPixelCount() {
         return getHeight() * getWidth();
     }
+    
+    /**
+     * The type of the image that was generated.
+     */
+    private int imageType = -1;
 
     /**
      * Get the type of the image.
@@ -181,19 +223,29 @@ public final class Sprite implements TextureElement {
      * @return the ID of the image type
      */
     public int getType() {
-        if (decoder.isRGB()) {
-            if (decoder.hasAlphaChannel()) {
-                return ImagePacker.TYPE_RGBA;
-            } else {
-                return ImagePacker.TYPE_RGB;
-            }
-        } else {
-            if (decoder.hasAlphaChannel()) {
-                return ImagePacker.TYPE_GREY_ALPHA;
-            } else {
-                return ImagePacker.TYPE_GREY;
-            }
+        if (imageType == -1) {
+            imageType = getTypeImpl();
         }
+        return imageType;
+    }
+
+    /**
+     * Get the type of the image.
+     * 
+     * @return the ID of the image type
+     */
+    private int getTypeImpl() {
+        if (decoder == null) {
+            return ImagePacker.TYPE_GREY_ALPHA;
+        }
+        Format format = decoder.decideTextureFormat(Format.LUMINANCE);
+        switch (format) {
+            case RGBA: return ImagePacker.TYPE_RGBA;
+            case RGB: return ImagePacker.TYPE_RGB;
+            case LUMINANCE_ALPHA: return ImagePacker.TYPE_GREY_ALPHA;
+            case LUMINANCE: return ImagePacker.TYPE_GREY;
+        }
+        return ImagePacker.TYPE_RGBA;
     }
 
     /**
@@ -203,7 +255,7 @@ public final class Sprite implements TextureElement {
      */
     @Override
     public int getWidth() {
-        return decoder.getWidth();
+        return width;
     }
 
     /**
@@ -231,6 +283,7 @@ public final class Sprite implements TextureElement {
      */
     public void releaseData() {
         imageData = null;
+        decoder = null;
     }
 
     /**

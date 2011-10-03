@@ -828,7 +828,7 @@ public final class TextureConverterNG extends Task {
                 ImageIO.write(result, TEXTURE_FORMAT, outJar);
                 outJar.closeEntry();
                 
-                outJar.putNextEntry(new JarEntry(usedFileName + atlasFiles + ".meta"));
+                outJar.putNextEntry(new JarEntry(usedFileName + ".xml"));
                 // Prepare the DOM document for writing
                 Source source = new DOMSource(document);
                 Result xmlResult = new StreamResult(outJar);
