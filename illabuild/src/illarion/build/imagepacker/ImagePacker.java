@@ -754,7 +754,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
         System.out.println("PNG written");
 
         try {
-            texture.loadTextureData(pIn, "png");
+            texture.loadTextureData(pIn, "png", true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

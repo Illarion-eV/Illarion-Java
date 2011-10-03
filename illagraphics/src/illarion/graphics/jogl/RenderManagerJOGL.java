@@ -123,6 +123,7 @@ public final class RenderManagerJOGL implements RenderManager {
     public void renderStarted() {
         renderStarted = true;
     }
+    
     /**
      * The frames rendered since the last measure.
      */

@@ -391,8 +391,8 @@ public final class IllaClient {
             System.exit(-1);
         }
         
-        Graphics.getInstance().setEngine(illarion.graphics.Engines.jogl);
-        InputManager.getInstance().setEngine(illarion.input.Engines.java);
+        Graphics.getInstance().setEngine(illarion.graphics.Engines.lwjgl);
+        InputManager.getInstance().setEngine(illarion.input.Engines.lwjgl);
 
         CrashReporter.getInstance().setConfig(getCfg());
 

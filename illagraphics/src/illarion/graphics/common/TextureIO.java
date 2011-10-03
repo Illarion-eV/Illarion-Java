@@ -51,8 +51,7 @@ import javolution.context.ArrayFactory;
  * @version 2.00
  */
 public final class TextureIO {
-    public final static String FORMAT = "sgi";
-    
+    public final static String FORMAT = "png";
     
     /**
      * Read a texture atlas from a byte channel. This method does only check the
@@ -70,7 +69,7 @@ public final class TextureIO {
         
         final TextureAtlas result = Graphics.getInstance().getTextureAtlas();
         try {
-            result.loadTextureData(dataFile);
+            result.loadTextureData(dataFile, false);
             result.cleanup();
         } catch (Exception e1) {
             throw new IOException(e1);
@@ -103,7 +102,7 @@ public final class TextureIO {
         
         final TextureAtlas result = Graphics.getInstance().getTextureAtlas();
         try {
-            result.loadTextureData(dataStream);
+            result.loadTextureData(dataStream, false);
             result.cleanup();
         } catch (Exception e1) {
             throw new IOException(e1);

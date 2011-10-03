@@ -687,47 +687,6 @@ public final class TextureAtlasJOGL implements TextureAtlas {
     }
 
     /**
-     * Set the image data of the texture. This is only needed in case the
-     * texture receives its data not from a texture file. The BufferedImage
-     * loaded into this function is automatically converted in the best format
-     * for rendering it using OpenGL.
-     * 
-     * @param imageData the image that shall be stored in this texture
-     */
-    @Override
-    public final void setTextureImage(final BufferedImage imageData) {
-        noMipMaps = true;
-
-        final byte[] imageByteData =
-            ((DataBufferByte) imageData.getRaster().getDataBuffer()).getData();
-
-        final ByteBuffer imageBuffer = getByteBuffer(imageByteData.length);
-        imageBuffer.put(imageByteData, 0, imageByteData.length);
-
-        imageBuffer.flip();
-
-        setTextureImage(imageBuffer);
-    }
-
-    /**
-     * Set the image data of the texture. This is only needed in case the
-     * texture receives its data not from a texture file. The BufferedImage
-     * loaded into this function is automatically converted in the best format
-     * for rendering it using OpenGL.
-     * 
-     * @param imageData the image that shall be stored in this texture
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public final void setTextureImage(final ByteBuffer imageData) {
-        if (!imageData.hasRemaining()) {
-            throw new IllegalArgumentException(
-                "There is no data remaining in the buffer!");
-        }
-        textureData.setBuffer(imageData);
-    }
-
-    /**
      * Set the texture type that shall be used.
      * 
      * @param type the new type that shall be used
@@ -821,13 +780,17 @@ public final class TextureAtlasJOGL implements TextureAtlas {
     }
 
     @Override
-    public void loadTextureData(File dataFile) {
+    public void loadTextureData(File dataFile, boolean keepTextureData) {
         try {
             String fileName = dataFile.getAbsolutePath();
             int dotPos = dataFile.getAbsolutePath().lastIndexOf(".");
             String extension = fileName.substring(dotPos);
             textureData = TextureIO.newTextureData(GLProfile.getGL2ES1(), dataFile, true, extension);
             texture = TextureIO.newTexture(textureData);
+            
+            if (!keepTextureData) {
+                textureData = null;
+            }
             
             final GL gl = GLContext.getCurrentGL();
             enable(gl);
@@ -842,12 +805,12 @@ public final class TextureAtlasJOGL implements TextureAtlas {
     }
 
     @Override
-    public void loadTextureData(InputStream dataStream) {
-        loadTextureData(dataStream, illarion.graphics.common.TextureIO.FORMAT);
+    public void loadTextureData(InputStream dataStream, boolean keepTextureData) {
+        loadTextureData(dataStream, illarion.graphics.common.TextureIO.FORMAT, keepTextureData);
     }
 
     @Override
-    public void loadTextureData(InputStream dataStream, String string) {
+    public void loadTextureData(InputStream dataStream, String string, boolean keepTextureData) {
         try {
             textureData = TextureIO.newTextureData(GLProfile.getGL2ES1(), dataStream, true, string);
             if (textureData == null) {
@@ -858,6 +821,10 @@ public final class TextureAtlasJOGL implements TextureAtlas {
         }
         try {
             texture = TextureIO.newTexture(textureData);
+            
+            if (!keepTextureData) {
+                textureData = null;
+            }
                         
             final GL gl = GLContext.getCurrentGL();
 

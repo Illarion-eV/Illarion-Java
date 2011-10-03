@@ -295,6 +295,19 @@ public final class Graphics {
     }
 
     /**
+     * Create a new mouse cursor instance that is based on a sprite.
+     * 
+     * @param sprite the sprite that is used to display the mouse cursor
+     * @return the mouse cursor instance
+     */
+    public MouseCursor getMouseCursor(final String ref, final int hotspotX,
+        final int hotspotY) {
+        return create(MouseCursor.class, usedEngine, new Class<?>[] {
+            String.class, int.class, int.class }, new Object[] { ref,
+            Integer.valueOf(hotspotX), Integer.valueOf(hotspotY) });
+    }
+
+    /**
      * Get the current quality setting.
      * 
      * @return the value for the current quality setting

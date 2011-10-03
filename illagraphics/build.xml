@@ -43,10 +43,8 @@ the Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
                 <fileset refid="trove" />
                 <fileset refid="javolution" />
                 <fileset refid="jogl" />
-                <fileset refid="nativewindow" />
-                <fileset refid="newt" />
-                <fileset refid="gluegen" />
                 <fileset refid="lwjgl" />
+                <fileset refid="slick" />
                 <pathelement location="${common.bin}" />
                 <pathelement path="${java.home}/lib" />
             </classpath>

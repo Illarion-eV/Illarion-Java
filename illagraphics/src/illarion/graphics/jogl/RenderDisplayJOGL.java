@@ -123,20 +123,6 @@ public final class RenderDisplayJOGL implements RenderDisplay {
     }
 
     /**
-     * The area limits that were set in place. They need to be stored in order
-     * to roll them back one by one when resetting.
-     */
-    private final FastList<Rectangle> areaLimits = new FastList<Rectangle>();
-
-    /**
-     * This is the list of the raw area limits. This limits don't have the
-     * intersection applied and are used for the proper calculation of the
-     * offset.
-     */
-    private final FastList<Rectangle> areaLimitsRaw =
-        new FastList<Rectangle>();
-
-    /**
      * The canvas used to display the graphics.
      */
     private Component canvas;
@@ -218,16 +204,6 @@ public final class RenderDisplayJOGL implements RenderDisplay {
         }
         final GL2ES1 gl2 = GLU.getCurrentGL().getGL2ES1();
         gl2.glPushMatrix();
-        if (!areaLimits.isEmpty()) {
-            final Rectangle lastRect = areaLimits.getLast();
-            if (scale > 1.f) {
-                gl2.glTranslatef(-lastRect.getWidth() / scale,
-                    -lastRect.getHeight() / scale, 0);
-            } else {
-                gl2.glTranslatef(lastRect.getWidth() * scale,
-                    lastRect.getHeight() * scale, 0);
-            }
-        }
         gl2.glScalef(scale, scale, 1.f);
     }
 
@@ -410,20 +386,6 @@ public final class RenderDisplayJOGL implements RenderDisplay {
         return renderArea.isInputListenerSupported(listener);
     }
 
-    /**
-     * Check if a rectangle is inside the current render rectangle.
-     * 
-     * @param checkRect the rectangle to check
-     * @return <code>true</code> in case the rectangle in inside the current
-     *         render rectangle
-     */
-    public boolean isInsideRenderArea(final Rectangle checkRect) {
-        if (areaLimits.isEmpty()) {
-            return true;
-        }
-        return areaLimits.getLast().intersects(checkRect);
-    }
-
     @Override
     public void removeInputListener(final Object listener) {
         getRenderArea();
@@ -481,18 +443,18 @@ public final class RenderDisplayJOGL implements RenderDisplay {
     @Override
     public void setAreaLimit(final int x, final int y, final int width,
         final int height) {
-//        if (canvas == null) {
-//            return;
-//        }
-//        final GL gl = GLU.getCurrentGL();
-//        if (!gl.isGL2ES1()) {
-//            return;
-//        }
-//
-//        final GL2ES1 gl2 = gl.getGL2ES1();
-//
-//        gl2.glEnable(GL.GL_SCISSOR_TEST);
-//        gl2.glScissor(x, y, width, height);
+        if (canvas == null) {
+            return;
+        }
+        final GL gl = GLU.getCurrentGL();
+        if (!gl.isGL2ES1()) {
+            return;
+        }
+
+        final GL2ES1 gl2 = gl.getGL2ES1();
+
+        gl2.glEnable(GL.GL_SCISSOR_TEST);
+        gl2.glScissor(x, y, width, height);
     }
 
     /**

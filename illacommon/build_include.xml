@@ -197,6 +197,17 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<fileset id="lwjgl" dir="${lwjgl.dir}">
 		<patternset refid="lwjgl.pattern" />
 	</fileset>
+
+    <!-- Slick -->
+    <!-- http://slick.cokeandcode.com/ -->
+    <property name="slick.dir" location="${common}/lib/slick"/>
+    <patternset id="slick.pattern">
+        <include name="slick.jar" />
+        <include name="slick-util.jar" />
+    </patternset>
+    <fileset id="slick" dir="${slick.dir}">
+        <patternset refid="slick.pattern" />
+    </fileset>
 	
 	<!-- JGraph 1.7.1.6 -->
 	<!-- http://www.jgraph.com/ -->

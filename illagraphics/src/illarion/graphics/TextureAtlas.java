@@ -241,26 +241,6 @@ public interface TextureAtlas {
     void setListener(TextureAtlasListener listener);
 
     /**
-     * Set the texture image from a external source. This has to fit to the
-     * definitions of the files that were stored in this class or are about to
-     * be stored in this class. This function also has to trigger a conversion
-     * of the format to the internal needed format if needed.
-     * 
-     * @param imageData the image that shall be used as texture
-     */
-    void setTextureImage(BufferedImage imageData);
-
-    /**
-     * Set the texture image from a external source. This has to fit to the
-     * definitions of the files that were stored in this class or are about to
-     * be stored in this class. This function also has to trigger a conversion
-     * of the format to the internal needed format if needed.
-     * 
-     * @param imageData the image that shall be used as texture
-     */
-    void setTextureImage(ByteBuffer imageData);
-
-    /**
      * Set the type of this texture. That could the default RGBA image, but also
      * a gray scale image with alpha or a image without alpha.
      * 
@@ -304,11 +284,11 @@ public interface TextureAtlas {
 
     void writeTextureDataToFile(File file);
 
-    void loadTextureData(File dataFile);
+    void loadTextureData(File dataFile, boolean keepTextureData);
 
-    void loadTextureData(InputStream dataStream);
+    void loadTextureData(InputStream dataStream, boolean keepTextureData);
 
-    void loadTextureData(InputStream dataStream, String string);
+    void loadTextureData(InputStream dataStream, String string, boolean keepTextureData);
     
     void cleanup();
 }

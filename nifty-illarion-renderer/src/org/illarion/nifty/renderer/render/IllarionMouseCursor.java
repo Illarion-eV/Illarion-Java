@@ -59,6 +59,24 @@ public final class IllarionMouseCursor implements MouseCursor {
     }
 
     /**
+     * Construct the mouse cursor.
+     * 
+     * @param sprite the sprite that is used to display the mouse cursor
+     * @param hotspotX the x location of the hotspot of the mouse cursor
+     * @param hotspotY the y location of the hotspot of the mouse cursor
+     */
+    public IllarionMouseCursor(final String ref, final int hotspotX,
+        final int hotspotY) {
+        internalCursor =
+            Graphics.getInstance().getMouseCursor(ref, hotspotX, hotspotY);
+        manager = InputManager.getInstance().getMouseManager();
+        
+        if (internalCursor == null) {
+            throw new NullPointerException();
+        }
+    }
+
+    /**
      * Disable the mouse cursor.
      */
     public void disable() {

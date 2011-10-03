@@ -152,7 +152,7 @@ public final class IllarionRenderDevice implements RenderDevice {
     @Override
     public MouseCursor createMouseCursor(final String filename,
         final int hotspotX, final int hotspotY) throws IOException {
-        return new IllarionMouseCursor(imageFactory.getSprite(filename),
+        return new IllarionMouseCursor(filename + ".png",
             hotspotX, hotspotY);
     }
 

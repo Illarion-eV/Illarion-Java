@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <nifty-styles xmlns="http://nifty-gui.sourceforge.net/nifty-styles-1.3.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-styles-1.3.xsd http://nifty-gui.sourceforge.net/nifty-styles-1.3.xsd">
-  <registerMouseCursor id="textFieldCursor" filename="guiSprite://textfield/mouse-cursor-textfield" hotspotX="3" hotspotY="12"/>
+  <registerMouseCursor id="textFieldCursor" filename="data/gui/mouse-cursor-textfield" hotspotX="3" hotspotY="12"/>
 
   <!-- the background of the textfield -->
   <style id="chat-textfield#panel">
