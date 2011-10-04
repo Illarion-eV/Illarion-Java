@@ -18,21 +18,20 @@
  */
 package illarion.graphics.common;
 
-import illarion.graphics.Texture;
-import illarion.graphics.TextureAtlas;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Map;
 
-import javolution.util.FastComparator;
+import javolution.text.TextBuilder;
 import javolution.util.FastMap;
-import javolution.util.FastTable;
 
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.XMLPackedSheet;
 
 /**
  * Utility class to load textures. It loads up the Atlas textures and supplies
@@ -43,6 +42,11 @@ import org.apache.log4j.Logger;
  * @version 2.00
  */
 public final class TextureLoader {
+    /**
+     * The base name of the atlas files.
+     */
+    @SuppressWarnings("nls")
+    private static final String ATLAS_BASE_NAME = "atlas-";
 
     /**
      * The file name of the default image.
@@ -51,45 +55,9 @@ public final class TextureLoader {
     private static final String DEFAULT_IMAGE = "data/gui/_default_";
 
     /**
-     * A empty string.
-     */
-    @SuppressWarnings("nls")
-    private static final String EMPTY_STRING = "".intern();
-
-    /**
      * The singleton instance of this texture loader.
      */
     private static final TextureLoader INSTANCE = new TextureLoader();
-
-    /**
-     * In case {@link #loadingState} contains this value the character were
-     * loaded last time completely.
-     */
-    private static final int LOAD_CHARS = 1;
-
-    /**
-     * In case {@link #loadingState} contains this value the effects were loaded
-     * last time completely.
-     */
-    private static final int LOAD_EFFECTS = 5;
-
-    /**
-     * In case {@link #loadingState} contains this value the GUI were loaded
-     * last time completely.
-     */
-    private static final int LOAD_GUI = 3;
-
-    /**
-     * In case {@link #loadingState} contains this value the items were loaded
-     * last time completely.
-     */
-    private static final int LOAD_ITEMS = 2;
-
-    /**
-     * In case {@link #loadingState} contains this value the tiles were loaded
-     * last time completely.
-     */
-    private static final int LOAD_TILES = 4;
 
     /**
      * The error and debug logger of the client.
@@ -106,81 +74,113 @@ public final class TextureLoader {
     }
 
     /**
+     * The index of the last atlas that was load. One array entry for each root
+     * directory.
+     */
+    private final int[] lastAtlasIndex;
+
+    /**
+     * The list of all the sheets that got already loaded. One array entry for
+     * each root directory. This is done to speed up the searching slightly as
+     * there are no textures that contain images of multiple base directories.
+     */
+    private final Map<String, XMLPackedSheet>[] loadedSheets;
+
+    /**
      * The current state of loading to ensure that the atlas files are loaded up
      * one by one.
      */
     private int loadingState = 0;
 
     /**
-     * Storage of all loaded textures. This is needed to keep track over the
-     * textures atlases that are already loaded.
+     * The list of known root directories. This list is used to locate
      */
-    private FastMap<String, List<TextureAtlas>> textureAtlases;
-
-    /**
-     * The current index of the atlas texture. This is used to improve the speed
-     * of texture loading.
-     */
-    private int textureIndex = 0;
-
-    /**
-     * The list of textures available in every folder. This list is used to
-     * increase the loading speed.
-     */
-    private FastMap<String, Map<String, Texture>> textures;
+    private final String[] rootDirectories;
 
     /**
      * Create a new texture loader.
      */
+    @SuppressWarnings("unchecked")
     private TextureLoader() {
-        textureAtlases =
-            new FastMap<String, List<TextureAtlas>>()
-                .setKeyComparator(FastComparator.STRING);
-        textures =
-            new FastMap<String, Map<String, Texture>>()
-                .setKeyComparator(FastComparator.STRING);
+        rootDirectories =
+            new String[] { "data/gui/", "data/chars/", "data/items/",
+                "data/tiles/", "data/effects/" };
+        Arrays.sort(rootDirectories);
+
+        loadedSheets =
+            (Map<String, XMLPackedSheet>[]) Array.newInstance(Map.class,
+                rootDirectories.length);
+        lastAtlasIndex = new int[rootDirectories.length];
+        Arrays.fill(lastAtlasIndex, -1);
     }
 
     /**
-     * Finish the texture loader and clean up the table that was used to load
-     * the textures. This should be done after all data is loaded from the
-     * texture loader and it does not any longer need to store references to all
-     * textures.
-     * <p>
-     * Requesting another texture after this was called, will result in a error.
-     * </p>
+     * Finish the texture loader and clean up.
      */
     public void cleanup() {
-        List<TextureAtlas> directory;
-        for (FastMap.Entry<String, List<TextureAtlas>> e =
-            textureAtlases.head(), end = textureAtlases.tail(); (e =
-            e.getNext()) != end;) {
-            directory = e.getValue();
-            for (int i = directory.size() - 1; i >= 0; --i) {
-                //directory.get(i).finish();
+        // clean unneeded data
+    }
+
+    private int getAtlasCount(final String directory) {
+        InputStream in = null;
+        int result = 0;
+        try {
+            in =
+                TextureLoader.class.getClassLoader().getResourceAsStream(
+                    directory + "atlas.count");
+            final BufferedInputStream oIn = new BufferedInputStream(in);
+            result = oIn.read();
+        } catch (final IOException e) {
+            // no texture count file found ... what ever
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (final IOException e) {
+                // closing failed, does not matter
             }
         }
-        textureAtlases = null;
-        textures = null;
+        return result;
     }
 
-    /**
-     * Get a texture instance pointing on a image upon a texture atlas.
-     * 
-     * @param resourceName the name of the resource
-     * @param smooth true in case the textures shall be rendered with expensive
-     *            smoothing techniques. Use this for textures that are scaled to
-     *            different sizes.
-     * @param compress allow the system to compress the image in order to speed
-     *            up the application
-     * @return the texture that marks the image.
-     */
-    public Texture getTexture(final String resourceName, final boolean smooth,
-        final boolean compress) {
-        final int seperator = resourceName.lastIndexOf('/') + 1;
+    private int getDirectoryIndex(final String resourceDir) {
+        final int dirIndex = Arrays.binarySearch(rootDirectories, resourceDir);
+        if (dirIndex < 0) {
+            throw new IllegalArgumentException("Illegal resource directory.");
+        }
+        return dirIndex;
+    }
 
-        return getTexture(resourceName.substring(0, seperator),
-            resourceName.substring(seperator), smooth, compress, true);
+    private String getResourceDirectory(final String sheetName) {
+        for (final String dirName : rootDirectories) {
+            if (sheetName.startsWith(dirName)) {
+                return dirName;
+            }
+        }
+        return null;
+    }
+
+    private Map<String, XMLPackedSheet> getSheetMapForDir(
+        final String resourceDir) {
+        final int dirIndex = getDirectoryIndex(resourceDir);
+
+        Map<String, XMLPackedSheet> sheets = loadedSheets[dirIndex];
+        if (sheets == null) {
+            sheets = new FastMap<String, XMLPackedSheet>();
+            loadedSheets[dirIndex] = sheets;
+        }
+        return sheets;
+    }
+
+    private String getSheetName(final String resourceDir,
+        final String resourceName) {
+        final TextBuilder builder = TextBuilder.newInstance();
+        builder.append(resourceDir);
+        builder.append(resourceName);
+        final String result = builder.toString();
+        TextBuilder.recycle(builder);
+        return result;
     }
 
     /**
@@ -196,13 +196,11 @@ public final class TextureLoader {
      *            the texture data
      * @return the texture that marks the image.
      */
-    public Texture getTexture(final String resourceName, final boolean smooth,
-        final boolean compress, final boolean discardTexData) {
-        final int seperator = resourceName.lastIndexOf('/') + 1;
+    public Image getTexture(final String resourceName) {
+        final String resourceDir = getResourceDirectory(resourceName);
 
-        return getTexture(resourceName.substring(0, seperator),
-            resourceName.substring(seperator), smooth, compress,
-            discardTexData);
+        return getTexture(resourceDir,
+            resourceName.substring(resourceDir.length()));
     }
 
     /**
@@ -210,221 +208,72 @@ public final class TextureLoader {
      * 
      * @param resourceDir Directory the resource is located in
      * @param resourceName the name of the resource excluding the directory
-     * @param smooth true in case the textures shall be rendered with expensive
-     *            smoothing techniques. Use this for textures that are scaled to
-     *            different sizes.
-     * @param compress allow the system to compress the image in order to reduce
-     *            the hardware requirements
-     * @return the texture that marks the image.
-     */
-    public Texture getTexture(final String resourceDir,
-        final String resourceName, final boolean smooth, final boolean compress) {
-        return getTexture(resourceDir, resourceName, smooth, compress, true);
-    }
-
-    /**
-     * Get a texture instance pointing on a image upon a texture atlas.
-     * 
-     * @param resourceDir Directory the resource is located in
-     * @param resourceName the name of the resource excluding the directory
-     * @param smooth true in case the textures shall be rendered with expensive
-     *            smoothing techniques. Use this for textures that are scaled to
-     *            different sizes.
-     * @param compress allow the system to compress the image in order to reduce
-     *            the hardware requirements
-     * @param discardTexData set that the texture shall store the buffer with
-     *            the texture data
      * @return the texture that marks the image.
      */
     @SuppressWarnings("nls")
-    public Texture getTexture(final String resourceDir,
-        final String resourceName, final boolean smooth,
-        final boolean compress, final boolean discardTexData) {
+    public Image getTexture(final String resourceDir, final String resourceName) {
 
-        if (textureAtlases == null) {
-            throw new IllegalStateException("The texture loader is finished "
-                + "and can't provide more textures");
+        final Map<String, XMLPackedSheet> currSheetMap =
+            getSheetMapForDir(resourceDir);
+
+        // Check if there is a packed sheet with the exact name of the resource
+        if (currSheetMap.containsKey(resourceName)) {
+            return currSheetMap.get(resourceName).getSprite(resourceName);
         }
-        Texture tex = null;
-        Map<String, Texture> folderTex = textures.get(resourceDir);
-        final String texName =
-            resourceName.replace("." + TextureIO.FORMAT, EMPTY_STRING).replace(".meta", EMPTY_STRING);
-        if (folderTex != null) {
-            tex = folderTex.get(texName);
 
-            if (tex != null) {
-                //tex.reportUsed();
-                return tex;
-            }
-        }
-        List<TextureAtlas> folderAtlas = textureAtlases.get(resourceDir);
-
-        // not found in one of the atlas files, lets look around a little
-        // further.
-        InputStream textureInput = null;
-        InputStream metaInput = null;
-        textureInput =
-                getClass().getClassLoader().getResourceAsStream(
-                    resourceDir + texName + "." + TextureIO.FORMAT);
-        metaInput =
-            getClass().getClassLoader().getResourceAsStream(
-                resourceDir + texName + ".meta");
-
-        if (textureInput != null) {
-            try {
-                final TextureAtlas newTexture =
-                    TextureIO.readTexture(textureInput, metaInput);
-                newTexture.setFileName(resourceDir + resourceName);
-
-                folderAtlas = getTextureAtlasList(resourceDir);
-                folderTex = getTextureMap(resourceDir);
-                if (folderAtlas == null) {
-                    folderAtlas =
-                        new FastTable<TextureAtlas>()
-                            .setValueComparator(FastComparator.IDENTITY);
-                    textureAtlases.put(resourceDir, folderAtlas);
-
-                    folderTex =
-                        new FastMap<String, Texture>()
-                            .setKeyComparator(FastComparator.STRING);
-                    textures.put(resourceDir, folderTex);
-                }
-                
-                folderAtlas.add(newTexture);
-                newTexture.getAllTextures(folderTex);
-
-                return folderTex.get(texName);
-
-            } catch (final IOException e) {
-                LOGGER.error("Unable to load texture: " + resourceName, e);
-                if (DEFAULT_IMAGE.contains(resourceName)) {
-                    return null;
-                }
-                return getTexture(DEFAULT_IMAGE, false, true);
+        // Scan all sheets in the directory and see of the resource is inside
+        // one of them.
+        Image result = null;
+        for (final XMLPackedSheet sheet : currSheetMap.values()) {
+            result = sheet.getSprite(resourceName);
+            if (result != null) {
+                return result;
             }
         }
 
-        int atlasCounter = -1;
-        String existingAtlasName;
-        String atlasName = null;
-        String textureName = null;
-        String metaName = null;
+        // Try to find a sheet with the exact name of this resource
+        XMLPackedSheet localSheet =
+            loadTextureSheet(resourceDir, resourceName);
+        if (localSheet != null) {
+            return localSheet.getSprite(resourceName);
+        }
+
+        // Now start loading the atlas files
+        String atlasName;
+        final TextBuilder builder = TextBuilder.newInstance();
+        final int dirIndex = getDirectoryIndex(resourceDir);
         while (true) {
-            ++atlasCounter;
+            lastAtlasIndex[dirIndex]++;
 
-            atlasName = resourceDir + "atlas-" + atlasCounter;
-            textureName = atlasName + "." + TextureIO.FORMAT;
-            metaName = atlasName + ".meta";
-            boolean alreadyUsed = false;
-
-            folderAtlas = getTextureAtlasList(resourceDir);
-            folderTex = getTextureMap(resourceDir);
-            if (folderAtlas == null) {
-                folderAtlas =
-                    new FastTable<TextureAtlas>()
-                        .setValueComparator(FastComparator.IDENTITY);
-                textureAtlases.put(resourceDir, folderAtlas);
-
-                folderTex =
-                    new FastMap<String, Texture>()
-                        .setKeyComparator(FastComparator.STRING);
-                textures.put(resourceDir, folderTex);
+            atlasName =
+                builder.append(ATLAS_BASE_NAME)
+                    .append(lastAtlasIndex[dirIndex]).toString();
+            localSheet = loadTextureSheet(resourceDir, atlasName);
+            if (localSheet == null) {
+                lastAtlasIndex[dirIndex]--;
+                break;
             }
 
-            for (int i = folderAtlas.size() - 1; i >= 0; --i) {
-                existingAtlasName = folderAtlas.get(i).getFileName();
-
-                if (existingAtlasName.equals(atlasName)) {
-                    alreadyUsed = true;
-                    break;
-                }
-            }
-
-            if (alreadyUsed) {
-                continue;
-            }
-
-            try {
-                textureInput =
-                    getClass().getClassLoader().getResourceAsStream(textureName);
-                metaInput =
-                    getClass().getClassLoader().getResourceAsStream(metaName);
-    
-                if (textureInput == null) {
-                    break;
-                }
-
-                final TextureAtlas newTexture = TextureIO.readTexture(textureInput, metaInput);
-                newTexture.setFileName(atlasName);
-                folderAtlas.add(newTexture);
-                newTexture.getAllTextures(folderTex);
-
-                tex = folderTex.get(texName);
-
-                if (tex != null) {
-                    return tex;
-                }
-            } catch (final IOException e) {
-                LOGGER.error("Unable to load texture: " + resourceName, e);
-                if (DEFAULT_IMAGE.contains(resourceName)) {
-                    return null;
-                }
-                return getTexture(DEFAULT_IMAGE, false, true);
-            } finally {
-                if (textureInput != null) {
-                    try {
-                        textureInput.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
+            result = localSheet.getSprite(resourceName);
+            if (result != null) {
+                return result;
             }
         }
 
-        LOGGER.error("Unable to load texture: " + resourceName);
+        LOGGER.error("Unable to load texture: " + resourceDir + resourceName);
         if (DEFAULT_IMAGE.contains(resourceName)) {
             return null;
         }
-        return getTexture(DEFAULT_IMAGE, false, true);
+        return getTexture(DEFAULT_IMAGE);
     }
 
-    /**
-     * Support function that receives the texture atlas list from the
-     * {@link #textureAtlases} map. The returned list is supposed to contain all
-     * texture atlas objects bound to this directory.
-     * 
-     * @param folder the directory
-     * @return the list of texture atlas objects
-     */
-    private List<TextureAtlas> getTextureAtlasList(final String folder) {
-        List<TextureAtlas> folderAtlas = textureAtlases.get(folder);
-        if (folderAtlas == null) {
-            folderAtlas =
-                new FastTable<TextureAtlas>()
-                    .setValueComparator(FastComparator.IDENTITY);
-            textureAtlases.put(folder, folderAtlas);
-        }
-        return folderAtlas;
-    }
+    public int getTotalAtlasCount() {
+        int result = 0;
 
-    /**
-     * Support function that receives the map of all textures that are stored at
-     * a specified directory. The returned map contains all textures that were
-     * load from the texture atlas objects.
-     * 
-     * @param folder the directory
-     * @return the map of texture objects
-     */
-    private Map<String, Texture> getTextureMap(final String folder) {
-        Map<String, Texture> folderTex = textures.get(folder);
-        if (folderTex == null) {
-            folderTex =
-                new FastMap<String, Texture>()
-                    .setKeyComparator(FastComparator.STRING);
-            textures.put(folder, folderTex);
+        for (final String dir : rootDirectories) {
+            result += getAtlasCount(dir);
         }
-        return folderTex;
+        return result;
     }
 
     /**
@@ -439,89 +288,38 @@ public final class TextureLoader {
      *         are loaded up
      */
     @SuppressWarnings("nls")
-    private boolean loadFolderAtlasTextures(final String resourceDir,
-        final boolean smooth, final boolean compress,
-        final boolean discardTexData) {
-        String existingAtlasName;
-        String atlasName = resourceDir + "atlas-" + textureIndex;
-        String textureFile = atlasName + "." + TextureIO.FORMAT;
-        String metaFile = atlasName + ".meta";
-        
-        boolean alreadyUsed = false;
+    private boolean loadFolderAtlasTextures(final String resourceDir) {
+        String atlasName;
+        final TextBuilder builder = TextBuilder.newInstance();
+        final int dirIndex = getDirectoryIndex(resourceDir);
+        XMLPackedSheet localSheet;
+        lastAtlasIndex[dirIndex]++;
 
-        final List<TextureAtlas> folderAtlas =
-            getTextureAtlasList(resourceDir);
-        final Map<String, Texture> folderTex = getTextureMap(resourceDir);
-
-        for (int i = folderAtlas.size() - 1; i >= 0; --i) {
-            existingAtlasName = folderAtlas.get(i).getFileName();
-
-            if (existingAtlasName.equals(atlasName)) {
-                alreadyUsed = true;
-                break;
-            }
-        }
-
-        if (alreadyUsed) {
-            return false;
-        }
-
-        try {
-            TextureLoader.class.getClassLoader().getResources("data");
-        } catch (final IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        final InputStream textureInput =
-            TextureLoader.class.getClassLoader()
-                .getResourceAsStream(textureFile);
-        
-        final InputStream metaInput =
-            TextureLoader.class.getClassLoader()
-                .getResourceAsStream(metaFile);
-
-        if (textureInput == null) {
+        atlasName =
+            builder.append(ATLAS_BASE_NAME).append(lastAtlasIndex[dirIndex])
+                .toString();
+        localSheet = loadTextureSheet(resourceDir, atlasName);
+        if (localSheet == null) {
+            lastAtlasIndex[dirIndex]--;
             return true;
         }
 
-        try {
-            final TextureAtlas newTexture = TextureIO.readTexture(textureInput, metaInput);
-            newTexture.setFileName(atlasName);
-            folderAtlas.add(newTexture);
-            newTexture.getAllTextures(folderTex);
-        } catch (final IOException e) {
-            LOGGER.error("Unable to load texture: " + atlasName, e);
-        }
         return false;
     }
-    
-    public int getTotalAtlasCount() {
-        int result = getAtlasCount("data/chars/");
-        result += getAtlasCount("data/items/");
-        result += getAtlasCount("data/gui/");
-        result += getAtlasCount("data/tiles/");
-        result += getAtlasCount("data/effects/");
-        
-        return result;
-    }
-    
-    private int getAtlasCount(final String directory) {
-        InputStream in = null;
-        int result = 0;
+
+    private XMLPackedSheet loadTextureSheet(final String resourceDir,
+        final String resourceName) {
+
+        XMLPackedSheet result = null;
+        final String sheetName = getSheetName(resourceDir, resourceName);
         try {
-            in = TextureLoader.class.getClassLoader().getResourceAsStream(directory + "atlas.count");
-            BufferedInputStream oIn = new BufferedInputStream(in);
-            result = oIn.read();
-        } catch (IOException e) {
-            // no texture count file found ... what ever
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException e) {
-                // closing failed, does not matter
-            }
+            result =
+                new XMLPackedSheet(sheetName + ".png", sheetName + ".xml");
+        } catch (final SlickException e) {
+            // resource does not appear to be available
+        }
+        if (result != null) {
+            getSheetMapForDir(resourceDir).put(resourceName, result);
         }
         return result;
     }
@@ -547,91 +345,14 @@ public final class TextureLoader {
      */
     @SuppressWarnings("nls")
     public boolean preloadAtlasTextures(final boolean discardTexData) {
-        ++loadingState;
-
-        switch (loadingState) {
-            case LOAD_CHARS:
-                // load characters, need to be scaled
-                if (!loadFolderAtlasTextures("data/chars/", true, true,
-                    discardTexData)) {
-                    --loadingState;
-                    textureIndex++;
-                } else {
-                    textureIndex = 0;
-                }
-                return false;
-            case LOAD_ITEMS:
-                // items, some of them need scaling as well
-                if (!loadFolderAtlasTextures("data/items/", true, true,
-                    discardTexData)) {
-                    --loadingState;
-                    textureIndex++;
-                } else {
-                    textureIndex = 0;
-                }
-                return false;
-            case LOAD_GUI:
-                // the gui, no scaling for this one
-                if (!loadFolderAtlasTextures("data/gui/", false, false,
-                    discardTexData)) {
-                    --loadingState;
-                    textureIndex++;
-                } else {
-                    textureIndex = 0;
-                }
-                return false;
-            case LOAD_TILES:
-                // the tiles, no scaling needed at all
-                if (!loadFolderAtlasTextures("data/tiles/", false, false,
-                    discardTexData)) {
-                    --loadingState;
-                    textureIndex++;
-                } else {
-                    textureIndex = 0;
-                }
-                return false;
-            case LOAD_EFFECTS:
-                // the effects, no scaling needed at all
-                if (!loadFolderAtlasTextures("data/effects/", false, true,
-                    discardTexData)) {
-                    --loadingState;
-                    textureIndex++;
-                } else {
-                    textureIndex = 0;
-                }
-                return false;
-            default:
-                return true;
+        if (loadingState >= rootDirectories.length) {
+            return true;
         }
-    }
 
-//    /**
-//     * This function is called in case all references to a texture got removed.
-//     * When this is done the textures get removed from the system.
-//     * 
-//     * @param atlas the texture atlas that is not in use anymore
-//     */
-//    @Override
-//    public void reportDeath(final TextureAtlas atlas) {
-//        atlas.removeTexture();
-//
-//        if (textureAtlases == null) {
-//            return;
-//        }
-//
-//        for (FastMap.Entry<String, List<TextureAtlas>> e =
-//            textureAtlases.head(), end = textureAtlases.tail(); (e =
-//            e.getNext()) != end;) {
-//
-//            final List<TextureAtlas> textureStorage = e.getValue();
-//            final int index = textureStorage.indexOf(atlas);
-//            if (index > -1) {
-//                textureStorage.remove(index);
-//                if (textureStorage.isEmpty()) {
-//                    textureAtlases.remove(e.getKey());
-//                }
-//                return;
-//            }
-//        }
-//    }
+        if (loadFolderAtlasTextures(rootDirectories[loadingState])) {
+            loadingState++;
+        }
+
+        return false;
+    }
 }
