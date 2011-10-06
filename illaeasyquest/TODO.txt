@@ -2,8 +2,6 @@ after rotate edge, no edit possible
 add Ctrl+Z, Ctrl+Y shortcuts for undo/redo
 show modified
 safety check on closing if modified
-add config (default folder)
-add recent files
 add save all
 add save as
 input quest id
