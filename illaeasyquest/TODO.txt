@@ -7,3 +7,4 @@ add save as
 input quest id
 always move loop with node
 have multiple graph levels
+mark edge as disconnected after moving
