@@ -22,6 +22,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 
 import javax.swing.JPanel;
@@ -30,6 +32,7 @@ import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
@@ -163,6 +166,47 @@ public class MainFrame extends JRibbonFrame
         getContentPane().add(rootPanel);
         
         pack();
+        
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowListener() {
+
+            @Override
+            public void windowActivated(final WindowEvent e) {
+                // nothing
+            }
+
+            @Override
+            public void windowClosed(final WindowEvent e) {
+                MainFrame.getInstance().dispose();
+            }
+
+            @Override
+            public void windowClosing(final WindowEvent e) {
+                MainFrame.getInstance().closeWindow();
+            }
+
+            @Override
+            public void windowDeactivated(final WindowEvent e) {
+                // nothing
+            }
+
+            @Override
+            public void windowDeiconified(final WindowEvent e) {
+                // nothing
+            }
+
+            @Override
+            public void windowIconified(final WindowEvent e) {
+                // nothing
+            }
+
+            @Override
+            public void windowOpened(final WindowEvent e) {
+                // nothing
+            }
+        });
+        
+        validate();
 		
 		if (getOpenTabs() == 0) {
             addNewQuest();
@@ -205,9 +249,12 @@ public class MainFrame extends JRibbonFrame
     }
 
     protected void closeWindow() {
-
+    	//Config.getInstance().setOldFiles(fileList);
+    	
         setVisible(false);
         dispose();
+        
+        Config.getInstance().save();
 
         System.exit(0);
     }
