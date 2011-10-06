@@ -312,7 +312,7 @@ public final class Editor extends mxGraphComponent {
             }
             if (conditionCode.isEmpty())
             {
-            	conditionCode = "true";
+            	conditionCode = "true\n";
             }
             
             String t = "";
