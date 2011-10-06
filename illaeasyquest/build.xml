@@ -66,10 +66,14 @@ the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
 	<target name="generate_filelists">
 		<delete file="${res}/template/handler/filelist" />
         <delete file="${res}/template/trigger/filelist" />
+		<delete file="${res}/template/condition/filelist" />
     	<fileset id="handlers_fs" dir="${res}/template/handler">
     	    <include name="*.lua" />
     	</fileset>
         <fileset id="trigger_fs" dir="${res}/template/trigger">
+            <include name="*.lua" />
+        </fileset>
+		<fileset id="condition_fs" dir="${res}/template/condition">
             <include name="*.lua" />
         </fileset>
     
@@ -79,8 +83,12 @@ the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
         <pathconvert pathsep="${line.separator}" property="trigger" refid="trigger_fs">
             <map from="${basedir}/res/" to="" />
         </pathconvert>
+		<pathconvert pathsep="${line.separator}" property="condition" refid="condition_fs">
+            <map from="${basedir}/res/" to="" />
+        </pathconvert>
     	<echo file="${res}/template/handler/filelist">${handlers}</echo>
         <echo file="${res}/template/trigger/filelist">${trigger}</echo>
+		<echo file="${res}/template/condition/filelist">${condition}</echo>
 	</target>
 
 	<target name="compile_easyquest" depends="generate_filelists">
