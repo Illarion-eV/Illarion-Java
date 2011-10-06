@@ -171,6 +171,8 @@ public class MainFrame extends JRibbonFrame
 
 	public static void main(String[] args)
 	{
+		Config.getInstance().init();
+		
 	    JRibbonFrame.setDefaultLookAndFeelDecorated(true);
 	    JDialog.setDefaultLookAndFeelDecorated(true);
 	    
