@@ -39,6 +39,7 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxUndoManager;
 import com.mxgraph.util.mxUndoableEdit;
 import com.mxgraph.util.mxUndoableEdit.mxUndoableChange;
@@ -127,10 +128,14 @@ public final class Editor extends mxGraphComponent {
 		undoManager.addListener(mxEvent.UNDO, undoHandler);
 		undoManager.addListener(mxEvent.REDO, undoHandler);
         
+		final Editor editor = this;
+		
         getGraphControl().addMouseListener(new MouseAdapter()
 		{
 		    public void mouseClicked(MouseEvent e) {
-		        if (e.getClickCount() == 2) {
+		        if (e.getClickCount() == 2 ||
+		        		(e.getClickCount() == 1 && 
+		        		MainFrame.getInstance().getCreateType() == MainFrame.CREATE_STATUS)) {
 		            Object cell = getCellAt(e.getX(), e.getY());
 			        if (cell == null) {
 			            Object parent = g.getDefaultParent();
@@ -141,6 +146,24 @@ public final class Editor extends mxGraphComponent {
                             status.setStart(false);
                             g.insertVertex(parent, null, status, e.getX()-60, e.getY()-15, 120,
                             30);
+                        } finally {
+                            g.getModel().endUpdate();
+                        }
+                        e.consume();
+			        }
+			    } else if (e.getClickCount() == 1 && 
+			    		MainFrame.getInstance().getCreateType() == MainFrame.CREATE_TRIGGER) {
+			    	Object cell = getCellAt(e.getX(), e.getY());
+			        if (cell == null) {
+			            Object parent = g.getDefaultParent();
+			            g.getModel().beginUpdate();
+                        try {
+                            Trigger trigger = new Trigger();
+                            trigger.setName("New Quest Trigger");
+                            mxCell edge = (mxCell)g.insertEdge(parent, null, trigger, null, null);
+                            edge.getGeometry().setSourcePoint(new mxPoint(e.getX()-60, e.getY()-15));
+                            edge.getGeometry().setTargetPoint(new mxPoint(e.getX()+60, e.getY()+15));
+                            editor.labelChanged(edge, trigger, null);
                         } finally {
                             g.getModel().endUpdate();
                         }

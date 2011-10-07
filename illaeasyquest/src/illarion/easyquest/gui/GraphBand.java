@@ -66,14 +66,22 @@ final class GraphBand extends JRibbonBand {
         final ActionListener nodeAction = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                
+                if (nodeButton.getActionModel().isSelected()) {
+                	MainFrame.getInstance().setCreateType(MainFrame.CREATE_STATUS);
+                } else {
+                	MainFrame.getInstance().setCreateType(MainFrame.CREATE_NOTHING);
+                }
             }
         };
 
         final ActionListener transitionAction = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-
+            	if (transitionButton.getActionModel().isSelected()) {
+                	MainFrame.getInstance().setCreateType(MainFrame.CREATE_TRIGGER);
+                } else {
+                	MainFrame.getInstance().setCreateType(MainFrame.CREATE_NOTHING);
+                }
             }
         };
         

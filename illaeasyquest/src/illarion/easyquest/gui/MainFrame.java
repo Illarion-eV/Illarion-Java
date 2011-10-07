@@ -46,6 +46,11 @@ import illarion.easyquest.Lang;
 @SuppressWarnings("serial")
 public class MainFrame extends JRibbonFrame
 {
+	public static final int CREATE_NOTHING = 0;
+	public static final int CREATE_STATUS = 1;
+	public static final int CREATE_TRIGGER = 2;
+	
+	private int createType;
     
     private final VetoableTabCloseListener editorTabListener =
         new VetoableTabCloseListener() {
@@ -107,14 +112,16 @@ public class MainFrame extends JRibbonFrame
 	{
 		super("easyQuest Editor");
 		
+		createType = CREATE_NOTHING;
+		
 		setApplicationIcon(Utils
             .getResizableIconFromResource("easyquest.png"));
 		
 		final RibbonTask graphTask =
             new RibbonTask(
             	Lang.getMsg(getClass(), "ribbonTaskQuest"),
-                new ClipboardBand()
-            	// new GraphBand()
+                new ClipboardBand(),
+            	new GraphBand()
             );
         getRibbon().addTask(graphTask);
 
@@ -317,5 +324,13 @@ public class MainFrame extends JRibbonFrame
 
     private void setTabTitle(final int index, final String title) {
         tabbedEditorArea.setTitleAt(index, title);
+    }
+    
+    public void setCreateType(int createType) {
+    	this.createType = createType;
+    }
+    
+    public int getCreateType() {
+    	return createType;
     }
 }
