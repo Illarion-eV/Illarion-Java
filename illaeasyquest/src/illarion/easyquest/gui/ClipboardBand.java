@@ -23,6 +23,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.TransferHandler;
+
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
@@ -69,21 +71,39 @@ final class ClipboardBand extends JRibbonBand {
         final ActionListener pasteAction = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                
+            	TransferHandler.getPasteAction().actionPerformed(
+            		new ActionEvent(
+            			MainFrame.getInstance().getCurrentQuestEditor(),
+            			e.getID(),
+            			e.getActionCommand()
+            		)
+            	);
             }
         };
 
         final ActionListener copyAction = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                
+            	TransferHandler.getCopyAction().actionPerformed(
+            		new ActionEvent(
+            			MainFrame.getInstance().getCurrentQuestEditor(),
+            			e.getID(),
+            			e.getActionCommand()
+            		)
+            	);
             }
         };
 
         final ActionListener cutAction = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                
+            	TransferHandler.getCutAction().actionPerformed(
+            		new ActionEvent(
+            			MainFrame.getInstance().getCurrentQuestEditor(),
+            			e.getID(),
+            			e.getActionCommand()
+            		)
+            	);
             }
         };
 
