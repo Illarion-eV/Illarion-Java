@@ -74,6 +74,8 @@ public final class Editor extends mxGraphComponent {
     
     private boolean savedSinceLastChange = false;
     
+    private int questID = 10000;
+    
     @SuppressWarnings("unused")
 	private mxKeyboardHandler keyboardHandler;
     @SuppressWarnings("unused")
@@ -92,6 +94,17 @@ public final class Editor extends mxGraphComponent {
 
     Editor(Graph graph) {
         super(graph);
+        
+        mxCell root = (mxCell)graph.getModel().getRoot();
+        Object value = root.getValue();
+        if (value != null) {
+        	String txt = value.toString();
+        	try {
+        		questID = Integer.parseInt(txt);
+        	} catch (NumberFormatException e) {
+        	}
+        }
+        
         
         getConnectionHandler().getMarker().setHotspot(0.5f);
         
@@ -200,6 +213,14 @@ public final class Editor extends mxGraphComponent {
 		return undoManager;
 	}
     
+    public int getQuestID() {
+    	return questID;
+    }
+    
+    public void setQuestID(int questID) {
+    	this.questID = questID;
+    }
+    
     public File getQuestFile() {
         return questFile;
     }
@@ -235,6 +256,14 @@ public final class Editor extends mxGraphComponent {
     }
 
     public String getQuestXML() {
+    	getGraph().getModel().beginUpdate();
+    	try {
+    		mxCell root = (mxCell)getGraph().getModel().getRoot();
+    		root.setValue(questID);
+    	} finally {
+    		getGraph().getModel().endUpdate();
+    	}
+    	
         mxCodec codec = new mxCodec();
         return mxUtils.getXml(codec.encode(getGraph().getModel()));
     }
@@ -346,7 +375,7 @@ public final class Editor extends mxGraphComponent {
             t = t + template.getHeader()
                   + "module(\"questsystem." + questName + "." + scriptName + "\", package.seeall)" + "\n"
                   + "\n"
-                  + "local QUEST_NUMBER = " + "10000" + "\n" // TODO: Get quest number from somewhere
+                  + "local QUEST_NUMBER = " + questID + "\n"
                   + "local PRECONDITION_QUESTSTATE = " + sourceId + "\n"
                   + "local POSTCONDITION_QUESTSTATE = " + targetId + "\n"
                   + "\n";
