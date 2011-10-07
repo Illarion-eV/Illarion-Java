@@ -39,7 +39,7 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import illarion.easyquest.Lang;
 
-final class Utils {
+public final class Utils {
 
     private static final Logger LOGGER = Logger.getLogger(Utils.class);
 
@@ -62,7 +62,7 @@ final class Utils {
         return resizeIcon;
     }
     
-    protected static void saveEasyQuest(final Editor editor) {
+    public static void saveEasyQuest(final Editor editor) {
         final File file = editor.getQuestFile();
         if (file == null) {
             selectAndSaveEasyQuest(editor);
@@ -92,7 +92,7 @@ final class Utils {
         }
     }
     
-    protected static void selectAndOpenQuest() {
+    public static void selectAndOpenQuest() {
         final JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
             @Override

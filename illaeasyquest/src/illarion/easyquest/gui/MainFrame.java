@@ -236,7 +236,7 @@ public class MainFrame extends JRibbonFrame
         });
 	}
 
-    protected static MainFrame getInstance() {
+    public static MainFrame getInstance() {
         return instance;
     }
     
@@ -278,7 +278,7 @@ public class MainFrame extends JRibbonFrame
         tabbedEditorArea.setSelectedIndex(tabbedEditorArea.getTabCount() - 1);
         return editor;
     }
-    protected Editor addNewQuest() {
+    public Editor addNewQuest() {
         return addNewQuest("");
     }
     
