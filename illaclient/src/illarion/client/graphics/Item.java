@@ -18,6 +18,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.resources.ItemFactory;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
@@ -134,7 +135,7 @@ public final class Item extends AbstractEntity {
      *            original color
      * @param referenceID the reference ID to refer to the paperdolling graphic
      */
-    protected Item(final int itemID, final String name, final int offX,
+    public Item(final int itemID, final String name, final int offX,
         final int offY, final int offS, final int frames, final int speed,
         final ItemInfo itemInfo, final SpriteColor baseColor,
         final int referenceID) {

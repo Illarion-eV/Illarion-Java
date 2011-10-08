@@ -24,13 +24,33 @@ import illarion.graphics.RenderTask;
 import java.awt.Color;
 import java.awt.Component;
 
+import javax.media.opengl.DebugGL2;
 import javax.media.opengl.DebugGL2ES1;
+import javax.media.opengl.DebugGL2ES2;
+import javax.media.opengl.DebugGL2GL3;
+import javax.media.opengl.DebugGL3;
+import javax.media.opengl.DebugGL3bc;
+import javax.media.opengl.DebugGL4;
+import javax.media.opengl.DebugGL4bc;
+import javax.media.opengl.DebugGLES1;
+import javax.media.opengl.DebugGLES2;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.GL2ES1;
+import javax.media.opengl.GL2ES2;
+import javax.media.opengl.GL2GL3;
+import javax.media.opengl.GL3;
+import javax.media.opengl.GL3bc;
+import javax.media.opengl.GL4;
+import javax.media.opengl.GL4bc;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLCapabilitiesImmutable;
 import javax.media.opengl.GLContext;
+import javax.media.opengl.GLDebugListener;
+import javax.media.opengl.GLDebugMessage;
+import javax.media.opengl.GLES1;
+import javax.media.opengl.GLES2;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.fixedfunc.GLMatrixFunc;
@@ -135,16 +155,16 @@ public final class DisplayAWT extends GLCanvas implements Display,
         final GL gl = drawable.getGL();
         gl.glClearColor(0.f, 0.f, 0.f, 1.f);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-        
-        Graphics.getInstance().getDrawer().drawRectangle(0, 0, 10, 10, TEMP_COLOR);
 
         manager.draw();
         
-        Graphics.getInstance().getDrawer().drawRectangle(20, 0, 30, 10, TEMP_COLOR);
         swapBuffers();
+        
+        int glError = gl.glGetError();
+        if (glError != GL.GL_NO_ERROR) {
+            LOGGER.error("OpenGL Error: " + glError);
+        }
     }
-    
-    private static final SpriteColorJOGL TEMP_COLOR = new SpriteColorJOGL(1.f, 1.f, 1.f, 1.f);
     
     private static void printStatusInfo(final String intro, final String value) {
         LOGGER.debug(String.format("%-60s%20s", intro, value));
@@ -217,8 +237,6 @@ public final class DisplayAWT extends GLCanvas implements Display,
         if (drawable.getContext() == null) {
             return;
         }
-        displayOpenGLStatusInfo();
-        setupViewport(drawable);
         setAutoSwapBufferMode(false);
 
         boolean releaseContext = false;
@@ -227,7 +245,11 @@ public final class DisplayAWT extends GLCanvas implements Display,
             releaseContext = true;
             LOGGER.debug("Fetching temporary context.");
         }
-
+        
+        applyDebugGL(drawable);
+        displayOpenGLStatusInfo();
+        setupViewport(drawable);
+        
         final GL gl = drawable.getGL();
         gl.glEnable(GL.GL_BLEND);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -238,6 +260,39 @@ public final class DisplayAWT extends GLCanvas implements Display,
         if (releaseContext) {
             drawable.getContext().release();
         }
+    }
+    
+    private void applyDebugGL(final GLAutoDrawable drawable) {
+        final GL gl = drawable.getContext().getGL();
+        
+        if (gl.isGL4bc()) {
+            drawable.setGL(new DebugGL4bc(gl.getGL4bc()));
+        } else if (gl.isGL4()) {
+            drawable.setGL(new DebugGL4(gl.getGL4()));
+        } else if (gl.isGL3bc()) {
+            drawable.setGL(new DebugGL3bc(gl.getGL3bc()));
+        } else if (gl.isGL3()) {
+            drawable.setGL(new DebugGL3(gl.getGL3()));
+        } else if (gl.isGL2()) {
+            drawable.setGL(new DebugGL2(gl.getGL2()));
+        } else if (gl.isGL2GL3()) {
+            drawable.setGL(new DebugGL2GL3(gl.getGL2GL3()));
+        } else if (gl.isGLES1()) {
+            drawable.setGL(new DebugGLES1(gl.getGLES1()));
+        } else if (gl.isGLES2()) {
+            drawable.setGL(new DebugGLES2(gl.getGLES2()));
+        } else if (gl.isGL2ES1()) {
+            drawable.setGL(new DebugGL2ES1(gl.getGL2ES1()));
+        } else if (gl.isGL2ES2()) {
+            drawable.setGL(new DebugGL2ES2(gl.getGL2ES2()));
+        }
+        
+        drawable.getContext().addGLDebugListener(new GLDebugListener() {
+            @Override
+            public void messageSent(GLDebugMessage event) {
+                LOGGER.debug("OpenGL Debug Message: " + event.getDbgMsg());
+            }
+        });
     }
 
     /**

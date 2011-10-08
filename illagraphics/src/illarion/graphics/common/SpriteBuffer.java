@@ -209,10 +209,6 @@ public final class SpriteBuffer {
         if (spriteName == null) {
             throw new NullPointerException("spriteName is null");
         }
-        
-        if (retSprite == null) {
-            throw new NullPointerException("sprite is null");
-        }
 
         storage.put(spriteName, retSprite);
         return retSprite;

@@ -16,33 +16,27 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.graphics;
+package illarion.client.tableloader;
 
-import illarion.common.util.RecycleFactory;
+import illarion.client.graphics.Effect;
+import illarion.client.resources.ResourceFactory;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 
+import org.apache.log4j.Logger;
+
 /**
- * The effect factory creates and stores the effect objects and keeps them for
- * reuse.
+ * This class is used to load the effect definitions from the resource table
+ * that was created using the configuration tool. The class will create the
+ * required effect objects and send them to the effect factory that takes care
+ * for distributing those objects.
  * 
  * @author Martin Karing
- * @author Nop
- * @since 0.95
+ * @since 1.22
+ * @version 1.22
  */
-public final class EffectFactory extends RecycleFactory<Effect> implements
-    TableLoaderSink, ResourceFactory {
-    /**
-     * The ID of the effect that is shown in case the requested effect is not
-     * defined.
-     */
-    private static final int DEFAULT_EFFECT = 12;
-
-    /**
-     * The singleton instance of the effect factory.
-     */
-    private static final EffectFactory INSTANCE = new EffectFactory();
-
+public final class EffectLoader extends ResourceLoader<Effect> implements
+    TableLoaderSink {
     /**
      * The table index of the column that stores the amount of frames of the
      * effect animation.
@@ -85,40 +79,28 @@ public final class EffectFactory extends RecycleFactory<Effect> implements
     private static final int TB_SPEED = 5;
 
     /**
-     * The constructor of the effect factory that triggers preparing the effects
-     * and loading the definition table files.
+     * The logger that is used to report error messages.
      */
-    private EffectFactory() {
-        super();
-    }
+    private final Logger logger = Logger.getLogger(ItemLoader.class);
 
     /**
-     * The the singleton instance of this effect factory.
-     * 
-     * @return the singleton instance for the effect factory
+     * Trigger the loading sequence for this loader.
      */
-    public static EffectFactory getInstance() {
-        return INSTANCE;
-    }
+    @Override
+    public void load() {
+        if (!hasTargetFactory()) {
+            throw new IllegalStateException("targetFactory not set yet.");
+        }
 
-    /**
-     * The initialisation function prepares all prototyped that are needed to
-     * work with this function.
-     */
-    @SuppressWarnings("nls")
-    public void init() {
+        final ResourceFactory<Effect> factory = getTargetFactory();
+
+        factory.init();
         new TableLoader("Effects", this);
-        mapDefault(DEFAULT_EFFECT, 1);
-        finish();
+        factory.loadingFinished();
     }
 
     /**
-     * Process one line of the definition table that contains the parameters for
-     * the effects.
-     * 
-     * @param line the line that is currently processed
-     * @param loader the table loader the loads the table file
-     * @return true to go on reading the file, false to stop reading the file
+     * Handle a single line of the resource table.
      */
     @Override
     public boolean processRecord(final int line, final TableLoader loader) {
@@ -133,9 +115,15 @@ public final class EffectFactory extends RecycleFactory<Effect> implements
         final Effect effect =
             new Effect(effectID, fileName, frameCount, offsetX, offsetY,
                 animSpeed, light);
-        register(effect);
-        effect.activate(effectID);
+        try {
+            getTargetFactory().storeResource(effect);
+            effect.activate(effectID);
+        } catch (final IllegalStateException ex) {
+            logger.error("Failed adding effect to internal factory. ID: "
+                + Integer.toString(effectID) + " - Filename: " + fileName);
+        }
 
         return true;
     }
+
 }

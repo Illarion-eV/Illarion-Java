@@ -82,10 +82,8 @@ public final class TextureRenderImmediate extends AbstractTextureRender {
         final GL2 gl = GLU.getCurrentGL().getGL2();
 
         DriverSettingsJOGL.getInstance().enableMode(gl,
-            DriverSettingsJOGL.Modes.DRAWTEXTURE);
-        texture.enable();
-//        DriverSettingsJOGL.getInstance().bindTexture(gl,
-//            texture.getTextureID());
+            DriverSettingsJOGL.Modes.DRAWTEXTURE, texture.getParent());
+        
         color.setActiveColor();
         gl.glPushMatrix();
 

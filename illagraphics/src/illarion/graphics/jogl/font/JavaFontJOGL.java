@@ -84,7 +84,7 @@ public class JavaFontJOGL implements FontJOGL {
         final GL2ES1 gl2 = gl.getGL2ES1();
         gl2.glPushMatrix();        
         RenderDisplay display = Graphics.getInstance().getRenderDisplay();
-        DriverSettingsJOGL.getInstance().bindTexture(gl, -1);
+        DriverSettingsJOGL.getInstance().reset();
 
         renderer.beginRendering(display.getWidth(), display.getHeight());
 

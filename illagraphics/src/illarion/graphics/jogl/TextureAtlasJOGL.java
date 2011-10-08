@@ -828,7 +828,10 @@ public final class TextureAtlasJOGL implements TextureAtlas {
             String extension = fileName.substring(dotPos);
             textureData = TextureIO.newTextureData(GLProfile.getGL2ES1(), dataFile, true, extension);
             texture = TextureIO.newTexture(textureData);
-            enable();
+            
+            final GL gl = GLContext.getCurrentGL();
+            enable(gl);
+            disable(gl);
         } catch (GLException e) {
             // texture not created
             e.printStackTrace();
@@ -855,17 +858,33 @@ public final class TextureAtlasJOGL implements TextureAtlas {
         }
         try {
             texture = TextureIO.newTexture(textureData);
-            enable();
+                        
+            final GL gl = GLContext.getCurrentGL();
+
+            int glError = gl.glGetError();
+            if (glError != GL.GL_NO_ERROR) {
+                System.err.println("OpenGL Error: " + glError);
+            }
+            
+            enable(gl);
+            disable(gl);
+            
+            glError = gl.glGetError();
+            if (glError != GL.GL_NO_ERROR) {
+                System.err.println("OpenGL Error: " + glError);
+            }
         } catch (GLException e) {
             
         }
     }
 
-    @Override
-    public void enable() {
-        final GL gl = GLContext.getCurrentGL();
+    public void enable(final GL gl) {
         texture.enable(gl);
         texture.bind(gl);
+    }
+
+    public void disable(final GL gl) {
+        texture.disable(gl);
     }
 
     @Override

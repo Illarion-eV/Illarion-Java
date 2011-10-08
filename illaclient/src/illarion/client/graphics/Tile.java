@@ -18,6 +18,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.resources.TileFactory;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.util.Location;
@@ -47,7 +48,7 @@ public class Tile extends AbstractEntity {
     /**
      * Create tile with animation or variants
      */
-    protected Tile(final int id, final String name, final int frames,
+    public Tile(final int id, final String name, final int frames,
         final int speed, final TileInfo info) {
         super(id, TILE_PATH, name, frames, 0, 0, 0, 0, Sprite.HAlign.center,
             Sprite.VAlign.middle, false, false, null);
@@ -76,7 +77,7 @@ public class Tile extends AbstractEntity {
      * @param id
      * @param name
      */
-    protected Tile(final int id, final String name, final TileInfo info) {
+    public Tile(final int id, final String name, final TileInfo info) {
         this(id, name, 1, 0, info);
     }
 

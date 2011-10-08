@@ -18,6 +18,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.resources.EffectFactory;
 import illarion.client.world.Game;
 
 import illarion.common.graphics.Layers;
@@ -76,7 +77,7 @@ public final class Effect extends AbstractEntity {
      * @param effectLight the encoded light value of the light that is emitted
      *            by this effect
      */
-    protected Effect(final int effectID, final String name, final int frames,
+    public Effect(final int effectID, final String name, final int frames,
         final int offX, final int offY, final int animSpeed,
         final int effectLight) {
         super(effectID, EFFECTS_PATH, name, frames, 0, offX, offY, 0,

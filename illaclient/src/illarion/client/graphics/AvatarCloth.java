@@ -18,6 +18,8 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.resources.ClothFactory;
+import illarion.client.resources.CharacterFactory;
 import illarion.graphics.Sprite;
 import illarion.graphics.SpriteColor;
 
@@ -28,7 +30,7 @@ import illarion.graphics.SpriteColor;
  * @author Martin Karing
  * @since 1.22
  */
-final class AvatarCloth extends AbstractEntity {
+public final class AvatarCloth extends AbstractEntity {
     /**
      * The resource path to the avatar graphics. All graphics need to be located
      * at this path within the JAR-resource files.
@@ -38,15 +40,27 @@ final class AvatarCloth extends AbstractEntity {
     /**
      * The factory that created and handles this instance of Avatar Cloth.
      */
-    private transient AvatarClothFactory parent;
+    private transient ClothFactory parent;
+
+    /**
+     * The ID of the avatar this cloth belongs to.
+     */
+    private int avatar;
+
+    /**
+     * The ID of the location the piece of cloth is located at.
+     */
+    private int locationId;
 
     /**
      * Definition constructor. This one sets up a new avatar cloth and sets all
      * needed configurations.
      * 
+     * @param avatarId the ID of the avatar the cloth is assigned to
      * @param itemID the ID of the avatar cloth that is
      * @param name the name of the cloth, that is the file name of the cloth
      *            graphic
+     * @param location the ID of the location this cloth is located at
      * @param frames the count of frames this cloth contains
      * @param still the number of the frame that is the start and the end of the
      *            animation
@@ -55,12 +69,40 @@ final class AvatarCloth extends AbstractEntity {
      * @param mirror true in case the graphic should be mirrored
      * @param baseCol the base coloring graphic
      */
-    protected AvatarCloth(final int itemID, final String name,
-        final int frames, final int still, final int offX, final int offY,
-        final boolean mirror, final SpriteColor baseCol) {
+    public AvatarCloth(final int avatarId, final int itemID,
+        final String name, final int location, final int frames,
+        final int still, final int offX, final int offY, final boolean mirror,
+        final SpriteColor baseCol) {
         super(itemID, CLOTH_PATH, name, frames, still, offX, offY, 0,
             Sprite.HAlign.center, Sprite.VAlign.bottom, true, mirror, baseCol);
+
+        avatar = avatarId;
+        locationId = location;
         reset();
+    }
+    
+    /**
+     * The default cloth that is used in the factories in case no avatar is
+     * set.
+     */
+    private static final AvatarCloth DEFAULT_CLOTH = new AvatarCloth();
+    
+    /**
+     * Get the cloth that is used by default.
+     * 
+     * @return the default cloth
+     */
+    public static AvatarCloth getDefaultCloth() {
+        return DEFAULT_CLOTH;
+    }
+    
+    /**
+     * The constructor to create the single default cloth.
+     */
+    private AvatarCloth() {
+        super(0, CLOTH_PATH, null, 0, 0, 0, 0, 0, Sprite.HAlign.center, Sprite.VAlign.bottom, true, false, null);
+        avatar = 0;
+        locationId = 0;
     }
 
     /**
@@ -71,7 +113,25 @@ final class AvatarCloth extends AbstractEntity {
     private AvatarCloth(final AvatarCloth org) {
         super(org);
         parent = org.parent;
+        avatar = org.avatar;
+        locationId = org.locationId;
         reset();
+    }
+
+    /**
+     * Get the ID of the avatar that piece of cloth belongs to.
+     */
+    public int getAvatarId() {
+        return avatar;
+    }
+
+    /**
+     * The ID of the location where the cloth is displayed on the character.
+     * 
+     * @return the location ID
+     */
+    public int getLocationId() {
+        return locationId;
     }
 
     /**
@@ -82,7 +142,13 @@ final class AvatarCloth extends AbstractEntity {
      */
     @Override
     public void activate(final int overwriteID) {
-        // nothing to do
+        if (avatar == 0) {
+            return;
+        }
+        final Avatar ava = CharacterFactory.getInstance().getPrototype(avatar);
+        final Sprite sprite = getSprite();
+        sprite.setOffset(sprite.getOffsetX() + ava.getOffsetX(),
+            sprite.getOffsetY() + ava.getOffsetY());
     }
 
     /**
@@ -111,7 +177,7 @@ final class AvatarCloth extends AbstractEntity {
      * 
      * @param parentFactory the factory that is the parent of this cloth object
      */
-    public void setFactory(final AvatarClothFactory parentFactory) {
+    public void setFactory(final ClothFactory parentFactory) {
         parent = parentFactory;
     }
 

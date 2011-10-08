@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.sound.SoundFactory;
+import illarion.client.resources.SoundFactory;
 import illarion.client.sound.SoundManager;
 import illarion.client.world.Game;
 import illarion.client.world.MapTile;

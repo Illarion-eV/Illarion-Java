@@ -16,42 +16,30 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.graphics;
+package illarion.client.tableloader;
 
-import org.apache.log4j.Logger;
-
-import illarion.common.util.RecycleFactory;
+import illarion.client.graphics.Avatar;
+import illarion.client.graphics.AvatarInfo;
+import illarion.client.resources.ResourceFactory;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 import illarion.graphics.Graphics;
 import illarion.graphics.SpriteColor;
 
+import org.apache.log4j.Logger;
+
 /**
- * The avatar factory loads and stores all graphical representations of
- * characters.
+ * This class is used to load the character definitions from the resource table
+ * that was created using the configuration tool. The class will create the
+ * required character objects and send them to the character factory that takes
+ * care for distributing those objects.
  * 
  * @author Martin Karing
- * @author Nop
- * @since 0.92
+ * @since 1.22
+ * @version 1.22
  */
-public final class AvatarFactory extends RecycleFactory<Avatar> implements
-    TableLoaderSink, ResourceFactory {
-    /**
-     * The ID of the avatar that is loaded by default in case the requested
-     * avatar was not found.
-     */
-    private static final int DEFAULT_ID = 10450;
-
-    /**
-     * The singleton instance of this class.
-     */
-    private static final AvatarFactory INSTANCE = new AvatarFactory();
-
-    /**
-     * The logger instance that takes care for the logging output of this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(AvatarFactory.class);
-
+public final class CharacterLoader extends ResourceLoader<Avatar> implements
+    TableLoaderSink {
     /**
      * The table index that stores the id of the animation this avatar shows.
      */
@@ -62,6 +50,11 @@ public final class AvatarFactory extends RecycleFactory<Avatar> implements
      * the server to request the client to show this avatar.
      */
     private static final int TB_APPEARANCE = 6;
+
+    /**
+     * The table intex that stores the blue value of the avatar.
+     */
+    private static final int TB_BLUE = 18;
 
     /**
      * The table index that stores the direction the avatar is looking at.
@@ -82,6 +75,11 @@ public final class AvatarFactory extends RecycleFactory<Avatar> implements
      * The table index that stores the German description of the avatar.
      */
     private static final int TB_GERMAN = 12;
+
+    /**
+     * The table intex that stores the green value of the avatar.
+     */
+    private static final int TB_GREEN = 17;
 
     /**
      * The table index of the character ID.
@@ -110,6 +108,11 @@ public final class AvatarFactory extends RecycleFactory<Avatar> implements
     private static final int TB_OFFY = 5;
 
     /**
+     * The table intex that stores the red value of the avatar.
+     */
+    private static final int TB_RED = 16;
+
+    /**
      * The table index that stores the length of the shadow of this avatar
      * graphic.
      */
@@ -124,72 +127,32 @@ public final class AvatarFactory extends RecycleFactory<Avatar> implements
      * The table index that stores the visibility bonus of this avatar.
      */
     private static final int TB_VISIBLE = 10;
-    
-    /**
-     * The table intex that stores the red value of the avatar.
-     */
-    private static final int TB_RED = 16;
-    
-    /**
-     * The table intex that stores the green value of the avatar.
-     */
-    private static final int TB_GREEN = 17;
-    
-    /**
-     * The table intex that stores the blue value of the avatar.
-     */
-    private static final int TB_BLUE = 18;
-    
-    /**
-     * The table intex that stores the alpha value of the avatar.
-     */
-    private static final int TB_ALPHA = 19;
+
+    // /**
+    // * The table intex that stores the alpha value of the avatar.
+    // */
+    // private static final int TB_ALPHA = 19;
 
     /**
-     * Constructor for the avatar factory. This sets up all storage tables that
-     * are needed to store the instances of the avatars created by this function
-     * and it starts loading the avatar table.
+     * The logger that is used to report error messages.
      */
-    private AvatarFactory() {
-        super();
-    }
+    private final Logger logger = Logger.getLogger(ItemLoader.class);
 
-    /**
-     * Get the singleton instance of this class.
-     * 
-     * @return the singleton instance of the avatar factory
-     */
-    public static AvatarFactory getInstance() {
-        return INSTANCE;
-    }
-
-    /**
-     * The initialisation function prepares all prototyped that are needed to
-     * work with this function.
-     */
-    @SuppressWarnings("nls")
-    public void init() {
-        new TableLoader("Chars", this);
-        // char is invisible by default
-        mapDefault(DEFAULT_ID, 1);
-
-        AvatarInfo.cleanup();
-        finish();
-    }
-
-    /**
-     * Decode the entries of one line that was read and create the avatar
-     * prototypes regarding this values.
-     * 
-     * @param line the number of the line that is currently read
-     * @param loader the table loader that loads the line and triggered this
-     *            function, it offers the function to read the different table
-     *            columns
-     * @return true in case the table loader should go in reading, false to
-     *         cancel the reading operations
-     */
     @Override
-    @SuppressWarnings("nls")
+    public void load() {
+        if (!hasTargetFactory()) {
+            throw new IllegalStateException("targetFactory not set yet.");
+        }
+
+        final ResourceFactory<Avatar> factory = getTargetFactory();
+
+        factory.init();
+        new TableLoader("Chars", this);
+        factory.loadingFinished();
+        AvatarInfo.cleanup();
+    }
+
+    @Override
     public boolean processRecord(final int line, final TableLoader loader) {
         final int avatarId = loader.getInt(TB_ID);
         final String filename = loader.getString(TB_NAME);
@@ -208,25 +171,25 @@ public final class AvatarFactory extends RecycleFactory<Avatar> implements
         final int skinRed = loader.getInt(TB_RED);
         final int skinGreen = loader.getInt(TB_GREEN);
         final int skinBlue = loader.getInt(TB_BLUE);
-        final int skinAlpha = loader.getInt(TB_ALPHA);
+        // final int skinAlpha = loader.getInt(TB_ALPHA);
 
         final AvatarInfo info =
             AvatarInfo.get(appearance, visibleMod, german, english);
         info.reportAnimation(animationID);
-        
+
         final SpriteColor tmp_color = Graphics.getInstance().getSpriteColor();
-        
+
         tmp_color.set(skinRed, skinGreen, skinBlue);
-        
+
         final Avatar avatar =
             new Avatar(avatarId, filename, frameCount, stillFrame, offsetX,
                 offsetY, shadowOffset, info, mirror, tmp_color, direction);
 
         try {
-            register(avatar);
+            getTargetFactory().storeResource(avatar);
             avatar.activate(avatarId);
         } catch (final IllegalStateException ex) {
-            LOGGER.error("Failed adding avatar to internal factory. ID: "
+            logger.error("Failed adding avatar to internal factory. ID: "
                 + Integer.toString(avatarId) + " - Filename: " + filename);
         }
 

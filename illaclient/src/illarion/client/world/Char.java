@@ -24,7 +24,6 @@ import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.Avatar;
 import illarion.client.graphics.AvatarClothManager;
 import illarion.client.graphics.Colors;
-import illarion.client.graphics.ItemFactory;
 import illarion.client.graphics.Marker;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.guiNG.references.AbstractReference;
@@ -32,6 +31,7 @@ import illarion.client.guiNG.references.CharReference;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.LookatCharCmd;
+import illarion.client.resources.ItemFactory;
 import illarion.client.util.Lang;
 
 import illarion.common.graphics.CharAnimations;

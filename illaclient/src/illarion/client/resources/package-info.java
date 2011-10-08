@@ -16,19 +16,13 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.graphics;
-
 /**
- * This interface is shared by all resource factories and ensures that they
- * start up in the very same way.
+ * This package contains the classes that store the resources of the client such
+ * as the item and tile definitions that are used to render those objects
+ * properly.
  * 
- * @author Martin Karing
  * @since 1.22
+ * @author Martin Karing
  * @version 1.22
  */
-public interface ResourceFactory {
-    /**
-     * Initialize the factory.
-     */
-    void init();
-}
+package illarion.client.resources;

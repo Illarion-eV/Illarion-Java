@@ -20,6 +20,7 @@ package illarion.graphics.jogl.render;
 
 import illarion.graphics.SpriteColor;
 import illarion.graphics.jogl.DriverSettingsJOGL;
+import illarion.graphics.jogl.TextureAtlasJOGL;
 import illarion.graphics.jogl.TextureJOGL;
 
 import java.nio.ByteBuffer;
@@ -112,8 +113,7 @@ public final class TextureRenderPointer extends AbstractTextureRender {
         final GL2ES1 gl = FixedFuncUtil.wrapFixedFuncEmul(GLContext.getCurrentGL());
 
         DriverSettingsJOGL.getInstance().enableMode(gl,
-            DriverSettingsJOGL.Modes.DRAWTEXTUREPOINTER);
-        texture.enable();
+            DriverSettingsJOGL.Modes.DRAWTEXTUREPOINTER, texture.getParent());
 
         color.setActiveColor();
         gl.glPushMatrix();

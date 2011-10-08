@@ -28,7 +28,7 @@ import illarion.client.IllaClient;
 import illarion.client.graphics.AnimationUtility;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.client.graphics.particle.emitter.WeatherRainEmitter2;
-import illarion.client.sound.SoundFactory;
+import illarion.client.resources.SoundFactory;
 import illarion.client.sound.SoundManager;
 import illarion.client.util.SessionMember;
 

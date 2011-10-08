@@ -16,31 +16,30 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.graphics;
+package illarion.client.tableloader;
 
+import illarion.client.graphics.Item;
+import illarion.client.resources.ResourceFactory;
 import illarion.common.graphics.ItemInfo;
-import illarion.common.util.RecycleFactory;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
-
 import illarion.graphics.Graphics;
 import illarion.graphics.SpriteColor;
 
+import org.apache.log4j.Logger;
+
 /**
- * The Item factory loads creates and stores all instances of the item class
- * that are around in the client.
+ * This class is used to load the item definitions from the resource table that
+ * was created using the configuration tool. The class will create the required
+ * item objects and send them to the item factory that takes care for
+ * distributing those objects.
  * 
  * @author Martin Karing
- * @author Nop
- * @since 0.95
+ * @since 1.22
+ * @version 1.22
  */
-public final class ItemFactory extends RecycleFactory<Item> implements
-    TableLoaderSink, ResourceFactory {
-    /**
-     * The singleton instance of this factory.
-     */
-    private static final ItemFactory INSTANCE = new ItemFactory();
-
+public final class ItemLoader extends ResourceLoader<Item> implements
+    TableLoaderSink {
     /**
      * The table index that stores the alpha modifier that shall be applied to
      * the original color of this avatar graphic.
@@ -165,47 +164,24 @@ public final class ItemFactory extends RecycleFactory<Item> implements
     private static final int TB_VARIANCE = 13;
 
     /**
-     * Construct the item factory, that also triggers the loading process of the
-     * items table that automatically fills the factory. The only instance of
-     * this class is the singleton instance that is created with this
-     * constructor.
+     * The logger that is used to report error messages.
      */
-    private ItemFactory() {
-        super();
-    }
+    private final Logger logger = Logger.getLogger(ItemLoader.class);
 
-    /**
-     * Get the singleton instance of this factory.
-     * 
-     * @return the singleton instance of this factory
-     */
-    public static ItemFactory getInstance() {
-        return INSTANCE;
-    }
+    @Override
+    public void load() {
+        if (!hasTargetFactory()) {
+            throw new IllegalStateException("targetFactory not set yet.");
+        }
 
-    /**
-     * The initialisation function prepares all prototyped that are needed to
-     * work with this function.
-     */
-    @SuppressWarnings("nls")
-    public void init() {
+        final ResourceFactory<Item> factory = getTargetFactory();
+
+        factory.init();
         new TableLoader("Items", this);
-        mapDefault(0, 1);
-
+        factory.loadingFinished();
         ItemInfo.cleanup();
-        finish();
     }
 
-    /**
-     * Process one line of the item definition table and create a item
-     * definition from it.
-     * 
-     * @param line the number of the line that is currently processed
-     * @param loader the table loader that handles this line and supplies the
-     *            data
-     * @return <code>true</code> to go on reading the table, false to cancel the
-     *         reading process
-     */
     @Override
     public boolean processRecord(final int line, final TableLoader loader) {
         final String name = loader.getString(TB_NAME);
@@ -263,10 +239,16 @@ public final class ItemFactory extends RecycleFactory<Item> implements
         item.setPaperdollingColor(baseColor);
 
         // register item with factory
-        register(item);
+        try {
+            getTargetFactory().storeResource(item);
+        } catch (final IllegalStateException e) {
+            logger.error("Failed to register item " + name + "in factory due"
+                + " a dublicated ID: " + Integer.toString(itemID));
+        }
 
         item.activate(itemID);
 
         return true;
     }
+
 }

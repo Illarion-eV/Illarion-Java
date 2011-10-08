@@ -16,15 +16,14 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.graphics;
+package illarion.client.tableloader;
 
-import org.apache.log4j.Logger;
-
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.procedure.TIntProcedure;
-
+import illarion.client.graphics.AvatarCloth;
+import illarion.client.resources.ResourceFactory;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
+
+import org.apache.log4j.Logger;
 
 /**
  * This class takes care for loading the avatar clothes, sorts them to the
@@ -32,13 +31,14 @@ import illarion.common.util.TableLoaderSink;
  * 
  * @author Martin Karing
  * @since 1.22
+ * @version 1.22
  */
-public final class AvatarClothLoader implements TableLoaderSink, ResourceFactory {
+public final class ClothLoader extends ResourceLoader<AvatarCloth> implements
+    TableLoaderSink {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger
-        .getLogger(AvatarClothLoader.class);
+    private static final Logger LOGGER = Logger.getLogger(ClothLoader.class);
 
     /**
      * The table index that stores the number of frames of the animation.
@@ -86,30 +86,17 @@ public final class AvatarClothLoader implements TableLoaderSink, ResourceFactory
      */
     private static final int TB_STILL = 2;
 
-    /**
-     * This list stores the IDs of the avatars that got clothes.
-     */
-    private TIntArrayList usedAvas;
+    @Override
+    public void load() {
+        if (!hasTargetFactory()) {
+            throw new IllegalStateException("targetFactory not set yet.");
+        }
 
-    /**
-     * The initialisation function prepares all prototyped that are needed to
-     * work with this function.
-     */
-    @SuppressWarnings({ "nls", "unused" })
-    public void init() {
-        usedAvas = new TIntArrayList();
+        final ResourceFactory<AvatarCloth> factory = getTargetFactory();
+
+        factory.init();
         new TableLoader("Cloth", this);
-
-        usedAvas.forEach(new TIntProcedure() {
-            @Override
-            public boolean execute(final int value) {
-                final Avatar parentAva =
-                    AvatarFactory.getInstance().getPrototype(value);
-                parentAva.getClothes().finish();
-                return true;
-            }
-        });
-        usedAvas = null;
+        factory.loadingFinished();
     }
 
     /**
@@ -126,31 +113,23 @@ public final class AvatarClothLoader implements TableLoaderSink, ResourceFactory
     @Override
     public boolean processRecord(final int line, final TableLoader loader) {
         final int avatarID = loader.getInt(TB_REF_CHAR_ID);
-        final Avatar parentAva =
-            AvatarFactory.getInstance().getPrototype(avatarID);
-        final AvatarClothManager manager = parentAva.getClothes();
-
         final int itemID = loader.getInt(TB_REF_ITEM_ID);
         final int location = loader.getInt(TB_LOCATION);
 
         final AvatarCloth cloth =
-            new AvatarCloth(itemID, loader.getString(TB_NAME),
-                loader.getInt(TB_FRAME), loader.getInt(TB_STILL),
-                loader.getInt(TB_OFFSET_X) + parentAva.getOffsetX(),
-                loader.getInt(TB_OFFSET_Y) + parentAva.getOffsetY(),
+            new AvatarCloth(avatarID, itemID, loader.getString(TB_NAME),
+                location, loader.getInt(TB_FRAME), loader.getInt(TB_STILL),
+                loader.getInt(TB_OFFSET_X), loader.getInt(TB_OFFSET_Y),
                 loader.getBoolean(TB_MIRROR), null);
 
         try {
-            manager.addCloth(location, cloth);
+            getTargetFactory().storeResource(cloth);
+            cloth.activate(itemID);
         } catch (final IllegalStateException e) {
             LOGGER.error("Error adding paperdolling item to avatar: "
                 + Integer.toString(avatarID) + " in group: "
                 + Integer.toString(location) + " to item: "
                 + Integer.toString(itemID));
-        }
-
-        if (!usedAvas.contains(avatarID)) {
-            usedAvas.add(avatarID);
         }
         return true;
     }

@@ -18,6 +18,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.resources.RuneFactory;
 import illarion.graphics.Sprite;
 
 /**

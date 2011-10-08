@@ -481,18 +481,18 @@ public final class RenderDisplayJOGL implements RenderDisplay {
     @Override
     public void setAreaLimit(final int x, final int y, final int width,
         final int height) {
-        if (canvas == null) {
-            return;
-        }
-        final GL gl = GLU.getCurrentGL();
-        if (!gl.isGL2ES1()) {
-            return;
-        }
-
-        final GL2ES1 gl2 = gl.getGL2ES1();
-
-        gl2.glEnable(GL.GL_SCISSOR_TEST);
-        gl2.glScissor(x, y, width, height);
+//        if (canvas == null) {
+//            return;
+//        }
+//        final GL gl = GLU.getCurrentGL();
+//        if (!gl.isGL2ES1()) {
+//            return;
+//        }
+//
+//        final GL2ES1 gl2 = gl.getGL2ES1();
+//
+//        gl2.glEnable(GL.GL_SCISSOR_TEST);
+//        gl2.glScissor(x, y, width, height);
     }
 
     /**

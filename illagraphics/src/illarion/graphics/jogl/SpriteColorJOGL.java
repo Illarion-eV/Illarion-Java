@@ -141,12 +141,12 @@ public final class SpriteColorJOGL implements Cloneable, SpriteColor {
             checkColor();
         }
 
-        if (equals(ACTIVE) && (ACTIVE.getAlphai() == getAlphai())) {
-            return;
-        }
-
-        ACTIVE.set(this);
-        ACTIVE.setAlpha(getAlphai());
+//        if (equals(ACTIVE) && (ACTIVE.getAlphai() == getAlphai())) {
+//            return;
+//        }
+//
+//        ACTIVE.set(this);
+//        ACTIVE.setAlpha(getAlphai());
         
         final GL2ES1 gl2 = FixedFuncUtil.wrapFixedFuncEmul(GLU.getCurrentGL());
         gl2.glColor4f(getRedf(), getGreenf(), getBluef(), getAlphaf());

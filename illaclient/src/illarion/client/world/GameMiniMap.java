@@ -37,8 +37,8 @@ import java.util.zip.InflaterInputStream;
 import org.apache.log4j.Logger;
 
 import illarion.client.graphics.Tile;
-import illarion.client.graphics.TileFactory;
 import illarion.client.net.server.TileUpdate;
+import illarion.client.resources.TileFactory;
 import illarion.client.util.SessionMember;
 
 import illarion.common.util.Location;

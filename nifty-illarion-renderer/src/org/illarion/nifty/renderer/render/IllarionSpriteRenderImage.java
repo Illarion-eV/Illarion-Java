@@ -138,6 +138,7 @@ final class IllarionSpriteRenderImage implements IllarionRenderImage {
             srcX, srcY, srcW, srcH));
         
         TEMP_SPRITE.drawNasty(x, y, w, h, centerX, centerY, scale, TEMP_COLOR);
+        
 
         TEMP_SPRITE.remove();
     }

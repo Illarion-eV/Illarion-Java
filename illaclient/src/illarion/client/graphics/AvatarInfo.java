@@ -32,7 +32,7 @@ import illarion.common.graphics.CharAnimations;
  * @author Martin Karing
  * @since 0.95
  */
-final class AvatarInfo {
+public final class AvatarInfo {
     /**
      * The buffer of constructs of this class that is generated during the
      * creation process and stores all AvatarInfo constructs that were
@@ -97,7 +97,7 @@ final class AvatarInfo {
      * It ensures that is becomes impossible to modify the instances of this
      * class and the unneeded buffer table is emptied and removed.
      */
-    protected static void cleanup() {
+    public static void cleanup() {
         buffer.clear();
         buffer = null;
         setup = false;
@@ -121,7 +121,7 @@ final class AvatarInfo {
      * @return the newly created instance of AvatarInfo or a already created one
      *         from the cache
      */
-    protected static AvatarInfo get(final int appearance,
+    public static AvatarInfo get(final int appearance,
         final int visibilityMod, final String germanDesc,
         final String englishDesc) {
 
@@ -188,7 +188,7 @@ final class AvatarInfo {
      * @param animationID the ID of the animation that is available.
      */
     @SuppressWarnings("nls")
-    protected void reportAnimation(final int animationID) {
+    public void reportAnimation(final int animationID) {
         if (!setup) {
             throw new IllegalStateException("Changing this construct is not "
                 + "allowed after the creation process.");

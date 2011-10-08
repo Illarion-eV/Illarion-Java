@@ -310,7 +310,5 @@ public interface TextureAtlas {
 
     void loadTextureData(InputStream dataStream, String string);
     
-    void enable();
-    
     void cleanup();
 }
