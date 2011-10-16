@@ -25,7 +25,6 @@ import illarion.client.Login;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.util.Lang;
-import illarion.client.world.Game;
 
 /**
  * Servermessage: Disconnect by server (

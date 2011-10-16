@@ -18,6 +18,9 @@
  */
 package illarion.graphics;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * This class is used to supply and compare possible display resolutions.
  * 
@@ -67,6 +70,52 @@ public final class GraphicResolution {
         bpp = newBpp;
         refreshRate = refresh;
         builder = new StringBuilder();
+    }
+    
+    public GraphicResolution(final String definition) {
+        Pattern pattern = Pattern.compile("(\\d+) x (\\d+) x (\\d+) @ (\\d+)Hz");
+        Matcher matcher = pattern.matcher(definition);
+        
+        builder = new StringBuilder();
+        if (matcher.matches()) {
+            width = Integer.parseInt(matcher.group(1));
+            height = Integer.parseInt(matcher.group(2));
+            bpp = Integer.parseInt(matcher.group(3));
+            refreshRate = Integer.parseInt(matcher.group(4));
+            return;
+        }
+        
+        pattern = Pattern.compile("(\\d+) x (\\d+) @ (\\d+)Hz");
+        matcher = pattern.matcher(definition);
+        if (matcher.matches()) {
+            width = Integer.parseInt(matcher.group(1));
+            height = Integer.parseInt(matcher.group(2));
+            bpp = -1;
+            refreshRate = Integer.parseInt(matcher.group(3));
+            return;
+        }
+        
+        pattern = Pattern.compile("(\\d+) x (\\d+) x (\\d+)");
+        matcher = pattern.matcher(definition);
+        if (matcher.matches()) {
+            width = Integer.parseInt(matcher.group(1));
+            height = Integer.parseInt(matcher.group(2));
+            bpp = Integer.parseInt(matcher.group(3));;
+            refreshRate = -1;
+            return;
+        }
+        
+        pattern = Pattern.compile("(\\d+) x (\\d+)");
+        matcher = pattern.matcher(definition);
+        if (matcher.matches()) {
+            width = Integer.parseInt(matcher.group(1));
+            height = Integer.parseInt(matcher.group(2));
+            bpp = -1;
+            refreshRate = -1;
+            return;
+        }
+        
+        throw new IllegalArgumentException("Can't parse string.");
     }
 
     /**

@@ -18,18 +18,13 @@
  */
 package illarion.graphics.common;
 
-import illarion.graphics.Graphics;
 import illarion.graphics.Sprite;
-import illarion.graphics.Texture;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javolution.text.TextBuilder;
-import javolution.util.FastComparator;
-import javolution.util.FastMap;
 
 /**
  * A function that stores the created sprites and orders them by name of the the
@@ -65,9 +60,9 @@ public final class SpriteBuffer {
      * Sprite buffer.
      */
     private SpriteBuffer() {
-//        final FastMap<String, Sprite> storageMap =
-//            new FastMap<String, Sprite>();
-//        //storageMap.setKeyComparator(FastComparator.STRING);
+        // final FastMap<String, Sprite> storageMap =
+        // new FastMap<String, Sprite>();
+        // //storageMap.setKeyComparator(FastComparator.STRING);
         storage = new ConcurrentHashMap<String, Sprite>();
     }
 
@@ -179,33 +174,24 @@ public final class SpriteBuffer {
             return returnSprite;
         }
 
-        final Sprite retSprite = Graphics.getInstance().getSprite(frames);
+        final Sprite retSprite = new Sprite(frames);
         retSprite.setOffset(offX, offY);
         retSprite.setAlign(horz, vert);
         retSprite.setMirror(mirror);
 
         if (frames == 1) {
-            final Texture tex =
-                TextureLoader.getInstance().getTexture(path, name, smooth,
-                    true);
 
-            retSprite.addTexture(tex);
+            retSprite.addImage(TextureLoader.getInstance().getTexture(path,
+                name));
         } else {
             nameBuilder = TextBuilder.newInstance();
             for (int i = 0; i < frames; ++i) {
-                nameBuilder.setLength(0);
-                nameBuilder.append(name);
-                nameBuilder.append('-');
-                nameBuilder.append(i);
-
-                final Texture tex =
-                    TextureLoader.getInstance().getTexture(path,
-                        nameBuilder.toString(), smooth, true);
-                retSprite.addTexture(tex);
+                retSprite.addImage(TextureLoader.getInstance().getTexture(
+                    path, nameBuilder.toString()));
             }
             TextBuilder.recycle(nameBuilder);
         }
-        
+
         if (spriteName == null) {
             throw new NullPointerException("spriteName is null");
         }

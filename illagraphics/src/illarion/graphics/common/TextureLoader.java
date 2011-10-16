@@ -18,10 +18,13 @@
  */
 package illarion.graphics.common;
 
+import illarion.common.util.NoResourceException;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -32,6 +35,8 @@ import org.apache.log4j.Logger;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.XMLPackedSheet;
+import org.newdawn.slick.loading.DeferredResource;
+import org.newdawn.slick.loading.LoadingList;
 
 /**
  * Utility class to load textures. It loads up the Atlas textures and supplies
@@ -172,6 +177,13 @@ public final class TextureLoader {
         }
         return sheets;
     }
+    
+    public static String cleanTextureName(final String name) {
+        if (name.endsWith(".png")) {
+            return name.substring(0, name.length() - 4);
+        }
+        return name;
+    }
 
     private String getSheetName(final String resourceDir,
         final String resourceName) {
@@ -198,6 +210,10 @@ public final class TextureLoader {
      */
     public Image getTexture(final String resourceName) {
         final String resourceDir = getResourceDirectory(resourceName);
+        
+        if (resourceDir == null) {
+            throw new IllegalArgumentException("Illegal Directory: " + resourceName);
+        }
 
         return getTexture(resourceDir,
             resourceName.substring(resourceDir.length()));
@@ -211,7 +227,9 @@ public final class TextureLoader {
      * @return the texture that marks the image.
      */
     @SuppressWarnings("nls")
-    public Image getTexture(final String resourceDir, final String resourceName) {
+    public Image getTexture(final String resourceDir, final String dirtyResourceName) {
+        
+        final String resourceName = cleanTextureName(dirtyResourceName);
 
         final Map<String, XMLPackedSheet> currSheetMap =
             getSheetMapForDir(resourceDir);
@@ -277,7 +295,9 @@ public final class TextureLoader {
     }
 
     /**
-     * Load all atlas files from a directory.
+     * Load all atlas files from a directory. This does not actually load
+     * the texture. But it generates a task and attaches it to the loading
+     * list.
      * 
      * @param resourceDir the directory the atlas files are searched in
      * @param smooth true in case the atlas files shall be scaled smoothly,
@@ -292,26 +312,85 @@ public final class TextureLoader {
         String atlasName;
         final TextBuilder builder = TextBuilder.newInstance();
         final int dirIndex = getDirectoryIndex(resourceDir);
-        XMLPackedSheet localSheet;
         lastAtlasIndex[dirIndex]++;
 
         atlasName =
             builder.append(ATLAS_BASE_NAME).append(lastAtlasIndex[dirIndex])
                 .toString();
-        localSheet = loadTextureSheet(resourceDir, atlasName);
-        if (localSheet == null) {
+        
+        try {
+            LoadingList.get().add(new DeferredTexture(resourceDir, atlasName));
+        } catch (final NoResourceException e) {
             lastAtlasIndex[dirIndex]--;
             return true;
         }
-
+        
         return false;
     }
+    
+    /**
+     * This is the task that is attached to the loading list in order to load
+     * the data of a texture atlas.
+     * 
+     * @author Martin Karing
+     * @since 1.22
+     * @version 1.22
+     */
+    private final class DeferredTexture implements DeferredResource {
+        /**
+         * The directory of the resource to load.
+         */
+        private final String dir;
+        
+        /**
+         * The texture to load.
+         */
+        private final String texture;
+        
+        /**
+         * Create a new deferred texture loading instance.
+         * 
+         * @param resDir the directory of the resource to load
+         * @param resTex the name of the texture to load
+         */
+        public DeferredTexture(final String resDir, final String resTex) {
+            dir = resDir;
+            texture = resTex;
+            
+            final URL testRef = DeferredTexture.class.getClassLoader().getResource(dir + texture + ".xml");
+            if (testRef == null) {
+                throw new NoResourceException();
+            }
+        }
 
-    private XMLPackedSheet loadTextureSheet(final String resourceDir,
+        /**
+         * Do the loading now.
+         */
+        @Override
+        public void load() throws IOException {
+            if (!getSheetMapForDir(dir).containsKey(texture)) {
+                loadTextureSheet(dir, texture);
+            }
+        }
+
+        /**
+         * Get the description of this loading.
+         */
+        @Override
+        public String getDescription() {
+            return null;
+        }
+        
+    }
+
+    protected XMLPackedSheet loadTextureSheet(final String resourceDir,
         final String resourceName) {
 
         XMLPackedSheet result = null;
         final String sheetName = getSheetName(resourceDir, resourceName);
+        if (TextureLoader.class.getClassLoader().getResource(sheetName + ".png") == null) {
+            return null;
+        }
         try {
             result =
                 new XMLPackedSheet(sheetName + ".png", sheetName + ".xml");

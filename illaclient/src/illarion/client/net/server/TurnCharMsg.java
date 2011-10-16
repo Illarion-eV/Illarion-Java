@@ -23,7 +23,7 @@ import java.io.IOException;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.Char;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
 
@@ -91,10 +91,10 @@ public final class TurnCharMsg extends AbstractReply {
             return true;
         }
 
-        if (Game.getPlayer().isPlayer(charId)) { // turn player
-            Game.getPlayer().getMovementHandler().acknowledgeTurn(dir);
+        if (World.getPlayer().isPlayer(charId)) { // turn player
+            World.getPlayer().getMovementHandler().acknowledgeTurn(dir);
         } else { // turn char
-            final Char chara = Game.getPeople().getCharacter(charId);
+            final Char chara = World.getPeople().getCharacter(charId);
             if (chara != null) {
                 chara.setDirection(dir);
             }
@@ -112,8 +112,8 @@ public final class TurnCharMsg extends AbstractReply {
     @Override
     public boolean processNow() {
         // no turning while the player is still moving
-        return !Game.getPlayer().isPlayer(charId)
-            || !Game.getPlayer().getMovementHandler().isMoving();
+        return !World.getPlayer().isPlayer(charId)
+            || !World.getPlayer().getMovementHandler().isMoving();
     }
 
     /**

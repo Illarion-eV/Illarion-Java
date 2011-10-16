@@ -20,7 +20,6 @@ package illarion.client.net.server;
 
 import java.io.IOException;
 
-import illarion.client.guiNG.GUI;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.util.BookFactory;
@@ -78,7 +77,7 @@ public final class BookMsg extends AbstractReply {
     @Override
     public boolean executeUpdate() {
         if (BookFactory.getInstance().loadBook(bookid)) {
-            GUI.getInstance().getBookWindow().setVisible(true);
+            //GUI.getInstance().getBookWindow().setVisible(true);
         }
         return true;
     }

@@ -20,7 +20,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
 
@@ -86,7 +86,7 @@ public final class DragMapInvCmd extends AbstractCommand {
      * @param loc the location on the map the drag starts at
      */
     public void setDragFrom(final Location loc) {
-        dir = (byte) Game.getPlayer().getLocation().getDirection(loc);
+        dir = (byte) World.getPlayer().getLocation().getDirection(loc);
     }
 
     /**

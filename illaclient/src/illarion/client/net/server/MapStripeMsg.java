@@ -24,8 +24,8 @@ import javolution.util.FastList;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.world.Game;
 import illarion.client.world.GameMap;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
 
@@ -132,7 +132,7 @@ public final class MapStripeMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        final GameMap map = Game.getMap();
+        final GameMap map = World.getMap();
         map.startTileUpdate();
         while (!tiles.isEmpty()) {
             final TileUpdate currUpdate = tiles.removeFirst();
@@ -143,9 +143,9 @@ public final class MapStripeMsg extends AbstractReply {
         }
         map.finishTileUpdate();
 
-        Game.getLights().refresh();
+        World.getLights().refresh();
 
-        if (Game.getDisplay().isActive()) {
+        if (World.getMapDisplay().isActive()) {
             map.getMinimap().finishUpdate();
         }
 

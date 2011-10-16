@@ -20,7 +20,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
 
@@ -80,7 +80,7 @@ public final class OpenMapCmd extends AbstractCommand {
      * @param dstLoc the location the map is located at
      */
     public void setPosition(final Location dstLoc) {
-        dir = (byte) Game.getPlayer().getLocation().getDirection(dstLoc);
+        dir = (byte) World.getPlayer().getLocation().getDirection(dstLoc);
     }
 
     /**

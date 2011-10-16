@@ -20,10 +20,7 @@ package illarion.client.graphics;
 
 import java.util.List;
 
-import javolution.util.FastList;
 import javolution.util.FastTable;
-
-import illarion.client.util.SessionMember;
 
 /**
  * The main animation manager that handles and updates all animations that are
@@ -35,11 +32,7 @@ import illarion.client.util.SessionMember;
  * @since 0.95
  * @version 1.22
  */
-public final class AnimationManager implements SessionMember {
-    /**
-     * The singleton instance of this class.
-     */
-    private static final AnimationManager INSTANCE = new AnimationManager();
+public final class AnimationManager {
 
     /**
      * The animation to add.
@@ -56,18 +49,9 @@ public final class AnimationManager implements SessionMember {
      * The private constructor of this class. This ensures that the only
      * instance of this class is the singleton instance.
      */
-    private AnimationManager() {
+    public AnimationManager() {
         animations = new FastTable<AbstractAnimation>();
         addAnimations = new FastTable<AbstractAnimation>();
-    }
-
-    /**
-     * The the singleton instance of the Animation Manager.
-     * 
-     * @return the singleton instance of this class
-     */
-    public static AnimationManager getInstance() {
-        return INSTANCE;
     }
 
     /**
@@ -99,27 +83,6 @@ public final class AnimationManager implements SessionMember {
         }
     }
 
-    @Override
-    public void endSession() {
-        addAnimations.clear();
-        animations.clear();
-    }
-
-    @Override
-    public void initSession() {
-        // initialization is not needed
-    }
-
-    @Override
-    public void shutdownSession() {
-        // shutdown requires nothing in addition
-    }
-
-    @Override
-    public void startSession() {
-        // starting the session requires nothing
-    }
-
     /**
      * Add an animation to this animation manager. Every animation that is
      * registered to the Animation Manager is notified at every call of
@@ -133,10 +96,4 @@ public final class AnimationManager implements SessionMember {
             addAnimations.add(animation);
         }
     }
-
-    @Override
-    public void loadSession() {
-        // nothing to load
-    }
-
 }

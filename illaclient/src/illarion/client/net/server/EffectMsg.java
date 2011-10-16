@@ -23,9 +23,8 @@ import java.io.IOException;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.resources.SoundFactory;
-import illarion.client.sound.SoundManager;
-import illarion.client.world.Game;
 import illarion.client.world.MapTile;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
 
@@ -90,9 +89,13 @@ public final class EffectMsg extends AbstractReply {
     @Override
     public boolean executeUpdate() {
         if (getId() == CommandList.MSG_SOUND_FX) {
-            SoundManager.getInstance().playEffect(effectId, loc);
+            final Location plyLoc = World.getPlayer().getLocation();
+            SoundFactory.getInstance().getSound(effectId).playAt(
+                loc.getScX() - plyLoc.getScX(),
+                loc.getScY() - plyLoc.getScY(),
+                loc.getScZ() - plyLoc.getScZ());
         } else {
-            final MapTile tile = Game.getMap().getMapAt(loc);
+            final MapTile tile = World.getMap().getMapAt(loc);
             if (tile != null) {
                 tile.showEffect(effectId);
             }

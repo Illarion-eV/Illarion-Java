@@ -18,6 +18,8 @@
  */
 package illarion.client.graphics;
 
+import org.newdawn.slick.Graphics;
+
 /**
  * Interface for a object that can be rendered on the screen.
  * 
@@ -31,7 +33,7 @@ public interface DisplayItem {
      * 
      * @return true in case the render operation was performed correctly
      */
-    boolean draw();
+    boolean draw(Graphics g);
 
     /**
      * Get the z order of the item. This order is used to sort the display items

@@ -18,16 +18,10 @@
  */
 package illarion.graphics.common;
 
-import illarion.common.util.NoResourceException;
-import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
 
 import java.awt.Font;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Map;
 
 import javolution.text.TextBuilder;
@@ -203,63 +197,12 @@ public final class FontLoader {
             return result;
         }
 
-        result = loadIllarionFont(font);
-        if (result != null) {
-            return result;
-        }
-
         LOGGER.error("Failed to load font: " + font.getFontName());
 
         if (font != Fonts.text) {
             return loadFont(Fonts.text);
         }
         return null;
-    }
-
-    private RenderableFont loadIllarionFont(final Fonts font) {
-        ObjectInputStream ois = null;
-        RenderedFont renderedFont = null;
-
-        try {
-            ois =
-                new ObjectInputStream(new BufferedInputStream(FontLoader.class
-                    .getClassLoader().getResourceAsStream(
-                        FONT_ROOT + font.getFontDataName())));
-
-            renderedFont = (RenderedFont) ois.readObject();
-        } catch (final FileNotFoundException ex) {
-            LOGGER
-                .debug("Can't find font file: " + font.getFontDataName(), ex);
-        } catch (final IOException ex) {
-            LOGGER.debug(
-                "Failed reading font file: " + font.getFontDataName(), ex);
-        } catch (final ClassNotFoundException ex) {
-            LOGGER.debug("Font file invalid: " + font.getFontDataName(), ex);
-        } finally {
-            if (ois != null) {
-                try {
-                    ois.close();
-                } catch (final IOException ex) {
-                    LOGGER
-                        .error("Failed to close input stream for font loading");
-                }
-            }
-        }
-
-        if (renderedFont == null) {
-            return null;
-        }
-
-        try {
-            renderedFont.prepareTextures(FONT_ROOT);
-        } catch (final Exception e) {
-            // Problem while preparing the textures.
-            throw new NoResourceException("Error while loading font", e);
-        }
-
-        final RenderableFont loadedText =
-            Graphics.getInstance().getFont(renderedFont);
-        return loadedText;
     }
 
     /**
@@ -286,9 +229,7 @@ public final class FontLoader {
                 javaFont = javaFont.deriveFont(Font.BOLD, font.getFontSize());
             }
 
-            final RenderableFont loadedText =
-                Graphics.getInstance().getFont(javaFont);
-            return loadedText;
+            return new RenderableFont(javaFont);
         } catch (final Exception e) {
             LOGGER.debug("Failed to load TTF Font:" + font.getFontTTFName());
         }

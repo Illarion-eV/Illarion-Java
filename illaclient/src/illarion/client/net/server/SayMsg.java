@@ -23,6 +23,7 @@ import java.io.IOException;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.util.ChatHandler;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
 
@@ -98,7 +99,7 @@ public final class SayMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        ChatHandler.getInstance().handleMessage(text, loc);
+        World.getChatHandler().handleMessage(text, loc);
         return true;
     }
 

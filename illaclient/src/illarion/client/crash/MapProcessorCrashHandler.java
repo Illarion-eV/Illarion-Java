@@ -18,7 +18,7 @@
  */
 package illarion.client.crash;
 
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 /**
  * The crash handler that takes care for crashes of the map processor. It will
@@ -71,8 +71,8 @@ public final class MapProcessorCrashHandler extends AbstractCrashHandler {
      */
     @Override
     protected boolean restart() {
-        Game.getMap().restartMapProcessor();
-        Game.getMap().checkInside();
+        World.getMap().restartMapProcessor();
+        World.getMap().checkInside();
 
         return false;
     }

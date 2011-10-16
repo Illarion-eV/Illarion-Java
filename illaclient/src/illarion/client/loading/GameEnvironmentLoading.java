@@ -1,0 +1,33 @@
+package illarion.client.loading;
+
+import illarion.client.world.World;
+
+import java.io.IOException;
+
+import org.newdawn.slick.loading.DeferredResource;
+
+/**
+ * This loading task takes care for loading the components of the game
+ * environment that still need to be loaded.
+ * 
+ * @author Martin Karing
+ * @since 1.22
+ * @version 1.22
+ */
+public final class GameEnvironmentLoading implements DeferredResource {
+    /**
+     * Load the game environment.
+     */
+    @Override
+    public void load() throws IOException {
+        World.initMissing();
+    }
+
+    /**
+     * The human readable description of this loading task.
+     */
+    @Override
+    public String getDescription() {
+        return null;
+    }
+}

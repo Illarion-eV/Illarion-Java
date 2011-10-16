@@ -18,8 +18,12 @@
  */
 package illarion.client;
 
+import illarion.client.net.CommandFactory;
+import illarion.client.net.CommandList;
+import illarion.client.net.NetComm;
+import illarion.client.net.client.LoginCmd;
+import illarion.client.net.client.MapDimensionCmd;
 import illarion.client.util.Lang;
-import illarion.client.world.Game;
 import illarion.common.util.Base64;
 
 import java.io.OutputStreamWriter;
@@ -27,6 +31,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+
+import illarion.client.world.MapDimensions;
+import illarion.client.world.World;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.util.List;
@@ -282,7 +289,19 @@ public final class Login {
             return false;
         }
         
-        Game.getInstance().connect();
+        final NetComm netComm = World.getNet();
+        if (!netComm.connect()) {
+            return false;
+        }
+        
+        final LoginCmd loginCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_LOGIN, LoginCmd.class);
+        loginCmd.setLogin(getSelectedCharacterName(), password);
+        loginCmd.setVersion(Servers.testserver.getClientVersion());
+        loginCmd.send();
+        
+        final MapDimensionCmd mapDimCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_MAPDIMENSION, MapDimensionCmd.class);
+        mapDimCmd.setMapDimensions(MapDimensions.getInstance().getStripesWidth(), MapDimensions.getInstance().getStripesHeight());
+        mapDimCmd.send();
         
         return true;
     }

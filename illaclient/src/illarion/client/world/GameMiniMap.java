@@ -35,18 +35,17 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 
 import illarion.client.graphics.Tile;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.resources.TileFactory;
-import illarion.client.util.SessionMember;
 
 import illarion.common.util.Location;
 
-import illarion.graphics.Graphics;
 import illarion.graphics.Sprite;
-import illarion.graphics.Texture;
-import illarion.graphics.TextureAtlas;
 import illarion.graphics.common.MapColor;
 
 /**
@@ -58,7 +57,7 @@ import illarion.graphics.common.MapColor;
  * @since 1.22
  * @version 1.22
  */
-public final class GameMiniMap implements SessionMember {
+public final class GameMiniMap {
     /**
      * The height of the world map in tiles.
      */
@@ -130,11 +129,6 @@ public final class GameMiniMap implements SessionMember {
     private static final int TILE_OVERLAY_MASK = 0x1f;
 
     /**
-     * The texture atlas that handles the texture image itself.
-     */
-    private final TextureAtlas atlas;
-
-    /**
      * The dirty flag, this will be true in case there are any changes on the
      * map that were yet not transfered to the world map texture.
      */
@@ -195,19 +189,9 @@ public final class GameMiniMap implements SessionMember {
     private int mapOriginY;
 
     /**
-     * The sprite that is used the draw the mini map.
-     */
-    private final Sprite minimap;
-
-    /**
      * The height of the overview map in tiles.
      */
     private int minimapHeight = 256;
-
-    /**
-     * The texture that is used to draw the mini map sprite.
-     */
-    private final Texture minimapTexture;
 
     /**
      * The width of the overview map in tiles.
@@ -233,12 +217,12 @@ public final class GameMiniMap implements SessionMember {
     /**
      * The sprite that is used the draw the world map.
      */
-    private final Sprite worldmap;
+    private Sprite worldmap;
 
     /**
      * The texture that is used to draw the world map sprite.
      */
-    private final Texture worldmapTexture;
+    private Image worldmapTexture;
 
     /**
      * Constructor of the game map that sets up all instance variables.
@@ -249,56 +233,53 @@ public final class GameMiniMap implements SessionMember {
                 * BYTES_PER_TILE);
         mapData.order(ByteOrder.nativeOrder());
         loadedMap = false;
+        
+        try {
+            worldmapTexture = new Image(WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
+            worldmap = new Sprite(1);
+            worldmap.addImage(worldmapTexture);
+        } catch (SlickException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-        atlas = Graphics.getInstance().getTextureAtlas();
-        atlas.setDimensions(WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
-
-//        atlas.addImage(TEX_NAME_WORLD, 0, 0, WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
-//        atlas.addImage(TEX_NAME_MINI, 0, 0, minimapWidth, minimapHeight);
-
-        worldmapTexture = atlas.getTexture(TEX_NAME_WORLD);
-        minimapTexture = atlas.getTexture(TEX_NAME_MINI);
-
-        worldmap = Graphics.getInstance().getSprite(1);
-        //worldmap.addTexture(worldmapTexture);
-
-        minimap = Graphics.getInstance().getSprite(1);
+        //minimap = Graphics.getInstance().getSprite(1);
         //minimap.addTexture(minimapTexture);
     }
 
-    @Override
-    public void endSession() {
-        finishUpdate();
-        saveMap();
-
-        updateAreas.clear();
-        updateBuffers.clear();
-
-        dirty = false;
-        dirtyAreaX1 = 0;
-        dirtyAreaX2 = 0;
-        dirtyAreaY1 = 0;
-        dirtyAreaY2 = 0;
-
-        mapLevel = 0;
-        mapOriginX = 0;
-        mapOriginY = 0;
-
-        minimapHeight = 256;
-        minimapWidth = 256;
-
-        loadedMap = false;
-        loadingMap = false;
-
-        updateSlowdown = 0;
-
-        mapData.clear();
-        final byte nullByte = (byte) 0;
-        while (mapData.hasRemaining()) {
-            mapData.put(nullByte);
-        }
-        mapData.clear();
-    }
+//    @Override
+//    public void endSession() {
+//        finishUpdate();
+//        saveMap();
+//
+//        updateAreas.clear();
+//        updateBuffers.clear();
+//
+//        dirty = false;
+//        dirtyAreaX1 = 0;
+//        dirtyAreaX2 = 0;
+//        dirtyAreaY1 = 0;
+//        dirtyAreaY2 = 0;
+//
+//        mapLevel = 0;
+//        mapOriginX = 0;
+//        mapOriginY = 0;
+//
+//        minimapHeight = 256;
+//        minimapWidth = 256;
+//
+//        loadedMap = false;
+//        loadingMap = false;
+//
+//        updateSlowdown = 0;
+//
+//        mapData.clear();
+//        final byte nullByte = (byte) 0;
+//        while (mapData.hasRemaining()) {
+//            mapData.put(nullByte);
+//        }
+//        mapData.clear();
+//    }
 
     /**
      * This update prepares a minimap update and stores the required data to the
@@ -408,15 +389,6 @@ public final class GameMiniMap implements SessionMember {
     }
 
     /**
-     * Get the sprite that is used to draw the mini map.
-     * 
-     * @return the sprite that holds the mini map
-     */
-    public Sprite getMinimap() {
-        return minimap;
-    }
-
-    /**
      * Get the zoom value of the minimap.
      * 
      * @return the value of the zoom on the minimap
@@ -432,11 +404,6 @@ public final class GameMiniMap implements SessionMember {
      */
     public Sprite getWorldmap() {
         return worldmap;
-    }
-
-    @Override
-    public void initSession() {
-        atlas.finish();
     }
 
     /**
@@ -514,7 +481,7 @@ public final class GameMiniMap implements SessionMember {
         if ((zoom > 90) && (zoom < 256) && (zoom != minimapHeight)) {
             minimapHeight = zoom;
             minimapWidth = zoom;
-            setPlayerLocation(Game.getPlayer().getLocation());
+            setPlayerLocation(World.getPlayer().getLocation());
         }
     }
 
@@ -585,20 +552,6 @@ public final class GameMiniMap implements SessionMember {
     }
 
     /**
-     * Clean up the resources used by this minimap.
-     */
-    @Override
-    public void shutdownSession() {
-        minimap.remove();
-        worldmap.remove();
-    }
-
-    @Override
-    public void startSession() {
-        loadMap();
-    }
-
-    /**
      * Update one tile of the overview map.
      * 
      * @param updateData the data that is needed for the update
@@ -638,7 +591,7 @@ public final class GameMiniMap implements SessionMember {
         if (minimapHeight > 90) {
             minimapHeight--;
             minimapWidth--;
-            setPlayerLocation(Game.getPlayer().getLocation());
+            setPlayerLocation(World.getPlayer().getLocation());
         }
     }
 
@@ -650,7 +603,7 @@ public final class GameMiniMap implements SessionMember {
         if (minimapHeight < 256) {
             minimapHeight++;
             minimapWidth++;
-            setPlayerLocation(Game.getPlayer().getLocation());
+            setPlayerLocation(World.getPlayer().getLocation());
         }
     }
 
@@ -732,31 +685,26 @@ public final class GameMiniMap implements SessionMember {
             (byte) ((tileData >> SHIFT_OVERLAY) & TILE_OVERLAY_MASK);
         final boolean tileBlocked = ((tileData >> SHIFT_BLOCKED) > 0);
 
-        final int[] tileColor =
+        final Color tileColor =
             MapColor.getColor(TileFactory.getInstance().getMapColor(tileID));
 
-        final int[] colorValue = new int[MapColor.COLOR_VALUES];
-        colorValue[0] = tileColor[0];
-        colorValue[1] = tileColor[1];
-        colorValue[2] = tileColor[2];
+        final Color colorValue = new Color(tileColor);
 
         if (tileOverlayID > 0) {
-            final int[] overlayTileColor =
+            final Color overlayTileColor =
                 MapColor.getColor(TileFactory.getInstance().getMapColor(
                     tileOverlayID));
 
-            colorValue[0] += (overlayTileColor[0] - tileColor[0]) >> 1;
-            colorValue[1] += (overlayTileColor[1] - tileColor[1]) >> 1;
-            colorValue[2] += (overlayTileColor[2] - tileColor[2]) >> 1;
+            colorValue.r += (overlayTileColor.r - tileColor.r) / 2.f;
+            colorValue.g += (overlayTileColor.g - tileColor.g) / 2.f;
+            colorValue.b += (overlayTileColor.b - tileColor.b) / 2.f;
         }
         if (tileBlocked) {
-            colorValue[0] *= BLOCKED_COLOR_MOD;
-            colorValue[1] *= BLOCKED_COLOR_MOD;
-            colorValue[2] *= BLOCKED_COLOR_MOD;
+            colorValue.scale(BLOCKED_COLOR_MOD);
         }
-        imageData.put((byte) (colorValue[0] & 0xFF));
-        imageData.put((byte) (colorValue[1] & 0xFF));
-        imageData.put((byte) (colorValue[2] & 0xFF));
+        imageData.put((byte) (colorValue.getRedByte() & 0xFF));
+        imageData.put((byte) (colorValue.getGreenByte() & 0xFF));
+        imageData.put((byte) (colorValue.getBlueByte() & 0xFF));
         imageData.put((byte) -1);
     }
 
@@ -785,7 +733,7 @@ public final class GameMiniMap implements SessionMember {
         BUILDER.append(mapOriginY / WORLDMAP_HEIGHT);
         BUILDER.append(mapLevel);
         BUILDER.append(".dat");
-        return new File(Game.getPlayer().getPath(), BUILDER.toString());
+        return new File(World.getPlayer().getPath(), BUILDER.toString());
     }
 
     /**
@@ -966,10 +914,5 @@ public final class GameMiniMap implements SessionMember {
         }
         mapData.putShort(index, encodedTileValue);
         return true;
-    }
-
-    @Override
-    public void loadSession() {
-        // nothing to load
     }
 }

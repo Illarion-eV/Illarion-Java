@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 /**
  * Servermessage: Introduce character (
@@ -84,7 +84,7 @@ public final class IntroduceMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        Game.getPeople().introduce(charId, text);
+        World.getPeople().introduce(charId, text);
         return true;
     }
 

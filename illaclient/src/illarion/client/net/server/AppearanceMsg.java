@@ -21,16 +21,13 @@ package illarion.client.net.server;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
 
 import illarion.client.graphics.AvatarClothManager;
-import illarion.client.graphics.Colors;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.Char;
-import illarion.client.world.Game;
-
-import illarion.graphics.Graphics;
-import illarion.graphics.SpriteColor;
+import illarion.client.world.World;
 
 /**
  * Servermessage: Character appearance (
@@ -77,8 +74,7 @@ public final class AppearanceMsg extends AbstractReply {
      * The sprite color instance that is used to send the color values to the
      * other parts of the client.
      */
-    private static final SpriteColor TEMP_COLOR = Graphics.getInstance()
-        .getSpriteColor();
+    private static final Color TEMP_COLOR = new Color(0);
 
     /**
      * Appearance of the character. This value contains the race and the gender
@@ -249,7 +245,7 @@ public final class AppearanceMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public boolean executeUpdate() {
-        final Char ch = Game.getPeople().getCharacter(charId);
+        final Char ch = World.getPeople().getCharacter(charId);
 
         // Character not found.
         if (ch == null) {
@@ -259,16 +255,16 @@ public final class AppearanceMsg extends AbstractReply {
         // set name color from attack mode
         switch (attackMode) {
             case STATE_PEACEFUL:
-                ch.setNameColor(Colors.yellow);
+                ch.setNameColor(Color.yellow);
                 break;
             case STATE_MELEE:
-                ch.setNameColor(Colors.red);
+                ch.setNameColor(Color.red);
                 break;
             case STATE_DISTANCE:
-                ch.setNameColor(Colors.green);
+                ch.setNameColor(Color.green);
                 break;
             case STATE_MAGIC:
-                ch.setNameColor(Colors.blue);
+                ch.setNameColor(Color.blue);
                 break;
             default:
                 LOGGER.warn("invalid attack mode received " + attackMode);
@@ -289,15 +285,20 @@ public final class AppearanceMsg extends AbstractReply {
         ch.setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, rightItemId);
         ch.setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, leftItemId);
 
-        TEMP_COLOR.set(skinColorRed, skinColorGreen, skinColorBlue);
-        TEMP_COLOR.setAlpha(SpriteColor.COLOR_MAX);
+        TEMP_COLOR.r = skinColorRed / 255.f;
+        TEMP_COLOR.g = skinColorGreen / 255.f;
+        TEMP_COLOR.b = skinColorBlue / 255.f;
+        TEMP_COLOR.a = 1.f;
+        
         if (skinColorRed != 255 || skinColorGreen != 255 || skinColorBlue != 255) {
         	ch.setSkinColor(TEMP_COLOR);
         } else {
             ch.setSkinColor(null);
         }
 
-        TEMP_COLOR.set(hairColorRed, hairColorGreen, hairColorBlue);
+        TEMP_COLOR.r = hairColorRed / 255.f;
+        TEMP_COLOR.g = hairColorGreen / 255.f;
+        TEMP_COLOR.b = hairColorBlue / 255.f;
         ch.setClothColor(AvatarClothManager.GROUP_HAIR, TEMP_COLOR);
         ch.setClothColor(AvatarClothManager.GROUP_BEARD, TEMP_COLOR);
         ch.setAlive(!deadFlag);

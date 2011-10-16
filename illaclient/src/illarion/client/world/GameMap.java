@@ -21,20 +21,21 @@ package illarion.client.world;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.newdawn.slick.Color;
+
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.procedure.TLongObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 
 import illarion.client.crash.MapProcessorCrashHandler;
 import illarion.client.net.server.TileUpdate;
-import illarion.client.util.SessionManager;
-import illarion.client.util.SessionMember;
 
 import illarion.common.graphics.ItemInfo;
 import illarion.common.util.Location;
-import illarion.common.util.Rectangle;
+import illarion.common.util.Stoppable;
+import illarion.common.util.StoppableStorage;
 
-import illarion.graphics.SpriteColor;
+import illarion.graphics.common.ColorHelper;
 import illarion.graphics.common.LightingMap;
 
 /**
@@ -45,8 +46,7 @@ import illarion.graphics.common.LightingMap;
  * @author Martin Karing
  * @since 1.22
  */
-public final class GameMap extends Interaction implements LightingMap,
-    SessionMember {
+public final class GameMap implements LightingMap, Stoppable {
     /**
      * The class that is used as helper class to clear all the tiles on the map.
      * Executing this will cause every tile to be cleared. Once this is done
@@ -97,7 +97,7 @@ public final class GameMap extends Interaction implements LightingMap,
         /**
          * The ambient light that is used to render the real tile light.
          */
-        private SpriteColor light;
+        private Color light;
 
         /**
          * Protected constructor so its accessible from outside.
@@ -129,7 +129,7 @@ public final class GameMap extends Interaction implements LightingMap,
          *            color
          * @param ambientLight the ambient light color itself
          */
-        void setup(final float newAmbientFactor, final SpriteColor ambientLight) {
+        void setup(final float newAmbientFactor, final Color ambientLight) {
             factor = newAmbientFactor;
             light = ambientLight;
         }
@@ -275,6 +275,8 @@ public final class GameMap extends Interaction implements LightingMap,
 
         minimap = new GameMiniMap();
         restartMapProcessor();
+        
+        StoppableStorage.getInstance().add(this);
     }
 
     /**
@@ -352,7 +354,7 @@ public final class GameMap extends Interaction implements LightingMap,
     }
 
     @Override
-    public void endSession() {
+    public void saveShutdown() {
         if (processor != null) {
             processor.clear();
             processor.saveShutdown();
@@ -371,19 +373,6 @@ public final class GameMap extends Interaction implements LightingMap,
     }
 
     /**
-     * Get the clipping values the map processor is working with. Careful at
-     * using this. Its possible to change the values of this rectangle. This
-     * will lead to really change behavior.
-     * 
-     * @return the clipping rectangle, this contains the distances of the
-     *         clipping border around the player character is map rows and
-     *         columns
-     */
-    public Rectangle getClipping() {
-        return processor.getClipping();
-    }
-
-    /**
      * Get the tile on the map that user is currently pointing at in case the
      * player is pointing at the game map.
      * 
@@ -392,15 +381,14 @@ public final class GameMap extends Interaction implements LightingMap,
      * @return the map tile the user is pointing at or null
      * @see illarion.client.world.Interaction#getComponentAt(int, int)
      */
-    @Override
     public MapTile getComponentAt(final int x, final int y) {
-        final int worldX = Game.getDisplay().getWorldX(x);
-        final int worldY = Game.getDisplay().getWorldY(y);
+        final int worldX = World.getMapDisplay().getWorldX(x);
+        final int worldY = World.getMapDisplay().getWorldY(y);
 
         final Location helpLoc = Location.getInstance();
         helpLoc.setDC(worldX, worldY);
 
-        final int playerBase = Game.getPlayer().getBaseLevel();
+        final int playerBase = World.getPlayer().getBaseLevel();
         final int base = playerBase - 2;
         final int lowX =
             helpLoc.getScX() + ((2 - playerBase) * TILE_PERSPECTIVE_OFFSET);
@@ -433,16 +421,6 @@ public final class GameMap extends Interaction implements LightingMap,
             return ground.getElevation();
         }
         return 0;
-    }
-
-    /**
-     * Get the amount of stripes that need to be requested from the server as
-     * map height.
-     * 
-     * @return the amount of stripes requested from the server as map height
-     */
-    public int getHeightStripes() {
-        return processor.getHeightStripes();
     }
 
     /**
@@ -487,21 +465,6 @@ public final class GameMap extends Interaction implements LightingMap,
      */
     public GameMiniMap getMinimap() {
         return minimap;
-    }
-
-    /**
-     * Get the amount of stripes that need to be requested from the server as
-     * map width.
-     * 
-     * @return the amount of stripes requested from the server as map width
-     */
-    public int getWidthStripes() {
-        return processor.getWidthStripes();
-    }
-
-    @Override
-    public void initSession() {
-        SessionManager.getInstance().addMember(minimap);
     }
 
     /**
@@ -593,9 +556,9 @@ public final class GameMap extends Interaction implements LightingMap,
     @Override
     public void renderLights() {
         final float factor =
-            1.f - Game.getWeather().getAmbientLight().getLuminationf();
+            1.f - ColorHelper.getLuminationf(World.getWeather().getAmbientLight());
 
-        renderLightsHelper.setup(factor, Game.getWeather().getAmbientLight());
+        renderLightsHelper.setup(factor, World.getWeather().getAmbientLight());
 
         synchronized (LIGHT_LOCK) {
             mapLock.readLock().lock();
@@ -607,7 +570,7 @@ public final class GameMap extends Interaction implements LightingMap,
 
         }
         
-        Game.getPeople().updateLight();
+        World.getPeople().updateLight();
     }
 
     /**
@@ -648,21 +611,11 @@ public final class GameMap extends Interaction implements LightingMap,
      * @see illarion.graphics.common.LightingMap#setLight(Location, SpriteColor)
      */
     @Override
-    public void setLight(final Location loc, final SpriteColor color) {
+    public void setLight(final Location loc, final Color color) {
         final MapTile tile = getMapAt(loc);
         if (tile != null) {
             tile.addLight(color);
         }
-    }
-
-    @Override
-    public void shutdownSession() {
-        // shut down of the map requires nothing
-    }
-
-    @Override
-    public void startSession() {
-        restartMapProcessor();
     }
 
     /**
@@ -721,7 +674,7 @@ public final class GameMap extends Interaction implements LightingMap,
                     mapLock.writeLock().unlock();
                 }
             }
-            Game.getLights().notifyChange(updateData.getLocation());
+            World.getLights().notifyChange(updateData.getLocation());
 
             if (processor != null) {
                 processor.reportUnchecked(locKey);
@@ -740,10 +693,5 @@ public final class GameMap extends Interaction implements LightingMap,
                 tile.recycle();
             }
         }
-    }
-
-    @Override
-    public void loadSession() {
-        // nothing to load
     }
 }

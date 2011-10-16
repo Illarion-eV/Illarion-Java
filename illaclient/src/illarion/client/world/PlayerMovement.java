@@ -20,12 +20,10 @@ package illarion.client.world;
 
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MapDisplayManager;
-import illarion.client.graphics.MarkerFactory;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.MoveCmd;
-import illarion.client.sound.SoundManager;
 import illarion.client.util.Path;
 import illarion.client.util.PathNode;
 import illarion.client.util.PathReceiver;
@@ -131,7 +129,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * overlapped move can be requested in case its needed.
      */
     private final MoveAnimation moveAnimation = new MoveAnimation(
-        Game.getDisplay());
+        World.getMapDisplay());
 
     /**
      * <code>True</code> in case the character is currently moving, false if
@@ -222,8 +220,6 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     public void acknowledgeTurn(final int direction) {
         requestedTurns[direction] = false;
         playerCharacter.setDirection(direction);
-        
-        SoundManager.getInstance().setListenerDirection(direction);
     }
 
     /**
@@ -238,8 +234,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         positionUpdated = false;
         playerCharacter.getLocation().set(parentPlayer.getLocation());
         playerCharacter.updatePosition(0);
-        Game.getPeople().checkVisibility();
-        Game.getMap().checkInside();
+        World.getPeople().checkVisibility();
+        World.getMap().checkInside();
 
         if (lastAllowedMove == Location.DIR_ZERO) {
             moving = false;
@@ -315,7 +311,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             && (moveAnimation.animationProgress() > POSITION_UPDATE_PROCESS)) {
             // update mini-map and world-map position
             final Location targetLoc = parentPlayer.getLocation();
-            Game.getMap().getMinimap().setPlayerLocation(targetLoc);
+            World.getMap().getMinimap().setPlayerLocation(targetLoc);
 
             // process obstructed tiles
             // Game.getMap().checkObstructions();
@@ -357,7 +353,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         cancelAutoWalk();
 
         final Location loc = parentPlayer.getLocation();
-        final MapTile walkTarget = Game.getMap().getMapAt(dest);
+        final MapTile walkTarget = World.getMap().getMapAt(dest);
         if ((walkTarget != null) && (dest.getScZ() == loc.getScZ())
             && !walkTarget.isObstacle()) {
             Pathfinder.getInstance().findPath(loc, dest, this);
@@ -371,8 +367,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * @param screenPosY the y location on the screen to walk to
      */
     public void walkTowards(final int screenPosX, final int screenPosY) {
-        final int xOffset = screenPosX - MapDisplayManager.MAP_CENTER_X;
-        final int yOffset = screenPosY - MapDisplayManager.MAP_CENTER_Y;
+        final int xOffset = screenPosX - MapDimensions.getInstance().getOnScreenWidth() >> 1;
+        final int yOffset = screenPosY - MapDimensions.getInstance().getOnScreenHeight() >> 1;
         final int distance =
             FastMath.sqrt((xOffset * xOffset) + (yOffset * yOffset));
 
@@ -474,7 +470,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         }
 
         final Location stepDest = node.getLocation();
-        final MapTile tile = Game.getMap().getMapAt(stepDest);
+        final MapTile tile = World.getMap().getMapAt(stepDest);
         final Location loc = parentPlayer.getLocation();
 
         // check whether path is clear
@@ -528,9 +524,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             || playerCharacter.getLocation().equals(target)) {
             parentPlayer.updateLocation(target);
             playerCharacter.setLocation(target);
-            SoundManager.getInstance().setListenerLocation(target);
             animationFinished(true);
-            Game.getDisplay().animationFinished(true);
+            World.getMapDisplay().animationFinished(true);
             walkTowards = false;
             return;
         }
@@ -540,8 +535,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             moveMode = Char.MOVE_RUN;
         }
         playerCharacter.moveTo(target, moveMode, speed);
-        final int oldElevation = Game.getDisplay().getElevation();
-        final int newElevation = Game.getMap().getElevationAt(target);
+        final int oldElevation = World.getMapDisplay().getElevation();
+        final int newElevation = World.getMap().getElevationAt(target);
         final int xOffset =
             parentPlayer.getLocation().getDcX() - target.getDcX();
         final int yOffset =
@@ -550,8 +545,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             newElevation, speed);
 
         parentPlayer.updateLocation(target);
-        SoundManager.getInstance().setListenerLocation(target);
-        Game.getMusicBox().updatePlayerLocation();
+        World.getMusicBox().updatePlayerLocation();
     }
 
     /**
@@ -607,9 +601,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         if ((anyTurnRequested() || (playerCharacter.getDirection() != direction))
             && !requestedTurns[direction]) {
             requestedTurns[direction] = true;
-            Game.getNet().sendCommand(
-                CommandFactory.getInstance().getCommand(
-                    CommandList.CMD_TURN_N + direction));
+            CommandFactory.getInstance().getCommand(
+                    CommandList.CMD_TURN_N + direction).send();
             timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
         } else {
             discardCheck();
@@ -632,6 +625,6 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         } else {
             cmd.setMoving();
         }
-        Game.getNet().sendCommand(cmd);
+        cmd.send();
     }
 }

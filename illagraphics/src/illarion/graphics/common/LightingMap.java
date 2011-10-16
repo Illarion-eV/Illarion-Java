@@ -18,8 +18,9 @@
  */
 package illarion.graphics.common;
 
+import org.newdawn.slick.Color;
+
 import illarion.common.util.Location;
-import illarion.graphics.SpriteColor;
 
 /**
  * The lightmap interface is used to handle the light effects on the map. It
@@ -74,5 +75,5 @@ public interface LightingMap {
      * @param loc the location on the map the light is assigned to
      * @param color the color that is assigned to the tile
      */
-    void setLight(Location loc, SpriteColor color);
+    void setLight(Location loc, Color color);
 }

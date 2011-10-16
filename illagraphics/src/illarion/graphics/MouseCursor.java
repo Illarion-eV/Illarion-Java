@@ -18,35 +18,72 @@
  */
 package illarion.graphics;
 
+import java.io.IOException;
+
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Cursor;
+import org.lwjgl.input.Mouse;
+import org.newdawn.slick.opengl.CursorLoader;
+
+import illarion.graphics.MouseCursor;
+
 /**
- * This interface is used to implement a mouse cursor using the different render
- * implementation. The implementations should use the native method to realize
- * the mouse cursor if possible. In case its not rendering it using a sprite
- * works too.
+ * This class implements the mouse cursor that is displayed in the game.
  * 
  * @author Martin Karing
  * @since 1.22
  * @version 1.22
  */
-public interface MouseCursor {
+public class MouseCursor {
     /**
-     * Update the mouse cursor. For non-native cursors this function is needed
-     * to render the cursor at the correct location.
+     * The mouse cursor that is wrapped in this class.
      */
-    void update(int x, int y);
+    private final Cursor internalCursor;
 
+    /**
+     * Create a new instance of a mouse cursor from a resource name with a
+     * set hotspot.
+     *  
+     * @param resName the name of the resource
+     * @param hotspotX the x coordinate of the hotspot
+     * @param hotspotY the y coordinate of the hotspot
+     */
+    public MouseCursor(final String resName, final int hotspotX,
+        final int hotspotY) {
+        Cursor newCursor = null;
+        try {
+            newCursor =
+                CursorLoader.get().getCursor(resName, hotspotX, hotspotY);
+        } catch (IOException e) {
+        } catch (LWJGLException e) {
+        }
+        internalCursor = newCursor;
+    }
+    
     /**
      * Enable the cursor. From now on this cursor is the active one and is
      * supposed to be displayed.
      */
-    void enableCursor();
-
+    public void enableCursor() {
+        try {
+            Mouse.setNativeCursor(internalCursor);
+        } catch (LWJGLException e) {
+            // failed to enable the mouse cursor
+        }
+    }
+    
     /**
      * Disable the cursor. After calling this function the cursor won't be
      * displayed any longer.
      */
-    void disableCursor();
-
+    public void disableCursor() {
+        try {
+            Mouse.setNativeCursor(null);
+        } catch (LWJGLException e) {
+            // failed to disable the mouse cursor
+        }
+    }
+    
     /**
      * Switch the mouse cursor so the one in the parameter is the active one
      * after the call. This is the preferred version of changing the current
@@ -57,5 +94,16 @@ public interface MouseCursor {
      *       cursor in the current instance and enabling the cursor that is hand
      *       over as parameter.
      */
-    void switchCursorTo(MouseCursor newCursor);
+    public void switchCursorTo(MouseCursor newCursor) {
+        if (newCursor != null && newCursor instanceof MouseCursor) {
+            try {
+                Mouse
+                    .setNativeCursor(((MouseCursor) newCursor).internalCursor);
+            } catch (LWJGLException e) {
+                // failed to switch the mouse cursor
+            }
+        }
+
+    }
+
 }

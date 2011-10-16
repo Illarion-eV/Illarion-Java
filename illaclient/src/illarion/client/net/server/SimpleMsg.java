@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.CombatHandler;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 /**
  * Servermessage: Generic simple message, used for messages that do not contain
@@ -97,10 +97,10 @@ public final class SimpleMsg extends AbstractReply {
                 break;
 
             case CommandList.MSG_MAP_COMPLETE:
-                Game.getDisplay().setActive(true);
-                Game.getLights().refresh();
-                Game.getMap().checkInside();
-                Game.getMap().getMinimap().finishUpdate();
+                World.getMapDisplay().setActive(true);
+                World.getLights().refresh();
+                World.getMap().checkInside();
+                World.getMap().getMinimap().finishUpdate();
                 break;
 
             default:

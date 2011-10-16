@@ -23,20 +23,15 @@ import java.util.List;
 import javolution.util.FastTable;
 
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
 
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.list.array.TShortArrayList;
 
 import illarion.client.graphics.AlphaChangeListener;
 import illarion.client.graphics.Effect;
-import illarion.client.graphics.EffectPool;
 import illarion.client.graphics.Item;
-import illarion.client.graphics.Marker;
-import illarion.client.graphics.MarkerFactory;
 import illarion.client.graphics.Tile;
-import illarion.client.graphics.particle.ParticlePool;
-import illarion.client.guiNG.references.AbstractReference;
-import illarion.client.guiNG.references.MapReference;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.LookatTileCmd;
@@ -47,14 +42,12 @@ import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 
-import illarion.graphics.Graphics;
-import illarion.graphics.SpriteColor;
 import illarion.graphics.common.LightSource;
 
 /**
  * A tile on the map. Contains the tile graphics and items.
  */
-public final class MapTile extends Interaction implements AlphaChangeListener,
+public final class MapTile implements AlphaChangeListener,
     RecycleObject {
 
     /**
@@ -83,14 +76,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
     private boolean hidden;
 
     /**
-     * The hover marker that is displayed in case the mouse moves over the tile.
-     * 
-     * @deprecated This was part of the old GUI
-     */
-    @Deprecated
-    private Marker hoverMarker = null;
-
-    /**
      * List of items on the tile.
      */
     private FastTable<Item> items;
@@ -98,8 +83,7 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
     /**
      * rendered light value on this tile.
      */
-    private transient final SpriteColor light = Graphics.getInstance()
-        .getSpriteColor();
+    private transient final Color light = new Color(0);
 
     /**
      * Light Source that is on the tile.
@@ -146,17 +130,8 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      * ID of the tile.
      */
     private int tileId;
-
-    /**
-     * The particle pool that handles all particles on this tile.
-     */
-    private transient EffectPool tilePool;
-
-    /**
-     * Temporary not rendered light value on this tile.
-     */
-    private transient final SpriteColor tmpLight = Graphics.getInstance()
-        .getSpriteColor();
+    
+    private final Color tmpLight = new Color(0);
 
     /**
      * Default Constructor for a map tile. Generates the tooltip and sets up all
@@ -164,7 +139,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      */
     @SuppressWarnings("nls")
     public MapTile() {
-        super("tooltip.map");
         tileId = ID_NONE;
         tile = null;
         lightSrc = null;
@@ -223,9 +197,9 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      */
     @Override
     public void alphaChanged(final int from, final int to) {
-        if (((from == SpriteColor.COLOR_MAX) && (to < from))
-            || ((from < to) && (to == SpriteColor.COLOR_MAX))) {
-            Game.getMap().updateTile(this);
+        if (((from == 255) && (to < from))
+            || ((from < to) && (to == 255))) {
+            World.getMap().updateTile(this);
         }
     }
 
@@ -242,7 +216,7 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
                 // only movable items
                 if (items.get(top).isMovable()) {
                     // can only manipulate items around the character
-                    if (Game.getPlayer().getLocation().isNeighbour(loc)) {
+                    if (World.getPlayer().getLocation().isNeighbour(loc)) {
                         return true;
                     }
                 }
@@ -261,7 +235,7 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
             final int top = items.size() - 1;
             if (top >= 0) {
                 // check distance from player, only neighbouring fields
-                if (Game.getPlayer().getLocation().isNeighbour(loc)) {
+                if (World.getPlayer().getLocation().isNeighbour(loc)) {
                     // it really is a container
                     if (items.get(top).isContainer()) {
                         return true;
@@ -270,43 +244,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
             }
         }
         return false;
-    }
-
-    /**
-     * Check if it is possible to use this tile.
-     * 
-     * @return true if the tile is useable, false if not
-     */
-    public boolean canUse() {
-        // select only once
-        // if (!Gui.getInstance().getManager().isUsed(this)) {
-        // // check distance from player, only neighbouring fields
-        // if (Game.getPlayer().getLocation().isNeighbour(loc)) {
-        // return true;
-        // }
-        // }
-        return false;
-    }
-
-    /**
-     * Cast a spell on the tile.
-     * 
-     * @return the casting object or null in case the cast failed
-     * @see illarion.client.world.Interaction#castSpellOn()
-     */
-    @Override
-    public AbstractReference castSpellOn() {
-        // select only once
-        // if (!Gui.getInstance().getManager().isUsed(this)) {
-        // if (canSeeLocation()) {
-        // // create usage object
-        // Reference use = new RefMap(loc);
-        // use.setMapUse(this, loc);
-        // return use;
-        // }
-        // Toolkit.getDefaultToolkit().beep();
-        // }
-        return null;
     }
 
     /**
@@ -350,46 +287,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
     }
 
     /**
-     * Start a dragging event of the top item on this tile.
-     * 
-     * @param x X-Coordinate of the mouse on the screen
-     * @param y Y-Coordinate of the mouse on the screen
-     * @return Reference to the dragging event
-     */
-    @Override
-    public AbstractReference dragFrom(final int x, final int y) {
-        if (canMoveItem()) {
-            // cannot move large items - just an attempt to limit it
-            // final Item item = items.get(items.size() - 1);
-            final MapReference ref = new MapReference();
-            ref.setReferringTile(this);
-            // ref.setItemId(item.getId());
-            // ref.setSource(this, item);
-            return ref;
-        }
-        return null;
-    }
-
-    /**
-     * Finish a dragging action on this map tile.
-     * 
-     * @param dragSrc the Reference to the dragging event
-     * @return the reference to this map tile where the dragging finished
-     */
-    @Override
-    public AbstractReference dragTo(final AbstractReference dragSrc) {
-        // accept all item types, chars only if they're moving a single step
-        // if (((dragSrc.getType() != Reference.CHARACTER) && canSeeLocation())
-        // || ((dragSrc.getType() == Reference.CHARACTER) && ((Char) dragSrc
-        // .getSource()).getLocation().isNeighbour(loc))) {
-        // final RefMap ref = new RefMap(loc);
-        // ref.setSource(this);
-        // return ref;
-        // }
-        return null;
-    }
-
-    /**
      * Get the map tile in case the user is currently pointing at. If the user
      * is pointing somewhere else, return null.
      * 
@@ -397,7 +294,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      * @param y Y-Coordinate on the screen the user is pointing at
      * @return the map tile in case the user is pointing at, or null
      */
-    @Override
     public MapTile getComponentAt(final int x, final int y) {
         if (!hidden && !obstructed) {
             // calculate distance from tile center to mouse
@@ -471,7 +367,7 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      * 
      * @return the light color on this tile
      */
-    public SpriteColor getLight() {
+    public Color getLight() {
         return light;
     }
 
@@ -483,19 +379,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
     public Location getLocation() {
         return loc;
     }
-
-    /**
-     * Request a menu for this tile on the map.
-     * 
-     * @return the generated context menu
-     */
-    // @Override
-    // public ContextMenu getMenu() {
-    // final ContextMenu menu =
-    // MenuFactory.getInstance().getCommand(MenuFactory.MENU_MAP);
-    // menu.setContext(this);
-    // return menu;
-    // }
 
     /**
      * Get the color for the minimap of this tile.
@@ -522,22 +405,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
             return Integer.MAX_VALUE;
         }
         return localTile.getMovementCost();
-    }
-
-    /**
-     * Get the particle pool of this tile that is used to handle particles of
-     * this tile.
-     * 
-     * @return the particle pool of this map tile
-     */
-    public ParticlePool getParticlePool() {
-        EffectPool localPool = tilePool;
-        if (localPool == null) {
-            localPool = EffectPool.getInstance(this);
-            localPool.setScreenPos(loc, Layers.EFFECTS);
-            tilePool = localPool;
-        }
-        return localPool;
     }
 
     /**
@@ -586,7 +453,7 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
         }
 
         // check for chars
-        if (Game.getPeople().getCharacterAt(loc) != null) {
+        if (World.getPeople().getCharacterAt(loc) != null) {
             return true;
         }
 
@@ -660,7 +527,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
     /**
      * Requesting the lookat informations for a tile from the server.
      */
-    @Override
     public void lookAt() {
         final LookatTileCmd cmd =
             (LookatTileCmd) CommandFactory.getInstance().getCommand(
@@ -668,24 +534,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
         cmd.setPosition(loc);
         cmd.send();
 
-    }
-
-    /**
-     * Open a container on the tile or walk to the the tile.
-     */
-    @Override
-    public void openContainer() {
-        if (canOpenContainer()) {
-            // final int sc =
-            // Gui.getInstance().getContainers()
-            // .requestShowcase(Containers.NONE);
-            // final OpenMapCmd cmd =
-            // (OpenMapCmd) CommandFactory.getInstance().getCommand(
-            // CommandList.CMD_OPEN_MAP);
-            // cmd.setShowcase(sc);
-            // cmd.setPosition(loc);
-            // cmd.send();
-        }
     }
 
     /**
@@ -698,13 +546,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
             loc = null;
         }
         GameFactory.getInstance().recycle(this);
-    }
-
-    /**
-     * Remove the reference to the particle pool of this tile.
-     */
-    public void removeParticlePool() {
-        tilePool = null;
     }
 
     /**
@@ -773,28 +614,13 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
         lightValue = 0;
 
         if (lightSrc != null) {
-            Game.getLights().remove(lightSrc);
+            World.getLights().remove(lightSrc);
             LightSource.releaseLight(lightSrc);
             lightSrc = null;
         }
 
-        light.resetColor();
-        tmpLight.resetColor();
-
-        if (tilePool != null) {
-            tilePool.clearPool();
-        }
-
-        if (hoverMarker != null) {
-            hoverMarker.makeInvisible();
-            hoverMarker.recycle();
-        }
-
-        // clear possible markers
-        // Gui.getInstance().getManager().removeMarker(InputHandler.MARK_MAP,
-        // this);
-        // Gui.getInstance().getManager().removeMarker(InputHandler.MARK_ITEM,
-        // this);
+        light.a = light.r = light.g = light.b = 0.f;
+        tmpLight.a = tmpLight.r = tmpLight.g = tmpLight.b = 0.f;
     }
 
     /**
@@ -809,29 +635,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
         }
         setInvisible(hide, obstructed);
         hidden = hide;
-    }
-
-    /**
-     * Enable or disable a hover on this map tile.
-     * 
-     * @param hover true to enable the hover, false to disable it
-     */
-    @Override
-    public void setHover(final boolean hover) {
-        if (hover) {
-            if (hoverMarker == null) {
-                final Marker sel = Marker.create(MarkerFactory.MAP_SELECT);
-                sel.setScreenPos(loc, Layers.MARKER);
-                hoverMarker = sel;
-                sel.show();
-                Game.getDisplay().add(sel);
-            } else {
-                hoverMarker.show();
-            }
-        } else if (hoverMarker != null) {
-            hoverMarker.hide();
-            hoverMarker = null;
-        }
     }
 
     /**
@@ -896,33 +699,6 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
     }
 
     /**
-     * Pick a item and put it into the bag. TODO: This function need to stack
-     * the items into the back correctly
-     */
-    public void takeItem() {
-        // final Reference from = dragFrom(0, 0);
-        // if (from == null) {
-        // return;
-        // }
-
-        // final int free =
-        // ((Inventory) Gui.getInstance().getContainers()
-        // .getContainer(Containers.INVENTORY)).getFree();
-        // if (free >= 0) {
-        // from.dragTo(new RefInventory(free));
-        // }
-        // if (Gui.getInstance().getContainers().getContainer(Containers.RIGHT)
-        // .isOpen()) {
-        // from.dragTo(new RefContainer(Containers.RIGHT, 1));
-        // } else {
-        // if (Gui.getInstance().getContainers()
-        // .getContainer(Containers.LEFT).isOpen()) {
-        // from.dragTo(new RefContainer(Containers.LEFT, 1));
-        // }
-        // }
-    }
-
-    /**
      * Create a string that identifies the tile and its current state.
      * 
      * @return the generated string
@@ -949,33 +725,12 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
     }
 
     /**
-     * Use a item on the map.
-     * 
-     * @return the reference to the use event
-     */
-    @Override
-    public AbstractReference useItem() {
-        // create usage object
-        final MapReference use = new MapReference();
-        use.setReferringTile(this);
-        // add item id to detect special items
-        if (items != null) {
-            final int top = items.size() - 1;
-            if (top >= 0) {
-                // use.setItemId(items.get(top).getId());
-            }
-        }
-
-        return use;
-    }
-
-    /**
      * Add some light influence to this tile. This is added to the already
      * existing light on this tile
      * 
      * @param color the light that shall be added
      */
-    protected void addLight(final SpriteColor color) {
+    protected void addLight(final Color color) {
         tmpLight.add(color);
     }
 
@@ -988,17 +743,20 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      * @param ambientLight the ambient light from the weather
      */
     protected void renderLight(final float factor,
-        final SpriteColor ambientLight) {
-        tmpLight.multiply(factor);
+        final Color ambientLight) {
+        tmpLight.scale(factor);
         tmpLight.add(ambientLight);
-        light.set(tmpLight);
+        light.a = tmpLight.a;
+        light.r = tmpLight.r;
+        light.g = tmpLight.g;
+        light.b = tmpLight.b;
     }
 
     /**
      * Reset the light value back to 0.
      */
     protected void resetLight() {
-        tmpLight.resetColor();
+        tmpLight.a = tmpLight.r = tmpLight.g = tmpLight.b = 0.f;
     }
 
     /**
@@ -1025,7 +783,7 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
      */
     private void checkLight() {
         // light sources are only on player level
-        if (!Game.getPlayer().isBaseLevel(loc)) {
+        if (!World.getPlayer().isBaseLevel(loc)) {
             return;
         }
 
@@ -1049,14 +807,14 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
         }
 
         if (lightSrc != null) {
-            Game.getLights().remove(lightSrc);
+            World.getLights().remove(lightSrc);
             LightSource.releaseLight(lightSrc);
             lightSrc = null;
         }
 
         if (newLightValue > 0) {
             lightSrc = LightSource.createLight(loc, newLightValue);
-            Game.getLights().add(lightSrc);
+            World.getLights().add(lightSrc);
         }
 
         lightValue = newLightValue;
@@ -1102,7 +860,7 @@ public final class MapTile extends Interaction implements AlphaChangeListener,
         // invalidate LOS data
         losDirty = true;
         // report a change of shadow
-        Game.getLights().notifyChange(loc);
+        World.getLights().notifyChange(loc);
         // check for a light source
         checkLight();
     }

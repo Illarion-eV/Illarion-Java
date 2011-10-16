@@ -18,12 +18,10 @@
  */
 package illarion.graphics.common;
 
-import illarion.graphics.Graphics;
-import illarion.graphics.SpriteColor;
-
 import java.nio.ByteBuffer;
 
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
 
 /**
  * Provides the color table for the small and the overview map.
@@ -50,35 +48,22 @@ public final class MapColor {
     /**
      * The RGBA Color values that are used on the map.
      */
-    private static final int[][] COLORS = new int[][] { { 0, 0, 0 }, // black
-        { 182, 214, 158 }, // green
-        { 155, 120, 90 }, // brown
-        { 175, 183, 165 }, // gray
-        { 126, 193, 238 }, // blue
-        { 255, 255, 204 }, // yellow
-        { 205, 101, 101 }, // red
-        { 255, 255, 255 }, // white
-        { 140, 160, 100 } // dark green
-        };
-
-    /**
-     * The RGBA Color values in the openGL compatible format.
-     */
-    private static final SpriteColor[] GLCOLORS =
-        new SpriteColor[COLORS.length];
+    private static final Color[] COLORS = new Color[] {
+        new Color(0, 0, 0), // black
+        new Color(182, 214, 158), // green
+        new Color(155, 120, 90), // brown
+        new Color(175, 183, 165), // gray
+        new Color(126, 193, 238), // blue
+        new Color(255, 255, 204), // yellow
+        new Color(205, 101, 101), // red
+        new Color(255, 255, 255), // white
+        new Color(140, 160, 100) // dark green
+    };
 
     /**
      * The error and debug logger of the client.
      */
     private static final Logger LOGGER = Logger.getLogger(MapColor.class);
-
-    static {
-        for (int i = 0; i < COLORS.length; ++i) {
-            GLCOLORS[i] = Graphics.getInstance().getSpriteColor();
-            GLCOLORS[i].set(COLORS[i][0], COLORS[i][1], COLORS[i][2]);
-            GLCOLORS[i].setAlpha(SpriteColor.COLOR_MAX);
-        }
-    }
 
     /**
      * Get the values of a color that is defined.
@@ -86,38 +71,8 @@ public final class MapColor {
      * @param color the index of the color value
      * @return a array with the red, green and blue color value
      */
-    public static int[] getColor(final int color) {
+    public static Color getColor(final int color) {
         return COLORS[color];
-    }
-
-    /**
-     * Get the sprite color that is defined under that index.
-     * 
-     * @param color the index of the requested color
-     * @return the sprite color object of this color
-     */
-    public static SpriteColor getSpriteColor(final int color) {
-        return GLCOLORS[color];
-    }
-
-    /**
-     * Set the currently used openGL color to one of the colors defined in this
-     * function.
-     * 
-     * @param color the index of the color value in the list of colors
-     */
-    @SuppressWarnings("nls")
-    public static void setColor(final int color) {
-        if (color > COLORS.length) {
-            LOGGER.error("minimap color out of range - ignoring");
-            final SpriteColor temp =
-                Graphics.getInstance().getSprite(1).getDefaultLight();
-            temp.setAlpha(SpriteColor.COLOR_MAX);
-            temp.setActiveColor();
-            return;
-        }
-
-        GLCOLORS[color].setActiveColor();
     }
 
     /**
@@ -138,11 +93,11 @@ public final class MapColor {
         }
 
         // draw pixel
-        for (int i = 0; i < COLOR_VALUES; ++i) {
-            map.put(pos + i, (byte) COLORS[color][i]);
-        }
-        // use calculated alpha values
-        map.put(pos + COLOR_VALUES, (byte) alpha);
+        map.position(pos);
+        map.put((byte) COLORS[color].getRedByte());
+        map.put((byte) COLORS[color].getGreenByte());
+        map.put((byte) COLORS[color].getBlueByte());
+        map.put((byte) alpha);
     }
 
     /**

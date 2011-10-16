@@ -20,8 +20,6 @@ package illarion.client.net.server;
 
 import java.io.IOException;
 
-import illarion.client.guiNG.GUI;
-import illarion.client.guiNG.Inventory;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 

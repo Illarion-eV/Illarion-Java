@@ -20,11 +20,10 @@ package illarion.client.net.server;
 
 import java.io.IOException;
 
-import illarion.client.guiNG.GUI;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.util.ChatHandler;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
 
@@ -88,9 +87,9 @@ public final class LookatTileMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        Game.getDisplay().lookAt(loc.getDcX(), loc.getDcY(), text);
-        GUI.getInstance().getChatText()
-            .showText(text, null, loc, ChatHandler.SpeechMode.normal);
+        World.getMapDisplay().lookAt(loc.getDcX(), loc.getDcY(), text);
+//        GUI.getInstance().getChatText()
+//            .showText(text, null, loc, ChatHandler.SpeechMode.normal);
         return true;
     }
 

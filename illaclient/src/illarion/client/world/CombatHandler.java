@@ -123,7 +123,7 @@ public final class CombatHandler {
             standDown();
         } else if (!combatActive && newMode) {
             combatActive = true;
-            Game.getMusicBox().playFightingMusic();
+            World.getMusicBox().playFightingMusic();
         }
     }
 
@@ -134,10 +134,10 @@ public final class CombatHandler {
      */
     public void standDown() {
         if (attackedChar != null) {
-            Game.getNet().sendCommand(
+            World.getNet().sendCommand(
                 CommandFactory.getInstance().getCommand(
                     CommandList.CMD_STAND_DOWN));
-            Game.getMusicBox().stopFightingMusic();
+            World.getMusicBox().stopFightingMusic();
         }
     }
 
@@ -173,6 +173,6 @@ public final class CombatHandler {
             (AttackCmd) CommandFactory.getInstance().getCommand(
                 CommandList.CMD_ATTACK);
         cmd.setTarget(id);
-        Game.getNet().sendCommand(cmd);
+        World.getNet().sendCommand(cmd);
     }
 }

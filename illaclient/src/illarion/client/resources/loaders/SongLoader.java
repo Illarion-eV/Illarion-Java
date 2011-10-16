@@ -1,0 +1,94 @@
+/*
+ * This file is part of the Illarion Client.
+ *
+ * Copyright © 2011 - Illarion e.V.
+ *
+ * The Illarion Client is free software: you can redistribute i and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ * 
+ * The Illarion Client is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ */
+package illarion.client.resources.loaders;
+
+import illarion.client.resources.ResourceFactory;
+import illarion.client.util.IdWrapper;
+import illarion.common.util.TableLoader;
+import illarion.common.util.TableLoaderSink;
+
+import org.apache.log4j.Logger;
+import org.newdawn.slick.Music;
+import org.newdawn.slick.SlickException;
+
+/**
+ * This class is used to load the song definitions from the resource table that
+ * was created using the configuration tool. The class will create the required
+ * song objects and send them to the song factory that takes care for
+ * distributing those objects.
+ * 
+ * @author Martin Karing
+ * @since 1.22
+ * @version 1.22
+ */
+public final class SongLoader extends ResourceLoader<IdWrapper<Music> > implements
+    TableLoaderSink {
+    /**
+     * The index in the table record of the sound id.
+     */
+    private static final int TB_ID = 0;
+
+    /**
+     * The index in the table record of the sound filename.
+     */
+    private static final int TB_NAME = 1;
+
+    /**
+     * The logger that is used to report error messages.
+     */
+    private final Logger logger = Logger.getLogger(ItemLoader.class);
+
+    /**
+     * Trigger the loading sequence for this loader.
+     */
+    @Override
+    public void load() {
+        if (!hasTargetFactory()) {
+            throw new IllegalStateException("targetFactory not set yet.");
+        }
+
+        final ResourceFactory<IdWrapper<Music> > factory = getTargetFactory();
+
+        factory.init();
+        new TableLoader("Songs", this);
+        factory.loadingFinished();
+    }
+
+    /**
+     * Handle a single line of the resource table.
+     */
+    @Override
+    public boolean processRecord(final int line, final TableLoader loader) {
+        final int clipID = loader.getInt(TB_ID);
+        final String filename = loader.getString(TB_NAME);
+
+        try {
+            getTargetFactory().storeResource(new IdWrapper<Music>(clipID, new Music(filename)));
+        } catch (final IllegalStateException ex) {
+            logger.error("Failed adding song to internal factory. ID: "
+                + Integer.toString(clipID) + " - Filename: " + filename);
+        } catch (SlickException e) {
+            logger.error("Failed adding song to internal factory. ID: "
+                + Integer.toString(clipID) + " - Filename: " + filename);
+        }
+
+        return true;
+    }
+
+}

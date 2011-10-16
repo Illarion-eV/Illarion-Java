@@ -18,6 +18,8 @@
  */
 package illarion.client.util;
 
+import illarion.client.world.World;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,8 +41,6 @@ import org.apache.log4j.Logger;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
-
-import illarion.client.world.Game;
 
 /**
  * This class handles everything around the table that stores the names of the
@@ -238,7 +238,7 @@ public final class NamesTable {
         final byte[] buffer = new byte[BUFFER_SIZE];
 
         final byte[] keyName = new byte[DESKeySpec.DES_KEY_LEN];
-        final String charName = Game.getPlayer().getCharacter().getName();
+        final String charName = World.getPlayer().getCharacter().getName();
         byte[] convString;
         try {
             convString = charName.getBytes("ISO-8859-1");
@@ -279,7 +279,7 @@ public final class NamesTable {
 
             // store the name of the character in the file to ensure that this
             // really is the file of the character.
-            encodeString(buffer, Game.getPlayer().getCharacter().getName());
+            encodeString(buffer, World.getPlayer().getCharacter().getName());
 
             // encode the amount of characters in the list, not really needed
             // but a way to check if the file is valid or not.
@@ -411,7 +411,7 @@ public final class NamesTable {
         }
 
         final byte[] keyName = new byte[DESKeySpec.DES_KEY_LEN];
-        final String charName = Game.getPlayer().getCharacter().getName();
+        final String charName = World.getPlayer().getCharacter().getName();
         byte[] convString;
         try {
             convString = charName.getBytes("ISO-8859-1");
@@ -464,7 +464,7 @@ public final class NamesTable {
 
             String charname = decodeString(buffer);
 
-            if (charname.equals(Game.getPlayer().getCharacter().getName())) {
+            if (charname.equals(World.getPlayer().getCharacter().getName())) {
                 final int count = decodeInteger(buffer);
                 int i = 0;
                 int charID = 0;

@@ -25,8 +25,8 @@ import org.apache.log4j.Logger;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.Char;
-import illarion.client.world.Game;
 import illarion.client.world.PlayerMovement;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
 
@@ -136,7 +136,7 @@ public final class MoveMsg extends AbstractReply {
             return true;
         }
 
-        if (Game.getPlayer().isPlayer(charId)) {
+        if (World.getPlayer().isPlayer(charId)) {
             int moveMode = PlayerMovement.MOVE_MODE_NONE;
             if (mode == MODE_MOVE) {
                 moveMode = PlayerMovement.MOVE_MODE_WALK;
@@ -145,18 +145,18 @@ public final class MoveMsg extends AbstractReply {
             } else if (mode == MODE_RUN) {
                 moveMode = PlayerMovement.MOVE_MODE_RUN;
             }
-            Game.getPlayer().getMovementHandler()
+            World.getPlayer().getMovementHandler()
                 .acknowledgeMove(moveMode, loc, speed);
             return true;
         }
 
         // other char not on screen, just remove it.
-        if (!Game.getPlayer().isOnScreen(loc, 1)) {
-            Game.getPeople().removeCharacter(charId);
+        if (!World.getPlayer().isOnScreen(loc, 1)) {
+            World.getPeople().removeCharacter(charId);
             return true;
         }
 
-        final Char chara = Game.getPeople().accessCharacter(charId);
+        final Char chara = World.getPeople().accessCharacter(charId);
         switch (mode) {
             case MODE_NO_MOVE:
                 chara.setLocation(loc);

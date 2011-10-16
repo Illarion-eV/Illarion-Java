@@ -1,20 +1,25 @@
 package illarion.client.gui.controller;
 
+import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
+
 import illarion.client.Login;
-import illarion.client.gui.GUI;
-import illarion.client.util.SessionManager;
-import illarion.client.world.Game;
-import illarion.common.util.LoadingManager;
-import illarion.common.util.LoadingManager.LoadingMonitor;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 
-public final class LoadScreenController implements ScreenController, LoadingMonitor {
+public final class LoadScreenController implements ScreenController {
 
 	private Nifty nifty;
 	private ProgressbarControl progress;
 	
+	private final StateBasedGame game;
+	
+    public LoadScreenController(StateBasedGame game) {
+        this.game = game;
+    }
+
     @Override
     public void bind(Nifty nifty, Screen screen) {
     	this.nifty = nifty;
@@ -23,36 +28,21 @@ public final class LoadScreenController implements ScreenController, LoadingMoni
 
     @Override
     public void onStartScreen() {
-        LoadingManager.getInstance().setMonitor(this);
-
-    }
-
-    @Override
-    public void onEndScreen() {
-        LoadingManager.getInstance().setMonitor(null);
+        setProgress(0.f);
     }
     
     public void setProgress(final float progressValue) {
     	progress.setProgress(progressValue);
     	if (progressValue >= 0.99f) {
 
-    	    if (SessionManager.getInstance().isStarted()) {
-                SessionManager.getInstance().startSession();
-                Login.getInstance().login();
-                
-                if (Game.getDisplay() != null) {
-                    Game.getInstance().gameLoop();
-                    nifty.gotoScreen("gamescreen");
-                    GUI.getInstance().setSelfRendering(false);
-                } else {
-                    System.out.println("Display not ready");
-                }
-    	    }
+    	    Login.getInstance().login();
+    	    
+    	    game.enterState(illarion.client.Game.STATE_PLAYING, new FadeOutTransition(), new FadeInTransition());
     	}
     }
 
     @Override
-    public void updateState(float state) {
-        setProgress(state);
+    public void onEndScreen() {
+        // nothing to do
     }
 }

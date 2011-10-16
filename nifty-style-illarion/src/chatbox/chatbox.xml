@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <nifty-styles>
   <style id="chatbox">
-    <attributes backgroundImage="guiSprite://window/border" imageMode="resize:6,9,6,6,6,9,6,8,6,9,6,6" />
+    <attributes backgroundImage="data/gui/window/border.png" imageMode="resize:6,9,6,6,6,9,6,8,6,9,6,6" />
   </style>
   <style id="chatbox#scrollpanel">
     <attributes focusable="true" padding="1px"/>

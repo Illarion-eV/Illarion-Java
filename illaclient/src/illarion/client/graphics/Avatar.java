@@ -20,13 +20,14 @@ package illarion.client.graphics;
 
 import java.awt.Rectangle;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+
 import illarion.client.resources.CharacterFactory;
 import illarion.client.util.Lang;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
-import illarion.graphics.Graphics;
 import illarion.graphics.Sprite;
-import illarion.graphics.SpriteColor;
 
 /**
  * Class for the avatar of a characters. The avatar is the visual representation
@@ -49,16 +50,14 @@ public final class Avatar extends AbstractEntity {
      * The minimal alpha value of a avatar that is needed to show the name tag
      * above the avatar graphic.
      */
-    private static final int HIDE_NAME_ALPHA =
-        (int) (0.5f * SpriteColor.COLOR_MAX);
+    private static final float HIDE_NAME_ALPHA = 0.5f;
 
     /**
      * The minimal illumination that is still needed to show the name of a
      * character above the avatar. If the illumination is lower then this value,
      * the name is hidden.
      */
-    private static final int HIDE_NAME_LUM =
-        (int) (0.25f * SpriteColor.COLOR_MAX);
+    private static final float HIDE_NAME_LUM = 0.25f;
 
     /**
      * The frame animation that handles the animation of this avatar.
@@ -122,15 +121,7 @@ public final class Avatar extends AbstractEntity {
      * The target light of this avatar. In case the light is set to be animated
      * the color this avatar is rendered with will approach this target light.
      */
-    private transient SpriteColor targetLight;
-
-    /**
-     * This color is used to temporary store the local light of the avatar up
-     * until the first change of this color. This is needed to ensure that the
-     * correct light instance is used all times.
-     */
-    private transient final SpriteColor tempColor = Graphics.getInstance()
-        .getSpriteColor();
+    private transient Color targetLight;
 
     /**
      * Create animated avatar for a character.
@@ -161,7 +152,7 @@ public final class Avatar extends AbstractEntity {
     public Avatar(final int avatarID, final String resName,
         final int frames, final int still, final int offX, final int offY,
         final int shadowOffset, final AvatarInfo avatarInfo,
-        final boolean mirror, final SpriteColor color, final int dir) {
+        final boolean mirror, final Color color, final int dir) {
         super(avatarID, CHAR_PATH, resName, frames, still, offX, offY,
             shadowOffset, Sprite.HAlign.center, Sprite.VAlign.bottom, true,
             mirror, color);
@@ -284,7 +275,7 @@ public final class Avatar extends AbstractEntity {
      * @param slot the slot of the object that shall get a different color
      * @param color the new color that shall be used to color the graphic itself
      */
-    public void changeClothColor(final int slot, final SpriteColor color) {
+    public void changeClothColor(final int slot, final Color color) {
         clothRender.changeBaseColor(slot, color);
     }
 
@@ -319,15 +310,15 @@ public final class Avatar extends AbstractEntity {
      * @return true at all times
      */
     @Override
-    public boolean draw() {
+    public boolean draw(final Graphics g) {
         // draw the avatar, naked!! :O
-        super.draw();
+        super.draw(g);
 
         // draw the clothes
-        clothRender.render();
+        clothRender.render(g);
 
         if (renderName && (name != null)) {
-            name.draw(getDisplayX(), getDisplayY());
+            name.draw(g, getDisplayX(), getDisplayY());
         }
 
         return true;
@@ -515,7 +506,7 @@ public final class Avatar extends AbstractEntity {
      * @param light the light the avatar is enlighten with
      */
     @Override
-    public void setLight(final SpriteColor light) {
+    public void setLight(final Color light) {
         super.setLight(light);
         clothRender.setLight(light);
         animateLight = false;
@@ -529,12 +520,12 @@ public final class Avatar extends AbstractEntity {
      * 
      * @param light the target light color for this avatar
      */
-    public void setLightTarget(final SpriteColor light) {
+    public void setLightTarget(final Color light) {
         targetLight = light;
-        final SpriteColor currLight = getLight();
-        tempColor.set(currLight);
-        setLight(tempColor);
-        clothRender.setLight(tempColor);
+        final Color currLight = getLight();
+        final Color tempLight = new Color(currLight);
+        setLight(tempLight);
+        clothRender.setLight(tempLight);
         animateLight = true;
     }
 
@@ -555,7 +546,7 @@ public final class Avatar extends AbstractEntity {
             name = TextTag.create();
         }
         name.setText(charName);
-        name.setColor(Colors.yellow);
+        name.setColor(Color.yellow);
         name.setOffset(-name.getWidth() / 2, getHeight());
     }
 
@@ -566,7 +557,7 @@ public final class Avatar extends AbstractEntity {
      *            shown above the character and shows the name of the character
      * @see illarion.client.graphics.Colors
      */
-    public void setNameColor(final Colors color) {
+    public void setNameColor(final Color color) {
         if (name == null) {
             return;
         }
@@ -616,17 +607,16 @@ public final class Avatar extends AbstractEntity {
 
         clothRender.setAlpha(getAlpha());
 
-        final SpriteColor locLight = getLight();
+        final Color locLight = getLight();
         if (animateLight && (locLight != null)
-            && locLight.approach(targetLight)) {
+            && AnimationUtility.approach(locLight, targetLight, delta)) {
             targetLight = locLight;
             animateLight = false;
         }
 
-        if ((getAlpha() > HIDE_NAME_ALPHA) && (Game.getPeople() != null)
-            && (Game.getPeople().getShowMapNames() > 0) && (name != null)
-            && (locLight != null)
-            && (locLight.getLuminationi() > HIDE_NAME_LUM)) {
+        if ((getAlpha() > HIDE_NAME_ALPHA)
+            && (World.getPeople().getShowMapNames() > 0) && (name != null)
+            && (locLight != null)) {
             if (!renderName) {
                 name.addToCamera(getDisplayX(), getDisplayY());
             }

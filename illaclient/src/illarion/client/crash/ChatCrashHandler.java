@@ -30,27 +30,17 @@ import illarion.client.util.ChatHandler;
  */
 public final class ChatCrashHandler extends AbstractCrashHandler {
     /**
-     * The singleton instance of this crash handler to avoid to many instances
-     * of this one.
+     * This constructor to create a crash handler referring to one chat handler.
      */
-    private static final ChatCrashHandler INSTANCE = new ChatCrashHandler();
-
-    /**
-     * The private constructor that is used to avoid the creation of any other
-     * instances but the singleton instance.
-     */
-    private ChatCrashHandler() {
+    public ChatCrashHandler(final ChatHandler target) {
         super();
+        handler = target;
     }
-
+    
     /**
-     * Get the singleton instance of this class.
-     * 
-     * @return the singleton instance of this class
+     * The chat handler that is accessed with this crash handler.
      */
-    public static ChatCrashHandler getInstance() {
-        return INSTANCE;
-    }
+    private final ChatHandler handler;
 
     /**
      * Get the message that describes the problem human readable.
@@ -70,7 +60,7 @@ public final class ChatCrashHandler extends AbstractCrashHandler {
      */
     @Override
     protected boolean restart() {
-        ChatHandler.restart();
+        handler.restart();
 
         return false;
     }

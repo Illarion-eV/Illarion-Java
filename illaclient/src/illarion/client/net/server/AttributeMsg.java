@@ -20,10 +20,9 @@ package illarion.client.net.server;
 
 import java.io.IOException;
 
-import illarion.client.guiNG.GUI;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 /**
  * Servermessage: Character attributes (
@@ -116,30 +115,15 @@ public final class AttributeMsg extends AbstractReply {
     @Override
     public boolean executeUpdate() {
         if (attribute.equals(HITPOINTS)) {
-            GUI.getInstance().getIndicators().getHealth().setValue(value);
+            World.getPlayer().getCharacter().setHitpoints(value);
         } else if (attribute.equals(MANAPOINTS)) {
-            GUI.getInstance().getIndicators().getMana().setValue(value);
+            World.getPlayer().getCharacter().setManapoints(value);
         } else if (attribute.equals(FOODLEVEL)) {
-            GUI.getInstance().getIndicators().getFood().setValue(value);
+            World.getPlayer().getCharacter().setFoodpoints(value);
         } else if (attribute.equals(PERCEPTION)) {
-            Game.getPlayer().setPerception(value);
+            //Game.getPlayer().setPerception(value);
         }
         // TODO: handle the missing attributes that could be received.
-        return true;
-    }
-
-    /**
-     * Check if the GUI is already prepared before executing this message.
-     */
-    @Override
-    public boolean processNow() {
-        if (attribute.equals(HITPOINTS)) {
-            return (GUI.getInstance().getIndicators().getHealth() != null);
-        } else if (attribute.equals(FOODLEVEL)) {
-            return (GUI.getInstance().getIndicators().getFood() != null);
-        } else if (attribute.equals(MANAPOINTS)) {
-            return (GUI.getInstance().getIndicators().getMana() != null);
-        }
         return true;
     }
 

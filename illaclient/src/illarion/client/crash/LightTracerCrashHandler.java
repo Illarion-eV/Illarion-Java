@@ -18,7 +18,7 @@
  */
 package illarion.client.crash;
 
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 /**
  * This crash handler takes care for crashes of the light tracer. In case a
@@ -71,9 +71,9 @@ public final class LightTracerCrashHandler extends AbstractCrashHandler {
      */
     @Override
     protected boolean restart() {
-        Game.getLights().saveShutdown();
-        Game.getInstance().restartLight();
-        Game.getLights().refresh();
+        //World.getLights().saveShutdown();
+        //Game.getInstance().restartLight();
+        World.getLights().refresh();
 
         return false;
     }

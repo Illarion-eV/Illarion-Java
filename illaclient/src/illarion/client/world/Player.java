@@ -21,14 +21,14 @@ package illarion.client.world;
 import java.awt.Point;
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import org.newdawn.slick.openal.SoundStore;
 
 import illarion.client.IllaClient;
+import illarion.client.Login;
 import illarion.client.graphics.Avatar;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.RequestAppearanceCmd;
-import illarion.client.sound.SoundManager;
 import illarion.client.util.Lang;
 
 import illarion.common.config.Config;
@@ -36,7 +36,6 @@ import illarion.common.config.ConfigChangeListener;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
-import illarion.common.util.FastMath;
 import illarion.common.util.Location;
 
 /**
@@ -87,11 +86,6 @@ public final class Player implements ConfigChangeListener {
      * Maximal distance to visible objects.
      */
     private static final int CLIP_DISTANCE = 14;
-
-    /**
-     * The instance of the logger that is used to write out the data.
-     */
-    private static final Logger LOGGER = Logger.getLogger(Player.class);
 
     /**
      * The maximum range between 2 characters, that can look at each other.
@@ -155,6 +149,14 @@ public final class Player implements ConfigChangeListener {
      * The character ID of the player.
      */
     private long playerId;
+    
+    /**
+     * Constructor for the player that receives the character name from the
+     * login data automatically.
+     */
+    public Player() {
+        this(Login.getInstance().getSelectedCharacterName());
+    }
 
     /**
      * Default constructor for the player.
@@ -162,7 +164,7 @@ public final class Player implements ConfigChangeListener {
      * @param newName the character name of the player playing this game
      */
     @SuppressWarnings("nls")
-    protected Player(final String newName) {
+    public Player(final String newName) {
         name = newName;
 
         path =
@@ -181,7 +183,7 @@ public final class Player implements ConfigChangeListener {
         cfg = new ConfigSystem(new File(path, "Player.xml.gz"));
         character.setName(name);
         character.setVisible(Char.VISIBILITY_MAX);
-        Game.getPeople().setPlayerCharacter(character);
+        World.getPeople().setPlayerCharacter(character);
 
         // followed = null;
         movementHandler = new PlayerMovement(this);
@@ -367,12 +369,10 @@ public final class Player implements ConfigChangeListener {
 
         // clear away invisible characters
         if (levelChange) {
-            Game.getPeople().clear();
+            World.getPeople().clear();
         } else {
-            Game.getPeople().clipCharacters();
+            World.getPeople().clipCharacters();
         }
-
-        SoundManager.getInstance().setListenerLocation(newLoc);
     }
 
     /**
@@ -399,16 +399,8 @@ public final class Player implements ConfigChangeListener {
         RequestAppearanceCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_REQUEST_APPEARANCE, RequestAppearanceCmd.class);
         cmd.request(newPlayerId);
         cmd.send();
-        // character.setAppearance(appear);
-
-        while (!Game.getPeople().isRunning()) {
-            try {
-                Thread.sleep(50);
-            } catch (final InterruptedException e) {
-                // does not matter
-            }
-        }
-        Game.getPeople().introduce(playerId, name);
+        
+        World.getPeople().introduce(playerId, name);
 
     }
 
@@ -417,7 +409,7 @@ public final class Player implements ConfigChangeListener {
      * correctly as well.
      */
     public void shutdown() {
-        Game.getPeople().setPlayerCharacter(null);
+        World.getPeople().setPlayerCharacter(null);
         character.recycle();
         movementHandler.shutdown();
     }
@@ -498,10 +490,10 @@ public final class Player implements ConfigChangeListener {
             // examine line without start and end point
             final int length = line.getLength() - 1;
             MapTile tile = null;
-            final GameMap map = Game.getMap();
+            final GameMap map = World.getMap();
             final Point point = new Point();
             int coverage =
-                Game.getWeather().getVisiblity()
+                World.getWeather().getVisiblity()
                     - ((perception - PERCEPTION_AVERAGE) * PERCEPTION_COVER_SHARE);
             // skip tile the character is standing on
             for (int i = 1; i < length; i++) {
@@ -530,18 +522,22 @@ public final class Player implements ConfigChangeListener {
      * Update the sound listener of this player.
      */
     private void updateListener() {
-        float effVol = 0.f;
         if (IllaClient.getCfg().getBoolean(CFG_SOUND_ON)) {
-            effVol =
+            float effVol =
                 IllaClient.getCfg().getInteger(CFG_SOUND_VOL) / MAX_CLIENT_VOL;
+            SoundStore.get().setSoundsOn(true);
+            SoundStore.get().setSoundVolume(effVol);
+        } else {
+            SoundStore.get().setSoundsOn(false);
         }
 
-        float musVol = 0.f;
         if (IllaClient.getCfg().getBoolean(CFG_MUSIC_ON)) {
-            musVol =
+            float musVol =
                 IllaClient.getCfg().getInteger(CFG_MUSIC_VOL) / MAX_CLIENT_VOL;
+            SoundStore.get().setMusicOn(true);
+            SoundStore.get().setMusicVolume(musVol);
+        } else {
+            SoundStore.get().setMusicOn(false);
         }
-
-        SoundManager.getInstance().setMasterVolume(musVol);
     }
 }

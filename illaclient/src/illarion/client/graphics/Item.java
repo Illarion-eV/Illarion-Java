@@ -18,6 +18,9 @@
  */
 package illarion.client.graphics;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+
 import illarion.client.resources.ItemFactory;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.MapConstants;
@@ -25,7 +28,6 @@ import illarion.common.graphics.MapVariance;
 import illarion.common.util.Location;
 
 import illarion.graphics.Sprite;
-import illarion.graphics.SpriteColor;
 
 /**
  * A item is a object that is on the game map or in the inventory or in any
@@ -88,7 +90,7 @@ public final class Item extends AbstractEntity {
      * The color that is used as base color in case paperdolling in done with
      * this item.
      */
-    private transient SpriteColor paperdollingColor = null;
+    private Color paperdollingColor = null;
 
     /**
      * The reference ID of this item to the paperdolling object.
@@ -137,7 +139,7 @@ public final class Item extends AbstractEntity {
      */
     public Item(final int itemID, final String name, final int offX,
         final int offY, final int offS, final int frames, final int speed,
-        final ItemInfo itemInfo, final SpriteColor baseColor,
+        final ItemInfo itemInfo, final Color baseColor,
         final int referenceID) {
         super(itemID, ITEM_PATH, name, frames, 0, offX, offY, offS,
             Sprite.HAlign.center, Sprite.VAlign.bottom,
@@ -258,11 +260,11 @@ public final class Item extends AbstractEntity {
      *         successfully
      */
     @Override
-    public boolean draw() {
-        super.draw();
+    public boolean draw(final Graphics g) {
+        super.draw(g);
 
         if (displayNumber) {
-            number.draw(getDisplayX(), getDisplayY());
+            number.draw(g, getDisplayX(), getDisplayY());
         }
 
         return true;
@@ -340,7 +342,7 @@ public final class Item extends AbstractEntity {
      * @return the color that is used as base color for paperdolling or
      *         <code>null</code>
      */
-    public SpriteColor getPaperdollingColor() {
+    public Color getPaperdollingColor() {
         return paperdollingColor;
     }
 
@@ -481,7 +483,7 @@ public final class Item extends AbstractEntity {
                 number = TextTag.create();
             }
 
-            number.setColor(Colors.yellow);
+            number.setColor(Color.yellow);
             number.setText(Integer.toString(count));
             number.setOffset((MapConstants.TILE_W / 2) - number.getHeight()
                 - number.getWidth(), -number.getHeight() / 2);
@@ -498,7 +500,7 @@ public final class Item extends AbstractEntity {
      * @param color the instance of sprite color that is used as base color in
      *            case paperdolling is done with this item
      */
-    public void setPaperdollingColor(final SpriteColor color) {
+    public void setPaperdollingColor(final Color color) {
         paperdollingColor = color;
     }
 

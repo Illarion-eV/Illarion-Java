@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 /**
  * Servermessage: Remove a character from the map (
@@ -78,7 +78,7 @@ public final class RemoveCharMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        Game.getPeople().removeCharacter(charId);
+        World.getPeople().removeCharacter(charId);
 
         return true;
     }

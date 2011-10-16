@@ -18,30 +18,77 @@
  */
 package illarion.graphics;
 
+import java.awt.font.GlyphVector;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.font.GlyphPage;
+import org.newdawn.slick.font.effects.ColorEffect;
+
 /**
- * This interface specifies the font implementations that are used to display
- * the text in the client.
+ * This class defines all informations for a OpenGL image based font.
  * 
  * @author Martin Karing
  * @version 2.00
  * @since 2.00
  */
-public interface RenderableFont {
+public final class RenderableFont {
+    /**
+     * The font that is used internal.
+     */
+    private final UnicodeFont internalFont;
+    
+    private final java.awt.Font javaFont;
+
+    /**
+     * Constructor for connecting with a font definitions file.
+     * 
+     * @param font the font that is rendered
+     */
+    @SuppressWarnings("unchecked")
+    public RenderableFont(final java.awt.Font font) {
+        internalFont = new UnicodeFont(font);
+        javaFont = font;
+        
+        internalFont.addAsciiGlyphs();
+        internalFont.getEffects().add(new ColorEffect());
+        try {
+            internalFont.loadGlyphs();
+        } catch (SlickException e) {
+            // failed loading glyphes
+        }
+    }
+    
     /**
      * Get width in pixel of given text.
      * 
      * @param text the text to measure
      * @return the pixel width of the given text
      */
-    int getWidth(String text);
+    public int getWidth(final String text) {
+        return internalFont.getWidth(text);
+    }
 
     /**
      * The height of the font in pixel.
      * 
      * @return font height in pixel
      */
-    int getHeight();
+    public int getHeight() {
+        return internalFont.getLineHeight();
+    }
 
+    /**
+     * The height of the font in pixel in case the set text is displayed.
+     * 
+     * @param text the text to display
+     * @return font height in pixel
+     */
+    public int getHeight(final String text) {
+        return internalFont.getHeight(text);
+    }
+    
     /**
      * Return the advance of the given character including kerning information.
      * 
@@ -51,8 +98,14 @@ public interface RenderableFont {
      * @return width of the character or null when no information for the
      *         character is available
      */
-    Integer getCharacterAdvance(char currentCharacter, char nextCharacter,
-        float size);
+    public Integer getCharacterAdvance(char currentCharacter,
+        char nextCharacter, float size) {
+        GlyphVector vector =
+            javaFont.createGlyphVector(GlyphPage.renderContext,
+                new char[] { currentCharacter, nextCharacter });
+        return (int) ((vector.getGlyphPosition(1).getX() - vector
+            .getGlyphPosition(0).getX()) * size);
+    }
 
     /**
      * Render a character sequence using this font.
@@ -63,5 +116,9 @@ public interface RenderableFont {
      * @param color the color of the text
      * @param size the size of the text
      */
-    void renderString(String text, int posX, int posY, SpriteColor color, float size);
+    public void renderString(String text, int posX, int posY,
+        Color color, float size) {
+        
+        internalFont.drawString(posX, posY, text, color);
+    }
 }

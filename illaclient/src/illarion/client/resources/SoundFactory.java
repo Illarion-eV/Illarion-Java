@@ -19,14 +19,17 @@
 package illarion.client.resources;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
-import illarion.client.sound.Sound;
+
+import illarion.client.util.IdWrapper;
 
 import java.util.logging.Logger;
+
+import org.newdawn.slick.Sound;
 
 /**
  * This factory provides access to all known sound files.
  */
-public final class SoundFactory implements ResourceFactory<Sound> {
+public final class SoundFactory implements ResourceFactory<IdWrapper<Sound> > {
 
     /**
      * This is the ID of the sound that is played in case the requested sound
@@ -105,8 +108,8 @@ public final class SoundFactory implements ResourceFactory<Sound> {
      * factory.
      */
     @Override
-    public void storeResource(final Sound resource) {
-        sounds.put(resource.getId(), resource);
+    public void storeResource(final IdWrapper<Sound> resource) {
+        sounds.put(resource.getId(), resource.getObject());
     }
 
 }

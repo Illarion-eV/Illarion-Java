@@ -37,12 +37,12 @@ import illarion.client.net.CommandList;
 import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.util.Lang;
 import illarion.client.util.NamesTable;
-import illarion.client.util.SessionMember;
 
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
 import illarion.common.util.Location;
 import illarion.common.util.Reusable;
+import illarion.common.util.Stoppable;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 
@@ -54,7 +54,7 @@ import illarion.common.util.TableLoaderSink;
  * @since 0.92
  * @version 1.22
  */
-public final class People implements SessionMember, TableLoaderSink,
+public final class People implements Stoppable, TableLoaderSink,
     ConfigChangeListener {
     /**
      * This helper class is used to create a procedure that checks and updates
@@ -80,7 +80,7 @@ public final class People implements SessionMember, TableLoaderSink,
          */
         @Override
         public boolean execute(final Char character) {
-            character.setVisible(Game.getPlayer().canSee(character));
+            character.setVisible(World.getPlayer().canSee(character));
             return true;
         }
     }
@@ -111,7 +111,7 @@ public final class People implements SessionMember, TableLoaderSink,
          */
         @Override
         public boolean execute(final Char character) {
-            if (!Game.getPlayer().isOnScreen(character.getLocation(), 0)) {
+            if (!World.getPlayer().isOnScreen(character.getLocation(), 0)) {
                 addCharacterToRemoveList(character);
             }
             return true;
@@ -421,11 +421,6 @@ public final class People implements SessionMember, TableLoaderSink,
     private final List<Char> removalList;
 
     /**
-     * Check if the session of the people is already running properly.
-     */
-    private boolean running;
-
-    /**
      * Settings if the ID of characters shall be shown or generic descriptors
      * like "Man", "Woman", etc.
      */
@@ -466,6 +461,19 @@ public final class People implements SessionMember, TableLoaderSink,
         clipCharactersHelper = new ClipCharactersProcedure();
         checkVisibilityHelper = new CheckVisibilityProcedure();
         updateNameHelper = new UpdateNameProcedure(this);
+        
+        final File nameTable =
+            new File(World.getPlayer().getPath(), "names.tbl");
+        final File nameTableNew =
+            new File(World.getPlayer().getPath(), "names.dat");
+        names = new NamesTable(nameTableNew);
+
+        if (nameTable.exists() && nameTable.isFile()) {
+            new TableLoader(nameTable, this);
+            if (!nameTable.delete()) {
+                LOGGER.error("Failed to delete old name table.");
+            }
+        }
     }
 
     /**
@@ -550,20 +558,6 @@ public final class People implements SessionMember, TableLoaderSink,
     }
 
     /**
-     * End a playing session by removing all characters properly and saving the
-     * table files.
-     */
-    @Override
-    public void endSession() {
-        running = false;
-
-        clear();
-
-        names.saveTable();
-        names = null;
-    }
-
-    /**
      * Get a character out of the list of the known characters.
      * 
      * @param id ID of the requested character
@@ -611,18 +605,6 @@ public final class People implements SessionMember, TableLoaderSink,
     }
 
     /**
-     * Check of there is a character below the cursor currently and get it.
-     * 
-     * @param x X-Coordinate of the mouse on the screen
-     * @param y Y-Coordinate of the mouse on the screen
-     * @return the character below the cursor or null
-     */
-    @Deprecated
-    public Interactive getComponentAt(final int x, final int y) {
-        return null;
-    }
-
-    /**
      * Get the current settings how the name of the characters is shown.
      * 
      * @return the current settings how the names are shown. Possible values are
@@ -630,11 +612,6 @@ public final class People implements SessionMember, TableLoaderSink,
      */
     public int getShowMapNames() {
         return showMapNames;
-    }
-
-    @Override
-    public void initSession() {
-        running = false;
     }
 
     /**
@@ -655,15 +632,6 @@ public final class People implements SessionMember, TableLoaderSink,
 
         // add name to list of known names
         names.addName(id, name);
-    }
-
-    /**
-     * Check if the people session is already started properly.
-     * 
-     * @return <code>true</code> in case the class is started
-     */
-    public boolean isRunning() {
-        return running;
     }
 
     /**
@@ -826,34 +794,6 @@ public final class People implements SessionMember, TableLoaderSink,
         showMapNames = newShowMapNames;
     }
 
-    @Override
-    public void shutdownSession() {
-        // nothing to do
-    }
-
-    /**
-     * Start a new session by loading the required name files.
-     */
-    @Override
-    @SuppressWarnings({ "nls", "unused" })
-    public void startSession() {
-        final File nameTable =
-            new File(Game.getPlayer().getPath(), "names.tbl");
-        final File nameTableNew =
-            new File(Game.getPlayer().getPath(), "names.dat");
-        names = new NamesTable(nameTableNew);
-
-        if (nameTable.exists() && nameTable.isFile()) {
-            new TableLoader(nameTable, this);
-            if (!nameTable.delete()) {
-                LOGGER.error("Failed to delete old name table.");
-            }
-        }
-
-        chars.clear();
-        running = true;
-    }
-
     /**
      * Change the name mode and toggle between no name, short name and full
      * name.
@@ -985,7 +925,7 @@ public final class People implements SessionMember, TableLoaderSink,
             (RequestAppearanceCmd) CommandFactory.getInstance().getCommand(
                 CommandList.CMD_REQUEST_APPEARANCE);
         cmd.request(id);
-        Game.getNet().sendCommand(cmd);
+        World.getNet().sendCommand(cmd);
         return chara;
     }
 
@@ -1100,8 +1040,8 @@ public final class People implements SessionMember, TableLoaderSink,
     }
 
     @Override
-    public void loadSession() {
-        // nothing to load
+    public void saveShutdown() {
+        names.saveTable();
     }
 
 }

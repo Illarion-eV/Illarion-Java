@@ -9,6 +9,7 @@ import illarion.client.util.Lang;
 import illarion.client.util.ChatHandler.ChatReceiver;
 import illarion.client.util.ChatHandler.SpeechMode;
 import illarion.client.world.Char;
+import illarion.client.world.World;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
@@ -42,12 +43,12 @@ public class GameScreenController implements ScreenController,
 
     @Override
     public void onStartScreen() {
-        ChatHandler.getInstance().addChatReceiver(this);
+        World.getChatHandler().addChatReceiver(this);
     }
 
     @Override
     public void onEndScreen() {
-        ChatHandler.getInstance().removeChatReceiver(this);
+        World.getChatHandler().removeChatReceiver(this);
     }
 
     @Override

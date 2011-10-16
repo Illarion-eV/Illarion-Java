@@ -18,9 +18,9 @@
  */
 package illarion.graphics.common;
 
+import org.newdawn.slick.Color;
+
 import illarion.common.util.Location;
-import illarion.graphics.Graphics;
-import illarion.graphics.SpriteColor;
 import javolution.util.FastList;
 
 /**
@@ -109,7 +109,7 @@ public final class LightSource {
     /**
      * The color of the light itself.
      */
-    private final transient SpriteColor color;
+    private final transient Color color;
 
     /**
      * The dirty flag, this is set to true in case there are further
@@ -157,13 +157,6 @@ public final class LightSource {
     private int size;
 
     /**
-     * This sprite color is used for temporary things like handing over a
-     * modified color to another function.
-     */
-    private transient final SpriteColor tempColor = Graphics.getInstance()
-        .getSpriteColor();
-
-    /**
      * A location instance for temporary purposes. This is for calculations or
      * to get some data from other classes.
      */
@@ -181,7 +174,7 @@ public final class LightSource {
         final int newSize = (encoding / 10000) % 10;
         rays = LightTracer.getRays(newSize);
         intensity = new float[(newSize * 2) + 1][(newSize * 2) + 1];
-        color = Graphics.getInstance().getSpriteColor();
+        color = new Color(0);
 
         init(location, encoding);
     }
@@ -214,11 +207,12 @@ public final class LightSource {
 
                 final float factor = locIntensity * bright;
 
-                tempColor.set(color);
+                Color tempColor = color.scaleCopy(factor);
                 if (invert) {
-                    tempColor.add(-SpriteColor.COLOR_MAX);
+                    tempColor.r -= 1.f;
+                    tempColor.g -= 1.f;
+                    tempColor.b -= 1.f;
                 }
-                tempColor.multiply(factor);
 
                 // set the light on the map
                 mapSource.setLight(tempLocation, tempColor);
@@ -289,7 +283,9 @@ public final class LightSource {
         remEnc /= 10;
         final float red = (remEnc % 10) / 9.f;
         remEnc /= 10;
-        color.set(red, green, blue);
+        color.r = red;
+        color.g = green;
+        color.b = blue;
 
         bright = (remEnc % 10) / 9.f;
         remEnc /= 10;

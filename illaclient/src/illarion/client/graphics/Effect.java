@@ -19,7 +19,7 @@
 package illarion.client.graphics;
 
 import illarion.client.resources.EffectFactory;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 import illarion.common.graphics.Layers;
 import illarion.common.util.Location;
@@ -200,7 +200,7 @@ public final class Effect extends AbstractEntity {
         hide();
 
         if (lightSrc != null) {
-            Game.getLights().remove(lightSrc);
+            World.getLights().remove(lightSrc);
             LightSource.releaseLight(lightSrc);
             lightSrc = null;
         }
@@ -221,11 +221,11 @@ public final class Effect extends AbstractEntity {
 
         if (light > 0) {
             if (lightSrc != null) {
-                Game.getLights().remove(lightSrc);
+                World.getLights().remove(lightSrc);
                 LightSource.releaseLight(lightSrc);
             }
             lightSrc = LightSource.createLight(loc, light);
-            Game.getLights().add(lightSrc);
+            World.getLights().add(lightSrc);
             setLight(DEFAULT_LIGHT);
         }
     }

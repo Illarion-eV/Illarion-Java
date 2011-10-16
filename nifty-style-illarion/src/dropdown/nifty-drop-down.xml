@@ -29,11 +29,11 @@
   </style>
 
   <style id="nifty-drop-down#icon">
-    <attributes filename="scrollbar/scrollbar" width="23px" height="23px" imageMode="sprite:23,23,0" visibleToMouse="true" />
+    <attributes filename="data/gui/scrollbar/scrollbar.png" width="23px" height="23px" imageMode="sprite:23,23,0" visibleToMouse="true" />
     <effect>
       <onClick name="focus" targetElement="#parent" />
-      <onClick name="imageOverlay" filename="scrollbar/scrollbar" imageMode="sprite:23,23,2" post="true" />
-      <onFocus name="imageOverlay" filename="scrollbar/scrollbar" imageMode="sprite:23,23,1" post="true" />
+      <onClick name="imageOverlay" filename="data/gui/scrollbar/scrollbar.png" imageMode="sprite:23,23,2" post="true" />
+      <onFocus name="imageOverlay" filename="data/gui/scrollbar/scrollbar.png" imageMode="sprite:23,23,1" post="true" />
       <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150" />
       <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150" />
     </effect>

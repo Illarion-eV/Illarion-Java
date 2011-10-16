@@ -18,6 +18,8 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.world.World;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -252,7 +254,7 @@ abstract class AbstractAnimation {
 
         if (!running) {
             running = true;
-            AnimationManager.getInstance().register(this);
+            World.getAnimationManager().register(this);
         }
     }
 

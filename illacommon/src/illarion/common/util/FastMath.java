@@ -995,6 +995,20 @@ public final class FastMath {
     }
 
     /**
+     * Check if two values are nearly equal.
+     * 
+     * @param value1 the first value
+     * @param value2 the second value
+     * @param delta the maximal allowed difference of with values
+     * @return <code>true<code> if the difference between both values is less
+     *          or equal then delta
+     */
+    public static boolean equal(final float value1, final float value2,
+        final float delta) {
+        return (FastMath.abs(value1 - value2) <= delta);
+    }
+
+    /**
      * Returns E^fValue
      * 
      * @param fValue Value to raise to a power

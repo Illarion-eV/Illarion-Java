@@ -4,7 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illacommon"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/illagraphics"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/illainput"/>
 	<classpathentry kind="lib" path="/illacommon/rsc/rsc_gui.jar"/>
 	<classpathentry kind="lib" path="/illacommon/rsc/rsc_items.jar"/>
 	<classpathentry kind="lib" path="/illacommon/rsc/rsc_tables.jar"/>
@@ -36,5 +35,7 @@
 	<classpathentry kind="lib" path="/illacommon/lib/joal/joal.jar"/>
 	<classpathentry kind="lib" path="/illacommon/lib/jorbis/jogg.jar"/>
 	<classpathentry kind="lib" path="/illacommon/lib/jorbis/jorbis.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/slick/slick.jar" sourcepath="/illacommon/lib/slick/slick-sources.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/nifty/nifty-lwjgl-slick-renderer-1.3.jar" sourcepath="/illacommon/lib/nifty/nifty-lwjgl-slick-renderer-1.3-sources.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

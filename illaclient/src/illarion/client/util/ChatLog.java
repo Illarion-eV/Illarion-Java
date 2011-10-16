@@ -22,6 +22,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.logging.FileHandler;
 
 import javolution.text.TextBuilder;
 
@@ -30,7 +31,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 import illarion.client.IllaClient;
 import illarion.client.world.Char;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
@@ -144,7 +145,7 @@ public final class ChatLog implements ConfigChangeListener {
      */
     @SuppressWarnings("nls")
     public void init(final Properties loggingProps) {
-        loggingProps.put("log4j.appender.ChatAppender.file", new File(Game
+        loggingProps.put("log4j.appender.ChatAppender.file", new File(World
             .getPlayer().getPath(), "illarion.log").getAbsolutePath());
         new PropertyConfigurator().doConfigure(loggingProps,
             logger.getLoggerRepository());

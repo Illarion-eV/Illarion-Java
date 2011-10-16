@@ -22,8 +22,8 @@ import java.io.IOException;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.world.Game;
 import illarion.client.world.MapTile;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
 
@@ -99,7 +99,7 @@ public final class ChangeItemMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        final MapTile tile = Game.getMap().getMapAt(loc);
+        final MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.changeTopItem(oldItem, newItem, count);
         }

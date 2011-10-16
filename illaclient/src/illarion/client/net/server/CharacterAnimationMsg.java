@@ -23,7 +23,7 @@ import java.io.IOException;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.Char;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 /**
  * Servermessage: Character animation (
@@ -85,7 +85,7 @@ public final class CharacterAnimationMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        final Char ch = Game.getPeople().getCharacter(charId);
+        final Char ch = World.getPeople().getCharacter(charId);
         if (ch == null) {
             // Update for illegal character
             return true;

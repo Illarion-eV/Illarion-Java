@@ -9,18 +9,18 @@
   </style>
 
   <style id="nifty-image-select#back-button">
-    <attributes backgroundImage="imageselect/background" imageMode="resize:2,19,2,2,2,19,2,76,2,19,2,2" width="23px" height="100%" childLayout="center" />
+    <attributes backgroundImage="data/gui/imageselect/background.png" imageMode="resize:2,19,2,2,2,19,2,76,2,19,2,2" width="23px" height="100%" childLayout="center" />
     <interact onClick="backClick()"/>
     <effect>
       <onClick name="focus" targetElement="#parent" />
-      <onFocus name="imageOverlay" filename="imageselect/background-focus" imageMode="resize:2,19,2,2,2,19,2,76,2,19,2,2" post="true" />
+      <onFocus name="imageOverlay" filename="data/gui/imageselect/background-focus.png" imageMode="resize:2,19,2,2,2,19,2,76,2,19,2,2" post="true" />
     </effect>
   </style>
 
   <style id="nifty-image-select#back-button-image">
-    <attributes filename="imageselect/left" align="center" valign="center" />
+    <attributes filename="data/gui/imageselect/left.png" align="center" valign="center" />
     <effect>
-      <onCustom name="imageOverlay" filename="imageselect/left-focus" post="true" neverStopRendering="true" />
+      <onCustom name="imageOverlay" filename="data/gui/imageselect/left-focus.png" post="true" neverStopRendering="true" />
     </effect>
   </style>
 
@@ -49,14 +49,14 @@
     <interact onClick="forwardClick()"/>
     <effect>
       <onClick name="focus" targetElement="#parent" />
-      <onFocus name="imageOverlay" filename="imageselect/background-focus" imageMode="resize:2,19,2,2,2,19,2,76,2,19,2,2" post="true" />
+      <onFocus name="imageOverlay" filename="data/gui/imageselect/background-focus.png" imageMode="resize:2,19,2,2,2,19,2,76,2,19,2,2" post="true" />
     </effect>
   </style>
 
   <style id="nifty-image-select#forward-button-image">
-    <attributes filename="imageselect/right" align="center" valign="center" />
+    <attributes filename="data/gui/imageselect/right.png" align="center" valign="center" />
     <effect>
-      <onCustom name="imageOverlay" filename="imageselect/right-focus" post="true" neverStopRendering="true" />
+      <onCustom name="imageOverlay" filename="data/gui/imageselect/right-focus.png" post="true" neverStopRendering="true" />
     </effect>
   </style>
 </nifty-styles>

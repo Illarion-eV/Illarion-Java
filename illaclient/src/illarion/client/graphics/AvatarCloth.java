@@ -18,10 +18,11 @@
  */
 package illarion.client.graphics;
 
+import org.newdawn.slick.Color;
+
 import illarion.client.resources.ClothFactory;
 import illarion.client.resources.CharacterFactory;
 import illarion.graphics.Sprite;
-import illarion.graphics.SpriteColor;
 
 /**
  * A avatar cloth definition stores all data about a cloth that are needed to
@@ -72,7 +73,7 @@ public final class AvatarCloth extends AbstractEntity {
     public AvatarCloth(final int avatarId, final int itemID,
         final String name, final int location, final int frames,
         final int still, final int offX, final int offY, final boolean mirror,
-        final SpriteColor baseCol) {
+        final Color baseCol) {
         super(itemID, CLOTH_PATH, name, frames, still, offX, offY, 0,
             Sprite.HAlign.center, Sprite.VAlign.bottom, true, mirror, baseCol);
 

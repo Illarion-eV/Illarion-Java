@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 
 import illarion.client.net.CommandFactory;
 import illarion.client.net.NetCommWriter;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 import illarion.common.util.RecycleObject;
 
@@ -149,7 +149,7 @@ public abstract class AbstractCommand implements RecycleObject {
      * Send this command to the using the net interface.
      */
     public final void send() {
-        Game.getNet().sendCommand(this);
+        World.getNet().sendCommand(this);
     }
 
     /**

@@ -26,14 +26,15 @@ import javolution.util.FastList;
 import javolution.util.FastTable;
 
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
 
 import illarion.client.crash.ChatCrashHandler;
-import illarion.client.graphics.Colors;
-import illarion.client.guiNG.GUI;
 import illarion.client.world.Char;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
+import illarion.common.util.Stoppable;
+import illarion.common.util.StoppableStorage;
 
 /**
  * This chat handler fetches all texts send by the network interface and
@@ -44,7 +45,7 @@ import illarion.common.util.Location;
  * @version 1.00
  * @since 1.22
  */
-public final class ChatHandler implements Runnable, SessionMember {
+public final class ChatHandler implements Runnable, Stoppable {
     /**
      * The possible speech modes that are displays on the screen.
      * 
@@ -56,35 +57,35 @@ public final class ChatHandler implements Runnable, SessionMember {
          * Speech mode for emotes.
          */
         @SuppressWarnings("nls")
-        emote(Colors.yellow, "^\\s*[!#]me(.*)\\s*$", "$1"),
+        emote(Color.yellow, "^\\s*[!#]me(.*)\\s*$", "$1"),
 
         /**
          * Speech mode for normal spoken text.
          */
-        normal(Colors.white, null, null),
+        normal(Color.white, null, null),
 
         /**
          * Speech mode for OOC messages.
          */
         @SuppressWarnings("nls")
-        ooc(Colors.gray, "^\\s*[!#]o(oc)?\\s*(.*)\\s*$", "$2"),
+        ooc(Color.gray, "^\\s*[!#]o(oc)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for shouted text.
          */
         @SuppressWarnings("nls")
-        shout(Colors.red, "^\\s*[!#]s(hout)?\\s*(.*)\\s*$", "$2"),
+        shout(Color.red, "^\\s*[!#]s(hout)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for whispered text.
          */
         @SuppressWarnings("nls")
-        whisper(Colors.gray, "^\\s*[!#]w(hisper)?\\s*(.*)\\s*$", "$2");
+        whisper(Color.gray, "^\\s*[!#]w(hisper)?\\s*(.*)\\s*$", "$2");
 
         /**
          * The color of this speech mode.
          */
-        private final Colors color;
+        private final Color color;
 
         /**
          * The regular expression used to find out the type of the text.
@@ -105,7 +106,7 @@ public final class ChatHandler implements Runnable, SessionMember {
          * @param replace the regular expression needed to isolate the actual
          *            text
          */
-        private SpeechMode(final Colors modeColor, final String findRegexp,
+        private SpeechMode(final Color modeColor, final String findRegexp,
             final String replace) {
             color = modeColor;
             if (findRegexp == null) {
@@ -122,7 +123,7 @@ public final class ChatHandler implements Runnable, SessionMember {
          * 
          * @return the color of the speech mode
          */
-        public Colors getColor() {
+        public Color getColor() {
             return color;
         }
 
@@ -221,11 +222,6 @@ public final class ChatHandler implements Runnable, SessionMember {
     }
 
     /**
-     * The singleton instance of this class.
-     */
-    private static final ChatHandler INSTANCE = new ChatHandler();
-
-    /**
      * The logger instance that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(ChatHandler.class);
@@ -254,20 +250,13 @@ public final class ChatHandler implements Runnable, SessionMember {
      * Private constructor that prepares that class to work properly and ensures
      * that only the singleton instance is active and running.
      */
-    private ChatHandler() {
+    public ChatHandler() {
         buffer = new FastList<TextNode>();
         dirtyList = new FastList<TextNode>();
         receivers = new FastTable<ChatHandler.ChatReceiver>();
         running = false;
-    }
 
-    /**
-     * Get the singleton instance of this class.
-     * 
-     * @return the singleton instance of this class
-     */
-    public static ChatHandler getInstance() {
-        return INSTANCE;
+        start();
     }
 
     /**
@@ -275,17 +264,12 @@ public final class ChatHandler implements Runnable, SessionMember {
      * new one. This also causes that the Chat Handler is started right away.
      */
     @SuppressWarnings("nls")
-    public static void restart() {
+    public void restart() {
         synchronized (ChatHandler.class) {
-            INSTANCE.stop();
-            INSTANCE.reset();
-            INSTANCE.start();
+            stop();
+            reset();
+            start();
         }
-    }
-
-    @Override
-    public void endSession() {
-        saveShutdown();
     }
 
     /**
@@ -315,16 +299,6 @@ public final class ChatHandler implements Runnable, SessionMember {
         }
     }
 
-    @Override
-    public void initSession() {
-        // nothing to do
-    }
-
-    @Override
-    public void loadSession() {
-        // nothing to load
-    }
-
     @SuppressWarnings("nls")
     @Override
     public void run() {
@@ -332,9 +306,7 @@ public final class ChatHandler implements Runnable, SessionMember {
             TextNode node = null;
 
             synchronized (dirtyList) {
-                if (dirtyList.isEmpty() || (Game.getPlayer() == null)
-                    || (Game.getPeople() == null)
-                    || (ChatLog.getInstance() == null)) {
+                if (dirtyList.isEmpty()) {
                     try {
                         dirtyList.wait();
                     } catch (final InterruptedException e) {
@@ -372,18 +344,18 @@ public final class ChatHandler implements Runnable, SessionMember {
             }
 
             Char chara;
-            if (Game.getPlayer().getLocation().equals(node.getLocation())) {
-                chara = Game.getPlayer().getCharacter();
+            if (World.getPlayer().getLocation().equals(node.getLocation())) {
+                chara = World.getPlayer().getCharacter();
             } else {
-                chara = Game.getPeople().getCharacterAt(node.getLocation());
+                chara = World.getPeople().getCharacterAt(node.getLocation());
             }
 
             ChatLog.getInstance().logMessage(chara, mode, resultText);
-//            GUI.getInstance().getChatText()
-//                .showText(resultText, chara, node.getLocation(), mode);
-//            GUI.getInstance().getJournal().addText(resultText, chara, mode);
+            // GUI.getInstance().getChatText()
+            // .showText(resultText, chara, node.getLocation(), mode);
+            // GUI.getInstance().getJournal().addText(resultText, chara, mode);
             sendMessagesToReceivers(resultText, chara, mode);
-            
+
             node.clean();
             synchronized (buffer) {
                 buffer.addLast(node);
@@ -391,23 +363,24 @@ public final class ChatHandler implements Runnable, SessionMember {
             node = null;
         }
     }
-    
+
     private final List<ChatReceiver> receivers;
-    
+
     public void addChatReceiver(final ChatReceiver receiver) {
         receivers.add(receiver);
     }
-    
+
     public void removeChatReceiver(final ChatReceiver receiver) {
         receivers.remove(receiver);
     }
-    
-    private void sendMessagesToReceivers(final String text, final Char chara, final SpeechMode mode) {
+
+    private void sendMessagesToReceivers(final String text, final Char chara,
+        final SpeechMode mode) {
         for (ChatReceiver receiver : receivers) {
             receiver.handleText(text, chara, mode);
         }
     }
-    
+
     public static interface ChatReceiver {
         void handleText(String text, Char chara, SpeechMode mode);
     }
@@ -421,16 +394,15 @@ public final class ChatHandler implements Runnable, SessionMember {
         synchronized (dirtyList) {
             dirtyList.notify();
         }
-    }
 
-    @Override
-    public void shutdownSession() {
-        stop();
-    }
+        try {
+            while (chatThread != null && chatThread.isAlive()) {
+                Thread.sleep(10);
+            }
+        } catch (Exception e) {
+            // something happend.. asume the thread stopped anyway.
+        }
 
-    @Override
-    public void startSession() {
-        start();
     }
 
     /**
@@ -457,9 +429,10 @@ public final class ChatHandler implements Runnable, SessionMember {
                 running = true;
                 if (chatThread == null) {
                     chatThread = new Thread(this, "Chat Handler");
-                    chatThread.setUncaughtExceptionHandler(ChatCrashHandler
-                        .getInstance());
+                    chatThread
+                        .setUncaughtExceptionHandler(new ChatCrashHandler(this));
                     chatThread.start();
+                    StoppableStorage.getInstance().add(this);
                 } else {
                     restart();
                 }

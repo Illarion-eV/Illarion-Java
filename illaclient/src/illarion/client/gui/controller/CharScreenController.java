@@ -1,9 +1,12 @@
 package illarion.client.gui.controller;
 
 
+import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
+
+import illarion.client.Game;
 import illarion.client.Login;
-import illarion.client.util.SessionManager;
-import illarion.client.world.Game;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -16,6 +19,12 @@ public class CharScreenController implements ScreenController {
 	
 	private ListBox<String> listBox;
 	
+	private final StateBasedGame game;
+	
+    public CharScreenController(StateBasedGame game) {
+        this.game = game;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void bind(Nifty nifty, Screen screen) {
@@ -46,8 +55,7 @@ public class CharScreenController implements ScreenController {
 	public void play() {
         Login.getInstance().selectCharacter(listBox.getFocusItemIndex());
         
-        nifty.gotoScreen("loading");
-        SessionManager.getInstance().loadSession();
+        game.enterState(Game.STATE_LOADING, new FadeOutTransition(), new FadeInTransition());
 	}
 	
 	public void logout() {

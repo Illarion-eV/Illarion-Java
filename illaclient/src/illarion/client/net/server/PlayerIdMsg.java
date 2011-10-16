@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 /**
  * Servermessage: ID of the player character (
@@ -78,7 +78,7 @@ public final class PlayerIdMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        Game.getPlayer().setPlayerID(playerId);
+        World.getPlayer().setPlayerID(playerId);
         return true;
     }
 

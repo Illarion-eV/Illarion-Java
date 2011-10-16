@@ -18,9 +18,9 @@
  */
 package illarion.client.graphics;
 
-import illarion.common.util.FastMath;
+import org.newdawn.slick.Color;
 
-import illarion.graphics.SpriteColor;
+import illarion.common.util.FastMath;
 
 /**
  * This is a utility class that provides a few static functions that are handy
@@ -121,6 +121,18 @@ public final class AnimationUtility {
             return FastMath.clamp(newValue, min, max);
         }
         return value;
+    }
+    
+    public static boolean approach(final Color workingColor, final Color targetColor, final int delta) {
+        workingColor.r = approach(workingColor.getRed(), targetColor.getRed(), 0, 255, delta) / 255.f;
+        workingColor.g = approach(workingColor.getGreen(), targetColor.getGreen(), 0, 255, delta) / 255.f;
+        workingColor.b = approach(workingColor.getBlue(), targetColor.getBlue(), 0, 255, delta) / 255.f;
+        workingColor.a = approach(workingColor.getAlpha(), targetColor.getAlpha(), 0, 255, delta) / 255.f;
+        
+        return !(FastMath.equal(workingColor.r, targetColor.r, 1.f / 254.f)
+            && FastMath.equal(workingColor.g, targetColor.g, 1.f / 254.f)
+            && FastMath.equal(workingColor.b, targetColor.b, 1.f / 254.f)
+            && FastMath.equal(workingColor.a, targetColor.a, 1.f / 254.f));
     }
 
     /**
@@ -357,7 +369,7 @@ public final class AnimationUtility {
      */
     public static int translateAlpha(final int value, final int target,
         final int step, final int delta) {
-        return translate(value, target, step, SpriteColor.COLOR_MIN,
-            SpriteColor.COLOR_MAX, delta);
+        return translate(value, target, step, 0,
+            255, delta);
     }
 }

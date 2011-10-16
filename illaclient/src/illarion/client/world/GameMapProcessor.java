@@ -18,16 +18,12 @@
  */
 package illarion.client.world;
 
+import illarion.common.util.Location;
+
 import org.apache.log4j.Logger;
 
 import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.procedure.TLongObjectProcedure;
-
-import illarion.client.ClientWindow;
-
-import illarion.common.graphics.MapConstants;
-import illarion.common.util.Location;
-import illarion.common.util.Rectangle;
 
 /**
  * This class checks the consistency of the map, the map, handles the fading out
@@ -45,29 +41,6 @@ import illarion.common.util.Rectangle;
 public class GameMapProcessor extends Thread implements
     TLongObjectProcedure<MapTile> {
     /**
-     * This value is added to the clipping border in all directions around the
-     * screen in addition to the actual visible range. If this value is set too
-     * high the client has to keep tiles in the memory that are not needed
-     * anymore. If the value is too small black stripes will show up while
-     * walking.
-     */
-    private static final int ADD_CLIPPING_RANGE = 7;
-
-    /**
-     * This is the amount of rows and columns that are requested from the server
-     * in addition to the tiles needed to fill the screen size. If this value is
-     * chosen too high the result is that large items and light sources are
-     * known to the client too late and just "pop" in.
-     */
-    private static final int ADD_MAP_RANGE = 4;
-
-    /**
-     * This is the additional map range that is attached to the bottom of the
-     * clipping ranges.
-     */
-    private static final int ADD_MAP_RANGE_BOTTOM = 9;
-
-    /**
      * The logger instance that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger
@@ -78,11 +51,6 @@ public class GameMapProcessor extends Thread implements
      * the player is inside at the next run.
      */
     private volatile boolean checkInside = false;
-
-    /**
-     * This rectangle is used to store the clipping borders.
-     */
-    private final Rectangle clipping;
 
     /**
      * This variable stores if there is a full check of the entire map needed or
@@ -131,13 +99,18 @@ public class GameMapProcessor extends Thread implements
         super("Map Processor");
         parent = parentMap;
         unchecked = new TLongArrayList();
-        clipping = Rectangle.getInstance();
-        clipping.set(-18, -24, 36, 42);
         running = false;
-
-        calculateClippingBorders(ClientWindow.getInstance().getScreenWidth(),
-            ClientWindow.getInstance().getScreenHeight());
     }
+    
+    /**
+     * The last width that was reported to this processor.
+     */
+    public int lastReportedWidth = -1;
+    
+    /**
+     * The last height that was reported to this processor.
+     */
+    public int lastReportedHeight = -1;
 
     /**
      * Do a inside check during the next run of the thread loop.
@@ -167,39 +140,6 @@ public class GameMapProcessor extends Thread implements
         unchecked.add(key);
 
         return true;
-    }
-
-    /**
-     * Get the clipping values the map processor is working with. Careful at
-     * using this. Its possible to change the values of this rectangle. This
-     * will lead to really change behavior.
-     * 
-     * @return the clipping rectangle, this contains the distances of the
-     *         clipping border around the player character is map rows and
-     *         columns
-     */
-    public Rectangle getClipping() {
-        return clipping;
-    }
-
-    /**
-     * Get the amount of stripes that need to be requested from the server as
-     * map height.
-     * 
-     * @return the amount of stripes requested from the server as map height
-     */
-    public int getHeightStripes() {
-        return clipping.getTop() >> 1;
-    }
-
-    /**
-     * Get the amount of stripes that need to be requested from the server as
-     * map width.
-     * 
-     * @return the amount of stripes requested from the server as map width
-     */
-    public int getWidthStripes() {
-        return clipping.getRight() >> 1;
     }
 
     /**
@@ -374,33 +314,6 @@ public class GameMapProcessor extends Thread implements
     }
 
     /**
-     * Calculate the clipping borders again in relation to the size of the
-     * displayed window.
-     * 
-     * @param width the width of the area the map is displayed in
-     * @param height the height of the area the map is displayed in
-     */
-    private void calculateClippingBorders(final int width, final int height) {
-        final int leftRight =
-            (int) Math.ceil(width / (float) MapConstants.TILE_W);
-        final int topBottom =
-            (int) Math.ceil(height / (float) MapConstants.TILE_H);
-
-        int leftClipping = -(leftRight + ADD_MAP_RANGE);
-        if ((leftClipping % 2) != 0) {
-            leftClipping -= 1;
-        }
-
-        int topClipping = topBottom + ADD_MAP_RANGE;
-        if ((topClipping % 2) != 0) {
-            topClipping += 1;
-        }
-
-        clipping.set(leftClipping, -(topClipping + ADD_MAP_RANGE_BOTTOM),
-            -(leftClipping << 1), (topClipping << 1) + ADD_MAP_RANGE_BOTTOM);
-    }
-
-    /**
      * Do the clipping check of a tile.
      * 
      * @param tile the tile that is checked
@@ -408,7 +321,7 @@ public class GameMapProcessor extends Thread implements
      * @return <code>true</code> in case the tile was clipped away
      */
     private boolean checkClipping(final MapTile tile, final long key) {
-        final Location playerLoc = Game.getPlayer().getLocation();
+        final Location playerLoc = World.getPlayer().getLocation();
         final Location tileLoc = tile.getLocation();
 
         /*
@@ -428,50 +341,52 @@ public class GameMapProcessor extends Thread implements
                 + " (tile.x < player.z - 2)");
             return true;
         }
+        
+        final MapDimensions mapDim = MapDimensions.getInstance();
 
-        if (((playerLoc.getCol() + clipping.getLeft()) - ADD_CLIPPING_RANGE) > tileLoc
+        if ((playerLoc.getCol() + mapDim.getClippingOffsetLeft()) > tileLoc
             .getCol()) {
             parent.removeTile(key);
             LOGGER.debug("Removed tile at location " + tileLoc.toString()
                 + " (outside of left clipping)");
             LOGGER.debug("Ply Col: " + Integer.toString(playerLoc.getCol())
-                + " Clipping Left: " + Integer.toString(clipping.getLeft())
+                + " Clipping Left: " + Integer.toString(mapDim.getClippingOffsetLeft())
                 + " Tile Col: " + Integer.toString(tileLoc.getCol()));
             return true;
         }
 
-        if ((playerLoc.getCol() + clipping.getRight() + ADD_CLIPPING_RANGE) < tileLoc
+        if ((playerLoc.getCol() + mapDim.getClippingOffsetRight()) < tileLoc
             .getCol()) {
             parent.removeTile(key);
             LOGGER.debug("Removed tile at location " + tileLoc.toString()
                 + " (outside of right clipping)");
             LOGGER.debug("Ply Col: " + Integer.toString(playerLoc.getCol())
-                + " Clipping Right: " + Integer.toString(clipping.getRight())
+                + " Clipping Right: " + Integer.toString(mapDim.getClippingOffsetRight())
                 + " Tile Col: " + Integer.toString(tileLoc.getCol()));
             return true;
         }
 
         final int level = Math.abs(tileLoc.getScZ() - playerLoc.getScZ()) * 6;
 
-        if ((playerLoc.getRow() + clipping.getTop() + ADD_CLIPPING_RANGE) < (tileLoc
+        if ((playerLoc.getRow() + mapDim.getClippingOffsetTop()) < (tileLoc
             .getRow() - level)) {
             parent.removeTile(key);
             LOGGER.debug("Removed tile at location " + tileLoc.toString()
                 + " (outside of top clipping)");
             LOGGER.debug("Ply Row: " + Integer.toString(playerLoc.getRow())
-                + " Clipping Top: " + Integer.toString(clipping.getTop())
+                + " Clipping Top: " + Integer.toString(mapDim.getClippingOffsetTop())
                 + " Tile Row: " + Integer.toString(tileLoc.getRow()));
             return true;
         }
 
-        if (((playerLoc.getRow() + clipping.getBottom()) - ADD_CLIPPING_RANGE) > (tileLoc
+        if ((playerLoc.getRow() + mapDim.getClippingOffsetBottom()) > (tileLoc
             .getRow() + level)) {
             parent.removeTile(key);
             LOGGER.debug("Removed tile at location " + tileLoc.toString()
                 + " (outside of bottom clipping)");
             LOGGER.debug("Ply Row: " + Integer.toString(playerLoc.getRow())
                 + " Clipping Bottom: "
-                + Integer.toString(clipping.getBottom()) + " Tile Row: "
+                + Integer.toString(mapDim.getClippingOffsetBottom()) + " Tile Row: "
                 + Integer.toString(tileLoc.getRow()));
             return true;
         }
@@ -489,7 +404,7 @@ public class GameMapProcessor extends Thread implements
      */
     @SuppressWarnings("nls")
     private boolean checkHidden(final MapTile tile, final long key) {
-        final Location playerLoc = Game.getPlayer().getLocation();
+        final Location playerLoc = World.getPlayer().getLocation();
         final Location tileLoc = tile.getLocation();
 
         if ((playerLoc == null) || (tileLoc == null)) {
@@ -574,7 +489,7 @@ public class GameMapProcessor extends Thread implements
      * @return <code>true</code> in case the tile got removed
      */
     private boolean checkObstruction(final MapTile tile, final long key) {
-        final Location playerLoc = Game.getPlayer().getLocation();
+        final Location playerLoc = World.getPlayer().getLocation();
         final Location tileLoc = tile.getLocation();
 
         final int topLimit = playerLoc.getScZ() + 2;
@@ -620,7 +535,7 @@ public class GameMapProcessor extends Thread implements
 
         checkInside = false;
 
-        final Location playerLoc = Game.getPlayer().getLocation();
+        final Location playerLoc = World.getPlayer().getLocation();
         final int currX = playerLoc.getScX();
         final int currY = playerLoc.getScY();
         int currZ = playerLoc.getScZ();
@@ -657,7 +572,7 @@ public class GameMapProcessor extends Thread implements
 
         }
 
-        Game.getWeather().setOutside(!isInside);
+        World.getWeather().setOutside(!isInside);
     }
 
     /**

@@ -20,7 +20,6 @@ package illarion.client.net.server;
 
 import java.io.IOException;
 
-import illarion.client.guiNG.GUI;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 
@@ -125,7 +124,7 @@ public final class ShowcaseMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        GUI.getInstance().addContainer(sc, itemId, count, itemX, itemY);
+        //GUI.getInstance().addContainer(sc, itemId, count, itemX, itemY);
         return true;
     }
 

@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
 
@@ -82,22 +82,22 @@ public final class LocationMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        Game.getDisplay().setActive(false);
+        World.getMapDisplay().setActive(false);
 
         // drop the whole map and expect update
-        Game.getMap().clear();
+        World.getMap().clear();
 
         // logical location
-        Game.getPlayer().setLocation(loc);
+        World.getPlayer().setLocation(loc);
         // graphics location
-        Game.getDisplay().setLocation(loc);
+        World.getMapDisplay().setLocation(loc);
         LightTracer.setBaseLevel(loc.getScZ());
 
         // switch mini-map if required
-        Game.getMap().getMinimap().setPlayerLocation(loc);
+        World.getMap().getMinimap().setPlayerLocation(loc);
 
-        Game.getPlayer().getCharacter().relistLight();
-        Game.getPlayer().getCharacter().updateLight(loc);
+        World.getPlayer().getCharacter().relistLight();
+        World.getPlayer().getCharacter().updateLight(loc);
 
         return true;
     }
@@ -108,7 +108,7 @@ public final class LocationMsg extends AbstractReply {
      */
     @Override
     public boolean processNow() {
-        return (Game.getPlayer() != null);
+        return (World.getPlayer() != null);
     }
 
     /**

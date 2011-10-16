@@ -18,18 +18,13 @@
  */
 package illarion.client.graphics;
 
-import java.awt.Rectangle;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 import illarion.client.world.GameFactory;
 
 import illarion.common.util.RecycleObject;
-
-import illarion.graphics.Drawer;
-import illarion.graphics.Graphics;
 import illarion.graphics.RenderableFont;
-import illarion.graphics.SpriteColor;
-//import illarion.graphics.TextLine;
-import illarion.graphics.common.RenderedFont;
 import illarion.graphics.common.FontLoader;
 
 /**
@@ -44,36 +39,17 @@ public class TextTag implements RecycleObject {
     /**
      * The color of the background pane that is displayed behind the text.
      */
-    private static final SpriteColor BACK_COLOR = Graphics.getInstance()
-        .getSpriteColor();
-
-    /**
-     * The instance of the Drawer implementation that is used to draw the
-     * rectangle behind the text of this text tag.
-     */
-    private static final Drawer DRAWER = Graphics.getInstance().getDrawer();
+    private static final Color BACK_COLOR = new Color(0.f, 0.f, 0.f, 0.3f);
 
     /**
      * The font that is used to render texts of the text tags.
      */
-    private static final RenderableFont TEXT_TAG_FONT;
-
-    static {
-        BACK_COLOR.set(SpriteColor.COLOR_MIN);
-        BACK_COLOR.setAlpha(0.3f);
-        TEXT_TAG_FONT =
-            FontLoader.getInstance().getFont(FontLoader.Fonts.small);
-    }
-
-    /**
-     * The rectangle that describes the bounds of the text.
-     */
-    private Rectangle bounds;
+    private static final RenderableFont TEXT_TAG_FONT = FontLoader.getInstance().getFont(FontLoader.Fonts.small);
 
     /**
      * The color implementation that is used to render the text.
      */
-    private transient SpriteColor color;
+    private transient Color color;
 
     /**
      * The x coordinate of the offset of this text tag.
@@ -89,11 +65,6 @@ public class TextTag implements RecycleObject {
      * The actual text that is displayed by this tag.
      */
     private String text;
-
-//    /**
-//     * The graphical text line that contains the text itself.
-//     */
-//    private transient TextLine textTag;
 
     /**
      * Create a new instance of the text tag. This instance is created by the
@@ -114,9 +85,7 @@ public class TextTag implements RecycleObject {
      */
     @Override
     public void activate(final int id) {
-//        textTag = Graphics.getInstance().getTextLine();
-//        textTag.setColor(color);
-//        textTag.setFont(TEXT_TAG_FONT);
+        // nothing to do
     }
 
     public void addToCamera(final int x, final int y) {
@@ -133,6 +102,16 @@ public class TextTag implements RecycleObject {
     public TextTag clone() {
         return new TextTag();
     }
+    
+    /**
+     * The width of this tag.  This value is generated once the text is set.
+     */
+    private int width;
+    
+    /**
+     * The height of this tag. This value is generated once the text is set.
+     */
+    private int height;
 
     /**
      * Draw the text tag to the screen.
@@ -140,17 +119,14 @@ public class TextTag implements RecycleObject {
      * @param x the x coordinate of the text on the screen
      * @param y the y coordinate of the text on the screen
      */
-    public void draw(final int x, final int y) {
+    public void draw(final Graphics g, final int x, final int y) {
         if (text == null) {
             return;
         }
-
-//        DRAWER.drawRectangle((x + dX) - 1, (y + dY) - 1, x + dX + bounds.width
-//            + 2, y + dY + bounds.height, BACK_COLOR);
-
-        color.setAlpha(SpriteColor.COLOR_MAX);
-//        textTag.setLocation(x + dX, y + dY);
-//        textTag.render();
+        
+        g.setColor(BACK_COLOR);
+        g.fillRect((x + dX) - 1, (y + dY) - 1, width + 2, height + 2);
+        TEXT_TAG_FONT.renderString(text, x + dX, y + dY, color, 1.f);
     }
 
     /**
@@ -159,10 +135,7 @@ public class TextTag implements RecycleObject {
      * @return the height of the text tag
      */
     public int getHeight() {
-        if (bounds == null) {
-            return 0;
-        }
-        return bounds.height;
+        return height;
     }
 
     /**
@@ -180,10 +153,7 @@ public class TextTag implements RecycleObject {
      * @return the width of the text tag
      */
     public int getWidth() {
-        if (bounds == null) {
-            return 0;
-        }
-        return bounds.width;
+        return width;
     }
 
     /**
@@ -203,8 +173,6 @@ public class TextTag implements RecycleObject {
     public void reset() {
         text = null;
         color = null;
-        bounds = null;
-//        textTag = null;
     }
 
     /**
@@ -212,11 +180,8 @@ public class TextTag implements RecycleObject {
      * 
      * @param newColor the color that is used to render the text tag.
      */
-    public void setColor(final Colors newColor) {
-        color = newColor.getColor();
-//        if (textTag != null) {
-//            textTag.setColor(color);
-//        }
+    public void setColor(final Color newColor) {
+        color = newColor;
     }
 
     /**
@@ -237,8 +202,7 @@ public class TextTag implements RecycleObject {
      */
     public void setText(final String newText) {
         text = newText;
-        bounds = new Rectangle(TEXT_TAG_FONT.getWidth(newText), TEXT_TAG_FONT.getHeight());
-//        textTag.setText(newText);
-//        textTag.layout();
+        width = TEXT_TAG_FONT.getWidth(newText);
+        height = TEXT_TAG_FONT.getHeight(newText);
     }
 }

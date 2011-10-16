@@ -22,19 +22,17 @@ import javolution.util.FastComparator;
 import javolution.util.FastTable;
 
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 
-import illarion.client.ClientWindow;
-import illarion.client.graphics.particle.ParticlePool;
-import illarion.client.world.Game;
+import illarion.client.IllaClient;
+import illarion.client.world.World;
 import illarion.client.world.GameMap;
 
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
-
-import illarion.graphics.Drawer;
-import illarion.graphics.Graphics;
-import illarion.graphics.SpriteColor;
 
 /**
  * The map display manager stores and manages all objects displayed on the map.
@@ -97,36 +95,6 @@ public final class MapDisplayManager implements AnimatedMove {
             return obj.hashCode();
         }
     }
-    
-    /**
-     * The X coordinate of the center of the map. At this location the avatar is
-     * displayed.
-     */
-    public static final int MAP_CENTER_X = ClientWindow.getInstance()
-        .getScreenWidth() / 2;
-
-    /**
-     * The Y coordinate of the center of the map. At this location the avatar is
-     * displayed.
-     */
-    public static final int MAP_CENTER_Y = ClientWindow.getInstance()
-        .getScreenHeight() / 2;
-
-    /**
-     * The height of the visible map. All tiles outside this height are not
-     * rendered to the screen.
-     */
-    @Deprecated
-    public static final int MAP_HEIGHT = 11 * MapConstants.TILE_H;
-
-    /**
-     * The width of the visible map. All tiles outside this width are not
-     * rendered to the screen.
-     */
-    @Deprecated
-    public static final int MAP_WIDTH = 11 * MapConstants.TILE_W;
-
-    private static final Drawer DRAWER = Graphics.getInstance().getDrawer();
 
     /**
      * The instance of the logger that is used to write out the data.
@@ -158,18 +126,11 @@ public final class MapDisplayManager implements AnimatedMove {
 
     private int elevation;
 
-    private final SpriteColor fadeOutColor = Graphics.getInstance()
-        .getSpriteColor();
+    private final Color fadeOutColor = new Color(0);
 
     private final MoveAnimation levelAni;
 
     private final Location origin;
-
-    /**
-     * The particle pool that is used to draw particles as overlays on top of
-     * the map.
-     */
-    private final OverlayPool overlayParticlePool;
 
     public MapDisplayManager() {
         active = false;
@@ -197,8 +158,6 @@ public final class MapDisplayManager implements AnimatedMove {
         });
         elevation = 0;
         dL = 0;
-        fadeOutColor.set(SpriteColor.COLOR_MIN);
-        overlayParticlePool = new OverlayPool();
     }
 
     /**
@@ -280,14 +239,14 @@ public final class MapDisplayManager implements AnimatedMove {
         // start separate Elevation animation
         final int fromElevation = elevation;
         elevation =
-            Game.getMap().getElevationAt(Game.getPlayer().getLocation());
+            World.getMap().getElevationAt(World.getPlayer().getLocation());
         if (elevation != fromElevation) {
             levelAni.start(0, fromElevation, 0, elevation, speed);
         }
 
         // adjust Z-order after update
-        if (Game.getAvatar() != null) {
-            readd(Game.getAvatar());
+        if (World.getAvatar() != null) {
+            readd(World.getAvatar());
         }
     }
 
@@ -299,7 +258,7 @@ public final class MapDisplayManager implements AnimatedMove {
     @Override
     public void animationFinished(final boolean ok) {
         // move graphical player position to new location
-        setLocation(Game.getPlayer().getLocation());
+        setLocation(World.getPlayer().getLocation());
 
         // remove surplus tiles from the map
         // Game.getMap().clipMap();
@@ -309,22 +268,22 @@ public final class MapDisplayManager implements AnimatedMove {
         return elevation;
     }
 
-    /**
-     * Get the particle pool that is used to render the particles as overlay
-     * over the entire map.
-     * 
-     * @return the particle pool that is used to render overlays
-     */
-    public ParticlePool getOverlayParticlePool() {
-        return overlayParticlePool;
-    }
-
     public int getWorldX(final int x) {
-        return ((x - MAP_CENTER_X) + origin.getDcX()) - dX;
+        return ((x - getMapCenterX()) + origin.getDcX()) - dX;
     }
 
     public int getWorldY(final int y) {
-        return ((y - MAP_CENTER_Y) + origin.getDcY()) - dY;
+        return ((y - getMapCenterY()) + origin.getDcY()) - dY;
+    }
+    
+    private int getMapCenterX() {
+        final GameContainer window = IllaClient.getInstance().getContainer();
+        return (window.getWidth() >> 1);
+    }
+    
+    private int getMapCenterY() {
+        final GameContainer window = IllaClient.getInstance().getContainer();
+        return (window.getHeight() >> 1);
     }
 
     /**
@@ -349,8 +308,8 @@ public final class MapDisplayManager implements AnimatedMove {
      * @param text
      */
     public void lookAt(int x, int y, final String text) {
-        x += (MAP_CENTER_X - origin.getDcX()) + dX;
-        y += (MAP_CENTER_Y - origin.getDcY()) + dY;
+        x += (getMapCenterX() - origin.getDcX()) + dX;
+        y += (getMapCenterY() - origin.getDcY()) + dY;
         // y += MAP_CENTER_Y + dY;
 
         // Tooltip tip = Tooltip.create();
@@ -389,11 +348,6 @@ public final class MapDisplayManager implements AnimatedMove {
             display.remove(item);
         }
     }
-    
-    public void render(final int delta) {
-        final ClientWindow window = ClientWindow.getInstance();
-        render(delta, window.getScreenWidth(), window.getScreenHeight());
-    }
 
     /**
      * Render all visible map items
@@ -402,26 +356,28 @@ public final class MapDisplayManager implements AnimatedMove {
      * @param width the width of the area the map is rendered in
      * @param height the height of the area the map is rendered in
      */
-    public void render(final int delta, final int width, final int height) {
+    public void render(final Graphics g, final GameContainer c, final int delta) {
         if (!active) {
             return;
         }
 
-        final int centerX = width >> 1;
-        final int centerY = height >> 1;
+        final int centerX = c.getWidth() >> 1;
+        final int centerY = c.getHeight() >> 1;
 
         final int offX = (centerX - origin.getDcX()) + dX;
         final int offY = (centerY - origin.getDcY()) + dY;
+        
+        g.pushTransform();
+        
+        g.translate(offX, offY);
 
-        ClientWindow.getInstance().getRenderDisplay().applyOffset(offX, offY);
-
-        final Avatar av = Game.getAvatar();
+        final Avatar av = World.getAvatar();
         if (av != null) {
             glueAvatarToOrigin(av);
             corridor.setCorridor(av);
         }
 
-        Camera.getInstance().setViewport(-offX, -offY, width, height + 100);
+        Camera.getInstance().setViewport(-offX, -offY, c.getWidth(), c.getHeight() + 100);
 
         synchronized (display) {
             DisplayItem currentItem;
@@ -431,20 +387,19 @@ public final class MapDisplayManager implements AnimatedMove {
                 for (int i = 0; i < itemCount; i++) {
                     currentItem = display.get(i);
                     currentItem.update(delta);
-                    currentItem.draw();
+                    currentItem.draw(g);
                 }
             }
         }
 
-        overlayParticlePool.draw();
+        g.popTransform();
+        
+        if (fadeOutColor.getAlpha() > 0) {
+            fadeOutColor.a = (AnimationUtility.approach(
+                fadeOutColor.getAlpha(), 0, 0, 255, delta)) / 255.f;
 
-        ClientWindow.getInstance().getRenderDisplay().resetOffset();
-
-        if (fadeOutColor.getAlphai() > 0) {
-            fadeOutColor.setAlpha(AnimationUtility.approach(
-                fadeOutColor.getAlphai(), 0, 0, SpriteColor.COLOR_MAX, delta));
-
-            DRAWER.drawRectangle(0, 0, width, height, fadeOutColor);
+            g.setColor(fadeOutColor);
+            g.fillRect(0, 0, c.getWidth(), c.getHeight());
         }
     }
 
@@ -457,8 +412,8 @@ public final class MapDisplayManager implements AnimatedMove {
      * @param mode
      */
     public void sayText(int x, int y, final String text, final int mode) {
-        x += (MAP_CENTER_X - origin.getDcX()) + dX;
-        y += (MAP_CENTER_Y - origin.getDcY()) + dY;
+//        x += (MAP_CENTER_X - origin.getDcX()) + dX;
+//        y += (MAP_CENTER_Y - origin.getDcY()) + dY;
 
         // Tooltip tip = Tooltip.create();
         // tip.initText(text);
@@ -470,7 +425,7 @@ public final class MapDisplayManager implements AnimatedMove {
 
     public void setActive(final boolean active) {
         if (!active) {
-            fadeOutColor.setAlpha(SpriteColor.COLOR_MAX);
+            fadeOutColor.a = 1.f;
         }
         this.active = active;
     }
@@ -495,11 +450,11 @@ public final class MapDisplayManager implements AnimatedMove {
         // origin.setSC(location.scX, location.scY, 0);
         origin.set(location);
         ani.stop();
-        final Avatar avatar = Game.getAvatar();
+        final Avatar avatar = World.getAvatar();
         if (avatar != null) {
             avatar.animationFinished(false);
         }
-        elevation = Game.getMap().getElevationAt(origin);
+        elevation = World.getMap().getElevationAt(origin);
         dL = elevation;
         dX = 0;
         dY = 0;

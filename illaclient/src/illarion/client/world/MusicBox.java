@@ -18,8 +18,11 @@
  */
 package illarion.client.world;
 
+import org.newdawn.slick.Music;
+
 import illarion.client.resources.SongFactory;
-import illarion.client.sound.SoundManager;
+import illarion.common.util.Stoppable;
+import illarion.common.util.StoppableStorage;
 
 /**
  * This is the music box. What is does is playing music. This class handles the
@@ -31,7 +34,7 @@ import illarion.client.sound.SoundManager;
  * @since 1.22
  * @version 1.22
  */
-public final class MusicBox {
+public final class MusicBox implements Stoppable {
     /**
      * This is the constant that applies in case no overwrite track is set and
      * the background music is supposed to play the default music.
@@ -68,6 +71,8 @@ public final class MusicBox {
         overrideSoundId = NO_TRACK;
         fightingMusicPlaying = false;
         currentDefaultTrack = NO_TRACK;
+        
+        StoppableStorage.getInstance().add(this);
     }
 
     /**
@@ -119,7 +124,8 @@ public final class MusicBox {
      */
     public void updatePlayerLocation() {
         final int newId =
-            Game.getMap().getMapAt(Game.getPlayer().getLocation())
+            World.getMap()
+                .getMapAt(World.getPlayer().getLocation())
                 .getTileMusic();
         if (newId != currentDefaultTrack) {
             currentDefaultTrack = newId;
@@ -128,12 +134,9 @@ public final class MusicBox {
     }
 
     /**
-     * This stops the music box and prepares this box for removal from the
-     * client instance.
+     * The music that is currently played.
      */
-    void shutdownMusicBox() {
-        SoundManager.getInstance().playBackground(null);
-    }
+    private Music currentMusic;
 
     /**
      * Set the sound track that is supposed to be played now. This function does
@@ -144,7 +147,13 @@ public final class MusicBox {
      * @param id the ID of the sound track to play
      */
     private void setSoundTrack(final int id) {
-        SoundManager.getInstance().playBackground(id);
+        if (id == NO_TRACK) {
+            currentMusic.stop();
+            currentMusic = null;
+            return;
+        }
+        currentMusic = SongFactory.getInstance().getSong(id);
+        currentMusic.loop();
     }
 
     /**
@@ -164,5 +173,12 @@ public final class MusicBox {
 
     public boolean isPlaying(final int musicId) {
         return (overrideSoundId != musicId);
+    }
+
+    @Override
+    public void saveShutdown() {
+        if (currentMusic != null) {
+            currentMusic.stop();
+        }
     }
 }

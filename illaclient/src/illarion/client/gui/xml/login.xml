@@ -12,7 +12,7 @@
 
 			<panel height="300px" width="400px" align="center" valign="center"
 				backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
-				<image filename="guiSprite://illarion_title" imageMode="normal"
+				<image filename="data/gui/illarion_title.png" imageMode="normal"
 					align="center" />
 				<panel height="30px" />
 				<panel width="400px" align="center" valign="center"

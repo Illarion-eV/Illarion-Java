@@ -1,14 +1,11 @@
 package illarion.client.gui.controller;
 
+import org.newdawn.slick.state.StateBasedGame;
+
 import illarion.client.Login;
-import illarion.common.util.LoadingManager;
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.NiftyIdCreator;
-import de.lessvoid.nifty.builder.ControlBuilder;
-import de.lessvoid.nifty.builder.LayerBuilder;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.CheckBox;
-import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
@@ -16,17 +13,8 @@ import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import de.lessvoid.nifty.tools.SizeValue;
-import de.lessvoid.nifty.effects.impl.Hint;
-import de.lessvoid.nifty.effects.Effect;
-import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.loaderv2.types.PanelType;
 import de.lessvoid.nifty.builder.PanelBuilder;
-import de.lessvoid.nifty.builder.EffectBuilder;
-import de.lessvoid.nifty.builder.ScreenBuilder;
-import de.lessvoid.nifty.builder.TextBuilder;
-import de.lessvoid.nifty.loaderv2.NiftyLoader;
-import de.lessvoid.nifty.loaderv2.types.NiftyType;
 
 
 public final class LoginScreenController implements ScreenController, KeyInputHandler {
@@ -40,11 +28,13 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 	private CheckBox savePassword;
 	private Button loginBtn;
 	private ListBox<?> charList;
-//	private Label errorText;
-//	
-//	private Element popupLogin;
-//    private Element popupError;
 	
+	private final StateBasedGame game;
+	
+    public LoginScreenController(StateBasedGame game) {
+        this.game = game;
+    }
+
     @Override
     public void bind(Nifty nifty, Screen screen) {
     	this.nifty = nifty;
@@ -133,7 +123,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     @Override
     public boolean keyEvent(NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyInputEvent.SubmitText) {
-        	login();
+            login();
             return true;
         }
         return false;

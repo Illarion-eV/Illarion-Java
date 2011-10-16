@@ -19,10 +19,12 @@
 package illarion.client.resources;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
-import illarion.client.sound.Song;
+import illarion.client.util.IdWrapper;
 import illarion.common.util.FastMath;
 
 import java.util.List;
+
+import org.newdawn.slick.Music;
 
 import javolution.util.FastTable;
 
@@ -32,7 +34,7 @@ import javolution.util.FastTable;
  * independent from the RecycleFactory, because there is only one song at time
  * played anyway.
  */
-public final class SongFactory implements ResourceFactory<Song> {
+public final class SongFactory implements ResourceFactory<IdWrapper<Music> > {
     /**
      * The singleton instance of the SongFactory.
      */
@@ -50,7 +52,7 @@ public final class SongFactory implements ResourceFactory<Song> {
     /**
      * The storage for the songs and the variations of the songs.
      */
-    private TIntObjectHashMap<List<Song>> songs;
+    private TIntObjectHashMap<List<Music>> songs;
 
     /**
      * Constructor of the factory. Starts to loading of table file containing
@@ -69,10 +71,10 @@ public final class SongFactory implements ResourceFactory<Song> {
      *         this id, the song is returned, in case there are multiple
      *         variations of this song, one is selected randomly and returned
      */
-    public Song getSong(final int id) {
+    public Music getSong(final int id) {
         if ((songs != null) && (songs.contains(id))) {
             // select a variant at random
-            final List<Song> clipList = songs.get(id);
+            final List<Music> clipList = songs.get(id);
             final int variant = FastMath.nextRandomInt(0, clipList.size() - 1);
             return songs.get(id).get(variant);
         }
@@ -85,7 +87,7 @@ public final class SongFactory implements ResourceFactory<Song> {
     @Override
     @SuppressWarnings("nls")
     public void init() {
-        songs = new TIntObjectHashMap<List<Song>>();
+        songs = new TIntObjectHashMap<List<Music>>();
     }
 
     /**
@@ -100,16 +102,16 @@ public final class SongFactory implements ResourceFactory<Song> {
      * Add a song to this factory.
      */
     @Override
-    public void storeResource(final Song resource) {
+    public void storeResource(final IdWrapper<Music> resource) {
         final int clipID = resource.getId();
 
-        List<Song> clipList;
+        List<Music> clipList;
         if (!songs.contains(clipID)) {
-            clipList = new FastTable<Song>();
+            clipList = new FastTable<Music>();
             songs.put(clipID, clipList);
         } else {
             clipList = songs.get(clipID);
         }
-        clipList.add(resource);
+        clipList.add(resource.getObject());
     }
 }

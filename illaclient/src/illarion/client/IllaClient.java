@@ -32,23 +32,22 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
 
 import illarion.client.crash.DefaultCrashHandler;
-import illarion.client.guiNG.GUI;
-import illarion.client.guiNG.Journal;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.SimpleCmd;
 import illarion.client.util.ChatLog;
 import illarion.client.util.Lang;
-import illarion.client.util.SessionManager;
-import illarion.client.world.Game;
+import illarion.client.world.MapDimensions;
+import illarion.client.world.World;
 
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
-import illarion.common.debug.DefaultDeadlockListener;
-import illarion.common.debug.ThreadDeadlockDetector;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.Scheduler;
@@ -56,9 +55,6 @@ import illarion.common.util.StoppableStorage;
 import illarion.common.util.TableLoader;
 
 import illarion.graphics.GraphicResolution;
-import illarion.graphics.Graphics;
-
-import illarion.input.InputManager;
 
 /**
  * Main Class of the Illarion Client, this loads up the whole game and runs the
@@ -99,30 +95,6 @@ public final class IllaClient {
     static final boolean MULTI_CLIENT = true;
 
     /**
-     * The constant to disable the LWJGL component.
-     */
-    private static final int COMPONENT_JOGL = (1 << 1);
-
-    /**
-     * The constant to disable the LWJGL component.
-     */
-    private static final int COMPONENT_LWJGL = (1 << 0);
-
-    /**
-     * The error message that should be displayed in the login window at the
-     * next reconnect.
-     */
-    @SuppressWarnings("nls")
-    private static String errorMessage = "";
-
-    /**
-     * The variable is set true in case the error exit handler has taken over.
-     * The main loop must not perform any actions in case this happens and it
-     * also must not quit.
-     */
-    private static boolean errorQuitting = false;
-
-    /**
      * Stores if there currently is a exit requested to avoid that the question
      * area is opened multiple times.
      */
@@ -139,24 +111,6 @@ public final class IllaClient {
      * The singleton instance of this class.
      */
     private static final IllaClient INSTANCE = new IllaClient();
-
-    /**
-     * True in case its needed to reconnect the client instead of shutting it
-     * down.
-     */
-    private static boolean requestedReconnect = false;
-
-    /**
-     * Sleeping time in ms between each render of the splash screen while the
-     * login window is displayed.
-     */
-    private static final int SLEEP_RENDER = 150;
-
-    /**
-     * The amount of times the splash screen is rendered after the login dialog
-     * is displayed and before the texture loading starts.
-     */
-    private static final int SLEEP_TEXTURE = 7;
 
     /**
      * The sleep time of the main thread in ms after the logout command was send
@@ -180,11 +134,6 @@ public final class IllaClient {
      * Stores the debug level of the client.
      */
     private int debugLevel = 0;
-
-    /**
-     * Components that got disabled during the integrity check.
-     */
-    private int disableComponents = 0;
     
     /**
      * The class loader of the this class. It is used to get the resource
@@ -196,13 +145,62 @@ public final class IllaClient {
      * Stores the server the client shall connect to.
      */
     private Servers usedServer = DEFAULT_SERVER;
+    
+    /**
+     * This is the reference to the Illarion Game instance.
+     */
+    private illarion.client.Game game;
+    
+    /**
+     * The container that is used to display the game.
+     */
+    private AppGameContainer gameContainer;
 
     /**
      * The default empty constructor used to create the singleton instance of
      * this class.
      */
     private IllaClient() {
-        // do nothing
+
+    }
+    
+    private void init() {
+        prepareConfig();
+        initLogfiles();
+        
+        CrashReporter.getInstance().setConfig(getCfg());
+        
+        game = new illarion.client.Game();
+        
+        final GraphicResolution res = new GraphicResolution(cfg.getString(CFG_RESOLUTION));
+        
+        try {
+            gameContainer = new AppGameContainer(game, res.getWidth(), res.getHeight(), cfg.getBoolean(CFG_FULLSCREEN));
+            MapDimensions.getInstance().reportScreenSize(gameContainer.getWidth(), gameContainer.getHeight());
+        } catch (SlickException e) {
+            System.err.println("Fatal error creating game screen!!!");
+            System.exit(-1);
+        }
+        
+        gameContainer.setAlwaysRender(true);
+        
+        try {
+            gameContainer.start();
+        } catch (SlickException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        Scheduler.getInstance().start();
+    }
+    
+    /**
+     * Get the container that is used to display the game inside.
+     * 
+     * @return the are used to display the game inside
+     */
+    public GameContainer getContainer() {
+        return gameContainer;
     }
 
     /**
@@ -214,18 +212,6 @@ public final class IllaClient {
             return;
         }
         exitRequested = true;
-
-        GUI.getInstance().showReallyExitDialog(new Runnable() {
-            @Override
-            public void run() {
-                IllaClient.getInstance().quitGame();
-            }
-        }, new Runnable() {
-            @Override
-            public void run() {
-                setExitRequested(false);
-            }
-        });
     }
 
     /**
@@ -235,36 +221,8 @@ public final class IllaClient {
      */
     @SuppressWarnings("nls")
     public static void errorExit(final String message) {
-        requestedReconnect = false;
-        errorQuitting = true;
-
-        INSTANCE.cfg.save();
-        Game.getInstance().setRunning(false);
-        StoppableStorage.getInstance().shutdown();
-
-        // try to save names and maps
-        if (Game.getPeople() != null) {
-            Game.getPeople().saveNames();
-        }
-        if (Game.getMap() != null) {
-            Game.getMap().getMinimap().saveMap();
-        }
-
-        // try sending a logout to the server
-        if (Game.getNet() != null) {
-            final SimpleCmd cmd =
-                (SimpleCmd) CommandFactory.getInstance().getCommand(
-                    CommandList.CMD_LOGOFF);
-            Game.getNet().sendCommand(cmd);
-
-            // wait a little so the command gets send
-            try {
-                Thread.sleep(SLEEPTIME_LOGOUT);
-            } catch (final InterruptedException e) {
-                LOGGER.warn("Interrupted waiting time", e);
-            }
-        }
-
+        World.cleanEnvironment();
+        
         LOGGER.info("Client terminated on user request.");
 
         LOGGER.fatal(Lang.getMsg(message));
@@ -290,10 +248,8 @@ public final class IllaClient {
      * @param message the message that shall be displayed in the login screen
      */
     public static void fallbackToLogin(final String message) {
-        if (Game.getInstance().isRunning()) {
-            SessionManager.getInstance().endSession();
-            illarion.client.gui.GUI.getInstance().showLogin();
-        }
+        INSTANCE.game.enterState(Game.STATE_LOGIN);
+        World.cleanEnvironment();
     }
 
     /**
@@ -384,24 +340,7 @@ public final class IllaClient {
             return;
         }
         
-        INSTANCE.prepareConfig();
-        INSTANCE.initLogfiles();
-
-        if (!INSTANCE.integrityCheck()) {
-            System.exit(-1);
-        }
-        
-        Graphics.getInstance().setEngine(illarion.graphics.Engines.lwjgl);
-        InputManager.getInstance().setEngine(illarion.input.Engines.lwjgl);
-
-        CrashReporter.getInstance().setConfig(getCfg());
-
-        INSTANCE.setupGraphicQuality();
-
-        // show the main window
-        System.out.write(0xFF);
-        ClientWindow.getInstance().init();
-        INSTANCE.initInput();
+        INSTANCE.init();
 
         // update read-me file if required
         installFile("readme.txt");
@@ -409,94 +348,7 @@ public final class IllaClient {
         // update manual files if required
         installFile("manual_de.pdf");
         installFile("manual_en.pdf");
-
-        boolean loadingDone = false;
-        boolean debugThread = false;
-        
-        Scheduler.getInstance().start();
-        SessionManager.getInstance().addMember(Game.getInstance());
-
-//            do {
-//                requestedReconnect = false;
-//
-//                
-//                if (isDebug(Debug.deadlock) && !debugThread) {
-//                    new ThreadDeadlockDetector()
-//                        .addListener(new DefaultDeadlockListener());
-//                    debugThread = true;
-//                }
-//
-//                if (!INSTANCE.loginResult) {
-//                    INSTANCE.exitLWJGL();
-//                    LOGGER.info("Client terminated on user request "
-//                        + "before login.");
-//                    LogManager.shutdown();
-//                    StoppableStorage.getInstance().shutdown();
-//                    startFinalKiller();
-//                    return;
-//                }
-//
-//                // establish connection
-//                //SessionManager.getInstance().startSession();
-//
-//                if (!Game.getInstance().isRunning()) {
-//                    continue;
-//                }
-//
-//                // init the talking log system
-//
-//                // wait until the network starts working
-//                while (Game.getInstance().isRunning()
-//                    && !Game.getNet().receivedAnything()) {
-//
-//                    try {
-//                        Thread.sleep(30);
-//                    } catch (final InterruptedException e) {
-//                        LOGGER.debug("Waiting for the server got interupted"
-//                            + " unexpected");
-//                    }
-//                }
-//
-//                ClientWindow.getInstance().focus();
-//
-//                LoadingScreen.getInstance().setLoadingDone();
-//                ClientWindow.getInstance().getRenderDisplay().hideCursor();
-//                ClientWindow.getInstance().getRenderDisplay().startRendering();
-//
-//                /*
-//                 * Main game loop, as long as the game is running this function
-//                 * is not left
-//                 */
-//                Game.getInstance().gameLoop();
-//
-//                // Shut the game down correctly
-//                SessionManager.getInstance().endSession();
-//                ClientWindow.getInstance().getRenderDisplay().showCursor();
-//                INSTANCE.cfg.save();
-//            } while (requestedReconnect && !errorQuitting);
-//
-//            if (!errorQuitting) {
-//                SessionManager.getInstance().shutdownSession();
-//
-//                INSTANCE.exitLWJGL();
-//
-//                LOGGER.info("Client terminated on user request.");
-//                LogManager.shutdown();
-//            } else {
-//                INSTANCE.exitLWJGL();
-//                while (true) {
-//                    try {
-//                        Thread.sleep(1000);
-//                    } catch (final InterruptedException e) {
-//                        // nothing
-//                    }
-//                }
-//            }
-//        }
-//
-//        CrashReporter.getInstance().waitForReport();
-//
-//        startFinalKiller();
+       
     }
 
     /**
@@ -627,15 +479,13 @@ public final class IllaClient {
      */
     public void quitGame() {
         // send logoff command
-        if (Game.getNet() == null) {
+        if (World.getNet() == null) {
             return;
         }
         final SimpleCmd cmd =
             (SimpleCmd) CommandFactory.getInstance().getCommand(
                 CommandList.CMD_LOGOFF);
-        Game.getNet().sendCommand(cmd);
-
-        Game.getInstance().setRunning(false);
+        World.getNet().sendCommand(cmd);
     }
 
     /**
@@ -645,98 +495,6 @@ public final class IllaClient {
      */
     public void setUsedServer(final Servers server) {
         usedServer = server;
-    }
-
-    /**
-     * Prepare the login of the client. Means parsing the arguments in case
-     * there are any or show the login dialog in order to fetch the needed
-     * informations.
-     * 
-     * @param args the arguments that were handed over to the client call
-     * @return true in case all data is fine and the client is ready to login,
-     *         false in case something when wrong
-     */
-    @SuppressWarnings("nls")
-    boolean prepareLogin(final String[] args) {
-        final LoginDialog login =
-            new LoginDialog(Game.getInstance(), ClientWindow.getInstance()
-                .getFrame());
-
-        if (!errorMessage.equals("")) {
-            login.setErrorMessage(errorMessage);
-        }
-
-        // evaluate parameters
-        // check parameters for login info
-        boolean quickstart = false;
-        int forceDebug = -1;
-        int loginIndex = 0;
-
-        for (int i = 0; i < args.length; ++i) {
-            if (args[i].equals("-login") && ((i + 2) < args.length)) {
-                quickstart = true;
-                loginIndex = i + 1;
-            } else if (args[i].equals("-server:game") && MULTI_CLIENT) {
-                login.setServer(1);
-            } else if (args[i].equals("-server:test") && MULTI_CLIENT) {
-                login.setServer(0);
-            } else if (args[i].equals("-debug")) {
-                forceDebug = Integer.parseInt(args[i + 1]);
-            }
-        }
-
-        // repeat until user cancels login dialog
-        // bypass login dialog upon first start with parameters
-        if (quickstart || login.display()) {
-            // detect the used server
-            final int selectedServer = login.getServer();
-            for (final Servers server : Servers.values()) {
-                if (selectedServer == server.ordinal()) {
-                    usedServer = server;
-                }
-            }
-
-            if (forceDebug > -1) {
-                debugLevel = forceDebug;
-            } else {
-                debugLevel = cfg.getInteger("debugLevel");
-            }
-
-            // ready of loading the client.
-            return true;
-        }
-
-        // something failed, lets stop it right here.
-        return false;
-    }
-
-    /**
-     * Check of a component is listed as loaded.
-     * 
-     * @param comp the component to check
-     * @return <code>true</code> in case the component is load
-     */
-    private boolean componentLoaded(final String comp) {
-        return Boolean.toString(true).equalsIgnoreCase(
-            System.getProperty("illarion.components.avaiable." + comp));
-    }
-
-    /**
-     * Shut down the LWJGL driven parts of the client. So the mouse, the
-     * keyboard as well as the display.
-     */
-    private void exitLWJGL() {
-        // InputManager.getInstance().getKeyboardManager().shutdown();
-        // InputManager.getInstance().getMouseManager().shutdown();
-        ClientWindow.getInstance().destruct();
-    }
-
-    /**
-     * Prepare the input handler for keyboard and mouse.
-     */
-    private void initInput() {
-        InputManager.getInstance().getKeyboardManager().startManager();
-        InputManager.getInstance().getMouseManager().startManager();
     }
 
     /**
@@ -767,113 +525,8 @@ public final class IllaClient {
         java.util.logging.Logger.getLogger("javolution").setLevel(java.util.logging.Level.SEVERE);
     }
 
-    /**
-     * This function checks if all components the client requires are load and
-     * ready to be used.
-     */
-    @SuppressWarnings("nls")
-    private boolean integrityCheck() {
-        boolean result = true;
-        if (componentLoaded("javolution")) {
-            LOGGER
-                .debug("Checking Javolution............................[OK]");
-        } else {
-            result = false;
-            LOGGER
-                .error("Checking Javolution........................[FAILED]");
-        }
-
-        if (componentLoaded("jorbis")) {
-            LOGGER
-                .debug("Checking JOrbis................................[OK]");
-        } else {
-            result = false;
-            LOGGER
-                .error("Checking JOrbis............................[FAILED]");
-        }
-
-        if (componentLoaded("jogg")) {
-            LOGGER
-                .debug("Checking JOgg..................................[OK]");
-        } else {
-            result = false;
-            LOGGER
-                .error("Checking JOgg..............................[FAILED]");
-        }
-
-        if (componentLoaded("tritonus")) {
-            LOGGER
-                .debug("Checking Tritonus..............................[OK]");
-        } else {
-            result = false;
-            LOGGER
-                .error("Checking Tritonus..........................[FAILED]");
-        }
-
-        if (componentLoaded("vorbisspi")) {
-            LOGGER
-                .debug("Checking VorbisSPI.............................[OK]");
-        } else {
-            result = false;
-            LOGGER
-                .error("Checking VorbisSPI.........................[FAILED]");
-        }
-
-        if (componentLoaded("trove")) {
-            LOGGER
-                .debug("Checking GNU Trove.............................[OK]");
-        } else {
-            result = false;
-            LOGGER
-                .error("Checking GNU Trove.........................[FAILED]");
-        }
-
-        if (componentLoaded("gluegen")) {
-            LOGGER
-                .debug("Checking Gluegen...............................[OK]");
-        } else {
-            disableComponents |= COMPONENT_JOGL;
-            LOGGER
-                .warn("Checking Gluegen............................[FAILED]");
-        }
-
-        if (componentLoaded("jogl")) {
-            LOGGER
-                .debug("Checking JOGL..................................[OK]");
-        } else {
-            disableComponents |= COMPONENT_JOGL;
-            LOGGER
-                .warn("Checking JOGL...............................[FAILED]");
-        }
-
-        if (componentLoaded("nativewindow")) {
-            LOGGER
-                .debug("Checking Nativewindow..........................[OK]");
-        } else {
-            disableComponents |= COMPONENT_JOGL;
-            LOGGER
-                .warn("Checking Nativewindow.......................[FAILED]");
-        }
-
-        if (componentLoaded("newt")) {
-            LOGGER
-                .debug("Checking Newt..................................[OK]");
-        } else {
-            disableComponents |= COMPONENT_JOGL;
-            LOGGER.warn("Checking Newt..............................[FAILED]");
-        }
-
-        if (componentLoaded("lwjgl")) {
-            LOGGER
-                .debug("Checking LWJGL.................................[OK]");
-        } else {
-            disableComponents |= COMPONENT_LWJGL;
-            LOGGER
-                .warn("Checking LWJGL..............................[FAILED]");
-        }
-
-        return result;
-    }
+    private static final String CFG_FULLSCREEN = "fullscreen";
+    private static final String CFG_RESOLUTION = "resolution";
 
     /**
      * Prepare the configuration system and the decryption system.
@@ -882,7 +535,6 @@ public final class IllaClient {
     private void prepareConfig() {
         cfg = new ConfigSystem(getFile("Illarion.xcfgz"));
         cfg.setDefault("debugLevel", 1);
-        cfg.setDefault("lowMemory", LoginDialog.SETTINGS_GRAPHIC_NORMAL);
         cfg.setDefault("showNameMode", illarion.client.world.People.NAME_SHORT);
         cfg.setDefault("showIDs", false);
         cfg.setDefault("soundOn", true);
@@ -893,15 +545,12 @@ public final class IllaClient {
             (int) (illarion.client.world.Player.MAX_CLIENT_VOL * 0.75f));
         cfg.setDefault(illarion.client.util.ChatLog.CFG_TEXTLOG, true);
         cfg.setDefault("fadingTime", 600);
-        cfg.setDefault(ClientWindow.CFG_FULLSCREEN, false);
-        cfg.setDefault(ClientWindow.CFG_RESOLUTION, new GraphicResolution(800,
+        cfg.setDefault(CFG_FULLSCREEN, false);
+        cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800,
             600, 32, 60).toString());
         cfg.setDefault("savePassword", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
         cfg.setDefault("engine", 1);
-        cfg.setDefault(Journal.CFG_JOURNAL_LENGTH, 100);
-        cfg.setDefault(Journal.CFG_JOURNAL_FONT,
-            Journal.CFG_JOURNAL_FONT_LARGE);
 
         final String locale = cfg.getString(Lang.LOCALE_CFG);
         if (locale == null) {
@@ -919,34 +568,5 @@ public final class IllaClient {
         crypt.loadPublicKey();
         TableLoader.setCrypto(crypt);
         Lang.getInstance().setConfig(cfg);
-    }
-
-    /**
-     * Setup the graphic port regarding the configuration for the requested
-     * graphic quality.
-     */
-    @SuppressWarnings("nls")
-    private void setupGraphicQuality() {
-        // setup the graphic environment
-        final int lowMemory = INSTANCE.cfg.getInteger("lowMemory");
-        switch (lowMemory) {
-            case LoginDialog.SETTINGS_GRAPHIC_MAX: // maximal quality
-                Graphics.getInstance().setQuality(Graphics.QUALITY_MAX);
-                break;
-            case LoginDialog.SETTINGS_GRAPHIC_HIGH: // high quality
-                Graphics.getInstance().setQuality(Graphics.QUALITY_HIGH);
-                break;
-            case LoginDialog.SETTINGS_GRAPHIC_NORMAL: // normal quality
-                Graphics.getInstance().setQuality(Graphics.QUALITY_NORMAL);
-                break;
-            case LoginDialog.SETTINGS_GRAPHIC_LOW: // low quality
-                Graphics.getInstance().setQuality(Graphics.QUALITY_LOW);
-                break;
-            case LoginDialog.SETTINGS_GRAPHIC_MIN: // minimal quality
-                Graphics.getInstance().setQuality(Graphics.QUALITY_MIN);
-                break;
-            default:
-                Graphics.getInstance().setQuality(Graphics.QUALITY_HIGH);
-        }
     }
 }

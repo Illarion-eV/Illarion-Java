@@ -22,8 +22,8 @@ import javolution.context.ObjectFactory;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.procedure.TObjectProcedure;
 
-import illarion.client.world.Game;
 import illarion.client.world.MapTile;
+import illarion.client.world.World;
 
 import illarion.common.util.Location;
 import illarion.common.util.Reusable;
@@ -419,7 +419,7 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     public void setPosition(final Location location) {
         loc = Location.getInstance();
         loc.set(location);
-        tile = Game.getMap().getMapAt(loc);
+        tile = World.getMap().getMapAt(loc);
         blocked = ((tile == null) || tile.isBlocked());
     }
 

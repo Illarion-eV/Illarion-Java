@@ -18,9 +18,11 @@
  */
 package illarion.client.graphics;
 
-import illarion.client.ClientWindow;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+
 import illarion.client.IllaClient;
-import illarion.client.world.Game;
+import illarion.client.world.World;
 
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
@@ -28,9 +30,7 @@ import illarion.common.util.FastMath;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 
-import illarion.graphics.Graphics;
 import illarion.graphics.Sprite;
-import illarion.graphics.SpriteColor;
 import illarion.graphics.common.SpriteBuffer;
 
 /**
@@ -125,7 +125,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
                     IllaClient.getCfg().getInteger(CFG_FADING);
 
                 FADING_SPEED =
-                    ((SpriteColor.COLOR_MAX - FADE_OUT_ALPHA) * AnimationUtility.DELTA_DIV)
+                    ((255 - FADE_OUT_ALPHA) * AnimationUtility.DELTA_DIV)
                         / fadingTime;
             }
         }
@@ -140,8 +140,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     /**
      * The default light that is used in the client.
      */
-    protected static final SpriteColor DEFAULT_LIGHT = Graphics.getInstance()
-        .getSprite(1).getDefaultLight();
+    protected static final Color DEFAULT_LIGHT = new Color(0);
 
     /**
      * The speed value for fading the alpha values by default.
@@ -152,7 +151,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * The color value of the alpha when the object is faded out fully.
      */
     private static final int FADE_OUT_ALPHA =
-        (int) (0.4f * SpriteColor.COLOR_MAX);
+        (int) (0.4f * 255);
 
     /**
      * This render color instance is used to calculate the mixed color of the
@@ -160,14 +159,13 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * entity since its only used temporary and stores no values over a longer
      * timer.
      */
-    private static final SpriteColor RENDERCOLOR = Graphics.getInstance()
-        .getSpriteColor();
+    private static final Color RENDERCOLOR = new Color(0);
 
     static {
         final int fadingTime = IllaClient.getCfg().getInteger(CFG_FADING);
 
         FADING_SPEED =
-            ((SpriteColor.COLOR_MAX - FADE_OUT_ALPHA) * AnimationUtility.DELTA_DIV)
+            ((255 - FADE_OUT_ALPHA) * AnimationUtility.DELTA_DIV)
                 / fadingTime;
 
         IllaClient.getCfg().addListener(CFG_FADING, new FadingUpdate());
@@ -195,7 +193,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * The base color is the color the image of the sprite is always colored
      * with, this color is applied no matter what the localLight is set to.
      */
-    private SpriteColor baseColor;
+    private Color baseColor;
 
     /**
      * The frame that is currently shown by this entity.
@@ -232,7 +230,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * real colors or the ambient light of the weather that ensures that the
      * object is colored for the display on the map.
      */
-    private SpriteColor localLight;
+    private Color localLight;
 
     /**
      * The shadow offset of the entity. This offset marks the area that does not
@@ -244,7 +242,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     /**
      * The color that is used to overwrite the real color of this entity.
      */
-    private SpriteColor overWriteBaseColor;
+    private Color overWriteBaseColor;
 
     /**
      * The scaling value that is applied to this entity.
@@ -349,7 +347,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         final String name, final int frames, final int still, final int offX,
         final int offY, final int shadowOffset, final Sprite.HAlign horz,
         final Sprite.VAlign vert, final boolean smooth, final boolean mirror,
-        final SpriteColor baseCol) {
+        final Color baseCol) {
 
         sprite =
             SpriteBuffer.getInstance().getSprite(path, name, frames, offX,
@@ -358,10 +356,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         currentFrame = still;
         if (baseCol == null) {
             baseColor = null;
-        } else if ((baseCol.getRedi() == SpriteColor.COLOR_MAX)
-            && (baseCol.getBluei() == SpriteColor.COLOR_MAX)
-            && (baseCol.getGreeni() == SpriteColor.COLOR_MAX)
-            && (baseCol.getAlphai() == SpriteColor.COLOR_MAX)) {
+        } else if (baseCol.equals(DEFAULT_LIGHT)) {
             baseColor = null;
         } else {
             baseColor = baseCol;
@@ -413,18 +408,20 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * @param newBaseColor the new base color of the entity, <code>null</code>
      *            to get the default color
      */
-    public void changeBaseColor(final SpriteColor newBaseColor) {
+    public void changeBaseColor(final Color newBaseColor) {
         if (newBaseColor == null) {
             overWriteBaseColor = null;
             return;
         }
 
         if (overWriteBaseColor == null) {
-            overWriteBaseColor = Graphics.getInstance().getSpriteColor();
+            overWriteBaseColor = new Color(newBaseColor);
+        } else {
+            overWriteBaseColor.r = newBaseColor.r;
+            overWriteBaseColor.g = newBaseColor.g;
+            overWriteBaseColor.b = newBaseColor.b;
+            overWriteBaseColor.a = newBaseColor.a;
         }
-
-        overWriteBaseColor.set(newBaseColor);
-        overWriteBaseColor.setAlpha(newBaseColor.getAlphai());
     }
 
     /**
@@ -441,7 +438,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * @return true in case the rendering operation was done successfully
      */
     @Override
-    public boolean draw() {
+    public boolean draw(final Graphics g) {
         int xOffset;
         int yOffset;
         if (useScale) {
@@ -461,40 +458,41 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
             return true;
         }
 
-        localLight.setAlpha(getAlpha());
+        localLight.a = getAlpha();
         
         final int renderLocX = displayX;
         final int renderLocY = displayY;
 
         if ((baseColor == null) && (overWriteBaseColor == null)) {
             if (useScale) {
-                sprite.draw(renderLocX, renderLocY, localLight, currentFrame,
+                sprite.draw(g, renderLocX, renderLocY, localLight, currentFrame,
                     scale);
             } else {
-                sprite.draw(renderLocX, renderLocY, localLight, currentFrame);
+                sprite.draw(g, renderLocX, renderLocY, localLight, currentFrame);
             }
         } else {
-            RENDERCOLOR.set(localLight);
-            RENDERCOLOR.setAlpha(localLight.getAlphai());
+            Color renderColor;
             if (overWriteBaseColor != null) {
-                RENDERCOLOR.multiply(overWriteBaseColor.getRedf(),
-                    overWriteBaseColor.getGreenf(),
-                    overWriteBaseColor.getBluef());
-                RENDERCOLOR.multiplyAlpha(overWriteBaseColor.getAlphaf());
+                renderColor = localLight.multiply(overWriteBaseColor);
             } else {
-                RENDERCOLOR.multiply(baseColor.getRedf(),
-                    baseColor.getGreenf(), baseColor.getBluef());
-                RENDERCOLOR.multiplyAlpha(baseColor.getAlphaf());
+                renderColor = localLight.multiply(baseColor);
             }
 
             if (useScale) {
-                sprite.draw(renderLocX, renderLocY, RENDERCOLOR, currentFrame,
+                sprite.draw(g, renderLocX, renderLocY, renderColor, currentFrame,
                     scale);
             } else {
-                sprite.draw(renderLocX, renderLocY, RENDERCOLOR, currentFrame);
+                sprite.draw(g, renderLocX, renderLocY, renderColor, currentFrame);
             }
         }
         return true;
+    }
+    
+    private void transferColor(final Color from, final Color to) {
+        to.r = from.r;
+        to.g = from.g;
+        to.b = from.b;
+        to.a = from.a;
     }
 
     /**
@@ -560,7 +558,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * 
      * @return the light this entity uses at the rendering functions
      */
-    public final SpriteColor getLight() {
+    public final Color getLight() {
         return localLight;
     }
 
@@ -617,7 +615,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     @Override
     public void hide() {
         if (shown) {
-            Game.getDisplay().remove(this);
+            World.getMapDisplay().remove(this);
             shown = false;
         }
     }
@@ -628,8 +626,8 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * @return true in case the entity is visible
      */
     public final boolean isVisible() {
-        return (alphaTarget > SpriteColor.COLOR_MIN)
-            || (alpha > SpriteColor.COLOR_MIN);
+        return (alphaTarget > 0)
+            || (alpha > 0);
     }
 
     /**
@@ -638,8 +636,8 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     @Override
     public void reset() {
         // start as opaque
-        alpha = SpriteColor.COLOR_MAX;
-        alphaTarget = SpriteColor.COLOR_MAX;
+        alpha = 255;
+        alphaTarget = 255;
         currentFrame = stillFrame;
         localLight = sprite.getDefaultLight();
         overWriteBaseColor = null;
@@ -677,7 +675,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * 
      * @param newBaseColor the new base color of the entity
      */
-    public void setBaseColor(final SpriteColor newBaseColor) {
+    public void setBaseColor(final Color newBaseColor) {
         baseColor = newBaseColor;
     }
 
@@ -699,7 +697,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * 
      * @param light the new light that shall be used by this entity
      */
-    public void setLight(final SpriteColor light) {
+    public void setLight(final Color light) {
         localLight = light;
     }
 
@@ -734,7 +732,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         if (shown) {
             final int newLayerZ = zLayer - typeLayer;
             if (newLayerZ != layerZ) {
-                Game.getDisplay().readd(this);
+                World.getMapDisplay().readd(this);
                 layerZ = newLayerZ;
             }
         } else {
@@ -761,7 +759,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     @Override
     public void show() {
         if (!shown) {
-            Game.getDisplay().add(this);
+            World.getMapDisplay().add(this);
             shown = true;
         }
     }
@@ -809,7 +807,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         if (transparent) {
             setAlphaTarget(FADE_OUT_ALPHA);
         } else {
-            setAlphaTarget(SpriteColor.COLOR_MAX);
+            setAlphaTarget(255);
         }
 
         updateAlpha(delta);
@@ -823,7 +821,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      *         its color
      */
     protected boolean isTransparent() {
-        return (alpha < SpriteColor.COLOR_MAX);
+        return (alpha < 255);
     }
 
     /**
@@ -836,7 +834,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         if (alpha != alphaTarget) {
             final int oldAlpha = alpha;
             setAlpha(AnimationUtility.translate(alpha, alphaTarget,
-                FADING_SPEED, FADE_OUT_ALPHA, SpriteColor.COLOR_MAX, delta));
+                FADING_SPEED, FADE_OUT_ALPHA, 255, delta));
             if ((oldAlpha != alpha) && (alphaListener != null)) {
                 alphaListener.alphaChanged(oldAlpha, alpha);
             }

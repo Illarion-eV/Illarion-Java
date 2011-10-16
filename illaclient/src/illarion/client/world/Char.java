@@ -19,15 +19,12 @@
 package illarion.client.world;
 
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
 
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.Avatar;
 import illarion.client.graphics.AvatarClothManager;
-import illarion.client.graphics.Colors;
-import illarion.client.graphics.Marker;
 import illarion.client.graphics.MoveAnimation;
-import illarion.client.guiNG.references.AbstractReference;
-import illarion.client.guiNG.references.CharReference;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.LookatCharCmd;
@@ -40,14 +37,12 @@ import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 
-import illarion.graphics.Graphics;
-import illarion.graphics.SpriteColor;
 import illarion.graphics.common.LightSource;
 
 /**
  * Represents a character: player, monster or npc.
  */
-public final class Char extends Interaction implements RecycleObject,
+public final class Char implements RecycleObject,
     AnimatedMove {
 
     /**
@@ -88,12 +83,12 @@ public final class Char extends Interaction implements RecycleObject,
     /**
      * The color that is used to show combat characters.
      */
-    private static final SpriteColor COMBAT_COLOR;
+    private static final Color COMBAT_COLOR;
 
     /**
      * The color that is used to show dead characters.
      */
-    private static final SpriteColor DEAD_COLOR;
+    private static final Color DEAD_COLOR;
 
     /**
      * Light Update status SET light value.
@@ -170,13 +165,8 @@ public final class Char extends Interaction implements RecycleObject,
     private static final int VISIBILITY_ALPHA_MOD = 10;
 
     static {
-        DEAD_COLOR = Graphics.getInstance().getSpriteColor();
-        DEAD_COLOR.set(SpriteColor.COLOR_MAX);
-        DEAD_COLOR.setAlpha(0.45f);
-
-        COMBAT_COLOR = Graphics.getInstance().getSpriteColor();
-        COMBAT_COLOR.set(1.f, 0.6f, 0.6f);
-        COMBAT_COLOR.setAlpha(1.f);
+        DEAD_COLOR = new Color(1.f, 1.f, 1.f, 0.45f);
+        COMBAT_COLOR = new Color(1.f, 0.6f, 0.6f, 1.f);
     }
 
     /**
@@ -194,11 +184,6 @@ public final class Char extends Interaction implements RecycleObject,
      * Current appearance value. Depends on race and gender of the character.
      */
     private int appearance;
-
-    /**
-     * Attack marker on this character.
-     */
-    private Marker attack;
 
     /**
      * Avatar of the character.
@@ -276,7 +261,7 @@ public final class Char extends Interaction implements RecycleObject,
      * Color of the name of the character. default, melee fighting, distance
      * fighting, magic
      */
-    private Colors nameColor;
+    private Color nameColor;
 
     /**
      * Scale of the character (based on its height).
@@ -286,7 +271,7 @@ public final class Char extends Interaction implements RecycleObject,
     /**
      * The custom color of the characters skin.
      */
-    private transient SpriteColor skinColor = null;
+    private transient Color skinColor = null;
 
     /**
      * Type of the character.
@@ -312,8 +297,12 @@ public final class Char extends Interaction implements RecycleObject,
     /**
      * A list of modified colors of the stuff a avatar wears.
      */
-    private transient final SpriteColor[] wearItemsColors =
-        new SpriteColor[AvatarClothManager.GROUP_COUNT];
+    private transient final Color[] wearItemsColors =
+        new Color[AvatarClothManager.GROUP_COUNT];
+    
+    private int hitpoints;
+    private int foodpoints;
+    private int manapoints;
 
     /**
      * Constructor to create a new character.
@@ -366,17 +355,6 @@ public final class Char extends Interaction implements RecycleObject,
     }
 
     /**
-     * Cast a spell on the tile below the character. TODO: cast on the
-     * character, rather then on the tile below
-     * 
-     * @return Reference to the map tile the spell was casted on
-     */
-    @Override
-    public AbstractReference castSpellOn() {
-        return Game.getMap().getMapAt(loc).castSpellOn();
-    }
-
-    /**
      * Create a copy of this character.
      * 
      * @return new character object
@@ -384,25 +362,6 @@ public final class Char extends Interaction implements RecycleObject,
     @Override
     public Char clone() {
         return new Char();
-    }
-
-    /**
-     * Drag a character, in case its next to the player.
-     * 
-     * @param x not in use
-     * @param y not in use
-     * @return Reference to the move character
-     */
-    @Override
-    public AbstractReference dragFrom(final int x, final int y) {
-        // if the char is standing next to player or is player
-        if (Game.getPlayer().getLocation().isNeighbour(loc)) {
-            final CharReference ref = new CharReference();
-            ref.setReferringCharacter(charId);
-            // ref.setSource(this, avatar);
-            return ref;
-        }
-        return null;
     }
 
     /**
@@ -437,29 +396,6 @@ public final class Char extends Interaction implements RecycleObject,
     }
 
     /**
-     * Get the character in case the player is pointing at it.
-     * 
-     * @param x X-Coordinate of the pointer on the game screen
-     * @param y Y-Coordinate of the pointer on the game screen
-     * @return The character or null
-     */
-    @Override
-    public Interactive getComponentAt(final int x, final int y) {
-        if (!visible) {
-            return null;
-        }
-        if (scale < SCALE_MIN) {
-            return null;
-        }
-        final int distance =
-            Math.abs(x - loc.getDcX()) + (Math.abs(y - loc.getDcY()) * 2);
-        if (distance < (MapConstants.TILE_W / 2)) {
-            return this;
-        }
-        return null;
-    }
-
-    /**
      * Get the current direction the character is looking at.
      * 
      * @return the direction value
@@ -486,19 +422,6 @@ public final class Char extends Interaction implements RecycleObject,
     public Location getLocation() {
         return loc;
     }
-
-    /**
-     * Get the context menu for this character.
-     * 
-     * @return The created context menu
-     */
-    // @Override
-    // public ContextMenu getMenu() {
-    // final ContextMenu menu =
-    // MenuFactory.getInstance().getCommand(MenuFactory.MENU_CHAR);
-    // menu.setContext(this);
-    // return menu;
-    // }
 
     /**
      * Get the name of the character.
@@ -574,14 +497,6 @@ public final class Char extends Interaction implements RecycleObject,
     }
 
     /**
-     * Execute a look at on a character.
-     */
-    @Override
-    public void lookAt() {
-        examineChar(LookatCharCmd.LOOKAT_POLITE);
-    }
-
-    /**
      * Move the character to a new position with animation. This function takes
      * absolute coordinates.
      * 
@@ -603,7 +518,7 @@ public final class Char extends Interaction implements RecycleObject,
         updateLight(loc);
 
         // determine general visibility by players
-        setVisible(Game.getPlayer().canSee(this));
+        setVisible(World.getPlayer().canSee(this));
         if (!visible || (avatar == null)) {
             tempLoc.recycle();
             return;
@@ -619,7 +534,7 @@ public final class Char extends Interaction implements RecycleObject,
 
         // find target elevation
         final int fromElevation = elevation;
-        elevation = Game.getMap().getElevationAt(loc);
+        elevation = World.getMap().getElevationAt(loc);
 
         int range = 1;
         if (mode == MOVE_RUN) {
@@ -674,10 +589,10 @@ public final class Char extends Interaction implements RecycleObject,
      */
     public void relistLight() {
         if (lightSrc != null) {
-            Game.getLights().remove(lightSrc);
+            World.getLights().remove(lightSrc);
             LightSource.releaseLight(lightSrc);
             lightSrc = LightSource.createLight(loc, lightValue);
-            Game.getLights().add(lightSrc);
+            World.getLights().add(lightSrc);
         }
     }
 
@@ -707,7 +622,7 @@ public final class Char extends Interaction implements RecycleObject,
      */
     public void resetLight() {
         if (lightSrc != null) {
-            Game.getLights().remove(lightSrc);
+            World.getLights().remove(lightSrc);
             LightSource.releaseLight(lightSrc);
             lightSrc = null;
             lightValue = 0;
@@ -753,7 +668,7 @@ public final class Char extends Interaction implements RecycleObject,
     public void setAppearance(final int newAppearance) {
         appearance = newAppearance;
         resetAnimation();
-        Game.getPeople().updateName(this);
+        World.getPeople().updateName(this);
     }
 
     /**
@@ -792,16 +707,12 @@ public final class Char extends Interaction implements RecycleObject,
         charId = newCharId;
         if (charId > NPC_BASE) {
             type = NPC;
-            setTooltipKey("tooltip.character");
         } else if (charId > MONSTER_BASE) {
             type = MONSTER;
-            setTooltipKey("tooltip.monster");
-        } else if (Game.getPlayer().isPlayer(charId)) {
+        } else if (World.getPlayer().isPlayer(charId)) {
             type = PLAYER;
-            setTooltipKey("tooltip.player");
         } else {
             type = PLAYER;
-            setTooltipKey("tooltip.character");
         }
 
     }
@@ -812,15 +723,11 @@ public final class Char extends Interaction implements RecycleObject,
      * @param slot the slot that shall be changed
      * @param color the color this part shall be displayed in
      */
-    public void setClothColor(final int slot, final SpriteColor color) {
-        if (wearItemsColors[slot] == null) {
-            wearItemsColors[slot] = Graphics.getInstance().getSpriteColor();
-        }
+    public void setClothColor(final int slot, final Color color) {
+        wearItemsColors[slot] = new Color(color);
         if (avatar != null) {
             avatar.changeClothColor(slot, color);
         }
-        wearItemsColors[slot].set(color);
-        wearItemsColors[slot].setAlpha(color.getAlphai());
     }
 
     /**
@@ -834,24 +741,6 @@ public final class Char extends Interaction implements RecycleObject,
     }
 
     /**
-     * Show or hide a hover marker on the tile of the character.
-     * 
-     * @param hover true if the hover shall be shown, false if hidden
-     */
-    @Override
-    public void setHover(final boolean hover) {
-        // if (hover) {
-        // final Marker sel = Marker.create(MarkerFactory.CHAR_SELECT);
-        // sel.setScreenPos(loc, Layers.MARKER);
-        // Gui.getInstance().getManager().showMarker(InputHandler.MARK_MAP,
-        // this, sel);
-        // } else {
-        // Gui.getInstance().getManager().hideMarker(InputHandler.MARK_MAP,
-        // this);
-        // }
-    }
-
-    /**
      * Set the new location of the character.
      * 
      * @param newLoc new location of the character
@@ -862,7 +751,7 @@ public final class Char extends Interaction implements RecycleObject,
             return;
         }
         loc.set(newLoc);
-        elevation = Game.getMap().getElevationAt(loc);
+        elevation = World.getMap().getElevationAt(loc);
         updatePosition(elevation);
     }
 
@@ -923,7 +812,7 @@ public final class Char extends Interaction implements RecycleObject,
         name = name.trim();
 
         if ((avatar != null) && (charId > 0)
-            && !Game.getPlayer().isPlayer(charId)) {
+            && !World.getPlayer().isPlayer(charId)) {
             avatar.setName(name);
         }
     }
@@ -933,7 +822,7 @@ public final class Char extends Interaction implements RecycleObject,
      * 
      * @param color the new color value
      */
-    public void setNameColor(final Colors color) {
+    public void setNameColor(final Color color) {
         nameColor = color;
 
         if (avatar != null) {
@@ -973,7 +862,7 @@ public final class Char extends Interaction implements RecycleObject,
         scale = newScale;
         if (avatar != null) {
             avatar.setScale(newScale);
-            Game.getPeople().updateName(this);
+            World.getPeople().updateName(this);
         }
     }
 
@@ -982,15 +871,11 @@ public final class Char extends Interaction implements RecycleObject,
      * 
      * @param color the color that is used to color the skin
      */
-    public void setSkinColor(final SpriteColor color) {
+    public void setSkinColor(final Color color) {
         if (color == null) {
             skinColor = null;
         } else {
-            if (skinColor == null) {
-                skinColor = Graphics.getInstance().getSpriteColor();
-            }
-            skinColor.set(color);
-            skinColor.setAlpha(color.getAlphai());
+            skinColor = new Color(color);
         }
         if (avatar != null) {
             avatar.changeBaseColor(color);
@@ -1092,7 +977,7 @@ public final class Char extends Interaction implements RecycleObject,
             final int tempLightValue = lightValue;
             resetLight();
             lightSrc = LightSource.createLight(loc, tempLightValue);
-            Game.getLights().add(lightSrc);
+            World.getLights().add(lightSrc);
             lightValue = tempLightValue;
         }
     }
@@ -1106,7 +991,7 @@ public final class Char extends Interaction implements RecycleObject,
     public void updateLight(final Location newLoc) {
         if (lightSrc != null) {
             lightSrc.getLocation().set(newLoc);
-            Game.getLights().refreshLight(lightSrc);
+            World.getLights().refreshLight(lightSrc);
         }
     }
 
@@ -1145,38 +1030,6 @@ public final class Char extends Interaction implements RecycleObject,
     }
 
     /**
-     * Use the item below the character. TODO: use things on characters, use
-     * tile under character instead
-     * 
-     * @return Reference on the maptile with the used item
-     */
-    @Override
-    public AbstractReference useItem() {
-        return Game.getMap().getMapAt(loc).useItem();
-    }
-
-    /**
-     * Handle a change of the mouse wheel on the character.
-     * 
-     * @param delta value the mouse wheel change by
-     */
-    @Override
-    public void wheelIncrement(final int delta) {
-        if (Game.getPlayer().isPlayer(charId)) {
-            if (delta > 0) { // left turn
-                Game.getPlayer()
-                    .getMovementHandler()
-                    .requestTurn(
-                        ((direction + Location.DIR_MOVE8) - 1)
-                            % Location.DIR_MOVE8);
-            } else { // right turn
-                Game.getPlayer().getMovementHandler()
-                    .requestTurn((direction + 1) % Location.DIR_MOVE8);
-            }
-        }
-    }
-
-    /**
      * Update the light source of the character.
      * 
      * @param mode the mode of the update
@@ -1184,14 +1037,14 @@ public final class Char extends Interaction implements RecycleObject,
     protected void updateLight(final int mode) {
         Location lightLoc;
         // different handling for own char
-        final Player player = Game.getPlayer();
+        final Player player = World.getPlayer();
         if ((player != null) && (player.getPlayerId() == charId)) {
             lightLoc = player.getLocation();
         } else {
             lightLoc = loc;
         }
 
-        final MapTile tile = Game.getMap().getMapAt(lightLoc);
+        final MapTile tile = World.getMap().getMapAt(lightLoc);
 
         final Avatar localAvatar = avatar;
         final MapTile localTile = tile;
@@ -1227,11 +1080,6 @@ public final class Char extends Interaction implements RecycleObject,
         if (avatar != null) {
             avatar.setScreenPos(loc.getDcX() + dX, loc.getDcY() + dY + fix,
                 loc.getDcZ() + dZ, Layers.CHARS);
-        }
-
-        if (attack != null) {
-            attack.setScreenPos(loc.getDcX() + dX, loc.getDcY() + dY,
-                loc.getDcZ() + dZ, Layers.MARKER);
         }
     }
 
@@ -1317,5 +1165,29 @@ public final class Char extends Interaction implements RecycleObject,
         avatar.setScale(scale);
         avatar.setAlpha(oldAlpha);
         avatar.show();
+    }
+
+    public int getHitpoints() {
+        return hitpoints;
+    }
+
+    public void setHitpoints(int hitpoints) {
+        this.hitpoints = hitpoints;
+    }
+
+    public int getFoodpoints() {
+        return foodpoints;
+    }
+
+    public void setFoodpoints(int foodpoints) {
+        this.foodpoints = foodpoints;
+    }
+
+    public int getManapoints() {
+        return manapoints;
+    }
+
+    public void setManapoints(int manapoints) {
+        this.manapoints = manapoints;
     }
 }

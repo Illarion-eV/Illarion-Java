@@ -18,9 +18,10 @@
  */
 package illarion.client.graphics;
 
-import illarion.common.util.Location;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
-import illarion.graphics.SpriteColor;
+import illarion.common.util.Location;
 
 /**
  * This class is able to trigger the rendering of the clothes of a avatar. The
@@ -169,7 +170,7 @@ final class AvatarClothRenderer {
     /**
      * The light that is currently set to the clothes.
      */
-    private SpriteColor currentLight;
+    private Color currentLight;
 
     /**
      * The direction if the parent that defines the order that is used to render
@@ -258,7 +259,7 @@ final class AvatarClothRenderer {
      * 
      * @param light the light object that is send to all currently set clothes
      */
-    public void setLight(final SpriteColor light) {
+    public void setLight(final Color light) {
         currentLight = light;
         for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
             if (currentClothes[i] != null) {
@@ -289,7 +290,7 @@ final class AvatarClothRenderer {
      * @param slot the slot that shall be changed
      * @param color the new color that shall be used as base color
      */
-    protected void changeBaseColor(final int slot, final SpriteColor color) {
+    protected void changeBaseColor(final int slot, final Color color) {
         if (currentClothes[slot] != null) {
             currentClothes[slot].changeBaseColor(color);
         }
@@ -311,11 +312,11 @@ final class AvatarClothRenderer {
     /**
      * Render all clothes in the correct order.
      */
-    protected void render() {
+    protected void render(final Graphics g) {
         for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
             final int currentIndex = RENDER_DIR[direction][i];
             if (currentClothes[currentIndex] != null) {
-                currentClothes[currentIndex].draw();
+                currentClothes[currentIndex].draw(g);
             }
         }
     }

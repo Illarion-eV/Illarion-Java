@@ -18,13 +18,15 @@
  */
 package illarion.client.graphics;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+
 import illarion.client.resources.TileFactory;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.util.Location;
 
 import illarion.graphics.Sprite;
-import illarion.graphics.SpriteColor;
 
 /**
  * Created: 20.08.2005 17:39:11
@@ -174,11 +176,11 @@ public class Tile extends AbstractEntity {
      * @return
      */
     @Override
-    public boolean draw() {
-        super.draw();
+    public boolean draw(final Graphics g) {
+        super.draw(g);
 
         if (overlay != null) {
-            overlay.draw();
+            overlay.draw(g);
         }
         return true;
     }
@@ -224,7 +226,7 @@ public class Tile extends AbstractEntity {
     // }
 
     @Override
-    public void setLight(final SpriteColor light) {
+    public void setLight(final Color light) {
         super.setLight(light);
         if (overlay != null) {
             overlay.setLight(light);
@@ -273,8 +275,8 @@ public class Tile extends AbstractEntity {
         if (overlay == null) {
             super.update(delta);
         } else {
-            setAlpha(SpriteColor.COLOR_MAX);
-            overlay.setAlpha(SpriteColor.COLOR_MAX);
+            setAlpha(255);
+            overlay.setAlpha(255);
         }
     }
 

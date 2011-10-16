@@ -31,7 +31,6 @@ import org.apache.log4j.Logger;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import illarion.client.IllaClient;
-import illarion.client.guiNG.GUI;
 
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
@@ -165,10 +164,10 @@ public final class BookFactory implements TableLoaderSink {
             }
             inputstream.close();
 
-            GUI.getInstance().getBook().setBookTitle(title);
-            GUI.getInstance().getBook().setBookText(finalBookText);
-            GUI.getInstance().getBook().setVisible(true);
-            GUI.getInstance().getBookWindow().setVisible(true);
+//            GUI.getInstance().getBook().setBookTitle(title);
+//            GUI.getInstance().getBook().setBookText(finalBookText);
+//            GUI.getInstance().getBook().setVisible(true);
+//            GUI.getInstance().getBookWindow().setVisible(true);
         } catch (final IOException ex) {
             tb = TextBuilder.newInstance();
             tb.append("Could not load book ");

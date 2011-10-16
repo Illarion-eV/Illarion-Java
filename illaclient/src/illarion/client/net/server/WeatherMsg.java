@@ -22,8 +22,8 @@ import java.io.IOException;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.world.Game;
 import illarion.client.world.Weather;
+import illarion.client.world.World;
 
 /**
  * Servermessage: Update of the current weather (
@@ -121,7 +121,7 @@ public final class WeatherMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        final Weather weather = Game.getWeather();
+        final Weather weather = World.getWeather();
         weather.setFog(fog);
         weather.setLightning(lightning);
         weather.setPrecipitation(precType, precipitation);
