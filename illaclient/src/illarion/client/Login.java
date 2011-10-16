@@ -149,6 +149,9 @@ public final class Login {
             queryBuilder.append(URLEncoder.encode(getPassword(), "UTF-8"));
 
             final String query = queryBuilder.toString();
+            
+            conn.connect();
+            
             final OutputStreamWriter output =
                 new OutputStreamWriter(conn.getOutputStream());
 

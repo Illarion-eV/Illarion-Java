@@ -67,6 +67,6 @@ public class RenderFontIllarion implements RenderFont {
     }
     
     public void drawText(final int x, final int y, final String line, final float size, final Color color) {
-        font.renderString(null, x, y, color, size);
+        font.renderString(line, x, y, color, size);
     }
 }

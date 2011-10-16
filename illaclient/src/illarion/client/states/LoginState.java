@@ -41,6 +41,8 @@ public class LoginState extends NiftyGameState {
         getNifty().addXml("illarion/client/gui/xml/charselect.xml");
         getNifty().addXml("illarion/client/gui/xml/options.xml");
         
+        getNifty().gotoScreen("login");
+        
         super.init(container, game);
     }
 }

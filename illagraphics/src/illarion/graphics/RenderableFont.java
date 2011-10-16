@@ -52,6 +52,7 @@ public final class RenderableFont {
         javaFont = font;
         
         internalFont.addAsciiGlyphs();
+        internalFont.addGlyphs("•");
         internalFont.getEffects().add(new ColorEffect());
         try {
             internalFont.loadGlyphs();
