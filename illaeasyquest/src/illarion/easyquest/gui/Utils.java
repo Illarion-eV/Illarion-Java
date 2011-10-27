@@ -164,7 +164,10 @@ public final class Utils {
         final int fileReturn =
             fileDiag.showSaveDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
-            final File targetFile = fileDiag.getSelectedFile();
+            File targetFile = fileDiag.getSelectedFile();
+            if (!targetFile.getName().endsWith(".quest")) {
+            	targetFile = new File(targetFile.getParent(),targetFile.getName()+".quest");
+            }
             saveEasyQuestImpl(quest, targetFile);
             editor.setQuestFile(targetFile);
             MainFrame.getInstance().setTabTitle(editor, targetFile.getName());
