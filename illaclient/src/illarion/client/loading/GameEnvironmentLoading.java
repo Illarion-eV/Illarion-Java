@@ -1,5 +1,6 @@
 package illarion.client.loading;
 
+import illarion.client.world.GameFactory;
 import illarion.client.world.World;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ public final class GameEnvironmentLoading implements DeferredResource {
      */
     @Override
     public void load() throws IOException {
+        GameFactory.getInstance().init();
         World.initMissing();
     }
 

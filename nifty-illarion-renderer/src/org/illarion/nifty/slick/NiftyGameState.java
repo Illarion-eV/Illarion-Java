@@ -262,11 +262,7 @@ public class NiftyGameState extends BasicGameState {
     public void enter(final GameContainer container, final StateBasedGame game)
         throws SlickException {
         SlickCallable.enterSafeBlock();
-        if (nifty.getCurrentScreen().isNull()) {
-            nifty.gotoScreen("start");
-        } else {
-            nifty.getCurrentScreen().startScreen();
-        }
+
         mouseDown = false;
         SlickCallable.leaveSafeBlock();
     }

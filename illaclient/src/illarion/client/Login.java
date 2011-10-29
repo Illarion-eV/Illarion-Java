@@ -130,6 +130,7 @@ public final class Login {
     }
     
     public void requestCharacterList() {
+        lastError = -1;
         final String serverURI = Servers.testserver.getServerHost();
         try {
 

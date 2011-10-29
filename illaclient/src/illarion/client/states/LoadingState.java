@@ -48,6 +48,8 @@ public class LoadingState extends NiftyGameState {
         controller = new LoadScreenController(game);
         fromXml("illarion/client/gui/xml/loading.xml", controller);
         
+        gotoScreen("loading");
+        
         Loading.enlistMissingComponents();
     }
 
