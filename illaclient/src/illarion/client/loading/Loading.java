@@ -20,9 +20,10 @@ public final class Loading {
     private static boolean loadingDone = false;
     
     public static void enlistMissingComponents() {
-        if (loadingDone) {
-            TextureLoader.getInstance().preloadAtlasTextures();
+        if (!loadingDone) {
+            while (!TextureLoader.getInstance().preloadAtlasTextures()) {};
             LoadingList.get().add(new ResourceTableLoading());
+            loadingDone = true;
         }
         
         LoadingList.get().add(new GameEnvironmentLoading());

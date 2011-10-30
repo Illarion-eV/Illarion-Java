@@ -458,7 +458,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
             return true;
         }
 
-        localLight.a = getAlpha();
+        localLight.a = getAlpha() / 255.f;
         
         final int renderLocX = displayX;
         final int renderLocY = displayY;

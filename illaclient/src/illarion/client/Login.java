@@ -304,7 +304,7 @@ public final class Login {
         loginCmd.send();
         
         final MapDimensionCmd mapDimCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_MAPDIMENSION, MapDimensionCmd.class);
-        mapDimCmd.setMapDimensions(MapDimensions.getInstance().getStripesWidth(), MapDimensions.getInstance().getStripesHeight());
+        mapDimCmd.setMapDimensions(MapDimensions.getInstance().getStripesWidth() >> 2, MapDimensions.getInstance().getStripesHeight() >> 2);
         mapDimCmd.send();
         
         return true;

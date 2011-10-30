@@ -155,6 +155,10 @@ public final class World {
         synchronized (INSTANCE) {
             StoppableStorage.getInstance().shutdown();
             
+            if (INSTANCE.net != null) {
+                INSTANCE.net.disconnect();
+            }
+            
             INSTANCE.chatHandler = null;
             INSTANCE.aniManager = null;
             INSTANCE.map = null;
@@ -211,6 +215,7 @@ public final class World {
         if (lights == null) {
             synchronized (this) {
                 lights = new LightTracer(getMap());
+                lights.start();
             }
         }
     }

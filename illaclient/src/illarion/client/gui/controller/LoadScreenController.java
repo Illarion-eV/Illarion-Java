@@ -31,14 +31,21 @@ public final class LoadScreenController implements ScreenController {
         setProgress(0.f);
     }
     
+    private boolean loadingDoneCalled = false;
+    
+    public void loadingDone() {
+        if (loadingDoneCalled) {
+            return;
+        }
+        loadingDoneCalled = true;
+        
+        Login.getInstance().login();
+        
+        game.enterState(illarion.client.Game.STATE_PLAYING, new FadeOutTransition(), new FadeInTransition());
+    }
+    
     public void setProgress(final float progressValue) {
     	progress.setProgress(progressValue);
-    	if (progressValue >= 0.99f) {
-
-    	    Login.getInstance().login();
-    	    
-    	    game.enterState(illarion.client.Game.STATE_PLAYING, new FadeOutTransition(), new FadeInTransition());
-    	}
     }
 
     @Override

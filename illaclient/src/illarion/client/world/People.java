@@ -32,6 +32,7 @@ import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.procedure.TObjectProcedure;
 
 import illarion.client.IllaClient;
+import illarion.client.Login;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.RequestAppearanceCmd;
@@ -40,6 +41,7 @@ import illarion.client.util.NamesTable;
 
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
+import illarion.common.util.DirectoryManager;
 import illarion.common.util.Location;
 import illarion.common.util.Reusable;
 import illarion.common.util.Stoppable;
@@ -462,10 +464,11 @@ public final class People implements Stoppable, TableLoaderSink,
         checkVisibilityHelper = new CheckVisibilityProcedure();
         updateNameHelper = new UpdateNameProcedure(this);
         
+        final File playerDir = new File(DirectoryManager.getInstance().getUserDirectory(), Login.getInstance().getSelectedCharacterName());
         final File nameTable =
-            new File(World.getPlayer().getPath(), "names.tbl");
+            new File(playerDir, "names.tbl");
         final File nameTableNew =
-            new File(World.getPlayer().getPath(), "names.dat");
+            new File(playerDir, "names.dat");
         names = new NamesTable(nameTableNew);
 
         if (nameTable.exists() && nameTable.isFile()) {

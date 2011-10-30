@@ -18,6 +18,7 @@
  */
 package illarion.client.util;
 
+import illarion.client.Login;
 import illarion.client.world.World;
 
 import java.io.File;
@@ -411,7 +412,7 @@ public final class NamesTable {
         }
 
         final byte[] keyName = new byte[DESKeySpec.DES_KEY_LEN];
-        final String charName = World.getPlayer().getCharacter().getName();
+        final String charName = Login.getInstance().getSelectedCharacterName();
         byte[] convString;
         try {
             convString = charName.getBytes("ISO-8859-1");
@@ -464,7 +465,7 @@ public final class NamesTable {
 
             String charname = decodeString(buffer);
 
-            if (charname.equals(World.getPlayer().getCharacter().getName())) {
+            if (charname.equals(charName)) {
                 final int count = decodeInteger(buffer);
                 int i = 0;
                 int charID = 0;

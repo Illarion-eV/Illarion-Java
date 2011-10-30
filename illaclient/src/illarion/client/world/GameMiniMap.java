@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.SlickCallable;
 
 import illarion.client.graphics.Tile;
 import illarion.client.net.server.TileUpdate;
@@ -233,15 +234,6 @@ public final class GameMiniMap {
                 * BYTES_PER_TILE);
         mapData.order(ByteOrder.nativeOrder());
         loadedMap = false;
-        
-        try {
-            worldmapTexture = new Image(WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
-            worldmap = new Sprite(1);
-            worldmap.addImage(worldmapTexture);
-        } catch (SlickException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
 
         //minimap = Graphics.getInstance().getSprite(1);
         //minimap.addTexture(minimapTexture);
@@ -412,6 +404,16 @@ public final class GameMiniMap {
      * of the whole map.
      */
     public void render() {
+        if (worldmapTexture == null) {
+            try {
+                worldmapTexture = new Image(WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
+            worldmap = new Sprite(1);
+            worldmap.addImage(worldmapTexture);
+            } catch (SlickException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
         if (!loadedMap || loadingMap) {
             return;
         }

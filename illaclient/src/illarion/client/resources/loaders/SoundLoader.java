@@ -53,6 +53,8 @@ public final class SoundLoader extends ResourceLoader<IdWrapper<Sound> > impleme
      * The logger that is used to report error messages.
      */
     private final Logger logger = Logger.getLogger(ItemLoader.class);
+    
+    private static final String SOUND_PATH = "data/sounds/";
 
     /**
      * Trigger the loading sequence for this loader.
@@ -79,7 +81,7 @@ public final class SoundLoader extends ResourceLoader<IdWrapper<Sound> > impleme
         final String filename = loader.getString(TB_NAME);
 
         try {
-            getTargetFactory().storeResource(new IdWrapper<Sound>(clipID, new Sound(filename)));
+            getTargetFactory().storeResource(new IdWrapper<Sound>(clipID, new Sound(SOUND_PATH + filename)));
         } catch (final IllegalStateException ex) {
             logger.error("Failed adding sound to internal factory. ID: "
                 + Integer.toString(clipID) + " - Filename: " + filename);

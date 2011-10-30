@@ -321,6 +321,10 @@ public class GameMapProcessor extends Thread implements
      * @return <code>true</code> in case the tile was clipped away
      */
     private boolean checkClipping(final MapTile tile, final long key) {
+        if (!World.getPlayer().hasValidLocation()) {
+            return false;
+        }
+        
         final Location playerLoc = World.getPlayer().getLocation();
         final Location tileLoc = tile.getLocation();
 

@@ -284,6 +284,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<fileset dir="${native}/win32">
 				<include name="lwjgl.dll" />
 				<include name="OpenAL32.dll" />
+                <include name="jinput-dx8.dll" />
+                <include name="jinput-raw.dll" />
 			</fileset>
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
@@ -298,6 +300,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<fileset dir="${native}/win64">
 				<include name="lwjgl64.dll" />
 				<include name="OpenAL64.dll" />
+                <include name="jinput-dx8_64.dll" />
+                <include name="jinput-raw_64.dll" />
 			</fileset>
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
@@ -312,6 +316,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<fileset dir="${native}/linux32">
 				<include name="liblwjgl.so" />
 				<include name="libopenal.so" />
+                <include name="libjinput-linux.so" />
 			</fileset>
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
@@ -326,6 +331,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			<fileset dir="${native}/linux64">
 				<include name="liblwjgl64.so" />
 				<include name="libopenal64.so" />
+                <include name="libjinput-linux64.so" />
 			</fileset>
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
@@ -339,7 +345,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<jar jarfile="${common}/lwjgl-natives-macosx-universal.jar">
 			<fileset dir="${native}/macosx">
 				<include name="liblwjgl.jnilib" />
-				<include name="openal.dylib" />
+				<include name="openal.jnilib" />
+                <include name="libjinput-osx.so" />
 			</fileset>
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />

@@ -206,7 +206,7 @@ public final class Sprite {
     protected final int getAlignOffsetY() {
         if (vAlignUsed == VAlign.middle) {
             return -(getHeight() >> 1);
-        } else if (vAlignUsed == VAlign.top) {
+        } else if (vAlignUsed == VAlign.bottom) {
             return -getHeight();
         }
         return 0;
@@ -282,9 +282,9 @@ public final class Sprite {
         int retOffset = (int) (offsetX * scale);
 
         if (hAlignUsed == HAlign.center) {
-            retOffset += (-getWidth() * scale) / 2.f;
-        } else if (hAlignUsed == HAlign.right) {
-            retOffset += -getWidth() * scale;
+            retOffset += (getWidth() * scale) / 2.f;
+        } else if (hAlignUsed == HAlign.left) {
+            retOffset += getWidth() * scale;
         }
         return retOffset;
     }
@@ -300,9 +300,9 @@ public final class Sprite {
         int retOffset = (int) (offsetY * scale);
 
         if (vAlignUsed == VAlign.middle) {
-            retOffset += (-getHeight() * scale) / 2;
-        } else if (vAlignUsed == VAlign.top) {
-            retOffset += -getHeight() * scale;
+            retOffset -= (getHeight() * scale) / 2;
+        } else if (vAlignUsed == VAlign.bottom) {
+            retOffset -= getHeight() * scale;
         }
         return retOffset;
     }
@@ -521,10 +521,11 @@ public final class Sprite {
         if (isMirrored()) {
             g.scale(-1.f, 1.f);
         }
-        
-        g.rotate(x, y, getRotation());
 
-        g.drawImage(texture, x + getAlignOffsetX(), y + getAlignOffsetY(), getColor(color));
+        texture.setRotation(getRotation());
+        texture.setCenterOfRotation(getAlignOffsetX(), getAlignOffsetY());
+        
+        g.drawImage(texture, x + getAlignOffsetX() + getOffsetX(), y + getAlignOffsetY() + getOffsetY(), getColor(color));
         
         g.popTransform();
         reportDrawTexture();

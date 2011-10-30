@@ -12,6 +12,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/illacommon/lib/trove/trove.jar" sourcepath="/illacommon/lib/trove/trove-src.zip"/>
-	<classpathentry kind="lib" path="/illacommon/lib/slick/slick.jar" sourcepath="/illacommon/lib/slick/slick-sources.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Slick"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

@@ -192,6 +192,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<patternset id="lwjgl.pattern">
 		<include name="lwjgl.jar" />
 		<include name="lwjgl*.jar" />
+        <include name="AppleJavaExtensions.jar" />
+        <include name="jinput.jar" />
 		<exclude name="*natives*" />
 	</patternset>
 	<fileset id="lwjgl" dir="${lwjgl.dir}">

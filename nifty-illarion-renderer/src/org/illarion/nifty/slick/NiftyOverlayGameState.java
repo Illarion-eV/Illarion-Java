@@ -109,12 +109,17 @@ public abstract class NiftyOverlayGameState extends BasicGameState implements Ni
    protected void initNifty() {
       initNifty(new RenderDeviceIllarion(), new SlickSoundDevice());
    }
+   
+   private RenderDeviceIllarion slickBasedRenderDevice;
 
    /**
     * Initialize Nifty. 
     */
    protected void initNifty(RenderDevice renderDevice, SoundDevice soundDevice) {
 		// activate Nifty
+       if (renderDevice instanceof RenderDeviceIllarion) {
+           slickBasedRenderDevice = (RenderDeviceIllarion) renderDevice;
+       }
 		nifty = new Nifty(renderDevice, soundDevice, overlayInputSystem, new TimeProvider());
 		}
 
@@ -223,6 +228,9 @@ public abstract class NiftyOverlayGameState extends BasicGameState implements Ni
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
       if (showOverlay && nifty != null) {
+          if (slickBasedRenderDevice != null) {
+              slickBasedRenderDevice.updateGraphicInstance(g);
+          }
 			SlickCallable.enterSafeBlock();
 			nifty.render(false);
 			SlickCallable.leaveSafeBlock();

@@ -182,7 +182,7 @@ public final class Player implements ConfigChangeListener {
 
         cfg = new ConfigSystem(new File(path, "Player.xml.gz"));
         character.setName(name);
-        character.setVisible(Char.VISIBILITY_MAX);
+        //character.setVisible(Char.VISIBILITY_MAX);
         World.getPeople().setPlayerCharacter(character);
 
         // followed = null;
@@ -356,6 +356,7 @@ public final class Player implements ConfigChangeListener {
      * @param newLoc new location of the character on the map
      */
     public void setLocation(final Location newLoc) {
+        validLocation = true;
         if (loc.equals(newLoc)) {
             return;
         }
@@ -373,6 +374,12 @@ public final class Player implements ConfigChangeListener {
         } else {
             World.getPeople().clipCharacters();
         }
+    }
+    
+    private boolean validLocation = false;
+    
+    public boolean hasValidLocation() {
+        return validLocation;
     }
 
     /**

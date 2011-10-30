@@ -185,7 +185,12 @@ public final class SpriteBuffer {
                 name));
         } else {
             nameBuilder = TextBuilder.newInstance();
+            nameBuilder.append(name);
+            nameBuilder.append('-');
+            final int targetLength = nameBuilder.length();
             for (int i = 0; i < frames; ++i) {
+                nameBuilder.setLength(targetLength);
+                nameBuilder.append(i);
                 retSprite.addImage(TextureLoader.getInstance().getTexture(
                     path, nameBuilder.toString()));
             }

@@ -70,7 +70,7 @@ public class LoadingState extends NiftyGameState {
         if (remaining > 0) {
             controller.setProgress((float) (total - remaining) / total);
         } else {
-            controller.setProgress(1.f);
+            controller.loadingDone();
         }
         
         super.render(container, game, g);

@@ -40,6 +40,7 @@ import illarion.client.net.client.AbstractCommand;
 import illarion.client.net.server.AbstractReply;
 
 import illarion.common.util.Scheduler;
+import illarion.common.util.Timer;
 
 /**
  * Network communication interface. All activities like sending and transmitting
@@ -217,6 +218,8 @@ public final class NetComm {
         TextBuilder.recycle(builderText);
     }
 
+    private boolean connectCalled = false;
+
     /**
      * Establish a connection with the server.
      * 
@@ -224,6 +227,7 @@ public final class NetComm {
      */
     @SuppressWarnings("nls")
     public boolean connect() {
+        connectCalled = true;
         try {
             final Servers usedServer =
                 IllaClient.getInstance().getUsedServer();
@@ -261,21 +265,26 @@ public final class NetComm {
             inputThread.start();
             messageHandler.start();
 
-            Scheduler.getInstance().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    final AbstractCommand cmd =
-                        CommandFactory.getInstance().getCommand(
-                            CommandList.CMD_KEEPALIVE);
-                    sendCommand(cmd);
-                }
-            }, INITIAL_DELAY, KEEP_ALIVE_DELAY);
+            keepAliveTimer =
+                new Timer(INITIAL_DELAY, KEEP_ALIVE_DELAY, new Runnable() {
+                    @Override
+                    public void run() {
+                        final AbstractCommand cmd =
+                            CommandFactory.getInstance().getCommand(
+                                CommandList.CMD_KEEPALIVE);
+                        sendCommand(cmd);
+                    }
+                });
+            keepAliveTimer.setRepeats(true);
+            keepAliveTimer.start();
         } catch (final IOException e) {
             LOGGER.fatal("Connection error");
             return false;
         }
         return true;
     }
+
+    private Timer keepAliveTimer;
 
     /**
      * Disconnect the client-server connection and shut the socket along with
@@ -284,6 +293,10 @@ public final class NetComm {
     @SuppressWarnings("nls")
     public void disconnect() {
         try {
+            if (keepAliveTimer != null) {
+                keepAliveTimer.stop();
+                keepAliveTimer = null;
+            }
             // stop threads
             if (sender != null) {
                 sender.setRunning(false);

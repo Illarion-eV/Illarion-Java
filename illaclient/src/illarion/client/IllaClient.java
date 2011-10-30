@@ -35,6 +35,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.renderer.Renderer;
 
 import illarion.client.crash.DefaultCrashHandler;
 import illarion.client.net.CommandFactory;
@@ -169,6 +170,8 @@ public final class IllaClient {
         initLogfiles();
         
         CrashReporter.getInstance().setConfig(getCfg());
+
+        Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
         
         game = new illarion.client.Game();
         
