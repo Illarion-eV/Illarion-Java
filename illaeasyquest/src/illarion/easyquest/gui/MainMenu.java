@@ -20,9 +20,12 @@ package illarion.easyquest.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
+import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryFooter;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
+import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntrySecondary;
 import org.pushingpixels.flamingo.api.common.JCommandButton.CommandButtonKind;
 
 import illarion.easyquest.Lang;
@@ -54,6 +57,38 @@ final class MainMenu extends RibbonApplicationMenu {
                         Utils.selectAndOpenQuest();
                     }
                 }, CommandButtonKind.ACTION_ONLY);
+        
+        final File[] oldFiles = Config.getInstance().getLastOpenedFiles();
+        final RibbonApplicationMenuEntrySecondary[] workingEntries =
+            new RibbonApplicationMenuEntrySecondary[oldFiles.length];
+        int entryIndex = 0;
+        for (final File openFile : oldFiles) {
+            if (openFile == null) {
+                continue;
+            }
+            workingEntries[entryIndex] =
+                new RibbonApplicationMenuEntrySecondary(
+                    Utils.getResizableIconFromResource("source.png"),
+                    openFile.getName(), new ActionListener() {
+                        private final File fileToOpen = openFile;
+
+                        @Override
+                        public void actionPerformed(final ActionEvent e) {
+                            Utils.openQuest(fileToOpen);
+                        }
+
+                    }, CommandButtonKind.ACTION_ONLY);
+            entryIndex++;
+        }
+
+        if (entryIndex > 0) {
+            final RibbonApplicationMenuEntrySecondary[] entries =
+                new RibbonApplicationMenuEntrySecondary[entryIndex];
+            System.arraycopy(workingEntries, 0, entries, 0, entryIndex);
+            openQuest.addSecondaryMenuGroup(
+                Lang.getMsg(getClass(), "oldFilesHead"), entries);
+        }
+        
         addMenuEntry(openQuest);
 
         addMenuSeparator();
@@ -123,5 +158,17 @@ final class MainMenu extends RibbonApplicationMenu {
                     }
                 }, CommandButtonKind.ACTION_ONLY);
         addMenuEntry(exitButton);
+        
+        final RibbonApplicationMenuEntryFooter settings =
+            new RibbonApplicationMenuEntryFooter(
+                Utils.getResizableIconFromResource("configure.png"),
+                Lang.getMsg(getClass(), "settingsButton"),
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
+                        Config.getInstance().createDialog().show();
+                    }
+                });
+        addFooterEntry(settings);
     }
 }

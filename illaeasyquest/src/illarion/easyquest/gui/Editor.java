@@ -39,6 +39,7 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxUndoManager;
 import com.mxgraph.util.mxUndoableEdit;
 import com.mxgraph.util.mxUndoableEdit.mxUndoableChange;
@@ -73,6 +74,8 @@ public final class Editor extends mxGraphComponent {
     
     private boolean savedSinceLastChange = false;
     
+    private int questID = 10000;
+    
     @SuppressWarnings("unused")
 	private mxKeyboardHandler keyboardHandler;
     @SuppressWarnings("unused")
@@ -91,6 +94,17 @@ public final class Editor extends mxGraphComponent {
 
     Editor(Graph graph) {
         super(graph);
+        
+        mxCell root = (mxCell)graph.getModel().getRoot();
+        Object value = root.getValue();
+        if (value != null) {
+        	String txt = value.toString();
+        	try {
+        		questID = Integer.parseInt(txt);
+        	} catch (NumberFormatException e) {
+        	}
+        }
+        
         
         getConnectionHandler().getMarker().setHotspot(0.5f);
         
@@ -127,10 +141,14 @@ public final class Editor extends mxGraphComponent {
 		undoManager.addListener(mxEvent.UNDO, undoHandler);
 		undoManager.addListener(mxEvent.REDO, undoHandler);
         
+		final Editor editor = this;
+		
         getGraphControl().addMouseListener(new MouseAdapter()
 		{
 		    public void mouseClicked(MouseEvent e) {
-		        if (e.getClickCount() == 2) {
+		        if (e.getClickCount() == 2 ||
+		        		(e.getClickCount() == 1 && 
+		        		MainFrame.getInstance().getCreateType() == MainFrame.CREATE_STATUS)) {
 		            Object cell = getCellAt(e.getX(), e.getY());
 			        if (cell == null) {
 			            Object parent = g.getDefaultParent();
@@ -141,6 +159,24 @@ public final class Editor extends mxGraphComponent {
                             status.setStart(false);
                             g.insertVertex(parent, null, status, e.getX()-60, e.getY()-15, 120,
                             30);
+                        } finally {
+                            g.getModel().endUpdate();
+                        }
+                        e.consume();
+			        }
+			    } else if (e.getClickCount() == 1 && 
+			    		MainFrame.getInstance().getCreateType() == MainFrame.CREATE_TRIGGER) {
+			    	Object cell = getCellAt(e.getX(), e.getY());
+			        if (cell == null) {
+			            Object parent = g.getDefaultParent();
+			            g.getModel().beginUpdate();
+                        try {
+                            Trigger trigger = new Trigger();
+                            trigger.setName("New Quest Trigger");
+                            mxCell edge = (mxCell)g.insertEdge(parent, null, trigger, null, null);
+                            edge.getGeometry().setSourcePoint(new mxPoint(e.getX()-60, e.getY()-15));
+                            edge.getGeometry().setTargetPoint(new mxPoint(e.getX()+60, e.getY()+15));
+                            editor.labelChanged(edge, trigger, null);
                         } finally {
                             g.getModel().endUpdate();
                         }
@@ -177,6 +213,14 @@ public final class Editor extends mxGraphComponent {
 		return undoManager;
 	}
     
+    public int getQuestID() {
+    	return questID;
+    }
+    
+    public void setQuestID(int questID) {
+    	this.questID = questID;
+    }
+    
     public File getQuestFile() {
         return questFile;
     }
@@ -212,6 +256,14 @@ public final class Editor extends mxGraphComponent {
     }
 
     public String getQuestXML() {
+    	getGraph().getModel().beginUpdate();
+    	try {
+    		mxCell root = (mxCell)getGraph().getModel().getRoot();
+    		root.setValue(questID);
+    	} finally {
+    		getGraph().getModel().endUpdate();
+    	}
+    	
         mxCodec codec = new mxCodec();
         return mxUtils.getXml(codec.encode(getGraph().getModel()));
     }
@@ -312,7 +364,7 @@ public final class Editor extends mxGraphComponent {
             }
             if (conditionCode.isEmpty())
             {
-            	conditionCode = "true";
+            	conditionCode = "true\n";
             }
             
             String t = "";
@@ -323,7 +375,7 @@ public final class Editor extends mxGraphComponent {
             t = t + template.getHeader()
                   + "module(\"questsystem." + questName + "." + scriptName + "\", package.seeall)" + "\n"
                   + "\n"
-                  + "local QUEST_NUMBER = " + "10000" + "\n" // TODO: Get quest number from somewhere
+                  + "local QUEST_NUMBER = " + questID + "\n"
                   + "local PRECONDITION_QUESTSTATE = " + sourceId + "\n"
                   + "local POSTCONDITION_QUESTSTATE = " + targetId + "\n"
                   + "\n";

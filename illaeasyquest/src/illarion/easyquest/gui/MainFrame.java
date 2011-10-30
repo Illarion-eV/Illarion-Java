@@ -22,6 +22,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 
 import javax.swing.JPanel;
@@ -30,6 +32,7 @@ import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
@@ -43,6 +46,11 @@ import illarion.easyquest.Lang;
 @SuppressWarnings("serial")
 public class MainFrame extends JRibbonFrame
 {
+	public static final int CREATE_NOTHING = 0;
+	public static final int CREATE_STATUS = 1;
+	public static final int CREATE_TRIGGER = 2;
+	
+	private int createType;
     
     private final VetoableTabCloseListener editorTabListener =
         new VetoableTabCloseListener() {
@@ -104,14 +112,18 @@ public class MainFrame extends JRibbonFrame
 	{
 		super("easyQuest Editor");
 		
+		createType = CREATE_NOTHING;
+		
 		setApplicationIcon(Utils
             .getResizableIconFromResource("easyquest.png"));
 		
-		@SuppressWarnings("unused")
 		final RibbonTask graphTask =
-            new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskQuest"),
-                new ClipboardBand(), new GraphBand());
-        // getRibbon().addTask(graphTask);
+            new RibbonTask(
+            	Lang.getMsg(getClass(), "ribbonTaskQuest"),
+                new ClipboardBand(),
+            	new GraphBand()
+            );
+        getRibbon().addTask(graphTask);
 
         getRibbon().setApplicationMenu(new MainMenu());
 
@@ -163,6 +175,47 @@ public class MainFrame extends JRibbonFrame
         getContentPane().add(rootPanel);
         
         pack();
+        
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowListener() {
+
+            @Override
+            public void windowActivated(final WindowEvent e) {
+                // nothing
+            }
+
+            @Override
+            public void windowClosed(final WindowEvent e) {
+                MainFrame.getInstance().dispose();
+            }
+
+            @Override
+            public void windowClosing(final WindowEvent e) {
+                MainFrame.getInstance().closeWindow();
+            }
+
+            @Override
+            public void windowDeactivated(final WindowEvent e) {
+                // nothing
+            }
+
+            @Override
+            public void windowDeiconified(final WindowEvent e) {
+                // nothing
+            }
+
+            @Override
+            public void windowIconified(final WindowEvent e) {
+                // nothing
+            }
+
+            @Override
+            public void windowOpened(final WindowEvent e) {
+                // nothing
+            }
+        });
+        
+        validate();
 		
 		if (getOpenTabs() == 0) {
             addNewQuest();
@@ -171,6 +224,8 @@ public class MainFrame extends JRibbonFrame
 
 	public static void main(String[] args)
 	{
+		Config.getInstance().init();
+		
 	    JRibbonFrame.setDefaultLookAndFeelDecorated(true);
 	    JDialog.setDefaultLookAndFeelDecorated(true);
 	    
@@ -190,7 +245,7 @@ public class MainFrame extends JRibbonFrame
         });
 	}
 
-    protected static MainFrame getInstance() {
+    public static MainFrame getInstance() {
         return instance;
     }
     
@@ -203,9 +258,12 @@ public class MainFrame extends JRibbonFrame
     }
 
     protected void closeWindow() {
-
+    	//Config.getInstance().setOldFiles(fileList);
+    	
         setVisible(false);
         dispose();
+        
+        Config.getInstance().save();
 
         System.exit(0);
     }
@@ -229,7 +287,7 @@ public class MainFrame extends JRibbonFrame
         tabbedEditorArea.setSelectedIndex(tabbedEditorArea.getTabCount() - 1);
         return editor;
     }
-    protected Editor addNewQuest() {
+    public Editor addNewQuest() {
         return addNewQuest("");
     }
     
@@ -266,5 +324,13 @@ public class MainFrame extends JRibbonFrame
 
     private void setTabTitle(final int index, final String title) {
         tabbedEditorArea.setTitleAt(index, title);
+    }
+    
+    public void setCreateType(int createType) {
+    	this.createType = createType;
+    }
+    
+    public int getCreateType() {
+    	return createType;
     }
 }
