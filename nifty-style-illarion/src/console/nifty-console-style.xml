@@ -43,7 +43,7 @@
     </effect>
   </style>
   <style id="nifty-console-textfield#text">
-    <attributes font="textfont" selectionColor="#f00f" visibleToMouse="false" align="left" textHAlign="left" textVAlign="center" valign="center"/>
+    <attributes font="textFont" selectionColor="#f00f" visibleToMouse="false" align="left" textHAlign="left" textVAlign="center" valign="center"/>
   </style>
   <style id="nifty-console-textfield#cursor-panel">
     <attributes childLayout="absolute" />

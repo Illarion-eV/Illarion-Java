@@ -21,13 +21,24 @@ package illarion.graphics.common;
 import illarion.graphics.RenderableFont;
 
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.font.effects.ColorEffect;
+import org.newdawn.slick.util.ResourceLoader;
+
+import de.lessvoid.nifty.slick2d.render.font.SlickLoadFontException;
+import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
+import de.lessvoid.nifty.slick2d.render.font.UnicodeSlickRenderFont;
+import de.lessvoid.nifty.slick2d.render.font.loader.SlickRenderFontLoader;
 
 /**
  * Class to load Fonts for the usage as OpenGL Font.
@@ -36,7 +47,7 @@ import org.apache.log4j.Logger;
  * @version 2.00
  * @since 2.00
  */
-public final class FontLoader {
+public final class FontLoader implements SlickRenderFontLoader {
     public static enum Fonts {
         menu("menuFont", "BlackChancery", 24.f, "normal"), small("smallFont",
             "Ubuntu", 14.f, "normal"), text("textFont", "Ubuntu", 16.f,
@@ -127,9 +138,9 @@ public final class FontLoader {
      */
     private FontLoader() {
         fonts = new FastMap<Fonts, RenderableFont>(3);
-        fonts.put(Fonts.menu, loadFont(Fonts.menu));
-        fonts.put(Fonts.small, loadFont(Fonts.small));
-        fonts.put(Fonts.text, loadFont(Fonts.text));
+//        fonts.put(Fonts.menu, loadFont(Fonts.menu));
+//        fonts.put(Fonts.small, loadFont(Fonts.small));
+//        fonts.put(Fonts.text, loadFont(Fonts.text));
     }
 
     /**
@@ -234,5 +245,35 @@ public final class FontLoader {
             LOGGER.debug("Failed to load TTF Font:" + font.getFontTTFName());
         }
         return null;
+    }
+
+    @Override
+    public SlickRenderFont loadFont(final Graphics g, final String filename)
+        throws SlickLoadFontException {
+        final Fonts font = toFontEnum(filename);
+        
+        try {
+            Font javaFont = Font.createFont(
+                Font.TRUETYPE_FONT,
+                ResourceLoader.getResourceAsStream(FONT_ROOT + font.getFontTTFName()));
+            
+            if (font.getFontStyle().equals("normal")) {
+                javaFont = javaFont.deriveFont(Font.PLAIN, font.getFontSize());
+            } else if (font.getFontStyle().equals("italic")) {
+                javaFont =
+                    javaFont.deriveFont(Font.ITALIC, font.getFontSize());
+            } else if (font.getFontStyle().equals("bold")) {
+                javaFont = javaFont.deriveFont(Font.BOLD, font.getFontSize());
+            }
+            
+            UnicodeFont uniFont = new UnicodeFont(javaFont);
+            uniFont.addAsciiGlyphs();
+            uniFont.addGlyphs("•");
+            uniFont.getEffects().add(new ColorEffect());
+            return new UnicodeSlickRenderFont(uniFont, javaFont);
+        } catch (Exception e) {
+            throw new SlickLoadFontException(e);
+        }
+        
     }
 }

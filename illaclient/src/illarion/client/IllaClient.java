@@ -37,6 +37,10 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.renderer.Renderer;
 
+import de.lessvoid.nifty.slick2d.loaders.SlickAddLoaderLocation;
+import de.lessvoid.nifty.slick2d.loaders.SlickRenderFontLoaders;
+import de.lessvoid.nifty.slick2d.loaders.SlickRenderImageLoaders;
+
 import illarion.client.crash.DefaultCrashHandler;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
@@ -56,6 +60,8 @@ import illarion.common.util.StoppableStorage;
 import illarion.common.util.TableLoader;
 
 import illarion.graphics.GraphicResolution;
+import illarion.graphics.common.FontLoader;
+import illarion.graphics.common.TextureLoader;
 
 /**
  * Main Class of the Illarion Client, this loads up the whole game and runs the
@@ -173,6 +179,9 @@ public final class IllaClient {
 
         Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
         
+        SlickRenderImageLoaders.getInstance().addLoader(TextureLoader.getInstance(), SlickAddLoaderLocation.first);
+        SlickRenderFontLoaders.getInstance().addLoader(FontLoader.getInstance(), SlickAddLoaderLocation.first);
+        
         game = new illarion.client.Game();
         
         final GraphicResolution res = new GraphicResolution(cfg.getString(CFG_RESOLUTION));
@@ -186,6 +195,7 @@ public final class IllaClient {
         }
         
         gameContainer.setAlwaysRender(true);
+        gameContainer.setTargetFrameRate(60);
         
         try {
             gameContainer.start();
@@ -193,8 +203,6 @@ public final class IllaClient {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        Scheduler.getInstance().start();
     }
     
     /**

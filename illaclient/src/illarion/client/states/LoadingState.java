@@ -1,4 +1,3 @@
-
 package illarion.client.states;
 
 import java.io.IOException;
@@ -8,7 +7,6 @@ import java.util.logging.Logger;
 import illarion.client.gui.controller.LoadScreenController;
 import illarion.client.loading.Loading;
 
-import org.illarion.nifty.slick.NiftyGameState;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -16,69 +14,64 @@ import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.opengl.SlickCallable;
 import org.newdawn.slick.state.StateBasedGame;
 
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.slick2d.NiftyBasicGameState;
+
 /**
- * This game state is active while the game loads. It takes care for showing
- * the loading screen and to trigger the actual loading.
+ * This game state is active while the game loads. It takes care for showing the
+ * loading screen and to trigger the actual loading.
  * 
  * @author Martin Karing
  * @since 1.22
  * @version 1.22
  */
-public class LoadingState extends NiftyGameState {
-    
+public final class LoadingState extends NiftyBasicGameState {
+
     private LoadScreenController controller;
 
+    private final int id;
+
     public LoadingState(final int slickGameStateId) {
-        super(slickGameStateId);
+        super("loading");
+        id = slickGameStateId;
     }
-    
+
     private final Logger log = Logger.getLogger(LoadingState.class.getName());
-    
-    /**
-     * initialize.
-     * 
-     * @param container GameContainer
-     * @param game StateBasedGame
-     * @throws SlickException exception
-     */
-    public void init(final GameContainer container, final StateBasedGame game)
-        throws SlickException {
-        super.init(container, game);
-        
+
+    @Override
+    protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
         controller = new LoadScreenController(game);
-        fromXml("illarion/client/gui/xml/loading.xml", controller);
-        
-        gotoScreen("loading");
+        nifty.fromXml("illarion/client/gui/xml/loading.xml", "loading",
+            controller);
         
         Loading.enlistMissingComponents();
     }
 
-    /**
-     * render.
-     * 
-     * @param container GameContainer
-     * @param game StateBasedGame
-     * @param g Graphics
-     * @throws SlickException exception
-     */
     @Override
-    public void render(final GameContainer container,
-        final StateBasedGame game, final Graphics g) throws SlickException {
+    public int getID() {
+        return id;
+    }
+
+    @Override
+    protected void renderGame(GameContainer container, StateBasedGame game,
+        Graphics g) throws SlickException {
+        super.renderGame(container, game, g);
+        
         final int remaining = LoadingList.get().getRemainingResources();
         final int total = LoadingList.get().getTotalResources();
-        
+
         if (remaining > 0) {
             controller.setProgress((float) (total - remaining) / total);
         } else {
             controller.loadingDone();
         }
         
-        super.render(container, game, g);
         
+
         if (remaining == 0) {
             return;
         }
-        
+
         SlickCallable.enterSafeBlock();
         try {
             LoadingList.get().getNext().load();
