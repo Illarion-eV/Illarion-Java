@@ -39,7 +39,7 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import illarion.easyquest.Lang;
 
-final class Utils {
+public final class Utils {
 
     private static final Logger LOGGER = Logger.getLogger(Utils.class);
 
@@ -62,7 +62,7 @@ final class Utils {
         return resizeIcon;
     }
     
-    protected static void saveEasyQuest(final Editor editor) {
+    public static void saveEasyQuest(final Editor editor) {
         final File file = editor.getQuestFile();
         if (file == null) {
             selectAndSaveEasyQuest(editor);
@@ -81,8 +81,8 @@ final class Utils {
             dirDiag.setDialogTitle("Exportieren");
             dirDiag.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             dirDiag.setAcceptAllFileFilterUsed(false);
-            //dirDiag.setCurrentDirectory(new File(Config.getInstance()
-            //    .getEasyQuestFolder()));
+            dirDiag.setCurrentDirectory(new File(Config.getInstance()
+                .getExportFolder()));
             final int fileReturn =
                 dirDiag.showSaveDialog(MainFrame.getInstance());
             if (fileReturn == JFileChooser.APPROVE_OPTION) {
@@ -92,7 +92,7 @@ final class Utils {
         }
     }
     
-    protected static void selectAndOpenQuest() {
+    public static void selectAndOpenQuest() {
         final JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
             @Override
@@ -106,8 +106,8 @@ final class Utils {
             }
         });
         fileDiag.setAcceptAllFileFilterUsed(false);
-        //fileDiag.setCurrentDirectory(new File(Config.getInstance()
-        //    .getEasyNpcFolder()));
+        fileDiag.setCurrentDirectory(new File(Config.getInstance()
+            .getEasyQuestFolder()));
 
         final int fileReturn =
             fileDiag.showOpenDialog(MainFrame.getInstance());
@@ -137,7 +137,7 @@ final class Utils {
             editor.setQuestFile(file);
             
             MainFrame.getInstance().setCurrentTabTitle(file.getName());
-            //Config.getInstance().addLastOpenedFile(file);
+            Config.getInstance().addLastOpenedFile(file);
         } catch (final IOException e1) {
             //LOGGER.error("Reading the script failed.", e1); //$NON-NLS-1$
         }
@@ -158,13 +158,16 @@ final class Utils {
             }
         });
         fileDiag.setAcceptAllFileFilterUsed(false);
-        //fileDiag.setCurrentDirectory(new File(Config.getInstance()
-        //    .getEasyNpcFolder()));
+        fileDiag.setCurrentDirectory(new File(Config.getInstance()
+            .getEasyQuestFolder()));
         fileDiag.setSelectedFile(editor.getQuestFile());
         final int fileReturn =
             fileDiag.showSaveDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
-            final File targetFile = fileDiag.getSelectedFile();
+            File targetFile = fileDiag.getSelectedFile();
+            if (!targetFile.getName().endsWith(".quest")) {
+            	targetFile = new File(targetFile.getParent(),targetFile.getName()+".quest");
+            }
             saveEasyQuestImpl(quest, targetFile);
             editor.setQuestFile(targetFile);
             MainFrame.getInstance().setTabTitle(editor, targetFile.getName());

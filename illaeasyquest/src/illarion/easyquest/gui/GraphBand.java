@@ -23,6 +23,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.common.CommandToggleButtonGroup;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
@@ -39,6 +42,7 @@ final class GraphBand extends JRibbonBand {
      */
     private static final long serialVersionUID = 1L;
     
+    private final JCommandButton propertiesButton;
     private final JCommandToggleButton nodeButton;
     private final JCommandToggleButton transitionButton;
 
@@ -49,6 +53,9 @@ final class GraphBand extends JRibbonBand {
     public GraphBand() {
         super(Lang.getMsg(GraphBand.class, "title"), null);
 
+        propertiesButton = 
+        	new JCommandButton(Lang.getMsg(getClass(), "properties"),
+                    Utils.getResizableIconFromResource("properties.png"));
         nodeButton =
             new JCommandToggleButton(Lang.getMsg(getClass(), "state"),
                 Utils.getResizableIconFromResource("state.png"));
@@ -56,6 +63,9 @@ final class GraphBand extends JRibbonBand {
             new JCommandToggleButton(Lang.getMsg(getClass(), "transition"),
                 Utils.getResizableIconFromResource("transition.png"));
 
+        propertiesButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
+                getClass(), "propertiesTooltipTitle"), Lang.getMsg(
+                getClass(), "propertiesTooltip")));
         nodeButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
             getClass(), "nodeTooltipTitle"), Lang.getMsg(
             getClass(), "nodeTooltip")));
@@ -63,20 +73,54 @@ final class GraphBand extends JRibbonBand {
             getClass(), "transitionTooltipTitle"), Lang.getMsg(
             getClass(), "transitionTooltip")));
 
+        final String idRequestTitle = Lang.getMsg(getClass(), "idRequestTitle");
+        final String idRequest = Lang.getMsg(getClass(), "idRequest");
+        final ActionListener propertiesAction = new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            	boolean validID = false;
+            	int id = MainFrame.getInstance().getCurrentQuestEditor().getQuestID();
+            	while (!validID) {
+            		validID = true;
+	            	String input = 
+	                    (String) JOptionPane.showInputDialog(null, idRequest,
+						idRequestTitle, JOptionPane.QUESTION_MESSAGE,
+						null, null, id);
+	            	if (input != null) {
+		            	try {
+		            		id = Integer.parseInt(input);
+		            		MainFrame.getInstance().getCurrentQuestEditor().setQuestID(id);
+		            	} catch (NumberFormatException exc) {
+		            		validID = false;
+		            	}
+	            	}
+            	}
+            }
+        };
+        
         final ActionListener nodeAction = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                
+                if (nodeButton.getActionModel().isSelected()) {
+                	MainFrame.getInstance().setCreateType(MainFrame.CREATE_STATUS);
+                } else {
+                	MainFrame.getInstance().setCreateType(MainFrame.CREATE_NOTHING);
+                }
             }
         };
 
         final ActionListener transitionAction = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-
+            	if (transitionButton.getActionModel().isSelected()) {
+                	MainFrame.getInstance().setCreateType(MainFrame.CREATE_TRIGGER);
+                } else {
+                	MainFrame.getInstance().setCreateType(MainFrame.CREATE_NOTHING);
+                }
             }
         };
         
+        propertiesButton.addActionListener(propertiesAction);
         nodeButton.addActionListener(nodeAction);
         transitionButton.addActionListener(transitionAction);
         
@@ -84,6 +128,7 @@ final class GraphBand extends JRibbonBand {
         graphElements.add(nodeButton);
         graphElements.add(transitionButton);
 
+        addCommandButton(propertiesButton, RibbonElementPriority.TOP);
         addCommandButton(nodeButton, RibbonElementPriority.TOP);
         addCommandButton(transitionButton, RibbonElementPriority.TOP);
 
