@@ -87,6 +87,15 @@ public final class Sprite implements TextureElement {
             BufferedImage image = ImageIO.read(fileEntry.getFile());
             height = image.getHeight();
             width = image.getWidth();
+            
+            BufferedImage tempImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+            tempImage.getGraphics().drawImage(image, 0, 0, null);
+            ImageIO.write(tempImage, "PNG", fileEntry.getFile());
+            try {
+                tempDecoder = new PNGDecoder(new FileInputStream(fileEntry.getFile()));
+            } catch (IOException e) {
+                System.err.println("Can't fix image: " + fileEntry.getFileName());
+            }
         }
         decoder = tempDecoder;
         getType();

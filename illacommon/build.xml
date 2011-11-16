@@ -1107,7 +1107,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	</target>
 
 	<target name="rsc_tables" description="Build the Table resources" depends="check_optional_dirs,init_libs,buildTasks" if="keys.config.exist">
-		<texconvert generatetransparency="false" target="${resources}/rsc_tables.jar" privateKey="${sign}/private.key">
+		<texconvert target="${resources}/rsc_tables.jar" privateKey="${sign}/private.key">
 			<filelist dir="${config}">
 				<file name="data/Books.tbl" />
 				<file name="data/Songs.tbl" />
