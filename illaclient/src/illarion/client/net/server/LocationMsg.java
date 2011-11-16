@@ -24,9 +24,9 @@ import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.World;
 
+import illarion.common.graphics.LightTracer;
 import illarion.common.util.Location;
 
-import illarion.graphics.common.LightTracer;
 
 /**
  * Servermessage: Current player position (

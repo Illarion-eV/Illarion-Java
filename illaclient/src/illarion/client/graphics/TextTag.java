@@ -21,11 +21,13 @@ package illarion.client.graphics;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
+import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
+import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
+
 import illarion.client.world.GameFactory;
 
+import illarion.common.graphics.FontLoader;
 import illarion.common.util.RecycleObject;
-import illarion.graphics.RenderableFont;
-import illarion.graphics.common.FontLoader;
 
 /**
  * The text tags are the small texts over the heads of characters that display
@@ -44,7 +46,14 @@ public class TextTag implements RecycleObject {
     /**
      * The font that is used to render texts of the text tags.
      */
-    private static final RenderableFont TEXT_TAG_FONT = FontLoader.getInstance().getFont(FontLoader.Fonts.small);
+    private static final SlickRenderFont TEXT_TAG_FONT = FontLoader
+        .getInstance().getFontSave(FontLoader.Fonts.small);
+
+    /**
+     * This color is used as temporary color during the rendering process.
+     */
+    private static final de.lessvoid.nifty.tools.Color NIFTY_COLOR =
+        new de.lessvoid.nifty.tools.Color(0.f, 0.f, 0.f, 0.f);
 
     /**
      * The color implementation that is used to render the text.
@@ -102,12 +111,12 @@ public class TextTag implements RecycleObject {
     public TextTag clone() {
         return new TextTag();
     }
-    
+
     /**
-     * The width of this tag.  This value is generated once the text is set.
+     * The width of this tag. This value is generated once the text is set.
      */
     private int width;
-    
+
     /**
      * The height of this tag. This value is generated once the text is set.
      */
@@ -123,10 +132,12 @@ public class TextTag implements RecycleObject {
         if (text == null) {
             return;
         }
-        
+
         g.setColor(BACK_COLOR);
         g.fillRect((x + dX) - 1, (y + dY) - 1, width + 2, height + 2);
-        TEXT_TAG_FONT.renderString(text, x + dX, y + dY, color, 1.f);
+        TEXT_TAG_FONT.renderText(g, text, x, y,
+            SlickRenderUtils.convertColorSlickNifty(color, NIFTY_COLOR), 1.f,
+            1.f);
     }
 
     /**
@@ -203,6 +214,6 @@ public class TextTag implements RecycleObject {
     public void setText(final String newText) {
         text = newText;
         width = TEXT_TAG_FONT.getWidth(newText);
-        height = TEXT_TAG_FONT.getHeight(newText);
+        height = TEXT_TAG_FONT.getHeight();
     }
 }

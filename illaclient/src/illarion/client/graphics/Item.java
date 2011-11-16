@@ -27,7 +27,7 @@ import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
 import illarion.common.util.Location;
 
-import illarion.graphics.Sprite;
+import illarion.common.graphics.Sprite;
 
 /**
  * A item is a object that is on the game map or in the inventory or in any

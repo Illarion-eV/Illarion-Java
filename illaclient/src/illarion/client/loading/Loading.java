@@ -2,7 +2,7 @@ package illarion.client.loading;
 
 import org.newdawn.slick.loading.LoadingList;
 
-import illarion.graphics.common.TextureLoader;
+import illarion.common.graphics.TextureLoader;
 
 /**
  * This class is used to create the list of things that need to be loaded before

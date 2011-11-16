@@ -44,10 +44,10 @@ import illarion.client.graphics.Tile;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.resources.TileFactory;
 
+import illarion.common.graphics.MapColor;
 import illarion.common.util.Location;
 
-import illarion.graphics.Sprite;
-import illarion.graphics.common.MapColor;
+import illarion.common.graphics.Sprite;
 
 /**
  * This class stores a reduced version of the full map the character knows. The

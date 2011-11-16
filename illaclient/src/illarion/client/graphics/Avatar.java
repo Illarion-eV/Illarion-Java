@@ -27,7 +27,7 @@ import illarion.client.resources.CharacterFactory;
 import illarion.client.util.Lang;
 import illarion.client.world.World;
 
-import illarion.graphics.Sprite;
+import illarion.common.graphics.Sprite;
 
 /**
  * Class for the avatar of a characters. The avatar is the visual representation

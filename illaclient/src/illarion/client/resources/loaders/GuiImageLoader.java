@@ -20,10 +20,10 @@ package illarion.client.resources.loaders;
 
 import illarion.client.graphics.GuiImage;
 import illarion.client.resources.ResourceFactory;
+import illarion.common.graphics.SpriteBuffer;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
-import illarion.graphics.Sprite;
-import illarion.graphics.common.SpriteBuffer;
+import illarion.common.graphics.Sprite;
 
 import org.apache.log4j.Logger;
 

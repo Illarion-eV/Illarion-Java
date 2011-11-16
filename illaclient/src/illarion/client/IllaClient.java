@@ -53,15 +53,15 @@ import illarion.client.world.World;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
+import illarion.common.graphics.FontLoader;
+import illarion.common.graphics.GraphicResolution;
+import illarion.common.graphics.TextureLoader;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.Scheduler;
 import illarion.common.util.StoppableStorage;
 import illarion.common.util.TableLoader;
 
-import illarion.graphics.GraphicResolution;
-import illarion.graphics.common.FontLoader;
-import illarion.graphics.common.TextureLoader;
 
 /**
  * Main Class of the Illarion Client, this loads up the whole game and runs the

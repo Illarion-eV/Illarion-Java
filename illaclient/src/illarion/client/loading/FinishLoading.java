@@ -1,6 +1,6 @@
 package illarion.client.loading;
 
-import illarion.graphics.common.SpriteBuffer;
+import illarion.common.graphics.SpriteBuffer;
 
 import java.io.IOException;
 

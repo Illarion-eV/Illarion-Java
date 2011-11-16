@@ -30,13 +30,13 @@ import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.crash.MapProcessorCrashHandler;
 import illarion.client.net.server.TileUpdate;
 
+import illarion.common.graphics.ColorHelper;
 import illarion.common.graphics.ItemInfo;
+import illarion.common.graphics.LightingMap;
 import illarion.common.util.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
 
-import illarion.graphics.common.ColorHelper;
-import illarion.graphics.common.LightingMap;
 
 /**
  * This handler stores all map data and ensures the updates of the map. This
@@ -317,7 +317,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * 
      * @param loc the location of the tile
      * @return obscurity of the tile, 0 for clear view
-     *         {@link illarion.graphics.common.LightingMap#BLOCKED_VIEW} for
+     *         {@link illarion.common.graphics.LightingMap#BLOCKED_VIEW} for
      *         fully blocked
      */
     @Override
@@ -608,7 +608,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * 
      * @param loc the location of the map tile on the server map
      * @param color the color that shall be set for this tile
-     * @see illarion.graphics.common.LightingMap#setLight(Location, SpriteColor)
+     * @see illarion.common.graphics.LightingMap#setLight(Location, SpriteColor)
      */
     @Override
     public void setLight(final Location loc, final Color color) {

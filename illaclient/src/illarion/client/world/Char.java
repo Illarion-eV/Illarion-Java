@@ -33,11 +33,11 @@ import illarion.client.util.Lang;
 
 import illarion.common.graphics.CharAnimations;
 import illarion.common.graphics.Layers;
+import illarion.common.graphics.LightSource;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 
-import illarion.graphics.common.LightSource;
 
 /**
  * Represents a character: player, monster or npc.

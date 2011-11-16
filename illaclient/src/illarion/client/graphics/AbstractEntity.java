@@ -26,12 +26,12 @@ import illarion.client.world.World;
 
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
+import illarion.common.graphics.Sprite;
+import illarion.common.graphics.SpriteBuffer;
 import illarion.common.util.FastMath;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 
-import illarion.graphics.Sprite;
-import illarion.graphics.common.SpriteBuffer;
 
 /**
  * The entity is a object that is shown in the game. It contains a sprite and

@@ -7,8 +7,8 @@ import illarion.client.graphics.Avatar;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.client.net.NetComm;
 import illarion.client.util.ChatHandler;
+import illarion.common.graphics.LightTracer;
 import illarion.common.util.StoppableStorage;
-import illarion.graphics.common.LightTracer;
 
 /**
  * This class is used to unify the access to the different components of the

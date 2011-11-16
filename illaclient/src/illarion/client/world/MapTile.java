@@ -38,11 +38,11 @@ import illarion.client.net.client.LookatTileCmd;
 import illarion.client.net.server.TileUpdate;
 
 import illarion.common.graphics.Layers;
+import illarion.common.graphics.LightSource;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 
-import illarion.graphics.common.LightSource;
 
 /**
  * A tile on the map. Contains the tile graphics and items.

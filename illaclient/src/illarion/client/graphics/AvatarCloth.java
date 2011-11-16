@@ -22,7 +22,7 @@ import org.newdawn.slick.Color;
 
 import illarion.client.resources.ClothFactory;
 import illarion.client.resources.CharacterFactory;
-import illarion.graphics.Sprite;
+import illarion.common.graphics.Sprite;
 
 /**
  * A avatar cloth definition stores all data about a cloth that are needed to

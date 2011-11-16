@@ -26,7 +26,7 @@ import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.util.Location;
 
-import illarion.graphics.Sprite;
+import illarion.common.graphics.Sprite;
 
 /**
  * Created: 20.08.2005 17:39:11
