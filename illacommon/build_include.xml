@@ -54,21 +54,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<property name="mapedit.res.deploy" location="${setup}/${mapedit.res}" />
 	<property name="mapedit.bin" location="${compiled}/${mapedit.jar}" />
 
-	<property name="graphics.jar" value="illarion_graphics.jar" />
-	<property name="graphics.bin" location="${compiled}/${graphics.jar}" />
-	<property name="graphics.res" value="illarion_graphics.illares" />
-	<property name="graphics.res.deploy" location="${setup}/${graphics.res}" />
-
-	<property name="input.jar" value="illarion_input.jar" />
-	<property name="input.bin" location="${compiled}/${input.jar}" />
-	<property name="input.res" value="illarion_input.illares" />
-	<property name="input.res.deploy" location="${setup}/${input.res}" />
-
-	<property name="sound.jar" value="illarion_sound.jar" />
-	<property name="sound.bin" location="${compiled}/${sound.jar}" />
-	<property name="sound.res" value="illarion_sound.illares" />
-	<property name="sound.res.deploy" location="${setup}/${sound.res}" />
-
 	<property name="download.jar" value="illarion_download.jar" />
 	<property name="download.bin" location="${compiled}/${download.jar}" />
 	<property name="download.deploy" location="${setup}/${download.jar}" />
@@ -87,21 +72,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<property name="resources.version" value="1.22" />
 	<property name="resources.vendor" value="Illarion e.V." />
 	<property name="resources.name" value="Illarion Resources" />
-
-	<!-- Graphics informations -->
-	<property name="graphics.version" value="2.00" />
-	<property name="graphics.vendor" value="Illarion e.V." />
-	<property name="graphics.name" value="Illarion Graphic Engine" />
-
-	<!-- Sound informations -->
-	<property name="sounds.version" value="2.00" />
-	<property name="sounds.vendor" value="Illarion e.V." />
-	<property name="sounds.name" value="Illarion Sound Engine" />
-
-	<!-- Input informations -->
-	<property name="input.version" value="2.00" />
-	<property name="input.vendor" value="Illarion e.V." />
-	<property name="input.name" value="Illarion Input Engine" />
 
 	<!-- MapEditor informations -->
 	<property name="mapedit.version" value="1.01" />
@@ -205,10 +175,19 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
     <property name="slick.dir" location="${common}/lib/slick"/>
     <patternset id="slick.pattern">
         <include name="slick.jar" />
-        <include name="slick-util.jar" />
     </patternset>
     <fileset id="slick" dir="${slick.dir}">
         <patternset refid="slick.pattern" />
+    </fileset>
+
+    <!-- Nifty 1.3.1-SNAPSHOT -->
+    <!-- http://nifty-gui.lessvoid.com/ -->
+    <property name="nifty.dir" location="${common}/lib/nifty"/>
+    <patternset id="nifty.pattern">
+        <include name="nifty*1.3.1-SNAPSHOT.jar" />
+    </patternset>
+    <fileset id="nifty" dir="${nifty.dir}">
+        <patternset refid="nifty.pattern" />
     </fileset>
 	
 	<!-- JGraph 1.7.1.6 -->

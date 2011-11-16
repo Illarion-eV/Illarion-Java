@@ -787,10 +787,11 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<fileset refid="log4j" />
 				<fileset refid="swt" />
 				<fileset refid="javolution" />
-				<pathelement location="${graphicsifc.bin}" />
 				<fileset refid="trove" />
 				<fileset refid="tabsplitter" />
 				<fileset refid="lzma" />
+                <fileset refid="slick" />
+                <fileset refid="nifty" />
 				<pathelement path="${java.home}/lib" />
 			</classpath>
 		</javac>
