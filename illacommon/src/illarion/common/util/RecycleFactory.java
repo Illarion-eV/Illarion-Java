@@ -192,10 +192,10 @@ public abstract class RecycleFactory<T extends RecycleObject> {
     public void recycle(final T obj) {
         final int id = obj.getId();
 
-        final PrototypeFactory<T> factory = storage.get(id);
+        final PrototypeFactory<T> factory = getFactory(id);
         if (factory == null) {
             throw new IllegalArgumentException(
-                "Failed to find a fitting recycle storage");
+                "Failed to find a fitting recycle storage: " + Integer.toString(id));
         }
 
         obj.reset();
@@ -297,7 +297,7 @@ public abstract class RecycleFactory<T extends RecycleObject> {
         }
 
         if (defaultMap != NONE) {
-            factory = storage.get(defaultMap + (id % defaultMapModulo));
+            factory = storage.get(getMappedId(id));
 
             if (factory != null) {
                 return factory;
@@ -305,5 +305,15 @@ public abstract class RecycleFactory<T extends RecycleObject> {
         }
 
         throw new IndexOutOfBoundsException("id " + id);
+    }
+    
+    /**
+     * Map a ID by the parameters set for this factory.
+     * 
+     * @param id the ID
+     * @return the ID with applied mapping
+     */
+    private int getMappedId(final int id) {
+        return defaultMap + (id % defaultMapModulo);
     }
 }

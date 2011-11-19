@@ -73,34 +73,55 @@ public final class AvatarCloth extends AbstractEntity {
         final String name, final int location, final int frames,
         final int still, final int offX, final int offY, final boolean mirror,
         final Color baseCol) {
-        super(itemID, CLOTH_PATH, name, frames, still, offX, offY, 0,
-            Sprite.HAlign.center, Sprite.VAlign.bottom, true, mirror, baseCol);
+        super(itemID, CLOTH_PATH, name, frames, still, offX
+            + getAvatarOffsetX(avatarId), offY + getAvatarOffsetY(avatarId),
+            0, Sprite.HAlign.center, Sprite.VAlign.bottom, true, mirror,
+            baseCol);
 
         avatar = avatarId;
         locationId = location;
         reset();
     }
-    
-    /**
-     * The default cloth that is used in the factories in case no avatar is
-     * set.
-     */
-    private static final AvatarCloth DEFAULT_CLOTH = new AvatarCloth();
-    
+
+    private static int getAvatarOffsetX(final int avatarId) {
+        if (avatarId == 0) {
+            return 0;
+        }
+        final Avatar ava =
+            CharacterFactory.getInstance().getPrototype(avatarId);
+        if (ava == null) {
+            return 0;
+        }
+        return ava.getSprite().getOffsetX();
+    }
+
+    private static int getAvatarOffsetY(final int avatarId) {
+        if (avatarId == 0) {
+            return 0;
+        }
+        final Avatar ava =
+            CharacterFactory.getInstance().getPrototype(avatarId);
+        if (ava == null) {
+            return 0;
+        }
+        return ava.getSprite().getOffsetY();
+    }
+
     /**
      * Get the cloth that is used by default.
      * 
      * @return the default cloth
      */
     public static AvatarCloth getDefaultCloth() {
-        return DEFAULT_CLOTH;
+        return new AvatarCloth();
     }
-    
+
     /**
      * The constructor to create the single default cloth.
      */
     private AvatarCloth() {
-        super(0, CLOTH_PATH, null, 0, 0, 0, 0, 0, Sprite.HAlign.center, Sprite.VAlign.bottom, true, false, null);
+        super(0, CLOTH_PATH, null, 0, 0, 0, 0, 0, Sprite.HAlign.center,
+            Sprite.VAlign.bottom, true, false, null);
         avatar = 0;
         locationId = 0;
     }
@@ -135,23 +156,6 @@ public final class AvatarCloth extends AbstractEntity {
     }
 
     /**
-     * Activate the cloth instance. Normally the ID is overwritten with this
-     * command, but that would be terrible here.
-     * 
-     * @param overwriteID the requested ID
-     */
-    @Override
-    public void activate(final int overwriteID) {
-        if (avatar == 0) {
-            return;
-        }
-        final Avatar ava = CharacterFactory.getInstance().getPrototype(avatar);
-        final Sprite sprite = getSprite();
-        sprite.setOffset(sprite.getOffsetX() + ava.getOffsetX(),
-            sprite.getOffsetY() + ava.getOffsetY());
-    }
-
-    /**
      * Create a duplicate of the AvatarCloth object.
      * 
      * @return the new created instance of AvatarCloth that is a copy of the
@@ -168,8 +172,8 @@ public final class AvatarCloth extends AbstractEntity {
     @Override
     public void recycle() {
         hide();
-        parent.recycle(this);
         super.changeBaseColor(null);
+        parent.recycle(this);
     }
 
     /**
@@ -192,5 +196,15 @@ public final class AvatarCloth extends AbstractEntity {
     @Override
     public void update(final int delta) {
         // nothing to do
+    }
+
+    @Override
+    public final void show() {
+        // do nothing
+    }
+
+    @Override
+    public final void hide() {
+        // do nothing
     }
 }

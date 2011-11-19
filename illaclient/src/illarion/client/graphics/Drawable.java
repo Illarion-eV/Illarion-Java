@@ -18,28 +18,26 @@
  */
 package illarion.client.graphics;
 
+import org.newdawn.slick.Graphics;
+
 /**
- * Interface for a object that can be rendered on the screen.
+ * This interface defines a simple object that can be drawn to the screen.
  * 
  * @author Martin Karing &lt;nitram@illarion.org&gt;
- * @author Nop
  */
-public interface DisplayItem extends Drawable {
+public interface Drawable {
     /**
-     * Get the z order of the item. This order is used to sort the display items
-     * in a proper order to be rendered.
+     * Draw the object on the screen.
      * 
-     * @return the z layer coordinate of the display item
+     * @return true in case the render operation was performed correctly
      */
-    int getZOrder();
-
+    boolean draw(Graphics g);
+    
     /**
-     * Remove object from display list.
+     * Update the alpha value of this component. This is done by considering the
+     * size and the location of the component and regarding the alpha target.
+     * 
+     * @param delta the time in milliseconds since the last update
      */
-    void hide();
-
-    /**
-     * Show object by adding it to the display list.
-     */
-    void show();
+    void update(int delta);
 }

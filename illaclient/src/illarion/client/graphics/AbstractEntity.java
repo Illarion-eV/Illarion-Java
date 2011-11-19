@@ -433,29 +433,16 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      */
     @Override
     public boolean draw(final Graphics g) {
-        int xOffset;
-        int yOffset;
-        if (useScale) {
-            xOffset = sprite.getScaledOffsetX(scale);
-            yOffset = sprite.getScaledOffsetY(scale);
-        } else {
-            xOffset = sprite.getOffsetX();
-            yOffset = sprite.getOffsetY();
-        }
-
-        final int scrX = displayX + xOffset;
-        final int scrY = displayY + yOffset;
-
+        final int renderLocX = displayX;
+        final int renderLocY = displayY;
         final int width = sprite.getWidth() - offS;
         final int height = sprite.getHeight();
-        if (!Camera.getInstance().requiresUpdate(scrX, scrY, width, height)) {
+        
+        if (!Camera.getInstance().requiresUpdate(renderLocX, renderLocY, width, height)) {
             return true;
         }
 
         localLight.a = getAlpha() / 255.f;
-        
-        final int renderLocX = displayX;
-        final int renderLocY = displayY;
 
         if ((baseColor == null) && (overWriteBaseColor == null)) {
             if (useScale) {
@@ -480,13 +467,6 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
             }
         }
         return true;
-    }
-    
-    private void transferColor(final Color from, final Color to) {
-        to.r = from.r;
-        to.g = from.g;
-        to.b = from.b;
-        to.a = from.a;
     }
 
     /**
@@ -726,7 +706,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         if (shown) {
             final int newLayerZ = zLayer - typeLayer;
             if (newLayerZ != layerZ) {
-                World.getMapDisplay().readd(this);
+                show();
                 layerZ = newLayerZ;
             }
         } else {
@@ -755,6 +735,8 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         if (!shown) {
             World.getMapDisplay().add(this);
             shown = true;
+        } else {
+            World.getMapDisplay().readd(this);
         }
     }
 

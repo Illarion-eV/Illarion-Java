@@ -362,6 +362,9 @@ public final class Sprite {
      *         textures set yet
      */
     public final int getHeight() {
+        if (textures.length == 0) {
+            return 0;
+        }
         final Image texture = textures[0];
         if (texture == null) {
             return -1;
@@ -449,6 +452,10 @@ public final class Sprite {
      *         textures set yet
      */
     public final int getWidth() {
+        if (textures.length == 0) {
+            return 0;
+        }
+        
         final Image texture = textures[0];
         if (texture == null) {
             return -1;
@@ -588,6 +595,10 @@ public final class Sprite {
     @SuppressWarnings("nls")
     public void draw(final Graphics g, final int x, final int y, final int w,
         final int h, final Color color, final int frame) {
+        
+        if (getFrames() == 0) {
+            return;
+        }
 
         final Image texture = getTexture(frame);
         if (texture == null) {
@@ -639,13 +650,15 @@ public final class Sprite {
     @SuppressWarnings("nls")
     public void draw(final Graphics g, final int x, final int y,
         final Color color, final int frame) {
+        
+        if (getFrames() == 0) {
+            return;
+        }
 
         final Image texture = getTexture(frame);
         if (texture == null) {
             throw new IllegalArgumentException("Failed to get proper texture.");
         }
-
-        g.pushTransform();
 
         g.translate(x, y);
         if (isMirrored()) {
@@ -660,9 +673,10 @@ public final class Sprite {
         g.drawImage(texture, getAlignOffsetX() + getOffsetX(),
             getAlignOffsetY() - getOffsetY(), getColor(color));
 
-        g.resetTransform();
-        g.popTransform();
-        reportDrawTexture();
+        if (isMirrored()) {
+            g.scale(-1.f, 1.f);
+        }
+        g.translate(-x, -y);
     }
 
     /**
@@ -695,12 +709,14 @@ public final class Sprite {
     @SuppressWarnings("nls")
     public void draw(final Graphics g, final int x, final int y,
         final Color color, final int frame, final float scale) {
+        if (getFrames() == 0) {
+            return;
+        }
+        
         final Image texture = getTexture(frame);
         if (texture == null) {
             throw new IllegalArgumentException("Failed to get proper texture.");
         }
-
-        g.pushTransform();
 
         g.translate(x, y);
         if (isMirrored()) {
@@ -716,7 +732,12 @@ public final class Sprite {
         g.drawImage(texture, getAlignOffsetX() + getOffsetX(),
             getAlignOffsetY() - getOffsetY(), getColor(color));
 
-        g.resetTransform();
-        g.popTransform();
+        final float invScale = 1.f / scale;
+        if (isMirrored()) {
+            g.scale(-invScale, invScale);
+        } else {
+            g.scale(invScale, invScale);
+        }
+        g.translate(-x, -y);
     }
 }
