@@ -49,9 +49,7 @@ import de.lessvoid.nifty.slick2d.render.image.loader.SlickRenderImageLoader;
  * Utility class to load textures. It loads up the Atlas textures and supplies
  * the informations to the sprites that need to render this textures.
  * 
- * @author Martin Karing
- * @since 2.00
- * @version 2.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TextureLoader implements SlickRenderImageLoader {
     /**
@@ -340,9 +338,7 @@ public final class TextureLoader implements SlickRenderImageLoader {
      * This is the task that is attached to the loading list in order to load
      * the data of a texture atlas.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private final class DeferredTexture implements DeferredResource {
         /**

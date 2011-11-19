@@ -26,8 +26,7 @@ import illarion.common.util.FastMath;
  * This is a helper class that is used to calculate the variances of tiles and
  * items on the map regarding the position.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class MapVariance {
     /**

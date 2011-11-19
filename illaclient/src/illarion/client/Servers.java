@@ -22,8 +22,7 @@ package illarion.client;
  * The definitions of the existing servers. All data needed to connect and
  * identify a server is stored here.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @SuppressWarnings("nls")
 public enum Servers {

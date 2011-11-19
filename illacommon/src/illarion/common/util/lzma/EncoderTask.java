@@ -31,9 +31,7 @@ import SevenZip.Compression.LZMA.Encoder;
  * send input the LzmaOutputStream. This task is supposed to be executed in a
  * additional thread.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class EncoderTask implements Callable<Boolean> {
     /**

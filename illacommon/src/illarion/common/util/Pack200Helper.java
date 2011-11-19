@@ -26,9 +26,7 @@ import java.util.jar.Pack200;
  * This is a helper class for all classes that work with the pack200 packer. Its
  * sole purpose is to provide packer and unpacker with common settings.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Pack200Helper {
     /**

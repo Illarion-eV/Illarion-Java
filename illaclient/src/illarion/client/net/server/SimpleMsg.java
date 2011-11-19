@@ -32,10 +32,8 @@ import illarion.client.world.World;
  * any data and are just send to trigger events that are all time the same and
  * require parameters.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class SimpleMsg extends AbstractReply {
     /**

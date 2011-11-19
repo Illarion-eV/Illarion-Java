@@ -23,9 +23,7 @@ import illarion.common.graphics.Sprite;
 /**
  * This class is used to store the name and the sprite of a GUI image.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GuiImage {
     /**

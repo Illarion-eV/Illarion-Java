@@ -28,9 +28,7 @@ import illarion.client.net.client.AttackCmd;
  * be notified about it.
  * 
  * @serial exclude
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CombatHandler {
     /**

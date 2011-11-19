@@ -34,10 +34,8 @@ import illarion.common.util.Location;
  * Servermessage: Update Items on map (
  * {@link illarion.client.net.CommandList#MSG_UPDATE_ITEMS}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class ItemUpdateMsg extends AbstractReply {
     /**

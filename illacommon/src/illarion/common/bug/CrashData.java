@@ -26,9 +26,7 @@ import javolution.text.TextBuilder;
  * single object and prepare the value set for later usage. The object is
  * immutable. So once the values are set, they can't be changed anymore.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CrashData implements Immutable {
     /**

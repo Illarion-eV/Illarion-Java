@@ -20,9 +20,7 @@
  * This package contains the classes that store the resources of the client such
  * as the item and tile definitions that are used to render those objects
  * properly.
- * 
- * @since 1.22
- * @author Martin Karing
- * @version 1.22
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 package illarion.client.resources;

@@ -25,10 +25,8 @@ import illarion.common.util.RecycleFactory;
  * The rune factory loads and stores all graphical representations of the runes
  * the player can use to cast.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public class RuneFactory extends RecycleFactory<Rune> implements
     ResourceFactory<Rune> {

@@ -68,8 +68,7 @@ import illarion.common.util.TableLoader;
  * main loop of the Illarion Client.
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.95
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class IllaClient {
     /**

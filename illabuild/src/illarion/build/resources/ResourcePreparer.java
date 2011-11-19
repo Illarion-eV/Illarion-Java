@@ -48,9 +48,7 @@ import illarion.common.util.Pack200Helper;
  * done this task does simply copy the files in question. No matter the settings
  * the files created will hold exactly the same name as before.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ResourcePreparer extends Task {
     /**

@@ -28,10 +28,8 @@ import illarion.client.net.NetCommReader;
  * {@link illarion.client.net.CommandList#MSG_SHOWCASE}).
  * 
  * @author Blay09
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class ShowcaseMsg extends AbstractReply {
     /**

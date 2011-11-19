@@ -54,9 +54,7 @@ import illarion.common.graphics.Sprite;
  * map data is packed to a minimized and fast readable size that can be stored
  * on the hard disk.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GameMiniMap {
     /**

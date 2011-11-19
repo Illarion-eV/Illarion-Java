@@ -33,19 +33,15 @@ import illarion.common.util.Reusable;
 /**
  * Class that stores all needed informations for a update of a single tile.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class TileUpdate implements Reusable {
     /**
      * The factory that creates instances of the TileUpdate class and stores
      * them for reuse.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class TileUpdateFactory {
         /**

@@ -26,9 +26,7 @@ import illarion.common.util.Range;
  * This is a configuration entry that is used to display a number range entry in
  * the configuration dialog. So a simple yes/no option.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NumberEntry implements ConfigEntry {
     /**

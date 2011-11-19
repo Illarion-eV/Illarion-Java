@@ -22,9 +22,7 @@ package illarion.client.util;
  * This interface is used for a class that is able to receive the path
  * calculated by the pathfinder.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface PathReceiver {
     /**

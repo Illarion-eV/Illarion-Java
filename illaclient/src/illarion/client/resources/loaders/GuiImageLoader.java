@@ -33,9 +33,7 @@ import org.apache.log4j.Logger;
  * required GUI image objects and send them to the GUI image factory that takes
  * care for distributing those objects.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GuiImageLoader extends ResourceLoader<GuiImage> implements
     TableLoaderSink {

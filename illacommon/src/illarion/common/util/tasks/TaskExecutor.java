@@ -24,9 +24,7 @@ import java.util.concurrent.Executors;
 /**
  * This class is used to execute tasks in the background.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TaskExecutor {
     private static final TaskExecutor INSTANCE = new TaskExecutor();

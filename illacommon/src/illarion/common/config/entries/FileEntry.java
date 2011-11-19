@@ -28,9 +28,7 @@ import illarion.common.config.Config;
  * search for the file. The default search directory will be the home directory
  * of the user.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class FileEntry implements ConfigEntry {
     /**

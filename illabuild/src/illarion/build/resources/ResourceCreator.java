@@ -55,9 +55,7 @@ import illarion.common.util.lzma.LzmaOutputStream;
  * This class is used to create resource bundles that contain the Illarion
  * applications and get downloaded.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ResourceCreator extends Task {
     /**

@@ -28,8 +28,7 @@ import illarion.common.graphics.Sprite;
  * A avatar cloth definition stores all data about a cloth that are needed to
  * know. It also allows to render a cloth part.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class AvatarCloth extends AbstractEntity {
     /**

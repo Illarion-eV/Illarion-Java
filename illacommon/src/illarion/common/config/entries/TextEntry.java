@@ -24,9 +24,7 @@ import illarion.common.config.Config;
  * This is a configuration entry that is used to a simple text entry in the
  * configuration.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TextEntry implements ConfigEntry {
     /**

@@ -29,9 +29,7 @@ import illarion.client.world.World;
  * Servermessage: Character animation (
  * {@link illarion.client.net.CommandList#MSG_CHARACTER_ANIMATION}).
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CharacterAnimationMsg extends AbstractReply {
     /**

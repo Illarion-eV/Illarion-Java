@@ -28,9 +28,7 @@ import illarion.common.util.Location;
  * {@link illarion.client.net.CommandList#CMD_LOOKAT_TILE}).
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.92
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LookatTileCmd extends AbstractCommand {
     /**

@@ -24,10 +24,8 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 /**
  * Recycle Factory. Base handler for storing and reusing recycle objects.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.95
- * @version 1.22
  * @param <T> The target class that of the objects that are handled by this
  *            recycle factory
  */
@@ -36,9 +34,7 @@ public abstract class RecycleFactory<T extends RecycleObject> {
      * The class used as factory for each prototype stored in this factory. The
      * object factories create duplicates of the prototype instance.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      * @param <K> The class of the objects created by this factory
      */
     private static final class PrototypeFactory<K extends RecycleObject> {

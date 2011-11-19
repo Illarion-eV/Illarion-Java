@@ -42,8 +42,6 @@ import javax.swing.KeyStroke;
  * closing behavior. It is also Translating.
  * 
  * @author Nop
- * @since 0.92
- * @version 0.92
  */
 public abstract class AbstractDialog extends JDialog {
 

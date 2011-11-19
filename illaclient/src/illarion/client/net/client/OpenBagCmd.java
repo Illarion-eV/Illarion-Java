@@ -26,9 +26,7 @@ import illarion.client.net.NetCommWriter;
  * {@link illarion.client.net.CommandList#CMD_OPEN_BAG}).
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.92
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class OpenBagCmd extends AbstractCommand {
     /**

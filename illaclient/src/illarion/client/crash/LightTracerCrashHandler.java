@@ -24,9 +24,7 @@ import illarion.client.world.World;
  * This crash handler takes care for crashes of the light tracer. In case a
  * crash happens its tried to restart the tracer and the game.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LightTracerCrashHandler extends AbstractCrashHandler {
     /**

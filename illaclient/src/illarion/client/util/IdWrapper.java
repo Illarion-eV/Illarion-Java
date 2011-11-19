@@ -3,9 +3,7 @@ package illarion.client.util;
 /**
  * This utility class is used to wrap a object together with a ID.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class IdWrapper<T> {
     /**

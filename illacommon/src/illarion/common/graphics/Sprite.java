@@ -27,19 +27,156 @@ import org.newdawn.slick.SlickException;
  * LWJGL implementation of the sprite interface that uses LWJGL to render the
  * sprite on the screen.
  * 
- * @author Martin Karing
- * @version 2.00
- * @since 2.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Sprite {
-    public enum VAlign {
-        top, middle, bottom
-
+    /**
+     * This interface is used to store the offset calculation for the different
+     * align values.
+     * 
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
+     */
+    private static interface AlignOffset {
+        /**
+         * Get the offset that is caused by the align value.
+         * 
+         * @param size the relevant size value, either height or width
+         * @return the offset applied by the align
+         */
+        int getOffset(int size);
     }
 
-    public enum HAlign {
-        left, center, right
+    /**
+     * This enumerator contains the vertical align values that are supposed to
+     * be assigned to the sprites.
+     * 
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
+     */
+    public enum VAlign {
+        /**
+         * This constant means that the origin of the sprite is at the top
+         * border of the image.
+         */
+        top(new AlignOffset() {
+            @Override
+            public int getOffset(final int size) {
+                return 0;
+            }
+        }),
 
+        /**
+         * This constant means that the origin of the sprite is in the center of
+         * the image.
+         */
+        middle(new AlignOffset() {
+            @Override
+            public int getOffset(final int size) {
+                return -(size / 2);
+            }
+        }),
+
+        /**
+         * This constant means that the offset is at the bottom of the image.
+         */
+        bottom(new AlignOffset() {
+            @Override
+            public int getOffset(final int size) {
+                return -size;
+            }
+        });
+
+        /**
+         * The class instance that stores the calculation to receive the offset
+         * value.
+         */
+        private final AlignOffset offset;
+
+        /**
+         * The constructor of the offset constants that requires a instance of
+         * the class to calculate the offset.
+         * 
+         * @param offsetSource the object used to calculate the offset
+         */
+        private VAlign(final AlignOffset offsetSource) {
+            offset = offsetSource;
+        }
+
+        /**
+         * Get the offset that is applied by this align constant.
+         * 
+         * @param height the height of the current image
+         * @return the offset applied by this constant
+         */
+        public int getOffset(final int height) {
+            return offset.getOffset(height);
+        }
+    }
+
+    /**
+     * This enumerator contains the horizontal align values that are supposed to
+     * be assigned to the sprites.
+     * 
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
+     */
+    public enum HAlign {
+        /**
+         * This constant means that the origin of the sprite is at the left side
+         * of the image.
+         */
+        left(new AlignOffset() {
+            @Override
+            public int getOffset(final int size) {
+                return 0;
+            }
+        }),
+
+        /**
+         * This constant means that the origin of the sprite is at the center of
+         * the image.
+         */
+        center(new AlignOffset() {
+            @Override
+            public int getOffset(final int size) {
+                return -(size / 2);
+            }
+        }),
+
+        /**
+         * This constant means that the origin of the sprite is at the right
+         * side of the image.
+         */
+        right(new AlignOffset() {
+            @Override
+            public int getOffset(final int size) {
+                return -size;
+            }
+        });
+
+        /**
+         * The class instance that stores the calculation to receive the offset
+         * value.
+         */
+        private final AlignOffset offset;
+        
+        /**
+         * The constructor of the offset constants that requires a instance of
+         * the class to calculate the offset.
+         * 
+         * @param offsetSource the object used to calculate the offset
+         */
+        private HAlign(final AlignOffset offsetSource) {
+            offset = offsetSource;
+        }
+
+        /**
+         * Get the offset that is applied by this align constant.
+         * 
+         * @param width the width of the current image
+         * @return the offset applied by this constant
+         */
+        public int getOffset(final int width) {
+            return offset.getOffset(width);
+        }
     }
 
     /**
@@ -135,7 +272,7 @@ public final class Sprite {
         offsetY = 0;
         mirror = false;
     }
-    
+
     /**
      * Copy constructor creates a new sprite that is at the time of coping
      * identical to the original sprite. How ever its possible to change the
@@ -168,7 +305,7 @@ public final class Sprite {
 
         if ((textures.length - unsetTextures) > 0) {
             final Image firstImg = textures[0];
-            
+
             if ((firstImg.getHeight() != newTexture.getHeight())
                 || (firstImg.getWidth() != newTexture.getWidth())) {
                 throw new IllegalArgumentException(
@@ -186,13 +323,8 @@ public final class Sprite {
      * 
      * @return the x share of the offset caused by the sprite align
      */
-    protected final int getAlignOffsetX() {
-        if (hAlignUsed == HAlign.center) {
-            return -(getWidth() >> 1);
-        } else if (hAlignUsed == HAlign.right) {
-            return -getWidth();
-        }
-        return 0;
+    private int getAlignOffsetX() {
+        return hAlignUsed.getOffset(getWidth());
     }
 
     /**
@@ -201,13 +333,8 @@ public final class Sprite {
      * 
      * @return the y share of the offset caused by the sprite align
      */
-    protected final int getAlignOffsetY() {
-        if (vAlignUsed == VAlign.middle) {
-            return -(getHeight() >> 1);
-        } else if (vAlignUsed == VAlign.bottom) {
-            return -getHeight();
-        }
-        return 0;
+    private int getAlignOffsetY() {
+        return vAlignUsed.getOffset(getHeight());
     }
 
     /**
@@ -424,7 +551,8 @@ public final class Sprite {
      * @param w the width the width of the sprite shall be scaled to
      * @param h the height the height of the sprite shall be scaled to
      */
-    public void draw(final Graphics g, final int x, final int y, final int w, final int h) {
+    public void draw(final Graphics g, final int x, final int y, final int w,
+        final int h) {
         draw(g, x, y, w, h, null, 0);
     }
 
@@ -440,8 +568,8 @@ public final class Sprite {
      * @param h the height the height of the sprite shall be scaled to
      * @param color the color that is used to render the sprite
      */
-    public void draw(final Graphics g, final int x, final int y, final int w, final int h,
-        final Color color) {
+    public void draw(final Graphics g, final int x, final int y, final int w,
+        final int h, final Color color) {
         draw(g, x, y, w, h, color, 0);
     }
 
@@ -458,25 +586,27 @@ public final class Sprite {
      * @param frame the frame that shall be rendered
      */
     @SuppressWarnings("nls")
-    public void draw(final Graphics g, final int x, final int y, final int w, final int h,
-        final Color color, final int frame) {
+    public void draw(final Graphics g, final int x, final int y, final int w,
+        final int h, final Color color, final int frame) {
 
         final Image texture = getTexture(frame);
         if (texture == null) {
             throw new IllegalArgumentException("Failed to get proper texture.");
         }
-        
+
         g.pushTransform();
         if (isMirrored()) {
             g.scale(-(w / getWidth()), h / getHeight());
         } else {
             g.scale(w / getWidth(), h / getHeight());
         }
-        
+
         g.rotate(x, y, getRotation());
-        
-        g.drawImage(texture, x + getAlignOffsetX(), y + getAlignOffsetY(), getColor(color));
-        
+
+        g.drawImage(texture, x + getAlignOffsetX() + getOffsetX(), y
+            + getAlignOffsetY() - getOffsetY(), getColor(color));
+
+        g.resetTransform();
         g.popTransform();
 
         reportDrawTexture();
@@ -491,7 +621,8 @@ public final class Sprite {
      * @param y the y coordinate of the location the texture shall been drawn at
      * @param color the color the texture of the sprite is rendered with
      */
-    public void draw(final Graphics g, final int x, final int y, final Color color) {
+    public void draw(final Graphics g, final int x, final int y,
+        final Color color) {
         draw(g, x, y, color, 0);
     }
 
@@ -506,36 +637,38 @@ public final class Sprite {
      * @param frame the frame that is rendered
      */
     @SuppressWarnings("nls")
-    public void draw(final Graphics g, final int x, final int y, final Color color,
-        final int frame) {
-        
+    public void draw(final Graphics g, final int x, final int y,
+        final Color color, final int frame) {
+
         final Image texture = getTexture(frame);
         if (texture == null) {
             throw new IllegalArgumentException("Failed to get proper texture.");
         }
-        
+
         g.pushTransform();
-        
+
         if (isMirrored()) {
             g.scale(-1.f, 1.f);
         }
 
         texture.setRotation(getRotation());
         texture.setCenterOfRotation(getAlignOffsetX(), getAlignOffsetY());
-        
-        g.drawImage(texture, x + getAlignOffsetX() + getOffsetX(), y + getAlignOffsetY() + getOffsetY(), getColor(color));
-        
+
+        g.drawImage(texture, x + getAlignOffsetX() + getOffsetX(), y
+            + getAlignOffsetY() - getOffsetY(), getColor(color));
+
+        g.resetTransform();
         g.popTransform();
         reportDrawTexture();
     }
-    
+
     /**
      * This function returns the color that is set as parameter or in case its
      * null it returns the default color.
      * 
      * @param color the color to check
      * @return the parameter color or in case the parameter is null the white
-     * color is returned
+     *         color is returned
      */
     private Color getColor(final Color color) {
         if (color == null) {
@@ -557,23 +690,25 @@ public final class Sprite {
      * @param scale the scaling value the height and the width is reduced with
      */
     @SuppressWarnings("nls")
-    public void draw(final Graphics g, final int x, final int y, final Color color,
-        final int frame, final float scale) {
+    public void draw(final Graphics g, final int x, final int y,
+        final Color color, final int frame, final float scale) {
         final Image texture = getTexture(frame);
         if (texture == null) {
             throw new IllegalArgumentException("Failed to get proper texture.");
         }
-        
+
         g.pushTransform();
-        
+
         if (isMirrored()) {
             g.scale(-scale, scale);
         } else {
             g.scale(scale, scale);
         }
         g.rotate(x, y, getRotation());
-        g.drawImage(texture, x + getAlignOffsetX(), y + getAlignOffsetY(), getColor(color));
-        
+        g.drawImage(texture, x + getAlignOffsetX() + getOffsetX(), y
+            + getAlignOffsetY() - getOffsetY(), getColor(color));
+
+        g.resetTransform();
         g.popTransform();
     }
 }

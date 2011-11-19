@@ -27,10 +27,8 @@ import illarion.client.net.NetCommReader;
  * Servermessage: Look at description of item in a showcase (
  * {@link illarion.client.net.CommandList#MSG_LOOKAT_SHOWCASE}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class LookatShowcaseMsg extends AbstractReply {
     /**

@@ -28,8 +28,7 @@ import illarion.common.util.Location;
  * render action is invoked in the order that is defined for the direction the
  * parent avatar is looking at.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class AvatarClothRenderer {
     /**

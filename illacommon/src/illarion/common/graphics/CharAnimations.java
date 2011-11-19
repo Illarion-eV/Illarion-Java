@@ -23,8 +23,7 @@ package illarion.common.graphics;
  * defined. Also it builds the texts for the configuration tool to refer to the
  * animations properly.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @SuppressWarnings("nls")
 public final class CharAnimations {

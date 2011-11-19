@@ -25,9 +25,7 @@ import illarion.common.util.MessageSource;
  * The special implementations for AWT and SWING have this interface is common
  * so they can be controlled properly.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 interface ReportDialog {
     /**

@@ -28,9 +28,7 @@ import javax.swing.UnsupportedLookAndFeelException;
  * This class is used to setup the look and feel of Illarion. This style only
  * applies to swing GUIs.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class IllarionLookAndFeel {
     /**

@@ -22,8 +22,6 @@
  * case the user chose to, to the Illarion Server.
  * 
  * @serial exclude
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 package illarion.common.bug;

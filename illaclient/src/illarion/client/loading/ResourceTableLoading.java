@@ -30,17 +30,13 @@ import org.newdawn.slick.loading.DeferredResource;
  * This class is used to allow the loading sequence of the client to load
  * the resource tables.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ResourceTableLoading implements DeferredResource {
     /**
      * This support class is used to perform the actual loading.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class TableFactoryInitTask implements Runnable {
         /**

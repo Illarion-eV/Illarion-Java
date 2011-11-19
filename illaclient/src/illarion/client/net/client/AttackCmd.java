@@ -26,9 +26,7 @@ import illarion.client.net.NetCommWriter;
  * {@link illarion.client.net.CommandList#CMD_ATTACK}).
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.92
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class AttackCmd extends AbstractCommand {
     /**

@@ -30,9 +30,7 @@ import java.io.IOException;
  * This class is used to manage the global directory manager that takes care for
  * the directories the manager needs to use.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DirectoryManager {
     /**

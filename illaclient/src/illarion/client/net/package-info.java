@@ -21,9 +21,7 @@
  * with the server. Everything to send and receive and decode and encode
  * messages and commands from and to the server are stored in here.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 package illarion.client.net;

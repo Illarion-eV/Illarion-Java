@@ -77,9 +77,7 @@ import illarion.common.util.Crypto;
  * the texture images together to image maps. And it checks the contents of the
  * archives and removes useless contents.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TextureConverterNG extends Task {
     /**
@@ -91,9 +89,7 @@ public final class TextureConverterNG extends Task {
      * This is a small helper class used to ensure that the directory and the
      * name of the file remain separated in a specific manner.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     public static final class FileEntry {
         /**

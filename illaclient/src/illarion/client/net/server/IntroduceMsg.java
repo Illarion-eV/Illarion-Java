@@ -28,10 +28,8 @@ import illarion.client.world.World;
  * Servermessage: Introduce character (
  * {@link illarion.client.net.CommandList#MSG_INTRODUCE}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class IntroduceMsg extends AbstractReply {
     /**

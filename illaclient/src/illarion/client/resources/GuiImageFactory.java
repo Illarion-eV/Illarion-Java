@@ -28,9 +28,7 @@ import javolution.util.FastMap;
  * This class is used to load and store the graphics that are needed for
  * displaying the GUI of the game.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GuiImageFactory implements ObjectSource<Sprite>,
     ResourceFactory<GuiImage> {

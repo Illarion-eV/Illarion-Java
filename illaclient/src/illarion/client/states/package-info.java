@@ -19,8 +19,6 @@
 /**
  * This package contains all the states the client can be in. 
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 package illarion.client.states;

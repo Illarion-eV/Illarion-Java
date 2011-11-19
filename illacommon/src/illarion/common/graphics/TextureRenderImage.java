@@ -25,9 +25,7 @@ import de.lessvoid.nifty.slick2d.render.image.ImageSlickRenderImage;
 /**
  * This class allows accessing the textures from the texture loader by nifty.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class TextureRenderImage extends ImageSlickRenderImage {
     /**

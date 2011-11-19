@@ -23,9 +23,7 @@ import java.util.ArrayList;
 /**
  * This class is used to define the empty space on a texture atlas.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class Space implements TextureElement {
     /**

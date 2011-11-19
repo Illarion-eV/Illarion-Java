@@ -34,9 +34,7 @@ import illarion.build.TextureConverterNG;
 /**
  * A simple sprite holder that allows the tool to name images
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Sprite implements TextureElement {
     /**

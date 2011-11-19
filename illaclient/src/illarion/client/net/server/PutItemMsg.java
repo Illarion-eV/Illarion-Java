@@ -31,10 +31,8 @@ import illarion.common.util.Location;
  * Servermessage: Add a item on a map tile (
  * {@link illarion.client.net.CommandList#MSG_PUT_ITEM}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class PutItemMsg extends AbstractReply {
     /**

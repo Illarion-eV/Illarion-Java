@@ -24,9 +24,7 @@ import java.io.File;
  * This interface offers reduced access to the configuration system. Accessing
  * this interface should be enough for the most cases.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface Config {
     /**

@@ -25,9 +25,7 @@ import illarion.common.util.Bresenham;
  * precalculates all rays when its created and stores them for later usage.
  * 
  * @author Nop
- * @author Martin Karing
- * @version 1.21
- * @since 2.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LightRays {
     /**

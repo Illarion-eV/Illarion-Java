@@ -29,9 +29,7 @@ import illarion.common.util.TableLoaderSink;
  * required overlay objects and send them to the overlay factory that takes care
  * for distributing those objects.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class RuneLoader extends ResourceLoader<Rune> implements
     TableLoaderSink {

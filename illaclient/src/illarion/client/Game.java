@@ -17,9 +17,7 @@ import org.newdawn.slick.state.StateBasedGame;
  * Illarion. It will maintain the different states of the game and allow
  * switching them.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Game extends StateBasedGame {
     /**

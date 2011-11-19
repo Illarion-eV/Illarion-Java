@@ -24,9 +24,7 @@ import illarion.common.config.gui.entries.SaveableEntry;
  * This is a extension to the save able entry for SWT. Its only used internal
  * for the SWT display.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface SaveableEntrySwt extends SaveableEntry {
     /**

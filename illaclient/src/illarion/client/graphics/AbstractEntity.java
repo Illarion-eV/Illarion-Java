@@ -42,9 +42,7 @@ import illarion.common.util.RecycleObject;
  * </p>
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.95
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @SuppressWarnings("nls")
 public abstract class AbstractEntity implements RecycleObject, DisplayItem,
@@ -55,9 +53,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * It forwards a alpha change message to two other handlers. This way its
      * possible to create a infinite amount of listeners on one entity.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class AlphaChangeListenerMulticast implements
         AlphaChangeListener {
@@ -101,9 +97,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * This class is used to install a configuration monitor in order to update
      * the fading time in case the configuration changes.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class FadingUpdate implements ConfigChangeListener {
         /**

@@ -23,10 +23,8 @@ package illarion.common.util;
  * of the recycle factory. Object that get often removed and created, such as
  * tiles or items should by recycle objects and use a recycle factory.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public interface RecycleObject extends Cloneable, Reusable {
     /**

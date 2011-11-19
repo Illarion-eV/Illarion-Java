@@ -23,8 +23,7 @@ import java.util.LinkedList;
 /**
  * This class is able to save stoppable objects and stop them all at once.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class StoppableStorage {
     /**

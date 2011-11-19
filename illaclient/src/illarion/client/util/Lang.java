@@ -32,10 +32,8 @@ import illarion.common.util.MessageSource;
  * Localized text handler. Loads the localized messages and returns them if
  * requested, regarding the language settings of the client.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.95
- * @version 1.22
  */
 @SuppressWarnings("nls")
 public final class Lang implements ConfigChangeListener, MessageSource {

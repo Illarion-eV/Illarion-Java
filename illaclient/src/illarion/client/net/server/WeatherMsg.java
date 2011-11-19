@@ -29,10 +29,8 @@ import illarion.client.world.World;
  * Servermessage: Update of the current weather (
  * {@link illarion.client.net.CommandList#MSG_WEATHER}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class WeatherMsg extends AbstractReply {
     /**

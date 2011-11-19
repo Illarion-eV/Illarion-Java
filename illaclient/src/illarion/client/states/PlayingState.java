@@ -1,6 +1,7 @@
 package illarion.client.states;
 
 import illarion.client.Game;
+import illarion.client.input.InputReceiver;
 import illarion.client.world.World;
 
 import org.newdawn.slick.GameContainer;
@@ -12,12 +13,13 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
 import de.lessvoid.nifty.slick2d.NiftyOverlayBasicGameState;
 import de.lessvoid.nifty.slick2d.NiftyOverlayGameState;
+import de.lessvoid.nifty.slick2d.input.SlickSlickInputSystem;
 import de.lessvoid.nifty.slick2d.render.SlickRenderDevice;
 import de.lessvoid.nifty.slick2d.sound.SlickSoundDevice;
 import de.lessvoid.nifty.tools.TimeProvider;
 
 /**
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  *
  */
 public class PlayingState extends NiftyOverlayBasicGameState {    
@@ -33,7 +35,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     @Override
     protected void initGameAndGUI(GameContainer container, StateBasedGame game)
         throws SlickException {
-        initNifty(container, game, new SlickRenderDevice(container), new SlickSoundDevice(), new TimeProvider());
+        initNifty(container, game, new SlickRenderDevice(container), new SlickSoundDevice(), new SlickSlickInputSystem(new InputReceiver()), new TimeProvider());
     }
 
     @Override

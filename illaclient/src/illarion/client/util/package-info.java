@@ -20,11 +20,9 @@
  * The utility package contains some classes that are used to support many other
  * classes in the client. They do not special job, rather they are supportive at
  * various things.
- * 
- * @since 0.95
- * @author Martin Karing
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  * @author Ralf Schumacher
- * @version 1.22
  */
 package illarion.client.util;

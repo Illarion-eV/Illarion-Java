@@ -34,9 +34,7 @@ import gnu.trove.procedure.TLongObjectProcedure;
  * disturb the main loop.
  * </p>
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class GameMapProcessor extends Thread implements
     TLongObjectProcedure<MapTile> {

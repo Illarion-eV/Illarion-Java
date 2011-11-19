@@ -21,10 +21,8 @@
  * needed to run the client itself.
  * 
  * @serial exclude
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  * @author Ralf Schumacher
- * @since 0.95
- * @version 1.22
  */
 package illarion.client;

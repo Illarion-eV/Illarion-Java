@@ -23,9 +23,7 @@ package illarion.common.util.tasks;
  * report updates upon the different tasks that are handled by the task
  * processing system.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface TaskListener {
     /**

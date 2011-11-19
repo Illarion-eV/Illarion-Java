@@ -37,18 +37,14 @@ import illarion.common.util.FastMath;
  * system. In this case the panel is filled with all components needed to set a
  * number in the configuration properly.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NumberEntrySwt implements SaveableEntrySwt {
     /**
      * This listener is used to monitor any actions done to the scroll bar and
      * update the display of the scroll bar according to this.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class NumberEntryScrollListener implements Listener {
         /**

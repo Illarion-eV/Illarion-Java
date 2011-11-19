@@ -27,9 +27,7 @@ import java.util.concurrent.Future;
  * This input stream allows the usage of the LZMA API using the default java
  * stream scheme.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LzmaInputStream extends FilterInputStream {
     /**

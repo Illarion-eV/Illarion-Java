@@ -35,9 +35,7 @@ import java.util.zip.Deflater;
  * This is the packing engine that takes care for converting the jar archives
  * into pack200 archives.
  * 
- * @author Martin Karing
- * @since 1.00
- * @version 1.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class PackingEngine {
     /**

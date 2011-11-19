@@ -35,9 +35,7 @@ import illarion.common.graphics.Sprite;
  * avatar.
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.95
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Avatar extends AbstractEntity {
     /**

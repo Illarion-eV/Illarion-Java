@@ -32,9 +32,7 @@ import illarion.common.bug.CrashReporter;
  * This abstract class takes care for fetching uncaught exceptions and tries to
  * keep the client alive just in the way it supposed to be.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
     /**

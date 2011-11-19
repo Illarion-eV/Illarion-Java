@@ -30,9 +30,7 @@ import illarion.common.util.StoppableStorage;
  * that the different overwriting levels of the music are kept as they are
  * supposed to be.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class MusicBox implements Stoppable {
     /**

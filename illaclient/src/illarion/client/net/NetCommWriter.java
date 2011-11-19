@@ -24,9 +24,7 @@ import illarion.common.util.Location;
  * This interface offers the possibility to write on a connection handled by the
  * network communication class of Illarion.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface NetCommWriter {
     /**

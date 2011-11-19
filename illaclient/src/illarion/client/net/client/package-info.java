@@ -20,9 +20,7 @@
  * This package contains all commands the client can send to the server in order
  * to notify it about the players actions.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 package illarion.client.net.client;

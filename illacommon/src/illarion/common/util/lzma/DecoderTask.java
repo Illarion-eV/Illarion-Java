@@ -30,9 +30,7 @@ import SevenZip.Compression.LZMA.Decoder;
  * The decoder task is taking care for decompressing LZMA data from a input
  * stream. This task is meant to run is a thread.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class DecoderTask implements Callable<Boolean> {
     /**

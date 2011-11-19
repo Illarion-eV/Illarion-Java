@@ -26,7 +26,6 @@ import illarion.client.net.NetCommWriter;
  * {@link illarion.client.net.CommandList#CMD_DRAG_INV_SC}).
  * 
  * @author Blay09
- * @since 1.22
  */
 public final class DragInvScCmd extends AbstractCommand {
 

@@ -41,16 +41,13 @@ import illarion.common.util.StoppableStorage;
  * forwards the data to the required parts of the client. It takes care for
  * transforming the text properly for each part of the client.
  * 
- * @author Martin Karing
- * @version 1.00
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ChatHandler implements Runnable, Stoppable {
     /**
      * The possible speech modes that are displays on the screen.
      * 
-     * @author Martin Karing
-     * @since 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     public static enum SpeechMode {
         /**
@@ -152,9 +149,7 @@ public final class ChatHandler implements Runnable, Stoppable {
      * This nodes are used to temporary store the chat entries that were
      * received.
      * 
-     * @author Martin Karing
-     * @version 1.00
-     * @since 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class TextNode {
         /**

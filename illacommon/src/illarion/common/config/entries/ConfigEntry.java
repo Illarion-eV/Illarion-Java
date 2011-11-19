@@ -25,9 +25,7 @@ import illarion.common.config.Config;
  * public. The configuration entries are the things shown in the configuration
  * dialog next to the names of the lines.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface ConfigEntry {
     /**

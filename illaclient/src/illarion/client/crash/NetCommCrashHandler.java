@@ -22,9 +22,7 @@ package illarion.client.crash;
  * The crash handler that takes care for crashes of the network interface. It
  * will cause a disconnect of the client and restart the connection.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NetCommCrashHandler extends AbstractCrashHandler {
     /**

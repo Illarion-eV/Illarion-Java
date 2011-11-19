@@ -21,8 +21,6 @@
  * using the standard window toolkit (SWT) as display system.
  * 
  * @serial exclude
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 package illarion.common.config.gui.entries.swt;

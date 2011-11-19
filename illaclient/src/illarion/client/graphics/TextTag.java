@@ -33,9 +33,8 @@ import illarion.common.util.RecycleObject;
  * The text tags are the small texts over the heads of characters that display
  * the name of the character.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
  */
 public class TextTag implements RecycleObject {
     /**

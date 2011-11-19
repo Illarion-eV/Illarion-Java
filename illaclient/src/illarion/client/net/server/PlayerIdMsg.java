@@ -28,10 +28,8 @@ import illarion.client.world.World;
  * Servermessage: ID of the player character (
  * {@link illarion.client.net.CommandList#MSG_PLAYER_ID}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class PlayerIdMsg extends AbstractReply {
     /**

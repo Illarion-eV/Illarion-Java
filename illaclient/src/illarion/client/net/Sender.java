@@ -37,10 +37,8 @@ import illarion.common.util.Location;
  * The Sender class handles all data that is send from the client, encodes the
  * commands and prepares them for sending.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 final class Sender extends Thread implements NetCommWriter {
     /**

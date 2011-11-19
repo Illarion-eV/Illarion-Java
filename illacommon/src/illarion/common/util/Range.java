@@ -25,9 +25,7 @@ import javolution.lang.Immutable;
 /**
  * Class to handle a range between two values.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class Range {
     /**
@@ -35,9 +33,7 @@ public class Range {
      * class. This class acts in the same way as the parent class with the only
      * difference that it does not allow any changes to the internal values.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class RangeImmutable extends Range implements
         Immutable {

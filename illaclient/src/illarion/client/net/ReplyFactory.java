@@ -61,10 +61,8 @@ import illarion.common.util.RecycleFactory;
  * The Factory for commands the server sends to the client. This factory
  * prepares and recycles all server messages and set the needed mapping.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class ReplyFactory extends RecycleFactory<AbstractReply> {
     /**

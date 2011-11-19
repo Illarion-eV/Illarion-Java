@@ -41,18 +41,14 @@ import illarion.common.util.MessageSource;
  * system. In this case the panel is filled with all components needed to set a
  * file in the configuration properly.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class FileEntrySwt implements SaveableEntrySwt {
     /**
      * The listener that is added to the button. It opens the file dialog in
      * case its requested.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class ButtonListener implements Listener {
         /**

@@ -28,9 +28,7 @@ import javolution.util.FastList;
  * color of the light.
  * 
  * @author Nop
- * @author Martin Karing
- * @version 1.21
- * @since 2.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LightSource {
     /**

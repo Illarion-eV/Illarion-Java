@@ -28,8 +28,6 @@ import illarion.client.util.BookFactory;
  * Servermessage: Book ( {@link illarion.client.net.CommandList#MSG_BOOK}).
  * 
  * @author Blay09
- * @since 1.22
- * @version 1.22
  */
 public final class BookMsg extends AbstractReply {
 

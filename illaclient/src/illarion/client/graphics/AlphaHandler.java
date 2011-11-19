@@ -23,9 +23,7 @@ package illarion.client.graphics;
  * map.
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.95
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface AlphaHandler {
     /**

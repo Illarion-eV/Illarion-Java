@@ -33,9 +33,7 @@ import org.newdawn.slick.SlickException;
  * song objects and send them to the song factory that takes care for
  * distributing those objects.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class SongLoader extends ResourceLoader<IdWrapper<Music> > implements
     TableLoaderSink {

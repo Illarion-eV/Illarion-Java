@@ -25,8 +25,7 @@ package illarion.common.util;
  * This exception has no real purpose, but its funny.
  * </p>
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class OutOfCoffeeException extends RuntimeException {
     /**

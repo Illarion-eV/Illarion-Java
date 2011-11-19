@@ -28,9 +28,7 @@ import java.util.concurrent.Future;
  * streams remains within limits. It will manage the required threads to execute
  * the compression and decompression tasks.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class LzmaLoadManager {
     /**

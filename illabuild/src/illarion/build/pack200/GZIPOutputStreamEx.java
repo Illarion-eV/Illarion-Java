@@ -29,9 +29,7 @@ import java.util.zip.DeflaterOutputStream;
  * a option that allows to set the compression level that is applied to the
  * deflater.
  * 
- * @author Martin Karing
- * @version 1.00
- * @since 1.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GZIPOutputStreamEx extends DeflaterOutputStream {
     /**

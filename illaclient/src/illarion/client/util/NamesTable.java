@@ -48,18 +48,14 @@ import gnu.trove.procedure.TIntObjectProcedure;
  * current character. It also offers the loaded data to other parts of the
  * client.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NamesTable {
     /**
      * Helper class that is used to write the content of the names table to a
      * byte buffer.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class WriteNameTableHelper implements
         TIntObjectProcedure<String> {

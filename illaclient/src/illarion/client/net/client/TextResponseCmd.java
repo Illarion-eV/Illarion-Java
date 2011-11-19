@@ -25,9 +25,7 @@ import illarion.client.net.NetCommWriter;
  * Client Command: Send a text that was requested by the server and typed in by
  * the player ( {@link illarion.client.net.CommandList#CMD_TEXT_RESPONSE}).
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TextResponseCmd extends AbstractCommand {
     /**

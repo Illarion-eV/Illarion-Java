@@ -24,10 +24,8 @@ import java.awt.Point;
  * Line calculation by Bresenham. This class is used to calculate a line between
  * 2 points in 2D space on a tiles map.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class Bresenham {
     /**

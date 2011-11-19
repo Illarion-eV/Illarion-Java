@@ -25,8 +25,7 @@ package illarion.common.graphics;
  * rendered. A object with a low layer number will be below a object with a high
  * layer number.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Layers {
     /**

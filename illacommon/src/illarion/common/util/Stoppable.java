@@ -22,8 +22,7 @@ package illarion.common.util;
  * This interface is mainly used for threads that need to be stopped at some
  * point, for example when shutting down.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface Stoppable {
     /**

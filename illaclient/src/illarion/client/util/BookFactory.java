@@ -40,7 +40,6 @@ import illarion.common.util.TableLoaderSink;
  * resources.
  * 
  * @author Blay09
- * @since 1.22
  */
 public final class BookFactory implements TableLoaderSink {
 

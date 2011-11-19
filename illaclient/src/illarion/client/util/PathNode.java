@@ -32,18 +32,14 @@ import illarion.common.util.Reusable;
  * A single path node that is used during the path finding and represents a
  * single step on the path that is searched or was found.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.95
- * @version 1.22
  */
 public final class PathNode implements Comparable<PathNode>, Reusable {
     /**
      * This procedure is used to recycle all references in the cache.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class CleanCacheProcedure implements
         TObjectProcedure<PathNode> {
@@ -67,9 +63,7 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
      * The factory that is used to create and buffer the instances of the path
      * nodes.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class PathNodeFactory extends ObjectFactory<PathNode> {
         /**

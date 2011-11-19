@@ -21,9 +21,7 @@ package illarion.common.util.tasks;
 /**
  * This exception is thrown in case a task is canceled.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class TaskCancelException extends Exception {
     /**

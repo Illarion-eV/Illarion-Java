@@ -35,9 +35,7 @@ import illarion.common.util.MessageSource;
  * turned upon request into a configuration dialog fitting into one of the GUI
  * systems.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ConfigDialog {
     /**
@@ -45,9 +43,7 @@ public final class ConfigDialog {
      * page of the configuration dialog is a entry. Entries contain in general a
      * title and a control element.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     public static final class Entry {
         /**
@@ -126,9 +122,7 @@ public final class ConfigDialog {
      * displayed as a tab in the dialog. Each page contains a title that is
      * displayed in the tab and a list of entries.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     public static final class Page {
         /**

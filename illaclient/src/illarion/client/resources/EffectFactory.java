@@ -25,10 +25,8 @@ import illarion.common.util.RecycleFactory;
  * The effect factory creates and stores the effect objects and keeps them for
  * reuse.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.95
- * @version 1.22
  */
 public final class EffectFactory extends RecycleFactory<Effect> implements
     ResourceFactory<Effect> {

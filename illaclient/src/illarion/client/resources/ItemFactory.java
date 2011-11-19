@@ -25,9 +25,8 @@ import illarion.common.util.RecycleFactory;
  * The Item factory loads creates and stores all instances of the item class
  * that are around in the client.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.95
  */
 public final class ItemFactory extends RecycleFactory<Item> implements
     ResourceFactory<Item> {

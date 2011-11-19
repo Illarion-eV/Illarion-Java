@@ -28,10 +28,8 @@ import illarion.client.net.NetCommReader;
  * Servermessage: Menu with items (
  * {@link illarion.client.net.CommandList#MSG_MENU}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class MenuMsg extends AbstractReply {
     /**

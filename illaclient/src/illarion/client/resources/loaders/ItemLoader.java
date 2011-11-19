@@ -33,9 +33,7 @@ import org.newdawn.slick.Color;
  * item objects and send them to the item factory that takes care for
  * distributing those objects.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ItemLoader extends ResourceLoader<Item> implements
     TableLoaderSink {

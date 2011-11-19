@@ -24,9 +24,7 @@ import illarion.client.world.World;
  * The crash handler that takes care for crashes of the map processor. It will
  * try to restart the processor in case it crashed.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class MapProcessorCrashHandler extends AbstractCrashHandler {
     /**

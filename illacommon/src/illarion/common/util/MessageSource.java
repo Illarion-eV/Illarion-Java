@@ -22,9 +22,7 @@ package illarion.common.util;
  * This interface is used for classes that supply the applications with messages
  * and texts.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface MessageSource {
     /**

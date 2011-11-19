@@ -23,9 +23,8 @@ import org.newdawn.slick.Graphics;
 /**
  * Interface for a object that can be rendered on the screen.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.95
  */
 public interface DisplayItem {
     /**

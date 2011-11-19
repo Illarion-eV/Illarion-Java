@@ -22,9 +22,7 @@ package illarion.client.graphics;
  * This interface holds the listener that is notified in case the alpha value of
  * a interface changes.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface AlphaChangeListener {
     /**

@@ -25,9 +25,7 @@ package illarion.client.crash;
  * crashed part. So in this case the client will be shut down and a error
  * message displayed.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DefaultCrashHandler extends AbstractCrashHandler {
     /**

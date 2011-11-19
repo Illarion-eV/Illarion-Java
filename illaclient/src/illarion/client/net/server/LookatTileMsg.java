@@ -31,10 +31,8 @@ import illarion.common.util.Location;
  * Servermessage: Look at description of a tile (
  * {@link illarion.client.net.CommandList#MSG_LOOKAT_TILE}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class LookatTileMsg extends AbstractReply {
     /**

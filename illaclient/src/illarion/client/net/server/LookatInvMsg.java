@@ -27,10 +27,8 @@ import illarion.client.net.NetCommReader;
  * Servermessage: Look at description of item in the inventory (
  * {@link illarion.client.net.CommandList#MSG_LOOKAT_INV}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class LookatInvMsg extends AbstractReply {
     /**

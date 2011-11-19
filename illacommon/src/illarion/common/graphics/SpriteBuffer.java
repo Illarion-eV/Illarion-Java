@@ -29,9 +29,7 @@ import javolution.text.TextBuilder;
  * sprite so other parts of the client do not create more and more sprites of
  * the same thing to render.
  * 
- * @author Martin Karing
- * @since 2.00
- * @version 2.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class SpriteBuffer {
     /**

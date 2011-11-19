@@ -33,10 +33,8 @@ import illarion.common.util.Location;
  * Servermessage: Map stripe (
  * {@link illarion.client.net.CommandList#MSG_MAP_STRIPE}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class MapStripeMsg extends AbstractReply {
     /**

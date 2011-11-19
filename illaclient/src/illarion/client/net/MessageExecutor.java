@@ -34,9 +34,7 @@ import illarion.common.util.Stoppable;
  * This class will take care that the messages received from the server are
  * executes properly.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class MessageExecutor extends Thread implements Stoppable {
     /**

@@ -33,10 +33,8 @@ import illarion.common.graphics.Sprite;
  * A item is a object that is on the game map or in the inventory or in any
  * container showcase of the client.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.95
- * @version 1.22
  */
 public final class Item extends AbstractEntity {
     /**

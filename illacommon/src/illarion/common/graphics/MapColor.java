@@ -26,9 +26,7 @@ import org.newdawn.slick.Color;
 /**
  * Provides the color table for the small and the overview map.
  * 
- * @author Martin Karing
- * @version 2.00
- * @since 2.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class MapColor {
     /**

@@ -25,9 +25,7 @@ import java.util.Random;
  * used in case the native implementation is not available or results in
  * problems.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class FastMath {
     /**

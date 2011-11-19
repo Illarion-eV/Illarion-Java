@@ -29,9 +29,7 @@ import illarion.client.net.client.TextResponseCmd;
  * Servermessage: Text Request (
  * {@link illarion.client.net.CommandList#MSG_TEXT_REQUEST}).
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TextRequestMsg extends AbstractReply {
     /**

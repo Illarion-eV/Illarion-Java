@@ -39,9 +39,7 @@ import illarion.common.config.ConfigChangeListener;
 /**
  * Class to handle the logging of the chat in the game to the logfile.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ChatLog implements ConfigChangeListener {
 

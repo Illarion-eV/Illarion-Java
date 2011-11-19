@@ -20,9 +20,7 @@
  * This package contains all messages the server can send to the client to
  * update the state of the client.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 package illarion.client.net.server;

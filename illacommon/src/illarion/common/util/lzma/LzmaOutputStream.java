@@ -27,9 +27,7 @@ import java.util.concurrent.Future;
 /**
  * This is the LZMA output stream that allows to create LZMA compressed files.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LzmaOutputStream extends FilterOutputStream {
     /**

@@ -30,9 +30,7 @@ import javolution.util.FastTable;
  * This class is not real resource factory. Its a relay that forwards the cloth
  * objects to the different factories that are assigned to the avatars.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ClothFactoryRelay implements ResourceFactory<AvatarCloth> {
     /**

@@ -20,9 +20,7 @@
  * This package contains the classes that are used to load the resource tables.
  * In every case a *.tbl file from the resources is load, one of these classes
  * is involved.
- * 
- * @since 1.22
- * @author Martin Karing
- * @version 1.22
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 package illarion.client.resources.loaders;

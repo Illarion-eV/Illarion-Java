@@ -26,18 +26,14 @@ import javolution.context.ObjectFactory;
  * Unlike the java implementation this vector is a mathematical 2D vector. It
  * can be used to calculate proper positions on the screen.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Vector implements Reusable, Serializable {
     /**
      * This is the factory class that is used to buffer and reuse the vectors
      * that are created.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class VectorFactory extends ObjectFactory<Vector> {
         /**

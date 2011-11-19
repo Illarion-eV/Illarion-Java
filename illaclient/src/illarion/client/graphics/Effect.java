@@ -29,9 +29,8 @@ import illarion.common.graphics.Sprite;
 /**
  * A effect is a frame based animation that shows at one tile on the game map.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.95
  */
 public final class Effect extends AbstractEntity {
     /**

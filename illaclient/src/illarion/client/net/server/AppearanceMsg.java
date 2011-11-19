@@ -33,10 +33,8 @@ import illarion.client.world.World;
  * Servermessage: Character appearance (
  * {@link illarion.client.net.CommandList#MSG_APPEARANCE}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class AppearanceMsg extends AbstractReply {
     /**

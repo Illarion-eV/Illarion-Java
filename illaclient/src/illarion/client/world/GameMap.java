@@ -43,8 +43,7 @@ import illarion.common.util.StoppableStorage;
  * class is fully thread save for all actions. Clipping, hiding effects and map
  * optimization is done by the GameMapProcessor.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GameMap implements LightingMap, Stoppable {
     /**
@@ -52,9 +51,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * Executing this will cause every tile to be cleared. Once this is done
      * they can be removed from the tile list.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class ClearHelper implements
         TObjectProcedure<MapTile> {
@@ -84,8 +81,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * {@link illarion.client.world.GameMap#renderLights()} function and it
      * triggers the renderLight function on each tile its called on.
      * 
-     * @author Martin Karing
-     * @since 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class RenderLightsHelper implements
         TObjectProcedure<MapTile> {
@@ -140,9 +136,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * executed receives a reset trigger for the light value of the tile. This
      * should be done before new light values are rendered on the tile.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class ResetLightsHelper implements
         TObjectProcedure<MapTile> {
@@ -171,9 +165,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * reset the things the map processor did. This is needed in case the map
      * processor is restarted after a error.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class ResetMapProcessorHelper implements
         TObjectProcedure<MapTile> {

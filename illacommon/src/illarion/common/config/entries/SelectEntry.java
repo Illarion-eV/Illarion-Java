@@ -25,9 +25,7 @@ import illarion.common.util.FastMath;
  * This is a configuration entry that is used to display a combo box in the
  * configuration dialog. So a selection of multiple possible values.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class SelectEntry implements ConfigEntry {
     /**

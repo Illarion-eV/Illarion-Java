@@ -37,9 +37,7 @@ import illarion.common.util.Location;
  * {@link illarion.client.net.CommandList#CMD_DRAG_MAP_MAP_NW}).
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.92
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DragMapMapCmd extends AbstractCommand {
     /**

@@ -28,8 +28,6 @@ import java.awt.LayoutManager;
  * graphics.
  * 
  * @author Nop
- * @since 0.92
- * @version 0.92
  */
 public final class CellLayout implements LayoutManager {
 

@@ -56,9 +56,7 @@ import org.w3c.dom.NodeList;
  * This class is used to store the login parameters and handle the requests that
  * need to be send to the server in order to perform the login properly.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Login {
     private static final class CharEntry {

@@ -26,9 +26,7 @@ import java.util.NoSuchElementException;
  * This support class is a enumerator that works on arrays. It allows to be used
  * as any other enumerator.
  * 
- * @author Martin Karing
- * @version 1.22
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @param <T> the type of the array
  */
 public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {

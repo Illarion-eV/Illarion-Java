@@ -52,18 +52,14 @@ import illarion.common.util.MessageSource;
  * This method implements the configuration dialog that uses the abstract window
  * toolkit (AWT {@link java.awt}) to display the GUI for the configuration.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ConfigDialogAwt extends Dialog {
     /**
      * The listener of the cancel button for this dialog. It causes the dialog
      * to be closed.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class CancelButtonListener implements ActionListener {
         /**
@@ -99,9 +95,7 @@ public final class ConfigDialogAwt extends Dialog {
      * The listener of the save button for this dialog. It causes all elements
      * to be saved and the dialog to be closed.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class SaveButtonListener implements ActionListener {
         /**

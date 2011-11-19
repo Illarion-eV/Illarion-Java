@@ -26,8 +26,7 @@ import illarion.common.util.RecycleFactory;
  * IDs they are assigned to. If needed it creates further instances of the
  * avatar cloth instances to ensure that all can be drawn properly.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ClothFactory extends RecycleFactory<AvatarCloth> implements
     ResourceFactory<AvatarCloth> {

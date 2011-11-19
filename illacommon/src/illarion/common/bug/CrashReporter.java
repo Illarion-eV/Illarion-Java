@@ -43,9 +43,7 @@ import illarion.common.util.MessageSource;
  * the reporter and handles sending the crash reports as well as showing the
  * required dialogs.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CrashReporter {
     /**

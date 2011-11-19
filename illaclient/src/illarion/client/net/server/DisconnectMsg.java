@@ -30,10 +30,8 @@ import illarion.client.util.Lang;
  * Servermessage: Disconnect by server (
  * {@link illarion.client.net.CommandList#MSG_DISCONNECT}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class DisconnectMsg extends AbstractReply {
     /**

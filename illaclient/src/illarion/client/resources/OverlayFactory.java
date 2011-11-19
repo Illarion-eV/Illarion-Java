@@ -25,10 +25,8 @@ import illarion.common.util.RecycleFactory;
  * The overlay factory loads and stores all graphical representations of the
  * overlays that create the map of Illarion.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class OverlayFactory extends RecycleFactory<Overlay> implements
     ResourceFactory<Overlay> {

@@ -21,8 +21,6 @@
  * defines the access to one specified type that is added to the configuration.
  * 
  * @serial exclude
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 package illarion.common.config.entries;

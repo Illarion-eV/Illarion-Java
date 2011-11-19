@@ -25,10 +25,8 @@ import illarion.common.util.RecycleFactory;
  * The avatar factory loads and stores all graphical representations of
  * characters.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class CharacterFactory extends RecycleFactory<Avatar> implements
     ResourceFactory<Avatar> {

@@ -33,9 +33,7 @@ import org.newdawn.slick.Color;
  * required character objects and send them to the character factory that takes
  * care for distributing those objects.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CharacterLoader extends ResourceLoader<Avatar> implements
     TableLoaderSink {

@@ -22,7 +22,6 @@ package illarion.client.graphics;
  * Interface for frame based animation targets.
  * 
  * @author Nop
- * @since 0.95
  */
 interface AnimatedFrame extends Animated {
     /**

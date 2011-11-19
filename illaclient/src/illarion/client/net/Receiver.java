@@ -37,10 +37,8 @@ import illarion.client.util.Lang;
  * The Receiver class handles all data that is send from the server, decodes the
  * messages and prepares them for execution.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 final class Receiver extends Thread implements NetCommReader {
     /**

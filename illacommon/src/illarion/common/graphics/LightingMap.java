@@ -28,9 +28,7 @@ import illarion.common.util.Location;
  * the line of sight or accepts no light.
  * 
  * @author Nop
- * @author Martin Karing
- * @version 1.21
- * @since 2.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface LightingMap {
     /**

@@ -22,9 +22,7 @@ package illarion.build.imagepacker;
  * This interface defined in general elements that located on a texture along
  * with all required informations about them.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface TextureElement {
     /**

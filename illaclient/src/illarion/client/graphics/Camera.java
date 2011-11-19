@@ -24,8 +24,7 @@ import illarion.common.util.Rectangle;
  * This helper class is used to hide out all parts of the game map that are not
  * needed to be viewed.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Camera {
     /**

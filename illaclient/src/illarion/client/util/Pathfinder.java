@@ -31,8 +31,7 @@ import illarion.common.util.StoppableStorage;
  * Pathfinder to search the best way between two locations. Using the
  * A*-algorithm.
  * 
- * @author Martin Karing
- * @since 1.2.1
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Pathfinder extends Thread implements Stoppable {
     /**

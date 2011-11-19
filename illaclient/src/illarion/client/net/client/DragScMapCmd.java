@@ -30,7 +30,6 @@ import illarion.common.util.Location;
  * {@link illarion.client.net.CommandList#CMD_DRAG_SC_MAP}).
  * 
  * @author Blay09
- * @since 1.22
  */
 public final class DragScMapCmd extends AbstractCommand {
 

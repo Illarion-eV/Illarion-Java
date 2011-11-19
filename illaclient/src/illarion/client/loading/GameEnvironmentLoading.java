@@ -11,9 +11,7 @@ import org.newdawn.slick.loading.DeferredResource;
  * This loading task takes care for loading the components of the game
  * environment that still need to be loaded.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GameEnvironmentLoading implements DeferredResource {
     /**

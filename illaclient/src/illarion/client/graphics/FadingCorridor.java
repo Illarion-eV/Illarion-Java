@@ -27,8 +27,7 @@ import illarion.common.graphics.Layers;
  * view on the player character.
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.95
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class FadingCorridor {
     /**

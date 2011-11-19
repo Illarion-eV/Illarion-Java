@@ -21,9 +21,7 @@ package illarion.common.config.gui.entries;
 /**
  * This is the generic interface of objects in a GUI that can be saved.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface SaveableEntry {
     /**

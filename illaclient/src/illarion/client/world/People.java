@@ -51,10 +51,8 @@ import illarion.common.util.TableLoaderSink;
 /**
  * Handles all characters known to the client but the player character.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class People implements Stoppable, TableLoaderSink,
     ConfigChangeListener {
@@ -62,9 +60,7 @@ public final class People implements Stoppable, TableLoaderSink,
      * This helper class is used to create a procedure that checks and updates
      * the visibility for every character in the list.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class CheckVisibilityProcedure implements
         TObjectProcedure<Char> {
@@ -92,9 +88,7 @@ public final class People implements Stoppable, TableLoaderSink,
      * on the map. Its used to check all characters on the map and remove those
      * that moved out of visible range.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private final class ClipCharactersProcedure implements
         TObjectProcedure<Char> {
@@ -124,9 +118,7 @@ public final class People implements Stoppable, TableLoaderSink,
      * This helper class is used to fetch a character from a location on the
      * map.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class GetCharacterAtProcedure implements Reusable,
         TObjectProcedure<Char> {
@@ -134,9 +126,7 @@ public final class People implements Stoppable, TableLoaderSink,
          * This is the factory class of the parent procedure that provides the
          * instances of the procedure in a proper thread safe way.
          * 
-         * @author Martin Karing
-         * @since 1.22
-         * @version 1.22
+         * @author Martin Karing &lt;nitram@illarion.org&gt;
          */
         private static final class GetCharacterAtProcedureFactory extends
             ObjectFactory<GetCharacterAtProcedure> {
@@ -249,9 +239,7 @@ public final class People implements Stoppable, TableLoaderSink,
      * This helper class is used to recycle all load character objects. This
      * happens in case the playing session ends.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class RecycleCharProcedure implements
         TObjectProcedure<Char> {
@@ -279,9 +267,7 @@ public final class People implements Stoppable, TableLoaderSink,
      * {@link illarion.client.world.People#updateLight()} uses the class to
      * trigger a light update for all chars in the list.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class UpdateLightProcedure implements
         TObjectProcedure<Char> {
@@ -309,9 +295,7 @@ public final class People implements Stoppable, TableLoaderSink,
      * {@link illarion.client.world.People#updateLight()} uses the class to
      * trigger a name update for all chars in the list.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class UpdateNameProcedure implements
         TObjectProcedure<Char> {

@@ -30,9 +30,7 @@ import illarion.client.net.NetCommWriter;
  * {@link illarion.client.net.CommandList#CMD_LOOKAT_MENU}).
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.92
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LookatMenuCmd extends AbstractCommand {
     /**

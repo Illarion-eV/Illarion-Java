@@ -25,8 +25,7 @@ import java.util.TimerTask;
  * The scheduler is a wrapper for a java.util.Timer so the whole client handles
  * just a single timer thread.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Scheduler implements Stoppable {
     /**

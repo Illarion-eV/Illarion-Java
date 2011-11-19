@@ -10,9 +10,7 @@ import org.newdawn.slick.loading.DeferredResource;
  * The finishing task for the loading sequence. This one should be called as
  * the last one during the loading sequence.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class FinishLoading implements DeferredResource {
     /**

@@ -32,8 +32,7 @@ import illarion.common.util.FastMath;
  * </p>
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.98
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ItemInfo {
     /**

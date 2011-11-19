@@ -22,10 +22,8 @@ package illarion.client.net;
  * Utility class that contains all constants for the client commands and the
  * server messages.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class CommandList {
     /**

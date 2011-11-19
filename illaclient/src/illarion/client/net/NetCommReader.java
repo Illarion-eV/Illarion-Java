@@ -24,9 +24,7 @@ import java.io.IOException;
  * This interface offers the possibility to read from a connection handled by
  * the network communication class of Illarion.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface NetCommReader {
     /**

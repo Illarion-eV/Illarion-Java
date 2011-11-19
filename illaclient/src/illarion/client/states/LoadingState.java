@@ -21,9 +21,7 @@ import de.lessvoid.nifty.slick2d.NiftyBasicGameState;
  * This game state is active while the game loads. It takes care for showing the
  * loading screen and to trigger the actual loading.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LoadingState extends NiftyBasicGameState {
 

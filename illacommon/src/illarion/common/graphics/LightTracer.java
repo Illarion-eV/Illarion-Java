@@ -38,9 +38,7 @@ import org.apache.log4j.Logger;
  * </p>
  * 
  * @author Nop
- * @author Martin Karing
- * @since 1.20
- * @version 2.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LightTracer extends Thread implements Stoppable {
     /**

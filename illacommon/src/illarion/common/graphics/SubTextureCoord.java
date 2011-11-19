@@ -21,9 +21,7 @@ package illarion.common.graphics;
 /**
  * This class is used to store texture coordinates.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class SubTextureCoord {
     private final String name;

@@ -36,9 +36,7 @@ import illarion.common.util.RecycleObject;
  * objects are created by the recycle factory for commands.
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.92
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public abstract class AbstractCommand implements RecycleObject {
     /**

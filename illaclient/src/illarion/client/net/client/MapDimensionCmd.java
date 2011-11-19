@@ -24,9 +24,7 @@ import illarion.client.net.NetCommWriter;
 /**
  * Client Command: Request the size of the transfered map.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @see illarion.client.net.CommandList#CMD_MAPDIMENSION
  */
 public class MapDimensionCmd extends AbstractCommand {

@@ -26,9 +26,7 @@ import illarion.common.util.FastMath;
  * This is a utility class that provides a few static functions that are handy
  * when handling animations.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class AnimationUtility {
     /**

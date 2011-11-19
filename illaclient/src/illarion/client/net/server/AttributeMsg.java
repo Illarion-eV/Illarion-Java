@@ -28,10 +28,8 @@ import illarion.client.world.World;
  * Servermessage: Character attributes (
  * {@link illarion.client.net.CommandList#MSG_ATTRIBUTE}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class AttributeMsg extends AbstractReply {
     /**

@@ -22,7 +22,6 @@ package illarion.client.graphics;
  * Interface for a general animation target for the animation handler.
  * 
  * @author Nop
- * @since 0.95
  */
 interface Animated {
     /**

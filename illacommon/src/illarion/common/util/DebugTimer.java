@@ -24,9 +24,7 @@ import org.apache.log4j.Logger;
  * Debug function used to write time stamps to the relative to the start time of
  * the client into the log file.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DebugTimer {
     /**

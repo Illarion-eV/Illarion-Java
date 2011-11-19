@@ -33,9 +33,7 @@ import java.io.UnsupportedEncodingException;
  * strings. Base64 can be used easily to store binary values as a string in text
  * files.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Base64 {
     /**

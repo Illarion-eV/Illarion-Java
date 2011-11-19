@@ -39,18 +39,14 @@ import illarion.common.util.Location;
  * It takes care for rendering the objects in the proper order, for animations
  * of the entire map and it manages the current location of the avatar.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class MapDisplayManager implements AnimatedMove {
     /**
      * This comparator is used to order the display list in case it is needed.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class DisplayListComparator extends
         FastComparator<DisplayItem> {
@@ -393,6 +389,11 @@ public final class MapDisplayManager implements AnimatedMove {
         }
 
         g.popTransform();
+        
+        g.setColor(Color.green);
+        g.drawLine(centerX, centerY, centerX + 10, centerY);
+        g.setColor(Color.red);
+        g.drawLine(centerX, centerY, centerX, centerY + 10);
         
         if (fadeOutColor.getAlpha() > 0) {
             fadeOutColor.a = (AnimationUtility.approach(

@@ -24,9 +24,7 @@ import java.util.regex.Pattern;
 /**
  * This class is used to supply and compare possible display resolutions.
  * 
- * @author Martin Karing
- * @version 2.00
- * @since 2.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GraphicResolution {
     /**

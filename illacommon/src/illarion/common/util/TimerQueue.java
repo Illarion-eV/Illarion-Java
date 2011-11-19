@@ -22,9 +22,7 @@ package illarion.common.util;
  * This class is the timer queue that stores all instances of timers and
  * regularly calls this instances from a single thread.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TimerQueue implements Runnable {
     /**

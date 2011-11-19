@@ -27,9 +27,7 @@ import org.apache.log4j.Logger;
  * its child nodes around.
  * 
  * @author Nop
- * @author Martin Karing
- * @version 2.00
- * @since 2.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class RayNode {
     /**

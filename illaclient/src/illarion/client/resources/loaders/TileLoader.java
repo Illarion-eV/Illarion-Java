@@ -32,9 +32,7 @@ import org.apache.log4j.Logger;
  * tile objects and send them to the tile factory that takes care for
  * distributing those objects.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TileLoader extends ResourceLoader<Tile> implements
     TableLoaderSink {

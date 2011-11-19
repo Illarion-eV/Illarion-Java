@@ -23,9 +23,7 @@ package illarion.common.util;
  * instances of the object are stored for later usage and in case there are
  * "old" object available those are used instead of new ones.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface Reusable extends javolution.lang.Reusable {
     /**

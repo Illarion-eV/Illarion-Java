@@ -41,10 +41,8 @@ import illarion.common.util.Location;
 /**
  * Main Class for the player controlled character.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class Player implements ConfigChangeListener {
     /**

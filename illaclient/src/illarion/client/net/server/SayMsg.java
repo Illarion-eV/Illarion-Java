@@ -30,10 +30,8 @@ import illarion.common.util.Location;
 /**
  * Servermessage: Talking ( {@link illarion.client.net.CommandList#MSG_SAY}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class SayMsg extends AbstractReply {
     /**

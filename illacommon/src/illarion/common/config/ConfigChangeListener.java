@@ -22,9 +22,7 @@ package illarion.common.config;
  * This listener is used to monitor changes all changes done to the
  * configuration.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface ConfigChangeListener {
     /**

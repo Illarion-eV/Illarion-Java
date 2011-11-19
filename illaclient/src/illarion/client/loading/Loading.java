@@ -8,9 +8,7 @@ import illarion.common.graphics.TextureLoader;
  * This class is used to create the list of things that need to be loaded before
  * the game is able to start.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Loading {
     /**

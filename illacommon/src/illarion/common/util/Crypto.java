@@ -49,7 +49,7 @@ import org.apache.log4j.Logger;
  * The encryption created by this class bases on a private and a public key.
  * 
  * @author Nop
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Crypto {
     /**

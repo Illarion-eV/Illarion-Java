@@ -22,9 +22,7 @@ package illarion.client.resources;
  * This interface is shared by all resource factories and ensures that they
  * start up in the very same way.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface ResourceFactory<T> {
     /**

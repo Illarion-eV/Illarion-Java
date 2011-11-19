@@ -31,9 +31,7 @@ import org.apache.log4j.Logger;
  * required overlay objects and send them to the overlay factory that takes care
  * for distributing those objects.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class OverlayLoader extends ResourceLoader<Overlay> implements
     TableLoaderSink {

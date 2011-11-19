@@ -26,9 +26,7 @@ import javolution.util.FastTable;
  * This is a implementation of a restart able timer that is able to operate very
  * fast. It will call any amount of added listeners after given delay times.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Timer {
     /**

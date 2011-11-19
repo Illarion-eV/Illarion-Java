@@ -52,17 +52,14 @@ import illarion.common.util.FastMath;
  * A image packer that sorts the images by its types and places them in a good
  * way on a larger sprite in order to waste as less as possible video ram.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ImagePacker implements Comparator<TextureElement> {
     /**
      * This is a helper function that is used as task for loading the images
      * into the image packer.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class AnalyseFileTask implements Runnable {
         /**

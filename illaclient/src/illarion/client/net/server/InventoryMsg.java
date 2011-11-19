@@ -27,10 +27,8 @@ import illarion.client.net.NetCommReader;
  * Servermessage: Update of a inventory item (
  * {@link illarion.client.net.CommandList#MSG_INVENTORY}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class InventoryMsg extends AbstractReply {
     /**

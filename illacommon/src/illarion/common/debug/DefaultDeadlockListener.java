@@ -24,9 +24,7 @@ import org.apache.log4j.Logger;
  * The default listener for the deadlock detector that prints the results to the
  * logging system.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class DefaultDeadlockListener implements
     ThreadDeadlockDetector.Listener {

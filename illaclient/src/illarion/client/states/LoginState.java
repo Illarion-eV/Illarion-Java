@@ -12,9 +12,7 @@ import de.lessvoid.nifty.slick2d.NiftyBasicGameState;
  * This game state is used to display the login and character selection dialog.
  * Also the option dialog is displayed in this state.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class LoginState extends NiftyBasicGameState {
     private final int id;

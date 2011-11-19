@@ -27,10 +27,8 @@ import illarion.client.net.NetCommReader;
  * Servermessage: Current date and time (
  * {@link illarion.client.net.CommandList#MSG_DATETIME}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.95
- * @version 1.22
  */
 public final class DateTimeMsg extends AbstractReply {
     /**

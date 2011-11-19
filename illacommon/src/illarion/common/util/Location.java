@@ -34,18 +34,14 @@ import illarion.common.graphics.MapConstants;
  * screen representations.
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.92
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class Location implements Externalizable, Reusable {
     /**
      * This is the factory class that is used to buffer and reuse the location
      * objects that are created.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class LocationFactory extends ObjectFactory<Location> {
         /**

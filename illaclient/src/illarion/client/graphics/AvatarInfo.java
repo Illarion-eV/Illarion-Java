@@ -29,8 +29,7 @@ import illarion.common.graphics.CharAnimations;
  * to the object.
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.95
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class AvatarInfo {
     /**

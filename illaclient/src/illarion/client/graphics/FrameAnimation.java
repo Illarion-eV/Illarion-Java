@@ -21,9 +21,8 @@ package illarion.client.graphics;
 /**
  * A frame animation is a animation based on different images.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.95
  */
 final class FrameAnimation extends AbstractAnimation {
     /**

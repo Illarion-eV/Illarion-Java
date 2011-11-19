@@ -22,8 +22,7 @@ package illarion.common.graphics;
  * Utility class that holds a few constants that are needed to define the map
  * correctly.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class MapConstants {
     /**

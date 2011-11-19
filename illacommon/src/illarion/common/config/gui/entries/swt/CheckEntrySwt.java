@@ -30,9 +30,7 @@ import illarion.common.config.entries.ConfigEntry;
  * configuration entry. Its sole purpose is the use along with the configuration
  * system.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CheckEntrySwt implements SaveableEntrySwt {
     /**

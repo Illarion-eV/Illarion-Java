@@ -41,9 +41,7 @@ import de.lessvoid.nifty.slick2d.render.font.loader.SlickRenderFontLoader;
 /**
  * Class to load Fonts for the usage as OpenGL Font.
  * 
- * @author Martin Karing
- * @version 2.00
- * @since 2.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class FontLoader implements SlickRenderFontLoader {
     public static enum Fonts {

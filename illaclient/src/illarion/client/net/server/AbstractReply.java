@@ -32,10 +32,8 @@ import illarion.common.util.RecycleObject;
  * Default class of a server message. This is the superclass of every server
  * message class.
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public abstract class AbstractReply implements RecycleObject {
     /**

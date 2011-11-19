@@ -8,9 +8,7 @@ import illarion.common.util.FastMath;
  * requires the size of the screen as information to offer the proper values.
  * This class requires updates upon changes of the screen size.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class MapDimensions {
     /**

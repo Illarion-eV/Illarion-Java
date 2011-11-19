@@ -22,9 +22,7 @@ package illarion.common.util;
  * Like the name suggests a object source is a source for objects. Its basically
  * a method to access a list with a String as key.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @param <T> The type of the object that is handled by this source
  */
 public interface ObjectSource<T> {

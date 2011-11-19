@@ -28,9 +28,7 @@ import javolution.util.FastTable;
  * the results of the updates must be done at another position.
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.95
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class AnimationManager {
 

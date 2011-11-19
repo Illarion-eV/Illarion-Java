@@ -21,8 +21,7 @@ package illarion.client;
 /**
  * A list of the available debug flags the client knows.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum Debug {
     /**

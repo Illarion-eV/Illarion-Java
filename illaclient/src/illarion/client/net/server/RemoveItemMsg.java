@@ -31,10 +31,8 @@ import illarion.common.util.Location;
  * Servermessage: Remove the top item on a tile (
  * {@link illarion.client.net.CommandList#MSG_REMOVE_ITEM}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class RemoveItemMsg extends AbstractReply {
     /**

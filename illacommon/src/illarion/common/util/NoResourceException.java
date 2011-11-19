@@ -23,9 +23,7 @@ package illarion.common.util;
  * table loader fails at loading a resource.
  * 
  * @author Nop
- * @author Martin Karing
- * @since 0.92
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NoResourceException extends RuntimeException {
     /**

@@ -28,10 +28,8 @@ import illarion.client.world.World;
  * Servermessage: Play background music (
  * {@link illarion.client.net.CommandList#MSG_MUSIC}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class MusicMsg extends AbstractReply {
     /**

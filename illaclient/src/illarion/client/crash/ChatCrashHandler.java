@@ -24,9 +24,7 @@ import illarion.client.util.ChatHandler;
  * This crash handler takes care for crashes of the chat handler thread. It is
  * able to restart the chat handler in case its needed.
  * 
- * @author Martin Karing
- * @version 1.22
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ChatCrashHandler extends AbstractCrashHandler {
     /**

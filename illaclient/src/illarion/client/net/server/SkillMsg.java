@@ -27,10 +27,8 @@ import illarion.client.net.NetCommReader;
  * Servermessage: Update the character skills (
  * {@link illarion.client.net.CommandList#MSG_SKILL}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class SkillMsg extends AbstractReply {
     /**

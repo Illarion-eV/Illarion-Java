@@ -41,18 +41,14 @@ import illarion.common.util.MessageSource;
  * contains the error problem description and the error message and allows the
  * user to choose what to do.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ReportDialogSwing implements ReportDialog {
     /**
      * Button listener helper class. This class is assigned to the buttons of
      * the dialog.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private final class ButtonListener implements ActionListener {
         /**

@@ -27,10 +27,8 @@ import illarion.client.net.NetCommReader;
  * Servermessage: Magic flags of the player character (
  * {@link illarion.client.net.CommandList#MSG_MAGIC_FLAG}).
  * 
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
- * @since 0.92
- * @version 1.22
  */
 public final class MagicFlagMsg extends AbstractReply {
     /**

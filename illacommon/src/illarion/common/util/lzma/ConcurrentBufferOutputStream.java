@@ -28,9 +28,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * This is a output stream that is thread save and moves its data over a
  * blocking queue. Its save to use this output stream with threads.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class ConcurrentBufferOutputStream extends OutputStream {
     /**

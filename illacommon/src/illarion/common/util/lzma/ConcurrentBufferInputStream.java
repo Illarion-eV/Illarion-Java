@@ -27,9 +27,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * The concurrent input stream that streams data for the use with different
  * threads.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class ConcurrentBufferInputStream extends InputStream {
     /**

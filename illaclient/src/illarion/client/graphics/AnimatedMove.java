@@ -22,7 +22,6 @@ package illarion.client.graphics;
  * Interface for movement based animation targets.
  * 
  * @author Nop
- * @since 0.95
  */
 public interface AnimatedMove extends Animated {
     /**

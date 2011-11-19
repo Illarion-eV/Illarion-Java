@@ -29,9 +29,7 @@ import org.apache.log4j.Logger;
  * This class takes care for loading the avatar clothes, sorts them to the
  * avatars and prepares to render them.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ClothLoader extends ResourceLoader<AvatarCloth> implements
     TableLoaderSink {

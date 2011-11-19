@@ -29,18 +29,14 @@ import javolution.context.ObjectFactory;
  * The rectangle class is a helper class that allows to define rectangles and
  * check them for intersection.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Rectangle implements Cloneable, Reusable, Externalizable {
     /**
      * This factory class is used to create and store the instances of this
      * Rectangles.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class RectangleFactory extends
         ObjectFactory<Rectangle> {

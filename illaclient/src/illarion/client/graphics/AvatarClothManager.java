@@ -25,8 +25,7 @@ import illarion.client.resources.ItemFactory;
  * The Cloth manager stores all known clothes and their locations for each known
  * avatar. And allows accessing the cloth definitions.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class AvatarClothManager {
     /**

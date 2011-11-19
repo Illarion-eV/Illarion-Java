@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
  * functions offered by this class line by line.
  * 
  * @author Nop
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TableLoader {
     /**

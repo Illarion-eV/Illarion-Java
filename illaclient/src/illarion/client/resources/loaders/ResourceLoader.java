@@ -21,7 +21,7 @@ package illarion.client.resources.loaders;
 import illarion.client.resources.ResourceFactory;
 
 /**
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public abstract class ResourceLoader<T> {
     /**

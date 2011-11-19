@@ -51,18 +51,14 @@ import illarion.common.util.MessageSource;
  * toolkit (SWT {@link org.eclipse.swt}) to display the GUI for the
  * configuration.
  * 
- * @author Martin Karing
- * @since 1.22
- * @version 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ConfigDialogSwt {
     /**
      * The listener of the cancel button for this dialog. It causes the dialog
      * to be closed.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class CancelButtonListener implements Listener {
         /**
@@ -98,9 +94,7 @@ public final class ConfigDialogSwt {
      * The listener of the save button for this dialog. It causes all elements
      * to be saved and the dialog to be closed.
      * 
-     * @author Martin Karing
-     * @since 1.22
-     * @version 1.22
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class SaveButtonListener implements Listener {
         /**

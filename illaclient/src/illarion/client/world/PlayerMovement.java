@@ -36,8 +36,7 @@ import illarion.common.util.Location;
  * The player movement class takes and handles all move requests and orders that
  * are needed to move the player character over the map.
  * 
- * @author Martin Karing
- * @since 1.22
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class PlayerMovement implements AnimatedMove, PathReceiver {
     /**

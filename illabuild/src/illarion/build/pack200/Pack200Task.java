@@ -35,17 +35,13 @@ import org.apache.tools.ant.types.FileSet;
  * This is the main task class that handles the Pack200 compression for the JAR
  * files.
  * 
- * @author Martin Karing
- * @since 1.00
- * @version 1.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Pack200Task extends Task {
     /**
      * This is the task that is executed to process one file.
      * 
-     * @author Martin Karing
-     * @since 1.00
-     * @version 1.00
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class FileTask implements Runnable {
         /**
