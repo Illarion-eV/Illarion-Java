@@ -18,6 +18,8 @@
  */
 package illarion.common.graphics;
 
+import illarion.common.util.FastMath;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -605,22 +607,56 @@ public final class Sprite {
             throw new IllegalArgumentException("Failed to get proper texture.");
         }
 
-        g.pushTransform();
+        g.translate(x, y);
         if (isMirrored()) {
             g.scale(-(w / getWidth()), h / getHeight());
         } else {
             g.scale(w / getWidth(), h / getHeight());
+        }        
+        
+        applyRotation(texture);
+        drawImage(g, texture, color);
+        
+        if (isMirrored()) {
+            g.scale(-(getWidth() / w), getHeight() / h);
+        } else {
+            g.scale(getWidth() / w, getHeight() / h);
+        } 
+        
+        g.translate(-x, -y);
+    }
+    
+    /**
+     * Apply the rotation of this sprite to the currently rendered texture.
+     * 
+     * @param texture the rotation of the texture
+     */
+    private void applyRotation(final Image texture) {
+        final float deg = getRotation();
+        if (FastMath.abs(deg) < FastMath.FLT_EPSILON) {
+            texture.setRotation(0.f);
+        } else {
+            texture.setRotation(getRotation());
+            texture.setCenterOfRotation(getAlignOffsetX(), getAlignOffsetY());
         }
-
-        g.rotate(x, y, getRotation());
-
-        g.drawImage(texture, x + getAlignOffsetX() + getOffsetX(), y
-            + getAlignOffsetY() - getOffsetY(), getColor(color));
-
-        g.resetTransform();
-        g.popTransform();
-
-        reportDrawTexture();
+    }
+    
+    /**
+     * Draw the image on the screen with the proper offsets.
+     * 
+     * @param g the graphics instance used to do the drawing operation
+     * @param texture the image that is drawn
+     * @param color the color that is applied to the image
+     */
+    private void drawImage(final Graphics g, final Image texture, final Color color) {
+        int xOff;
+        int yOff = getAlignOffsetY() - getOffsetY();
+        if (isMirrored()) {
+            xOff = getAlignOffsetX() - getOffsetX();
+        } else {
+            xOff = getAlignOffsetX() + getOffsetX();
+        }
+        g.drawImage(texture, xOff, yOff, getColor(color));
     }
 
     /**
@@ -665,13 +701,8 @@ public final class Sprite {
             g.scale(-1.f, 1.f);
         }
 
-        if (getRotation() != 1.f) {
-            texture.setRotation(getRotation());
-            texture.setCenterOfRotation(getAlignOffsetX(), getAlignOffsetY());
-        }
-
-        g.drawImage(texture, getAlignOffsetX() + getOffsetX(),
-            getAlignOffsetY() - getOffsetY(), getColor(color));
+        applyRotation(texture);
+        drawImage(g, texture, color);
 
         if (isMirrored()) {
             g.scale(-1.f, 1.f);
@@ -724,13 +755,9 @@ public final class Sprite {
         } else {
             g.scale(scale, scale);
         }
-        if (getRotation() != 1.f) {
-            texture.setRotation(getRotation());
-            texture.setCenterOfRotation(getAlignOffsetX(), getAlignOffsetY());
-        }
-
-        g.drawImage(texture, getAlignOffsetX() + getOffsetX(),
-            getAlignOffsetY() - getOffsetY(), getColor(color));
+        
+        applyRotation(texture);
+        drawImage(g, texture, color);
 
         final float invScale = 1.f / scale;
         if (isMirrored()) {
