@@ -45,6 +45,10 @@ import illarion.client.crash.DefaultCrashHandler;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.SimpleCmd;
+import illarion.client.resources.SongFactory;
+import illarion.client.resources.SoundFactory;
+import illarion.client.resources.loaders.SongLoader;
+import illarion.client.resources.loaders.SoundLoader;
 import illarion.client.util.ChatLog;
 import illarion.client.util.Lang;
 import illarion.client.world.MapDimensions;
@@ -181,6 +185,10 @@ public final class IllaClient {
         SlickRenderImageLoaders.getInstance().addLoader(TextureLoader.getInstance(), SlickAddLoaderLocation.first);
         SlickRenderFontLoaders.getInstance().addLoader(FontLoader.getInstance(), SlickAddLoaderLocation.first);
         
+        // Preload sound and music
+        new SongLoader().setTarget(SongFactory.getInstance()).load();
+        new SoundLoader().setTarget(SoundFactory.getInstance()).load();
+        
         game = new illarion.client.Game();
         
         final GraphicResolution res = new GraphicResolution(cfg.getString(CFG_RESOLUTION));
@@ -194,7 +202,7 @@ public final class IllaClient {
         }
         
         gameContainer.setAlwaysRender(true);
-        gameContainer.setTargetFrameRate(60);
+        //gameContainer.setTargetFrameRate(60);
         
         try {
             gameContainer.start();

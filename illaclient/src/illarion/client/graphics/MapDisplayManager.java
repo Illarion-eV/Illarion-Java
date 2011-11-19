@@ -237,7 +237,7 @@ public final class MapDisplayManager implements AnimatedMove {
         elevation =
             World.getMap().getElevationAt(World.getPlayer().getLocation());
         if (elevation != fromElevation) {
-            levelAni.start(0, fromElevation, 0, elevation, speed);
+            levelAni.start(0, -fromElevation, 0,- elevation, speed);
         }
 
         // adjust Z-order after update
@@ -456,7 +456,7 @@ public final class MapDisplayManager implements AnimatedMove {
             avatar.animationFinished(false);
         }
         elevation = World.getMap().getElevationAt(origin);
-        dL = elevation;
+        dL = -elevation;
         dX = 0;
         dY = 0;
     }

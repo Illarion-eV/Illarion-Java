@@ -18,6 +18,9 @@
  */
 package illarion.client.graphics;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
@@ -158,8 +161,7 @@ final class AvatarClothRenderer {
      * The list of clothes the avatar currently wears. This clothes are rendered
      * one by one when its requested.
      */
-    private final AvatarCloth[] currentClothes =
-        new AvatarCloth[AvatarClothManager.GROUP_COUNT];
+    private final AvatarCloth[] currentClothes;
 
     /**
      * The frame that is currently rendered.
@@ -190,18 +192,22 @@ final class AvatarClothRenderer {
     /**
      * The scaling value that applies to all cloth graphics.
      */
-    private float scale = 1.f;
+    private float scale;
 
     /**
-     * The copy constructor that is used to create a dublicate of this class in
+     * This is the lock used to ensure the proper access on the cloth objects.
+     */
+    private final ReadWriteLock clothLock;
+
+    /**
+     * The copy constructor that is used to create a duplicate of this class in
      * order to get separated instances for each avatar that is needed.
      * 
      * @param org the instance of AvatarClothRenderer that shall be copied into
      *            a new instance
      */
     protected AvatarClothRenderer(final AvatarClothRenderer org) {
-        direction = org.direction;
-        parentFrames = org.parentFrames;
+        this(org.direction, org.parentFrames);
     }
 
     /**
@@ -211,8 +217,11 @@ final class AvatarClothRenderer {
      * @param frames the amount of frames the parent avatar animation contains
      */
     protected AvatarClothRenderer(final int dir, final int frames) {
-        direction = dir;
+        clothLock = new ReentrantReadWriteLock();
+        scale = 1.f;
+        currentClothes = new AvatarCloth[AvatarClothManager.GROUP_COUNT];
         parentFrames = frames;
+        direction = dir;
     }
 
     /**
@@ -222,10 +231,15 @@ final class AvatarClothRenderer {
      * @param newAlpha the new alpha value
      */
     public void setAlpha(final int newAlpha) {
-        for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-            if (currentClothes[i] != null) {
-                currentClothes[i].setAlpha(newAlpha);
+        clothLock.readLock().lock();
+        try {
+            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
+                if (currentClothes[i] != null) {
+                    currentClothes[i].setAlpha(newAlpha);
+                }
             }
+        } finally {
+            clothLock.readLock().unlock();
         }
     }
 
@@ -236,17 +250,22 @@ final class AvatarClothRenderer {
      */
     public void setFrame(final int frame) {
         currentFrame = frame;
-        for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-            final AvatarCloth currentCloth = currentClothes[i];
-            if (currentCloth != null) {
-                final int currentFrames = currentCloth.getFrames();
-                if (currentFrames == parentFrames) {
-                    currentCloth.setFrame(frame);
-                } else if (currentFrames > 1) {
-                    currentCloth
-                        .setFrame((int) (((float) currentFrames * (float) frame) / parentFrames));
+        clothLock.readLock().lock();
+        try {
+            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
+                final AvatarCloth currentCloth = currentClothes[i];
+                if (currentCloth != null) {
+                    final int currentFrames = currentCloth.getFrames();
+                    if (currentFrames == parentFrames) {
+                        currentCloth.setFrame(frame);
+                    } else if (currentFrames > 1) {
+                        currentCloth
+                            .setFrame((int) (((float) currentFrames * (float) frame) / parentFrames));
+                    }
                 }
             }
+        } finally {
+            clothLock.readLock().unlock();
         }
     }
 
@@ -260,10 +279,15 @@ final class AvatarClothRenderer {
      */
     public void setLight(final Color light) {
         currentLight = light;
-        for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-            if (currentClothes[i] != null) {
-                currentClothes[i].setLight(light);
+        clothLock.readLock().lock();
+        try {
+            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
+                if (currentClothes[i] != null) {
+                    currentClothes[i].setLight(light);
+                }
             }
+        } finally {
+            clothLock.readLock().unlock();
         }
     }
 
@@ -276,10 +300,15 @@ final class AvatarClothRenderer {
      */
     public void setScale(final float newScale) {
         scale = newScale;
-        for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-            if (currentClothes[i] != null) {
-                currentClothes[i].setScale(newScale);
+        clothLock.readLock().lock();
+        try {
+            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
+                if (currentClothes[i] != null) {
+                    currentClothes[i].setScale(newScale);
+                }
             }
+        } finally {
+            clothLock.readLock().unlock();
         }
     }
 
@@ -290,8 +319,13 @@ final class AvatarClothRenderer {
      * @param color the new color that shall be used as base color
      */
     protected void changeBaseColor(final int slot, final Color color) {
-        if (currentClothes[slot] != null) {
-            currentClothes[slot].changeBaseColor(color);
+        clothLock.readLock().lock();
+        try {
+            if (currentClothes[slot] != null) {
+                currentClothes[slot].changeBaseColor(color);
+            }
+        } finally {
+            clothLock.readLock().unlock();
         }
     }
 
@@ -300,11 +334,16 @@ final class AvatarClothRenderer {
      * this renderer back into their factory.
      */
     protected void clear() {
-        for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-            if (currentClothes[i] != null) {
-                currentClothes[i].recycle();
+        clothLock.writeLock().lock();
+        try {
+            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
+                if (currentClothes[i] != null) {
+                    currentClothes[i].recycle();
+                }
+                currentClothes[i] = null;
             }
-            currentClothes[i] = null;
+        } finally {
+            clothLock.writeLock().unlock();
         }
     }
 
@@ -312,11 +351,16 @@ final class AvatarClothRenderer {
      * Render all clothes in the correct order.
      */
     protected void render(final Graphics g) {
-        for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-            final int currentIndex = RENDER_DIR[direction][i];
-            if (currentClothes[currentIndex] != null) {
-                currentClothes[currentIndex].draw(g);
+        clothLock.readLock().lock();
+        try {
+            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
+                final int currentIndex = RENDER_DIR[direction][i];
+                if (currentClothes[currentIndex] != null) {
+                    currentClothes[currentIndex].draw(g);
+                }
             }
+        } finally {
+            clothLock.readLock().unlock();
         }
     }
 
@@ -331,16 +375,21 @@ final class AvatarClothRenderer {
      *            remove the item
      */
     protected void setCloth(final int group, final AvatarCloth item) {
-        if (currentClothes[group] != null) {
-            currentClothes[group].recycle();
-        }
-        currentClothes[group] = item;
+        clothLock.writeLock().lock();
+        try {
+            if (currentClothes[group] != null) {
+                currentClothes[group].recycle();
+            }
+            currentClothes[group] = item;
 
-        if (item != null) {
-            item.setLight(currentLight);
-            item.setScreenPos(avatarPosX, avatarPosY, avatarPosZ, layer);
-            item.setFrame(currentFrame);
-            item.setScale(scale);
+            if (item != null) {
+                item.setLight(currentLight);
+                item.setScreenPos(avatarPosX, avatarPosY, avatarPosZ, layer);
+                item.setFrame(currentFrame);
+                item.setScale(scale);
+            }
+        } finally {
+            clothLock.writeLock().unlock();
         }
     }
 
@@ -360,10 +409,15 @@ final class AvatarClothRenderer {
         avatarPosY = newY;
         avatarPosZ = newZ;
         layer = newLayer;
-        for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-            if (currentClothes[i] != null) {
-                currentClothes[i].setScreenPos(newX, newY, newZ, newLayer);
+        clothLock.readLock().lock();
+        try {
+            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
+                if (currentClothes[i] != null) {
+                    currentClothes[i].setScreenPos(newX, newY, newZ, newLayer);
+                }
             }
+        } finally {
+            clothLock.readLock().unlock();
         }
     }
 }

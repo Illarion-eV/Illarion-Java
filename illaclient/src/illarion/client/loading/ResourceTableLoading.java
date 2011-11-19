@@ -82,10 +82,6 @@ public final class ResourceTableLoading implements DeferredResource {
             new TableFactoryInitTask(new EffectLoader()
                 .setTarget(EffectFactory.getInstance())),
             new TableFactoryInitTask(new RuneLoader().setTarget(RuneFactory
-                .getInstance())),
-            new TableFactoryInitTask(new SongLoader().setTarget(SongFactory
-                .getInstance())),
-            new TableFactoryInitTask(new SoundLoader().setTarget(SoundFactory
                 .getInstance())));
     }
 

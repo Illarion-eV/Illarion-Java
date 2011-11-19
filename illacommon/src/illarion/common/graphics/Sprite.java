@@ -157,7 +157,7 @@ public final class Sprite {
          * value.
          */
         private final AlignOffset offset;
-        
+
         /**
          * The constructor of the offset constants that requires a instance of
          * the class to calculate the offset.
@@ -647,15 +647,18 @@ public final class Sprite {
 
         g.pushTransform();
 
+        g.translate(x, y);
         if (isMirrored()) {
             g.scale(-1.f, 1.f);
         }
 
-        texture.setRotation(getRotation());
-        texture.setCenterOfRotation(getAlignOffsetX(), getAlignOffsetY());
+        if (getRotation() != 1.f) {
+            texture.setRotation(getRotation());
+            texture.setCenterOfRotation(getAlignOffsetX(), getAlignOffsetY());
+        }
 
-        g.drawImage(texture, x + getAlignOffsetX() + getOffsetX(), y
-            + getAlignOffsetY() - getOffsetY(), getColor(color));
+        g.drawImage(texture, getAlignOffsetX() + getOffsetX(),
+            getAlignOffsetY() - getOffsetY(), getColor(color));
 
         g.resetTransform();
         g.popTransform();
@@ -699,14 +702,19 @@ public final class Sprite {
 
         g.pushTransform();
 
+        g.translate(x, y);
         if (isMirrored()) {
             g.scale(-scale, scale);
         } else {
             g.scale(scale, scale);
         }
-        g.rotate(x, y, getRotation());
-        g.drawImage(texture, x + getAlignOffsetX() + getOffsetX(), y
-            + getAlignOffsetY() - getOffsetY(), getColor(color));
+        if (getRotation() != 1.f) {
+            texture.setRotation(getRotation());
+            texture.setCenterOfRotation(getAlignOffsetX(), getAlignOffsetY());
+        }
+
+        g.drawImage(texture, getAlignOffsetX() + getOffsetX(),
+            getAlignOffsetY() - getOffsetY(), getColor(color));
 
         g.resetTransform();
         g.popTransform();

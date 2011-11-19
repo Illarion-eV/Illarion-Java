@@ -540,8 +540,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             parentPlayer.getLocation().getDcX() - target.getDcX();
         final int yOffset =
             parentPlayer.getLocation().getDcY() - target.getDcY();
-        moveAnimation.start(0, 0, oldElevation, xOffset, yOffset,
-            newElevation, speed);
+        moveAnimation.start(0, 0, -oldElevation, xOffset, yOffset,
+            -newElevation, speed);
 
         parentPlayer.updateLocation(target);
         World.getMusicBox().updatePlayerLocation();

@@ -25,6 +25,8 @@ import illarion.client.util.IdWrapper;
 import java.util.logging.Logger;
 
 import org.newdawn.slick.Sound;
+import org.newdawn.slick.loading.DeferredResource;
+import org.newdawn.slick.loading.LoadingList;
 
 /**
  * This factory provides access to all known sound files.
@@ -109,7 +111,12 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<Sound> > {
      */
     @Override
     public void storeResource(final IdWrapper<Sound> resource) {
-        sounds.put(resource.getId(), resource.getObject());
+        final Sound sound = resource.getObject();
+        
+        if (sound instanceof DeferredResource) {
+            LoadingList.get().add((DeferredResource) sound);
+        }
+        sounds.put(resource.getId(), sound);
     }
 
 }

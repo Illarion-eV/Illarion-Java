@@ -550,8 +550,8 @@ public final class Char implements RecycleObject,
                 startAnimation(CharAnimations.RUN, speed);
             }
             move.start(tempLoc.getDcX() - loc.getDcX(),
-                (tempLoc.getDcY() + fromElevation) - loc.getDcY(),
-                tempLoc.getDcZ() - loc.getDcZ(), 0, elevation, 0, speed);
+                tempLoc.getDcY() + fromElevation - loc.getDcY(),
+                0, 0, +elevation, 0, speed);
         } else {
             // reset last animation result
             dX = 0;
@@ -1078,7 +1078,7 @@ public final class Char implements RecycleObject,
      */
     protected void updatePosition(final int fix) {
         if (avatar != null) {
-            avatar.setScreenPos(loc.getDcX() + dX, loc.getDcY() + dY + fix,
+            avatar.setScreenPos(loc.getDcX() + dX, loc.getDcY() + dY - fix,
                 loc.getDcZ() + dZ, Layers.CHARS);
         }
     }

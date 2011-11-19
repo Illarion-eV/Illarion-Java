@@ -25,6 +25,8 @@ import illarion.common.util.FastMath;
 import java.util.List;
 
 import org.newdawn.slick.Music;
+import org.newdawn.slick.loading.DeferredResource;
+import org.newdawn.slick.loading.LoadingList;
 
 import javolution.util.FastTable;
 
@@ -104,6 +106,11 @@ public final class SongFactory implements ResourceFactory<IdWrapper<Music> > {
     @Override
     public void storeResource(final IdWrapper<Music> resource) {
         final int clipID = resource.getId();
+        final Music music = resource.getObject();
+        
+        if (music instanceof DeferredResource) {
+            LoadingList.get().add((DeferredResource) music);
+        }
 
         List<Music> clipList;
         if (!songs.contains(clipID)) {
@@ -112,6 +119,6 @@ public final class SongFactory implements ResourceFactory<IdWrapper<Music> > {
         } else {
             clipList = songs.get(clipID);
         }
-        clipList.add(resource.getObject());
+        clipList.add(music);
     }
 }

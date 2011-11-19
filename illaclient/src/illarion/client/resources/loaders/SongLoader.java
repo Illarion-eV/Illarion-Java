@@ -26,6 +26,7 @@ import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.openal.SoundStore;
 
 /**
  * This class is used to load the song definitions from the resource table that
@@ -66,6 +67,7 @@ public final class SongLoader extends ResourceLoader<IdWrapper<Music> > implemen
         final ResourceFactory<IdWrapper<Music> > factory = getTargetFactory();
 
         factory.init();
+        SoundStore.get().setDeferredLoading(true);
         new TableLoader("Songs", this);
         factory.loadingFinished();
     }
