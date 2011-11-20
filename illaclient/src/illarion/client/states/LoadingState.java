@@ -41,8 +41,12 @@ public final class LoadingState extends NiftyBasicGameState {
         controller = new LoadScreenController(game);
         nifty.fromXml("illarion/client/gui/xml/loading.xml", "loading",
             controller);
-        
+    }
+    
+    public void enterState(final GameContainer container,
+        final StateBasedGame game) throws SlickException {
         Loading.enlistMissingComponents();
+        super.enterState(container, game);
     }
 
     @Override
