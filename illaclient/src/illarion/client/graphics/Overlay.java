@@ -74,6 +74,14 @@ public class Overlay extends AbstractEntity implements RecycleObject {
             return null;
         }
     }
+    
+    public void show() {
+        // nothing to do
+    }
+    
+    public void hide() {
+        // nothing to do
+    }
 
     @Override
     public void activate(final int id) {

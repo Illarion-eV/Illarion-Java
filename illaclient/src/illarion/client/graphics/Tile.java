@@ -240,6 +240,11 @@ public class Tile extends AbstractEntity {
      */
     public void setOverlay(final Overlay overlay) {
         this.overlay = overlay;
+        if (overlay != null) {
+            setFadingCorridorEffectEnabled(false);
+        } else {
+            setFadingCorridorEffectEnabled(true);
+        }
     }
 
     /**
@@ -272,11 +277,9 @@ public class Tile extends AbstractEntity {
 
     @Override
     public void update(final int delta) {
-        if (overlay == null) {
-            super.update(delta);
-        } else {
-            setAlpha(255);
-            overlay.setAlpha(255);
+        super.update(delta);
+        if (overlay != null) {
+            overlay.update(delta);
         }
     }
 

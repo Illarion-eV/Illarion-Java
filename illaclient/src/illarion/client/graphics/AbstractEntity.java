@@ -32,7 +32,6 @@ import illarion.common.util.FastMath;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 
-
 /**
  * The entity is a object that is shown in the game. It contains a sprite and
  * possibly a frame animation. Also it performs fade in and out effects.
@@ -144,8 +143,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     /**
      * The color value of the alpha when the object is faded out fully.
      */
-    private static final int FADE_OUT_ALPHA =
-        (int) (0.4f * 255);
+    private static final int FADE_OUT_ALPHA = (int) (0.4f * 255);
 
     /**
      * This render color instance is used to calculate the mixed color of the
@@ -159,8 +157,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         final int fadingTime = IllaClient.getCfg().getInteger(CFG_FADING);
 
         FADING_SPEED =
-            ((255 - FADE_OUT_ALPHA) * AnimationUtility.DELTA_DIV)
-                / fadingTime;
+            ((255 - FADE_OUT_ALPHA) * AnimationUtility.DELTA_DIV) / fadingTime;
 
         IllaClient.getCfg().addListener(CFG_FADING, new FadingUpdate());
     }
@@ -279,6 +276,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         entityID = org.entityID;
         offS = org.offS;
         baseColor = org.baseColor;
+        fadingCorridorEffect = org.fadingCorridorEffect;
     }
 
     /**
@@ -435,10 +433,8 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     public boolean draw(final Graphics g) {
         final int renderLocX = displayX;
         final int renderLocY = displayY;
-        final int width = sprite.getWidth() - offS;
-        final int height = sprite.getHeight();
-        
-        if (!Camera.getInstance().requiresUpdate(renderLocX, renderLocY, width, height)) {
+
+        if (!drawingNeeded) {
             return true;
         }
 
@@ -446,10 +442,11 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
 
         if ((baseColor == null) && (overWriteBaseColor == null)) {
             if (useScale) {
-                sprite.draw(g, renderLocX, renderLocY, localLight, currentFrame,
-                    scale);
+                sprite.draw(g, renderLocX, renderLocY, localLight,
+                    currentFrame, scale);
             } else {
-                sprite.draw(g, renderLocX, renderLocY, localLight, currentFrame);
+                sprite.draw(g, renderLocX, renderLocY, localLight,
+                    currentFrame);
             }
         } else {
             Color renderColor;
@@ -460,10 +457,11 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
             }
 
             if (useScale) {
-                sprite.draw(g, renderLocX, renderLocY, renderColor, currentFrame,
-                    scale);
+                sprite.draw(g, renderLocX, renderLocY, renderColor,
+                    currentFrame, scale);
             } else {
-                sprite.draw(g, renderLocX, renderLocY, renderColor, currentFrame);
+                sprite.draw(g, renderLocX, renderLocY, renderColor,
+                    currentFrame);
             }
         }
         return true;
@@ -600,8 +598,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * @return true in case the entity is visible
      */
     public final boolean isVisible() {
-        return (alphaTarget > 0)
-            || (alpha > 0);
+        return (alphaTarget > 0) || (alpha > 0);
     }
 
     /**
@@ -760,34 +757,51 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      */
     @Override
     public void update(final int delta) {
-        int xOffset;
-        int yOffset;
+        int xOffset = sprite.getOffsetX() + sprite.getAlignOffsetX();
+        int yOffset = sprite.getOffsetY() - sprite.getAlignOffsetY();
+
+        int width = sprite.getWidth();
+        int widthNoShadow = width - offS;
+        int height = sprite.getHeight();
+
         if (useScale) {
-            xOffset = sprite.getScaledOffsetX(scale);
-            yOffset = sprite.getScaledOffsetY(scale);
-        } else {
-            xOffset = sprite.getOffsetX();
-            yOffset = sprite.getOffsetY();
+            xOffset *= scale;
+            yOffset *= scale;
+            width *= scale;
+            widthNoShadow *= scale;
+            height *= scale;
         }
 
         final int scrX = displayX + xOffset;
-        final int scrY = displayY + yOffset;
+        final int scrY = displayY - yOffset;
 
-        final int width = sprite.getWidth();
-        final int height = sprite.getHeight();
+        if (fadingCorridorEffect) {
+            final boolean transparent =
+                FadingCorridor.getInstance().isInCorridor(scrX, scrY, layerZ,
+                    widthNoShadow, height);
 
-        final boolean transparent =
-            FadingCorridor.getInstance().isInCorridor(scrX, scrY, layerZ,
-                width, height);
-
-        if (transparent) {
-            setAlphaTarget(FADE_OUT_ALPHA);
-        } else {
-            setAlphaTarget(255);
+            if (transparent) {
+                setAlphaTarget(FADE_OUT_ALPHA);
+            } else {
+                setAlphaTarget(255);
+            }
         }
 
         updateAlpha(delta);
+        drawingNeeded =
+            Camera.getInstance().requiresUpdate(scrX, scrY, width, height);
     }
+
+    private boolean fadingCorridorEffect = true;
+
+    public void setFadingCorridorEffectEnabled(final boolean value) {
+        fadingCorridorEffect = value;
+    }
+
+    /**
+     * This variable is set to true in case drawing this image is required.
+     */
+    private boolean drawingNeeded = false;
 
     /**
      * This function checks if the entity is made transparent due the color its

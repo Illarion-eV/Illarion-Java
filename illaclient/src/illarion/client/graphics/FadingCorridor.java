@@ -114,7 +114,7 @@ public final class FadingCorridor {
      */
     protected void setCorridor(final AbstractEntity character) {
         fading.setBounds(character.getDisplayX() + TOLERANCE,
-            character.getDisplayY() + TOLERANCE, character.getWidth(),
+            character.getDisplayY() + TOLERANCE - character.getHeight(), character.getWidth(),
             character.getHeight());
         back = character.getZOrder() - (Layers.DISTANCE / 2);
     }

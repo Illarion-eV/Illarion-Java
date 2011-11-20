@@ -81,6 +81,7 @@ public final class AvatarCloth extends AbstractEntity {
         avatar = avatarId;
         locationId = location;
         reset();
+        setFadingCorridorEffectEnabled(false);
     }
 
     private static int getAvatarOffsetX(final int avatarId) {
@@ -183,19 +184,6 @@ public final class AvatarCloth extends AbstractEntity {
      */
     public void setFactory(final ClothFactory parentFactory) {
         parent = parentFactory;
-    }
-
-    /**
-     * Update the alpha value regarding the needed fading operations. Since the
-     * fading needs to be done in the same way as the character sprite, this
-     * function won't change anything.
-     * 
-     * @param delta the time in milliseconds since the last render run
-     * @return the new alpha value
-     */
-    @Override
-    public void update(final int delta) {
-        // nothing to do
     }
 
     @Override

@@ -195,6 +195,11 @@ final class AvatarClothRenderer {
     private float scale;
 
     /**
+     * The alpha value applied to the clothes.
+     */
+    private int clothAlpha;
+
+    /**
      * This is the lock used to ensure the proper access on the cloth objects.
      */
     private final ReadWriteLock clothLock;
@@ -222,6 +227,7 @@ final class AvatarClothRenderer {
         currentClothes = new AvatarCloth[AvatarClothManager.GROUP_COUNT];
         parentFrames = frames;
         direction = dir;
+        clothAlpha = -1;
     }
 
     /**
@@ -231,11 +237,17 @@ final class AvatarClothRenderer {
      * @param newAlpha the new alpha value
      */
     public void setAlpha(final int newAlpha) {
+        if (newAlpha == clothAlpha) {
+            return;
+        }
+
+        clothAlpha = newAlpha;
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
                 if (currentClothes[i] != null) {
                     currentClothes[i].setAlpha(newAlpha);
+                    currentClothes[i].setAlphaTarget(newAlpha);
                 }
             }
         } finally {
@@ -350,13 +362,29 @@ final class AvatarClothRenderer {
     /**
      * Render all clothes in the correct order.
      */
-    protected void render(final Graphics g) {
+    protected void draw(final Graphics g) {
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
                 final int currentIndex = RENDER_DIR[direction][i];
                 if (currentClothes[currentIndex] != null) {
                     currentClothes[currentIndex].draw(g);
+                }
+            }
+        } finally {
+            clothLock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Update all clothes
+     */
+    protected void update(final int delta) {
+        clothLock.readLock().lock();
+        try {
+            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
+                if (currentClothes[i] != null) {
+                    currentClothes[i].update(delta);
                 }
             }
         } finally {
@@ -387,6 +415,10 @@ final class AvatarClothRenderer {
                 item.setScreenPos(avatarPosX, avatarPosY, avatarPosZ, layer);
                 item.setFrame(currentFrame);
                 item.setScale(scale);
+                if (clothAlpha > -1) {
+                    item.setAlpha(clothAlpha);
+                    item.setAlphaTarget(clothAlpha);
+                }
             }
         } finally {
             clothLock.writeLock().unlock();

@@ -325,7 +325,7 @@ public final class Sprite {
      * 
      * @return the x share of the offset caused by the sprite align
      */
-    private int getAlignOffsetX() {
+    public int getAlignOffsetX() {
         return hAlignUsed.getOffset(getWidth());
     }
 
@@ -335,7 +335,7 @@ public final class Sprite {
      * 
      * @return the y share of the offset caused by the sprite align
      */
-    private int getAlignOffsetY() {
+    public int getAlignOffsetY() {
         return vAlignUsed.getOffset(getHeight());
     }
 
@@ -471,7 +471,7 @@ public final class Sprite {
      * @return <code>true</code> in case the texture needs to be displayed
      *         mirrored
      */
-    protected final boolean isMirrored() {
+    public final boolean isMirrored() {
         return mirror;
     }
 

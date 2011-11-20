@@ -67,11 +67,6 @@ public final class Item extends AbstractEntity {
     private boolean displayNumber = false;
 
     /**
-     * True in case the item has to fade out, false if not.
-     */
-    private final boolean fading;
-
-    /**
      * General informations about the item that do not vary from item instance
      * to instance and are stores in only one object for all instances of the
      * same item this way.
@@ -160,7 +155,7 @@ public final class Item extends AbstractEntity {
             variants = false;
         }
 
-        fading = (getHeight() >= FADING_LIMIT);
+        setFadingCorridorEffectEnabled(getHeight() >= FADING_LIMIT);
 
         paperdollingID = referenceID;
         reset();
@@ -183,7 +178,6 @@ public final class Item extends AbstractEntity {
         info = org.info;
         variants = org.variants;
         ani = org.ani;
-        fading = org.fading;
         paperdollingID = org.paperdollingID;
         paperdollingColor = org.paperdollingColor;
         reset();
@@ -534,9 +528,7 @@ public final class Item extends AbstractEntity {
      */
     @Override
     public void update(final int delta) {
-        if (fading) {
-            super.update(delta);
-        }
+        super.update(delta);
 
         if (showNumber && (count > 1) && (number != null)) {
             if (!displayNumber) {

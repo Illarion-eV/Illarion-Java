@@ -313,7 +313,7 @@ public final class Avatar extends AbstractEntity {
         super.draw(g);
 
         // draw the clothes
-        clothRender.render(g);
+        clothRender.draw(g);
 
         if (renderName && (name != null)) {
             name.draw(g, getDisplayX(), getDisplayY());
@@ -601,9 +601,10 @@ public final class Avatar extends AbstractEntity {
      */
     @Override
     public void update(final int delta) {
-        updateAlpha(delta);
+        super.update(delta);
 
         clothRender.setAlpha(getAlpha());
+        clothRender.update(delta);
 
         final Color locLight = getLight();
         if (animateLight && (locLight != null)

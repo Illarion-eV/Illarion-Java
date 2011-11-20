@@ -64,8 +64,6 @@ public final class LoadingState extends NiftyBasicGameState {
             controller.loadingDone();
         }
         
-        
-
         if (remaining == 0) {
             return;
         }

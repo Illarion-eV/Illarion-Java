@@ -56,7 +56,5 @@ public final class Game extends StateBasedGame {
         addState(new LoginState(STATE_LOGIN));
         addState(new LoadingState(STATE_LOADING));
         addState(new PlayingState());
-        
-        enterState(Game.STATE_LOGIN);
     }
 }

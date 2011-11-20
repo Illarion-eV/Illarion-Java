@@ -373,7 +373,7 @@ public final class MapDisplayManager implements AnimatedMove {
             corridor.setCorridor(av);
         }
 
-        Camera.getInstance().setViewport(-offX, -offY, c.getWidth(), c.getHeight() + 100);
+        Camera.getInstance().setViewport(-offX, -offY, c.getWidth(), c.getHeight());
 
         synchronized (display) {
             DisplayItem currentItem;
