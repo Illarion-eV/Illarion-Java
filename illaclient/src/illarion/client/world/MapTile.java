@@ -18,16 +18,8 @@
  */
 package illarion.client.world;
 
-import java.util.List;
-
-import javolution.util.FastTable;
-
-import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.list.array.TShortArrayList;
-
 import illarion.client.graphics.AlphaChangeListener;
 import illarion.client.graphics.Effect;
 import illarion.client.graphics.Item;
@@ -36,19 +28,24 @@ import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.LookatTileCmd;
 import illarion.client.net.server.TileUpdate;
-
+import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 
+import java.util.List;
+
+import javolution.util.FastTable;
+
+import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
 
 /**
  * A tile on the map. Contains the tile graphics and items.
  */
-public final class MapTile implements AlphaChangeListener,
-    RecycleObject {
+public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Default Tile ID for no tile at this position.
@@ -59,6 +56,16 @@ public final class MapTile implements AlphaChangeListener,
      * The instance of the logger that is used to write out the data.
      */
     private static final Logger LOGGER = Logger.getLogger(MapTile.class);
+
+    /**
+     * Create a new instance of a map tile using the GameFactory.
+     * 
+     * @return the new instance of the map tile
+     */
+    protected static MapTile create() {
+        return (MapTile) GameFactory.getInstance().getCommand(
+            GameFactory.OBJ_MAPTILE);
+    }
 
     /**
      * Higest elevation caused by an item on this tile.
@@ -130,7 +137,7 @@ public final class MapTile implements AlphaChangeListener,
      * ID of the tile.
      */
     private int tileId;
-    
+
     private final Color tmpLight = new Color(0);
 
     /**
@@ -143,16 +150,6 @@ public final class MapTile implements AlphaChangeListener,
         tile = null;
         lightSrc = null;
         losDirty = true;
-    }
-
-    /**
-     * Create a new instance of a map tile using the GameFactory.
-     * 
-     * @return the new instance of the map tile
-     */
-    protected static MapTile create() {
-        return (MapTile) GameFactory.getInstance().getCommand(
-            GameFactory.OBJ_MAPTILE);
     }
 
     /**
@@ -189,6 +186,16 @@ public final class MapTile implements AlphaChangeListener,
     }
 
     /**
+     * Add some light influence to this tile. This is added to the already
+     * existing light on this tile
+     * 
+     * @param color the light that shall be added
+     */
+    protected void addLight(final Color color) {
+        tmpLight.add(color);
+    }
+
+    /**
      * This function receives updates in case the alpha value of the tile
      * changes. Its possible that this happens in case the character is walking
      * past this tile. The effect of this is that the map processor checks the
@@ -197,8 +204,7 @@ public final class MapTile implements AlphaChangeListener,
      */
     @Override
     public void alphaChanged(final int from, final int to) {
-        if (((from == 255) && (to < from))
-            || ((from < to) && (to == 255))) {
+        if (((from == 255) && (to < from)) || ((from < to) && (to == 255))) {
             World.getMap().updateTile(this);
         }
     }
@@ -274,6 +280,81 @@ public final class MapTile implements AlphaChangeListener,
                 + " found " + items.get(pos).getId());
         }
         itemChanged();
+    }
+
+    /**
+     * Determine whether the top item is a light source and needs to be
+     * registered. Also removes previous or changed light sources.
+     */
+    private void checkLight() {
+        // light sources are only on player level
+        if (!World.getPlayer().isBaseLevel(loc)) {
+            return;
+        }
+
+        int newLightValue = 0;
+
+        final List<Item> localItems = items;
+        if (localItems != null) {
+            final int count = localItems.size();
+            Item item;
+            for (int i = 0; i < count; i++) {
+                item = localItems.get(i);
+                if (item.isLight()) {
+                    newLightValue = item.getItemLight();
+                    break;
+                }
+            }
+        }
+
+        if (lightValue == newLightValue) {
+            return;
+        }
+
+        if (lightSrc != null) {
+            World.getLights().remove(lightSrc);
+            LightSource.releaseLight(lightSrc);
+            lightSrc = null;
+        }
+
+        if (newLightValue > 0) {
+            lightSrc = LightSource.createLight(loc, newLightValue);
+            World.getLights().add(lightSrc);
+        }
+
+        lightValue = newLightValue;
+    }
+
+    /**
+     * Delete any surplus items in an update.
+     * 
+     * @param itemNumber the maximum amount of items that shall remain
+     */
+    private void clampItems(final int itemNumber) {
+        // reset elevation data when items are updated
+        elevation = 0;
+        elevationIndex = -1;
+
+        if (items == null) {
+            return;
+        }
+
+        Item item;
+        final List<Item> localItems = items;
+        final int amount = localItems.size() - itemNumber;
+        for (int i = 0; i < amount; i++) {
+            // recylce the removed items
+            item = localItems.get(itemNumber);
+            item.recycle();
+
+            // keep deleting in the same place as the list becomes shorter
+            localItems.remove(itemNumber);
+        }
+
+        if (localItems.isEmpty()) {
+            FastTable.recycle(items);
+            items = null;
+        }
     }
 
     /**
@@ -360,6 +441,15 @@ public final class MapTile implements AlphaChangeListener,
     @Override
     public int getId() {
         return GameFactory.OBJ_MAPTILE;
+    }
+
+    /**
+     * Get the the interactive instance used for interaction with this tile.
+     * 
+     * @return the interactive tile referring to this map tile
+     */
+    public InteractiveMapTile getInteractive() {
+        return InteractiveMapTile.getInteractiveTile(this);
     }
 
     /**
@@ -525,6 +615,19 @@ public final class MapTile implements AlphaChangeListener,
     }
 
     /**
+     * Notify the tile that the items got changed. That makes a recalculation of
+     * the lights and the line of sight needed.
+     */
+    private void itemChanged() {
+        // invalidate LOS data
+        losDirty = true;
+        // report a change of shadow
+        World.getLights().notifyChange(loc);
+        // check for a light source
+        checkLight();
+    }
+
+    /**
      * Requesting the lookat informations for a tile from the server.
      */
     public void lookAt() {
@@ -583,6 +686,23 @@ public final class MapTile implements AlphaChangeListener,
     }
 
     /**
+     * Render the light on this tile, using the ambient light of the weather and
+     * a factor how much the tile light modifies the ambient light.
+     * 
+     * @param factor the factor how much the ambient light is modified by the
+     *            tile light
+     * @param ambientLight the ambient light from the weather
+     */
+    protected void renderLight(final float factor, final Color ambientLight) {
+        tmpLight.scale(factor);
+        tmpLight.add(ambientLight);
+        light.a = tmpLight.a;
+        light.r = tmpLight.r;
+        light.g = tmpLight.g;
+        light.b = tmpLight.b;
+    }
+
+    /**
      * Clear the tile and recycle it. This also recycles all item and light
      * sources on this tile.
      */
@@ -624,6 +744,13 @@ public final class MapTile implements AlphaChangeListener,
     }
 
     /**
+     * Reset the light value back to 0.
+     */
+    protected void resetLight() {
+        tmpLight.a = tmpLight.r = tmpLight.g = tmpLight.b = 0.f;
+    }
+
+    /**
      * Set the hidden flag for tiles that are hidden to show building interiors.
      * Hidden tiles are completely hidden.
      * 
@@ -635,234 +762,6 @@ public final class MapTile implements AlphaChangeListener,
         }
         setInvisible(hide, obstructed);
         hidden = hide;
-    }
-
-    /**
-     * Set the obstructed flag for tiles that are obstructed by upper levels.
-     * 
-     * @param obstruct true if the tile shall be marked as obstructed
-     */
-    public void setObstructed(final boolean obstruct) {
-        if (obstructed == obstruct) {
-            return;
-        }
-        setInvisible(hidden, obstruct);
-        obstructed = obstruct;
-    }
-
-    /**
-     * Set the ID of the tile and change the type of the tile this way. This
-     * function also sets up a new tile at this position if there was no.
-     * Furthermore all calculations that are needed for a new tile are triggered
-     * by this function.
-     * 
-     * @param id the new ID if the tile
-     */
-    public void setTileId(final int id) {
-        losDirty = true;
-        resetLight();
-
-        // no replacement necessary
-        if ((tileId == id) && (tile != null)) {
-            tile.setScreenPos(loc, Layers.TILE);
-            return;
-        }
-
-        tileId = id;
-
-        // free old tile to factory
-        if (tile != null) {
-            tile.recycle();
-            tile = null;
-        }
-
-        // get a new tile to display
-        if (id >= 0) {
-            // create a tile, possibly with variants
-            tile = Tile.create(id, loc);
-
-            tile.addAlphaChangeListener(this);
-            tile.setScreenPos(loc, Layers.TILE);
-            tile.setLight(light);
-            tile.show();
-        }
-    }
-
-    /**
-     * Show a graphical effect on the tile.
-     * 
-     * @param effectId the ID of the effect
-     */
-    public void showEffect(final int effectId) {
-        final Effect effect = Effect.create(effectId);
-        effect.show(loc);
-    }
-
-    /**
-     * Create a string that identifies the tile and its current state.
-     * 
-     * @return the generated string
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public String toString() {
-        return "MapTile " + loc.toString() + " tile=" + tileId + " items="
-            + (items != null ? items.size() : 0);
-    }
-
-    /**
-     * Update the entire item list. This function is called by the net interface
-     * in case the server sends a full set of new item data to the client.
-     * 
-     * @param itemNumber Amount of items within the list of items
-     * @param itemId List of the item IDs for all items that shall be created
-     * @param itemCount List of count values for all items
-     */
-    public void updateItems(final int itemNumber, final TIntArrayList itemId,
-        final TShortArrayList itemCount) {
-        updateItemList(itemNumber, itemId, itemCount);
-        itemChanged();
-    }
-
-    /**
-     * Add some light influence to this tile. This is added to the already
-     * existing light on this tile
-     * 
-     * @param color the light that shall be added
-     */
-    protected void addLight(final Color color) {
-        tmpLight.add(color);
-    }
-
-    /**
-     * Render the light on this tile, using the ambient light of the weather and
-     * a factor how much the tile light modifies the ambient light.
-     * 
-     * @param factor the factor how much the ambient light is modified by the
-     *            tile light
-     * @param ambientLight the ambient light from the weather
-     */
-    protected void renderLight(final float factor,
-        final Color ambientLight) {
-        tmpLight.scale(factor);
-        tmpLight.add(ambientLight);
-        light.a = tmpLight.a;
-        light.r = tmpLight.r;
-        light.g = tmpLight.g;
-        light.b = tmpLight.b;
-    }
-
-    /**
-     * Reset the light value back to 0.
-     */
-    protected void resetLight() {
-        tmpLight.a = tmpLight.r = tmpLight.g = tmpLight.b = 0.f;
-    }
-
-    /**
-     * Update a map tile using the update data the server send.
-     * 
-     * @param update the update data the server send
-     */
-    protected void update(final TileUpdate update) {
-        // update tile
-        setTileId(update.getTileId());
-
-        musicId = update.getTileMusic();
-
-        // update items
-        updateItemList(update.getItemNumber(), update.getItemId(),
-            update.getItemCount());
-
-        itemChanged();
-    }
-
-    /**
-     * Determine whether the top item is a light source and needs to be
-     * registered. Also removes previous or changed light sources.
-     */
-    private void checkLight() {
-        // light sources are only on player level
-        if (!World.getPlayer().isBaseLevel(loc)) {
-            return;
-        }
-
-        int newLightValue = 0;
-
-        final List<Item> localItems = items;
-        if (localItems != null) {
-            final int count = localItems.size();
-            Item item;
-            for (int i = 0; i < count; i++) {
-                item = localItems.get(i);
-                if (item.isLight()) {
-                    newLightValue = item.getItemLight();
-                    break;
-                }
-            }
-        }
-
-        if (lightValue == newLightValue) {
-            return;
-        }
-
-        if (lightSrc != null) {
-            World.getLights().remove(lightSrc);
-            LightSource.releaseLight(lightSrc);
-            lightSrc = null;
-        }
-
-        if (newLightValue > 0) {
-            lightSrc = LightSource.createLight(loc, newLightValue);
-            World.getLights().add(lightSrc);
-        }
-
-        lightValue = newLightValue;
-    }
-
-    /**
-     * Delete any surplus items in an update.
-     * 
-     * @param itemNumber the maximum amount of items that shall remain
-     */
-    private void clampItems(final int itemNumber) {
-        // reset elevation data when items are updated
-        elevation = 0;
-        elevationIndex = -1;
-
-        if (items == null) {
-            return;
-        }
-
-        Item item;
-        final List<Item> localItems = items;
-        final int amount = localItems.size() - itemNumber;
-        for (int i = 0; i < amount; i++) {
-            // recylce the removed items
-            item = localItems.get(itemNumber);
-            item.recycle();
-
-            // keep deleting in the same place as the list becomes shorter
-            localItems.remove(itemNumber);
-        }
-
-        if (localItems.isEmpty()) {
-            FastTable.recycle(items);
-            items = null;
-        }
-    }
-
-    /**
-     * Notify the tile that the items got changed. That makes a recalculation of
-     * the lights and the line of sight needed.
-     */
-    private void itemChanged() {
-        // invalidate LOS data
-        losDirty = true;
-        // report a change of shadow
-        World.getLights().notifyChange(loc);
-        // check for a light source
-        checkLight();
     }
 
     /**
@@ -965,6 +864,97 @@ public final class MapTile implements AlphaChangeListener,
     }
 
     /**
+     * Set the obstructed flag for tiles that are obstructed by upper levels.
+     * 
+     * @param obstruct true if the tile shall be marked as obstructed
+     */
+    public void setObstructed(final boolean obstruct) {
+        if (obstructed == obstruct) {
+            return;
+        }
+        setInvisible(hidden, obstruct);
+        obstructed = obstruct;
+    }
+
+    /**
+     * Set the ID of the tile and change the type of the tile this way. This
+     * function also sets up a new tile at this position if there was no.
+     * Furthermore all calculations that are needed for a new tile are triggered
+     * by this function.
+     * 
+     * @param id the new ID if the tile
+     */
+    public void setTileId(final int id) {
+        losDirty = true;
+        resetLight();
+
+        // no replacement necessary
+        if ((tileId == id) && (tile != null)) {
+            tile.setScreenPos(loc, Layers.TILE);
+            return;
+        }
+
+        tileId = id;
+
+        // free old tile to factory
+        if (tile != null) {
+            tile.recycle();
+            tile = null;
+        }
+
+        // get a new tile to display
+        if (id >= 0) {
+            // create a tile, possibly with variants
+            tile = Tile.create(id, loc);
+
+            tile.addAlphaChangeListener(this);
+            tile.setScreenPos(loc, Layers.TILE);
+            tile.setLight(light);
+            tile.show();
+        }
+    }
+
+    /**
+     * Show a graphical effect on the tile.
+     * 
+     * @param effectId the ID of the effect
+     */
+    public void showEffect(final int effectId) {
+        final Effect effect = Effect.create(effectId);
+        effect.show(loc);
+    }
+
+    /**
+     * Create a string that identifies the tile and its current state.
+     * 
+     * @return the generated string
+     */
+    @SuppressWarnings("nls")
+    @Override
+    public String toString() {
+        return "MapTile " + loc.toString() + " tile=" + tileId + " items="
+            + (items != null ? items.size() : 0);
+    }
+
+    /**
+     * Update a map tile using the update data the server send.
+     * 
+     * @param update the update data the server send
+     */
+    protected void update(final TileUpdate update) {
+        // update tile
+        setTileId(update.getTileId());
+
+        musicId = update.getTileMusic();
+
+        // update items
+        updateItemList(update.getItemNumber(), update.getItemId(),
+            update.getItemCount());
+
+        itemChanged();
+    }
+
+    /**
      * Update a single item with new data.
      * 
      * @param item the item that shall be updated
@@ -1016,5 +1006,19 @@ public final class MapTile implements AlphaChangeListener,
                 items.get(pos).enableNumbers(true);
             }
         }
+    }
+
+    /**
+     * Update the entire item list. This function is called by the net interface
+     * in case the server sends a full set of new item data to the client.
+     * 
+     * @param itemNumber Amount of items within the list of items
+     * @param itemId List of the item IDs for all items that shall be created
+     * @param itemCount List of count values for all items
+     */
+    public void updateItems(final int itemNumber, final TIntArrayList itemId,
+        final TShortArrayList itemCount) {
+        updateItemList(itemNumber, itemId, itemCount);
+        itemChanged();
     }
 }

@@ -19,7 +19,6 @@
 package illarion.client.world;
 
 import illarion.client.graphics.AnimatedMove;
-import illarion.client.graphics.MapDisplayManager;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
@@ -28,7 +27,6 @@ import illarion.client.util.Path;
 import illarion.client.util.PathNode;
 import illarion.client.util.PathReceiver;
 import illarion.client.util.Pathfinder;
-
 import illarion.common.util.FastMath;
 import illarion.common.util.Location;
 
@@ -39,6 +37,15 @@ import illarion.common.util.Location;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class PlayerMovement implements AnimatedMove, PathReceiver {
+    /**
+     * This value is the relation of the distance from the character location to
+     * the location of the cursor to the plain x or y offset. In case the
+     * relation is smaller or equal to this the character will move straight
+     * horizontal or vertical on the screen. Else it will move diagonal.
+     */
+    private static final double MOUSE_ANGLE = Math.cos(Math.PI
+        / Location.DIR_MOVE8);
+
     /**
      * The constant for no move.
      */
@@ -58,15 +65,6 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * The constant for a normal walking move.
      */
     public static final int MOVE_MODE_WALK = 0;
-
-    /**
-     * This value is the relation of the distance from the character location to
-     * the location of the cursor to the plain x or y offset. In case the
-     * relation is smaller or equal to this the character will move straight
-     * horizontal or vertical on the screen. Else it will move diagonal.
-     */
-    private static final double MOUSE_ANGLE = Math.cos(Math.PI
-        / Location.DIR_MOVE8);
 
     /**
      * The overlap time of a movement in milliseconds. If this time is left of
@@ -246,198 +244,6 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     }
 
     /**
-     * Stop the automated walking.
-     */
-    public void cancelAutoWalk() {
-        autoPath = null;
-        autoDest = null;
-    }
-
-    @Override
-    public void handlePath(final Path path) {
-        cancelAutoWalk();
-        autoPath = path;
-        if (autoPath != null) {
-            autoDest = autoPath.getDestination();
-            autoPath.nextStep();
-            autoStep();
-        }
-    }
-
-    /**
-     * Get if the player character is currently moving.
-     * 
-     * @return <code>true</code> in case the character is currently moving
-     */
-    public boolean isMoving() {
-        return moving;
-    }
-
-    /**
-     * Request a move of the player character. This function will check if there
-     * is already a move or not. In case there is one and depending on how far
-     * the old move is processed already, its possible that a new move is
-     * requested already earlier so the movement looks all in all smooth.
-     * 
-     * @param direction the direction the move shall be performed in
-     * @param mode the mode of the move that shall be performed
-     */
-    public void requestMove(final int direction, final int mode) {
-        requestMove(direction, mode, true);
-    }
-
-    /**
-     * This function needs to be triggered in case a turn needs to be done.
-     * 
-     * @param direction the direction the player wants his character to look at
-     */
-    public void requestTurn(final int direction) {
-        requestTurn(direction, true);
-    }
-
-    /**
-     * Set current location of the animation. This is useless in this class and
-     * this function is only implemented so this class is a valid animation
-     * target.
-     * 
-     * @param posX the new x coordinate of the animation target
-     * @param posY the new y coordinate of the animation target
-     * @param posZ the new z coordinate of the animation target
-     */
-    @Override
-    public void setPosition(final int posX, final int posY, final int posZ) {
-        if (!positionUpdated
-            && (moveAnimation.animationProgress() > POSITION_UPDATE_PROCESS)) {
-            // update mini-map and world-map position
-            final Location targetLoc = parentPlayer.getLocation();
-            World.getMap().getMinimap().setPlayerLocation(targetLoc);
-
-            // process obstructed tiles
-            // Game.getMap().checkObstructions();
-            positionUpdated = true;
-        } else if ((moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME)
-            && (lastAllowedMove == Location.DIR_ZERO)
-            && (lastMoveRequest == Location.DIR_ZERO)) {
-            if (walkTowards) {
-                requestMove(walkTowardsDir, walkTowardsMode);
-            } else {
-                autoStep();
-            }
-        }
-    }
-
-    /**
-     * Cleanup the movement handler and prepare everything for a proper
-     * shutdown.
-     */
-    public void shutdown() {
-        moveAnimation.removeTarget(this);
-        stopWalkTowards();
-        cancelAutoWalk();
-        animationFinished(false);
-    }
-
-    public void stopWalkTowards() {
-//        GUI.getInstance().getMouseCursor()
-//            .setCursor(MarkerFactory.CRSR_NORMAL);
-        walkTowards = false;
-    }
-
-    /**
-     * Make the character automatically walking to a target location.
-     * 
-     * @param dest the location the character shall walk to
-     */
-    public void walkTo(final Location dest) {
-        cancelAutoWalk();
-
-        final Location loc = parentPlayer.getLocation();
-        final MapTile walkTarget = World.getMap().getMapAt(dest);
-        if ((walkTarget != null) && (dest.getScZ() == loc.getScZ())
-            && !walkTarget.isObstacle()) {
-            Pathfinder.getInstance().findPath(loc, dest, this);
-        }
-    }
-
-    /**
-     * Walk towards a direction.
-     * 
-     * @param screenPosX the x location on the screen to walk to
-     * @param screenPosY the y location on the screen to walk to
-     */
-    public void walkTowards(final int screenPosX, final int screenPosY) {
-        final int xOffset = screenPosX - MapDimensions.getInstance().getOnScreenWidth() >> 1;
-        final int yOffset = screenPosY - MapDimensions.getInstance().getOnScreenHeight() >> 1;
-        final int distance =
-            FastMath.sqrt((xOffset * xOffset) + (yOffset * yOffset));
-
-        if (distance <= 5) {
-            return;
-        }
-
-        final double relXOffset = (float) xOffset / (float) distance;
-        final double relYOffset = (float) yOffset / (float) distance;
-
-        if (distance > 200) {
-            walkTowardsMode = MOVE_MODE_RUN;
-        } else if (distance < 30) {
-            walkTowardsMode = MOVE_MODE_NONE;
-        } else {
-            walkTowardsMode = MOVE_MODE_WALK;
-        }
-
-        if (relXOffset > MOUSE_ANGLE) {
-//            GUI.getInstance().getMouseCursor()
-//                .setCursor(MarkerFactory.CRSR_WALK_SE);
-            walkTowardsDir = Location.DIR_SOUTHEAST;
-        } else if (relXOffset < -MOUSE_ANGLE) {
-//            GUI.getInstance().getMouseCursor()
-//                .setCursor(MarkerFactory.CRSR_WALK_NW);
-            walkTowardsDir = Location.DIR_NORTHWEST;
-        } else if (relYOffset > MOUSE_ANGLE) {
-//            GUI.getInstance().getMouseCursor()
-//                .setCursor(MarkerFactory.CRSR_WALK_NE);
-            walkTowardsDir = Location.DIR_NORTHEAST;
-        } else if (relYOffset < -MOUSE_ANGLE) {
-//            GUI.getInstance().getMouseCursor()
-//                .setCursor(MarkerFactory.CRSR_WALK_SW);
-            walkTowardsDir = Location.DIR_SOUTHWEST;
-        } else if ((xOffset > 0) && (yOffset > 0)) {
-//            GUI.getInstance().getMouseCursor()
-//                .setCursor(MarkerFactory.CRSR_WALK_E);
-            walkTowardsDir = Location.DIR_EAST;
-        } else if ((xOffset > 0) && (yOffset < 0)) {
-//            GUI.getInstance().getMouseCursor()
-//                .setCursor(MarkerFactory.CRSR_WALK_S);
-            walkTowardsDir = Location.DIR_SOUTH;
-        } else if ((xOffset < 0) && (yOffset < 0)) {
-//            GUI.getInstance().getMouseCursor()
-//                .setCursor(MarkerFactory.CRSR_WALK_W);
-            walkTowardsDir = Location.DIR_WEST;
-        } else if ((xOffset < 0) && (yOffset > 0)) {
-//            GUI.getInstance().getMouseCursor()
-//                .setCursor(MarkerFactory.CRSR_WALK_N);
-            walkTowardsDir = Location.DIR_NORTH;
-        }
-
-        if (walkTowardsMode == MOVE_MODE_NONE) {
-            walkTowards = false;
-            requestTurn(walkTowardsDir, true);
-            return;
-        }
-
-        if (walkTowards) {
-            return;
-        }
-
-        walkTowards = true;
-        cancelAutoWalk();
-
-        requestTurn(walkTowardsDir, false);
-        requestMove(walkTowardsDir, walkTowardsMode);
-    }
-
-    /**
      * Check if any turn is requested but yet not confirmed by the server.
      * 
      * @return <code>true</code> in case there is a turn that is requested from
@@ -486,6 +292,14 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     }
 
     /**
+     * Stop the automated walking.
+     */
+    public void cancelAutoWalk() {
+        autoPath = null;
+        autoDest = null;
+    }
+
+    /**
      * Check if pending requests need to be discarded in order to keep the stuff
      * working correctly.
      */
@@ -498,6 +312,26 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             lastMoveRequest = Location.DIR_ZERO;
             timeOfDiscard = 0L;
         }
+    }
+
+    @Override
+    public void handlePath(final Path path) {
+        cancelAutoWalk();
+        autoPath = path;
+        if (autoPath != null) {
+            autoDest = autoPath.getDestination();
+            autoPath.nextStep();
+            autoStep();
+        }
+    }
+
+    /**
+     * Get if the player character is currently moving.
+     * 
+     * @return <code>true</code> in case the character is currently moving
+     */
+    public boolean isMoving() {
+        return moving;
     }
 
     /**
@@ -514,11 +348,11 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      */
     private void performMove(final int mode, final Location target,
         final int speed) {
-//        final illarion.client.guiNG.ChatEditor editor =
-//            illarion.client.guiNG.GUI.getInstance().getChatEditor();
-//        if (editor.isVisible() && (editor.getTextLength() == 0)) {
-//            editor.setVisible(false);
-//        }
+        // final illarion.client.guiNG.ChatEditor editor =
+        // illarion.client.guiNG.GUI.getInstance().getChatEditor();
+        // if (editor.isVisible() && (editor.getTextLength() == 0)) {
+        // editor.setVisible(false);
+        // }
         if ((mode == MOVE_MODE_NONE)
             || playerCharacter.getLocation().equals(target)) {
             parentPlayer.updateLocation(target);
@@ -545,6 +379,19 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
         parentPlayer.updateLocation(target);
         World.getMusicBox().updatePlayerLocation();
+    }
+
+    /**
+     * Request a move of the player character. This function will check if there
+     * is already a move or not. In case there is one and depending on how far
+     * the old move is processed already, its possible that a new move is
+     * requested already earlier so the movement looks all in all smooth.
+     * 
+     * @param direction the direction the move shall be performed in
+     * @param mode the mode of the move that shall be performed
+     */
+    public void requestMove(final int direction, final int mode) {
+        requestMove(direction, mode, true);
     }
 
     /**
@@ -590,6 +437,15 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * This function needs to be triggered in case a turn needs to be done.
      * 
      * @param direction the direction the player wants his character to look at
+     */
+    public void requestTurn(final int direction) {
+        requestTurn(direction, true);
+    }
+
+    /**
+     * This function needs to be triggered in case a turn needs to be done.
+     * 
+     * @param direction the direction the player wants his character to look at
      * @param stopAutoMove <code>true</code> in case this request shall remove
      *            the currently running automated movement
      */
@@ -600,8 +456,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         if ((anyTurnRequested() || (playerCharacter.getDirection() != direction))
             && !requestedTurns[direction]) {
             requestedTurns[direction] = true;
-            CommandFactory.getInstance().getCommand(
-                    CommandList.CMD_TURN_N + direction).send();
+            CommandFactory.getInstance()
+                .getCommand(CommandList.CMD_TURN_N + direction).send();
             timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
         } else {
             discardCheck();
@@ -625,5 +481,149 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             cmd.setMoving();
         }
         cmd.send();
+    }
+
+    /**
+     * Set current location of the animation. This is useless in this class and
+     * this function is only implemented so this class is a valid animation
+     * target.
+     * 
+     * @param posX the new x coordinate of the animation target
+     * @param posY the new y coordinate of the animation target
+     * @param posZ the new z coordinate of the animation target
+     */
+    @Override
+    public void setPosition(final int posX, final int posY, final int posZ) {
+        if (!positionUpdated
+            && (moveAnimation.animationProgress() > POSITION_UPDATE_PROCESS)) {
+            // update mini-map and world-map position
+            final Location targetLoc = parentPlayer.getLocation();
+            World.getMap().getMinimap().setPlayerLocation(targetLoc);
+
+            // process obstructed tiles
+            // Game.getMap().checkObstructions();
+            positionUpdated = true;
+        } else if ((moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME)
+            && (lastAllowedMove == Location.DIR_ZERO)
+            && (lastMoveRequest == Location.DIR_ZERO)) {
+            if (walkTowards) {
+                requestMove(walkTowardsDir, walkTowardsMode);
+            } else {
+                autoStep();
+            }
+        }
+    }
+
+    /**
+     * Cleanup the movement handler and prepare everything for a proper
+     * shutdown.
+     */
+    public void shutdown() {
+        moveAnimation.removeTarget(this);
+        stopWalkTowards();
+        cancelAutoWalk();
+        animationFinished(false);
+    }
+
+    public void stopWalkTowards() {
+        // GUI.getInstance().getMouseCursor()
+        // .setCursor(MarkerFactory.CRSR_NORMAL);
+        walkTowards = false;
+    }
+
+    /**
+     * Make the character automatically walking to a target location.
+     * 
+     * @param dest the location the character shall walk to
+     */
+    public void walkTo(final Location dest) {
+        cancelAutoWalk();
+
+        final Location loc = parentPlayer.getLocation();
+        final MapTile walkTarget = World.getMap().getMapAt(dest);
+        if ((walkTarget != null) && (dest.getScZ() == loc.getScZ())
+            && !walkTarget.isObstacle()) {
+            Pathfinder.getInstance().findPath(loc, dest, this);
+        }
+    }
+
+    /**
+     * Walk towards a direction.
+     * 
+     * @param screenPosX the x location on the screen to walk to
+     * @param screenPosY the y location on the screen to walk to
+     */
+    public void walkTowards(final int screenPosX, final int screenPosY) {
+        final int xOffset =
+            (screenPosX - MapDimensions.getInstance().getOnScreenWidth()) >> 1;
+        final int yOffset =
+            (screenPosY - MapDimensions.getInstance().getOnScreenHeight()) >> 1;
+        final int distance =
+            FastMath.sqrt((xOffset * xOffset) + (yOffset * yOffset));
+
+        if (distance <= 5) {
+            return;
+        }
+
+        final double relXOffset = (float) xOffset / (float) distance;
+        final double relYOffset = (float) yOffset / (float) distance;
+
+        if (distance > 200) {
+            walkTowardsMode = MOVE_MODE_RUN;
+        } else if (distance < 30) {
+            walkTowardsMode = MOVE_MODE_NONE;
+        } else {
+            walkTowardsMode = MOVE_MODE_WALK;
+        }
+
+        if (relXOffset > MOUSE_ANGLE) {
+            // GUI.getInstance().getMouseCursor()
+            // .setCursor(MarkerFactory.CRSR_WALK_SE);
+            walkTowardsDir = Location.DIR_SOUTHEAST;
+        } else if (relXOffset < -MOUSE_ANGLE) {
+            // GUI.getInstance().getMouseCursor()
+            // .setCursor(MarkerFactory.CRSR_WALK_NW);
+            walkTowardsDir = Location.DIR_NORTHWEST;
+        } else if (relYOffset > MOUSE_ANGLE) {
+            // GUI.getInstance().getMouseCursor()
+            // .setCursor(MarkerFactory.CRSR_WALK_NE);
+            walkTowardsDir = Location.DIR_NORTHEAST;
+        } else if (relYOffset < -MOUSE_ANGLE) {
+            // GUI.getInstance().getMouseCursor()
+            // .setCursor(MarkerFactory.CRSR_WALK_SW);
+            walkTowardsDir = Location.DIR_SOUTHWEST;
+        } else if ((xOffset > 0) && (yOffset > 0)) {
+            // GUI.getInstance().getMouseCursor()
+            // .setCursor(MarkerFactory.CRSR_WALK_E);
+            walkTowardsDir = Location.DIR_EAST;
+        } else if ((xOffset > 0) && (yOffset < 0)) {
+            // GUI.getInstance().getMouseCursor()
+            // .setCursor(MarkerFactory.CRSR_WALK_S);
+            walkTowardsDir = Location.DIR_SOUTH;
+        } else if ((xOffset < 0) && (yOffset < 0)) {
+            // GUI.getInstance().getMouseCursor()
+            // .setCursor(MarkerFactory.CRSR_WALK_W);
+            walkTowardsDir = Location.DIR_WEST;
+        } else if ((xOffset < 0) && (yOffset > 0)) {
+            // GUI.getInstance().getMouseCursor()
+            // .setCursor(MarkerFactory.CRSR_WALK_N);
+            walkTowardsDir = Location.DIR_NORTH;
+        }
+
+        if (walkTowardsMode == MOVE_MODE_NONE) {
+            walkTowards = false;
+            requestTurn(walkTowardsDir, true);
+            return;
+        }
+
+        if (walkTowards) {
+            return;
+        }
+
+        walkTowards = true;
+        cancelAutoWalk();
+
+        requestTurn(walkTowardsDir, false);
+        requestMove(walkTowardsDir, walkTowardsMode);
     }
 }

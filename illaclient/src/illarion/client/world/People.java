@@ -18,6 +18,24 @@
  */
 package illarion.client.world;
 
+import gnu.trove.map.hash.TLongObjectHashMap;
+import gnu.trove.procedure.TObjectProcedure;
+import illarion.client.IllaClient;
+import illarion.client.Login;
+import illarion.client.net.CommandFactory;
+import illarion.client.net.CommandList;
+import illarion.client.net.client.RequestAppearanceCmd;
+import illarion.client.util.Lang;
+import illarion.client.util.NamesTable;
+import illarion.common.config.Config;
+import illarion.common.config.ConfigChangeListener;
+import illarion.common.util.DirectoryManager;
+import illarion.common.util.Location;
+import illarion.common.util.Reusable;
+import illarion.common.util.Stoppable;
+import illarion.common.util.TableLoader;
+import illarion.common.util.TableLoaderSink;
+
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -27,26 +45,6 @@ import javolution.text.TextBuilder;
 import javolution.util.FastTable;
 
 import org.apache.log4j.Logger;
-
-import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.procedure.TObjectProcedure;
-
-import illarion.client.IllaClient;
-import illarion.client.Login;
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
-import illarion.client.net.client.RequestAppearanceCmd;
-import illarion.client.util.Lang;
-import illarion.client.util.NamesTable;
-
-import illarion.common.config.Config;
-import illarion.common.config.ConfigChangeListener;
-import illarion.common.util.DirectoryManager;
-import illarion.common.util.Location;
-import illarion.common.util.Reusable;
-import illarion.common.util.Stoppable;
-import illarion.common.util.TableLoader;
-import illarion.common.util.TableLoaderSink;
 
 /**
  * Handles all characters known to the client but the player character.
@@ -158,6 +156,21 @@ public final class People implements Stoppable, TableLoaderSink,
             new GetCharacterAtProcedureFactory();
 
         /**
+         * Get a instance of this procedure. This instance is either newly
+         * created or a old reused one. In any case the instance is prepared to
+         * use the location set with the parameter.
+         * 
+         * @param loc the location the returned instance is supposed to use as
+         *            search instance
+         * @return the instance that is prepared to be used now
+         */
+        public static GetCharacterAtProcedure getInstance(final Location loc) {
+            final GetCharacterAtProcedure result = FACTORY.object();
+            result.searchLoc = loc;
+            return result;
+        }
+
+        /**
          * The character that is found on the location.
          */
         private Char resultChar;
@@ -173,21 +186,6 @@ public final class People implements Stoppable, TableLoaderSink,
          */
         public GetCharacterAtProcedure() {
             // nothing to do
-        }
-
-        /**
-         * Get a instance of this procedure. This instance is either newly
-         * created or a old reused one. In any case the instance is prepared to
-         * use the location set with the parameter.
-         * 
-         * @param loc the location the returned instance is supposed to use as
-         *            search instance
-         * @return the instance that is prepared to be used now
-         */
-        public static GetCharacterAtProcedure getInstance(final Location loc) {
-            final GetCharacterAtProcedure result = FACTORY.object();
-            result.searchLoc = loc;
-            return result;
         }
 
         /**
@@ -326,16 +324,6 @@ public final class People implements Stoppable, TableLoaderSink,
     }
 
     /**
-     * Settings value for showing full names.
-     */
-    public static final int NAME_LONG = 2;
-
-    /**
-     * Settings value for showing shorten names.
-     */
-    public static final int NAME_SHORT = 1;
-
-    /**
      * The key for the configuration where the name mode is stored.
      */
     @SuppressWarnings("nls")
@@ -359,12 +347,36 @@ public final class People implements Stoppable, TableLoaderSink,
     private static final Logger LOGGER = Logger.getLogger(People.class);
 
     /**
+     * Settings value for showing full names.
+     */
+    public static final int NAME_LONG = 2;
+
+    /**
+     * Settings value for showing shorten names.
+     */
+    public static final int NAME_SHORT = 1;
+
+    /**
      * This is the format string that is displayed in the {@link #toString()}
      * function.
      */
     @SuppressWarnings("nls")
     private static final String TO_STRING_TEXT =
         "People Manager - %d$1 characters in storage";
+
+    /**
+     * This function checks a argument against <code>null</code> and throws a
+     * exception in case the argument is <code>null</code>
+     * 
+     * @param arg the argument to test
+     * @throws NullPointerException in case the argument is <code>null</code>.
+     */
+    @SuppressWarnings("nls")
+    private static void throwNullException(final Object arg) {
+        if (arg == null) {
+            throw new NullPointerException("Argument must not be null.");
+        }
+    }
 
     /**
      * The list of visible characters.
@@ -423,7 +435,6 @@ public final class People implements Stoppable, TableLoaderSink,
      * used to trigger a light update for all characters.
      */
     private final UpdateLightProcedure updateLightHelper;
-
     /**
      * The instance of the
      * {@link illarion.client.world.People.UpdateNameProcedure} class that is
@@ -447,12 +458,12 @@ public final class People implements Stoppable, TableLoaderSink,
         clipCharactersHelper = new ClipCharactersProcedure();
         checkVisibilityHelper = new CheckVisibilityProcedure();
         updateNameHelper = new UpdateNameProcedure(this);
-        
-        final File playerDir = new File(DirectoryManager.getInstance().getUserDirectory(), Login.getInstance().getSelectedCharacterName());
-        final File nameTable =
-            new File(playerDir, "names.tbl");
-        final File nameTableNew =
-            new File(playerDir, "names.dat");
+
+        final File playerDir =
+            new File(DirectoryManager.getInstance().getUserDirectory(), Login
+                .getInstance().getSelectedCharacterName());
+        final File nameTable = new File(playerDir, "names.tbl");
+        final File nameTableNew = new File(playerDir, "names.dat");
         names = new NamesTable(nameTableNew);
 
         if (nameTable.exists() && nameTable.isFile()) {
@@ -460,20 +471,6 @@ public final class People implements Stoppable, TableLoaderSink,
             if (!nameTable.delete()) {
                 LOGGER.error("Failed to delete old name table.");
             }
-        }
-    }
-
-    /**
-     * This function checks a argument against <code>null</code> and throws a
-     * exception in case the argument is <code>null</code>
-     * 
-     * @param arg the argument to test
-     * @throws NullPointerException in case the argument is <code>null</code>.
-     */
-    @SuppressWarnings("nls")
-    private static void throwNullException(final Object arg) {
-        if (arg == null) {
-            throw new NullPointerException("Argument must not be null.");
         }
     }
 
@@ -493,6 +490,22 @@ public final class People implements Stoppable, TableLoaderSink,
     }
 
     /**
+     * Add a character to the list of known characters.
+     * 
+     * @param chara the character that shall be added
+     */
+    protected void addCharacter(final Char chara) {
+        throwPlayerCharacter(chara);
+
+        charsLock.writeLock().lock();
+        try {
+            chars.put(chara.getCharId(), chara);
+        } finally {
+            charsLock.writeLock().unlock();
+        }
+    }
+
+    /**
      * Add a character to the list of characters that are going to be removed at
      * the next run of {@link #cleanRemovalList()}.
      * 
@@ -502,6 +515,18 @@ public final class People implements Stoppable, TableLoaderSink,
         throwNullException(removeChar);
         throwPlayerCharacter(removeChar);
         removalList.add(removeChar);
+    }
+
+    /**
+     * Check the visibility for all characters currently on the screen.
+     */
+    protected void checkVisibility() {
+        charsLock.readLock().lock();
+        try {
+            chars.forEachValue(checkVisibilityHelper);
+        } finally {
+            charsLock.readLock().unlock();
+        }
     }
 
     /**
@@ -525,6 +550,38 @@ public final class People implements Stoppable, TableLoaderSink,
     }
 
     /**
+     * Clear the list of characters and recycle all of them.
+     */
+    protected void clear() {
+        if (CombatHandler.getInstance().isAttacking()) {
+            CombatHandler.getInstance().standDown();
+        }
+        charsLock.writeLock().lock();
+        try {
+            cleanRemovalList();
+            chars.forEachValue(new RecycleCharProcedure());
+            chars.clear();
+        } finally {
+            charsLock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Check all known characters if they are outside of the screen and hide
+     * them from the screen. Save them still to the characters that are known to
+     * left the screen.
+     */
+    protected void clipCharacters() {
+        charsLock.writeLock().lock();
+        try {
+            chars.forEachValue(clipCharactersHelper);
+            cleanRemovalList();
+        } finally {
+            charsLock.writeLock().unlock();
+        }
+    }
+
+    /**
      * Act in case a change of the configuration occurred. This causes all
      * values dependent on the configuration to fit the configuration again.
      */
@@ -542,6 +599,29 @@ public final class People implements Stoppable, TableLoaderSink,
             showIDs = cfg.getBoolean(CFG_SHOWID_KEY);
             return;
         }
+    }
+
+    /**
+     * This function creates a new character and requests the required
+     * informations from the server.
+     * 
+     * @param id the ID of the character to be created
+     * @return the created character
+     */
+    private Char createNewCharacter(final long id) {
+        final Char chara = Char.create();
+        chara.setCharId(id);
+        updateName(chara);
+
+        addCharacter(chara);
+
+        // request appearance from server if char is not known
+        final RequestAppearanceCmd cmd =
+            (RequestAppearanceCmd) CommandFactory.getInstance().getCommand(
+                CommandList.CMD_REQUEST_APPEARANCE);
+        cmd.request(id);
+        World.getNet().sendCommand(cmd);
+        return chara;
     }
 
     /**
@@ -592,6 +672,66 @@ public final class People implements Stoppable, TableLoaderSink,
     }
 
     /**
+     * Get the name of the character. Returns the last known name or someone
+     * along with the ID of the character, in case its set that the IDs shall be
+     * shown.
+     * 
+     * @param id ID of the character thats name is wanted
+     * @return the name of the character or null
+     */
+    @SuppressWarnings("nls")
+    private String getName(final long id) {
+        String name = null;
+
+        if (names != null) {
+            name = names.getName(id);
+        }
+
+        if (name == null) {
+            if (showIDs) {
+                final TextBuilder buildName = TextBuilder.newInstance();
+                buildName.setLength(0);
+                buildName.append(Lang.getMsg("someone"));
+                buildName.append(' ');
+                buildName.append('(');
+                buildName.append(id);
+                buildName.append(')');
+                name = buildName.toString();
+                TextBuilder.recycle(buildName);
+            }
+        }
+        return name;
+    }
+
+    /**
+     * Return the short version of the name of a character.
+     * 
+     * @param id ID of the characters whos short name is wanted
+     * @return the short version of the name of the character
+     */
+    @SuppressWarnings("nls")
+    private String getShortName(final long id) {
+        String name = null;
+
+        if (names != null) {
+            name = names.getName(id);
+        }
+
+        // return the id
+        if (name == null) {
+            if (showIDs) {
+                name = Long.toString(id);
+            }
+        } else { // return text up to first blank
+            final int pos = name.indexOf(" ");
+            if (pos > 0) {
+                name = name.substring(0, pos);
+            }
+        }
+        return name;
+    }
+
+    /**
      * Get the current settings how the name of the characters is shown.
      * 
      * @return the current settings how the names are shown. Possible values are
@@ -619,6 +759,28 @@ public final class People implements Stoppable, TableLoaderSink,
 
         // add name to list of known names
         names.addName(id, name);
+    }
+
+    /**
+     * Check if the location is the location of the player character.
+     * 
+     * @param id the location to check
+     * @return <code>true</code> in case the player character is set and its
+     *         location equals the location supplied by the argument
+     */
+    private boolean isPlayerCharacter(final Location loc) {
+        return ((playerChar != null) && (playerChar.getLocation().equals(loc)));
+    }
+
+    /**
+     * Check if the ID is the ID of the player character.
+     * 
+     * @param id the id to check
+     * @return <code>true</code> in case the player character is set and its ID
+     *         equals the ID supplied by the argument
+     */
+    private boolean isPlayerCharacter(final long id) {
+        return ((playerChar != null) && (playerChar.getCharId() == id));
     }
 
     /**
@@ -760,6 +922,11 @@ public final class People implements Stoppable, TableLoaderSink,
         names.saveTable();
     }
 
+    @Override
+    public void saveShutdown() {
+        names.saveTable();
+    }
+
     /**
      * Set the character of the player.
      * 
@@ -782,6 +949,34 @@ public final class People implements Stoppable, TableLoaderSink,
     }
 
     /**
+     * This function throws a {@link java.lang.IllegalArgumentException} in case
+     * the character supplied with the argument is the player character.
+     * 
+     * @param chara the character to check
+     * @throws IllegalArgumentException in case the character in the argument is
+     *             the player character
+     */
+    private void throwPlayerCharacter(final Char chara) {
+        throwPlayerCharacter(chara.getCharId());
+    }
+
+    /**
+     * This function throws a {@link java.lang.IllegalArgumentException} in case
+     * the ID suppled by the argument is the ID of the player character
+     * 
+     * @param chara the ID to test
+     * @throws IllegalArgumentException in case the argument contains the ID of
+     *             the player character
+     */
+    @SuppressWarnings("nls")
+    private void throwPlayerCharacter(final long id) {
+        if (isPlayerCharacter(id)) {
+            throw new IllegalArgumentException(
+                "The player character can't be used here.");
+        }
+    }
+
+    /**
      * Change the name mode and toggle between no name, short name and full
      * name.
      */
@@ -799,66 +994,6 @@ public final class People implements Stoppable, TableLoaderSink,
     @Override
     public String toString() {
         return String.format(TO_STRING_TEXT, Integer.valueOf(chars.size()));
-    }
-
-    /**
-     * Add a character to the list of known characters.
-     * 
-     * @param chara the character that shall be added
-     */
-    protected void addCharacter(final Char chara) {
-        throwPlayerCharacter(chara);
-
-        charsLock.writeLock().lock();
-        try {
-            chars.put(chara.getCharId(), chara);
-        } finally {
-            charsLock.writeLock().unlock();
-        }
-    }
-
-    /**
-     * Check the visibility for all characters currently on the screen.
-     */
-    protected void checkVisibility() {
-        charsLock.readLock().lock();
-        try {
-            chars.forEachValue(checkVisibilityHelper);
-        } finally {
-            charsLock.readLock().unlock();
-        }
-    }
-
-    /**
-     * Clear the list of characters and recycle all of them.
-     */
-    protected void clear() {
-        if (CombatHandler.getInstance().isAttacking()) {
-            CombatHandler.getInstance().standDown();
-        }
-        charsLock.writeLock().lock();
-        try {
-            cleanRemovalList();
-            chars.forEachValue(new RecycleCharProcedure());
-            chars.clear();
-        } finally {
-            charsLock.writeLock().unlock();
-        }
-    }
-
-    /**
-     * Check all known characters if they are outside of the screen and hide
-     * them from the screen. Save them still to the characters that are known to
-     * left the screen.
-     */
-    protected void clipCharacters() {
-        charsLock.writeLock().lock();
-        try {
-            chars.forEachValue(clipCharactersHelper);
-            cleanRemovalList();
-        } finally {
-            charsLock.writeLock().unlock();
-        }
     }
 
     /**
@@ -891,144 +1026,6 @@ public final class People implements Stoppable, TableLoaderSink,
         } else {
             chara.setName(getName(chara.getCharId()));
         }
-    }
-
-    /**
-     * This function creates a new character and requests the required
-     * informations from the server.
-     * 
-     * @param id the ID of the character to be created
-     * @return the created character
-     */
-    private Char createNewCharacter(final long id) {
-        final Char chara = Char.create();
-        chara.setCharId(id);
-        updateName(chara);
-
-        addCharacter(chara);
-
-        // request appearance from server if char is not known
-        final RequestAppearanceCmd cmd =
-            (RequestAppearanceCmd) CommandFactory.getInstance().getCommand(
-                CommandList.CMD_REQUEST_APPEARANCE);
-        cmd.request(id);
-        World.getNet().sendCommand(cmd);
-        return chara;
-    }
-
-    /**
-     * Get the name of the character. Returns the last known name or someone
-     * along with the ID of the character, in case its set that the IDs shall be
-     * shown.
-     * 
-     * @param id ID of the character thats name is wanted
-     * @return the name of the character or null
-     */
-    @SuppressWarnings("nls")
-    private String getName(final long id) {
-        String name = null;
-
-        if (names != null) {
-            name = names.getName(id);
-        }
-
-        if (name == null) {
-            if (showIDs) {
-                final TextBuilder buildName = TextBuilder.newInstance();
-                buildName.setLength(0);
-                buildName.append(Lang.getMsg("someone"));
-                buildName.append(' ');
-                buildName.append('(');
-                buildName.append(id);
-                buildName.append(')');
-                name = buildName.toString();
-                TextBuilder.recycle(buildName);
-            }
-        }
-        return name;
-    }
-
-    /**
-     * Return the short version of the name of a character.
-     * 
-     * @param id ID of the characters whos short name is wanted
-     * @return the short version of the name of the character
-     */
-    @SuppressWarnings("nls")
-    private String getShortName(final long id) {
-        String name = null;
-
-        if (names != null) {
-            name = names.getName(id);
-        }
-
-        // return the id
-        if (name == null) {
-            if (showIDs) {
-                name = Long.toString(id);
-            }
-        } else { // return text up to first blank
-            final int pos = name.indexOf(" ");
-            if (pos > 0) {
-                name = name.substring(0, pos);
-            }
-        }
-        return name;
-    }
-
-    /**
-     * Check if the location is the location of the player character.
-     * 
-     * @param id the location to check
-     * @return <code>true</code> in case the player character is set and its
-     *         location equals the location supplied by the argument
-     */
-    private boolean isPlayerCharacter(final Location loc) {
-        return ((playerChar != null) && (playerChar.getLocation().equals(loc)));
-    }
-
-    /**
-     * Check if the ID is the ID of the player character.
-     * 
-     * @param id the id to check
-     * @return <code>true</code> in case the player character is set and its ID
-     *         equals the ID supplied by the argument
-     */
-    private boolean isPlayerCharacter(final long id) {
-        return ((playerChar != null) && (playerChar.getCharId() == id));
-    }
-
-    /**
-     * This function throws a {@link java.lang.IllegalArgumentException} in case
-     * the character supplied with the argument is the player character.
-     * 
-     * @param chara the character to check
-     * @throws IllegalArgumentException in case the character in the argument is
-     *             the player character
-     */
-    private void throwPlayerCharacter(final Char chara) {
-        throwPlayerCharacter(chara.getCharId());
-    }
-
-    /**
-     * This function throws a {@link java.lang.IllegalArgumentException} in case
-     * the ID suppled by the argument is the ID of the player character
-     * 
-     * @param chara the ID to test
-     * @throws IllegalArgumentException in case the argument contains the ID of
-     *             the player character
-     */
-    @SuppressWarnings("nls")
-    private void throwPlayerCharacter(final long id) {
-        if (isPlayerCharacter(id)) {
-            throw new IllegalArgumentException(
-                "The player character can't be used here.");
-        }
-    }
-
-    @Override
-    public void saveShutdown() {
-        names.saveTable();
     }
 
 }

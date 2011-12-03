@@ -421,6 +421,15 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      */
     @Override
     public abstract AbstractEntity clone();
+    
+    /**
+     * Get the frame that is currently displayed.
+     * 
+     * @return the currently displayed frame
+     */
+    public int getCurrentFrame() {
+        return currentFrame;
+    }
 
     /**
      * Draw this entity to the screen. This also performs a few basic animations

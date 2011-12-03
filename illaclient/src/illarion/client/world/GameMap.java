@@ -18,18 +18,12 @@
  */
 package illarion.client.world;
 
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.newdawn.slick.Color;
-
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.procedure.TLongObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
-
 import illarion.client.crash.MapProcessorCrashHandler;
 import illarion.client.net.server.TileUpdate;
-
+import illarion.client.world.interactive.InteractiveMap;
 import illarion.common.graphics.ColorHelper;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.LightingMap;
@@ -37,6 +31,10 @@ import illarion.common.util.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.newdawn.slick.Color;
 
 /**
  * This handler stores all map data and ensures the updates of the map. This
@@ -198,9 +196,10 @@ public final class GameMap implements LightingMap, Stoppable {
     public static final Object LIGHT_LOCK = new Object();
 
     /**
-     * Offset of the tiles due the perspective of the map view.
+     * The determines after how many remove operations the lists clean up on
+     * their own.
      */
-    public static final int TILE_PERSPECTIVE_OFFSET = 3;
+    private static final float MAP_COMPACTION_FACTOR = 0.01f;
 
     /**
      * The lock that is hold in case there are remove or hide operations on the
@@ -209,16 +208,12 @@ public final class GameMap implements LightingMap, Stoppable {
     public static final Object TILES_LOCK = new Object();
 
     /**
-     * The determines after how many remove operations the lists clean up on
-     * their own.
-     */
-    private static final float MAP_COMPACTION_FACTOR = 0.01f;
-
-    /**
      * This is a helper object that triggers recycle for all tiles its called
      * upon.
      */
     private final TObjectProcedure<MapTile> clearHelper = new ClearHelper();
+
+    private final InteractiveMap interactive;
 
     /**
      * The lock that secures the map tiles.
@@ -262,12 +257,13 @@ public final class GameMap implements LightingMap, Stoppable {
         super();
         tiles = new TLongObjectHashMap<MapTile>(1000);
         tiles.setAutoCompactionFactor(MAP_COMPACTION_FACTOR);
+        interactive = new InteractiveMap(this);
 
         mapLock = new ReentrantReadWriteLock();
 
         minimap = new GameMiniMap();
         restartMapProcessor();
-        
+
         StoppableStorage.getInstance().add(this);
     }
 
@@ -345,16 +341,6 @@ public final class GameMap implements LightingMap, Stoppable {
         }
     }
 
-    @Override
-    public void saveShutdown() {
-        if (processor != null) {
-            processor.clear();
-            processor.saveShutdown();
-            processor = null;
-        }
-        clear();
-    }
-
     /**
      * Finish a tile update of the game map.
      */
@@ -362,43 +348,6 @@ public final class GameMap implements LightingMap, Stoppable {
         if (processor != null) {
             processor.start();
         }
-    }
-
-    /**
-     * Get the tile on the map that user is currently pointing at in case the
-     * player is pointing at the game map.
-     * 
-     * @param x the X-Coordinate of the screen position the user is pointing at
-     * @param y the Y-Coordinate of the screen position the user is pointing at
-     * @return the map tile the user is pointing at or null
-     * @see illarion.client.world.Interaction#getComponentAt(int, int)
-     */
-    public MapTile getComponentAt(final int x, final int y) {
-        final int worldX = World.getMapDisplay().getWorldX(x);
-        final int worldY = World.getMapDisplay().getWorldY(y);
-
-        final Location helpLoc = Location.getInstance();
-        helpLoc.setDC(worldX, worldY);
-
-        final int playerBase = World.getPlayer().getBaseLevel();
-        final int base = playerBase - 2;
-        final int lowX =
-            helpLoc.getScX() + ((2 - playerBase) * TILE_PERSPECTIVE_OFFSET);
-        final int lowY =
-            helpLoc.getScY() - ((2 - playerBase) * TILE_PERSPECTIVE_OFFSET);
-        helpLoc.recycle();
-
-        MapTile foundTile;
-        for (int i = 4; i >= 0; --i) {
-            foundTile =
-                getMapAt(lowX - (TILE_PERSPECTIVE_OFFSET * i), lowY
-                    + (TILE_PERSPECTIVE_OFFSET * i), base + i);
-            if ((foundTile != null) && !foundTile.isHidden()) {
-                return foundTile;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -413,6 +362,15 @@ public final class GameMap implements LightingMap, Stoppable {
             return ground.getElevation();
         }
         return 0;
+    }
+
+    /**
+     * Get the interactive map that is used to interact with this map.
+     * 
+     * @return the map used to interact with this map
+     */
+    public InteractiveMap getInteractive() {
+        return interactive;
     }
 
     /**
@@ -548,7 +506,8 @@ public final class GameMap implements LightingMap, Stoppable {
     @Override
     public void renderLights() {
         final float factor =
-            1.f - ColorHelper.getLuminationf(World.getWeather().getAmbientLight());
+            1.f - ColorHelper.getLuminationf(World.getWeather()
+                .getAmbientLight());
 
         renderLightsHelper.setup(factor, World.getWeather().getAmbientLight());
 
@@ -561,7 +520,7 @@ public final class GameMap implements LightingMap, Stoppable {
             }
 
         }
-        
+
         World.getPeople().updateLight();
     }
 
@@ -593,6 +552,16 @@ public final class GameMap implements LightingMap, Stoppable {
         processor.setUncaughtExceptionHandler(MapProcessorCrashHandler
             .getInstance());
         processor.start();
+    }
+
+    @Override
+    public void saveShutdown() {
+        if (processor != null) {
+            processor.clear();
+            processor.saveShutdown();
+            processor = null;
+        }
+        clear();
     }
 
     /**

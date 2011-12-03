@@ -9,6 +9,14 @@
     <useControls filename="nifty-chatbox.xml" />
     
     <screen id="gamescreen" controller="illarion.client.gui.controller.GameScreenController">
+        <layer id="gameLayer" childLayout="center" backgroundColor="#0000">
+            <panel id="gamePanel" height="100%" width="100%" backgroundColor="#0000" visibleToMouse="false" childLayout="absolute">
+                <control id="mapDropTarget" name="droppable" width="100%" height="100%" visibleToMouse="false" />
+                <control id="mapDragObject" name="draggabe">
+                    <image />
+                </control>
+            </panel>
+        </layer>
     	<layer id="mainLayer" backgroundColor="#0000" childLayout="center">
     		<panel height="100%" width="100%" align="left" valign="bottom" backgroundColor="#0000" childLayout="vertical" visibleToMouse="false">
     			<text id="main" font="textFont" text="" />

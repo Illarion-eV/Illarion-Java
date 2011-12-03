@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
+import illarion.client.world.World;
 
 /**
  * Servermessage: Update of a inventory item (
@@ -87,11 +88,7 @@ public final class InventoryMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-//        final Inventory inv = GUI.getInstance().getInventory();
-//        if (inv == null) {
-//            return false;
-//        }
-//        inv.setItemId(location, itemId, count);
+        World.getPlayer().getInventory().setItem(location, itemId, count);
         return true;
     }
 

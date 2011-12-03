@@ -18,11 +18,11 @@
  */
 package illarion.client.world;
 
-import org.newdawn.slick.Music;
-
 import illarion.client.resources.SongFactory;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
+
+import org.newdawn.slick.Music;
 
 /**
  * This is the music box. What is does is playing music. This class handles the
@@ -34,20 +34,25 @@ import illarion.common.util.StoppableStorage;
  */
 public final class MusicBox implements Stoppable {
     /**
+     * The ID of the combat music.
+     */
+    private static final int COMBAT_TRACK = 1;
+
+    /**
      * This is the constant that applies in case no overwrite track is set and
      * the background music is supposed to play the default music.
      */
     public static final int NO_TRACK = 0;
 
     /**
-     * The ID of the combat music.
-     */
-    private static final int COMBAT_TRACK = 1;
-
-    /**
      * The current music track that is playing.
      */
     private int currentDefaultTrack;
+
+    /**
+     * The music that is currently played.
+     */
+    private Music currentMusic;
 
     /**
      * This flag is set <code>true</code> in case the music box is supposed to
@@ -69,8 +74,12 @@ public final class MusicBox implements Stoppable {
         overrideSoundId = NO_TRACK;
         fightingMusicPlaying = false;
         currentDefaultTrack = NO_TRACK;
-        
+
         StoppableStorage.getInstance().add(this);
+    }
+
+    public boolean isPlaying(final int musicId) {
+        return (overrideSoundId != musicId);
     }
 
     /**
@@ -105,36 +114,12 @@ public final class MusicBox implements Stoppable {
         }
     }
 
-    /**
-     * Stop playing the fighting music and fall back to the last sound track
-     * played.
-     */
-    public void stopFightingMusic() {
-        if (fightingMusicPlaying) {
-            fightingMusicPlaying = false;
-            updateSoundTrack();
+    @Override
+    public void saveShutdown() {
+        if (currentMusic != null) {
+            currentMusic.stop();
         }
     }
-
-    /**
-     * Update the location where the player is currently at. This will update
-     * the soundtrack that is played in case its needed.
-     */
-    public void updatePlayerLocation() {
-        final int newId =
-            World.getMap()
-                .getMapAt(World.getPlayer().getLocation())
-                .getTileMusic();
-        if (newId != currentDefaultTrack) {
-            currentDefaultTrack = newId;
-            updateSoundTrack();
-        }
-    }
-
-    /**
-     * The music that is currently played.
-     */
-    private Music currentMusic;
 
     /**
      * Set the sound track that is supposed to be played now. This function does
@@ -155,6 +140,31 @@ public final class MusicBox implements Stoppable {
     }
 
     /**
+     * Stop playing the fighting music and fall back to the last sound track
+     * played.
+     */
+    public void stopFightingMusic() {
+        if (fightingMusicPlaying) {
+            fightingMusicPlaying = false;
+            updateSoundTrack();
+        }
+    }
+
+    /**
+     * Update the location where the player is currently at. This will update
+     * the soundtrack that is played in case its needed.
+     */
+    public void updatePlayerLocation() {
+        final int newId =
+            World.getMap().getMapAt(World.getPlayer().getLocation())
+                .getTileMusic();
+        if (newId != currentDefaultTrack) {
+            currentDefaultTrack = newId;
+            updateSoundTrack();
+        }
+    }
+
+    /**
      * Calling this function will cause the sound track to restart. It will
      * select the required sound track based upon the current state of the
      * music.
@@ -167,16 +177,5 @@ public final class MusicBox implements Stoppable {
             setSoundTrack(overrideSoundId);
         }
         setSoundTrack(currentDefaultTrack);
-    }
-
-    public boolean isPlaying(final int musicId) {
-        return (overrideSoundId != musicId);
-    }
-
-    @Override
-    public void saveShutdown() {
-        if (currentMusic != null) {
-            currentMusic.stop();
-        }
     }
 }

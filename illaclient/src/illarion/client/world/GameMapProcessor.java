@@ -18,12 +18,12 @@
  */
 package illarion.client.world;
 
+import gnu.trove.list.array.TLongArrayList;
+import gnu.trove.procedure.TLongObjectProcedure;
+import illarion.client.graphics.MapDisplayManager;
 import illarion.common.util.Location;
 
 import org.apache.log4j.Logger;
-
-import gnu.trove.list.array.TLongArrayList;
-import gnu.trove.procedure.TLongObjectProcedure;
 
 /**
  * This class checks the consistency of the map, the map, handles the fading out
@@ -64,6 +64,16 @@ public class GameMapProcessor extends Thread implements
     private final boolean insideStates[] = new boolean[2];
 
     /**
+     * The last height that was reported to this processor.
+     */
+    public int lastReportedHeight = -1;
+
+    /**
+     * The last width that was reported to this processor.
+     */
+    public int lastReportedWidth = -1;
+
+    /**
      * The map that is handled by this processor instance.
      */
     private final GameMap parent;
@@ -99,132 +109,6 @@ public class GameMapProcessor extends Thread implements
         unchecked = new TLongArrayList();
         running = false;
     }
-    
-    /**
-     * The last width that was reported to this processor.
-     */
-    public int lastReportedWidth = -1;
-    
-    /**
-     * The last height that was reported to this processor.
-     */
-    public int lastReportedHeight = -1;
-
-    /**
-     * Do a inside check during the next run of the thread loop.
-     */
-    public void checkInside() {
-        checkInside = true;
-    }
-
-    /**
-     * Clear the map, that should be done in case all tiles got removed from the
-     * map and the current checks need to stop instantly.
-     */
-    public void clear() {
-        synchronized (unchecked) {
-            unchecked.clear();
-        }
-    }
-
-    /**
-     * Procedure function that is used to collect data from the map of the game.
-     * <p>
-     * Do not call this function from any other class.
-     * </p>
-     */
-    @Override
-    public boolean execute(final long key, final MapTile tile) {
-        unchecked.add(key);
-
-        return true;
-    }
-
-    /**
-     * This method causes the map processor to hold and stop processing data
-     * until the operations are resumed with {@link #start()}.
-     */
-    public synchronized void pause() {
-        pauseLoop = true;
-    }
-
-    /**
-     * Add a key of a map location to the processor that contains a location on
-     * the map that was yet unchecked.
-     * 
-     * @param key the key of the location that needs to be checked
-     */
-    public void reportUnchecked(final long key) {
-        synchronized (unchecked) {
-            if (unchecked.contains(key)) {
-                unchecked.add(key);
-            }
-            unchecked.notify();
-        }
-        fullCheckNeeded = true;
-    }
-
-    /**
-     * The main method of the game map processor.
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public void run() {
-        while (running) {
-            while (pauseLoop) {
-                try {
-                    synchronized (unchecked) {
-                        unchecked.wait();
-                    }
-                } catch (final InterruptedException e) {
-                    LOGGER.debug("Unexpected wakeup during pause.", e);
-                }
-            }
-            performInsideCheck();
-
-            if (processUnchecked()) {
-                continue;
-            }
-
-            if (workloadCheck()) {
-                continue;
-            }
-
-            try {
-                synchronized (unchecked) {
-                    unchecked.wait();
-                }
-            } catch (final InterruptedException e) {
-                LOGGER.debug("Unexpected wake up of the map processor", e);
-            }
-        }
-    }
-
-    /**
-     * Stop this thread as soon as possible.
-     */
-    public void saveShutdown() {
-        running = false;
-        synchronized (unchecked) {
-            unchecked.notify();
-        }
-    }
-
-    /**
-     * This method starts or resumes the map processor.
-     */
-    @Override
-    public synchronized void start() {
-        pauseLoop = false;
-        if (running) {
-            synchronized (unchecked) {
-                unchecked.notify();
-            }
-        } else {
-            running = true;
-            super.start();
-        }
-    }
 
     /**
      * Add all tiles in the visible perspective above one location to the list
@@ -240,8 +124,8 @@ public class GameMapProcessor extends Thread implements
         int currZ = searchLoc.getScZ();
 
         while (currZ <= limit) {
-            currX -= GameMap.TILE_PERSPECTIVE_OFFSET;
-            currY += GameMap.TILE_PERSPECTIVE_OFFSET;
+            currX -= MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
+            currY += MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
             currZ++;
             final long foundKey = Location.getKey(currX, currY, currZ);
             synchronized (unchecked) {
@@ -266,8 +150,8 @@ public class GameMapProcessor extends Thread implements
         int currZ = searchLoc.getScZ();
 
         while (currZ >= limit) {
-            currX += GameMap.TILE_PERSPECTIVE_OFFSET;
-            currY -= GameMap.TILE_PERSPECTIVE_OFFSET;
+            currX += MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
+            currY -= MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
             currZ--;
             final long foundKey = Location.getKey(currX, currY, currZ);
             synchronized (unchecked) {
@@ -322,7 +206,7 @@ public class GameMapProcessor extends Thread implements
         if (!World.getPlayer().hasValidLocation()) {
             return false;
         }
-        
+
         final Location playerLoc = World.getPlayer().getLocation();
         final Location tileLoc = tile.getLocation();
 
@@ -343,7 +227,7 @@ public class GameMapProcessor extends Thread implements
                 + " (tile.x < player.z - 2)");
             return true;
         }
-        
+
         final MapDimensions mapDim = MapDimensions.getInstance();
 
         if ((playerLoc.getCol() + mapDim.getClippingOffsetLeft()) > tileLoc
@@ -352,7 +236,8 @@ public class GameMapProcessor extends Thread implements
             LOGGER.debug("Removed tile at location " + tileLoc.toString()
                 + " (outside of left clipping)");
             LOGGER.debug("Ply Col: " + Integer.toString(playerLoc.getCol())
-                + " Clipping Left: " + Integer.toString(mapDim.getClippingOffsetLeft())
+                + " Clipping Left: "
+                + Integer.toString(mapDim.getClippingOffsetLeft())
                 + " Tile Col: " + Integer.toString(tileLoc.getCol()));
             return true;
         }
@@ -363,7 +248,8 @@ public class GameMapProcessor extends Thread implements
             LOGGER.debug("Removed tile at location " + tileLoc.toString()
                 + " (outside of right clipping)");
             LOGGER.debug("Ply Col: " + Integer.toString(playerLoc.getCol())
-                + " Clipping Right: " + Integer.toString(mapDim.getClippingOffsetRight())
+                + " Clipping Right: "
+                + Integer.toString(mapDim.getClippingOffsetRight())
                 + " Tile Col: " + Integer.toString(tileLoc.getCol()));
             return true;
         }
@@ -376,7 +262,8 @@ public class GameMapProcessor extends Thread implements
             LOGGER.debug("Removed tile at location " + tileLoc.toString()
                 + " (outside of top clipping)");
             LOGGER.debug("Ply Row: " + Integer.toString(playerLoc.getRow())
-                + " Clipping Top: " + Integer.toString(mapDim.getClippingOffsetTop())
+                + " Clipping Top: "
+                + Integer.toString(mapDim.getClippingOffsetTop())
                 + " Tile Row: " + Integer.toString(tileLoc.getRow()));
             return true;
         }
@@ -388,8 +275,8 @@ public class GameMapProcessor extends Thread implements
                 + " (outside of bottom clipping)");
             LOGGER.debug("Ply Row: " + Integer.toString(playerLoc.getRow())
                 + " Clipping Bottom: "
-                + Integer.toString(mapDim.getClippingOffsetBottom()) + " Tile Row: "
-                + Integer.toString(tileLoc.getRow()));
+                + Integer.toString(mapDim.getClippingOffsetBottom())
+                + " Tile Row: " + Integer.toString(tileLoc.getRow()));
             return true;
         }
 
@@ -480,6 +367,13 @@ public class GameMapProcessor extends Thread implements
     }
 
     /**
+     * Do a inside check during the next run of the thread loop.
+     */
+    public void checkInside() {
+        checkInside = true;
+    }
+
+    /**
      * Do the obstruction check of a tile. So this means that all tiles are
      * hidden in case there is a tile above them and they are fully invisible
      * anyway. Tiles below the level of the player are removed, since they won't
@@ -501,8 +395,8 @@ public class GameMapProcessor extends Thread implements
         int currZ = tileLoc.getScZ();
 
         while (currZ < topLimit) {
-            currX -= GameMap.TILE_PERSPECTIVE_OFFSET;
-            currY += GameMap.TILE_PERSPECTIVE_OFFSET;
+            currX -= MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
+            currY += MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
             currZ++;
 
             final boolean remove = (currZ < (topLimit - 2));
@@ -523,6 +417,37 @@ public class GameMapProcessor extends Thread implements
             addAllBelow(tileLoc, playerLoc.getScZ() - 2);
         }
         return false;
+    }
+
+    /**
+     * Clear the map, that should be done in case all tiles got removed from the
+     * map and the current checks need to stop instantly.
+     */
+    public void clear() {
+        synchronized (unchecked) {
+            unchecked.clear();
+        }
+    }
+
+    /**
+     * Procedure function that is used to collect data from the map of the game.
+     * <p>
+     * Do not call this function from any other class.
+     * </p>
+     */
+    @Override
+    public boolean execute(final long key, final MapTile tile) {
+        unchecked.add(key);
+
+        return true;
+    }
+
+    /**
+     * This method causes the map processor to hold and stop processing data
+     * until the operations are resumed with {@link #start()}.
+     */
+    public synchronized void pause() {
+        pauseLoop = true;
     }
 
     /**
@@ -618,6 +543,68 @@ public class GameMapProcessor extends Thread implements
     }
 
     /**
+     * Add a key of a map location to the processor that contains a location on
+     * the map that was yet unchecked.
+     * 
+     * @param key the key of the location that needs to be checked
+     */
+    public void reportUnchecked(final long key) {
+        synchronized (unchecked) {
+            if (unchecked.contains(key)) {
+                unchecked.add(key);
+            }
+            unchecked.notify();
+        }
+        fullCheckNeeded = true;
+    }
+
+    /**
+     * The main method of the game map processor.
+     */
+    @SuppressWarnings("nls")
+    @Override
+    public void run() {
+        while (running) {
+            while (pauseLoop) {
+                try {
+                    synchronized (unchecked) {
+                        unchecked.wait();
+                    }
+                } catch (final InterruptedException e) {
+                    LOGGER.debug("Unexpected wakeup during pause.", e);
+                }
+            }
+            performInsideCheck();
+
+            if (processUnchecked()) {
+                continue;
+            }
+
+            if (workloadCheck()) {
+                continue;
+            }
+
+            try {
+                synchronized (unchecked) {
+                    unchecked.wait();
+                }
+            } catch (final InterruptedException e) {
+                LOGGER.debug("Unexpected wake up of the map processor", e);
+            }
+        }
+    }
+
+    /**
+     * Stop this thread as soon as possible.
+     */
+    public void saveShutdown() {
+        running = false;
+        synchronized (unchecked) {
+            unchecked.notify();
+        }
+    }
+
+    /**
      * Search all surrounding tiles and the tile below and look for a tile that
      * is currently hidden.
      * 
@@ -654,6 +641,22 @@ public class GameMapProcessor extends Thread implements
         }
 
         return false;
+    }
+
+    /**
+     * This method starts or resumes the map processor.
+     */
+    @Override
+    public synchronized void start() {
+        pauseLoop = false;
+        if (running) {
+            synchronized (unchecked) {
+                unchecked.notify();
+            }
+        } else {
+            running = true;
+            super.start();
+        }
     }
 
     /**

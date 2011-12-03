@@ -18,9 +18,6 @@
  */
 package illarion.client.world;
 
-import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.Avatar;
 import illarion.client.graphics.AvatarClothManager;
@@ -30,55 +27,20 @@ import illarion.client.net.CommandList;
 import illarion.client.net.client.LookatCharCmd;
 import illarion.client.resources.ItemFactory;
 import illarion.client.util.Lang;
-
+import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
-import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 
+import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
 
 /**
  * Represents a character: player, monster or npc.
  */
-public final class Char implements RecycleObject,
-    AnimatedMove {
-
-    /**
-     * The speed a animation runs with on default.
-     */
-    public static final int DEFAULT_ANIMATION_SPEED = 5;
-
-    /**
-     * Move mode constant for a pushed move.
-     */
-    public static final int MOVE_PUSH = 0;
-
-    /**
-     * Move mode constant for a running move.
-     */
-    public static final int MOVE_RUN = 2;
-
-    /**
-     * Move mode constant for a walking move.
-     */
-    public static final int MOVE_WALK = 1;
-
-    /**
-     * Light Update status SOFTly change value.
-     */
-    protected static final int LIGHT_SOFT = 2;
-
-    /**
-     * Light Update status UPDATE light value.
-     */
-    protected static final int LIGHT_UPDATE = 3;
-
-    /**
-     * Maximum value for visibility.
-     */
-    protected static final int VISIBILITY_MAX = 100;
+public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * The color that is used to show combat characters.
@@ -91,9 +53,24 @@ public final class Char implements RecycleObject,
     private static final Color DEAD_COLOR;
 
     /**
+     * The speed a animation runs with on default.
+     */
+    public static final int DEFAULT_ANIMATION_SPEED = 5;
+
+    /**
      * Light Update status SET light value.
      */
     private static final int LIGHT_SET = 1;
+
+    /**
+     * Light Update status SOFTly change value.
+     */
+    protected static final int LIGHT_SOFT = 2;
+
+    /**
+     * Light Update status UPDATE light value.
+     */
+    protected static final int LIGHT_UPDATE = 3;
 
     /**
      * The instance of the logger that is used to write out the data.
@@ -119,6 +96,21 @@ public final class Char implements RecycleObject,
      * Mask to check if the character ID belongs to a monster.
      */
     private static final long MONSTER_BASE = 0xFE000000L;
+
+    /**
+     * Move mode constant for a pushed move.
+     */
+    public static final int MOVE_PUSH = 0;
+
+    /**
+     * Move mode constant for a running move.
+     */
+    public static final int MOVE_RUN = 2;
+
+    /**
+     * Move mode constant for a walking move.
+     */
+    public static final int MOVE_WALK = 1;
 
     /**
      * Type value that the character is a npc.
@@ -164,9 +156,24 @@ public final class Char implements RecycleObject,
      */
     private static final int VISIBILITY_ALPHA_MOD = 10;
 
+    /**
+     * Maximum value for visibility.
+     */
+    protected static final int VISIBILITY_MAX = 100;
+
     static {
         DEAD_COLOR = new Color(1.f, 1.f, 1.f, 0.45f);
         COMBAT_COLOR = new Color(1.f, 0.6f, 0.6f, 1.f);
+    }
+
+    /**
+     * Create a new character, using the GameFactory.
+     * 
+     * @return the new character
+     */
+    protected static Char create() {
+        return (Char) GameFactory.getInstance().getCommand(
+            GameFactory.OBJ_CHARACTER);
     }
 
     /**
@@ -226,6 +233,10 @@ public final class Char implements RecycleObject,
      */
     private int elevation;
 
+    private int foodpoints;
+
+    private int hitpoints;
+
     /**
      * Last visibility value that was shown. Used for fading in and out
      * animations.
@@ -246,6 +257,8 @@ public final class Char implements RecycleObject,
      * Current Location of the character on the map.
      */
     private transient final Location loc;
+
+    private int manapoints;
 
     /**
      * Move animation handler for this character.
@@ -282,12 +295,10 @@ public final class Char implements RecycleObject,
      * Visibility bonus of the character (for large characters).
      */
     private int visibilityBonus;
-
     /**
      * Flag if the character is visible.
      */
     private boolean visible;
-
     /**
      * A list of items this avatar wears. This list is send to the avatar at a
      * update.
@@ -299,10 +310,6 @@ public final class Char implements RecycleObject,
      */
     private transient final Color[] wearItemsColors =
         new Color[AvatarClothManager.GROUP_COUNT];
-    
-    private int hitpoints;
-    private int foodpoints;
-    private int manapoints;
 
     /**
      * Constructor to create a new character.
@@ -313,16 +320,6 @@ public final class Char implements RecycleObject,
         scale = 0;
         animation = CharAnimations.STAND;
         avatarId = -1;
-    }
-
-    /**
-     * Create a new character, using the GameFactory.
-     * 
-     * @return the new character
-     */
-    protected static Char create() {
-        return (Char) GameFactory.getInstance().getCommand(
-            GameFactory.OBJ_CHARACTER);
     }
 
     /**
@@ -404,6 +401,14 @@ public final class Char implements RecycleObject,
         return direction;
     }
 
+    public int getFoodpoints() {
+        return foodpoints;
+    }
+
+    public int getHitpoints() {
+        return hitpoints;
+    }
+
     /**
      * Get the ID of the recycle object type.
      * 
@@ -415,12 +420,25 @@ public final class Char implements RecycleObject,
     }
 
     /**
+     * Get a interactive reference to this character.
+     * 
+     * @return a interactive reference to this character
+     */
+    public InteractiveChar getInteractive() {
+        return InteractiveChar.create(this);
+    }
+
+    /**
      * Get the current location of the character.
      * 
      * @return the location of the character
      */
     public Location getLocation() {
         return loc;
+    }
+
+    public int getManapoints() {
+        return manapoints;
     }
 
     /**
@@ -550,8 +568,8 @@ public final class Char implements RecycleObject,
                 startAnimation(CharAnimations.RUN, speed);
             }
             move.start(tempLoc.getDcX() - loc.getDcX(),
-                tempLoc.getDcY() + fromElevation - loc.getDcY(),
-                0, 0, +elevation, 0, speed);
+                (tempLoc.getDcY() + fromElevation) - loc.getDcY(), 0, 0,
+                +elevation, 0, speed);
         } else {
             // reset last animation result
             dX = 0;
@@ -581,6 +599,17 @@ public final class Char implements RecycleObject,
     @Override
     public void recycle() {
         GameFactory.getInstance().recycle(this);
+    }
+
+    /**
+     * Release the current avatar and free the resources.
+     */
+    private void releaseAvatar() {
+        if (avatar != null) {
+            avatar.recycle();
+            avatar = null;
+            avatarId = -1;
+        }
     }
 
     /**
@@ -615,6 +644,18 @@ public final class Char implements RecycleObject,
         charId = 0;
         visible = false;
         skinColor = null;
+    }
+
+    /**
+     * Set the current animation back to its parent, update the avatar and
+     * invoke the needed animations.
+     */
+    private void resetAnimation() {
+        animation = CharAnimations.STAND;
+        updateAvatar();
+        if (avatar != null) {
+            avatar.animate(DEFAULT_ANIMATION_SPEED, this, true);
+        }
     }
 
     /**
@@ -740,6 +781,14 @@ public final class Char implements RecycleObject,
         resetAnimation();
     }
 
+    public void setFoodpoints(final int foodpoints) {
+        this.foodpoints = foodpoints;
+    }
+
+    public void setHitpoints(final int hitpoints) {
+        this.hitpoints = hitpoints;
+    }
+
     /**
      * Set the new location of the character.
      * 
@@ -753,6 +802,10 @@ public final class Char implements RecycleObject,
         loc.set(newLoc);
         elevation = World.getMap().getElevationAt(loc);
         updatePosition(elevation);
+    }
+
+    public void setManapoints(final int manapoints) {
+        this.manapoints = manapoints;
     }
 
     /**
@@ -970,143 +1023,6 @@ public final class Char implements RecycleObject,
     }
 
     /**
-     * Update the current light source of this character.
-     */
-    public void updateLight() {
-        if (lightValue > 0) {
-            final int tempLightValue = lightValue;
-            resetLight();
-            lightSrc = LightSource.createLight(loc, tempLightValue);
-            World.getLights().add(lightSrc);
-            lightValue = tempLightValue;
-        }
-    }
-
-    /**
-     * Change the position of the light source of the character and refresh the
-     * light.
-     * 
-     * @param newLoc the new location of the light source
-     */
-    public void updateLight(final Location newLoc) {
-        if (lightSrc != null) {
-            lightSrc.getLocation().set(newLoc);
-            World.getLights().refreshLight(lightSrc);
-        }
-    }
-
-    /**
-     * Update the paper doll, so set all items the characters wears to the
-     * avatar. Do this in case many cloth parts changed or in case the avatar
-     * instance changed.
-     */
-    public void updatePaperdoll() {
-        if (hasWearingItem(AvatarClothManager.GROUP_FIRST_HAND,
-            wearItems[AvatarClothManager.GROUP_FIRST_HAND])
-            || hasWearingItem(AvatarClothManager.GROUP_SECOND_HAND,
-                wearItems[AvatarClothManager.GROUP_SECOND_HAND])) {
-            setWearingItem(AvatarClothManager.GROUP_FIRST_HAND,
-                wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
-            setWearingItem(AvatarClothManager.GROUP_SECOND_HAND,
-                wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
-        } else {
-            setWearingItem(AvatarClothManager.GROUP_FIRST_HAND,
-                wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
-            setWearingItem(AvatarClothManager.GROUP_SECOND_HAND,
-                wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
-        }
-        for (int i = 0; i < wearItems.length; ++i) {
-            if ((i == AvatarClothManager.GROUP_FIRST_HAND)
-                || (i == AvatarClothManager.GROUP_SECOND_HAND)) {
-                continue;
-            }
-            final int itemID = wearItems[i];
-            if (itemID == 0) {
-                avatar.removeClothItem(i);
-            } else {
-                avatar.setClothItem(i, itemID);
-            }
-        }
-    }
-
-    /**
-     * Update the light source of the character.
-     * 
-     * @param mode the mode of the update
-     */
-    protected void updateLight(final int mode) {
-        Location lightLoc;
-        // different handling for own char
-        final Player player = World.getPlayer();
-        if ((player != null) && (player.getPlayerId() == charId)) {
-            lightLoc = player.getLocation();
-        } else {
-            lightLoc = loc;
-        }
-
-        final MapTile tile = World.getMap().getMapAt(lightLoc);
-
-        final Avatar localAvatar = avatar;
-        final MapTile localTile = tile;
-        if ((localAvatar != null) && (localTile != null)) {
-            switch (mode) {
-                case LIGHT_SET:
-                    localAvatar.setLight(localTile.getLight());
-                    break;
-                case LIGHT_SOFT:
-                    localAvatar.setLightTarget(localTile.getLight());
-                    break;
-                case LIGHT_UPDATE:
-                    if (localAvatar.hasAnimatedLight()) {
-                        localAvatar.setLightTarget(localTile.getLight());
-                    } else {
-                        localAvatar.setLight(localTile.getLight());
-                    }
-                    break;
-                default:
-                    LOGGER.warn("Wrong light update mode."); //$NON-NLS-1$
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Update the avatar display position.
-     * 
-     * @param fix additional position offset for the character, used for the
-     *            elevation.
-     */
-    protected void updatePosition(final int fix) {
-        if (avatar != null) {
-            avatar.setScreenPos(loc.getDcX() + dX, loc.getDcY() + dY - fix,
-                loc.getDcZ() + dZ, Layers.CHARS);
-        }
-    }
-
-    /**
-     * Release the current avatar and free the resources.
-     */
-    private void releaseAvatar() {
-        if (avatar != null) {
-            avatar.recycle();
-            avatar = null;
-            avatarId = -1;
-        }
-    }
-
-    /**
-     * Set the current animation back to its parent, update the avatar and
-     * invoke the needed animations.
-     */
-    private void resetAnimation() {
-        animation = CharAnimations.STAND;
-        updateAvatar();
-        if (avatar != null) {
-            avatar.animate(DEFAULT_ANIMATION_SPEED, this, true);
-        }
-    }
-
-    /**
      * Update the graphical appearance of the character.
      */
     @SuppressWarnings("nls")
@@ -1167,27 +1083,117 @@ public final class Char implements RecycleObject,
         avatar.show();
     }
 
-    public int getHitpoints() {
-        return hitpoints;
+    /**
+     * Update the current light source of this character.
+     */
+    public void updateLight() {
+        if (lightValue > 0) {
+            final int tempLightValue = lightValue;
+            resetLight();
+            lightSrc = LightSource.createLight(loc, tempLightValue);
+            World.getLights().add(lightSrc);
+            lightValue = tempLightValue;
+        }
     }
 
-    public void setHitpoints(int hitpoints) {
-        this.hitpoints = hitpoints;
+    /**
+     * Update the light source of the character.
+     * 
+     * @param mode the mode of the update
+     */
+    protected void updateLight(final int mode) {
+        Location lightLoc;
+        // different handling for own char
+        final Player player = World.getPlayer();
+        if ((player != null) && (player.getPlayerId() == charId)) {
+            lightLoc = player.getLocation();
+        } else {
+            lightLoc = loc;
+        }
+
+        final MapTile tile = World.getMap().getMapAt(lightLoc);
+
+        final Avatar localAvatar = avatar;
+        final MapTile localTile = tile;
+        if ((localAvatar != null) && (localTile != null)) {
+            switch (mode) {
+                case LIGHT_SET:
+                    localAvatar.setLight(localTile.getLight());
+                    break;
+                case LIGHT_SOFT:
+                    localAvatar.setLightTarget(localTile.getLight());
+                    break;
+                case LIGHT_UPDATE:
+                    if (localAvatar.hasAnimatedLight()) {
+                        localAvatar.setLightTarget(localTile.getLight());
+                    } else {
+                        localAvatar.setLight(localTile.getLight());
+                    }
+                    break;
+                default:
+                    LOGGER.warn("Wrong light update mode."); //$NON-NLS-1$
+                    break;
+            }
+        }
     }
 
-    public int getFoodpoints() {
-        return foodpoints;
+    /**
+     * Change the position of the light source of the character and refresh the
+     * light.
+     * 
+     * @param newLoc the new location of the light source
+     */
+    public void updateLight(final Location newLoc) {
+        if (lightSrc != null) {
+            lightSrc.getLocation().set(newLoc);
+            World.getLights().refreshLight(lightSrc);
+        }
     }
 
-    public void setFoodpoints(int foodpoints) {
-        this.foodpoints = foodpoints;
+    /**
+     * Update the paper doll, so set all items the characters wears to the
+     * avatar. Do this in case many cloth parts changed or in case the avatar
+     * instance changed.
+     */
+    public void updatePaperdoll() {
+        if (hasWearingItem(AvatarClothManager.GROUP_FIRST_HAND,
+            wearItems[AvatarClothManager.GROUP_FIRST_HAND])
+            || hasWearingItem(AvatarClothManager.GROUP_SECOND_HAND,
+                wearItems[AvatarClothManager.GROUP_SECOND_HAND])) {
+            setWearingItem(AvatarClothManager.GROUP_FIRST_HAND,
+                wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+            setWearingItem(AvatarClothManager.GROUP_SECOND_HAND,
+                wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+        } else {
+            setWearingItem(AvatarClothManager.GROUP_FIRST_HAND,
+                wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+            setWearingItem(AvatarClothManager.GROUP_SECOND_HAND,
+                wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+        }
+        for (int i = 0; i < wearItems.length; ++i) {
+            if ((i == AvatarClothManager.GROUP_FIRST_HAND)
+                || (i == AvatarClothManager.GROUP_SECOND_HAND)) {
+                continue;
+            }
+            final int itemID = wearItems[i];
+            if (itemID == 0) {
+                avatar.removeClothItem(i);
+            } else {
+                avatar.setClothItem(i, itemID);
+            }
+        }
     }
 
-    public int getManapoints() {
-        return manapoints;
-    }
-
-    public void setManapoints(int manapoints) {
-        this.manapoints = manapoints;
+    /**
+     * Update the avatar display position.
+     * 
+     * @param fix additional position offset for the character, used for the
+     *            elevation.
+     */
+    protected void updatePosition(final int fix) {
+        if (avatar != null) {
+            avatar.setScreenPos(loc.getDcX() + dX, (loc.getDcY() + dY) - fix,
+                loc.getDcZ() + dZ, Layers.CHARS);
+        }
     }
 }

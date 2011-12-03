@@ -19,9 +19,11 @@
 package illarion.client.net.client;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
+import illarion.client.world.interactive.UseTarget;
 
 /**
  * Client Command: Use something, optional with something else (
@@ -41,11 +43,11 @@ public final class UseCmd extends AbstractCommand {
      */
     private byte counter;
 
-//    /**
-//     * The list of things that are involved in the use command.
-//     */
-//    private final ArrayList<AbstractReference> uses =
-//        new ArrayList<AbstractReference>(MAXIMAL_USES_COUNT);
+    /**
+     * The list of things that are involved in the use command.
+     */
+    private final List<UseTarget> uses =
+        new ArrayList<UseTarget>(MAXIMAL_USES_COUNT);
 
     /**
      * Default constructor for the use command.
@@ -54,22 +56,22 @@ public final class UseCmd extends AbstractCommand {
         super(CommandList.CMD_USE);
     }
 
-//    /**
-//     * Ad a single use element to the list of elements that are involved in this
-//     * use. This function also causes that the counter value is stored in the
-//     * command.
-//     * 
-//     * @param execute the use element that shall be added.
-//     */
-//    @SuppressWarnings("nls")
-//    public void addUse(final AbstractReference execute) {
-//        uses.add(execute);
-//        if (uses.size() > MAXIMAL_USES_COUNT) {
-//            throw new IllegalArgumentException(
-//                "only two uses and menu are supported");
-//        }
-//        counter = (byte) 0;
-//    }
+    /**
+     * Add a single use element to the list of elements that are involved in this
+     * use. This function also causes that the counter value is stored in the
+     * command.
+     * 
+     * @param execute the use element that shall be added.
+     */
+    @SuppressWarnings("nls")
+    public void addUse(final UseTarget execute) {
+        uses.add(execute);
+        if (uses.size() > MAXIMAL_USES_COUNT) {
+            throw new IllegalArgumentException(
+                "only two uses and menu are supported");
+        }
+        counter = (byte) 0;
+    }
 
     /**
      * Create a duplicate of this use command.
@@ -89,14 +91,14 @@ public final class UseCmd extends AbstractCommand {
      */
     @Override
     public void encode(final NetCommWriter writer) {
-//        writer.writeByte((byte) uses.size());
-//
-//        for (final AbstractReference use : uses) {
-//            use.encodeUse(writer);
-//        }
-//
-//        // add counter value
-//        writer.writeByte(counter);
+        writer.writeByte((byte) uses.size());
+
+        for (final UseTarget use : uses) {
+            use.encodeUse(writer);
+        }
+
+        // add counter value
+        writer.writeByte(counter);
     }
 
     /**
@@ -105,7 +107,7 @@ public final class UseCmd extends AbstractCommand {
      */
     @Override
     public void reset() {
-//        uses.clear();
+        uses.clear();
     }
 
     /**
@@ -126,7 +128,6 @@ public final class UseCmd extends AbstractCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-//        return toString("Elements: " + uses.size() + " Counter: " + counter);
-        return "";
+        return toString("Elements: " + uses.size() + " Counter: " + counter);
     }
 }

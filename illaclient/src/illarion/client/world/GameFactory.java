@@ -19,7 +19,6 @@
 package illarion.client.world;
 
 import illarion.client.graphics.TextTag;
-
 import illarion.common.util.RecycleFactory;
 import illarion.common.util.RecycleObject;
 
@@ -29,9 +28,24 @@ import illarion.common.util.RecycleObject;
 public final class GameFactory extends RecycleFactory<RecycleObject> {
 
     /**
+     * Singleton instance of the Game Factory.
+     */
+    private static final GameFactory INSTANCE = new GameFactory();
+
+    /**
+     * ID for the get function to get the character object.
+     */
+    protected static final int OBJ_CHARACTER = 0;
+
+    /**
      * ID for the get function to get the maptext object.
      */
     public static final int OBJ_MAPTEXT = 6;
+
+    /**
+     * ID for the get function to get the maptile object.
+     */
+    protected static final int OBJ_MAPTILE = 1;
 
     /**
      * ID for the get function to get the message object.
@@ -54,34 +68,19 @@ public final class GameFactory extends RecycleFactory<RecycleObject> {
     public static final int OBJ_USAGE = 4;
 
     /**
-     * ID for the get function to get the character object.
-     */
-    protected static final int OBJ_CHARACTER = 0;
-
-    /**
-     * ID for the get function to get the maptile object.
-     */
-    protected static final int OBJ_MAPTILE = 1;
-
-    /**
-     * Singleton instance of the Game Factory.
-     */
-    private static final GameFactory INSTANCE = new GameFactory();
-
-    /**
-     * Constructor for the Game Factory.
-     */
-    private GameFactory() {
-        super();
-    }
-
-    /**
      * Get the singleton instance of the Game Factory.
      * 
      * @return the instance of the Game Factory
      */
     public static GameFactory getInstance() {
         return INSTANCE;
+    }
+
+    /**
+     * Constructor for the Game Factory.
+     */
+    private GameFactory() {
+        super();
     }
 
     /**

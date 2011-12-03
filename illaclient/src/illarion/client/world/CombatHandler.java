@@ -37,6 +37,15 @@ public final class CombatHandler {
     private static final CombatHandler INSTANCE = new CombatHandler();
 
     /**
+     * Get the singleton instance of this class.
+     * 
+     * @return the singleton instance of this class
+     */
+    public static CombatHandler getInstance() {
+        return INSTANCE;
+    }
+
+    /**
      * The character that is currently under attack.
      */
     private Char attackedChar;
@@ -52,15 +61,6 @@ public final class CombatHandler {
      */
     private CombatHandler() {
         // nothing to do
-    }
-
-    /**
-     * Get the singleton instance of this class.
-     * 
-     * @return the singleton instance of this class
-     */
-    public static CombatHandler getInstance() {
-        return INSTANCE;
     }
 
     /**
@@ -90,6 +90,20 @@ public final class CombatHandler {
      */
     public boolean isCombatMode() {
         return combatActive;
+    }
+
+    /**
+     * Send a attack command to the server that initiates a fight with the
+     * character that ID is set in the parameter.
+     * 
+     * @param id the ID of the character to fight
+     */
+    private void sendAttackToServer(final long id) {
+        final AttackCmd cmd =
+            (AttackCmd) CommandFactory.getInstance().getCommand(
+                CommandList.CMD_ATTACK);
+        cmd.setTarget(id);
+        World.getNet().sendCommand(cmd);
     }
 
     /**
@@ -158,19 +172,5 @@ public final class CombatHandler {
     public boolean toggleCombatMode() {
         setCombatMode(!combatActive);
         return combatActive;
-    }
-
-    /**
-     * Send a attack command to the server that initiates a fight with the
-     * character that ID is set in the parameter.
-     * 
-     * @param id the ID of the character to fight
-     */
-    private void sendAttackToServer(final long id) {
-        final AttackCmd cmd =
-            (AttackCmd) CommandFactory.getInstance().getCommand(
-                CommandList.CMD_ATTACK);
-        cmd.setTarget(id);
-        World.getNet().sendCommand(cmd);
     }
 }

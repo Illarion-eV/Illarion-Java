@@ -18,6 +18,9 @@
  */
 package illarion.client.world;
 
+import illarion.client.graphics.AnimationUtility;
+import illarion.client.resources.SoundFactory;
+
 import java.util.Random;
 
 import org.apache.log4j.Logger;
@@ -26,19 +29,11 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Sound;
 
-import illarion.client.graphics.AnimationUtility;
-import illarion.client.resources.SoundFactory;
-
 /**
  * Weather control class. Generated and stores all effects caused by the weather
  * and the ingame time.
  */
 public final class Weather {
-    /**
-     * Precipitation type rain.
-     */
-    public static final int RAIN = 1;
-
     /**
      * Ambient light colors for every hour and every overcast type. The list
      * builds up with the daytime in the first level, the clear and overcast
@@ -196,6 +191,11 @@ public final class Weather {
      * Changing speed of the precipitation types.
      */
     private static final int PREC_STEP = 15;
+
+    /**
+     * Precipitation type rain.
+     */
+    public static final int RAIN = 1;
 
     /**
      * Additional visibility coverage caused by rain.
@@ -481,6 +481,69 @@ public final class Weather {
     }
 
     /**
+     * Update the current weather conditions to the next values. This function
+     * also performs the smooth change of the values.
+     * 
+     * @param delta the time since the last call of this function
+     */
+    private void changeWeather(final int delta) {
+        // fog
+        fog = AnimationUtility.translate(fog, fogTarget, FOG_STEP, delta);
+
+        if (cloud != cloudTarget) {
+            cloud =
+                AnimationUtility.translate(cloud, cloudTarget, CLOUDS_STEP,
+                    CLOUDS_MIN, CLOUDS_MAX, delta);
+            calculateLight();
+        }
+
+        // soft change between rain and snow
+        prec =
+            AnimationUtility.translate(prec, precTarget, PREC_STEP, 0, 500,
+                delta);
+
+        // changing winds
+        if (--nextGust <= 0) {
+            windTarget = generalWind;
+            // vary wind by gust strength
+            if (gusts > 0) {
+                windTarget +=
+                    rnd.nextInt(WIND_GUST_EFFECT * gusts)
+                        - ((WIND_GUST_EFFECT / 2) * gusts);
+            }
+            // time to next wind change
+            nextGust =
+                rnd.nextInt(((WIND_GUST_MAX / 2) + 1) - (gusts / 2)) + 1;
+        }
+
+        // scheduling lightning
+        if (lightning > 0) {
+            if (nextThunder >= 0) {
+                if (nextThunder-- <= 0) {
+                    // play thunder sound effect
+                    final Sound sound =
+                        SoundFactory.getInstance().getSound(THUNDER_SOUND_ID);
+                    sound.play();
+                    nextThunder = -1;
+                }
+            }
+
+            if (nextFlash-- <= 0) {
+                showFlash =
+                    FLASH_WAIT_LONG
+                        + rnd.nextInt((lightning / (FLASH_WAIT_LONG - 1)) + 1);
+                nextThunder =
+                    FLASH_WAIT_LONG - (lightning / THUNDER_WAIT_TIME);
+
+                nextFlash =
+                    (FLASH_CENTER_VALUE - (lightning / FLASH_WAIT_LONG))
+                        + rnd.nextInt(FLASH_CENTER_VALUE
+                            - (lightning / FLASH_WAIT_LONG));
+            }
+        }
+    }
+
+    /**
      * Get the current ambientlight.
      * 
      * @return the current ambientlight
@@ -579,18 +642,6 @@ public final class Weather {
     public boolean isOutside() {
         return outside;
     }
-    
-    public void update(final int delta) {
-        nextChange -= delta;
-        if (nextChange <= 0) {
-            changeWeather(UPDATE_INTERVAL - (int) nextChange);
-            nextChange += UPDATE_INTERVAL;
-        }
-
-        wind =
-            AnimationUtility.translate(wind, windTarget, WIND_STEP,
-                WIND_INTERAL_MIN, WIND_INTERAL_MAX, delta);
-    }
 
     /**
      * Perform all render actions for the map and calculate the changes to the
@@ -607,6 +658,25 @@ public final class Weather {
         }
 
         renderFlash(g, c);
+    }
+
+    /**
+     * Render a flash if needed and count the waiting times down.
+     */
+    private void renderFlash(final Graphics g, final GameContainer c) {
+        if (lightning == 0) {
+            return;
+        }
+
+        if ((showFlash > 0) && ((showFlash-- % FLASH_WAIT) != 0)) {
+            if (FLASH_COLOR.getGreen() == 0) {
+                FLASH_COLOR.r = FLASH_COLOR.g = FLASH_COLOR.b = 1.f;
+            }
+
+            g.setColor(FLASH_COLOR);
+            g.fillRect(0, 0, c.getWidth(), c.getHeight());
+        }
+
     }
 
     /**
@@ -731,84 +801,15 @@ public final class Weather {
         nextGust = 0;
     }
 
-    /**
-     * Update the current weather conditions to the next values. This function
-     * also performs the smooth change of the values.
-     * 
-     * @param delta the time since the last call of this function
-     */
-    private void changeWeather(final int delta) {
-        // fog
-        fog = AnimationUtility.translate(fog, fogTarget, FOG_STEP, delta);
-
-        if (cloud != cloudTarget) {
-            cloud =
-                AnimationUtility.translate(cloud, cloudTarget, CLOUDS_STEP,
-                    CLOUDS_MIN, CLOUDS_MAX, delta);
-            calculateLight();
+    public void update(final int delta) {
+        nextChange -= delta;
+        if (nextChange <= 0) {
+            changeWeather(UPDATE_INTERVAL - (int) nextChange);
+            nextChange += UPDATE_INTERVAL;
         }
 
-        // soft change between rain and snow
-        prec =
-            AnimationUtility.translate(prec, precTarget, PREC_STEP, 0, 500,
-                delta);
-
-        // changing winds
-        if (--nextGust <= 0) {
-            windTarget = generalWind;
-            // vary wind by gust strength
-            if (gusts > 0) {
-                windTarget +=
-                    rnd.nextInt(WIND_GUST_EFFECT * gusts)
-                        - ((WIND_GUST_EFFECT / 2) * gusts);
-            }
-            // time to next wind change
-            nextGust =
-                rnd.nextInt(((WIND_GUST_MAX / 2) + 1) - (gusts / 2)) + 1;
-        }
-
-        // scheduling lightning
-        if (lightning > 0) {
-            if (nextThunder >= 0) {
-                if (nextThunder-- <= 0) {
-                    // play thunder sound effect
-                    Sound sound = SoundFactory.getInstance().getSound(THUNDER_SOUND_ID);
-                    sound.play();
-                    nextThunder = -1;
-                }
-            }
-
-            if (nextFlash-- <= 0) {
-                showFlash =
-                    FLASH_WAIT_LONG
-                        + rnd.nextInt((lightning / (FLASH_WAIT_LONG - 1)) + 1);
-                nextThunder =
-                    FLASH_WAIT_LONG - (lightning / THUNDER_WAIT_TIME);
-
-                nextFlash =
-                    (FLASH_CENTER_VALUE - (lightning / FLASH_WAIT_LONG))
-                        + rnd.nextInt(FLASH_CENTER_VALUE
-                            - (lightning / FLASH_WAIT_LONG));
-            }
-        }
-    }
-
-    /**
-     * Render a flash if needed and count the waiting times down.
-     */
-    private void renderFlash(final Graphics g, final GameContainer c) {
-        if (lightning == 0) {
-            return;
-        }
-
-        if ((showFlash > 0) && ((showFlash-- % FLASH_WAIT) != 0)) {
-            if (FLASH_COLOR.getGreen() == 0) {
-                FLASH_COLOR.r = FLASH_COLOR.g = FLASH_COLOR.b = 1.f;
-            }
-            
-            g.setColor(FLASH_COLOR);
-            g.fillRect(0, 0, c.getWidth(), c.getHeight());
-        }
-
+        wind =
+            AnimationUtility.translate(wind, windTarget, WIND_STEP,
+                WIND_INTERAL_MIN, WIND_INTERAL_MAX, delta);
     }
 }

@@ -28,5 +28,10 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="illacommon/native/win32"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/illacommon/lib/eventbus/eventbus-1.4.jar" sourcepath="/illacommon/lib/eventbus/eventbus-1.4-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/illacommon/lib/eventbus/eventbus-1.4-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

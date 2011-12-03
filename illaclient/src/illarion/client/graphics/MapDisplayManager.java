@@ -93,17 +93,9 @@ public final class MapDisplayManager implements AnimatedMove {
     }
 
     /**
-     * The instance of the logger that is used to write out the data.
+     * Offset of the tiles due the perspective of the map view.
      */
-    private static final Logger LOGGER = Logger
-        .getLogger(MapDisplayManager.class);
-
-    /**
-     * The height in pixels the GUI laps over the map at the bottom of the map
-     * display.
-     */
-    @Deprecated
-    private static final int MAP_GUI_BOTTOM_OVERLAP = 12;
+    public static final int TILE_PERSPECTIVE_OFFSET = 3;
 
     boolean displayListDirty = false;
 
