@@ -25,6 +25,7 @@ import de.lessvoid.nifty.controls.dragndrop.DraggableControl;
 import de.lessvoid.nifty.controls.dragndrop.builder.DraggableBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
+import de.lessvoid.nifty.input.NiftyMouseInputEvent;
 import de.lessvoid.nifty.loaderv2.types.ImageType;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
@@ -115,11 +116,15 @@ public final class InteractionManager {
                 imgBuilder.height(Integer.toString(height) + "px");
                 
                 final Element imgElement = imgBuilder.build(activeNifty, activeScreen, draggedGraphic);
-                draggedGraphic.getControl(DraggableControl.class).dragStart(oldx, oldy);
-                draggedGraphic.getControl(DraggableControl.class).drag(newx, newy);
                 
                 final ImageRenderer imgRender = imgElement.getRenderer(ImageRenderer.class);
-                imgRender.setImage(new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(targetTile.getTopImage())));
+                imgRender.setImage(new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem)));
+                
+                draggedGraphic.initControls();
+                ///final DraggableControl dragControl = draggedGraphic.getControl(DraggableControl.class);
+                draggedGraphic.onClick();
+                //dragControl.dragStart(oldx, oldy);
+                //dragControl.drag(newx, newy);
             }
         }
     }
