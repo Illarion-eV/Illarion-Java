@@ -12,8 +12,8 @@
         <layer id="gameLayer" childLayout="center" backgroundColor="#0000">
             <panel id="gamePanel" height="100%" width="100%" backgroundColor="#0000" visibleToMouse="false" childLayout="absolute">
                 <control id="mapDropTarget" name="droppable" width="100%" height="100%" visibleToMouse="false" />
-                <control id="mapDragObject" name="draggabe">
-                    <image />
+                <control id="mapDragObject" name="draggable" childLayout="center">
+                    <image id="mapDragImage"  width="100%" height="100%" visible="false" />
                 </control>
             </panel>
         </layer>

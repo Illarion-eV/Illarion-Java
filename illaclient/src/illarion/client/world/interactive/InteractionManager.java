@@ -41,11 +41,16 @@ import illarion.client.world.World;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class InteractionManager {
+    private final NiftyMouseInputEvent mouseEvent;
     private Draggable draggedObject;
     private Element draggedGraphic;
     private boolean isDragging;
     private Nifty activeNifty;
     private Screen activeScreen;
+    
+    public InteractionManager() {
+        mouseEvent = new NiftyMouseInputEvent();
+    }
 
     public void dropAt(final int x, final int y) {
         if (draggedObject == null) {
@@ -103,35 +108,45 @@ public final class InteractionManager {
                 final int width = movedItem.getWidth();
                 final int height = movedItem.getHeight();
                 
-                final DraggableBuilder dragBuilder = new DraggableBuilder("mapDraggable");
-                dragBuilder.childLayoutCenter();
-                dragBuilder.width(Integer.toString(width) + "px");
-                dragBuilder.height(Integer.toString(height) + "px");
-                dragBuilder.x(Integer.toString(oldx - width / 2) + "px");
-                dragBuilder.y(Integer.toString(oldy - height / 2) + "px");
-                draggedGraphic = dragBuilder.build(activeNifty, activeScreen, activeScreen.findElementByName("gamePanel"));
+                draggedGraphic = activeScreen.findElementByName("mapDragObject");
+                DraggableControl dragControl = draggedGraphic.getNiftyControl(DraggableControl.class);
+                draggedGraphic.resetLayout();
+                draggedGraphic.setConstraintWidth(new SizeValue(Integer.toString(width) + "px"));
+                draggedGraphic.setConstraintHeight(new SizeValue(Integer.toString(height) + "px"));
+                draggedGraphic.setConstraintX(new SizeValue(Integer.toString(oldx - width / 2) + "px"));
+                draggedGraphic.setConstraintY(new SizeValue(Integer.toString(oldy - height / 2) + "px"));
+                draggedGraphic.setVisible(true);
+                draggedGraphic.reactivate();
                 
-                final ImageBuilder imgBuilder = new ImageBuilder();
-                imgBuilder.width(Integer.toString(width) + "px");
-                imgBuilder.height(Integer.toString(height) + "px");
-                
-                final Element imgElement = imgBuilder.build(activeNifty, activeScreen, draggedGraphic);
+                Element imgElement = draggedGraphic.findElementByName("mapDragImage");
+                if (imgElement == null) {
+                    ImageBuilder imgBuilder = new ImageBuilder("mapDragImage");
+                    imgBuilder.width(Integer.toString(width) + "px");
+                    imgBuilder.height(Integer.toString(height) + "px");
+                    imgBuilder.visible(true);
+                    imgElement = imgBuilder.build(activeNifty, activeScreen, draggedGraphic);
+                }
+                imgElement.setWidth(width);
+                imgElement.setHeight(height);
                 
                 final ImageRenderer imgRender = imgElement.getRenderer(ImageRenderer.class);
                 imgRender.setImage(new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem)));
                 
-                draggedGraphic.initControls();
-                ///final DraggableControl dragControl = draggedGraphic.getControl(DraggableControl.class);
-                draggedGraphic.onClick();
-                //dragControl.dragStart(oldx, oldy);
-                //dragControl.drag(newx, newy);
+                activeScreen.layoutLayers();
+                
+                mouseEvent.initialize(oldx, oldy, 0, true, false, false);
+                mouseEvent.setButton0InitialDown(true);
+                activeScreen.mouseEvent(mouseEvent);
+                
+                mouseEvent.initialize(newx, newy, 0, true, false, false);
+                activeScreen.mouseEvent(mouseEvent);
             }
         }
     }
     
     private void cleanDraggedElement() {
         if (draggedGraphic != null) {
-            draggedGraphic.markForRemoval();
+            draggedGraphic.setVisible(false);
             draggedGraphic = null;
         }
     }
