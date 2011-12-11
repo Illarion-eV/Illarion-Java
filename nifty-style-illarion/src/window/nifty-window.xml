@@ -34,7 +34,7 @@
   </style>
 
   <style id="inventory-window#bar">
-    <attributes width="100px" align="right" height="20px" backgroundImage="data/gui/inventory_bar.png" childLayout="horizontal" imageMode="resize:0,1,104,10,0,1,104,1,0,1,104,9" />
+    <attributes width="100px" height="20px" align="right" backgroundImage="data/gui/inventory_bar.png" childLayout="horizontal" imageMode="resize:0,1,104,10,0,1,104,1,0,1,104,9" />
   </style>
   
   <style id="inventory-window#title" base="base-font">
@@ -42,7 +42,7 @@
   </style>
 
   <style id="inventory-window#content">
-    <attributes width="100%" height="*" backgroundImage="data/gui/inventory.png" childLayout="absolute" />
+    <attributes width="100%" height="*" backgroundImage="data/gui/inventory.png" childLayout="center" />
   </style>
 
   <style id="inventory-window#close-button">

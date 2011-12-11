@@ -109,7 +109,6 @@ public final class InteractionManager {
                 final int height = movedItem.getHeight();
                 
                 draggedGraphic = activeScreen.findElementByName("mapDragObject");
-                DraggableControl dragControl = draggedGraphic.getNiftyControl(DraggableControl.class);
                 draggedGraphic.resetLayout();
                 draggedGraphic.setConstraintWidth(new SizeValue(Integer.toString(width) + "px"));
                 draggedGraphic.setConstraintHeight(new SizeValue(Integer.toString(height) + "px"));
@@ -118,14 +117,7 @@ public final class InteractionManager {
                 draggedGraphic.setVisible(true);
                 draggedGraphic.reactivate();
                 
-                Element imgElement = draggedGraphic.findElementByName("mapDragImage");
-                if (imgElement == null) {
-                    ImageBuilder imgBuilder = new ImageBuilder("mapDragImage");
-                    imgBuilder.width(Integer.toString(width) + "px");
-                    imgBuilder.height(Integer.toString(height) + "px");
-                    imgBuilder.visible(true);
-                    imgElement = imgBuilder.build(activeNifty, activeScreen, draggedGraphic);
-                }
+                final Element imgElement = draggedGraphic.findElementByName("mapDragImage");
                 imgElement.setWidth(width);
                 imgElement.setHeight(height);
                 
