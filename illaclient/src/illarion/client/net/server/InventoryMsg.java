@@ -18,11 +18,13 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.world.World;
+import illarion.client.net.server.events.InventoryUpdateEvent;
+
+import java.io.IOException;
+
+import org.bushe.swing.event.EventBus;
 
 /**
  * Servermessage: Update of a inventory item (
@@ -32,6 +34,11 @@ import illarion.client.world.World;
  * @author Nop
  */
 public final class InventoryMsg extends AbstractReply {
+    /**
+     * Using this topic the update event of the inventory is published.
+     */
+    private static final String EV_TOPIC_UPDATE = "Inventory Update";
+
     /**
      * New count of the item on the position.
      */
@@ -88,7 +95,8 @@ public final class InventoryMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        World.getPlayer().getInventory().setItem(location, itemId, count);
+        EventBus.publish(EV_TOPIC_UPDATE, new InventoryUpdateEvent(itemId,
+            location, count));
         return true;
     }
 
