@@ -135,7 +135,7 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
 
     private int getSlotNumber(final String name) {
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
-            if (slots[i].equals(name)) {
+            if (name.startsWith(slots[i])) {
                 return i;
             }
         }
@@ -226,7 +226,7 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         dragElement.setConstraintWidth(width);
         dragElement.setConstraintHeight(height);
         
-        //dropSlots[slotId].layoutElements();
+        dropSlots[slotId].layoutElements();
     }
     
     private SizeValue generateSizeValue(final int pixels) {
