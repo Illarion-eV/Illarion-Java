@@ -213,11 +213,11 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         int fixedWidth = objectWidth;
         int fixedHeight = objectHeight;
         if (fixedWidth > parentWidth) {
-            fixedHeight *= (parentWidth / fixedWidth);
+            fixedHeight *= ((float) parentWidth / fixedWidth);
             fixedWidth = parentWidth;
         }
         if (fixedHeight > parentHeight) {
-            fixedWidth *= (parentHeight / fixedHeight);
+            fixedWidth *= ((float) parentHeight / fixedHeight);
             fixedHeight = parentHeight;
         }
         
