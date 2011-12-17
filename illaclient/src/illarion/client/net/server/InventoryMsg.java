@@ -35,11 +35,6 @@ import org.bushe.swing.event.EventBus;
  */
 public final class InventoryMsg extends AbstractReply {
     /**
-     * Using this topic the update event of the inventory is published.
-     */
-    private static final String EV_TOPIC_UPDATE = "Inventory Update";
-
-    /**
      * New count of the item on the position.
      */
     private short count;
@@ -95,7 +90,7 @@ public final class InventoryMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(EV_TOPIC_UPDATE, new InventoryUpdateEvent(itemId,
+        EventBus.publish(new InventoryUpdateEvent(itemId,
             location, count));
         return true;
     }

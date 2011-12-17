@@ -170,20 +170,21 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
             dragBuilder.visibleToMouse();
             dragBuilder.visible(true);
             dragBuilder.childLayoutCenter();
-            //dragBuilder.revert(true);
+            dragBuilder.revert(true);
             dragBuilder.drop(true);
             dragBuilder.x("0px");
             dragBuilder.y("0px");
             
-            result =
-                dragBuilder
-                    .build(activeNifty, activeScreen, dragParent);
             ImageBuilder imgBuilder = new ImageBuilder(slotItemImageName);
+            dragBuilder.image(imgBuilder);
             imgBuilder.alignCenter();
             imgBuilder.valignCenter();
             imgBuilder.x("0px");
             imgBuilder.y("0px");
-            imgBuilder.build(activeNifty, activeScreen, result);
+            
+            result =
+                dragBuilder
+                    .build(activeNifty, activeScreen, dragParent);
         }
 
         return result;

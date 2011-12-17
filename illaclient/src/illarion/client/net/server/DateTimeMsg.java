@@ -20,8 +20,11 @@ package illarion.client.net.server;
 
 import java.io.IOException;
 
+import org.bushe.swing.event.EventBus;
+
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
+import illarion.client.net.server.events.DateTimeUpdateEvent;
 
 /**
  * Servermessage: Current date and time (
@@ -106,10 +109,8 @@ public final class DateTimeMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        // final Clock clock = Gui.getInstance().getClock();
-        // clock.setDate(day, month, year);
-        // clock.setTime(hour, minute);
-
+        EventBus.publish(new DateTimeUpdateEvent(year, month, day, hour,
+            minute));
         return true;
     }
 
