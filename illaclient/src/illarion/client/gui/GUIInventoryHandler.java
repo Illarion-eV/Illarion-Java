@@ -117,6 +117,7 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
     public void dropInInventory(final String topic,
         final DroppableDroppedEvent data) {
         final int slotId = getSlotNumber(topic);
+        System.out.println("Drop in Inventory: " + topic);
         World.getInteractionManager().dropAtInventory(slotId);
     }
 
@@ -124,12 +125,14 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
     public void dragFromInventory(final String topic,
         final DraggableDragStartedEvent data) {
         final int slotId = getSlotNumber(topic);
+        System.out.println("Drag from Inventory: " + topic);
         World.getInteractionManager().notifyDraggingInventory(slotId);
     }
 
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
     public void dragFromInventory(final String topic,
         final DraggableDragCanceledEvent data) {
+        System.out.println("Cancel dragging!");
         World.getInteractionManager().cancelDragging();
     }
 
@@ -210,11 +213,11 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         int fixedWidth = objectWidth;
         int fixedHeight = objectHeight;
         if (fixedWidth > parentWidth) {
-            fixedHeight *= (fixedWidth / parentWidth);
+            fixedHeight *= (parentWidth / fixedWidth);
             fixedWidth = parentWidth;
         }
         if (fixedHeight > parentHeight) {
-            fixedWidth *= (fixedHeight / parentHeight);
+            fixedWidth *= (parentHeight / fixedHeight);
             fixedHeight = parentHeight;
         }
         

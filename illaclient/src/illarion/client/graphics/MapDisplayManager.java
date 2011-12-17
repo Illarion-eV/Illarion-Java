@@ -21,7 +21,6 @@ package illarion.client.graphics;
 import javolution.util.FastComparator;
 import javolution.util.FastTable;
 
-import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -381,11 +380,6 @@ public final class MapDisplayManager implements AnimatedMove {
         }
 
         g.popTransform();
-        
-        g.setColor(Color.green);
-        g.drawLine(centerX, centerY, centerX + 10, centerY);
-        g.setColor(Color.red);
-        g.drawLine(centerX, centerY, centerX, centerY + 10);
         
         if (fadeOutColor.getAlpha() > 0) {
             fadeOutColor.a = (AnimationUtility.approach(
