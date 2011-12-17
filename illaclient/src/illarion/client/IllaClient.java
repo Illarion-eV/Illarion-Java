@@ -32,6 +32,9 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.bushe.swing.event.EventServiceExistsException;
+import org.bushe.swing.event.EventServiceLocator;
+import org.bushe.swing.event.ThreadSafeEventService;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -179,6 +182,12 @@ public final class IllaClient {
         initLogfiles();
         
         CrashReporter.getInstance().setConfig(getCfg());
+        
+        try {
+            EventServiceLocator.setEventService(EventServiceLocator.EVENT_BUS_CLASS, new ThreadSafeEventService());
+        } catch (EventServiceExistsException e1) {
+            LOGGER.error("Failed preparing the EventBus. Settings the Service handler happened too late");
+        }
 
         Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
         

@@ -13,7 +13,7 @@
 	<classpathentry kind="lib" path="/illacommon/lib/javolution/javolution.jar" sourcepath="/illacommon/lib/javolution/javolution-sources.jar"/>
 	<classpathentry kind="lib" path="/illacommon/lib/log4j/log4j.jar"/>
 	<classpathentry kind="lib" path="/illacommon/lib/trove/trove.jar" sourcepath="/illacommon/lib/trove/trove-src.zip"/>
-	<classpathentry kind="lib" path="/illacommon/lib/xpp3/xpp3_min-1.1.4c.jar"/>
+	<classpathentry kind="lib" path="/illacommon/lib/xpp3/xpp3_min-1.1.4c.jar" sourcepath="I:/Entwicklung/maven/repository/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/nifty-style-illarion"/>
 	<classpathentry kind="lib" path="/illacommon/lib/joal/joal.jar"/>
 	<classpathentry kind="lib" path="/illacommon/lib/jorbis/jogg.jar"/>

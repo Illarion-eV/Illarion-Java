@@ -35,7 +35,10 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     @Override
     protected void initGameAndGUI(GameContainer container, StateBasedGame game)
         throws SlickException {
-        initNifty(container, game, new SlickRenderDevice(container), new SlickSoundDevice(), new SlickSlickInputSystem(new InputReceiver()), new TimeProvider());
+        initNifty(container, game, new SlickRenderDevice(container),
+            new SlickSoundDevice(),
+            new SlickSlickInputSystem(new InputReceiver()),
+            new TimeProvider());
     }
 
     @Override

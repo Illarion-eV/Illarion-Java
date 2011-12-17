@@ -52,7 +52,7 @@ public final class InteractionManager {
         mouseEvent = new NiftyMouseInputEvent();
     }
 
-    public void dropAt(final int x, final int y) {
+    public void dropAtMap(final int x, final int y) {
         if (draggedObject == null) {
             return;
         }
@@ -65,6 +65,25 @@ public final class InteractionManager {
         }
 
         draggedObject.dragTo(targetTile);
+        cancelDragging();
+    }
+    
+    public void dropAtInventory(final int slot) {
+        if (draggedObject == null) {
+            return;
+        }
+        
+        final InteractiveInventorySlot targetSlot = World.getPlayer().getInventory().getItem(slot).getInteractive();
+        
+        if (targetSlot == null) {
+            return;
+        }
+        
+        draggedObject.dragTo(targetSlot);
+        cancelDragging();
+    }
+    
+    public void cancelDragging() {
         draggedObject = null;
         isDragging = false;
         cleanDraggedElement();
@@ -79,6 +98,23 @@ public final class InteractionManager {
         activeNifty = nifty;
         activeScreen = screen;
     }
+    
+    public void notifyDraggingInventory(int slot) {
+        if (!isDragging) {
+            final InteractiveInventorySlot sourceSlot = World.getPlayer().getInventory().getItem(slot).getInteractive();
+            
+            if (sourceSlot == null) {
+                return;
+            }
+            
+            if (!sourceSlot.isValidItem()) {
+                return;
+            }
+
+            startDragging(sourceSlot);
+            cleanDraggedElement();
+        }
+    }
 
     /**
      * @param oldx
@@ -86,7 +122,7 @@ public final class InteractionManager {
      * @param newx
      * @param newy
      */
-    public void notifyDragging(int oldx, int oldy, int newx, int newy) {
+    public void notifyDraggingMap(int oldx, int oldy, int newx, int newy) {
         if (!isDragging) {
             final InteractiveMapTile targetTile =
                 World.getMap().getInteractive()

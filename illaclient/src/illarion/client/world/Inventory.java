@@ -18,6 +18,8 @@
  */
 package illarion.client.world;
 
+import org.bushe.swing.event.EventBus;
+
 /**
  * This class is used to store the current inventory of the player character.
  * 
@@ -28,6 +30,8 @@ public final class Inventory {
      * The amount of available inventory slots.
      */
     public static final int SLOT_COUNT = 18;
+    
+    public static final String EB_TOPIC = "InventoryUpdate";
 
     /**
      * The items stored in this inventory.
@@ -64,5 +68,6 @@ public final class Inventory {
      */
     public void setItem(final int slot, final int id, final int count) {
         slots[slot].setData(id, count);
+        EventBus.publish(EB_TOPIC, Integer.valueOf(slot));
     }
 }

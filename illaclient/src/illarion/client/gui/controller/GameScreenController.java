@@ -19,6 +19,7 @@
 package illarion.client.gui.controller;
 
 import illarion.client.gui.GUIChatHandler;
+import illarion.client.gui.GUIInventoryHandler;
 import illarion.client.gui.MapDroppableSubscriber;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractionManager;
@@ -62,6 +63,8 @@ public class GameScreenController implements ScreenController {
         screen.findElementByName("chatLog#scrollpanel#vertical-scrollbar").setFocusable(false);
         
         World.getInteractionManager().setActiveNiftyEnv(nifty, screen);
+        
+        new GUIInventoryHandler().bind(nifty, screen);
     }
 
     @Override

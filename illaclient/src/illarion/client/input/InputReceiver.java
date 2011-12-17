@@ -34,6 +34,6 @@ public final class InputReceiver extends InputAdapter {
     }
     
     public void mouseDragged(int oldx, int oldy, int newx, int newy) {
-        World.getInteractionManager().notifyDragging(oldx, oldy, newx, newy);
+        World.getInteractionManager().notifyDraggingMap(oldx, oldy, newx, newy);
     }
 }

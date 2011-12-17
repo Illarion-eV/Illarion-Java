@@ -43,7 +43,7 @@ public class MapDroppableSubscriber {
         
         droppedElement.setVisible(false);
         
-        World.getInteractionManager().dropAt(dropSpotX, dropSpotY);
+        World.getInteractionManager().dropAtMap(dropSpotX, dropSpotY);
     }
 
 }
