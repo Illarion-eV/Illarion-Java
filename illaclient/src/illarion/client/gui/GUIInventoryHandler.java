@@ -32,12 +32,14 @@ import org.bushe.swing.event.EventTopicSubscriber;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.ImageBuilder;
+import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
 import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
 import de.lessvoid.nifty.controls.dragndrop.builder.DraggableBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
+import de.lessvoid.nifty.layout.manager.CenterLayout;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
@@ -128,6 +130,7 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         final int slotId = getSlotNumber(topic);
         System.out.println("Drop in Inventory: " + topic);
         World.getInteractionManager().dropAtInventory(slotId);
+        data.getDraggable().getElement().markForMove(data.getSource().getElement().findElementByName("#droppableContent"));
     }
 
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
@@ -158,13 +161,15 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         if (slotId < 0 || slotId >= Inventory.SLOT_COUNT) {
             throw new IllegalArgumentException("Slot ID out of valid range.");
         }
+        
+        System.out.println("Received Slot Item Update: Slot(" + Integer.toString(slotId) + "), itemId(" + Integer.toString(itemId) + ")");
 
         final Element dragObject = getSlotItem(slotId, (itemId > 0));
         
         if (itemId > 0) {
             applyImageToDragSpot(dragObject, slotId, itemId, count);
         } else if (dragObject != null) {
-            dragObject.markForRemoval();
+            dragObject.setVisible(false);
         }
     }
 
@@ -175,6 +180,7 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         Element result = dropSlots[slotId].findElementByName(slotItemName);
         if (result == null && create) {
             final Element dragParent = dropSlots[slotId].findElementByName("#droppableContent");
+            dragParent.setLayoutManager(new CenterLayout());
             
             DraggableBuilder dragBuilder = new DraggableBuilder(slotItemName);
             dragBuilder.alignCenter();
@@ -183,9 +189,9 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
             dragBuilder.visible(true);
             dragBuilder.childLayoutCenter();
             dragBuilder.revert(true);
-            dragBuilder.drop(false);
+            dragBuilder.drop(true);
             dragBuilder.x("0px");
-            dragBuilder.y("0px");
+            dragBuilder.y("0px"); 
             
             ImageBuilder imgBuilder = new ImageBuilder(slotItemImageName);
             dragBuilder.image(imgBuilder);
@@ -237,6 +243,8 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         image.setConstraintHeight(height);        
         dragElement.setConstraintWidth(width);
         dragElement.setConstraintHeight(height);
+        
+        dragElement.setVisible(true);
         
         dropSlots[slotId].layoutElements();
     }

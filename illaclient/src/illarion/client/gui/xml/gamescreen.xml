@@ -33,92 +33,92 @@
         <layer id="windows" childLayout="absolute">
             <control id="inventory" name="window" style="inventory-window" title="Inventar" width="248px" height="486px" x="400px" hideOnClose="true">
                 <panel height="100%" width="100%" childLayout="absolute" visibleToMouse="false">
-                    <control id="invslot_chest" name="droppable" height="84px" width="46px" x="102px" y="67px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_chest" name="droppable" height="84px" width="46px" x="102px" y="67px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>   
-                    <control id="invslot_head" name="droppable" height="40px" width="46px" y="12px" x="102px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_head" name="droppable" height="40px" width="46px" y="12px" x="102px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_legs" name="droppable" height="64px" width="45px" x="102px" y="167px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_legs" name="droppable" height="64px" width="45px" x="102px" y="167px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_feet" name="droppable" height="45px" width="45px" x="102px" y="247px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_feet" name="droppable" height="45px" width="45px" x="102px" y="247px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_bag" name="droppable" height="55px" width="62px" x="22px" y="12px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_bag" name="droppable" height="55px" width="62px" x="22px" y="12px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_lhand" name="droppable" height="55px" width="62px" x="22px" y="127px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_lhand" name="droppable" height="55px" width="62px" x="22px" y="127px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_rfinger" name="droppable" height="39px" width="23px" x="60px" y="198px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_rfinger" name="droppable" height="39px" width="23px" x="60px" y="198px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_lfinger" name="droppable" height="39px" width="23px" x="22px" y="198px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_lfinger" name="droppable" height="39px" width="23px" x="22px" y="198px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_neck" name="droppable" height="28px" width="38px" x="165px" y="23px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_neck" name="droppable" height="28px" width="38px" x="165px" y="23px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_cloak" name="droppable" height="43px" width="64px" x="165px" y="67px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_cloak" name="droppable" height="43px" width="64px" x="165px" y="67px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_rhand" name="droppable" height="55px" width="64px" x="165px" y="127px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_rhand" name="droppable" height="55px" width="64px" x="165px" y="127px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_hands" name="droppable" height="39px" width="64px" x="165px" y="198px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_hands" name="droppable" height="39px" width="64px" x="165px" y="198px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_belt1" name="droppable" height="55px" width="62px" x="15px" y="326px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_belt1" name="droppable" height="55px" width="62px" x="15px" y="326px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_belt2" name="droppable" height="55px" width="62px" x="94px" y="326px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_belt2" name="droppable" height="55px" width="62px" x="94px" y="326px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_belt3" name="droppable" height="55px" width="62px" x="172px" y="326px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_belt3" name="droppable" height="55px" width="62px" x="172px" y="326px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_belt4" name="droppable" height="55px" width="62px" x="15px" y="397px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_belt4" name="droppable" height="55px" width="62px" x="15px" y="397px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>             
                     </control>
-                    <control id="invslot_belt5" name="droppable" height="55px" width="62px" x="94px" y="397px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_belt5" name="droppable" height="55px" width="62px" x="94px" y="397px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
                     </control>
-                    <control id="invslot_belt6" name="droppable" height="55px" width="62px" x="172px" y="397px" visibleToMouse="true" childLayout="overlay">
+                    <control id="invslot_belt6" name="droppable" height="55px" width="62px" x="172px" y="397px" visibleToMouse="true">
                         <effect>
                             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
                         </effect>
