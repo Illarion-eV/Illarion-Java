@@ -1,3 +1,21 @@
+/*
+ * This file is part of the Illarion Client.
+ *
+ * Copyright © 2011 - Illarion e.V.
+ *
+ * The Illarion Client is free software: you can redistribute i and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ * 
+ * The Illarion Client is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ */
 package illarion.client.input;
 
 import illarion.client.world.PlayerMovement;
@@ -13,6 +31,7 @@ import org.newdawn.slick.util.InputAdapter;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class InputReceiver extends InputAdapter {
+    private final KeyMapper keyMapper = new KeyMapper();
     /**
      * @see org.newdawn.slick.InputListener#keyPressed(int, char)
      */
@@ -30,6 +49,7 @@ public final class InputReceiver extends InputAdapter {
             case Input.KEY_RIGHT:
                 World.getPlayer().getMovementHandler().requestMove(Location.DIR_EAST, PlayerMovement.MOVE_MODE_WALK);
                 break;
+            default: keyMapper.handleKeyInput(key); break;
         }
     }
     

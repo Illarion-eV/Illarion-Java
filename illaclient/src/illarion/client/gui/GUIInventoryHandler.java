@@ -19,6 +19,7 @@
 package illarion.client.gui;
 
 import illarion.client.graphics.Item;
+import illarion.client.input.KeyMapper;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.Inventory;
@@ -26,6 +27,7 @@ import illarion.client.world.World;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
+import org.bushe.swing.event.EventTopicSubscriber;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
@@ -46,7 +48,7 @@ import de.lessvoid.nifty.tools.SizeValue;
  * 
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent> {
+public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent>, EventTopicSubscriber<String> {
     private final String[] slots;
     private final Element[] dropSlots;
     private Element inventoryWindow;
@@ -99,6 +101,7 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         activeNifty.subscribeAnnotations(this);
         
         EventBus.subscribe(InventoryUpdateEvent.class, this);
+        EventBus.subscribe(KeyMapper.EB_TOPIC, this);
     }
 
     public void showInventory() {
@@ -110,6 +113,12 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
     public void hideInventory() {
         if (inventoryWindow != null) {
             inventoryWindow.setVisible(false);
+        }
+    }
+    
+    public void toggleInventory() {
+        if (inventoryWindow != null) {
+            inventoryWindow.setVisible(!inventoryWindow.isVisible());
         }
     }
 
@@ -174,7 +183,7 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
             dragBuilder.visible(true);
             dragBuilder.childLayoutCenter();
             dragBuilder.revert(true);
-            dragBuilder.drop(true);
+            dragBuilder.drop(false);
             dragBuilder.x("0px");
             dragBuilder.y("0px");
             
@@ -245,5 +254,15 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
     @Override
     public void onEvent(final InventoryUpdateEvent data) {
         setSlotItem(data.getSlotId(), data.getItemId(), data.getCount());
+    }
+
+    /* (non-Javadoc)
+     * @see org.bushe.swing.event.EventTopicSubscriber#onEvent(java.lang.String, java.lang.Object)
+     */
+    @Override
+    public void onEvent(String topic, String data) {
+        if (data.equals("ToggleInventory")) {
+            toggleInventory();
+        }
     }
 }
