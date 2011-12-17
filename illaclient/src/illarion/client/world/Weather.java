@@ -19,11 +19,14 @@
 package illarion.client.world;
 
 import illarion.client.graphics.AnimationUtility;
+import illarion.client.net.server.events.DateTimeUpdateEvent;
 import illarion.client.resources.SoundFactory;
 
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -400,6 +403,21 @@ public final class Weather {
      * for the effective {@link #wind} value.
      */
     private int windTarget = 0;
+    
+    /**
+     * The current hour value the weather is generating the light with.
+     */
+    private int hour;
+    
+    /**
+     * The alpha influence by the minutes.
+     */
+    private float timeAlpha;
+    
+    public void setTime(final int hours, final int minutes) {
+        hour = hours;
+        timeAlpha = minutes / 60;
+    }
 
     /**
      * Default constructor. Prepare and active everything needed to show the
@@ -427,7 +445,15 @@ public final class Weather {
         showFlash = 0;
         wind = 0;
         windTarget = 0;
+        EventBus.subscribe(DateTimeUpdateEvent.class, new EventSubscriber<DateTimeUpdateEvent>() {
+            @Override
+            public void onEvent(final DateTimeUpdateEvent event) {
+                setTime(event.getHour(), event.getMinute());
+            }
+        });
     }
+    
+    
 
     /**
      * Calculate the current ambient light, depending on the time of day, the
