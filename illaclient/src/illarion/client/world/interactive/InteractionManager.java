@@ -160,7 +160,7 @@ public final class InteractionManager {
                 final ImageRenderer imgRender = imgElement.getRenderer(ImageRenderer.class);
                 imgRender.setImage(new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem)));
                 
-                activeScreen.layoutLayers();
+                draggedGraphic.getParent().layoutElements();
                 
                 mouseEvent.initialize(oldx, oldy, 0, true, false, false);
                 mouseEvent.setButton0InitialDown(true);

@@ -32,14 +32,12 @@ import org.bushe.swing.event.EventTopicSubscriber;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.ImageBuilder;
-import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
 import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
 import de.lessvoid.nifty.controls.dragndrop.builder.DraggableBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
-import de.lessvoid.nifty.layout.manager.CenterLayout;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
@@ -58,8 +56,6 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
     private Screen activeScreen;
 
     private static final String INVSLOT_HEAD = "invslot_";
-    private static final String SLOTITEM_TAIL = "_item";
-    private static final String SLOTITEMIMAGE_TAIL = "_itemimage";
 
     public GUIInventoryHandler() {
         slots = new String[Inventory.SLOT_COUNT];
@@ -174,15 +170,14 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
     }
 
     private Element getSlotItem(final int slotId, final boolean create) {
-        final String slotItemName = slots[slotId].concat(SLOTITEM_TAIL);
-        final String slotItemImageName =
-            slots[slotId].concat(SLOTITEMIMAGE_TAIL);
-        Element result = dropSlots[slotId].findElementByName(slotItemName);
-        if (result == null && create) {
-            final Element dragParent = dropSlots[slotId].findElementByName("#droppableContent");
-            dragParent.setLayoutManager(new CenterLayout());
-            
-            DraggableBuilder dragBuilder = new DraggableBuilder(slotItemName);
+        final Element dragParent = dropSlots[slotId].getElements().get(0);
+        Element result  = null;;
+        
+        if (!dragParent.getElements().isEmpty()) {
+            result = dragParent.getElements().get(0);
+        }
+        if (result == null && create) {            
+            DraggableBuilder dragBuilder = new DraggableBuilder();
             dragBuilder.alignCenter();
             dragBuilder.valignCenter();
             dragBuilder.visibleToMouse();
@@ -193,7 +188,7 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
             dragBuilder.x("0px");
             dragBuilder.y("0px"); 
             
-            ImageBuilder imgBuilder = new ImageBuilder(slotItemImageName);
+            ImageBuilder imgBuilder = new ImageBuilder();
             dragBuilder.image(imgBuilder);
             imgBuilder.alignCenter();
             imgBuilder.valignCenter();
@@ -203,6 +198,10 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
             result =
                 dragBuilder
                     .build(activeNifty, activeScreen, dragParent);
+            
+            if (dropSlots[slotId].getElements().size() > 1) {
+                throw new IllegalStateException("Added more then one object to the field.");
+            }
         }
 
         return result;
@@ -210,9 +209,8 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
 
     private void applyImageToDragSpot(final Element dragElement,
         final int slotId, final int itemId, final int count) {
-        final String slotItemImageName =
-            slots[slotId].concat(SLOTITEMIMAGE_TAIL);
-        final Element image = dragElement.findElementByName(slotItemImageName);
+        
+        final Element image = dragElement.getElements().get(0);
 
         final Item displayedItem = ItemFactory.getInstance()
             .getPrototype(itemId);
