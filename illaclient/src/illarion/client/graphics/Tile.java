@@ -214,17 +214,6 @@ public class Tile extends AbstractEntity {
         TileFactory.getInstance().recycle(this);
     }
 
-    // @Override
-    // public void reduceFrames() {
-    // super.reduceFrames();
-    // if (ani != null) {
-    // // restart animation with new parameters
-    // ani.start(sprite.getFrames(), 0, (int) ani.getDuration()
-    // / Animation.ANIMATION_FRAME, FrameAnimation.LOOPED);
-    // ani.stop();
-    // }
-    // }
-
     @Override
     public void setLight(final Color light) {
         super.setLight(light);
@@ -240,11 +229,7 @@ public class Tile extends AbstractEntity {
      */
     public void setOverlay(final Overlay overlay) {
         this.overlay = overlay;
-        if (overlay != null) {
-            setFadingCorridorEffectEnabled(false);
-        } else {
-            setFadingCorridorEffectEnabled(true);
-        }
+        setFadingCorridorEffectEnabled(overlay == null);
     }
 
     /**

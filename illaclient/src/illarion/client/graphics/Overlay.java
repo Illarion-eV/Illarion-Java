@@ -41,7 +41,7 @@ public class Overlay extends AbstractEntity implements RecycleObject {
      */
     public Overlay(final int id, final String name) {
         super(id, TILE_PATH, name, 28, 0, 0, 0, 0, Sprite.HAlign.center,
-            Sprite.VAlign.middle, false);
+            Sprite.VAlign.middle, false, false, null);
         reset();
     }
 
@@ -85,8 +85,7 @@ public class Overlay extends AbstractEntity implements RecycleObject {
 
     @Override
     public void activate(final int id) {
-        // no mapping possible
-        // this.id = id;
+        setFadingCorridorEffectEnabled(false);
     }
 
     @Override
