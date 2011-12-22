@@ -93,6 +93,7 @@ public final class GUIInventoryHandler implements
     private final String[] slots;
     private final String[] slotItems;
     private final Element[] dropSlots;
+    private final Element[] draggedObjects;
     private Element inventoryWindow;
     private Nifty activeNifty;
     private Screen activeScreen;
@@ -127,6 +128,7 @@ public final class GUIInventoryHandler implements
         }
 
         dropSlots = new Element[Inventory.SLOT_COUNT];
+        draggedObjects = new Element[Inventory.SLOT_COUNT];
 
     }
 
@@ -212,12 +214,8 @@ public final class GUIInventoryHandler implements
 
     private Element getSlotItem(final int slotId, final boolean create) {
         final Element dragParent = dropSlots[slotId].getElements().get(0);
-        Element result = null;
-        ;
+        Element result = draggedObjects[slotId];
 
-        if (!dragParent.getElements().isEmpty()) {
-            result = dragParent.findElementByName(slotItems[slotId]);
-        }
         if (result == null && create) {
             DraggableBuilder dragBuilder = new DraggableBuilder(slotItems[slotId]);
             dragBuilder.valignCenter();
@@ -238,6 +236,7 @@ public final class GUIInventoryHandler implements
             imgBuilder.y("0px");
 
             result = dragBuilder.build(activeNifty, activeScreen, dragParent);
+            draggedObjects[slotId] = result;
 
             if (dropSlots[slotId].getElements().size() > 1) {
                 throw new IllegalStateException(
