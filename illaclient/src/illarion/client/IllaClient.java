@@ -65,8 +65,6 @@ import illarion.common.graphics.GraphicResolution;
 import illarion.common.graphics.TextureLoader;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
-import illarion.common.util.Scheduler;
-import illarion.common.util.StoppableStorage;
 import illarion.common.util.TableLoader;
 
 

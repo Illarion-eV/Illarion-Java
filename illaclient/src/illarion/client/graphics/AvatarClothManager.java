@@ -151,13 +151,11 @@ public final class AvatarClothManager {
             return false;
         }
         int refID;
-        Item refItem;
 
         if ((group == GROUP_HAIR) || (group == GROUP_BEARD)) {
             refID = itemID;
-            refItem = null;
         } else {
-            refItem = ItemFactory.getInstance().getPrototype(itemID);
+            Item refItem = ItemFactory.getInstance().getPrototype(itemID);
             refID = refItem.getPaperdollingId();
         }
         return exsistingClothes[group].prototypeExists(refID);

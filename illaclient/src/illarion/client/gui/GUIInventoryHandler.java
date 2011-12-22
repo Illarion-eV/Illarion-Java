@@ -19,6 +19,7 @@
 package illarion.client.gui;
 
 import illarion.client.graphics.Item;
+import illarion.client.input.InputReceiver;
 import illarion.client.input.KeyMapper;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
@@ -48,8 +49,49 @@ import de.lessvoid.nifty.tools.SizeValue;
  * 
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent>, EventTopicSubscriber<String> {
+public final class GUIInventoryHandler implements
+    EventSubscriber<InventoryUpdateEvent>, EventTopicSubscriber<String> {
+    /**
+     * This class is used as drag end operation and used to move a object that
+     * was dragged out of the inventory back in so the server can send the
+     * commands to clean everything up.
+     * 
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
+     */
+    private static class EndOfDragOperation implements Runnable {
+        /**
+         * The element that is moved.
+         */
+        private final Element elementToMove;
+        
+        /**
+         * The element that is the target of the move operation.
+         */
+        private final Element elementTarget;
+
+        /**
+         * Create a new instance of this class and set the effected elements.
+         * 
+         * @param moveElement the element to move
+         * @param targetElement the target of the move operation
+         */
+        public EndOfDragOperation(final Element moveElement,
+            final Element targetElement) {
+            elementToMove = moveElement;
+            elementTarget = targetElement;
+        }
+
+        /**
+         * Execute this operation.
+         */
+        @Override
+        public void run() {
+            elementToMove.markForMove(elementTarget);
+        }
+    }
+
     private final String[] slots;
+    private final String[] slotItems;
     private final Element[] dropSlots;
     private Element inventoryWindow;
     private Nifty activeNifty;
@@ -78,8 +120,10 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         slots[16] = "belt5";
         slots[17] = "belt6";
 
+        slotItems = new String[Inventory.SLOT_COUNT];
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
             slots[i] = INVSLOT_HEAD.concat(slots[i]);
+            slotItems[i] = slots[i].concat("_item");
         }
 
         dropSlots = new Element[Inventory.SLOT_COUNT];
@@ -97,9 +141,9 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         }
 
         activeNifty.subscribeAnnotations(this);
-        
+
         EventBus.subscribe(InventoryUpdateEvent.class, this);
-        EventBus.subscribe(KeyMapper.EB_TOPIC, this);
+        EventBus.subscribe(InputReceiver.EB_TOPIC, this);
     }
 
     public void showInventory() {
@@ -113,7 +157,7 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
             inventoryWindow.setVisible(false);
         }
     }
-    
+
     public void toggleInventory() {
         if (inventoryWindow != null) {
             inventoryWindow.setVisible(!inventoryWindow.isVisible());
@@ -124,23 +168,22 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
     public void dropInInventory(final String topic,
         final DroppableDroppedEvent data) {
         final int slotId = getSlotNumber(topic);
-        System.out.println("Drop in Inventory: " + topic);
         World.getInteractionManager().dropAtInventory(slotId);
-        data.getDraggable().getElement().markForMove(data.getSource().getElement().findElementByName("#droppableContent"));
     }
 
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
     public void dragFromInventory(final String topic,
         final DraggableDragStartedEvent data) {
         final int slotId = getSlotNumber(topic);
-        System.out.println("Drag from Inventory: " + topic);
-        World.getInteractionManager().notifyDraggingInventory(slotId);
+        World.getInteractionManager().notifyDraggingInventory(
+            slotId,
+            new EndOfDragOperation(data.getDraggable().getElement(), data
+                .getSource().getElement().findElementByName("#droppableContent")));
     }
 
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
-    public void dragFromInventory(final String topic,
+    public void cancelDragging(final String topic,
         final DraggableDragCanceledEvent data) {
-        System.out.println("Cancel dragging!");
         World.getInteractionManager().cancelDragging();
     }
 
@@ -157,11 +200,9 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         if (slotId < 0 || slotId >= Inventory.SLOT_COUNT) {
             throw new IllegalArgumentException("Slot ID out of valid range.");
         }
-        
-        System.out.println("Received Slot Item Update: Slot(" + Integer.toString(slotId) + "), itemId(" + Integer.toString(itemId) + ")");
 
         final Element dragObject = getSlotItem(slotId, (itemId > 0));
-        
+
         if (itemId > 0) {
             applyImageToDragSpot(dragObject, slotId, itemId, count);
         } else if (dragObject != null) {
@@ -171,36 +212,36 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
 
     private Element getSlotItem(final int slotId, final boolean create) {
         final Element dragParent = dropSlots[slotId].getElements().get(0);
-        Element result  = null;;
-        
+        Element result = null;
+        ;
+
         if (!dragParent.getElements().isEmpty()) {
-            result = dragParent.getElements().get(0);
+            result = dragParent.findElementByName(slotItems[slotId]);
         }
-        if (result == null && create) {            
-            DraggableBuilder dragBuilder = new DraggableBuilder();
-            dragBuilder.alignCenter();
+        if (result == null && create) {
+            DraggableBuilder dragBuilder = new DraggableBuilder(slotItems[slotId]);
             dragBuilder.valignCenter();
+            dragBuilder.alignCenter();
             dragBuilder.visibleToMouse();
             dragBuilder.visible(true);
             dragBuilder.childLayoutCenter();
             dragBuilder.revert(true);
             dragBuilder.drop(true);
             dragBuilder.x("0px");
-            dragBuilder.y("0px"); 
-            
-            ImageBuilder imgBuilder = new ImageBuilder();
+            dragBuilder.y("0px");
+
+            ImageBuilder imgBuilder = new ImageBuilder("#itemImage");
             dragBuilder.image(imgBuilder);
             imgBuilder.alignCenter();
             imgBuilder.valignCenter();
             imgBuilder.x("0px");
             imgBuilder.y("0px");
-            
-            result =
-                dragBuilder
-                    .build(activeNifty, activeScreen, dragParent);
-            
+
+            result = dragBuilder.build(activeNifty, activeScreen, dragParent);
+
             if (dropSlots[slotId].getElements().size() > 1) {
-                throw new IllegalStateException("Added more then one object to the field.");
+                throw new IllegalStateException(
+                    "Added more then one object to the field.");
             }
         }
 
@@ -209,20 +250,20 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
 
     private void applyImageToDragSpot(final Element dragElement,
         final int slotId, final int itemId, final int count) {
-        
-        final Element image = dragElement.getElements().get(0);
 
-        final Item displayedItem = ItemFactory.getInstance()
-            .getPrototype(itemId);
+        final Element image = dragElement.findElementByName("#itemImage");
+
+        final Item displayedItem =
+            ItemFactory.getInstance().getPrototype(itemId);
         image.getRenderer(ImageRenderer.class).setImage(
             new NiftyImage(activeNifty.getRenderEngine(),
                 new EntitySlickRenderImage(displayedItem)));
-        
+
         final int objectWidth = displayedItem.getWidth();
         final int objectHeight = displayedItem.getHeight();
         final int parentWidth = dropSlots[slotId].getWidth();
         final int parentHeight = dropSlots[slotId].getHeight();
-        
+
         int fixedWidth = objectWidth;
         int fixedHeight = objectHeight;
         if (fixedWidth > parentWidth) {
@@ -233,20 +274,20 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
             fixedWidth *= ((float) parentHeight / fixedHeight);
             fixedHeight = parentHeight;
         }
-        
+
         final SizeValue width = generateSizeValue(fixedWidth);
         final SizeValue height = generateSizeValue(fixedHeight);
-        
+
         image.setConstraintWidth(width);
-        image.setConstraintHeight(height);        
+        image.setConstraintHeight(height);
         dragElement.setConstraintWidth(width);
         dragElement.setConstraintHeight(height);
-        
+
         dragElement.setVisible(true);
-        
+
         dropSlots[slotId].layoutElements();
     }
-    
+
     private SizeValue generateSizeValue(final int pixels) {
         return new SizeValue(Integer.toString(pixels).concat("px"));
     }
@@ -262,8 +303,10 @@ public class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent
         setSlotItem(data.getSlotId(), data.getItemId(), data.getCount());
     }
 
-    /* (non-Javadoc)
-     * @see org.bushe.swing.event.EventTopicSubscriber#onEvent(java.lang.String, java.lang.Object)
+    /*
+     * (non-Javadoc)
+     * @see org.bushe.swing.event.EventTopicSubscriber#onEvent(java.lang.String,
+     * java.lang.Object)
      */
     @Override
     public void onEvent(String topic, String data) {

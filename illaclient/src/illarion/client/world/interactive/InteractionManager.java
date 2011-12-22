@@ -41,16 +41,9 @@ import illarion.client.world.World;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class InteractionManager {
-    private final NiftyMouseInputEvent mouseEvent;
     private Draggable draggedObject;
-    private Element draggedGraphic;
     private boolean isDragging;
-    private Nifty activeNifty;
-    private Screen activeScreen;
-    
-    public InteractionManager() {
-        mouseEvent = new NiftyMouseInputEvent();
-    }
+    private Runnable endOfDragAction;
 
     public void dropAtMap(final int x, final int y) {
         if (draggedObject == null) {
@@ -86,20 +79,18 @@ public final class InteractionManager {
     public void cancelDragging() {
         draggedObject = null;
         isDragging = false;
-        cleanDraggedElement();
+        if (endOfDragAction != null) {
+            endOfDragAction.run();
+            endOfDragAction = null;
+        }
     }
 
     public void startDragging(final Draggable draggable) {
         draggedObject = draggable;
         isDragging = true;
     }
-
-    public void setActiveNiftyEnv(final Nifty nifty, final Screen screen) {
-        activeNifty = nifty;
-        activeScreen = screen;
-    }
     
-    public void notifyDraggingInventory(int slot) {
+    public void notifyDraggingInventory(final int slot, final Runnable endOfDragOp) {
         if (!isDragging) {
             final InteractiveInventorySlot sourceSlot = World.getPlayer().getInventory().getItem(slot).getInteractive();
             
@@ -112,22 +103,12 @@ public final class InteractionManager {
             }
 
             startDragging(sourceSlot);
-            cleanDraggedElement();
+            endOfDragAction = endOfDragOp;
         }
     }
-
-    /**
-     * @param oldx
-     * @param oldy
-     * @param newx
-     * @param newy
-     */
-    public void notifyDraggingMap(int oldx, int oldy, int newx, int newy) {
+    
+    public void notifyDraggingMap(final InteractiveMapTile targetTile, final Runnable endOfDragOp) {
         if (!isDragging) {
-            final InteractiveMapTile targetTile =
-                World.getMap().getInteractive()
-                    .getInteractiveTileOnScreenLoc(oldx, oldy);
-
             if (targetTile == null) {
                 return;
             }
@@ -137,45 +118,7 @@ public final class InteractionManager {
             }
 
             startDragging(targetTile);
-            cleanDraggedElement();
-
-            if (activeScreen != null && activeNifty != null) {
-                final Item movedItem = targetTile.getTopImage();
-                final int width = movedItem.getWidth();
-                final int height = movedItem.getHeight();
-                
-                draggedGraphic = activeScreen.findElementByName("mapDragObject");
-                draggedGraphic.resetLayout();
-                draggedGraphic.setConstraintWidth(new SizeValue(Integer.toString(width) + "px"));
-                draggedGraphic.setConstraintHeight(new SizeValue(Integer.toString(height) + "px"));
-                draggedGraphic.setConstraintX(new SizeValue(Integer.toString(oldx - width / 2) + "px"));
-                draggedGraphic.setConstraintY(new SizeValue(Integer.toString(oldy - height / 2) + "px"));
-                draggedGraphic.setVisible(true);
-                draggedGraphic.reactivate();
-                
-                final Element imgElement = draggedGraphic.findElementByName("mapDragImage");
-                imgElement.setWidth(width);
-                imgElement.setHeight(height);
-                
-                final ImageRenderer imgRender = imgElement.getRenderer(ImageRenderer.class);
-                imgRender.setImage(new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem)));
-                
-                draggedGraphic.getParent().layoutElements();
-                
-                mouseEvent.initialize(oldx, oldy, 0, true, false, false);
-                mouseEvent.setButton0InitialDown(true);
-                activeScreen.mouseEvent(mouseEvent);
-                
-                mouseEvent.initialize(newx, newy, 0, true, false, false);
-                activeScreen.mouseEvent(mouseEvent);
-            }
-        }
-    }
-    
-    private void cleanDraggedElement() {
-        if (draggedGraphic != null) {
-            draggedGraphic.setVisible(false);
-            draggedGraphic = null;
+            endOfDragAction = endOfDragOp;
         }
     }
 }

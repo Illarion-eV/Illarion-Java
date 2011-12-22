@@ -22,6 +22,7 @@ import illarion.client.world.PlayerMovement;
 import illarion.client.world.World;
 import illarion.common.util.Location;
 
+import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.util.InputAdapter;
 
@@ -31,6 +32,11 @@ import org.newdawn.slick.util.InputAdapter;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class InputReceiver extends InputAdapter {
+    /**
+     * The topic that is in general used to publish input events.
+     */
+    public static final String EB_TOPIC = "InputEvent";
+    
     private final KeyMapper keyMapper = new KeyMapper();
     /**
      * @see org.newdawn.slick.InputListener#keyPressed(int, char)
@@ -54,6 +60,6 @@ public final class InputReceiver extends InputAdapter {
     }
     
     public void mouseDragged(int oldx, int oldy, int newx, int newy) {
-        World.getInteractionManager().notifyDraggingMap(oldx, oldy, newx, newy);
+        EventBus.publish(EB_TOPIC, new DragOnMapEvent(oldx, oldy, newx, newy));
     }
 }

@@ -20,7 +20,7 @@ package illarion.client.gui.controller;
 
 import illarion.client.gui.GUIChatHandler;
 import illarion.client.gui.GUIInventoryHandler;
-import illarion.client.gui.MapDroppableSubscriber;
+import illarion.client.gui.GameMapHandler;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractionManager;
 import de.lessvoid.nifty.Nifty;
@@ -43,6 +43,7 @@ public class GameScreenController implements ScreenController {
     private Droppable mapDropTarget;
     
     private GUIChatHandler chatHandler;
+    private GameMapHandler mapHandler;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -62,15 +63,15 @@ public class GameScreenController implements ScreenController {
         screen.findElementByName("chatLog#scrollpanel#panel").setFocusable(false);
         screen.findElementByName("chatLog#scrollpanel#vertical-scrollbar").setFocusable(false);
         
-        World.getInteractionManager().setActiveNiftyEnv(nifty, screen);
-        
         new GUIInventoryHandler().bind(nifty, screen);
+        mapHandler = new GameMapHandler();
+        mapHandler.bind(parentNifty, screen);
     }
 
     @Override
     public void onStartScreen() {
         World.getChatHandler().addChatReceiver(chatHandler);
-        parentNifty.subscribeAnnotations(new MapDroppableSubscriber());
+        parentNifty.subscribeAnnotations(mapHandler);
     }
 
     @Override

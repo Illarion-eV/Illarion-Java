@@ -15,7 +15,8 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
- */package illarion.client.input;
+ */
+package illarion.client.input;
 
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Input;
@@ -30,8 +31,6 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 public final class KeyMapper {
     private final TIntObjectHashMap<String> inputMap;
     
-    public static final String EB_TOPIC = "InputEvent";
-    
     public KeyMapper() {
         inputMap = new TIntObjectHashMap<String>();
         inputMap.put(Input.KEY_I, "ToggleInventory");
@@ -39,7 +38,7 @@ public final class KeyMapper {
     
     public void handleKeyInput(final int key) {
         if (inputMap.contains(key)) {
-            EventBus.publish(EB_TOPIC, inputMap.get(key));
+            EventBus.publish(InputReceiver.EB_TOPIC, inputMap.get(key));
         }
     }
 }

@@ -236,7 +236,7 @@ final class FrameAnimation extends AbstractAnimation {
      * @return <code>true</code> in case the animation runs backwards
      */
     private boolean isBackwards() {
-        return (mode & BACKWARDS) > 0;
+        return (mode & BACKWARDS) != 0;
     }
 
     /**
@@ -246,7 +246,7 @@ final class FrameAnimation extends AbstractAnimation {
      * @return <code>true</code> in case the animation shall run cyclic
      */
     private boolean isCyclic() {
-        return (mode & CYCLIC) > 0;
+        return (mode & CYCLIC) != 0;
     }
 
     /**
@@ -255,7 +255,7 @@ final class FrameAnimation extends AbstractAnimation {
      * @return <code>true</code> if the animation runs in a loop
      */
     private boolean isLooped() {
-        return (mode & LOOPED) > 0;
+        return (mode & LOOPED) != 0;
     }
 
     /**
