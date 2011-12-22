@@ -18,7 +18,11 @@
  */
 package illarion.client.gui;
 
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
+
 import javolution.text.TextBuilder;
+import illarion.client.input.InputReceiver;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.SayCmd;
@@ -40,7 +44,7 @@ import de.lessvoid.nifty.screen.Screen;
  * 
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GUIChatHandler implements KeyInputHandler, ChatReceiver {
+public final class GUIChatHandler implements KeyInputHandler, ChatReceiver, EventTopicSubscriber<String> {
     /**
      * The log that is used to display the text.
      */
@@ -67,6 +71,8 @@ public final class GUIChatHandler implements KeyInputHandler, ChatReceiver {
         this.screen = screen;
         this.chatMsg = chatMsg;
         this.chatLog = chatLog;
+        
+        EventBus.subscribe(InputReceiver.EB_TOPIC, this);
     }
 
     /**
@@ -186,5 +192,20 @@ public final class GUIChatHandler implements KeyInputHandler, ChatReceiver {
         chatLog.showItemByIndex(chatLog.itemCount() - 1);
         // send out the text
         TextBuilder.recycle(textBuilder);
+    }
+
+    /**
+     * Handle the events this handler subscribed to.
+     * 
+     * @param topic the event topic
+     * @param data the data that was delivered along with this event
+     */
+    @Override
+    public void onEvent(final String topic, final String data) {
+        if (topic.equals(InputReceiver.EB_TOPIC)) {
+            if (data.equals("SelectChat")) {
+                chatMsg.setFocus();
+            }
+        }
     }
 }

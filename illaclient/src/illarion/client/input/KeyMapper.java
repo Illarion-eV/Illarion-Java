@@ -34,6 +34,7 @@ public final class KeyMapper {
     public KeyMapper() {
         inputMap = new TIntObjectHashMap<String>();
         inputMap.put(Input.KEY_I, "ToggleInventory");
+        inputMap.put(Input.KEY_ENTER, "SelectChat");
     }
     
     public void handleKeyInput(final int key) {
