@@ -141,7 +141,11 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
 
     @Override
     public void dragTo(final InteractiveInventorySlot targetSlot) {
-        if (!canDrag() || targetSlot.isValidItem()) {
+        if (!canDrag()) {
+            return;
+        }
+        
+        if (!targetSlot.acceptItem(getTopItemId())) {
             return;
         }
 
@@ -240,5 +244,14 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
      */
     public Item getTopImage() {
         return parentTile.getTopItem();
+    }
+    
+    /**
+     * Get the ID of the first item on this tile.
+     * 
+     * @return the item ID
+     */
+    public int getTopItemId() {
+        return getTopImage().getId();
     }
 }

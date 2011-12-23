@@ -71,12 +71,20 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
         if (!isValidItem()) {
             return;
         }
+        
+        if (!targetSlot.acceptItem(getItemId())) {
+            return;
+        }
 
         final DragInvInvCmd cmd =
             CommandFactory.getInstance().getCommand(
                 CommandList.CMD_DRAG_INV_INV, DragInvInvCmd.class);
         cmd.setDrag(getSlotId(), targetSlot.getSlotId());
         cmd.send();
+    }
+    
+    public boolean acceptItem(final int itemId) {
+        return (!isValidItem() || itemId == getItemId());
     }
 
     /**
@@ -126,5 +134,14 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      */
     public boolean isValidItem() {
         return parentItem.containsItem();
+    }
+    
+    /**
+     * The ID of the item in this slot.
+     * 
+     * @return the ID of the item in this slot
+     */
+    public int getItemId() {
+        return parentItem.getItemID();
     }
 }

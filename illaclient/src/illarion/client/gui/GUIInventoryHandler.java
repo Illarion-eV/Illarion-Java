@@ -20,7 +20,6 @@ package illarion.client.gui;
 
 import illarion.client.graphics.Item;
 import illarion.client.input.InputReceiver;
-import illarion.client.input.KeyMapper;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.Inventory;
