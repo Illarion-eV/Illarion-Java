@@ -68,7 +68,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      */
     @Override
     public void dragTo(final InteractiveInventorySlot targetSlot) {
-        if (!isValidItem() || targetSlot.isValidItem()) {
+        if (!isValidItem()) {
             return;
         }
 
