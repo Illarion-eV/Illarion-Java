@@ -25,6 +25,7 @@ import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.Inventory;
 import illarion.client.world.World;
+import illarion.common.graphics.FontLoader;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
@@ -32,15 +33,19 @@ import org.bushe.swing.event.EventTopicSubscriber;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.ImageBuilder;
 import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
 import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
+import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.dragndrop.builder.DraggableBuilder;
+import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.tools.Color;
 import de.lessvoid.nifty.tools.SizeValue;
 
 /**
@@ -86,7 +91,9 @@ public final class GUIInventoryHandler implements
          */
         @Override
         public void run() {
+            elementToMove.hide();
             elementToMove.markForMove(elementTarget);
+            elementToMove.show();
         }
     }
 
@@ -234,6 +241,19 @@ public final class GUIInventoryHandler implements
             imgBuilder.valignCenter();
             imgBuilder.x("0px");
             imgBuilder.y("0px");
+            
+            LabelBuilder lblBuilder = new LabelBuilder("#itemCountLabel");
+            dragBuilder.control(lblBuilder);
+            lblBuilder.alignRight();
+            lblBuilder.valignBottom();
+            lblBuilder.visible(false);
+            lblBuilder.backgroundColor(new Color("#64541f33"));
+            lblBuilder.color(new Color("#eaba14ff"));
+            lblBuilder.text("255");
+            lblBuilder.font(FontLoader.Fonts.small.getName());
+            
+            EffectBuilder showEffectBuilder = new EffectBuilder("fade");
+            dragBuilder.onShowEffect(showEffectBuilder);
 
             result = dragBuilder.build(activeNifty, activeScreen, dragParent);
             draggedObjects[slotId] = result;
@@ -257,6 +277,11 @@ public final class GUIInventoryHandler implements
         image.getRenderer(ImageRenderer.class).setImage(
             new NiftyImage(activeNifty.getRenderEngine(),
                 new EntitySlickRenderImage(displayedItem)));
+        
+        final Element label = dragElement.findElementByName("#itemCountLabel");
+        if (count > 1) {
+            label.getNiftyControl(Label.class).setText(Integer.toString(count));
+        }
 
         final int objectWidth = displayedItem.getWidth();
         final int objectHeight = displayedItem.getHeight();
@@ -282,9 +307,14 @@ public final class GUIInventoryHandler implements
         dragElement.setConstraintWidth(width);
         dragElement.setConstraintHeight(height);
 
-        dragElement.setVisible(true);
+        dragElement.show();
+        if (count > 1) {
+            label.show();
+        } else {
+            label.hide();
+        }
 
-        dropSlots[slotId].layoutElements();
+        dragElement.getParent().layoutElements();
     }
 
     private SizeValue generateSizeValue(final int pixels) {
