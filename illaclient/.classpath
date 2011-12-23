@@ -33,5 +33,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/illacommon/lib/eventbus/eventbus-1.4-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/illacommon/lib/lwjgl/lwjgl_util.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

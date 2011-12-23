@@ -10,13 +10,8 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
 import de.lessvoid.nifty.slick2d.NiftyOverlayBasicGameState;
-import de.lessvoid.nifty.slick2d.NiftyOverlayGameState;
 import de.lessvoid.nifty.slick2d.input.SlickSlickInputSystem;
-import de.lessvoid.nifty.slick2d.render.SlickRenderDevice;
-import de.lessvoid.nifty.slick2d.sound.SlickSoundDevice;
-import de.lessvoid.nifty.tools.TimeProvider;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -35,10 +30,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     @Override
     protected void initGameAndGUI(GameContainer container, StateBasedGame game)
         throws SlickException {
-        initNifty(container, game, new SlickRenderDevice(container),
-            new SlickSoundDevice(),
-            new SlickSlickInputSystem(new InputReceiver()),
-            new TimeProvider());
+        initNifty(container, game, new SlickSlickInputSystem(new InputReceiver()));
     }
 
     @Override
