@@ -310,6 +310,15 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<patternset refid="lzma.pattern" />
 	</fileset>
 
+    <!-- XZ-Java -->
+    <!-- https://github.com/jponge/lzma-java -->
+    <patternset id="xz.pattern">
+        <include name="xz.jar" />
+    </patternset>
+    <fileset id="xz" dir="${common}/lib/xz">
+        <patternset refid="xz.pattern" />
+    </fileset>
+
 	<!-- Standard Window Toolkit (SWT) 3.6.1 -->
 	<!-- http://www.eclipse.org/swt/ -->
 	<patternset id="swt.pattern">

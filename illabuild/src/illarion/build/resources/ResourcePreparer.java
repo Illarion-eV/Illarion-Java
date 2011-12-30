@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
+import java.util.logging.Logger;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -62,15 +63,21 @@ public final class ResourcePreparer extends Task {
     private final List<AbstractFileSet> filesets;
 
     /**
-     * The file that will store the created resource.
+     * The directory the file will be stored at.
      */
-    private File targetFile;
+    private File targetDir;
 
     /**
      * This variable to set to <code>true</code> in case pack200 is supposed to
      * be used to compress the data further.
      */
     private boolean useP200;
+
+    /**
+     * The logger used to print messages from this class.
+     */
+    private static final Logger LOGGER = Logger
+        .getLogger(ResourcePreparer.class.getName());
 
     /**
      * The default constructor that prepares this class for proper operation.
@@ -146,7 +153,7 @@ public final class ResourcePreparer extends Task {
                         processFile(new File(dir, fileName));
                         counter++;
                     } catch (final IOException e) {
-                        System.err.println("Problem with File: " + fileName); //$NON-NLS-1$
+                        LOGGER.severe("Problem with File: " + fileName);
                     }
                 }
             }
@@ -158,7 +165,7 @@ public final class ResourcePreparer extends Task {
                         processFile(new File(dir, fileName));
                         counter++;
                     } catch (final IOException e) {
-                        System.err.println("Problem with File: " + fileName); //$NON-NLS-1$
+                        LOGGER.severe("Problem with File: " + fileName);
                     }
                 }
             }
@@ -167,7 +174,7 @@ public final class ResourcePreparer extends Task {
             throw e;
         }
 
-        System.out.println("Prepared " + Integer.toString(counter) + " Files"); //$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.info("Prepared " + Integer.toString(counter) + " Files");
     }
 
     /**
@@ -176,7 +183,7 @@ public final class ResourcePreparer extends Task {
      * @param dir the directory where the target files are supposed to be moved
      */
     public void setTargetDir(final File dir) {
-        targetFile = dir;
+        targetDir = dir;
     }
 
     /**
@@ -199,8 +206,8 @@ public final class ResourcePreparer extends Task {
         if (useP200) {
             final int count = processFileP200(file, 0L);
             if (count > 1) {
-                System.out.println("Required " + Integer.toString(count) //$NON-NLS-1$
-                    + " rounds stabilise " + file.getName()); //$NON-NLS-1$
+                LOGGER.warning("Required " + Integer.toString(count)
+                    + " rounds stabilise " + file.getName());
             }
         } else {
             processFileNormal(file);
@@ -215,18 +222,21 @@ public final class ResourcePreparer extends Task {
      * @throws IOException in case anything goes wrong
      */
     private void processFileNormal(final File file) throws IOException {
-        final File destFile = new File(targetFile, file.getName());
-
-        if (!destFile.exists()) {
-            destFile.createNewFile();
+        final File destFile = new File(targetDir, file.getName());
+        
+        if (file.equals(destFile)) {
+            return;
         }
+        
+        final File tempFile =
+            File.createTempFile("temp_", ".illares.tmp", targetDir);
 
         FileChannel source = null;
         FileChannel destination = null;
 
         try {
             source = new FileInputStream(file).getChannel();
-            destination = new FileOutputStream(destFile).getChannel();
+            destination = new FileOutputStream(tempFile).getChannel();
             destination.transferFrom(source, 0, source.size());
         } finally {
             if (source != null) {
@@ -235,6 +245,13 @@ public final class ResourcePreparer extends Task {
             if (destination != null) {
                 destination.close();
             }
+        }
+
+        if (destFile.exists()) {
+            destFile.delete();
+        }
+        if (!tempFile.renameTo(destFile)) {
+            throw new IOException("Failed to move the temporary file into place.");
         }
     }
 
@@ -252,8 +269,10 @@ public final class ResourcePreparer extends Task {
      */
     private int processFileP200(final File file, final long lastSize)
         throws IOException {
-        final File tempFile = File.createTempFile("p200temp", ".pack.tmp"); //$NON-NLS-1$ //$NON-NLS-2$
-        final File destFile = new File(targetFile, file.getName());
+        final File tempFile = File.createTempFile("p200temp", ".pack.tmp");
+        tempFile.deleteOnExit();
+        
+        final File destFile = new File(targetDir, file.getName());
 
         final Pack200.Packer packer = Pack200Helper.getPacker();
         final Pack200.Unpacker unpacker = Pack200Helper.getUnpacker();
@@ -267,6 +286,15 @@ public final class ResourcePreparer extends Task {
             out.flush();
             out.close();
             out = null;
+            
+            if (destFile.exists()) {
+                if (!destFile.delete()) {
+                    throw new IOException("Can't delete old destination file.");
+                }
+            }
+            if (!destFile.createNewFile()) {
+                throw new IOException("Can't create new destination file.");
+            }
 
             jOut =
                 new JarOutputStream(new BufferedOutputStream(
@@ -286,7 +314,7 @@ public final class ResourcePreparer extends Task {
         }
 
         if (destFile.length() != lastSize) {
-            return processFileP200(file, destFile.length()) + 1;
+            return processFileP200(destFile, destFile.length()) + 1;
         }
         return 0;
     }
@@ -299,7 +327,7 @@ public final class ResourcePreparer extends Task {
      */
     @SuppressWarnings("nls")
     private void validate() throws BuildException {
-        if (targetFile == null) {
+        if (targetDir == null) {
             throw new BuildException("a target file is required");
         }
         if (filesets.isEmpty() && filelists.isEmpty()) {

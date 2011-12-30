@@ -87,21 +87,8 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
         <ant antfile="${common}/build.xml" target="prepare_tabsplitter" />
     </target>
     
-    <target name="build_resources" description="Build all resources" depends="fetch_libs,download_resources,create_resources" />
-	
-	<target name="download_resources" depends="check_optional_dirs" if="not.keys.config.exist">
-		<ant antfile="${common}/build.xml" target="download_resources" />
-	</target>
-	
-	<target name="create_resources" depends="check_optional_dirs" if="keys.config.exist">
-        <ant antfile="${common}/build.xml" target="rsc_books" />
-        <ant antfile="${common}/build.xml" target="rsc_gui" />
-        <ant antfile="${common}/build.xml" target="rsc_items" />
-        <ant antfile="${common}/build.xml" target="rsc_tiles" />
-        <ant antfile="${common}/build.xml" target="rsc_chars" />
-        <ant antfile="${common}/build.xml" target="rsc_effects" />
-        <ant antfile="${common}/build.xml" target="rsc_sound" />
-        <ant antfile="${common}/build.xml" target="rsc_tables" />
+    <target name="build_resources" description="Fetch all the resources">
+		<ant antfile="${common}/build.xml" target="rsc_download" />
         <ant antfile="${common}/build.xml" target="rsc_manual" />
 	</target>
 	

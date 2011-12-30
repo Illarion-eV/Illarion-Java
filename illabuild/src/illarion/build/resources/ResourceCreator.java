@@ -49,7 +49,12 @@ import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ZipFileSet;
 
 import illarion.common.util.Pack200Helper;
-import illarion.common.util.lzma.LzmaOutputStream;
+
+import org.tukaani.xz.FilterOptions;
+import org.tukaani.xz.LZMA2Options;
+import org.tukaani.xz.UnsupportedOptionsException;
+import org.tukaani.xz.X86Options;
+import org.tukaani.xz.XZOutputStream;
 
 /**
  * This class is used to create resource bundles that contain the Illarion
@@ -145,13 +150,32 @@ public final class ResourceCreator extends Task {
                     "Can't access the target file properly"); //$NON-NLS-1$
             }
 
+            final LZMA2Options lzmaOptions;
+            final X86Options x86Options;
+
+            try {
+                lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_MAX);
+                x86Options = new X86Options();
+            } catch (UnsupportedOptionsException e1) {
+                throw new BuildException("Failed to setup compressor.");
+            }
+
+            final FilterOptions[] defaultOptions =
+                new FilterOptions[] { lzmaOptions };
+            final FilterOptions[] nativeOptions =
+                new FilterOptions[] { x86Options, lzmaOptions };
+
+            FileOutputStream fOut = null;
+            XZOutputStream xOut = null;
+            BufferedOutputStream bOut = null;
             ZipOutputStream zOut = null;
 
             try {
-                zOut =
-                    new ZipOutputStream(
-                        new BufferedOutputStream(new LzmaOutputStream(
-                            new FileOutputStream(targetFile))));
+                fOut = new FileOutputStream(targetFile);
+                xOut = new XZOutputStream(fOut, defaultOptions);
+                bOut = new BufferedOutputStream(xOut);
+                zOut = new ZipOutputStream(bOut);
+
                 zOut.setLevel(0);
                 zOut.setMethod(ZipEntry.DEFLATED);
 
@@ -191,6 +215,7 @@ public final class ResourceCreator extends Task {
                     }
                 }
 
+                boolean firstFile = true;
                 useP200 = false;
                 for (final AbstractFileSet fileset : nativeFilesets) {
                     final DirectoryScanner ds =
@@ -206,6 +231,12 @@ public final class ResourceCreator extends Task {
                             while (nativeEntry != null) {
                                 if (!nativeEntry.isDirectory()
                                     && isNativeFilename(nativeEntry.getName())) {
+                                    if (firstFile) {
+                                        firstFile = false;
+                                        zOut.flush();
+                                        xOut.endBlock();
+                                        xOut.updateFilters(nativeOptions);
+                                    }
                                     handleStream(nativeIn,
                                         nativeEntry.getName(), zOut);
                                     nativeIn.closeEntry();
@@ -228,19 +259,23 @@ public final class ResourceCreator extends Task {
             } catch (final IOException e) {
                 throw new BuildException(e);
             } finally {
-                if (zOut != null) {
-                    try {
-                        zOut.close();
-                    } catch (final IOException e) {
-                        // nothing
-                    }
-                }
+                closeStream(zOut);
             }
 
             System.out.print("Creating " + targetFile.getName() + " is done."); //$NON-NLS-1$ //$NON-NLS-2$
         } catch (final BuildException e) {
             e.printStackTrace();
             throw e;
+        }
+    }
+
+    private void closeStream(final OutputStream outStream) {
+        if (outStream != null) {
+            try {
+                outStream.close();
+            } catch (final IOException e) {
+                // nothing
+            }
         }
     }
 
@@ -352,6 +387,11 @@ public final class ResourceCreator extends Task {
     }
 
     /**
+     * The count of bytes maximal transfered during copy operations.
+     */
+    private static final int MAX_TRANSFER_SIZE = 1000000;
+
+    /**
      * This function copies a stream to a temporary file that is marked for
      * deletion automatically.
      * 
@@ -365,6 +405,8 @@ public final class ResourceCreator extends Task {
 
         ReadableByteChannel inChannel = null;
         FileChannel outChannel = null;
+        
+        System.gc();
 
         try {
             inChannel = Channels.newChannel(in);
@@ -377,12 +419,13 @@ public final class ResourceCreator extends Task {
                 long position = 0;
                 while (position < size) {
                     position +=
-                        fInChannel.transferTo(position, size - position,
+                        fInChannel.transferTo(position,
+                            Math.min(MAX_TRANSFER_SIZE, size - position),
                             outChannel);
                 }
             } else {
                 final ByteBuffer tempBuffer =
-                    ByteBuffer.allocateDirect(10000000);
+                    ByteBuffer.allocateDirect(MAX_TRANSFER_SIZE);
 
                 boolean eof = false;
                 while (!eof) {

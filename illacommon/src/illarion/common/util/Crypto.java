@@ -33,6 +33,8 @@ import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -41,8 +43,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-
-import org.apache.log4j.Logger;
 
 /**
  * Class to handle the encryption of the files that are stored by the client.
@@ -66,7 +66,7 @@ public final class Crypto {
     /**
      * The error and debug logger of the client.
      */
-    private static final Logger LOGGER = Logger.getLogger(Crypto.class);
+    private static final Logger LOGGER = Logger.getLogger(Crypto.class.getName());
 
     /**
      * The filename of the private key.
@@ -92,55 +92,6 @@ public final class Crypto {
      * The public key instance that was loaded into the this class.
      */
     private PublicKey publicKey;
-
-    /**
-     * Constructor for the this class that prepares the keys and loads the the
-     * files "private.key" and "public.key" from the working directory in case
-     * its possible.
-     * <p>
-     * In case that worked its possible to decode and encode files with this
-     * class.
-     * </p>
-     */
-    @SuppressWarnings("nls")
-    public Crypto() {
-        // try loading the private key from the current dir
-        ObjectInputStream keyIn = null;
-        try {
-            keyIn = new ObjectInputStream(new FileInputStream("private.key"));
-            privateKey = (PrivateKey) keyIn.readObject();
-        } catch (final Exception e) {
-            privateKey = null;
-            LOGGER.error("Failed reading the private key.", e);
-        } finally {
-            try {
-                if (keyIn != null) {
-                    keyIn.close();
-                }
-            } catch (final IOException e) {
-                LOGGER.error("Closing the input stream of the private key "
-                    + "failed.", e);
-            }
-        }
-
-        // try loading the public key from the current dir
-        try {
-            keyIn = new ObjectInputStream(new FileInputStream("public.key"));
-            publicKey = (PublicKey) keyIn.readObject();
-        } catch (final Exception e) {
-            publicKey = null;
-            LOGGER.error("Failed reading the public key.", e);
-        } finally {
-            try {
-                if (keyIn != null) {
-                    keyIn.close();
-                }
-            } catch (final IOException e) {
-                LOGGER.error("Closing the input stream of the public key "
-                    + "failed.", e);
-            }
-        }
-    }
 
     /**
      * Decrypt a file by using the public key that was prepared with the class
@@ -172,7 +123,7 @@ public final class Crypto {
 
             pumpData(in, dst, cipher);
         } catch (final Exception e) {
-            LOGGER.error("Decryping the resource failed.", e);
+            LOGGER.log(Level.SEVERE, "Decryping the resource failed.", e);
             return false;
         }
         return true;
@@ -191,7 +142,7 @@ public final class Crypto {
             cipher = Cipher.getInstance(RSA);
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
         } catch (final Exception e) {
-            LOGGER.error("Creating Cipher failed.", e);
+            LOGGER.log(Level.SEVERE, "Creating Cipher failed.", e);
         }
 
         return new CipherInputStream(src, cipher);
@@ -255,7 +206,7 @@ public final class Crypto {
             cipher = Cipher.getInstance(RSA);
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         } catch (final Exception e) {
-            LOGGER.error("Creating Cipher failed.", e);
+            LOGGER.log(Level.SEVERE, "Creating Cipher failed.", e);
         }
 
         return new CipherOutputStream(src, cipher);
@@ -309,7 +260,13 @@ public final class Crypto {
         } catch (final FileNotFoundException e) {
             // the file was not found -> ignore
         }
-        LOGGER.error("Loading the private key failed.");
+        
+
+        if (loadPrivateKeyImpl(Crypto.class.getClassLoader()
+            .getResourceAsStream(System.getProperty("illarion.common.crypto.private")))) {
+            return;
+        }
+        LOGGER.log(Level.SEVERE, "Loading the private key failed.");
     }
 
     /**
@@ -320,7 +277,7 @@ public final class Crypto {
     @SuppressWarnings("nls")
     public void loadPrivateKey(final InputStream in) {
         if (!loadPrivateKeyImpl(in)) {
-            LOGGER.error("Loading the private key failed.");
+            LOGGER.log(Level.SEVERE, "Loading the private key failed.");
         }
     }
 
@@ -354,7 +311,12 @@ public final class Crypto {
         } catch (final FileNotFoundException e) {
             // the file was not found -> ignore
         }
-        LOGGER.error("Loading the public key failed.");
+
+        if (loadPublicKeyImpl(Crypto.class.getClassLoader()
+            .getResourceAsStream(System.getProperty("illarion.common.crypto.public")))) {
+            return;
+        }
+        LOGGER.log(Level.SEVERE, "Loading the public key failed.");
     }
 
     /**
@@ -365,7 +327,7 @@ public final class Crypto {
     @SuppressWarnings("nls")
     public void loadPublicKey(final InputStream in) {
         if (!loadPublicKeyImpl(in)) {
-            LOGGER.error("Loading the public key failed.");
+            LOGGER.log(Level.SEVERE, "Loading the public key failed.");
         }
     }
 
@@ -410,9 +372,9 @@ public final class Crypto {
         try {
             privateKey = (PrivateKey) loadKey;
         } catch (final Exception e) {
-            // nothing to do
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
