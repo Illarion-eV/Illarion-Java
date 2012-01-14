@@ -34,9 +34,10 @@ import java.util.jar.Pack200;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.tukaani.xz.XZInputStream;
+
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.Pack200Helper;
-import illarion.common.util.lzma.LzmaInputStream;
 
 import illarion.download.install.resources.ResourceManager;
 import illarion.download.tasks.download.Download;
@@ -196,7 +197,7 @@ public final class Unpack implements Callable<UnpackResult> {
 
             zIn =
                 new ZipInputStream(new BufferedInputStream(
-                    new LzmaInputStream(cIn)));
+                    new XZInputStream(cIn)));
             inChannel = Channels.newChannel(zIn);
 
             ZipEntry currEntry = zIn.getNextEntry();

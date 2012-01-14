@@ -29,6 +29,8 @@ import illarion.common.graphics.FontLoader;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
+import org.illarion.nifty.controls.InventorySlot;
+import org.illarion.nifty.controls.inventoryslot.InventorySlotControl;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
@@ -64,25 +66,17 @@ public final class GUIInventoryHandler implements
      */
     private static class EndOfDragOperation implements Runnable {
         /**
-         * The element that is moved.
+         * The inventory slot that requires the reset.
          */
-        private final Element elementToMove;
-        
-        /**
-         * The element that is the target of the move operation.
-         */
-        private final Element elementTarget;
+        private final InventorySlot invSlot;
 
         /**
          * Create a new instance of this class and set the effected elements.
          * 
-         * @param moveElement the element to move
-         * @param targetElement the target of the move operation
+         * @param invSlot the inventory slot to reset
          */
-        public EndOfDragOperation(final Element moveElement,
-            final Element targetElement) {
-            elementToMove = moveElement;
-            elementTarget = targetElement;
+        public EndOfDragOperation(final InventorySlot slot) {
+            invSlot = slot;
         }
 
         /**
@@ -90,16 +84,12 @@ public final class GUIInventoryHandler implements
          */
         @Override
         public void run() {
-            elementToMove.hide();
-            elementToMove.markForMove(elementTarget);
-            elementToMove.show();
+            invSlot.retrieveDraggable();
         }
     }
 
     private final String[] slots;
-    private final String[] slotItems;
-    private final Element[] dropSlots;
-    private final Element[] draggedObjects;
+    private final Element[] invSlots;
     private Element inventoryWindow;
     private Nifty activeNifty;
     private Screen activeScreen;
@@ -108,33 +98,26 @@ public final class GUIInventoryHandler implements
 
     public GUIInventoryHandler() {
         slots = new String[Inventory.SLOT_COUNT];
-        slots[0] = "bag";
-        slots[1] = "head";
-        slots[2] = "neck";
-        slots[3] = "chest";
-        slots[4] = "hands";
-        slots[5] = "lhand";
-        slots[6] = "rhand";
-        slots[7] = "lfinger";
-        slots[8] = "rfinger";
-        slots[9] = "legs";
-        slots[10] = "feet";
-        slots[11] = "cloak";
-        slots[12] = "belt1";
-        slots[13] = "belt2";
-        slots[14] = "belt3";
-        slots[15] = "belt4";
-        slots[16] = "belt5";
-        slots[17] = "belt6";
+        slots[0] = "invslot_bag";
+        slots[1] = "invslot_head";
+        slots[2] = "invslot_neck";
+        slots[3] = "invslot_chest";
+        slots[4] = "invslot_hands";
+        slots[5] = "invslot_lhand";
+        slots[6] = "invslot_rhand";
+        slots[7] = "invslot_lfinger";
+        slots[8] = "invslot_rfinger";
+        slots[9] = "invslot_legs";
+        slots[10] = "invslot_feet";
+        slots[11] = "invslot_cloak";
+        slots[12] = "invslot_belt1";
+        slots[13] = "invslot_belt2";
+        slots[14] = "invslot_belt3";
+        slots[15] = "invslot_belt4";
+        slots[16] = "invslot_belt5";
+        slots[17] = "invslot_belt6";
 
-        slotItems = new String[Inventory.SLOT_COUNT];
-        for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
-            slots[i] = INVSLOT_HEAD.concat(slots[i]);
-            slotItems[i] = slots[i].concat("_item");
-        }
-
-        dropSlots = new Element[Inventory.SLOT_COUNT];
-        draggedObjects = new Element[Inventory.SLOT_COUNT];
+        invSlots = new Element[Inventory.SLOT_COUNT];
 
     }
 
@@ -145,7 +128,7 @@ public final class GUIInventoryHandler implements
         inventoryWindow = screen.findElementByName("inventory");
 
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
-            dropSlots[i] = inventoryWindow.findElementByName(slots[i]);
+            invSlots[i] = inventoryWindow.findElementByName(slots[i]);
         }
 
         activeNifty.subscribeAnnotations(this);
@@ -185,8 +168,8 @@ public final class GUIInventoryHandler implements
         final int slotId = getSlotNumber(topic);
         World.getInteractionManager().notifyDraggingInventory(
             slotId,
-            new EndOfDragOperation(data.getDraggable().getElement(), data
-                .getSource().getElement().findElementByName("#droppableContent")));
+            new EndOfDragOperation(invSlots[slotId]
+                .getNiftyControl(InventorySlot.class)));
     }
 
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
@@ -209,115 +192,27 @@ public final class GUIInventoryHandler implements
             throw new IllegalArgumentException("Slot ID out of valid range.");
         }
 
-        final Element dragObject = getSlotItem(slotId, (itemId > 0));
+        final InventorySlot invSlot =
+            invSlots[slotId].getNiftyControl(InventorySlot.class);
 
         if (itemId > 0) {
-            applyImageToDragSpot(dragObject, slotId, itemId, count);
-        } else if (dragObject != null) {
-            dragObject.setVisible(false);
-        }
-    }
+            final Item displayedItem =
+                ItemFactory.getInstance().getPrototype(itemId);
+            final NiftyImage niftyImage =
+                new NiftyImage(activeNifty.getRenderEngine(),
+                    new EntitySlickRenderImage(displayedItem));
 
-    private Element getSlotItem(final int slotId, final boolean create) {
-        final Element dragParent = dropSlots[slotId].getElements().get(0);
-        Element result = draggedObjects[slotId];
-
-        if (result == null && create) {
-            DraggableBuilder dragBuilder = new DraggableBuilder(slotItems[slotId]);
-            dragBuilder.valignCenter();
-            dragBuilder.alignCenter();
-            dragBuilder.visibleToMouse();
-            dragBuilder.visible(true);
-            dragBuilder.childLayoutCenter();
-            dragBuilder.revert(true);
-            dragBuilder.drop(true);
-            dragBuilder.x("0px");
-            dragBuilder.y("0px");
-
-            ImageBuilder imgBuilder = new ImageBuilder("#itemImage");
-            dragBuilder.image(imgBuilder);
-            imgBuilder.alignCenter();
-            imgBuilder.valignCenter();
-            imgBuilder.x("0px");
-            imgBuilder.y("0px");
-            
-            LabelBuilder lblBuilder = new LabelBuilder("#itemCountLabel");
-            dragBuilder.control(lblBuilder);
-            lblBuilder.alignRight();
-            lblBuilder.valignBottom();
-            lblBuilder.visible(false);
-            lblBuilder.backgroundColor(new Color("#64541f33"));
-            lblBuilder.color(new Color("#eaba14ff"));
-            lblBuilder.text("255");
-            lblBuilder.font(FontLoader.Fonts.small.getName());
-            
-            EffectBuilder showEffectBuilder = new EffectBuilder("fade");
-            dragBuilder.onShowEffect(showEffectBuilder);
-
-            result = dragBuilder.build(activeNifty, activeScreen, dragParent);
-            draggedObjects[slotId] = result;
-
-            if (dropSlots[slotId].getElements().size() > 1) {
-                throw new IllegalStateException(
-                    "Added more then one object to the field.");
+            invSlot.setImage(niftyImage);
+            invSlot.setLabelText(Integer.toString(itemId));
+            if (itemId > 1) {
+                invSlot.showLabel();
+            } else {
+                invSlot.hideLabel();
             }
-        }
-
-        return result;
-    }
-
-    private void applyImageToDragSpot(final Element dragElement,
-        final int slotId, final int itemId, final int count) {
-
-        final Element image = dragElement.findElementByName("#itemImage");
-
-        final Item displayedItem =
-            ItemFactory.getInstance().getPrototype(itemId);
-        image.getRenderer(ImageRenderer.class).setImage(
-            new NiftyImage(activeNifty.getRenderEngine(),
-                new EntitySlickRenderImage(displayedItem)));
-        
-        final Element label = dragElement.findElementByName("#itemCountLabel");
-        if (count > 1) {
-            label.getNiftyControl(Label.class).setText(Integer.toString(count));
-        }
-
-        final int objectWidth = displayedItem.getWidth();
-        final int objectHeight = displayedItem.getHeight();
-        final int parentWidth = dropSlots[slotId].getWidth();
-        final int parentHeight = dropSlots[slotId].getHeight();
-
-        int fixedWidth = objectWidth;
-        int fixedHeight = objectHeight;
-        if (fixedWidth > parentWidth) {
-            fixedHeight *= ((float) parentWidth / fixedWidth);
-            fixedWidth = parentWidth;
-        }
-        if (fixedHeight > parentHeight) {
-            fixedWidth *= ((float) parentHeight / fixedHeight);
-            fixedHeight = parentHeight;
-        }
-
-        final SizeValue width = generateSizeValue(fixedWidth);
-        final SizeValue height = generateSizeValue(fixedHeight);
-
-        image.setConstraintWidth(width);
-        image.setConstraintHeight(height);
-        dragElement.setConstraintWidth(width);
-        dragElement.setConstraintHeight(height);
-
-        dragElement.show();
-        if (count > 1) {
-            label.show();
         } else {
-            label.hide();
+            invSlot.setImage(null);
+            invSlot.hideLabel();
         }
-
-        dragElement.getParent().layoutElements();
-    }
-
-    private SizeValue generateSizeValue(final int pixels) {
-        return new SizeValue(Integer.toString(pixels).concat("px"));
     }
 
     /**

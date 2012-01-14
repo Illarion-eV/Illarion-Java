@@ -391,9 +391,9 @@ public final class Crypto {
         try {
             publicKey = (PublicKey) loadKey;
         } catch (final Exception e) {
-            // nothing to do
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**

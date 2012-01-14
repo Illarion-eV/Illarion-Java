@@ -742,21 +742,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</unjar>
 	</target>
 
-	<target name="download_resources" description="Download prebuild resources">
-		<get dest="${common}/rsc-all.zip" src="http://illarion.org/media/java/rsc-all.zip" verbose="false" ignoreerrors="true" />
-		<antcall target="extract_resources" />
-		<delete file="${common}/rsc-all.zip" />
-	</target>
-
-	<target name="resource_file_present">
-		<available file="${common}/rsc-all.zip" property="rsc_all.avaiable" />
-	</target>
-
-	<target name="extract_resources" depends="resource_file_present" if="${rsc_all.avaiable}">
-		<mkdir dir="${resources}" />
-		<unzip dest="${resources}" src="${common}/rsc-all.zip" overwrite="true" />
-	</target>
-
 	<target name="create_library_bundle" description="Create the library ZIP-File that is downloaded during the build">
 		<delete file="${common}/libs-all.zip" failonerror="false" />
 		<zip destfile="${common}/libs-all.zip" update="false" compress="true">
@@ -764,16 +749,6 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<include name="**/*.jar" />
 				<include name="**/*.zip" />
 				<include name="**/*.txt" />
-				<exclude name="signed/**" />
-			</fileset>
-		</zip>
-	</target>
-
-	<target name="create_resource_bundle" description="Create the ZIP-File of the prepared resources that are deployed in case the required parts of the build environment to create them are missing.">
-		<delete file="${common}/rsc-all.zip" failonerror="false" />
-		<zip destfile="${common}/rsc-all.zip" update="false" compress="false">
-			<fileset dir="${resources}">
-				<include name="*.jar" />
 				<exclude name="signed/**" />
 			</fileset>
 		</zip>

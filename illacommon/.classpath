@@ -5,7 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/javolution/javolution.jar" sourcepath="lib/javolution/javolution-sources.jar"/>
 	<classpathentry kind="lib" path="lib/log4j/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/lzma/lzma.jar"/>
 	<classpathentry kind="lib" path="lib/swt/swt.jar" sourcepath="lib/swt/swt_src.zip"/>
 	<classpathentry kind="lib" path="lib/tabsplitter/tabsplitter.jar"/>
 	<classpathentry kind="lib" path="lib/trove/trove.jar" sourcepath="lib/trove/trove-src.zip"/>
