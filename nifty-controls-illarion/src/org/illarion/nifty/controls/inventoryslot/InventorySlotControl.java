@@ -23,6 +23,8 @@ import java.util.Properties;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 
+import sun.print.BackgroundLookupListener;
+
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.AbstractController;
@@ -131,7 +133,7 @@ public class InventorySlotControl extends AbstractController implements
         draggedImage.getRenderer(ImageRenderer.class).setImage(image);
         backgroundImage.getRenderer(ImageRenderer.class).setImage(image);
         if (image != null) {
-            
+
             int width = image.getWidth();
             int height = image.getHeight();
             if (width > getWidth()) {
@@ -142,23 +144,26 @@ public class InventorySlotControl extends AbstractController implements
                 width = width * (height / getHeight());
                 height = getHeight();
             }
-            
-            final SizeValue widthSize = new SizeValue(Integer.toString(width).concat("px"));
-            final SizeValue heightSize = new SizeValue(Integer.toString(height).concat("px"));
-            
-            draggable.setConstraintHeight(heightSize);
-            draggable.setConstraintWidth(widthSize);
+
+            final SizeValue widthSize =
+                new SizeValue(Integer.toString(width).concat("px"));
+            final SizeValue heightSize =
+                new SizeValue(Integer.toString(height).concat("px"));
+
+            draggedImage.setConstraintHeight(heightSize);
+            draggedImage.setConstraintWidth(widthSize);
             backgroundImage.setVisible(true);
             backgroundImage.setConstraintHeight(heightSize);
             backgroundImage.setConstraintWidth(widthSize);
             draggedImage.setVisible(false);
-            draggable.getControl(DraggableControl.class).setEnabled(true);
+            draggable.enable();
             getElement().layoutElements();
         } else {
             backgroundImage.setVisible(false);
             backgroundImageLabel.setVisible(false);
             draggedImage.setVisible(false);
             draggable.getControl(DraggableControl.class).setEnabled(false);
+            getElement().layoutElements();
         }
     }
 
@@ -168,7 +173,10 @@ public class InventorySlotControl extends AbstractController implements
      * @param value the visibility value of the image
      */
     protected void setVisibleOfDraggedImage(final boolean value) {
-        draggedImage.setVisible(value);
+        if (draggedImage.isVisible() != value) {
+            draggedImage.setVisible(value);
+            draggedImage.getParent().layoutElements();
+        }
     }
 
     /**
@@ -176,7 +184,10 @@ public class InventorySlotControl extends AbstractController implements
      */
     @Override
     public void showLabel() {
-        backgroundImageLabel.show();
+        if (!backgroundImageLabel.isVisible()) {
+            backgroundImageLabel.show();
+            backgroundImageLabel.getParent().layoutElements();
+        }
     }
 
     /**
@@ -184,7 +195,10 @@ public class InventorySlotControl extends AbstractController implements
      */
     @Override
     public void hideLabel() {
-        backgroundImageLabel.hide();
+        if (backgroundImageLabel.isVisible()) {
+            backgroundImageLabel.hide();
+            backgroundImageLabel.getParent().layoutElements();
+        }
     }
 
     /**

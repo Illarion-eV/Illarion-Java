@@ -71,6 +71,8 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
 				<fileset refid="log4j" />
                 <fileset refid="trove" />
                 <fileset refid="javolution" />
+                <fileset refid="slick" />
+                <fileset refid="eventbus" />
 				<pathelement location="${common.bin}" />
 				<pathelement location="${graphics.bin}" />
 				<pathelement location="${sound.bin}" />

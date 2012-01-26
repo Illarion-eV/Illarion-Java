@@ -73,7 +73,7 @@ public final class GUIInventoryHandler implements
         /**
          * Create a new instance of this class and set the effected elements.
          * 
-         * @param invSlot the inventory slot to reset
+         * @param slot the inventory slot to reset
          */
         public EndOfDragOperation(final InventorySlot slot) {
             invSlot = slot;
@@ -203,12 +203,12 @@ public final class GUIInventoryHandler implements
                     new EntitySlickRenderImage(displayedItem));
 
             invSlot.setImage(niftyImage);
+            invSlot.showLabel();
             invSlot.setLabelText(Integer.toString(itemId));
-            if (itemId > 1) {
-                invSlot.showLabel();
-            } else {
-                invSlot.hideLabel();
-            }
+            //if (itemId > 1) {
+            //} else {
+            //    invSlot.hideLabel();
+            //}
         } else {
             invSlot.setImage(null);
             invSlot.hideLabel();
@@ -217,8 +217,7 @@ public final class GUIInventoryHandler implements
 
     /**
      * Fired upon the inventory publishing a update event.
-     * 
-     * @param topic the topic of the publisher
+     *
      * @param data the published data
      */
     @Override
