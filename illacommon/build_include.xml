@@ -111,6 +111,16 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<tstamp />
 
 	<!-- Libraries -->
+	<!-- Eventbus 1.4 -->
+	<!-- http://www.javazoom.net/vorbisspi/vorbisspi.html -->
+	<property name="eventbus.dir" location="${common}/lib/eventbus" />
+	<patternset id="eventbus.pattern">
+		<include name="eventbus-1.4.jar" />
+	</patternset>
+	<fileset id="eventbus" dir="${eventbus.dir}">
+		<patternset refid="eventbus.pattern" />
+	</fileset>
+
 	<!-- Vorbis SPI 1.0.3 -->
 	<!-- http://www.javazoom.net/vorbisspi/vorbisspi.html -->
 	<property name="vorbisspi.dir" location="${common}/lib/vorbisspi" />
