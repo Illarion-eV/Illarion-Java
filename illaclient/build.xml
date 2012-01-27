@@ -74,6 +74,8 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
                 <fileset refid="javolution" />
                 <fileset refid="slick" />
                 <fileset refid="eventbus" />
+				<fileset refid="nifty" />
+				<pathelement location="${niftycontrols}/${niftycontrols.jar}" />
 				<pathelement location="${common.bin}" />
 				<pathelement path="${java.home}/lib" />
 			</classpath>

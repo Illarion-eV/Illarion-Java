@@ -65,6 +65,7 @@ the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
 		<javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}" target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}" debuglevel="${build.debuglevel}">
 			<classpath>
 				<fileset refid="lzma" />
+				<fileset refid="xz" />
 				<fileset refid="swingx" />
 				<pathelement path="${common.bin}" />
 				<pathelement path="${java.home}/lib" />
@@ -78,12 +79,8 @@ the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
 			</fileset>
 			<zipgroupfileset refid="lzma" />
 			<zipgroupfileset refid="swingx" />
+			<zipgroupfileset refid="xz" />
 			<zipfileset src="${common.bin}" />
-            <zipfileset src="${graphics.bin}">
-			    <exclude name="illarion/graphics/lwjgl/**" />
-                <exclude name="illarion/graphics/jogl/**" />
-                <exclude name="illarion/graphics/generic/**" />
-			</zipfileset>
 			<metainf dir="${download}">
 				<include name="*.txt" />
 			</metainf>
@@ -121,6 +118,8 @@ the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
 			<libraryjar refid="trove" />
 			<libraryjar refid="log4j" />
 			<libraryjar refid="swt" />
+			<libraryjar refid="nifty" />
+			<libraryjar refid="slick" />
 			<libraryjar refid="tabsplitter" />
 			<libraryjar path="${java.home}/lib" />
 			<keepclasseswithmembers name="illarion.download.install.Installation">
