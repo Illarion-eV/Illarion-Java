@@ -7,148 +7,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b0ea94af-ab6d-4ed6-8227-35f2fb04f96d" name="Default" comment="Fixed inventory control dragging problem. Inventory appears working now.">
-      <change type="DELETED" beforePath="I:\Entwicklung\Illarion-Java\illaclient\.settings\org.eclipse.core.resources.prefs" afterPath="" />
-      <change type="DELETED" beforePath="I:\Entwicklung\Illarion-Java\illaclient\.settings\org.eclipse.core.runtime.prefs" afterPath="" />
-      <change type="DELETED" beforePath="I:\Entwicklung\Illarion-Java\illaclient\.settings\org.eclipse.ltk.core.refactoring.prefs" afterPath="" />
-      <change type="DELETED" beforePath="I:\Entwicklung\Illarion-Java\illacommon\.settings\org.eclipse.core.resources.prefs" afterPath="" />
-      <change type="DELETED" beforePath="I:\Entwicklung\Illarion-Java\illacommon\.settings\org.eclipse.core.runtime.prefs" afterPath="" />
-      <change type="DELETED" beforePath="I:\Entwicklung\Illarion-Java\illadownload\.settings\org.eclipse.ltk.core.refactoring.prefs" afterPath="" />
-      <change type="DELETED" beforePath="I:\Entwicklung\Illarion-Java\illaeasyquest\.settings\org.eclipse.jdt.core.prefs" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/Game.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/Game.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/IllaClient.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/IllaClient.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/Login.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/Login.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/crash/AbstractCrashHandler.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/crash/AbstractCrashHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AbstractAnimation.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AbstractAnimation.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AbstractEntity.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AbstractEntity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AnimationManager.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AnimationManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AnimationUtility.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AnimationUtility.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Avatar.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Avatar.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AvatarCloth.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AvatarCloth.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AvatarClothRenderer.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AvatarClothRenderer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AvatarInfo.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/AvatarInfo.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Effect.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Effect.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/FadingCorridor.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/FadingCorridor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Item.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Item.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/MapDisplayManager.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/MapDisplayManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Overlay.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Overlay.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Rune.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Rune.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/TextTag.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/TextTag.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Tile.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Tile.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/EntitySlickRenderImage.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/EntitySlickRenderImage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/GUIChatHandler.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/GUIChatHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/GUIInventoryHandler.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/GUIInventoryHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/GameMapHandler.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/GameMapHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/controller/CharScreenController.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/controller/CharScreenController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/controller/GameScreenController.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/controller/GameScreenController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/controller/LoadScreenController.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/controller/LoadScreenController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/controller/LoginScreenController.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/controller/LoginScreenController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/controller/ProgressbarControl.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/controller/ProgressbarControl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/xml/options.xml" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/gui/xml/options.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/input/InputReceiver.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/input/InputReceiver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/input/KeyMapper.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/input/KeyMapper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/loading/FinishLoading.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/loading/FinishLoading.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/loading/GameEnvironmentLoading.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/loading/GameEnvironmentLoading.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/loading/Loading.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/loading/Loading.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/loading/ResourceTableLoading.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/loading/ResourceTableLoading.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/CommandFactory.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/CommandFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/MessageExecutor.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/MessageExecutor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/NetComm.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/NetComm.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/Receiver.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/Receiver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/ReplyFactory.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/ReplyFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/Sender.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/Sender.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/AbstractCommand.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/AbstractCommand.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/CastCmd.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/CastCmd.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/DragInvMapCmd.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/DragInvMapCmd.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/DragMapInvCmd.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/DragMapInvCmd.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/DragMapMapCmd.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/DragMapMapCmd.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/DragMapScCmd.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/DragMapScCmd.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/DragScMapCmd.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/DragScMapCmd.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/LookatTileCmd.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/LookatTileCmd.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/OpenMapCmd.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/OpenMapCmd.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/SimpleCmd.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/SimpleCmd.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/UseCmd.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/client/UseCmd.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/AbstractReply.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/AbstractReply.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/AppearanceMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/AppearanceMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/AttributeMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/AttributeMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/BookMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/BookMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/ChangeItemMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/ChangeItemMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/CharacterAnimationMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/CharacterAnimationMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/CloseShowcaseMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/CloseShowcaseMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/DateTimeMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/DateTimeMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/DisconnectMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/DisconnectMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/EffectMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/EffectMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/IntroduceMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/IntroduceMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/InventoryMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/InventoryMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/ItemUpdateMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/ItemUpdateMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/LocationMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/LocationMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/LookatCharMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/LookatCharMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/LookatInvMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/LookatInvMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/LookatShowcaseMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/LookatShowcaseMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/LookatTileMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/LookatTileMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/MagicFlagMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/MagicFlagMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/MapStripeMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/MapStripeMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/MenuMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/MenuMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/MoveMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/MoveMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/MusicMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/MusicMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/PlayerIdMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/PlayerIdMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/PutItemMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/PutItemMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/RemoveCharMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/RemoveCharMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/RemoveItemMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/RemoveItemMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/SayMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/SayMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/ShowcaseMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/ShowcaseMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/SimpleMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/SimpleMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/SkillMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/SkillMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/TextRequestMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/TextRequestMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/TileUpdate.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/TileUpdate.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/TurnCharMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/TurnCharMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/WeatherMsg.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/net/server/WeatherMsg.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/ClothFactoryRelay.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/ClothFactoryRelay.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/GuiImageFactory.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/GuiImageFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/SongFactory.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/SongFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/SoundFactory.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/SoundFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/CharacterLoader.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/CharacterLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/ClothLoader.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/ClothLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/EffectLoader.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/EffectLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/GuiImageLoader.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/GuiImageLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/ItemLoader.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/ItemLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/OverlayLoader.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/OverlayLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/SongLoader.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/SongLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/SoundLoader.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/SoundLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/TileLoader.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/resources/loaders/TileLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/states/LoadingState.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/states/LoadingState.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/states/LoginState.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/states/LoginState.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/states/PlayingState.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/states/PlayingState.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/util/AbstractDialog.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/util/AbstractDialog.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/util/BookFactory.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/util/BookFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/util/CellLayout.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/util/CellLayout.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/util/ChatHandler.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/util/ChatHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/util/ChatLog.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/util/ChatLog.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/util/Lang.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/util/Lang.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/util/NamesTable.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/util/NamesTable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/util/Path.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/util/Path.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/util/PathNode.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/util/PathNode.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/util/Pathfinder.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/util/Pathfinder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/Char.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/Char.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/GameMap.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/GameMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/GameMapProcessor.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/GameMapProcessor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/GameMiniMap.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/GameMiniMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/Inventory.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/Inventory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/MapTile.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/MapTile.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/MusicBox.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/MusicBox.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/People.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/People.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/Player.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/Player.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/Weather.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/Weather.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/interactive/AbstractDraggable.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/interactive/AbstractDraggable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/interactive/InteractionManager.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/interactive/InteractionManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/interactive/InteractiveMap.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/interactive/InteractiveMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/illarion/client/world/interactive/InteractiveMapTile.java" afterPath="$PROJECT_DIR$/illaclient/src/illarion/client/world/interactive/InteractiveMapTile.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/messages_de.properties" afterPath="$PROJECT_DIR$/illaclient/src/messages_de.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illaclient/src/messages_en.properties" afterPath="$PROJECT_DIR$/illaclient/src/messages_en.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illacommon/build.xml" afterPath="$PROJECT_DIR$/illacommon/build.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illacommon/build_include.xml" afterPath="$PROJECT_DIR$/illacommon/build_include.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illacommon/src/illarion/common/util/Crypto.java" afterPath="$PROJECT_DIR$/illacommon/src/illarion/common/util/Crypto.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/illacommon/src/illarion/common/util/RecycleFactory.java" afterPath="$PROJECT_DIR$/illacommon/src/illarion/common/util/RecycleFactory.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nifty-controls-illarion/nifty-controls/illarion-inventoryslot.xml" afterPath="$PROJECT_DIR$/nifty-controls-illarion/nifty-controls/illarion-inventoryslot.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nifty-controls-illarion/src/org/illarion/nifty/controls/inventoryslot/InventorySlotControl.java" afterPath="$PROJECT_DIR$/nifty-controls-illarion/src/org/illarion/nifty/controls/inventoryslot/InventorySlotControl.java" />
     </list>
     <ignored path="Illarion-Java.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -171,21 +33,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <line_breakpoints>
-      <breakpoint url="file://$PROJECT_DIR$/illacommon/src/illarion/common/util/Crypto.java" line="298" class="illarion.common.util.Crypto" package="illarion.common.util">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="false" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-    </line_breakpoints>
     <breakpoint_any>
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -226,10 +73,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
+      <file leaf-file-name="illarion-inventoryslot.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/nifty-controls-illarion/nifty-controls/illarion-inventoryslot.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="4" selection-start="184" selection-end="184" vertical-scroll-proportion="0.32122093">
+            <state line="26" column="38" selection-start="1461" selection-end="1461" vertical-scroll-proportion="0.64244187">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="InventorySlotControl.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nifty-controls-illarion/src/org/illarion/nifty/controls/inventoryslot/InventorySlotControl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="180" column="109" selection-start="6395" selection-end="6395" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Crypto.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/illacommon/src/illarion/common/util/Crypto.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="298" column="0" selection-start="10045" selection-end="10045" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GUIInventoryHandler.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/illaclient/src/illarion/client/gui/GUIInventoryHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="194" column="21" selection-start="6728" selection-end="6728" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -250,13 +124,10 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/illaclient/src/messages_de.properties" />
-        <option value="$PROJECT_DIR$/illaclient/src/illarion/client/graphics/Rune.java" />
         <option value="$PROJECT_DIR$/illaclient/src/illarion/client/gui/xml/options.xml" />
         <option value="$PROJECT_DIR$/illacommon/src/illarion/common/util/RecycleFactory.java" />
         <option value="$PROJECT_DIR$/illaclient/build.xml" />
         <option value="$PROJECT_DIR$/nifty-controls-illarion/src/org/illarion/nifty/controls/chatbox/ListBoxImpl.java" />
-        <option value="$PROJECT_DIR$/nifty-controls-illarion/src/org/illarion/nifty/controls/inventoryslot/InventorySlotControl.java" />
         <option value="$PROJECT_DIR$/illacommon/src/illarion/common/util/Crypto.java" />
         <option value="$PROJECT_DIR$/illabuild/illabuild.iml" />
         <option value="$PROJECT_DIR$/illaclient/illaclient.iml" />
@@ -266,6 +137,9 @@
         <option value="$PROJECT_DIR$/illaeasyquest/illaeasyquest.iml" />
         <option value="$PROJECT_DIR$/illamapedit/illamapedit.iml" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/nifty-controls-illarion/src/org/illarion/nifty/controls/inventoryslot/InventorySlotControl.java" />
+        <option value="$PROJECT_DIR$/illaclient/src/illarion/client/gui/GUIInventoryHandler.java" />
+        <option value="$PROJECT_DIR$/nifty-controls-illarion/nifty-controls/illarion-inventoryslot.xml" />
       </list>
     </option>
   </component>
@@ -332,7 +206,7 @@
         <subPane>
           <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="Illarion-Java" />
+              <option name="myItemId" value="Illarion Java Applications" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -354,6 +228,80 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="Illarion Java Applications" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Illarion Java Applications" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nifty-controls-illarion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Illarion Java Applications" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nifty-controls-illarion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="builder" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Illarion Java Applications" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nifty-controls-illarion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="inventoryslot" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Illarion Java Applications" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nifty-controls-illarion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Illarion Java Applications" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nifty-controls-illarion" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nifty-controls" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -386,7 +334,15 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="illabuild" />
+              <option name="myItemId" value="illaclient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gui" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -625,7 +581,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="6" width="1936" height="1042" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295583" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -640,7 +596,7 @@
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17574786" sideWeight="0.80973953" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959402" sideWeight="0.80973953" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39957264" sideWeight="0.80973953" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18589744" sideWeight="0.80973953" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18589744" sideWeight="0.80973953" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30690828" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19026047" sideWeight="0.49786323" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -746,20 +702,6 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$PROJECT_DIR$/illacommon/lib/nifty/nifty-1.3.1-sources.jar!/de/lessvoid/nifty/elements/render/TextRenderer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="146" column="0" selection-start="3257" selection-end="3257" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/illacommon/lib/nifty/nifty-1.3.1-sources.jar!/de/lessvoid/nifty/screen/Screen.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="525" column="0" selection-start="17600" selection-end="17600" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/illacommon/lib/nifty/nifty-1.3.1-sources.jar!/de/lessvoid/nifty/Nifty.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1481" column="0" selection-start="48390" selection-end="48390" vertical-scroll-proportion="0.0">
@@ -770,13 +712,6 @@
     <entry file="jar://$PROJECT_DIR$/illacommon/lib/nifty/nifty-1.3.1-sources.jar!/de/lessvoid/xml/tools/SpecialValuesReplace.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="59" column="0" selection-start="2436" selection-end="2436" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nifty-controls-illarion/src/org/illarion/nifty/controls/inventoryslot/InventorySlotControl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="189" column="0" selection-start="6461" selection-end="6461" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -792,23 +727,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="35" column="44" selection-start="1281" selection-end="1281" vertical-scroll-proportion="0.0">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/illacommon/src/illarion/common/util/Crypto.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="46" selection-start="2583" selection-end="2583" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#1983#2007#0" expanded="true" />
-            <element signature="e#3246#3270#0" expanded="true" />
-            <element signature="e#4456#4480#0" expanded="true" />
-            <element signature="e#5654#5678#0" expanded="true" />
-            <element signature="e#6991#7015#0" expanded="true" />
-            <element signature="e#7986#8010#0" expanded="true" />
-            <element signature="e#9342#9366#0" expanded="true" />
-            <element signature="e#9625#9649#0" expanded="true" />
-            <element signature="e#10942#10966#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -864,6 +782,34 @@
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state line="13" column="4" selection-start="184" selection-end="184" vertical-scroll-proportion="0.32122093">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/illacommon/src/illarion/common/util/Crypto.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="298" column="0" selection-start="10045" selection-end="10045" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/illaclient/src/illarion/client/gui/GUIInventoryHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="194" column="21" selection-start="6728" selection-end="6728" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nifty-controls-illarion/src/org/illarion/nifty/controls/inventoryslot/InventorySlotControl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="180" column="109" selection-start="6395" selection-end="6395" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nifty-controls-illarion/nifty-controls/illarion-inventoryslot.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="38" selection-start="1461" selection-end="1461" vertical-scroll-proportion="0.64244187">
           <folding />
         </state>
       </provider>

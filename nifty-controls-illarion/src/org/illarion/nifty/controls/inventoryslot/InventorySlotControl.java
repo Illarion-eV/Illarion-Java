@@ -18,12 +18,6 @@
  */
 package org.illarion.nifty.controls.inventoryslot;
 
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import org.bushe.swing.event.EventTopicSubscriber;
-import org.illarion.nifty.controls.InventorySlot;
-
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.AbstractController;
@@ -38,10 +32,14 @@ import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
+import org.bushe.swing.event.EventTopicSubscriber;
+import org.illarion.nifty.controls.InventorySlot;
+
+import java.util.Properties;
 
 /**
  * The control class of the inventory slot.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @deprecated Don't refer to this class in any application. Rather use the
  *             general interface of the inventory slot:
@@ -49,7 +47,7 @@ import de.lessvoid.xml.xpp3.Attributes;
  */
 @Deprecated
 public class InventorySlotControl extends AbstractController implements
-    InventorySlot {
+        InventorySlot {
     /**
      * The image that is dragged around.
      */
@@ -84,16 +82,16 @@ public class InventorySlotControl extends AbstractController implements
      * The event subscriber that is used to monitor the stop dragging events.
      */
     private EventTopicSubscriber<DraggableDragCanceledEvent> dragCanceledEvent;
-    
+
     private Screen screen;
     private Nifty nifty;
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void bind(Nifty nifty, Screen screen, Element element,
-        Properties parameter, Attributes controlDefinitionAttributes) {
+                     Properties parameter, Attributes controlDefinitionAttributes) {
         super.bind(element);
 
         this.screen = screen;
@@ -103,26 +101,25 @@ public class InventorySlotControl extends AbstractController implements
         draggable = droppable.findElementByName("#draggable");
         draggedImage = draggable.findElementByName("#draggableImage");
         backgroundImage = element.findElementByName("#backgroundImage");
-        backgroundImageLabel =
-            element.findElementByName("#backgroundImageLabel");
+        backgroundImageLabel = element.findElementByName("#backgroundImageLabel");
 
         dragStartEvent =
-            new EventTopicSubscriber<DraggableDragStartedEvent>() {
-                @Override
-                public void onEvent(String topic,
-                    DraggableDragStartedEvent data) {
-                    setVisibleOfDraggedImage(true);
-                }
-            };
+                new EventTopicSubscriber<DraggableDragStartedEvent>() {
+                    @Override
+                    public void onEvent(String topic,
+                                        DraggableDragStartedEvent data) {
+                        setVisibleOfDraggedImage(true);
+                    }
+                };
 
         dragCanceledEvent =
-            new EventTopicSubscriber<DraggableDragCanceledEvent>() {
-                @Override
-                public void onEvent(String topic,
-                    DraggableDragCanceledEvent data) {
-                    setVisibleOfDraggedImage(false);
-                }
-            };
+                new EventTopicSubscriber<DraggableDragCanceledEvent>() {
+                    @Override
+                    public void onEvent(String topic,
+                                        DraggableDragCanceledEvent data) {
+                        setVisibleOfDraggedImage(false);
+                    }
+                };
     }
 
     /**
@@ -132,8 +129,8 @@ public class InventorySlotControl extends AbstractController implements
     public void setImage(final NiftyImage image) {
         draggedImage.getRenderer(ImageRenderer.class).setImage(image);
         backgroundImage.getRenderer(ImageRenderer.class).setImage(image);
-        if (image != null) {
 
+        if (image != null) {
             int width = image.getWidth();
             int height = image.getHeight();
             if (width > getWidth()) {
@@ -146,9 +143,9 @@ public class InventorySlotControl extends AbstractController implements
             }
 
             final SizeValue widthSize =
-                new SizeValue(Integer.toString(width).concat("px"));
+                    new SizeValue(Integer.toString(width).concat("px"));
             final SizeValue heightSize =
-                new SizeValue(Integer.toString(height).concat("px"));
+                    new SizeValue(Integer.toString(height).concat("px"));
 
             draggable.setConstraintHeight(heightSize);
             draggable.setConstraintWidth(widthSize);
@@ -171,7 +168,7 @@ public class InventorySlotControl extends AbstractController implements
 
     /**
      * Set the visibility value of the dragged image.
-     * 
+     *
      * @param value the visibility value of the image
      */
     protected void setVisibleOfDraggedImage(final boolean value) {
@@ -209,6 +206,7 @@ public class InventorySlotControl extends AbstractController implements
     @Override
     public void setLabelText(final String text) {
         backgroundImageLabel.getNiftyControl(Label.class).setText(text);
+        backgroundImageLabel.getParent().layoutElements();
     }
 
     /**
@@ -244,5 +242,4 @@ public class InventorySlotControl extends AbstractController implements
     public boolean inputEvent(final NiftyInputEvent inputEvent) {
         return false;
     }
-
 }

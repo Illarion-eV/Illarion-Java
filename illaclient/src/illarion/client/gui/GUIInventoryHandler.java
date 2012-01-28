@@ -191,12 +191,12 @@ public final class GUIInventoryHandler implements
                     new EntitySlickRenderImage(displayedItem));
 
             invSlot.setImage(niftyImage);
-            invSlot.showLabel();
-            invSlot.setLabelText(Integer.toString(itemId));
-            //if (itemId > 1) {
-            //} else {
-            //    invSlot.hideLabel();
-            //}
+            invSlot.setLabelText(Integer.toString(count));
+            if (count > 1) {
+                invSlot.showLabel();
+            } else {
+                invSlot.hideLabel();
+            }
         } else {
             invSlot.setImage(null);
             invSlot.hideLabel();
