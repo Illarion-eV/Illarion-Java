@@ -19,11 +19,10 @@
 package org.illarion.nifty.controls.inventoryslot;
 
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
-
-import sun.print.BackgroundLookupListener;
 
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
@@ -85,7 +84,10 @@ public class InventorySlotControl extends AbstractController implements
      * The event subscriber that is used to monitor the stop dragging events.
      */
     private EventTopicSubscriber<DraggableDragCanceledEvent> dragCanceledEvent;
-
+    
+    private Screen screen;
+    private Nifty nifty;
+    
     /**
      * {@inheritDoc}
      */
@@ -93,6 +95,9 @@ public class InventorySlotControl extends AbstractController implements
     public void bind(Nifty nifty, Screen screen, Element element,
         Properties parameter, Attributes controlDefinitionAttributes) {
         super.bind(element);
+
+        this.screen = screen;
+        this.nifty = nifty;
 
         droppable = element.findElementByName("#droppable");
         draggable = droppable.findElementByName("#draggable");
@@ -118,11 +123,6 @@ public class InventorySlotControl extends AbstractController implements
                     setVisibleOfDraggedImage(false);
                 }
             };
-
-        nifty.subscribe(screen, draggable.getId(),
-            DraggableDragStartedEvent.class, dragStartEvent);
-        nifty.subscribe(screen, draggable.getId(),
-            DraggableDragCanceledEvent.class, dragCanceledEvent);
     }
 
     /**
@@ -150,6 +150,8 @@ public class InventorySlotControl extends AbstractController implements
             final SizeValue heightSize =
                 new SizeValue(Integer.toString(height).concat("px"));
 
+            draggable.setConstraintHeight(heightSize);
+            draggable.setConstraintWidth(widthSize);
             draggedImage.setConstraintHeight(heightSize);
             draggedImage.setConstraintWidth(widthSize);
             backgroundImage.setVisible(true);
@@ -227,6 +229,11 @@ public class InventorySlotControl extends AbstractController implements
      */
     @Override
     public void onStartScreen() {
+        nifty.subscribe(screen, draggable.getId(),
+                DraggableDragStartedEvent.class, dragStartEvent);
+        nifty.subscribe(screen, draggable.getId(),
+                DraggableDragCanceledEvent.class, dragCanceledEvent);
+
         retrieveDraggable();
     }
 
