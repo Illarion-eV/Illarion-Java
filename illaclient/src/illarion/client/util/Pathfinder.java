@@ -18,14 +18,12 @@
  */
 package illarion.client.util;
 
-import javolution.util.FastComparator;
-import javolution.util.FastTable;
-
 import illarion.client.crash.PathfinderCrashHandler;
-
 import illarion.common.util.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
+import javolution.util.FastComparator;
+import javolution.util.FastTable;
 
 /**
  * Pathfinder to search the best way between two locations. Using the

@@ -18,30 +18,22 @@
  */
 package illarion.client.util;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.procedure.TIntObjectProcedure;
 import illarion.client.Login;
 import illarion.client.world.World;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Key;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
+import org.apache.log4j.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.log4j.Logger;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.procedure.TIntObjectProcedure;
+import java.io.*;
+import java.security.Key;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 /**
  * This class handles everything around the table that stores the names of the
@@ -102,7 +94,7 @@ public final class NamesTable {
     private static final int BUFFER_SIZE = 10000000;
 
     /**
-     * AND-Mask for masking the lowerst byte of a value.
+     * AND-Mask for masking the lowest byte of a value.
      */
     private static final int BYTE_MASK_1 = (1 << Byte.SIZE) - 1;
 
@@ -184,7 +176,7 @@ public final class NamesTable {
      */
     @SuppressWarnings("boxing")
     public void addName(final long charID, final String charName) {
-        final int charIDint = (int) (charID - (1 << Integer.SIZE));
+        final int charIDint = (int) (charID - (1L << Integer.SIZE));
         names.put(charIDint, charName);
     }
 
@@ -197,7 +189,7 @@ public final class NamesTable {
      *             the buffer
      */
     @SuppressWarnings("nls")
-    public String decodeString(final byte[] buffer) throws IOException {
+    String decodeString(final byte[] buffer) throws IOException {
         final int len = decodeByte(buffer);
 
         if ((cursor + len) > buffer.length) {
@@ -217,7 +209,7 @@ public final class NamesTable {
      * @return the name of the character that was found or null
      */
     public String getName(final long charID) {
-        final int charIDint = (int) (charID - (1 << Integer.SIZE));
+        final int charIDint = (int) (charID - (1L << Integer.SIZE));
         return names.get(charIDint);
     }
 
@@ -227,7 +219,7 @@ public final class NamesTable {
     @SuppressWarnings("nls")
     public void saveTable() {
         if (nameTable.exists() && !nameTable.canWrite()) {
-            LOGGER.error("Nametable File locked, can't write the"
+            LOGGER.error("Name table File locked, can't write the"
                 + " name table.");
             return;
         }
@@ -236,23 +228,23 @@ public final class NamesTable {
 
         final byte[] keyName = new byte[DESKeySpec.DES_KEY_LEN];
         final String charName = World.getPlayer().getCharacter().getName();
-        byte[] convString;
+        byte[] conversationString;
         try {
-            convString = charName.getBytes("ISO-8859-1");
+            conversationString = charName.getBytes("ISO-8859-1");
         } catch (final UnsupportedEncodingException e) {
             LOGGER.error("Encoding problem ISO-8859-1 not found");
-            convString = charName.getBytes();
+            conversationString = charName.getBytes();
         }
         for (int i = 0; i < keyName.length; ++i) {
-            if (i < convString.length) {
-                keyName[i] = convString[i];
+            if (i < conversationString.length) {
+                keyName[i] = conversationString[i];
             } else {
                 keyName[i] = (byte) i;
             }
 
         }
         final Key key = new SecretKeySpec(keyName, "DES");
-        Cipher cipher = null;
+        Cipher cipher;
         try {
             cipher = Cipher.getInstance("DES");
             cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -265,9 +257,9 @@ public final class NamesTable {
 
         cursor = 0;
 
-        FileOutputStream outStream = null;
+        FileOutputStream outStream;
         ZipOutputStream gOutStream = null;
-        CipherOutputStream cOutStream = null;
+        CipherOutputStream cOutStream;
         try {
             outStream = new FileOutputStream(nameTable);
             cOutStream = new CipherOutputStream(outStream, cipher);
@@ -335,14 +327,14 @@ public final class NamesTable {
     void encodeString(final byte[] buffer, final String txt) {
         final int len = txt.length();
         buffer[cursor++] = (byte) (len & BYTE_MASK_1);
-        byte[] convString;
+        byte[] conversationString;
         try {
-            convString = txt.getBytes(ENCODING);
+            conversationString = txt.getBytes(ENCODING);
         } catch (final UnsupportedEncodingException e) {
             LOGGER.error("Encoding problem " + ENCODING + " not found");
-            convString = txt.getBytes();
+            conversationString = txt.getBytes();
         }
-        for (final byte value : convString) {
+        for (final byte value : conversationString) {
             buffer[cursor++] = value;
         }
     }
@@ -353,11 +345,9 @@ public final class NamesTable {
      * 
      * @param buffer the buffer that contains the data that is encoded
      * @return the decoded unsigned byte
-     * @throws IOException If there are more byte read then there are written in
-     *             the buffer
      */
     @SuppressWarnings("nls")
-    private int decodeByte(final byte[] buffer) throws IOException {
+    private int decodeByte(final byte[] buffer) {
         if (cursor == buffer.length) {
             throw new IndexOutOfBoundsException("Reading beyond buffer");
         }
@@ -374,10 +364,8 @@ public final class NamesTable {
      * 
      * @param buffer the buffer contains the data that shall be decoded
      * @return The two bytes in the buffer handled as unsigned 4 byte value
-     * @throws IOException If there are more byte read then there are written in
-     *             the buffer
      */
-    private int decodeInteger(final byte[] buffer) throws IOException {
+    private int decodeInteger(final byte[] buffer) {
         int temp = decodeByte(buffer);
         temp <<= Byte.SIZE;
         temp += decodeByte(buffer);
@@ -409,30 +397,28 @@ public final class NamesTable {
 
         final byte[] keyName = new byte[DESKeySpec.DES_KEY_LEN];
         final String charName = Login.getInstance().getSelectedCharacterName();
-        byte[] convString;
+        byte[] conversationString;
         try {
-            convString = charName.getBytes("ISO-8859-1");
+            conversationString = charName.getBytes("ISO-8859-1");
         } catch (final UnsupportedEncodingException e) {
             LOGGER.error("Encoding problem ISO-8859-1 not found");
-            convString = charName.getBytes();
+            conversationString = charName.getBytes();
         }
         for (int i = 0; i < keyName.length; ++i) {
-            if (i < convString.length) {
-                keyName[i] = convString[i];
+            if (i < conversationString.length) {
+                keyName[i] = conversationString[i];
             } else {
                 keyName[i] = (byte) i;
             }
-
         }
         final Key key = new SecretKeySpec(keyName, "DES");
 
-        Cipher cipher = null;
+        Cipher cipher;
         try {
             cipher = Cipher.getInstance("DES");
             cipher.init(Cipher.DECRYPT_MODE, key);
         } catch (final Exception e) {
-            LOGGER.error("Problem while creating cipher. File "
-                + "operations disabled.", e);
+            LOGGER.error("Problem while creating cipher. File operations disabled.", e);
             fileOperations = false;
             return;
         }
@@ -441,9 +427,9 @@ public final class NamesTable {
 
         cursor = 0;
 
-        FileInputStream inStream = null;
+        FileInputStream inStream;
         ZipInputStream gInStream = null;
-        CipherInputStream cInStream = null;
+        CipherInputStream cInStream;
         try {
             inStream = new FileInputStream(nameTable);
             cInStream = new CipherInputStream(inStream, cipher);
@@ -451,7 +437,7 @@ public final class NamesTable {
 
             gInStream.getNextEntry();
             // read all the data from the stream.
-            int read = 0;
+            int read;
             int totalRead = 0;
             while (0 < (read =
                 gInStream.read(buffer, totalRead, buffer.length - totalRead))) {
@@ -459,16 +445,16 @@ public final class NamesTable {
             }
             gInStream.closeEntry();
 
-            String charname = decodeString(buffer);
+            String characterName = decodeString(buffer);
 
-            if (charname.equals(charName)) {
+            if (characterName.equals(charName)) {
                 final int count = decodeInteger(buffer);
                 int i = 0;
-                int charID = 0;
+                int charID;
                 while (count > i++) {
                     charID = decodeInteger(buffer);
-                    charname = decodeString(buffer);
-                    names.put(charID, charname);
+                    characterName = decodeString(buffer);
+                    names.put(charID, characterName);
                 }
             }
 

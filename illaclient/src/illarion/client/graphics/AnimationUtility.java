@@ -18,9 +18,8 @@
  */
 package illarion.client.graphics;
 
-import org.newdawn.slick.Color;
-
 import illarion.common.util.FastMath;
+import org.newdawn.slick.Color;
 
 /**
  * This is a utility class that provides a few static functions that are handy

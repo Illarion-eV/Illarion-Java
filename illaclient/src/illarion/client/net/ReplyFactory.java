@@ -18,44 +18,9 @@
  */
 package illarion.client.net;
 
-import javolution.context.PoolContext;
-
-import illarion.client.net.server.AbstractReply;
-import illarion.client.net.server.AppearanceMsg;
-import illarion.client.net.server.AttributeMsg;
-import illarion.client.net.server.BookMsg;
-import illarion.client.net.server.ChangeItemMsg;
-import illarion.client.net.server.CharacterAnimationMsg;
-import illarion.client.net.server.CloseShowcaseMsg;
-import illarion.client.net.server.DateTimeMsg;
-import illarion.client.net.server.DisconnectMsg;
-import illarion.client.net.server.EffectMsg;
-import illarion.client.net.server.IntroduceMsg;
-import illarion.client.net.server.InventoryMsg;
-import illarion.client.net.server.ItemUpdateMsg;
-import illarion.client.net.server.LocationMsg;
-import illarion.client.net.server.LookatCharMsg;
-import illarion.client.net.server.LookatInvMsg;
-import illarion.client.net.server.LookatShowcaseMsg;
-import illarion.client.net.server.LookatTileMsg;
-import illarion.client.net.server.MagicFlagMsg;
-import illarion.client.net.server.MapStripeMsg;
-import illarion.client.net.server.MenuMsg;
-import illarion.client.net.server.MoveMsg;
-import illarion.client.net.server.MusicMsg;
-import illarion.client.net.server.PlayerIdMsg;
-import illarion.client.net.server.PutItemMsg;
-import illarion.client.net.server.RemoveCharMsg;
-import illarion.client.net.server.RemoveItemMsg;
-import illarion.client.net.server.SayMsg;
-import illarion.client.net.server.ShowcaseMsg;
-import illarion.client.net.server.SimpleMsg;
-import illarion.client.net.server.SkillMsg;
-import illarion.client.net.server.TextRequestMsg;
-import illarion.client.net.server.TurnCharMsg;
-import illarion.client.net.server.WeatherMsg;
-
+import illarion.client.net.server.*;
 import illarion.common.util.RecycleFactory;
+import javolution.context.PoolContext;
 
 /**
  * The Factory for commands the server sends to the client. This factory

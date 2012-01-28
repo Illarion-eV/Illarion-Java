@@ -18,14 +18,13 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.CombatHandler;
 import illarion.client.world.World;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Generic simple message, used for messages that do not contain

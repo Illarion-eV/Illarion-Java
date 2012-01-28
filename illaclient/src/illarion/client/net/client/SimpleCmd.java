@@ -66,7 +66,6 @@ public final class SimpleCmd extends AbstractCommand {
      */
     @Override
     public void encode(final NetCommWriter writer) {
-        return;
     }
 
     /**

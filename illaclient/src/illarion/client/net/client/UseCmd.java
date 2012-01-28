@@ -18,12 +18,12 @@
  */
 package illarion.client.net.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
 import illarion.client.world.interactive.UseTarget;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Client Command: Use something, optional with something else (

@@ -18,23 +18,19 @@
  */
 package illarion.client.util;
 
+import illarion.client.IllaClient;
+import illarion.client.world.Char;
+import illarion.client.world.World;
+import illarion.common.config.Config;
+import illarion.common.config.ConfigChangeListener;
+import javolution.text.TextBuilder;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-import java.util.logging.FileHandler;
-
-import javolution.text.TextBuilder;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
-import illarion.client.IllaClient;
-import illarion.client.world.Char;
-import illarion.client.world.World;
-
-import illarion.common.config.Config;
-import illarion.common.config.ConfigChangeListener;
 
 /**
  * Class to handle the logging of the chat in the game to the logfile.

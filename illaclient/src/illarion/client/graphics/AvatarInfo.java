@@ -18,10 +18,10 @@
  */
 package illarion.client.graphics;
 
+import illarion.common.graphics.CharAnimations;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import illarion.common.graphics.CharAnimations;
 
 /**
  * Additional Info for an avatar. Every avatar for every avatar gets only one
@@ -124,7 +124,7 @@ public final class AvatarInfo {
         final int visibilityMod, final String germanDesc,
         final String englishDesc) {
 
-        final Integer key = Integer.valueOf(appearance);
+        final Integer key = appearance;
         if (buffer.containsKey(key)) {
             return buffer.get(key);
         }

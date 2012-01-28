@@ -18,17 +18,15 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.list.array.TShortArrayList;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
-
 import illarion.common.util.Location;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Update Items on map (

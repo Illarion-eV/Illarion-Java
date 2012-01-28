@@ -24,19 +24,14 @@ import illarion.client.net.NetComm;
 import illarion.client.net.client.LoginCmd;
 import illarion.client.net.client.MapDimensionCmd;
 import illarion.client.util.Lang;
-import illarion.common.util.Base64;
-
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
-
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
-import java.nio.charset.Charset;
-import java.security.GeneralSecurityException;
-import java.util.List;
+import illarion.common.util.Base64;
+import javolution.util.FastTable;
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -44,13 +39,14 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import javolution.util.FastTable;
-
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.security.GeneralSecurityException;
+import java.util.List;
 
 /**
  * This class is used to store the login parameters and handle the requests that

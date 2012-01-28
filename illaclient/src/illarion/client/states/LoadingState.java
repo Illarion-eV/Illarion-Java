@@ -1,12 +1,9 @@
 package illarion.client.states;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.slick2d.NiftyBasicGameState;
 import illarion.client.gui.controller.LoadScreenController;
 import illarion.client.loading.Loading;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -14,8 +11,9 @@ import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.opengl.SlickCallable;
 import org.newdawn.slick.state.StateBasedGame;
 
-import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.slick2d.NiftyBasicGameState;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This game state is active while the game loads. It takes care for showing the

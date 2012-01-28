@@ -18,16 +18,14 @@
  */
 package illarion.client.graphics;
 
-import java.awt.Rectangle;
-
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
-
 import illarion.client.resources.CharacterFactory;
 import illarion.client.util.Lang;
 import illarion.client.world.World;
-
 import illarion.common.graphics.Sprite;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+
+import java.awt.*;
 
 /**
  * Class for the avatar of a characters. The avatar is the visual representation

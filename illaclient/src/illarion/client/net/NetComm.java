@@ -18,29 +18,24 @@
  */
 package illarion.client.net;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
-import java.nio.channels.spi.SelectorProvider;
-import java.nio.charset.Charset;
-import java.util.TimerTask;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import javolution.text.TextBuilder;
-
-import org.apache.log4j.Logger;
-
 import illarion.client.Debug;
 import illarion.client.IllaClient;
 import illarion.client.Servers;
 import illarion.client.crash.NetCommCrashHandler;
 import illarion.client.net.client.AbstractCommand;
 import illarion.client.net.server.AbstractReply;
-
-import illarion.common.util.Scheduler;
 import illarion.common.util.Timer;
+import javolution.text.TextBuilder;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.nio.channels.spi.SelectorProvider;
+import java.nio.charset.Charset;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Network communication interface. All activities like sending and transmitting
@@ -193,8 +188,7 @@ public final class NetComm {
         int bytes = 0;
         while (buffer.hasRemaining()) {
             final byte bufferValue = buffer.get();
-            builder.append(String.format(DUMP_FORMAT_BYTES,
-                Byte.valueOf(bufferValue)));
+            builder.append(String.format(DUMP_FORMAT_BYTES, bufferValue));
 
             final char c = (char) ((bufferValue + CHAR_MOD) % CHAR_MOD);
             if (c >= FIRST_PRINT_CHAR) {
@@ -206,8 +200,7 @@ public final class NetComm {
         }
 
         builder.append(' ');
-        builder
-            .append(String.format(DUMP_FORMAT_TOTAL, Integer.valueOf(bytes)));
+        builder.append(String.format(DUMP_FORMAT_TOTAL, bytes));
         builder.append(' ');
         builder.append('<');
         builder.append(builderText);

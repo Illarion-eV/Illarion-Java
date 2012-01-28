@@ -18,16 +18,14 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
-import javolution.util.FastList;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.GameMap;
 import illarion.client.world.World;
-
 import illarion.common.util.Location;
+import javolution.util.FastList;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Map stripe (

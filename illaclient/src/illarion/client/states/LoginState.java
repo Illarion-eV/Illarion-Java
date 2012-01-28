@@ -1,12 +1,10 @@
 package illarion.client.states;
 
-import illarion.client.gui.controller.CharScreenController;
-import illarion.client.gui.controller.LoginScreenController;
-
-import org.newdawn.slick.state.StateBasedGame;
-
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.slick2d.NiftyBasicGameState;
+import illarion.client.gui.controller.CharScreenController;
+import illarion.client.gui.controller.LoginScreenController;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * This game state is used to display the login and character selection dialog.

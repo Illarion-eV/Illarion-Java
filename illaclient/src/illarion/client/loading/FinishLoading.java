@@ -1,10 +1,9 @@
 package illarion.client.loading;
 
 import illarion.common.graphics.SpriteBuffer;
+import org.newdawn.slick.loading.DeferredResource;
 
 import java.io.IOException;
-
-import org.newdawn.slick.loading.DeferredResource;
 
 /**
  * The finishing task for the loading sequence. This one should be called as

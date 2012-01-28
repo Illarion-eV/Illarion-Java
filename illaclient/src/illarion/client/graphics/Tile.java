@@ -18,15 +18,13 @@
  */
 package illarion.client.graphics;
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
-
 import illarion.client.resources.TileFactory;
 import illarion.common.graphics.MapVariance;
+import illarion.common.graphics.Sprite;
 import illarion.common.graphics.TileInfo;
 import illarion.common.util.Location;
-
-import illarion.common.graphics.Sprite;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 /**
  * Created: 20.08.2005 17:39:11

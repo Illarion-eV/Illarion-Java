@@ -18,38 +18,9 @@
  */
 package illarion.client.net;
 
-import javolution.context.PoolContext;
-
-import illarion.client.net.client.AbstractCommand;
-import illarion.client.net.client.AttackCmd;
-import illarion.client.net.client.CastCmd;
-import illarion.client.net.client.DragInvInvCmd;
-import illarion.client.net.client.DragInvMapCmd;
-import illarion.client.net.client.DragInvScCmd;
-import illarion.client.net.client.DragMapInvCmd;
-import illarion.client.net.client.DragMapMapCmd;
-import illarion.client.net.client.DragMapScCmd;
-import illarion.client.net.client.DragScInvCmd;
-import illarion.client.net.client.DragScMapCmd;
-import illarion.client.net.client.DragScScCmd;
-import illarion.client.net.client.LoginCmd;
-import illarion.client.net.client.LookatCharCmd;
-import illarion.client.net.client.LookatInvCmd;
-import illarion.client.net.client.LookatMenuCmd;
-import illarion.client.net.client.LookatShowcaseCmd;
-import illarion.client.net.client.LookatTileCmd;
-import illarion.client.net.client.MapDimensionCmd;
-import illarion.client.net.client.MoveCmd;
-import illarion.client.net.client.OpenBagCmd;
-import illarion.client.net.client.OpenMapCmd;
-import illarion.client.net.client.OpenShowcaseCmd;
-import illarion.client.net.client.RequestAppearanceCmd;
-import illarion.client.net.client.SayCmd;
-import illarion.client.net.client.SimpleCmd;
-import illarion.client.net.client.TextResponseCmd;
-import illarion.client.net.client.UseCmd;
-
+import illarion.client.net.client.*;
 import illarion.common.util.RecycleFactory;
+import javolution.context.PoolContext;
 
 /**
  * The Factory for commands the client sends to the server. This factory

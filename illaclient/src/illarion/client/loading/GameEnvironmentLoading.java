@@ -2,10 +2,9 @@ package illarion.client.loading;
 
 import illarion.client.world.GameFactory;
 import illarion.client.world.World;
+import org.newdawn.slick.loading.DeferredResource;
 
 import java.io.IOException;
-
-import org.newdawn.slick.loading.DeferredResource;
 
 /**
  * This loading task takes care for loading the components of the game

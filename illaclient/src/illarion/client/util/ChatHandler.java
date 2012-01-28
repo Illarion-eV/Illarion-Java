@@ -18,23 +18,20 @@
  */
 package illarion.client.util;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javolution.util.FastList;
-import javolution.util.FastTable;
-
-import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-
 import illarion.client.crash.ChatCrashHandler;
 import illarion.client.world.Char;
 import illarion.client.world.World;
-
 import illarion.common.util.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
+import javolution.util.FastList;
+import javolution.util.FastTable;
+import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
+
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This chat handler fetches all texts send by the network interface and

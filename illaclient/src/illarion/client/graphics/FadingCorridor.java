@@ -18,9 +18,9 @@
  */
 package illarion.client.graphics;
 
-import java.awt.Rectangle;
-
 import illarion.common.graphics.Layers;
+
+import java.awt.*;
 
 /**
  * This fading corridor is used to fade out the objects that would block the

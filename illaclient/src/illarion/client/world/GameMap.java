@@ -30,11 +30,10 @@ import illarion.common.graphics.LightingMap;
 import illarion.common.util.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
+import org.newdawn.slick.Color;
 
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.newdawn.slick.Color;
 
 /**
  * This handler stores all map data and ensures the updates of the map. This

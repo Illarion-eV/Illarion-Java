@@ -18,12 +18,10 @@
  */
 package illarion.client.net.client;
 
-import javolution.text.TextBuilder;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
-
 import illarion.common.util.Location;
+import javolution.text.TextBuilder;
 
 /**
  * Client Command: Dragging a item from the game map to the game map (

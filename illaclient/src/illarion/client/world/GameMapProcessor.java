@@ -22,7 +22,6 @@ import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.procedure.TLongObjectProcedure;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.common.util.Location;
-
 import org.apache.log4j.Logger;
 
 /**
@@ -636,11 +635,8 @@ public class GameMapProcessor extends Thread implements
         foundTile =
             parent.getMapAt(searchLoc.getScX(), searchLoc.getScY(),
                 searchLoc.getScZ() - 1);
-        if ((foundTile != null) && foundTile.isHidden()) {
-            return true;
-        }
 
-        return false;
+        return (foundTile != null) && foundTile.isHidden();
     }
 
     /**

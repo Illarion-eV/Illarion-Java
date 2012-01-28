@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="XPP3">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/xpp3" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/xpp3" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/xpp3" recursive="false" />
+  </library>
+</component>

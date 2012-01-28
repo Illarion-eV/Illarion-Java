@@ -1,16 +1,15 @@
 package illarion.client.gui.controller;
 
 
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.Game;
+import illarion.client.Login;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
-
-import illarion.client.Game;
-import illarion.client.Login;
-import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.screen.Screen;
-import de.lessvoid.nifty.screen.ScreenController;
-import de.lessvoid.nifty.controls.ListBox;
 
 public class CharScreenController implements ScreenController {
 

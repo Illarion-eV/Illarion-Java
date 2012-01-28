@@ -18,13 +18,13 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.util.Lang;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Disconnect by server (

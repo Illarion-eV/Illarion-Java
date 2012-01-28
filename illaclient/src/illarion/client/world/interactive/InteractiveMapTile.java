@@ -18,7 +18,6 @@
  */
 package illarion.client.world.interactive;
 
-import illarion.client.graphics.AbstractEntity;
 import illarion.client.graphics.Item;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;

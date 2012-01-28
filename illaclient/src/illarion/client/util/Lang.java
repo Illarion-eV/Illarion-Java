@@ -18,15 +18,14 @@
  */
 package illarion.client.util;
 
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
-import org.apache.log4j.Logger;
-
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
 import illarion.common.util.MessageSource;
+import org.apache.log4j.Logger;
+
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * Localized text handler. Loads the localized messages and returns them if

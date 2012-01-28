@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Slick">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/slick" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/slick" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/slick" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/slick" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/slick" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/slick" recursive="false" type="SOURCES" />
+  </library>
+</component>

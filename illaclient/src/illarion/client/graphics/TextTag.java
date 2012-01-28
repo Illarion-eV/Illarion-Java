@@ -18,16 +18,13 @@
  */
 package illarion.client.graphics;
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
-
 import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
 import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
-
 import illarion.client.world.GameFactory;
-
 import illarion.common.graphics.FontLoader;
 import illarion.common.util.RecycleObject;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 /**
  * The text tags are the small texts over the heads of characters that display
@@ -97,9 +94,6 @@ public class TextTag implements RecycleObject {
     }
 
     public void addToCamera(final int x, final int y) {
-        if (text == null) {
-            return;
-        }
     }
 
     /**

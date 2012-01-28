@@ -17,8 +17,9 @@ You should have received a copy of the GNU General Public License along with
 the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 -->
 <project name="Illarion Build Imports" basedir=".">
-	<property file="../illacommon/local.location.properties" />
-	<property file="../illacommon/location.properties" />
+    <dirname property="illacommon.include.dir" file="${ant.file.Illarion Build Imports}" />
+	<property file="${illacommon.include.dir}/local.location.properties" />
+	<property file="${illacommon.include.dir}/location.properties" />
 
 	<import file="${sign}/build_keys.xml" optional="true" />
 

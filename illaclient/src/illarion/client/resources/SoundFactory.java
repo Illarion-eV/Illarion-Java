@@ -19,14 +19,12 @@
 package illarion.client.resources;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import illarion.client.util.IdWrapper;
-
-import java.util.logging.Logger;
-
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
+
+import java.util.logging.Logger;
 
 /**
  * This factory provides access to all known sound files.

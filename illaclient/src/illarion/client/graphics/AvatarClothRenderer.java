@@ -18,13 +18,12 @@
  */
 package illarion.client.graphics;
 
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
+import illarion.common.util.Location;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
-import illarion.common.util.Location;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * This class is able to trigger the rendering of the clothes of a avatar. The

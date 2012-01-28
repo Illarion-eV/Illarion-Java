@@ -18,20 +18,6 @@
  */
 package illarion.client.world.interactive;
 
-import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.builder.ControlBuilder;
-import de.lessvoid.nifty.builder.ImageBuilder;
-import de.lessvoid.nifty.controls.dragndrop.DraggableControl;
-import de.lessvoid.nifty.controls.dragndrop.builder.DraggableBuilder;
-import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.ImageRenderer;
-import de.lessvoid.nifty.input.NiftyMouseInputEvent;
-import de.lessvoid.nifty.loaderv2.types.ImageType;
-import de.lessvoid.nifty.render.NiftyImage;
-import de.lessvoid.nifty.screen.Screen;
-import de.lessvoid.nifty.tools.SizeValue;
-import illarion.client.graphics.Item;
-import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.world.World;
 
 /**

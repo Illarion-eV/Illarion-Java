@@ -1,20 +1,19 @@
 package illarion.client.gui.controller;
 
-import org.newdawn.slick.state.StateBasedGame;
-
-import illarion.client.Login;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.loaderv2.types.PanelType;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import de.lessvoid.nifty.loaderv2.types.PanelType;
-import de.lessvoid.nifty.builder.PanelBuilder;
+import illarion.client.Login;
+import org.newdawn.slick.state.StateBasedGame;
 
 
 public final class LoginScreenController implements ScreenController, KeyInputHandler {

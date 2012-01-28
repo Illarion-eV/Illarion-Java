@@ -18,12 +18,12 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.Weather;
 import illarion.client.world.World;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Update of the current weather (

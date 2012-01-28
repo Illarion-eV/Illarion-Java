@@ -18,16 +18,14 @@
  */
 package illarion.client.graphics;
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
-
 import illarion.client.resources.ItemFactory;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
-import illarion.common.util.Location;
-
 import illarion.common.graphics.Sprite;
+import illarion.common.util.Location;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 /**
  * A item is a object that is on the game map or in the inventory or in any

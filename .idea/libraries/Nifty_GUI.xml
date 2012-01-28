@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Nifty-GUI">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/nifty" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/nifty" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/nifty" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/nifty" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/nifty" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/nifty" recursive="false" type="SOURCES" />
+  </library>
+</component>

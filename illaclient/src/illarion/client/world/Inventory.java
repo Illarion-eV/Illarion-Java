@@ -19,7 +19,6 @@
 package illarion.client.world;
 
 import illarion.client.net.server.events.InventoryUpdateEvent;
-
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 

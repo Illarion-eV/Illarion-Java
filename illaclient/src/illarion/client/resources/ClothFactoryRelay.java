@@ -21,10 +21,9 @@ package illarion.client.resources;
 import illarion.client.graphics.Avatar;
 import illarion.client.graphics.AvatarCloth;
 import illarion.client.graphics.AvatarClothManager;
+import javolution.util.FastTable;
 
 import java.util.List;
-
-import javolution.util.FastTable;
 
 /**
  * This class is not real resource factory. Its a relay that forwards the cloth

@@ -304,18 +304,17 @@ public final class Crypto {
         try {
             final String keyValue =
                 System.getProperty("illarion.common.crypto.public");
-            if ((keyValue != null)
-                && loadPublicKeyImpl(new FileInputStream(new File(keyValue)))) {
-                return;
+            if (keyValue != null) {
+                if (loadPublicKeyImpl(Crypto.class.getClassLoader().getResourceAsStream(keyValue))) {
+                    return;
+                } else if (loadPublicKeyImpl(new FileInputStream(new File(keyValue)))) {
+                    return;
+                }
             }
         } catch (final FileNotFoundException e) {
             // the file was not found -> ignore
         }
 
-        if (loadPublicKeyImpl(Crypto.class.getClassLoader()
-            .getResourceAsStream(System.getProperty("illarion.common.crypto.public")))) {
-            return;
-        }
         LOGGER.log(Level.SEVERE, "Loading the public key failed.");
     }
 

@@ -31,11 +31,10 @@ import illarion.common.config.ConfigSystem;
 import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.Location;
-
-import java.awt.Point;
-import java.io.File;
-
 import org.newdawn.slick.openal.SoundStore;
+
+import java.awt.*;
+import java.io.File;
 
 /**
  * Main Class for the player controlled character.

@@ -33,7 +33,6 @@ import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
-
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 
@@ -480,11 +479,8 @@ public final class Char implements RecycleObject, AnimatedMove {
             return false;
         }
 
-        if (avatar == null) {
-            return true;
-        }
+        return avatar == null || avatar.clothItemExist(slot, id);
 
-        return avatar.clothItemExist(slot, id);
     }
 
     /**
@@ -819,7 +815,7 @@ public final class Char implements RecycleObject, AnimatedMove {
         // substitute missing name with description
         if (newName == null) {
             if ((scale > SCALE_MIN) && (avatar != null)) {
-                final StringBuffer result = new StringBuffer();
+                final StringBuilder result = new StringBuilder();
                 boolean standard = false;
 
                 // build scale qualifier

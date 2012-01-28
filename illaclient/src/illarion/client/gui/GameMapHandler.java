@@ -18,15 +18,6 @@
  */
 package illarion.client.gui;
 
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
-
-import illarion.client.graphics.Item;
-import illarion.client.input.DragOnMapEvent;
-import illarion.client.input.InputReceiver;
-import illarion.client.world.World;
-import illarion.client.world.interactive.InteractiveMapTile;
-
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
@@ -36,6 +27,13 @@ import de.lessvoid.nifty.input.NiftyMouseInputEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.graphics.Item;
+import illarion.client.input.DragOnMapEvent;
+import illarion.client.input.InputReceiver;
+import illarion.client.world.World;
+import illarion.client.world.interactive.InteractiveMapTile;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
 
 /**
  * This class is used to monitor all dropping operations on the droppable area

@@ -18,11 +18,11 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.util.BookFactory;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Book ( {@link illarion.client.net.CommandList#MSG_BOOK}).

@@ -18,22 +18,18 @@
  */
 package illarion.client.util;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
+import illarion.client.IllaClient;
+import illarion.common.util.TableLoader;
+import illarion.common.util.TableLoaderSink;
+import javolution.text.TextBuilder;
+import org.apache.log4j.Logger;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
-
-import javolution.text.TextBuilder;
-
-import org.apache.log4j.Logger;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
-
-import illarion.client.IllaClient;
-
-import illarion.common.util.TableLoader;
-import illarion.common.util.TableLoaderSink;
 
 /**
  * This class loads the book table and has the ability to load books from the

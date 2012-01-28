@@ -18,36 +18,24 @@
  */
 package illarion.client.gui;
 
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
+import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
+import de.lessvoid.nifty.controls.DroppableDroppedEvent;
+import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.render.NiftyImage;
+import de.lessvoid.nifty.screen.Screen;
 import illarion.client.graphics.Item;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.Inventory;
 import illarion.client.world.World;
-import illarion.common.graphics.FontLoader;
-
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
-import org.illarion.nifty.controls.inventoryslot.InventorySlotControl;
-
-import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.builder.EffectBuilder;
-import de.lessvoid.nifty.builder.ImageBuilder;
-import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
-import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
-import de.lessvoid.nifty.controls.DroppableDroppedEvent;
-import de.lessvoid.nifty.controls.Label;
-import de.lessvoid.nifty.controls.dragndrop.builder.DraggableBuilder;
-import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
-import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.ImageRenderer;
-import de.lessvoid.nifty.render.NiftyImage;
-import de.lessvoid.nifty.screen.Screen;
-import de.lessvoid.nifty.tools.Color;
-import de.lessvoid.nifty.tools.SizeValue;
 
 /**
  * This handler takes care for showing and hiding objects in the inventory. Also

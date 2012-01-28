@@ -21,9 +21,6 @@ package illarion.client.world;
 import illarion.client.graphics.AnimationUtility;
 import illarion.client.net.server.events.DateTimeUpdateEvent;
 import illarion.client.resources.SoundFactory;
-
-import java.util.Random;
-
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
@@ -31,6 +28,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Sound;
+
+import java.util.Random;
 
 /**
  * Weather control class. Generated and stores all effects caused by the weather

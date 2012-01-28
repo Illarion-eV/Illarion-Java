@@ -18,32 +18,9 @@
  */
 package illarion.client;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.swing.JOptionPane;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.bushe.swing.event.EventServiceExistsException;
-import org.bushe.swing.event.EventServiceLocator;
-import org.bushe.swing.event.ThreadSafeEventService;
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.opengl.renderer.Renderer;
-
 import de.lessvoid.nifty.slick2d.loaders.SlickAddLoaderLocation;
 import de.lessvoid.nifty.slick2d.loaders.SlickRenderFontLoaders;
 import de.lessvoid.nifty.slick2d.loaders.SlickRenderImageLoaders;
-
 import illarion.client.crash.DefaultCrashHandler;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
@@ -56,7 +33,6 @@ import illarion.client.util.ChatLog;
 import illarion.client.util.Lang;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
-
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
@@ -66,6 +42,22 @@ import illarion.common.graphics.TextureLoader;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.TableLoader;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.bushe.swing.event.EventServiceExistsException;
+import org.bushe.swing.event.EventServiceLocator;
+import org.bushe.swing.event.ThreadSafeEventService;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.renderer.Renderer;
+
+import javax.swing.*;
+import java.io.*;
+import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**

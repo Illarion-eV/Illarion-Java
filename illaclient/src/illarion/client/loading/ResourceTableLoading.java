@@ -1,30 +1,11 @@
 package illarion.client.loading;
 
-import illarion.client.resources.CharacterFactory;
-import illarion.client.resources.ClothFactoryRelay;
-import illarion.client.resources.EffectFactory;
-import illarion.client.resources.ItemFactory;
-import illarion.client.resources.OverlayFactory;
-import illarion.client.resources.RuneFactory;
-import illarion.client.resources.SongFactory;
-import illarion.client.resources.SoundFactory;
-import illarion.client.resources.TileFactory;
-import illarion.client.resources.loaders.CharacterLoader;
-import illarion.client.resources.loaders.ClothLoader;
-import illarion.client.resources.loaders.EffectLoader;
-import illarion.client.resources.loaders.ItemLoader;
-import illarion.client.resources.loaders.OverlayLoader;
-import illarion.client.resources.loaders.ResourceLoader;
-import illarion.client.resources.loaders.RuneLoader;
-import illarion.client.resources.loaders.SongLoader;
-import illarion.client.resources.loaders.SoundLoader;
-import illarion.client.resources.loaders.TileLoader;
+import illarion.client.resources.*;
+import illarion.client.resources.loaders.*;
+import javolution.context.ConcurrentContext;
+import org.newdawn.slick.loading.DeferredResource;
 
 import java.io.IOException;
-
-import javolution.context.ConcurrentContext;
-
-import org.newdawn.slick.loading.DeferredResource;
 
 /**
  * This class is used to allow the loading sequence of the client to load

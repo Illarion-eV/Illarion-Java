@@ -21,7 +21,6 @@ package illarion.client.input;
 import illarion.client.world.PlayerMovement;
 import illarion.client.world.World;
 import illarion.common.util.Location;
-
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.util.InputAdapter;
