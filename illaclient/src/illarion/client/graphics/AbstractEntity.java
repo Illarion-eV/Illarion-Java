@@ -18,12 +18,8 @@
  */
 package illarion.client.graphics;
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
-
 import illarion.client.IllaClient;
 import illarion.client.world.World;
-
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
 import illarion.common.graphics.Sprite;
@@ -31,6 +27,8 @@ import illarion.common.graphics.SpriteBuffer;
 import illarion.common.util.FastMath;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 /**
  * The entity is a object that is shown in the game. It contains a sprite and
@@ -688,11 +686,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      */
     public void setScale(final float newScale) {
         scale = newScale;
-        if (FastMath.abs(1.f - newScale) > FastMath.FLT_EPSILON) {
-            useScale = true;
-        } else {
-            useScale = false;
-        }
+        useScale = FastMath.abs(1.f - newScale) > FastMath.FLT_EPSILON;
     }
 
     /**

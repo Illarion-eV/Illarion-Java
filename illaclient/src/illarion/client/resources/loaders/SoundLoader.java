@@ -22,7 +22,6 @@ import illarion.client.resources.ResourceFactory;
 import illarion.client.util.IdWrapper;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
-
 import org.apache.log4j.Logger;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;

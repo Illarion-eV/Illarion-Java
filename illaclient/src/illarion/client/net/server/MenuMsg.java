@@ -18,11 +18,11 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-import java.util.Arrays;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Servermessage: Menu with items (

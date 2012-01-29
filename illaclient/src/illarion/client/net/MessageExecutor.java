@@ -18,17 +18,14 @@
  */
 package illarion.client.net;
 
-import java.util.concurrent.BlockingQueue;
-
-import javolution.util.FastList;
-
-import org.apache.log4j.Logger;
-
 import illarion.client.Debug;
 import illarion.client.IllaClient;
 import illarion.client.net.server.AbstractReply;
-
 import illarion.common.util.Stoppable;
+import javolution.util.FastList;
+import org.apache.log4j.Logger;
+
+import java.util.concurrent.BlockingQueue;
 
 /**
  * This class will take care that the messages received from the server are

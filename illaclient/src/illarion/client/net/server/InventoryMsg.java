@@ -21,10 +21,9 @@ package illarion.client.net.server;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.InventoryUpdateEvent;
+import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
-
-import org.bushe.swing.event.EventBus;
 
 /**
  * Servermessage: Update of a inventory item (

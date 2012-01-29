@@ -384,10 +384,8 @@ public class ListBoxImpl<T> extends EmptyNiftyControlImpl {
     if (selectionIndex >= viewDisplayItemCount) {
       return true;
     }
-    if (selectionIndex >= itemCount()) {
-      return true;
-    }
-    return false;
+
+    return selectionIndex >= itemCount();
   }
 
   private boolean invalidIndex(final int itemIndex) {
@@ -404,10 +402,8 @@ public class ListBoxImpl<T> extends EmptyNiftyControlImpl {
     if (itemIndex < 0) {
       return true;
     }
-    if (itemIndex > items.size()) {
-      return true;
-    }
-    return false;
+
+    return itemIndex > items.size();
   }
 
   private void focusItemIndexUpdate() {

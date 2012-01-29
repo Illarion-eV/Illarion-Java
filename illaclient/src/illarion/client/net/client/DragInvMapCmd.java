@@ -20,7 +20,6 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
-
 import illarion.common.util.Location;
 
 /**

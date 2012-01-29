@@ -18,12 +18,13 @@
  */
 package illarion.client.world.interactive;
 
-import static illarion.client.graphics.MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.client.world.GameMap;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.util.Location;
+
+import static illarion.client.graphics.MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
 
 /**
  * This interactive map class is used for the user interaction with the game

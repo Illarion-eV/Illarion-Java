@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/illabuild/illabuild.iml" filepath="$PROJECT_DIR$/illabuild/illabuild.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illaclient/illaclient.iml" filepath="$PROJECT_DIR$/illaclient/illaclient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illacommon/illacommon.iml" filepath="$PROJECT_DIR$/illacommon/illacommon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illadownload/illadownload.iml" filepath="$PROJECT_DIR$/illadownload/illadownload.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illaeasynpc/illaeasynpc.iml" filepath="$PROJECT_DIR$/illaeasynpc/illaeasynpc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illaeasyquest/illaeasyquest.iml" filepath="$PROJECT_DIR$/illaeasyquest/illaeasyquest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illamapedit/illamapedit.iml" filepath="$PROJECT_DIR$/illamapedit/illamapedit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nifty-controls-illarion/nifty-controls-illarion.iml" filepath="$PROJECT_DIR$/nifty-controls-illarion/nifty-controls-illarion.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nifty-style-illarion/nifty-style-illarion.iml" filepath="$PROJECT_DIR$/nifty-style-illarion/nifty-style-illarion.iml" />
+    </modules>
+  </component>
+</project>
+

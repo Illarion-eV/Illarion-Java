@@ -18,20 +18,17 @@
  */
 package illarion.client.graphics;
 
-import javolution.util.FastComparator;
-import javolution.util.FastTable;
-
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-
 import illarion.client.IllaClient;
-import illarion.client.world.World;
 import illarion.client.world.GameMap;
-
+import illarion.client.world.World;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
+import javolution.util.FastComparator;
+import javolution.util.FastTable;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 
 /**
  * The map display manager stores and manages all objects displayed on the map.
@@ -367,12 +364,10 @@ public final class MapDisplayManager implements AnimatedMove {
         Camera.getInstance().setViewport(-offX, -offY, c.getWidth(), c.getHeight());
 
         synchronized (display) {
-            DisplayItem currentItem;
             synchronized (GameMap.LIGHT_LOCK) {
                 // draw all items
                 final int itemCount = display.size();
-                for (int i = 0; i < itemCount; i++) {
-                    currentItem = display.get(i);
+                for (DisplayItem currentItem : display) {
                     currentItem.update(delta);
                     currentItem.draw(g);
                 }

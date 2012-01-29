@@ -18,13 +18,12 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
-import org.bushe.swing.event.EventBus;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.DateTimeUpdateEvent;
+import org.bushe.swing.event.EventBus;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Current date and time (

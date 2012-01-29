@@ -20,11 +20,10 @@ package illarion.client.graphics;
 
 import illarion.client.resources.EffectFactory;
 import illarion.client.world.World;
-
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
-import illarion.common.util.Location;
 import illarion.common.graphics.Sprite;
+import illarion.common.util.Location;
 
 /**
  * A effect is a frame based animation that shows at one tile on the game map.

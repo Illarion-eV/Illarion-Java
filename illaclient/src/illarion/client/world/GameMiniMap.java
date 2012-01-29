@@ -24,12 +24,12 @@ import illarion.client.resources.TileFactory;
 import illarion.common.graphics.MapColor;
 import illarion.common.graphics.Sprite;
 import illarion.common.util.Location;
+import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
@@ -40,11 +40,6 @@ import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
-
-import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
 
 /**
  * This class stores a reduced version of the full map the character knows. The

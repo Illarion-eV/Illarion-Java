@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="Substance Look&amp;Feel">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/substance" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/substance" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/substance-flamingo" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/substance-swingx" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/trident" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/substance" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/substance-flamingo" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/substance-swingx" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/trident" recursive="false" />
+  </library>
+</component>

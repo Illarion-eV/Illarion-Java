@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="PNGDecoder">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/twl" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/twl" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/twl" recursive="false" />
+  </library>
+</component>

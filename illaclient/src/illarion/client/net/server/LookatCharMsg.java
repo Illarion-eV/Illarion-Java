@@ -18,10 +18,10 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Look at description of a character (

@@ -18,15 +18,6 @@
  */
 package illarion.client.gui;
 
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
-
-import illarion.client.graphics.Item;
-import illarion.client.input.DragOnMapEvent;
-import illarion.client.input.InputReceiver;
-import illarion.client.world.World;
-import illarion.client.world.interactive.InteractiveMapTile;
-
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
@@ -36,6 +27,13 @@ import de.lessvoid.nifty.input.NiftyMouseInputEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.graphics.Item;
+import illarion.client.input.DragOnMapEvent;
+import illarion.client.input.InputReceiver;
+import illarion.client.world.World;
+import illarion.client.world.interactive.InteractiveMapTile;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
 
 /**
  * This class is used to monitor all dropping operations on the droppable area
@@ -159,18 +157,18 @@ public final class GameMapHandler implements
         World.getInteractionManager().dropAtMap(dropSpotX, dropSpotY);
     }
 
-    public void handleDragOnMap(final int oldx, final int oldy,
+    public boolean handleDragOnMap(final int oldx, final int oldy,
         final int newx, final int newy) {
         final InteractiveMapTile targetTile =
             World.getMap().getInteractive()
                 .getInteractiveTileOnScreenLoc(oldx, oldy);
 
         if (targetTile == null) {
-            return;
+            return false;
         }
 
         if (!targetTile.canDrag()) {
-            return;
+            return false;
         }
 
         if (activeScreen != null && activeNifty != null) {
@@ -212,6 +210,14 @@ public final class GameMapHandler implements
 
         World.getInteractionManager().notifyDraggingMap(targetTile,
             endOfDragOp);
+        
+        return true;
+    }
+    
+    private boolean moveToMouse(final int targetX, final int targetY) {
+        World.getPlayer().getMovementHandler().walkTowards(targetX, targetY);
+
+        return true;
     }
     
     /**
@@ -220,8 +226,11 @@ public final class GameMapHandler implements
     @Override
     public void onEvent(final String topic, final DragOnMapEvent data) {
         if (topic.equals(InputReceiver.EB_TOPIC)) {
-            handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(),
-                data.getNewY());
+            if (handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY())) {
+                return;
+            }
+
+            moveToMouse(data.getNewX(), data.getNewY());
         }
     }
 }

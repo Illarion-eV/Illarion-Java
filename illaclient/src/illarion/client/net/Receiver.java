@@ -18,6 +18,12 @@
  */
 package illarion.client.net;
 
+import illarion.client.Debug;
+import illarion.client.IllaClient;
+import illarion.client.net.server.AbstractReply;
+import illarion.client.util.Lang;
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -25,13 +31,6 @@ import java.nio.CharBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.CharsetDecoder;
 import java.util.concurrent.BlockingQueue;
-
-import org.apache.log4j.Logger;
-
-import illarion.client.Debug;
-import illarion.client.IllaClient;
-import illarion.client.net.server.AbstractReply;
-import illarion.client.util.Lang;
 
 /**
  * The Receiver class handles all data that is send from the server, decodes the

@@ -18,6 +18,7 @@
  */
 package illarion.common.util;
 
+import javolution.context.ObjectFactory;
 import javolution.util.FastList;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -37,13 +38,7 @@ public abstract class RecycleFactory<T extends RecycleObject> {
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      * @param <K> The class of the objects created by this factory
      */
-    private static final class PrototypeFactory<K extends RecycleObject> {
-        /**
-         * The list that stores the object instances that are currently not
-         * used.
-         */
-        public final FastList<K> buffer;
-
+    private static final class PrototypeFactory<K extends RecycleObject> extends ObjectFactory<K> {
         /**
          * The prototype used to create the duplicates.
          */
@@ -59,7 +54,6 @@ public abstract class RecycleFactory<T extends RecycleObject> {
         public PrototypeFactory(final K proto) {
             super();
             prototype = proto;
-            buffer = new FastList<K>();
             proto.reset();
             recycle(proto);
         }
@@ -76,37 +70,11 @@ public abstract class RecycleFactory<T extends RecycleObject> {
         }
 
         /**
-         * Fetch a object from this factory. Its either a newly created one or a
-         * old one from the buffer.
-         * 
-         * @return the object to be used
-         */
-        public K object() {
-            synchronized (buffer) {
-                if (!buffer.isEmpty()) {
-                    return buffer.removeLast();
-                }
-            }
-            return create();
-        }
-
-        /**
-         * Recycle a instance of the objects stored in this list. This causes
-         * that the object is placed back into the storage and used again later.
-         * 
-         * @param obj the object to recycle
-         */
-        public void recycle(final K obj) {
-            synchronized (buffer) {
-                buffer.addLast(obj);
-            }
-        }
-
-        /**
          * Create a new instance of the object. That causes that a clone of the
          * prototype is created.
          */
         @SuppressWarnings("unchecked")
+        @Override
         protected K create() {
             return (K) prototype.clone();
         }

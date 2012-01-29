@@ -18,12 +18,10 @@
  */
 package illarion.client.graphics;
 
-import org.apache.log4j.Logger;
-
 import illarion.client.resources.OverlayFactory;
-import illarion.common.util.RecycleObject;
-
 import illarion.common.graphics.Sprite;
+import illarion.common.util.RecycleObject;
+import org.apache.log4j.Logger;
 
 /**
  * Created: 20.08.2005 17:39:11

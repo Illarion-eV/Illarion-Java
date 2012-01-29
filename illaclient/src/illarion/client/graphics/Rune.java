@@ -33,6 +33,7 @@ public class Rune extends AbstractEntity {
      * @param id
      * @param name
      */
+    @Deprecated
     public Rune(final int id, final String name) {
         super(id, CHAR_PATH, name, 1, 0, 0, 0, 0, Sprite.HAlign.center,
             Sprite.VAlign.middle, false);

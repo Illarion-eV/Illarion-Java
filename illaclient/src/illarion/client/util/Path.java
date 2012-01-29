@@ -18,9 +18,9 @@
  */
 package illarion.client.util;
 
-import java.util.LinkedList;
-
 import illarion.common.util.Location;
+
+import java.util.LinkedList;
 
 /**
  * A path created by the path finder that stores the path nodes.

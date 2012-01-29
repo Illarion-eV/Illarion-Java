@@ -18,9 +18,9 @@
  */
 package illarion.client.graphics;
 
-import java.util.List;
-
 import javolution.util.FastTable;
+
+import java.util.List;
 
 /**
  * The main animation manager that handles and updates all animations that are

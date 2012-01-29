@@ -21,14 +21,12 @@ package illarion.client.resources;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.util.IdWrapper;
 import illarion.common.util.FastMath;
-
-import java.util.List;
-
+import javolution.util.FastTable;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
 
-import javolution.util.FastTable;
+import java.util.List;
 
 /**
  * The song factory, so the main storage for background music. While this sounds

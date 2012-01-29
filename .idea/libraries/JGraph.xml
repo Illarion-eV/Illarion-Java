@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="JGraph">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/jgraph" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/jgraph" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/jgraph" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/jgraph" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/jgraph" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/jgraph" recursive="false" type="SOURCES" />
+  </library>
+</component>

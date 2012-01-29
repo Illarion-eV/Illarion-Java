@@ -21,7 +21,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		   Build the collection of the common files into their jar file.
 	</description>
 
-	<import file="../illacommon/build_include.xml" />
+    <dirname property="illacommon.dir" file="${ant.file.Illarion Common}" />
+	<import file="${illacommon.dir}/build_include.xml" />
 
 	<property name="src" location="${common}/src" />
 	<property name="classes" location="${common}/antclasses" />

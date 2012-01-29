@@ -18,10 +18,9 @@
  */
 package illarion.client.input;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Input;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 /**
  * This class is used to generate events based on keys that got pressed.

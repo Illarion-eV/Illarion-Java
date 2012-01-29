@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Flamingo">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/flamingo" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/flamingo" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/flamingo" recursive="false" />
+  </library>
+</component>

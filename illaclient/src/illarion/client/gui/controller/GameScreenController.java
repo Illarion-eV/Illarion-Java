@@ -18,19 +18,17 @@
  */
 package illarion.client.gui.controller;
 
-import illarion.client.gui.GUIChatHandler;
-import illarion.client.gui.GUIInventoryHandler;
-import illarion.client.gui.GameMapHandler;
-import illarion.client.world.World;
-import illarion.client.world.interactive.InteractionManager;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Droppable;
-import de.lessvoid.nifty.controls.DroppableDroppedEvent;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.gui.GUIChatHandler;
+import illarion.client.gui.GUIInventoryHandler;
+import illarion.client.gui.GameMapHandler;
+import illarion.client.world.World;
 
 public class GameScreenController implements ScreenController {
 
@@ -44,6 +42,7 @@ public class GameScreenController implements ScreenController {
     
     private GUIChatHandler chatHandler;
     private GameMapHandler mapHandler;
+    private GUIInventoryHandler inventoryHandler;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -62,8 +61,9 @@ public class GameScreenController implements ScreenController {
         
         screen.findElementByName("chatLog#scrollpanel#panel").setFocusable(false);
         screen.findElementByName("chatLog#scrollpanel#vertical-scrollbar").setFocusable(false);
-        
-        new GUIInventoryHandler().bind(nifty, screen);
+
+        inventoryHandler = new GUIInventoryHandler();
+        inventoryHandler.bind(nifty, screen);
         mapHandler = new GameMapHandler();
         mapHandler.bind(parentNifty, screen);
     }
@@ -72,6 +72,7 @@ public class GameScreenController implements ScreenController {
     public void onStartScreen() {
         World.getChatHandler().addChatReceiver(chatHandler);
         parentNifty.subscribeAnnotations(mapHandler);
+        inventoryHandler.onStartScreen();
     }
 
     @Override

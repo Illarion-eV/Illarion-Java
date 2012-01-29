@@ -18,24 +18,23 @@
  */
 package illarion.client.gui;
 
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
-
-import javolution.text.TextBuilder;
-import illarion.client.input.InputReceiver;
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
-import illarion.client.net.client.SayCmd;
-import illarion.client.util.ChatHandler;
-import illarion.client.util.Lang;
-import illarion.client.util.ChatHandler.ChatReceiver;
-import illarion.client.util.ChatHandler.SpeechMode;
-import illarion.client.world.Char;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
+import illarion.client.input.InputReceiver;
+import illarion.client.net.CommandFactory;
+import illarion.client.net.CommandList;
+import illarion.client.net.client.SayCmd;
+import illarion.client.util.ChatHandler;
+import illarion.client.util.ChatHandler.ChatReceiver;
+import illarion.client.util.ChatHandler.SpeechMode;
+import illarion.client.util.Lang;
+import illarion.client.world.Char;
+import javolution.text.TextBuilder;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
 
 /**
  * This class takes care to receive chat input from the GUI and sends it to the

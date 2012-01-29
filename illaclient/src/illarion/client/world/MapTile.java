@@ -34,13 +34,11 @@ import illarion.common.graphics.LightSource;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
-
-import java.util.List;
-
 import javolution.util.FastTable;
-
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
+
+import java.util.List;
 
 /**
  * A tile on the map. Contains the tile graphics and items.
@@ -296,10 +294,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
         final List<Item> localItems = items;
         if (localItems != null) {
-            final int count = localItems.size();
-            Item item;
-            for (int i = 0; i < count; i++) {
-                item = localItems.get(i);
+            for (Item item : localItems) {
                 if (item.isLight()) {
                     newLightValue = item.getItemLight();
                     break;
@@ -399,8 +394,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
             obstruction = 0;
             if (items != null) {
                 final int count = items.size();
-                for (int i = 0; i < count; i++) {
-                    obstruction += items.get(i).getCoverage();
+                for (Item item : items) {
+                    obstruction += item.getCoverage();
                 }
             }
             losDirty = false;
@@ -577,9 +572,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
         final List<Item> localItems = items;
         if (localItems != null) {
             final int count = localItems.size();
-            Item item;
-            for (int i = 0; i < count; i++) {
-                item = localItems.get(i);
+            for (Item item : localItems) {
                 if (item.isObstacle()) {
                     return true;
                 } else if (item.isJesus()) {
@@ -608,10 +601,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      */
     public boolean isOpaque() {
         final Tile localTile = tile;
-        if (localTile == null) {
-            return false;
-        }
-        return localTile.isOpapue();
+        return localTile != null && localTile.isOpapue();
     }
 
     /**
@@ -718,8 +708,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
         // recycle item data
         if (items != null) {
             final int count = items.size();
-            for (int i = 0; i < count; i++) {
-                items.get(i).recycle();
+            for (Item item : items) {
+                item.recycle();
             }
             items.clear();
             FastTable.recycle(items);
@@ -784,9 +774,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
                 final List<Item> localItems = items;
                 if (localItems != null) {
-                    final int count = localItems.size();
-                    for (int i = 0; i < count; i++) {
-                        localItems.get(i).show();
+                    for (Item localItem : localItems) {
+                        localItem.show();
                     }
                 }
             } else {
@@ -796,9 +785,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
                 final List<Item> localItems = items;
                 if (localItems != null) {
-                    final int count = localItems.size();
-                    for (int i = 0; i < count; i++) {
-                        localItems.get(i).hide();
+                    for (Item localItem : localItems) {
+                        localItem.hide();
                     }
                 }
             }

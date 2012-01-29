@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="module" module-name="illacommon" />
+    <orderEntry type="module-library">
+      <library name="rsc_gui.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_gui.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="rsc_items.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_items.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="rsc_tables.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_tables.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="rsc_tiles.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_tiles.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="rsc_chars.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_chars.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="rsc_effects.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_effects.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="rsc_sounds.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_sounds.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="nifty-style-illarion" />
+    <orderEntry type="module" module-name="nifty-controls-illarion" />
+    <orderEntry type="library" name="EventBus" level="project" />
+    <orderEntry type="library" name="LWJGL" level="project" />
+    <orderEntry type="library" name="Javolution" level="project" />
+    <orderEntry type="library" name="log4j" level="project" />
+    <orderEntry type="library" name="Nifty-GUI" level="project" />
+    <orderEntry type="library" name="Slick" level="project" />
+    <orderEntry type="library" name="GnuTrove" level="project" />
+    <orderEntry type="library" name="XPP3" level="project" />
+    <orderEntry type="library" name="JOrbis" level="project" />
+  </component>
+</module>
+

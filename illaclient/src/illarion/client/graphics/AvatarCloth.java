@@ -18,11 +18,10 @@
  */
 package illarion.client.graphics;
 
-import org.newdawn.slick.Color;
-
-import illarion.client.resources.ClothFactory;
 import illarion.client.resources.CharacterFactory;
+import illarion.client.resources.ClothFactory;
 import illarion.common.graphics.Sprite;
+import org.newdawn.slick.Color;
 
 /**
  * A avatar cloth definition stores all data about a cloth that are needed to

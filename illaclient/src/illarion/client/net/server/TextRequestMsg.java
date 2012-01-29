@@ -18,12 +18,12 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.net.client.TextResponseCmd;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Text Request (

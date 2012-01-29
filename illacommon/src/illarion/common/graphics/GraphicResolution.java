@@ -69,7 +69,13 @@ public final class GraphicResolution {
         refreshRate = refresh;
         builder = new StringBuilder();
     }
-    
+
+    /**
+     * Create a new graphic resolution object from a definition string.
+     *
+     * @param definition the text that is parsed to get the values for the resolution
+     * @throws IllegalArgumentException in case the string can't be parsed
+     */
     public GraphicResolution(final String definition) {
         Pattern pattern = Pattern.compile("(\\d+) x (\\d+) x (\\d+) @ (\\d+)Hz");
         Matcher matcher = pattern.matcher(definition);

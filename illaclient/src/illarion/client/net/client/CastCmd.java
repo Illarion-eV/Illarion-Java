@@ -18,10 +18,9 @@
  */
 package illarion.client.net.client;
 
-import javolution.text.TextBuilder;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
+import javolution.text.TextBuilder;
 
 /**
  * Client Command: Cast a spell (

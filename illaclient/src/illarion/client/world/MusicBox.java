@@ -21,7 +21,6 @@ package illarion.client.world;
 import illarion.client.resources.SongFactory;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
-
 import org.newdawn.slick.Music;
 
 /**

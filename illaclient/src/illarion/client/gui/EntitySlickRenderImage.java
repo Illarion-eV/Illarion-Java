@@ -18,11 +18,9 @@
  */
 package illarion.client.gui;
 
-import illarion.client.graphics.AbstractEntity;
-
-import org.newdawn.slick.Image;
-
 import de.lessvoid.nifty.slick2d.render.image.ImageSlickRenderImage;
+import illarion.client.graphics.AbstractEntity;
+import org.newdawn.slick.Image;
 
 /**
  * This implementation of a slick render image is used to

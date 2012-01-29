@@ -18,15 +18,14 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.resources.SoundFactory;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
-
 import illarion.common.util.Location;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Sound or graphic effect (

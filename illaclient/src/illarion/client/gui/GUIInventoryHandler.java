@@ -18,36 +18,27 @@
  */
 package illarion.client.gui;
 
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
+import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
+import de.lessvoid.nifty.controls.DroppableDroppedEvent;
+import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.events.ElementShowEvent;
+import de.lessvoid.nifty.render.NiftyImage;
+import de.lessvoid.nifty.screen.Screen;
 import illarion.client.graphics.Item;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.Inventory;
 import illarion.client.world.World;
-import illarion.common.graphics.FontLoader;
-
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
-import org.illarion.nifty.controls.inventoryslot.InventorySlotControl;
 
-import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.builder.EffectBuilder;
-import de.lessvoid.nifty.builder.ImageBuilder;
-import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
-import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
-import de.lessvoid.nifty.controls.DroppableDroppedEvent;
-import de.lessvoid.nifty.controls.Label;
-import de.lessvoid.nifty.controls.dragndrop.builder.DraggableBuilder;
-import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
-import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.ImageRenderer;
-import de.lessvoid.nifty.render.NiftyImage;
-import de.lessvoid.nifty.screen.Screen;
-import de.lessvoid.nifty.tools.Color;
-import de.lessvoid.nifty.tools.SizeValue;
+import java.util.Arrays;
 
 /**
  * This handler takes care for showing and hiding objects in the inventory. Also
@@ -57,6 +48,7 @@ import de.lessvoid.nifty.tools.SizeValue;
  */
 public final class GUIInventoryHandler implements
     EventSubscriber<InventoryUpdateEvent>, EventTopicSubscriber<String> {
+
     /**
      * This class is used as drag end operation and used to move a object that
      * was dragged out of the inventory back in so the server can send the
@@ -88,11 +80,37 @@ public final class GUIInventoryHandler implements
         }
     }
 
+    /**
+     * This class is used to handle the events that are triggered once the inventory window is set visible. Once this
+     * happens its needed to restore the visibility values of the labels as the Nifty-GUI sets all child elements to
+     * visible as well for some strange reason.
+     *
+     * This entire event subscriber can be erased in case the Nifty-GUI ever changes this behaviour.
+     *
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
+     */
+    private class GetVisibleEventSubscriber implements EventTopicSubscriber<ElementShowEvent> {
+        /**
+         * Handle the event.
+         *
+         * @param topic the topic of the event, that should equal the ID of the inventory window
+         * @param data the actual event
+         */
+        @Override
+        public void onEvent(final String topic, final ElementShowEvent data) {
+            if (topic.equals(inventoryWindow.getId())) {
+                restoreSlotLabelVisibility();
+            }
+        }
+    }
+
     private final String[] slots;
     private final Element[] invSlots;
+    private final boolean[] slotLabelVisibility;
     private Element inventoryWindow;
     private Nifty activeNifty;
     private Screen activeScreen;
+    private GetVisibleEventSubscriber visibilityEventSubscriber;
 
     private static final String INVSLOT_HEAD = "invslot_";
 
@@ -118,7 +136,9 @@ public final class GUIInventoryHandler implements
         slots[17] = "invslot_belt6";
 
         invSlots = new Element[Inventory.SLOT_COUNT];
-
+        slotLabelVisibility = new boolean[Inventory.SLOT_COUNT];
+        Arrays.fill(slotLabelVisibility, false);
+        visibilityEventSubscriber = new GetVisibleEventSubscriber();
     }
 
     public void bind(final Nifty nifty, final Screen screen) {
@@ -130,22 +150,25 @@ public final class GUIInventoryHandler implements
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
             invSlots[i] = inventoryWindow.findElementByName(slots[i]);
         }
+    }
 
+    public void onStartScreen() {
         activeNifty.subscribeAnnotations(this);
 
         EventBus.subscribe(InventoryUpdateEvent.class, this);
         EventBus.subscribe(InputReceiver.EB_TOPIC, this);
+        activeNifty.subscribe(activeScreen, inventoryWindow.getId(), ElementShowEvent.class, visibilityEventSubscriber);
     }
 
     public void showInventory() {
         if (inventoryWindow != null) {
-            inventoryWindow.setVisible(true);
+            inventoryWindow.show();
         }
     }
 
     public void hideInventory() {
         if (inventoryWindow != null) {
-            inventoryWindow.setVisible(false);
+            inventoryWindow.hide();
         }
     }
 
@@ -167,9 +190,9 @@ public final class GUIInventoryHandler implements
         final DraggableDragStartedEvent data) {
         final int slotId = getSlotNumber(topic);
         World.getInteractionManager().notifyDraggingInventory(
-            slotId,
-            new EndOfDragOperation(invSlots[slotId]
-                .getNiftyControl(InventorySlot.class)));
+                slotId,
+                new EndOfDragOperation(invSlots[slotId]
+                        .getNiftyControl(InventorySlot.class)));
     }
 
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
@@ -178,6 +201,12 @@ public final class GUIInventoryHandler implements
         World.getInteractionManager().cancelDragging();
     }
 
+    /**
+     * Get the number of a slot based on the name.
+     *
+     * @param name the name of the slot
+     * @return the number of the slot fitting the name
+     */
     private int getSlotNumber(final String name) {
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
             if (name.startsWith(slots[i])) {
@@ -187,6 +216,13 @@ public final class GUIInventoryHandler implements
         return -1;
     }
 
+    /**
+     * Set a new item to a slot.
+     *
+     * @param slotId the ID of the slot to change
+     * @param itemId the ID of the item that shall be displayed in the slot             
+     * @param count the amount of items displayed in this slot
+     */
     public void setSlotItem(final int slotId, final int itemId, final int count) {
         if (slotId < 0 || slotId >= Inventory.SLOT_COUNT) {
             throw new IllegalArgumentException("Slot ID out of valid range.");
@@ -203,15 +239,29 @@ public final class GUIInventoryHandler implements
                     new EntitySlickRenderImage(displayedItem));
 
             invSlot.setImage(niftyImage);
-            invSlot.showLabel();
-            invSlot.setLabelText(Integer.toString(itemId));
-            //if (itemId > 1) {
-            //} else {
-            //    invSlot.hideLabel();
-            //}
+            invSlot.setLabelText(Integer.toString(count));
+            if (count > 1) {
+                slotLabelVisibility[slotId] = true;
+                invSlot.showLabel();
+            } else {
+                slotLabelVisibility[slotId] = false;
+                invSlot.hideLabel();
+            }
         } else {
             invSlot.setImage(null);
             invSlot.hideLabel();
+        }
+    }
+    
+    void restoreSlotLabelVisibility() {
+        for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
+            final InventorySlot invSlot =
+                    invSlots[i].getNiftyControl(InventorySlot.class);
+            if (slotLabelVisibility[i]) {
+                invSlot.showLabel();
+            } else {
+                invSlot.hideLabel();
+            }
         }
     }
 

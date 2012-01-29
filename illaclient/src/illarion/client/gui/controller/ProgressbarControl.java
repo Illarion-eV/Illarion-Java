@@ -1,7 +1,5 @@
 package illarion.client.gui.controller;
 
-import java.util.Properties;
-
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Controller;
 import de.lessvoid.nifty.elements.Element;
@@ -9,6 +7,8 @@ import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
+
+import java.util.Properties;
 
 public class ProgressbarControl implements Controller {
 	private Element progressBarElement;

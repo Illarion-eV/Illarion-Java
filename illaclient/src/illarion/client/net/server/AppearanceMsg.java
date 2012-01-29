@@ -18,16 +18,15 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-
 import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.Char;
 import illarion.client.world.World;
+import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Character appearance (

@@ -29,22 +29,15 @@ import illarion.client.util.Lang;
 import illarion.client.util.NamesTable;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
-import illarion.common.util.DirectoryManager;
-import illarion.common.util.Location;
-import illarion.common.util.Reusable;
-import illarion.common.util.Stoppable;
-import illarion.common.util.TableLoader;
-import illarion.common.util.TableLoaderSink;
+import illarion.common.util.*;
+import javolution.context.ObjectFactory;
+import javolution.text.TextBuilder;
+import javolution.util.FastTable;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import javolution.context.ObjectFactory;
-import javolution.text.TextBuilder;
-import javolution.util.FastTable;
-
-import org.apache.log4j.Logger;
 
 /**
  * Handles all characters known to the client but the player character.
@@ -538,9 +531,8 @@ public final class People implements Stoppable, TableLoaderSink,
         charsLock.writeLock().lock();
         try {
             if (!removalList.isEmpty()) {
-                final int count = removalList.size();
-                for (int i = 0; i < count; i++) {
-                    removeCharacter(removalList.get(i).getCharId());
+                for (Char removeChar : removalList) {
+                    removeCharacter(removeChar.getCharId());
                 }
                 removalList.clear();
             }
@@ -597,7 +589,6 @@ public final class People implements Stoppable, TableLoaderSink,
         }
         if (key.equals(CFG_SHOWID_KEY)) {
             showIDs = cfg.getBoolean(CFG_SHOWID_KEY);
-            return;
         }
     }
 
@@ -993,7 +984,7 @@ public final class People implements Stoppable, TableLoaderSink,
      */
     @Override
     public String toString() {
-        return String.format(TO_STRING_TEXT, Integer.valueOf(chars.size()));
+        return String.format(TO_STRING_TEXT, chars.size());
     }
 
     /**

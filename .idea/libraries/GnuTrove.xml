@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="GnuTrove">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/trove" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/trove" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/trove" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/trove" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/trove" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/trove" recursive="false" type="SOURCES" />
+  </library>
+</component>

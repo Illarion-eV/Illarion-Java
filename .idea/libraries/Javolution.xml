@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Javolution">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/javolution" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/javolution" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/javolution" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/javolution" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/javolution" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/javolution" recursive="false" type="SOURCES" />
+  </library>
+</component>

@@ -18,17 +18,15 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
-import javolution.util.FastList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.list.array.TShortArrayList;
-
 import illarion.client.net.NetCommReader;
 import illarion.client.world.MapTile;
-
 import illarion.common.util.Location;
 import illarion.common.util.Reusable;
+import javolution.util.FastList;
+
+import java.io.IOException;
 
 /**
  * Class that stores all needed informations for a update of a single tile.
@@ -233,10 +231,7 @@ public final class TileUpdate implements Reusable {
      * @return true if the tile is static blocked
      */
     public boolean isBlocked() {
-        if (mapTile != null) {
-            return mapTile.isObstacle();
-        }
-        return false;
+        return mapTile != null && mapTile.isObstacle();
     }
 
     /**

@@ -18,20 +18,18 @@
  */
 package illarion.client.net;
 
+import illarion.client.Debug;
+import illarion.client.IllaClient;
+import illarion.client.net.client.AbstractCommand;
+import illarion.client.util.Lang;
+import illarion.common.util.Location;
+import org.apache.log4j.Logger;
+
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.CharsetEncoder;
 import java.util.concurrent.BlockingQueue;
-
-import org.apache.log4j.Logger;
-
-import illarion.client.Debug;
-import illarion.client.IllaClient;
-import illarion.client.net.client.AbstractCommand;
-import illarion.client.util.Lang;
-
-import illarion.common.util.Location;
 
 /**
  * The Sender class handles all data that is send from the client, encodes the

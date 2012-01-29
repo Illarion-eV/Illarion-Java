@@ -22,7 +22,6 @@ import illarion.client.graphics.Effect;
 import illarion.client.resources.ResourceFactory;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
-
 import org.apache.log4j.Logger;
 
 /**

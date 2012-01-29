@@ -1,17 +1,15 @@
 package illarion.client.states;
 
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.slick2d.NiftyOverlayBasicGameState;
+import de.lessvoid.nifty.slick2d.input.SlickSlickInputSystem;
 import illarion.client.Game;
 import illarion.client.input.InputReceiver;
 import illarion.client.world.World;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
-
-import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.slick2d.NiftyOverlayBasicGameState;
-import de.lessvoid.nifty.slick2d.input.SlickSlickInputSystem;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;

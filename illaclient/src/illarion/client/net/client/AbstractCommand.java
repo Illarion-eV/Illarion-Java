@@ -18,18 +18,15 @@
  */
 package illarion.client.net.client;
 
-import java.io.UnsupportedEncodingException;
-
-import javolution.context.PoolContext;
-import javolution.text.TextBuilder;
-
-import org.apache.log4j.Logger;
-
 import illarion.client.net.CommandFactory;
 import illarion.client.net.NetCommWriter;
 import illarion.client.world.World;
-
 import illarion.common.util.RecycleObject;
+import javolution.context.PoolContext;
+import javolution.text.TextBuilder;
+import org.apache.log4j.Logger;
+
+import java.io.UnsupportedEncodingException;
 
 /**
  * Default super class for all commands that get send to a server. This command

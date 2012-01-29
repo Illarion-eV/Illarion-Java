@@ -193,8 +193,8 @@ abstract class AbstractAnimation {
      * @param finished true in case the animation finished, false if not
      */
     protected final void animationFinished(final boolean finished) {
-        for (int i = 0; i < targets.size(); i++) {
-            targets.get(i).animationFinished(finished);
+        for (Animated target : targets) {
+            target.animationFinished(finished);
         }
     }
 

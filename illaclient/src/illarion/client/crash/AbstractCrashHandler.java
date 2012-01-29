@@ -18,15 +18,13 @@
  */
 package illarion.client.crash;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-
-import org.apache.log4j.Logger;
-
 import illarion.client.IllaClient;
 import illarion.client.util.Lang;
-
 import illarion.common.bug.CrashData;
 import illarion.common.bug.CrashReporter;
+import org.apache.log4j.Logger;
+
+import java.lang.Thread.UncaughtExceptionHandler;
 
 /**
  * This abstract class takes care for fetching uncaught exceptions and tries to

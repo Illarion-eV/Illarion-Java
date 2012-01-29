@@ -18,11 +18,11 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.World;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Character attributes (
@@ -141,7 +141,6 @@ public final class AttributeMsg extends AbstractReply {
      */
     @Override
     public String toString() {
-        return toString(String.format(TO_STRING_FORMAT, attribute,
-            Integer.valueOf(value)));
+        return toString(String.format(TO_STRING_FORMAT, attribute, value));
     }
 }

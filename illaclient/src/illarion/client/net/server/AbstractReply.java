@@ -18,15 +18,13 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
-import javolution.context.PoolContext;
-
 import illarion.client.net.NetCommReader;
 import illarion.client.net.ReplyFactory;
-
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
+import javolution.context.PoolContext;
+
+import java.io.IOException;
 
 /**
  * Default class of a server message. This is the superclass of every server
@@ -76,7 +74,7 @@ public abstract class AbstractReply implements RecycleObject {
      * @throws IOException in case there are not enough bytes in the buffer to
      *             decode a location, this exception is thrown
      */
-    protected static final Location decodeLocation(final NetCommReader reader)
+    protected static Location decodeLocation(final NetCommReader reader)
         throws IOException {
         final Location loc = Location.getInstance();
         loc.setSC(reader.readShort(), reader.readShort(), reader.readShort());

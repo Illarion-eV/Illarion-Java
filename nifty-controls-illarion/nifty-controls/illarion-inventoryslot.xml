@@ -17,9 +17,9 @@
             </control>
 
             <panel width="100%" height="100%" childLayout="center" visibleToMouse="false">
+                <control id="#backgroundImageLabel" name="label" text="000" align="right" valign="bottom"
+                         visible="false" color="#ff0f" backgroundColor="#bb15"/>
                 <image id="#backgroundImage" visible="false"/>
-                <control id="#backgroundImageLabel" name="label" visible="false"
-                         color="#f00"/>
             </panel>
         </panel>
     </controlDefinition>
