@@ -786,6 +786,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<jar jarfile="${jar}" basedir="${src}" includes="public.key" update="true" index="${build.index}" />
 		<delete dir="${classes}" />
 	</target>
+    
+    <target name="download_everything" depends="rsc_download,rsc_manual,download_libraries" />
 
 	<target name="rsc_download" description="Download the resources">
 		<get src="http://illarion.org/media/java/rsc/rsc_books.jar" dest="${resources}/rsc_books.jar" usetimestamp="true" verbose="true" />
@@ -798,18 +800,12 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
         <get src="http://illarion.org/media/java/rsc/rsc_tiles.jar" dest="${resources}/rsc_tiles.jar" usetimestamp="true" verbose="true" />
     </target>
 
-	<target name="rsc_manual" description="Build the Manual resources" depends="init_libs,buildTasks">
+	<target name="rsc_manual" description="Build the Manual resources">
 		<copy todir="${resources}">
 			<filelist dir="${client}">
 				<file name="manual_de.pdf" />
 				<file name="manual_en.pdf" />
 			</filelist>
 		</copy>
-		<resourcebuild target="${setup}/manual.illares" usepack200="false">
-			<filelist dir="${client}">
-				<file name="manual_de.pdf" />
-				<file name="manual_en.pdf" />
-			</filelist>
-		</resourcebuild>
 	</target>
 </project>
