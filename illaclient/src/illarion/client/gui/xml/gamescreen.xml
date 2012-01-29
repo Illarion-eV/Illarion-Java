@@ -32,7 +32,8 @@
 	        </panel>
         </layer>
         <layer id="windows" childLayout="absolute">
-            <control id="inventory" name="window" style="inventory-window" title="Inventar" width="248px" height="486px" x="400px" hideOnClose="true">
+            <control id="inventory" name="window" style="inventory-window" title="Inventar" visible="false"
+                     width="248px" height="486px" x="400px" hideOnClose="true">
                 <panel height="100%" width="100%" childLayout="absolute" visibleToMouse="false">
                     <control id="invslot_chest" name="inventoryslot" height="84px" width="46px" x="102px" y="67px" />
                     <control id="invslot_head" name="inventoryslot" height="40px" width="46px" y="12px" x="102px" />

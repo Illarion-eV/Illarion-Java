@@ -21,7 +21,8 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
         Build parts of the Illarion client.
     </description>
 
-	<import file="../illacommon/build_include.xml" />
+    <dirname property="illaclient.dir" file="${ant.file.Illarion Client}" />
+	<import file="${illaclient.dir}/../illacommon/build_include.xml" />
 
 	<!-- set global properties for this build -->
 	<property name="src" location="${client}/src" />
@@ -74,9 +75,6 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
                 <fileset refid="slick" />
                 <fileset refid="eventbus" />
 				<pathelement location="${common.bin}" />
-				<pathelement location="${graphics.bin}" />
-				<pathelement location="${sound.bin}" />
-				<pathelement location="${input.bin}" />
 				<pathelement path="${java.home}/lib" />
 			</classpath>
 		</javac>

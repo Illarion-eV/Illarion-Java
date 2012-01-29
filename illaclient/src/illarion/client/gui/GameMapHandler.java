@@ -157,18 +157,18 @@ public final class GameMapHandler implements
         World.getInteractionManager().dropAtMap(dropSpotX, dropSpotY);
     }
 
-    public void handleDragOnMap(final int oldx, final int oldy,
+    public boolean handleDragOnMap(final int oldx, final int oldy,
         final int newx, final int newy) {
         final InteractiveMapTile targetTile =
             World.getMap().getInteractive()
                 .getInteractiveTileOnScreenLoc(oldx, oldy);
 
         if (targetTile == null) {
-            return;
+            return false;
         }
 
         if (!targetTile.canDrag()) {
-            return;
+            return false;
         }
 
         if (activeScreen != null && activeNifty != null) {
@@ -210,6 +210,14 @@ public final class GameMapHandler implements
 
         World.getInteractionManager().notifyDraggingMap(targetTile,
             endOfDragOp);
+        
+        return true;
+    }
+    
+    private boolean moveToMouse(final int targetX, final int targetY) {
+        World.getPlayer().getMovementHandler().walkTowards(targetX, targetY);
+
+        return true;
     }
     
     /**
@@ -218,8 +226,11 @@ public final class GameMapHandler implements
     @Override
     public void onEvent(final String topic, final DragOnMapEvent data) {
         if (topic.equals(InputReceiver.EB_TOPIC)) {
-            handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(),
-                data.getNewY());
+            if (handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY())) {
+                return;
+            }
+
+            moveToMouse(data.getNewX(), data.getNewY());
         }
     }
 }
