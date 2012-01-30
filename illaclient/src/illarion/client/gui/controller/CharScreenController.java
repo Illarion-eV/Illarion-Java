@@ -2,9 +2,11 @@ package illarion.client.gui.controller;
 
 
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.Game;
 import illarion.client.Login;
 import org.newdawn.slick.state.StateBasedGame;
@@ -19,6 +21,7 @@ public class CharScreenController implements ScreenController {
 	private ListBox<String> listBox;
 	
 	private final StateBasedGame game;
+	private Label statusLabel;
 	
     public CharScreenController(StateBasedGame game) {
         this.game = game;
@@ -31,6 +34,9 @@ public class CharScreenController implements ScreenController {
     	this.screen = screen;
         listBox = (ListBox<String>) screen.findNiftyControl("myListBox", ListBox.class);
     	fillMyListBox();
+    	statusLabel = screen.findNiftyControl("statusText", Label.class);
+    	statusLabel.setHeight(new SizeValue("20" + SizeValue.PIXEL));
+    	statusLabel.setWidth(new SizeValue("180" + SizeValue.PIXEL));
     }
 
     @Override
@@ -52,12 +58,20 @@ public class CharScreenController implements ScreenController {
 	}
 	
 	public void play() {
-        Login.getInstance().selectCharacter(listBox.getFocusItemIndex());
+        boolean found = Login.getInstance().selectCharacter(listBox.getFocusItemIndex());
+        
+        if(!found)
+        {       	
+        	statusLabel.setText("No character selected");
+        	statusLabel.getElement().getParent().layoutElements();
+        	return;
+        }
         
         game.enterState(Game.STATE_LOADING, new FadeOutTransition(), new FadeInTransition());
 	}
 	
 	public void logout() {
+		statusLabel.setText("");
 		nifty.gotoScreen("login");
 	}
 }
