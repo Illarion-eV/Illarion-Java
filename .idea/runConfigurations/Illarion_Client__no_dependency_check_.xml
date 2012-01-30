@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Illarion Client (no dependency check)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="illarion.client.IllaClient" />
+    <option name="VM_PARAMETERS" value="" />
+    <option name="PROGRAM_PARAMETERS" value="" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/illaclient" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+    <option name="ALTERNATIVE_JRE_PATH" value="C:/Program Files (x86)/Java/jdk1.6.0_29" />
+    <option name="ENABLE_SWING_INSPECTOR" value="false" />
+    <option name="ENV_VARIABLES" />
+    <option name="PASS_PARENT_ENVS" value="true" />
+    <module name="illaclient" />
+    <envs />
+    <method>
+      <option name="AntTarget" enabled="false" antfile="file://$PROJECT_DIR$/illacommon/build.xml" target="download_everything" />
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
