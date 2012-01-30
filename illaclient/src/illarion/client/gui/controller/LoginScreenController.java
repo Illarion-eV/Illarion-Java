@@ -28,6 +28,8 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 	private Button loginBtn;
 	private ListBox<?> charList;
 	
+	private boolean firstStart = true;
+	
 	private final StateBasedGame game;
 	
     public LoginScreenController(StateBasedGame game) {
@@ -65,6 +67,13 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
        /* Element myLabel=screen.findElementByName("testHint");
         myLabel.setConstraintX(new SizeValue("100px"));
         myLabel.setConstraintY(new SizeValue("200px"));*/
+    	
+    	// For some reason the passwordTxt Text get changed to the dots when changing screens, so we need to reset the password
+    	if(!firstStart)
+    	{
+    		final Login login = Login.getInstance();
+    		passwordTxt.setText(login.getPassword());
+    	}
     }
 
     @Override
@@ -87,9 +96,9 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         if (login.hasError()) {
 //            nifty.showPopup(screen, popupError.getId(), null);
 //            errorText.setText(login.getErrorText());
-            
             return;
         }
+        firstStart = false;
     	nifty.gotoScreen("charSelect");
     }
    
@@ -116,6 +125,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     }	
     
     public void options() {
+    	firstStart = false;
     	nifty.gotoScreen("options");
     }
     
