@@ -2,15 +2,15 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/illabuild/illabuild.iml" filepath="$PROJECT_DIR$/illabuild/illabuild.iml" />
-      <module fileurl="file://$PROJECT_DIR$/illaclient/illaclient.iml" filepath="$PROJECT_DIR$/illaclient/illaclient.iml" />
-      <module fileurl="file://$PROJECT_DIR$/illacommon/illacommon.iml" filepath="$PROJECT_DIR$/illacommon/illacommon.iml" />
-      <module fileurl="file://$PROJECT_DIR$/illadownload/illadownload.iml" filepath="$PROJECT_DIR$/illadownload/illadownload.iml" />
-      <module fileurl="file://$PROJECT_DIR$/illaeasynpc/illaeasynpc.iml" filepath="$PROJECT_DIR$/illaeasynpc/illaeasynpc.iml" />
-      <module fileurl="file://$PROJECT_DIR$/illaeasyquest/illaeasyquest.iml" filepath="$PROJECT_DIR$/illaeasyquest/illaeasyquest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/illamapedit/illamapedit.iml" filepath="$PROJECT_DIR$/illamapedit/illamapedit.iml" />
-      <module fileurl="file://$PROJECT_DIR$/nifty-controls-illarion/nifty-controls-illarion.iml" filepath="$PROJECT_DIR$/nifty-controls-illarion/nifty-controls-illarion.iml" />
-      <module fileurl="file://$PROJECT_DIR$/nifty-style-illarion/nifty-style-illarion.iml" filepath="$PROJECT_DIR$/nifty-style-illarion/nifty-style-illarion.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illabuild/Illarion Build Utility.iml" filepath="$PROJECT_DIR$/illabuild/Illarion Build Utility.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illaclient/Illarion Client.iml" filepath="$PROJECT_DIR$/illaclient/Illarion Client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illacommon/Illarion Common Library.iml" filepath="$PROJECT_DIR$/illacommon/Illarion Common Library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illadownload/Illarion Download Utility.iml" filepath="$PROJECT_DIR$/illadownload/Illarion Download Utility.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illamapedit/Illarion Mapeditor.iml" filepath="$PROJECT_DIR$/illamapedit/Illarion Mapeditor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nifty-controls-illarion/Illarion Nifty-GUI Controls.iml" filepath="$PROJECT_DIR$/nifty-controls-illarion/Illarion Nifty-GUI Controls.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nifty-style-illarion/Illarion Nifty-GUI Style.iml" filepath="$PROJECT_DIR$/nifty-style-illarion/Illarion Nifty-GUI Style.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illaeasynpc/Illarion easyNPC Editor.iml" filepath="$PROJECT_DIR$/illaeasynpc/Illarion easyNPC Editor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/illaeasyquest/Illarion easyQuest Editor.iml" filepath="$PROJECT_DIR$/illaeasyquest/Illarion easyQuest Editor.iml" />
     </modules>
   </component>
 </project>

@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="illacommon" />
+    <orderEntry type="module" module-name="Illarion Common Library" />
     <orderEntry type="module-library">
       <library name="rsc_gui.jar">
         <CLASSES>
@@ -71,8 +71,8 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="nifty-style-illarion" />
-    <orderEntry type="module" module-name="nifty-controls-illarion" />
+    <orderEntry type="module" module-name="Illarion Nifty-GUI Style" />
+    <orderEntry type="module" module-name="Illarion Nifty-GUI Controls" />
     <orderEntry type="library" name="EventBus" level="project" />
     <orderEntry type="library" name="LWJGL" level="project" />
     <orderEntry type="library" name="Javolution" level="project" />

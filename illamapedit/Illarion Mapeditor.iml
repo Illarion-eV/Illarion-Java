@@ -8,7 +8,16 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="illacommon" />
+    <orderEntry type="module" module-name="Illarion Common Library" />
+    <orderEntry type="module-library">
+      <library name="rsc_items.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_items.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module-library">
       <library name="rsc_tables.jar">
         <CLASSES>
@@ -18,13 +27,21 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Flamingo" level="project" />
+    <orderEntry type="module-library">
+      <library name="rsc_tiles.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_tiles.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Javolution" level="project" />
-    <orderEntry type="library" name="JSyntaxPane" level="project" />
     <orderEntry type="library" name="log4j" level="project" />
+    <orderEntry type="library" name="GnuTrove" level="project" />
+    <orderEntry type="library" name="Flamingo" level="project" />
     <orderEntry type="library" name="Substance Look&amp;Feel" level="project" />
     <orderEntry type="library" name="SwingX" level="project" />
-    <orderEntry type="library" name="GnuTrove" level="project" />
   </component>
 </module>
 

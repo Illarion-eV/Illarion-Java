@@ -16,7 +16,7 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="illacommon" />
+    <orderEntry type="module" module-name="Illarion Common Library" />
     <orderEntry type="library" name="Nifty-GUI" level="project" />
   </component>
 </module>
