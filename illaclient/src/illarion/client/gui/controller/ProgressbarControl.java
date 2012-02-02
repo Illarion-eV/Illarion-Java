@@ -45,7 +45,7 @@ public class ProgressbarControl implements Controller {
 		}
 
 		final int MIN_WIDTH = 28; 
-		int pixelWidth = (int) (Math.max(MIN_WIDTH, progressBarElement.getParent().getWidth()) * progress);
+		int pixelWidth = (int) Math.max(MIN_WIDTH, progressBarElement.getParent().getWidth() * progress);
 		progressBarElement.setConstraintWidth(new SizeValue(pixelWidth + "px"));
 		progressBarElement.getParent().layoutElements();
 	}

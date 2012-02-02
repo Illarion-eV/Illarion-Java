@@ -22,12 +22,12 @@ public final class LoadScreenController implements ScreenController {
     @Override
     public void bind(Nifty nifty, Screen screen) {
     	this.nifty = nifty;
-    	progress = screen.findControl("loading", ProgressbarControl.class); 
+    	progress = screen.findControl("loading", ProgressbarControl.class);
     }
 
     @Override
     public void onStartScreen() {
-        setProgress(0.f);
+
     }
     
     private boolean loadingDoneCalled = false;
@@ -39,12 +39,13 @@ public final class LoadScreenController implements ScreenController {
         loadingDoneCalled = true;
         
         Login.getInstance().login();
-        
-        game.enterState(illarion.client.Game.STATE_PLAYING, new FadeOutTransition(), new FadeInTransition());
+
+        game.enterState(illarion.client.Game.STATE_PLAYING, new FadeOutTransition(), null);
     }
     
     public void setProgress(final float progressValue) {
-    	progress.setProgress(progressValue);
+        if(progress != null)
+			progress.setProgress(progressValue);
     }
 
     @Override

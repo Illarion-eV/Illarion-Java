@@ -19,14 +19,11 @@
 	   		<panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical">
 	    		<image filename="data/gui/illarion_title.png" imageMode="normal" align="center"/>
 	    		<panel height="30px" />
-	        	<control name="progressbar" id="loading" align="center" valign="center" width="400px" height="28px">	
-		        	<effect>
-		        		<onStartScreen name="fade" start="#00" end="#ff" inherit="true" />    
-	                </effect>
-	            </control>
-	            
-	            <effect>
-	            	<onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />
+	        	<control name="progressbar" id="loading" align="center" valign="center" width="400px" height="28px"/>
+
+                <effect>
+                    <onStartScreen name="fade" start="#00" end="#ff" inherit="true" />
+	            	<!--<onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />-->
 	            </effect>
 	        </panel>
 	    </layer>
