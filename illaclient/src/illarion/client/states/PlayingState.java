@@ -33,7 +33,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
 
     @Override
     protected void prepareNifty(Nifty nifty, StateBasedGame game) {
-        nifty.fromXml("illarion/client/gui/xml/gamescreen.xml", "gamescreen");
+        nifty.fromXmlWithoutStartScreen("illarion/client/gui/xml/gamescreen.xml");
     }
 
     @Override

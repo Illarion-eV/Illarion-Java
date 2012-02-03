@@ -39,6 +39,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -262,20 +263,24 @@ public final class Login {
         return charList.get(index).getStatus();
     }
     
-    public void selectCharacter(final int index) {
-        if (index < 0) {
-            return;
-        }
-        selectedChar = charList.get(index);
+    public boolean selectCharacter(final int index) {
+    	
+    	if(index < 0 || charList.size() < (index + 1))
+    		return false;
+    	
+    	selectedChar = charList.get(index);
+    	return true;
     }
     
-    public void selectCharacter(final String charName) {
+    public boolean selectCharacter(final String charName) {
         for (CharEntry chars : charList) {
             if (chars.getName().equals(charName)) {
                 selectedChar = chars;
-                return;
+                return true;
             }
         }
+        
+        return false;
     }
     
     public String getSelectedCharacterName() {

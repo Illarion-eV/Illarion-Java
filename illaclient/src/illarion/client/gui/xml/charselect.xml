@@ -13,7 +13,8 @@
 			<panel height="300px" width="400px" align="center" valign="center"
 				backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
 				<image filename="data/gui/illarion_title.png" imageMode="normal"
-					align="center" />
+					align="center" />				
+				<control name="label" id="statusText" text=""/>
 				<panel height="30px" />
 				<panel height="300px" width="400px" align="center" valign="center"
 					backgroundColor="#000" childLayout="vertical" visibleToMouse="true">
@@ -38,7 +39,7 @@
 
 					<effect>
 						<onStartScreen name="fade" start="#00" end="#ff" inherit="true" />
-                        <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />
+                        <!--<onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />-->
 					</effect>
 				</panel>
 			</panel>

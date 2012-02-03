@@ -58,6 +58,10 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<property name="download.jar" value="illarion_download.jar" />
 	<property name="download.bin" location="${compiled}/${download.jar}" />
 	<property name="download.deploy" location="${setup}/${download.jar}" />
+	
+	<property name="niftycontrols.jar" value="nifty-controls-illarion.jar" />
+	<property name="niftycontrols.bin" location="${compiled}/${niftycontrols.jar}" />
+	<property name="niftycontrols.deploy" location="${setup}/${niftycontrols.jar}" />
 
 	<!-- Client informations -->
 	<property name="client.version" value="1.22 delta" />
@@ -98,6 +102,11 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<property name="config.version" value="1.06" />
 	<property name="config.vendor" value="Illarion e.V." />
 	<property name="config.name" value="Illarion Config-Tool" />
+	
+	<!-- NiftyControls informations -->
+	<property name="niftycontrols.version" value="1.00" />
+	<property name="niftycontrols.vendor" value="Illarion e.V." />
+	<property name="niftycontrols.name" value="Illarion Nifty Controls" />
 
 	<!-- Compile informations -->
 	<property name="build.compiler" value="javac1.6" />
@@ -367,7 +376,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 	<!-- Create config tool Tasks -->
 	<target name="buildTasks">
 		<echo>java.library.path = ${java.library.path}</echo>
-		<taskdef resource="illarion/build/illabuild.properties">
+		<taskdef resource="${build}/src/illarion/build/illabuild.properties">
 			<classpath>
 				<pathelement location="${build.bin}" />
 				<fileset refid="log4j" />

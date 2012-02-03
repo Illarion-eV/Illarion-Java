@@ -2,7 +2,10 @@ package illarion.client.states;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.slick2d.NiftyBasicGameState;
+import de.lessvoid.nifty.slick2d.NiftyOverlayBasicGameState;
+import de.lessvoid.nifty.slick2d.input.SlickSlickInputSystem;
 import illarion.client.gui.controller.LoadScreenController;
+import illarion.client.input.InputReceiver;
 import illarion.client.loading.Loading;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -21,14 +24,13 @@ import java.util.logging.Logger;
  * 
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class LoadingState extends NiftyBasicGameState {
+public final class LoadingState extends NiftyOverlayBasicGameState {
 
     private LoadScreenController controller;
 
     private final int id;
 
     public LoadingState(final int slickGameStateId) {
-        super("loading");
         id = slickGameStateId;
     }
 
@@ -37,14 +39,24 @@ public final class LoadingState extends NiftyBasicGameState {
     @Override
     protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
         controller = new LoadScreenController(game);
-        nifty.fromXml("illarion/client/gui/xml/loading.xml", "loading",
-            controller);
+        nifty.registerScreenController(controller);
+        nifty.fromXmlWithoutStartScreen("illarion/client/gui/xml/loading.xml");
     }
     
     public void enterState(final GameContainer container,
         final StateBasedGame game) throws SlickException {
         Loading.enlistMissingComponents();
-        super.enterState(container, game);
+        getNifty().gotoScreen("loading");
+    }
+
+    @Override
+    protected void initGameAndGUI(GameContainer container, StateBasedGame game) throws SlickException {
+        initNifty(container, game, new SlickSlickInputSystem(new InputReceiver()));
+    }
+
+    @Override
+    protected void leaveState(GameContainer container, StateBasedGame game) throws SlickException {
+
     }
 
     @Override
@@ -55,7 +67,8 @@ public final class LoadingState extends NiftyBasicGameState {
     @Override
     protected void renderGame(GameContainer container, StateBasedGame game,
         Graphics g) throws SlickException {
-        super.renderGame(container, game, g);
+
+        g.clear();
         
         final int remaining = LoadingList.get().getRemainingResources();
         final int total = LoadingList.get().getTotalResources();
@@ -78,5 +91,10 @@ public final class LoadingState extends NiftyBasicGameState {
         } finally {
             SlickCallable.leaveSafeBlock();
         }
+    }
+
+    @Override
+    protected void updateGame(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+
     }
 }
