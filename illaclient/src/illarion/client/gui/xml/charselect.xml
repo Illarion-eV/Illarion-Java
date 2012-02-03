@@ -39,7 +39,6 @@
 
 					<effect>
 						<onStartScreen name="fade" start="#00" end="#ff" inherit="true" />
-                        <!--<onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />-->
 					</effect>
 				</panel>
 			</panel>
