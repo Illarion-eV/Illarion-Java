@@ -66,8 +66,8 @@ public class CharScreenController implements ScreenController {
         	statusLabel.getElement().getParent().layoutElements();
         	return;
         }
-        
-        game.enterState(Game.STATE_LOADING, new FadeOutTransition(), new FadeInTransition());
+
+        game.enterState(Game.STATE_LOADING, new FadeOutTransition(), null);
 	}
 	
 	public void logout() {
