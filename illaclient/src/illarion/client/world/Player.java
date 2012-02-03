@@ -207,7 +207,7 @@ public final class Player implements ConfigChangeListener {
      * @param chara The character that is checked
      * @return the visibility of the character in percent
      */
-    protected int canSee(final Char chara) {
+    public int canSee(final Char chara) {
         if (isPlayer(chara.getCharId())) {
             return Char.VISIBILITY_MAX;
         }
