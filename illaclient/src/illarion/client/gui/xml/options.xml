@@ -13,15 +13,17 @@
                    childLayout="vertical" visibleToMouse="true">
 	    		<panel height="35px" width="400px" align="center" valign="center" backgroundColor="#0000"
                        childLayout="horizontal" visibleToMouse="true">
-	    			<control id="someTab" name="button" style="illarion-tab" label="Allgemein" width="100" height="35" />
-	    			<control id="someTab" name="button" style="illarion-tab" label="Grafik" width="100" height="35" />
-	    			<control id="someTab" name="button" style="illarion-tab" label="Musik" width="100" height="35" />
-	    			<control id="someTab" name="button" style="illarion-tab" label="Maus" width="100" height="35" />
+	    			<control id="general" name="button" style="illarion-tab" label="Allgemein" width="100" height="35" >
+                        <interact onClick="onGeneralTabClick()" />
+                    </control>
+	    			<control id="graphic" name="button" style="illarion-tab" label="Grafik" width="100" height="35" >
+	    				<interact onClick="onGraphicTabClick()" />
+	    			</control>
+	    			<control id="music" name="button" style="illarion-tab" label="Musik" width="100" height="35" />
+	    			<control id="mouse" name="button" style="illarion-tab" label="Maus" width="100" height="35" />
 	    		</panel>
-	    		<panel height="300px" width="400px" align="center" valign="center" backgroundColor="#051901ff" childLayout="vertical" visibleToMouse="true">
-	    		</panel>
-
-	    		<panel height="30px" />
+	    		<panel id="optionsPanel" height="300px" width="400px" align="center" valign="center"
+                       backgroundColor="#051901ff" childLayout="vertical" visibleToMouse="true" />
 
     			<panel childLayout="horizontal" visibleToMouse="true">
                     <panel width="90px" />
