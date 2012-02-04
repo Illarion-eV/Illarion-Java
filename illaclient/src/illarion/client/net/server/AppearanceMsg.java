@@ -300,6 +300,8 @@ public final class AppearanceMsg extends AbstractReply {
         ch.setClothColor(AvatarClothManager.GROUP_BEARD, TEMP_COLOR);
         ch.setAlive(!deadFlag);
         ch.updateLight();
+
+        ch.setVisible(World.getPlayer().canSee(ch));
         return true;
     }
 
