@@ -44,6 +44,7 @@ import com.mxgraph.util.mxUndoManager;
 import com.mxgraph.util.mxUndoableEdit;
 import com.mxgraph.util.mxUndoableEdit.mxUndoableChange;
 import com.mxgraph.util.mxUtils;
+import com.mxgraph.view.mxGraphSelectionModel;
 import com.mxgraph.view.mxStylesheet;
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.io.mxCodecRegistry;
@@ -444,6 +445,7 @@ public final class Editor extends mxGraphComponent {
     {
         String errors = "";
         Graph graph = (Graph)getGraph();
+        mxGraphSelectionModel model = graph.getSelectionModel();
         Object parent = graph.getDefaultParent();
         Object[] edges = graph.getChildEdges(parent);
         Object[] nodes = graph.getChildVertices(parent);
@@ -463,6 +465,7 @@ public final class Editor extends mxGraphComponent {
         }
         
         int countUnconnected = 0;
+        int countNoContent = 0;
         for (Object edge : edges)
         {
             mxCell cell = (mxCell)edge;
@@ -472,9 +475,19 @@ public final class Editor extends mxGraphComponent {
             {
                 countUnconnected = countUnconnected + 1;
             }
+            
+            Trigger trigger = (Trigger)cell.getValue();
+            if (trigger.getType() == null || trigger.getParameters() == null || trigger.getConditions() == null)
+            {
+            	model.addCell(cell);
+            	countNoContent = countNoContent + 1;
+            }
         }
         if (countUnconnected > 0) {
             errors = errors + Lang.getMsg(Editor.class, "unconnectedError") + " " + countUnconnected + ".\n";
+        }
+        if (countNoContent > 0) {
+        	errors = errors + Lang.getMsg(Editor.class, "noContentError") + " " + countNoContent + ".\n";
         }
         
         if (errors.length() != 0)
