@@ -22,7 +22,8 @@ the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
            Build the Illarion easyQuest Editor.
     </description>
 
-	<import file="../illacommon/build_include.xml" />
+    <dirname file="${ant.file.Illarion easyQuest Editor}" property="easyquest.dir" />
+	<import file="${easyquest.dir}/../illacommon/build_include.xml" />
 
 	<property name="src" location="${easyquest}/src" />
 	<property name="res" location="${easyquest}/res" />

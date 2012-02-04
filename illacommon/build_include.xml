@@ -18,48 +18,45 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 -->
 <project name="Illarion Build Imports" basedir=".">
     <dirname property="illacommon.include.dir" file="${ant.file.Illarion Build Imports}" />
+
 	<property file="${illacommon.include.dir}/local.location.properties" />
 	<property file="${illacommon.include.dir}/location.properties" />
 
 	<import file="${sign}/build_keys.xml" optional="true" />
 
-	<!-- Base folders -->
-	<property name="client.jar" value="illarion_client.jar" />
+    <property name="compiled" location="${illacommon.include.dir}/../bin" />
+    <property name="signedcompiled" location="${illacommon.include.dir}/../bin/signed" />
+    <property name="setup" location="${illacommon.include.dir}/../setup" />
+    <property name="setuplib" location="${illacommon.include.dir}/../setup/lib" />
+
+    <property name="client" location="${illacommon.include.dir}/../illaclient" />
 	<property name="client.bin" location="${compiled}/${client.jar}" />
-	<property name="client.res" value="illarion_client.illares" />
 	<property name="client.res.deploy" location="${setup}/${client.res}" />
 
-	<property name="common.jar" value="illarion_common.jar" />
+    <property name="common" location="${illacommon.include.dir}/../illacommon" />
 	<property name="common.bin" location="${compiled}/${common.jar}" />
-	<property name="common.res" value="illarion_common.illares" />
 	<property name="common.res.deploy" location="${setup}/${common.res}" />
 
-	<property name="config.jar" value="illaconfig.jar" />
-	<property name="config.bin" location="${config}/data/${config.jar}" />
-
-	<property name="build.jar" value="illabuild.jar" />
+    <property name="build" location="${illacommon.include.dir}/../illabuild" />
 	<property name="build.bin" location="${compiled}/${build.jar}" />
 
-	<property name="easynpc.jar" value="illarion_easynpc.jar" />
-	<property name="easynpc.res" value="illarion_easynpc.illares" />
+    <property name="easynpc" location="${illacommon.include.dir}/../illaeasynpc" />
 	<property name="easynpc.res.deploy" location="${setup}/${easynpc.res}" />
 	<property name="easynpc.bin" location="${compiled}/${easynpc.jar}" />
 
-	<property name="easyquest.jar" value="illarion_easyquest.jar" />
-	<property name="easyquest.res" value="illarion_easyquest.illares" />
+    <property name="easyquest" location="${illacommon.include.dir}/../illaeasyquest" />
 	<property name="easyquest.res.deploy" location="${setup}/${easyquest.res}" />
 	<property name="easyquest.bin" location="${compiled}/${easyquest.jar}" />
 
-	<property name="mapedit.jar" value="illarion_mapeditor.jar" />
-	<property name="mapedit.res" value="illarion_mapeditor.illares" />
+    <property name="mapedit" location="${illacommon.include.dir}/../illamapedit" />
 	<property name="mapedit.res.deploy" location="${setup}/${mapedit.res}" />
 	<property name="mapedit.bin" location="${compiled}/${mapedit.jar}" />
 
-	<property name="download.jar" value="illarion_download.jar" />
+    <property name="download" location="${illacommon.include.dir}/../illadownload" />
 	<property name="download.bin" location="${compiled}/${download.jar}" />
 	<property name="download.deploy" location="${setup}/${download.jar}" />
-	
-	<property name="niftycontrols.jar" value="nifty-controls-illarion.jar" />
+
+    <property name="niftycontrols" location="${illacommon.include.dir}/../nifty-controls-illarion" />
 	<property name="niftycontrols.bin" location="${compiled}/${niftycontrols.jar}" />
 	<property name="niftycontrols.deploy" location="${setup}/${niftycontrols.jar}" />
 
@@ -373,20 +370,28 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<taskdef resource="proguard/ant/task.properties" classpath="${common}/lib/proguard/proguard.jar" />
 	</target>
 
-	<!-- Create config tool Tasks -->
-	<target name="buildTasks">
-		<echo>java.library.path = ${java.library.path}</echo>
-		<taskdef resource="${build}/src/illarion/build/illabuild.properties">
-			<classpath>
-				<pathelement location="${build.bin}" />
-				<fileset refid="log4j" />
-				<fileset refid="lzma" />
-				<fileset refid="javolution" />
-				<fileset refid="trove" />
-                <fileset refid="twl" />
-			</classpath>
-		</taskdef>
-	</target>
+    <target name="get_buildtool">
+        <get dest="${build.local.dir}" src="${build.url}" verbose="true" usetimestamp="true" ignoreerrors="true" />
+    </target>
+
+    <property name="build.local.dir" location="${illacommon.include.dir}/../${build.local}" />
+    <target name="register_extensions" depends="get_buildtool">
+        <delete failonerror="false">
+            <fileset dir="${illacommon.include.dir}">
+                <include name="tempBuildTool_*"/>
+            </fileset>
+        </delete>
+
+        <tempfile destdir="${illacommon.include.dir}" prefix="tempBuildTool_" property="local.buildtool" />
+        <copy file="${build.local.dir}" tofile="${local.buildtool}" />
+        <taskdef resource="illarion/build/illabuild.properties">
+            <classpath>
+                <pathelement location="${local.buildtool}" />
+            </classpath>
+        </taskdef>
+    </target>
+
+    <target name="buildTasks" depends="register_extensions" />
 
 	<target name="native_build_pattern">
 		<patternset id="only.windows.32">
@@ -444,15 +449,9 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 
 	<target name="check_optional_dirs">
 		<available filepath="${sign}" file="${sign}" property="keys.exist" type="dir" />
-		<available filepath="${config}" file="${config}" property="config.exist" type="dir" />
 		<condition property="not.keys.exist">
 			<not>
 				<isset property="keys.exist" />
-			</not>
-		</condition>
-		<condition property="not.config.exist">
-			<not>
-				<isset property="config.exist" />
 			</not>
 		</condition>
 		<condition property="keys.config.exist" else="not.keys.config.exist">
