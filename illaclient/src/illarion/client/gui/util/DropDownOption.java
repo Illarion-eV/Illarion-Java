@@ -28,7 +28,7 @@ import de.lessvoid.nifty.screen.Screen;
  *
  * @author Stefano Bonicatti &lt;smjert@gmail.com&gt;
  */
-public class DropDownOption<T> implements Option<String, DropDown<DropDownItem<T>>>{
+public class DropDownOption<T> implements Option<T, DropDown<DropDownItem<T>>>{
     
     private DropDown<DropDownItem<T>> control;
     private String key;
@@ -46,11 +46,11 @@ public class DropDownOption<T> implements Option<String, DropDown<DropDownItem<T
     }
     
     @Override
-    public String getValue() {
+    public T getValue() {
         if(control == null)
-            return "";
+            return null;
 
-        return control.getSelection().getKey().toString();
+        return control.getSelection().getKey();
     }
 
     @Override

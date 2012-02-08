@@ -27,7 +27,9 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 	private CheckBox savePassword;
 	private Button loginBtn;
 	private ListBox<?> charList;
-	
+    
+    
+	private boolean notifyResolutionChanged;
 	private boolean firstStart = true;
 	
 	private final StateBasedGame game;
@@ -74,6 +76,17 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     		final Login login = Login.getInstance();
     		passwordTxt.setText(login.getPassword());
     	}
+
+        if(notifyResolutionChanged)
+        {
+            nifty.resolutionChanged();
+            notifyResolutionChanged = false;
+        }
+    }
+
+
+    public void resolutionChanged(){
+        notifyResolutionChanged = true;
     }
 
     @Override

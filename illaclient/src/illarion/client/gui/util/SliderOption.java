@@ -19,33 +19,30 @@
 package illarion.client.gui.util;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.controls.CheckBox;
-import de.lessvoid.nifty.controls.checkbox.builder.CheckboxBuilder;
+import de.lessvoid.nifty.controls.Slider;
+import de.lessvoid.nifty.controls.slider.builder.SliderBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 
 /**
  * @author Stefano Bonicatti &lt;smjert@gmail.com&gt;
  */
-public class CheckBoxOption implements Option<Boolean, CheckBox>{
-
-    private CheckBox control;
+public class SliderOption implements Option<Integer, Slider> {
+    
     private String key;
+    private Slider control;
 
-    public CheckBoxOption(String name, Element parent, Nifty nifty, Screen screen)
+    public SliderOption(String name, Element parent, Nifty nifty, Screen screen)
     {
         key = name;
-
-        CheckboxBuilder checkBoxBuilder = new CheckboxBuilder(name + "GUI");
-        Element checkBoxElement = checkBoxBuilder.build(nifty, screen, parent);
-        control = checkBoxElement.getNiftyControl(CheckBox.class);
+        SliderBuilder sliderBuilder = new SliderBuilder(name + "GUI", false);
+        control = sliderBuilder.build(nifty, screen, parent).getNiftyControl(Slider.class);
     }
-    
     @Override
-    public Boolean getValue() {
+    public Integer getValue() {
         if(control == null)
-            return false;
-        return control.isChecked();
+            return 0;
+        return (int)control.getValue();
     }
 
     @Override
@@ -54,7 +51,7 @@ public class CheckBoxOption implements Option<Boolean, CheckBox>{
     }
 
     @Override
-    public CheckBox getControl() {
+    public Slider getControl() {
         return control;
     }
 }

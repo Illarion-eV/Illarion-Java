@@ -11,19 +11,22 @@
     	<layer id="layer2" backgroundColor="#0000" childLayout="center">
 	    	<panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" visibleToMouse="true">
-	    		<panel height="35px" width="400px" align="center" valign="center" backgroundColor="#0000"
+
+	    		<panel height="35px" width="300px" align="center" valign="center" backgroundColor="#0000"
                        childLayout="horizontal" visibleToMouse="true">
-	    			<control id="general" name="button" style="illarion-tab" label="Allgemein" width="100" height="35" >
+	    			<control id="general" name="button" style="illarion-tab" label="Allgemein" width="100"
+                              height="35" >
                         <interact onClick="onGeneralTabClick()" />
                     </control>
 	    			<control id="graphic" name="button" style="illarion-tab" label="Grafik" width="100" height="35" >
 	    				<interact onClick="onGraphicTabClick()" />
 	    			</control>
-	    			<control id="music" name="button" style="illarion-tab" label="Musik" width="100" height="35" />
-	    			<control id="mouse" name="button" style="illarion-tab" label="Maus" width="100" height="35" />
+	    			<control id="audio" name="button" style="illarion-tab" label="Musik" width="100" height="35" >
+                        <interact onClick="onAudioTabClick()" />
+                    </control>
 	    		</panel>
-	    		<panel id="optionsPanel" height="300px" width="400px" align="center" valign="center"
-                       backgroundColor="#051901ff" childLayout="vertical" visibleToMouse="true" />
+	    		<panel id="optionsPanel" height="300px" width="300px" align="center" valign="center"
+                       backgroundColor="#051901ff" childLayout="overlay" visibleToMouse="true" />
 
     			<panel childLayout="horizontal" visibleToMouse="true">
                     <panel width="90px" />
