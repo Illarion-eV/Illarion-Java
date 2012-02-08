@@ -5,7 +5,6 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.Login;
 import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
 public final class LoadScreenController implements ScreenController {
@@ -14,6 +13,8 @@ public final class LoadScreenController implements ScreenController {
 	private ProgressbarControl progress;
 	
 	private final StateBasedGame game;
+
+    private boolean notifyResolutionChanged;
 	
     public LoadScreenController(StateBasedGame game) {
         this.game = game;
@@ -28,6 +29,15 @@ public final class LoadScreenController implements ScreenController {
     @Override
     public void onStartScreen() {
 
+        if(notifyResolutionChanged)
+        {
+            nifty.resolutionChanged();
+            notifyResolutionChanged = false;
+        }
+    }
+    
+    public void resolutionChanged(){
+        notifyResolutionChanged = true;
     }
     
     private boolean loadingDoneCalled = false;
