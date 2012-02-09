@@ -52,6 +52,7 @@ import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.renderer.Renderer;
+import org.newdawn.slick.state.GameState;
 
 import javax.swing.*;
 import java.io.*;
@@ -165,6 +166,10 @@ public final class IllaClient {
      */
     private IllaClient() {
 
+    }
+    
+    public GameState getGameState(int id){
+        return game.getState(id);
     }
     
     private void init() {
