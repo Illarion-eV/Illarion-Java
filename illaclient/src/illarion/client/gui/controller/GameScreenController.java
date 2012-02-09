@@ -43,6 +43,8 @@ public class GameScreenController implements ScreenController {
     private GUIChatHandler chatHandler;
     private GameMapHandler mapHandler;
     private GUIInventoryHandler inventoryHandler;
+    
+    private boolean notifyResolutionChanged;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -70,6 +72,11 @@ public class GameScreenController implements ScreenController {
 
     @Override
     public void onStartScreen() {
+        if(notifyResolutionChanged)
+        {
+            parentNifty.resolutionChanged();
+            notifyResolutionChanged = false;
+        }
         World.getChatHandler().addChatReceiver(chatHandler);
         parentNifty.subscribeAnnotations(mapHandler);
         inventoryHandler.onStartScreen();
@@ -78,5 +85,9 @@ public class GameScreenController implements ScreenController {
     @Override
     public void onEndScreen() {
         World.getChatHandler().removeChatReceiver(chatHandler);
+    }
+    
+    public void resolutionChanged(){
+        notifyResolutionChanged = true;
     }
 }

@@ -22,6 +22,8 @@ public class CharScreenController implements ScreenController {
 	
 	private final StateBasedGame game;
 	private Label statusLabel;
+
+    private boolean notifyResolutionChanged;
 	
     public CharScreenController(StateBasedGame game) {
         this.game = game;
@@ -41,7 +43,16 @@ public class CharScreenController implements ScreenController {
 
     @Override
     public void onStartScreen() {
-    	
+        if(notifyResolutionChanged)
+        {
+            nifty.resolutionChanged();
+            notifyResolutionChanged = false;
+        }
+    }
+
+    public void resolutionChanged()
+    {
+        notifyResolutionChanged = true;
     }
 
     @Override
