@@ -7,6 +7,7 @@
 /illacommon/rsc
 /illacommon/*.zip
 /illacommon/local*
+/illacommon/illabuild.jar
 /illacommon/tempBuildTool_*
 /illaeasyquest/res/template/*/filelist
 /keys

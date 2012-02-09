@@ -370,11 +370,11 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<taskdef resource="proguard/ant/task.properties" classpath="${common}/lib/proguard/proguard.jar" />
 	</target>
 
+    <property name="build.local.dir" location="${illacommon.include.dir}/${build.local}" />
     <target name="get_buildtool">
         <get dest="${build.local.dir}" src="${build.url}" verbose="true" usetimestamp="true" ignoreerrors="true" />
     </target>
 
-    <property name="build.local.dir" location="${illacommon.include.dir}/../${build.local}" />
     <target name="register_extensions" depends="get_buildtool">
         <delete failonerror="false">
             <fileset dir="${illacommon.include.dir}">
