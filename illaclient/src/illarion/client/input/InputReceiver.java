@@ -21,6 +21,8 @@ package illarion.client.input;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.util.InputAdapter;
 
+import illarion.client.world.World;
+
 /**
  * This class is used to receive and forward all user input.
  *
@@ -44,5 +46,9 @@ public final class InputReceiver
 
     public void mouseDragged(int oldx, int oldy, int newx, int newy) {
         EventBus.publish(EB_TOPIC, new DragOnMapEvent(oldx, oldy, newx, newy));
+    }
+    
+    public void mouseReleased(int button, int x, int y) {
+        World.getPlayer().getMovementHandler().stopWalkTowards();
     }
 }

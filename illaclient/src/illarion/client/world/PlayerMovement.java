@@ -520,16 +520,17 @@ public final class PlayerMovement
      * @param screenPosY the y location on the screen to walk to
      */
     public void walkTowards(final int screenPosX, final int screenPosY) {
-        final int xOffset = (screenPosX - MapDimensions.getInstance().getOnScreenWidth()) >> 1;
-        final int yOffset = (screenPosY - MapDimensions.getInstance().getOnScreenHeight()) >> 1;
+        final MapDimensions mapDimensions = MapDimensions.getInstance();
+        final int xOffset = screenPosX - (mapDimensions.getOnScreenWidth() / 2);
+        final int yOffset = -(screenPosY - (mapDimensions.getOnScreenHeight() / 2));
         final int distance = FastMath.sqrt((xOffset * xOffset) + (yOffset * yOffset));
 
         if (distance <= 5) {
             return;
         }
 
-        final double relXOffset = (float) xOffset / (float) distance;
-        final double relYOffset = (float) yOffset / (float) distance;
+        final float relXOffset = (float) xOffset / (float) distance;
+        final float relYOffset = (float) yOffset / (float) distance;
 
         if (distance > 200) {
             walkTowardsMode = MOVE_MODE_RUN;
