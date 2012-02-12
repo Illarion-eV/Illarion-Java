@@ -150,15 +150,19 @@ public class TriggerTemplates {
                                 .matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*")) {
                                 String[] param =
                                     line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
+                                
+                                String description;
                                 if (isGerman) {
-                                    triggerTemplate
-                                        .addParameter(new TemplateParameter(
-                                            param[1], param[2], param[4]));
+                                    description = param[4];
                                 } else {
-                                    triggerTemplate
-                                        .addParameter(new TemplateParameter(
-                                            param[1], param[2], param[3]));
+                                    description = param[3];
                                 }
+                                
+                                TemplateParameter parameter = new TemplateParameter(
+                            	    param[1], param[2], description);
+                                
+                                triggerTemplate.addParameter(parameter);
+
                                 continue;
                             }
 

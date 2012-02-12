@@ -110,11 +110,11 @@ public class CellEditor implements mxICellEditor
     		    Trigger value = (Trigger)((mxCell)cell).getValue();
     		    triggerDialog.setLocationRelativeTo(MainFrame.getInstance());
     			triggerDialog.setName(value.getName());
-    			triggerDialog.setId(value.getObjectId());
     			if (value.getType() != null)
     			{
     			    triggerDialog.setType(value.getType());
     			}
+    			triggerDialog.setId(value.getObjectId());
     			triggerDialog.setParameters(value.getParameters());
     			triggerDialog.setConditions(value.getConditions());
     			triggerDialog.setVisible(true);

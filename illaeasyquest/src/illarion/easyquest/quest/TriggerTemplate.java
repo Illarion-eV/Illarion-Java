@@ -18,6 +18,8 @@
  */
 package illarion.easyquest.quest;
 
+import illarion.easyquest.Lang;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -32,6 +34,7 @@ public class TriggerTemplate
     private boolean hasQuestNumber;
     private boolean hasPrior;
     private boolean hasPosterior;
+    private TemplateParameter id;
     private List<TemplateParameter> parameters;
     
     public TriggerTemplate(String name)
@@ -45,6 +48,7 @@ public class TriggerTemplate
         hasQuestNumber = false;
         hasPrior = false;
         hasPosterior = false;
+        id = null;
         parameters = new ArrayList<TemplateParameter>();
     }
     
@@ -66,6 +70,15 @@ public class TriggerTemplate
     public void setCategory(String category)
     {
         this.category = category;
+        String idType, idDescription;
+        if (category.equals("triggerfield")) {
+        	idType = "POSITION";
+        	idDescription = Lang.getMsg(getClass(), "idPosition");
+        } else {
+        	idType = "INTEGER";
+        	idDescription = Lang.getMsg(getClass(), "idInteger");
+        }
+        id = new TemplateParameter("objectId", idType, idDescription);
     }
     
     public String getHeader()
@@ -96,6 +109,11 @@ public class TriggerTemplate
     public void setEntryPoint(String entryPoint)
     {
         this.entryPoint = entryPoint;
+    }
+    
+    public TemplateParameter getId()
+    {
+    	return id;
     }
     
     public int size()
@@ -132,7 +150,7 @@ public class TriggerTemplate
     {
         return (title != null) && hasQuestNumber && hasPrior && hasPosterior
             && (header != null) && (body != null) && (entryPoint != null)
-            && (category != null) && (parameters.size() > 0);
+            && (category != null) && (id != null);
     }
     
     public String toString()

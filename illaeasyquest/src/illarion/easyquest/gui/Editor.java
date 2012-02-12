@@ -398,7 +398,7 @@ public final class Editor extends mxGraphComponent {
     		quest.put(scriptName + ".lua", t);
     		
             questtxt = questtxt + template.getCategory() + ","
-                    + trigger.getObjectId() + ","
+                    + exportId(trigger.getObjectId(), template.getId().getType()) + ","
                     + template.getEntryPoint() + ","
                     + scriptName + "\n";
               
@@ -408,6 +408,32 @@ public final class Editor extends mxGraphComponent {
         quest.put("quest.txt", questtxt);
         
         return quest;
+    }
+    
+    private String exportId(Object parameter, String type)
+    {
+        if (type.equals("POSITION"))
+        {
+            Position p = (Position)parameter;
+            return p.getX() + "," + p.getY() + "," + p.getZ();
+        }
+        else if (type.equals("INTEGER"))
+        {
+            if (parameter instanceof Long)
+            {
+                Long n = (Long)parameter;
+                return n.toString();
+            }
+            else
+            {
+                String s = (String)parameter;
+                return s;
+            }
+        }
+        else
+        {
+            return "TYPE NOT SUPPORTED";
+        }
     }
     
     private String exportParameter(Object parameter, String type)
