@@ -18,6 +18,8 @@
  */
 package illarion.client.input;
 
+import de.lessvoid.nifty.slick2d.NiftyInputForwarding;
+
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.util.InputAdapter;
 
@@ -37,6 +39,12 @@ public final class InputReceiver
 
     private final KeyMapper keyMapper = new KeyMapper();
 
+    private final NiftyInputForwarding forwardingControl;
+
+    public InputReceiver(final NiftyInputForwarding forwardingInputSystem) {
+        forwardingControl = forwardingInputSystem;
+    }
+
     /**
      * @see org.newdawn.slick.InputListener#keyPressed(int, char)
      */
@@ -45,10 +53,14 @@ public final class InputReceiver
     }
 
     public void mouseDragged(int oldx, int oldy, int newx, int newy) {
-        EventBus.publish(EB_TOPIC, new DragOnMapEvent(oldx, oldy, newx, newy));
+        EventBus.publish(EB_TOPIC, new DragOnMapEvent(oldx, oldy, newx, newy,
+                                                      forwardingControl.getInputForwardingControl()));
     }
-    
+
     public void mouseReleased(int button, int x, int y) {
         World.getPlayer().getMovementHandler().stopWalkTowards();
+        if (forwardingControl.isInputForwardingSupported()) {
+            forwardingControl.getInputForwardingControl().releaseExclusiveMouse();
+        }
     }
 }
