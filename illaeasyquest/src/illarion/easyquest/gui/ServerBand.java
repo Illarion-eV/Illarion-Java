@@ -46,7 +46,6 @@ final class ServerBand extends JRibbonBand {
      */
     private static final long serialVersionUID = 1L;
     
-    private final JCommandButton characterButton;
     private final JCommandButton statusButton;
 
     /**
@@ -56,14 +55,6 @@ final class ServerBand extends JRibbonBand {
     public ServerBand() {
         super(Lang.getMsg(ServerBand.class, "title"), null);
 
-        characterButton = 
-        	new JCommandButton(Lang.getMsg(ServerBand.class, "character"),
-                    Utils.getResizableIconFromResource("character.png"));
-        
-        characterButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-                ServerBand.class, "characterTooltipTitle"), Lang.getMsg(
-                ServerBand.class, "characterTooltip")));
-        
         statusButton = 
         	new JCommandButton(Lang.getMsg(ServerBand.class, "status"),
                     Utils.getResizableIconFromResource("setstatus.png"));
@@ -158,7 +149,6 @@ final class ServerBand extends JRibbonBand {
         
         statusButton.addActionListener(statusAction);
 
-        addCommandButton(characterButton, RibbonElementPriority.TOP);
         addCommandButton(statusButton, RibbonElementPriority.TOP);
 
         final List<RibbonBandResizePolicy> policies =
