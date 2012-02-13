@@ -121,7 +121,8 @@ public class MainFrame extends JRibbonFrame
             new RibbonTask(
             	Lang.getMsg(getClass(), "ribbonTaskQuest"),
                 new ClipboardBand(),
-            	new GraphBand()
+            	new GraphBand(),
+            	new ServerBand()
             );
         getRibbon().addTask(graphTask);
 

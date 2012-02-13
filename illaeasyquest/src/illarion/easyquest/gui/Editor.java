@@ -214,6 +214,28 @@ public final class Editor extends mxGraphComponent {
 		return undoManager;
 	}
     
+    public int getSelectedStatusNumber() throws IllegalStateException {
+    	Graph graph = (Graph)getGraph();
+        mxGraphSelectionModel model = graph.getSelectionModel();
+        Object[] nodes = model.getCells();
+    	int count = 0;
+    	mxCell status = null;
+    	
+    	for (Object node : nodes) {
+        	mxCell cell = (mxCell)node;
+        	if (cell.getValue() instanceof Status) {
+        		status = cell;
+        		count = count + 1;
+        	}
+    	}
+        
+    	if (count == 1) {
+	    	return ((Status)status.getValue()).isStart() ? 0 : Integer.parseInt(status.getId());
+    	} else {
+    		throw new IllegalStateException(String.valueOf(count));
+    	}
+    }
+    
     public int getQuestID() {
     	return questID;
     }
@@ -472,6 +494,7 @@ public final class Editor extends mxGraphComponent {
         String errors = "";
         Graph graph = (Graph)getGraph();
         mxGraphSelectionModel model = graph.getSelectionModel();
+        model.clear();
         Object parent = graph.getDefaultParent();
         Object[] edges = graph.getChildEdges(parent);
         Object[] nodes = graph.getChildVertices(parent);
