@@ -503,7 +503,10 @@ public final class Editor extends mxGraphComponent {
             }
             
             Trigger trigger = (Trigger)cell.getValue();
-            if (trigger.getType() == null || trigger.getParameters() == null || trigger.getConditions() == null)
+
+            if (trigger.getType() == null || trigger.getObjectId() == null ||
+            		(trigger.getObjectId() instanceof Long && (Long)(trigger.getObjectId()) == 0) ||
+            		trigger.getParameters() == null || trigger.getConditions() == null)
             {
             	model.addCell(cell);
             	countNoContent = countNoContent + 1;
