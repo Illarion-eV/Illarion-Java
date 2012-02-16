@@ -16,37 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.gui;
+package illarion.client.gui.xml;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.controls.DroppableDroppedEvent;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.input.NiftyMouseInputEvent;
-import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
-import de.lessvoid.nifty.tools.SizeValue;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
 
-import illarion.client.graphics.Item;
+import illarion.client.input.ClickOnMapEvent;
 import illarion.client.input.DoubleClickOnMapEvent;
-import illarion.client.input.DragOnMapEvent;
 import illarion.client.input.InputReceiver;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveMapTile;
 
 /**
- * This class is used to monitor all double click operations on the game map and notify the
- * interaction manager about a double click in case one happens.
+ * This class is used to monitor all click operations on the game map and notify the
+ * interaction manager about a click in case one happens.
  *
  * @author Vilarion &lt;vilarion@illarion.org&gt;
  */
-public final class GameMapDoubleClickHandler
-        implements EventTopicSubscriber<DoubleClickOnMapEvent> {
+public final class GameMapClickHandler
+        implements EventTopicSubscriber<ClickOnMapEvent> {
 
     /**
      * The Nifty-GUI instance that is handling the GUI display currently.
@@ -59,31 +53,31 @@ public final class GameMapDoubleClickHandler
     private Screen activeScreen;
 
     /**
-     * This mouse event instance is used to initiate the double click event.
+     * This mouse event instance is used to initiate the click event.
      */
     private final NiftyMouseInputEvent mouseEvent;
 
     /**
      * The panel that is located on top of the game map. So this is the lowest located panel and the intended parent
      * for
-     * the original location of the double clicked object.
+     * the original location of the clicked object.
      */
     private Element gamePanel;
 
     /**
-     * The element that is double clicked.
+     * The element that is clicked.
      */
     private Element doubleClickedGraphic;
 
     /**
-     * The element that displays the image that is double clicked.
+     * The element that displays the image that is clicked.
      */
     private Element doubleClickedImage;
 
     /**
      * Default constructor that takes care of initializing the variables required for this class to work.
      */
-    public GameMapDoubleClickHandler() {
+    public GameMapClickHandler() {
         mouseEvent = new NiftyMouseInputEvent();
     }
 
@@ -94,14 +88,10 @@ public final class GameMapDoubleClickHandler
         EventBus.subscribe(InputReceiver.EB_TOPIC, this);
     }
 
-    public boolean handleDoubleClickOnMap(final int x, final int y, final ForwardingInputSystem forwardingControl) {
+    public boolean handleClickOnMap(final int x, final int y, final ForwardingInputSystem forwardingControl) {
         final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(x, y);
 
         if (tile == null) {
-            return false;
-        }
-
-        if (!tile.isInUseRange()) {
             return false;
         }
 
@@ -113,7 +103,7 @@ public final class GameMapDoubleClickHandler
             activeScreen.mouseEvent(mouseEvent);
         }
 
-        tile.use();
+        tile.lookAt();
 
         return true;
     }
@@ -129,9 +119,9 @@ public final class GameMapDoubleClickHandler
      * Handle a input event that was published.
      */
     @Override
-    public void onEvent(final String topic, final DoubleClickOnMapEvent data) {
+    public void onEvent(final String topic, final ClickOnMapEvent data) {
         if (topic.equals(InputReceiver.EB_TOPIC)) {
-            if (handleDoubleClickOnMap(data.getX(), data.getY(), data.getForwardingControl())) {
+            if (handleClickOnMap(data.getX(), data.getY(), data.getForwardingControl())) {
                 return;
             }
 

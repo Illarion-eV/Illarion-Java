@@ -25,6 +25,7 @@ import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.ElementShowEvent;
+import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import illarion.client.graphics.Item;
@@ -33,6 +34,7 @@ import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.Inventory;
 import illarion.client.world.World;
+
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
@@ -196,9 +198,16 @@ public final class GUIInventoryHandler implements
     }
 
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
-    public void cancelDragging(final String topic,
-        final DraggableDragCanceledEvent data) {
+         public void cancelDragging(final String topic,
+                                    final DraggableDragCanceledEvent data) {
         World.getInteractionManager().cancelDragging();
+    }
+
+    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    public void clickInventory(final String topic,
+                               final NiftyMousePrimaryClickedEvent data) {
+        final int slotId = getSlotNumber(topic);
+        World.getPlayer().getInventory().getItem(slotId).getInteractive().use();
     }
 
     /**

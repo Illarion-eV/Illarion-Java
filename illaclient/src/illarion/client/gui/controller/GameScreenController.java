@@ -29,6 +29,7 @@ import illarion.client.gui.GUIChatHandler;
 import illarion.client.gui.GUIInventoryHandler;
 import illarion.client.gui.GameMapDoubleClickHandler;
 import illarion.client.gui.GameMapDragHandler;
+import illarion.client.gui.xml.GameMapClickHandler;
 import illarion.client.world.World;
 
 public class GameScreenController implements ScreenController {
@@ -42,6 +43,7 @@ public class GameScreenController implements ScreenController {
     private Droppable mapDropTarget;
     
     private GUIChatHandler chatHandler;
+    private GameMapClickHandler mapClickHandler;
     private GameMapDoubleClickHandler mapDoubleClickHandler;
     private GameMapDragHandler mapDragHandler;
     private GUIInventoryHandler inventoryHandler;
@@ -68,6 +70,8 @@ public class GameScreenController implements ScreenController {
 
         inventoryHandler = new GUIInventoryHandler();
         inventoryHandler.bind(nifty, screen);
+        mapClickHandler = new GameMapClickHandler();
+        mapClickHandler.bind(parentNifty, screen);
         mapDoubleClickHandler = new GameMapDoubleClickHandler();
         mapDoubleClickHandler.bind(parentNifty, screen);
         mapDragHandler = new GameMapDragHandler();

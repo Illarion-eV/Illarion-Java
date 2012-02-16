@@ -20,6 +20,11 @@ package illarion.client.input;
 
 import de.lessvoid.nifty.slick2d.NiftyInputForwarding;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.util.InputAdapter;
 
@@ -36,6 +41,9 @@ public final class InputReceiver
      * The topic that is in general used to publish input events.
      */
     public static final String EB_TOPIC = "InputEvent";
+
+    private boolean wasDoubleClick = false;
+    private Timer timer = null;
 
     private final KeyMapper keyMapper = new KeyMapper();
 
@@ -70,6 +78,25 @@ public final class InputReceiver
     public void mouseClicked(int button, int x, int y, int clickCount) {
         if (clickCount == 2) {
             EventBus.publish(EB_TOPIC, new DoubleClickOnMapEvent(x, y, forwardingControl.getInputForwardingControl()));
+            wasDoubleClick = true;
+        } else {
+            Integer timerinterval = (Integer) Toolkit.getDefaultToolkit().getDesktopProperty(
+                    "awt.multiClickInterval");
+
+            final int xc = x, yc = y;
+            timer = new Timer(timerinterval.intValue(), new ActionListener() {
+
+                public void actionPerformed(ActionEvent evt) {
+                    if (wasDoubleClick) {
+                        wasDoubleClick = false;
+                    } else {
+                        EventBus.publish(EB_TOPIC, new ClickOnMapEvent(xc, yc,
+                                                                       forwardingControl.getInputForwardingControl()));
+                    }
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
         }
     }
 }
