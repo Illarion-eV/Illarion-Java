@@ -28,6 +28,7 @@ import illarion.common.config.ConfigChangeListener;
 import illarion.common.config.ConfigDialog;
 import illarion.common.config.ConfigSystem;
 import illarion.common.config.entries.DirectoryEntry;
+import illarion.common.config.entries.TextEntry;
 import illarion.common.util.DirectoryManager;
 
 public final class Config implements ConfigChangeListener {
@@ -66,6 +67,9 @@ public final class Config implements ConfigChangeListener {
      */
     @SuppressWarnings("nls")
     private static final String openFiles = "openFiles";
+    
+    private static final String character = "character";
+    private static final String password = "password";
     
     /**
      * The properties that store the values of this configuration.
@@ -149,7 +153,15 @@ public final class Config implements ConfigChangeListener {
         page.addEntry(new ConfigDialog.Entry(
             "illarion.easyquest.gui.config.exportFolderLabel", new DirectoryEntry(
                 exportFolder, null)));
+        dialog.addPage(page);
         
+        page = new ConfigDialog.Page("illarion.easyquest.gui.config.serverTab");
+        page.addEntry(new ConfigDialog.Entry(
+            "illarion.easyquest.gui.config.characterLabel",
+            new TextEntry(character)));
+        page.addEntry(new ConfigDialog.Entry(
+            "illarion.easyquest.gui.config.passwordLabel",
+            new TextEntry(password)));
         dialog.addPage(page);
 
         return dialog;
@@ -244,6 +256,8 @@ public final class Config implements ConfigChangeListener {
         cfg.setDefault(lastFilesKey, "");
         cfg.setDefault(exportFolder, System.getProperty("user.home"));
         cfg.setDefault(openFiles, "");
+        cfg.setDefault(character, "");
+        cfg.setDefault(password, "");
 
         cfg.addListener(this);
     }
@@ -283,4 +297,20 @@ public final class Config implements ConfigChangeListener {
 	public void configChanged(illarion.common.config.Config cfg, String key) {
 		
 	}
+	
+	public void setCharacter(final String newCharacter) {
+        cfg.set(character, newCharacter);
+    }
+	
+	public void setPassword(final String newPassword) {
+        cfg.set(password, newPassword);
+    }
+	
+	public String getCharacter() {
+        return cfg.getFile(character).toString();
+    }
+	
+	public String getPassword() {
+        return cfg.getFile(password).toString();
+    }
 }
