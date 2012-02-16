@@ -24,6 +24,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
 import illarion.client.net.client.DragMapInvCmd;
 import illarion.client.net.client.DragMapMapCmd;
+import illarion.client.net.client.UseCmd;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.util.Location;
@@ -173,6 +174,19 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
                 DragMapMapCmd.class);
         cmd.setDragTo(targetTile.getLocation());
         cmd.setCounter();
+        cmd.send();
+    }
+
+    public void use() {
+        if (!isInUseRange()) {
+            return;
+        }
+
+        final UseCmd cmd =
+                CommandFactory.getInstance().getCommand(
+                        CommandList.CMD_USE,
+                        UseCmd.class);
+        cmd.addUse(this);
         cmd.send();
     }
 

@@ -63,4 +63,13 @@ public final class InputReceiver
             forwardingControl.getInputForwardingControl().releaseExclusiveMouse();
         }
     }
+
+    /**
+     * @see org.newdawn.slick.InputListener#mouseClicked(int, int, int, int)
+     */
+    public void mouseClicked(int button, int x, int y, int clickCount) {
+        if (clickCount == 2) {
+            EventBus.publish(EB_TOPIC, new DoubleClickOnMapEvent(x, y, forwardingControl.getInputForwardingControl()));
+        }
+    }
 }
