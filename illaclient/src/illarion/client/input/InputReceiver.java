@@ -76,27 +76,29 @@ public final class InputReceiver
      * @see org.newdawn.slick.InputListener#mouseClicked(int, int, int, int)
      */
     public void mouseClicked(int button, int x, int y, int clickCount) {
-        if (clickCount == 2) {
-            EventBus.publish(EB_TOPIC, new DoubleClickOnMapEvent(x, y, forwardingControl.getInputForwardingControl()));
-            wasDoubleClick = true;
-        } else {
-            Integer timerinterval = (Integer) Toolkit.getDefaultToolkit().getDesktopProperty(
-                    "awt.multiClickInterval");
+        if (button == 0) {
+            if (clickCount == 2) {
+                EventBus.publish(EB_TOPIC, new DoubleClickOnMapEvent(x, y, forwardingControl.getInputForwardingControl()));
+                wasDoubleClick = true;
+            } else {
+                Integer timerinterval = (Integer) Toolkit.getDefaultToolkit().getDesktopProperty(
+                        "awt.multiClickInterval");
 
-            final int xc = x, yc = y;
-            timer = new Timer(timerinterval.intValue(), new ActionListener() {
+                final int xc = x, yc = y;
+                timer = new Timer(timerinterval.intValue(), new ActionListener() {
 
-                public void actionPerformed(ActionEvent evt) {
-                    if (wasDoubleClick) {
-                        wasDoubleClick = false;
-                    } else {
-                        EventBus.publish(EB_TOPIC, new ClickOnMapEvent(xc, yc,
-                                                                       forwardingControl.getInputForwardingControl()));
+                    public void actionPerformed(ActionEvent evt) {
+                        if (wasDoubleClick) {
+                            wasDoubleClick = false;
+                        } else {
+                            EventBus.publish(EB_TOPIC, new ClickOnMapEvent(xc, yc,
+                                                                           forwardingControl.getInputForwardingControl()));
+                        }
                     }
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
+                });
+                timer.setRepeats(false);
+                timer.start();
+            }
         }
     }
 }
