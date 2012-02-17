@@ -86,6 +86,10 @@ public final class LookatTileMsg extends AbstractReply {
         World.getMapDisplay().lookAt(loc.getDcX(), loc.getDcY(), text);
 //        GUI.getInstance().getChatText()
 //            .showText(text, null, loc, ChatHandler.SpeechMode.normal);
+
+        // for testing lookat only
+        World.getChatHandler().handleMessage(text, null);
+
         return true;
     }
 

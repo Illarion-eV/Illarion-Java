@@ -20,6 +20,7 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
+import illarion.client.world.World;
 
 import java.io.IOException;
 
@@ -84,6 +85,10 @@ public final class LookatInvMsg extends AbstractReply {
     public boolean executeUpdate() {
         // Gui.getInstance().getContainers()
         // .lookAtResult(Containers.INVENTORY, slot, text);
+
+        // for testing lookat only
+        World.getChatHandler().handleMessage(text, null);
+
         return true;
     }
 
