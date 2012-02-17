@@ -28,6 +28,9 @@ import de.lessvoid.nifty.elements.events.ElementShowEvent;
 import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
+
+import javax.swing.*;
+
 import illarion.client.graphics.Item;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.InventoryUpdateEvent;
@@ -40,6 +43,9 @@ import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 /**
@@ -113,6 +119,10 @@ public final class GUIInventoryHandler implements
     private Nifty activeNifty;
     private Screen activeScreen;
     private GetVisibleEventSubscriber visibilityEventSubscriber;
+    
+    private int clickCount = 0;
+    private boolean wasDoubleClick = false;
+    private Timer timer = null;
 
     private static final String INVSLOT_HEAD = "invslot_";
 
@@ -207,7 +217,30 @@ public final class GUIInventoryHandler implements
     public void clickInventory(final String topic,
                                final NiftyMousePrimaryClickedEvent data) {
         final int slotId = getSlotNumber(topic);
-        World.getPlayer().getInventory().getItem(slotId).getInteractive().use();
+
+        if (clickCount == 1) {
+            World.getPlayer().getInventory().getItem(slotId).getInteractive().use();
+            clickCount = 0;
+            wasDoubleClick = true;
+        } else {
+            Integer timerinterval = (Integer) Toolkit.getDefaultToolkit().getDesktopProperty(
+                    "awt.multiClickInterval");
+            clickCount = 1;
+
+            timer = new Timer(timerinterval.intValue(), new ActionListener() {
+
+                public void actionPerformed(ActionEvent evt) {
+                    if (wasDoubleClick) {
+                        wasDoubleClick = false;
+                    } else {
+                        World.getPlayer().getInventory().getItem(slotId).getInteractive().lookAt();
+                    }
+                    clickCount = 0;
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
+        }
     }
 
     /**
