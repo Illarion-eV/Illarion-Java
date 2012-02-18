@@ -24,6 +24,8 @@ import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
 import illarion.client.net.client.DragMapInvCmd;
 import illarion.client.net.client.DragMapMapCmd;
+import illarion.client.net.client.LookatTileCmd;
+import illarion.client.net.client.UseCmd;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.util.Location;
@@ -34,6 +36,7 @@ import javolution.context.ObjectFactory;
  * This is the interactive representation of a tile on the map.
  * 
  * @author Martin Karing &lt;nitram@illarion.org&gt;
+ * @author Vilarion &lt;vilarion@illarion.org&gt;
  */
 public class InteractiveMapTile extends AbstractDraggable implements DropTarget, UseTarget, Reusable {
     /**
@@ -173,6 +176,28 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
                 DragMapMapCmd.class);
         cmd.setDragTo(targetTile.getLocation());
         cmd.setCounter();
+        cmd.send();
+    }
+
+    public void use() {
+        if (!isInUseRange()) {
+            return;
+        }
+
+        final UseCmd cmd =
+                CommandFactory.getInstance().getCommand(
+                        CommandList.CMD_USE,
+                        UseCmd.class);
+        cmd.addUse(this);
+        cmd.send();
+    }
+
+    public void lookAt() {
+        final LookatTileCmd cmd =
+                CommandFactory.getInstance().getCommand(
+                        CommandList.CMD_LOOKAT_TILE,
+                        LookatTileCmd.class);
+        cmd.setPosition(getLocation());
         cmd.send();
     }
 

@@ -336,7 +336,7 @@ public final class ChatHandler implements Runnable, Stoppable {
             }
 
             Char chara;
-            if (World.getPlayer().getLocation().equals(node.getLocation())) {
+            if (node.getLocation() == null || World.getPlayer().getLocation().equals(node.getLocation())) {
                 chara = World.getPlayer().getCharacter();
             } else {
                 chara = World.getPeople().getCharacterAt(node.getLocation());

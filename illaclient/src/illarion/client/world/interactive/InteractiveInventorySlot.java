@@ -23,6 +23,8 @@ import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
 import illarion.client.net.client.DragInvInvCmd;
 import illarion.client.net.client.DragInvMapCmd;
+import illarion.client.net.client.LookatInvCmd;
+import illarion.client.net.client.UseCmd;
 import illarion.client.world.InventorySlot;
 
 /**
@@ -80,6 +82,30 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
             CommandFactory.getInstance().getCommand(
                 CommandList.CMD_DRAG_INV_INV, DragInvInvCmd.class);
         cmd.setDrag(getSlotId(), targetSlot.getSlotId());
+        cmd.send();
+    }
+
+    public void use() {
+        if (!isValidItem()) {
+            return;
+        }
+
+        final UseCmd cmd =
+                CommandFactory.getInstance().getCommand(
+                        CommandList.CMD_USE, UseCmd.class);
+        cmd.addUse(this);
+        cmd.send();
+    }
+
+    public void lookAt() {
+        if (!isValidItem()) {
+            return;
+        }
+
+        final LookatInvCmd cmd =
+                CommandFactory.getInstance().getCommand(
+                        CommandList.CMD_LOOKAT_INV, LookatInvCmd.class);
+        cmd.setSlot(this.getSlotId());
         cmd.send();
     }
     

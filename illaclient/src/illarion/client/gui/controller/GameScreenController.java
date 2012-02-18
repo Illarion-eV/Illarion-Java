@@ -25,9 +25,9 @@ import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import illarion.client.gui.GUIChatHandler;
-import illarion.client.gui.GUIInventoryHandler;
-import illarion.client.gui.GameMapHandler;
+
+import illarion.client.gui.*;
+import illarion.client.gui.GameMapClickHandler;
 import illarion.client.world.World;
 
 public class GameScreenController implements ScreenController {
@@ -41,7 +41,9 @@ public class GameScreenController implements ScreenController {
     private Droppable mapDropTarget;
     
     private GUIChatHandler chatHandler;
-    private GameMapHandler mapHandler;
+    private GameMapClickHandler mapClickHandler;
+    private GameMapDoubleClickHandler mapDoubleClickHandler;
+    private GameMapDragHandler mapDragHandler;
     private GUIInventoryHandler inventoryHandler;
     
     private boolean notifyResolutionChanged;
@@ -66,8 +68,12 @@ public class GameScreenController implements ScreenController {
 
         inventoryHandler = new GUIInventoryHandler();
         inventoryHandler.bind(nifty, screen);
-        mapHandler = new GameMapHandler();
-        mapHandler.bind(parentNifty, screen);
+        mapClickHandler = new GameMapClickHandler();
+        mapClickHandler.bind(parentNifty, screen);
+        mapDoubleClickHandler = new GameMapDoubleClickHandler();
+        mapDoubleClickHandler.bind(parentNifty, screen);
+        mapDragHandler = new GameMapDragHandler();
+        mapDragHandler.bind(parentNifty, screen);
     }
 
     @Override
@@ -78,7 +84,7 @@ public class GameScreenController implements ScreenController {
             notifyResolutionChanged = false;
         }
         World.getChatHandler().addChatReceiver(chatHandler);
-        parentNifty.subscribeAnnotations(mapHandler);
+        parentNifty.subscribeAnnotations(mapDragHandler);
         inventoryHandler.onStartScreen();
     }
 
