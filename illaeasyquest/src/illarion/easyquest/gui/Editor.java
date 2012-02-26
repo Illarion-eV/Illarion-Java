@@ -44,6 +44,7 @@ import com.mxgraph.util.mxUndoManager;
 import com.mxgraph.util.mxUndoableEdit;
 import com.mxgraph.util.mxUndoableEdit.mxUndoableChange;
 import com.mxgraph.util.mxUtils;
+import com.mxgraph.view.mxGraphSelectionModel;
 import com.mxgraph.view.mxStylesheet;
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.io.mxCodecRegistry;
@@ -212,6 +213,28 @@ public final class Editor extends mxGraphComponent {
 	{
 		return undoManager;
 	}
+    
+    public int getSelectedStatusNumber() throws IllegalStateException {
+    	Graph graph = (Graph)getGraph();
+        mxGraphSelectionModel model = graph.getSelectionModel();
+        Object[] nodes = model.getCells();
+    	int count = 0;
+    	mxCell status = null;
+    	
+    	for (Object node : nodes) {
+        	mxCell cell = (mxCell)node;
+        	if (cell.getValue() instanceof Status) {
+        		status = cell;
+        		count = count + 1;
+        	}
+    	}
+        
+    	if (count == 1) {
+	    	return ((Status)status.getValue()).isStart() ? 0 : Integer.parseInt(status.getId());
+    	} else {
+    		throw new IllegalStateException(String.valueOf(count));
+    	}
+    }
     
     public int getQuestID() {
     	return questID;
@@ -397,7 +420,7 @@ public final class Editor extends mxGraphComponent {
     		quest.put(scriptName + ".lua", t);
     		
             questtxt = questtxt + template.getCategory() + ","
-                    + trigger.getObjectId() + ","
+                    + exportId(trigger.getObjectId(), template.getId().getType()) + ","
                     + template.getEntryPoint() + ","
                     + scriptName + "\n";
               
@@ -407,6 +430,32 @@ public final class Editor extends mxGraphComponent {
         quest.put("quest.txt", questtxt);
         
         return quest;
+    }
+    
+    private String exportId(Object parameter, String type)
+    {
+        if (type.equals("POSITION"))
+        {
+            Position p = (Position)parameter;
+            return p.getX() + "," + p.getY() + "," + p.getZ();
+        }
+        else if (type.equals("INTEGER"))
+        {
+            if (parameter instanceof Long)
+            {
+                Long n = (Long)parameter;
+                return n.toString();
+            }
+            else
+            {
+                String s = (String)parameter;
+                return s;
+            }
+        }
+        else
+        {
+            return "TYPE NOT SUPPORTED";
+        }
     }
     
     private String exportParameter(Object parameter, String type)
@@ -444,6 +493,8 @@ public final class Editor extends mxGraphComponent {
     {
         String errors = "";
         Graph graph = (Graph)getGraph();
+        mxGraphSelectionModel model = graph.getSelectionModel();
+        model.clear();
         Object parent = graph.getDefaultParent();
         Object[] edges = graph.getChildEdges(parent);
         Object[] nodes = graph.getChildVertices(parent);
@@ -463,6 +514,7 @@ public final class Editor extends mxGraphComponent {
         }
         
         int countUnconnected = 0;
+        int countNoContent = 0;
         for (Object edge : edges)
         {
             mxCell cell = (mxCell)edge;
@@ -472,9 +524,22 @@ public final class Editor extends mxGraphComponent {
             {
                 countUnconnected = countUnconnected + 1;
             }
+            
+            Trigger trigger = (Trigger)cell.getValue();
+
+            if (trigger.getType() == null || trigger.getObjectId() == null ||
+            		(trigger.getObjectId() instanceof Long && (Long)(trigger.getObjectId()) == 0) ||
+            		trigger.getParameters() == null || trigger.getConditions() == null)
+            {
+            	model.addCell(cell);
+            	countNoContent = countNoContent + 1;
+            }
         }
         if (countUnconnected > 0) {
             errors = errors + Lang.getMsg(Editor.class, "unconnectedError") + " " + countUnconnected + ".\n";
+        }
+        if (countNoContent > 0) {
+        	errors = errors + Lang.getMsg(Editor.class, "noContentError") + " " + countNoContent + ".\n";
         }
         
         if (errors.length() != 0)

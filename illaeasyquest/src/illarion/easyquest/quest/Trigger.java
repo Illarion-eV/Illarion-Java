@@ -24,14 +24,13 @@ import java.io.Serializable;
 public class Trigger implements Serializable {
 
     private String name;
-    private long objectId;
     private String type;
+    private Object objectId;
     private Object[] parameters;
     private Condition[] conditions;
 
     public Trigger() {
         name = "";
-        objectId = 0;
         type = null;
         parameters = null;
         conditions = null;
@@ -45,11 +44,11 @@ public class Trigger implements Serializable {
         return name;
     }
     
-    public void setObjectId(long id) {
+    public void setObjectId(Object id) {
         objectId = id;
     }
     
-    public long getObjectId() {
+    public Object getObjectId() {
         return objectId;
     }
     

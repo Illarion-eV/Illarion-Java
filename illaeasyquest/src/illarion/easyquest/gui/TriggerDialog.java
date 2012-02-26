@@ -35,7 +35,6 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.JFormattedTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.Box;
@@ -51,13 +50,11 @@ public class TriggerDialog extends JDialog
 {
     
     private final JTextField name;
-    private final JFormattedTextField objectId;
     private final JComboBox trigger;
     private final Box conditionPanels;
     private final JButton okay;
     private final JButton cancel;
     private final JPanel main;
-    private final JLabel labelId;
     
     public TriggerDialog(Frame owner)
     {
@@ -70,14 +67,10 @@ public class TriggerDialog extends JDialog
         final Box body = Box.createVerticalBox();
 		final Box buttons = Box.createHorizontalBox();
 		final JLabel labelName = new JLabel(Lang.getMsg(getClass(), "name")+":");
-		labelId = new JLabel(Lang.getMsg(getClass(), "objectId")+":");
 		final JLabel labelType = new JLabel(Lang.getMsg(getClass(), "type")+":");
 		name = new JTextField(17);
 		NumberFormat format = NumberFormat.getIntegerInstance();
         format.setGroupingUsed(false);
-        objectId = new JFormattedTextField(format);
-        objectId.setHorizontalAlignment(JFormattedTextField.RIGHT);
-		objectId.setValue(new Long(0));
 		trigger = new JComboBox();
 		okay = new JButton(Lang.getMsg(getClass(), "ok"));
 		cancel = new JButton(Lang.getMsg(getClass(), "cancel"));
@@ -87,21 +80,17 @@ public class TriggerDialog extends JDialog
 		    trigger.addItem(TriggerTemplates.getInstance().getTemplate(i));
 		}
 		
-		final TriggerDialog dialog = this;
 		trigger.addItemListener(new ItemListener() {
 		    public void itemStateChanged(ItemEvent e) {
 		        if (e.getStateChange() == ItemEvent.SELECTED)
 		        {
 		            main.removeAll();
 		            TriggerTemplate template = (TriggerTemplate)e.getItem();
+		            main.add(new ParameterPanel(template.getId()));
 		            for (int i=0; i<template.size(); ++i)
             		{
             		    main.add(new ParameterPanel(template.getParameter(i)));
             		}
-            		String category = template.getCategory();
-            		String label = category.substring(0, 1).toUpperCase()
-            		    + category.substring(1) + " " + Lang.getMsg(dialog.getClass(), "id") + ":";
-            		labelId.setText(label);
             		pack();
             		validate();
 		        }
@@ -115,8 +104,6 @@ public class TriggerDialog extends JDialog
 		
 		header.add(labelName);
 		header.add(name);
-		header.add(labelId);
-		header.add(objectId);
 		header.add(labelType);
 		header.add(trigger);
 		header.setBorder(BorderFactory.createEmptyBorder(5,5,10,5));
@@ -153,14 +140,16 @@ public class TriggerDialog extends JDialog
         name.setText(value);
     }
     
-    public long getId()
+    public Object getId()
     {
-        return ((Number)objectId.getValue()).longValue();
+    	Component c = main.getComponent(0);
+        return ((ParameterPanel)c).getParameter();
     }
     
-    public void setId(long value)
+    public void setId(Object value)
     {
-        objectId.setValue(new Long(value));
+    	Component c = main.getComponent(0);
+        ((ParameterPanel)c).setParameter(value);
     }
     
     public String getType()
@@ -175,31 +164,31 @@ public class TriggerDialog extends JDialog
     
     public Object[] getParameters()
     {
-        int count = main.getComponentCount();
+        int count = main.getComponentCount() - 1;
         Object[] parameters = new Object[count];
-        for (int i=0; i<count; ++i)
+        for (int i=1; i<=count; ++i)
         {
             Component c = main.getComponent(i);
-            parameters[i] = ((ParameterPanel)c).getParameter();
+            parameters[i-1] = ((ParameterPanel)c).getParameter();
         }
         return parameters;
     }
     
     public void setParameters(Object[] parameters)
     {
-        int count = main.getComponentCount();
+        int count = main.getComponentCount() - 1;
         
         if (parameters != null)
         {
-            for (int i=0; i<count; ++i)
+            for (int i=1; i<=count; ++i)
             {
                 Component c = main.getComponent(i);
-                ((ParameterPanel)c).setParameter(parameters[i]);
+                ((ParameterPanel)c).setParameter(parameters[i-1]);
             }
         }
         else
         {
-            for (int i=0; i<count; ++i)
+            for (int i=1; i<=count; ++i)
             {
                 Component c = main.getComponent(i);
                 ((ParameterPanel)c).setParameter(null);
