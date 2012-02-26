@@ -201,11 +201,15 @@ public final class Download implements Callable<DownloadResult> {
                         } catch (final IOException ex) {
                             // nothing to do
                         }
-                        manager.reportDownloadFinished(this,
-                            new DownloadResult(
-                                DownloadResult.Results.notModified,
-                                "download.not_modified", source, target,
-                                lastModified));
+                        if (target.exists()) {
+                            manager.reportDownloadFinished(this,
+                                new DownloadResult(DownloadResult.Results.downloaded, "download.not_modified",
+                                                   source, target, lastModified));
+                        } else {
+                            manager.reportDownloadFinished(this,
+                                new DownloadResult(DownloadResult.Results.notModified, "download.not_modified",
+                                                   source, target, lastModified));
+                        }
                         return false;
                     case HttpURLConnection.HTTP_OK:
                     case HttpURLConnection.HTTP_PARTIAL:

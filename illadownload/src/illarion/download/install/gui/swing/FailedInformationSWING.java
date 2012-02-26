@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXLabel.TextAlignment;
+import org.jdesktop.swingx.JXList;
 
 import illarion.download.util.Lang;
 
@@ -163,7 +164,6 @@ public final class FailedInformationSWING extends AbstractContentSWING {
         headLabel.setFont(headLabel.getFont().deriveFont(Font.BOLD, 14.f));
 
         con.gridy = line++;
-        con.weighty = 0.0;
         final JXLabel textField = new JXLabel();
         textField.setCursor(null);
         textField.setOpaque(false);
@@ -179,7 +179,6 @@ public final class FailedInformationSWING extends AbstractContentSWING {
         con.gridx = 0;
         con.gridwidth = 2;
         con.weightx = 1.0;
-        con.weighty = 1.0;
         contentPanel.add(new JLabel(), con);
     }
 

@@ -64,7 +64,6 @@ the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
 		<mkdir dir="${classes}" />
 		<javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}" target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}" debuglevel="${build.debuglevel}">
 			<classpath>
-				<fileset refid="lzma" />
 				<fileset refid="xz" />
 				<fileset refid="swingx" />
 				<pathelement path="${common.bin}" />
@@ -77,7 +76,6 @@ the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
 			<fileset dir="${classes}">
 				<include name="illarion/download/**" />
 			</fileset>
-			<zipgroupfileset refid="lzma" />
 			<zipgroupfileset refid="swingx" />
 			<zipgroupfileset refid="xz" />
 			<zipfileset src="${common.bin}" />

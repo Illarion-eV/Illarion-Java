@@ -39,7 +39,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		<delete file="${jar}" />
 	</target>
 
-	<target name="build_common_res" description="create the resource of the common library" depends="check_optional_dirs, init, buildTasks" if="keys.exist">
+	<target name="build_common_res" description="create the resource of the common library"
+            depends="check_optional_dirs, build_common, register_extensions" if="keys.exist">
 		<resourceprepare targetdir="${signedcompiled}" usepack200="true">
 			<filelist dir="${compiled}">
 				<file name="${common.jar}" />
@@ -69,7 +70,37 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_javolution" description="prepare the JAVOLUTION bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
+    <target name="prepare_eventbus" description="prepare the EVENTBUS bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="eventbus" />
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="eventbus.pattern" />
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="eventbus.pattern" />
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/eventbus.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="eventbus.pattern" />
+            </fileset>
+        </resourcebuild>
+    </target>
+
+	<target name="prepare_javolution" description="prepare the JAVOLUTION bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="javolution" />
 		</resourceprepare>
@@ -97,106 +128,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_jogl" description="prepare the JOGL bundle"  depends="check_optional_dirs,init_libs,buildTasks,native_build_pattern" if="keys.exist">
-		<patternset id="jogl.natives">
-            <include name="gluegen-rt-natives*.jar" />
-			<include name="jogl-all-natives*.jar" />
-		</patternset>
-
-		<delete>
-			<fileset dir="${signedlibs}">
-                <include name="gluegen-rt.jar"/>
-				<include name="jogl.all.jar"/>
-			</fileset>
-		</delete>
-
-
-		<resourceprepare targetdir="${signedlibs}" usepack200="true">
-			<fileset refid="jogl" />
-			<fileset dir="${jogl.dir}">
-				<patternset refid="jogl.natives" />
-			</fileset>
-		</resourceprepare>
-
-		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
-			<path>
-				<fileset dir="${signedlibs}">
-					<patternset refid="jogl.pattern" />
-				</fileset>
-				<fileset dir="${signedlibs}">
-					<patternset refid="jogl.natives" />
-				</fileset>
-			</path>
-		</signjar>
-
-		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
-			<path>
-				<fileset dir="${signedlibs}">
-					<patternset refid="jogl.pattern" />
-				</fileset>
-				<fileset dir="${signedlibs}">
-					<patternset refid="jogl.natives" />
-				</fileset>
-			</path>
-		</verifyjar>
-
-		<resourcebuild target="${setuplib}/jogl-windows-i586.illares" usepack200="true">
-			<fileset dir="${signedlibs}">
-				<patternset refid="jogl.pattern" />
-				<patternset refid="only.windows.32" />
-			</fileset>
-			<nativefileset dir="${signedlibs}">
-				<patternset refid="jogl.natives" />
-				<patternset refid="only.windows.32" />
-			</nativefileset>
-		</resourcebuild>
-
-		<resourcebuild target="${setuplib}/jogl-windows-amd64.illares" usepack200="true">
-			<fileset dir="${signedlibs}">
-				<patternset refid="jogl.pattern" />
-				<patternset refid="only.windows.64" />
-			</fileset>
-			<nativefileset dir="${signedlibs}">
-				<patternset refid="jogl.natives" />
-				<patternset refid="only.windows.64" />
-			</nativefileset>
-		</resourcebuild>
-
-		<resourcebuild target="${setuplib}/jogl-linux-i586.illares" usepack200="true">
-			<fileset dir="${signedlibs}">
-				<patternset refid="jogl.pattern" />
-				<patternset refid="only.linux.32" />
-			</fileset>
-			<nativefileset dir="${signedlibs}">
-				<patternset refid="jogl.natives" />
-				<patternset refid="only.linux.32" />
-			</nativefileset>
-		</resourcebuild>
-
-		<resourcebuild target="${setuplib}/jogl-linux-amd64.illares" usepack200="true">
-			<fileset dir="${signedlibs}">
-				<patternset refid="jogl.pattern" />
-				<patternset refid="only.linux.64" />
-			</fileset>
-			<nativefileset dir="${signedlibs}">
-				<patternset refid="jogl.natives" />
-				<patternset refid="only.linux.64" />
-			</nativefileset>
-		</resourcebuild>
-
-		<resourcebuild target="${setuplib}/jogl-macosx-universal.illares" usepack200="true">
-			<fileset dir="${signedlibs}">
-				<patternset refid="jogl.pattern" />
-				<patternset refid="only.macosx" />
-			</fileset>
-			<nativefileset dir="${signedlibs}">
-				<patternset refid="jogl.natives" />
-				<patternset refid="only.macosx" />
-			</nativefileset>
-		</resourcebuild>
-	</target>
-
-	<target name="prepare_jsyntaxpane" description="prepare the JSYNTAXPANE bundle"  depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
+	<target name="prepare_jsyntaxpane" description="prepare the JSYNTAXPANE bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="jsyntaxpane" />
 		</resourceprepare>
@@ -224,7 +157,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-    <target name="prepare_jgraph" description="prepare the JGraph bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
+    <target name="prepare_jgraph" description="prepare the JGraph bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
         <resourceprepare targetdir="${signedlibs}" usepack200="true">
             <fileset refid="jgraph" />
         </resourceprepare>
@@ -252,7 +186,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
         </resourcebuild>
     </target>
 
-	<target name="prepare_log4j" description="prepare the LOG4J bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
+	<target name="prepare_log4j" description="prepare the LOG4J bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="log4j" />
 		</resourceprepare>
@@ -293,7 +228,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<attribute name="Built-Date" value="${TODAY}" />
 				<attribute name="Implementation-Vendor" value="LWJGL Team" />
 				<attribute name="Implementation-Title" value="LWJGL Natives Windows 32bit" />
-				<attribute name="Implementation-Version" value="2.6" />
+				<attribute name="Implementation-Version" value="2.8.3" />
 			</manifest>
 		</jar>
 
@@ -309,7 +244,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<attribute name="Built-Date" value="${TODAY}" />
 				<attribute name="Implementation-Vendor" value="LWJGL Team" />
 				<attribute name="Implementation-Title" value="LWJGL Natives Windows 64bit" />
-				<attribute name="Implementation-Version" value="2.6" />
+				<attribute name="Implementation-Version" value="2.8.3" />
 			</manifest>
 		</jar>
 
@@ -324,7 +259,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<attribute name="Built-Date" value="${TODAY}" />
 				<attribute name="Implementation-Vendor" value="LWJGL Team" />
 				<attribute name="Implementation-Title" value="LWJGL Natives Linux 32bit" />
-				<attribute name="Implementation-Version" value="2.6" />
+				<attribute name="Implementation-Version" value="2.8.3" />
 			</manifest>
 		</jar>
 
@@ -339,7 +274,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<attribute name="Built-Date" value="${TODAY}" />
 				<attribute name="Implementation-Vendor" value="LWJGL Team" />
 				<attribute name="Implementation-Title" value="LWJGL Natives Linux 64bit" />
-				<attribute name="Implementation-Version" value="2.6" />
+				<attribute name="Implementation-Version" value="2.8.3" />
 			</manifest>
 		</jar>
 
@@ -354,7 +289,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<attribute name="Built-Date" value="${TODAY}" />
 				<attribute name="Implementation-Vendor" value="LWJGL Team" />
 				<attribute name="Implementation-Title" value="LWJGL Natives MacOS X" />
-				<attribute name="Implementation-Version" value="2.6" />
+				<attribute name="Implementation-Version" value="2.8.3" />
 			</manifest>
 		</jar>
 
@@ -368,7 +303,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<attribute name="Built-Date" value="${TODAY}" />
 				<attribute name="Implementation-Vendor" value="LWJGL Team" />
 				<attribute name="Implementation-Title" value="LWJGL Natives Solaris 32bit" />
-				<attribute name="Implementation-Version" value="2.6" />
+				<attribute name="Implementation-Version" value="2.8.3" />
 			</manifest>
 		</jar>
 
@@ -382,7 +317,7 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 				<attribute name="Built-Date" value="${TODAY}" />
 				<attribute name="Implementation-Vendor" value="LWJGL Team" />
 				<attribute name="Implementation-Title" value="LWJGL Natives Solaris 64bit" />
-				<attribute name="Implementation-Version" value="2.6" />
+				<attribute name="Implementation-Version" value="2.8.3" />
 			</manifest>
 		</jar>
 
@@ -503,7 +438,66 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_substance" description="prepare the SUBSTANCE bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
+    <target name="prepare_nifty" description="prepare the NIFTY-GUI bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="nifty" />
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="nifty.pattern" />
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="nifty.pattern" />
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/nifty.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="nifty.pattern" />
+            </fileset>
+        </resourcebuild>
+    </target>
+
+    <target name="prepare_slick" description="prepare the SLICK bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="slick" />
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="slick.pattern" />
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="slick.pattern" />
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/slick.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="slick.pattern" />
+            </fileset>
+        </resourcebuild>
+    </target>
+
+	<target name="prepare_substance" description="prepare the SUBSTANCE bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
 		<property name="use.pack200" value="false" />
 
 		<resourceprepare targetdir="${signedlibs}" usepack200="${use.pack200}">
@@ -545,7 +539,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_tabsplitter" description="prepare the TABSPLITTER bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
+	<target name="prepare_tabsplitter" description="prepare the TABSPLITTER bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="tabsplitter" />
 		</resourceprepare>
@@ -573,7 +568,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_trove" description="prepare the TROVE bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
+	<target name="prepare_trove" description="prepare the TROVE bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="trove" />
 		</resourceprepare>
@@ -601,7 +597,8 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 		</resourcebuild>
 	</target>
 
-	<target name="prepare_vorbisspi" description="prepare the TROVE bundle" depends="check_optional_dirs,init_libs,buildTasks" if="keys.exist">
+	<target name="prepare_vorbisspi" description="prepare the VORBISSPI bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
 		<resourceprepare targetdir="${signedlibs}" usepack200="true">
 			<fileset refid="vorbisspi" />
 			<fileset refid="jorbis" />
@@ -636,6 +633,35 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
 			</fileset>
 		</resourcebuild>
 	</target>
+
+    <target name="prepare_xpp3" description="prepare the XPP3 bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="xpp" />
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}" storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="xpp.pattern" />
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="xpp.pattern" />
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/xpp3.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="xpp.pattern" />
+            </fileset>
+        </resourcebuild>
+    </target>
 
 	<target name="init_libs">
 		<mkdir dir="${setuplib}" />
@@ -800,12 +826,14 @@ the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
         <get src="http://illarion.org/media/java/rsc/rsc_tiles.jar" dest="${resources}/rsc_tiles.jar" usetimestamp="true" verbose="true" />
     </target>
 
-	<target name="rsc_manual" description="Build the Manual resources">
+	<target name="rsc_manual" depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist" description="Build the Manual resources">
+        <filelist dir="${client}" id="manuals">
+            <file name="manual_de.pdf" />
+            <file name="manual_en.pdf" />
+        </filelist>
+
 		<copy todir="${resources}">
-			<filelist dir="${client}">
-				<file name="manual_de.pdf" />
-				<file name="manual_en.pdf" />
-			</filelist>
+			<filelist refid="manuals" />
 		</copy>
 	</target>
 </project>

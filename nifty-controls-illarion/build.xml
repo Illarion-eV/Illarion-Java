@@ -28,9 +28,12 @@ the Illarion Nifty Controls Library. If not, see <http://www.gnu.org/licenses/>.
 	<property name="classes" location="${niftycontrols}/antclasses" />
 	<property name="jar" location="${niftycontrols}/${niftycontrols.jar}" />
 
-	<target name="build_nifty_controls" description="Build the nifty controls jar" depends="check_optional_dirs, init, buildTasks, compile_nifty_controls" if="keys.exist">
-		<move file="${jar}" tofile="${niftycontrols.bin}" />
+    <target name="build_nifty_controls" description="Build unobfuscated test client" depends="init, compile_nifty_controls">
+        <move file="${jar}" tofile="${niftycontrols.bin}" />
+    </target>
 
+	<target name="build_nifty_controls_res" description="Build the nifty controls jar"
+            depends="check_optional_dirs, build_nifty_controls, register_extensions" if="keys.exist">
 		<resourceprepare targetdir="${signedcompiled}" usepack200="true">
 			<filelist dir="${compiled}">
 				<file name="${niftycontrols.jar}" />
@@ -53,8 +56,12 @@ the Illarion Nifty Controls Library. If not, see <http://www.gnu.org/licenses/>.
 			</path>
 		</verifyjar>
 
-		<copy file="${signedcompiled}/${niftycontrols.jar}" tofile="${niftycontrols.deploy}" />
-		<pack200 srcfile="${niftycontrols.deploy}" destdir="${setup}" />
+        <resourcebuild target="${niftyillarion.res.deploy}" usepack200="true">
+            <filelist dir="${signedcompiled}">
+                <file name="${niftycontrols.jar}" />
+                <file name="${niftystyle.jar}" />
+            </filelist>
+        </resourcebuild>
 	</target>
 
 	<target name="compile_nifty_controls" depends="proguard">
@@ -63,11 +70,8 @@ the Illarion Nifty Controls Library. If not, see <http://www.gnu.org/licenses/>.
 		<mkdir dir="${classes}" />
 		<javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}" target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}" debuglevel="${build.debuglevel}">
 			<classpath>
-				<fileset refid="lzma" />
-				<fileset refid="swingx" />
 				<fileset refid="nifty" />
 				<fileset refid="eventbus" />
-				<fileset refid="slick" />
 				<pathelement path="${common.bin}" />
 				<pathelement path="${java.home}/lib" />
 			</classpath>
@@ -86,6 +90,7 @@ the Illarion Nifty Controls Library. If not, see <http://www.gnu.org/licenses/>.
 				<attribute name="Implementation-Version" value="${niftycontrols.version}" />
 			</manifest>
 		</jar>
+        <jar jarfile="${jar}" basedir="${niftycontrols}/nifty-controls" update="true" index="true" includes="*.xml" />
 
 		<delete dir="${classes}" />
 	</target>

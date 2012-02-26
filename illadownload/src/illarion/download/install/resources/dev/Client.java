@@ -24,9 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.libs.Javolution;
-import illarion.download.install.resources.libs.Log4j;
-import illarion.download.install.resources.libs.Trove;
+import illarion.download.install.resources.libs.*;
 import illarion.download.util.Lang;
 
 /**
@@ -100,17 +98,17 @@ public final class Client implements DevelopmentResource {
             dep.add(Javolution.getInstance());
             dep.add(Log4j.getInstance());
             dep.add(Trove.getInstance());
+            dep.add(Slick.getInstance());
+            dep.add(NiftyGui.getInstance());
+            dep.add(EventBus.getInstance());
             dep.add(Common.getInstance());
-            dep.add(Graphics.getInstance());
-            dep.add(Input.getInstance());
-            dep.add(Sound.getInstance());
+            dep.add(NiftyIllarion.getInstance());
 
             dep.add(Books.getInstance());
             dep.add(Characters.getInstance());
             dep.add(Effects.getInstance());
             dep.add(Items.getInstance());
             dep.add(Gui.getInstance());
-            dep.add(Manual.getInstance());
             dep.add(Sounds.getInstance());
             dep.add(Tables.getInstance());
             dep.add(Tiles.getInstance());

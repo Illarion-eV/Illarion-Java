@@ -109,8 +109,6 @@ public final class Mapeditor implements DevelopmentResource {
             dep.add(Trove.getInstance());
             dep.add(Tabsplitter.getInstance());
             dep.add(Common.getInstance());
-            dep.add(Graphics.getInstance());
-            dep.add(Input.getInstance());
 
             dep.add(Items.getInstance());
             dep.add(Tables.getInstance());

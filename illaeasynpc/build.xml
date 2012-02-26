@@ -34,7 +34,8 @@ the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
         <move file="${jar}" tofile="${easynpc.bin}" />
 	</target>
 
-    <target name="build_easynpc_res" description="create the resource of the illarion client" depends="check_optional_dirs, init, buildTasks" if="keys.exist">
+    <target name="build_easynpc_res" description="create the resource of the illarion client"
+            depends="check_optional_dirs, build_easynpc, register_extensions" if="keys.exist">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
                 <file name="${easynpc.jar}" />

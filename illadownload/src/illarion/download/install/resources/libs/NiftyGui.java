@@ -1,22 +1,22 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.download.install.resources.dev;
+package illarion.download.install.resources.libs;
 
 import java.io.File;
 import java.net.URL;
@@ -24,25 +24,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.libs.JOGL;
-import illarion.download.install.resources.libs.Javolution;
-import illarion.download.install.resources.libs.LWJGL;
-import illarion.download.install.resources.libs.Log4j;
-import illarion.download.install.resources.libs.Trove;
 import illarion.download.util.Lang;
 
 /**
- * This resource contains the Illarion Input Engine.
+ * This resource contains the Nifty-GUI.
  * 
  * @author Martin Karing
  * @since 1.00
  * @version 1.00
  */
-public final class Input implements DevelopmentResource {
+public final class NiftyGui
+        implements LibraryResource {
     /**
      * The singleton instance of this class.
      */
-    private static final Input INSTANCE = new Input();
+    private static final NiftyGui INSTANCE = new NiftyGui();
 
     /**
      * The files that are needed to be added to the class path for this
@@ -51,19 +47,25 @@ public final class Input implements DevelopmentResource {
     private Collection<File> classpath;
 
     /**
-     * The dependencies of this resource.
-     */
-    private Collection<Resource> dependencies;
-
-    /**
      * The resources that are needed to be downloaded for this class.
      */
     private Collection<URL> resources;
 
     /**
+     * The arguments that are passed to the virtual machine in case this
+     * resource is part of the application.
+     */
+    private Collection<String> vmArguments;
+
+    /**
+     * The libraries this library depends on.
+     */
+    private Collection<Resource> dependencies;
+
+    /**
      * Private constructor to avoid instances but the singleton instance.
      */
-    private Input() {
+    private NiftyGui() {
         // nothing to do
     }
 
@@ -84,8 +86,10 @@ public final class Input implements DevelopmentResource {
     public Collection<File> getClassPath() {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
-            cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                "illarion_input.jar")); //$NON-NLS-1$
+            final String dir = LibraryDirectory.getInstance().getDirectory();
+            cp.add(new File(dir, "nifty-1.3.2-SNAPSHOT.jar")); //$NON-NLS-1$
+            cp.add(new File(dir, "nifty-default-controls-1.3.2-SNAPSHOT.jar")); //$NON-NLS-1$
+            cp.add(new File(dir, "nifty-slick-renderer-1.3.2-SNAPSHOT.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -93,18 +97,15 @@ public final class Input implements DevelopmentResource {
     }
 
     /**
-     * Get the dependencies of this resource.
+     * Get the libraries this library requires to work.
      */
     @Override
     public Collection<Resource> getDependencies() {
         if (dependencies == null) {
-            final Collection<Resource> dep = new ArrayList<Resource>();
-            dep.add(JOGL.getInstance());
-            dep.add(LWJGL.getInstance());
-            dep.add(Log4j.getInstance());
-            dep.add(Trove.getInstance());
-            dep.add(Javolution.getInstance());
-            dep.add(Common.getInstance());
+            final Collection<Resource> dep = new ArrayList<Resource>(2);
+            dep.add(Slick.getInstance());
+            dep.add(EventBus.getInstance());
+            dep.add(Xpp.getInstance());
 
             dependencies = dep;
         }
@@ -122,7 +123,7 @@ public final class Input implements DevelopmentResource {
 
     @Override
     public String getName() {
-        return Lang.getMsg(Input.class.getName());
+        return Lang.getMsg(NiftyGui.class.getName());
     }
 
     /**
@@ -144,7 +145,7 @@ public final class Input implements DevelopmentResource {
             final Collection<URL> res = new ArrayList<URL>();
             try {
                 res.add(new URL(ONLINE_PATH
-                    + "illarion_input" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                    + "nifty" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (final Exception e) {
                 // Catch everything and do nothing!
             }
@@ -168,7 +169,14 @@ public final class Input implements DevelopmentResource {
      */
     @Override
     public Collection<String> getVMArguments() {
-        return null;
+        if (vmArguments == null) {
+            final Collection<String> vmArgs = new ArrayList<String>();
+            vmArgs.add("-Dillarion.components.avaiable.nifty=true"); //$NON-NLS-1$
+
+            vmArguments = vmArgs;
+        }
+
+        return vmArguments;
     }
 
     /**

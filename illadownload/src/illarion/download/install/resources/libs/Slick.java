@@ -1,20 +1,20 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.install.resources.libs;
 
@@ -23,24 +23,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import illarion.common.util.DirectoryManager;
-
 import illarion.download.install.resources.Resource;
 import illarion.download.util.Lang;
-import illarion.download.util.OSDetection;
 
 /**
- * This resource contains the JOGL library along with NEWT and Nativewindow.
+ * This resource contains the Slick 2D graphic engine.
  * 
  * @author Martin Karing
  * @since 1.00
  * @version 1.00
  */
-public final class JOGL implements LibraryResource {
+public final class Slick
+        implements LibraryResource {
     /**
      * The singleton instance of this class.
      */
-    private static final JOGL INSTANCE = new JOGL();
+    private static final Slick INSTANCE = new Slick();
 
     /**
      * The files that are needed to be added to the class path for this
@@ -60,9 +58,14 @@ public final class JOGL implements LibraryResource {
     private Collection<String> vmArguments;
 
     /**
+     * The libraries this library depends on.
+     */
+    private Collection<Resource> dependencies;
+
+    /**
      * Private constructor to avoid instances but the singleton instance.
      */
-    private JOGL() {
+    private Slick() {
         // nothing to do
     }
 
@@ -83,10 +86,8 @@ public final class JOGL implements LibraryResource {
     public Collection<File> getClassPath() {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
-            final String dataDir =
-                LibraryDirectory.getInstance().getDirectory();
-            cp.add(new File(dataDir, "gluegen-rt.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "jogl.all.jar")); //$NON-NLS-1$
+            final String dir = LibraryDirectory.getInstance().getDirectory();
+            cp.add(new File(dir, "slick.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -94,11 +95,18 @@ public final class JOGL implements LibraryResource {
     }
 
     /**
-     * Get the dependencies of this resource.
+     * Get the libraries this library requires to work.
      */
     @Override
     public Collection<Resource> getDependencies() {
-        return null;
+        if (dependencies == null) {
+            final Collection<Resource> dep = new ArrayList<Resource>(2);
+            dep.add(LWJGL.getInstance());
+            dep.add(VorbisSPI.getInstance());
+            
+            dependencies = dep;
+        }
+        return dependencies;
     }
 
     /**
@@ -112,7 +120,7 @@ public final class JOGL implements LibraryResource {
 
     @Override
     public String getName() {
-        return Lang.getMsg(JOGL.class.getName());
+        return Lang.getMsg(Slick.class.getName());
     }
 
     /**
@@ -132,28 +140,9 @@ public final class JOGL implements LibraryResource {
     public Collection<URL> getRequiredRessources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
-
-            if (OSDetection.isOsUnknown() || OSDetection.isSolaris()) {
-                return null;
-            }
-
-            final StringBuilder builder = new StringBuilder();
-            builder.append(ONLINE_PATH);
-            builder.append("jogl-"); //$NON-NLS-1$
-            builder.append(OSDetection.getOsValue());
-            builder.append('-');
-
-            if (OSDetection.isMacOSX()) {
-                builder.append("universal"); //$NON-NLS-1$
-            } else if (OSDetection.isArchUnknown()) {
-                return null;
-            } else {
-                builder.append(OSDetection.getArchValue());
-            }
-            builder.append(RESSOURCE_FILE_EXT);
-
             try {
-                res.add(new URL(builder.toString()));
+                res.add(new URL(ONLINE_PATH
+                    + "slick" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (final Exception e) {
                 // Catch everything and do nothing!
             }
@@ -178,21 +167,8 @@ public final class JOGL implements LibraryResource {
     @Override
     public Collection<String> getVMArguments() {
         if (vmArguments == null) {
-            if (OSDetection.isOsUnknown() || OSDetection.isSolaris()) {
-                return null;
-            }
-            if (!OSDetection.isMacOSX() && OSDetection.isArchUnknown()) {
-                return null;
-            }
-
             final Collection<String> vmArgs = new ArrayList<String>();
-            vmArgs.add("-Dillarion.components.avaiable.gluegen=true"); //$NON-NLS-1$
-            vmArgs.add("-Dillarion.components.avaiable.jogl=true"); //$NON-NLS-1$
-            vmArgs.add("-Dillarion.components.avaiable.nativewindow=true"); //$NON-NLS-1$
-            vmArgs.add("-Dillarion.components.avaiable.newt=true"); //$NON-NLS-1$
-            vmArgs.add("-Djava.library.path=" //$NON-NLS-1$
-                + DirectoryManager.getInstance().getDataDirectory()
-                + File.separator + LOCAL_LIB_PATH + ""); //$NON-NLS-1$
+            vmArgs.add("-Dillarion.components.avaiable.slick=true"); //$NON-NLS-1$
 
             vmArguments = vmArgs;
         }

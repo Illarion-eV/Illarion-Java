@@ -58,7 +58,11 @@
 
     <property name="niftycontrols" location="${illacommon.include.dir}/../nifty-controls-illarion" />
     <property name="niftycontrols.bin" location="${compiled}/${niftycontrols.jar}" />
-    <property name="niftycontrols.deploy" location="${setup}/${niftycontrols.jar}" />
+
+    <property name="niftystyle" location="${illacommon.include.dir}/../nifty-style-illarion" />
+    <property name="niftystyle.bin" location="${compiled}/${niftystyle.jar}" />
+
+    <property name="niftyillarion.res.deploy" location="${setup}/${nifty-illarion.res}" />
 
     <!-- Client informations -->
     <property name="client.version" value="1.22 delta" />
@@ -104,6 +108,11 @@
     <property name="niftycontrols.version" value="1.00" />
     <property name="niftycontrols.vendor" value="Illarion e.V." />
     <property name="niftycontrols.name" value="Illarion Nifty Controls" />
+
+    <!-- NiftyStyles informations -->
+    <property name="niftystyle.version" value="1.00" />
+    <property name="niftystyle.vendor" value="Illarion e.V." />
+    <property name="niftystyle.name" value="Illarion Nifty Style" />
 
     <!-- Compile informations -->
     <property name="build.compiler" value="javac1.6" />
@@ -321,6 +330,14 @@
     </patternset>
     <fileset id="swt" dir="${common}/lib/swt">
         <patternset refid="swt.pattern" />
+    </fileset>
+
+    <!-- XPP3 1.1.4c -->    <!-- http://www.extreme.indiana.edu/xgws/xsoap/xpp/ -->
+    <patternset id="xpp.pattern">
+        <include name="xpp3*.jar" />
+    </patternset>
+    <fileset id="xpp" dir="${common}/lib/xpp3">
+        <patternset refid="xpp.pattern" />
     </fileset>
 
     <!-- and finally some functions that are used in all build scripts -->    <!--

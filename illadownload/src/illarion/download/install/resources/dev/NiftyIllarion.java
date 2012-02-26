@@ -1,20 +1,20 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.install.resources.dev;
 
@@ -24,36 +24,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.libs.JOGL;
-import illarion.download.install.resources.libs.Javolution;
-import illarion.download.install.resources.libs.LWJGL;
-import illarion.download.install.resources.libs.Log4j;
-import illarion.download.install.resources.libs.Trove;
 import illarion.download.util.Lang;
 
 /**
- * This resource contains the Illarion Graphic Engine.
+ * This resource contains the additions to the Nifty-GUI made for Illarion.
  * 
  * @author Martin Karing
  * @since 1.00
  * @version 1.00
  */
-public final class Graphics implements DevelopmentResource {
+public final class NiftyIllarion
+        implements DevelopmentResource {
     /**
      * The singleton instance of this class.
      */
-    private static final Graphics INSTANCE = new Graphics();
+    private static final NiftyIllarion INSTANCE = new NiftyIllarion();
 
     /**
      * The files that are needed to be added to the class path for this
      * resource.
      */
     private Collection<File> classpath;
-
-    /**
-     * The dependencies of this resource.
-     */
-    private Collection<Resource> dependencies;
 
     /**
      * The resources that are needed to be downloaded for this class.
@@ -63,7 +54,7 @@ public final class Graphics implements DevelopmentResource {
     /**
      * Private constructor to avoid instances but the singleton instance.
      */
-    private Graphics() {
+    private NiftyIllarion() {
         // nothing to do
     }
 
@@ -84,8 +75,9 @@ public final class Graphics implements DevelopmentResource {
     public Collection<File> getClassPath() {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
-            cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                "illarion_graphics.jar")); //$NON-NLS-1$
+            final String dir = DevelopmentResourceDirectory.getInstance().getDirectory();
+            cp.add(new File(dir, "nifty-controls-illarion.jar")); //$NON-NLS-1$
+            cp.add(new File(dir, "nifty-style-illarion.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -93,22 +85,12 @@ public final class Graphics implements DevelopmentResource {
     }
 
     /**
-     * Get the dependencies of this resource.
+     * Get the dependencies of this resource. At this resource has none, this
+     * returns <code>null</code>.
      */
     @Override
     public Collection<Resource> getDependencies() {
-        if (dependencies == null) {
-            final Collection<Resource> dep = new ArrayList<Resource>();
-            dep.add(JOGL.getInstance());
-            dep.add(LWJGL.getInstance());
-            dep.add(Log4j.getInstance());
-            dep.add(Trove.getInstance());
-            dep.add(Javolution.getInstance());
-            dep.add(Common.getInstance());
-
-            dependencies = dep;
-        }
-        return dependencies;
+        return null;
     }
 
     /**
@@ -122,7 +104,7 @@ public final class Graphics implements DevelopmentResource {
 
     @Override
     public String getName() {
-        return Lang.getMsg(Graphics.class.getName());
+        return Lang.getMsg(NiftyIllarion.class.getName());
     }
 
     /**
@@ -144,7 +126,7 @@ public final class Graphics implements DevelopmentResource {
             final Collection<URL> res = new ArrayList<URL>();
             try {
                 res.add(new URL(ONLINE_PATH
-                    + "illarion_graphics" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                    + "nifty-illarion" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (final Exception e) {
                 // Catch everything and do nothing!
             }

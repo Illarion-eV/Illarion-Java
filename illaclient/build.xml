@@ -33,7 +33,8 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
 		<move file="${jar}" tofile="${client.bin}" />
 	</target>
 
-	<target name="build_client_res" description="create the resource of the illarion client" depends="check_optional_dirs, init, buildTasks" if="keys.exist">
+	<target name="build_client_res" description="create the resource of the illarion client"
+            depends="check_optional_dirs, build_client, register_extensions" if="keys.exist">
 		<resourceprepare targetdir="${signedcompiled}" usepack200="true">
 			<filelist dir="${compiled}">
 				<file name="${client.jar}" />
@@ -74,8 +75,9 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
                 <fileset refid="javolution" />
                 <fileset refid="slick" />
                 <fileset refid="eventbus" />
+                <fileset refid="lwjgl" />
 				<fileset refid="nifty" />
-				<pathelement location="${niftycontrols}/${niftycontrols.jar}" />
+				<pathelement location="${niftycontrols.bin}" />
 				<pathelement location="${common.bin}" />
 				<pathelement path="${java.home}/lib" />
 			</classpath>
@@ -95,8 +97,11 @@ the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
 				<attribute name="Implementation-Version" value="${client.version}" />
 			</manifest>
 		</jar>
-		<jar jarfile="${jar}" basedir="${src}" includes="logging.properties messages_de.properties messages_en.properties" update="true" />
+        <jar jarfile="${jar}" basedir="${src}" includes="**/*.xml *.properties" update="true" />
 		<jar jarfile="${jar}" basedir="${client}" includes="public.key Illarion.cfg readme.txt" update="true" index="${build.index}" />
-		<delete dir="${classes}" />
 	</target>
+
+    <target name="cleanup" description="Cleanup all temporary files created by the build.">
+        <delete dir="${classes}" />
+    </target>
 </project>

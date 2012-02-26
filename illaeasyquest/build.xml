@@ -34,7 +34,8 @@ the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
         <move file="${jar}" tofile="${easyquest.bin}" />
 	</target>
 
-    <target name="build_easyquest_res" description="create the resource of the illarion client" depends="check_optional_dirs, init, buildTasks" if="keys.exist">
+    <target name="build_easyquest_res" description="create the resource of the illarion client"
+            depends="check_optional_dirs, build_easyquest, register_extensions" if="keys.exist">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
                 <file name="${easyquest.jar}" />

@@ -182,7 +182,7 @@ public final class Unpack implements Callable<UnpackResult> {
         CountBytesInputStream cIn = null;
         ZipInputStream zIn = null;
         final long fileSize = file.length();
-        final long blockSize = Math.max(1024, fileSize / 100);
+        final long blockSize = Math.max(1024, fileSize / 1000);
 
         final List<File> installedFiles = new ArrayList<File>();
 
@@ -201,7 +201,7 @@ public final class Unpack implements Callable<UnpackResult> {
             inChannel = Channels.newChannel(zIn);
 
             ZipEntry currEntry = zIn.getNextEntry();
-            long posInFile = 0;
+            long posInFile;
             while (currEntry != null) {
                 final String entryName = currEntry.getName();
                 boolean pack200 = false;
@@ -211,15 +211,12 @@ public final class Unpack implements Callable<UnpackResult> {
                 final File targetFile = new File(targetDir, entryName);
                 final String fullPath = targetFile.getAbsolutePath();
 
-                new File(fullPath.substring(0,
-                    fullPath.lastIndexOf(File.separatorChar))).mkdirs();
+                new File(fullPath.substring(0, fullPath.lastIndexOf(File.separatorChar))).mkdirs();
 
                 outChannel = new FileOutputStream(targetFile).getChannel();
                 posInFile = 0;
                 while (zIn.available() > 0) {
-                    posInFile +=
-                        outChannel
-                            .transferFrom(inChannel, posInFile, fileSize);
+                    posInFile += outChannel.transferFrom(inChannel, posInFile, fileSize);
                 }
                 outChannel.close();
                 outChannel = null;
@@ -251,6 +248,8 @@ public final class Unpack implements Callable<UnpackResult> {
 
                 currEntry = zIn.getNextEntry();
             }
+        } catch (Exception e) {
+            return new UnpackResult(name, UnpackResult.Results.corrupted, "unpack.corrupted", file);
         } finally {
             if (inChannel != null) {
                 inChannel.close();
@@ -267,16 +266,13 @@ public final class Unpack implements Callable<UnpackResult> {
         }
 
         final URL downloadURL = downloadResult.getSource();
-        ResourceManager.getInstance().reportResourceInstalled(downloadURL,
-            downloadResult.getLastModified());
+        ResourceManager.getInstance().reportResourceInstalled(downloadURL, downloadResult.getLastModified());
 
         for (final File currentFile : installedFiles) {
-            ResourceManager.getInstance().reportFileInstalled(downloadURL,
-                currentFile);
+            ResourceManager.getInstance().reportFileInstalled(downloadURL, currentFile);
         }
 
-        return new UnpackResult(name, UnpackResult.Results.unpacked,
-            "unpack.unpacked", file); //$NON-NLS-1$
+        return new UnpackResult(name, UnpackResult.Results.unpacked, "unpack.unpacked", file); //$NON-NLS-1$
     }
 
     /**

@@ -268,7 +268,7 @@ public final class ProgressSWING extends AbstractContentSWING implements
                     break;
                 case corrupted:
                     setProgressMessage(Lang
-                        .getMsg("illarion.download.intall.gui.Progress.UnpackProgress.currupted"));
+                        .getMsg("illarion.download.intall.gui.Progress.UnpackProgress.corrupted"));
                     break;
                 case notModified:
                     setProgressMessage(Lang
@@ -571,7 +571,7 @@ public final class ProgressSWING extends AbstractContentSWING implements
     /**
      * Get the graphical display of a download.
      * 
-     * @param download the download thats display is needed
+     * @param unpack the unpack progress that is displayed
      * @param createNew create a new instance in case none was created before
      * @return the display of the download
      */

@@ -18,14 +18,7 @@
  */
 package illarion.build.resources;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -50,11 +43,7 @@ import org.apache.tools.ant.types.ZipFileSet;
 
 import illarion.common.util.Pack200Helper;
 
-import org.tukaani.xz.FilterOptions;
-import org.tukaani.xz.LZMA2Options;
-import org.tukaani.xz.UnsupportedOptionsException;
-import org.tukaani.xz.X86Options;
-import org.tukaani.xz.XZOutputStream;
+import org.tukaani.xz.*;
 
 /**
  * This class is used to create resource bundles that contain the Illarion
@@ -160,20 +149,15 @@ public final class ResourceCreator extends Task {
                 throw new BuildException("Failed to setup compressor.");
             }
 
-            final FilterOptions[] defaultOptions =
-                new FilterOptions[] { lzmaOptions };
-            final FilterOptions[] nativeOptions =
-                new FilterOptions[] { x86Options, lzmaOptions };
+            final FilterOptions[] defaultOptions = { lzmaOptions };
+            final FilterOptions[] nativeOptions = { x86Options, lzmaOptions };
 
-            FileOutputStream fOut = null;
-            XZOutputStream xOut = null;
-            BufferedOutputStream bOut = null;
             ZipOutputStream zOut = null;
 
             try {
-                fOut = new FileOutputStream(targetFile);
-                xOut = new XZOutputStream(fOut, defaultOptions);
-                bOut = new BufferedOutputStream(xOut);
+                final FileOutputStream fOut = new FileOutputStream(targetFile);
+                final XZOutputStream xOut = new XZOutputStream(fOut, defaultOptions);
+                final BufferedOutputStream bOut = new BufferedOutputStream(xOut);
                 zOut = new ZipOutputStream(bOut);
 
                 zOut.setLevel(0);
@@ -215,8 +199,8 @@ public final class ResourceCreator extends Task {
                     }
                 }
 
-                boolean firstFile = true;
                 useP200 = false;
+                boolean firstFile = true;
                 for (final AbstractFileSet fileset : nativeFilesets) {
                     final DirectoryScanner ds =
                         fileset.getDirectoryScanner(getProject());
@@ -266,6 +250,24 @@ public final class ResourceCreator extends Task {
         } catch (final BuildException e) {
             e.printStackTrace();
             throw e;
+        }
+        
+        /** Checking the created file. */
+        BufferedInputStream b = null;
+        try {
+            final byte[] tempArray = new byte[1024];
+            b = new BufferedInputStream(new XZInputStream(new FileInputStream(targetFile)));
+            while (b.read(tempArray) != -1);
+        } catch (Exception e) {
+            throw new BuildException("Checking the compressed file failed.", e);
+        } finally {
+            if (b != null) {
+                try {
+                    b.close();
+                } catch (IOException e) {
+                    
+                }
+            }
         }
     }
 
