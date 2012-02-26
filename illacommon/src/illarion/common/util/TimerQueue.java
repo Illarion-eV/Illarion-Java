@@ -1,30 +1,31 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.util;
 
 /**
- * This class is the timer queue that stores all instances of timers and
- * regularly calls this instances from a single thread.
- * 
+ * This class is the timer queue that stores all instances of timers and regularly calls this instances from a single
+ * thread.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class TimerQueue implements Runnable {
+public final class TimerQueue
+        implements Runnable {
     /**
      * The singleton instance of this timer queue.
      */
@@ -36,14 +37,14 @@ public final class TimerQueue implements Runnable {
     private Timer firstTimer;
 
     /**
-     * The last timer in the list. This entry is needed to perform a high speed
-     * check if a timer is part of this queue.
+     * The last timer in the list. This entry is needed to perform a high speed check if a timer is part of this queue.
      */
     private Timer lastTimer;
 
     /**
-     * The running flag. This is set to <code>true</code> in case the thread
-     * that updates this queue is set in place and running.
+     * The running flag. This is set to <code>true</code> in case the thread that updates this queue is set in place
+     * and
+     * running.
      */
     private boolean running;
 
@@ -59,17 +60,15 @@ public final class TimerQueue implements Runnable {
 
     /**
      * Get the instance of this timer queue.
-     * 
-     * @return the instance of this timer queue that is supposed to be used for
-     *         all timers
+     *
+     * @return the instance of this timer queue that is supposed to be used for all timers
      */
     static TimerQueue getInstance() {
         return INSTANCE;
     }
 
     /**
-     * The main loop of the timer queue. That functions constantly calls the
-     * timers based upon their settings.
+     * The main loop of the timer queue. That functions constantly calls the timers based upon their settings.
      */
     @Override
     public void run() {
@@ -99,10 +98,9 @@ public final class TimerQueue implements Runnable {
 
     /**
      * Add a timer to the queue of timers.
-     * 
+     *
      * @param timer the timer to add
-     * @param expirationTime the time stamp of the next time this timer is
-     *            supposed to be called
+     * @param expirationTime the time stamp of the next time this timer is supposed to be called
      */
     void addTimer(final Timer timer, final long expirationTime) {
         Timer previousTimer;
@@ -145,18 +143,17 @@ public final class TimerQueue implements Runnable {
 
     /**
      * Check if a timer is in the queue.
-     * 
+     *
      * @param timer the timer to check
      * @return <code>true</code> in case the timer is in this timer queue
      */
     boolean containsTimer(final Timer timer) {
-        return (timer.equals(firstTimer) || timer.equals(lastTimer) || (timer
-            .getNextTimer() != null));
+        return timer.equals(firstTimer) || timer.equals(lastTimer) || (timer.getNextTimer() != null);
     }
 
     /**
      * Send a update to all timers that are now supposed to be updated.
-     * 
+     *
      * @return the time in milliseconds to wait until the next call is needed
      */
     long postExpiredTimers() {
@@ -200,9 +197,8 @@ public final class TimerQueue implements Runnable {
     }
 
     /**
-     * Remove a timer from the queue. AFter this the timer is not invoked
-     * anymore.
-     * 
+     * Remove a timer from the queue. AFter this the timer is not invoked anymore.
+     *
      * @param timer the timer to remove from the list
      */
     void removeTimer(final Timer timer) {
@@ -252,14 +248,13 @@ public final class TimerQueue implements Runnable {
     @SuppressWarnings("nls")
     private synchronized void start() {
         if (running) {
-            throw new RuntimeException("Can't start a TimerQueue "
-                + "that is already running");
+            throw new RuntimeException("Can't start a TimerQueue " + "that is already running");
         }
 
         final Thread timerThread = new Thread(null, this, "TimerQueue");
         timerThread.setDaemon(true);
         timerThread.setPriority(Thread.NORM_PRIORITY);
-        
+
         running = true;
         timerThread.start();
     }

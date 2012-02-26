@@ -1,22 +1,26 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world;
+
+import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
+import org.newdawn.slick.Color;
 
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.Avatar;
@@ -27,19 +31,21 @@ import illarion.client.net.CommandList;
 import illarion.client.net.client.LookatCharCmd;
 import illarion.client.resources.ItemFactory;
 import illarion.client.util.Lang;
+import illarion.client.world.events.CharMoveEvent;
+import illarion.client.world.events.CharNameEvent;
+import illarion.client.world.events.CharVisibilityEvent;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
-import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
 
 /**
  * Represents a character: player, monster or npc.
  */
-public final class Char implements RecycleObject, AnimatedMove {
+public final class Char
+        implements RecycleObject, AnimatedMove {
 
     /**
      * The color that is used to show combat characters.
@@ -127,26 +133,22 @@ public final class Char implements RecycleObject, AnimatedMove {
     private static final int PLAYER = 0;
 
     /**
-     * Minimum scale. Below the avatar does not get a title for example and is
-     * not recognized at all.
+     * Minimum scale. Below the avatar does not get a title for example and is not recognized at all.
      */
     private static final float SCALE_MIN = 0.1f;
 
     /**
-     * Scale modifier that is needed at least so a prefix for a small character
-     * is prepended.
+     * Scale modifier that is needed at least so a prefix for a small character is prepended.
      */
     private static final float SCALE_SMALL = 0.8f;
 
     /**
-     * Scale modifier that is needed at least so a prefix for a tall character
-     * is prepended.
+     * Scale modifier that is needed at least so a prefix for a tall character is prepended.
      */
     private static final float SCALE_TALL = 1.05f;
 
     /**
-     * Scale modifier that is needed at least so a prefix for a tiny character
-     * is prepended.
+     * Scale modifier that is needed at least so a prefix for a tiny character is prepended.
      */
     private static final float SCALE_TINY = 0.6f;
 
@@ -167,17 +169,15 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Create a new character, using the GameFactory.
-     * 
+     *
      * @return the new character
      */
     protected static Char create() {
-        return (Char) GameFactory.getInstance().getCommand(
-            GameFactory.OBJ_CHARACTER);
+        return (Char) GameFactory.getInstance().getCommand(GameFactory.OBJ_CHARACTER);
     }
 
     /**
-     * The alive state of the character. <code>true</code> in caes the character
-     * is alive.
+     * The alive state of the character. <code>true</code> in caes the character is alive.
      */
     private boolean alive;
 
@@ -227,8 +227,7 @@ public final class Char implements RecycleObject, AnimatedMove {
     private int dZ;
 
     /**
-     * Elevation of the character above the ground. Occurs if the character
-     * steps on a item with elevation.
+     * Elevation of the character above the ground. Occurs if the character steps on a item with elevation.
      */
     private int elevation;
 
@@ -237,8 +236,7 @@ public final class Char implements RecycleObject, AnimatedMove {
     private int hitpoints;
 
     /**
-     * Last visibility value that was shown. Used for fading in and out
-     * animations.
+     * Last visibility value that was shown. Used for fading in and out animations.
      */
     private int lastVisibility;
 
@@ -270,8 +268,7 @@ public final class Char implements RecycleObject, AnimatedMove {
     private String name;
 
     /**
-     * Color of the name of the character. default, melee fighting, distance
-     * fighting, magic
+     * Color of the name of the character. default, melee fighting, distance fighting, magic
      */
     private Color nameColor;
 
@@ -299,16 +296,14 @@ public final class Char implements RecycleObject, AnimatedMove {
      */
     private boolean visible;
     /**
-     * A list of items this avatar wears. This list is send to the avatar at a
-     * update.
+     * A list of items this avatar wears. This list is send to the avatar at a update.
      */
     private final int[] wearItems = new int[AvatarClothManager.GROUP_COUNT];
 
     /**
      * A list of modified colors of the stuff a avatar wears.
      */
-    private transient final Color[] wearItemsColors =
-        new Color[AvatarClothManager.GROUP_COUNT];
+    private transient final Color[] wearItemsColors = new Color[AvatarClothManager.GROUP_COUNT];
 
     /**
      * Constructor to create a new character.
@@ -323,7 +318,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Activate the character. That method is unused
-     * 
+     *
      * @param id parameter is not in use
      */
     @Override
@@ -333,7 +328,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Stop the walking animation of the character.
-     * 
+     *
      * @param ok not in use
      */
     @Override
@@ -343,7 +338,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Return if the character can be named or not.
-     * 
+     *
      * @return true if the character can be named, else if not
      */
     public boolean canHaveName() {
@@ -352,7 +347,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Create a copy of this character.
-     * 
+     *
      * @return new character object
      */
     @Override
@@ -362,20 +357,18 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Execute a lookat at the character with a special mode.
-     * 
+     *
      * @param mode the mode that is used to look at the character
      */
     public void examineChar(final int mode) {
-        final LookatCharCmd cmd =
-            (LookatCharCmd) CommandFactory.getInstance().getCommand(
-                CommandList.CMD_LOOKAT_CHAR);
+        final LookatCharCmd cmd = (LookatCharCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_LOOKAT_CHAR);
         cmd.examine(charId, mode);
         cmd.send();
     }
 
     /**
      * Get the current avatar of the character.
-     * 
+     *
      * @return the avatar of the character
      */
     public Avatar getAvatar() {
@@ -384,7 +377,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Get the character ID of the character.
-     * 
+     *
      * @return the ID of the character
      */
     public long getCharId() {
@@ -393,7 +386,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Get the current direction the character is looking at.
-     * 
+     *
      * @return the direction value
      */
     public int getDirection() {
@@ -410,7 +403,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Get the ID of the recycle object type.
-     * 
+     *
      * @return ID of the recycle object type
      */
     @Override
@@ -420,7 +413,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Get a interactive reference to this character.
-     * 
+     *
      * @return a interactive reference to this character
      */
     public InteractiveChar getInteractive() {
@@ -429,7 +422,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Get the current location of the character.
-     * 
+     *
      * @return the location of the character
      */
     public Location getLocation() {
@@ -442,7 +435,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Get the name of the character.
-     * 
+     *
      * @return the name of the character
      */
     public String getName() {
@@ -454,7 +447,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Get the visibility bonus value.
-     * 
+     *
      * @return visibility bonus value
      */
     public int getVisibilityBonus() {
@@ -463,7 +456,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Check if a cloth item is defined in a specified group.
-     * 
+     *
      * @param slot the slot where the item shall be checked
      * @param id the id of the item that shall be checked
      * @return <code>true</code> in case a item is defined and displayable
@@ -485,7 +478,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Check if the character is a monster.
-     * 
+     *
      * @return true if the character is a monster, false if not.
      */
     public boolean isMonster() {
@@ -494,7 +487,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Check if the character is a npc.
-     * 
+     *
      * @return true if the character is a npc, false if not.
      */
     public boolean isNPC() {
@@ -502,8 +495,17 @@ public final class Char implements RecycleObject, AnimatedMove {
     }
 
     /**
+     * Check if the character is a human controlled character.
+     *
+     * @return {@code true} if the character is a human controlled character
+     */
+    public boolean isHuman() {
+        return type == PLAYER;
+    }
+
+    /**
      * Check if the character is visible or not.
-     * 
+     *
      * @return true if the character is visible, false if not
      */
     public boolean isVisible() {
@@ -511,12 +513,11 @@ public final class Char implements RecycleObject, AnimatedMove {
     }
 
     /**
-     * Move the character to a new position with animation. This function takes
-     * absolute coordinates.
-     * 
+     * Move the character to a new position with animation. This function takes absolute coordinates.
+     *
      * @param newPos the target location of the move
-     * @param mode the mode of the move, possible values are {@link #MOVE_PUSH},
-     *            {@link #MOVE_WALK} and {@link #MOVE_RUN}
+     * @param mode the mode of the move, possible values are {@link #MOVE_PUSH}, {@link #MOVE_WALK} and {@link
+     * #MOVE_RUN}
      * @param speed moving speed
      */
     public void moveTo(final Location newPos, final int mode, final int speed) {
@@ -556,16 +557,14 @@ public final class Char implements RecycleObject, AnimatedMove {
         }
 
         // start animations only if reasonable distance
-        if ((loc.getDistance(tempLoc) <= range) && (speed > 0)
-            && (dir != Location.DIR_ZERO) && (mode != MOVE_PUSH)) {
+        if ((loc.getDistance(tempLoc) <= range) && (speed > 0) && (dir != Location.DIR_ZERO) && (mode != MOVE_PUSH)) {
             if (mode == MOVE_WALK) {
                 startAnimation(CharAnimations.WALK, speed);
             } else if (mode == MOVE_RUN) {
                 startAnimation(CharAnimations.RUN, speed);
             }
-            move.start(tempLoc.getDcX() - loc.getDcX(),
-                (tempLoc.getDcY() + fromElevation) - loc.getDcY(), 0, 0,
-                +elevation, 0, speed);
+            move.start(tempLoc.getDcX() - loc.getDcX(), (tempLoc.getDcY() + fromElevation) - loc.getDcY(), 0, 0,
+                       +elevation, 0, speed);
         } else {
             // reset last animation result
             dX = 0;
@@ -576,13 +575,12 @@ public final class Char implements RecycleObject, AnimatedMove {
         tempLoc.recycle();
         updateLight(LIGHT_SOFT);
 
-        // notify about character movement to adjust cursor
-        // Gui.getInstance().getManager().notifyMovement();
+        EventBus.publish(new CharMoveEvent(getCharId(), loc));
     }
 
     /**
      * Check if its possible to update the Avatar of this character.
-     * 
+     *
      * @return <code>true</code> in case the avatar is updateable
      */
     public boolean readyForUpdate() {
@@ -609,8 +607,7 @@ public final class Char implements RecycleObject, AnimatedMove {
     }
 
     /**
-     * Put the light source of the character into the list of light sources that
-     * are rendered.
+     * Put the light source of the character into the list of light sources that are rendered.
      */
     public void relistLight() {
         if (lightSrc != null) {
@@ -643,8 +640,7 @@ public final class Char implements RecycleObject, AnimatedMove {
     }
 
     /**
-     * Set the current animation back to its parent, update the avatar and
-     * invoke the needed animations.
+     * Set the current animation back to its parent, update the avatar and invoke the needed animations.
      */
     private void resetAnimation() {
         animation = CharAnimations.STAND;
@@ -668,9 +664,8 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Set the alive state of this character.
-     * 
-     * @param newAliveState set the new alive state. <code>true</code> in case
-     *            the character is alive.
+     *
+     * @param newAliveState set the new alive state. <code>true</code> in case the character is alive.
      */
     public void setAlive(final boolean newAliveState) {
         alive = newAliveState;
@@ -688,8 +683,7 @@ public final class Char implements RecycleObject, AnimatedMove {
         } else {
             avatar.changeBaseColor(skinColor);
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                if ((i == AvatarClothManager.GROUP_BEARD)
-                    || (i == AvatarClothManager.GROUP_HAIR)) {
+                if ((i == AvatarClothManager.GROUP_BEARD) || (i == AvatarClothManager.GROUP_HAIR)) {
                     continue;
                 }
                 avatar.changeClothColor(i, wearItemsColors[i]);
@@ -699,7 +693,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Change the appearance of the character.
-     * 
+     *
      * @param newAppearance the new appearance value
      */
     public void setAppearance(final int newAppearance) {
@@ -709,11 +703,9 @@ public final class Char implements RecycleObject, AnimatedMove {
     }
 
     /**
-     * Set or remove the marker from the character that selects the character as
-     * active combat target.
-     * 
-     * @param activate <code>true</code> to enable the combat target marker on
-     *            this character
+     * Set or remove the marker from the character that selects the character as active combat target.
+     *
+     * @param activate <code>true</code> to enable the combat target marker on this character
      */
     public void setAttackMarker(final boolean activate) {
         if (avatar == null) {
@@ -736,7 +728,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Change the ID of the character.
-     * 
+     *
      * @param newCharId new ID of the character
      */
     @SuppressWarnings("nls")
@@ -756,7 +748,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Update the color of a specified cloth part.
-     * 
+     *
      * @param slot the slot that shall be changed
      * @param color the color this part shall be displayed in
      */
@@ -769,7 +761,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Change the direction the character is looking at.
-     * 
+     *
      * @param newDirection the new direction value
      */
     public void setDirection(final int newDirection) {
@@ -787,7 +779,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Set the new location of the character.
-     * 
+     *
      * @param newLoc new location of the character
      */
     public void setLocation(final Location newLoc) {
@@ -798,6 +790,7 @@ public final class Char implements RecycleObject, AnimatedMove {
         loc.set(newLoc);
         elevation = World.getMap().getElevationAt(loc);
         updatePosition(elevation);
+        EventBus.publish(new CharMoveEvent(getCharId(), loc));
     }
 
     public void setManapoints(final int manapoints) {
@@ -805,9 +798,8 @@ public final class Char implements RecycleObject, AnimatedMove {
     }
 
     /**
-     * Set the name of the current character. Pre and suffixes are generated by
-     * this function as well
-     * 
+     * Set the name of the current character. Pre and suffixes are generated by this function as well
+     *
      * @param newName the name of the character or null
      */
     @SuppressWarnings("nls")
@@ -860,15 +852,16 @@ public final class Char implements RecycleObject, AnimatedMove {
         // clean up the name
         name = name.trim();
 
-        if ((avatar != null) && (charId > 0)
-            && !World.getPlayer().isPlayer(charId)) {
+        if ((avatar != null) && (charId > 0) && !World.getPlayer().isPlayer(charId)) {
             avatar.setName(name);
         }
+
+        EventBus.publish(new CharNameEvent(getCharId(), getName()));
     }
 
     /**
      * Set the color of the name of the character.
-     * 
+     *
      * @param color the new color value
      */
     public void setNameColor(final Color color) {
@@ -881,7 +874,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Set the new position of the character.
-     * 
+     *
      * @param x X-Coordinate of the character
      * @param y Y-Coordinate of the character
      * @param z Z-Coordinate of the character
@@ -897,14 +890,13 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Set the scale of the character.
-     * 
+     *
      * @param newScale new scale value between 0.5f and 1.2f
      */
     @SuppressWarnings("nls")
     public void setScale(final float newScale) {
         if ((newScale < MINIMAL_SCALE) || (newScale > MAXIMAL_SCALE)) {
-            LOGGER.warn("invalid character scale " + newScale
-                + " ignored for " + charId);
+            LOGGER.warn("invalid character scale " + newScale + " ignored for " + charId);
             return;
         }
 
@@ -917,7 +909,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Set the color of the skin of the avatar.
-     * 
+     *
      * @param color the color that is used to color the skin
      */
     public void setSkinColor(final Color color) {
@@ -933,7 +925,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Set the visibility bonus of this character.
-     * 
+     *
      * @param newVisibilityBonus the new visibility bonus value
      */
     public void setVisibilityBonus(final int newVisibilityBonus) {
@@ -942,7 +934,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Set the visibility of a character.
-     * 
+     *
      * @param visibility the new visibility of the character
      */
     public void setVisible(final int visibility) {
@@ -962,12 +954,14 @@ public final class Char implements RecycleObject, AnimatedMove {
             } else if (avatar != null) {
                 avatar.setAlphaTarget(0);
             }
+
+            EventBus.publish(new CharVisibilityEvent(getCharId(), visibility));
         }
     }
 
     /**
      * Add a item the avatar wears to its current list.
-     * 
+     *
      * @param slot the slot the item is carried at
      * @param id the ID of the item the character wears
      */
@@ -978,8 +972,7 @@ public final class Char implements RecycleObject, AnimatedMove {
             return;
         }
 
-        final int light =
-            ItemFactory.getInstance().getPrototype(id).getItemLight();
+        final int light = ItemFactory.getInstance().getPrototype(id).getItemLight();
 
         if (light > lightValue) {
             lightValue = light;
@@ -999,12 +992,12 @@ public final class Char implements RecycleObject, AnimatedMove {
     }
 
     /**
-     * Set and start a new animation for this character. The animation is shown
-     * and after its done the animation handler returns to the normal state.
-     * 
+     * Set and start a new animation for this character. The animation is shown and after its done the animation
+     * handler
+     * returns to the normal state.
+     *
      * @param newAnimation the ID of the new animation
-     * @param speed the animation speed, the larger the value the slower the
-     *            animation
+     * @param speed the animation speed, the larger the value the slower the animation
      */
     public void startAnimation(final int newAnimation, final int speed) {
         if (avatar == null) {
@@ -1029,9 +1022,8 @@ public final class Char implements RecycleObject, AnimatedMove {
         }
 
         // calculate avatar id
-        final int newAvatar =
-            (((appearance * Location.DIR_MOVE8) + direction) * CharAnimations.TOTAL_ANIMATIONS)
-                + animation;
+        final int newAvatar = (((appearance * Location.DIR_MOVE8) + direction) * CharAnimations.TOTAL_ANIMATIONS) +
+                animation;
 
         // no change, return
         if ((avatarId == newAvatar) && (avatar != null)) {
@@ -1052,8 +1044,7 @@ public final class Char implements RecycleObject, AnimatedMove {
         avatar = Avatar.create(avatarId);
 
         if (avatar == null) {
-            throw new NullPointerException("Avatar for ID "
-                + Integer.toString(avatarId) + " is NULL.");
+            throw new NullPointerException("Avatar for ID " + Integer.toString(avatarId) + " is NULL.");
         }
 
         updatePaperdoll();
@@ -1094,7 +1085,7 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Update the light source of the character.
-     * 
+     *
      * @param mode the mode of the update
      */
     protected void updateLight(final int mode) {
@@ -1134,9 +1125,8 @@ public final class Char implements RecycleObject, AnimatedMove {
     }
 
     /**
-     * Change the position of the light source of the character and refresh the
-     * light.
-     * 
+     * Change the position of the light source of the character and refresh the light.
+     *
      * @param newLoc the new location of the light source
      */
     public void updateLight(final Location newLoc) {
@@ -1147,28 +1137,21 @@ public final class Char implements RecycleObject, AnimatedMove {
     }
 
     /**
-     * Update the paper doll, so set all items the characters wears to the
-     * avatar. Do this in case many cloth parts changed or in case the avatar
-     * instance changed.
+     * Update the paper doll, so set all items the characters wears to the avatar. Do this in case many cloth parts
+     * changed or in case the avatar instance changed.
      */
     public void updatePaperdoll() {
-        if (hasWearingItem(AvatarClothManager.GROUP_FIRST_HAND,
-            wearItems[AvatarClothManager.GROUP_FIRST_HAND])
-            || hasWearingItem(AvatarClothManager.GROUP_SECOND_HAND,
-                wearItems[AvatarClothManager.GROUP_SECOND_HAND])) {
-            setWearingItem(AvatarClothManager.GROUP_FIRST_HAND,
-                wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
-            setWearingItem(AvatarClothManager.GROUP_SECOND_HAND,
-                wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+        if (hasWearingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]) ||
+                hasWearingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND])
+                ) {
+            setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+            setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
         } else {
-            setWearingItem(AvatarClothManager.GROUP_FIRST_HAND,
-                wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
-            setWearingItem(AvatarClothManager.GROUP_SECOND_HAND,
-                wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+            setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+            setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
         }
         for (int i = 0; i < wearItems.length; ++i) {
-            if ((i == AvatarClothManager.GROUP_FIRST_HAND)
-                || (i == AvatarClothManager.GROUP_SECOND_HAND)) {
+            if ((i == AvatarClothManager.GROUP_FIRST_HAND) || (i == AvatarClothManager.GROUP_SECOND_HAND)) {
                 continue;
             }
             final int itemID = wearItems[i];
@@ -1182,14 +1165,12 @@ public final class Char implements RecycleObject, AnimatedMove {
 
     /**
      * Update the avatar display position.
-     * 
-     * @param fix additional position offset for the character, used for the
-     *            elevation.
+     *
+     * @param fix additional position offset for the character, used for the elevation.
      */
     protected void updatePosition(final int fix) {
         if (avatar != null) {
-            avatar.setScreenPos(loc.getDcX() + dX, (loc.getDcY() + dY) - fix,
-                loc.getDcZ() + dZ, Layers.CHARS);
+            avatar.setScreenPos(loc.getDcX() + dX, (loc.getDcY() + dY) - fix, loc.getDcZ() + dZ, Layers.CHARS);
         }
     }
 }

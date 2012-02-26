@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world;
 
@@ -23,11 +23,9 @@ import illarion.client.net.CommandList;
 import illarion.client.net.client.AttackCmd;
 
 /**
- * This class is used to store and set the current combat mode. It will forward
- * all changes to the combat mode to the other parts of the client, that need to
- * be notified about it.
- * 
- * @serial exclude
+ * This class is used to store and set the current combat mode. It will forward all changes to the combat mode to the
+ * other parts of the client, that need to be notified about it.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CombatHandler {
@@ -38,7 +36,7 @@ public final class CombatHandler {
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance of this class
      */
     public static CombatHandler getInstance() {
@@ -56,8 +54,7 @@ public final class CombatHandler {
     private boolean combatActive;
 
     /**
-     * Private constructor to ensure that only the singleton instance is
-     * created.
+     * Private constructor to ensure that only the singleton instance is created.
      */
     private CombatHandler() {
         // nothing to do
@@ -65,7 +62,7 @@ public final class CombatHandler {
 
     /**
      * Test if the player is currently attacking anyone.
-     * 
+     *
      * @return <code>true</code> in case anyone is attacked
      */
     public boolean isAttacking() {
@@ -74,18 +71,17 @@ public final class CombatHandler {
 
     /**
      * Test if a character is currently attacked.
-     * 
+     *
      * @param testChar the char to check if he is the current target
      * @return <code>true</code> in case the character is the current target
      */
     public boolean isAttacking(final Char testChar) {
-        return ((testChar != null) && (isAttacking()) && (testChar
-            .equals(attackedChar)));
+        return ((testChar != null) && (isAttacking()) && (testChar.equals(attackedChar)));
     }
 
     /**
      * Get the current combat mode.
-     * 
+     *
      * @return <code>true</code> in case the combat mode is currently active
      */
     public boolean isCombatMode() {
@@ -93,40 +89,42 @@ public final class CombatHandler {
     }
 
     /**
-     * Send a attack command to the server that initiates a fight with the
-     * character that ID is set in the parameter.
-     * 
+     * Send a attack command to the server that initiates a fight with the character that ID is set in the parameter.
+     *
      * @param id the ID of the character to fight
      */
     private void sendAttackToServer(final long id) {
-        final AttackCmd cmd =
-            (AttackCmd) CommandFactory.getInstance().getCommand(
-                CommandList.CMD_ATTACK);
+        final AttackCmd cmd = (AttackCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_ATTACK);
         cmd.setTarget(id);
         World.getNet().sendCommand(cmd);
     }
 
     /**
      * Set the character that is attacked from now in.
-     * 
+     *
      * @param character the character that is now attacked
      */
     public void setAttackTarget(final Char character) {
-        standDown();
         if (character == attackedChar) {
             return;
         }
 
-        if (character != null) {
+        standDown();
+
+        if ((character != null) && canBeAttacked(character)) {
             attackedChar = character;
             sendAttackToServer(character.getCharId());
             character.setAttackMarker(true);
         }
     }
 
+    public boolean canBeAttacked(final Char character) {
+        return !World.getPlayer().isPlayer(character.getCharId()) && !character.isNPC();
+    }
+
     /**
      * Set the new combat mode.
-     * 
+     *
      * @param newMode <code>true</code> to enable the combat mode
      */
     public void setCombatMode(final boolean newMode) {
@@ -140,22 +138,21 @@ public final class CombatHandler {
     }
 
     /**
-     * Stop the current attack any report this to the server in case its needed.
-     * This does not directly stop the attack. It just requests to stop the
-     * attack from the server.
+     * Stop the current attack any report this to the server in case its needed. This does not directly stop the
+     * attack.
+     * It just requests to stop the attack from the server.
      */
     public void standDown() {
         if (attackedChar != null) {
-            World.getNet().sendCommand(
-                CommandFactory.getInstance().getCommand(
-                    CommandList.CMD_STAND_DOWN));
+            World.getNet().sendCommand(CommandFactory.getInstance().getCommand(CommandList.CMD_STAND_DOWN));
             World.getMusicBox().stopFightingMusic();
+            attackedChar = null;
         }
     }
 
     /**
-     * This function does nearly the same as {@link #standDown()}. How ever it
-     * does not result in sending a stand down command to the server.
+     * This function does nearly the same as {@link #standDown()}. How ever it does not result in sending a stand down
+     * command to the server.
      */
     public void targetLost() {
         if (attackedChar != null) {
@@ -166,7 +163,7 @@ public final class CombatHandler {
 
     /**
      * Toggle the combat mode.
-     * 
+     *
      * @return <code>true</code> in case the combat mode is now active
      */
     public boolean toggleCombatMode() {

@@ -42,8 +42,7 @@
             <panel height="201px" width="610px" align="left" valign="bottom" backgroundColor="#0000" childLayout="vertical" visibleToMouse="true">
                 <panel height="191px" width="600px" align="right" valign="top" backgroundColor="#0000" childLayout="vertical" visibleToMouse="true">
                     <control name="chatBox" id="chatLog" vertical="on" horizontal="off" displayItems="7" selectionMode="Disabled" wrap="true" />
-                    <control name="textfield" id="chatMsg" style="chat-textfield" maxLength="255" width="600px"
-                             height="30px" font="textFont" wrap="true" />
+                    <control name="textfield" id="chatMsg" style="chat-textfield" maxLength="255" width="600px" height="30px" font="textFont" wrap="true" />
                 </panel>
             </panel>
         </layer>
@@ -68,6 +67,20 @@
                     <control id="invslot_belt4" name="inventoryslot" height="55px" width="62px" x="15px" y="397px" />
                     <control id="invslot_belt5" name="inventoryslot" height="55px" width="62px" x="94px" y="397px" />
                     <control id="invslot_belt6" name="inventoryslot" height="55px" width="62px" x="172px" y="397px" />
+                </panel>
+            </control>
+            <control id="charlist" name="window" style="nifty-window" title="Charaktere" visible="true" hideOnClose="true" height="175px" width="250px" x="100px" y="100px">
+                <panel childLayout="vertical">
+                    <panel childLayout="horizontal">
+                        <control name="label" text="Anzeige:" />
+                        <panel width="3px" />
+                        <control id="charlist-viewselection" style="nifty-drop-down" name="dropDown" width="*" />
+                    </panel>
+                    <panel height="3px" />
+                    <panel childLayout="center">
+                        <control id="charlist-list" name="listBox" style="nifty-list-box" displayItems="4" selection="Single" vertical="on" horizontal="off" />
+                    </panel>
+                    <panel height="3px" />
                 </panel>
             </control>
         </layer>
