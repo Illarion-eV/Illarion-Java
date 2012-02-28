@@ -1,43 +1,44 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net;
 
-import illarion.client.net.client.*;
-import illarion.common.util.RecycleFactory;
 import javolution.context.PoolContext;
 
+import illarion.client.net.client.*;
+import illarion.common.util.RecycleFactory;
+
 /**
- * The Factory for commands the client sends to the server. This factory
- * prepares and recycles all client commands and set the needed mapping.
- * 
+ * The Factory for commands the client sends to the server. This factory prepares and recycles all client commands and
+ * set the needed mapping.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class CommandFactory extends RecycleFactory<AbstractCommand> {
+public final class CommandFactory
+        extends RecycleFactory<AbstractCommand> {
     /**
      * Singleton instance of this command factory.
      */
     private static final CommandFactory INSTANCE = new CommandFactory();
 
     /**
-     * Constructor of the command factory. His registers all commands to the
-     * factory and sets all the needed mappings.
+     * Constructor of the command factory. His registers all commands to the factory and sets all the needed mappings.
      */
     private CommandFactory() {
         super();
@@ -115,15 +116,16 @@ public final class CommandFactory extends RecycleFactory<AbstractCommand> {
         map(CommandList.CMD_DRAG_MAP_MAP_W, CommandList.CMD_DRAG_MAP_MAP_N);
         map(CommandList.CMD_DRAG_MAP_MAP_NW, CommandList.CMD_DRAG_MAP_MAP_N);
         map(CommandList.CMD_DRAG_MAP_MAP_ZERO, CommandList.CMD_DRAG_MAP_MAP_N);
-        
+
         register(new TextResponseCmd());
+        register(new CloseDialogMessageCmd());
 
         finish();
     }
 
     /**
      * Get the singleton instance of this command factory.
-     * 
+     *
      * @return the singleton instance of the factory
      */
     public static CommandFactory getInstance() {
@@ -131,9 +133,8 @@ public final class CommandFactory extends RecycleFactory<AbstractCommand> {
     }
 
     /**
-     * Get the AbstractCommand requested from this factory. This method is
-     * implemented in addition in order to ensure the execution in the
-     * PoolContext.
+     * Get the AbstractCommand requested from this factory. This method is implemented in addition in order to ensure
+     * the execution in the PoolContext.
      */
     @Override
     public AbstractCommand getCommand(final int requestId) {
@@ -146,9 +147,8 @@ public final class CommandFactory extends RecycleFactory<AbstractCommand> {
     }
 
     /**
-     * Get the AbstractCommand requested from this factory. This method is
-     * implemented in addition in order to ensure the execution in the
-     * PoolContext. Function returns the proper type.
+     * Get the AbstractCommand requested from this factory. This method is implemented in addition in order to ensure
+     * the execution in the PoolContext. Function returns the proper type.
      */
     @SuppressWarnings("unchecked")
     public <T extends AbstractCommand> T getCommand(final int requestId, final Class<T> clazz) {

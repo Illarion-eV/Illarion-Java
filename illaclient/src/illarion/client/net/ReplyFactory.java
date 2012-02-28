@@ -1,43 +1,44 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net;
 
-import illarion.client.net.server.*;
-import illarion.common.util.RecycleFactory;
 import javolution.context.PoolContext;
 
+import illarion.client.net.server.*;
+import illarion.common.util.RecycleFactory;
+
 /**
- * The Factory for commands the server sends to the client. This factory
- * prepares and recycles all server messages and set the needed mapping.
- * 
+ * The Factory for commands the server sends to the client. This factory prepares and recycles all server messages and
+ * set the needed mapping.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class ReplyFactory extends RecycleFactory<AbstractReply> {
+public final class ReplyFactory
+        extends RecycleFactory<AbstractReply> {
     /**
      * The singleton instance of this factory.
      */
     private static final ReplyFactory INSTANCE = new ReplyFactory();
 
     /**
-     * The default constructor of the factory. This registers all commands and
-     * sets up all needed mappings.
+     * The default constructor of the factory. This registers all commands and sets up all needed mappings.
      */
     private ReplyFactory() {
         super();
@@ -89,15 +90,16 @@ public final class ReplyFactory extends RecycleFactory<AbstractReply> {
 
         register(new CharacterAnimationMsg());
         register(new BookMsg());
-        
+
         register(new TextRequestMsg());
+        register(new DialogMessageMsg());
 
         finish();
     }
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance of this class
      */
     public static ReplyFactory getInstance() {
@@ -105,9 +107,8 @@ public final class ReplyFactory extends RecycleFactory<AbstractReply> {
     }
 
     /**
-     * Get the AbstractReply requested from this factory. This method is
-     * implemented in addition in order to ensure the execution in the
-     * PoolContext.
+     * Get the AbstractReply requested from this factory. This method is implemented in addition in order to ensure the
+     * execution in the PoolContext.
      */
     @Override
     public AbstractReply getCommand(final int requestId) {

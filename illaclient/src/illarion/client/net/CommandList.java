@@ -1,39 +1,42 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net;
 
 /**
- * Utility class that contains all constants for the client commands and the
- * server messages.
- * 
+ * Utility class that contains all constants for the client commands and the server messages.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 public final class CommandList {
+    /**
+     * Client command that informs the server that a message dialog was closed.
+     */
+    public static final int CMD_CLOSE_DIALOG_MSG = 0x51;
+
     /**
      * Client command to start attacking another character.
      */
     public static final int CMD_ATTACK = 0xFA;
 
     /**
-     * Client command to cast a spell on the map, at the own character or at a
-     * item in the inventory or in a showcase.
+     * Client command to cast a spell on the map, at the own character or at a item in the inventory or in a showcase.
      */
     public static final int CMD_CAST = 0xFD;
 
@@ -43,14 +46,12 @@ public final class CommandList {
     public static final int CMD_CLOSE_SHOWCASE = 0xE9;
 
     /**
-     * Client command to drag a item from a inventory slot to another inventory
-     * slot.
+     * Client command to drag a item from a inventory slot to another inventory slot.
      */
     public static final int CMD_DRAG_INV_INV = 0xE3;
 
     /**
-     * Client command to drag a item from a inventory slot to a position on the
-     * game map.
+     * Client command to drag a item from a inventory slot to a position on the game map.
      */
     public static final int CMD_DRAG_INV_MAP = 0xE4;
 
@@ -60,68 +61,57 @@ public final class CommandList {
     public static final int CMD_DRAG_INV_SC = 0xE1;
 
     /**
-     * Client command to drag a item from a position on the game map into the
-     * inventory.
+     * Client command to drag a item from a position on the game map into the inventory.
      */
     public static final int CMD_DRAG_MAP_INV = 0xE5;
 
     /**
-     * Client command to drag a item located east of the player character to
-     * another position on the game map.
+     * Client command to drag a item located east of the player character to another position on the game map.
      */
     public static final int CMD_DRAG_MAP_MAP_E = 0x22;
 
     /**
-     * Client command to drag a item located north of the player character to
-     * another position on the game map.
+     * Client command to drag a item located north of the player character to another position on the game map.
      */
     public static final int CMD_DRAG_MAP_MAP_N = 0x20;
 
     /**
-     * Client command to drag a item located northeast of the player character
-     * to another position on the game map.
+     * Client command to drag a item located northeast of the player character to another position on the game map.
      */
     public static final int CMD_DRAG_MAP_MAP_NE = 0x21;
 
     /**
-     * Client command to drag a item located northwest of the player character
-     * to another position on the game map.
+     * Client command to drag a item located northwest of the player character to another position on the game map.
      */
     public static final int CMD_DRAG_MAP_MAP_NW = 0x27;
 
     /**
-     * Client command to drag a item located south of the player character to
-     * another position on the game map.
+     * Client command to drag a item located south of the player character to another position on the game map.
      */
     public static final int CMD_DRAG_MAP_MAP_S = 0x24;
 
     /**
-     * Client command to drag a item located southeast of the player character
-     * to another position on the game map.
+     * Client command to drag a item located southeast of the player character to another position on the game map.
      */
     public static final int CMD_DRAG_MAP_MAP_SE = 0x23;
 
     /**
-     * Client command to drag a item located southwest of the player character
-     * to another position on the game map.
+     * Client command to drag a item located southwest of the player character to another position on the game map.
      */
     public static final int CMD_DRAG_MAP_MAP_SW = 0x25;
 
     /**
-     * Client command to drag a item located west of the player character to
-     * another position on the game map.
+     * Client command to drag a item located west of the player character to another position on the game map.
      */
     public static final int CMD_DRAG_MAP_MAP_W = 0x26;
 
     /**
-     * Client command to drag an item located below the player character to
-     * another position on the game map.
+     * Client command to drag an item located below the player character to another position on the game map.
      */
     public static final int CMD_DRAG_MAP_MAP_ZERO = 0x2A; // NO_UCD
 
     /**
-     * Client command to drag a item from a position on the game map into a
-     * container.
+     * Client command to drag a item from a position on the game map into a container.
      */
     public static final int CMD_DRAG_MAP_SC = 0xE6;
 
@@ -131,8 +121,7 @@ public final class CommandList {
     public static final int CMD_DRAG_SC_INV = 0xE2;
 
     /**
-     * Client command to drag a item from a container to a location on the game
-     * map.
+     * Client command to drag a item from a container to a location on the game map.
      */
     public static final int CMD_DRAG_SC_MAP = 0xE8;
 
@@ -147,8 +136,7 @@ public final class CommandList {
     public static final int CMD_INTRODUCE = 0xF6;
 
     /**
-     * Client command to tell the server that the connection between client and
-     * server is still active.
+     * Client command to tell the server that the connection between client and server is still active.
      */
     public static final int CMD_KEEPALIVE = 0xD8; // NO_UCD
 
@@ -193,8 +181,7 @@ public final class CommandList {
     public static final int CMD_MAPDIMENSION = 0xA0;
 
     /**
-     * Client command to move a character. Either the own one or pushing the
-     * character of someone else.
+     * Client command to move a character. Either the own one or pushing the character of someone else.
      */
     public static final int CMD_MOVE = 0x10;
 
@@ -214,8 +201,7 @@ public final class CommandList {
     public static final int CMD_OPEN_SHOWCASE = 0xEA;
 
     /**
-     * Client command to request the appearance of another yet unknown
-     * character.
+     * Client command to request the appearance of another yet unknown character.
      */
     public static final int CMD_REQUEST_APPEARANCE = 0x0E;
 
@@ -273,15 +259,14 @@ public final class CommandList {
      * Client command to turn the player character west.
      */
     public static final int CMD_TURN_W = 0x46; // NO_UCD
-    
+
     /**
-     * Client command that is used to anser a text request.
+     * Client command that is used to answer a text request.
      */
     public static final int CMD_TEXT_RESPONSE = 0x50;
 
     /**
-     * Client command to perform a use action of one or two items on different
-     * locations.
+     * Client command to perform a use action of one or two items on different locations.
      */
     public static final int CMD_USE = 0xFE;
 
@@ -289,6 +274,11 @@ public final class CommandList {
      * Client command to send a whispered text.
      */
     public static final int CMD_WHISPER = 0xF3;
+
+    /**
+     * Server message that contains the data of a message dialog.
+     */
+    public static final int MSG_DIALOG_MSG = 0x51;
 
     /**
      * Server message that contains the appearance data of a character.
@@ -316,8 +306,7 @@ public final class CommandList {
     public static final int MSG_CHANGE_ITEM = 0xD9;
 
     /**
-     * Server message that contains a data of a animation the character has to
-     * show.
+     * Server message that contains a data of a animation the character has to show.
      */
     public static final int MSG_CHARACTER_ANIMATION = 0xCB;
 
@@ -327,8 +316,7 @@ public final class CommandList {
     public static final int MSG_CLOSE_SHOWCASE = 0xC4; //
 
     /**
-     * Server message that contains the informations about the current date and
-     * time.
+     * Server message that contains the informations about the current date and time.
      */
     public static final int MSG_DATETIME = 0xB6;
 
@@ -338,8 +326,7 @@ public final class CommandList {
     public static final int MSG_DISCONNECT = 0xCC;
 
     /**
-     * Server message that contains the data of a graphical effect that shall be
-     * played instantly.
+     * Server message that contains the data of a graphical effect that shall be played instantly.
      */
     public static final int MSG_GRAPHIC_FX = 0xC9; // NO_UCD
 
@@ -349,14 +336,12 @@ public final class CommandList {
     public static final int MSG_INTRODUCE = 0xD4;
 
     /**
-     * Server message that contains the items in the slot of the characters
-     * inventory.
+     * Server message that contains the items in the slot of the characters inventory.
      */
     public static final int MSG_INVENTORY = 0xC1;
 
     /**
-     * Server message that updates the location of the player character on the
-     * game map.
+     * Server message that updates the location of the player character on the game map.
      */
     public static final int MSG_LOCATION = 0xBD;
 
@@ -366,14 +351,12 @@ public final class CommandList {
     public static final int MSG_LOOKAT_CHAR = 0x18;
 
     /**
-     * Server message that contains the data of a lookat event on a inventory
-     * slot.
+     * Server message that contains the data of a lookat event on a inventory slot.
      */
     public static final int MSG_LOOKAT_INV = 0xBE;
 
     /**
-     * Server message that contains the data of a lookat event on a showcase
-     * slot.
+     * Server message that contains the data of a lookat event on a showcase slot.
      */
     public static final int MSG_LOOKAT_SHOWCASE = 0xBF;
 
@@ -393,8 +376,7 @@ public final class CommandList {
     public static final int MSG_MAP_COMPLETE = 0xA2;
 
     /**
-     * Server message that contains a map stripe. So all tiles along a stipe and
-     * the item on the tiles.
+     * Server message that contains a map stripe. So all tiles along a stipe and the item on the tiles.
      */
     public static final int MSG_MAP_STRIPE = 0xA1;
 
@@ -404,14 +386,13 @@ public final class CommandList {
     public static final int MSG_MENU = 0xBC;
 
     /**
-     * Server message for moving a character. That could be the player character
-     * or another character. This message handles pushing and walking movements.
+     * Server message for moving a character. That could be the player character or another character. This message
+     * handles pushing and walking movements.
      */
     public static final int MSG_MOVE = 0xDF;
 
     /**
-     * Server message that says what track of the background music shall be
-     * played right now.
+     * Server message that says what track of the background music shall be played right now.
      */
     public static final int MSG_MUSIC = 0xC8;
 
@@ -456,14 +437,13 @@ public final class CommandList {
     public static final int MSG_SKILL = 0xD1;
 
     /**
-     * Server message that contains the data of a sound effect that shall be
-     * played instantly.
+     * Server message that contains the data of a sound effect that shall be played instantly.
      */
     public static final int MSG_SOUND_FX = 0xC7;
 
     /**
-     * Server message that the target of a attack is lost due death or escape
-     * and the player character needs to stand down.
+     * Server message that the target of a attack is lost due death or escape and the player character needs to stand
+     * down.
      */
     public static final int MSG_TARGET_LOST = 0xBA;
 
@@ -471,7 +451,7 @@ public final class CommandList {
      * Server message to turn the character into a specified direction.
      */
     public static final int MSG_TURN_CHAR = 0xE0;
-    
+
     /**
      * Server message to request a text from the player.
      */
@@ -498,8 +478,7 @@ public final class CommandList {
     protected static final int HEADER_SIZE = 6;
 
     /**
-     * Private constructor of the class so nothing can create a instance of this
-     * utility class.
+     * Private constructor of the class so nothing can create a instance of this utility class.
      */
     private CommandList() {
         // blocking constructor
