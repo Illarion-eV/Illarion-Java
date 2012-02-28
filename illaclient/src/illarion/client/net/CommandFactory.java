@@ -117,7 +117,7 @@ public final class CommandFactory
         map(CommandList.CMD_DRAG_MAP_MAP_NW, CommandList.CMD_DRAG_MAP_MAP_N);
         map(CommandList.CMD_DRAG_MAP_MAP_ZERO, CommandList.CMD_DRAG_MAP_MAP_N);
 
-        register(new TextResponseCmd());
+        register(new CloseDialogInputCmd());
         register(new CloseDialogMessageCmd());
 
         finish();

@@ -49,6 +49,13 @@ public final class DialogMessageMsg
      */
     private int dialogId;
 
+    /**
+     * Default constructor for the message dialog message.
+     */
+    public DialogMessageMsg() {
+        super(CommandList.MSG_DIALOG_MSG);
+    }
+
     @Override
     public AbstractReply clone() {
         return new DialogMessageMsg();
@@ -65,6 +72,8 @@ public final class DialogMessageMsg
     @Override
     public boolean executeUpdate() {
         CloseDialogMessageCmd closeDialogMessageCmd = CommandFactory.getInstance().getCommand(CommandList
+
+
 
 
 

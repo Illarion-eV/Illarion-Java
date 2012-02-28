@@ -91,7 +91,7 @@ public final class ReplyFactory
         register(new CharacterAnimationMsg());
         register(new BookMsg());
 
-        register(new TextRequestMsg());
+        register(new DialogInputMsg());
         register(new DialogMessageMsg());
 
         finish();

@@ -263,7 +263,7 @@ public final class CommandList {
     /**
      * Client command that is used to answer a text request.
      */
-    public static final int CMD_TEXT_RESPONSE = 0x50;
+    public static final int CMD_CLOSE_DIALOG_INPUT = 0x50;
 
     /**
      * Client command to perform a use action of one or two items on different locations.
@@ -455,7 +455,7 @@ public final class CommandList {
     /**
      * Server message to request a text from the player.
      */
-    public static final int MSG_TEXT_REQUEST = 0x50;
+    public static final int MSG_DIALOG_INPUT = 0x50;
 
     /**
      * Server message that contains a full updated list of all items on a tile.
