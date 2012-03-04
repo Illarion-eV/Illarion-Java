@@ -244,7 +244,7 @@
         <patternset refid="twl.pattern" />
     </fileset>
 
-    <!-- Substance Look and Feel 6.1 -->    <!-- https://substance.dev.java.net/ -->
+    <!-- Insubstantial 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
     <patternset id="substance.pattern">
         <include name="substance.jar" />
     </patternset>
@@ -252,7 +252,7 @@
         <patternset refid="substance.pattern" />
     </fileset>
 
-    <!-- Flamingo Swing component suite 5.0 -->    <!-- https://flamingo.dev.java.net/ -->
+    <!-- Flamingo Swing component suite 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
     <patternset id="flamingo.pattern">
         <include name="flamingo.jar" />
     </patternset>
@@ -260,7 +260,7 @@
         <patternset refid="flamingo.pattern" />
     </fileset>
 
-    <!-- Substance Flamingo component suite 6.1 -->    <!-- https://substance-flamingo.dev.java.net/ -->
+    <!-- Substance Flamingo component suite 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
     <patternset id="substance-flamingo.pattern">
         <include name="substance-flamingo.jar" />
     </patternset>
@@ -268,7 +268,7 @@
         <patternset refid="substance-flamingo.pattern" />
     </fileset>
 
-    <!-- Substance SwingX component suite 6.1 -->    <!-- https://substance-swingx.dev.java.net/ -->
+    <!-- Substance SwingX component suite 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
     <patternset id="substance-swingx.pattern">
         <include name="substance-swingx.jar" />
     </patternset>
@@ -276,12 +276,21 @@
         <patternset refid="substance-swingx.pattern" />
     </fileset>
 
-    <!-- Trident Animation Library 1.2 -->    <!-- http://kenai.com/projects/trident/pages/Home -->
+    <!-- Trident Animation Library 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
     <patternset id="trident.pattern">
         <include name="trident.jar" />
     </patternset>
     <fileset id="trident" dir="${common}/lib/trident">
         <patternset refid="trident.pattern" />
+    </fileset>
+
+    <!-- Swing Look and Feel enhancement framework 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
+    <patternset id="laf.pattern">
+        <include name="laf-plugin.jar" />
+        <include name="laf-widget.jar" />
+    </patternset>
+    <fileset id="laf" dir="${common}/lib/laf">
+        <patternset refid="laf.pattern" />
     </fileset>
 
     <!-- SwingX 1.6.2 -->    <!-- http://swinglabs.org/index.jsp -->

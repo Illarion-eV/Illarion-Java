@@ -27,18 +27,18 @@ import illarion.download.install.resources.Resource;
 import illarion.download.util.Lang;
 
 /**
- * This resource contains the Substance Look&Feel for Swing.
+ * This resource contains the Substance Look&Feel for the Flamingo Components.
  *
  * @author Martin Karing
  * @version 1.00
  * @since 1.00
  */
-public final class Substance
+public final class SubstanceFlamingo
         implements LibraryResource {
     /**
      * The singleton instance of this class.
      */
-    private static final Substance INSTANCE = new Substance();
+    private static final SubstanceFlamingo INSTANCE = new SubstanceFlamingo();
 
     /**
      * The files that are needed to be added to the class path for this resource.
@@ -63,9 +63,10 @@ public final class Substance
     /**
      * Private constructor to avoid instances but the singleton instance.
      */
-    private Substance() {
+    private SubstanceFlamingo() {
         dependencies = new ArrayList<Resource>();
-        dependencies.add(Trident.getInstance());
+        dependencies.add(Flamingo.getInstance());
+        dependencies.add(Substance.getInstance());
     }
 
     /**
@@ -85,12 +86,7 @@ public final class Substance
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             final String dataDir = LibraryDirectory.getInstance().getDirectory();
-            cp.add(new File(dataDir, "substance.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "laf-plugin.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "laf-widget.jar")); //$NON-NLS-1$
             cp.add(new File(dataDir, "substance-flamingo.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "substance-swingx.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "flamingo.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -115,7 +111,7 @@ public final class Substance
 
     @Override
     public String getName() {
-        return Lang.getMsg(Substance.class.getName());
+        return Lang.getMsg(SubstanceFlamingo.class.getName());
     }
 
     /**
@@ -135,7 +131,7 @@ public final class Substance
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {
-                res.add(new URL(ONLINE_PATH + "substance" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                res.add(new URL(ONLINE_PATH + "substance-flamingo" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (final Exception e) {
                 // Catch everything and do nothing!
             }
@@ -159,8 +155,6 @@ public final class Substance
     public Collection<String> getVMArguments() {
         if (vmArguments == null) {
             final Collection<String> vmArgs = new ArrayList<String>();
-            vmArgs.add("-Dillarion.components.avaiable.flamingo=true"); //$NON-NLS-1$
-            vmArgs.add("-Dillarion.components.avaiable.substance=true"); //$NON-NLS-1$
             vmArgs.add("-Dillarion.components.avaiable.substance-flamingo=true"); //$NON-NLS-1$
 
             vmArguments = vmArgs;

@@ -71,15 +71,9 @@ public final class DialogMessageMsg
 
     @Override
     public boolean executeUpdate() {
-        CloseDialogMessageCmd closeDialogMessageCmd = CommandFactory.getInstance().getCommand(CommandList
-
-
-
-
-
-
-
-                                                                                                      .CMD_CLOSE_DIALOG_MSG, CloseDialogMessageCmd.class);
+        final CloseDialogMessageCmd closeDialogMessageCmd;
+        closeDialogMessageCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_CLOSE_DIALOG_MSG,
+                                                                        CloseDialogMessageCmd.class);
         closeDialogMessageCmd.setDialogId(dialogId);
         closeDialogMessageCmd.send();
         return true;

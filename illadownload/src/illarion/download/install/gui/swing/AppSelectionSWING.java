@@ -1,60 +1,51 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.install.gui.swing;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 import illarion.download.install.resources.Resource;
 import illarion.download.util.Lang;
 
 /**
- * This is the application selection view. Its sole purpose is to display the
- * applications the user can start using this utility. This display only shows
- * in case the application to start is not selected explicit.
- * 
+ * This is the application selection view. Its sole purpose is to display the applications the user can start using
+ * this
+ * utility. This display only shows in case the application to start is not selected explicit.
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
-public final class AppSelectionSWING extends AbstractContentSWING {
+public final class AppSelectionSWING
+        extends AbstractContentSWING {
     /**
-     * This class is used as listener for the buttons that launch the different
-     * applications.
-     * 
+     * This class is used as listener for the buttons that launch the different applications.
+     *
      * @author Martin Karing
-     * @since 1.00
      * @version 1.00
+     * @since 1.00
      */
-    private static final class ApplicationButtonListener implements
-        ActionListener {
+    private static final class ApplicationButtonListener
+            implements ActionListener {
         /**
          * The parent that stores the selected resource.
          */
@@ -66,23 +57,20 @@ public final class AppSelectionSWING extends AbstractContentSWING {
         private final Resource resource;
 
         /**
-         * Public constructor so the parent class is able to create a object of
-         * this class. Using this constructor also the required values for this
-         * listener are set.
-         * 
+         * Public constructor so the parent class is able to create a object of this class. Using this constructor also
+         * the required values for this listener are set.
+         *
          * @param parentContent the parent that stores the selected listener
          * @param res the resource that is selected by this listener
          */
-        public ApplicationButtonListener(
-            final AppSelectionSWING parentContent, final Resource res) {
+        public ApplicationButtonListener(final AppSelectionSWING parentContent, final Resource res) {
             parent = parentContent;
             resource = res;
         }
 
         /**
-         * This is invoked in case the button is clicked. When this happens the
-         * resource assigned to this class is marked as ready and the execution
-         * of the install routine continues.
+         * This is invoked in case the button is clicked. When this happens the resource assigned to this class is
+         * marked as ready and the execution of the install routine continues.
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
@@ -133,54 +121,45 @@ public final class AppSelectionSWING extends AbstractContentSWING {
         con.weighty = 0.0;
         con.insets.set(0, 0, 7, 0);
 
-        final JLabel headLabel =
-            new JLabel(
-                Lang.getMsg("illarion.download.intall.gui.AppSelection.title"));
+        final JLabel headLabel = new JLabel(Lang.getMsg("illarion.download.install.gui.AppSelection.title"));
         contentPanel.add(headLabel, con);
         headLabel.setFont(headLabel.getFont().deriveFont(Font.BOLD, 14.f));
 
         final JButton rsClient = createLaunchButton();
-        rsClient.setText(Lang
-            .getMsg("illarion.download.intall.gui.AppSelection.rsClient"));
+        rsClient.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.rsClient"));
         rsClient.setEnabled(false);
 
         con.gridy = line++;
         contentPanel.add(rsClient, con);
 
         final JButton tsClient = createLaunchButton();
-        tsClient.setText(Lang
-            .getMsg("illarion.download.intall.gui.AppSelection.tsClient"));
-        tsClient.addActionListener(new ApplicationButtonListener(this,
-            illarion.download.install.resources.dev.Client.getInstance()));
+        tsClient.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.tsClient"));
+        tsClient.addActionListener(new ApplicationButtonListener(this, illarion.download.install.resources.dev.Client
+                .getInstance()));
 
         con.gridy = line++;
         contentPanel.add(tsClient, con);
 
         final JButton easyEditor = createLaunchButton();
-        easyEditor.setText(Lang
-            .getMsg("illarion.download.intall.gui.AppSelection.easyEditor"));
-        easyEditor.addActionListener(new ApplicationButtonListener(this,
-            illarion.download.install.resources.dev.EasyNpcEditor
-                .getInstance()));
+        easyEditor.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.easyEditor"));
+        easyEditor.addActionListener(new ApplicationButtonListener(this, illarion.download.install.resources.dev
+                .EasyNpcEditor.getInstance()));
 
         con.gridy = line++;
         contentPanel.add(easyEditor, con);
 
         final JButton easyQuest = createLaunchButton();
-        easyQuest.setText(Lang
-            .getMsg("illarion.download.intall.gui.AppSelection.easyQuest"));
-        easyQuest.addActionListener(new ApplicationButtonListener(this,
-            illarion.download.install.resources.dev.EasyQuestEditor
-                .getInstance()));
+        easyQuest.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.easyQuest"));
+        easyQuest.addActionListener(new ApplicationButtonListener(this, illarion.download.install.resources.dev
+                .EasyQuestEditor.getInstance()));
 
         con.gridy = line++;
         contentPanel.add(easyQuest, con);
 
         final JButton mapEditor = createLaunchButton();
-        mapEditor.setText(Lang
-            .getMsg("illarion.download.intall.gui.AppSelection.mapEditor"));
-        mapEditor.addActionListener(new ApplicationButtonListener(this,
-            illarion.download.install.resources.dev.Mapeditor.getInstance()));
+        mapEditor.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.mapEditor"));
+        mapEditor.addActionListener(new ApplicationButtonListener(this, illarion.download.install.resources.dev
+                .Mapeditor.getInstance()));
 
         con.gridy = line++;
         contentPanel.add(mapEditor, con);
@@ -209,7 +188,7 @@ public final class AppSelectionSWING extends AbstractContentSWING {
             easyQuest.setIcon(new ImageIcon(base.getImage("easyquest.png")));
         }
     }
-    
+
     private JButton createLaunchButton() {
         final Dimension launchButtonDim = new Dimension(120, 58);
         final JButton button = new JButton();
@@ -219,14 +198,13 @@ public final class AppSelectionSWING extends AbstractContentSWING {
         button.setPreferredSize(launchButtonDim);
         button.setSize(launchButtonDim);
         button.setFont(button.getFont().deriveFont(20.f));
-        
+
         return button;
     }
 
     /**
-     * Get the resource that was selected in this menu or <code>null<code> in
-     * case none was selected.
-     * 
+     * Get the resource that was selected in this menu or <code>null<code> in case none was selected.
+     *
      * @return the selected resource or <code>null</code>
      */
     public Resource getSelectedResource() {
@@ -240,7 +218,7 @@ public final class AppSelectionSWING extends AbstractContentSWING {
 
     /**
      * Set the resource that was selected in this menu.
-     * 
+     *
      * @param res the new selected resource
      */
     protected void setSelectedResource(final Resource res) {

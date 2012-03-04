@@ -1,60 +1,55 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.install.gui.swing;
 
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXLabel.TextAlignment;
 import org.jdesktop.swingx.JXList;
 
+import illarion.download.tasks.unpack.FailMonitor;
 import illarion.download.util.Lang;
 
 /**
- * This class is used to display some informations about failed downloads in
- * case this happened.
- * 
+ * This class is used to display some informations about failed downloads in case this happened.
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
-public final class FailedInformationSWING extends AbstractContentSWING {
+public final class FailedInformationSWING
+        extends AbstractContentSWING {
     /**
      * This is a little helper class to update the result value.
-     * 
+     *
      * @author Martin Karing
-     * @since 1.00
      * @version 1.00
+     * @since 1.00
      */
-    private static final class UpdateResultClass implements ActionListener {
+    private static final class UpdateResultClass
+            implements ActionListener {
         /**
-         * The parent instance of this instance that will receive the new result
-         * value.
+         * The parent instance of this instance that will receive the new result value.
          */
         private final FailedInformationSWING parentClass;
 
@@ -64,22 +59,19 @@ public final class FailedInformationSWING extends AbstractContentSWING {
         private final int targetResult;
 
         /**
-         * Construct a new instance of this class. This constructor is public to
-         * allow the parent class to create a instance without problems. This
-         * will also set the required values for this listener to work.
-         * 
+         * Construct a new instance of this class. This constructor is public to allow the parent class to create a
+         * instance without problems. This will also set the required values for this listener to work.
+         *
          * @param parent the parent of this instance
          * @param newResult the result value that is supposed to be set
          */
-        public UpdateResultClass(final FailedInformationSWING parent,
-            final int newResult) {
+        public UpdateResultClass(final FailedInformationSWING parent, final int newResult) {
             parentClass = parent;
             targetResult = newResult;
         }
 
         /**
-         * This function is called in case the button is clicked and will set
-         * the new result value.
+         * This function is called in case the button is clicked and will set the new result value.
          */
         @Override
         public void actionPerformed(final ActionEvent e) {
@@ -89,14 +81,14 @@ public final class FailedInformationSWING extends AbstractContentSWING {
     }
 
     /**
-     * This is the value of the result variable in case the launcher is ordered
-     * to launch the target application anyway.
+     * This is the value of the result variable in case the launcher is ordered to launch the target application
+     * anyway.
      */
     public static final int RESULT_LAUNCH = 2;
 
     /**
-     * This is the value of the result variable in case the application is
-     * ordered to retry downloading the application.
+     * This is the value of the result variable in case the application is ordered to retry downloading the
+     * application.
      */
     public static final int RESULT_RETRY = 1;
 
@@ -112,25 +104,16 @@ public final class FailedInformationSWING extends AbstractContentSWING {
     @Override
     public void fillButtons(final BaseSWING base, final JPanel buttonPanel) {
         final JButton retryButton = base.getPanelButton();
-        retryButton
-            .setText(Lang
-                .getMsg("illarion.download.intall.gui.FailedInformation.retry.text"));
-        retryButton
-            .setToolTipText(Lang
-                .getMsg("illarion.download.intall.gui.FailedInformation.retry.tooltip"));
-        retryButton
-            .addActionListener(new UpdateResultClass(this, RESULT_RETRY));
+        retryButton.setText(Lang.getMsg("illarion.download.install.gui.FailedInformation.retry.text"));
+        retryButton.setToolTipText(Lang.getMsg("illarion.download.install.gui.FailedInformation.retry.tooltip"));
+        retryButton.addActionListener(new UpdateResultClass(this, RESULT_RETRY));
         buttonPanel.add(retryButton);
 
         final JButton startAnywayButton = base.getPanelButton();
-        startAnywayButton
-            .setText(Lang
-                .getMsg("illarion.download.intall.gui.FailedInformation.startAnyway.text"));
-        startAnywayButton
-            .setToolTipText(Lang
-                .getMsg("illarion.download.intall.gui.FailedInformation.startAnyway.tooltip"));
-        startAnywayButton.addActionListener(new UpdateResultClass(this,
-            RESULT_LAUNCH));
+        startAnywayButton.setText(Lang.getMsg("illarion.download.install.gui.FailedInformation.startAnyway.text"));
+        startAnywayButton.setToolTipText(Lang.getMsg("illarion.download.install.gui.FailedInformation.startAnyway" +
+                                                             ".tooltip"));
+        startAnywayButton.addActionListener(new UpdateResultClass(this, RESULT_LAUNCH));
         buttonPanel.add(startAnywayButton);
 
         buttonPanel.add(base.getExitButton());
@@ -157,9 +140,7 @@ public final class FailedInformationSWING extends AbstractContentSWING {
         con.weighty = 0.0;
         con.insets.set(0, 0, 10, 0);
 
-        final JLabel headLabel =
-            new JLabel(
-                Lang.getMsg("illarion.download.intall.gui.FailedInformation.title"));
+        final JLabel headLabel = new JLabel(Lang.getMsg("illarion.download.install.gui.FailedInformation.title"));
         contentPanel.add(headLabel, con);
         headLabel.setFont(headLabel.getFont().deriveFont(Font.BOLD, 14.f));
 
@@ -171,9 +152,20 @@ public final class FailedInformationSWING extends AbstractContentSWING {
         textField.setLineWrap(true);
         textField.setMaxLineSpan(BaseSWING.WINDOW_WIDTH - 20);
         textField.setTextAlignment(TextAlignment.JUSTIFY);
-        textField.setText(Lang
-            .getMsg("illarion.download.intall.gui.FailedInformation.content"));
+        textField.setText(Lang.getMsg("illarion.download.install.gui.FailedInformation.content"));
         contentPanel.add(textField, con);
+
+        con.gridy = line++;
+        con.gridx = 0;
+        con.gridwidth = 2;
+        con.weightx = 1.0;
+        final FailMonitor failMon = FailMonitor.getInstance();
+        final int errCnt = failMon.getErrorCount();
+        final String[] failedPackages = new String[errCnt];
+        for (int i = 0; i < errCnt; i++) {
+            failedPackages[i] = failMon.getErrorResult(i).getTaskName();
+        }
+        contentPanel.add(new JXList(failedPackages), con);
 
         con.gridy = line++;
         con.gridx = 0;
@@ -184,7 +176,7 @@ public final class FailedInformationSWING extends AbstractContentSWING {
 
     /**
      * Get the result of this information display.
-     * 
+     *
      * @return the result value
      * @see #RESULT_LAUNCH
      * @see #RESULT_RETRY
@@ -207,12 +199,11 @@ public final class FailedInformationSWING extends AbstractContentSWING {
 
     /**
      * Update the value of the result variable.
-     * 
+     *
      * @param newResult the new value of the result variable.
      */
     protected void setResult(final int newResult) {
         result = newResult;
         reportContinue();
     }
-
 }
