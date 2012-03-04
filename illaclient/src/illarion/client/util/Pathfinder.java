@@ -1,51 +1,51 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.util;
+
+import javolution.util.FastComparator;
+import javolution.util.FastTable;
 
 import illarion.client.crash.PathfinderCrashHandler;
 import illarion.common.util.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
-import javolution.util.FastComparator;
-import javolution.util.FastTable;
 
 /**
- * Pathfinder to search the best way between two locations. Using the
- * A*-algorithm.
- * 
+ * Pathfinder to search the best way between two locations. Using the A*-algorithm.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class Pathfinder extends Thread implements Stoppable {
+public final class Pathfinder
+        extends Thread
+        implements Stoppable {
     /**
      * The singleton instance of the pathfinder class.
      */
     private static Pathfinder instance;
 
     /**
-     * The maximum length of a path, that is accepted, before the pathfinder
-     * gives up searching.
+     * The maximum length of a path, that is accepted, before the pathfinder gives up searching.
      */
     private static final int MAX_LENGTH = 30;
 
     /**
-     * Minimum cost of a one step to the next tile. This is used for the
-     * Heuristic of the path finding
+     * Minimum cost of a one step to the next tile. This is used for the Heuristic of the path finding
      */
     private static final int MIN_MOVE_COST = 5;
 
@@ -101,14 +101,13 @@ public final class Pathfinder extends Thread implements Stoppable {
 
     /**
      * Get instance of singleton.
-     * 
+     *
      * @return The instance of the pathfinder class.
      */
     public synchronized static Pathfinder getInstance() {
         if (instance == null) {
             instance = new Pathfinder();
-            instance.setUncaughtExceptionHandler(PathfinderCrashHandler
-                .getInstance());
+            instance.setUncaughtExceptionHandler(PathfinderCrashHandler.getInstance());
         }
         return instance;
     }
@@ -122,19 +121,17 @@ public final class Pathfinder extends Thread implements Stoppable {
             StoppableStorage.getInstance().remove(instance);
         }
         instance = new Pathfinder();
-        instance.setUncaughtExceptionHandler(PathfinderCrashHandler
-            .getInstance());
+        instance.setUncaughtExceptionHandler(PathfinderCrashHandler.getInstance());
     }
 
     /**
      * Search a path between two locations.
-     * 
+     *
      * @param pathStart the location where the path starts
      * @param pathDest the location where the path ends
      * @param pathRec the class that receives the resulting path
      */
-    public void findPath(final Location pathStart, final Location pathDest,
-        final PathReceiver pathRec) {
+    public void findPath(final Location pathStart, final Location pathDest, final PathReceiver pathRec) {
         startLoc.set(pathStart);
         endLoc.set(pathDest);
         receiver = pathRec;
@@ -145,9 +142,8 @@ public final class Pathfinder extends Thread implements Stoppable {
     }
 
     /**
-     * Run the thread. This function keeps running as long as the path finder
-     * thread is working. It will sleep as long as the the path finder is idle.
-     * To quit this function use the {@link #saveShutdown()} function.
+     * Run the thread. This function keeps running as long as the path finder thread is working. It will sleep as long
+     * as the the path finder is idle. To quit this function use the {@link #saveShutdown()} function.
      */
     @SuppressWarnings("null")
     @Override
@@ -172,10 +168,10 @@ public final class Pathfinder extends Thread implements Stoppable {
 
             if (restart) {
                 if (searchStartLoc == null) {
-                    searchStartLoc = Location.getInstance();
+                    searchStartLoc = new Location();
                 }
                 if (searchEndLoc == null) {
-                    searchEndLoc = Location.getInstance();
+                    searchEndLoc = new Location();
                 }
                 if (open == null) {
                     open = FastTable.newInstance();
@@ -223,9 +219,7 @@ public final class Pathfinder extends Thread implements Stoppable {
                 }
                 resultPath.prependStep(searchNode);
                 searchReceiver.handlePath(resultPath);
-                searchStartLoc.recycle();
                 searchStartLoc = null;
-                searchEndLoc.recycle();
                 searchEndLoc = null;
                 FastTable.recycle(open);
                 open = null;
@@ -251,20 +245,17 @@ public final class Pathfinder extends Thread implements Stoppable {
             removeFromOpen(currentNode);
             addToClosed(currentNode);
 
-            final Location searchLoc = Location.getInstance();
+            final Location searchLoc = new Location();
             for (int dir = 0; dir < Location.DIR_MOVE8; ++dir) {
                 searchLoc.set(currentLoc);
                 searchLoc.moveSC8(dir);
                 final PathNode searchNode = PathNode.getNode(searchLoc);
 
                 if (!searchNode.isBlocked()) {
-                    int newMoveCost =
-                        currentNode.getCost() + searchNode.getValue();
+                    int newMoveCost = currentNode.getCost() + searchNode.getValue();
 
-                    if ((dir == Location.DIR_NORTHEAST)
-                        || (dir == Location.DIR_NORTHWEST)
-                        || (dir == Location.DIR_SOUTHEAST)
-                        || (dir == Location.DIR_SOUTHWEST)) {
+                    if ((dir == Location.DIR_NORTHEAST) || (dir == Location.DIR_NORTHWEST) || (dir == Location
+                            .DIR_SOUTHEAST) || (dir == Location.DIR_SOUTHWEST)) {
                         newMoveCost *= 1.1f;
                     }
 
@@ -283,14 +274,12 @@ public final class Pathfinder extends Thread implements Stoppable {
 
                         maxDepth = Math.max(maxDepth, searchNode.getDepth());
 
-                        searchNode.setHeuristic(MIN_MOVE_COST
-                            * searchLoc.getDistance(searchEndLoc));
+                        searchNode.setHeuristic(MIN_MOVE_COST * searchLoc.getDistance(searchEndLoc));
 
                         addToOpen(searchNode);
                     }
                 }
             }
-            searchLoc.recycle();
             open.sort();
         }
     }
@@ -317,7 +306,7 @@ public final class Pathfinder extends Thread implements Stoppable {
 
     /**
      * Add a path node to the list of nodes that were considered already.
-     * 
+     *
      * @param node the path node that shall be added
      */
     private void addToClosed(final PathNode node) {
@@ -327,7 +316,7 @@ public final class Pathfinder extends Thread implements Stoppable {
 
     /**
      * Add a path node to the list of nodes that were not fully checked yet.
-     * 
+     *
      * @param node the path node that shall be added
      */
     private void addToOpen(final PathNode node) {
@@ -337,7 +326,7 @@ public final class Pathfinder extends Thread implements Stoppable {
 
     /**
      * Remove a node from the list of tiles that were considered already.
-     * 
+     *
      * @param node the node that shall be removed from the list
      */
     private void removeFromClosed(final PathNode node) {
@@ -347,7 +336,7 @@ public final class Pathfinder extends Thread implements Stoppable {
 
     /**
      * Remove a node from the list of tiles that were not fully checked yet.
-     * 
+     *
      * @param node the node that shall be removed from the list
      */
     private void removeFromOpen(final PathNode node) {

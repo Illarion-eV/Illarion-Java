@@ -1,22 +1,29 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
+
+import javolution.util.FastComparator;
+import javolution.util.FastTable;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 
 import illarion.client.IllaClient;
 import illarion.client.world.GameMap;
@@ -24,28 +31,23 @@ import illarion.client.world.World;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
-import javolution.util.FastComparator;
-import javolution.util.FastTable;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
 
 /**
- * The map display manager stores and manages all objects displayed on the map.
- * It takes care for rendering the objects in the proper order, for animations
- * of the entire map and it manages the current location of the avatar.
- * 
+ * The map display manager stores and manages all objects displayed on the map. It takes care for rendering the objects
+ * in the proper order, for animations of the entire map and it manages the current location of the avatar.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class MapDisplayManager implements AnimatedMove {
+public final class MapDisplayManager
+        implements AnimatedMove {
     /**
      * This comparator is used to order the display list in case it is needed.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static final class DisplayListComparator extends
-        FastComparator<DisplayItem> {
+    private static final class DisplayListComparator
+            extends FastComparator<DisplayItem> {
         /**
          * The serialization UID.
          */
@@ -59,8 +61,8 @@ public final class MapDisplayManager implements AnimatedMove {
         }
 
         /**
-         * Test of two objects are equal. This returns <code>true</code> also in
-         * case both objects are <code>null</code>.
+         * Test of two objects are equal. This returns <code>true</code> also in case both objects are
+         * <code>null</code>.
          */
         @Override
         public boolean areEqual(final DisplayItem o1, final DisplayItem o2) {
@@ -68,8 +70,7 @@ public final class MapDisplayManager implements AnimatedMove {
         }
 
         /**
-         * Compare two instances of the object and there relative offset that is
-         * needed for ordering this objects.
+         * Compare two instances of the object and there relative offset that is needed for ordering this objects.
          */
         @Override
         public int compare(final DisplayItem o1, final DisplayItem o2) {
@@ -146,7 +147,7 @@ public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Make item visible on screen
-     * 
+     *
      * @param item
      */
     @SuppressWarnings("nls")
@@ -168,7 +169,7 @@ public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Animate the movement of the game map
-     * 
+     *
      * @param dir
      * @param speed
      * @param run
@@ -182,8 +183,7 @@ public final class MapDisplayManager implements AnimatedMove {
         switch (dir) {
             case Location.DIR_NORTH:
                 // animate map
-                ani.start(0, 0, MapConstants.STEP_X * mod,
-                    -MapConstants.STEP_Y * mod, speed);
+                ani.start(0, 0, MapConstants.STEP_X * mod, -MapConstants.STEP_Y * mod, speed);
                 break;
             case Location.DIR_NORTHEAST:
                 // animate map
@@ -191,8 +191,7 @@ public final class MapDisplayManager implements AnimatedMove {
                 break;
             case Location.DIR_EAST:
                 // animate map
-                ani.start(0, 0, -MapConstants.STEP_X * mod,
-                    -MapConstants.STEP_Y * mod, speed);
+                ani.start(0, 0, -MapConstants.STEP_X * mod, -MapConstants.STEP_Y * mod, speed);
                 break;
             case Location.DIR_SOUTHEAST:
                 // animate map
@@ -200,8 +199,7 @@ public final class MapDisplayManager implements AnimatedMove {
                 break;
             case Location.DIR_SOUTH:
                 // animate map
-                ani.start(0, 0, -MapConstants.STEP_X * mod,
-                    MapConstants.STEP_Y * mod, speed);
+                ani.start(0, 0, -MapConstants.STEP_X * mod, MapConstants.STEP_Y * mod, speed);
                 break;
             case Location.DIR_SOUTHWEST:
                 // animate map
@@ -209,8 +207,7 @@ public final class MapDisplayManager implements AnimatedMove {
                 break;
             case Location.DIR_WEST:
                 // animate map
-                ani.start(0, 0, MapConstants.STEP_X * mod, MapConstants.STEP_Y
-                    * mod, speed);
+                ani.start(0, 0, MapConstants.STEP_X * mod, MapConstants.STEP_Y * mod, speed);
                 break;
             case Location.DIR_NORTHWEST:
                 // animate map
@@ -222,10 +219,9 @@ public final class MapDisplayManager implements AnimatedMove {
         }
         // start separate Elevation animation
         final int fromElevation = elevation;
-        elevation =
-            World.getMap().getElevationAt(World.getPlayer().getLocation());
+        elevation = World.getMap().getElevationAt(World.getPlayer().getLocation());
         if (elevation != fromElevation) {
-            levelAni.start(0, -fromElevation, 0,- elevation, speed);
+            levelAni.start(0, -fromElevation, 0, -elevation, speed);
         }
 
         // adjust Z-order after update
@@ -236,7 +232,7 @@ public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Map movement is complete
-     * 
+     *
      * @param ok
      */
     @Override
@@ -259,12 +255,12 @@ public final class MapDisplayManager implements AnimatedMove {
     public int getWorldY(final int y) {
         return ((y - getMapCenterY()) + origin.getDcY()) - dY;
     }
-    
+
     private int getMapCenterX() {
         final GameContainer window = IllaClient.getInstance().getContainer();
         return (window.getWidth() >> 1);
     }
-    
+
     private int getMapCenterY() {
         final GameContainer window = IllaClient.getInstance().getContainer();
         return (window.getHeight() >> 1);
@@ -272,12 +268,11 @@ public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Fix avatar's position in the middle of the screen and Z-Order
-     * 
+     *
      * @param av
      */
     public void glueAvatarToOrigin(final Avatar av) {
-        av.setScreenPos(origin.getDcX() - dX, (origin.getDcY() - dY) + dL,
-            origin.getDcZ(), Layers.CHARS);
+        av.setScreenPos(origin.getDcX() - dX, (origin.getDcY() - dY) + dL, origin.getDcZ(), Layers.CHARS);
     }
 
     public boolean isActive() {
@@ -286,7 +281,7 @@ public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Display lookat text
-     * 
+     *
      * @param x screen coordinates
      * @param y
      * @param text
@@ -305,9 +300,8 @@ public final class MapDisplayManager implements AnimatedMove {
     }
 
     /**
-     * Remove and add a item again. This has to be done in case the value of a
-     * item changed.
-     * 
+     * Remove and add a item again. This has to be done in case the value of a item changed.
+     *
      * @param item the display item to remove and add again
      */
     public void readd(final DisplayItem item) {
@@ -324,7 +318,7 @@ public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Remove item from screen
-     * 
+     *
      * @param item
      */
     public void remove(final DisplayItem item) {
@@ -335,7 +329,7 @@ public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Render all visible map items
-     * 
+     *
      * @param delta the delta time since the last render operation
      * @param width the width of the area the map is rendered in
      * @param height the height of the area the map is rendered in
@@ -350,9 +344,9 @@ public final class MapDisplayManager implements AnimatedMove {
 
         final int offX = (centerX - origin.getDcX()) + dX;
         final int offY = (centerY - origin.getDcY()) + dY;
-        
+
         g.pushTransform();
-        
+
         g.translate(offX, offY);
 
         final Avatar av = World.getAvatar();
@@ -375,10 +369,9 @@ public final class MapDisplayManager implements AnimatedMove {
         }
 
         g.popTransform();
-        
+
         if (fadeOutColor.getAlpha() > 0) {
-            fadeOutColor.a = (AnimationUtility.approach(
-                fadeOutColor.getAlpha(), 0, 0, 255, delta)) / 255.f;
+            fadeOutColor.a = (AnimationUtility.approach(fadeOutColor.getAlpha(), 0, 0, 255, delta)) / 255.f;
 
             g.setColor(fadeOutColor);
             g.fillRect(0, 0, c.getWidth(), c.getHeight());
@@ -387,15 +380,15 @@ public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Display spoken text. Temporary solution.
-     * 
+     *
      * @param x
      * @param y
      * @param text
      * @param mode
      */
     public void sayText(int x, int y, final String text, final int mode) {
-//        x += (MAP_CENTER_X - origin.getDcX()) + dX;
-//        y += (MAP_CENTER_Y - origin.getDcY()) + dY;
+        //        x += (MAP_CENTER_X - origin.getDcX()) + dX;
+        //        y += (MAP_CENTER_Y - origin.getDcY()) + dY;
 
         // Tooltip tip = Tooltip.create();
         // tip.initText(text);
@@ -425,7 +418,7 @@ public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Move the map origin to a new location
-     * 
+     *
      * @param location
      */
     public void setLocation(final Location location) {
@@ -444,7 +437,7 @@ public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Scroll map
-     * 
+     *
      * @param x
      * @param y
      */
@@ -459,18 +452,16 @@ public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Show spoken text as tooltip
-     * 
+     *
      * @param text
      * @param mode
      */
-    public void showText(final String text, final int mode, final int x,
-        final int y) {
+    public void showText(final String text, final int mode, final int x, final int y) {
         // convert to screen coordinates
-        final Location tempLoc = Location.getInstance();
+        final Location tempLoc = new Location();
         tempLoc.setSC(x, y, origin.getScZ());
 
         sayText(tempLoc.getDcX(), tempLoc.getDcY(), text, mode);
-        tempLoc.recycle();
     }
 
     private void insertSorted(final DisplayItem item) {

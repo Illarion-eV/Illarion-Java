@@ -309,7 +309,7 @@ public final class Char
      * Constructor to create a new character.
      */
     public Char() {
-        loc = Location.getInstance();
+        loc = new Location();
         move = new MoveAnimation(this);
         scale = 0;
         animation = CharAnimations.STAND;
@@ -522,7 +522,7 @@ public final class Char
      */
     public void moveTo(final Location newPos, final int mode, final int speed) {
         // get old position
-        final Location tempLoc = Location.getInstance();
+        final Location tempLoc = new Location();
         tempLoc.set(loc);
         loc.set(newPos);
 
@@ -535,7 +535,6 @@ public final class Char
         // determine general visibility by players
         setVisible(World.getPlayer().canSee(this));
         if (!visible || (avatar == null)) {
-            tempLoc.recycle();
             return;
         }
 
@@ -572,7 +571,6 @@ public final class Char
             dZ = 0;
             updatePosition(elevation);
         }
-        tempLoc.recycle();
         updateLight(LIGHT_SOFT);
 
         EventBus.publish(new CharMoveEvent(getCharId(), loc));

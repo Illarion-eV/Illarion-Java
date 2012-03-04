@@ -121,7 +121,7 @@ public final class PlayerMovement
     /**
      * The target location of the last move.
      */
-    private final Location lastMoveTarget = Location.getInstance();
+    private final Location lastMoveTarget = new Location();
 
     /**
      * The move animation that moves the map around. This animation is also used to fetch the informations about the

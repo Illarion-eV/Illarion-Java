@@ -1,22 +1,26 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.server;
+
+import java.io.IOException;
+
+import org.apache.log4j.Logger;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
@@ -24,18 +28,15 @@ import illarion.client.world.Char;
 import illarion.client.world.PlayerMovement;
 import illarion.client.world.World;
 import illarion.common.util.Location;
-import org.apache.log4j.Logger;
-
-import java.io.IOException;
 
 /**
- * Servermessage: Move of a character (
- * {@link illarion.client.net.CommandList#MSG_MOVE}).
- * 
+ * Servermessage: Move of a character ( {@link illarion.client.net.CommandList#MSG_MOVE}).
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class MoveMsg extends AbstractReply {
+public final class MoveMsg
+        extends AbstractReply {
     /**
      * The instance of the logger that is used to write out the data.
      */
@@ -72,8 +73,8 @@ public final class MoveMsg extends AbstractReply {
     private transient Location loc;
 
     /**
-     * The moving mode of the character. Valid values are {@link #MODE_NO_MOVE},
-     * {@link #MODE_MOVE}, {@link #MODE_PUSH}.
+     * The moving mode of the character. Valid values are {@link #MODE_NO_MOVE}, {@link #MODE_MOVE}, {@link
+     * #MODE_PUSH}.
      */
     private short mode;
 
@@ -91,7 +92,7 @@ public final class MoveMsg extends AbstractReply {
 
     /**
      * Create a new instance of the character move message as recycle object.
-     * 
+     *
      * @return a new instance of this message object
      */
     @Override
@@ -100,17 +101,15 @@ public final class MoveMsg extends AbstractReply {
     }
 
     /**
-     * Decode the character move data the receiver got and prepare it for the
-     * execution.
-     * 
-     * @param reader the receiver that got the data from the server that needs
-     *            to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     *             decode the full message
+     * Decode the character move data the receiver got and prepare it for the execution.
+     *
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      * @see illarion.client.net.server.AbstractReply#decode(NetCommReader)
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(final NetCommReader reader)
+            throws IOException {
         charId = reader.readUInt();
         loc = decodeLocation(reader);
         mode = reader.readUByte();
@@ -118,16 +117,14 @@ public final class MoveMsg extends AbstractReply {
     }
 
     /**
-     * Execute the character move message and send the decoded data to the rest
-     * of the client.
-     * 
+     * Execute the character move message and send the decoded data to the rest of the client.
+     *
      * @return true if the execution is done, false if it shall be called again
      */
     @SuppressWarnings("nls")
     @Override
     public boolean executeUpdate() {
-        if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE)
-            && (mode != MODE_PUSH) && (mode != MODE_RUN)) {
+        if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE) && (mode != MODE_PUSH) && (mode != MODE_RUN)) {
             LOGGER.warn("Move char message called in unknown mode " + mode);
             return true;
         }
@@ -141,8 +138,7 @@ public final class MoveMsg extends AbstractReply {
             } else if (mode == MODE_RUN) {
                 moveMode = PlayerMovement.MOVE_MODE_RUN;
             }
-            World.getPlayer().getMovementHandler()
-                .acknowledgeMove(moveMode, loc, speed);
+            World.getPlayer().getMovementHandler().acknowledgeMove(moveMode, loc, speed);
             return true;
         }
 
@@ -175,17 +171,13 @@ public final class MoveMsg extends AbstractReply {
      */
     @Override
     public void reset() {
-        if (loc != null) {
-            loc.recycle();
-            loc = null;
-        }
+        loc = null;
     }
 
     /**
      * Get the data of this character move message as string.
-     * 
-     * @return the string that contains the values that were decoded for this
-     *         message
+     *
+     * @return the string that contains the values that were decoded for this message
      */
     @SuppressWarnings("nls")
     @Override
