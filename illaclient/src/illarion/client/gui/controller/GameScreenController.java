@@ -21,7 +21,8 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Droppable;
 import de.lessvoid.nifty.controls.Label;
-import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.controls.ScrollPanel;
+import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -35,7 +36,7 @@ public class GameScreenController
     private Screen screen;
     private Label main;
     private TextField chatMsg;
-    private ListBox<String> chatLog;
+    private ScrollPanel chatLog;
     private Nifty parentNifty;
 
     private Droppable mapDropTarget;
@@ -55,15 +56,12 @@ public class GameScreenController
         this.screen = screen;
         parentNifty = nifty;
         chatMsg = screen.findNiftyControl("chatMsg", TextField.class);
-        chatLog = (ListBox<String>) screen.findNiftyControl("chatLog", ListBox.class);
+        chatLog = screen.findNiftyControl("chatPanel", ScrollPanel.class);
 
         mapDropTarget = screen.findNiftyControl("mapDropTarget", Droppable.class);
 
         chatHandler = new GUIChatHandler(screen, chatLog, chatMsg);
         chatMsg.getElement().addInputHandler(chatHandler);
-
-        screen.findElementByName("chatLog#scrollpanel#panel").setFocusable(false);
-        screen.findElementByName("chatLog#scrollpanel#vertical-scrollbar").setFocusable(false);
 
         inventoryHandler = new GUIInventoryHandler();
         inventoryHandler.bind(nifty, screen);
