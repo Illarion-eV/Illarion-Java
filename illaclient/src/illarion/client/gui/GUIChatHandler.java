@@ -18,7 +18,10 @@
  */
 package illarion.client.gui;
 
-import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.controls.ScrollPanel;
+import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
+import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
@@ -47,7 +50,7 @@ public final class GUIChatHandler implements KeyInputHandler, ChatReceiver, Even
     /**
      * The log that is used to display the text.
      */
-    private final ListBox<String> chatLog;
+    private final ScrollPanel chatLog;
     
     /**
      * The input field that holds the text that is yet to be send.
@@ -66,7 +69,7 @@ public final class GUIChatHandler implements KeyInputHandler, ChatReceiver, Even
      * @param chatLog the log that displays written text
      * @param chatMsg the input field holding the text to be send
      */
-    public GUIChatHandler(final Screen screen, final ListBox<String> chatLog, final TextField chatMsg) {
+    public GUIChatHandler(final Screen screen, final ScrollPanel chatLog, final TextField chatMsg) {
         this.screen = screen;
         this.chatMsg = chatMsg;
         this.chatLog = chatLog;
@@ -186,10 +189,15 @@ public final class GUIChatHandler implements KeyInputHandler, ChatReceiver, Even
             textBuilder.append(':').append(' ');
             textBuilder.append(text);
         }
+        Element contentPane = chatLog.getElement().findElementByName("chatLog");
+        LabelBuilder label = new LabelBuilder() {{
+            text(textBuilder.toString());
+            textHAlign(Align.Left);
+            parameter("wrap", "true");
+            width(percentage(100));
+        }};
+        label.build(contentPane.getNifty(), screen, contentPane);
 
-        chatLog.addItem(textBuilder.toString());
-        chatLog.showItemByIndex(chatLog.itemCount() - 1);
-        // send out the text
         TextBuilder.recycle(textBuilder);
     }
 

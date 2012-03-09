@@ -41,7 +41,11 @@
         <layer id="chatLayer" backgroundColor="#0000" childLayout="center">
             <panel height="201px" width="610px" align="left" valign="bottom" backgroundColor="#0000" childLayout="vertical" visibleToMouse="true">
                 <panel height="191px" width="600px" align="right" valign="top" backgroundColor="#0000" childLayout="vertical" visibleToMouse="true">
-                    <control name="chatBox" id="chatLog" vertical="on" horizontal="off" displayItems="7" selectionMode="Disabled" wrap="true" />
+                    <control name="scrollPanel" id="chatPanel" vertical="true" horizontal="false" height="161px"
+                             width="600px" autoScroll="bottom" style="nifty-listbox">
+                        <panel id="chatLog" x="10" y="10" width="565px" childLayout="vertical">
+                        </panel>
+                    </control>
                     <control name="textfield" id="chatMsg" style="chat-textfield" maxLength="255" width="600px" height="30px" font="textFont" wrap="true" />
                 </panel>
             </panel>
