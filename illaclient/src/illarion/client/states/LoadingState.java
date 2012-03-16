@@ -33,6 +33,7 @@ import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.opengl.SlickCallable;
 import org.newdawn.slick.state.StateBasedGame;
 
+import illarion.client.Game;
 import illarion.client.gui.controller.LoadScreenController;
 import illarion.client.loading.Loading;
 
@@ -46,12 +47,6 @@ public final class LoadingState
         extends NiftyOverlayBasicGameState {
 
     private LoadScreenController controller;
-
-    private final int id;
-
-    public LoadingState(final int slickGameStateId) {
-        id = slickGameStateId;
-    }
 
     private final Logger log = Logger.getLogger(LoadingState.class.getName());
 
@@ -82,7 +77,7 @@ public final class LoadingState
 
     @Override
     public int getID() {
-        return id;
+        return Game.STATE_LOADING;
     }
 
     @Override

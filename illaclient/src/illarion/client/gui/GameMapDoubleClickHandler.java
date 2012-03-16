@@ -19,29 +19,22 @@
 package illarion.client.gui;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.controls.DroppableDroppedEvent;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.input.NiftyMouseInputEvent;
-import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
-import de.lessvoid.nifty.tools.SizeValue;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
 
-import illarion.client.graphics.Item;
 import illarion.client.input.DoubleClickOnMapEvent;
-import illarion.client.input.DragOnMapEvent;
 import illarion.client.input.InputReceiver;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveMapTile;
 
 /**
- * This class is used to monitor all double click operations on the game map and notify the
- * interaction manager about a double click in case one happens.
+ * This class is used to monitor all double click operations on the game map and notify the interaction manager about a
+ * double click in case one happens.
  *
  * @author Vilarion &lt;vilarion@illarion.org&gt;
  */
@@ -114,13 +107,6 @@ public final class GameMapDoubleClickHandler
         }
 
         tile.use();
-
-        return true;
-    }
-
-    private boolean moveToMouse(final int targetX, final int targetY, final ForwardingInputSystem forwardingControl) {
-        World.getPlayer().getMovementHandler().walkTowards(targetX, targetY);
-        forwardingControl.requestExclusiveMouse();
 
         return true;
     }

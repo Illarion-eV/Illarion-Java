@@ -20,15 +20,13 @@ package illarion.client.input;
 
 import de.lessvoid.nifty.slick2d.NiftyInputForwarding;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.util.InputAdapter;
 
 import illarion.client.world.World;
+import illarion.common.util.Timer;
 
 /**
  * This class is used to receive and forward all user input.
@@ -78,21 +76,32 @@ public final class InputReceiver
     public void mouseClicked(int button, int x, int y, int clickCount) {
         if (button == 0) {
             if (clickCount == 2) {
-                EventBus.publish(EB_TOPIC, new DoubleClickOnMapEvent(x, y, forwardingControl.getInputForwardingControl()));
+                if (timer != null) {
+                    timer.stop();
+                    timer = null;
+                }
                 wasDoubleClick = true;
+                EventBus.publish(EB_TOPIC, new DoubleClickOnMapEvent(x, y,
+                                                                     forwardingControl.getInputForwardingControl()));
             } else {
-                Integer timerinterval = (Integer) Toolkit.getDefaultToolkit().getDesktopProperty(
-                        "awt.multiClickInterval");
+                Integer timerinterval = (Integer) Toolkit.getDefaultToolkit().getDesktopProperty("awt" +
+                                                                                                         "" +
+                                                                                                         "" +
+                                                                                                         "" +
+                                                                                                         "" +
+                                                                                                         ".multiClickInterval");
 
                 final int xc = x, yc = y;
-                timer = new Timer(timerinterval.intValue(), new ActionListener() {
+                if (timer != null) {
+                    timer.stop();
+                }
 
-                    public void actionPerformed(ActionEvent evt) {
-                        if (wasDoubleClick) {
-                            wasDoubleClick = false;
-                        } else {
-                            EventBus.publish(EB_TOPIC, new ClickOnMapEvent(xc, yc,
-                                                                           forwardingControl.getInputForwardingControl()));
+                wasDoubleClick = false;
+                timer = new Timer(timerinterval, new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!wasDoubleClick) {
+                            EventBus.publish(EB_TOPIC, new ClickOnMapEvent(xc, yc, forwardingControl.getInputForwardingControl()));
                         }
                     }
                 });

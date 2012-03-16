@@ -60,8 +60,8 @@ public final class Game
     @Override
     public void initStatesList(GameContainer container)
             throws SlickException {
-        addState(new LoginState(STATE_LOGIN));
-        addState(new LoadingState(STATE_LOADING));
+        addState(new LoginState());
+        addState(new LoadingState());
         addState(new PlayingState());
     }
 }
