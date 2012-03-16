@@ -20,11 +20,10 @@ package illarion.client.input;
 
 import de.lessvoid.nifty.slick2d.NiftyInputForwarding;
 
-import java.awt.*;
-
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.util.InputAdapter;
 
+import illarion.client.IllaClient;
 import illarion.client.world.World;
 import illarion.common.util.Timer;
 
@@ -84,12 +83,7 @@ public final class InputReceiver
                 EventBus.publish(EB_TOPIC, new DoubleClickOnMapEvent(x, y,
                                                                      forwardingControl.getInputForwardingControl()));
             } else {
-                Integer timerinterval = (Integer) Toolkit.getDefaultToolkit().getDesktopProperty("awt" +
-                                                                                                         "" +
-                                                                                                         "" +
-                                                                                                         "" +
-                                                                                                         "" +
-                                                                                                         ".multiClickInterval");
+                final int timerInterval = IllaClient.getCfg().getInteger("doubleClickInterval");
 
                 final int xc = x, yc = y;
                 if (timer != null) {
@@ -97,11 +91,12 @@ public final class InputReceiver
                 }
 
                 wasDoubleClick = false;
-                timer = new Timer(timerinterval, new Runnable() {
+                timer = new Timer(timerInterval, new Runnable() {
                     @Override
                     public void run() {
                         if (!wasDoubleClick) {
-                            EventBus.publish(EB_TOPIC, new ClickOnMapEvent(xc, yc, forwardingControl.getInputForwardingControl()));
+                            EventBus.publish(EB_TOPIC, new ClickOnMapEvent(xc, yc,
+                                                                           forwardingControl.getInputForwardingControl()));
                         }
                     }
                 });

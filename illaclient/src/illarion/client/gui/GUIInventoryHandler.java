@@ -29,7 +29,6 @@ import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 
-import java.awt.*;
 import java.util.Arrays;
 
 import org.bushe.swing.event.EventBus;
@@ -37,6 +36,7 @@ import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 
+import illarion.client.IllaClient;
 import illarion.client.graphics.Item;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.InventoryUpdateEvent;
@@ -223,14 +223,14 @@ public final class GUIInventoryHandler
             wasDoubleClick = true;
 
         } else {
-            Integer timerinterval = (Integer) Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
+            final int timerInterval = IllaClient.getCfg().getInteger("doubleClickInterval");
             clickCount = 1;
             wasDoubleClick = false;
             if (timer != null) {
                 timer.stop();
                 timer = null;
             }
-            timer = new Timer(timerinterval.intValue(), new Runnable() {
+            timer = new Timer(timerInterval, new Runnable() {
                 @Override
                 public void run() {
                     if (!wasDoubleClick) {
@@ -275,7 +275,8 @@ public final class GUIInventoryHandler
 
         if (itemId > 0) {
             final Item displayedItem = ItemFactory.getInstance().getPrototype(itemId);
-            final NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(displayedItem));
+            final NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
+                                                         new EntitySlickRenderImage(displayedItem));
 
             invSlot.setImage(niftyImage);
             invSlot.setLabelText(Integer.toString(count));

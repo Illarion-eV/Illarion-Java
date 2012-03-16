@@ -1,26 +1,45 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client;
 
 import de.lessvoid.nifty.slick2d.loaders.SlickAddLoaderLocation;
 import de.lessvoid.nifty.slick2d.loaders.SlickRenderFontLoaders;
 import de.lessvoid.nifty.slick2d.loaders.SlickRenderImageLoaders;
+
+import javax.swing.*;
+import java.io.*;
+import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.bushe.swing.event.EventServiceExistsException;
+import org.bushe.swing.event.EventServiceLocator;
+import org.bushe.swing.event.ThreadSafeEventService;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.renderer.Renderer;
+import org.newdawn.slick.state.GameState;
+
 import illarion.client.crash.DefaultCrashHandler;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
@@ -42,29 +61,10 @@ import illarion.common.graphics.TextureLoader;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.TableLoader;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.bushe.swing.event.EventServiceExistsException;
-import org.bushe.swing.event.EventServiceLocator;
-import org.bushe.swing.event.ThreadSafeEventService;
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.opengl.renderer.Renderer;
-import org.newdawn.slick.state.GameState;
-
-import javax.swing.*;
-import java.io.*;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
-
 
 /**
- * Main Class of the Illarion Client, this loads up the whole game and runs the
- * main loop of the Illarion Client.
- * 
+ * Main Class of the Illarion Client, this loads up the whole game and runs the main loop of the Illarion Client.
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -75,14 +75,13 @@ public final class IllaClient {
     public static final String APPLICATION = "Illarion Client"; //$NON-NLS-1$
 
     /**
-     * The version information of this client. This version is shows at multiple
-     * positions within the client.
+     * The version information of this client. This version is shows at multiple positions within the client.
      */
     public static final String VERSION = "1.22 δ"; //$NON-NLS-1$
 
     /**
-     * The default server the client connects too. The client will always
-     * connect to this server if {@link #MULTI_CLIENT} is set to false.
+     * The default server the client connects too. The client will always connect to this server if {@link
+     * #MULTI_CLIENT} is set to false.
      */
     static final Servers DEFAULT_SERVER = Servers.testserver;
 
@@ -92,22 +91,19 @@ public final class IllaClient {
     static final Logger LOGGER = Logger.getLogger(IllaClient.class);
 
     /**
-     * Allow to connect to multiple servers. In case this is set to true, the
-     * server is able to connect to all servers listed. In case its false the
-     * client connects only to the default server.
+     * Allow to connect to multiple servers. In case this is set to true, the server is able to connect to all servers
+     * listed. In case its false the client connects only to the default server.
      */
     static final boolean MULTI_CLIENT = true;
 
     /**
-     * Stores if there currently is a exit requested to avoid that the question
-     * area is opened multiple times.
+     * Stores if there currently is a exit requested to avoid that the question area is opened multiple times.
      */
     private static boolean exitRequested = false;
 
     /**
-     * The buffer size in byte that is available to install files to the client
-     * directory. This buffer is used to store and save the files that need to
-     * be copied.
+     * The buffer size in byte that is available to install files to the client directory. This buffer is used to store
+     * and save the files that need to be copied.
      */
     private static final int FILE_BUFFER = 1000;
 
@@ -117,15 +113,15 @@ public final class IllaClient {
     private static final IllaClient INSTANCE = new IllaClient();
 
     /**
-     * The sleep time of the main thread in ms after the logout command was send
-     * to give the other threads some time to handle their things and shut down
-     * as well.
+     * The sleep time of the main thread in ms after the logout command was send to give the other threads some time to
+     * handle their things and shut down as well.
      */
     private static final int SLEEPTIME_LOGOUT = 200;
 
     /**
-     * Storage of the properties that are used by the logger settings. This is
-     * needed to set up the correct paths to the files.
+     * Storage of the properties that are used by the logger settings. This is needed to set up the correct paths to
+     * the
+     * files.
      */
     private static Properties tempProps = new Properties();
 
@@ -138,10 +134,10 @@ public final class IllaClient {
      * Stores the debug level of the client.
      */
     private int debugLevel = 0;
-    
+
     /**
-     * The class loader of the this class. It is used to get the resource
-     * streams that contain the resource data of the client.
+     * The class loader of the this class. It is used to get the resource streams that contain the resource data of the
+     * client.
      */
     private final ClassLoader rscLoader = IllaClient.class.getClassLoader();
 
@@ -149,35 +145,34 @@ public final class IllaClient {
      * Stores the server the client shall connect to.
      */
     private Servers usedServer = DEFAULT_SERVER;
-    
+
     /**
      * This is the reference to the Illarion Game instance.
      */
     private illarion.client.Game game;
-    
+
     /**
      * The container that is used to display the game.
      */
     private AppGameContainer gameContainer;
 
     /**
-     * The default empty constructor used to create the singleton instance of
-     * this class.
+     * The default empty constructor used to create the singleton instance of this class.
      */
     private IllaClient() {
 
     }
-    
-    public GameState getGameState(int id){
+
+    public GameState getGameState(int id) {
         return game.getState(id);
     }
-    
+
     private void init() {
         prepareConfig();
         initLogfiles();
-        
+
         CrashReporter.getInstance().setConfig(getCfg());
-        
+
         try {
             EventServiceLocator.setEventService(EventServiceLocator.EVENT_BUS_CLASS, new ThreadSafeEventService());
         } catch (EventServiceExistsException e1) {
@@ -185,29 +180,30 @@ public final class IllaClient {
         }
 
         Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
-        
+
         SlickRenderImageLoaders.getInstance().addLoader(TextureLoader.getInstance(), SlickAddLoaderLocation.first);
         SlickRenderFontLoaders.getInstance().addLoader(FontLoader.getInstance(), SlickAddLoaderLocation.first);
-        
+
         // Preload sound and music
         new SongLoader().setTarget(SongFactory.getInstance()).load();
         new SoundLoader().setTarget(SoundFactory.getInstance()).load();
-        
+
         game = new illarion.client.Game();
-        
+
         final GraphicResolution res = new GraphicResolution(cfg.getString(CFG_RESOLUTION));
-        
+
         try {
-            gameContainer = new AppGameContainer(game, res.getWidth(), res.getHeight(), cfg.getBoolean(CFG_FULLSCREEN));
+            gameContainer = new AppGameContainer(game, res.getWidth(), res.getHeight(),
+                                                 cfg.getBoolean(CFG_FULLSCREEN));
             MapDimensions.getInstance().reportScreenSize(gameContainer.getWidth(), gameContainer.getHeight());
         } catch (SlickException e) {
             System.err.println("Fatal error creating game screen!!!");
             System.exit(-1);
         }
-        
+
         gameContainer.setAlwaysRender(true);
         //gameContainer.setTargetFrameRate(60);
-        
+
         try {
             gameContainer.start();
         } catch (SlickException e) {
@@ -215,10 +211,10 @@ public final class IllaClient {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Get the container that is used to display the game inside.
-     * 
+     *
      * @return the are used to display the game inside
      */
     public GameContainer getContainer() {
@@ -226,8 +222,7 @@ public final class IllaClient {
     }
 
     /**
-     * Show a question frame if the client shall really quit and exit the client
-     * in case the user selects yes.
+     * Show a question frame if the client shall really quit and exit the client in case the user selects yes.
      */
     public static void ensureExit() {
         if (exitRequested) {
@@ -238,13 +233,13 @@ public final class IllaClient {
 
     /**
      * Show an error message and leave the client.
-     * 
+     *
      * @param message the error message that shall be displayed.
      */
     @SuppressWarnings("nls")
     public static void errorExit(final String message) {
         World.cleanEnvironment();
-        
+
         LOGGER.info("Client terminated on user request.");
 
         LOGGER.fatal(Lang.getMsg(message));
@@ -256,17 +251,15 @@ public final class IllaClient {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                JOptionPane.showMessageDialog(null, Lang.getMsg(message),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, Lang.getMsg(message), "Error", JOptionPane.ERROR_MESSAGE);
                 startFinalKiller();
             }
         }).start();
     }
 
     /**
-     * Quit the client and restart the connection with the login screen right
-     * away.
-     * 
+     * Quit the client and restart the connection with the login screen right away.
+     *
      * @param message the message that shall be displayed in the login screen
      */
     public static void fallbackToLogin(final String message) {
@@ -276,7 +269,7 @@ public final class IllaClient {
 
     /**
      * Get the configuration handler of the basic client settings.
-     * 
+     *
      * @return the configuration handler
      */
     public static Config getCfg() {
@@ -284,20 +277,19 @@ public final class IllaClient {
     }
 
     /**
-     * Get the full path to a file. This includes the default path that was set
-     * up and the name of the file this function gets.
-     * 
+     * Get the full path to a file. This includes the default path that was set up and the name of the file this
+     * function gets.
+     *
      * @param name the name of the file that shall be append to the folder
      * @return the full path to a file
      */
     public static String getFile(final String name) {
-        return new File(DirectoryManager.getInstance().getUserDirectory(),
-            name).getAbsolutePath();
+        return new File(DirectoryManager.getInstance().getUserDirectory(), name).getAbsolutePath();
     }
 
     /**
      * Get the singleton instance of this client main object.
-     * 
+     *
      * @return the singleton instance of this class
      */
     public static IllaClient getInstance() {
@@ -306,7 +298,7 @@ public final class IllaClient {
 
     /**
      * Load a resource as stream via the basic class loader.
-     * 
+     *
      * @param path the path to the object that shall be loaded
      * @return the data stream of the object
      */
@@ -316,7 +308,7 @@ public final class IllaClient {
 
     /**
      * Get a text that identifies the version of this client.
-     * 
+     *
      * @return the version text of this client
      */
     public static String getVersionText() {
@@ -325,21 +317,21 @@ public final class IllaClient {
 
     /**
      * Check if a debug flag is set or not.
-     * 
+     *
      * @param flag the debug flag that shall be checked
      * @return true in case the flag is enabled, false if not
      */
     public static boolean isDebug(final Debug flag) {
         return (INSTANCE.debugLevel & (1 << flag.ordinal())) > 0;
     }
-    
+
     public static void initChatLog() {
         ChatLog.getInstance().init(tempProps);
     }
 
     /**
      * Main function starts the client and sets up all data.
-     * 
+     *
      * @param args the arguments handed over to the client
      */
     @SuppressWarnings("nls")
@@ -361,7 +353,7 @@ public final class IllaClient {
         if (folder == null) {
             return;
         }
-        
+
         INSTANCE.init();
 
         // update read-me file if required
@@ -370,14 +362,13 @@ public final class IllaClient {
         // update manual files if required
         installFile("manual_de.pdf");
         installFile("manual_en.pdf");
-       
+
     }
 
     /**
-     * This method is the final one to be called before the client is killed for
-     * sure. It gives the rest of the client 10 seconds before it forcefully
-     * shuts down everything. This is used to ensure that the client quits when
-     * it has to, but in case it does so faster, it won't be killed like that.
+     * This method is the final one to be called before the client is killed for sure. It gives the rest of the client
+     * 10 seconds before it forcefully shuts down everything. This is used to ensure that the client quits when it has
+     * to, but in case it does so faster, it won't be killed like that.
      */
     @SuppressWarnings("nls")
     public static void startFinalKiller() {
@@ -394,7 +385,7 @@ public final class IllaClient {
 
     /**
      * This function changes the state of the exit requested parameter.
-     * 
+     *
      * @param newValue the new value for the exitRequested parameter
      */
     static void setExitRequested(final boolean newValue) {
@@ -402,9 +393,8 @@ public final class IllaClient {
     }
 
     /**
-     * Get if there is currently a exit request pending. Means of the really
-     * exit dialog is opened or not.
-     * 
+     * Get if there is currently a exit request pending. Means of the really exit dialog is opened or not.
+     *
      * @return true in case the exit dialog is currently displayed
      */
     protected static boolean getExitRequested() {
@@ -412,30 +402,25 @@ public final class IllaClient {
     }
 
     /**
-     * This function determines the user data directory and requests the folder
-     * to store the client data in case it is needed. It also performs checks to
-     * see if the folder is valid.
-     * 
-     * @return a string with the path to the folder or null in case no folder is
-     *         set
+     * This function determines the user data directory and requests the folder to store the client data in case it is
+     * needed. It also performs checks to see if the folder is valid.
+     *
+     * @return a string with the path to the folder or null in case no folder is set
      */
     @SuppressWarnings("nls")
     private static String checkFolder() {
         if (!DirectoryManager.getInstance().hasUserDirectory()) {
-            JOptionPane.showMessageDialog(null,
-                "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
-                    + "Installation is corrupted, please run it again.",
-                "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
+                    "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
 
-        return DirectoryManager.getInstance().getUserDirectory()
-            .getAbsolutePath();
+        return DirectoryManager.getInstance().getUserDirectory().getAbsolutePath();
     }
 
     /**
      * Install a file from the jar files to the client directory.
-     * 
+     *
      * @param fileName the name of the file that shall be stored
      * @return true in case the file was stored, false if not.
      */
@@ -444,16 +429,14 @@ public final class IllaClient {
     }
 
     /**
-     * Install a file from a jar in the client directory. Existing files are
-     * only updates if needed.
-     * 
+     * Install a file from a jar in the client directory. Existing files are only updates if needed.
+     *
      * @param fileName the filename of the source file
      * @param outputFile the full path to the target file
      * @return true in case the file got stored or if there was no update needed
      */
     @SuppressWarnings("nls")
-    private static boolean installFile(final String fileName,
-        final File outputFile) {
+    private static boolean installFile(final String fileName, final File outputFile) {
         final InputStream input = getResource(fileName);
         if (input == null) {
             return false;
@@ -489,7 +472,7 @@ public final class IllaClient {
 
     /**
      * Get the server that was selected as connection target.
-     * 
+     *
      * @return the selected server
      */
     public Servers getUsedServer() {
@@ -504,15 +487,13 @@ public final class IllaClient {
         if (World.getNet() == null) {
             return;
         }
-        final SimpleCmd cmd =
-            (SimpleCmd) CommandFactory.getInstance().getCommand(
-                CommandList.CMD_LOGOFF);
+        final SimpleCmd cmd = (SimpleCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_LOGOFF);
         World.getNet().sendCommand(cmd);
     }
 
     /**
      * Set the server that shall be used to login at.
-     * 
+     *
      * @param server the server that is used to connect with
      */
     public void setUsedServer(final Servers server) {
@@ -524,24 +505,18 @@ public final class IllaClient {
      */
     @SuppressWarnings("nls")
     private void initLogfiles() {
-        tempProps.put("log4j.appender.IllaLogfileAppender.file",
-            getFile("error.log"));
-        tempProps.put("log4j.appender.ChatAppender.file",
-            getFile("illarion.log"));
+        tempProps.put("log4j.appender.IllaLogfileAppender.file", getFile("error.log"));
+        tempProps.put("log4j.appender.ChatAppender.file", getFile("illarion.log"));
         tempProps.put("log4j.reset", "true");
-        new PropertyConfigurator().doConfigure(tempProps,
-            LOGGER.getLoggerRepository());
+        new PropertyConfigurator().doConfigure(tempProps, LOGGER.getLoggerRepository());
 
-        Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler
-            .getInstance());
+        Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
 
         LOGGER.info(getVersionText() + " started.");
         LOGGER.info("VM: " + System.getProperty("java.version"));
-        LOGGER.info("OS: " + System.getProperty("os.name") + " "
-            + System.getProperty("os.version") + " "
-            + System.getProperty("os.arch"));
-        
-        
+        LOGGER.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System
+                .getProperty("os.arch"));
+
         java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
         java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
         java.util.logging.Logger.getLogger("javolution").setLevel(java.util.logging.Level.SEVERE);
@@ -560,31 +535,30 @@ public final class IllaClient {
         cfg.setDefault("showNameMode", illarion.client.world.People.NAME_SHORT);
         cfg.setDefault("showIDs", false);
         cfg.setDefault("soundOn", true);
-        cfg.setDefault("soundVolume",
-            (int) illarion.client.world.Player.MAX_CLIENT_VOL);
+        cfg.setDefault("soundVolume", (int) illarion.client.world.Player.MAX_CLIENT_VOL);
         cfg.setDefault("musicOn", true);
-        cfg.setDefault("musicVolume",
-            (int) (illarion.client.world.Player.MAX_CLIENT_VOL * 0.75f));
+        cfg.setDefault("musicVolume", (int) (illarion.client.world.Player.MAX_CLIENT_VOL * 0.75f));
         cfg.setDefault(illarion.client.util.ChatLog.CFG_TEXTLOG, true);
         cfg.setDefault("fadingTime", 600);
         cfg.setDefault(CFG_FULLSCREEN, false);
-        cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800,
-            600, 32, 60).toString());
+        cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800, 600, 32, 60).toString());
         cfg.setDefault("savePassword", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
         cfg.setDefault("engine", 1);
 
         final String locale = cfg.getString(Lang.LOCALE_CFG);
         if (locale == null) {
-            final String jnlpLocale =
-                System.getProperty("illarion.client.locale");
-            if ((jnlpLocale == null)
-                || jnlpLocale.equals(Lang.LOCALE_CFG_ENGLISH)) {
+            final String jnlpLocale = System.getProperty("illarion.client.locale");
+            if ((jnlpLocale == null) || jnlpLocale.equals(Lang.LOCALE_CFG_ENGLISH)) {
                 cfg.set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
             } else {
                 cfg.set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_GERMAN);
             }
         }
+
+        final java.awt.Toolkit awtDefaultToolkit = java.awt.Toolkit.getDefaultToolkit();
+        cfg.setDefault("doubleClickInterval", (Integer) awtDefaultToolkit.getDesktopProperty("awt" +
+                                                                                                     ".multiClickInterval"));
 
         final Crypto crypt = new Crypto();
         crypt.loadPublicKey();
