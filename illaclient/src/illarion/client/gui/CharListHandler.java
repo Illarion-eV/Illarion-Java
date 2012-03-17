@@ -91,6 +91,7 @@ public final class CharListHandler
         filterChangedEvent = new EventTopicSubscriber<DropDownSelectionChangedEvent<String>>() {
             @Override
             public void onEvent(final String topic, final DropDownSelectionChangedEvent<String> data) {
+                dirty = true;
                 updateGUI();
             }
         };
