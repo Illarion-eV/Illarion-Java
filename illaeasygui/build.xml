@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file is part of the Illarion easyGUI Editor.
+
+Copyright © 2011 - Illarion e.V.
+
+The Illarion easyGUI Editor is free software: you can redistribute i and/or
+modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+The Illarion easyGUI Editor is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+the Illarion easyGUI Editor. If not, see <http://www.gnu.org/licenses/>.
+-->
+<project name="Illarion easyGUI Editor" default="build_easygui" basedir=".">
+	<description>
+           Build the Illarion easyGUI Editor.
+    </description>
+
+	<import file="../illacommon/build_include.xml" />
+
+	<property name="src" location="${easygui}/src" />
+	<property name="res" location="${easygui}/res" />
+	<property name="classes" location="${easygui}/antclasses" />
+	<property name="jar" location="${easygui}/${easygui.jar}" />
+	<property name="jar_res" location="${easygui}/illarion_easygui_resources.jar" />
+
+	<target name="build_easygui" description="build easygui editor jar file" depends="init, compile_easygui">
+        <move file="${jar}" tofile="${easygui.bin}" />
+	</target>
+
+    <target name="build_easygui_res" description="create the resource of the illarion client"
+            depends="check_optional_dirs, build_easygui, register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedcompiled}" usepack200="true">
+            <filelist dir="${compiled}">
+                <file name="${easygui.jar}" />
+            </filelist>
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}" storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${easygui.jar}" />
+                </filelist>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${easygui.jar}" />
+                </filelist>
+            </path>
+        </verifyjar>
+    	
+        <resourcebuild target="${easygui.res.deploy}" usepack200="true">
+            <filelist dir="${signedcompiled}">
+                <file name="${easygui.jar}" />
+            </filelist>
+        </resourcebuild>
+    </target>
+
+	<target name="compile_easygui">
+		<delete dir="${classes}" />
+		<mkdir dir="${classes}" />
+
+		<javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}" debuglevel="${build.debuglevel}">
+			<classpath>
+				<fileset refid="substance" />
+                <fileset refid="trident" />
+                <fileset refid="flamingo" />
+                <fileset refid="substance-flamingo" />
+                <fileset refid="jsyntaxpane" />
+                <fileset refid="javolution" />
+                <fileset refid="trove" />
+                <fileset refid="log4j" />
+				<pathelement location="${common.bin}" />
+				<pathelement path="${java.home}/lib" />
+			</classpath>
+		</javac>
+
+		<jar jarfile="${jar}" basedir="${classes}" includes="illarion/easygui/**">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+				<attribute name="Implementation-Vendor" value="${easygui.vendor}" />
+				<attribute name="Implementation-Title" value="${easygui.name}" />
+				<attribute name="Implementation-Version" value="${easygui.version}" />
+			</manifest>
+		</jar>
+		<jar jarfile="${jar}" basedir="${src}" includes="logging.properties" update="true" />
+		<jar jarfile="${jar}" basedir="${src}" includes="illarion/easygui/gui/syntax/easyGUI.properties" update="true"
+                />
+		<jar jarfile="${jar}" basedir="${res}" includes="*.png" update="true" />
+		<jar jarfile="${jar}" basedir="${src}" includes="messages_*.properties" update="true" index="${build.index}" />
+		<delete dir="${classes}" />
+
+		<copy toDir="${setup}" preservelastmodified="true">
+			<filelist dir="${easygui}/res">
+				<file name="easygui16.png" />
+				<file name="easygui32.png" />
+				<file name="easygui48.png" />
+				<file name="easygui64.png" />
+				<file name="easygui128.png" />
+				<file name="easygui256.png" />
+			</filelist>
+		</copy>
+	</target>
+</project>

@@ -1,0 +1,63 @@
+/*
+ * This file is part of the Illarion easyGUI Editor.
+ *
+ * Copyright © 2011 - Illarion e.V.
+ *
+ * The Illarion easyGUI Editor is free software: you can redistribute i and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * The Illarion easyGUI Editor is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * the Illarion easyGUI Editor. If not, see <http://www.gnu.org/licenses/>.
+ */
+package illarion.easygui.parsed.talk;
+
+import java.io.IOException;
+import java.io.Writer;
+
+import illarion.common.util.Reusable;
+
+/**
+ * This interface is the common talking condition interface used to store the
+ * consequences of a talking line.
+ * 
+ * @author Martin Karing
+ * @since 1.00
+ * @version 1.02
+ */
+public interface TalkConsequence extends Reusable {
+    /**
+     * The base module of all consequences.
+     */
+    @SuppressWarnings("nls")
+    String BASE_LUA_MODULE = "npc.base.consequence.";
+
+    /**
+     * Get the LUA module needed for this consequence.
+     * 
+     * @return the LUA module needed for this consequence
+     */
+    String getLuaModule();
+
+    /**
+     * Write the data of this talking consequence to a easyGUI script.
+     * 
+     * @param target the writer that takes the data
+     * @exception java.io.IOException thrown in case the writing operations fail.
+     */
+    void writeEasyNpc(Writer target) throws IOException;
+
+    /**
+     * Write the data of this talking consequence to a LUA script.
+     * 
+     * @param target the writer that takes the data
+     * @throws java.io.IOException thrown in case the writing operations fail
+     */
+    void writeLua(Writer target) throws IOException;
+}
