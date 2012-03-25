@@ -19,61 +19,44 @@
 package illarion.client.gui.controller;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.controls.Droppable;
-import de.lessvoid.nifty.controls.Label;
-import de.lessvoid.nifty.controls.ScrollPanel;
-import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import illarion.client.gui.*;
-import illarion.client.world.World;
 
 public class GameScreenController
         implements ScreenController {
 
-    private Screen screen;
-    private Label main;
-    private TextField chatMsg;
-    private ScrollPanel chatLog;
     private Nifty parentNifty;
 
-    private Droppable mapDropTarget;
-
-    private GUIChatHandler chatHandler;
-    private GameMapClickHandler mapClickHandler;
-    private GameMapDoubleClickHandler mapDoubleClickHandler;
-    private GameMapDragHandler mapDragHandler;
-    private GUIInventoryHandler inventoryHandler;
-    private CharListHandler charListHandler;
+    private Collection<ScreenController> childControllers;
 
     private boolean notifyResolutionChanged;
+
+    public GameScreenController() {
+        childControllers = new ArrayList<ScreenController>();
+
+        childControllers.add(new GUIChatHandler());
+        childControllers.add(new GUIInventoryHandler());
+        childControllers.add(new CharListHandler());
+        childControllers.add(new DialogHandler());
+
+        childControllers.add(new GameMapClickHandler());
+        childControllers.add(new GameMapDoubleClickHandler());
+        childControllers.add(new GameMapDragHandler());
+    }
 
     @SuppressWarnings("unchecked")
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
-        this.screen = screen;
         parentNifty = nifty;
-        chatMsg = screen.findNiftyControl("chatMsg", TextField.class);
-        chatLog = screen.findNiftyControl("chatPanel", ScrollPanel.class);
 
-        mapDropTarget = screen.findNiftyControl("mapDropTarget", Droppable.class);
-
-        chatHandler = new GUIChatHandler(screen, chatLog, chatMsg);
-        chatMsg.getElement().addInputHandler(chatHandler);
-
-        inventoryHandler = new GUIInventoryHandler();
-        inventoryHandler.bind(nifty, screen);
-        mapClickHandler = new GameMapClickHandler();
-        mapClickHandler.bind(parentNifty, screen);
-        mapDoubleClickHandler = new GameMapDoubleClickHandler();
-        mapDoubleClickHandler.bind(parentNifty, screen);
-        mapDragHandler = new GameMapDragHandler();
-        mapDragHandler.bind(parentNifty, screen);
-
-        charListHandler = new CharListHandler();
-        charListHandler.bind(nifty, screen);
+        for (final ScreenController childController : childControllers) {
+            childController.bind(nifty, screen);
+        }
     }
 
     @Override
@@ -82,15 +65,17 @@ public class GameScreenController
             parentNifty.resolutionChanged();
             notifyResolutionChanged = false;
         }
-        World.getChatHandler().addChatReceiver(chatHandler);
-        parentNifty.subscribeAnnotations(mapDragHandler);
-        inventoryHandler.onStartScreen();
-        charListHandler.onStartScreen();
+
+        for (final ScreenController childController : childControllers) {
+            childController.onStartScreen();
+        }
     }
 
     @Override
     public void onEndScreen() {
-        World.getChatHandler().removeChatReceiver(chatHandler);
+        for (final ScreenController childController : childControllers) {
+            childController.onEndScreen();
+        }
     }
 
     public void resolutionChanged() {

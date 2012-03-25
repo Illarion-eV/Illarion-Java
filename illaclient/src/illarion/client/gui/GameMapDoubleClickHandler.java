@@ -22,6 +22,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyMouseInputEvent;
 import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 
 import org.bushe.swing.event.EventBus;
@@ -39,7 +40,7 @@ import illarion.client.world.interactive.InteractiveMapTile;
  * @author Vilarion &lt;vilarion@illarion.org&gt;
  */
 public final class GameMapDoubleClickHandler
-        implements EventTopicSubscriber<DoubleClickOnMapEvent> {
+        implements EventTopicSubscriber<DoubleClickOnMapEvent>, ScreenController {
 
     /**
      * The Nifty-GUI instance that is handling the GUI display currently.
@@ -84,7 +85,16 @@ public final class GameMapDoubleClickHandler
         activeNifty = nifty;
         activeScreen = screen;
         gamePanel = screen.findElementByName("gamePanel");
+    }
+
+    @Override
+    public void onStartScreen() {
         EventBus.subscribe(InputReceiver.EB_TOPIC, this);
+    }
+
+    @Override
+    public void onEndScreen() {
+        EventBus.unsubscribe(InputReceiver.EB_TOPIC, this);
     }
 
     public boolean handleDoubleClickOnMap(final int x, final int y, final ForwardingInputSystem forwardingControl) {

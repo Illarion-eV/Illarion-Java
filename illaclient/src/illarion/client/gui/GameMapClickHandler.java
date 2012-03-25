@@ -22,25 +22,25 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyMouseInputEvent;
 import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
 
 import illarion.client.input.ClickOnMapEvent;
-import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.input.InputReceiver;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveMapTile;
 
 /**
- * This class is used to monitor all click operations on the game map and notify the
- * interaction manager about a click in case one happens.
+ * This class is used to monitor all click operations on the game map and notify the interaction manager about a click
+ * in case one happens.
  *
  * @author Vilarion &lt;vilarion@illarion.org&gt;
  */
 public final class GameMapClickHandler
-        implements EventTopicSubscriber<ClickOnMapEvent> {
+        implements EventTopicSubscriber<ClickOnMapEvent>, ScreenController {
 
     /**
      * The Nifty-GUI instance that is handling the GUI display currently.
@@ -85,7 +85,16 @@ public final class GameMapClickHandler
         activeNifty = nifty;
         activeScreen = screen;
         gamePanel = screen.findElementByName("gamePanel");
+    }
+
+    @Override
+    public void onStartScreen() {
         EventBus.subscribe(InputReceiver.EB_TOPIC, this);
+    }
+
+    @Override
+    public void onEndScreen() {
+        EventBus.unsubscribe(InputReceiver.EB_TOPIC, this);
     }
 
     public boolean handleClickOnMap(final int x, final int y, final ForwardingInputSystem forwardingControl) {

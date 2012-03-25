@@ -22,10 +22,11 @@ import javolution.text.TextBuilder;
 
 import java.io.IOException;
 
-import illarion.client.net.CommandFactory;
+import org.bushe.swing.event.EventBus;
+
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.net.client.CloseDialogMessageCmd;
+import illarion.client.net.server.events.DialogMessageReceivedEvent;
 
 /**
  * This server message is used to make the client showing a message dialog.
@@ -71,11 +72,8 @@ public final class DialogMessageMsg
 
     @Override
     public boolean executeUpdate() {
-        final CloseDialogMessageCmd closeDialogMessageCmd;
-        closeDialogMessageCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_CLOSE_DIALOG_MSG,
-                                                                        CloseDialogMessageCmd.class);
-        closeDialogMessageCmd.setDialogId(dialogId);
-        closeDialogMessageCmd.send();
+        EventBus.publish(new DialogMessageReceivedEvent(dialogId, title, content));
+
         return true;
     }
 

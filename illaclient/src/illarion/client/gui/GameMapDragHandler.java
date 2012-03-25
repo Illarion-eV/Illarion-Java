@@ -26,6 +26,7 @@ import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.input.NiftyMouseInputEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import de.lessvoid.nifty.tools.SizeValue;
 
@@ -45,7 +46,7 @@ import illarion.client.world.interactive.InteractiveMapTile;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GameMapDragHandler
-        implements EventTopicSubscriber<DragOnMapEvent> {
+        implements EventTopicSubscriber<DragOnMapEvent>, ScreenController {
     /**
      * This class is used as end operation to the dragging that started on the map. It takes care that the elements
      * used
@@ -138,7 +139,18 @@ public final class GameMapDragHandler
         draggedGraphic = gamePanel.findElementByName("mapDragObject");
         draggedImage = draggedGraphic.findElementByName("mapDragImage");
         endOfDragOp = new GameMapDragEndOperation(draggedGraphic, gamePanel);
+    }
+
+    @Override
+    public void onStartScreen() {
+        activeNifty.subscribeAnnotations(this);
         EventBus.subscribe(InputReceiver.EB_TOPIC, this);
+    }
+
+    @Override
+    public void onEndScreen() {
+        activeNifty.unsubscribeAnnotations(this);
+        EventBus.unsubscribe(InputReceiver.EB_TOPIC, this);
     }
 
     /**
