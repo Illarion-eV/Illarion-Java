@@ -88,9 +88,6 @@ public final class Substance
             cp.add(new File(dataDir, "substance.jar")); //$NON-NLS-1$
             cp.add(new File(dataDir, "laf-plugin.jar")); //$NON-NLS-1$
             cp.add(new File(dataDir, "laf-widget.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "substance-flamingo.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "substance-swingx.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "flamingo.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -159,9 +156,7 @@ public final class Substance
     public Collection<String> getVMArguments() {
         if (vmArguments == null) {
             final Collection<String> vmArgs = new ArrayList<String>();
-            vmArgs.add("-Dillarion.components.avaiable.flamingo=true"); //$NON-NLS-1$
             vmArgs.add("-Dillarion.components.avaiable.substance=true"); //$NON-NLS-1$
-            vmArgs.add("-Dillarion.components.avaiable.substance-flamingo=true"); //$NON-NLS-1$
 
             vmArguments = vmArgs;
         }
