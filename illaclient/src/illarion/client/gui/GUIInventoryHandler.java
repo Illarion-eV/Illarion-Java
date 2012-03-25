@@ -28,6 +28,7 @@ import de.lessvoid.nifty.elements.events.ElementShowEvent;
 import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.screen.ScreenController;
 
 import java.util.Arrays;
 
@@ -52,7 +53,7 @@ import illarion.common.util.Timer;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GUIInventoryHandler
-        implements EventSubscriber<InventoryUpdateEvent>, EventTopicSubscriber<String> {
+        implements EventSubscriber<InventoryUpdateEvent>, EventTopicSubscriber<String>, ScreenController {
 
     /**
      * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
@@ -169,6 +170,21 @@ public final class GUIInventoryHandler
         EventBus.subscribe(InputReceiver.EB_TOPIC, this);
         activeNifty.subscribe(activeScreen, inventoryWindow.getId(), ElementShowEvent.class,
                               visibilityEventSubscriber);
+
+        final Inventory inventory = World.getPlayer().getInventory();
+        illarion.client.world.InventorySlot invSlot;
+        for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
+            invSlot = inventory.getItem(i);
+            if (invSlot.getItemID() == 0) {
+                continue;
+            }
+            setSlotItem(invSlot.getSlot(), invSlot.getItemID(), invSlot.getCount());
+        }
+    }
+
+    @Override
+    public void onEndScreen() {
+
     }
 
     public void showInventory() {

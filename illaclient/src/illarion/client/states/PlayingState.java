@@ -28,6 +28,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import illarion.client.Game;
+import illarion.client.Login;
 import illarion.client.input.InputReceiver;
 import illarion.client.world.World;
 
@@ -74,6 +75,8 @@ public class PlayingState
     protected void enterState(GameContainer container, StateBasedGame game)
             throws SlickException {
         getNifty().gotoScreen("gamescreen");
+
+        Login.getInstance().login();
     }
 
     @Override
