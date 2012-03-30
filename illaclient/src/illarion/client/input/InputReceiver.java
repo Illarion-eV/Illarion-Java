@@ -19,11 +19,13 @@
 package illarion.client.input;
 
 import de.lessvoid.nifty.slick2d.NiftyInputForwarding;
+import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.util.InputAdapter;
 
 import illarion.client.IllaClient;
+import illarion.client.gui.util.AbstractMultiActionHelper;
 import illarion.client.world.World;
 import illarion.common.util.Timer;
 
@@ -69,40 +71,44 @@ public final class InputReceiver
         }
     }
 
+    private static final class Button0MultiClickHelper
+            extends AbstractMultiActionHelper {
+        private int x;
+        private int y;
+        private ForwardingInputSystem fwdInputSystem;
+
+        public Button0MultiClickHelper() {
+            super(IllaClient.getCfg().getInteger("doubleClickInterval"));
+        }
+
+        public void setInputData(final int posX, final int posY, final ForwardingInputSystem forwarding) {
+            x = posX;
+            y = posY;
+            fwdInputSystem = forwarding;
+        }
+
+        @Override
+        public void executeAction(final int count) {
+            switch (count) {
+                case 1:
+                    EventBus.publish(EB_TOPIC, new ClickOnMapEvent(x, y, fwdInputSystem));
+                    break;
+                case 2:
+                    EventBus.publish(EB_TOPIC, new DoubleClickOnMapEvent(x, y, fwdInputSystem));
+                    break;
+            }
+        }
+    }
+
+    private final Button0MultiClickHelper button0MultiClickHelper = new Button0MultiClickHelper();
+
     /**
      * @see org.newdawn.slick.InputListener#mouseClicked(int, int, int, int)
      */
     public void mouseClicked(int button, int x, int y, int clickCount) {
         if (button == 0) {
-            if (clickCount == 2) {
-                if (timer != null) {
-                    timer.stop();
-                    timer = null;
-                }
-                wasDoubleClick = true;
-                EventBus.publish(EB_TOPIC, new DoubleClickOnMapEvent(x, y,
-                                                                     forwardingControl.getInputForwardingControl()));
-            } else {
-                final int timerInterval = IllaClient.getCfg().getInteger("doubleClickInterval");
-
-                final int xc = x, yc = y;
-                if (timer != null) {
-                    timer.stop();
-                }
-
-                wasDoubleClick = false;
-                timer = new Timer(timerInterval, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!wasDoubleClick) {
-                            EventBus.publish(EB_TOPIC, new ClickOnMapEvent(xc, yc,
-                                                                           forwardingControl.getInputForwardingControl()));
-                        }
-                    }
-                });
-                timer.setRepeats(false);
-                timer.start();
-            }
+            button0MultiClickHelper.setInputData(x, y, forwardingControl.getInputForwardingControl());
+            button0MultiClickHelper.pulse();
         }
     }
 }

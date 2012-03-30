@@ -39,6 +39,7 @@ import org.illarion.nifty.controls.InventorySlot;
 
 import illarion.client.IllaClient;
 import illarion.client.graphics.Item;
+import illarion.client.gui.util.AbstractMultiActionHelper;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
@@ -225,39 +226,39 @@ public final class GUIInventoryHandler
         World.getInteractionManager().cancelDragging();
     }
 
+    private static final class InventoryClickActionHelper
+            extends AbstractMultiActionHelper {
+        private int slotId;
+
+        protected InventoryClickActionHelper() {
+            super(IllaClient.getCfg().getInteger("doubleClickInterval"));
+        }
+
+        public void setSlotId(final int id) {
+            slotId = id;
+        }
+
+        @Override
+        public void executeAction(int count) {
+            switch (count) {
+                case 1:
+                    World.getPlayer().getInventory().getItem(slotId).getInteractive().lookAt();
+                    break;
+                case 2:
+                    World.getPlayer().getInventory().getItem(slotId).getInteractive().use();
+                    break;
+            }
+        }
+    }
+
+    private final InventoryClickActionHelper inventoryClickActionHelper = new InventoryClickActionHelper();
+
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
     public void clickInventory(final String topic, final NiftyMousePrimaryClickedEvent data) {
         final int slotId = getSlotNumber(topic);
 
-        if (clickCount == 1) {
-            if (timer != null) {
-                timer.stop();
-                timer = null;
-            }
-            World.getPlayer().getInventory().getItem(slotId).getInteractive().use();
-            clickCount = 0;
-            wasDoubleClick = true;
-
-        } else {
-            final int timerInterval = IllaClient.getCfg().getInteger("doubleClickInterval");
-            clickCount = 1;
-            wasDoubleClick = false;
-            if (timer != null) {
-                timer.stop();
-                timer = null;
-            }
-            timer = new Timer(timerInterval, new Runnable() {
-                @Override
-                public void run() {
-                    if (!wasDoubleClick) {
-                        World.getPlayer().getInventory().getItem(slotId).getInteractive().lookAt();
-                    }
-                    clickCount = 0;
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
-        }
+        inventoryClickActionHelper.setSlotId(slotId);
+        inventoryClickActionHelper.pulse();
     }
 
     /**
