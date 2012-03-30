@@ -32,7 +32,7 @@ public final class CloseDialogInputCmd
     /**
      * The ID that was send by the server to initiate text input.
      */
-    private long dialogID;
+    private int dialogID;
 
     /**
      * The text that is send to the server.
@@ -63,7 +63,7 @@ public final class CloseDialogInputCmd
      */
     @Override
     public void encode(final NetCommWriter writer) {
-        writer.writeUInt(dialogID);
+        writer.writeInt(dialogID);
         writer.writeUByte((byte) 0xFF);
         writer.writeString(text);
     }
@@ -81,7 +81,7 @@ public final class CloseDialogInputCmd
      *
      * @param id the id of the dialog
      */
-    public void setDialogId(final long id) {
+    public void setDialogId(final int id) {
         dialogID = id;
     }
 

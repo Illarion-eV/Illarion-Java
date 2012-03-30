@@ -50,7 +50,7 @@ public final class DialogInputMsg
     /**
      * The ID of this request.
      */
-    private long requestId;
+    private int requestId;
 
     /**
      * Default constructor for the effect message.
@@ -81,7 +81,7 @@ public final class DialogInputMsg
         title = reader.readString();
         multiLine = (reader.readByte() != 0);
         maxCharacters = reader.readUShort();
-        requestId = reader.readUInt();
+        requestId = reader.readInt();
     }
 
     /**
@@ -92,6 +92,8 @@ public final class DialogInputMsg
     @Override
     public boolean executeUpdate() {
         final CloseDialogInputCmd cmd = (CloseDialogInputCmd) CommandFactory.getInstance().getCommand(CommandList
+
+
 
 
 
