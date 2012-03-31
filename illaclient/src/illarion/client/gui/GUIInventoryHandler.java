@@ -55,7 +55,6 @@ import illarion.common.util.Timer;
  */
 public final class GUIInventoryHandler
         implements EventSubscriber<InventoryUpdateEvent>, EventTopicSubscriber<String>, ScreenController {
-
     /**
      * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
      * so the server can send the commands to clean everything up.
@@ -112,6 +111,50 @@ public final class GUIInventoryHandler
         }
     }
 
+    /**
+     * This class is used to handle multiple clicks into the inventory. It records the clicks and reacts on them in
+     * regard to the resulting amount of clicks.
+     *
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
+     */
+    private static final class InventoryClickActionHelper
+            extends AbstractMultiActionHelper {
+        /**
+         * The ID of the slot that was clicked at.
+         */
+        private int slotId;
+
+        /**
+         * The constructor for this class. The timeout time is set to the system default double click interval.
+         */
+        public InventoryClickActionHelper() {
+            super(IllaClient.getCfg().getInteger("doubleClickInterval"));
+        }
+
+        /**
+         * Set the ID of the slot that was clicked at.
+         *
+         * @param id the ID of the slot
+         */
+        public void setSlotId(final int id) {
+            slotId = id;
+        }
+
+        @Override
+        public void executeAction(final int count) {
+            switch (count) {
+                case 1:
+                    World.getPlayer().getInventory().getItem(slotId).getInteractive().lookAt();
+                    break;
+                case 2:
+                    World.getPlayer().getInventory().getItem(slotId).getInteractive().use();
+                    break;
+            }
+        }
+    }
+
+    private static final String INVSLOT_HEAD = "invslot_";
+
     private final String[] slots;
     private final Element[] invSlots;
     private final boolean[] slotLabelVisibility;
@@ -124,7 +167,10 @@ public final class GUIInventoryHandler
     private boolean wasDoubleClick = false;
     private Timer timer = null;
 
-    private static final String INVSLOT_HEAD = "invslot_";
+    /**
+     * The instance of the inventory click helper that is used in this instance of the GUI inventory handler.
+     */
+    private final InventoryClickActionHelper inventoryClickActionHelper = new InventoryClickActionHelper();
 
     public GUIInventoryHandler() {
         slots = new String[Inventory.SLOT_COUNT];
@@ -164,6 +210,88 @@ public final class GUIInventoryHandler
         }
     }
 
+    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    public void cancelDragging(final String topic, final DraggableDragCanceledEvent data) {
+        World.getInteractionManager().cancelDragging();
+    }
+
+    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    public void clickInventory(final String topic, final NiftyMousePrimaryClickedEvent data) {
+        final int slotId = getSlotNumber(topic);
+
+        inventoryClickActionHelper.setSlotId(slotId);
+        inventoryClickActionHelper.pulse();
+    }
+
+    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    public void dragFromInventory(final String topic, final DraggableDragStartedEvent data) {
+        final int slotId = getSlotNumber(topic);
+        World.getInteractionManager().notifyDraggingInventory(slotId, new EndOfDragOperation(invSlots[slotId]
+                                                                                                     .getNiftyControl
+
+                                                                                                             (InventorySlot.class)));
+    }
+
+    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    public void dropInInventory(final String topic, final DroppableDroppedEvent data) {
+        final int slotId = getSlotNumber(topic);
+        World.getInteractionManager().dropAtInventory(slotId);
+    }
+
+    /**
+     * Get the number of a slot based on the name.
+     *
+     * @param name the name of the slot
+     * @return the number of the slot fitting the name
+     */
+    private int getSlotNumber(final String name) {
+        for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
+            if (name.startsWith(slots[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void hideInventory() {
+        if (inventoryWindow != null) {
+            inventoryWindow.hide();
+        }
+    }
+
+    @Override
+    public void onEndScreen() {
+
+    }
+
+    /**
+     * Fired upon the inventory publishing a update event.
+     *
+     * @param data the published data
+     */
+    @Override
+    public void onEvent(final InventoryUpdateEvent data) {
+        setSlotItem(data.getSlotId(), data.getItemId(), data.getCount());
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.bushe.swing.event.EventTopicSubscriber#onEvent(java.lang.String,
+     * java.lang.Object)
+     */
+    @Override
+    public void onEvent(String topic, String data) {
+        if (data.equals("ToggleInventory")) {
+            toggleInventory();
+        }
+    }
+
+    public void toggleInventory() {
+        if (inventoryWindow != null) {
+            inventoryWindow.setVisible(!inventoryWindow.isVisible());
+        }
+    }
+
     public void onStartScreen() {
         activeNifty.subscribeAnnotations(this);
 
@@ -181,99 +309,6 @@ public final class GUIInventoryHandler
             }
             setSlotItem(invSlot.getSlot(), invSlot.getItemID(), invSlot.getCount());
         }
-    }
-
-    @Override
-    public void onEndScreen() {
-
-    }
-
-    public void showInventory() {
-        if (inventoryWindow != null) {
-            inventoryWindow.show();
-        }
-    }
-
-    public void hideInventory() {
-        if (inventoryWindow != null) {
-            inventoryWindow.hide();
-        }
-    }
-
-    public void toggleInventory() {
-        if (inventoryWindow != null) {
-            inventoryWindow.setVisible(!inventoryWindow.isVisible());
-        }
-    }
-
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
-    public void dropInInventory(final String topic, final DroppableDroppedEvent data) {
-        final int slotId = getSlotNumber(topic);
-        World.getInteractionManager().dropAtInventory(slotId);
-    }
-
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
-    public void dragFromInventory(final String topic, final DraggableDragStartedEvent data) {
-        final int slotId = getSlotNumber(topic);
-        World.getInteractionManager().notifyDraggingInventory(slotId, new EndOfDragOperation(invSlots[slotId]
-                                                                                                     .getNiftyControl
-
-                                                                                                             (InventorySlot.class)));
-    }
-
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
-    public void cancelDragging(final String topic, final DraggableDragCanceledEvent data) {
-        World.getInteractionManager().cancelDragging();
-    }
-
-    private static final class InventoryClickActionHelper
-            extends AbstractMultiActionHelper {
-        private int slotId;
-
-        protected InventoryClickActionHelper() {
-            super(IllaClient.getCfg().getInteger("doubleClickInterval"));
-        }
-
-        public void setSlotId(final int id) {
-            slotId = id;
-        }
-
-        @Override
-        public void executeAction(int count) {
-            switch (count) {
-                case 1:
-                    World.getPlayer().getInventory().getItem(slotId).getInteractive().lookAt();
-                    break;
-                case 2:
-                    World.getPlayer().getInventory().getItem(slotId).getInteractive().use();
-                    break;
-            }
-        }
-    }
-
-    private final InventoryClickActionHelper inventoryClickActionHelper = new InventoryClickActionHelper();
-
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
-    public void clickInventory(final String topic, final NiftyMousePrimaryClickedEvent data) {
-        final int slotId = getSlotNumber(topic);
-
-        inventoryClickActionHelper.setSlotId(slotId);
-        inventoryClickActionHelper.pulse();
-    }
-
-    /**
-     * Get the number of a slot based on the name.
-     *
-     * @param name the name of the slot
-     * @return the number of the slot fitting the name
-     */
-    private int getSlotNumber(final String name) {
-        for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
-            if (name.startsWith(slots[i])) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     /**
@@ -321,25 +356,9 @@ public final class GUIInventoryHandler
         }
     }
 
-    /**
-     * Fired upon the inventory publishing a update event.
-     *
-     * @param data the published data
-     */
-    @Override
-    public void onEvent(final InventoryUpdateEvent data) {
-        setSlotItem(data.getSlotId(), data.getItemId(), data.getCount());
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.bushe.swing.event.EventTopicSubscriber#onEvent(java.lang.String,
-     * java.lang.Object)
-     */
-    @Override
-    public void onEvent(String topic, String data) {
-        if (data.equals("ToggleInventory")) {
-            toggleInventory();
+    public void showInventory() {
+        if (inventoryWindow != null) {
+            inventoryWindow.show();
         }
     }
 }
