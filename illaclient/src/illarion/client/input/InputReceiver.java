@@ -37,50 +37,39 @@ import illarion.common.util.Timer;
 public final class InputReceiver
         extends InputAdapter {
     /**
-     * The topic that is in general used to publish input events.
+     * This is the multi click helper that is used to detect single and multiple clicks on the game map.
      */
-    public static final String EB_TOPIC = "InputEvent";
-
-    private boolean wasDoubleClick = false;
-    private Timer timer = null;
-
-    private final KeyMapper keyMapper = new KeyMapper();
-
-    private final NiftyInputForwarding forwardingControl;
-
-    public InputReceiver(final NiftyInputForwarding forwardingInputSystem) {
-        forwardingControl = forwardingInputSystem;
-    }
-
-    /**
-     * @see org.newdawn.slick.InputListener#keyPressed(int, char)
-     */
-    public void keyPressed(final int key, final char c) {
-        keyMapper.handleKeyInput(key);
-    }
-
-    public void mouseDragged(int oldx, int oldy, int newx, int newy) {
-        EventBus.publish(EB_TOPIC, new DragOnMapEvent(oldx, oldy, newx, newy,
-                                                      forwardingControl.getInputForwardingControl()));
-    }
-
-    public void mouseReleased(int button, int x, int y) {
-        World.getPlayer().getMovementHandler().stopWalkTowards();
-        if (forwardingControl.isInputForwardingSupported()) {
-            forwardingControl.getInputForwardingControl().releaseExclusiveMouse();
-        }
-    }
-
     private static final class Button0MultiClickHelper
             extends AbstractMultiActionHelper {
+        /**
+         * The x coordinate of the last reported click.
+         */
         private int x;
+
+        /**
+         * The Y coordinate of the last reported click.
+         */
         private int y;
+
+        /**
+         * The input forwarding system that is published along with the click events.
+         */
         private ForwardingInputSystem fwdInputSystem;
 
+        /**
+         * The constructor that sets the used timeout interval to the system default double click interval.
+         */
         public Button0MultiClickHelper() {
             super(IllaClient.getCfg().getInteger("doubleClickInterval"));
         }
 
+        /**
+         * Update the data that is needed to report the state of the last click properly.
+         *
+         * @param posX the x coordinate where the click happened
+         * @param posY the y coordinate where the click happened
+         * @param forwarding the input forwarding system required to be published with the events
+         */
         public void setInputData(final int posX, final int posY, final ForwardingInputSystem forwarding) {
             x = posX;
             y = posY;
@@ -100,7 +89,36 @@ public final class InputReceiver
         }
     }
 
+    /**
+     * The topic that is in general used to publish input events.
+     */
+    public static final String EB_TOPIC = "InputEvent";
+
+    private boolean wasDoubleClick = false;
+    private Timer timer = null;
+
+    private final KeyMapper keyMapper = new KeyMapper();
+
+    private final NiftyInputForwarding forwardingControl;
+
+    private boolean keyDownOnMap;
+
+    /**
+     * The instance of the button multiclick helper that is used in this instance of the input receiver.
+     */
     private final Button0MultiClickHelper button0MultiClickHelper = new Button0MultiClickHelper();
+
+    public InputReceiver(final NiftyInputForwarding forwardingInputSystem) {
+        forwardingControl = forwardingInputSystem;
+        keyDownOnMap = false;
+    }
+
+    /**
+     * @see org.newdawn.slick.InputListener#keyPressed(int, char)
+     */
+    public void keyPressed(final int key, final char c) {
+        keyMapper.handleKeyInput(key);
+    }
 
     /**
      * @see org.newdawn.slick.InputListener#mouseClicked(int, int, int, int)
@@ -109,6 +127,24 @@ public final class InputReceiver
         if (button == 0) {
             button0MultiClickHelper.setInputData(x, y, forwardingControl.getInputForwardingControl());
             button0MultiClickHelper.pulse();
+            keyDownOnMap = true;
+        }
+    }
+
+    public void mouseDragged(int oldx, int oldy, int newx, int newy) {
+        if (keyDownOnMap) {
+            EventBus.publish(EB_TOPIC, new DragOnMapEvent(oldx, oldy, newx, newy,
+                                                          forwardingControl.getInputForwardingControl()));
+        }
+    }
+
+    public void mouseReleased(int button, int x, int y) {
+        if (button == 0) {
+            World.getPlayer().getMovementHandler().stopWalkTowards();
+            if (forwardingControl.isInputForwardingSupported()) {
+                forwardingControl.getInputForwardingControl().releaseExclusiveMouse();
+            }
+            keyDownOnMap = false;
         }
     }
 }
