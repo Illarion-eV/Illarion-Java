@@ -42,17 +42,17 @@ public interface DialogInput extends Window {
     }
 
     /**
-     * Set the text that is supposed to be displayed in the dialog message.
-     *
-     * @param text the text to be displayed
-     */
-    void setText(String text);
-
-    /**
      * Set the text of one button in this dialog.
      *
      * @param button the button to change
      * @param label  the new label of this button
      */
     void setButtonLabel(DialogButton button, String label);
+
+    /**
+     * Set the maximal amount of characters allowed to be typed into this dialog.
+     *
+     * @param length the maximal amount of characters
+     */
+    void setMaximalLength(int length);
 }

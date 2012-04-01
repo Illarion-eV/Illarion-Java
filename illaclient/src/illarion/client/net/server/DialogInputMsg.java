@@ -18,12 +18,12 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
-import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.net.client.CloseDialogInputCmd;
+import illarion.client.net.server.events.DialogInputReceivedEvent;
+import org.bushe.swing.event.EventBus;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Text Request ( {@link illarion.client.net.CommandList#MSG_DIALOG_INPUT}).
@@ -91,18 +91,7 @@ public final class DialogInputMsg
      */
     @Override
     public boolean executeUpdate() {
-        final CloseDialogInputCmd cmd = (CloseDialogInputCmd) CommandFactory.getInstance().getCommand(CommandList
-
-
-
-
-
-
-
-                                                                                                              .CMD_CLOSE_DIALOG_INPUT);
-        cmd.setText("This client has no intension of talking with you.");
-        cmd.setDialogId(requestId);
-        cmd.send();
+        EventBus.publish(new DialogInputReceivedEvent(requestId, title, maxCharacters, multiLine));
 
         return true;
     }

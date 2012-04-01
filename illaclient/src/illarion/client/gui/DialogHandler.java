@@ -22,16 +22,19 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
-import org.illarion.nifty.controls.DialogMessageConfirmedEvent;
-import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
-
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
+import illarion.client.net.client.CloseDialogInputCmd;
 import illarion.client.net.client.CloseDialogMessageCmd;
+import illarion.client.net.server.events.DialogInputReceivedEvent;
 import illarion.client.net.server.events.DialogMessageReceivedEvent;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
+import org.illarion.nifty.controls.DialogInput;
+import org.illarion.nifty.controls.DialogInputConfirmedEvent;
+import org.illarion.nifty.controls.DialogMessageConfirmedEvent;
+import org.illarion.nifty.controls.dialog.input.builder.DialogInputBuilder;
+import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
 
 /**
  * This class is the dialog handler that takes care for receiving events to show dialogs. It opens and maintains those
@@ -42,7 +45,9 @@ import illarion.client.net.server.events.DialogMessageReceivedEvent;
 public final class DialogHandler
         implements ScreenController {
     private final EventSubscriber<DialogMessageReceivedEvent> messageEventHandler;
-    private final EventSubscriber<DialogMessageConfirmedEvent> confirmationEventHandler;
+    private final EventSubscriber<DialogMessageConfirmedEvent> messageConfirmationEventHandler;
+    private final EventSubscriber<DialogInputReceivedEvent> inputEventHandler;
+    private final EventSubscriber<DialogInputConfirmedEvent> inputConfirmationEventHandler;
 
     private Nifty nifty;
     private Screen screen;
@@ -55,13 +60,38 @@ public final class DialogHandler
             }
         };
 
-        confirmationEventHandler = new EventSubscriber<DialogMessageConfirmedEvent>() {
+        inputEventHandler = new EventSubscriber<DialogInputReceivedEvent>() {
+            @Override
+            public void onEvent(final DialogInputReceivedEvent event) {
+                showDialogInput(event.getId(), event.getTitle(), event.getMaxLength(), event.hasMultipleLines());
+            }
+        };
+
+        messageConfirmationEventHandler = new EventSubscriber<DialogMessageConfirmedEvent>() {
             @Override
             public void onEvent(final DialogMessageConfirmedEvent event) {
                 final CommandFactory factory = CommandFactory.getInstance();
                 final CloseDialogMessageCmd cmd = factory.getCommand(CommandList.CMD_CLOSE_DIALOG_MSG,
-                                                                     CloseDialogMessageCmd.class);
+                        CloseDialogMessageCmd.class);
                 cmd.setDialogId(event.getDialogId());
+                cmd.send();
+            }
+        };
+
+        inputConfirmationEventHandler = new EventSubscriber<DialogInputConfirmedEvent>() {
+            @Override
+            public void onEvent(final DialogInputConfirmedEvent event) {
+                final CommandFactory factory = CommandFactory.getInstance();
+                final CloseDialogInputCmd cmd = factory.getCommand(CommandList.CMD_CLOSE_DIALOG_INPUT,
+                        CloseDialogInputCmd.class);
+                cmd.setDialogId(event.getDialogId());
+                if (event.getPressedButton() == DialogInput.DialogButton.left) {
+                    cmd.setSuccess(true);
+                    cmd.setText(event.getText());
+                } else {
+                    cmd.setSuccess(false);
+                    cmd.setText("");
+                }
                 cmd.send();
             }
         };
@@ -76,21 +106,42 @@ public final class DialogHandler
     @Override
     public void onStartScreen() {
         EventBus.subscribe(DialogMessageReceivedEvent.class, messageEventHandler);
-        EventBus.subscribe(DialogMessageConfirmedEvent.class, confirmationEventHandler);
+        EventBus.subscribe(DialogMessageConfirmedEvent.class, messageConfirmationEventHandler);
+        EventBus.subscribe(DialogInputReceivedEvent.class, inputEventHandler);
+        EventBus.subscribe(DialogInputConfirmedEvent.class, inputConfirmationEventHandler);
     }
 
     @Override
     public void onEndScreen() {
         EventBus.unsubscribe(DialogMessageReceivedEvent.class, messageEventHandler);
-        EventBus.unsubscribe(DialogMessageConfirmedEvent.class, confirmationEventHandler);
+        EventBus.unsubscribe(DialogMessageConfirmedEvent.class, messageConfirmationEventHandler);
+        EventBus.unsubscribe(DialogInputReceivedEvent.class, inputEventHandler);
+        EventBus.unsubscribe(DialogInputConfirmedEvent.class, inputConfirmationEventHandler);
     }
 
     public void showDialogMessage(final int id, final String title, final String message) {
         final Element parentAra = screen.findElementByName("windows");
-        final DialogMessageBuilder builder = new DialogMessageBuilder("dialog" + id, title);
+        final DialogMessageBuilder builder = new DialogMessageBuilder("msgDialog" + id, title);
         builder.text(message);
         builder.button("OK");
         builder.dialogId(id);
+        builder.width(builder.pixels(400));
+        builder.build(nifty, screen, parentAra);
+    }
+
+    public void showDialogInput(final int id, final String title, final int maxCharacters,
+                                final boolean multipleLines) {
+        final Element parentAra = screen.findElementByName("windows");
+        final DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + id, title);
+        builder.buttonLeft("OK");
+        builder.buttonRight("Cancel");
+        builder.dialogId(id);
+        builder.maxLength(maxCharacters);
+        if (multipleLines) {
+            builder.style("llarion-dialog-input-multi");
+        } else {
+            builder.style("llarion-dialog-input-single");
+        }
         builder.width(builder.pixels(400));
         builder.build(nifty, screen, parentAra);
     }

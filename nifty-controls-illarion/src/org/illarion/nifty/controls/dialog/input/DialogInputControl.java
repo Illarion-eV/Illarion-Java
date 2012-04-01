@@ -22,7 +22,6 @@ import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
-import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
@@ -66,11 +65,6 @@ public class DialogInputControl
     private boolean alreadyClosed;
 
     /**
-     * The message that is displayed in this dialog.
-     */
-    private String message;
-
-    /**
      * The label of the left button that is displayed in this dialog.
      */
     private String buttonLabelLeft;
@@ -79,6 +73,11 @@ public class DialogInputControl
      * The label of the right button that is displayed in this dialog.
      */
     private String buttonLabelRight;
+
+    /**
+     * The maximal amount of characters allowed to be typed into the input dialog.
+     */
+    private int maxLength;
 
     @Override
     public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
@@ -89,18 +88,18 @@ public class DialogInputControl
 
         dialogId = Integer.parseInt(controlDefinitionAttributes.get("dialogId"));
 
-        message = controlDefinitionAttributes.get("text");
         buttonLabelLeft = controlDefinitionAttributes.get("buttonLeft");
         buttonLabelRight = controlDefinitionAttributes.get("buttonRight");
+        maxLength = controlDefinitionAttributes.getAsInteger("maxLength", 65535);
 
         alreadyClosed = false;
     }
 
     @Override
     public void onStartScreen() {
-        setText(message);
         setButtonLabel(DialogInput.DialogButton.left, buttonLabelLeft);
         setButtonLabel(DialogInput.DialogButton.right, buttonLabelRight);
+        setMaximalLength(maxLength);
 
         super.onStartScreen();
 
@@ -114,12 +113,6 @@ public class DialogInputControl
         element.setConstraintY(new SizeValue(Integer.toString(y) + "px"));
 
         parent.layoutElements();
-    }
-
-    @Override
-    public void setText(final String text) {
-        final Label label = getContent().findNiftyControl("#text", Label.class);
-        label.setText(text);
     }
 
     @Override
@@ -139,6 +132,15 @@ public class DialogInputControl
 
         buttonControl.setText(label);
         niftyInstance.subscribe(currentScreen, buttonControl.getId(), ButtonClickedEvent.class, this);
+    }
+
+    @Override
+    public void setMaximalLength(final int length) {
+        final TextField field = getContent().findNiftyControl("#input", TextField.class);
+        if (field == null) {
+            throw new IllegalArgumentException("Failed to fetch input field.");
+        }
+        field.setMaxLength(length);
     }
 
     @Override

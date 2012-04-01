@@ -44,15 +44,6 @@ public class DialogInputBuilder
     }
 
     /**
-     * Set the text of this dialog.
-     *
-     * @param text the text displayed in the dialog
-     */
-    public void text(final String text) {
-        set("text", text);
-    }
-
-    /**
      * Set the text of the left button displayed in this dialog.
      *
      * @param text the text displayed in the left button of this dialog
@@ -77,5 +68,14 @@ public class DialogInputBuilder
      */
     public void dialogId(final int id) {
         set("dialogId", Integer.toString(id));
+    }
+
+    /**
+     * Set the maximal amount of characters that are allowed to be typed in into the dialog.
+     *
+     * @param maxChars the maximal amount of characters allowed in this input dialog
+     */
+    public void maxLength(final int maxChars) {
+        set("maxLength", Integer.toString(maxChars));
     }
 }

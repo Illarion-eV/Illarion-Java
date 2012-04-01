@@ -40,6 +40,11 @@ public final class CloseDialogInputCmd
     private String text;
 
     /**
+     * The flag that stores if the input was confirmed or canceled.
+     */
+    private boolean success;
+
+    /**
      * Default constructor for the text response command.
      */
     public CloseDialogInputCmd() {
@@ -64,7 +69,11 @@ public final class CloseDialogInputCmd
     @Override
     public void encode(final NetCommWriter writer) {
         writer.writeInt(dialogID);
-        writer.writeUByte((byte) 0xFF);
+        if (success) {
+            writer.writeUByte((byte) 0xFF);
+        } else {
+            writer.writeUByte((byte) 0x00);
+        }
         writer.writeString(text);
     }
 
@@ -92,6 +101,15 @@ public final class CloseDialogInputCmd
      */
     public void setText(final String sayText) {
         text = sayText;
+    }
+
+    /**
+     * Set if the input dialog was confirmed or canceled.
+     *
+     * @param value {@code true} in case the dialog was confirmed
+     */
+    public void setSuccess(final boolean value) {
+        success = value;
     }
 
     /**

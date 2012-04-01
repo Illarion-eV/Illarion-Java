@@ -20,14 +20,11 @@ package illarion.client.input;
 
 import de.lessvoid.nifty.slick2d.NiftyInputForwarding;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
-
-import org.bushe.swing.event.EventBus;
-import org.newdawn.slick.util.InputAdapter;
-
 import illarion.client.IllaClient;
 import illarion.client.gui.util.AbstractMultiActionHelper;
 import illarion.client.world.World;
-import illarion.common.util.Timer;
+import org.bushe.swing.event.EventBus;
+import org.newdawn.slick.util.InputAdapter;
 
 /**
  * This class is used to receive and forward all user input.
@@ -38,6 +35,8 @@ public final class InputReceiver
         extends InputAdapter {
     /**
      * This is the multi click helper that is used to detect single and multiple clicks on the game map.
+     *
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class Button0MultiClickHelper
             extends AbstractMultiActionHelper {
@@ -66,8 +65,8 @@ public final class InputReceiver
         /**
          * Update the data that is needed to report the state of the last click properly.
          *
-         * @param posX the x coordinate where the click happened
-         * @param posY the y coordinate where the click happened
+         * @param posX       the x coordinate where the click happened
+         * @param posY       the y coordinate where the click happened
          * @param forwarding the input forwarding system required to be published with the events
          */
         public void setInputData(final int posX, final int posY, final ForwardingInputSystem forwarding) {
@@ -94,13 +93,20 @@ public final class InputReceiver
      */
     public static final String EB_TOPIC = "InputEvent";
 
-    private boolean wasDoubleClick = false;
-    private Timer timer = null;
-
+    /**
+     * The key mapper stores the keep-action assignments of the client.
+     */
     private final KeyMapper keyMapper = new KeyMapper();
 
+    /**
+     * This forwarding control input system is used to control the input forwarding of the Nifty-GUI.
+     */
     private final NiftyInputForwarding forwardingControl;
 
+    /**
+     * This variable is used to keep track if the mouse went down on the map. This is required to detect if a
+     * dragging operation started on the map.
+     */
     private boolean keyDownOnMap;
 
     /**
@@ -116,6 +122,7 @@ public final class InputReceiver
     /**
      * @see org.newdawn.slick.InputListener#keyPressed(int, char)
      */
+    @Override
     public void keyPressed(final int key, final char c) {
         keyMapper.handleKeyInput(key);
     }
@@ -123,21 +130,31 @@ public final class InputReceiver
     /**
      * @see org.newdawn.slick.InputListener#mouseClicked(int, int, int, int)
      */
+    @Override
     public void mouseClicked(int button, int x, int y, int clickCount) {
         if (button == 0) {
             button0MultiClickHelper.setInputData(x, y, forwardingControl.getInputForwardingControl());
             button0MultiClickHelper.pulse();
-            keyDownOnMap = true;
         }
     }
 
+    @Override
     public void mouseDragged(int oldx, int oldy, int newx, int newy) {
         if (keyDownOnMap) {
             EventBus.publish(EB_TOPIC, new DragOnMapEvent(oldx, oldy, newx, newy,
-                                                          forwardingControl.getInputForwardingControl()));
+                    forwardingControl.getInputForwardingControl()));
         }
     }
 
+    @Override
+    public void mousePressed(int button, int x, int y) {
+        if (button == 0) {
+            keyDownOnMap = true;
+            System.out.println("Button went down on map.");
+        }
+    }
+
+    @Override
     public void mouseReleased(int button, int x, int y) {
         if (button == 0) {
             World.getPlayer().getMovementHandler().stopWalkTowards();
