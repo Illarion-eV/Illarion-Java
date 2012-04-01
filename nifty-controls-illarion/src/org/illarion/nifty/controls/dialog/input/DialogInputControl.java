@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.nifty.controls.dialog.message;
+package org.illarion.nifty.controls.dialog.input;
 
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.Label;
+import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
@@ -30,20 +31,20 @@ import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
-import org.illarion.nifty.controls.DialogMessage;
-import org.illarion.nifty.controls.DialogMessageConfirmedEvent;
+import org.illarion.nifty.controls.DialogInput;
+import org.illarion.nifty.controls.DialogInputConfirmedEvent;
 
 import java.util.Properties;
 
 /**
- * This is the main control class for message dialogs.
+ * This is the main control class for input dialogs.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Deprecated
-public class DialogMessageControl
+public class DialogInputControl
         extends WindowControl
-        implements DialogMessage, EventTopicSubscriber<ButtonClickedEvent> {
+        implements DialogInput, EventTopicSubscriber<ButtonClickedEvent> {
     /**
      * The instance of the Nifty-GUI that is parent to this control.
      */
@@ -70,13 +71,18 @@ public class DialogMessageControl
     private String message;
 
     /**
-     * The label of the button that is displayed in this dialog.
+     * The label of the left button that is displayed in this dialog.
      */
-    private String buttonLabel;
+    private String buttonLabelLeft;
+
+    /**
+     * The label of the right button that is displayed in this dialog.
+     */
+    private String buttonLabelRight;
 
     @Override
-    public void bind(Nifty nifty, Screen screen, Element element, Properties parameter,
-                     Attributes controlDefinitionAttributes) {
+    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
+                     final Attributes controlDefinitionAttributes) {
         super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
         niftyInstance = nifty;
         currentScreen = screen;
@@ -84,7 +90,8 @@ public class DialogMessageControl
         dialogId = Integer.parseInt(controlDefinitionAttributes.get("dialogId"));
 
         message = controlDefinitionAttributes.get("text");
-        buttonLabel = controlDefinitionAttributes.get("button");
+        buttonLabelLeft = controlDefinitionAttributes.get("buttonLeft");
+        buttonLabelRight = controlDefinitionAttributes.get("buttonRight");
 
         alreadyClosed = false;
     }
@@ -92,7 +99,8 @@ public class DialogMessageControl
     @Override
     public void onStartScreen() {
         setText(message);
-        setButton(buttonLabel);
+        setButtonLabel(DialogInput.DialogButton.left, buttonLabelLeft);
+        setButtonLabel(DialogInput.DialogButton.right, buttonLabelRight);
 
         super.onStartScreen();
 
@@ -109,15 +117,28 @@ public class DialogMessageControl
     }
 
     @Override
-    public void setText(String text) {
+    public void setText(final String text) {
         final Label label = getContent().findNiftyControl("#text", Label.class);
         label.setText(text);
     }
 
-    public void setButton(final String text) {
-        final Button button = getContent().findNiftyControl("#button", Button.class);
-        button.setText(text);
-        niftyInstance.subscribe(currentScreen, button.getId(), ButtonClickedEvent.class, this);
+    @Override
+    public void setButtonLabel(final DialogInput.DialogButton button, final String label) {
+        Button buttonControl = null;
+        switch (button) {
+            case left:
+                buttonControl = getContent().findNiftyControl("#buttonLeft", Button.class);
+                break;
+            case right:
+                buttonControl = getContent().findNiftyControl("#buttonRight", Button.class);
+        }
+
+        if (buttonControl == null) {
+            throw new IllegalStateException("Failure while fetching button.");
+        }
+
+        buttonControl.setText(label);
+        niftyInstance.subscribe(currentScreen, buttonControl.getId(), ButtonClickedEvent.class, this);
     }
 
     @Override
@@ -125,7 +146,12 @@ public class DialogMessageControl
         if (alreadyClosed) {
             return;
         }
-        EventBus.publish(new DialogMessageConfirmedEvent(dialogId));
+
+        if (topic.contains("#buttonLeft")) {
+            EventBus.publish(new DialogInputConfirmedEvent(dialogId, DialogButton.left, getInputText()));
+        } else {
+            EventBus.publish(new DialogInputConfirmedEvent(dialogId, DialogButton.right, getInputText()));
+        }
         closeWindow();
     }
 
@@ -138,5 +164,19 @@ public class DialogMessageControl
             }
         });
         alreadyClosed = true;
+    }
+
+    /**
+     * Get the text that was typed into the input area of this control.
+     *
+     * @return the text of the input area
+     */
+    private String getInputText() {
+        final TextField field = getContent().findNiftyControl("#input", TextField.class);
+        if (field == null) {
+            throw new IllegalArgumentException("Failed to fetch input field.");
+        }
+
+        return field.getText();
     }
 }

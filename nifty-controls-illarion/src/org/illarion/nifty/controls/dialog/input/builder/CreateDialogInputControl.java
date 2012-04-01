@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.nifty.controls.dialog.message.builder;
+package org.illarion.nifty.controls.dialog.input.builder;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyIdCreator;
@@ -25,50 +25,50 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.loaderv2.types.ControlType;
 import de.lessvoid.nifty.loaderv2.types.ElementType;
 import de.lessvoid.nifty.screen.Screen;
-import org.illarion.nifty.controls.DialogMessage;
+import org.illarion.nifty.controls.DialogInput;
 
 /**
- * The control creator for the message dialog.
+ * The control creator for the input dialog.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class CreateDialogMessageControl
+public class CreateDialogInputControl
         extends ControlAttributes {
     /**
-     * The identifier string of the message dialog control.
+     * The identifier string of the input dialog control.
      */
-    static final String NAME = "dialog-message";
+    static final String NAME = "dialog-input";
 
     /**
-     * Create a new message dialog with a automatically generated ID.
+     * Create a new input dialog with a automatically generated ID.
      */
-    public CreateDialogMessageControl() {
+    public CreateDialogInputControl() {
         setAutoId(NiftyIdCreator.generate());
         setName(NAME);
     }
 
     /**
-     * Create a new message dialog with a user defined ID.
+     * Create a new input dialog with a user defined ID.
      *
      * @param id the ID of the new control
      */
-    public CreateDialogMessageControl(final String id) {
+    public CreateDialogInputControl(final String id) {
         setId(id);
         setName(NAME);
     }
 
     /**
-     * Create the dialog message
+     * Create the input dialog.
      *
      * @param nifty  the instance of the Nifty-GUI that will display the dialog
      * @param screen the screen this dialog will be a part of
      * @param parent the parent element of this dialog
-     * @return the newly created message dialog
+     * @return the newly created input dialog
      */
-    public DialogMessage create(final Nifty nifty, final Screen screen, final Element parent) {
+    public DialogInput create(final Nifty nifty, final Screen screen, final Element parent) {
         nifty.addControl(screen, parent, getStandardControl());
         nifty.addControlsWithoutStartScreen();
-        return parent.findNiftyControl(attributes.get("id"), DialogMessage.class);
+        return parent.findNiftyControl(attributes.get("id"), DialogInput.class);
     }
 
     /**

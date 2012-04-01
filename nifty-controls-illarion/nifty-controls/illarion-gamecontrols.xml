@@ -17,6 +17,7 @@
   ~ along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <nifty-controls>
-    <useControls filename="illarion-inventoryslot.xml" />
-    <useControls filename="illarion-dialog-message.xml" />
+    <useControls filename="illarion-inventoryslot.xml"/>
+    <useControls filename="illarion-dialog-message.xml"/>
+    <useControls filename="illarion-dialog-input.xml"/>
 </nifty-controls>

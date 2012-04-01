@@ -16,25 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.nifty.controls.dialog.message.builder;
+package org.illarion.nifty.controls.dialog.input.builder;
 
 import de.lessvoid.nifty.builder.ControlBuilder;
 
 /**
- * The builder of a message dialog.
+ * The builder of a input dialog.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class DialogMessageBuilder
+public class DialogInputBuilder
         extends ControlBuilder {
     /**
-     * Build a new message dialog with a set title and ID.
+     * Build a new input dialog with a set title and ID.
      *
      * @param id    the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
-    public DialogMessageBuilder(final String id, final String title) {
-        super(id, CreateDialogMessageControl.NAME);
+    public DialogInputBuilder(final String id, final String title) {
+        super(id, CreateDialogInputControl.NAME);
         set("title", title);
         set("closeable", "false");
         set("hideOnClose", "false");
@@ -44,27 +44,36 @@ public class DialogMessageBuilder
     }
 
     /**
-     * Set the text that is displayed in this dialog.
+     * Set the text of this dialog.
      *
-     * @param text the text displayed in this dialog
+     * @param text the text displayed in the dialog
      */
     public void text(final String text) {
         set("text", text);
     }
 
     /**
-     * Set the label of the button that is displayed in this dialog.
+     * Set the text of the left button displayed in this dialog.
      *
-     * @param text the button label in this dialog
+     * @param text the text displayed in the left button of this dialog
      */
-    public void button(final String text) {
-        set("button", text);
+    public void buttonLeft(final String text) {
+        set("buttonLeft", text);
+    }
+
+    /**
+     * Set the text of the right button displayed in this dialog.
+     *
+     * @param text the text displayed in the right button of this dialog
+     */
+    public void buttonRight(final String text) {
+        set("buttonRight", text);
     }
 
     /**
      * Set the ID of this dialog.
      *
-     * @param id the dialog ID
+     * @param id the ID of the dialog
      */
     public void dialogId(final int id) {
         set("dialogId", Integer.toString(id));

@@ -21,12 +21,26 @@ package org.illarion.nifty.controls;
 import de.lessvoid.nifty.controls.Window;
 
 /**
- * This is the common interface for a dialog message that provides all required functions for the control of a dialog.
+ * This is the common interface for a input dialog that provides all required functions for the control of a dialog.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface DialogMessage
-        extends Window {
+public interface DialogInput extends Window {
+    /**
+     * This enumerator contains the possible values for the buttons displayed in this dialog.
+     */
+    enum DialogButton {
+        /**
+         * The constant for the left button.
+         */
+        left,
+
+        /**
+         * The constant for the right button.
+         */
+        right
+    }
+
     /**
      * Set the text that is supposed to be displayed in the dialog message.
      *
@@ -35,9 +49,10 @@ public interface DialogMessage
     void setText(String text);
 
     /**
-     * Set the text that is supposed to be displayed in the dialog.
+     * Set the text of one button in this dialog.
      *
-     * @param button the button to display
+     * @param button the button to change
+     * @param label  the new label of this button
      */
-    void setButton(String button);
+    void setButtonLabel(DialogButton button, String label);
 }
