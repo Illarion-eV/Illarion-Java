@@ -21,6 +21,7 @@ package illarion.client.net.server;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.DialogInputReceivedEvent;
+import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
@@ -79,7 +80,7 @@ public final class DialogInputMsg
     public void decode(final NetCommReader reader)
             throws IOException {
         title = reader.readString();
-        multiLine = (reader.readByte() != 0);
+        multiLine = reader.readByte() != 0;
         maxCharacters = reader.readUShort();
         requestId = reader.readInt();
     }
@@ -112,6 +113,15 @@ public final class DialogInputMsg
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Text Request: " + requestId);
+        final TextBuilder builder = TextBuilder.newInstance();
+        try {
+            builder.append("title: ").append(title);
+            builder.append(" id: ").append(requestId);
+            builder.append(" maximal characters: ").append(maxCharacters);
+            builder.append(" support multiline: ").append(multiLine);
+            return toString(builder.toString());
+        } finally {
+            TextBuilder.recycle(builder);
+        }
     }
 }

@@ -15,13 +15,13 @@
   ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
-  --><!-- This control is designed to define the different slots in the inventory of the Illarion Client. -->
+  -->
 <nifty-controls>
-    <controlDefinition name="dialog-input" visibleToMouse="false"
+    <controlDefinition name="dialog-input" style="illarion-dialog-input-single" visibleToMouse="true"
                        controller="org.illarion.nifty.controls.dialog.input.DialogInputControl">
         <control name="window" title="Nachricht" id="#window" visibleToMouse="true">
             <panel childLayout="vertical" visibleToMouse="true" width="100%">
-                <panel width="100%">
+                <panel width="100%" childLayout="center">
                     <control name="textfield" id="#input" maxlength="65536"/>
                 </panel>
                 <panel id="#buttons" childLayout="center" visibleToMouse="true" width="100%">
