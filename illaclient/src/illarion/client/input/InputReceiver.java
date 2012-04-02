@@ -33,6 +33,8 @@ import org.newdawn.slick.util.InputAdapter;
  */
 public final class InputReceiver
         extends InputAdapter {
+    private static final int MOVE_KEY = 1;
+
     /**
      * This is the multi click helper that is used to detect single and multiple clicks on the game map.
      *
@@ -107,7 +109,7 @@ public final class InputReceiver
      * This variable is used to keep track if the mouse went down on the map. This is required to detect if a
      * dragging operation started on the map.
      */
-    private boolean keyDownOnMap;
+    private boolean keyDownOnMap[];
 
     /**
      * The instance of the button multiclick helper that is used in this instance of the input receiver.
@@ -116,7 +118,11 @@ public final class InputReceiver
 
     public InputReceiver(final NiftyInputForwarding forwardingInputSystem) {
         forwardingControl = forwardingInputSystem;
-        keyDownOnMap = false;
+
+        keyDownOnMap = new boolean[3];
+        for (int i = 0; i < keyDownOnMap.length; i++) {
+            keyDownOnMap[i] = false;
+        }
     }
 
     /**
@@ -140,7 +146,7 @@ public final class InputReceiver
 
     @Override
     public void mouseDragged(int oldx, int oldy, int newx, int newy) {
-        if (keyDownOnMap) {
+        if (keyDownOnMap[MOVE_KEY]) {
             EventBus.publish(EB_TOPIC, new DragOnMapEvent(oldx, oldy, newx, newy,
                     forwardingControl.getInputForwardingControl()));
         }
@@ -148,20 +154,17 @@ public final class InputReceiver
 
     @Override
     public void mousePressed(int button, int x, int y) {
-        if (button == 0) {
-            keyDownOnMap = true;
-            System.out.println("Button went down on map.");
-        }
+        keyDownOnMap[button] = true;
     }
 
     @Override
     public void mouseReleased(int button, int x, int y) {
-        if (button == 0) {
+        if (button == MOVE_KEY) {
             World.getPlayer().getMovementHandler().stopWalkTowards();
             if (forwardingControl.isInputForwardingSupported()) {
                 forwardingControl.getInputForwardingControl().releaseExclusiveMouse();
             }
-            keyDownOnMap = false;
         }
+        keyDownOnMap[button] = false;
     }
 }
