@@ -21,25 +21,6 @@ package illarion.client;
 import de.lessvoid.nifty.slick2d.loaders.SlickAddLoaderLocation;
 import de.lessvoid.nifty.slick2d.loaders.SlickRenderFontLoaders;
 import de.lessvoid.nifty.slick2d.loaders.SlickRenderImageLoaders;
-
-import javax.swing.*;
-import java.io.*;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.bushe.swing.event.EventServiceExistsException;
-import org.bushe.swing.event.EventServiceLocator;
-import org.bushe.swing.event.ThreadSafeEventService;
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.opengl.renderer.Renderer;
-import org.newdawn.slick.state.GameState;
-
 import illarion.client.crash.DefaultCrashHandler;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
@@ -61,6 +42,23 @@ import illarion.common.graphics.TextureLoader;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.TableLoader;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.bushe.swing.event.EventServiceExistsException;
+import org.bushe.swing.event.EventServiceLocator;
+import org.bushe.swing.event.ThreadSafeEventService;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.renderer.Renderer;
+import org.newdawn.slick.state.GameState;
+
+import javax.swing.*;
+import java.io.*;
+import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Main Class of the Illarion Client, this loads up the whole game and runs the main loop of the Illarion Client.
@@ -185,8 +183,12 @@ public final class IllaClient {
         SlickRenderFontLoaders.getInstance().addLoader(FontLoader.getInstance(), SlickAddLoaderLocation.first);
 
         // Preload sound and music
-        new SongLoader().setTarget(SongFactory.getInstance()).load();
-        new SoundLoader().setTarget(SoundFactory.getInstance()).load();
+        try {
+            new SongLoader().setTarget(SongFactory.getInstance()).call();
+            new SoundLoader().setTarget(SoundFactory.getInstance()).call();
+        } catch (Exception e) {
+            LOGGER.error("Failed to load sounds and music!");
+        }
 
         game = new illarion.client.Game();
 
@@ -194,7 +196,7 @@ public final class IllaClient {
 
         try {
             gameContainer = new AppGameContainer(game, res.getWidth(), res.getHeight(),
-                                                 cfg.getBoolean(CFG_FULLSCREEN));
+                    cfg.getBoolean(CFG_FULLSCREEN));
             MapDimensions.getInstance().reportScreenSize(gameContainer.getWidth(), gameContainer.getHeight());
         } catch (SlickException e) {
             System.err.println("Fatal error creating game screen!!!");
@@ -431,7 +433,7 @@ public final class IllaClient {
     /**
      * Install a file from a jar in the client directory. Existing files are only updates if needed.
      *
-     * @param fileName the filename of the source file
+     * @param fileName   the filename of the source file
      * @param outputFile the full path to the target file
      * @return true in case the file got stored or if there was no update needed
      */
@@ -558,7 +560,7 @@ public final class IllaClient {
 
         final java.awt.Toolkit awtDefaultToolkit = java.awt.Toolkit.getDefaultToolkit();
         cfg.setDefault("doubleClickInterval", (Integer) awtDefaultToolkit.getDesktopProperty("awt" +
-                                                                                                     ".multiClickInterval"));
+                ".multiClickInterval"));
 
         final Crypto crypt = new Crypto();
         crypt.loadPublicKey();

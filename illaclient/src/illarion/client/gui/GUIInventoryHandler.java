@@ -197,6 +197,7 @@ public final class GUIInventoryHandler
         visibilityEventSubscriber = new GetVisibleEventSubscriber();
     }
 
+    @Override
     public void bind(final Nifty nifty, final Screen screen) {
         activeNifty = nifty;
         activeScreen = screen;
@@ -224,10 +225,8 @@ public final class GUIInventoryHandler
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
     public void dragFromInventory(final String topic, final DraggableDragStartedEvent data) {
         final int slotId = getSlotNumber(topic);
-        World.getInteractionManager().notifyDraggingInventory(slotId, new EndOfDragOperation(invSlots[slotId]
-                .getNiftyControl
-
-                        (InventorySlot.class)));
+        World.getInteractionManager().notifyDraggingInventory(slotId,
+                new EndOfDragOperation(invSlots[slotId].getNiftyControl(InventorySlot.class)));
     }
 
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
@@ -290,6 +289,7 @@ public final class GUIInventoryHandler
         }
     }
 
+    @Override
     public void onStartScreen() {
         activeNifty.subscribeAnnotations(this);
 

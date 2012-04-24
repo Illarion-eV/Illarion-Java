@@ -102,9 +102,9 @@ public final class InventorySlot {
     }
 
     /**
-     * Set the informations about this item.
+     * Set the information's about this item.
      *
-     * @param newId the ID of the item
+     * @param newId    the ID of the item
      * @param newCount the amount of items
      */
     public void setData(final int newId, final int newCount) {

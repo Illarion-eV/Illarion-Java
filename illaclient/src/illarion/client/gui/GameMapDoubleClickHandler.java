@@ -24,14 +24,12 @@ import de.lessvoid.nifty.input.NiftyMouseInputEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
-
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
-
 import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.input.InputReceiver;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveMapTile;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
 
 /**
  * This class is used to monitor all double click operations on the game map and notify the interaction manager about a
@@ -108,7 +106,7 @@ public final class GameMapDoubleClickHandler
             return false;
         }
 
-        if (activeScreen != null && activeNifty != null) {
+        if ((activeScreen != null) && (activeNifty != null)) {
             forwardingControl.releaseExclusiveMouse();
 
             mouseEvent.initialize(x, y, 0, true, false, false);

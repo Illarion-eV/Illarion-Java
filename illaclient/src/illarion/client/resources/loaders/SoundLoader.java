@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources.loaders;
 
@@ -32,11 +32,11 @@ import org.newdawn.slick.openal.SoundStore;
  * was created using the configuration tool. The class will create the required
  * sound objects and send them to the sound factory that takes care for
  * distributing those objects.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class SoundLoader extends ResourceLoader<IdWrapper<Sound> > implements
-    TableLoaderSink {
+public final class SoundLoader extends AbstractResourceLoader<IdWrapper<Sound>> implements
+        TableLoaderSink {
     /**
      * The index in the table record of the sound id.
      */
@@ -51,24 +51,26 @@ public final class SoundLoader extends ResourceLoader<IdWrapper<Sound> > impleme
      * The logger that is used to report error messages.
      */
     private final Logger logger = Logger.getLogger(ItemLoader.class);
-    
+
     private static final String SOUND_PATH = "data/sounds/";
 
     /**
      * Trigger the loading sequence for this loader.
      */
     @Override
-    public void load() {
+    public ResourceFactory<IdWrapper<Sound>> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<IdWrapper<Sound> > factory = getTargetFactory();
+        final ResourceFactory<IdWrapper<Sound>> factory = getTargetFactory();
 
         factory.init();
         SoundStore.get().setDeferredLoading(true);
         new TableLoader("Sounds", this);
         factory.loadingFinished();
+
+        return factory;
     }
 
     /**
@@ -83,10 +85,10 @@ public final class SoundLoader extends ResourceLoader<IdWrapper<Sound> > impleme
             getTargetFactory().storeResource(new IdWrapper<Sound>(clipID, new Sound(SOUND_PATH + filename)));
         } catch (final IllegalStateException ex) {
             logger.error("Failed adding sound to internal factory. ID: "
-                + Integer.toString(clipID) + " - Filename: " + filename);
+                    + Integer.toString(clipID) + " - Filename: " + filename);
         } catch (SlickException e) {
             logger.error("Failed adding sound to internal factory. ID: "
-                + Integer.toString(clipID) + " - Filename: " + filename);
+                    + Integer.toString(clipID) + " - Filename: " + filename);
         }
 
         return true;

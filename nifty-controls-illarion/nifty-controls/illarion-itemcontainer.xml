@@ -17,19 +17,11 @@
   ~ along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <nifty-controls>
-    <controlDefinition name="dialog-input" style="illarion-dialog-input-single" visibleToMouse="true"
-                       controller="org.illarion.nifty.controls.dialog.input.DialogInputControl">
-        <control name="window" title="Nachricht" id="#window" visibleToMouse="true">
+    <controlDefinition name="itemcontainer" style="illarion-dialog-input-single" visibleToMouse="true"
+                       controller="org.illarion.nifty.controls.itemcontainer.ItemContainerControl">
+        <control name="window" title="Container" id="#window" visibleToMouse="true">
             <panel childLayout="vertical" visibleToMouse="true" width="100%">
-                <panel width="100%" childLayout="center">
-                    <control name="textfield" id="#input" maxlength="65536"/>
-                </panel>
-                <panel id="#buttons" childLayout="center" visibleToMouse="true" width="100%">
-                    <panel childLayout="horizontal" align="center">
-                        <control name="button" id="#buttonLeft" label="OK"/>
-                        <control name="button" id="#buttonRight" label="Cancel"/>
-                    </panel>
-                </panel>
+                <control name="tabGroup" id="#mainTabs" width="100%"/>
             </panel>
         </control>
     </controlDefinition>

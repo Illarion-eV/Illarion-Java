@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world;
 
@@ -26,14 +26,16 @@ import illarion.client.util.ChatHandler;
 import illarion.client.world.interactive.InteractionManager;
 import illarion.common.graphics.LightTracer;
 import illarion.common.util.StoppableStorage;
+import org.apache.log4j.Logger;
 
-import java.util.logging.Logger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This class is used to unify the access to the different components of the
  * game and to ensure a proper initialization and cleaning of those components
  * if needed.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class World {
@@ -43,8 +45,6 @@ public final class World {
     private static final World INSTANCE = new World();
 
     public static void cleanEnvironment() {
-        INSTANCE.log.entering(World.class.getName(), "cleanEnvironment()");
-
         synchronized (INSTANCE) {
             StoppableStorage.getInstance().shutdown();
 
@@ -63,9 +63,12 @@ public final class World {
             INSTANCE.net = null;
             INSTANCE.weather = null;
 
-        }
+            if (INSTANCE.executorService != null) {
+                INSTANCE.executorService.shutdownNow();
+            }
+            INSTANCE.executorService = null;
 
-        INSTANCE.log.exiting(World.class.getName(), "cleanEnvironment()");
+        }
     }
 
     public static AnimationManager getAnimationManager() {
@@ -89,7 +92,7 @@ public final class World {
 
     /**
      * Get the map of the game.
-     * 
+     *
      * @return the map of the game
      */
     public static GameMap getMap() {
@@ -126,10 +129,15 @@ public final class World {
         INSTANCE.checkWeather();
         return INSTANCE.weather;
     }
-    
+
     public static InteractionManager getInteractionManager() {
         INSTANCE.checkInteractionManager();
         return INSTANCE.interactionManager;
+    }
+
+    public static ExecutorService getExecutorService() {
+        INSTANCE.checkExecutorService();
+        return INSTANCE.executorService;
     }
 
     public static void initMissing() {
@@ -143,6 +151,7 @@ public final class World {
         getNet();
         getWeather();
         getInteractionManager();
+        getExecutorService();
     }
 
     /**
@@ -150,7 +159,7 @@ public final class World {
      * animations in the game.
      */
     private AnimationManager aniManager;
-    
+
     /**
      * The manager that takes care for the interaction between map and GUI.
      */
@@ -208,11 +217,16 @@ public final class World {
     private Weather weather;
 
     /**
+     * The executor service that is used for the execution of all concurrent tasks.
+     */
+    private ExecutorService executorService;
+
+    /**
      * Private constructor to ensure the sole instance is the singleton
      * instance.
      */
     private World() {
-        log = Logger.getLogger(World.class.getName());
+        log = Logger.getLogger(World.class);
     }
 
     private void checkAniManager() {
@@ -300,6 +314,14 @@ public final class World {
         if (interactionManager == null) {
             synchronized (this) {
                 interactionManager = new InteractionManager();
+            }
+        }
+    }
+
+    private void checkExecutorService() {
+        if (executorService == null) {
+            synchronized (this) {
+                executorService = Executors.newCachedThreadPool();
             }
         }
     }

@@ -20,6 +20,8 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
+import illarion.client.net.server.events.OpenContainerEvent;
+import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
@@ -32,41 +34,7 @@ import java.io.IOException;
  * @author Nop
  */
 public final class ShowcaseMsg extends AbstractReply {
-    /**
-     * Default size of the arrays that store the items this message contains.
-     * The size of the arrays is automatically increased in case its needed.
-     */
-    private static final int DEFAULT_SIZE = 70;
-
-    /**
-     * List of the count values of the items inside the container.
-     */
-    private short[] count = new short[DEFAULT_SIZE];
-
-    /**
-     * List of the IDs of the Items inside the container.
-     */
-    private int[] itemId = new int[DEFAULT_SIZE];
-
-    /**
-     * List of the Y positions of the items inside the container.
-     */
-    private int[] itemX = new int[DEFAULT_SIZE];
-
-    /**
-     * List of the X positions of the Items inside the container.
-     */
-    private int[] itemY = new int[DEFAULT_SIZE];
-
-    /**
-     * ID of the container that shall be shown.
-     */
-    private byte sc;
-
-    /**
-     * Count of items inside the container.
-     */
-    private short size;
+    private OpenContainerEvent event;
 
     /**
      * Default constructor for the container message.
@@ -96,22 +64,18 @@ public final class ShowcaseMsg extends AbstractReply {
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
-        sc = (byte) reader.readUByte();
-        size = reader.readUByte();
+        final int containerId = reader.readUByte();
+        final int containerSize = reader.readUShort();
+        final int itemAmount = reader.readUShort();
 
-        if (size > itemId.length) {
-            itemId = new int[size];
-            count = new short[size];
-            itemX = new int[size];
-            itemY = new int[size];
-        }
+        event = new OpenContainerEvent(containerId, containerSize);
 
-        for (int i = 0; i < size; i++) {
-            reader.readShort(); // TODO: position
-            itemId[i] = reader.readUShort();
-            count[i] = reader.readUByte();
-            itemX[i] = reader.readInt();
-            itemY[i] = reader.readInt();
+        for (int i = 0; i < itemAmount; i++) {
+            final int itemPos = reader.readUShort();
+            final int itemId = reader.readUShort();
+            final int itemCount = reader.readUByte();
+
+            event.addItem(itemPos, new OpenContainerEvent.Item(itemId, itemCount));
         }
     }
 
@@ -123,7 +87,8 @@ public final class ShowcaseMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        //GUI.getInstance().addContainer(sc, itemId, count, itemX, itemY);
+        EventBus.publish(event);
+        event = null;
         return true;
     }
 
@@ -136,6 +101,6 @@ public final class ShowcaseMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("SC: " + sc + " size: " + size);
+        return toString("Container: " + event.getContainerId());
     }
 }

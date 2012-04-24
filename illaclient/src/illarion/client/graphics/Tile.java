@@ -1,23 +1,24 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
+import illarion.client.resources.Resource;
 import illarion.client.resources.TileFactory;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.Sprite;
@@ -29,7 +30,7 @@ import org.newdawn.slick.Graphics;
 /**
  * Created: 20.08.2005 17:39:11
  */
-public class Tile extends AbstractEntity {
+public class Tile extends AbstractEntity implements Resource {
     private static final int BASE_MASK = 0x001F;
     private static final int OVERLAY_MASK = 0x03E0;
     private static final int SHAPE_MASK = 0xFC00;
@@ -49,9 +50,9 @@ public class Tile extends AbstractEntity {
      * Create tile with animation or variants
      */
     public Tile(final int id, final String name, final int frames,
-        final int speed, final TileInfo info) {
+                final int speed, final TileInfo info) {
         super(id, TILE_PATH, name, frames, 0, 0, 0, 0, Sprite.HAlign.center,
-            Sprite.VAlign.middle, false, false, null);
+                Sprite.VAlign.middle, false, false, null);
 
         this.info = info;
 
@@ -73,7 +74,7 @@ public class Tile extends AbstractEntity {
 
     /**
      * Create static tile
-     * 
+     *
      * @param id
      * @param name
      */
@@ -83,7 +84,7 @@ public class Tile extends AbstractEntity {
 
     /**
      * Copy constructor for duplicates
-     * 
+     *
      * @param org
      */
     private Tile(final Tile org) {
@@ -98,7 +99,7 @@ public class Tile extends AbstractEntity {
 
     /**
      * Return the base id of a tile
-     * 
+     *
      * @param id
      * @return
      */
@@ -122,7 +123,7 @@ public class Tile extends AbstractEntity {
 
     /**
      * Create a tile and its overlay. Assign variant.
-     * 
+     *
      * @param id complex id
      * @param x
      * @param y
@@ -167,7 +168,7 @@ public class Tile extends AbstractEntity {
 
     /**
      * Draw tile and its overlay
-     * 
+     *
      * @param x
      * @param y
      * @param corridor
@@ -222,7 +223,7 @@ public class Tile extends AbstractEntity {
 
     /**
      * Assign overlay to tile
-     * 
+     *
      * @param overlay
      */
     public void setOverlay(final Overlay overlay) {
@@ -232,7 +233,7 @@ public class Tile extends AbstractEntity {
 
     /**
      * Set position of tile and its overlays
-     * 
+     *
      * @param x
      * @param y
      * @param z
@@ -240,7 +241,7 @@ public class Tile extends AbstractEntity {
      */
     @Override
     public void setScreenPos(final int x, final int y, final int z,
-        final int layer) {
+                             final int layer) {
         super.setScreenPos(x, y, z, layer);
         if (overlay != null) {
             overlay.setScreenPos(x, y, 0, 0);
@@ -268,7 +269,7 @@ public class Tile extends AbstractEntity {
 
     /**
      * Determine the graphical variant from the x/y coordinates
-     * 
+     *
      * @param x
      * @param y
      */
