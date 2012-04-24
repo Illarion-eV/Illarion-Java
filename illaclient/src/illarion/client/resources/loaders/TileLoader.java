@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources.loaders;
 
@@ -30,11 +30,11 @@ import org.apache.log4j.Logger;
  * was created using the configuration tool. The class will create the required
  * tile objects and send them to the tile factory that takes care for
  * distributing those objects.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class TileLoader extends ResourceLoader<Tile> implements
-    TableLoaderSink {
+public final class TileLoader extends AbstractResourceLoader<Tile> implements
+        TableLoaderSink {
     /**
      * The column index of the minimap color of that tile in the resource table.
      */
@@ -95,7 +95,7 @@ public final class TileLoader extends ResourceLoader<Tile> implements
      * Trigger the loading sequence for this loader.
      */
     @Override
-    public void load() {
+    public ResourceFactory<Tile> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
@@ -105,6 +105,8 @@ public final class TileLoader extends ResourceLoader<Tile> implements
         factory.init();
         new TableLoader("Tiles", this);
         factory.loadingFinished();
+
+        return factory;
     }
 
     /**
@@ -117,13 +119,13 @@ public final class TileLoader extends ResourceLoader<Tile> implements
         final String name = loader.getString(TB_NAME);
         Tile tile = null;
         final TileInfo info =
-            new TileInfo(loader.getInt(TB_COLOR), loader.getInt(TB_COST),
-                loader.getBoolean(TB_OPAQUE));
+                new TileInfo(loader.getInt(TB_COLOR), loader.getInt(TB_COST),
+                        loader.getBoolean(TB_OPAQUE));
         switch (mode) {
             case TILE_MODE_ANIMATED:
                 tile =
-                    new Tile(id, name, loader.getInt(TB_FRAME),
-                        loader.getInt(TB_SPEED), info);
+                        new Tile(id, name, loader.getInt(TB_FRAME),
+                                loader.getInt(TB_SPEED), info);
                 break;
 
             case TILE_MODE_VARIANT:
@@ -141,7 +143,7 @@ public final class TileLoader extends ResourceLoader<Tile> implements
             tile.activate(id);
         } catch (final IllegalStateException ex) {
             logger.error("Failed adding tile to internal factory. ID: "
-                + Integer.toString(id) + " - Filename: " + name);
+                    + Integer.toString(id) + " - Filename: " + name);
         }
 
         return true;

@@ -1,67 +1,38 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.util;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-
-import javolution.context.ObjectFactory;
 import javolution.text.TextBuilder;
+
+import java.io.Serializable;
 
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 
 /**
- * Storage for the server map and all recalculation function for the Client
- * screen representations.
- * 
+ * Storage for the server map and all recalculation function for the Client screen representations.
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class Location implements Externalizable, Reusable {
-    /**
-     * This is the factory class that is used to buffer and reuse the location
-     * objects that are created.
-     * 
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class LocationFactory extends ObjectFactory<Location> {
-        /**
-         * Public constructor to allow the parent class to create a proper
-         * instance.
-         */
-        public LocationFactory() {
-            super();
-        }
-
-        /**
-         * Create a new instance of the vector class.
-         * 
-         * @return the new vector instance
-         */
-        @Override
-        protected Location create() {
-            return new Location();
-        }
-    }
+public class Location
+        implements Serializable {
 
     /**
      * Constant for a move in eastern direction.
@@ -113,40 +84,29 @@ public class Location implements Externalizable, Reusable {
     public static final int DIR_ZERO = 0x0A;
 
     /**
-     * Modificator used at the calculation of the display coordinates in case
-     * its a tile above or below the level 0.
+     * Modificator used at the calculation of the display coordinates in case its a tile above or below the level 0.
      */
     public static final int DISPLAY_Z_OFFSET_MOD = 6;
 
     /**
-     * The factory used to buffer and reuse the class instances.
-     */
-    private static final ObjectFactory<Location> FACTORY =
-        new LocationFactory();
-
-    /**
-     * Modificator of the X-Coordinate of the server coordinates to calculate a
-     * key of this position.
+     * Modificator of the X-Coordinate of the server coordinates to calculate a key of this position.
      */
     private static final long KEY_MOD_X = 65536L;
 
     /**
-     * Modificator of the Y-Coordinate of the server coordinates to calculate a
-     * key of this position.
+     * Modificator of the Y-Coordinate of the server coordinates to calculate a key of this position.
      */
     private static final long KEY_MOD_Y = 1L;
 
     /**
-     * Modificator of the Z-Coordinate of the server coordinates to calculate a
-     * key of this position.
+     * Modificator of the Z-Coordinate of the server coordinates to calculate a key of this position.
      */
     private static final long KEY_MOD_Z = 4294967296L;
 
     /**
      * Offset to all fields that can be accessed by a move in 8 directions.
      */
-    private static final int[][] MOVE8 = new int[][] {
-        { 0, 1, 1, 1, 0, -1, -1, -1 }, { -1, -1, 0, 1, 1, 1, 0, -1 } };
+    private static final int[][] MOVE8 = {{0, 1, 1, 1, 0, -1, -1, -1}, {-1, -1, 0, 1, 1, 1, 0, -1}};
 
     /**
      * The serialization UID of this location class.
@@ -159,20 +119,20 @@ public class Location implements Externalizable, Reusable {
     private int col;
 
     /**
-     * X-Coordinate of the Display coordinates of the tile. Means on what
-     * position of the game window the marked position is shown.
+     * X-Coordinate of the Display coordinates of the tile. Means on what position of the game window the marked
+     * position is shown.
      */
     private int dcX;
 
     /**
-     * Y-Coordinate of the Display coordinates of the tile. Means on what
-     * position of the game window the marked position is shown.
+     * Y-Coordinate of the Display coordinates of the tile. Means on what position of the game window the marked
+     * position is shown.
      */
     private int dcY;
 
     /**
-     * Z-Coordinate of the Display coordinates of the tile. Means on what
-     * position of the game window the marked position is shown.
+     * Z-Coordinate of the Display coordinates of the tile. Means on what position of the game window the marked
+     * position is shown.
      */
     private int dcZ;
 
@@ -217,17 +177,15 @@ public class Location implements Externalizable, Reusable {
     private int scZ;
 
     /**
-     * Constructor of a new location object pointing to 0, 0, 0 on the server
-     * coordinates.
+     * Constructor of a new location object pointing to 0, 0, 0 on the server coordinates.
      */
     public Location() {
         reset();
     }
 
     /**
-     * Create a new instance of the location that points to a specified location
-     * on the map.
-     * 
+     * Create a new instance of the location that points to a specified location on the map.
+     *
      * @param c the column of the map coordinates
      * @param r the row of the map coordinates
      */
@@ -237,15 +195,11 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Create a new instance of the location that points to a specified location
-     * on the map.
-     * 
-     * @param x the x coordinate of the server coordinates of the target
-     *            position
-     * @param y the y coordinate of the server coordinates of the target
-     *            position
-     * @param z the z coordinate of the server coordinates of the target
-     *            position
+     * Create a new instance of the location that points to a specified location on the map.
+     *
+     * @param x the x coordinate of the server coordinates of the target position
+     * @param y the y coordinate of the server coordinates of the target position
+     * @param z the z coordinate of the server coordinates of the target position
      */
     public Location(final int x, final int y, final int z) {
         this();
@@ -253,9 +207,8 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Copy constructor. This constructor creates a copy of the location
-     * instance set here.
-     * 
+     * Copy constructor. This constructor creates a copy of the location instance set here.
+     *
      * @param org the original Location instance
      */
     public Location(final Location org) {
@@ -264,58 +217,48 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Calculate the display coordinates from floating server coordinates. This
-     * function returns the X part of the display coordinates where a object
-     * with this coordinates needs to be displayed.
-     * 
+     * Calculate the display coordinates from floating server coordinates. This function returns the X part of the
+     * display coordinates where a object with this coordinates needs to be displayed.
+     *
      * @param x the x coordinate of the server location that shall be converted
      * @param y the y coordinate of the server location that shall be converted
      * @param z the z coordinate of the server location that shall be converted
-     * @return the x coordinate of the display coordinates where the object
-     *         needs to be displayed
+     * @return the x coordinate of the display coordinates where the object needs to be displayed
      */
     @SuppressWarnings("unused")
-    public static int displayCoordinateX(final float x, final float y,
-        final float z) {
-        return (int) ((x + y) * (MapConstants.STEP_X));
+    public static int displayCoordinateX(final float x, final float y, final float z) {
+        return (int) ((x + y) * MapConstants.STEP_X);
     }
 
     /**
-     * Calculate the display coordinates from floating server coordinates. This
-     * function returns the Y part of the display coordinates where a object
-     * with this coordinates needs to be displayed.
-     * 
+     * Calculate the display coordinates from floating server coordinates. This function returns the Y part of the
+     * display coordinates where a object with this coordinates needs to be displayed.
+     *
      * @param x the x coordinate of the server location that shall be converted
      * @param y the y coordinate of the server location that shall be converted
      * @param z the z coordinate of the server location that shall be converted
-     * @return the y coordinate of the display coordinates where the object
-     *         needs to be displayed
+     * @return the y coordinate of the display coordinates where the object needs to be displayed
      */
-    public static int displayCoordinateY(final float x, final float y,
-        final float z) {
-        return (int) (((x - y) * MapConstants.STEP_Y) + (DISPLAY_Z_OFFSET_MOD
-            * z * MapConstants.STEP_Y));
+    public static int displayCoordinateY(final float x, final float y, final float z) {
+        return (int) (((x - y) * MapConstants.STEP_Y) + (DISPLAY_Z_OFFSET_MOD * z * MapConstants.STEP_Y));
     }
 
     /**
-     * Calculate the display coordinates from floating server coordinates. This
-     * function returns the Z part of the display coordinates where a object
-     * with this coordinates needs to be displayed.
-     * 
+     * Calculate the display coordinates from floating server coordinates. This function returns the Z part of the
+     * display coordinates where a object with this coordinates needs to be displayed.
+     *
      * @param x the x coordinate of the server location that shall be converted
      * @param y the y coordinate of the server location that shall be converted
      * @param z the z coordinate of the server location that shall be converted
-     * @return the z coordinate of the display coordinates where the object
-     *         needs to be displayed
+     * @return the z coordinate of the display coordinates where the object needs to be displayed
      */
-    public static int displayCoordinateZ(final float x, final float y,
-        final float z) {
+    public static int displayCoordinateZ(final float x, final float y, final float z) {
         return (int) ((x - y - (z * Layers.LEVEL)) * Layers.DISTANCE);
     }
 
     /**
      * Get the X part of a direction vector.
-     * 
+     *
      * @param direction the direction the x vector is needed from
      * @return the x part of the direction vector
      */
@@ -325,7 +268,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Get the Y part of a direction vector.
-     * 
+     *
      * @param direction the direction the y vector is needed from
      * @return the y part of the direction vector
      */
@@ -334,25 +277,25 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Get a instance from this location class that is currently not in use. Its
-     * proposed to use this one over the usual constructors.
-     * 
+     * Get a instance from this location class that is currently not in use. Its proposed to use this one over the
+     * usual
+     * constructors.
+     *
      * @return the unused location instance
      */
+    @Deprecated
     public static Location getInstance() {
-        return FACTORY.object();
+        return new Location();
     }
 
     /**
-     * Create a key that identifies a position exactly. Can be used for
-     * collection classes. The key calculated using the server position.
-     * 
-     * @param x the X-Coordinate of the server coordinates used to calculate the
-     *            key
-     * @param y the Y-Coordinate of the server coordinates used to calculate the
-     *            key
-     * @param z the Z-Coordinate of the server coordinates used to calculate the
-     *            key
+     * Create a key that identifies a position exactly. Can be used for collection classes. The key calculated using
+     * the
+     * server position.
+     *
+     * @param x the X-Coordinate of the server coordinates used to calculate the key
+     * @param y the Y-Coordinate of the server coordinates used to calculate the key
+     * @param z the Z-Coordinate of the server coordinates used to calculate the key
      * @return the key of this position
      */
     public static long getKey(final int x, final int y, final int z) {
@@ -360,9 +303,8 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Add an offset to the display location. The calculation to map and server
-     * coordinates is triggered automatically.
-     * 
+     * Add an offset to the display location. The calculation to map and server coordinates is triggered automatically.
+     *
      * @param x Value to add to the X-Coordinate of the display location
      * @param y Value to add to the Y-Coordinate of the display location
      * @param z Value to add to the Z-Coordinate of the display location
@@ -381,9 +323,8 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Add an offset to the map location. The calculation to Server and Display
-     * coordinates is triggered automatically.
-     * 
+     * Add an offset to the map location. The calculation to Server and Display coordinates is triggered automatically.
+     *
      * @param c Value to add to the column of the map coordinates
      * @param r Value to add to the row of the map coordinates
      */
@@ -400,9 +341,8 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Add an offset to the server location. The calculation to Map and Display
-     * coordinates is triggered automatically.
-     * 
+     * Add an offset to the server location. The calculation to Map and Display coordinates is triggered automatically.
+     *
      * @param x Value to add to the X-Coordinate of the server location
      * @param y Value to add to the Y-Coordinate of the server location
      * @param z Value to add to the Z-Coordinate of the server location
@@ -421,12 +361,11 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Check this location and a second one for equality. Two locations are
-     * considered equal in case the server coordinates fit.
-     * 
+     * Check this location and a second one for equality. Two locations are considered equal in case the server
+     * coordinates fit.
+     *
      * @param obj the second location
-     * @return true in case the server coordinates of this location and the
-     *         second location are the same.
+     * @return true in case the server coordinates of this location and the second location are the same.
      */
     @Override
     public boolean equals(final Object obj) {
@@ -447,14 +386,12 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Test if the position is identical with the server coordinates handed over
-     * to this function.
-     * 
+     * Test if the position is identical with the server coordinates handed over to this function.
+     *
      * @param x X-Coordinate of the server coordinates
      * @param y Y-Coordinate of the server coordinates
      * @param z Y-Coordinate of the server coordinates
-     * @return true if the coordinates set as parameters of this function are
-     *         identical with the current position.
+     * @return true if the coordinates set as parameters of this function are identical with the current position.
      */
     public boolean equalsSC(final int x, final int y, final int z) {
         if (dirtySC) {
@@ -464,20 +401,8 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Catch the garbage collector and stop it from disposing this object. This
-     * function causes that the instance is not disposed by th garbage
-     * collector. Instead its put back into its factory.
-     */
-    @Override
-    public void finalize() throws Throwable {
-        super.finalize();
-        recycle();
-        throw new Throwable();
-    }
-
-    /**
      * Get the column on the client map.
-     * 
+     *
      * @return the column on the client map
      */
     public int getCol() {
@@ -489,7 +414,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Get the X-Coordinate of the Display Coordinates.
-     * 
+     *
      * @return X-Coordinate of the Display Coordinates
      */
     public int getDcX() {
@@ -501,7 +426,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Get the Y-Coordinate of the Display Coordinates.
-     * 
+     *
      * @return Y-Coordinate of the Display Coordinates
      */
     public int getDcY() {
@@ -513,7 +438,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Get the Z-Coordinate of the Display Coordinates.
-     * 
+     *
      * @return Z-Coordinate of the Display Coordinates
      */
     public int getDcZ() {
@@ -524,14 +449,12 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Determine the direction to get from the current location to the
-     * coordinates handed over to this function, using the 8 directions system.
-     * The coordinates used are the server coordinates.
-     * 
+     * Determine the direction to get from the current location to the coordinates handed over to this function, using
+     * the 8 directions system. The coordinates used are the server coordinates.
+     *
      * @param x X-Coordinate of the target location
      * @param y Y-Coordinate of the target location
-     * @return the direction needed to get from the current location to the
-     *         target location
+     * @return the direction needed to get from the current location to the target location
      */
     public int getDirection(final int x, final int y) {
         if (dirtySC) {
@@ -561,13 +484,11 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Determine the direction needed to change the current location to the
-     * location that is handed over to this function using the 8 direction
-     * system. The coordinates used are the server coordinates.
-     * 
+     * Determine the direction needed to change the current location to the location that is handed over to this
+     * function using the 8 direction system. The coordinates used are the server coordinates.
+     *
      * @param loc The target location
-     * @return the direction needed to get from the current location to the
-     *         target location
+     * @return the direction needed to get from the current location to the target location
      */
     public int getDirection(final Location loc) {
         if (loc.dirtySC) {
@@ -577,13 +498,11 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Get the distance in needed steps from the current position to the target
-     * position.
-     * 
+     * Get the distance in needed steps from the current position to the target position.
+     *
      * @param loc the target position
-     * @return the amount of steps needed to get from the current position to
-     *         the target position in case there are not blocked tiles on the
-     *         way
+     * @return the amount of steps needed to get from the current position to the target position in case there are not
+     *         blocked tiles on the way
      */
     public int getDistance(final Location loc) {
         if (dirtySC) {
@@ -598,9 +517,9 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Create a key that identifies this position exactly. Can be used for
-     * collection classes. The key calculated using the server position.
-     * 
+     * Create a key that identifies this position exactly. Can be used for collection classes. The key calculated using
+     * the server position.
+     *
      * @return the key of this position
      */
     public long getKey() {
@@ -613,7 +532,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Get the row on the client map.
-     * 
+     *
      * @return the row on the client map
      */
     public int getRow() {
@@ -625,7 +544,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Get the X-Coordinate of the Server Coordinates.
-     * 
+     *
      * @return X-Coordinate of the Server Coordinates
      */
     public int getScX() {
@@ -637,7 +556,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Get the Y-Coordinate of the Server Coordinates.
-     * 
+     *
      * @return Y-Coordinate of the Server Coordinates
      */
     public int getScY() {
@@ -649,7 +568,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Get the Z-Coordinate of the Server Coordinates.
-     * 
+     *
      * @return Z-Coordinate of the Server Coordinates
      */
     public int getScZ() {
@@ -661,10 +580,10 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Get the square root distance between two locations.
-     * 
+     *
      * @param loc the target location
-     * @return the square root distance between the two locations. So the length
-     *         of a straight line between this location and the target location.
+     * @return the square root distance between the two locations. So the length of a straight line between this
+     *         location and the target location.
      */
     public float getSqrtDistance(final Location loc) {
         if (dirtySC) {
@@ -673,13 +592,12 @@ public class Location implements Externalizable, Reusable {
         if (loc.dirtySC) {
             loc.toServerCoordinates();
         }
-        return FastMath.sqrt(FastMath.pow(loc.scX - scX, 2)
-            + FastMath.pow(loc.scY - scY, 2));
+        return FastMath.sqrt(FastMath.pow(loc.scX - scX, 2) + FastMath.pow(loc.scY - scY, 2));
     }
 
     /**
      * Generate the hash code of this location object.
-     * 
+     *
      * @return the hash code
      */
     @Override
@@ -692,7 +610,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Determine if a location is empty or at the origin.
-     * 
+     *
      * @return true if all 3 components of the server coordinate are 0
      */
     public boolean isEmpty() {
@@ -703,12 +621,10 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Determine if this location and a second one are direct neighbours. So
-     * they have to touch each other.
-     * 
+     * Determine if this location and a second one are direct neighbours. So they have to touch each other.
+     *
      * @param loc the second location
-     * @return true in case this location and the second one are touching each
-     *         other
+     * @return true in case this location and the second one are touching each other
      */
     public boolean isNeighbour(final Location loc) {
         if (dirtySC) {
@@ -717,13 +633,12 @@ public class Location implements Externalizable, Reusable {
         if (loc.dirtySC) {
             loc.toServerCoordinates();
         }
-        return (FastMath.abs(loc.scX - scX) < 2)
-            && (FastMath.abs(loc.scY - scY) < 2);
+        return (FastMath.abs(loc.scX - scX) < 2) && (FastMath.abs(loc.scY - scY) < 2);
     }
 
     /**
      * Move location one step into a direction using the 4 direction system.
-     * 
+     *
      * @param dir The direction the Server coordinates are moved by
      */
     public void moveSC(final int dir) {
@@ -744,7 +659,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Move location one step into a direction using the 8 direction system.
-     * 
+     *
      * @param dir The direction the Server coordinates are moved by
      */
     public void moveSC8(final int dir) {
@@ -763,29 +678,10 @@ public class Location implements Externalizable, Reusable {
         dirtyDC = true;
     }
 
-    /**
-     * Load the location from an input stream. This method does only load the
-     * server coordinates from the input stream.
-     */
-    @Override
-    public void readExternal(final ObjectInput in) throws IOException,
-        ClassNotFoundException {
-        final long version = in.readLong();
-        if (version == 1L) {
-            scX = in.readInt();
-            scY = in.readInt();
-            scZ = in.readInt();
-            dirtySC = false;
-        }
-    }
-
-    @Override
+    @Deprecated
     public void recycle() {
-        reset();
-        FACTORY.recycle(this);
     }
 
-    @Override
     public void reset() {
         dirtyDC = true;
         dirtyMC = true;
@@ -795,7 +691,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Set location from given location.
-     * 
+     *
      * @param loc The source location that is copied to this location
      */
     public void set(final Location loc) {
@@ -816,9 +712,9 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Set the location to some display coordinates. The calculations to map and
-     * server coordinates is done automatically. Z coordinate is used as 0.
-     * 
+     * Set the location to some display coordinates. The calculations to map and server coordinates is done
+     * automatically. Z coordinate is used as 0.
+     *
      * @param x X-Coordinate of the display coordinates
      * @param y Y-Coordinate of the display coordinates
      */
@@ -827,9 +723,9 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Set the location to some display coordinates. The calculations to map and
-     * server coordinates is done automatically.
-     * 
+     * Set the location to some display coordinates. The calculations to map and server coordinates is done
+     * automatically.
+     *
      * @param x X-Coordinate of the display coordinates
      * @param y Y-Coordinate of the display coordinates
      * @param z Z-Coordinate of the display coordinates
@@ -846,7 +742,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Set distance between tiles on screen. Default is no gap.
-     * 
+     *
      * @param newGap the new gap value
      */
     public void setGap(final int newGap) {
@@ -856,22 +752,19 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Set the server coordinates over a key that was created by the
-     * {@link #getKey()} or the {@link #getKey(int, int, int)} method.
-     * 
+     * Set the server coordinates over a key that was created by the {@link #getKey()} or the {@link #getKey(int, int,
+     * int)} method.
+     *
      * @param key the key used to set the server coordinates of the location
      */
     public void setKey(final long key) {
-        setSC(
-            (int) (((key % KEY_MOD_Z) / KEY_MOD_X) - (KEY_MOD_X / 2)),
-            (int) ((((key % KEY_MOD_Z) % KEY_MOD_X) / KEY_MOD_Y) - (KEY_MOD_Y / 2)),
-            (int) ((key / KEY_MOD_Z) - (KEY_MOD_Z / 2)));
+        setSC((int) (((key % KEY_MOD_Z) / KEY_MOD_X) - (KEY_MOD_X / 2)), (int) (key % KEY_MOD_Z % KEY_MOD_X),
+              (int) ((key / KEY_MOD_Z) - (KEY_MOD_Z / 2)));
     }
 
     /**
-     * Set a location to some map coordinates. The server and display
-     * coordinates are calculated automatically.
-     * 
+     * Set a location to some map coordinates. The server and display coordinates are calculated automatically.
+     *
      * @param c Column of the map coordinates
      * @param r Row of the map coordinates
      */
@@ -885,9 +778,9 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Set the location to some server coordinates. The calculations to map and
-     * display coordinates is done automatically. Z is used as 0.
-     * 
+     * Set the location to some server coordinates. The calculations to map and display coordinates is done
+     * automatically. Z is used as 0.
+     *
      * @param x X-Coordinate of the server coordinates
      * @param y Y-Coordinate of the server coordinates
      */
@@ -896,9 +789,9 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Set the location to some server coordinates. The calculations to map and
-     * display coordinates is done automatically.
-     * 
+     * Set the location to some server coordinates. The calculations to map and display coordinates is done
+     * automatically.
+     *
      * @param x X-Coordinate of the server coordinates
      * @param y Y-Coordinate of the server coordinates
      * @param z Z-Coordinate of the server coordinates
@@ -915,7 +808,7 @@ public class Location implements Externalizable, Reusable {
 
     /**
      * Create a string with the server coordinates of this position.
-     * 
+     *
      * @return the string of the server coordinates
      */
     @SuppressWarnings("nls")
@@ -937,21 +830,7 @@ public class Location implements Externalizable, Reusable {
     }
 
     /**
-     * Write this location to a output stream. This method does only store the
-     * server coordinates of this location.
-     */
-    @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
-        out.writeLong(serialVersionUID);
-        toServerCoordinates();
-        out.writeInt(scX);
-        out.writeInt(scY);
-        out.writeInt(scZ);
-    }
-
-    /**
-     * Use the server coordinates and the map coordinates to calculate the
-     * display coordinates.
+     * Use the server coordinates and the map coordinates to calculate the display coordinates.
      */
     private void toDisplayCoordinates() {
         if (!dirtyDC) {
@@ -959,9 +838,7 @@ public class Location implements Externalizable, Reusable {
         }
         if (!dirtySC) {
             dcX = (scX + scY) * (MapConstants.STEP_X + gap);
-            dcY =
-                -(((scX - scY) * (MapConstants.STEP_Y + gap))
-                    + (DISPLAY_Z_OFFSET_MOD * scZ * MapConstants.STEP_Y));
+            dcY = -(((scX - scY) * (MapConstants.STEP_Y + gap)) + (DISPLAY_Z_OFFSET_MOD * scZ * MapConstants.STEP_Y));
             dcZ = (scX - scY - (scZ * Layers.LEVEL)) * Layers.DISTANCE;
 
             dirtyDC = false;
@@ -1008,12 +885,10 @@ public class Location implements Externalizable, Reusable {
 
             dirtySC = false;
         } else if (!dirtyDC) {
-            scX =
-                FastMath
-                    .round(((-dcY / (float) (MapConstants.STEP_Y + gap)) + (dcX / (float) (MapConstants.STEP_X + gap))) / 2.f);
-            scY =
-                FastMath
-                    .round(((dcX / (float) (MapConstants.STEP_X + gap)) - (-dcY / (float) (MapConstants.STEP_Y + gap))) / 2.f);
+            scX = FastMath.round(((-dcY / (float) (MapConstants.STEP_Y + gap)) + (dcX / (float) (MapConstants.STEP_X
+                    + gap))) / 2.f);
+            scY = FastMath.round(((dcX / (float) (MapConstants.STEP_X + gap)) - (-dcY / (float) (MapConstants.STEP_Y
+                    + gap))) / 2.f);
             scZ = 0;
 
             dirtySC = false;

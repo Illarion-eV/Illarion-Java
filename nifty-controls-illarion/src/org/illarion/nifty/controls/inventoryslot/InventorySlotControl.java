@@ -1,20 +1,20 @@
 /*
- * This file is part of the Illarion Nifty-GUI controls.
+ * This file is part of the Illarion Nifty-GUI Controls.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Nifty-GUI controls is free software: you can redistribute and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Nifty-GUI controls is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Nifty-GUI controls. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.nifty.controls.inventoryslot;
 
@@ -43,11 +43,10 @@ import java.util.Properties;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @deprecated Don't refer to this class in any application. Rather use the
  *             general interface of the inventory slot:
- *             {@link org.illarion.nifty.controls.InventorySlot}
+ *             {@link InventorySlot}
  */
 @Deprecated
-public class InventorySlotControl extends AbstractController implements
-        InventorySlot {
+public class InventorySlotControl extends AbstractController implements InventorySlot {
     /**
      * The image that is dragged around.
      */
@@ -69,9 +68,19 @@ public class InventorySlotControl extends AbstractController implements
     private Element backgroundImageLabel;
 
     /**
+     * The image that is always displayed in the background.
+     */
+    private Element staticBackgroundImage;
+
+    /**
      * The element items can get dropped into.
      */
     private Element droppable;
+
+    /**
+     * This value stores if the label should be visible or not. This is needed to restore the visibility upon request.
+     */
+    private boolean labelVisible;
 
     /**
      * The event subscriber that is used to monitor the start dragging events.
@@ -90,9 +99,9 @@ public class InventorySlotControl extends AbstractController implements
      * {@inheritDoc}
      */
     @Override
-    public void bind(Nifty nifty, Screen screen, Element element,
-                     Properties parameter, Attributes controlDefinitionAttributes) {
-        super.bind(element);
+    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
+                     final Attributes controlDefinitionAttributes) {
+        bind(element);
 
         this.screen = screen;
         this.nifty = nifty;
@@ -102,24 +111,25 @@ public class InventorySlotControl extends AbstractController implements
         draggedImage = draggable.findElementByName("#draggableImage");
         backgroundImage = element.findElementByName("#backgroundImage");
         backgroundImageLabel = element.findElementByName("#backgroundImageLabel");
+        staticBackgroundImage = element.findElementByName("#staticBackgroundImage");
 
-        dragStartEvent =
-                new EventTopicSubscriber<DraggableDragStartedEvent>() {
-                    @Override
-                    public void onEvent(String topic,
-                                        DraggableDragStartedEvent data) {
-                        setVisibleOfDraggedImage(true);
-                    }
-                };
+        dragStartEvent = new EventTopicSubscriber<DraggableDragStartedEvent>() {
+            @Override
+            public void onEvent(final String topic, final DraggableDragStartedEvent data) {
+                setVisibleOfDraggedImage(true);
+            }
+        };
 
-        dragCanceledEvent =
-                new EventTopicSubscriber<DraggableDragCanceledEvent>() {
-                    @Override
-                    public void onEvent(String topic,
-                                        DraggableDragCanceledEvent data) {
-                        setVisibleOfDraggedImage(false);
-                    }
-                };
+        dragCanceledEvent = new EventTopicSubscriber<DraggableDragCanceledEvent>() {
+            @Override
+            public void onEvent(final String topic, final DraggableDragCanceledEvent data) {
+                setVisibleOfDraggedImage(false);
+            }
+        };
+
+        if (parameter.containsKey("background")) {
+            setBackgroundImage(nifty.createImage(parameter.getProperty("background"), false));
+        }
     }
 
     /**
@@ -134,18 +144,18 @@ public class InventorySlotControl extends AbstractController implements
             int width = image.getWidth();
             int height = image.getHeight();
             if (width > getWidth()) {
-                height = height * (width / getWidth());
+                height *= width / getWidth();
                 width = getWidth();
             }
             if (height > getHeight()) {
-                width = width * (height / getHeight());
+                width *= height / getHeight();
                 height = getHeight();
             }
 
             final SizeValue widthSize =
-                    new SizeValue(Integer.toString(width).concat("px"));
+                    new SizeValue(Integer.toString(width) + "px");
             final SizeValue heightSize =
-                    new SizeValue(Integer.toString(height).concat("px"));
+                    new SizeValue(Integer.toString(height) + "px");
 
             draggable.setConstraintHeight(heightSize);
             draggable.setConstraintWidth(widthSize);
@@ -163,6 +173,17 @@ public class InventorySlotControl extends AbstractController implements
             draggedImage.setVisible(false);
             draggable.getControl(DraggableControl.class).setEnabled(false);
             getElement().layoutElements();
+        }
+    }
+
+    @Override
+    public void setBackgroundImage(final NiftyImage image) {
+        if (image == null) {
+            staticBackgroundImage.getRenderer(ImageRenderer.class).setImage(null);
+            staticBackgroundImage.setVisible(false);
+        } else {
+            staticBackgroundImage.getRenderer(ImageRenderer.class).setImage(image);
+            staticBackgroundImage.setVisible(true);
         }
     }
 
@@ -187,6 +208,7 @@ public class InventorySlotControl extends AbstractController implements
             backgroundImageLabel.show();
             backgroundImageLabel.getParent().layoutElements();
         }
+        labelVisible = true;
     }
 
     /**
@@ -198,6 +220,7 @@ public class InventorySlotControl extends AbstractController implements
             backgroundImageLabel.hide();
             backgroundImageLabel.getParent().layoutElements();
         }
+        labelVisible = false;
     }
 
     /**
@@ -222,17 +245,25 @@ public class InventorySlotControl extends AbstractController implements
         });
     }
 
+    @Override
+    public void restoreVisibility() {
+        if (labelVisible) {
+            showLabel();
+        } else {
+            hideLabel();
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void onStartScreen() {
-        nifty.subscribe(screen, draggable.getId(),
-                DraggableDragStartedEvent.class, dragStartEvent);
-        nifty.subscribe(screen, draggable.getId(),
-                DraggableDragCanceledEvent.class, dragCanceledEvent);
+        nifty.subscribe(screen, draggable.getId(), DraggableDragStartedEvent.class, dragStartEvent);
+        nifty.subscribe(screen, draggable.getId(), DraggableDragCanceledEvent.class, dragCanceledEvent);
 
         retrieveDraggable();
+        hideLabel();
     }
 
     /**
@@ -240,6 +271,6 @@ public class InventorySlotControl extends AbstractController implements
      */
     @Override
     public boolean inputEvent(final NiftyInputEvent inputEvent) {
-        return false;
+        return true;
     }
 }

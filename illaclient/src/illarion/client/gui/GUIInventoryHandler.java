@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.gui;
 
@@ -28,43 +28,39 @@ import de.lessvoid.nifty.elements.events.ElementShowEvent;
 import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
-
-import javax.swing.*;
-
+import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.IllaClient;
 import illarion.client.graphics.Item;
+import illarion.client.gui.util.AbstractMultiActionHelper;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.Inventory;
 import illarion.client.world.World;
-
+import illarion.common.util.Timer;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 /**
- * This handler takes care for showing and hiding objects in the inventory. Also
- * it monitors all dropping operations on the slots of the inventory.
- * 
+ * This handler takes care for showing and hiding objects in the inventory. Also it monitors all dropping operations on
+ * the slots of the inventory.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GUIInventoryHandler implements
-    EventSubscriber<InventoryUpdateEvent>, EventTopicSubscriber<String> {
-
+public final class GUIInventoryHandler
+        implements EventSubscriber<InventoryUpdateEvent>, EventTopicSubscriber<String>, ScreenController {
     /**
-     * This class is used as drag end operation and used to move a object that
-     * was dragged out of the inventory back in so the server can send the
-     * commands to clean everything up.
-     * 
+     * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
+     * so the server can send the commands to clean everything up.
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static class EndOfDragOperation implements Runnable {
+    private static class EndOfDragOperation
+            implements Runnable {
         /**
          * The inventory slot that requires the reset.
          */
@@ -72,7 +68,7 @@ public final class GUIInventoryHandler implements
 
         /**
          * Create a new instance of this class and set the effected elements.
-         * 
+         *
          * @param slot the inventory slot to reset
          */
         public EndOfDragOperation(final InventorySlot slot) {
@@ -92,17 +88,18 @@ public final class GUIInventoryHandler implements
      * This class is used to handle the events that are triggered once the inventory window is set visible. Once this
      * happens its needed to restore the visibility values of the labels as the Nifty-GUI sets all child elements to
      * visible as well for some strange reason.
-     *
+     * <p/>
      * This entire event subscriber can be erased in case the Nifty-GUI ever changes this behaviour.
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private class GetVisibleEventSubscriber implements EventTopicSubscriber<ElementShowEvent> {
+    private class GetVisibleEventSubscriber
+            implements EventTopicSubscriber<ElementShowEvent> {
         /**
          * Handle the event.
          *
          * @param topic the topic of the event, that should equal the ID of the inventory window
-         * @param data the actual event
+         * @param data  the actual event
          */
         @Override
         public void onEvent(final String topic, final ElementShowEvent data) {
@@ -112,6 +109,50 @@ public final class GUIInventoryHandler implements
         }
     }
 
+    /**
+     * This class is used to handle multiple clicks into the inventory. It records the clicks and reacts on them in
+     * regard to the resulting amount of clicks.
+     *
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
+     */
+    private static final class InventoryClickActionHelper
+            extends AbstractMultiActionHelper {
+        /**
+         * The ID of the slot that was clicked at.
+         */
+        private int slotId;
+
+        /**
+         * The constructor for this class. The timeout time is set to the system default double click interval.
+         */
+        public InventoryClickActionHelper() {
+            super(IllaClient.getCfg().getInteger("doubleClickInterval"));
+        }
+
+        /**
+         * Set the ID of the slot that was clicked at.
+         *
+         * @param id the ID of the slot
+         */
+        public void setSlotId(final int id) {
+            slotId = id;
+        }
+
+        @Override
+        public void executeAction(final int count) {
+            switch (count) {
+                case 1:
+                    World.getPlayer().getInventory().getItem(slotId).getInteractive().lookAt();
+                    break;
+                case 2:
+                    World.getPlayer().getInventory().getItem(slotId).getInteractive().use();
+                    break;
+            }
+        }
+    }
+
+    private static final String INVSLOT_HEAD = "invslot_";
+
     private final String[] slots;
     private final Element[] invSlots;
     private final boolean[] slotLabelVisibility;
@@ -119,12 +160,15 @@ public final class GUIInventoryHandler implements
     private Nifty activeNifty;
     private Screen activeScreen;
     private GetVisibleEventSubscriber visibilityEventSubscriber;
-    
+
     private int clickCount = 0;
     private boolean wasDoubleClick = false;
     private Timer timer = null;
 
-    private static final String INVSLOT_HEAD = "invslot_";
+    /**
+     * The instance of the inventory click helper that is used in this instance of the GUI inventory handler.
+     */
+    private final InventoryClickActionHelper inventoryClickActionHelper = new InventoryClickActionHelper();
 
     public GUIInventoryHandler() {
         slots = new String[Inventory.SLOT_COUNT];
@@ -153,6 +197,7 @@ public final class GUIInventoryHandler implements
         visibilityEventSubscriber = new GetVisibleEventSubscriber();
     }
 
+    @Override
     public void bind(final Nifty nifty, final Screen screen) {
         activeNifty = nifty;
         activeScreen = screen;
@@ -164,83 +209,30 @@ public final class GUIInventoryHandler implements
         }
     }
 
-    public void onStartScreen() {
-        activeNifty.subscribeAnnotations(this);
-
-        EventBus.subscribe(InventoryUpdateEvent.class, this);
-        EventBus.subscribe(InputReceiver.EB_TOPIC, this);
-        activeNifty.subscribe(activeScreen, inventoryWindow.getId(), ElementShowEvent.class, visibilityEventSubscriber);
-    }
-
-    public void showInventory() {
-        if (inventoryWindow != null) {
-            inventoryWindow.show();
-        }
-    }
-
-    public void hideInventory() {
-        if (inventoryWindow != null) {
-            inventoryWindow.hide();
-        }
-    }
-
-    public void toggleInventory() {
-        if (inventoryWindow != null) {
-            inventoryWindow.setVisible(!inventoryWindow.isVisible());
-        }
-    }
-
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
-    public void dropInInventory(final String topic,
-        final DroppableDroppedEvent data) {
-        final int slotId = getSlotNumber(topic);
-        World.getInteractionManager().dropAtInventory(slotId);
-    }
-
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
-    public void dragFromInventory(final String topic,
-        final DraggableDragStartedEvent data) {
-        final int slotId = getSlotNumber(topic);
-        World.getInteractionManager().notifyDraggingInventory(
-                slotId,
-                new EndOfDragOperation(invSlots[slotId]
-                        .getNiftyControl(InventorySlot.class)));
-    }
-
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
-         public void cancelDragging(final String topic,
-                                    final DraggableDragCanceledEvent data) {
+    public void cancelDragging(final String topic, final DraggableDragCanceledEvent data) {
         World.getInteractionManager().cancelDragging();
     }
 
     @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
-    public void clickInventory(final String topic,
-                               final NiftyMousePrimaryClickedEvent data) {
+    public void clickInventory(final String topic, final NiftyMousePrimaryClickedEvent data) {
         final int slotId = getSlotNumber(topic);
 
-        if (clickCount == 1) {
-            World.getPlayer().getInventory().getItem(slotId).getInteractive().use();
-            clickCount = 0;
-            wasDoubleClick = true;
-        } else {
-            Integer timerinterval = (Integer) Toolkit.getDefaultToolkit().getDesktopProperty(
-                    "awt.multiClickInterval");
-            clickCount = 1;
+        inventoryClickActionHelper.setSlotId(slotId);
+        inventoryClickActionHelper.pulse();
+    }
 
-            timer = new Timer(timerinterval.intValue(), new ActionListener() {
+    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    public void dragFromInventory(final String topic, final DraggableDragStartedEvent data) {
+        final int slotId = getSlotNumber(topic);
+        World.getInteractionManager().notifyDraggingInventory(slotId,
+                new EndOfDragOperation(invSlots[slotId].getNiftyControl(InventorySlot.class)));
+    }
 
-                public void actionPerformed(ActionEvent evt) {
-                    if (wasDoubleClick) {
-                        wasDoubleClick = false;
-                    } else {
-                        World.getPlayer().getInventory().getItem(slotId).getInteractive().lookAt();
-                    }
-                    clickCount = 0;
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
-        }
+    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    public void dropInInventory(final String topic, final DroppableDroppedEvent data) {
+        final int slotId = getSlotNumber(topic);
+        World.getInteractionManager().dropAtInventory(slotId);
     }
 
     /**
@@ -258,53 +250,15 @@ public final class GUIInventoryHandler implements
         return -1;
     }
 
-    /**
-     * Set a new item to a slot.
-     *
-     * @param slotId the ID of the slot to change
-     * @param itemId the ID of the item that shall be displayed in the slot             
-     * @param count the amount of items displayed in this slot
-     */
-    public void setSlotItem(final int slotId, final int itemId, final int count) {
-        if (slotId < 0 || slotId >= Inventory.SLOT_COUNT) {
-            throw new IllegalArgumentException("Slot ID out of valid range.");
-        }
-
-        final InventorySlot invSlot =
-            invSlots[slotId].getNiftyControl(InventorySlot.class);
-
-        if (itemId > 0) {
-            final Item displayedItem =
-                ItemFactory.getInstance().getPrototype(itemId);
-            final NiftyImage niftyImage =
-                new NiftyImage(activeNifty.getRenderEngine(),
-                    new EntitySlickRenderImage(displayedItem));
-
-            invSlot.setImage(niftyImage);
-            invSlot.setLabelText(Integer.toString(count));
-            if (count > 1) {
-                slotLabelVisibility[slotId] = true;
-                invSlot.showLabel();
-            } else {
-                slotLabelVisibility[slotId] = false;
-                invSlot.hideLabel();
-            }
-        } else {
-            invSlot.setImage(null);
-            invSlot.hideLabel();
+    public void hideInventory() {
+        if (inventoryWindow != null) {
+            inventoryWindow.hide();
         }
     }
-    
-    void restoreSlotLabelVisibility() {
-        for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
-            final InventorySlot invSlot =
-                    invSlots[i].getNiftyControl(InventorySlot.class);
-            if (slotLabelVisibility[i]) {
-                invSlot.showLabel();
-            } else {
-                invSlot.hideLabel();
-            }
-        }
+
+    @Override
+    public void onEndScreen() {
+
     }
 
     /**
@@ -326,6 +280,86 @@ public final class GUIInventoryHandler implements
     public void onEvent(String topic, String data) {
         if (data.equals("ToggleInventory")) {
             toggleInventory();
+        }
+    }
+
+    public void toggleInventory() {
+        if (inventoryWindow != null) {
+            inventoryWindow.setVisible(!inventoryWindow.isVisible());
+        }
+    }
+
+    @Override
+    public void onStartScreen() {
+        activeNifty.subscribeAnnotations(this);
+
+        EventBus.subscribe(InventoryUpdateEvent.class, this);
+        EventBus.subscribe(InputReceiver.EB_TOPIC, this);
+        activeNifty.subscribe(activeScreen, inventoryWindow.getId(), ElementShowEvent.class,
+                visibilityEventSubscriber);
+
+        final Inventory inventory = World.getPlayer().getInventory();
+        illarion.client.world.InventorySlot invSlot;
+        for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
+            invSlot = inventory.getItem(i);
+            if (invSlot.getItemID() == 0) {
+                continue;
+            }
+            setSlotItem(invSlot.getSlot(), invSlot.getItemID(), invSlot.getCount());
+        }
+    }
+
+    /**
+     * Set a new item to a slot.
+     *
+     * @param slotId the ID of the slot to change
+     * @param itemId the ID of the item that shall be displayed in the slot
+     * @param count  the amount of items displayed in this slot
+     */
+    public void setSlotItem(final int slotId, final int itemId, final int count) {
+        if ((slotId < 0) || (slotId >= Inventory.SLOT_COUNT)) {
+            throw new IllegalArgumentException("Slot ID out of valid range.");
+        }
+
+        final InventorySlot invSlot = invSlots[slotId].getNiftyControl(InventorySlot.class);
+
+        if (itemId > 0) {
+            final Item displayedItem = ItemFactory.getInstance().getPrototype(itemId);
+
+            final NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
+                    new EntitySlickRenderImage(displayedItem));
+
+            invSlot.setImage(niftyImage);
+            invSlot.setLabelText(Integer.toString(count));
+            if (count > 1) {
+                slotLabelVisibility[slotId] = true;
+                invSlot.showLabel();
+            } else {
+                slotLabelVisibility[slotId] = false;
+                invSlot.hideLabel();
+            }
+        } else {
+            invSlot.setImage(null);
+            invSlot.hideLabel();
+        }
+
+        invSlots[slotId].getParent().layoutElements();
+    }
+
+    void restoreSlotLabelVisibility() {
+        for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
+            final InventorySlot invSlot = invSlots[i].getNiftyControl(InventorySlot.class);
+            if (slotLabelVisibility[i]) {
+                invSlot.showLabel();
+            } else {
+                invSlot.hideLabel();
+            }
+        }
+    }
+
+    public void showInventory() {
+        if (inventoryWindow != null) {
+            inventoryWindow.show();
         }
     }
 }

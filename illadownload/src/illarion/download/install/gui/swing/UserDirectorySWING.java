@@ -1,68 +1,56 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.install.gui.swing;
 
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.text.JTextComponent;
-
 import org.jdesktop.swingx.JXLabel;
 
 import illarion.common.util.DirectoryManager;
-
 import illarion.download.util.Lang;
 
 /**
- * This is the display for the user directory. This displayed form allows to set
- * this directory.
- * 
+ * This is the display for the user directory. This displayed form allows to set this directory.
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
-public final class UserDirectorySWING extends AbstractContentSWING {
+public final class UserDirectorySWING
+        extends AbstractContentSWING {
     /**
-     * This is the continue button listener. It will invoke when the continue
-     * button is clicked. It will check if the entered path is valid and
-     * continue the application then.
-     * 
+     * This is the continue button listener. It will invoke when the continue button is clicked. It will check if the
+     * entered path is valid and continue the application then.
+     *
      * @author Martin Karing
-     * @since 1.00
      * @version 1.00
+     * @since 1.00
      */
-    private static final class ContinueButtonListener implements
-        ActionListener {
+    private static final class ContinueButtonListener
+            implements ActionListener {
         /**
-         * This is the base component that is used to align the error window in
-         * case one is needed.
+         * This is the base component that is used to align the error window in case one is needed.
          */
         private final BaseSWING baseComponent;
 
@@ -72,23 +60,20 @@ public final class UserDirectorySWING extends AbstractContentSWING {
         private final UserDirectorySWING parent;
 
         /**
-         * The text component that contains the path that is supposed to be
-         * forwarded.
+         * The text component that contains the path that is supposed to be forwarded.
          */
         private final JTextComponent pathSource;
 
         /**
-         * Constructor of the button listener. It will store the references to
-         * the components required for this to work properly.
-         * 
-         * @param base the base component that is used to align a error window
-         *            in case one is needed
-         * @param parentObject this is the parent of the object this listener is
-         *            assigned to
+         * Constructor of the button listener. It will store the references to the components required for this to work
+         * properly.
+         *
+         * @param base the base component that is used to align a error window in case one is needed
+         * @param parentObject this is the parent of the object this listener is assigned to
          * @param source the source of the text to the path
          */
-        public ContinueButtonListener(final BaseSWING base,
-            final UserDirectorySWING parentObject, final JTextComponent source) {
+        public ContinueButtonListener(final BaseSWING base, final UserDirectorySWING parentObject,
+                                      final JTextComponent source) {
             pathSource = source;
             baseComponent = base;
             parent = parentObject;
@@ -108,36 +93,32 @@ public final class UserDirectorySWING extends AbstractContentSWING {
             }
 
             if (path != null) {
-                DirectoryManager.getInstance()
-                    .setUserDirectory(new File(path));
+                DirectoryManager.getInstance().setUserDirectory(new File(path));
                 if (DirectoryManager.getInstance().hasUserDirectory()) {
                     parent.reportContinue();
                     return;
                 }
             }
 
-            JOptionPane
-                .showMessageDialog(
-                    baseComponent,
-                    Lang.getMsg("illarion.download.intall.gui.Directory.DirError.message"),
-                    Lang.getMsg("illarion.download.intall.gui.Directory.DirError.title"),
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(baseComponent, Lang.getMsg("illarion.download.install.gui.Directory" +
+                                                                             ".DirError.message"),
+                                          Lang.getMsg("illarion.download.install.gui.Directory.DirError.title"),
+                                          JOptionPane.ERROR_MESSAGE);
         }
     }
 
     /**
-     * This is the listener that is applied to the search button. It will open a
-     * dialog that allows selecting a folder and put the path to the selected
-     * folder to the text component that is set by the constructor.
-     * 
+     * This is the listener that is applied to the search button. It will open a dialog that allows selecting a folder
+     * and put the path to the selected folder to the text component that is set by the constructor.
+     *
      * @author Martin Karing
-     * @since 1.00
      * @version 1.00
+     * @since 1.00
      */
-    private static final class SearchButtonListener implements ActionListener {
+    private static final class SearchButtonListener
+            implements ActionListener {
         /**
-         * This is the base component the newly opened selection window will be
-         * aligned to.
+         * This is the base component the newly opened selection window will be aligned to.
          */
         private final BaseSWING baseComponent;
 
@@ -147,15 +128,12 @@ public final class UserDirectorySWING extends AbstractContentSWING {
         private final JTextComponent pathReceiver;
 
         /**
-         * The search button listener. This listener enables the button its
-         * applied on to search for a path.
-         * 
-         * @param base the base component that is used to align the opened
-         *            dialog
+         * The search button listener. This listener enables the button its applied on to search for a path.
+         *
+         * @param base the base component that is used to align the opened dialog
          * @param receiver the text component that will receive the text
          */
-        public SearchButtonListener(final BaseSWING base,
-            final JTextComponent receiver) {
+        public SearchButtonListener(final BaseSWING base, final JTextComponent receiver) {
             pathReceiver = receiver;
             baseComponent = base;
         }
@@ -175,15 +153,13 @@ public final class UserDirectorySWING extends AbstractContentSWING {
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
             if (chooser.showOpenDialog(baseComponent) == JFileChooser.APPROVE_OPTION) {
-                pathReceiver.setText(chooser.getSelectedFile()
-                    .getAbsolutePath());
+                pathReceiver.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         }
     }
 
     /**
-     * This flag is used to ensure that the components are not created more then
-     * once.
+     * This flag is used to ensure that the components are not created more then once.
      */
     private boolean componentsCreated = false;
 
@@ -227,9 +203,7 @@ public final class UserDirectorySWING extends AbstractContentSWING {
         con.weighty = 0.0;
         con.insets.set(0, 0, 10, 0);
 
-        final JLabel headLabel =
-            new JLabel(
-                Lang.getMsg("illarion.download.intall.gui.UserDirectory.title"));
+        final JLabel headLabel = new JLabel(Lang.getMsg("illarion.download.install.gui.UserDirectory.title"));
         contentPanel.add(headLabel, con);
         headLabel.setFont(headLabel.getFont().deriveFont(Font.BOLD, 14.f));
 
@@ -239,8 +213,7 @@ public final class UserDirectorySWING extends AbstractContentSWING {
         textField.setOpaque(false);
         textField.setFocusable(false);
         textField.setLineWrap(true);
-        textField.setText(Lang
-            .getMsg("illarion.download.intall.gui.UserDirectory.content"));
+        textField.setText(Lang.getMsg("illarion.download.install.gui.UserDirectory.content"));
         contentPanel.add(textField, con);
 
         con.gridy = line++;
@@ -249,8 +222,7 @@ public final class UserDirectorySWING extends AbstractContentSWING {
         textField.setOpaque(false);
         textField.setFocusable(false);
         textField.setLineWrap(true);
-        textField.setText(Lang
-            .getMsg("illarion.download.intall.gui.Directory.enterPathDesc"));
+        textField.setText(Lang.getMsg("illarion.download.install.gui.Directory.enterPathDesc"));
         contentPanel.add(textField, con);
 
         createComponents(base);
@@ -280,9 +252,8 @@ public final class UserDirectorySWING extends AbstractContentSWING {
     }
 
     /**
-     * Create the components. This is only used for interactive components to
-     * ensure that they are created properly.
-     * 
+     * Create the components. This is only used for interactive components to ensure that they are created properly.
+     *
      * @param base the base element the components are created for
      */
     @SuppressWarnings("nls")
@@ -293,16 +264,11 @@ public final class UserDirectorySWING extends AbstractContentSWING {
         componentsCreated = true;
 
         pathArea = new JTextField(30);
-        pathArea.setText(System.getProperty("user.home") + File.separator
-            + "Illarion" + File.separator + "usr");
-        searchPathButton =
-            new JButton(
-                Lang.getMsg("illarion.download.intall.gui.Directory.search"));
-        searchPathButton.addActionListener(new SearchButtonListener(base,
-            pathArea));
+        pathArea.setText(System.getProperty("user.home") + File.separator + "Illarion" + File.separator + "usr");
+        searchPathButton = new JButton(Lang.getMsg("illarion.download.install.gui.Directory.search"));
+        searchPathButton.addActionListener(new SearchButtonListener(base, pathArea));
         continueButton = base.getContinueButton();
-        continueButton.addActionListener(new ContinueButtonListener(base,
-            this, pathArea));
+        continueButton.addActionListener(new ContinueButtonListener(base, this, pathArea));
     }
 
 }

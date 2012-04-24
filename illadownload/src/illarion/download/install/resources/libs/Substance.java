@@ -1,20 +1,20 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.install.resources.libs;
 
@@ -27,24 +27,28 @@ import illarion.download.install.resources.Resource;
 import illarion.download.util.Lang;
 
 /**
- * This resource contains the Substance Look&Feel for Swing. Also it contains
- * the flamingo components and the trident animation library.
- * 
+ * This resource contains the Substance Look&Feel for Swing.
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
-public final class Substance implements LibraryResource {
+public final class Substance
+        implements LibraryResource {
     /**
      * The singleton instance of this class.
      */
     private static final Substance INSTANCE = new Substance();
 
     /**
-     * The files that are needed to be added to the class path for this
-     * resource.
+     * The files that are needed to be added to the class path for this resource.
      */
     private Collection<File> classpath;
+
+    /**
+     * The dependencies of this library.
+     */
+    private Collection<Resource> dependencies;
 
     /**
      * The resources that are needed to be downloaded for this class.
@@ -52,8 +56,7 @@ public final class Substance implements LibraryResource {
     private Collection<URL> resources;
 
     /**
-     * The arguments that are passed to the virtual machine in case this
-     * resource is part of the application.
+     * The arguments that are passed to the virtual machine in case this resource is part of the application.
      */
     private Collection<String> vmArguments;
 
@@ -61,12 +64,13 @@ public final class Substance implements LibraryResource {
      * Private constructor to avoid instances but the singleton instance.
      */
     private Substance() {
-        // nothing to do
+        dependencies = new ArrayList<Resource>();
+        dependencies.add(Trident.getInstance());
     }
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance
      */
     public static Resource getInstance() {
@@ -74,19 +78,16 @@ public final class Substance implements LibraryResource {
     }
 
     /**
-     * Generate and return the files needed to be added to the class path for
-     * this resource.
+     * Generate and return the files needed to be added to the class path for this resource.
      */
     @Override
     public Collection<File> getClassPath() {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
-            final String dataDir =
-                LibraryDirectory.getInstance().getDirectory();
+            final String dataDir = LibraryDirectory.getInstance().getDirectory();
             cp.add(new File(dataDir, "substance.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "substance-flamingo.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "flamingo.jar")); //$NON-NLS-1$
-            cp.add(new File(dataDir, "trident.jar")); //$NON-NLS-1$
+            cp.add(new File(dataDir, "laf-plugin.jar")); //$NON-NLS-1$
+            cp.add(new File(dataDir, "laf-widget.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -94,17 +95,15 @@ public final class Substance implements LibraryResource {
     }
 
     /**
-     * This resource does not depend on anything else. So this function returns
-     * <code>null</code> at all times
+     * This resource does not depend on anything else. So this function returns <code>null</code> at all times
      */
     @Override
     public Collection<Resource> getDependencies() {
-        return null;
+        return dependencies;
     }
 
     /**
-     * As this resource is not start able this function will throw a exception
-     * upon a call.
+     * As this resource is not start able this function will throw a exception upon a call.
      */
     @Override
     public String getLaunchClass() {
@@ -117,8 +116,8 @@ public final class Substance implements LibraryResource {
     }
 
     /**
-     * This resource does not require and program arguments. So this function
-     * will return <code>null</code> in any case.
+     * This resource does not require and program arguments. So this function will return <code>null</code> in any
+     * case.
      */
     @Override
     public Collection<String> getProgramArgument() {
@@ -126,8 +125,7 @@ public final class Substance implements LibraryResource {
     }
 
     /**
-     * Generates and returns the list of files that need to be downloaded to get
-     * this resource working.
+     * Generates and returns the list of files that need to be downloaded to get this resource working.
      */
     @Override
     public Collection<URL> getRequiredRessources() {
@@ -144,8 +142,7 @@ public final class Substance implements LibraryResource {
     }
 
     /**
-     * The name of the directory the downloaded files are supposed to be
-     * extracted to.
+     * The name of the directory the downloaded files are supposed to be extracted to.
      */
     @Override
     public String getSubDirectory() {
@@ -153,18 +150,13 @@ public final class Substance implements LibraryResource {
     }
 
     /**
-     * Generate and return the list of virtual machine arguments that are passed
-     * to java when the function is called.
+     * Generate and return the list of virtual machine arguments that are passed to java when the function is called.
      */
     @Override
     public Collection<String> getVMArguments() {
         if (vmArguments == null) {
             final Collection<String> vmArgs = new ArrayList<String>();
-            vmArgs.add("-Dillarion.components.avaiable.flamingo=true"); //$NON-NLS-1$
             vmArgs.add("-Dillarion.components.avaiable.substance=true"); //$NON-NLS-1$
-            vmArgs
-                .add("-Dillarion.components.avaiable.substance-flamingo=true"); //$NON-NLS-1$
-            vmArgs.add("-Dillarion.components.avaiable.trident=true"); //$NON-NLS-1$
 
             vmArguments = vmArgs;
         }

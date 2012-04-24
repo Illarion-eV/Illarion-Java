@@ -1,22 +1,27 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world;
+
+import java.awt.*;
+import java.io.File;
+
+import org.newdawn.slick.openal.SoundStore;
 
 import illarion.client.IllaClient;
 import illarion.client.Login;
@@ -31,18 +36,15 @@ import illarion.common.config.ConfigSystem;
 import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.Location;
-import org.newdawn.slick.openal.SoundStore;
-
-import java.awt.*;
-import java.io.File;
 
 /**
  * Main Class for the player controlled character.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class Player implements ConfigChangeListener {
+public final class Player
+        implements ConfigChangeListener {
     /**
      * The key in the configuration for the music on/off flag.
      */
@@ -121,11 +123,10 @@ public final class Player implements ConfigChangeListener {
     /**
      * The current location of the server map for the player.
      */
-    private final Location loc = Location.getInstance();
+    private final Location loc = new Location();
 
     /**
-     * The player movement handler that takes care that the player character is
-     * walking around.
+     * The player movement handler that takes care that the player character is walking around.
      */
     private final PlayerMovement movementHandler;
 
@@ -135,14 +136,12 @@ public final class Player implements ConfigChangeListener {
     private final String name;
 
     /**
-     * The path to the folder of character specific stuff, like the map or the
-     * names table.
+     * The path to the folder of character specific stuff, like the map or the names table.
      */
     private final File path;
 
     /**
-     * The perception attribute of the character. This value is used for LOS
-     * calculations.
+     * The perception attribute of the character. This value is used for LOS calculations.
      */
     private int perception;
 
@@ -154,8 +153,7 @@ public final class Player implements ConfigChangeListener {
     private boolean validLocation = false;
 
     /**
-     * Constructor for the player that receives the character name from the
-     * login data automatically.
+     * Constructor for the player that receives the character name from the login data automatically.
      */
     public Player() {
         this(Login.getInstance().getSelectedCharacterName());
@@ -163,21 +161,19 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Default constructor for the player.
-     * 
+     *
      * @param newName the character name of the player playing this game
      */
     @SuppressWarnings("nls")
     public Player(final String newName) {
         name = newName;
 
-        path =
-            new File(DirectoryManager.getInstance().getUserDirectory(), name);
+        path = new File(DirectoryManager.getInstance().getUserDirectory(), name);
 
         character = Char.create();
 
         if (!path.isDirectory() && !path.mkdir()) {
-            IllaClient
-                .fallbackToLogin(Lang.getMsg("error.character_settings"));
+            IllaClient.fallbackToLogin(Lang.getMsg("error.character_settings"));
             cfg = null;
             movementHandler = null;
             inventory = null;
@@ -203,7 +199,7 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Check how good the player character is able to see the target character.
-     * 
+     *
      * @param chara The character that is checked
      * @return the visibility of the character in percent
      */
@@ -224,7 +220,7 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Check if the player character can see a location on the map at all.
-     * 
+     *
      * @param targetLoc The location that is checked for visibility
      * @return true if the location is visible
      */
@@ -233,20 +229,19 @@ public final class Player implements ConfigChangeListener {
     }
 
     /**
-     * The monitor function that is notified in case the configuration changes
-     * and triggers the required updates.
+     * The monitor function that is notified in case the configuration changes and triggers the required updates.
      */
     @Override
     public void configChanged(final Config config, final String key) {
-        if (key.equals(CFG_SOUND_ON) || key.equals(CFG_SOUND_VOL)
-            || key.equals(CFG_MUSIC_ON) || key.equals(CFG_MUSIC_VOL)) {
+        if (key.equals(CFG_SOUND_ON) || key.equals(CFG_SOUND_VOL) || key.equals(CFG_MUSIC_ON) || key.equals
+                (CFG_MUSIC_VOL)) {
             updateListener();
         }
     }
 
     /**
      * Get the map level the player character is currently standing on.
-     * 
+     *
      * @return The level the player character is currently standing on
      */
     public int getBaseLevel() {
@@ -255,7 +250,7 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Get the configuration interface for the character specific settings.
-     * 
+     *
      * @return the configuration interface
      */
     public Config getCfg() {
@@ -264,7 +259,7 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Get the graphical representation of the players character.
-     * 
+     *
      * @return The character of the player
      */
     public Char getCharacter() {
@@ -273,10 +268,9 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Get the location in the front of the character.
-     * 
+     *
      * @return The location right in the front of the character
-     * @deprecated Better use {@link #getFrontLocation(Location)} to avoid the
-     *             creation of too many new objects
+     * @deprecated Better use {@link #getFrontLocation(Location)} to avoid the creation of too many new objects
      */
     @Deprecated
     public Location getFrontLocation() {
@@ -288,9 +282,8 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Get the location in the front of the character.
-     * 
-     * @param targetLoc the front location of the character is stored in this
-     *            location object
+     *
+     * @param targetLoc the front location of the character is stored in this location object
      */
     public void getFrontLocation(final Location targetLoc) {
         targetLoc.set(loc);
@@ -299,7 +292,7 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Get the inventory of the player.
-     * 
+     *
      * @return the player inventory
      */
     public Inventory getInventory() {
@@ -308,7 +301,7 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Get the current location of the character.
-     * 
+     *
      * @return The current location of the character
      */
     public Location getLocation() {
@@ -316,9 +309,8 @@ public final class Player implements ConfigChangeListener {
     }
 
     /**
-     * Get the movement handler of the player character that allows controls the
-     * movement of the player.
-     * 
+     * Get the movement handler of the player character that allows controls the movement of the player.
+     *
      * @return the movement handler
      */
     public PlayerMovement getMovementHandler() {
@@ -327,7 +319,7 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Get the path to the player directory.
-     * 
+     *
      * @return The path to the player directory
      */
     public File getPath() {
@@ -336,7 +328,7 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Get the current ID of the players character.
-     * 
+     *
      * @return The ID of the player character
      */
     public long getPlayerId() {
@@ -345,15 +337,14 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Get the visibility of a target location for the players character.
-     * 
+     *
      * @param targetLoc The location that is checked for visibility
      * @param limit The maximum value for the visibility
      * @return The visibility of the target location
      */
     private int getVisibility(final Location targetLoc, final int limit) {
         // target is at same level or above char
-        final boolean visible =
-            targetLoc.getScZ() <= character.getLocation().getScZ();
+        final boolean visible = targetLoc.getScZ() <= character.getLocation().getScZ();
         // calculate line-of-sight
         if (visible && (character.getLocation().getDistance(targetLoc) < 30)) {
             // calculate intervening fields.
@@ -365,9 +356,8 @@ public final class Player implements ConfigChangeListener {
             MapTile tile = null;
             final GameMap map = World.getMap();
             final Point point = new Point();
-            int coverage =
-                World.getWeather().getVisiblity()
-                    - ((perception - PERCEPTION_AVERAGE) * PERCEPTION_COVER_SHARE);
+            int coverage = World.getWeather().getVisiblity() - ((perception - PERCEPTION_AVERAGE) *
+                    PERCEPTION_COVER_SHARE);
             // skip tile the character is standing on
             for (int i = 1; i < length; i++) {
                 line.getPoint(i, point);
@@ -397,7 +387,7 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Check if a location is at the same level as the player.
-     * 
+     *
      * @param checkLoc The location that shall be checked
      * @return true if the location is at the same level as the player
      */
@@ -406,23 +396,19 @@ public final class Player implements ConfigChangeListener {
     }
 
     /**
-     * Check if the player character is currently looking at a specified
-     * character.
-     * 
+     * Check if the player character is currently looking at a specified character.
+     *
      * @param chara The character the player character could look at
      * @return true if the player character is looking at the character
      */
     public boolean isLookingAt(final Char chara) {
-        final int dist =
-            Math.abs(character.getDirection()
-                - getLocation().getDirection(chara.getLocation()));
-        return (dist < MINIMUM_LOOKING_AT_RANGE)
-            || (dist > MAXIMUM_LOOKING_AT_RANGE);
+        final int dist = Math.abs(character.getDirection() - getLocation().getDirection(chara.getLocation()));
+        return (dist < MINIMUM_LOOKING_AT_RANGE) || (dist > MAXIMUM_LOOKING_AT_RANGE);
     }
 
     /**
      * Determines whether the character is currently moving.
-     * 
+     *
      * @return <code>true</code> if the character is moving
      * @deprecated directly get the information from the movement handler
      */
@@ -433,12 +419,10 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Check of a position in server coordinates is on the screen of the player.
-     * 
+     *
      * @param testLoc The location that shall be checked.
-     * @param tolerance an additional tolerance added to the default clipping
-     *            distance
-     * @return true if the position is within the clipping distance and the
-     *         tolerance
+     * @param tolerance an additional tolerance added to the default clipping distance
+     * @return true if the position is within the clipping distance and the tolerance
      */
     public boolean isOnScreen(final Location testLoc, final int tolerance) {
         final int limit = CLIP_DISTANCE + tolerance;
@@ -447,7 +431,7 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Check if a ID is the ID of the player.
-     * 
+     *
      * @param checkId the ID to be checked
      * @return true if it is the player, false if not
      */
@@ -456,10 +440,9 @@ public final class Player implements ConfigChangeListener {
     }
 
     /**
-     * Change the location of the character. This will instantly change the
-     * position on the map where the client is shown. Calling this function is a
-     * result of any warp requested by the server.
-     * 
+     * Change the location of the character. This will instantly change the position on the map where the client is
+     * shown. Calling this function is a result of any warp requested by the server.
+     *
      * @param newLoc new location of the character on the map
      */
     public void setLocation(final Location newLoc) {
@@ -485,7 +468,7 @@ public final class Player implements ConfigChangeListener {
 
     /**
      * Set the value of the character attribute "perception".
-     * 
+     *
      * @param value The new perception value
      */
     public void setPerception(final int value) {
@@ -493,21 +476,17 @@ public final class Player implements ConfigChangeListener {
     }
 
     /**
-     * Set the ID of the players character. This also causes a introducing of
-     * the player character to the rest of the client, so the chat box for
-     * example is able to show the name of the character without additional
-     * affords.
-     * 
+     * Set the ID of the players character. This also causes a introducing of the player character to the rest of the
+     * client, so the chat box for example is able to show the name of the character without additional affords.
+     *
      * @param newPlayerId the new ID of the player
      */
     public void setPlayerID(final long newPlayerId) {
         playerId = newPlayerId;
         character.setCharId(playerId);
 
-        final RequestAppearanceCmd cmd =
-            CommandFactory.getInstance()
-                .getCommand(CommandList.CMD_REQUEST_APPEARANCE,
-                    RequestAppearanceCmd.class);
+        final RequestAppearanceCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_REQUEST_APPEARANCE,
+                                                                                 RequestAppearanceCmd.class);
         cmd.request(newPlayerId);
         cmd.send();
 
@@ -516,8 +495,7 @@ public final class Player implements ConfigChangeListener {
     }
 
     /**
-     * Then this instance of player is removed its content needs to removed
-     * correctly as well.
+     * Then this instance of player is removed its content needs to removed correctly as well.
      */
     public void shutdown() {
         World.getPeople().setPlayerCharacter(null);
@@ -530,8 +508,7 @@ public final class Player implements ConfigChangeListener {
      */
     private void updateListener() {
         if (IllaClient.getCfg().getBoolean(CFG_SOUND_ON)) {
-            final float effVol =
-                IllaClient.getCfg().getInteger(CFG_SOUND_VOL) / MAX_CLIENT_VOL;
+            final float effVol = IllaClient.getCfg().getInteger(CFG_SOUND_VOL) / MAX_CLIENT_VOL;
             SoundStore.get().setSoundsOn(true);
             SoundStore.get().setSoundVolume(effVol);
         } else {
@@ -539,8 +516,7 @@ public final class Player implements ConfigChangeListener {
         }
 
         if (IllaClient.getCfg().getBoolean(CFG_MUSIC_ON)) {
-            final float musVol =
-                IllaClient.getCfg().getInteger(CFG_MUSIC_VOL) / MAX_CLIENT_VOL;
+            final float musVol = IllaClient.getCfg().getInteger(CFG_MUSIC_VOL) / MAX_CLIENT_VOL;
             SoundStore.get().setMusicOn(true);
             SoundStore.get().setMusicVolume(musVol);
         } else {
@@ -549,10 +525,9 @@ public final class Player implements ConfigChangeListener {
     }
 
     /**
-     * Update the location that is bound to this player. This does not have any
-     * side effects but the location of the player and the sound listener
-     * changed.
-     * 
+     * Update the location that is bound to this player. This does not have any side effects but the location of the
+     * player and the sound listener changed.
+     *
      * @param newLoc the new location of the player
      */
     public void updateLocation(final Location newLoc) {

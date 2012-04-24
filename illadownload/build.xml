@@ -1,140 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This file is part of the Illarion Download Manager.
-
-Copyright © 2011 - Illarion e.V.
-
-The Illarion Download Manager is free software: you can redistribute i
-and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation, either version 3 of the License,
-or (at your option) any later version.
-
-The Illarion Download Manager is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with
-the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
--->
+<!--
+  ~ This file is part of the Illarion Download Utility.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Download Utility is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Download Utility is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
+  -->
 <project name="Illarion Download System" default="build_download" basedir=".">
-	<description>
+    <description>
         Build the illarion downloader/updater/launcher. This is the replacement
-	    for the Java Webstart deployment system.
+        for the Java Webstart deployment system.
     </description>
 
-	<import file="../illacommon/build_include.xml" />
+    <import file="../illacommon/build_include.xml"/>
 
-	<!-- set global properties for this build -->
-	<property name="src" location="${download}/src" />
-	<property name="classes" location="${download}/antclasses" />
-	<property name="jar" location="${download}/${download.jar}" />
+    <!-- set global properties for this build -->
+    <property name="src" location="${download}/src"/>
+    <property name="classes" location="${download}/antclasses"/>
+    <property name="jar" location="${download}/${download.jar}"/>
 
-	<target name="build_download" description="Build the download jar" depends="check_optional_dirs, init, buildTasks, compile_download" if="keys.exist">
-		<move file="${jar}" tofile="${download.bin}" />
+    <target name="build_download" description="Build the download jar"
+            depends="check_optional_dirs, init, buildTasks, compile_download" if="keys.exist">
+        <move file="${jar}" tofile="${download.bin}"/>
 
-		<resourceprepare targetdir="${signedcompiled}" usepack200="true">
-			<filelist dir="${compiled}">
-				<file name="${download.jar}" />
-			</filelist>
-		</resourceprepare>
+        <resourceprepare targetdir="${signedcompiled}" usepack200="true">
+            <filelist dir="${compiled}">
+                <file name="${download.jar}"/>
+            </filelist>
+        </resourceprepare>
 
-		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}" storetype="${storetype}">
-			<path>
-				<filelist dir="${signedcompiled}">
-					<file name="${download.jar}" />
-				</filelist>
-			</path>
-		</signjar>
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}"
+                 storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${download.jar}"/>
+                </filelist>
+            </path>
+        </signjar>
 
-		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
-			<path>
-				<filelist dir="${signedcompiled}">
-					<file name="${download.jar}" />
-				</filelist>
-			</path>
-		</verifyjar>
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${download.jar}"/>
+                </filelist>
+            </path>
+        </verifyjar>
 
-		<copy file="${signedcompiled}/${download.jar}" tofile="${download.deploy}" />
-		<pack200 srcfile="${download.deploy}" destdir="${setup}" />
-	</target>
+        <copy file="${signedcompiled}/${download.jar}" tofile="${download.deploy}"/>
+        <pack200 srcfile="${download.deploy}" destdir="${setup}"/>
+    </target>
 
-	<target name="compile_download" depends="proguard">
-		<!-- Compile the java code from ${src} into ${build} -->
-		<delete dir="${classes}" />
-		<mkdir dir="${classes}" />
-		<javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}" target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}" debuglevel="${build.debuglevel}">
-			<classpath>
-				<fileset refid="xz" />
-				<fileset refid="swingx" />
-				<pathelement path="${common.bin}" />
-				<pathelement path="${java.home}/lib" />
-			</classpath>
-		</javac>
+    <target name="compile_download" depends="proguard">
+        <!-- Compile the java code from ${src} into ${build} -->
+        <delete dir="${classes}"/>
+        <mkdir dir="${classes}"/>
+        <javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}"
+               target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <classpath>
+                <fileset refid="xz"/>
+                <fileset refid="swingx"/>
+                <pathelement path="${common.bin}"/>
+                <pathelement path="${java.home}/lib"/>
+            </classpath>
+        </javac>
 
-		<!--Build jar file-->
-		<jar jarfile="${jar}" basedir="${classes}" includes="illarion/download/**">
-			<fileset dir="${classes}">
-				<include name="illarion/download/**" />
-			</fileset>
-			<zipgroupfileset refid="swingx" />
-			<zipgroupfileset refid="xz" />
-			<zipfileset src="${common.bin}" />
-			<metainf dir="${download}">
-				<include name="*.txt" />
-			</metainf>
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-Date" value="${TODAY}" />
-				<attribute name="Implementation-Vendor" value="${download.vendor}" />
-				<attribute name="Implementation-Title" value="${download.name}" />
-				<attribute name="Implementation-Version" value="${download.version}" />
-				<attribute name="Main-Class" value="illarion.download.install.Installation" />
-			</manifest>
-		</jar>
+        <!--Build jar file-->
+        <jar jarfile="${jar}" basedir="${classes}" includes="illarion/download/**">
+            <fileset dir="${classes}">
+                <include name="illarion/download/**"/>
+            </fileset>
+            <zipgroupfileset refid="swingx"/>
+            <zipgroupfileset refid="xz"/>
+            <zipfileset src="${common.bin}"/>
+            <metainf dir="${download}">
+                <include name="*.txt"/>
+            </metainf>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="${download.vendor}"/>
+                <attribute name="Implementation-Title" value="${download.name}"/>
+                <attribute name="Implementation-Version" value="${download.version}"/>
+                <attribute name="Main-Class" value="illarion.download.install.Installation"/>
+            </manifest>
+        </jar>
 
-		<jar jarfile="${jar}" basedir="${src}" includes="*.png" update="true" />
-		<jar jarfile="${jar}" basedir="${download}" includes="JNLP-INF/*.jnlp" update="true" compress="false" />
-		<jar jarfile="${jar}" basedir="${src}" includes="messages_de.properties messages_en.properties" update="true" index="true" />
-		<delete dir="${classes}" />
+        <jar jarfile="${jar}" basedir="${src}" includes="*.png" update="true"/>
+        <jar jarfile="${jar}" basedir="${download}" includes="JNLP-INF/*.jnlp" update="true" compress="false"/>
+        <jar jarfile="${jar}" basedir="${src}" includes="messages_de.properties messages_en.properties" update="true"
+             index="true"/>
+        <delete dir="${classes}"/>
 
-		<mkdir dir="${download}/tmp" />
-		<proguard preverify="true" skipnonpubliclibraryclasses="false"
-			skipnonpubliclibraryclassmembers="false"
-			mergeinterfacesaggressively="true"
-			obfuscate="false"
-			optimizationpasses="4"
-			optimize="false"
-			allowaccessmodification="true"
-			overloadaggressively="true"
-			shrink="true"
-			usemixedcaseclassnames="true"
-			printmapping="${download}/mapping.txt">
-			
-			<injar file="${jar}" />
-			<outjar file="${download}/tmp" />
-			<libraryjar refid="javolution" />
-			<libraryjar refid="trove" />
-			<libraryjar refid="log4j" />
-			<libraryjar refid="swt" />
-			<libraryjar refid="nifty" />
-			<libraryjar refid="slick" />
-			<libraryjar refid="tabsplitter" />
-			<libraryjar path="${java.home}/lib" />
-			<keepclasseswithmembers name="illarion.download.install.Installation">
-				<method access="public static" type="void" name="main" parameters="java.lang.String[]" />
-			</keepclasseswithmembers>
-			<keepclasseswithmembers>
-				<method name="getMnemonic" type="int" parameters="" />
-                <method name="createUI" type="javax.swing.plaf.ComponentUI" parameters="javax.swing.JComponent" />
-                <method name="getBackgroundPainter" type="org.jdesktop.swingx.painter.Painter" parameters="" />
-                <method name="setBackgroundPainter" type="void" parameters="org.jdesktop.swingx.painter.Painter" />
-                <method name="displayPropertiesToCSS" type="java.lang.String" parameters="java.awt.Font,java.awt.Color" />
-				<method name="loadActionMap" type="void" parameters="org.jdesktop.swingx.plaf.basic.core.LazyActionMap" />
-			</keepclasseswithmembers>
-		</proguard>
+        <mkdir dir="${download}/tmp"/>
+        <proguard preverify="true" skipnonpubliclibraryclasses="false"
+                  skipnonpubliclibraryclassmembers="false"
+                  mergeinterfacesaggressively="true"
+                  obfuscate="false"
+                  optimizationpasses="4"
+                  optimize="true"
+                  allowaccessmodification="true"
+                  overloadaggressively="true"
+                  shrink="true"
+                  usemixedcaseclassnames="true"
+                  printmapping="${download}/mapping.txt">
 
-		<delete file="${jar}" />
-		<move file="${download}/tmp/${download.jar}" tofile="${jar}" />
-		<delete dir="${download}/tmp" />
-	</target>
+            <injar file="${jar}"/>
+            <outjar file="${download}/tmp"/>
+            <libraryjar refid="javolution"/>
+            <libraryjar refid="trove"/>
+            <libraryjar refid="log4j"/>
+            <libraryjar refid="swt"/>
+            <libraryjar refid="nifty"/>
+            <libraryjar refid="slick"/>
+            <libraryjar refid="tabsplitter"/>
+            <libraryjar path="${java.home}/lib"/>
+            <keepclasseswithmembers name="illarion.download.install.Installation">
+                <method access="public static" type="void" name="main" parameters="java.lang.String[]"/>
+            </keepclasseswithmembers>
+            <keepclasseswithmembers>
+                <method name="getMnemonic" type="int" parameters=""/>
+                <method name="createUI" type="javax.swing.plaf.ComponentUI" parameters="javax.swing.JComponent"/>
+                <method name="getBackgroundPainter" type="org.jdesktop.swingx.painter.Painter" parameters=""/>
+                <method name="setBackgroundPainter" type="void" parameters="org.jdesktop.swingx.painter.Painter"/>
+                <method name="displayPropertiesToCSS" type="java.lang.String"
+                        parameters="java.awt.Font,java.awt.Color"/>
+                <method name="loadActionMap" type="void"
+                        parameters="org.jdesktop.swingx.plaf.basic.core.LazyActionMap"/>
+            </keepclasseswithmembers>
+        </proguard>
+
+        <delete file="${jar}"/>
+        <move file="${download}/tmp/${download.jar}" tofile="${jar}"/>
+        <delete dir="${download}/tmp"/>
+    </target>
 </project>

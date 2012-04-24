@@ -1,24 +1,25 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
 import illarion.client.resources.CharacterFactory;
+import illarion.client.resources.Resource;
 import illarion.client.util.Lang;
 import illarion.client.world.World;
 import illarion.common.graphics.Sprite;
@@ -31,11 +32,11 @@ import java.awt.*;
  * Class for the avatar of a characters. The avatar is the visual representation
  * of a character on a map. All characters, including monsters and NPCs have a
  * avatar.
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class Avatar extends AbstractEntity {
+public final class Avatar extends AbstractEntity implements Resource {
     /**
      * The resource path to the avatar graphics. All graphics need to be located
      * at this path within the JAR-resource files.
@@ -121,41 +122,41 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Create animated avatar for a character.
-     * 
-     * @param avatarID the id of the avatar, the id needs to by unique per
-     *            race/sex/direction combination
-     * @param resName the name of the avatar, needs to fit to the name of the
-     *            resource files with the images for this avatar
-     * @param frames the count of frames for the animation of the character
-     * @param still the still frame, so the frame that is shown in case the
-     *            character does not move
-     * @param offX the offset in x direction in pixels, so the amount of pixels
-     *            the graphic is moved from its origin
-     * @param offY the offset in y direction in pixels, so the amount of pixels
-     *            the graphic is moved from its origin
+     *
+     * @param avatarID     the id of the avatar, the id needs to by unique per
+     *                     race/sex/direction combination
+     * @param resName      the name of the avatar, needs to fit to the name of the
+     *                     resource files with the images for this avatar
+     * @param frames       the count of frames for the animation of the character
+     * @param still        the still frame, so the frame that is shown in case the
+     *                     character does not move
+     * @param offX         the offset in x direction in pixels, so the amount of pixels
+     *                     the graphic is moved from its origin
+     * @param offY         the offset in y direction in pixels, so the amount of pixels
+     *                     the graphic is moved from its origin
      * @param shadowOffset the shadow offset so the amount of pixels the width
-     *            of the image is lowered so the image does not fade out in case
-     *            someone steps into its shadow
-     * @param avatarInfo the avatar information data, such as the name of the
-     *            avatar in German and English and the visibility modifier of
-     *            the avatar
-     * @param mirror show the avatar graphic horizontal mirrored
-     * @param color the color that local light is by default modified with in
-     *            order to get the proper render color of the Avatar
-     * @param dir the direction the avatar is looking at
+     *                     of the image is lowered so the image does not fade out in case
+     *                     someone steps into its shadow
+     * @param avatarInfo   the avatar information data, such as the name of the
+     *                     avatar in German and English and the visibility modifier of
+     *                     the avatar
+     * @param mirror       show the avatar graphic horizontal mirrored
+     * @param color        the color that local light is by default modified with in
+     *                     order to get the proper render color of the Avatar
+     * @param dir          the direction the avatar is looking at
      */
     @SuppressWarnings("nls")
     public Avatar(final int avatarID, final String resName,
-        final int frames, final int still, final int offX, final int offY,
-        final int shadowOffset, final AvatarInfo avatarInfo,
-        final boolean mirror, final Color color, final int dir) {
+                  final int frames, final int still, final int offX, final int offY,
+                  final int shadowOffset, final AvatarInfo avatarInfo,
+                  final boolean mirror, final Color color, final int dir) {
         super(avatarID, CHAR_PATH, resName, frames, still, offX, offY,
-            shadowOffset, Sprite.HAlign.center, Sprite.VAlign.bottom, true,
-            mirror, color);
+                shadowOffset, Sprite.HAlign.center, Sprite.VAlign.bottom, true,
+                mirror, color);
 
         if (avatarInfo == null) {
             throw new IllegalArgumentException(
-                "Avatar informations may not be NULL");
+                    "Avatar informations may not be NULL");
         }
 
         targetLight = DEFAULT_LIGHT;
@@ -179,7 +180,7 @@ public final class Avatar extends AbstractEntity {
     /**
      * Copy constructor. Create a copy of the current instance of the avatar
      * into a new avatar object.
-     * 
+     *
      * @param org the avatar object that shall be copied
      */
     private Avatar(final Avatar org) {
@@ -204,9 +205,9 @@ public final class Avatar extends AbstractEntity {
      * Create a avatar from the avatar factory. This either creates a new
      * instance of the avatar class or it takes a existing instance from the
      * list of currently unused instances.
-     * 
+     *
      * @param avatarID the ID of the character that identifies the name and the
-     *            sex and the direction of the avatar that is needed
+     *                 sex and the direction of the avatar that is needed
      * @return a instance of the needed avatar type
      */
     public static Avatar create(final int avatarID) {
@@ -216,9 +217,9 @@ public final class Avatar extends AbstractEntity {
     /**
      * Activate the avatar instance for usage. This needs to be done right after
      * the avatar instance got created.
-     * 
+     *
      * @param newID doesn't do anything since the ID of this object is related
-     *            to other things that can't be change
+     *              to other things that can't be change
      */
     @Override
     public void activate(final int newID) {
@@ -227,16 +228,16 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Start a animation for this avatar.
-     * 
-     * @param speed the speed of the animation, the larger this value, the
-     *            longer the animation takes to finish
+     *
+     * @param speed  the speed of the animation, the larger this value, the
+     *               longer the animation takes to finish
      * @param parent the parent character that triggered the animation and needs
-     *            to be notified when its finished
-     * @param loop true in case the animation shall never stop and rather run
-     *            forever
+     *               to be notified when its finished
+     * @param loop   true in case the animation shall never stop and rather run
+     *               forever
      */
     public void animate(final int speed, final Animated parent,
-        final boolean loop) {
+                        final boolean loop) {
         if (ani == null) {
             return;
         }
@@ -255,7 +256,7 @@ public final class Avatar extends AbstractEntity {
     /**
      * This function is triggered in case a animation that is not looped
      * finished.
-     * 
+     *
      * @param finished set true in case the animation is really done
      */
     @Override
@@ -267,8 +268,8 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Change the color of one paperdolling object.
-     * 
-     * @param slot the slot of the object that shall get a different color
+     *
+     * @param slot  the slot of the object that shall get a different color
      * @param color the new color that shall be used to color the graphic itself
      */
     public void changeClothColor(final int slot, final Color color) {
@@ -278,7 +279,7 @@ public final class Avatar extends AbstractEntity {
     /**
      * Create a duplicate of this avatar instance. The returned object is a
      * exact copy of the current avatar instance.
-     * 
+     *
      * @return the copy of the current avatar instance
      */
     @Override
@@ -288,8 +289,8 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Check if a cloth item is defined in a specified group.
-     * 
-     * @param group the group where the item shall be searched in
+     *
+     * @param group  the group where the item shall be searched in
      * @param itemID the item id that shall be checked
      * @return <code>true</code> in case the item is defined and renderable
      */
@@ -302,7 +303,7 @@ public final class Avatar extends AbstractEntity {
      * light value to approach the target light in case the light values are
      * different. It also draws the name above the avatar in case it needs to be
      * shown.
-     * 
+     *
      * @return true at all times
      */
     @Override
@@ -322,7 +323,7 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Check if the avatar is able to show a special animation.
-     * 
+     *
      * @param animationID the ID of the animation that shall be checked
      * @return true in case the animation is available
      */
@@ -332,7 +333,7 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Get the manager that holds all clothes this avatar can wear.
-     * 
+     *
      * @return the cloth manager with all clothes the avatar can wear
      */
     public AvatarClothManager getClothes() {
@@ -343,7 +344,7 @@ public final class Avatar extends AbstractEntity {
      * Get the description of the avatar. This description can be used for this
      * name display above the avatar image. The returned string is already the
      * localized version.
-     * 
+     *
      * @return the description text of the avatar, in German or English
      *         regarding the localising settings the client runs with
      */
@@ -356,7 +357,7 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Get the x offset of this avatar.
-     * 
+     *
      * @return the x offset of his avatar
      */
     public int getOffsetX() {
@@ -365,7 +366,7 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Get the y offset of this avatar.
-     * 
+     *
      * @return the y offset of his avatar
      */
     public int getOffsetY() {
@@ -377,7 +378,7 @@ public final class Avatar extends AbstractEntity {
      * height, width and the location of the image on the screen. The location
      * that is set within the rectangle is the location of the origin of the
      * avatar so the rectangle does not mark the borders of the avatar for sure.
-     * 
+     *
      * @return the rectangle of the the avatar image
      * @deprecated better use {@link #getRectangle(Rectangle)} to avoid the
      *             creation of too many instances of the rectangle object. This
@@ -395,10 +396,10 @@ public final class Avatar extends AbstractEntity {
      * height, width and the location of the image on the screen. The location
      * that is set within the rectangle is the location of the origin of the
      * avatar so the rectangle does not mark the borders of the avatar for sure.
-     * 
+     *
      * @param targetRectangle the rectangle object that is the target of the
-     *            bounding rectangle. The bounding data is set to this
-     *            rectangle.
+     *                        bounding rectangle. The bounding data is set to this
+     *                        rectangle.
      */
     public void getRectangle(final Rectangle targetRectangle) {
         targetRectangle.x = getDisplayX() - (getWidth() >> 1);
@@ -409,7 +410,7 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Get the visibility modifier of the avatar.
-     * 
+     *
      * @return the visibility modifier of the avatar, the value is handled as
      *         percent value
      */
@@ -420,7 +421,7 @@ public final class Avatar extends AbstractEntity {
     /**
      * Check if the light is currently animated. Means the light is currently
      * changing towards a target light color.
-     * 
+     *
      * @return true in case the light is currently animated
      */
     public boolean hasAnimatedLight() {
@@ -447,7 +448,7 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Remove a item from the list of items that are shown as clothes.
-     * 
+     *
      * @param group the group that shall be cleaned
      */
     public void removeClothItem(final int group) {
@@ -473,9 +474,9 @@ public final class Avatar extends AbstractEntity {
     /**
      * Set a item as a clothing item to a specified body location. In case its
      * defined the cloth renderer will try to show the cloth on the avatar.
-     * 
-     * @param group the group of the item, so the location of the item, where it
-     *            shall be displayed
+     *
+     * @param group  the group of the item, so the location of the item, where it
+     *               shall be displayed
      * @param itemID the ID of the item that shall be displayed
      */
     public void setClothItem(final int group, final int itemID) {
@@ -485,7 +486,7 @@ public final class Avatar extends AbstractEntity {
     /**
      * Set the current frame of the avatar. This forwards the frame to the
      * Entity super function but sends it also to the cloth render.
-     * 
+     *
      * @param frame the index of the frame that shall be rendered next
      */
     @Override
@@ -498,7 +499,7 @@ public final class Avatar extends AbstractEntity {
      * Set the light this avatar is colored with. Setting the light with this
      * function will disable the smooth change of the light and sets the light
      * color right away.
-     * 
+     *
      * @param light the light the avatar is enlighten with
      */
     @Override
@@ -513,7 +514,7 @@ public final class Avatar extends AbstractEntity {
      * function will enable the smooth change of the light and so the light
      * color of the avatar will slowly approach the color of the light set with
      * this function.
-     * 
+     *
      * @param light the target light color for this avatar
      */
     public void setLightTarget(final Color light) {
@@ -527,7 +528,7 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Set the name that is displayed in the tag above the avatar graphic.
-     * 
+     *
      * @param charName the name that is displayed above the character graphic
      */
     public void setName(final String charName) {
@@ -548,9 +549,9 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Set the color of the text that is shown above the avatar that is shown.
-     * 
+     *
      * @param color the color that is used for the font of the the text that is
-     *            shown above the character and shows the name of the character
+     *              shown above the character and shows the name of the character
      * @see illarion.client.graphics.Colors
      */
     public void setNameColor(final Color color) {
@@ -566,9 +567,9 @@ public final class Avatar extends AbstractEntity {
      * 1.2f. The size is applied to the height and the width of the avatar
      * images since scaling height and width independent from each other would
      * look crap.
-     * 
+     *
      * @param newScale the new scale value of the avatar image. Values between
-     *            0.5f and 1.2f are valid
+     *                 0.5f and 1.2f are valid
      */
     @Override
     public void setScale(final float newScale) {
@@ -578,15 +579,15 @@ public final class Avatar extends AbstractEntity {
 
     /**
      * Set the location on the screen.
-     * 
-     * @param posX the x coordinate of the location on the screen
-     * @param posY the y coordinate of the location on the screen
-     * @param layerZ the z coordinate, so the layer on the screen
+     *
+     * @param posX       the x coordinate of the location on the screen
+     * @param posY       the y coordinate of the location on the screen
+     * @param layerZ     the z coordinate, so the layer on the screen
      * @param groupLayer the global layer value of the graphic type
      */
     @Override
     public void setScreenPos(final int posX, final int posY, final int layerZ,
-        final int groupLayer) {
+                             final int groupLayer) {
         super.setScreenPos(posX, posY, layerZ, groupLayer);
         clothRender.setScreenLocation(posX, posY, layerZ, groupLayer);
     }
@@ -594,7 +595,7 @@ public final class Avatar extends AbstractEntity {
     /**
      * Update the values of this avatar entity. The light values, the alpha
      * values as well as the name display is checked using this function.
-     * 
+     *
      * @param delta the time since the last update in milliseoncs
      */
     @Override
@@ -606,14 +607,14 @@ public final class Avatar extends AbstractEntity {
 
         final Color locLight = getLight();
         if (animateLight && (locLight != null)
-            && AnimationUtility.approach(locLight, targetLight, delta)) {
+                && AnimationUtility.approach(locLight, targetLight, delta)) {
             targetLight = locLight;
             animateLight = false;
         }
 
         if ((getAlpha() > HIDE_NAME_ALPHA)
-            && (World.getPeople().getShowMapNames() > 0) && (name != null)
-            && (locLight != null)) {
+                && (World.getPeople().getShowMapNames() > 0) && (name != null)
+                && (locLight != null)) {
             if (!renderName) {
                 name.addToCamera(getDisplayX(), getDisplayY());
             }

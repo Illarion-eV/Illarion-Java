@@ -18,12 +18,13 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
-import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.net.client.CloseDialogInputCmd;
+import illarion.client.net.server.events.DialogInputReceivedEvent;
+import javolution.text.TextBuilder;
+import org.bushe.swing.event.EventBus;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Text Request ( {@link illarion.client.net.CommandList#MSG_DIALOG_INPUT}).
@@ -50,7 +51,7 @@ public final class DialogInputMsg
     /**
      * The ID of this request.
      */
-    private long requestId;
+    private int requestId;
 
     /**
      * Default constructor for the effect message.
@@ -79,9 +80,9 @@ public final class DialogInputMsg
     public void decode(final NetCommReader reader)
             throws IOException {
         title = reader.readString();
-        multiLine = (reader.readByte() != 0);
+        multiLine = reader.readByte() != 0;
         maxCharacters = reader.readUShort();
-        requestId = reader.readUInt();
+        requestId = reader.readInt();
     }
 
     /**
@@ -91,16 +92,8 @@ public final class DialogInputMsg
      */
     @Override
     public boolean executeUpdate() {
-        final CloseDialogInputCmd cmd = (CloseDialogInputCmd) CommandFactory.getInstance().getCommand(CommandList
-
-
-
-
-
-                                                                                                              .CMD_CLOSE_DIALOG_INPUT);
-        cmd.setText("This client has no intension of talking with you.");
-        cmd.setDialogId(requestId);
-        cmd.send();
+        System.out.println(toString());
+        EventBus.publish(new DialogInputReceivedEvent(requestId, title, maxCharacters, multiLine));
 
         return true;
     }
@@ -121,6 +114,15 @@ public final class DialogInputMsg
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Text Request: " + requestId);
+        final TextBuilder builder = TextBuilder.newInstance();
+        try {
+            builder.append("title: ").append(title);
+            builder.append(" id: ").append(requestId);
+            builder.append(" maximal characters: ").append(maxCharacters);
+            builder.append(" support multiline: ").append(multiLine);
+            return toString(builder.toString());
+        } finally {
+            TextBuilder.recycle(builder);
+        }
     }
 }

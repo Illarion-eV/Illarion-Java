@@ -1,24 +1,25 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
 import illarion.client.resources.ItemFactory;
+import illarion.client.resources.Resource;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
@@ -30,11 +31,11 @@ import org.newdawn.slick.Graphics;
 /**
  * A item is a object that is on the game map or in the inventory or in any
  * container showcase of the client.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class Item extends AbstractEntity {
+public final class Item extends AbstractEntity implements Resource {
     /**
      * The minimal height of the item image in pixels that is needed so the item
      * graphic fades out in case the player avatar is (partly) hidden by the
@@ -109,32 +110,32 @@ public final class Item extends AbstractEntity {
     /**
      * Create a new item based on the parameters. The item allows recoloring by
      * a base color.
-     * 
-     * @param itemID the ID of the item
-     * @param name the base name of the item resource files that are loaded to
-     *            get the image(s) for this item
-     * @param offX the x offset of the item graphic
-     * @param offY the y offset of the item graphic
-     * @param offS the shadow offset of the item graphic, so the area of the
-     *            item graphic that is not taken into consideration at the check
-     *            if the item needs to fade out
-     * @param frames the amount of frames of this item, this frames can be used
-     *            as animation or as variances
-     * @param speed the speed of the animation, speed 0 means the item uses the
-     *            frames as variances
-     * @param itemInfo the item informations about the items that are shared by
-     *            all instances of the item and do never change
-     * @param baseColor the color this item is colored with or null to keep the
-     *            original color
+     *
+     * @param itemID      the ID of the item
+     * @param name        the base name of the item resource files that are loaded to
+     *                    get the image(s) for this item
+     * @param offX        the x offset of the item graphic
+     * @param offY        the y offset of the item graphic
+     * @param offS        the shadow offset of the item graphic, so the area of the
+     *                    item graphic that is not taken into consideration at the check
+     *                    if the item needs to fade out
+     * @param frames      the amount of frames of this item, this frames can be used
+     *                    as animation or as variances
+     * @param speed       the speed of the animation, speed 0 means the item uses the
+     *                    frames as variances
+     * @param itemInfo    the item informations about the items that are shared by
+     *                    all instances of the item and do never change
+     * @param baseColor   the color this item is colored with or null to keep the
+     *                    original color
      * @param referenceID the reference ID to refer to the paperdolling graphic
      */
     public Item(final int itemID, final String name, final int offX,
-        final int offY, final int offS, final int frames, final int speed,
-        final ItemInfo itemInfo, final Color baseColor,
-        final int referenceID) {
+                final int offY, final int offS, final int frames, final int speed,
+                final ItemInfo itemInfo, final Color baseColor,
+                final int referenceID) {
         super(itemID, ITEM_PATH, name, frames, 0, offX, offY, offS,
-            Sprite.HAlign.center, Sprite.VAlign.bottom,
-            itemInfo.hasVariance(), false, baseColor);
+                Sprite.HAlign.center, Sprite.VAlign.bottom,
+                itemInfo.hasVariance(), false, baseColor);
 
         info = itemInfo;
 
@@ -168,7 +169,7 @@ public final class Item extends AbstractEntity {
      * use the same instance of the animation and show the same frame at the
      * same time.
      * </p>
-     * 
+     *
      * @param org the item instance that shall be copied
      */
     private Item(final Item org) {
@@ -185,15 +186,15 @@ public final class Item extends AbstractEntity {
      * Create a new item instance for a ID and a specified location. The
      * location is used in case the item has variances. The item is not set on
      * the map tile of the location by default.
-     * 
-     * @param itemID the ID of the item that shall be created
+     *
+     * @param itemID    the ID of the item that shall be created
      * @param locColumn the column on the map where the item shall be created
-     * @param locRow the row on the map where the item shall be created
+     * @param locRow    the row on the map where the item shall be created
      * @return the item object that shall be used, either a newly created one or
      *         a unused from the recycler
      */
     public static Item create(final int itemID, final int locColumn,
-        final int locRow) {
+                              final int locRow) {
         final Item item = ItemFactory.getInstance().getCommand(itemID);
         // Set variant and scaling, this functions check on their own if this is
         // allowed
@@ -206,9 +207,9 @@ public final class Item extends AbstractEntity {
      * Create a new item instance for a ID and a specified location. The
      * location is used in case the item has variances. The item is not set on
      * the map tile of the location by default.
-     * 
+     *
      * @param itemID the ID of the item that shall be created
-     * @param loc the location where the item shall be shown
+     * @param loc    the location where the item shall be shown
      * @return the item object that shall be used, either a newly created one or
      *         a unused from the recycler
      */
@@ -218,9 +219,9 @@ public final class Item extends AbstractEntity {
 
     /**
      * Activate the item instance after it got out of the recycle factory.
-     * 
+     *
      * @param newID the id that was requested when this instance of the item
-     *            object came out of the factory
+     *              object came out of the factory
      */
     @Override
     public void activate(final int newID) {
@@ -232,7 +233,7 @@ public final class Item extends AbstractEntity {
      * one item object of the same kind on the screen and more instances of this
      * object are needed. The returned copy is usable right away and will draw
      * exactly the same as this instance.
-     * 
+     *
      * @return the newly created item instance
      */
     @Override
@@ -245,7 +246,7 @@ public final class Item extends AbstractEntity {
      * to fade out in order to free the view on the player character this is
      * done here also. And it case the item needs to draw a number, this is done
      * as well.
-     * 
+     *
      * @return <code>true</code> in case the render operation is done
      *         successfully
      */
@@ -262,7 +263,7 @@ public final class Item extends AbstractEntity {
 
     /**
      * Enable the display of numbers for stacked items.
-     * 
+     *
      * @param newShowNumber <code>true</code> to show the number at this item
      */
     public void enableNumbers(final boolean newShowNumber) {
@@ -273,7 +274,7 @@ public final class Item extends AbstractEntity {
      * Get the count of the item. A count greater then 1 means that this item
      * represents a item stack with the returned amount of items of the same
      * kind on it.
-     * 
+     *
      * @return the number of items on the stack or 1 in case there is just one
      *         item
      */
@@ -283,7 +284,7 @@ public final class Item extends AbstractEntity {
 
     /**
      * Get the value how much this item blocks the line of sight.
-     * 
+     *
      * @return the value in percent how much the line of sight is blocked by
      *         this item
      * @see illarion.common.graphics.ItemInfo#getOpacity()
@@ -295,7 +296,7 @@ public final class Item extends AbstractEntity {
     /**
      * Get the facing of the item, so the directions this item accepts light
      * from.
-     * 
+     *
      * @return the direction the item accepts light from
      * @see illarion.common.graphics.ItemInfo#getFace()
      */
@@ -305,7 +306,7 @@ public final class Item extends AbstractEntity {
 
     /**
      * Get the encoded value of the light that is emitted by this item.
-     * 
+     *
      * @return the encoded value of the light
      * @see illarion.common.graphics.ItemInfo#getLight()
      */
@@ -317,7 +318,7 @@ public final class Item extends AbstractEntity {
      * Get the surface level of the item. Other items that get placed on this
      * tile need to move up by the returned value in order to appear to lie on
      * this item.
-     * 
+     *
      * @return the offset of the surface of this item, relative to the origin of
      *         this item
      * @see illarion.common.graphics.ItemInfo#getLevel()
@@ -328,7 +329,7 @@ public final class Item extends AbstractEntity {
 
     /**
      * Get the color that is used for paperdolling in case there is one set.
-     * 
+     *
      * @return the color that is used as base color for paperdolling or
      *         <code>null</code>
      */
@@ -339,7 +340,7 @@ public final class Item extends AbstractEntity {
     /**
      * Get the Reference ID that is used to the get the correct paperdolling
      * graphic.
-     * 
+     *
      * @return the paperdolling reference id
      */
     public int getPaperdollingId() {
@@ -348,7 +349,7 @@ public final class Item extends AbstractEntity {
 
     /**
      * Check if this item is a book or not.
-     * 
+     *
      * @return <code>true</code> if this item is a book and is handle able by
      *         the book reader
      * @see illarion.common.graphics.ItemInfo#isBook()
@@ -361,7 +362,7 @@ public final class Item extends AbstractEntity {
 
     /**
      * Check if this item is a container.
-     * 
+     *
      * @return <code>true</code> in case the item is a container
      * @see illarion.common.graphics.ItemInfo#isContainer()
      */
@@ -372,7 +373,7 @@ public final class Item extends AbstractEntity {
     /**
      * Check if the item is a Jesus item and allows walking over blocked tiles
      * such as water.
-     * 
+     *
      * @return <code>true</code> if the item allows walking over blocked tiles
      * @see illarion.common.graphics.ItemInfo#isJesus()
      */
@@ -382,7 +383,7 @@ public final class Item extends AbstractEntity {
 
     /**
      * Check if this item emits any light.
-     * 
+     *
      * @return <code>true</code> in case this item is a source of light
      * @see illarion.common.graphics.ItemInfo#isLight()
      */
@@ -392,7 +393,7 @@ public final class Item extends AbstractEntity {
 
     /**
      * Check if the item can be moved around.
-     * 
+     *
      * @return <code>true</code> if the item can be moved around by the player
      * @see illarion.common.graphics.ItemInfo#isMovable()
      */
@@ -402,7 +403,7 @@ public final class Item extends AbstractEntity {
 
     /**
      * Check if the item is obstacle, so the pathfinder needs to walk around it.
-     * 
+     *
      * @return <code>true</code> if the item is obstacle
      * @see illarion.common.graphics.ItemInfo#isObstacle()
      */
@@ -440,12 +441,12 @@ public final class Item extends AbstractEntity {
 
     /**
      * Scale the size of the item to a new one.
-     * 
-     * @param size the new size in pixel of the item object, this value is
-     *            applied to the larger side, so either height or width of the
-     *            item image
+     *
+     * @param size    the new size in pixel of the item object, this value is
+     *                applied to the larger side, so either height or width of the
+     *                item image
      * @param enlarge <code>true</code> to allow to enlarge the item image, else
-     *            only scaling ratios below 1 are applied
+     *                only scaling ratios below 1 are applied
      */
     public void scaleTo(final int size, final boolean enlarge) {
         final int value = Math.max(getHeight(), getWidth());
@@ -459,10 +460,10 @@ public final class Item extends AbstractEntity {
 
     /**
      * Set number of stacked items.
-     * 
+     *
      * @param newCount the number of items on this stack, in case its more then
-     *            one a text is displayed next to the item that shown how many
-     *            items are on the stack
+     *                 one a text is displayed next to the item that shown how many
+     *                 items are on the stack
      */
     public void setCount(final int newCount) {
         count = newCount;
@@ -476,7 +477,7 @@ public final class Item extends AbstractEntity {
             number.setColor(Color.yellow);
             number.setText(Integer.toString(count));
             number.setOffset((MapConstants.TILE_W / 2) - number.getHeight()
-                - number.getWidth(), -number.getHeight() / 2);
+                    - number.getWidth(), -number.getHeight() / 2);
         } else if (number != null) {
             number.recycle();
             number = null;
@@ -486,9 +487,9 @@ public final class Item extends AbstractEntity {
     /**
      * Set the color that is used in case this item is displayed as a
      * paperdolling item.
-     * 
+     *
      * @param color the instance of sprite color that is used as base color in
-     *            case paperdolling is done with this item
+     *              case paperdolling is done with this item
      */
     public void setPaperdollingColor(final Color color) {
         paperdollingColor = color;
@@ -521,7 +522,7 @@ public final class Item extends AbstractEntity {
     /**
      * Update the displayed item. This takes care for fading effects in case
      * needed and for handling the display of the number at the item.
-     * 
+     *
      * @param delta the time in milliseconds since the last update
      */
     @Override
@@ -544,7 +545,7 @@ public final class Item extends AbstractEntity {
     /**
      * Determine the graphical variant from a coordinate and set the needed
      * frame on this.
-     * 
+     *
      * @param locX the first part of the coordinate
      * @param locY the second part of the coordinate
      */
@@ -558,14 +559,14 @@ public final class Item extends AbstractEntity {
     /**
      * Set an individual scale dependent on a location. The new scale value is
      * directly applied to the item.
-     * 
+     *
      * @param locX the first part of the coordinate
      * @param locY the second part of the coordinate
      */
     private void setScale(final int locX, final int locY) {
         if (info.hasVariance()) {
             setScale(MapVariance.getItemScaleVariance(locX, locY,
-                info.getVariance()));
+                    info.getVariance()));
         }
     }
 }

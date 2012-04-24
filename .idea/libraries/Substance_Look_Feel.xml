@@ -1,17 +1,29 @@
 <component name="libraryTable">
   <library name="Substance Look&amp;Feel">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/illacommon/lib/substance" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/laf" />
       <root url="file://$PROJECT_DIR$/illacommon/lib/substance" />
       <root url="file://$PROJECT_DIR$/illacommon/lib/substance-flamingo" />
       <root url="file://$PROJECT_DIR$/illacommon/lib/substance-swingx" />
       <root url="file://$PROJECT_DIR$/illacommon/lib/trident" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/laf" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/substance" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/substance-flamingo" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/substance-swingx" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/trident" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/laf" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/substance" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/substance-flamingo" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/substance-swingx" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/trident" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/laf" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/substance" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/substance-flamingo" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/substance-swingx" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/trident" recursive="false" type="SOURCES" />
   </library>
 </component>

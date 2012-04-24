@@ -1,26 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
 <nifty-styles>
-  <!-- +++++++++++++++++++++++++++++++++++++ -->
-  <!-- style for the button background panel -->
-  <!-- +++++++++++++++++++++++++++++++++++++ -->
-  <style id="nifty-button#panel">
-    <attributes backgroundImage="button/button" imageMode="sprite-resize:100,23,0,10,80,10,11,10,80,10,2,10,80,10,10" paddingLeft="7px" paddingRight="7px" width="100px" height="23px" childLayout="center" visibleToMouse="true" />
-    <effect>
-      <onHover name="imageOverlay" filename="data/gui/button/button.png" imageMode="sprite-resize:100,23,1,10,80,10,11,10,80,10,2,10,80,10,10" post="true" />
-      <onFocus name="imageOverlay" filename="data/gui/button/button.png" imageMode="sprite-resize:100,23,2,10,80,10,11,10,80,10,2,10,80,10,10" post="true" />
-      <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150" />
-      <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150" />
-    </effect>
-  </style>
+    <!-- +++++++++++++++++++++++++++++++++++++ --><!-- style for the button background panel --><!-- +++++++++++++++++++++++++++++++++++++ -->
+    <style id="nifty-button#panel">
+        <attributes backgroundImage="data/gui/button/button.png" imageMode="sprite-resize:100,23,0,10,80,10,11,10,80,10,2,10,80,10,10" paddingLeft="7px" paddingRight="7px" width="100px" height="23px" childLayout="center" visibleToMouse="true" />
+        <effect>
+            <onHover name="imageOverlay" filename="data/gui/button/button.png" imageMode="sprite-resize:100,23,1,10,80,10,11,10,80,10,2,10,80,10,10" post="true" />
+            <onFocus name="imageOverlay" filename="data/gui/button/button.png" imageMode="sprite-resize:100,23,2,10,80,10,11,10,80,10,2,10,80,10,10" post="true" />
+            <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150" />
+            <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150" />
+        </effect>
+    </style>
 
-  <!-- +++++++++++++++++++++++++++++++++++++ -->
-  <!-- style for the button text -->
-  <!-- +++++++++++++++++++++++++++++++++++++ -->
-  <style id="nifty-button#text" base="button-font">
-    <attributes align="center" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false"/>
-    <effect>
-      <onEnabled name="textColorAnimated" startColor="#8886" endColor="#eeef" post="false" length="150" />
-      <onDisabled name="textColorAnimated" startColor="#eeef" endColor="#8886" post="false" length="150" />
-    </effect>
-  </style>
+    <!-- +++++++++++++++++++++++++++++++++++++ --><!-- style for the button text --><!-- +++++++++++++++++++++++++++++++++++++ -->
+    <style id="nifty-button#text" base="button-font">
+        <attributes align="center" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false" />
+        <effect>
+            <onEnabled name="textColorAnimated" startColor="#8886" endColor="#eeef" post="false" length="150" />
+            <onDisabled name="textColorAnimated" startColor="#eeef" endColor="#8886" post="false" length="150" />
+        </effect>
+    </style>
 </nifty-styles>

@@ -1,25 +1,32 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world;
 
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.list.array.TShortArrayList;
+import javolution.util.FastTable;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
+
 import illarion.client.graphics.AlphaChangeListener;
 import illarion.client.graphics.Effect;
 import illarion.client.graphics.Item;
@@ -34,16 +41,12 @@ import illarion.common.graphics.LightSource;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
-import javolution.util.FastTable;
-import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-
-import java.util.List;
 
 /**
  * A tile on the map. Contains the tile graphics and items.
  */
-public final class MapTile implements AlphaChangeListener, RecycleObject {
+public final class MapTile
+        implements AlphaChangeListener, RecycleObject {
 
     /**
      * Default Tile ID for no tile at this position.
@@ -57,12 +60,11 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Create a new instance of a map tile using the GameFactory.
-     * 
+     *
      * @return the new instance of the map tile
      */
     protected static MapTile create() {
-        return (MapTile) GameFactory.getInstance().getCommand(
-            GameFactory.OBJ_MAPTILE);
+        return (MapTile) GameFactory.getInstance().getCommand(GameFactory.OBJ_MAPTILE);
     }
 
     /**
@@ -111,8 +113,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     private boolean losDirty;
 
     /**
-     * The ID of the sound track that is played while the player is standing on
-     * this tile.
+     * The ID of the sound track that is played while the player is standing on this tile.
      */
     private int musicId;
 
@@ -139,8 +140,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     private final Color tmpLight = new Color(0);
 
     /**
-     * Default Constructor for a map tile. Generates the tooltip and sets up all
-     * initial values for the tile.
+     * Default Constructor for a map tile. Generates the tooltip and sets up all initial values for the tile.
      */
     @SuppressWarnings("nls")
     public MapTile() {
@@ -151,20 +151,19 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Activate the tile and ready it for usage. This fetches the objects that
-     * are required for this instance to work properly.
-     * 
+     * Activate the tile and ready it for usage. This fetches the objects that are required for this instance to work
+     * properly.
+     *
      * @param id parameter not in use
      */
     @Override
     public void activate(final int id) {
-        loc = Location.getInstance();
+        loc = new Location();
     }
 
     /**
-     * Add a single item to the item stack. The new item is placed at the last
-     * position and is shown on top this way.
-     * 
+     * Add a single item to the item stack. The new item is placed at the last position and is shown on top this way.
+     *
      * @param itemId the ID of the item that is created
      * @param count the count value of the item that is created
      */
@@ -184,9 +183,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Add some light influence to this tile. This is added to the already
-     * existing light on this tile
-     * 
+     * Add some light influence to this tile. This is added to the already existing light on this tile
+     *
      * @param color the light that shall be added
      */
     protected void addLight(final Color color) {
@@ -194,11 +192,9 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * This function receives updates in case the alpha value of the tile
-     * changes. Its possible that this happens in case the character is walking
-     * past this tile. The effect of this is that the map processor checks the
-     * tile again and displays it, so the tile below the tile that got faded out
-     * is visible properly.
+     * This function receives updates in case the alpha value of the tile changes. Its possible that this happens in
+     * case the character is walking past this tile. The effect of this is that the map processor checks the tile again
+     * and displays it, so the tile below the tile that got faded out is visible properly.
      */
     @Override
     public void alphaChanged(final int from, final int to) {
@@ -209,7 +205,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Check if the player can move the top item on this tile.
-     * 
+     *
      * @return true if the player can move the item around
      */
     public boolean canMoveItem() {
@@ -231,7 +227,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Check if it is possible to open a container on the tile.
-     * 
+     *
      * @return true if there is a container that can be opend, else false
      */
     public boolean canOpenContainer() {
@@ -252,17 +248,15 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Update the item at the top position of the stack of items.
-     * 
+     *
      * @param oldItemId the ID of the item that is currently on the top position
      * @param itemId the new ID that shall be set on the item
      * @param count the new count value of the item in top position
      */
     @SuppressWarnings("nls")
-    public void changeTopItem(final int oldItemId, final int itemId,
-        final int count) {
+    public void changeTopItem(final int oldItemId, final int itemId, final int count) {
         if (items == null) {
-            LOGGER
-                .warn("There are no items on this field. Change top impossible.");
+            LOGGER.warn("There are no items on this field. Change top impossible.");
             return;
         }
         final int pos = items.size() - 1;
@@ -274,15 +268,14 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
         if (items.get(pos).getId() == oldItemId) {
             setItem(pos, itemId, count);
         } else {
-            LOGGER.warn("change top item mismatch. Expected " + oldItemId
-                + " found " + items.get(pos).getId());
+            LOGGER.warn("change top item mismatch. Expected " + oldItemId + " found " + items.get(pos).getId());
         }
         itemChanged();
     }
 
     /**
-     * Determine whether the top item is a light source and needs to be
-     * registered. Also removes previous or changed light sources.
+     * Determine whether the top item is a light source and needs to be registered. Also removes previous or changed
+     * light sources.
      */
     private void checkLight() {
         // light sources are only on player level
@@ -322,7 +315,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Delete any surplus items in an update.
-     * 
+     *
      * @param itemNumber the maximum amount of items that shall remain
      */
     private void clampItems(final int itemNumber) {
@@ -354,7 +347,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Create a clone of the tile.
-     * 
+     *
      * @return the clone of this tile
      */
     @Override
@@ -363,9 +356,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Get the map tile in case the user is currently pointing at. If the user
-     * is pointing somewhere else, return null.
-     * 
+     * Get the map tile in case the user is currently pointing at. If the user is pointing somewhere else, return null.
+     *
      * @param x X-Coordinate on the screen the user is pointing at
      * @param y Y-Coordinate on the screen the user is pointing at
      * @return the map tile in case the user is pointing at, or null
@@ -373,8 +365,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     public MapTile getComponentAt(final int x, final int y) {
         if (!hidden && !obstructed) {
             // calculate distance from tile center to mouse
-            final int distance =
-                Math.abs(x - loc.getDcX()) + (Math.abs(y - loc.getDcY()) * 2);
+            final int distance = Math.abs(x - loc.getDcX()) + (Math.abs(y - loc.getDcY()) * 2);
             if (distance < (MapConstants.TILE_W / 2)) {
                 return this;
             }
@@ -384,9 +375,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Determine how much of the tile is hidden due items on it. Needed for LOS
-     * calculation.
-     * 
+     * Determine how much of the tile is hidden due items on it. Needed for LOS calculation.
+     *
      * @return identifier how much of the tile is hidden
      */
     public int getCoverage() {
@@ -406,7 +396,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Get the elevation of the item with the highest elevation value.
-     * 
+     *
      * @return the elevation value
      */
     public int getElevation() {
@@ -415,7 +405,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Check from what sides the tile acceps light.
-     * 
+     *
      * @return the identifier for the side the tile accepts light from
      */
     public int getFace() {
@@ -430,7 +420,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Get the ID of this object type in the game factory.
-     * 
+     *
      * @return The ID of the object type for the game factroy
      */
     @Override
@@ -440,7 +430,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Get the the interactive instance used for interaction with this tile.
-     * 
+     *
      * @return the interactive tile referring to this map tile
      */
     public InteractiveMapTile getInteractive() {
@@ -449,7 +439,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Get the current rendered light.
-     * 
+     *
      * @return the light color on this tile
      */
     public Color getLight() {
@@ -458,7 +448,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Get the location of the tile.
-     * 
+     *
      * @return the location of the tile
      */
     public Location getLocation() {
@@ -467,7 +457,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Get the color for the minimap of this tile.
-     * 
+     *
      * @return the identifier of the color value for this tile
      */
     public int getMapColor() {
@@ -479,9 +469,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Get the cost of moving over this item. Needed was walking patch
-     * calculations.
-     * 
+     * Get the cost of moving over this item. Needed was walking patch calculations.
+     *
      * @return the costs for moving over this tile
      */
     public int getMovementCost() {
@@ -494,7 +483,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Get the ID of the tile.
-     * 
+     *
      * @return the ID of the tile
      */
     public int getTileId() {
@@ -502,9 +491,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Get the ID of the background music track that is supposed to be played on
-     * this tile.
-     * 
+     * Get the ID of the background music track that is supposed to be played on this tile.
+     *
      * @return the background music track for this tile
      */
     public int getTileMusic() {
@@ -513,7 +501,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Get the item on the top of this tile.
-     * 
+     *
      * @return the top tile or <code>null</code> in case there is none
      */
     public Item getTopItem() {
@@ -529,7 +517,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Check if there is anything on the tile that blocks moving over the tile.
-     * 
+     *
      * @return true in case it is not possible to walk over this tile
      */
     public boolean isBlocked() {
@@ -547,7 +535,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Get the hidden flag of the tile.
-     * 
+     *
      * @return true if the tile is hidden
      */
     public boolean isHidden() {
@@ -555,9 +543,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Check if the tile is obstacle or if there is a item that blocks the
-     * movement over this tile.
-     * 
+     * Check if the tile is obstacle or if there is a item that blocks the movement over this tile.
+     *
      * @return true if the tile is obstacle
      */
     public boolean isObstacle() {
@@ -586,7 +573,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Get the obstructed flag of the tile.
-     * 
+     *
      * @return true if the tile is obstructed
      */
     public boolean isObstructed() {
@@ -595,9 +582,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Check if the tile is fully opaque and everything below can be hidden.
-     * 
-     * @return <code>true</code> in case the tile is opaque and everything below
-     *         is hidden entirely.
+     *
+     * @return <code>true</code> in case the tile is opaque and everything below is hidden entirely.
      */
     public boolean isOpaque() {
         final Tile localTile = tile;
@@ -605,8 +591,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Notify the tile that the items got changed. That makes a recalculation of
-     * the lights and the line of sight needed.
+     * Notify the tile that the items got changed. That makes a recalculation of the lights and the line of sight
+     * needed.
      */
     private void itemChanged() {
         // invalidate LOS data
@@ -621,9 +607,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      * Requesting the lookat informations for a tile from the server.
      */
     public void lookAt() {
-        final LookatTileCmd cmd =
-            (LookatTileCmd) CommandFactory.getInstance().getCommand(
-                CommandList.CMD_LOOKAT_TILE);
+        final LookatTileCmd cmd = (LookatTileCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_LOOKAT_TILE);
         cmd.setPosition(loc);
         cmd.send();
 
@@ -634,10 +618,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      */
     @Override
     public void recycle() {
-        if (loc != null) {
-            loc.recycle();
-            loc = null;
-        }
+        loc = null;
         GameFactory.getInstance().recycle(this);
     }
 
@@ -676,11 +657,10 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Render the light on this tile, using the ambient light of the weather and
-     * a factor how much the tile light modifies the ambient light.
-     * 
-     * @param factor the factor how much the ambient light is modified by the
-     *            tile light
+     * Render the light on this tile, using the ambient light of the weather and a factor how much the tile light
+     * modifies the ambient light.
+     *
+     * @param factor the factor how much the ambient light is modified by the tile light
      * @param ambientLight the ambient light from the weather
      */
     protected void renderLight(final float factor, final Color ambientLight) {
@@ -693,8 +673,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Clear the tile and recycle it. This also recycles all item and light
-     * sources on this tile.
+     * Clear the tile and recycle it. This also recycles all item and light sources on this tile.
      */
     @Override
     public void reset() {
@@ -741,9 +720,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Set the hidden flag for tiles that are hidden to show building interiors.
-     * Hidden tiles are completely hidden.
-     * 
+     * Set the hidden flag for tiles that are hidden to show building interiors. Hidden tiles are completely hidden.
+     *
      * @param hide true if the tile shall be hidden
      */
     public void setHidden(final boolean hide) {
@@ -756,7 +734,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Adjust visiblitiy to match hidden and obstructed flag.
-     * 
+     *
      * @param hide the target hide flag
      * @param obstruct the target obstruct flag
      * @see illarion.client.world.MapTile#setHidden(boolean)
@@ -795,7 +773,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Set a item at a special position of the item stack on this tile.
-     * 
+     *
      * @param index The index within the item list of this tile
      * @param itemId The new item ID of the item
      * @param itemCount The new count value of this item
@@ -843,8 +821,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
             } else if (index == items.size()) { // extend list by 1 row
                 localItems.add(item);
             } else { // index mismatch
-                throw new IllegalArgumentException(
-                    "update behind end of items list");
+                throw new IllegalArgumentException("update behind end of items list");
             }
         }
         // termporarily disable all numbers
@@ -853,7 +830,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Set the obstructed flag for tiles that are obstructed by upper levels.
-     * 
+     *
      * @param obstruct true if the tile shall be marked as obstructed
      */
     public void setObstructed(final boolean obstruct) {
@@ -865,11 +842,10 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Set the ID of the tile and change the type of the tile this way. This
-     * function also sets up a new tile at this position if there was no.
-     * Furthermore all calculations that are needed for a new tile are triggered
-     * by this function.
-     * 
+     * Set the ID of the tile and change the type of the tile this way. This function also sets up a new tile at this
+     * position if there was no. Furthermore all calculations that are needed for a new tile are triggered by this
+     * function.
+     *
      * @param id the new ID if the tile
      */
     public void setTileId(final int id) {
@@ -904,7 +880,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Show a graphical effect on the tile.
-     * 
+     *
      * @param effectId the ID of the effect
      */
     public void showEffect(final int effectId) {
@@ -914,19 +890,18 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Create a string that identifies the tile and its current state.
-     * 
+     *
      * @return the generated string
      */
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return "MapTile " + loc.toString() + " tile=" + tileId + " items="
-            + (items != null ? items.size() : 0);
+        return "MapTile " + loc.toString() + " tile=" + tileId + " items=" + (items != null ? items.size() : 0);
     }
 
     /**
      * Update a map tile using the update data the server send.
-     * 
+     *
      * @param update the update data the server send
      */
     protected void update(final TileUpdate update) {
@@ -936,21 +911,19 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
         musicId = update.getTileMusic();
 
         // update items
-        updateItemList(update.getItemNumber(), update.getItemId(),
-            update.getItemCount());
+        updateItemList(update.getItemNumber(), update.getItemId(), update.getItemCount());
 
         itemChanged();
     }
 
     /**
      * Update a single item with new data.
-     * 
+     *
      * @param item the item that shall be updated
      * @param itemCount the count value of the new item
      * @param index the index of the item within the stack of items on this tile
      */
-    private void updateItem(final Item item, final int itemCount,
-        final int index) {
+    private void updateItem(final Item item, final int itemCount, final int index) {
         // set number
         item.setCount(itemCount);
         // calculate offset from items carrying other items
@@ -959,8 +932,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
             objectOffset = elevation;
         }
         // position on tile with increasing z-order
-        item.setScreenPos(loc.getDcX(), loc.getDcY() - objectOffset,
-            loc.getDcZ() - index, Layers.ITEM);
+        item.setScreenPos(loc.getDcX(), loc.getDcY() - objectOffset, loc.getDcZ() - index, Layers.ITEM);
 
         // set the elevation for items that can carry
         final int level = item.getLevel();
@@ -975,13 +947,12 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
 
     /**
      * Update all items on the stack of this tile at once.
-     * 
+     *
      * @param number the new amount of items on this tile
      * @param itemId the list of item ids for the items on this tile
      * @param itemCount the list of count values for the items on this tile
      */
-    private void updateItemList(final int number, final TIntArrayList itemId,
-        final TShortArrayList itemCount) {
+    private void updateItemList(final int number, final TIntArrayList itemId, final TShortArrayList itemCount) {
         clampItems(number);
         for (int i = 0; i < number; i++) {
             setItem(i, itemId.get(i), itemCount.get(i));
@@ -997,15 +968,14 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Update the entire item list. This function is called by the net interface
-     * in case the server sends a full set of new item data to the client.
-     * 
+     * Update the entire item list. This function is called by the net interface in case the server sends a full set of
+     * new item data to the client.
+     *
      * @param itemNumber Amount of items within the list of items
      * @param itemId List of the item IDs for all items that shall be created
      * @param itemCount List of count values for all items
      */
-    public void updateItems(final int itemNumber, final TIntArrayList itemId,
-        final TShortArrayList itemCount) {
+    public void updateItems(final int itemNumber, final TIntArrayList itemId, final TShortArrayList itemCount) {
         updateItemList(itemNumber, itemId, itemCount);
         itemChanged();
     }

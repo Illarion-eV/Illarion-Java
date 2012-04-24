@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources.loaders;
 
@@ -28,11 +28,11 @@ import illarion.common.util.TableLoaderSink;
  * that was created using the configuration tool. The class will create the
  * required overlay objects and send them to the overlay factory that takes care
  * for distributing those objects.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class RuneLoader extends ResourceLoader<Rune> implements
-    TableLoaderSink {
+public final class RuneLoader extends AbstractResourceLoader<Rune> implements
+        TableLoaderSink {
     /**
      * The index of the column that stores the ID of the rune inside the
      * resource table.
@@ -49,7 +49,7 @@ public class RuneLoader extends ResourceLoader<Rune> implements
      * Trigger the loading sequence for this loader.
      */
     @Override
-    public void load() {
+    public ResourceFactory<Rune> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
@@ -59,6 +59,8 @@ public class RuneLoader extends ResourceLoader<Rune> implements
         factory.init();
         new TableLoader("Runes", this);
         factory.loadingFinished();
+
+        return factory;
     }
 
     /**

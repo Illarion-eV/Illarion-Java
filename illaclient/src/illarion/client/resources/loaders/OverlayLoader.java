@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources.loaders;
 
@@ -29,11 +29,11 @@ import org.apache.log4j.Logger;
  * that was created using the configuration tool. The class will create the
  * required overlay objects and send them to the overlay factory that takes care
  * for distributing those objects.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class OverlayLoader extends ResourceLoader<Overlay> implements
-    TableLoaderSink {
+public final class OverlayLoader extends AbstractResourceLoader<Overlay> implements
+        TableLoaderSink {
     /**
      * The column index of the overlay id of that overlay in the resource table.
      */
@@ -53,7 +53,7 @@ public final class OverlayLoader extends ResourceLoader<Overlay> implements
      * Trigger the loading sequence for this loader.
      */
     @Override
-    public void load() {
+    public ResourceFactory<Overlay> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
@@ -63,6 +63,8 @@ public final class OverlayLoader extends ResourceLoader<Overlay> implements
         factory.init();
         new TableLoader("Overlays", this);
         factory.loadingFinished();
+
+        return factory;
     }
 
     /**
@@ -79,7 +81,7 @@ public final class OverlayLoader extends ResourceLoader<Overlay> implements
             overlay.activate(id);
         } catch (final IllegalStateException ex) {
             logger.error("Failed adding overlay to internal factory. ID: "
-                + Integer.toString(id) + " - Filename: " + name);
+                    + Integer.toString(id) + " - Filename: " + name);
         }
 
         return true;

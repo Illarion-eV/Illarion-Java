@@ -24,6 +24,7 @@ import de.lessvoid.nifty.controls.DropDownSelectionChangedEvent;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.ListBoxSelectionChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.screen.ScreenController;
 import gnu.trove.procedure.TObjectProcedure;
 
 import java.lang.ref.WeakReference;
@@ -49,7 +50,7 @@ import illarion.common.util.Location;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CharListHandler
-        implements EventSubscriber<AbstractCharEvent> {
+        implements EventSubscriber<AbstractCharEvent>, ScreenController {
     private ListBox<GUIEntryWrapper> guiList;
     private DropDown<String> filterSelection;
 
@@ -91,6 +92,7 @@ public final class CharListHandler
         filterChangedEvent = new EventTopicSubscriber<DropDownSelectionChangedEvent<String>>() {
             @Override
             public void onEvent(final String topic, final DropDownSelectionChangedEvent<String> data) {
+                dirty = true;
                 updateGUI();
             }
         };
@@ -319,5 +321,10 @@ public final class CharListHandler
         dirty = true;
         cleanupList();
         updateGUI();
+    }
+
+    @Override
+    public void onEndScreen() {
+
     }
 }

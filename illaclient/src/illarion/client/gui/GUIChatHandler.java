@@ -1,31 +1,37 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.gui;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.ScrollPanel;
+import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.screen.ScreenController;
+import javolution.text.TextBuilder;
+
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
+
 import illarion.client.input.InputReceiver;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
@@ -35,51 +41,55 @@ import illarion.client.util.ChatHandler.ChatReceiver;
 import illarion.client.util.ChatHandler.SpeechMode;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
-import javolution.text.TextBuilder;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
+import illarion.client.world.World;
 
 /**
- * This class takes care to receive chat input from the GUI and sends it to the
- * server. Also it receives chat from the server and takes care for displaying
- * it on the GUI.
- * 
+ * This class takes care to receive chat input from the GUI and sends it to the server. Also it receives chat from the
+ * server and takes care for displaying it on the GUI.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GUIChatHandler implements KeyInputHandler, ChatReceiver, EventTopicSubscriber<String> {
+public final class GUIChatHandler
+        implements KeyInputHandler, ChatReceiver, EventTopicSubscriber<String>, ScreenController {
     /**
      * The log that is used to display the text.
      */
-    private final ScrollPanel chatLog;
-    
+    private ScrollPanel chatLog;
+
     /**
      * The input field that holds the text that is yet to be send.
      */
-    private final TextField chatMsg;
-    
+    private TextField chatMsg;
+
     /**
      * The screen that displays the GUI.
      */
-    private final Screen screen;
-    
-    /**
-     * Create a new GUI chat handler and set the required references.
-     * 
-     * @param screen the screen that displays the GUI
-     * @param chatLog the log that displays written text
-     * @param chatMsg the input field holding the text to be send
-     */
-    public GUIChatHandler(final Screen screen, final ScrollPanel chatLog, final TextField chatMsg) {
+    private Screen screen;
+
+    @Override
+    public void bind(final Nifty nifty, final Screen screen) {
         this.screen = screen;
-        this.chatMsg = chatMsg;
-        this.chatLog = chatLog;
-        
+
+        chatMsg = screen.findNiftyControl("chatMsg", TextField.class);
+        chatLog = screen.findNiftyControl("chatPanel", ScrollPanel.class);
+
+        chatMsg.getElement().addInputHandler(this);
+    }
+
+    @Override
+    public void onStartScreen() {
+        World.getChatHandler().addChatReceiver(this);
         EventBus.subscribe(InputReceiver.EB_TOPIC, this);
     }
 
+    @Override
+    public void onEndScreen() {
+        World.getChatHandler().removeChatReceiver(this);
+        EventBus.unsubscribe(InputReceiver.EB_TOPIC, this);
+    }
+
     /**
-     * Receive a Input event from the GUI and send a text in case this event
-     * applies.
+     * Receive a Input event from the GUI and send a text in case this event applies.
      */
     @Override
     public boolean keyEvent(final NiftyInputEvent inputEvent) {
@@ -102,20 +112,17 @@ public final class GUIChatHandler implements KeyInputHandler, ChatReceiver, Even
 
     /**
      * Send the text as talking text to the server.
-     * 
+     *
      * @param text the text to send
      */
     private void sendText(final String text) {
-        final SayCmd cmd =
-            CommandFactory.getInstance().getCommand(CommandList.CMD_SAY,
-                SayCmd.class);
+        final SayCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_SAY, SayCmd.class);
         cmd.setText(text);
         cmd.send();
     }
-    
+
     /**
-     * The key for a chat entry in case you hear someone saying something but
-     * not the source of the voice.
+     * The key for a chat entry in case you hear someone saying something but not the source of the voice.
      */
     @SuppressWarnings("nls")
     private final String KEY_DISTANCE = "chat.distantShout";
@@ -170,9 +177,7 @@ public final class GUIChatHandler implements KeyInputHandler, ChatReceiver, Even
             if ((name == null) && (chara == null)) {
                 name = Lang.getMsg(KEY_DISTANCE);
             } else if ((name == null) && (chara != null)) {
-                name =
-                    Lang.getMsg(KEY_SOMEONE) + " ("
-                        + Long.toString(chara.getCharId()) + ")";
+                name = Lang.getMsg(KEY_SOMEONE) + " (" + Long.toString(chara.getCharId()) + ")";
             }
 
             textBuilder.append(name);
@@ -203,7 +208,7 @@ public final class GUIChatHandler implements KeyInputHandler, ChatReceiver, Even
 
     /**
      * Handle the events this handler subscribed to.
-     * 
+     *
      * @param topic the event topic
      * @param data the data that was delivered along with this event
      */

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ This file is part of the Illarion Nifty-GUI Controls.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-controls>
+    <controlDefinition name="dialog-input" style="illarion-dialog-input-single" visibleToMouse="true"
+                       controller="org.illarion.nifty.controls.dialog.input.DialogInputControl">
+        <control name="window" title="Nachricht" id="#window" visibleToMouse="true">
+            <panel childLayout="vertical" visibleToMouse="true" width="100%">
+                <panel width="100%" childLayout="center">
+                    <control name="textfield" id="#input" maxlength="65536"/>
+                </panel>
+                <panel id="#buttons" childLayout="center" visibleToMouse="true" width="100%">
+                    <panel childLayout="horizontal" align="center">
+                        <control name="button" id="#buttonLeft" label="OK"/>
+                        <control name="button" id="#buttonRight" label="Cancel"/>
+                    </panel>
+                </panel>
+            </panel>
+        </control>
+    </controlDefinition>
+</nifty-controls>

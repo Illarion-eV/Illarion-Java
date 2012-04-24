@@ -1,46 +1,48 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.util;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.procedure.TObjectProcedure;
+import javolution.context.ObjectFactory;
+
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.util.Location;
 import illarion.common.util.Reusable;
-import javolution.context.ObjectFactory;
 
 /**
- * A single path node that is used during the path finding and represents a
- * single step on the path that is searched or was found.
- * 
+ * A single path node that is used during the path finding and represents a single step on the path that is searched or
+ * was found.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class PathNode implements Comparable<PathNode>, Reusable {
+public final class PathNode
+        implements Comparable<PathNode>, Reusable {
     /**
      * This procedure is used to recycle all references in the cache.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static final class CleanCacheProcedure implements
-        TObjectProcedure<PathNode> {
+    private static final class CleanCacheProcedure
+            implements TObjectProcedure<PathNode> {
         /**
          * Public constructor so the parent class is able to create a instance.
          */
@@ -58,15 +60,14 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * The factory that is used to create and buffer the instances of the path
-     * nodes.
-     * 
+     * The factory that is used to create and buffer the instances of the path nodes.
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static final class PathNodeFactory extends ObjectFactory<PathNode> {
+    private static final class PathNodeFactory
+            extends ObjectFactory<PathNode> {
         /**
-         * Public constructor to allow the parent class to create proper
-         * instances.
+         * Public constructor to allow the parent class to create proper instances.
          */
         public PathNodeFactory() {
             // nothing to do
@@ -74,7 +75,7 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
 
         /**
          * Create a new path node.
-         * 
+         *
          * @return the new path node instance
          */
         @Override
@@ -84,18 +85,15 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * The cache for the path nodes that were loaded already. It needed to store
-     * them so the pathfinder can access values calculated before.
+     * The cache for the path nodes that were loaded already. It needed to store them so the pathfinder can access
+     * values calculated before.
      */
-    private static TLongObjectHashMap<PathNode> cache =
-        new TLongObjectHashMap<PathNode>();
+    private static TLongObjectHashMap<PathNode> cache = new TLongObjectHashMap<PathNode>();
 
     /**
-     * The instance of the CleanCacheProcedure instance that is used to clean up
-     * the path nodes.
+     * The instance of the CleanCacheProcedure instance that is used to clean up the path nodes.
      */
-    private static final CleanCacheProcedure CLEAN_HELPER =
-        new CleanCacheProcedure();
+    private static final CleanCacheProcedure CLEAN_HELPER = new CleanCacheProcedure();
 
     /**
      * The factory used to create and buffer the instances of this path nodes.
@@ -113,20 +111,18 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     private boolean close = false;
 
     /**
-     * The movement cost to reach this tile at the current settings. Means the
-     * movement cost of this tile and of all tiles stepped on before.
+     * The movement cost to reach this tile at the current settings. Means the movement cost of this tile and of all
+     * tiles stepped on before.
      */
     private int cost = 0;
 
     /**
-     * The depth of the tile. Means how many steps it is away from the starting
-     * position.
+     * The depth of the tile. Means how many steps it is away from the starting position.
      */
     private int depth = 0;
 
     /**
-     * The heuristic value, means the estimated movement cost to reach the
-     * target position.
+     * The heuristic value, means the estimated movement cost to reach the target position.
      */
     private int heuristic = 0;
 
@@ -136,20 +132,17 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     private Location loc;
 
     /**
-     * True in case the path node is in the list of tile that still need to be
-     * checked.
+     * True in case the path node is in the list of tile that still need to be checked.
      */
     private boolean open = false;
 
     /**
-     * The parent node, so the node the character steps on before it reaches
-     * this path node.
+     * The parent node, so the node the character steps on before it reaches this path node.
      */
     private PathNode parent;
 
     /**
-     * The map tile of this path node, needed to access some tile related
-     * informations.
+     * The map tile of this path node, needed to access some tile related informations.
      */
     private MapTile tile;
 
@@ -161,8 +154,7 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Delete all nodes in the cache. Needed for a fresh start, like a new path
-     * finding.
+     * Delete all nodes in the cache. Needed for a fresh start, like a new path finding.
      */
     public static void clearCache() {
         cache.forEachValue(CLEAN_HELPER);
@@ -170,9 +162,9 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Get a path node on a specified location. The path node is taken from the
-     * cache and is only newly created in case it is not present in the cache.
-     * 
+     * Get a path node on a specified location. The path node is taken from the cache and is only newly created in case
+     * it is not present in the cache.
+     *
      * @param loc the location the path node shall represent
      * @return the path node, fresh created or from the cache
      */
@@ -189,14 +181,13 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Compare this path node with another one. Needed to sort the path nodes in
-     * the list of path nodes that are still to check, so the path nodes that
-     * most likely are checked first. The {@link #getCost()} and the heuristic
-     * value are added and compared for both nodes.
-     * 
+     * Compare this path node with another one. Needed to sort the path nodes in the list of path nodes that are still
+     * to check, so the path nodes that most likely are checked first. The {@link #getCost()} and the heuristic value
+     * are added and compared for both nodes.
+     *
      * @param o the path node this path nodes is compared with
-     * @return 0 in case the result of the sumation is the same for both nodes,
-     *         1 in case the value of this node is larger, else -1
+     * @return 0 in case the result of the sumation is the same for both nodes, 1 in case the value of this node is
+     *         larger, else -1
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
@@ -217,10 +208,9 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
 
     /**
      * Check if this path node and another one is equal.
-     * 
+     *
      * @param o the path node that is possibly equal with this path node.
-     * @return true in case this path node and the path node in the function
-     *         parameter are equal
+     * @return true in case this path node and the path node in the function parameter are equal
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -234,7 +224,7 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
 
     /**
      * Check if the tile is in the list of tiles that are already checked.
-     * 
+     *
      * @return true if its in the list
      */
     public boolean getClosed() {
@@ -242,9 +232,10 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Get the movement cost to reach this tile when walking from the starting
-     * location on the current path to this path node.
-     * 
+     * Get the movement cost to reach this tile when walking from the starting location on the current path to this
+     * path
+     * node.
+     *
      * @return the walking cost to reach this tile
      */
     public int getCost() {
@@ -253,7 +244,7 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
 
     /**
      * Get the depth of the tile, so the steps needed to reach this node.
-     * 
+     *
      * @return the steps needed to reach this path node
      */
     public int getDepth() {
@@ -261,9 +252,8 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Get the distance from the position of this node to the destination
-     * position.
-     * 
+     * Get the distance from the position of this node to the destination position.
+     *
      * @param dest the destination position
      * @return the distance to the destination position
      */
@@ -273,7 +263,7 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
 
     /**
      * Get the location of this path node.
-     * 
+     *
      * @return the location of this path node
      */
     public Location getLocation() {
@@ -282,7 +272,7 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
 
     /**
      * Check if the tile is in the list of tiles that still need to be checked.
-     * 
+     *
      * @return true if its in the list
      */
     public boolean getOpen() {
@@ -290,9 +280,8 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Get the parent node, so the node the character steps on before steping on
-     * this node.
-     * 
+     * Get the parent node, so the node the character steps on before steping on this node.
+     *
      * @return the parent path node
      */
     public PathNode getParent() {
@@ -300,9 +289,8 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Get the movement cost to get on this path node, independed from all tiles
-     * before.
-     * 
+     * Get the movement cost to get on this path node, independed from all tiles before.
+     *
      * @return the movement cost
      */
     public int getValue() {
@@ -311,7 +299,7 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
 
     /**
      * Get the has code for this path node.
-     * 
+     *
      * @return the hash code
      * @see java.lang.Object#hashCode()
      */
@@ -321,9 +309,9 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Check if this path node is blocked by anything, such as a item or a other
-     * character or simply a tile that is not passable.
-     * 
+     * Check if this path node is blocked by anything, such as a item or a other character or simply a tile that is not
+     * passable.
+     *
      * @return true if the tile is blocked
      */
     public boolean isBlocked() {
@@ -338,10 +326,7 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
 
     @Override
     public void reset() {
-        if (loc != null) {
-            loc.recycle();
-            loc = null;
-        }
+        loc = null;
         tile = null;
         parent = null;
         cost = 0;
@@ -353,9 +338,8 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Change the status if the path node is in the list of tiles that are
-     * already checked, or not.
-     * 
+     * Change the status if the path node is in the list of tiles that are already checked, or not.
+     *
      * @param newClose true if the tile is in the list
      */
     public void setClosed(final boolean newClose) {
@@ -363,9 +347,10 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Set the movement cost to reach this tile when walking from the starting
-     * location on the current path to this path node.
-     * 
+     * Set the movement cost to reach this tile when walking from the starting location on the current path to this
+     * path
+     * node.
+     *
      * @param newCost the new value for the movement cost
      */
     public void setCost(final int newCost) {
@@ -374,7 +359,7 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
 
     /**
      * Set the enstimated movement cost to reach the target location.
-     * 
+     *
      * @param newHeuristic the new estimated walking cost to reach the target.
      */
     public void setHeuristic(final int newHeuristic) {
@@ -382,9 +367,8 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Change the status if the path node is in the list of tiles that still
-     * need to be checked, or not.
-     * 
+     * Change the status if the path node is in the list of tiles that still need to be checked, or not.
+     *
      * @param newOpen true if the tile is in the list
      */
     public void setOpen(final boolean newOpen) {
@@ -392,9 +376,10 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Set the parent node, that is before this node in the path. This also
-     * updates the depth to the depth of the parent node + 1.
-     * 
+     * Set the parent node, that is before this node in the path. This also updates the depth to the depth of the
+     * parent
+     * node + 1.
+     *
      * @param newParent the new parent node
      */
     public void setParent(final PathNode newParent) {
@@ -403,21 +388,19 @@ public final class PathNode implements Comparable<PathNode>, Reusable {
     }
 
     /**
-     * Set the location of this node. This also fetches the required references
-     * for this class to work properly.
-     * 
+     * Set the location of this node. This also fetches the required references for this class to work properly.
+     *
      * @param location the location of this node
      */
     public void setPosition(final Location location) {
-        loc = Location.getInstance();
-        loc.set(location);
+        loc = new Location(location);
         tile = World.getMap().getMapAt(loc);
-        blocked = ((tile == null) || tile.isBlocked());
+        blocked = (tile == null) || tile.isBlocked();
     }
 
     /**
      * Get a string that represents this path node.
-     * 
+     *
      * @return a string that contains the position of this path node
      * @see java.lang.Object#toString()
      */

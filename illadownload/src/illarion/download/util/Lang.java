@@ -1,20 +1,20 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.util;
 
@@ -27,12 +27,13 @@ import illarion.common.util.MessageSource;
 
 /**
  * This class is used to manage the language settings of this application.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
-public final class Lang implements MessageSource {
+public final class Lang
+        implements MessageSource {
     /**
      * The singleton instance of this class.
      */
@@ -41,8 +42,7 @@ public final class Lang implements MessageSource {
     /**
      * The logger instance that handles the log output of this class.
      */
-    private static final Logger LOGGER = Logger
-        .getLogger(Lang.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Lang.class.getName());
 
     /**
      * The file name of the message bundles the client loads for the language.
@@ -55,8 +55,7 @@ public final class Lang implements MessageSource {
     private Locale locale;
 
     /**
-     * The storage of the localized messages. Holds the key for the string and
-     * the localized full message.
+     * The storage of the localized messages. Holds the key for the string and the localized full message.
      */
     private final ResourceBundle messages;
 
@@ -71,14 +70,12 @@ public final class Lang implements MessageSource {
             locale = Locale.ENGLISH;
         }
 
-        messages =
-            ResourceBundle.getBundle(MESSAGE_BUNDLE, locale,
-                Lang.class.getClassLoader());
+        messages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Lang.class.getClassLoader());
     }
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the instance of the class
      */
     public static Lang getInstance() {
@@ -87,10 +84,9 @@ public final class Lang implements MessageSource {
 
     /**
      * Get a localized message from a key.
-     * 
+     *
      * @param key The key of the localized message
-     * @return the localized message or the key with surrounding < > in case the
-     *         key was not found in the storage
+     * @return the localized message or the key with surrounding < > in case the key was not found in the storage
      */
     public static String getMsg(final String key) {
         return INSTANCE.getMessage(key);
@@ -98,7 +94,7 @@ public final class Lang implements MessageSource {
 
     /**
      * Get the current local settings.
-     * 
+     *
      * @return the local object of the chosen local settings
      */
     public Locale getLocale() {
@@ -107,10 +103,9 @@ public final class Lang implements MessageSource {
 
     /**
      * Get a localized message from a key.
-     * 
+     *
      * @param key The key of the localized message
-     * @return the localized message or the key with surrounding &lt; &gt; in
-     *         case the key was not found in the storage
+     * @return the localized message or the key with surrounding &lt; &gt; in case the key was not found in the storage
      */
     @SuppressWarnings("nls")
     @Override
@@ -125,7 +120,7 @@ public final class Lang implements MessageSource {
 
     /**
      * Check if a key contains a message.
-     * 
+     *
      * @param key the key that shall be checked
      * @return true in case a message was found
      */
@@ -140,19 +135,19 @@ public final class Lang implements MessageSource {
 
     /**
      * Check if the client is currently running with the English language.
-     * 
+     *
      * @return true if the language is set to English
      */
     public boolean isEnglish() {
-        return (locale == Locale.ENGLISH);
+        return locale == Locale.ENGLISH;
     }
 
     /**
      * Check if the client is currently running with the German language.
-     * 
+     *
      * @return true if the language is set to German
      */
     public boolean isGerman() {
-        return (locale == Locale.GERMAN);
+        return locale == Locale.GERMAN;
     }
 }

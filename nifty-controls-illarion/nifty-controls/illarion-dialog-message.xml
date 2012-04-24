@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ This file is part of the Illarion Nifty-GUI Controls.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
+  --><!-- This control is designed to define the different slots in the inventory of the Illarion Client. -->
+<nifty-controls>
+    <controlDefinition name="dialog-message" visibleToMouse="true"
+                       controller="org.illarion.nifty.controls.dialog.message.DialogMessageControl">
+        <control name="window" title="Nachricht" id="#window" visibleToMouse="true">
+            <panel childLayout="vertical" visibleToMouse="true" width="100%">
+                <panel childLayout="center" width="100%">
+                    <control name="label" id="#text" wrap="true" text="-" width="100%"/>
+                </panel>
+                <panel height="5px"/>
+                <panel id="#buttons" childLayout="center" visibleToMouse="true" width="100%">
+                    <control name="button" id="#button" label="OK"/>
+                </panel>
+            </panel>
+        </control>
+    </controlDefinition>
+</nifty-controls>

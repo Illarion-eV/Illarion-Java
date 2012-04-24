@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<nifty-controls>
-  <controlDefinition style="illaButton" name="illaButton" controller="org.illarion.nifty.controls.illaButton.illaButtonControl" inputMapping="de.lessvoid.nifty.input.mapping.MenuInputMapping">
-    <panel style="#panel" focusable="true">
-      <text id="#text" style="#text" text="$label"/>
-    </panel>
-  </controlDefinition>
-</nifty-controls>
