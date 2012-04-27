@@ -26,8 +26,7 @@ import org.bushe.swing.event.EventBus;
 import java.io.IOException;
 
 /**
- * Servermessage: Content of a container (
- * {@link illarion.client.net.CommandList#MSG_SHOWCASE}).
+ * Servermessage: Content of a container ({@link CommandList#MSG_SHOWCASE}).
  *
  * @author Blay09
  * @author Martin Karing &lt;nitram@illarion.org&gt;

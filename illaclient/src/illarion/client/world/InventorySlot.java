@@ -25,21 +25,11 @@ import illarion.client.world.interactive.InteractiveInventorySlot;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class InventorySlot {
-    /**
-     * The count of items on this slot.
-     */
-    private int count;
-
+public final class InventorySlot extends AbstractItemSlot {
     /**
      * The interactive reference to this slot.
      */
     private final InteractiveInventorySlot interactive;
-
-    /**
-     * The ID of the item on this slot.
-     */
-    private int itemId;
 
     /**
      * The inventory slot this instance refers to
@@ -57,24 +47,6 @@ public final class InventorySlot {
     }
 
     /**
-     * Check if this slot stores a item.
-     *
-     * @return <code>true</code> in case this slot stores a item
-     */
-    public boolean containsItem() {
-        return itemId != 0;
-    }
-
-    /**
-     * Get the amount of items.
-     *
-     * @return the item count
-     */
-    public int getCount() {
-        return count;
-    }
-
-    /**
      * Get the interactive inventory slot that refers to this inventory slot.
      *
      * @return the interactive inventory slot
@@ -84,31 +56,11 @@ public final class InventorySlot {
     }
 
     /**
-     * Get the ID of the item.
-     *
-     * @return the ID
-     */
-    public int getItemID() {
-        return itemId;
-    }
-
-    /**
      * Get the slot of this inventory item.
      *
      * @return the slot of the item
      */
     public int getSlot() {
         return slot;
-    }
-
-    /**
-     * Set the information's about this item.
-     *
-     * @param newId    the ID of the item
-     * @param newCount the amount of items
-     */
-    public void setData(final int newId, final int newCount) {
-        itemId = newId;
-        count = newCount;
     }
 }
