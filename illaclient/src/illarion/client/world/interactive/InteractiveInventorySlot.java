@@ -21,10 +21,7 @@ package illarion.client.world.interactive;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
-import illarion.client.net.client.DragInvInvCmd;
-import illarion.client.net.client.DragInvMapCmd;
-import illarion.client.net.client.LookatInvCmd;
-import illarion.client.net.client.UseCmd;
+import illarion.client.net.client.*;
 import illarion.client.world.InventorySlot;
 
 /**
@@ -92,6 +89,16 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
                 CommandFactory.getInstance().getCommand(
                         CommandList.CMD_USE, UseCmd.class);
         cmd.addUse(this);
+        cmd.send();
+    }
+
+    public void openContainer() {
+        if (!isValidItem()) {
+            return;
+        }
+
+        final OpenBagCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_OPEN_BAG, OpenBagCmd.class);
+        cmd.setShowcase(0);
         cmd.send();
     }
 

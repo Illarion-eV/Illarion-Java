@@ -140,12 +140,22 @@ public final class GUIInventoryHandler
 
         @Override
         public void executeAction(final int count) {
+            final illarion.client.world.InventorySlot slot = World.getPlayer().getInventory().getItem(slotId);
+
+            if (!slot.containsItem()) {
+                return;
+            }
+
             switch (count) {
                 case 1:
-                    World.getPlayer().getInventory().getItem(slotId).getInteractive().lookAt();
+                    slot.getInteractive().lookAt();
                     break;
                 case 2:
-                    World.getPlayer().getInventory().getItem(slotId).getInteractive().use();
+                    if (slot.getItemPrototype().isContainer()) {
+                        slot.getInteractive().openContainer();
+                    } else {
+                        slot.getInteractive().use();
+                    }
                     break;
             }
         }
