@@ -176,6 +176,20 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
         cmd.send();
     }
 
+    @Override
+    public void dragTo(final InteractiveContainerSlot targetSlot) {
+        if (!canDrag()) {
+            return;
+        }
+
+        final DragMapScCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_MAP_SC,
+                DragMapScCmd.class);
+        cmd.setSource(getLocation());
+        cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
+        cmd.send();
+
+    }
+
     public void use() {
         if (!isInUseRange()) {
             return;

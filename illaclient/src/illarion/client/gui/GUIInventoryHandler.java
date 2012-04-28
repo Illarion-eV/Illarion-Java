@@ -35,8 +35,8 @@ import illarion.client.gui.util.AbstractMultiActionHelper;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
-import illarion.client.world.Inventory;
 import illarion.client.world.World;
+import illarion.client.world.items.Inventory;
 import illarion.common.util.Timer;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
@@ -51,16 +51,15 @@ import java.util.Arrays;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GUIInventoryHandler
-        implements EventSubscriber<InventoryUpdateEvent>, EventTopicSubscriber<String>, ScreenController {
+public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent>,
+        EventTopicSubscriber<String>, ScreenController {
     /**
      * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
      * so the server can send the commands to clean everything up.
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static class EndOfDragOperation
-            implements Runnable {
+    private static class EndOfDragOperation implements Runnable {
         /**
          * The inventory slot that requires the reset.
          */
@@ -71,7 +70,7 @@ public final class GUIInventoryHandler
          *
          * @param slot the inventory slot to reset
          */
-        public EndOfDragOperation(final InventorySlot slot) {
+        EndOfDragOperation(final InventorySlot slot) {
             invSlot = slot;
         }
 
@@ -93,8 +92,7 @@ public final class GUIInventoryHandler
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private class GetVisibleEventSubscriber
-            implements EventTopicSubscriber<ElementShowEvent> {
+    private class GetVisibleEventSubscriber implements EventTopicSubscriber<ElementShowEvent> {
         /**
          * Handle the event.
          *
@@ -115,8 +113,7 @@ public final class GUIInventoryHandler
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static final class InventoryClickActionHelper
-            extends AbstractMultiActionHelper {
+    private static final class InventoryClickActionHelper extends AbstractMultiActionHelper {
         /**
          * The ID of the slot that was clicked at.
          */
@@ -125,7 +122,7 @@ public final class GUIInventoryHandler
         /**
          * The constructor for this class. The timeout time is set to the system default double click interval.
          */
-        public InventoryClickActionHelper() {
+        InventoryClickActionHelper() {
             super(IllaClient.getCfg().getInteger("doubleClickInterval"));
         }
 
@@ -140,7 +137,7 @@ public final class GUIInventoryHandler
 
         @Override
         public void executeAction(final int count) {
-            final illarion.client.world.InventorySlot slot = World.getPlayer().getInventory().getItem(slotId);
+            final illarion.client.world.items.InventorySlot slot = World.getPlayer().getInventory().getItem(slotId);
 
             if (!slot.containsItem()) {
                 return;
@@ -309,7 +306,7 @@ public final class GUIInventoryHandler
                 visibilityEventSubscriber);
 
         final Inventory inventory = World.getPlayer().getInventory();
-        illarion.client.world.InventorySlot invSlot;
+        illarion.client.world.items.InventorySlot invSlot;
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
             invSlot = inventory.getItem(i);
             if (invSlot.getItemID() == 0) {

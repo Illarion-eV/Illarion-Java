@@ -154,8 +154,9 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
      * @param title the title of the new tab
      * @return the builder that is going to construct the tab
      */
-    private static TabBuilder buildTab(final String title) {
-        final TabBuilder builder = new TabBuilder("tab-" + title, "Tab #" + title);
+    private TabBuilder buildTab(final String title) {
+        final String prefix = getElement().findElementByName("#mainTabs").getId();
+        final TabBuilder builder = new TabBuilder(prefix + "#tab-" + title, "Tab #" + title);
         builder.childLayoutVertical();
         builder.width("100%");
         return builder;
