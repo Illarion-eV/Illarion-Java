@@ -21,11 +21,8 @@ package illarion.client.world.interactive;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
-import illarion.client.net.client.DragInvInvCmd;
-import illarion.client.net.client.DragInvMapCmd;
-import illarion.client.net.client.LookatInvCmd;
-import illarion.client.net.client.UseCmd;
-import illarion.client.world.InventorySlot;
+import illarion.client.net.client.*;
+import illarion.client.world.items.ContainerSlot;
 
 /**
  * This class holds the interactive representation of a inventory slot.
@@ -34,24 +31,17 @@ import illarion.client.world.InventorySlot;
  */
 public final class InteractiveContainerSlot extends AbstractDraggable implements DropTarget, UseTarget {
     /**
-     * The ID that is needed to tell the server that the operations refer to a slot in the inventory.
+     * The container slot this interactive reference points to.
      */
-    private static final byte REFERENCE_ID = 3;
+    private final ContainerSlot parentSlot;
 
     /**
-     * The inventory item this interactive class refers to.
-     */
-    private final InventorySlot parentItem;
-
-    /**
-     * Create a new instance of this interactive slot and set the inventory slot
-     * it refers to.
+     * Create a new instance of this interactive slot and set the container slot it refers to.
      *
-     * @param item the inventory item that is the parent of this interactive
-     *             item
+     * @param slot the container slot this reference points to
      */
-    public InteractiveContainerSlot(final InventorySlot item) {
-        parentItem = item;
+    public InteractiveContainerSlot(final ContainerSlot slot) {
+        parentSlot = slot;
     }
 
     /**
@@ -69,47 +59,33 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      */
     @Override
     public void dragTo(final InteractiveInventorySlot targetSlot) {
-        if (!isValidItem()) {
-            return;
-        }
-
         if (!targetSlot.acceptItem(getItemId())) {
             return;
         }
 
-        final DragInvInvCmd cmd =
-                CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_DRAG_INV_INV, DragInvInvCmd.class);
-        cmd.setDrag(getSlotId(), targetSlot.getSlotId());
+        final DragScInvCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_INV,
+                DragScInvCmd.class);
+        cmd.setSource(parentSlot.getContainerId(), parentSlot.getLocation());
+        cmd.setTarget(targetSlot.getSlotId());
         cmd.send();
     }
 
     public void use() {
-        if (!isValidItem()) {
-            return;
-        }
-
-        final UseCmd cmd =
-                CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_USE, UseCmd.class);
+        final UseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_USE, UseCmd.class);
         cmd.addUse(this);
         cmd.send();
     }
 
     public void lookAt() {
-        if (!isValidItem()) {
-            return;
-        }
-
-        final LookatInvCmd cmd =
+        final LookatShowcaseCmd cmd =
                 CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_LOOKAT_INV, LookatInvCmd.class);
-        cmd.setSlot(this.getSlotId());
+                        CommandList.CMD_LOOKAT_SHOWCASE, LookatShowcaseCmd.class);
+        cmd.setSlot(parentSlot.getContainerId(), parentSlot.getLocation());
         cmd.send();
     }
 
     public boolean acceptItem(final int itemId) {
-        return !isValidItem() || (itemId == getItemId());
+        return itemId == getItemId();
     }
 
     /**
@@ -119,16 +95,19 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      */
     @Override
     public void dragTo(final InteractiveMapTile targetTile) {
-        if (!isValidItem()) {
-            return;
-        }
-
-        final DragInvMapCmd cmd =
+        final DragScMapCmd cmd =
                 CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_DRAG_INV_MAP, DragInvMapCmd.class);
-        cmd.setDragFrom(getSlotId());
-        cmd.setDragTo(targetTile.getLocation());
+                        CommandList.CMD_DRAG_SC_MAP, DragScMapCmd.class);
+        cmd.setSource(parentSlot.getContainerId(), parentSlot.getLocation());
+        cmd.setTarget(targetTile.getLocation());
         cmd.send();
+    }
+
+    @Override
+    public void dragTo(final InteractiveContainerSlot targetSlot) {
+        final DragScScCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_SC, DragScScCmd.class);
+        cmd.setSource(parentSlot.getContainerId(), parentSlot.getLocation());
+        cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
     }
 
     /**
@@ -138,7 +117,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      */
     @Override
     public void encodeUse(final NetCommWriter writer) {
-        writer.writeByte(REFERENCE_ID);
+        writer.writeByte((byte) parentSlot.getContainerId());
         writer.writeByte((byte) getSlotId());
     }
 
@@ -148,17 +127,11 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      * @return the location ID
      */
     public int getSlotId() {
-        return parentItem.getSlot();
+        return parentSlot.getLocation();
     }
 
-    /**
-     * Check if this interactive slot refers to a valid item.
-     *
-     * @return <code>true</code> in case this interactive item refers to a valid
-     *         item
-     */
-    public boolean isValidItem() {
-        return parentItem.containsItem();
+    public ContainerSlot getSlot() {
+        return parentSlot;
     }
 
     /**
@@ -167,6 +140,6 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      * @return the ID of the item in this slot
      */
     public int getItemId() {
-        return parentItem.getItemID();
+        return parentSlot.getItemID();
     }
 }

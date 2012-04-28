@@ -100,6 +100,6 @@ public final class ShowcaseMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Container: " + event.getContainerId());
+        return toString("ItemContainer: " + event.getContainerId());
     }
 }

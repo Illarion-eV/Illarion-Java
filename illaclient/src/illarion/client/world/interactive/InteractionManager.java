@@ -47,6 +47,18 @@ public final class InteractionManager {
         cancelDragging();
     }
 
+    public void dropAtContainer(final int container, final int slot) {
+        if (draggedObject == null) {
+            return;
+        }
+
+        final InteractiveContainerSlot targetSlot = World.getPlayer().getContainer(container).getSlot(slot)
+                .getInteractive();
+
+        draggedObject.dragTo(targetSlot);
+        cancelDragging();
+    }
+
     public void dropAtInventory(final int slot) {
         if (draggedObject == null) {
             return;
@@ -74,6 +86,16 @@ public final class InteractionManager {
     public void startDragging(final Draggable draggable) {
         draggedObject = draggable;
         isDragging = true;
+    }
+
+    public void notifyDraggingContainer(final int container, final int slot, final Runnable endOfDragOp) {
+        if (!isDragging) {
+            final InteractiveContainerSlot sourceSlot = World.getPlayer().getContainer(container).getSlot(slot)
+                    .getInteractive();
+
+            startDragging(sourceSlot);
+            endOfDragAction = endOfDragOp;
+        }
     }
 
     public void notifyDraggingInventory(final int slot, final Runnable endOfDragOp) {
