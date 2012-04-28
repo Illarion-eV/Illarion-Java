@@ -200,6 +200,13 @@ public class ContainerHandler implements ScreenController {
     private void updateContainer(final int containerId, final TIntObjectIterator<OpenContainerEvent.Item> itr) {
         final org.illarion.nifty.controls.ItemContainer conControl = itemContainerMap.get(containerId);
 
+        final int slotCount = conControl.getSlotCount();
+        for (int i = 0; i < slotCount; i++) {
+            final InventorySlot conSlot = conControl.getSlot(itr.key());
+            conSlot.setImage(null);
+            conSlot.hideLabel();
+        }
+
         while (itr.hasNext()) {
             itr.advance();
             final InventorySlot conSlot = conControl.getSlot(itr.key());
