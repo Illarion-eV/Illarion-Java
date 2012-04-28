@@ -74,7 +74,7 @@ public final class DragMapScCmd extends AbstractCommand {
         writer.writeLocation(sourceLocation);
         writer.writeByte(targetContainer);
         writer.writeByte(targetContainerSlot);
-        writer.writeByte((byte) 0); // Counter
+        writer.writeByte((byte) 1); // Counter
     }
 
     /**

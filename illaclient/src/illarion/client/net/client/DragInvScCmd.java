@@ -73,7 +73,7 @@ public final class DragInvScCmd extends AbstractCommand {
         writer.writeByte(sourceSlot);
         writer.writeByte(targetContainer);
         writer.writeByte(targetContainerSlot);
-        writer.writeByte((byte) 0); // Counter
+        writer.writeByte((byte) 1); // Counter
     }
 
     /**
