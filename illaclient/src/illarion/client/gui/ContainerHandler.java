@@ -280,6 +280,11 @@ public class ContainerHandler implements ScreenController {
         final int slotId = getSlotId(topic);
         final int containerId = getContainerId(topic);
 
+        System.out.println("Dropped into container(" + Integer.toString(containerId) + ") into slot(" + Integer
+                .toString(slotId) + ") that is currently " + (data.getTarget().getElement().isVisible() ? "" : "not ") +
+                "visible."
+        );
+
         World.getInteractionManager().dropAtContainer(containerId, slotId);
     }
 
