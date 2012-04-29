@@ -33,11 +33,12 @@
                          visible="false" color="#ff0f" backgroundColor="#bb15"/>
             </panel>
 
-            <control id="#droppable" name="droppable" height="100%" width="100%" childLayout="center">
+            <control id="#droppable" name="droppable" height="100%" width="100%" childLayout="center"
+                     visibleToMouse="true">
                 <control id="#draggable" name="draggable" enabled="false" childLayout="center" width="100%"
-                         height="100%">
-                    <panel width="100%" height="100%" childLayout="center" visibleToMouse="true">
-                        <image id="#draggableImage" width="100%" height="100%" visible="false"/>
+                         height="100%" visibleToMouse="true">
+                    <panel width="100%" height="100%" childLayout="center" visibleToMouse="false">
+                        <image id="#draggableImage" width="100%" height="100%" visible="false" visibleToMouse="false"/>
                     </panel>
                 </control>
             </control>

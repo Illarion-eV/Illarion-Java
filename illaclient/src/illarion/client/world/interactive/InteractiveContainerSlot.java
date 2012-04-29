@@ -108,6 +108,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
         final DragScScCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_SC, DragScScCmd.class);
         cmd.setSource(parentSlot.getContainerId(), parentSlot.getLocation());
         cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
+        cmd.send();
     }
 
     /**

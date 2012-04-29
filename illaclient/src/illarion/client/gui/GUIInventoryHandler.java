@@ -216,12 +216,12 @@ public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdat
         }
     }
 
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    @NiftyEventSubscriber(pattern = "invslot_.*")
     public void cancelDragging(final String topic, final DraggableDragCanceledEvent data) {
         World.getInteractionManager().cancelDragging();
     }
 
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    @NiftyEventSubscriber(pattern = "invslot_.*")
     public void clickInventory(final String topic, final NiftyMousePrimaryClickedEvent data) {
         final int slotId = getSlotNumber(topic);
 
@@ -229,14 +229,14 @@ public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdat
         inventoryClickActionHelper.pulse();
     }
 
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    @NiftyEventSubscriber(pattern = "invslot_.*")
     public void dragFromInventory(final String topic, final DraggableDragStartedEvent data) {
         final int slotId = getSlotNumber(topic);
         World.getInteractionManager().notifyDraggingInventory(slotId,
                 new EndOfDragOperation(invSlots[slotId].getNiftyControl(InventorySlot.class)));
     }
 
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    @NiftyEventSubscriber(pattern = "invslot_.*")
     public void dropInInventory(final String topic, final DroppableDroppedEvent data) {
         final int slotId = getSlotNumber(topic);
         World.getInteractionManager().dropAtInventory(slotId);
