@@ -32,6 +32,7 @@ import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 
@@ -94,6 +95,11 @@ public class InventorySlotControl extends AbstractController implements Inventor
 
     private Screen screen;
     private Nifty nifty;
+
+    /**
+     * The logger that displays all logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(InventorySlotControl.class);
 
     /**
      * {@inheritDoc}
@@ -205,6 +211,8 @@ public class InventorySlotControl extends AbstractController implements Inventor
     @Override
     public void showLabel() {
         if (!backgroundImageLabel.isVisible()) {
+            LOGGER.debug("Showing Label!");
+
             backgroundImageLabel.show();
             backgroundImageLabel.getParent().layoutElements();
         }
@@ -217,6 +225,8 @@ public class InventorySlotControl extends AbstractController implements Inventor
     @Override
     public void hideLabel() {
         if (backgroundImageLabel.isVisible()) {
+            LOGGER.debug("Hiding Label!");
+
             backgroundImageLabel.hide();
             backgroundImageLabel.getParent().layoutElements();
         }
@@ -229,7 +239,9 @@ public class InventorySlotControl extends AbstractController implements Inventor
     @Override
     public void setLabelText(final String text) {
         backgroundImageLabel.getNiftyControl(Label.class).setText(text);
-        backgroundImageLabel.getParent().layoutElements();
+        if (backgroundImageLabel.isVisible()) {
+            backgroundImageLabel.getParent().layoutElements();
+        }
     }
 
     /**
@@ -263,7 +275,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
         nifty.subscribe(screen, draggable.getId(), DraggableDragCanceledEvent.class, dragCanceledEvent);
 
         retrieveDraggable();
-        hideLabel();
+        restoreVisibility();
     }
 
     /**
