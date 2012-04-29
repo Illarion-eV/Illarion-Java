@@ -202,7 +202,7 @@ public class ContainerHandler implements ScreenController {
 
         final int slotCount = conControl.getSlotCount();
         for (int i = 0; i < slotCount; i++) {
-            final InventorySlot conSlot = conControl.getSlot(itr.key());
+            final InventorySlot conSlot = conControl.getSlot(i);
             conSlot.setImage(null);
             conSlot.hideLabel();
         }
