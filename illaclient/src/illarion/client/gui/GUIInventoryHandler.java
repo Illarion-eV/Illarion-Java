@@ -346,6 +346,7 @@ public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdat
                 invSlot.hideLabel();
             }
         } else {
+            slotLabelVisibility[slotId] = false;
             invSlot.setImage(null);
             invSlot.hideLabel();
         }
@@ -362,6 +363,7 @@ public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdat
                 invSlot.hideLabel();
             }
         }
+        inventoryWindow.layoutElements();
     }
 
     public void showInventory() {
