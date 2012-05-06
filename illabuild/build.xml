@@ -1,74 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-This file is part of the Illarion Build Utility.
-
-Copyright © 2011 - Illarion e.V.
-
-The Illarion Build Utility is free software: you can redistribute i and/or
-modify it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or (at your
-option) any later version.
-
-The Illarion Build Utility is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-Public License for more details.
-
-You should have received a copy of the GNU General Public License along with
-the Illarion Build Utility. If not, see <http://www.gnu.org/licenses/>.
--->
+  ~ This file is part of the Illarion Build Utility.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Build Utility is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Build Utility is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Build Utility.  If not, see <http://www.gnu.org/licenses/>.
+  -->
 <project name="Illarion Build Utilitiy" default="build_buildutil" basedir=".">
-	<description>
-           Build the Illarion Build Utility
+    <description>
+        Build the Illarion Build Utility
     </description>
 
-	<import file="../illacommon/build_include.xml" />
+    <import file="../illacommon/build_include.xml"/>
 
-	<property name="src" location="${build}/src" />
-	<property name="res" location="${build}/res" />
-	<property name="classes" location="${build}/antclasses" />
-	<property name="jar" location="${build}/${build.jar}" />
+    <property name="src" location="${build}/src"/>
+    <property name="res" location="${build}/res"/>
+    <property name="classes" location="${build}/antclasses"/>
+    <property name="jar" location="${build}/${build.jar}"/>
 
-	<target name="build_buildutil" description="build the build utility jar file" depends="init, compile_buildutil">
-        <move file="${jar}" tofile="${build.bin}" failonerror="false" />
-		<delete file="${jar}" failonerror="false" />
-	</target>
+    <target name="build_buildutil" description="build the build utility jar file"
+            depends="init, compile_buildutil, build_jar" unless="build.uptodate">
+        <move file="${jar}" tofile="${build.bin}" failonerror="false"/>
+        <delete file="${jar}" failonerror="false"/>
+    </target>
 
-	<target name="compile_buildutil">
-		<delete dir="${classes}" />
-		<mkdir dir="${classes}" />
+    <target name="compile_buildutil">
+        <mkdir dir="${classes}"/>
 
-		<javac includeantruntime="true" includejavaruntime="true"
-			srcdir="${src}" destdir="${classes}" source="${source.version}"
-			target="${target.version}" encoding="${source.encoding}"
-			compiler="${build.compiler}" debug="${build.debug}"
-			debuglevel="${build.debuglevel}">
-			<classpath>
-                <fileset refid="twl" />
-                <fileset refid="xz" />
-				<pathelement location="${common.bin}" />
-				<pathelement path="${java.home}/lib" />
-			</classpath>
-		</javac>
+        <javac includeantruntime="true" includejavaruntime="true"
+               srcdir="${src}" destdir="${classes}" source="${source.version}"
+               target="${target.version}" encoding="${source.encoding}"
+               compiler="${build.compiler}" debug="${build.debug}"
+               debuglevel="${build.debuglevel}">
+            <classpath>
+                <fileset refid="twl"/>
+                <fileset refid="xz"/>
+                <pathelement location="${common.bin}"/>
+                <pathelement path="${java.home}/lib"/>
+            </classpath>
+        </javac>
+    </target>
 
-		<jar jarfile="${jar}" basedir="${classes}" includes="illarion/build/**">
-			<fileset dir="${classes}">
-			    <include name="illarion/build/**"/>
-			</fileset>
+    <target name="build_jar" depends="check_for_up_to_date" unless="build.uptodate">
+        <jar jarfile="${jar}" basedir="${classes}" includes="illarion/build/**">
+            <fileset dir="${classes}">
+                <include name="illarion/build/**"/>
+            </fileset>
             <fileset dir="${src}">
                 <include name="illarion/build/illabuild.properties"/>
             </fileset>
-            <zipfileset src="${common.bin}" />
-			<zipgroupfileset refid="twl" />
-            <zipgroupfileset refid="xz" />
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-Date" value="${TODAY}" />
-				<attribute name="Implementation-Vendor" value="${easynpc.vendor}" />
-				<attribute name="Implementation-Title" value="${easynpc.name}" />
-				<attribute name="Implementation-Version" value="${easynpc.version}" />
-			</manifest>
-		</jar>
-		<delete dir="${classes}" />
-	</target>
+            <zipfileset src="${common.bin}"/>
+            <zipgroupfileset refid="twl"/>
+            <zipgroupfileset refid="xz"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="${easynpc.vendor}"/>
+                <attribute name="Implementation-Title" value="${easynpc.name}"/>
+                <attribute name="Implementation-Version" value="${easynpc.version}"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${jar}" basedir="${src}" includes="public.key" update="true" index="${build.index}"/>
+    </target>
+
+    <target name="check_for_up_to_date">
+        <uptodate property="build.uptodate" targetfile="${build.bin}">
+            <srcfiles dir="${classes}">
+                <include name="illarion/build/**"/>
+            </srcfiles>
+            <srcfiles dir="${src}">
+                <include name="illarion/build/illabuild.properties"/>
+                <include name="public.key"/>
+            </srcfiles>
+        </uptodate>
+    </target>
 </project>

@@ -1,97 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This file is part of the Illarion Nifty Controls Library.
-
-Copyright © 2011 - Illarion e.V.
-
-The Illarion Nifty Controls Library is free software: you can redistribute i
-and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation, either version 3 of the License,
-or (at your option) any later version.
-
-The Illarion Nifty Controls Library is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with
-the Illarion Nifty Controls Library. If not, see <http://www.gnu.org/licenses/>.
--->
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Controls.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
+  -->
 <project name="Nifty Controls Illarion" default="build_nifty_controls" basedir=".">
-	<description>
+    <description>
         Build nifty controls.
     </description>
 
-	<import file="../illacommon/build_include.xml" />
+    <import file="../illacommon/build_include.xml"/>
 
-	<!-- set global properties for this build -->
-	<property name="src" location="${niftycontrols}/src" />
-	<property name="classes" location="${niftycontrols}/antclasses" />
-	<property name="jar" location="${niftycontrols}/${niftycontrols.jar}" />
+    <!-- set global properties for this build -->
+    <property name="src" location="${niftycontrols}/src"/>
+    <property name="classes" location="${niftycontrols}/antclasses"/>
+    <property name="jar" location="${niftycontrols}/${niftycontrols.jar}"/>
 
-    <target name="build_nifty_controls" description="Build unobfuscated test client" depends="init, compile_nifty_controls">
-        <move file="${jar}" tofile="${niftycontrols.bin}" />
+    <target name="build_nifty_controls" description="Build unobfuscated test client"
+            depends="init, compile_nifty_controls, build_jar" unless="niftycontrols.uptodate">
+        <move file="${jar}" tofile="${niftycontrols.bin}"/>
     </target>
 
-	<target name="build_nifty_controls_res" description="Build the nifty controls jar"
-            depends="check_optional_dirs, build_nifty_controls, register_extensions" if="keys.exist">
-		<resourceprepare targetdir="${signedcompiled}" usepack200="true">
-			<filelist dir="${compiled}">
-				<file name="${niftycontrols.jar}" />
-			</filelist>
-		</resourceprepare>
+    <target name="build_nifty_controls_res" description="Build the nifty controls jar"
+            depends="check_optional_dirs, build_nifty_controls, register_extensions" if="keys.exist"
+            unless="niftycontrols.uptodate">
+        <resourceprepare targetdir="${signedcompiled}" usepack200="true">
+            <filelist dir="${compiled}">
+                <file name="${niftycontrols.jar}"/>
+            </filelist>
+        </resourceprepare>
 
-		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}" storetype="${storetype}">
-			<path>
-				<filelist dir="${signedcompiled}">
-					<file name="${niftycontrols.jar}" />
-				</filelist>
-			</path>
-		</signjar>
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}"
+                 storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${niftycontrols.jar}"/>
+                </filelist>
+            </path>
+        </signjar>
 
-		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
-			<path>
-				<filelist dir="${signedcompiled}">
-					<file name="${niftycontrols.jar}" />
-				</filelist>
-			</path>
-		</verifyjar>
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${niftycontrols.jar}"/>
+                </filelist>
+            </path>
+        </verifyjar>
 
         <resourcebuild target="${niftyillarion.res.deploy}" usepack200="true">
             <filelist dir="${signedcompiled}">
-                <file name="${niftycontrols.jar}" />
-                <file name="${niftystyle.jar}" />
+                <file name="${niftycontrols.jar}"/>
+                <file name="${niftystyle.jar}"/>
             </filelist>
         </resourcebuild>
-	</target>
+    </target>
 
-	<target name="compile_nifty_controls" depends="proguard">
-		<!-- Compile the java code from ${src} into ${build} -->
-		<delete dir="${classes}" />
-		<mkdir dir="${classes}" />
-		<javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}" target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}" debuglevel="${build.debuglevel}">
-			<classpath>
-				<fileset refid="nifty" />
-				<fileset refid="eventbus" />
-				<pathelement path="${common.bin}" />
-				<pathelement path="${java.home}/lib" />
-			</classpath>
-		</javac>
+    <target name="compile_nifty_controls">
+        <!-- Compile the java code from ${src} into ${build} -->
+        <mkdir dir="${classes}"/>
+        <javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}"
+               target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <classpath>
+                <fileset refid="nifty"/>
+                <fileset refid="eventbus"/>
+                <fileset refid="log4j"/>
+                <pathelement path="${common.bin}"/>
+                <pathelement path="${java.home}/lib"/>
+            </classpath>
+        </javac>
+    </target>
 
-		<!--Build jar file-->
-		<jar jarfile="${jar}" basedir="${classes}" includes="org/illarion/nifty/controls/**">
-			<!--<fileset dir="${classes}">
-				<include name="org/illarion/nifty/controls/**" />
-			</fileset>-->
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-Date" value="${TODAY}" />
-				<attribute name="Implementation-Vendor" value="${niftycontrols.vendor}" />
-				<attribute name="Implementation-Title" value="${niftycontrols.name}" />
-				<attribute name="Implementation-Version" value="${niftycontrols.version}" />
-			</manifest>
-		</jar>
-        <jar jarfile="${jar}" basedir="${niftycontrols}/nifty-controls" update="true" index="true" includes="*.xml" />
+    <target name="build_jar" depends="check_for_up_to_date" unless="niftycontrols.uptodate">
+        <jar jarfile="${jar}" basedir="${classes}" includes="org/illarion/nifty/controls/**">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="${niftycontrols.vendor}"/>
+                <attribute name="Implementation-Title" value="${niftycontrols.name}"/>
+                <attribute name="Implementation-Version" value="${niftycontrols.version}"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${jar}" basedir="${niftycontrols}/nifty-controls" update="true" index="true" includes="*.xml"/>
+    </target>
 
-		<delete dir="${classes}" />
-	</target>
+    <target name="check_for_up_to_date">
+        <uptodate property="niftycontrols.uptodate" targetfile="${niftycontrols.bin}">
+            <srcfiles dir="${classes}">
+                <include name="org/illarion/nifty/controls/**"/>
+            </srcfiles>
+            <srcfiles dir="${niftycontrols}/nifty-controls">
+                <include name="*.xml"/>
+            </srcfiles>
+        </uptodate>
+    </target>
 </project>

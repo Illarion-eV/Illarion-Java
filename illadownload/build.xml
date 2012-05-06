@@ -29,9 +29,11 @@
     <property name="src" location="${download}/src"/>
     <property name="classes" location="${download}/antclasses"/>
     <property name="jar" location="${download}/${download.jar}"/>
+    <property name="org.jar" location="${download}/org_${download.jar}"/>
 
     <target name="build_download" description="Build the download jar"
-            depends="check_optional_dirs, init, buildTasks, compile_download" if="keys.exist">
+            depends="check_optional_dirs, init, buildTasks, compile_download, build_jar" if="keys.exist"
+            unless="download.uptodate">
         <move file="${jar}" tofile="${download.bin}"/>
 
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
@@ -64,7 +66,6 @@
 
     <target name="compile_download" depends="proguard">
         <!-- Compile the java code from ${src} into ${build} -->
-        <delete dir="${classes}"/>
         <mkdir dir="${classes}"/>
         <javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}"
                target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}"
@@ -76,8 +77,9 @@
                 <pathelement path="${java.home}/lib"/>
             </classpath>
         </javac>
+    </target>
 
-        <!--Build jar file-->
+    <target name="build_jar" depends="check_for_up_to_date" unless="download.uptodate">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/download/**">
             <fileset dir="${classes}">
                 <include name="illarion/download/**"/>
@@ -102,7 +104,6 @@
         <jar jarfile="${jar}" basedir="${download}" includes="JNLP-INF/*.jnlp" update="true" compress="false"/>
         <jar jarfile="${jar}" basedir="${src}" includes="messages_de.properties messages_en.properties" update="true"
              index="true"/>
-        <delete dir="${classes}"/>
 
         <mkdir dir="${download}/tmp"/>
         <proguard preverify="true" skipnonpubliclibraryclasses="false"
@@ -142,8 +143,24 @@
             </keepclasseswithmembers>
         </proguard>
 
-        <delete file="${jar}"/>
+        <move file="${jar}" tofile="${org.jar}"/>
         <move file="${download}/tmp/${download.jar}" tofile="${jar}"/>
         <delete dir="${download}/tmp"/>
+    </target>
+
+    <target name="check_for_up_to_date">
+        <uptodate property="download.uptodate" targetfile="${org.jar}">
+            <srcfiles dir="${classes}">
+                <include name="illarion/download/**"/>
+            </srcfiles>
+            <srcfiles dir="${src}">
+                <include name="*.png"/>
+                <include name="messages_de.properties"/>
+                <include name="messages_en.properties"/>
+            </srcfiles>
+            <srcfiles dir="${download}">
+                <include name="JNLP-INF/*.jnlp"/>
+            </srcfiles>
+        </uptodate>
     </target>
 </project>

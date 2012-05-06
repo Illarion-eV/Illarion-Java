@@ -1,113 +1,134 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-This file is part of the Illarion easyNPC Editor.
-
-Copyright © 2011 - Illarion e.V.
-
-The Illarion easyNPC Editor is free software: you can redistribute i and/or
-modify it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or (at your
-option) any later version.
-
-The Illarion easyNPC Editor is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-Public License for more details.
-
-You should have received a copy of the GNU General Public License along with
-the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
--->
+  ~ This file is part of the Illarion easyNPC Editor.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
+  -->
 <project name="Illarion easyNPC Editor" default="build_easynpc" basedir=".">
-	<description>
-           Build the Illarion easyNPC Editor.
+    <description>
+        Build the Illarion easyNPC Editor.
     </description>
 
-	<import file="../illacommon/build_include.xml" />
+    <import file="../illacommon/build_include.xml"/>
 
-	<property name="src" location="${easynpc}/src" />
-	<property name="res" location="${easynpc}/res" />
-	<property name="classes" location="${easynpc}/antclasses" />
-	<property name="jar" location="${easynpc}/${easynpc.jar}" />
-	<property name="jar_res" location="${easynpc}/illarion_easynpc_resources.jar" />
+    <property name="src" location="${easynpc}/src"/>
+    <property name="res" location="${easynpc}/res"/>
+    <property name="classes" location="${easynpc}/antclasses"/>
+    <property name="jar" location="${easynpc}/${easynpc.jar}"/>
+    <property name="jar_res" location="${easynpc}/illarion_easynpc_resources.jar"/>
 
-	<target name="build_easynpc" description="build easynpc editor jar file" depends="init, compile_easynpc">
-        <move file="${jar}" tofile="${easynpc.bin}" />
-	</target>
+    <target name="build_easynpc" description="build easynpc editor jar file"
+            depends="init, compile_easynpc, build_jar" unless="easynpc.uptodate">
+        <move file="${jar}" tofile="${easynpc.bin}"/>
+    </target>
 
     <target name="build_easynpc_res" description="create the resource of the illarion client"
-            depends="check_optional_dirs, build_easynpc, register_extensions" if="keys.exist">
+            depends="check_optional_dirs, build_easynpc, register_extensions" if="keys.exist" unless="easynpc.uptodate">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
-                <file name="${easynpc.jar}" />
+                <file name="${easynpc.jar}"/>
             </filelist>
         </resourceprepare>
 
-        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}" storetype="${storetype}">
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}"
+                 storetype="${storetype}">
             <path>
                 <filelist dir="${signedcompiled}">
-                    <file name="${easynpc.jar}" />
+                    <file name="${easynpc.jar}"/>
                 </filelist>
             </path>
         </signjar>
 
-        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
             <path>
                 <filelist dir="${signedcompiled}">
-                    <file name="${easynpc.jar}" />
+                    <file name="${easynpc.jar}"/>
                 </filelist>
             </path>
         </verifyjar>
-    	
+
         <resourcebuild target="${easynpc.res.deploy}" usepack200="true">
             <filelist dir="${signedcompiled}">
-                <file name="${easynpc.jar}" />
+                <file name="${easynpc.jar}"/>
             </filelist>
         </resourcebuild>
     </target>
 
-	<target name="compile_easynpc">
-		<delete dir="${classes}" />
-		<mkdir dir="${classes}" />
+    <target name="compile_easynpc">
+        <mkdir dir="${classes}"/>
 
-		<javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}" debuglevel="${build.debuglevel}">
-			<classpath>
-				<fileset refid="substance" />
-                <fileset refid="trident" />
-                <fileset refid="flamingo" />
-                <fileset refid="substance-flamingo" />
-                <fileset refid="jsyntaxpane" />
-                <fileset refid="javolution" />
-                <fileset refid="trove" />
-                <fileset refid="log4j" />
-				<pathelement location="${common.bin}" />
-				<pathelement path="${java.home}/lib" />
-			</classpath>
-		</javac>
+        <javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}"
+               encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}"
+               debuglevel="${build.debuglevel}">
+            <classpath>
+                <fileset refid="substance"/>
+                <fileset refid="trident"/>
+                <fileset refid="flamingo"/>
+                <fileset refid="substance-flamingo"/>
+                <fileset refid="jsyntaxpane"/>
+                <fileset refid="javolution"/>
+                <fileset refid="trove"/>
+                <fileset refid="log4j"/>
+                <pathelement location="${common.bin}"/>
+                <pathelement path="${java.home}/lib"/>
+            </classpath>
+        </javac>
 
-		<jar jarfile="${jar}" basedir="${classes}" includes="illarion/easynpc/**">
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-Date" value="${TODAY}" />
-				<attribute name="Implementation-Vendor" value="${easynpc.vendor}" />
-				<attribute name="Implementation-Title" value="${easynpc.name}" />
-				<attribute name="Implementation-Version" value="${easynpc.version}" />
-			</manifest>
-		</jar>
-		<jar jarfile="${jar}" basedir="${src}" includes="logging.properties" update="true" />
-		<jar jarfile="${jar}" basedir="${src}" includes="illarion/easynpc/gui/syntax/easyNpc.properties" update="true" />
-		<jar jarfile="${jar}" basedir="${res}" includes="*.png" update="true" />
-		<jar jarfile="${jar}" basedir="${src}" includes="messages_*.properties" update="true" index="${build.index}" />
-		<delete dir="${classes}" />
+        <copy toDir="${setup}" preservelastmodified="true">
+            <filelist dir="${easynpc}/res">
+                <file name="easynpc16.png"/>
+                <file name="easynpc32.png"/>
+                <file name="easynpc48.png"/>
+                <file name="easynpc64.png"/>
+                <file name="easynpc128.png"/>
+                <file name="easynpc256.png"/>
+            </filelist>
+        </copy>
+    </target>
 
-		<copy toDir="${setup}" preservelastmodified="true">
-			<filelist dir="${easynpc}/res">
-				<file name="easynpc16.png" />
-				<file name="easynpc32.png" />
-				<file name="easynpc48.png" />
-				<file name="easynpc64.png" />
-				<file name="easynpc128.png" />
-				<file name="easynpc256.png" />
-			</filelist>
-		</copy>
-	</target>
+    <target name="build_jar" depends="check_for_up_to_date" unless="easynpc.uptodate">
+        <jar jarfile="${jar}" basedir="${classes}" includes="illarion/easynpc/**">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="${easynpc.vendor}"/>
+                <attribute name="Implementation-Title" value="${easynpc.name}"/>
+                <attribute name="Implementation-Version" value="${easynpc.version}"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${jar}" basedir="${src}" includes="logging.properties" update="true"/>
+        <jar jarfile="${jar}" basedir="${src}" includes="illarion/easynpc/gui/syntax/easyNpc.properties" update="true"/>
+        <jar jarfile="${jar}" basedir="${res}" includes="*.png" update="true"/>
+        <jar jarfile="${jar}" basedir="${src}" includes="messages_*.properties" update="true" index="${build.index}"/>
+    </target>
+
+    <target name="check_for_up_to_date">
+        <uptodate property="easynpc.uptodate" targetfile="${easynpc.bin}">
+            <srcfiles dir="${classes}">
+                <include name="illarion/easynpc/**"/>
+            </srcfiles>
+            <srcfiles dir="${src}">
+                <include name="logging.properties"/>
+                <include name="illarion/easynpc/gui/syntax/easyNpc.properties"/>
+                <include name="messages_*.properties"/>
+            </srcfiles>
+            <srcfiles dir="${res}">
+                <include name="*.png"/>
+            </srcfiles>
+        </uptodate>
+    </target>
 </project>

@@ -1,128 +1,164 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-This file is part of the Illarion easyQuest Editor.
-
-Copyright © 2011 - Illarion e.V.
-
-The Illarion easyQuest Editor is free software: you can redistribute i and/or
-modify it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or (at your
-option) any later version.
-
-The Illarion easyQuest Editor is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-Public License for more details.
-
-You should have received a copy of the GNU General Public License along with
-the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
--->
+  ~ This file is part of the Illarion easyQuest Editor.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion easyQuest Editor is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion easyQuest Editor is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion easyQuest Editor.  If not, see <http://www.gnu.org/licenses/>.
+  -->
 <project name="Illarion easyQuest Editor" default="build_easyquest" basedir=".">
-	<description>
-           Build the Illarion easyQuest Editor.
+    <description>
+        Build the Illarion easyQuest Editor.
     </description>
 
-    <dirname file="${ant.file.Illarion easyQuest Editor}" property="easyquest.dir" />
-	<import file="${easyquest.dir}/../illacommon/build_include.xml" />
+    <dirname file="${ant.file.Illarion easyQuest Editor}" property="easyquest.dir"/>
+    <import file="${easyquest.dir}/../illacommon/build_include.xml"/>
 
-	<property name="src" location="${easyquest}/src" />
-	<property name="res" location="${easyquest}/res" />
-	<property name="classes" location="${easyquest}/antclasses" />
-	<property name="jar" location="${easyquest}/${easyquest.jar}" />
+    <property name="src" location="${easyquest}/src"/>
+    <property name="res" location="${easyquest}/res"/>
+    <property name="classes" location="${easyquest}/antclasses"/>
+    <property name="jar" location="${easyquest}/${easyquest.jar}"/>
 
-	<target name="build_easyquest" description="build easyquest editor jar file" depends="init, compile_easyquest">
-        <move file="${jar}" tofile="${easyquest.bin}" />
-	</target>
+    <target name="build_easyquest" description="build easyquest editor jar file"
+            depends="init, compile_easyquest, build_jar" unless="easyquest.uptodate">
+        <move file="${jar}" tofile="${easyquest.bin}"/>
+    </target>
 
     <target name="build_easyquest_res" description="create the resource of the illarion client"
-            depends="check_optional_dirs, build_easyquest, register_extensions" if="keys.exist">
+            depends="check_optional_dirs, build_easyquest, register_extensions" if="keys.exist"
+            unless="easyquest.uptodate">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
-                <file name="${easyquest.jar}" />
+                <file name="${easyquest.jar}"/>
             </filelist>
         </resourceprepare>
 
-        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}" storetype="${storetype}">
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}"
+                 storetype="${storetype}">
             <path>
                 <filelist dir="${signedcompiled}">
-                    <file name="${easyquest.jar}" />
+                    <file name="${easyquest.jar}"/>
                 </filelist>
             </path>
         </signjar>
 
-        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
             <path>
                 <filelist dir="${signedcompiled}">
-                    <file name="${easyquest.jar}" />
+                    <file name="${easyquest.jar}"/>
                 </filelist>
             </path>
         </verifyjar>
-    	
+
         <resourcebuild target="${easyquest.res.deploy}" usepack200="true">
             <filelist dir="${signedcompiled}">
-                <file name="${easyquest.jar}" />
+                <file name="${easyquest.jar}"/>
             </filelist>
         </resourcebuild>
     </target>
-	
-	<target name="generate_filelists">
-		<delete file="${res}/template/handler/filelist" />
-        <delete file="${res}/template/trigger/filelist" />
-		<delete file="${res}/template/condition/filelist" />
-    	<fileset id="handlers_fs" dir="${res}/template/handler">
-    	    <include name="*.lua" />
-    	</fileset>
+
+    <target name="generate_filelists" depends="check_filelists_uptodate" unless="easynpc.changed_template_files">
+        <delete file="${res}/template/handler/filelist"/>
+        <delete file="${res}/template/trigger/filelist"/>
+        <delete file="${res}/template/condition/filelist"/>
+        <fileset id="handlers_fs" dir="${res}/template/handler">
+            <include name="*.lua"/>
+        </fileset>
         <fileset id="trigger_fs" dir="${res}/template/trigger">
-            <include name="*.lua" />
+            <include name="*.lua"/>
         </fileset>
-		<fileset id="condition_fs" dir="${res}/template/condition">
-            <include name="*.lua" />
+        <fileset id="condition_fs" dir="${res}/template/condition">
+            <include name="*.lua"/>
         </fileset>
-    
-    	<pathconvert pathsep="${line.separator}" property="handlers" refid="handlers_fs">
-    		<map from="${basedir}/res/" to="" />
+
+        <pathconvert pathsep="${line.separator}" property="handlers" refid="handlers_fs">
+            <map from="${basedir}/res/" to=""/>
         </pathconvert>
         <pathconvert pathsep="${line.separator}" property="trigger" refid="trigger_fs">
-            <map from="${basedir}/res/" to="" />
+            <map from="${basedir}/res/" to=""/>
         </pathconvert>
-		<pathconvert pathsep="${line.separator}" property="condition" refid="condition_fs">
-            <map from="${basedir}/res/" to="" />
+        <pathconvert pathsep="${line.separator}" property="condition" refid="condition_fs">
+            <map from="${basedir}/res/" to=""/>
         </pathconvert>
-    	<echo file="${res}/template/handler/filelist">${handlers}</echo>
+        <echo file="${res}/template/handler/filelist">${handlers}</echo>
         <echo file="${res}/template/trigger/filelist">${trigger}</echo>
-		<echo file="${res}/template/condition/filelist">${condition}</echo>
-	</target>
+        <echo file="${res}/template/condition/filelist">${condition}</echo>
+    </target>
 
-	<target name="compile_easyquest" depends="generate_filelists">
-		<delete dir="${classes}" />
-		<mkdir dir="${classes}" />
+    <target name="check_filelists_uptodate">
+        <condition property="easynpc.changed_template_files">
+            <resourcecount count="0" when="eq">
+                <fileset dir="${res}/template">
+                    <include name="handler/*.lua"/>
+                    <include name="trigger/*.lua"/>
+                    <include name="condition/*.lua"/>
+                    <modified/>
+                </fileset>
+            </resourcecount>
+        </condition>
+    </target>
 
-		<javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}" debuglevel="${build.debuglevel}">
-			<classpath>
-			    <fileset refid="javolution" />
-			    <fileset refid="log4j" />
-				<fileset refid="substance" />
-                <fileset refid="trident" />
-                <fileset refid="flamingo" />
-                <fileset refid="substance-flamingo" />
-                <fileset refid="jgraph" />
-				<pathelement location="${common.bin}" />
-				<pathelement path="${java.home}/lib" />
-			</classpath>
-		</javac>
+    <target name="compile_easyquest" depends="generate_filelists">
+        <mkdir dir="${classes}"/>
 
-		<jar jarfile="${jar}" basedir="${classes}" includes="illarion/easyquest/**">
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-Date" value="${TODAY}" />
-				<attribute name="Implementation-Vendor" value="${easyquest.vendor}" />
-				<attribute name="Implementation-Title" value="${easyquest.name}" />
-				<attribute name="Implementation-Version" value="${easyquest.version}" />
-			</manifest>
-		</jar>
-		<jar jarfile="${jar}" basedir="${src}" includes="logging.properties" update="true" />
-		<jar jarfile="${jar}" basedir="${res}" includes="*.png,**/*.lua,**/filelist" update="true" />
-		<jar jarfile="${jar}" basedir="${src}" includes="messages_*.properties" update="true" index="${build.index}" />
-		<delete dir="${classes}" />
-	</target>
+        <javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}"
+               encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}"
+               debuglevel="${build.debuglevel}">
+            <classpath>
+                <fileset refid="javolution"/>
+                <fileset refid="log4j"/>
+                <fileset refid="substance"/>
+                <fileset refid="trident"/>
+                <fileset refid="flamingo"/>
+                <fileset refid="substance-flamingo"/>
+                <fileset refid="jgraph"/>
+                <pathelement location="${common.bin}"/>
+                <pathelement path="${java.home}/lib"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="build_jar" depends="check_for_up_to_date" unless="easyquest.uptodate">
+        <jar jarfile="${jar}" basedir="${classes}" includes="illarion/easyquest/**">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="${easyquest.vendor}"/>
+                <attribute name="Implementation-Title" value="${easyquest.name}"/>
+                <attribute name="Implementation-Version" value="${easyquest.version}"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${jar}" basedir="${src}" includes="logging.properties" update="true"/>
+        <jar jarfile="${jar}" basedir="${res}" includes="*.png,**/*.lua,**/filelist" update="true"/>
+        <jar jarfile="${jar}" basedir="${src}" includes="messages_*.properties" update="true" index="${build.index}"/>
+    </target>
+
+    <target name="check_for_up_to_date">
+        <uptodate property="easyquest.uptodate" targetfile="${easyquest.bin}">
+            <srcfiles dir="${classes}">
+                <include name="illarion/easyquest/**"/>
+            </srcfiles>
+            <srcfiles dir="${src}">
+                <include name="logging.properties"/>
+                <include name="messages_*.properties"/>
+            </srcfiles>
+            <srcfiles dir="${res}">
+                <include name="*.png"/>
+                <include name="**/*.lua"/>
+                <include name="**/filelist"/>
+            </srcfiles>
+        </uptodate>
+    </target>
 </project>
