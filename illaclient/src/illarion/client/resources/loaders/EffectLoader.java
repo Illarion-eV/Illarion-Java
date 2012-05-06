@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources.loaders;
 
@@ -29,11 +29,11 @@ import org.apache.log4j.Logger;
  * that was created using the configuration tool. The class will create the
  * required effect objects and send them to the effect factory that takes care
  * for distributing those objects.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class EffectLoader extends ResourceLoader<Effect> implements
-    TableLoaderSink {
+public final class EffectLoader extends AbstractResourceLoader<Effect> implements
+        TableLoaderSink {
     /**
      * The table index of the column that stores the amount of frames of the
      * effect animation.
@@ -84,7 +84,7 @@ public final class EffectLoader extends ResourceLoader<Effect> implements
      * Trigger the loading sequence for this loader.
      */
     @Override
-    public void load() {
+    public ResourceFactory<Effect> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
@@ -94,6 +94,8 @@ public final class EffectLoader extends ResourceLoader<Effect> implements
         factory.init();
         new TableLoader("Effects", this);
         factory.loadingFinished();
+
+        return factory;
     }
 
     /**
@@ -110,14 +112,14 @@ public final class EffectLoader extends ResourceLoader<Effect> implements
         final int light = loader.getInt(TB_LIGHT);
 
         final Effect effect =
-            new Effect(effectID, fileName, frameCount, offsetX, offsetY,
-                animSpeed, light);
+                new Effect(effectID, fileName, frameCount, offsetX, offsetY,
+                        animSpeed, light);
         try {
             getTargetFactory().storeResource(effect);
             effect.activate(effectID);
         } catch (final IllegalStateException ex) {
             logger.error("Failed adding effect to internal factory. ID: "
-                + Integer.toString(effectID) + " - Filename: " + fileName);
+                    + Integer.toString(effectID) + " - Filename: " + fileName);
         }
 
         return true;

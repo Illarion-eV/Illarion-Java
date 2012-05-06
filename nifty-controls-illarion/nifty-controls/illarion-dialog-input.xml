@@ -25,7 +25,7 @@
                     <control name="textfield" id="#input" maxlength="65536"/>
                 </panel>
                 <panel id="#buttons" childLayout="center" visibleToMouse="true" width="100%">
-                    <panel childLayout="horizontal">
+                    <panel childLayout="horizontal" align="center">
                         <control name="button" id="#buttonLeft" label="OK"/>
                         <control name="button" id="#buttonRight" label="Cancel"/>
                     </panel>

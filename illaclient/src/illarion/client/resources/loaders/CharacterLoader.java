@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources.loaders;
 
@@ -31,11 +31,11 @@ import org.newdawn.slick.Color;
  * that was created using the configuration tool. The class will create the
  * required character objects and send them to the character factory that takes
  * care for distributing those objects.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class CharacterLoader extends ResourceLoader<Avatar> implements
-    TableLoaderSink {
+public final class CharacterLoader extends AbstractResourceLoader<Avatar> implements
+        TableLoaderSink {
     /**
      * The table index that stores the id of the animation this avatar shows.
      */
@@ -135,7 +135,7 @@ public final class CharacterLoader extends ResourceLoader<Avatar> implements
     private final Logger logger = Logger.getLogger(ItemLoader.class);
 
     @Override
-    public void load() {
+    public ResourceFactory<Avatar> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
@@ -146,6 +146,8 @@ public final class CharacterLoader extends ResourceLoader<Avatar> implements
         new TableLoader("Chars", this);
         factory.loadingFinished();
         AvatarInfo.cleanup();
+
+        return factory;
     }
 
     @Override
@@ -170,21 +172,21 @@ public final class CharacterLoader extends ResourceLoader<Avatar> implements
         // final int skinAlpha = loader.getInt(TB_ALPHA);
 
         final AvatarInfo info =
-            AvatarInfo.get(appearance, visibleMod, german, english);
+                AvatarInfo.get(appearance, visibleMod, german, english);
         info.reportAnimation(animationID);
 
         final Color tmp_color = new Color(skinRed, skinGreen, skinBlue, 255);
 
         final Avatar avatar =
-            new Avatar(avatarId, filename, frameCount, stillFrame, offsetX,
-                offsetY, shadowOffset, info, mirror, tmp_color, direction);
+                new Avatar(avatarId, filename, frameCount, stillFrame, offsetX,
+                        offsetY, shadowOffset, info, mirror, tmp_color, direction);
 
         try {
             getTargetFactory().storeResource(avatar);
             avatar.activate(avatarId);
         } catch (final IllegalStateException ex) {
             logger.error("Failed adding avatar to internal factory. ID: "
-                + Integer.toString(avatarId) + " - Filename: " + filename);
+                    + Integer.toString(avatarId) + " - Filename: " + filename);
         }
 
         return true;

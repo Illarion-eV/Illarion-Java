@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources.loaders;
 
@@ -27,11 +27,11 @@ import org.apache.log4j.Logger;
 /**
  * This class takes care for loading the avatar clothes, sorts them to the
  * avatars and prepares to render them.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ClothLoader extends ResourceLoader<AvatarCloth> implements
-    TableLoaderSink {
+public final class ClothLoader extends AbstractResourceLoader<AvatarCloth> implements
+        TableLoaderSink {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
@@ -84,7 +84,7 @@ public final class ClothLoader extends ResourceLoader<AvatarCloth> implements
     private static final int TB_STILL = 2;
 
     @Override
-    public void load() {
+    public ResourceFactory<AvatarCloth> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
@@ -94,15 +94,17 @@ public final class ClothLoader extends ResourceLoader<AvatarCloth> implements
         factory.init();
         new TableLoader("Cloth", this);
         factory.loadingFinished();
+
+        return factory;
     }
 
     /**
      * Handle one record from the table that is loaded by this function. This
      * function is called by the table loader.
-     * 
-     * @param line the line in the list that is currently processed
+     *
+     * @param line   the line in the list that is currently processed
      * @param loader the table loader class that handles the table that is
-     *            currently loading
+     *               currently loading
      * @return true in case the loader shall go on reading the table, false if
      *         it should stop
      */
@@ -114,19 +116,19 @@ public final class ClothLoader extends ResourceLoader<AvatarCloth> implements
         final int location = loader.getInt(TB_LOCATION);
 
         final AvatarCloth cloth =
-            new AvatarCloth(avatarID, itemID, loader.getString(TB_NAME),
-                location, loader.getInt(TB_FRAME), loader.getInt(TB_STILL),
-                loader.getInt(TB_OFFSET_X), loader.getInt(TB_OFFSET_Y),
-                loader.getBoolean(TB_MIRROR), null);
+                new AvatarCloth(avatarID, itemID, loader.getString(TB_NAME),
+                        location, loader.getInt(TB_FRAME), loader.getInt(TB_STILL),
+                        loader.getInt(TB_OFFSET_X), loader.getInt(TB_OFFSET_Y),
+                        loader.getBoolean(TB_MIRROR), null);
 
         try {
             getTargetFactory().storeResource(cloth);
             cloth.activate(itemID);
         } catch (final IllegalStateException e) {
             LOGGER.error("Error adding paperdolling item to avatar: "
-                + Integer.toString(avatarID) + " in group: "
-                + Integer.toString(location) + " to item: "
-                + Integer.toString(itemID));
+                    + Integer.toString(avatarID) + " in group: "
+                    + Integer.toString(location) + " to item: "
+                    + Integer.toString(itemID));
         }
         return true;
     }

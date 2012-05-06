@@ -39,6 +39,13 @@ public interface InventorySlot extends NiftyControl {
     void setImage(NiftyImage image);
 
     /**
+     * Set the image that is displayed as background of this slot.
+     *
+     * @param image the image in the background of this slot
+     */
+    void setBackgroundImage(NiftyImage image);
+
+    /**
      * Show the label in this inventory slot.
      */
     void showLabel();
@@ -59,4 +66,10 @@ public interface InventorySlot extends NiftyControl {
      * Send the draggable object back to this slot.
      */
     void retrieveDraggable();
+
+    /**
+     * This function causes the visibility stare of the component to be restored. This is needed in case the parent
+     * object changed its visibility.
+     */
+    void restoreVisibility();
 }

@@ -35,8 +35,8 @@ import illarion.client.gui.util.AbstractMultiActionHelper;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
-import illarion.client.world.Inventory;
 import illarion.client.world.World;
+import illarion.client.world.items.Inventory;
 import illarion.common.util.Timer;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
@@ -51,16 +51,15 @@ import java.util.Arrays;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GUIInventoryHandler
-        implements EventSubscriber<InventoryUpdateEvent>, EventTopicSubscriber<String>, ScreenController {
+public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent>,
+        EventTopicSubscriber<String>, ScreenController {
     /**
      * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
      * so the server can send the commands to clean everything up.
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static class EndOfDragOperation
-            implements Runnable {
+    private static class EndOfDragOperation implements Runnable {
         /**
          * The inventory slot that requires the reset.
          */
@@ -71,7 +70,7 @@ public final class GUIInventoryHandler
          *
          * @param slot the inventory slot to reset
          */
-        public EndOfDragOperation(final InventorySlot slot) {
+        EndOfDragOperation(final InventorySlot slot) {
             invSlot = slot;
         }
 
@@ -93,8 +92,7 @@ public final class GUIInventoryHandler
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private class GetVisibleEventSubscriber
-            implements EventTopicSubscriber<ElementShowEvent> {
+    private class GetVisibleEventSubscriber implements EventTopicSubscriber<ElementShowEvent> {
         /**
          * Handle the event.
          *
@@ -115,8 +113,7 @@ public final class GUIInventoryHandler
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static final class InventoryClickActionHelper
-            extends AbstractMultiActionHelper {
+    private static final class InventoryClickActionHelper extends AbstractMultiActionHelper {
         /**
          * The ID of the slot that was clicked at.
          */
@@ -125,7 +122,7 @@ public final class GUIInventoryHandler
         /**
          * The constructor for this class. The timeout time is set to the system default double click interval.
          */
-        public InventoryClickActionHelper() {
+        InventoryClickActionHelper() {
             super(IllaClient.getCfg().getInteger("doubleClickInterval"));
         }
 
@@ -140,12 +137,22 @@ public final class GUIInventoryHandler
 
         @Override
         public void executeAction(final int count) {
+            final illarion.client.world.items.InventorySlot slot = World.getPlayer().getInventory().getItem(slotId);
+
+            if (!slot.containsItem()) {
+                return;
+            }
+
             switch (count) {
                 case 1:
-                    World.getPlayer().getInventory().getItem(slotId).getInteractive().lookAt();
+                    slot.getInteractive().lookAt();
                     break;
                 case 2:
-                    World.getPlayer().getInventory().getItem(slotId).getInteractive().use();
+                    if (slot.getItemPrototype().isContainer()) {
+                        slot.getInteractive().openContainer();
+                    } else {
+                        slot.getInteractive().use();
+                    }
                     break;
             }
         }
@@ -197,6 +204,7 @@ public final class GUIInventoryHandler
         visibilityEventSubscriber = new GetVisibleEventSubscriber();
     }
 
+    @Override
     public void bind(final Nifty nifty, final Screen screen) {
         activeNifty = nifty;
         activeScreen = screen;
@@ -208,12 +216,12 @@ public final class GUIInventoryHandler
         }
     }
 
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    @NiftyEventSubscriber(pattern = "invslot_.*")
     public void cancelDragging(final String topic, final DraggableDragCanceledEvent data) {
         World.getInteractionManager().cancelDragging();
     }
 
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    @NiftyEventSubscriber(pattern = "invslot_.*")
     public void clickInventory(final String topic, final NiftyMousePrimaryClickedEvent data) {
         final int slotId = getSlotNumber(topic);
 
@@ -221,16 +229,14 @@ public final class GUIInventoryHandler
         inventoryClickActionHelper.pulse();
     }
 
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    @NiftyEventSubscriber(pattern = "invslot_.*")
     public void dragFromInventory(final String topic, final DraggableDragStartedEvent data) {
         final int slotId = getSlotNumber(topic);
-        World.getInteractionManager().notifyDraggingInventory(slotId, new EndOfDragOperation(invSlots[slotId]
-                .getNiftyControl
-
-                        (InventorySlot.class)));
+        World.getInteractionManager().notifyDraggingInventory(slotId,
+                new EndOfDragOperation(invSlots[slotId].getNiftyControl(InventorySlot.class)));
     }
 
-    @NiftyEventSubscriber(pattern = INVSLOT_HEAD + ".*")
+    @NiftyEventSubscriber(pattern = "invslot_.*")
     public void dropInInventory(final String topic, final DroppableDroppedEvent data) {
         final int slotId = getSlotNumber(topic);
         World.getInteractionManager().dropAtInventory(slotId);
@@ -290,6 +296,7 @@ public final class GUIInventoryHandler
         }
     }
 
+    @Override
     public void onStartScreen() {
         activeNifty.subscribeAnnotations(this);
 
@@ -299,7 +306,7 @@ public final class GUIInventoryHandler
                 visibilityEventSubscriber);
 
         final Inventory inventory = World.getPlayer().getInventory();
-        illarion.client.world.InventorySlot invSlot;
+        illarion.client.world.items.InventorySlot invSlot;
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
             invSlot = inventory.getItem(i);
             if (invSlot.getItemID() == 0) {
@@ -339,6 +346,7 @@ public final class GUIInventoryHandler
                 invSlot.hideLabel();
             }
         } else {
+            slotLabelVisibility[slotId] = false;
             invSlot.setImage(null);
             invSlot.hideLabel();
         }
@@ -355,6 +363,7 @@ public final class GUIInventoryHandler
                 invSlot.hideLabel();
             }
         }
+        inventoryWindow.layoutElements();
     }
 
     public void showInventory() {
