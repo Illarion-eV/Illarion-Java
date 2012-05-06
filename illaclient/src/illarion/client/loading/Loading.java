@@ -18,9 +18,8 @@
  */
 package illarion.client.loading;
 
-import org.newdawn.slick.loading.LoadingList;
-
 import illarion.common.graphics.TextureLoader;
+import org.newdawn.slick.loading.LoadingList;
 
 /**
  * This class is used to create the list of things that need to be loaded before the game is able to start.
@@ -38,7 +37,7 @@ public final class Loading {
         if (!loadingDone) {
             while (!TextureLoader.getInstance().preloadAtlasTextures()) {
             }
-            ;
+
             LoadingList.get().add(new ResourceTableLoading());
             LoadingList.get().add(new GameEnvironmentLoading());
             loadingDone = true;

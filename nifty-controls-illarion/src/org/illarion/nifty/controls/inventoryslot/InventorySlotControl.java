@@ -32,6 +32,7 @@ import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 
@@ -68,9 +69,19 @@ public class InventorySlotControl extends AbstractController implements Inventor
     private Element backgroundImageLabel;
 
     /**
+     * The image that is always displayed in the background.
+     */
+    private Element staticBackgroundImage;
+
+    /**
      * The element items can get dropped into.
      */
     private Element droppable;
+
+    /**
+     * This value stores if the label should be visible or not. This is needed to restore the visibility upon request.
+     */
+    private boolean labelVisible;
 
     /**
      * The event subscriber that is used to monitor the start dragging events.
@@ -84,6 +95,11 @@ public class InventorySlotControl extends AbstractController implements Inventor
 
     private Screen screen;
     private Nifty nifty;
+
+    /**
+     * The logger that displays all logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(InventorySlotControl.class);
 
     /**
      * {@inheritDoc}
@@ -101,6 +117,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
         draggedImage = draggable.findElementByName("#draggableImage");
         backgroundImage = element.findElementByName("#backgroundImage");
         backgroundImageLabel = element.findElementByName("#backgroundImageLabel");
+        staticBackgroundImage = element.findElementByName("#staticBackgroundImage");
 
         dragStartEvent = new EventTopicSubscriber<DraggableDragStartedEvent>() {
             @Override
@@ -115,6 +132,10 @@ public class InventorySlotControl extends AbstractController implements Inventor
                 setVisibleOfDraggedImage(false);
             }
         };
+
+        if (parameter.containsKey("background")) {
+            setBackgroundImage(nifty.createImage(parameter.getProperty("background"), false));
+        }
     }
 
     /**
@@ -161,6 +182,17 @@ public class InventorySlotControl extends AbstractController implements Inventor
         }
     }
 
+    @Override
+    public void setBackgroundImage(final NiftyImage image) {
+        if (image == null) {
+            staticBackgroundImage.getRenderer(ImageRenderer.class).setImage(null);
+            staticBackgroundImage.setVisible(false);
+        } else {
+            staticBackgroundImage.getRenderer(ImageRenderer.class).setImage(image);
+            staticBackgroundImage.setVisible(true);
+        }
+    }
+
     /**
      * Set the visibility value of the dragged image.
      *
@@ -179,9 +211,12 @@ public class InventorySlotControl extends AbstractController implements Inventor
     @Override
     public void showLabel() {
         if (!backgroundImageLabel.isVisible()) {
+            LOGGER.debug("Showing Label!");
+
             backgroundImageLabel.show();
             backgroundImageLabel.getParent().layoutElements();
         }
+        labelVisible = true;
     }
 
     /**
@@ -190,9 +225,12 @@ public class InventorySlotControl extends AbstractController implements Inventor
     @Override
     public void hideLabel() {
         if (backgroundImageLabel.isVisible()) {
+            LOGGER.debug("Hiding Label!");
+
             backgroundImageLabel.hide();
             backgroundImageLabel.getParent().layoutElements();
         }
+        labelVisible = false;
     }
 
     /**
@@ -201,7 +239,9 @@ public class InventorySlotControl extends AbstractController implements Inventor
     @Override
     public void setLabelText(final String text) {
         backgroundImageLabel.getNiftyControl(Label.class).setText(text);
-        backgroundImageLabel.getParent().layoutElements();
+        if (backgroundImageLabel.isVisible()) {
+            backgroundImageLabel.getParent().layoutElements();
+        }
     }
 
     /**
@@ -217,6 +257,15 @@ public class InventorySlotControl extends AbstractController implements Inventor
         });
     }
 
+    @Override
+    public void restoreVisibility() {
+        if (labelVisible) {
+            showLabel();
+        } else {
+            hideLabel();
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -226,6 +275,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
         nifty.subscribe(screen, draggable.getId(), DraggableDragCanceledEvent.class, dragCanceledEvent);
 
         retrieveDraggable();
+        restoreVisibility();
     }
 
     /**

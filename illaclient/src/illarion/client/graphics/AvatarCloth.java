@@ -1,35 +1,36 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.ClothFactory;
+import illarion.client.resources.Resource;
 import illarion.common.graphics.Sprite;
 import org.newdawn.slick.Color;
 
 /**
  * A avatar cloth definition stores all data about a cloth that are needed to
  * know. It also allows to render a cloth part.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class AvatarCloth extends AbstractEntity {
+public final class AvatarCloth extends AbstractEntity implements Resource {
     /**
      * The resource path to the avatar graphics. All graphics need to be located
      * at this path within the JAR-resource files.
@@ -54,28 +55,28 @@ public final class AvatarCloth extends AbstractEntity {
     /**
      * Definition constructor. This one sets up a new avatar cloth and sets all
      * needed configurations.
-     * 
+     *
      * @param avatarId the ID of the avatar the cloth is assigned to
-     * @param itemID the ID of the avatar cloth that is
-     * @param name the name of the cloth, that is the file name of the cloth
-     *            graphic
+     * @param itemID   the ID of the avatar cloth that is
+     * @param name     the name of the cloth, that is the file name of the cloth
+     *                 graphic
      * @param location the ID of the location this cloth is located at
-     * @param frames the count of frames this cloth contains
-     * @param still the number of the frame that is the start and the end of the
-     *            animation
-     * @param offX the x offset
-     * @param offY the y offset
-     * @param mirror true in case the graphic should be mirrored
-     * @param baseCol the base coloring graphic
+     * @param frames   the count of frames this cloth contains
+     * @param still    the number of the frame that is the start and the end of the
+     *                 animation
+     * @param offX     the x offset
+     * @param offY     the y offset
+     * @param mirror   true in case the graphic should be mirrored
+     * @param baseCol  the base coloring graphic
      */
     public AvatarCloth(final int avatarId, final int itemID,
-        final String name, final int location, final int frames,
-        final int still, final int offX, final int offY, final boolean mirror,
-        final Color baseCol) {
+                       final String name, final int location, final int frames,
+                       final int still, final int offX, final int offY, final boolean mirror,
+                       final Color baseCol) {
         super(itemID, CLOTH_PATH, name, frames, still, offX
-            + getAvatarOffsetX(avatarId), offY + getAvatarOffsetY(avatarId),
-            0, Sprite.HAlign.center, Sprite.VAlign.bottom, true, mirror,
-            baseCol);
+                + getAvatarOffsetX(avatarId), offY + getAvatarOffsetY(avatarId),
+                0, Sprite.HAlign.center, Sprite.VAlign.bottom, true, mirror,
+                baseCol);
 
         avatar = avatarId;
         locationId = location;
@@ -88,7 +89,7 @@ public final class AvatarCloth extends AbstractEntity {
             return 0;
         }
         final Avatar ava =
-            CharacterFactory.getInstance().getPrototype(avatarId);
+                CharacterFactory.getInstance().getPrototype(avatarId);
         if (ava == null) {
             return 0;
         }
@@ -100,7 +101,7 @@ public final class AvatarCloth extends AbstractEntity {
             return 0;
         }
         final Avatar ava =
-            CharacterFactory.getInstance().getPrototype(avatarId);
+                CharacterFactory.getInstance().getPrototype(avatarId);
         if (ava == null) {
             return 0;
         }
@@ -109,7 +110,7 @@ public final class AvatarCloth extends AbstractEntity {
 
     /**
      * Get the cloth that is used by default.
-     * 
+     *
      * @return the default cloth
      */
     public static AvatarCloth getDefaultCloth() {
@@ -121,14 +122,14 @@ public final class AvatarCloth extends AbstractEntity {
      */
     private AvatarCloth() {
         super(0, CLOTH_PATH, null, 0, 0, 0, 0, 0, Sprite.HAlign.center,
-            Sprite.VAlign.bottom, true, false, null);
+                Sprite.VAlign.bottom, true, false, null);
         avatar = 0;
         locationId = 0;
     }
 
     /**
      * Copy constructor. Create a copy of this object.
-     * 
+     *
      * @param org the instance of AvatarCloth that shall be copied
      */
     private AvatarCloth(final AvatarCloth org) {
@@ -148,7 +149,7 @@ public final class AvatarCloth extends AbstractEntity {
 
     /**
      * The ID of the location where the cloth is displayed on the character.
-     * 
+     *
      * @return the location ID
      */
     public int getLocationId() {
@@ -157,7 +158,7 @@ public final class AvatarCloth extends AbstractEntity {
 
     /**
      * Create a duplicate of the AvatarCloth object.
-     * 
+     *
      * @return the new created instance of AvatarCloth that is a copy of the
      *         current instance
      */
@@ -178,7 +179,7 @@ public final class AvatarCloth extends AbstractEntity {
 
     /**
      * Set the factory this Cloth is managed by.
-     * 
+     *
      * @param parentFactory the factory that is the parent of this cloth object
      */
     public void setFactory(final ClothFactory parentFactory) {

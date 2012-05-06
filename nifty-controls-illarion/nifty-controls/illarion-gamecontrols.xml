@@ -18,6 +18,7 @@
   -->
 <nifty-controls>
     <useControls filename="illarion-inventoryslot.xml"/>
+    <useControls filename="illarion-itemcontainer.xml"/>
     <useControls filename="illarion-dialog-message.xml"/>
     <useControls filename="illarion-dialog-input.xml"/>
 </nifty-controls>

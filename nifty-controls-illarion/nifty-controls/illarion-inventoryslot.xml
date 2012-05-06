@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Controls.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <!-- This control is designed to define the different slots in the inventory of the Illarion Client. -->
 <nifty-controls>
     <controlDefinition name="inventoryslot" controller="org.illarion.nifty.controls.inventoryslot.InventorySlotControl"
@@ -7,20 +26,22 @@
             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
         </effect>
         <panel childLayout="center">
-            <control id="#droppable" name="droppable" height="100%" width="100%" childLayout="center">
+            <panel width="100%" height="100%" childLayout="center" visibleToMouse="false">
+                <image id="#staticBackgroundImage" visible="false"/>
+                <image id="#backgroundImage" visible="false"/>
+                <control id="#backgroundImageLabel" name="label" text="000" align="right" valign="bottom"
+                         visible="false" color="#ff0f" backgroundColor="#bb15"/>
+            </panel>
+
+            <control id="#droppable" name="droppable" height="100%" width="100%" childLayout="center"
+                     visibleToMouse="true">
                 <control id="#draggable" name="draggable" enabled="false" childLayout="center" width="100%"
-                         height="100%">
-                    <panel width="100%" height="100%" childLayout="center" visibleToMouse="true">
-                        <image id="#draggableImage" width="100%" height="100%" visible="false"/>
+                         height="100%" visibleToMouse="true">
+                    <panel width="100%" height="100%" childLayout="center" visibleToMouse="false">
+                        <image id="#draggableImage" width="100%" height="100%" visible="false" visibleToMouse="false"/>
                     </panel>
                 </control>
             </control>
-
-            <panel width="100%" height="100%" childLayout="center" visibleToMouse="false">
-                <control id="#backgroundImageLabel" name="label" text="000" align="right" valign="bottom"
-                         visible="false" color="#ff0f" backgroundColor="#bb15"/>
-                <image id="#backgroundImage" visible="false"/>
-            </panel>
         </panel>
     </controlDefinition>
 </nifty-controls>

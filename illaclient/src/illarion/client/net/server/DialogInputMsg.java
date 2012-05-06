@@ -92,6 +92,7 @@ public final class DialogInputMsg
      */
     @Override
     public boolean executeUpdate() {
+        System.out.println(toString());
         EventBus.publish(new DialogInputReceivedEvent(requestId, title, maxCharacters, multiLine));
 
         return true;

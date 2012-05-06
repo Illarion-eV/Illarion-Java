@@ -18,10 +18,6 @@
  */
 package illarion.client.world;
 
-import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
-import org.newdawn.slick.Color;
-
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.Avatar;
 import illarion.client.graphics.AvatarClothManager;
@@ -40,6 +36,9 @@ import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
+import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
+import org.newdawn.slick.Color;
 
 /**
  * Represents a character: player, monster or npc.
@@ -417,7 +416,7 @@ public final class Char
      * @return a interactive reference to this character
      */
     public InteractiveChar getInteractive() {
-        return InteractiveChar.create(this);
+        return new InteractiveChar(this);
     }
 
     /**
@@ -458,7 +457,7 @@ public final class Char
      * Check if a cloth item is defined in a specified group.
      *
      * @param slot the slot where the item shall be checked
-     * @param id the id of the item that shall be checked
+     * @param id   the id of the item that shall be checked
      * @return <code>true</code> in case a item is defined and displayable
      */
     @SuppressWarnings("nls")
@@ -516,9 +515,9 @@ public final class Char
      * Move the character to a new position with animation. This function takes absolute coordinates.
      *
      * @param newPos the target location of the move
-     * @param mode the mode of the move, possible values are {@link #MOVE_PUSH}, {@link #MOVE_WALK} and {@link
-     * #MOVE_RUN}
-     * @param speed moving speed
+     * @param mode   the mode of the move, possible values are {@link #MOVE_PUSH}, {@link #MOVE_WALK} and {@link
+     *               #MOVE_RUN}
+     * @param speed  moving speed
      */
     public void moveTo(final Location newPos, final int mode, final int speed) {
         // get old position
@@ -563,7 +562,7 @@ public final class Char
                 startAnimation(CharAnimations.RUN, speed);
             }
             move.start(tempLoc.getDcX() - loc.getDcX(), (tempLoc.getDcY() + fromElevation) - loc.getDcY(), 0, 0,
-                       +elevation, 0, speed);
+                    +elevation, 0, speed);
         } else {
             // reset last animation result
             dX = 0;
@@ -747,7 +746,7 @@ public final class Char
     /**
      * Update the color of a specified cloth part.
      *
-     * @param slot the slot that shall be changed
+     * @param slot  the slot that shall be changed
      * @param color the color this part shall be displayed in
      */
     public void setClothColor(final int slot, final Color color) {
@@ -961,7 +960,7 @@ public final class Char
      * Add a item the avatar wears to its current list.
      *
      * @param slot the slot the item is carried at
-     * @param id the ID of the item the character wears
+     * @param id   the ID of the item the character wears
      */
     @SuppressWarnings("nls")
     public void setWearingItem(final int slot, final int id) {
@@ -995,7 +994,7 @@ public final class Char
      * returns to the normal state.
      *
      * @param newAnimation the ID of the new animation
-     * @param speed the animation speed, the larger the value the slower the animation
+     * @param speed        the animation speed, the larger the value the slower the animation
      */
     public void startAnimation(final int newAnimation, final int speed) {
         if (avatar == null) {

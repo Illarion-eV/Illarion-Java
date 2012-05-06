@@ -143,6 +143,11 @@ public final class DialogHandler
             builder.style("llarion-dialog-input-single");
         }
         builder.width(builder.pixels(400));
-        builder.build(nifty, screen, parentAra);
+
+        try {
+            builder.build(nifty, screen, parentAra);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 }

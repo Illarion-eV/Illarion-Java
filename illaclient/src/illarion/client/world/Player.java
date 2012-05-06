@@ -18,24 +18,30 @@
  */
 package illarion.client.world;
 
-import java.awt.*;
-import java.io.File;
-
-import org.newdawn.slick.openal.SoundStore;
-
+import gnu.trove.iterator.TIntObjectIterator;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.graphics.Avatar;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.RequestAppearanceCmd;
+import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.util.Lang;
+import illarion.client.world.items.Inventory;
+import illarion.client.world.items.ItemContainer;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.Location;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
+import org.newdawn.slick.openal.SoundStore;
+
+import java.awt.*;
+import java.io.File;
 
 /**
  * Main Class for the player controlled character.
@@ -43,8 +49,7 @@ import illarion.common.util.Location;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class Player
-        implements ConfigChangeListener {
+public final class Player implements ConfigChangeListener {
     /**
      * The key in the configuration for the music on/off flag.
      */
@@ -150,7 +155,20 @@ public final class Player
      */
     private long playerId;
 
-    private boolean validLocation = false;
+    /**
+     * This flag is changed to {@code true} once the location of the player was set once.
+     */
+    private boolean validLocation;
+
+    /**
+     * This map contains the containers that are known for the player.
+     */
+    public final TIntObjectHashMap<ItemContainer> containers;
+
+    /**
+     * The event subscriber that monitors update events of containers.
+     */
+    public final EventSubscriber<OpenContainerEvent> openContainerEventEventSubscriber;
 
     /**
      * Constructor for the player that receives the character name from the login data automatically.
@@ -171,12 +189,15 @@ public final class Player
         path = new File(DirectoryManager.getInstance().getUserDirectory(), name);
 
         character = Char.create();
+        validLocation = false;
 
         if (!path.isDirectory() && !path.mkdir()) {
             IllaClient.fallbackToLogin(Lang.getMsg("error.character_settings"));
             cfg = null;
             movementHandler = null;
             inventory = null;
+            containers = null;
+            openContainerEventEventSubscriber = null;
             return;
         }
 
@@ -188,6 +209,19 @@ public final class Player
         // followed = null;
         movementHandler = new PlayerMovement(this);
         inventory = new Inventory();
+        containers = new TIntObjectHashMap<ItemContainer>();
+
+        openContainerEventEventSubscriber = new EventSubscriber<OpenContainerEvent>() {
+            @Override
+            public void onEvent(final OpenContainerEvent event) {
+                final ItemContainer container = getContainer(event.getContainerId());
+                final TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
+                while (itr.hasNext()) {
+                    itr.advance();
+                    container.setItem(itr.key(), itr.value().getItemId(), itr.value().getCount());
+                }
+            }
+        };
 
         IllaClient.getCfg().addListener(CFG_SOUND_ON, this);
         IllaClient.getCfg().addListener(CFG_SOUND_VOL, this);
@@ -195,6 +229,37 @@ public final class Player
         IllaClient.getCfg().addListener(CFG_MUSIC_VOL, this);
 
         updateListener();
+        EventBus.subscribe(OpenContainerEvent.class, openContainerEventEventSubscriber);
+    }
+
+    /**
+     * Get the container that is assigned to the ID. This either creates a new container or opens and existing one.
+     *
+     * @param id the ID of the container
+     * @return the container assigned to this ID or a newly created container
+     */
+    public ItemContainer getContainer(final int id) {
+        synchronized (containers) {
+            if (containers.containsKey(id)) {
+                return containers.get(id);
+            }
+            final ItemContainer newContainer = new ItemContainer(id);
+            containers.put(id, newContainer);
+            return newContainer;
+        }
+    }
+
+    /**
+     * Remove a container that is assigned to a specified key.
+     *
+     * @param id the key of the parameter to remove
+     */
+    public void removeContainer(final int id) {
+        synchronized (containers) {
+            if (containers.containsKey(id)) {
+                containers.remove(id);
+            }
+        }
     }
 
     /**
@@ -216,16 +281,6 @@ public final class Player
         visibility += chara.getVisibilityBonus();
 
         return getVisibility(chara.getLocation(), visibility);
-    }
-
-    /**
-     * Check if the player character can see a location on the map at all.
-     *
-     * @param targetLoc The location that is checked for visibility
-     * @return true if the location is visible
-     */
-    protected boolean canSee(final Location targetLoc) {
-        return getVisibility(targetLoc, Char.VISIBILITY_MAX) > 0;
     }
 
     /**
@@ -339,7 +394,7 @@ public final class Player
      * Get the visibility of a target location for the players character.
      *
      * @param targetLoc The location that is checked for visibility
-     * @param limit The maximum value for the visibility
+     * @param limit     The maximum value for the visibility
      * @return The visibility of the target location
      */
     private int getVisibility(final Location targetLoc, final int limit) {
@@ -420,7 +475,7 @@ public final class Player
     /**
      * Check of a position in server coordinates is on the screen of the player.
      *
-     * @param testLoc The location that shall be checked.
+     * @param testLoc   The location that shall be checked.
      * @param tolerance an additional tolerance added to the default clipping distance
      * @return true if the position is within the clipping distance and the tolerance
      */
@@ -486,7 +541,7 @@ public final class Player
         character.setCharId(playerId);
 
         final RequestAppearanceCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_REQUEST_APPEARANCE,
-                                                                                 RequestAppearanceCmd.class);
+                RequestAppearanceCmd.class);
         cmd.request(newPlayerId);
         cmd.send();
 

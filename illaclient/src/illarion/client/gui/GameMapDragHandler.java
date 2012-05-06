@@ -29,15 +29,13 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import de.lessvoid.nifty.tools.SizeValue;
-
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
-
 import illarion.client.graphics.Item;
 import illarion.client.input.DragOnMapEvent;
 import illarion.client.input.InputReceiver;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveMapTile;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
 
 /**
  * This class is used to monitor all dropping operations on the droppable area over the game map and notify the
@@ -69,7 +67,7 @@ public final class GameMapDragHandler
         /**
          * Create a new end of drag operation.
          *
-         * @param draggedElement the dragged element
+         * @param draggedElement  the dragged element
          * @param returnToElement the element the dragged element needs to return to
          */
         public GameMapDragEndOperation(final Element draggedElement, final Element returnToElement) {
@@ -170,7 +168,7 @@ public final class GameMapDragHandler
     public boolean handleDragOnMap(final int oldx, final int oldy, final int newx, final int newy,
                                    final ForwardingInputSystem forwardingControl) {
         final InteractiveMapTile targetTile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(oldx,
-                                                                                                            oldy);
+                oldy);
 
         if (targetTile == null) {
             return false;
@@ -180,7 +178,7 @@ public final class GameMapDragHandler
             return false;
         }
 
-        if (activeScreen != null && activeNifty != null) {
+        if ((activeScreen != null) && (activeNifty != null)) {
             final Item movedItem = targetTile.getTopImage();
             final int width = movedItem.getWidth();
             final int height = movedItem.getHeight();
@@ -229,7 +227,7 @@ public final class GameMapDragHandler
     public void onEvent(final String topic, final DragOnMapEvent data) {
         if (topic.equals(InputReceiver.EB_TOPIC)) {
             if (handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
-                                data.getForwardingControl())) {
+                    data.getForwardingControl())) {
                 return;
             }
 

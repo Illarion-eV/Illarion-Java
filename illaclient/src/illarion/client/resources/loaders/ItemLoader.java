@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources.loaders;
 
@@ -31,11 +31,11 @@ import org.newdawn.slick.Color;
  * was created using the configuration tool. The class will create the required
  * item objects and send them to the item factory that takes care for
  * distributing those objects.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ItemLoader extends ResourceLoader<Item> implements
-    TableLoaderSink {
+public final class ItemLoader extends AbstractResourceLoader<Item> implements
+        TableLoaderSink {
     /**
      * The table index that stores the alpha modifier that shall be applied to
      * the original color of this avatar graphic.
@@ -165,7 +165,7 @@ public final class ItemLoader extends ResourceLoader<Item> implements
     private final Logger logger = Logger.getLogger(ItemLoader.class);
 
     @Override
-    public void load() {
+    public ResourceFactory<Item> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
@@ -176,6 +176,8 @@ public final class ItemLoader extends ResourceLoader<Item> implements
         new TableLoader("Items", this);
         factory.loadingFinished();
         ItemInfo.cleanup();
+
+        return factory;
     }
 
     @Override
@@ -189,7 +191,7 @@ public final class ItemLoader extends ResourceLoader<Item> implements
 
         Color baseColor = null;
         if ((colorRed >= 0) && (colorGreen >= 0) && (colorBlue >= 0)
-            && (colorAlpha >= 0)) {
+                && (colorAlpha >= 0)) {
             baseColor = new Color(colorRed, colorGreen, colorBlue, colorAlpha);
         }
 
@@ -210,8 +212,8 @@ public final class ItemLoader extends ResourceLoader<Item> implements
         final int paperdollingRef = loader.getInt(TB_PAPERDOLL_REF_ID);
 
         final ItemInfo info =
-            ItemInfo.create(face, moveable, specialFlag, obstacle, variance,
-                opacity, surfaceLevel, itemLight);
+                ItemInfo.create(face, moveable, specialFlag, obstacle, variance,
+                        opacity, surfaceLevel, itemLight);
 
         int frames;
         int speed;
@@ -228,8 +230,8 @@ public final class ItemLoader extends ResourceLoader<Item> implements
         }
 
         final Item item =
-            new Item(itemID, name, offsetX, offsetY, offsetShadow, frames,
-                speed, info, null, paperdollingRef);
+                new Item(itemID, name, offsetX, offsetY, offsetShadow, frames,
+                        speed, info, null, paperdollingRef);
         item.setPaperdollingColor(baseColor);
 
         // register item with factory
@@ -237,7 +239,7 @@ public final class ItemLoader extends ResourceLoader<Item> implements
             getTargetFactory().storeResource(item);
         } catch (final IllegalStateException e) {
             logger.error("Failed to register item " + name + "in factory due"
-                + " a dublicated ID: " + Integer.toString(itemID));
+                    + " a dublicated ID: " + Integer.toString(itemID));
         }
 
         item.activate(itemID);

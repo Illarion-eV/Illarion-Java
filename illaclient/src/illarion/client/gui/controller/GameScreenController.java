@@ -21,11 +21,10 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.gui.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import illarion.client.gui.*;
 
 public class GameScreenController
         implements ScreenController {
@@ -43,6 +42,7 @@ public class GameScreenController
         childControllers.add(new GUIInventoryHandler());
         childControllers.add(new CharListHandler());
         childControllers.add(new DialogHandler());
+        childControllers.add(new ContainerHandler());
 
         childControllers.add(new GameMapClickHandler());
         childControllers.add(new GameMapDoubleClickHandler());
@@ -69,6 +69,7 @@ public class GameScreenController
         for (final ScreenController childController : childControllers) {
             childController.onStartScreen();
         }
+
     }
 
     @Override
