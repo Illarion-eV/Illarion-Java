@@ -51,12 +51,14 @@
 
     <target name="build_source" description="Build only the source code" depends="fetch_libs">
         <ant antfile="${common}/build.xml" target="build_common_res"/>
+
+        <ant antfile="${niftycontrols}/build.xml" target="build_nifty_controls_res"/>
+        <ant antfile="${niftystyle}/build.xml" target="build_nifty_style_res"/>
+
         <ant antfile="${client}/build.xml" target="build_client_res"/>
         <!--<ant antfile="${mapedit}/build.xml" target="build_mapedit_res" />-->
         <ant antfile="${easynpc}/build.xml" target="build_easynpc_res"/>
         <ant antfile="${easyquest}/build.xml" target="build_easyquest_res"/>
-        <ant antfile="${niftycontrols}/build.xml" target="build_nifty_controls_res"/>
-        <ant antfile="${niftystyle}/build.xml" target="build_nifty_style_res"/>
 
         <ant antfile="${build}/build.xml" target="build_buildutil"/>
         <ant antfile="${download}/build.xml" target="build_download"/>
