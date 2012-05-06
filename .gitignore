@@ -12,7 +12,8 @@
 /illaeasyquest/res/template/*/filelist
 /keys
 /bin
-/setup
+/setup/*
+!/setup/publish.sh
 /out
 /.idea/workspace.xml
 /.idea/uiDesigner.xml
