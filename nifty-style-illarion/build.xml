@@ -18,62 +18,73 @@
   ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <project name="Nifty Style Illarion" default="build_nifty_style" basedir=".">
-	<description>
+    <description>
         Build nifty controls.
     </description>
 
-	<import file="../illacommon/build_include.xml" />
+    <import file="../illacommon/build_include.xml"/>
 
-	<!-- set global properties for this build -->
-	<property name="src" location="${niftystyle}/src" />
-	<property name="jar" location="${niftystyle}/${niftystyle.jar}" />
+    <!-- set global properties for this build -->
+    <property name="src" location="${niftystyle}/src"/>
+    <property name="jar" location="${niftystyle}/${niftystyle.jar}"/>
 
     <target name="build_nifty_style" description="Build the style of Nifty for Illarion"
-            depends="init, compile_nifty_style">
-        <move file="${jar}" tofile="${niftystyle.bin}" />
+            depends="init, build_jar" unless="niftystyle.uptodate">
+        <move file="${jar}" tofile="${niftystyle.bin}"/>
     </target>
 
-	<target name="build_nifty_style_res" description="Build the nifty styles jar"
-            depends="check_optional_dirs, build_nifty_style, register_extensions" if="keys.exist">
-		<resourceprepare targetdir="${signedcompiled}" usepack200="true">
-			<filelist dir="${compiled}">
-				<file name="${niftystyle.jar}" />
-			</filelist>
-		</resourceprepare>
+    <target name="build_nifty_style_res" description="Build the nifty styles jar"
+            depends="check_optional_dirs, build_nifty_style, register_extensions" if="keys.exist"
+            unless="niftystyle.uptodate">
+        <resourceprepare targetdir="${signedcompiled}" usepack200="true">
+            <filelist dir="${compiled}">
+                <file name="${niftystyle.jar}"/>
+            </filelist>
+        </resourceprepare>
 
-		<signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}" storetype="${storetype}">
-			<path>
-				<filelist dir="${signedcompiled}">
-					<file name="${niftystyle.jar}" />
-				</filelist>
-			</path>
-		</signjar>
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}"
+                 storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${niftystyle.jar}"/>
+                </filelist>
+            </path>
+        </signjar>
 
-		<verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}">
-			<path>
-				<filelist dir="${signedcompiled}">
-					<file name="${niftystyle.jar}" />
-				</filelist>
-			</path>
-		</verifyjar>
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${niftystyle.jar}"/>
+                </filelist>
+            </path>
+        </verifyjar>
 
         <resourcebuild target="${niftyillarion.res.deploy}" usepack200="true">
             <filelist dir="${signedcompiled}">
-                <file name="${niftycontrols.jar}" />
-                <file name="${niftystyle.jar}" />
+                <file name="${niftycontrols.jar}"/>
+                <file name="${niftystyle.jar}"/>
             </filelist>
         </resourcebuild>
-	</target>
+    </target>
 
-	<target name="compile_nifty_style" depends="proguard">
+    <target name="build_jar" depends="check_for_up_to_date" unless="niftystyle.uptodate">
         <jar jarfile="${jar}" basedir="${src}" index="true" includes="**/*.xml">
             <manifest>
-                <attribute name="Built-By" value="${user.name}" />
-                <attribute name="Built-Date" value="${TODAY}" />
-                <attribute name="Implementation-Vendor" value="${niftystyle.vendor}" />
-                <attribute name="Implementation-Title" value="${niftystyle.name}" />
-                <attribute name="Implementation-Version" value="${niftystyle.version}" />
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="${niftystyle.vendor}"/>
+                <attribute name="Implementation-Title" value="${niftystyle.name}"/>
+                <attribute name="Implementation-Version" value="${niftystyle.version}"/>
             </manifest>
         </jar>
-	</target>
+    </target>
+
+    <target name="check_for_up_to_date">
+        <uptodate property="niftystyle.uptodate" targetfile="${niftystyle.bin}">
+            <srcfiles dir="${src}">
+                <include name="**/*.xml"/>
+            </srcfiles>
+        </uptodate>
+    </target>
 </project>

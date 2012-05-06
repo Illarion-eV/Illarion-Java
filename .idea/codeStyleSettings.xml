@@ -3,62 +3,12 @@
   <component name="ProjectCodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS">
       <value>
+        <option name="GENERATE_FINAL_PARAMETERS" value="true" />
         <option name="USE_EXTERNAL_ANNOTATIONS" value="true" />
-        <option name="IMPORT_LAYOUT_TABLE">
-          <value>
-            <package name="" withSubpackages="true" static="false" />
-            <emptyLine />
-            <package name="javax" withSubpackages="true" static="false" />
-            <package name="java" withSubpackages="true" static="false" />
-            <emptyLine />
-            <package name="org" withSubpackages="true" static="false" />
-            <emptyLine />
-            <package name="illarion" withSubpackages="true" static="false" />
-            <package name="" withSubpackages="true" static="true" />
-          </value>
-        </option>
-        <option name="STATIC_FIELDS_ORDER_WEIGHT" value="3" />
-        <option name="FIELDS_ORDER_WEIGHT" value="4" />
-        <option name="CONSTRUCTORS_ORDER_WEIGHT" value="5" />
-        <option name="STATIC_METHODS_ORDER_WEIGHT" value="6" />
-        <option name="METHODS_ORDER_WEIGHT" value="7" />
-        <option name="STATIC_INNER_CLASSES_ORDER_WEIGHT" value="1" />
-        <option name="INNER_CLASSES_ORDER_WEIGHT" value="2" />
         <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="true" />
-        <option name="JD_ALIGN_PARAM_COMMENTS" value="false" />
-        <option name="JD_ALIGN_EXCEPTION_COMMENTS" value="false" />
-        <option name="JD_KEEP_INVALID_TAGS" value="false" />
-        <option name="WRAP_COMMENTS" value="true" />
         <XML>
-          <option name="XML_ATTRIBUTE_WRAP" value="0" />
-          <option name="XML_KEEP_LINE_BREAKS" value="false" />
-          <option name="XML_KEEP_LINE_BREAKS_IN_TEXT" value="false" />
-          <option name="XML_KEEP_BLANK_LINES" value="1" />
-          <option name="XML_SPACE_INSIDE_EMPTY_TAG" value="true" />
-          <option name="XML_WHITE_SPACE_AROUND_CDATA" value="1" />
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>
-        <codeStyleSettings language="JAVA">
-          <option name="KEEP_LINE_BREAKS" value="false" />
-          <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
-          <option name="KEEP_CONTROL_STATEMENT_IN_ONE_LINE" value="false" />
-          <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
-          <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
-          <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="1" />
-          <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
-          <option name="ALIGN_MULTILINE_THROWS_LIST" value="true" />
-          <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
-          <option name="SPACE_BEFORE_ARRAY_INITIALIZER_LBRACE" value="true" />
-          <option name="SPACE_BEFORE_ANNOTATION_ARRAY_INITIALIZER_LBRACE" value="true" />
-          <option name="EXTENDS_KEYWORD_WRAP" value="2" />
-          <option name="THROWS_KEYWORD_WRAP" value="2" />
-          <option name="ARRAY_INITIALIZER_WRAP" value="5" />
-          <option name="IF_BRACE_FORCE" value="3" />
-          <option name="DOWHILE_BRACE_FORCE" value="3" />
-          <option name="WHILE_BRACE_FORCE" value="3" />
-          <option name="FOR_BRACE_FORCE" value="3" />
-          <option name="WRAP_LONG_LINES" value="true" />
-        </codeStyleSettings>
       </value>
     </option>
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />

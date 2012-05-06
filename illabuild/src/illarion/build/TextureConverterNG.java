@@ -16,6 +16,22 @@
  */
 package illarion.build;
 
+import illarion.build.imagepacker.ImagePacker;
+import illarion.common.util.Crypto;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.Manifest;
+import org.apache.tools.ant.taskdefs.Manifest.Attribute;
+import org.apache.tools.ant.taskdefs.ManifestException;
+import org.apache.tools.ant.types.FileList;
+import org.apache.tools.ant.types.FileSet;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,23 +53,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.taskdefs.Manifest;
-import org.apache.tools.ant.taskdefs.Manifest.Attribute;
-import org.apache.tools.ant.taskdefs.ManifestException;
-import org.apache.tools.ant.types.FileList;
-import org.apache.tools.ant.types.FileSet;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import illarion.build.imagepacker.ImagePacker;
-import illarion.common.util.Crypto;
 
 /**
  * This converter mainly converts the PNG image files into a format optimized for OpenGL, in order to improve the speed
@@ -89,7 +88,7 @@ public final class TextureConverterNG
         /**
          * Create a new file entry that stores directory and filename separated.
          *
-         * @param dir the directory
+         * @param dir  the directory
          * @param file the file
          */
         public FileEntry(final File dir, final String file) {
@@ -222,15 +221,15 @@ public final class TextureConverterNG
      * @return the byte array created
      */
     public static final byte[] intToByteArray(final int value) {
-        return new byte[] {(byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value};
+        return new byte[]{(byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value};
     }
 
     /**
      * Main method to start this converter. It expects one archive file starting with raw_ as argument.
      *
      * @param args The name of the archive file starting with raw_. A file with the replaced header rsc_ will be
-     * created
-     * that contains the new data.
+     *             created
+     *             that contains the new data.
      */
     @SuppressWarnings("nls")
     public static void main(final String[] args) {
@@ -254,7 +253,7 @@ public final class TextureConverterNG
      *
      * @param manifest the manifest
      */
-    public void addConfigutedManifest(final Manifest manifest) {
+    public void addConfiguredManifest(final Manifest manifest) {
         man = manifest;
     }
 
@@ -347,7 +346,7 @@ public final class TextureConverterNG
      * Read one file and put it into the file list based on its file name.
      *
      * @param directory the directory of the file
-     * @param filename the name of the file
+     * @param filename  the name of the file
      */
     private void analyseAndOrderFile(final File directory, final String filename) {
         final String cleanFileName = filename.replace('\\', '/');
@@ -374,7 +373,7 @@ public final class TextureConverterNG
      * Analyze all set files and order them into the processing lists
      *
      * @throws BuildException in case anything goes wrong
-     * @throws IOException in case dumping the file list fails
+     * @throws IOException    in case dumping the file list fails
      */
     @SuppressWarnings("nls")
     private void buildFileList()
@@ -451,10 +450,10 @@ public final class TextureConverterNG
             }
             try {
                 man.getMainSection().addAttributeAndCheck(new Attribute("Images-packed-by",
-                                                                        "Illarion TextureConverterNG 1.3"));
+                        "Illarion TextureConverterNG 1.3"));
 
                 man.addConfiguredAttribute(new Attribute(Manifest.ATTRIBUTE_MANIFEST_VERSION,
-                                                         Manifest.DEFAULT_MANIFEST_VERSION));
+                        Manifest.DEFAULT_MANIFEST_VERSION));
             } catch (final ManifestException e) {
                 // ignore
             }
