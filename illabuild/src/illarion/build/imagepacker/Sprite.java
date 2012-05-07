@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 /**
@@ -180,8 +181,10 @@ public final class Sprite implements TextureElement {
             return imageData;
         }
 
+        InputStream stream = null;
         try {
-            decoder = new PNGDecoder(new FileInputStream(file.getFile()));
+            stream = new FileInputStream(file.getFile());
+            decoder = new PNGDecoder(stream);
         } catch (IOException e) {
         }
 
@@ -206,6 +209,15 @@ public final class Sprite implements TextureElement {
 
             decoder = null;
         }
+
+        if (stream != null) {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                // ignored
+            }
+        }
+
         return imageData;
     }
 
