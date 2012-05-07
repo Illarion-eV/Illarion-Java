@@ -1,49 +1,49 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parsed.talk.consequences;
+
+import illarion.easynpc.parsed.talk.TalkConsequence;
+import javolution.context.ObjectFactory;
 
 import java.io.IOException;
 import java.io.Writer;
 
-import javolution.context.ObjectFactory;
-
-import illarion.easynpc.parsed.talk.TalkConsequence;
-
 /**
  * This consequence is used to store the data of a warp consequence of a
  * talking line.
- * 
- * @author Martin Karing, Martin Polak
- * @since 1.02
+ *
+ * @author Martin Karing
+ * @author Martin Polak
  * @version 1.02
+ * @since 1.02
  */
 public final class ConsequenceWarp implements TalkConsequence {
     /**
      * The factory class that creates and buffers ConsequenceWarp objects for
      * later reuse.
-     * 
+     *
      * @author Martin Karing
-     * @since 1.02
      * @version 1.02
+     * @since 1.02
      */
     private static final class ConsequenceWarpFactory extends
-        ObjectFactory<ConsequenceWarp> {
+            ObjectFactory<ConsequenceWarp> {
         /**
          * Public constructor to the parent class is able to create a instance
          * properly.
@@ -71,15 +71,15 @@ public final class ConsequenceWarp implements TalkConsequence {
      * The factory used to create and reuse objects of this class.
      */
     private static final ConsequenceWarpFactory FACTORY =
-        new ConsequenceWarpFactory();
+            new ConsequenceWarpFactory();
 
     /**
      * The LUA code needed to be included for a warp consequence.
      */
     @SuppressWarnings("nls")
     private static final String LUA_CODE =
-        "talkEntry:addConsequence(%1$s.warp(%2$s, %3$s, %4$s));"
-            + illarion.easynpc.writer.LuaWriter.NL;
+            "talkEntry:addConsequence(%1$s.warp(%2$s, %3$s, %4$s));"
+                    + illarion.easynpc.writer.LuaWriter.NL;
 
     /**
      * The LUA module that is required for this consequence to work.
@@ -88,12 +88,18 @@ public final class ConsequenceWarp implements TalkConsequence {
     private static final String LUA_MODULE = BASE_LUA_MODULE + "warp";
 
     /**
-     * The coordinates that the player is sent to.
+     * The x coordinate of the location that the player is sent to.
      */
     private int x;
-    
+
+    /**
+     * The y coordinate of the location that the player is sent to.
+     */
     private int y;
-    
+
+    /**
+     * The z coordinate of the location that the player is sent to.
+     */
     private int z;
 
     /**
@@ -106,7 +112,7 @@ public final class ConsequenceWarp implements TalkConsequence {
 
     /**
      * Get a newly created or a old and reused instance of this class.
-     * 
+     *
      * @return the instance of this class that is now ready to be used
      */
     public static ConsequenceWarp getInstance() {
@@ -142,15 +148,15 @@ public final class ConsequenceWarp implements TalkConsequence {
 
     /**
      * Set the data needed for this warp consequence.
-     * 
+     *
      * @param posx x-coordinate.
-     * @param posx y-coordinate.
-     * @param posx z-coordinate.
+     * @param posy y-coordinate.
+     * @param posz z-coordinate.
      */
     public void setCoordinates(final int posx, final int posy, final int posz) {
-        x=posx;
-        y=posy;
-        z=posz;
+        x = posx;
+        y = posy;
+        z = posz;
     }
 
     /**
