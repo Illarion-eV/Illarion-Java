@@ -239,10 +239,8 @@ public final class ResourceCreator extends Task {
                     }
                 }
 
-                zOut.finish();
                 zOut.flush();
-                xOut.finish();
-                xOut.flush();
+                zOut.finish();
             } catch (final FileNotFoundException e) {
                 throw new BuildException(e);
             } catch (final IOException e) {
