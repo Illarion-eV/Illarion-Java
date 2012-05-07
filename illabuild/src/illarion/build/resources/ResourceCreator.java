@@ -230,8 +230,10 @@ public final class ResourceCreator extends Task {
                     }
                 }
 
-                zOut.flush();
                 zOut.finish();
+                zOut.flush();
+                xOut.finish();
+                xOut.flush();
             } catch (final FileNotFoundException e) {
                 throw new BuildException(e);
             } catch (final IOException e) {
@@ -249,7 +251,7 @@ public final class ResourceCreator extends Task {
         /** Checking the created file. */
         BufferedInputStream b = null;
         try {
-            final byte[] tempArray = new byte[1024];
+            final byte[] tempArray = new byte[2048];
             b = new BufferedInputStream(new XZInputStream(new FileInputStream(targetFile)));
             while (b.read(tempArray) != -1) ;
         } catch (Exception e) {
