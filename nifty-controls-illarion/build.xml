@@ -60,13 +60,6 @@
                 </filelist>
             </path>
         </verifyjar>
-
-        <resourcebuild target="${niftyillarion.res.deploy}" usepack200="true">
-            <filelist dir="${signedcompiled}">
-                <file name="${niftycontrols.jar}"/>
-                <file name="${niftystyle.jar}"/>
-            </filelist>
-        </resourcebuild>
     </target>
 
     <target name="compile_nifty_controls">
