@@ -30,8 +30,13 @@
     <property name="libs" location="${common}/lib"/>
     <property name="signedlibs" location="${common}/lib/signed"/>
 
-    <target name="prepare_all" description="Build all libraries again as needed." depends="init_libs"
-            unless="libs.uptodate">
+    <target name="prepare_all" description="Build all libraries again as needed."
+            depends="init_libs,check_libs_compiled_uptodate"
+            unless="libs.compiled.uptodate">
+
+        <copy file="${common}/libs-all.zip" tofile="${common}/libs-all-compiled.zip" failonerror="no"
+              preservelastmodified="on"/>
+
         <antcall target="prepare_eventbus"/>
         <antcall target="prepare_javolution"/>
         <antcall target="prepare_jsyntaxpane"/>
@@ -845,6 +850,11 @@
 
     <target name="check_libs_uptodate">
         <uptodate property="libs.uptodate" srcfile="${common}/libs-all.zip" targetfile="${common}/libs-all-old.zip"/>
+    </target>
+
+    <target name="check_libs_compiled_uptodate">
+        <uptodate property="libs.compiled.uptodate" srcfile="${common}/libs-all.zip"
+                  targetfile="${common}/libs-all-compiled.zip"/>
     </target>
 
     <target name="extract_libs" depends="check_libs_uptodate" unless="libs.uptodate">
