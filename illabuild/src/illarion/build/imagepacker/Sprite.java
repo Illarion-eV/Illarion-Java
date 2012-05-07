@@ -1,39 +1,37 @@
 /*
  * This file is part of the Illarion Build Utility.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Build Utility is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
+ * The Illarion Build Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
  * The Illarion Build Utility is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Build Utility. If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Build Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.build.imagepacker;
 
+import de.matthiasmann.twl.utils.PNGDecoder;
+import de.matthiasmann.twl.utils.PNGDecoder.Format;
+import illarion.build.TextureConverterNG;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import javax.imageio.ImageIO;
-
-import de.matthiasmann.twl.utils.PNGDecoder;
-import de.matthiasmann.twl.utils.PNGDecoder.Format;
-
-import illarion.build.TextureConverterNG;
-
 /**
  * A simple sprite holder that allows the tool to name images
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Sprite implements TextureElement {
@@ -56,7 +54,7 @@ public final class Sprite implements TextureElement {
      * The y position of the sprite.
      */
     private int y;
-    
+
     /**
      * The file this sprite was load from.
      */
@@ -64,33 +62,40 @@ public final class Sprite implements TextureElement {
 
     /**
      * Create a sprite based on a file
-     * 
+     *
      * @param fileEntry The file entry containing the sprite image
      * @throws IOException
      * @throws FileNotFoundException
      */
     public Sprite(final TextureConverterNG.FileEntry fileEntry)
-        throws FileNotFoundException, IOException {
+            throws FileNotFoundException, IOException {
         PNGDecoder tempDecoder = null;
+        FileInputStream inputStream = null;
         try {
-            tempDecoder = new PNGDecoder(new FileInputStream(fileEntry.getFile()));
+            inputStream = new FileInputStream(fileEntry.getFile());
+            tempDecoder = new PNGDecoder(inputStream);
         } catch (IOException e) {
             System.err.println("Error for image: " + fileEntry.getFileName() + ": " + e.getLocalizedMessage());
         }
-        
+
         if (tempDecoder != null) {
             height = tempDecoder.getHeight();
             width = tempDecoder.getWidth();
         } else {
+            if (inputStream != null) {
+                inputStream.close();
+                inputStream = null;
+            }
             BufferedImage image = ImageIO.read(fileEntry.getFile());
             height = image.getHeight();
             width = image.getWidth();
-            
+
             BufferedImage tempImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
             tempImage.getGraphics().drawImage(image, 0, 0, null);
             ImageIO.write(tempImage, "PNG", fileEntry.getFile());
             try {
-                tempDecoder = new PNGDecoder(new FileInputStream(fileEntry.getFile()));
+                inputStream = new FileInputStream(fileEntry.getFile());
+                tempDecoder = new PNGDecoder(inputStream);
             } catch (IOException e) {
                 System.err.println("Can't fix image: " + fileEntry.getFileName());
             }
@@ -99,13 +104,16 @@ public final class Sprite implements TextureElement {
         getType();
         name = stripFileExtension(fileEntry.getFileName());
         file = fileEntry;
-        
+
         decoder = null;
+        if (inputStream != null) {
+            inputStream.close();
+        }
     }
 
     /**
      * This function is used to strip the file extension of a file name.
-     * 
+     *
      * @param fileName the full file name
      * @return the file name without extension
      */
@@ -115,7 +123,7 @@ public final class Sprite implements TextureElement {
 
     /**
      * Check if this sprite location contains the given x,y position
-     * 
+     *
      * @param xp The x position of the sprite
      * @param yp The y position of the sprite
      * @return True if the sprite contains the point
@@ -136,12 +144,12 @@ public final class Sprite implements TextureElement {
 
         return true;
     }
-    
+
     /**
      * The height of the sprite.
      */
     private final int height;
-    
+
     /**
      * The width of the sprite.
      */
@@ -149,7 +157,7 @@ public final class Sprite implements TextureElement {
 
     /**
      * Get the height of this sprite within the sheet
-     * 
+     *
      * @return The height of this sprite within the sheet
      */
     @Override
@@ -164,19 +172,19 @@ public final class Sprite implements TextureElement {
 
     /**
      * Get the image of this sprite
-     * 
+     *
      * @return The image of this sprite
      */
     public ByteBuffer getImage() {
         if (imageData != null) {
             return imageData;
         }
-        
+
         try {
             decoder = new PNGDecoder(new FileInputStream(file.getFile()));
         } catch (IOException e) {
         }
-        
+
         if (decoder == null) {
             imageData = ByteBuffer.allocateDirect(getHeight() * getWidth() * 2);
             while (imageData.hasRemaining()) {
@@ -186,16 +194,16 @@ public final class Sprite implements TextureElement {
         } else {
             Format format = decoder.decideTextureFormat(Format.LUMINANCE);
             imageData =
-                ByteBuffer.allocateDirect(
-                    format.getNumComponents() * getWidth()
-                    * getHeight());
+                    ByteBuffer.allocateDirect(
+                            format.getNumComponents() * getWidth()
+                                    * getHeight());
             try {
-                decoder.decode(imageData, getWidth() * 
-                    format.getNumComponents(), format);
+                decoder.decode(imageData, getWidth() *
+                        format.getNumComponents(), format);
             } catch (IOException e) {
                 System.err.println("Failed reading the image data.");
             }
-            
+
             decoder = null;
         }
         return imageData;
@@ -203,7 +211,7 @@ public final class Sprite implements TextureElement {
 
     /**
      * Get the name of this sprite
-     * 
+     *
      * @return The name of this sprite
      */
     public String getName() {
@@ -212,13 +220,13 @@ public final class Sprite implements TextureElement {
 
     /**
      * Get the amount of pixels this image has.
-     * 
+     *
      * @return the amount of pixels of this image
      */
     public long getPixelCount() {
         return getHeight() * getWidth();
     }
-    
+
     /**
      * The type of the image that was generated.
      */
@@ -226,7 +234,7 @@ public final class Sprite implements TextureElement {
 
     /**
      * Get the type of the image.
-     * 
+     *
      * @return the ID of the image type
      */
     public int getType() {
@@ -238,7 +246,7 @@ public final class Sprite implements TextureElement {
 
     /**
      * Get the type of the image.
-     * 
+     *
      * @return the ID of the image type
      */
     private int getTypeImpl() {
@@ -247,17 +255,21 @@ public final class Sprite implements TextureElement {
         }
         Format format = decoder.decideTextureFormat(Format.LUMINANCE);
         switch (format) {
-            case RGBA: return ImagePacker.TYPE_RGBA;
-            case RGB: return ImagePacker.TYPE_RGB;
-            case LUMINANCE_ALPHA: return ImagePacker.TYPE_GREY_ALPHA;
-            case LUMINANCE: return ImagePacker.TYPE_GREY;
+            case RGBA:
+                return ImagePacker.TYPE_RGBA;
+            case RGB:
+                return ImagePacker.TYPE_RGB;
+            case LUMINANCE_ALPHA:
+                return ImagePacker.TYPE_GREY_ALPHA;
+            case LUMINANCE:
+                return ImagePacker.TYPE_GREY;
         }
         return ImagePacker.TYPE_RGBA;
     }
 
     /**
      * Get the width of this sprite within the sheet
-     * 
+     *
      * @return The width of this sprite within the sheet
      */
     @Override
@@ -267,7 +279,7 @@ public final class Sprite implements TextureElement {
 
     /**
      * Get the x position of this sprite within the sheet
-     * 
+     *
      * @return The x position of this sprite within the sheet
      */
     @Override
@@ -277,7 +289,7 @@ public final class Sprite implements TextureElement {
 
     /**
      * Get the y position of this sprite within the sheet
-     * 
+     *
      * @return The y position of this sprite within the sheet
      */
     @Override
@@ -295,7 +307,7 @@ public final class Sprite implements TextureElement {
 
     /**
      * Set the position within the sheet of this sprite
-     * 
+     *
      * @param posX The x position of the sprite
      * @param posY The y position of the sprite
      */
