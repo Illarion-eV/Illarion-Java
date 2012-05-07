@@ -84,6 +84,11 @@ public final class ResourceCreator extends Task {
     private boolean useP200;
 
     /**
+     * This variable is set true in case the resource creator detected a error.
+     */
+    private boolean secondTry = false;
+
+    /**
      * The default constructor that prepares this class for proper operation.
      */
     public ResourceCreator() {
@@ -137,7 +142,11 @@ public final class ResourceCreator extends Task {
             final X86Options x86Options;
 
             try {
-                lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_MAX);
+                if (secondTry) {
+                    lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_DEFAULT);
+                } else {
+                    lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_MAX);
+                }
                 x86Options = new X86Options();
             } catch (UnsupportedOptionsException e1) {
                 throw new BuildException("Failed to setup compressor.");
@@ -255,8 +264,13 @@ public final class ResourceCreator extends Task {
             b = new BufferedInputStream(new XZInputStream(new FileInputStream(targetFile)));
             while (b.read(tempArray) != -1) ;
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new BuildException("Checking the compressed file failed.", e);
+            if (secondTry) {
+                throw new BuildException("Checking the compressed file failed.", e);
+            }
+            System.out.println("Compressed data was corrupted. Trying compression again at less aggressive levels.");
+            secondTry = true;
+            closeStream(b);
+            execute();
         } finally {
             closeStream(b);
         }
