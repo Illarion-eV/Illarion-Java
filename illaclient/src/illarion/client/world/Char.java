@@ -561,8 +561,8 @@ public final class Char
             } else if (mode == MOVE_RUN) {
                 startAnimation(CharAnimations.RUN, speed);
             }
-            move.start(tempLoc.getDcX() - loc.getDcX(), (tempLoc.getDcY() + fromElevation) - loc.getDcY(), 0, 0,
-                    +elevation, 0, speed);
+            move.start(tempLoc.getDcX() - loc.getDcX(), (tempLoc.getDcY() - fromElevation) - loc.getDcY(), 0, 0,
+                    -elevation, 0, speed);
         } else {
             // reset last animation result
             dX = 0;
@@ -786,7 +786,7 @@ public final class Char
         }
         loc.set(newLoc);
         elevation = World.getMap().getElevationAt(loc);
-        updatePosition(elevation);
+        updatePosition(-elevation);
         EventBus.publish(new CharMoveEvent(getCharId(), loc));
     }
 
