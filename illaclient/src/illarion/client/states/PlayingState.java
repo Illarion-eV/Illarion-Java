@@ -21,23 +21,20 @@ package illarion.client.states;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.slick2d.NiftyOverlayBasicGameState;
 import de.lessvoid.nifty.slick2d.input.SlickSlickInputSystem;
-
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
-
 import illarion.client.Game;
 import illarion.client.Login;
 import illarion.client.input.InputReceiver;
 import illarion.client.world.World;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class PlayingState
         extends NiftyOverlayBasicGameState {
-    private int lastDelta;
 
     /* (non-Javadoc)
     * @see org.newdawn.slick.state.BasicGameState#getID()
@@ -61,13 +58,13 @@ public class PlayingState
     @Override
     protected void renderGame(GameContainer container, StateBasedGame game, Graphics g)
             throws SlickException {
-        World.getMapDisplay().render(g, container, lastDelta);
+        World.getMapDisplay().render(g, container);
     }
 
     @Override
     protected void updateGame(GameContainer container, StateBasedGame game, int delta)
             throws SlickException {
-        lastDelta = delta;
+        World.getMapDisplay().update(container, delta);
         World.getAnimationManager().animate(delta);
     }
 

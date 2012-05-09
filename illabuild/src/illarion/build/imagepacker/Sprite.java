@@ -71,7 +71,7 @@ public final class Sprite implements TextureElement {
     public Sprite(final TextureConverterNG.FileEntry fileEntry)
             throws FileNotFoundException, IOException {
         PNGDecoder tempDecoder = null;
-        FileInputStream inputStream = null;
+        InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(fileEntry.getFile());
             tempDecoder = new PNGDecoder(inputStream);
@@ -99,6 +99,7 @@ public final class Sprite implements TextureElement {
                 tempDecoder = new PNGDecoder(inputStream);
             } catch (IOException e) {
                 System.err.println("Can't fix image: " + fileEntry.getFileName());
+                throw e;
             }
         }
         decoder = tempDecoder;
@@ -107,8 +108,10 @@ public final class Sprite implements TextureElement {
         file = fileEntry;
 
         decoder = null;
-        if (inputStream != null) {
+        try {
             inputStream.close();
+        } catch (IOException e) {
+            // closing stream failed -> it does not matter
         }
     }
 

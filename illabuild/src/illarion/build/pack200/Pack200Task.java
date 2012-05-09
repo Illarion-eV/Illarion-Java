@@ -1,22 +1,27 @@
 /*
  * This file is part of the Illarion Build Utility.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Build Utility is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
+ * The Illarion Build Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
  * The Illarion Build Utility is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Build Utility. If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Build Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.build.pack200;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.FileSet;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,21 +31,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.Pack200;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.FileSet;
-
 /**
  * This is the main task class that handles the Pack200 compression for the JAR
  * files.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Pack200Task extends Task {
     /**
      * This is the task that is executed to process one file.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class FileTask implements Runnable {
@@ -62,14 +62,14 @@ public final class Pack200Task extends Task {
 
         /**
          * Create a new instance of this file task to process one file.
-         * 
-         * @param packEngine the engine used to pack the file
+         *
+         * @param packEngine    the engine used to pack the file
          * @param repackingFlag <code>true</code> in case the file is needed to
-         *            be repacked
+         *                      be repacked
          * @param processedFile the file that is processed
          */
-        public FileTask(final PackingEngine packEngine,
-            final boolean repackingFlag, final File processedFile) {
+        private FileTask(final PackingEngine packEngine,
+                         final boolean repackingFlag, final File processedFile) {
             pack = packEngine;
             repack = repackingFlag;
             file = processedFile;
@@ -130,7 +130,7 @@ public final class Pack200Task extends Task {
 
     /**
      * Check if a file is available and readable.
-     * 
+     *
      * @param file the file to check
      * @throws BuildException in case the file does not exist or is not readable
      */
@@ -138,13 +138,13 @@ public final class Pack200Task extends Task {
     private static void checkFile(final File file) throws BuildException {
         if (!file.canRead() || !file.isFile()) {
             throw new BuildException("File does not exist or can't be read: "
-                + file);
+                    + file);
         }
     }
 
     /**
      * Adds a set of files to copy.
-     * 
+     *
      * @param set a set of files to copy
      */
     public void addFileset(final FileSet set) {
@@ -165,7 +165,7 @@ public final class Pack200Task extends Task {
         } else {
             for (final FileSet fs : filesets) {
                 final DirectoryScanner ds =
-                    fs.getDirectoryScanner(getProject());
+                        fs.getDirectoryScanner(getProject());
 
                 final File dir = fs.getDir(getProject());
                 for (final String fileName : ds.getIncludedFiles()) {
@@ -178,8 +178,8 @@ public final class Pack200Task extends Task {
         }
 
         final ExecutorService exe =
-            Executors.newFixedThreadPool(Runtime.getRuntime()
-                .availableProcessors());
+                Executors.newFixedThreadPool(Runtime.getRuntime()
+                        .availableProcessors());
         for (final File f : files) {
             exe.submit(new FileTask(engine, repacking, f));
         }
@@ -194,7 +194,7 @@ public final class Pack200Task extends Task {
     /**
      * Set the directory that is the destination. All packed files will be
      * created there.
-     * 
+     *
      * @param dir the destination directory
      */
     public void setDestdir(final File dir) {
@@ -206,39 +206,39 @@ public final class Pack200Task extends Task {
      * modification time of the files will be preserved. In case its not set the
      * time stamp of all files will be set to the value of the last created
      * file.
-     * 
+     *
      * @param enabled <code>true</code> to keep the modification times
      */
     public void setKeepModificationTime(final boolean enabled) {
         if (enabled) {
             engine.setProperty(Pack200.Packer.MODIFICATION_TIME,
-                Pack200.Packer.KEEP);
+                    Pack200.Packer.KEEP);
         }
         engine.setProperty(Pack200.Packer.MODIFICATION_TIME,
-            Pack200.Packer.LATEST);
+                Pack200.Packer.LATEST);
     }
 
     /**
      * Set the keep order flag. In case the order of the file is not kept its
      * likely that the resulting file will be smaller but features like indexing
      * the jar won't work anymore.
-     * 
+     *
      * @param enabled <code>true</code> to ensure that the order of the files is
-     *            kept
+     *                kept
      */
     public void setKeepOrder(final boolean enabled) {
         if (enabled) {
             engine.setProperty(Pack200.Packer.KEEP_FILE_ORDER,
-                Pack200.Packer.TRUE);
+                    Pack200.Packer.TRUE);
         }
         engine.setProperty(Pack200.Packer.KEEP_FILE_ORDER,
-            Pack200.Packer.FALSE);
+                Pack200.Packer.FALSE);
     }
 
     /**
      * Set the task to repacking. The result is that the file will be packed and
      * unpacked again right away.
-     * 
+     *
      * @param repack <code>true</code> to make the task repacking
      */
     public void setRepack(final boolean repack) {
@@ -248,12 +248,12 @@ public final class Pack200Task extends Task {
     /**
      * Set the segment size of the packed file. The larger the better the
      * compression rate and the larger the requirements to unpack it.
-     * 
+     *
      * @param size the new maximal size of a segment in bytes
      */
     public void setSegmentLimit(final int size) {
         engine.setProperty(Pack200.Packer.SEGMENT_LIMIT,
-            Integer.toString(size));
+                Integer.toString(size));
     }
 
     /**
@@ -261,7 +261,7 @@ public final class Pack200Task extends Task {
      * entire file will be stored in one segment. For large files that results
      * in very high requirements to unpack the archive, how ever it will lead to
      * a better compression rate.
-     * 
+     *
      * @param enabled <code>true</code> to pack the file into a single segment
      */
     public void setSingleSegment(final boolean enabled) {
@@ -273,7 +273,7 @@ public final class Pack200Task extends Task {
 
     /**
      * Set the file that is supposed to be packed.
-     * 
+     *
      * @param file the file that is processed
      */
     public void setSrcfile(final File file) {
@@ -282,16 +282,16 @@ public final class Pack200Task extends Task {
 
     /**
      * Check if the settings of this task are good to be executed.
-     * 
+     *
      * @throws BuildException in case anything at the settings for this task is
-     *             wrong
+     *                        wrong
      */
     @SuppressWarnings("nls")
     private void validate() throws BuildException {
-        if ((sourceFile == null) && (filesets.size() == 0)) {
+        if ((sourceFile == null) && filesets.isEmpty()) {
             throw new BuildException("need to specify either file or fileset");
         }
-        if ((sourceFile != null) && (filesets.size() > 0)) {
+        if ((sourceFile != null) && !filesets.isEmpty()) {
             throw new BuildException("can't specify both file and fileset");
         }
     }

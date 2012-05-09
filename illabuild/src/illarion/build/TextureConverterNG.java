@@ -737,7 +737,7 @@ public final class TextureConverterNG
                              final String filename) {
         int atlasFiles = 0;
         String usedFileName;
-        while (!packer.allDone()) {
+        while (!packer.isEverythingDone()) {
             try {
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();

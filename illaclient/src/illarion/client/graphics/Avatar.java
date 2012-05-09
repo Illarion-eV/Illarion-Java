@@ -59,7 +59,7 @@ public final class Avatar extends AbstractEntity implements Resource {
     /**
      * The frame animation that handles the animation of this avatar.
      */
-    private transient final FrameAnimation ani;
+    private final transient FrameAnimation ani;
 
     /**
      * In case the light shall be animated this value is set to true. In special
@@ -71,19 +71,19 @@ public final class Avatar extends AbstractEntity implements Resource {
     /**
      * The clothes this avatar can wear.
      */
-    private transient final AvatarClothManager clothes;
+    private final transient AvatarClothManager clothes;
 
     /**
      * The render system for the clothes of this avatar.
      */
-    private transient final AvatarClothRenderer clothRender;
+    private final transient AvatarClothRenderer clothRender;
 
     /**
      * The information data of the avatar. This offers the possibility to send a
-     * set of informations about the description of the characters avatar in
-     * both languages and the visibility modifier informations to other classes.
+     * set of information about the description of the characters avatar in
+     * both languages and the visibility modifier information to other classes.
      */
-    private transient final AvatarInfo info;
+    private final transient AvatarInfo info;
 
     /**
      * The text tag is the small text box shown above the avatar that contains
@@ -211,7 +211,12 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @return a instance of the needed avatar type
      */
     public static Avatar create(final int avatarID) {
-        return CharacterFactory.getInstance().getCommand(avatarID);
+        try {
+            return CharacterFactory.getInstance().getCommand(avatarID);
+        } catch (final IndexOutOfBoundsException ex) {
+            // ignored
+        }
+        return null;
     }
 
     /**
@@ -315,7 +320,7 @@ public final class Avatar extends AbstractEntity implements Resource {
         clothRender.draw(g);
 
         if (renderName && (name != null)) {
-            name.draw(g, getDisplayX(), getDisplayY());
+            name.draw(g);
         }
 
         return true;
@@ -532,7 +537,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @param charName the name that is displayed above the character graphic
      */
     public void setName(final String charName) {
-        if (charName.length() == 0) {
+        if (charName.isEmpty()) {
             if (name != null) {
                 name.recycle();
                 name = null;
@@ -544,7 +549,7 @@ public final class Avatar extends AbstractEntity implements Resource {
         }
         name.setText(charName);
         name.setColor(Color.yellow);
-        name.setOffset(-name.getWidth() / 2, getHeight());
+        name.setOffset(name.getWidth() / 2, getHeight() + name.getHeight() + 5);
     }
 
     /**
@@ -552,7 +557,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      *
      * @param color the color that is used for the font of the the text that is
      *              shown above the character and shows the name of the character
-     * @see illarion.client.graphics.Colors
+     * @see Color
      */
     public void setNameColor(final Color color) {
         if (name == null) {
@@ -590,6 +595,10 @@ public final class Avatar extends AbstractEntity implements Resource {
                              final int groupLayer) {
         super.setScreenPos(posX, posY, layerZ, groupLayer);
         clothRender.setScreenLocation(posX, posY, layerZ, groupLayer);
+
+        if ((name != null) && renderName) {
+            name.addToCamera(posX, posY);
+        }
     }
 
     /**
@@ -622,8 +631,14 @@ public final class Avatar extends AbstractEntity implements Resource {
         } else if (name != null) {
             if (renderName) {
                 name.addToCamera(getDisplayX(), getDisplayY());
+                name.update(delta);
             }
             renderName = false;
+        }
+
+        if ((name != null) && renderName) {
+            name.addToCamera(getDisplayX(), getDisplayY());
+            name.update(delta);
         }
     }
 
