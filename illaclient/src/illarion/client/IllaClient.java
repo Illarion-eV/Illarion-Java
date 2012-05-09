@@ -204,7 +204,7 @@ public final class IllaClient {
         }
 
         gameContainer.setAlwaysRender(true);
-        //gameContainer.setTargetFrameRate(60);
+        gameContainer.setTargetFrameRate(60);
 
         try {
             gameContainer.start();
