@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.server;
 
@@ -26,7 +26,7 @@ import java.io.IOException;
 /**
  * Servermessage: Look at description of item in a showcase (
  * {@link illarion.client.net.CommandList#MSG_LOOKAT_SHOWCASE}).
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
@@ -47,6 +47,11 @@ public final class LookatShowcaseMsg extends AbstractReply {
     private String text;
 
     /**
+     * The value of the item that was looked at.
+     */
+    private long value;
+
+    /**
      * Default constructor for the showcase item look at text message.
      */
     public LookatShowcaseMsg() {
@@ -56,7 +61,7 @@ public final class LookatShowcaseMsg extends AbstractReply {
     /**
      * Create a new instance of the showcase item look at text message as
      * recycle object.
-     * 
+     *
      * @return a new instance of this message object
      */
     @Override
@@ -67,23 +72,24 @@ public final class LookatShowcaseMsg extends AbstractReply {
     /**
      * Decode the showcase item look at text data the receiver got and prepare
      * it for the execution.
-     * 
+     *
      * @param reader the receiver that got the data from the server that needs
-     *            to be decoded
+     *               to be decoded
      * @throws IOException thrown in case there was not enough data received to
-     *             decode the full message
+     *                     decode the full message
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
         sc = reader.readUByte();
         slot = reader.readUByte();
         text = reader.readString();
+        value = reader.readUInt();
     }
 
     /**
      * Execute the showcase item look at text message and send the decoded data
      * to the rest of the client.
-     * 
+     *
      * @return true if the execution is done, false if it shall be called again
      */
     @Override
@@ -106,7 +112,7 @@ public final class LookatShowcaseMsg extends AbstractReply {
 
     /**
      * Get the data of this showcase item look at text message as string.
-     * 
+     *
      * @return the string that contains the values that were decoded for this
      *         message
      */
@@ -120,6 +126,8 @@ public final class LookatShowcaseMsg extends AbstractReply {
         builder.append(slot);
         builder.append(" Message: ");
         builder.append(text);
-        return toString(builder.toString());
+        builder.append(" Item value: ");
+        builder.append(value);
+        return toString(builder);
     }
 }
