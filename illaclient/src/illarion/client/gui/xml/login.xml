@@ -25,7 +25,7 @@
     <useControls filename="illarion-gamecontrols.xml"/>
 
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
-        <layer id="layer" backgroundColor="#000" childLayout="center">
+        <layer id="layer" backgroundColor="#000" childLayout="center" visibleToMouse="true">
 
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000"
                    childLayout="vertical" visibleToMouse="true">
@@ -37,7 +37,7 @@
                         <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
                             <text font="textFont" text="Account Name:"/>
                         </panel>
-                        <control name="textfield" id="nameTxt" maxLength="20"/>
+                        <control name="textfield" id="nameTxt" maxLength="20" visibleToMouse="true"/>
                     </panel>
 
                     <panel childLayout="horizontal" visibleToMouse="true">
