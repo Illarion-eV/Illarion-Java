@@ -23,21 +23,11 @@ package illarion.client.net.server.events;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class DialogInputReceivedEvent {
-    /**
-     * The title of the dialog.
-     */
-    private final String title;
-
+public final class DialogInputReceivedEvent extends AbstractDialogReceivedEvent {
     /**
      * The maximal length that is allowed in this input.
      */
     private final int length;
-
-    /**
-     * The ID of the dialog that has to be send to notify the server that the dialog was closed.
-     */
-    private final int id;
 
     /**
      * The multiple lines flag marks if more then one line is allowed to be typed in.
@@ -54,19 +44,9 @@ public class DialogInputReceivedEvent {
      */
     public DialogInputReceivedEvent(final int dialogId, final String dialogTitle, final int maxLength,
                                     final boolean multipleLines) {
-        title = dialogTitle;
+        super(dialogId, dialogTitle);
         length = maxLength;
-        id = dialogId;
         multiple = multipleLines;
-    }
-
-    /**
-     * Get the ID of this dialog.
-     *
-     * @return the ID of the dialog
-     */
-    public int getId() {
-        return id;
     }
 
     /**
@@ -76,15 +56,6 @@ public class DialogInputReceivedEvent {
      */
     public int getMaxLength() {
         return length;
-    }
-
-    /**
-     * Get the title of the dialog.
-     *
-     * @return the title of the message dialog
-     */
-    public String getTitle() {
-        return title;
     }
 
     /**
