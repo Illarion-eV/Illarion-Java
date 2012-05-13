@@ -20,7 +20,8 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.world.World;
+import illarion.client.net.server.events.LookAtInventoryEvent;
+import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
@@ -31,7 +32,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class LookatInvMsg extends AbstractReply {
+public final class LookAtInvMsg extends AbstractReply {
     /**
      * Inventory slot that message is related to.
      */
@@ -50,19 +51,18 @@ public final class LookatInvMsg extends AbstractReply {
     /**
      * Default constructor for the inventory item look at text message.
      */
-    public LookatInvMsg() {
+    public LookAtInvMsg() {
         super(CommandList.MSG_LOOKAT_INV);
     }
 
     /**
-     * Create a new instance of the inventory item look at text message as
-     * recycle object.
+     * Create a new instance of the inventory item look at text message as recycle object.
      *
      * @return a new instance of this message object
      */
     @Override
-    public LookatInvMsg clone() {
-        return new LookatInvMsg();
+    public LookAtInvMsg clone() {
+        return new LookAtInvMsg();
     }
 
     /**
@@ -82,18 +82,13 @@ public final class LookatInvMsg extends AbstractReply {
     }
 
     /**
-     * Execute the inventory item look at text message and send the decoded data
-     * to the rest of the client.
+     * Execute the inventory item look at text message and send the decoded data to the rest of the client.
      *
      * @return true if the execution is done, false if it shall be called again
      */
     @Override
     public boolean executeUpdate() {
-        // Gui.getInstance().getContainers()
-        // .lookAtResult(Containers.INVENTORY, slot, text);
-
-        // for testing lookat only
-        World.getChatHandler().handleMessage(text, null);
+        EventBus.publish(new LookAtInventoryEvent(slot, text, value));
 
         return true;
     }
@@ -109,8 +104,7 @@ public final class LookatInvMsg extends AbstractReply {
     /**
      * Get the data of this inventory item look at text message as string.
      *
-     * @return the string that contains the values that were decoded for this
-     *         message
+     * @return the string that contains the values that were decoded for this  message
      */
     @SuppressWarnings("nls")
     @Override
