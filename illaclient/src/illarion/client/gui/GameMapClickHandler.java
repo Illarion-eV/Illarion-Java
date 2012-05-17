@@ -63,16 +63,6 @@ public final class GameMapClickHandler
     private Element gamePanel;
 
     /**
-     * The element that is clicked.
-     */
-    private Element doubleClickedGraphic;
-
-    /**
-     * The element that displays the image that is clicked.
-     */
-    private Element doubleClickedImage;
-
-    /**
      * Default constructor that takes care of initializing the variables required for this class to work.
      */
     public GameMapClickHandler() {

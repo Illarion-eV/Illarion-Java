@@ -20,17 +20,6 @@ package illarion.client.world;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.procedure.TObjectProcedure;
-import javolution.context.ObjectFactory;
-import javolution.text.TextBuilder;
-import javolution.util.FastTable;
-
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
-
 import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.net.CommandFactory;
@@ -42,6 +31,15 @@ import illarion.client.world.events.CharRemovedEvent;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
 import illarion.common.util.*;
+import javolution.context.ObjectFactory;
+import javolution.text.TextBuilder;
+import javolution.util.FastTable;
+import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
+
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Handles all characters known to the client but the player character.
@@ -431,7 +429,7 @@ public final class People
         updateNameHelper = new UpdateNameProcedure(this);
 
         final File playerDir = new File(DirectoryManager.getInstance().getUserDirectory(),
-                                        Login.getInstance().getSelectedCharacterName());
+                Login.getInstance().getSelectedCharacterName());
         final File nameTable = new File(playerDir, "names.tbl");
         final File nameTableNew = new File(playerDir, "names.dat");
         names = new NamesTable(nameTableNew);
@@ -584,113 +582,7 @@ public final class People
         final RequestAppearanceCmd cmd = (RequestAppearanceCmd) CommandFactory.getInstance().getCommand(CommandList
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                                                                                                .CMD_REQUEST_APPEARANCE);
+                .CMD_REQUEST_APPEARANCE);
         cmd.request(id);
         World.getNet().sendCommand(cmd);
         return chara;
@@ -805,7 +697,7 @@ public final class People
                 name = Long.toString(id);
             }
         } else { // return text up to first blank
-            final int pos = name.indexOf(" ");
+            final int pos = name.indexOf(' ');
             if (pos > 0) {
                 name = name.substring(0, pos);
             }
@@ -826,7 +718,7 @@ public final class People
     /**
      * Introduce a character and store the name in the table or overwrite a existing entry for this character.
      *
-     * @param id the ID of the character that shall get a name
+     * @param id   the ID of the character that shall get a name
      * @param name the name that the character shall get
      */
     public void introduce(final long id, final String name) {
@@ -906,7 +798,7 @@ public final class People
     /**
      * Process a record from the table containing the names and add the name to the name storage of this class.
      *
-     * @param line current line that is handled
+     * @param line   current line that is handled
      * @param loader table loader that loads the name table
      * @return true at all times
      */

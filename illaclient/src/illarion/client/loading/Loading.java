@@ -33,6 +33,13 @@ public final class Loading {
      */
     private static boolean loadingDone = false;
 
+    /**
+     * Private constructor to ensure that this class is never instantiated.
+     */
+    private Loading() {
+        // nothing
+    }
+
     public static void enlistMissingComponents() {
         if (!loadingDone) {
             while (!TextureLoader.getInstance().preloadAtlasTextures()) {

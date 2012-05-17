@@ -821,10 +821,10 @@ public final class Char
                 // paste description
                 final String text = avatar.getDescription();
                 // no qualifier, remove ending if present
-                if (text.length() == 0) {
+                if (text.isEmpty()) {
                     result.setLength(0);
                 } else if (standard) {
-                    final int pos = text.indexOf(" ");
+                    final int pos = text.indexOf(' ');
                     if ((pos == 1) || (pos == 2)) {
                         result.append(text.substring(pos + 1));
                     } else {

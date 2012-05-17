@@ -152,7 +152,6 @@ public final class CommandFactory
      */
     @SuppressWarnings("unchecked")
     public <T extends AbstractCommand> T getCommand(final int requestId, final Class<T> clazz) {
-        final AbstractCommand cmd = getCommand(requestId);
-        return (T) cmd;
+        return (T) getCommand(requestId);
     }
 }
