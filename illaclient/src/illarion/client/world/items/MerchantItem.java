@@ -18,6 +18,8 @@
  */
 package illarion.client.world.items;
 
+import illarion.common.util.Money;
+
 /**
  * This class is able to store a single item that is sold by a NPC merchant.
  *
@@ -42,7 +44,7 @@ public final class MerchantItem {
     /**
      * The price of the item in copper coins.
      */
-    private final long price;
+    private final Money price;
 
     /**
      * Create a new instance of that merchant item.
@@ -56,6 +58,42 @@ public final class MerchantItem {
         index = itemIndex;
         itemId = id;
         name = itemName;
-        price = itemPrice;
+        price = new Money(itemPrice);
+    }
+
+    /**
+     * The index of the merchant item in the list as it was transferred from the server.
+     *
+     * @return the index
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * The ID of the item that is supposed to be traded.
+     *
+     * @return the item ID
+     */
+    public int getItemId() {
+        return itemId;
+    }
+
+    /**
+     * The name of the item that was transferred and is supposed to be displayed.
+     *
+     * @return the name of the item
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Get the price of the item in copper coins.
+     *
+     * @return the price of the item
+     */
+    public Money getPrice() {
+        return price;
     }
 }
