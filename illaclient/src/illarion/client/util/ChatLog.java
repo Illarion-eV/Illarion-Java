@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.util;
 
@@ -34,7 +34,7 @@ import java.util.Properties;
 
 /**
  * Class to handle the logging of the chat in the game to the logfile.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ChatLog implements ConfigChangeListener {
@@ -55,31 +55,31 @@ public final class ChatLog implements ConfigChangeListener {
      * not the source of the voice.
      */
     @SuppressWarnings("nls")
-    private final String KEY_DISTANCE = "chat.distantShout";
+    private static final String KEY_DISTANCE = "chat.distantShout";
 
     /**
      * The key for normal speech.
      */
     @SuppressWarnings("nls")
-    private final String KEY_SAY = "log.say";
+    private static final String KEY_SAY = "log.say";
 
     /**
      * The key for shouting.
      */
     @SuppressWarnings("nls")
-    private final String KEY_SHOUT = "log.shout";
+    private static final String KEY_SHOUT = "log.shout";
 
     /**
      * The key for the language file for the generic "someone" name in the chat.
      */
     @SuppressWarnings("nls")
-    private final String KEY_SOMEONE = "chat.someone";
+    private static final String KEY_SOMEONE = "chat.someone";
 
     /**
      * The key for whispering.
      */
     @SuppressWarnings("nls")
-    private final String KEY_WHISPER = "log.whisper";
+    private static final String KEY_WHISPER = "log.whisper";
 
     /**
      * Constant value to determine if the logger is active in general or not. In
@@ -110,7 +110,7 @@ public final class ChatLog implements ConfigChangeListener {
 
     /**
      * Get the singleton instance of the chatfile logger.
-     * 
+     *
      * @return the singleton instance of this class
      */
     public static ChatLog getInstance() {
@@ -132,17 +132,17 @@ public final class ChatLog implements ConfigChangeListener {
     /**
      * Set up the logger and all needed settings so everything is fine and
      * reading for the logging actions.
-     * 
+     *
      * @param loggingProps the properties that are used to setup the loggers.
-     *            These need to be modified in order to set the correct paths to
-     *            the logfiles
+     *                     These need to be modified in order to set the correct paths to
+     *                     the logfiles
      */
     @SuppressWarnings("nls")
     public void init(final Properties loggingProps) {
         loggingProps.put("log4j.appender.ChatAppender.file", new File(World
-            .getPlayer().getPath(), "illarion.log").getAbsolutePath());
+                .getPlayer().getPath(), "illarion.log").getAbsolutePath());
         new PropertyConfigurator().doConfigure(loggingProps,
-            logger.getLoggerRepository());
+                logger.getLoggerRepository());
 
         loggerWorking = true;
 
@@ -151,20 +151,20 @@ public final class ChatLog implements ConfigChangeListener {
 
         logger.info("");
         logger.info(Lang.getMsg("log.newSession") + " - "
-            + sdf.format(new Date()));
+                + sdf.format(new Date()));
     }
 
     /**
      * Write a text that was spoken to the the logfile.
-     * 
-     * @param chara the character who spoke the text, null if its unknown what
-     *            character said the text
+     *
+     * @param chara    the character who spoke the text, null if its unknown what
+     *                 character said the text
      * @param talkMode the mode the message was talked in (say, whisper, shout)
-     * @param text the text that was spoken itself
+     * @param text     the text that was spoken itself
      */
     @SuppressWarnings("nls")
     public void logMessage(final Char chara,
-        final ChatHandler.SpeechMode talkMode, final String text) {
+                           final ChatHandler.SpeechMode talkMode, final String text) {
 
         if (!loggerWorking || !logActive) {
             return;
@@ -192,8 +192,8 @@ public final class ChatLog implements ConfigChangeListener {
                 name = Lang.getMsg(KEY_DISTANCE);
             } else if ((name == null) && (chara != null)) {
                 name =
-                    Lang.getMsg(KEY_SOMEONE) + " ("
-                        + Long.toString(chara.getCharId()) + ")";
+                        Lang.getMsg(KEY_SOMEONE) + " ("
+                                + Long.toString(chara.getCharId()) + ")";
             }
 
             textBuilder.append(name);

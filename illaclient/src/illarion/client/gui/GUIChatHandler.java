@@ -27,11 +27,6 @@ import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import javolution.text.TextBuilder;
-
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
-
 import illarion.client.input.InputReceiver;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
@@ -42,6 +37,9 @@ import illarion.client.util.ChatHandler.SpeechMode;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
+import javolution.text.TextBuilder;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
 
 /**
  * This class takes care to receive chat input from the GUI and sends it to the server. Also it receives chat from the
@@ -125,31 +123,31 @@ public final class GUIChatHandler
      * The key for a chat entry in case you hear someone saying something but not the source of the voice.
      */
     @SuppressWarnings("nls")
-    private final String KEY_DISTANCE = "chat.distantShout";
+    private static final String KEY_DISTANCE = "chat.distantShout";
 
     /**
      * The key for normal speech.
      */
     @SuppressWarnings("nls")
-    private final String KEY_SAY = "log.say";
+    private static final String KEY_SAY = "log.say";
 
     /**
      * The key for shouting.
      */
     @SuppressWarnings("nls")
-    private final String KEY_SHOUT = "log.shout";
+    private static final String KEY_SHOUT = "log.shout";
 
     /**
      * The key for the language file for the generic "someone" name in the chat.
      */
     @SuppressWarnings("nls")
-    private final String KEY_SOMEONE = "chat.someone";
+    private static final String KEY_SOMEONE = "chat.someone";
 
     /**
      * The key for whispering.
      */
     @SuppressWarnings("nls")
-    private final String KEY_WHISPER = "log.whisper";
+    private static final String KEY_WHISPER = "log.whisper";
 
     /**
      * Receive text send from the server and display it in the chat log.
@@ -210,7 +208,7 @@ public final class GUIChatHandler
      * Handle the events this handler subscribed to.
      *
      * @param topic the event topic
-     * @param data the data that was delivered along with this event
+     * @param data  the data that was delivered along with this event
      */
     @Override
     public void onEvent(final String topic, final String data) {
