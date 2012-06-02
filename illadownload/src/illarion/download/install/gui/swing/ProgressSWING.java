@@ -18,13 +18,6 @@
  */
 package illarion.download.install.gui.swing;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jdesktop.swingx.JXLabel;
-
 import illarion.download.tasks.download.Download;
 import illarion.download.tasks.download.DownloadCallback;
 import illarion.download.tasks.download.DownloadResult;
@@ -32,6 +25,12 @@ import illarion.download.tasks.unpack.Unpack;
 import illarion.download.tasks.unpack.UnpackCallback;
 import illarion.download.tasks.unpack.UnpackResult;
 import illarion.download.util.Lang;
+import org.jdesktop.swingx.JXLabel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This window is used to display the download and the installation progress of The selected application.
@@ -82,7 +81,7 @@ public final class ProgressSWING
          * Create a new display and set it up properly to display the download progress.
          *
          * @param parentDisplay the parent progress display of this class
-         * @param download the download that is handled
+         * @param download      the download that is handled
          */
         @SuppressWarnings("nls")
         public DownloadDetailDisplay(final ProgressSWING parentDisplay, final Download download) {
@@ -111,21 +110,22 @@ public final class ProgressSWING
             switch (result.getResult()) {
                 case canceled:
                     setProgressMessage(Lang.getMsg("illarion.download.install.gui.Progress.DownloadProgress" + "" +
-                                                           ".canceled"));
+                            ".canceled"));
                     break;
                 case downloaded:
                     setProgressMessage(Lang.getMsg("illarion.download.install.gui.Progress.DownloadProgress" + "" +
-                                                           ".downloaded"));
+                            ".downloaded"));
                     break;
                 case downloadFailed:
                     setProgressMessage(Lang.getMsg("illarion.download.install.gui.Progress.DownloadProgress.failed"));
                     break;
                 case notModified:
                     setProgressMessage(Lang.getMsg("illarion.download.install.gui.Progress.DownloadProgress" + "" +
-                                                           ".notModified"));
+                            ".notModified"));
                     break;
             }
             locked = true;
+            parent.moveDetailDisplayToFinishList(this);
             setVisible(true);
             parent.setVisible(true);
             repaint();
@@ -139,7 +139,7 @@ public final class ProgressSWING
          * Report a change of this download to this display.
          *
          * @param downloaded the amount of bytes now downloaded
-         * @param size the total amount of bytes of this file
+         * @param size       the total amount of bytes of this file
          * @return the delta to the last reported state
          */
         public long reportUpdate(final long downloaded, final long size) {
@@ -157,7 +157,7 @@ public final class ProgressSWING
                 int downloadedBytes = 0;
                 int totalBytes = 0;
                 if (size > Integer.MAX_VALUE) {
-                    final int diff = ((int) (size / Integer.MAX_VALUE)) + 1;
+                    final int diff = (int) (size / Integer.MAX_VALUE) + 1;
                     downloadedBytes = (int) (downloaded / diff);
                     totalBytes = (int) (size / diff);
                 } else {
@@ -212,12 +212,18 @@ public final class ProgressSWING
         private long maxSize;
 
         /**
+         * The parent of this detail display component.
+         */
+        private final ProgressSWING parent;
+
+        /**
          * Create a new display and set it up properly to display the unpack progress.
          *
-         * @param unpack the unpack progress that is handled
+         * @param parentDisplay the parent progress display of this class
+         * @param unpack        the unpack progress that is handled
          */
         @SuppressWarnings("nls")
-        public UnpackDetailDisplay(final Unpack unpack) {
+        public UnpackDetailDisplay(final ProgressSWING parentDisplay, final Unpack unpack) {
             super(unpack.getName());
 
             setProgressMessage(Lang.getMsg("illarion.download.install.gui.Progress.UnpackProgress.installing"));
@@ -225,6 +231,8 @@ public final class ProgressSWING
             locked = false;
             lastReportedBytes = 0;
             maxSize = 0;
+
+            parent = parentDisplay;
         }
 
         /**
@@ -251,10 +259,11 @@ public final class ProgressSWING
                     break;
                 case notModified:
                     setProgressMessage(Lang.getMsg("illarion.download.install.gui.Progress.UnpackProgress" +
-                                                           ".notModified"));
+                            ".notModified"));
                     break;
             }
             locked = true;
+            parent.moveDetailDisplayToFinishList(this);
             setVisible(true);
             repaint();
 
@@ -267,7 +276,7 @@ public final class ProgressSWING
          * Report a change of this download to this display.
          *
          * @param unpacked the amount of bytes already processed
-         * @param size the total amount of bytes of this file
+         * @param size     the total amount of bytes of this file
          * @return the delta to the last reported state
          */
         public long reportUpdate(final long unpacked, final long size) {
@@ -285,7 +294,7 @@ public final class ProgressSWING
                 int unpackedBytes = 0;
                 int totalBytes = 0;
                 if (size > Integer.MAX_VALUE) {
-                    final int diff = ((int) (size / Integer.MAX_VALUE)) + 1;
+                    final int diff = (int) (size / Integer.MAX_VALUE) + 1;
                     unpackedBytes = (int) (unpacked / diff);
                     totalBytes = (int) (size / diff);
                 } else {
@@ -322,7 +331,7 @@ public final class ProgressSWING
     /**
      * The map that stores all downloads that are currently known.
      */
-    private final Map<Download, DownloadDetailDisplay> downloadMap = new HashMap<Download, DownloadDetailDisplay>();
+    private final Map<Download, ProgressSWING.DownloadDetailDisplay> downloadMap;
 
     /**
      * This panel holds all detailed operations in progress that are currently going on.
@@ -330,9 +339,19 @@ public final class ProgressSWING
     private JPanel progressDetailList;
 
     /**
+     * The panel that holds the elements that already finished there operations.
+     */
+    private JPanel finishedDetailList;
+
+    /**
      * The line number for the next entry to add to the progress detail list.
      */
     private int progressDetailListLine;
+
+    /**
+     * The line number for the next entry to add to the finished detail list.
+     */
+    private int finishedDetailListLine;
 
     /**
      * This variable is used to store the amount of bytes that need to be downloaded in total.
@@ -347,7 +366,15 @@ public final class ProgressSWING
     /**
      * The map that stores all unpack operations that are currently known.
      */
-    private final Map<Unpack, UnpackDetailDisplay> unpackMap = new HashMap<Unpack, UnpackDetailDisplay>();
+    private final Map<Unpack, ProgressSWING.UnpackDetailDisplay> unpackMap;
+
+    /**
+     * Default constructor.
+     */
+    public ProgressSWING() {
+        downloadMap = new HashMap<Download, ProgressSWING.DownloadDetailDisplay>();
+        unpackMap = new HashMap<Unpack, ProgressSWING.UnpackDetailDisplay>();
+    }
 
     /**
      * Add the buttons needed for this display.
@@ -414,19 +441,30 @@ public final class ProgressSWING
         contentPanel.add(totalProgressBar, con);
 
         progressDetailList = new JPanel(new GridBagLayout());
-        final JScrollPane scrollArea = new JScrollPane(progressDetailList,
-                                                       ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                                                       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        finishedDetailList = new JPanel(new GridBagLayout());
+
+        final JPanel detailList = new JPanel(new BorderLayout());
+        detailList.add(finishedDetailList, BorderLayout.NORTH);
+        detailList.add(progressDetailList, BorderLayout.SOUTH);
+
+        final JScrollPane scrollArea = new JScrollPane(detailList,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         con.gridy = line++;
         con.weighty = 1.0;
         con.fill = GridBagConstraints.BOTH;
         contentPanel.add(scrollArea, con);
+
         con.gridy = 2000;
         con.gridwidth = 1;
         con.insets.set(0, 0, 0, 0);
+
         progressDetailList.add(new JLabel(), con);
+        finishedDetailList.add(new JLabel(), con);
+
         progressDetailListLine = 0;
+        finishedDetailListLine = 0;
     }
 
     @Override
@@ -436,7 +474,7 @@ public final class ProgressSWING
 
     @Override
     public void reportDownloadFinished(final Download download, final DownloadResult result) {
-        final DownloadDetailDisplay display = getDownloadDisplay(download, 0L, false);
+        final ProgressSWING.DownloadDetailDisplay display = getDownloadDisplay(download, 0L, false);
         if (display != null) {
             currentlyDownloadedBytes += display.reportResult(result);
         }
@@ -445,7 +483,7 @@ public final class ProgressSWING
 
     @Override
     public void reportDownloadProgress(final Download download, final long bytesDone, final long bytesTotal) {
-        final DownloadDetailDisplay display = getDownloadDisplay(download, bytesTotal, true);
+        final ProgressSWING.DownloadDetailDisplay display = getDownloadDisplay(download, bytesTotal, true);
 
         currentlyDownloadedBytes += display.reportUpdate(bytesDone, bytesTotal);
         updateProgressBar();
@@ -453,7 +491,7 @@ public final class ProgressSWING
 
     @Override
     public void reportUnpackFinished(final Unpack unpack, final UnpackResult result) {
-        final UnpackDetailDisplay display = getUnpackDisplay(unpack, false);
+        final ProgressSWING.UnpackDetailDisplay display = getUnpackDisplay(unpack, false);
         if (display != null) {
             currentlyDownloadedBytes += display.reportResult(result);
         }
@@ -462,7 +500,7 @@ public final class ProgressSWING
 
     @Override
     public void reportUnpackProgress(final Unpack unpack, final long bytesDone, final long bytesTotal) {
-        final UnpackDetailDisplay display = getUnpackDisplay(unpack, true);
+        final ProgressSWING.UnpackDetailDisplay display = getUnpackDisplay(unpack, true);
 
         currentlyDownloadedBytes += display.reportUpdate(bytesDone, bytesTotal);
         updateProgressBar();
@@ -496,18 +534,18 @@ public final class ProgressSWING
     /**
      * Get the graphical display of a download.
      *
-     * @param download the download thats display is needed
+     * @param download   the download thats display is needed
      * @param bytesTotal the maximal size of this download
-     * @param createNew create a new instance of this class in case none was created yet
+     * @param createNew  create a new instance of this class in case none was created yet
      * @return the display of the download
      */
-    private DownloadDetailDisplay getDownloadDisplay(final Download download, final long bytesTotal,
-                                                     final boolean createNew) {
-        DownloadDetailDisplay display = null;
+    private ProgressSWING.DownloadDetailDisplay getDownloadDisplay(final Download download, final long bytesTotal,
+                                                                   final boolean createNew) {
+        ProgressSWING.DownloadDetailDisplay display = null;
         if (downloadMap.containsKey(download)) {
             display = downloadMap.get(download);
         } else if (createNew) {
-            display = new DownloadDetailDisplay(this, download);
+            display = new ProgressSWING.DownloadDetailDisplay(this, download);
             downloadMap.put(download, display);
 
             final GridBagConstraints con = new GridBagConstraints();
@@ -527,19 +565,40 @@ public final class ProgressSWING
         return display;
     }
 
+    private void moveDetailDisplayToFinishList(final AbstractProgressDetailDisplay display) {
+        if (display.getParent().equals(finishedDetailList)) {
+            return;
+        }
+
+        display.getParent().remove(display);
+
+        final GridBagConstraints con = new GridBagConstraints();
+        con.anchor = GridBagConstraints.WEST;
+        con.fill = GridBagConstraints.HORIZONTAL;
+        con.gridheight = 1;
+        con.gridwidth = 1;
+        con.gridx = 0;
+        con.gridy = finishedDetailListLine++;
+        con.weightx = 1.0;
+        con.weighty = 0.0;
+        con.insets.set(0, 0, 1, 0);
+
+        finishedDetailList.add(display, con);
+    }
+
     /**
      * Get the graphical display of a download.
      *
-     * @param unpack the unpack progress that is displayed
+     * @param unpack    the unpack progress that is displayed
      * @param createNew create a new instance in case none was created before
      * @return the display of the download
      */
-    private UnpackDetailDisplay getUnpackDisplay(final Unpack unpack, final boolean createNew) {
-        UnpackDetailDisplay display = null;
+    private ProgressSWING.UnpackDetailDisplay getUnpackDisplay(final Unpack unpack, final boolean createNew) {
+        ProgressSWING.UnpackDetailDisplay display = null;
         if (unpackMap.containsKey(unpack)) {
             display = unpackMap.get(unpack);
         } else if (createNew) {
-            display = new UnpackDetailDisplay(unpack);
+            display = new ProgressSWING.UnpackDetailDisplay(this, unpack);
             unpackMap.put(unpack, display);
 
             final GridBagConstraints con = new GridBagConstraints();
@@ -566,7 +625,7 @@ public final class ProgressSWING
             int downloadedBytes = 0;
             int totalBytes = 0;
             if (totalDownloadBytes > Integer.MAX_VALUE) {
-                final int diff = ((int) (totalDownloadBytes / Integer.MAX_VALUE)) + 1;
+                final int diff = (int) (totalDownloadBytes / Integer.MAX_VALUE) + 1;
                 downloadedBytes = (int) (currentlyDownloadedBytes / diff);
                 totalBytes = (int) (totalDownloadBytes / diff);
             } else {

@@ -1,45 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of the Illarion Download Utility.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Download Utility is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Download Utility is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
+  -->
 <!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
 <jnlp codebase="http://illarion.org/~nitram/downloads" href="illarion_client.jnlp" version="1.22" spec="6.0+">
-	<information>
-		<title>Illarion Client</title>
-		<vendor>Illarion e.V.</vendor>
-		<homepage href="http://illarion.org" />
-		<description>A graphical client for the Illarion online role playing game.</description>
-		<description kind="one-line">Client for Illarion</description>
-		<description kind="tooltip">Illarion Client</description>
-        <icon href="jnlp_ico/illarion_client16.png" height="16" width="16" kind="default" />
-        <icon href="jnlp_ico/illarion_client32.png" height="32" width="32" kind="default" />
-        <icon href="jnlp_ico/illarion_client48.png" height="48" width="48" kind="default" />
-        <icon href="jnlp_ico/illarion_client64.png" height="64" width="64" kind="default" />
-        <icon href="jnlp_ico/illarion_client128.png" height="128" width="128" kind="default" />
-        <icon href="jnlp_ico/illarion_client256.png" height="256" width="256" kind="default" />
-        <icon href="jnlp_ico/illarion_client.ico" height="64" width="64" kind="shortcut" />
-        <icon href="jnlp_ico/illarion_client.icns" height="64" width="64" kind="shortcut" />
-		<offline-allowed />
-		<shortcut online="true">
-			<desktop />
-			<menu submenu="Illarion"></menu>
-		</shortcut>
-	</information>
-	<information locale="de">
-		<title>Illarion Client</title>
-		<vendor>Illarion e.V.</vendor>
-		<description>Ein graphischer Client für das Illarion Online-Rollenspiel.</description>
-		<description kind="one-line">Client von Illarion</description>
-	</information>
-	<security>
-		<all-permissions />
-	</security>
-	<update check="always" policy="always" />
-	<resources>
-	    <!--Java Requirements-->
-        <java version="1.6.0_24" href="http://java.sun.com/products/autodl/j2se" />
-        <java version="1.6+" href="http://java.sun.com/products/autodl/j2se" />
-        <java version="1.6+" />
-        
-        <jar href="illarion_download.jar" download="eager" main="true" />
-        <property name="illarion.download.launch" value="tsclient" />
+    <information>
+        <title>Illarion Client</title>
+        <vendor>Illarion e.V.</vendor>
+        <homepage href="http://illarion.org"/>
+        <description>A graphical client for the Illarion online role playing game.</description>
+        <description kind="one-line">Client for Illarion</description>
+        <description kind="tooltip">Illarion Client</description>
+        <icon href="jnlp_ico/illarion_client16.png" height="16" width="16" kind="default"/>
+        <icon href="jnlp_ico/illarion_client32.png" height="32" width="32" kind="default"/>
+        <icon href="jnlp_ico/illarion_client48.png" height="48" width="48" kind="default"/>
+        <icon href="jnlp_ico/illarion_client64.png" height="64" width="64" kind="default"/>
+        <icon href="jnlp_ico/illarion_client128.png" height="128" width="128" kind="default"/>
+        <icon href="jnlp_ico/illarion_client256.png" height="256" width="256" kind="default"/>
+        <icon href="jnlp_ico/illarion_client.ico" height="64" width="64" kind="shortcut"/>
+        <icon href="jnlp_ico/illarion_client.icns" height="64" width="64" kind="shortcut"/>
+        <offline-allowed/>
+        <shortcut online="true">
+            <desktop/>
+            <menu submenu="Illarion"></menu>
+        </shortcut>
+    </information>
+    <information locale="de">
+        <title>Illarion Client</title>
+        <vendor>Illarion e.V.</vendor>
+        <description>Ein graphischer Client für das Illarion Online-Rollenspiel.</description>
+        <description kind="one-line">Client von Illarion</description>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <update check="always" policy="always"/>
+    <resources>
+        <!--Java Requirements-->
+        <java version="1.6+" href="http://java.sun.com/products/autodl/j2se"
+              java-vm-args="-Djava.net.preferIPv4Stack=true"/>
+
+        <jar href="illarion_download.jar" download="eager" main="true"/>
+        <property name="illarion.download.launch" value="tsclient"/>
     </resources>
-	<application-desc main-class="illarion.download.install.Installation"></application-desc>
+    <application-desc main-class="illarion.download.install.Installation"></application-desc>
 </jnlp>

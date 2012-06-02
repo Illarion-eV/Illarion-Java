@@ -1,24 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of the Illarion Download Utility.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Download Utility is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Download Utility is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
+  -->
 <!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
 <jnlp codebase="http://illarion.org/~nitram/downloads" href="illarion_easyquest.jnlp" version="1.00" spec="6.0+">
     <information>
         <title>Illarion EasyQuest Editor</title>
         <vendor>Illarion e.V.</vendor>
-        <homepage href="http://illarion.org" />
+        <homepage href="http://illarion.org"/>
         <description>EasyQuest Editor for the roleplaying game Illarion</description>
         <description kind="one-line">EasyQuest Editor for Illarion</description>
         <description kind="tooltip">Illarion EasyQuest Editor</description>
-        <icon href="jnlp_ico/illarion_easyquest16.png" height="16" width="16" kind="default" />
-        <icon href="jnlp_ico/illarion_easyquest32.png" height="32" width="32" kind="default" />
-        <icon href="jnlp_ico/illarion_easyquest48.png" height="48" width="48" kind="default" />
-        <icon href="jnlp_ico/illarion_easyquest64.png" height="64" width="64" kind="default" />
-        <icon href="jnlp_ico/illarion_easyquest128.png" height="128" width="128" kind="default" />
-        <icon href="jnlp_ico/illarion_easyquest256.png" height="256" width="256" kind="default" />
-        <icon href="jnlp_ico/illarion_easyquest.ico" height="64" width="64" kind="shortcut" />
-        <icon href="jnlp_ico/illarion_easyquest.icns" height="64" width="64" kind="shortcut" />
-        <offline-allowed />
+        <icon href="jnlp_ico/illarion_easyquest16.png" height="16" width="16" kind="default"/>
+        <icon href="jnlp_ico/illarion_easyquest32.png" height="32" width="32" kind="default"/>
+        <icon href="jnlp_ico/illarion_easyquest48.png" height="48" width="48" kind="default"/>
+        <icon href="jnlp_ico/illarion_easyquest64.png" height="64" width="64" kind="default"/>
+        <icon href="jnlp_ico/illarion_easyquest128.png" height="128" width="128" kind="default"/>
+        <icon href="jnlp_ico/illarion_easyquest256.png" height="256" width="256" kind="default"/>
+        <icon href="jnlp_ico/illarion_easyquest.ico" height="64" width="64" kind="shortcut"/>
+        <icon href="jnlp_ico/illarion_easyquest.icns" height="64" width="64" kind="shortcut"/>
+        <offline-allowed/>
         <shortcut online="true">
-            <desktop />
+            <desktop/>
             <menu submenu="Illarion"></menu>
         </shortcut>
     </information>
@@ -29,17 +47,16 @@
         <description kind="one-line">EasyQuest Editor von Illarion</description>
     </information>
     <security>
-        <all-permissions />
+        <all-permissions/>
     </security>
-    <update check="always" policy="always" />
+    <update check="always" policy="always"/>
     <resources>
         <!--Java Requirements-->
-        <java version="1.6.0_24" href="http://java.sun.com/products/autodl/j2se" />
-        <java version="1.6+" href="http://java.sun.com/products/autodl/j2se" />
-        <java version="1.6+" />
-        
-        <jar href="illarion_download.jar" download="eager" main="true" />
-        <property name="illarion.download.launch" value="easyquest" />
+        <java version="1.6+" href="http://java.sun.com/products/autodl/j2se"
+              java-vm-args="-Djava.net.preferIPv4Stack=true"/>
+
+        <jar href="illarion_download.jar" download="eager" main="true"/>
+        <property name="illarion.download.launch" value="easyquest"/>
     </resources>
     <application-desc main-class="illarion.download.install.Installation"></application-desc>
 </jnlp>
