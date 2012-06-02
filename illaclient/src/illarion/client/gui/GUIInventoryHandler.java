@@ -308,7 +308,7 @@ public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdat
         final List<Effect> hintEffects = element.getEffects(EffectEventId.onCustom, Hint.class);
 
         if (hintEffects.size() != 1) {
-            throw new RuntimeException("sanity check failed");
+            throw new IllegalStateException("sanity check failed");
         }
 
         final Effect effect = hintEffects.get(0);
