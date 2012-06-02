@@ -116,6 +116,7 @@
                   overloadaggressively="true"
                   shrink="true"
                   usemixedcaseclassnames="true"
+                  target="${target.version}"
                   printmapping="${download}/mapping.txt">
 
             <injar file="${jar}"/>
@@ -127,7 +128,7 @@
             <libraryjar refid="nifty"/>
             <libraryjar refid="slick"/>
             <libraryjar refid="tabsplitter"/>
-            <libraryjar path="${java.home}/lib"/>
+            <libraryjar path="${java.home}/lib/rt.jar"/>
             <keepclasseswithmembers name="illarion.download.install.Installation">
                 <method access="public static" type="void" name="main" parameters="java.lang.String[]"/>
             </keepclasseswithmembers>
