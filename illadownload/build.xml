@@ -32,8 +32,8 @@
     <property name="org.jar" location="${download}/org_${download.jar}"/>
 
     <target name="build_download" description="Build the download jar"
-            depends="check_optional_dirs, init, buildTasks, compile_download, build_jar" if="keys.exist"
-            unless="download.uptodate">
+            depends="check_optional_dirs, init, check_for_up_to_date, buildTasks, compile_download, build_jar"
+            if="keys.exist" unless="download.uptodate">
         <move file="${jar}" tofile="${download.bin}"/>
 
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
@@ -64,15 +64,17 @@
         <pack200 srcfile="${download.deploy}" destdir="${setup}"/>
     </target>
 
-    <target name="compile_download" depends="proguard">
+    <target name="compile_download" depends="check_for_up_to_date, proguard" unless="download.uptodate">
         <!-- Compile the java code from ${src} into ${build} -->
+        <delete dir="${classes}"/>
         <mkdir dir="${classes}"/>
         <javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}"
                target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}"
-               debug="${build.debug}" debuglevel="${build.debuglevel}">
+               debug="${build.debug}" debuglevel="${build.debuglevel}" listfiles="yes">
             <classpath>
                 <fileset refid="xz"/>
                 <fileset refid="swingx"/>
+                <fileset refid="log4j"/>
                 <pathelement path="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>
@@ -86,6 +88,7 @@
             </fileset>
             <zipgroupfileset refid="swingx"/>
             <zipgroupfileset refid="xz"/>
+            <zipgroupfileset refid="log4j"/>
             <zipfileset src="${common.bin}"/>
             <metainf dir="${download}">
                 <include name="*.txt"/>
@@ -123,12 +126,11 @@
             <outjar file="${download}/tmp"/>
             <libraryjar refid="javolution"/>
             <libraryjar refid="trove"/>
-            <libraryjar refid="log4j"/>
             <libraryjar refid="swt"/>
             <libraryjar refid="nifty"/>
             <libraryjar refid="slick"/>
             <libraryjar refid="tabsplitter"/>
-            <libraryjar path="${java.home}/lib/rt.jar"/>
+            <libraryjar path="${java.home}/lib/"/>
             <keepclasseswithmembers name="illarion.download.install.Installation">
                 <method access="public static" type="void" name="main" parameters="java.lang.String[]"/>
             </keepclasseswithmembers>
@@ -142,6 +144,8 @@
                 <method name="loadActionMap" type="void"
                         parameters="org.jdesktop.swingx.plaf.basic.core.LazyActionMap"/>
             </keepclasseswithmembers>
+            <dontwarn name="javax.jms.**"/>
+            <dontwarn name="javax.mail.**"/>
         </proguard>
 
         <move file="${jar}" tofile="${org.jar}"/>
@@ -150,18 +154,14 @@
     </target>
 
     <target name="check_for_up_to_date">
-        <uptodate property="download.uptodate" targetfile="${org.jar}">
-            <srcfiles dir="${classes}">
-                <include name="illarion/download/**"/>
-            </srcfiles>
-            <srcfiles dir="${src}">
-                <include name="*.png"/>
-                <include name="messages_de.properties"/>
-                <include name="messages_en.properties"/>
-            </srcfiles>
-            <srcfiles dir="${download}">
-                <include name="JNLP-INF/*.jnlp"/>
-            </srcfiles>
-        </uptodate>
+        <condition property="download.uptodate">
+            <resourcecount count="0" when="eq">
+                <fileset dir="${src}">
+                    <modified>
+                        <param name="cache.cachefile" value="${download}/cache.properties"/>
+                    </modified>
+                </fileset>
+            </resourcecount>
+        </condition>
     </target>
 </project>
