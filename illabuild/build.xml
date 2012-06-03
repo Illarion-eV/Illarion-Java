@@ -30,7 +30,7 @@
     <property name="jar" location="${build}/${build.jar}"/>
 
     <target name="build_buildutil" description="build the build utility jar file"
-            depends="init, compile_buildutil, build_jar" unless="build.uptodate">
+            depends="init, compile_buildutil, build_jar">
         <move file="${jar}" tofile="${build.bin}" failonerror="false"/>
         <delete file="${jar}" failonerror="false"/>
     </target>
@@ -52,7 +52,7 @@
         </javac>
     </target>
 
-    <target name="build_jar" depends="check_for_up_to_date" unless="build.uptodate">
+    <target name="build_jar">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/build/**">
             <fileset dir="${classes}">
                 <include name="illarion/build/**"/>
@@ -72,17 +72,5 @@
             </manifest>
         </jar>
         <jar jarfile="${jar}" basedir="${src}" includes="public.key" update="true" index="${build.index}"/>
-    </target>
-
-    <target name="check_for_up_to_date">
-        <uptodate property="build.uptodate" targetfile="${build.bin}">
-            <srcfiles dir="${classes}">
-                <include name="illarion/build/**"/>
-            </srcfiles>
-            <srcfiles dir="${src}">
-                <include name="illarion/build/illabuild.properties"/>
-                <include name="public.key"/>
-            </srcfiles>
-        </uptodate>
     </target>
 </project>

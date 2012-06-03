@@ -35,8 +35,8 @@
     </target>
 
     <target name="build_nifty_controls_res" description="Build the nifty controls jar"
-            depends="check_optional_dirs, build_nifty_controls, register_extensions" if="keys.exist"
-            unless="niftycontrols.uptodate">
+            depends="check_optional_dirs, build_nifty_controls, register_extensions"
+            if="keys.exist">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
                 <file name="${niftycontrols.jar}"/>
@@ -64,6 +64,7 @@
 
     <target name="compile_nifty_controls">
         <!-- Compile the java code from ${src} into ${build} -->
+        <delete dir="${classes}"/>
         <mkdir dir="${classes}"/>
         <javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}"
                target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}"
@@ -78,7 +79,7 @@
         </javac>
     </target>
 
-    <target name="build_jar" depends="check_for_up_to_date" unless="niftycontrols.uptodate">
+    <target name="build_jar">
         <jar jarfile="${jar}" basedir="${classes}" includes="org/illarion/nifty/controls/**">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
@@ -89,16 +90,5 @@
             </manifest>
         </jar>
         <jar jarfile="${jar}" basedir="${niftycontrols}/nifty-controls" update="true" index="true" includes="*.xml"/>
-    </target>
-
-    <target name="check_for_up_to_date">
-        <uptodate property="niftycontrols.uptodate" targetfile="${niftycontrols.bin}">
-            <srcfiles dir="${classes}">
-                <include name="org/illarion/nifty/controls/**"/>
-            </srcfiles>
-            <srcfiles dir="${niftycontrols}/nifty-controls">
-                <include name="*.xml"/>
-            </srcfiles>
-        </uptodate>
     </target>
 </project>

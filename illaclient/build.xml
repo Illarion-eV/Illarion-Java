@@ -31,7 +31,7 @@
     <property name="jar" location="${client}/${client.jar}"/>
 
     <target name="build_client" description="Build unobfuscated test client"
-            depends="init, compile_client, build_jar" unless="client.uptodate">
+            depends="init, compile_client, build_jar">
         <move file="${jar}" tofile="${client.bin}"/>
     </target>
 
@@ -70,6 +70,7 @@
 
     <target name="compile_client">
         <!-- Compile the java code from ${src} into ${build} -->
+        <delete dir="${classes}"/>
         <mkdir dir="${classes}"/>
         <javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}"
                target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}"
@@ -89,7 +90,7 @@
         </javac>
     </target>
 
-    <target name="build_jar" depends="check_for_up_to_date" unless="client.uptodate">
+    <target name="build_jar">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/client/**" excludes="illarion/client/test/**">
             <metainf dir="${client}">
                 <include name="*.txt"/>
@@ -106,22 +107,5 @@
         <jar jarfile="${jar}" basedir="${src}" includes="**/*.xml *.properties" update="true"/>
         <jar jarfile="${jar}" basedir="${client}" includes="Illarion.cfg readme.txt" update="true"
              index="${build.index}"/>
-    </target>
-
-    <target name="check_for_up_to_date">
-        <uptodate property="client.uptodate" targetfile="${client.bin}">
-            <srcfiles dir="${classes}">
-                <include name="illarion/client/**"/>
-                <exclude name="illarion/client/test/**"/>
-            </srcfiles>
-            <srcfiles dir="${src}">
-                <include name="**/*.xml"/>
-                <include name="*.properties"/>
-            </srcfiles>
-            <srcfiles dir="${client}">
-                <include name="Illarion.cfg"/>
-                <include name="readme.txt"/>
-            </srcfiles>
-        </uptodate>
     </target>
 </project>

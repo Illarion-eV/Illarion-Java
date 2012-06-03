@@ -32,8 +32,8 @@
     <property name="org.jar" location="${download}/org_${download.jar}"/>
 
     <target name="build_download" description="Build the download jar"
-            depends="check_optional_dirs, init, check_for_up_to_date, buildTasks, compile_download, build_jar"
-            if="keys.exist" unless="download.uptodate">
+            depends="check_optional_dirs, init, buildTasks, compile_download, build_jar"
+            if="keys.exist">
         <move file="${jar}" tofile="${download.bin}"/>
 
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
@@ -64,7 +64,7 @@
         <pack200 srcfile="${download.deploy}" destdir="${setup}"/>
     </target>
 
-    <target name="compile_download" depends="check_for_up_to_date, proguard" unless="download.uptodate">
+    <target name="compile_download">
         <!-- Compile the java code from ${src} into ${build} -->
         <delete dir="${classes}"/>
         <mkdir dir="${classes}"/>
@@ -81,7 +81,7 @@
         </javac>
     </target>
 
-    <target name="build_jar" depends="check_for_up_to_date" unless="download.uptodate">
+    <target name="build_jar">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/download/**">
             <fileset dir="${classes}">
                 <include name="illarion/download/**"/>
@@ -151,17 +151,5 @@
         <move file="${jar}" tofile="${org.jar}"/>
         <move file="${download}/tmp/${download.jar}" tofile="${jar}"/>
         <delete dir="${download}/tmp"/>
-    </target>
-
-    <target name="check_for_up_to_date">
-        <condition property="download.uptodate">
-            <resourcecount count="0" when="eq">
-                <fileset dir="${src}">
-                    <modified>
-                        <param name="cache.cachefile" value="${download}/cache.properties"/>
-                    </modified>
-                </fileset>
-            </resourcecount>
-        </condition>
     </target>
 </project>

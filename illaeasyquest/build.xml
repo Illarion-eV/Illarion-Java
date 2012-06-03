@@ -36,8 +36,7 @@
     </target>
 
     <target name="build_easyquest_res" description="create the resource of the illarion client"
-            depends="check_optional_dirs, build_easyquest, register_extensions" if="keys.exist"
-            unless="easyquest.uptodate">
+            depends="check_optional_dirs, build_easyquest, register_extensions" if="keys.exist">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
                 <file name="${easyquest.jar}"/>
@@ -104,13 +103,16 @@
                     <include name="handler/*.lua"/>
                     <include name="trigger/*.lua"/>
                     <include name="condition/*.lua"/>
-                    <modified/>
+                    <modified>
+                        <param name="cache.cachefile" value="${easyquest}/cache.res.properties"/>
+                    </modified>
                 </fileset>
             </resourcecount>
         </condition>
     </target>
 
     <target name="compile_easyquest" depends="generate_filelists">
+        <delete dir="${classes}"/>
         <mkdir dir="${classes}"/>
 
         <javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}"
@@ -130,7 +132,7 @@
         </javac>
     </target>
 
-    <target name="build_jar" depends="check_for_up_to_date" unless="easyquest.uptodate">
+    <target name="build_jar">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/easyquest/**">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
@@ -143,22 +145,5 @@
         <jar jarfile="${jar}" basedir="${src}" includes="logging.properties" update="true"/>
         <jar jarfile="${jar}" basedir="${res}" includes="*.png,**/*.lua,**/filelist" update="true"/>
         <jar jarfile="${jar}" basedir="${src}" includes="messages_*.properties" update="true" index="${build.index}"/>
-    </target>
-
-    <target name="check_for_up_to_date">
-        <uptodate property="easyquest.uptodate" targetfile="${easyquest.bin}">
-            <srcfiles dir="${classes}">
-                <include name="illarion/easyquest/**"/>
-            </srcfiles>
-            <srcfiles dir="${src}">
-                <include name="logging.properties"/>
-                <include name="messages_*.properties"/>
-            </srcfiles>
-            <srcfiles dir="${res}">
-                <include name="*.png"/>
-                <include name="**/*.lua"/>
-                <include name="**/filelist"/>
-            </srcfiles>
-        </uptodate>
     </target>
 </project>

@@ -36,7 +36,7 @@
     </target>
 
     <target name="build_easynpc_res" description="create the resource of the illarion client"
-            depends="check_optional_dirs, build_easynpc, register_extensions" if="keys.exist" unless="easynpc.uptodate">
+            depends="check_optional_dirs, build_easynpc, register_extensions" if="keys.exist">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
                 <file name="${easynpc.jar}"/>
@@ -69,6 +69,7 @@
     </target>
 
     <target name="compile_easynpc">
+        <delete dir="${classes}"/>
         <mkdir dir="${classes}"/>
 
         <javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}"
@@ -100,7 +101,7 @@
         </copy>
     </target>
 
-    <target name="build_jar" depends="check_for_up_to_date" unless="easynpc.uptodate">
+    <target name="build_jar">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/easynpc/**">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
@@ -114,21 +115,5 @@
         <jar jarfile="${jar}" basedir="${src}" includes="illarion/easynpc/gui/syntax/easyNpc.properties" update="true"/>
         <jar jarfile="${jar}" basedir="${res}" includes="*.png" update="true"/>
         <jar jarfile="${jar}" basedir="${src}" includes="messages_*.properties" update="true" index="${build.index}"/>
-    </target>
-
-    <target name="check_for_up_to_date">
-        <uptodate property="easynpc.uptodate" targetfile="${easynpc.bin}">
-            <srcfiles dir="${classes}">
-                <include name="illarion/easynpc/**"/>
-            </srcfiles>
-            <srcfiles dir="${src}">
-                <include name="logging.properties"/>
-                <include name="illarion/easynpc/gui/syntax/easyNpc.properties"/>
-                <include name="messages_*.properties"/>
-            </srcfiles>
-            <srcfiles dir="${res}">
-                <include name="*.png"/>
-            </srcfiles>
-        </uptodate>
     </target>
 </project>

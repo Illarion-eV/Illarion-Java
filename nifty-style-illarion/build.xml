@@ -34,8 +34,7 @@
     </target>
 
     <target name="build_nifty_style_res" description="Build the nifty styles jar"
-            depends="check_optional_dirs, build_nifty_style, register_extensions" if="keys.exist"
-            unless="niftystyle.uptodate">
+            depends="check_optional_dirs, build_nifty_style, register_extensions" if="keys.exist">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
                 <file name="${niftystyle.jar}"/>
@@ -68,7 +67,7 @@
         </resourcebuild>
     </target>
 
-    <target name="build_jar" depends="check_for_up_to_date" unless="niftystyle.uptodate">
+    <target name="build_jar">
         <jar jarfile="${jar}" basedir="${src}" index="true" includes="**/*.xml">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
@@ -78,13 +77,5 @@
                 <attribute name="Implementation-Version" value="${niftystyle.version}"/>
             </manifest>
         </jar>
-    </target>
-
-    <target name="check_for_up_to_date">
-        <uptodate property="niftystyle.uptodate" targetfile="${niftystyle.bin}">
-            <srcfiles dir="${src}">
-                <include name="**/*.xml"/>
-            </srcfiles>
-        </uptodate>
     </target>
 </project>

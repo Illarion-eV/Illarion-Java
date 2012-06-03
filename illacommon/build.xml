@@ -29,13 +29,14 @@
     <property name="jar" location="${common}/${common.jar}"/>
     <property name="test" location="${common}/test"/>
 
-    <target name="build_common" description="build common jar file" depends="init, compile_common, build_jar"
+    <target name="build_common" description="build common jar file"
+            depends="init, compile_common, build_jar"
             unless="common.uptodate">
         <move file="${jar}" tofile="${common.bin}"/>
     </target>
 
     <target name="build_common_res" description="create the resource of the common library"
-            depends="check_optional_dirs, build_common, register_extensions" if="keys.exist" unless="common.uptodate">
+            depends="check_optional_dirs, build_common, register_extensions" if="keys.exist">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
                 <file name="${common.jar}"/>
@@ -68,6 +69,7 @@
     </target>
 
     <target name="compile_common">
+        <delete dir="${classes}"/>
         <mkdir dir="${classes}"/>
         <javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}"
                encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}"
@@ -78,7 +80,6 @@
                 <fileset refid="javolution"/>
                 <fileset refid="trove"/>
                 <fileset refid="tabsplitter"/>
-                <fileset refid="lzma"/>
                 <fileset refid="slick"/>
                 <fileset refid="nifty"/>
                 <pathelement path="${java.home}/lib"/>
@@ -86,7 +87,7 @@
         </javac>
     </target>
 
-    <target name="build_jar" depends="check_for_up_to_date" unless="common.uptodate">
+    <target name="build_jar">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/common/**">
             <metainf dir="${common}">
                 <include name="*.txt"/>
@@ -100,16 +101,5 @@
             </manifest>
         </jar>
         <jar jarfile="${jar}" basedir="${src}" includes="public.key" update="true" index="${build.index}"/>
-    </target>
-
-    <target name="check_for_up_to_date">
-        <uptodate property="common.uptodate" targetfile="${common.bin}">
-            <srcfiles dir="${classes}">
-                <include name="illarion/common/**"/>
-            </srcfiles>
-            <srcfiles dir="${src}">
-                <include name="public.key"/>
-            </srcfiles>
-        </uptodate>
     </target>
 </project>
