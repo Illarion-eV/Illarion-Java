@@ -18,13 +18,13 @@
  */
 package illarion.download.install.resources.libs;
 
+import illarion.download.install.resources.Resource;
+import illarion.download.util.Lang;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import illarion.download.install.resources.Resource;
-import illarion.download.util.Lang;
 
 /**
  * This resource contains the SwingX Extensions.
@@ -79,7 +79,7 @@ public final class SwingX
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             final String dataDir = LibraryDirectory.getInstance().getDirectory();
-            cp.add(new File(dataDir, "swingx-core.jar")); //$NON-NLS-1$
+            cp.add(new File(dataDir, "swingx.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }

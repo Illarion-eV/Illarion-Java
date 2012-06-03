@@ -246,8 +246,7 @@ public final class BaseSWING extends JFrame {
 
         buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         content.add(buttonPanel, BorderLayout.SOUTH);
-        buttonPanel.setBorder(BorderFactory
-                .createEtchedBorder(EtchedBorder.LOWERED));
+        buttonPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
         mainPanel = new JPanel();
         content.add(mainPanel, BorderLayout.CENTER);
@@ -277,8 +276,7 @@ public final class BaseSWING extends JFrame {
 
             final Color green = new Color(81, 111, 17);
             UIManager.put("nimbusOrange", green);
-            for (final LookAndFeelInfo info : UIManager
-                    .getInstalledLookAndFeels()) {
+            for (final LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
