@@ -18,13 +18,13 @@
  */
 package illarion.download.install.gui.swing;
 
+import illarion.download.install.resources.Resource;
+import illarion.download.util.Lang;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import illarion.download.install.resources.Resource;
-import illarion.download.util.Lang;
 
 /**
  * This is the application selection view. Its sole purpose is to display the applications the user can start using
@@ -61,7 +61,7 @@ public final class AppSelectionSWING
          * the required values for this listener are set.
          *
          * @param parentContent the parent that stores the selected listener
-         * @param res the resource that is selected by this listener
+         * @param res           the resource that is selected by this listener
          */
         public ApplicationButtonListener(final AppSelectionSWING parentContent, final Resource res) {
             parent = parentContent;
@@ -103,8 +103,6 @@ public final class AppSelectionSWING
         final int mapeditIconID = base.trackImage("mapedit.png");
         final int easynpcIconID = base.trackImage("easynpc.png");
         final int easyquestIconID = base.trackImage("easyquest.png");
-
-        final Dimension launchButtonDim = new Dimension(120, 58);
 
         contentPanel.setLayout(new GridBagLayout());
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));

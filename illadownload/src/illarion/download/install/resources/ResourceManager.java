@@ -18,16 +18,16 @@
  */
 package illarion.download.install.resources;
 
-import java.io.*;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 import illarion.common.util.DirectoryManager;
 import illarion.download.install.resources.db.DBResource;
 import illarion.download.install.resources.db.ResourceCheckLevel;
 import illarion.download.install.resources.db.ResourceDatabase;
 import illarion.download.tasks.download.DownloadManager;
+
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The resource manager is one of the key parts of the entire download system. It keeps track of the state of all
@@ -112,7 +112,7 @@ public final class ResourceManager {
      * Report that a file was installed.
      *
      * @param resourceURL the URL of the resource this file is assigned to
-     * @param file the file itself
+     * @param file        the file itself
      */
     public void reportFileInstalled(final URL resourceURL, final File file) {
         resourceDatabase.addFile(resourceURL, file);
@@ -122,7 +122,7 @@ public final class ResourceManager {
     /**
      * Report that a new resource is fully installed and note that information in the resource database.
      *
-     * @param url the URL that was the source of this resource
+     * @param url         the URL that was the source of this resource
      * @param lastChanged the time when this resource was last changed
      */
     public void reportResourceInstalled(final URL url, final long lastChanged) {
@@ -246,7 +246,6 @@ public final class ResourceManager {
             resourceDatabase = (ResourceDatabase) in.readObject();
         } catch (final Exception e) {
             // file not found, should not happen, but if, it does not matter
-            e.printStackTrace();
         } finally {
             if (in != null) {
                 try {
@@ -262,9 +261,9 @@ public final class ResourceManager {
      * This private function is used to add new downloads to a download manager. It is only able to add one file at a
      * time.
      *
-     * @param name the name of the download
-     * @param dir the directory the files downloaded need to be extracted to
-     * @param url the URL that is supposed to be downloaded
+     * @param name    the name of the download
+     * @param dir     the directory the files downloaded need to be extracted to
+     * @param url     the URL that is supposed to be downloaded
      * @param manager the download manager that maintains the download
      */
     private void scheduleDownloadImpl(final String name, final String dir, final URL url,
@@ -279,6 +278,6 @@ public final class ResourceManager {
 
         final String fileName = url.getFile();
         manager.scheduleDownload(name, dir, url, new File(DirectoryManager.getInstance().getDataDirectory(),
-                                                          fileName.substring(fileName.lastIndexOf('/'))), timeout);
+                fileName.substring(fileName.lastIndexOf('/'))), timeout);
     }
 }

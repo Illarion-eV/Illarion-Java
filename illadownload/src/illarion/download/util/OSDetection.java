@@ -1,31 +1,33 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.util;
+
+import org.apache.log4j.Logger;
 
 /**
  * This small utility class is used to detect the operating system and the
  * architecture of the current system and offer that information to the rest of
  * the application.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
 public final class OSDetection {
     /**
@@ -79,6 +81,11 @@ public final class OSDetection {
     private final int os;
 
     /**
+     * The logger instance that takes care for the logger output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(OSDetection.class);
+
+    /**
      * The private constructor that generates the required values.
      */
     private OSDetection() {
@@ -92,33 +99,24 @@ public final class OSDetection {
         } else if (osName.contains("Mac OS X")) { //$NON-NLS-1$
             os = MACOSX;
         } else {
-            System.out.println("OS-Detection failed for: " + osName); //$NON-NLS-1$
+            LOGGER.error("OS-Detection failed for: " + osName);
             os = UNKNOWN;
         }
 
         final String archName = System.getProperty("os.arch"); //$NON-NLS-1$
-        if (archName.contains("amd64")) { //$NON-NLS-1$
+        if (archName.contains("amd64") || archName.contains("x86_64")) { //$NON-NLS-1$
             arch = BIT64;
-        } else if (archName.contains("x86_64")) { //$NON-NLS-1$
-            arch = BIT64;
-        } else if (archName.contains("i386")) { //$NON-NLS-1$
-            arch = BIT32;
-        } else if (archName.contains("i586")) { //$NON-NLS-1$
-            arch = BIT32;
-        } else if (archName.contains("i686")) { //$NON-NLS-1$
-            arch = BIT32;
-        } else if (archName.contains("x86")) { //$NON-NLS-1$
+        } else if (archName.contains("i386") || archName.contains("i586") || archName.contains("i686") || archName.contains("x86")) { //$NON-NLS-1$
             arch = BIT32;
         } else {
-            System.out
-                .println("Architecture-Detection failed for: " + archName); //$NON-NLS-1$
+            LOGGER.error("Architecture-Detection failed for: " + archName);
             arch = UNKNOWN;
         }
     }
 
     /**
      * Get the string identifier of the architecture of the host system.
-     * 
+     *
      * @return the string identifier of the architecture
      */
     public static String getArchValue() {
@@ -134,7 +132,7 @@ public final class OSDetection {
 
     /**
      * Get a string identifier of the operating system.
-     * 
+     *
      * @return the OS identifier of the operating system
      */
     public static String getOsValue() {
@@ -154,73 +152,73 @@ public final class OSDetection {
 
     /**
      * Check if this operating system is a 32bit system.
-     * 
-     * @return <code>true</code> in case the operating system is a 32bit system
+     *
+     * @return {@code true} in case the operating system is a 32bit system
      */
     public static boolean is32Bit() {
-        return (INSTANCE.arch == BIT32);
+        return INSTANCE.arch == BIT32;
     }
 
     /**
      * Check if this operating system is a 64bit system.
-     * 
-     * @return <code>true</code> in case the operating system is a 64bit system
+     *
+     * @return {@code true} in case the operating system is a 64bit system
      */
     public static boolean is64Bit() {
-        return (INSTANCE.arch == BIT64);
+        return INSTANCE.arch == BIT64;
     }
 
     /**
      * Check if the architecture is unknown.
-     * 
-     * @return <code>true</code> in case the architectureis unknown
+     *
+     * @return {@code true} in case the architecture is unknown
      */
     public static boolean isArchUnknown() {
-        return (INSTANCE.arch == UNKNOWN);
+        return INSTANCE.arch == UNKNOWN;
     }
 
     /**
      * Check if this operating system is "Linux".
-     * 
-     * @return <code>true</code> in case the operating system is "Linux"
+     *
+     * @return {@code true} in case the operating system is "Linux"
      */
     public static boolean isLinux() {
-        return (INSTANCE.os == LINUX);
+        return INSTANCE.os == LINUX;
     }
 
     /**
      * Check if this operating system is "MacOS X".
-     * 
-     * @return <code>true</code> in case the operating system is "MacOS X"
+     *
+     * @return {@code true} in case the operating system is "MacOS X"
      */
     public static boolean isMacOSX() {
-        return (INSTANCE.os == MACOSX);
+        return INSTANCE.os == MACOSX;
     }
 
     /**
      * Check if the operating system is unknown.
-     * 
-     * @return <code>true</code> in case the operating system is unknown
+     *
+     * @return {@code true} in case the operating system is unknown
      */
     public static boolean isOsUnknown() {
-        return (INSTANCE.os == UNKNOWN);
+        return INSTANCE.os == UNKNOWN;
     }
 
     /**
      * Check if this operating system is "Sun OS".
-     * 
-     * @return <code>true</code> in case the operating system is "Sun OS"
+     *
+     * @return {@code true} in case the operating system is "Sun OS"
      */
     public static boolean isSolaris() {
-        return (INSTANCE.os == SOLARIS);
+        return INSTANCE.os == SOLARIS;
     }
 
     /**
      * Check if this operating system is "Windows".
-     * 
-     * @return <code>true</code> in case the operating system is "Windows"
+     *
+     * @return {@code true} in case the operating system is "Windows"
      */
     public static boolean isWindows() {
-        return (INSTANCE.os == WINDOWS);
+        return INSTANCE.os == WINDOWS;
     }
 }

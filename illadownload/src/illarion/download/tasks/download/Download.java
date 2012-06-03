@@ -18,6 +18,8 @@
  */
 package illarion.download.tasks.download;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -86,6 +88,11 @@ public final class Download implements Callable<DownloadResult> {
     private final File target;
 
     /**
+     * This instance of the logger takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Download.class);
+
+    /**
      * Create a new instance of a download. This object will download one file.
      *
      * @param title             the name of this download
@@ -109,12 +116,13 @@ public final class Download implements Callable<DownloadResult> {
     }
 
     @Override
-    public DownloadResult call() throws Exception {
-        DownloadResult retVal;
+    public DownloadResult call() throws IOException {
+        DownloadResult retVal = null;
 
-        while ((retVal = callImpl()) == null) {
-            // nothing to do here, just trigger the download again and again
+        while (retVal == null) {
+            retVal = callImpl();
         }
+
         manager.reportDownloadFinished(this, retVal);
         return retVal;
     }
@@ -246,13 +254,13 @@ public final class Download implements Callable<DownloadResult> {
      * takes care for downloading the file.
      *
      * @return the result of the download
-     * @throws Exception in case anything goes wrong
+     * @throws IOException in case the download or storing the download data fails
      */
     @SuppressWarnings("nls")
-    private DownloadResult callImpl() throws Exception {
-        long transfered = 0;
+    private DownloadResult callImpl() throws IOException {
+        long transferred = 0;
         if (target.exists()) {
-            transfered = target.length();
+            transferred = target.length();
         }
 
         URLConnection connection = null;
@@ -272,7 +280,7 @@ public final class Download implements Callable<DownloadResult> {
             manager.reportProgress(this, 0L, length);
 
             onlineFileLastMod = connection.getLastModified();
-            if ((transfered == length) && target.exists()
+            if ((transferred == length) && target.exists()
                     && (target.lastModified() >= onlineFileLastMod)) {
                 return new DownloadResult(DownloadResult.Results.downloaded,
                         "download.done", source, target, onlineFileLastMod);
@@ -323,21 +331,21 @@ public final class Download implements Callable<DownloadResult> {
             }
 
             int noTransferCounter = 0;
-            long oldTransfered = transfered;
-            while (transfered < length) {
-                oldTransfered = transfered;
-                transfered +=
-                        fileChannel.transferFrom(inChannel, transfered,
-                                Math.min(length - transfered, blockLength));
+            long oldTransferred = transferred;
+            while (transferred < length) {
+                oldTransferred = transferred;
+                transferred +=
+                        fileChannel.transferFrom(inChannel, transferred,
+                                Math.min(length - transferred, blockLength));
 
-                if (oldTransfered != transfered) {
-                    manager.reportProgress(this, transfered, length);
-                } else {
+                if (oldTransferred == transferred) {
                     noTransferCounter++;
+                } else {
+                    manager.reportProgress(this, transferred, length);
                 }
 
                 if (noTransferCounter == 50) {
-                    System.out.println("Restarting stalled download: " + name);
+                    LOGGER.warn("Restarting stalled download: " + name);
                     // transfer seems stalled -> restarting
                     return null;
                 }
@@ -358,7 +366,11 @@ public final class Download implements Callable<DownloadResult> {
             }
         }
 
-        target.setLastModified(onlineFileLastMod + 1000);
+        if (!target.setLastModified(onlineFileLastMod + 1000)) {
+            return new DownloadResult(
+                    DownloadResult.Results.downloadFailed,
+                    "download.file_failed", source, target, 0L);
+        }
 
         if (canceled) {
             return new DownloadResult(DownloadResult.Results.canceled,

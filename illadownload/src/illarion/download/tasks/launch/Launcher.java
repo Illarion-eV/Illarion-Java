@@ -1,22 +1,28 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.tasks.launch;
+
+import illarion.common.util.DirectoryManager;
+import illarion.download.install.resources.Resource;
+import illarion.download.install.resources.ResourceManager;
+import illarion.download.util.OSDetection;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,19 +30,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import illarion.common.util.DirectoryManager;
-
-import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.ResourceManager;
-import illarion.download.util.OSDetection;
-
 /**
  * The use of this class is to start a independent JVM that runs the chosen
  * application. This class requires calls that are system dependent.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
 public final class Launcher {
     /**
@@ -61,6 +61,11 @@ public final class Launcher {
     private final Set<String> vmArguments;
 
     /**
+     * This instance of the logger takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Launcher.class);
+
+    /**
      * The constructor that launches the resource that is selected in the
      * resource manager.
      */
@@ -71,7 +76,7 @@ public final class Launcher {
     /**
      * The constructor and the possibility to select the resource that is
      * supposed to be launched with this.
-     * 
+     *
      * @param resToLaunch the resource that is expected to be launched
      */
     @SuppressWarnings("nls")
@@ -81,7 +86,7 @@ public final class Launcher {
         }
         if (!resToLaunch.isStartable()) {
             throw new IllegalArgumentException(
-                "resToLaunch has to be startable.");
+                    "resToLaunch has to be startable.");
         }
         resource = resToLaunch;
 
@@ -92,7 +97,7 @@ public final class Launcher {
 
     /**
      * Calling this function causes the selected application to launch.
-     * 
+     *
      * @return <code>true</code> in case launching the application was
      *         successful
      */
@@ -118,13 +123,16 @@ public final class Launcher {
         callList.add(resource.getLaunchClass());
         callList.addAll(arguments);
 
-        System.out.println("Calling: ");
-        final int entries = callList.size();
-        for (int i = 0; i < entries; i++) {
-            System.out.print(callList.get(i));
-            System.out.print(' ');
+        if (LOGGER.isDebugEnabled()) {
+            final StringBuilder debugBuilder = new StringBuilder();
+            debugBuilder.append("Calling: ");
+            debugBuilder.append(System.getProperty("line.separator"));
+
+            for (final String aCallList : callList) {
+                debugBuilder.append(aCallList).append(' ');
+            }
+            LOGGER.debug(debugBuilder);
         }
-        System.out.println();
 
         final ProcessBuilder pBuilder = new ProcessBuilder(callList);
         pBuilder.directory(DirectoryManager.getInstance().getUserDirectory());
@@ -133,24 +141,8 @@ public final class Launcher {
             proc.getInputStream().close();
             proc.getOutputStream().close();
             proc.getErrorStream().close();
-            // InputStream inStream = proc.getInputStream();
-            // int value = 0;
-            // while (true) {
-            // value = inStream.read();
-            // if (value < 0) {
-            // System.out.println("EOF");
-            // break;
-            // }
-            // if (value == 0xFF) {
-            // System.out.println("READY");
-            // break;
-            // }
-            // System.out.write(value);
-            // }
-            // inStream.close();
         } catch (final Exception e) {
-            System.err.println("Fehler beim starten.");
-            e.printStackTrace(System.err);
+            LOGGER.fatal("Error while launching application", e);
             return false;
         }
 
@@ -160,7 +152,7 @@ public final class Launcher {
     /**
      * Build the class path string that contain a list of files pointing to each
      * file needed to include to this application.
-     * 
+     *
      * @return the string that represents the class path
      */
     private String buildClassPathString() {
@@ -181,7 +173,7 @@ public final class Launcher {
      * application properly. The first call of this function needs to be done
      * with the main resource as this resource is the root of the dependency
      * tree.
-     * 
+     *
      * @param currentRes the currently handled resource
      */
     private void collectLaunchData(final Resource currentRes) {
@@ -206,13 +198,13 @@ public final class Launcher {
      * This small utility function takes care for escaping a path. This
      * operation is platform dependent so the result will differ on different
      * platforms.
-     * 
+     *
      * @param orgPath the original plain path
      * @return the escaped path
      */
-    private String escapePath(final String orgPath) {
+    private static String escapePath(final String orgPath) {
         if (OSDetection.isWindows()) {
-            return "\"".concat(orgPath).concat("\""); //$NON-NLS-1$ //$NON-NLS-2$
+            return '"' + orgPath + '"'; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return orgPath.replace(" ", "\\ "); //$NON-NLS-1$ //$NON-NLS-2$
     }
