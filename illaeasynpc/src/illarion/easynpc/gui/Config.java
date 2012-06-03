@@ -1,43 +1,22 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.gui;
-
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.io.File;
-import java.io.IOException;
-import java.util.Map.Entry;
-import java.util.Properties;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
-import javolution.util.FastTable;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.pushingpixels.substance.api.skin.SkinInfo;
-
-import illarion.easynpc.Lang;
 
 import illarion.common.config.ConfigChangeListener;
 import illarion.common.config.ConfigDialog;
@@ -47,11 +26,24 @@ import illarion.common.config.entries.DirectoryEntry;
 import illarion.common.config.entries.NumberEntry;
 import illarion.common.config.entries.SelectEntry;
 import illarion.common.util.DirectoryManager;
+import illarion.easynpc.Lang;
+import javolution.util.FastTable;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.pushingpixels.substance.api.skin.SkinInfo;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 /**
  * This class is used to store and to publish the settings used by the editor
  * GUI.
- * 
+ *
  * @author Martin Karing
  * @since 1.00
  */
@@ -61,7 +53,7 @@ public final class Config implements ConfigChangeListener {
      */
     @SuppressWarnings("nls")
     public static final String defaultLookAndFeel =
-        "org.pushingpixels.substance.api.skin.OfficeSilver2007Skin";
+            "org.pushingpixels.substance.api.skin.OfficeSilver2007Skin";
 
     /**
      * The amount of last opened files that shall be stored.
@@ -209,7 +201,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance
      */
     public static Config getInstance() {
@@ -220,7 +212,7 @@ public final class Config implements ConfigChangeListener {
      * This function determines the user data directory and requests the folder
      * to store the editor data in case it is needed. It also performs checks to
      * see if the folder is valid.
-     * 
+     *
      * @return a string with the path to the folder or null in case no folder is
      *         set
      */
@@ -228,33 +220,33 @@ public final class Config implements ConfigChangeListener {
     private static String checkFolder() {
         if (!DirectoryManager.getInstance().hasUserDirectory()) {
             JOptionPane.showMessageDialog(null,
-                "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
-                    + "Installation is corrupted, please run it again.",
-                "Error", JOptionPane.ERROR_MESSAGE);
+                    "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
+                            + "Installation is corrupted, please run it again.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
 
         return DirectoryManager.getInstance().getUserDirectory()
-            .getAbsolutePath();
+                .getAbsolutePath();
     }
 
     /**
      * Prepend this file to the list of last opened files.
-     * 
+     *
      * @param file the file to prepend
      */
     public void addLastOpenedFile(final File file) {
         cfg.set(lastFilesKey, file.getAbsolutePath() + File.pathSeparator
-            + cfg.getString(lastFilesKey));
+                + cfg.getString(lastFilesKey));
         lastOpenedFilesBuffer = null;
     }
 
     @Override
     public void configChanged(final illarion.common.config.Config cfg,
-        final String key) {
+                              final String key) {
         if (key.equals(usedLookAndFeel)) {
             SubstanceLookAndFeel
-                .setSkin(Config.getInstance().getLookAndFeel());
+                    .setSkin(Config.getInstance().getLookAndFeel());
             final int count = MainFrame.getInstance().getOpenTabs();
 
             for (int i = 0; i < count; i++) {
@@ -274,43 +266,45 @@ public final class Config implements ConfigChangeListener {
         ConfigDialog.Page page;
         page = new ConfigDialog.Page("illarion.easynpc.gui.config.generalTab");
         page.addEntry(new ConfigDialog.Entry(
-            "illarion.easynpc.gui.config.easyNpcFolderLabel",
-            new DirectoryEntry(easyNpcFolder, null)));
+                "illarion.easynpc.gui.config.easyNpcFolderLabel",
+                new DirectoryEntry(easyNpcFolder, null)));
         page.addEntry(new ConfigDialog.Entry(
-            "illarion.easynpc.gui.config.luaFolderLabel", new DirectoryEntry(
+                "illarion.easynpc.gui.config.luaFolderLabel", new DirectoryEntry(
                 luaNpcFolder, null)));
         page.addEntry(new ConfigDialog.Entry(
-            "illarion.easynpc.gui.config.maxUndoLabel", new NumberEntry(
+                "illarion.easynpc.gui.config.maxUndoLabel", new NumberEntry(
                 undoCountKey, 0, 10000)));
         page.addEntry(new ConfigDialog.Entry(
-            "illarion.easynpc.gui.config.errorReport", new SelectEntry(
+                "illarion.easynpc.gui.config.errorReport", new SelectEntry(
                 illarion.common.bug.CrashReporter.CFG_KEY,
-                SelectEntry.STORE_INDEX, Lang
-                    .getMsg("illarion.easynpc.gui.config.errorAsk"), Lang
-                    .getMsg("illarion.easynpc.gui.config.errorAlways"), Lang
-                    .getMsg("illarion.easynpc.gui.config.errorNever"))));
+                SelectEntry.STORE_INDEX,
+                new Object[]{
+                        Lang.getMsg("illarion.easynpc.gui.config.errorAsk"),
+                        Lang.getMsg("illarion.easynpc.gui.config.errorAlways"),
+                        Lang.getMsg("illarion.easynpc.gui.config.errorNever")
+                })));
         dialog.addPage(page);
 
         page =
-            new ConfigDialog.Page("illarion.easynpc.gui.config.lookAndFeelTab");
+                new ConfigDialog.Page("illarion.easynpc.gui.config.lookAndFeelTab");
         page.addEntry(new ConfigDialog.Entry(
-            "illarion.easynpc.gui.config.useWindowDecoLabel", new CheckEntry(
+                "illarion.easynpc.gui.config.useWindowDecoLabel", new CheckEntry(
                 useWindowDeco)));
 
         FastTable<String> themeObject = FastTable.newInstance();
         FastTable<String> themeLabel = FastTable.newInstance();
 
         for (final Entry<String, SkinInfo> skin : SubstanceLookAndFeel
-            .getAllSkins().entrySet()) {
+                .getAllSkins().entrySet()) {
             themeObject.add(skin.getValue().getClassName());
             themeLabel.add(skin.getValue().getDisplayName());
         }
 
         page.addEntry(new ConfigDialog.Entry(
-            "illarion.easynpc.gui.config.usedThemeLabel", new SelectEntry(
+                "illarion.easynpc.gui.config.usedThemeLabel", new SelectEntry(
                 usedLookAndFeel, SelectEntry.STORE_VALUE, themeObject
-                    .toArray(), themeLabel.toArray(new String[themeLabel
-                    .size()]))));
+                .toArray(), themeLabel.toArray(new String[themeLabel
+                .size()]))));
         FastTable.recycle(themeObject);
         themeObject = null;
 
@@ -318,7 +312,7 @@ public final class Config implements ConfigChangeListener {
         themeLabel = null;
 
         page.addEntry(new ConfigDialog.Entry(
-            "illarion.easynpc.gui.config.useSyntaxLabel", new CheckEntry(
+                "illarion.easynpc.gui.config.useSyntaxLabel", new CheckEntry(
                 useSyntaxHighlight)));
         dialog.addPage(page);
 
@@ -327,7 +321,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Check if auto building is enabled or not.
-     * 
+     *
      * @return <code>true</code> in case auto building is enabled
      */
     public boolean getAutoBuild() {
@@ -336,7 +330,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Get the folder where to store the easyNPC scripts.
-     * 
+     *
      * @return the folder to store the easyNPC scripts
      */
     public String getEasyNpcFolder() {
@@ -345,7 +339,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Get the internal used config object.
-     * 
+     *
      * @return the internal used config object
      */
     public illarion.common.config.Config getInternalCfg() {
@@ -354,7 +348,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Get the list of the last opened files.
-     * 
+     *
      * @return the list of last opened files
      */
     public File[] getLastOpenedFiles() {
@@ -362,13 +356,13 @@ public final class Config implements ConfigChangeListener {
             return lastOpenedFilesBuffer;
         }
         final String[] fetchedList =
-            cfg.getString(lastFilesKey).split(File.pathSeparator);
+                cfg.getString(lastFilesKey).split(File.pathSeparator);
         final File[] returnList = new File[LAST_OPEN_FILES_COUNT];
         final String[] cleanList = new String[LAST_OPEN_FILES_COUNT];
 
         int entryPos = 0;
         for (int i = 0; (i < fetchedList.length)
-            && (i < LAST_OPEN_FILES_COUNT); i++) {
+                && (i < LAST_OPEN_FILES_COUNT); i++) {
             final String workString = fetchedList[i];
             if (workString.length() < 5) {
                 continue;
@@ -411,15 +405,15 @@ public final class Config implements ConfigChangeListener {
     /**
      * Read the last window state from the properties and set them to the
      * windows.
-     * 
+     *
      * @param comp The window that shall receive the stored settings
      */
     public void getLastWindowValue(final JFrame comp) {
         if ((cfg.getInteger(lastWindowX) <= 0)
-            || (cfg.getInteger(lastWindowY) <= 0)
-            || (cfg.getInteger(lastWindowW) <= 0)
-            || (cfg.getInteger(lastWindowH) <= 0)
-            || (cfg.getInteger(lastWindowState) <= 0)) {
+                || (cfg.getInteger(lastWindowY) <= 0)
+                || (cfg.getInteger(lastWindowW) <= 0)
+                || (cfg.getInteger(lastWindowH) <= 0)
+                || (cfg.getInteger(lastWindowState) <= 0)) {
             final Dimension screenSize = comp.getToolkit().getScreenSize();
             final int width = (screenSize.width * 8) / 10;
             final int height = (screenSize.height * 8) / 10;
@@ -436,10 +430,10 @@ public final class Config implements ConfigChangeListener {
             newBounds.height = cfg.getInteger(lastWindowH);
 
             final Rectangle testBounds =
-                new Rectangle(new Point(0, 0), comp.getToolkit()
-                    .getScreenSize());
+                    new Rectangle(new Point(0, 0), comp.getToolkit()
+                            .getScreenSize());
             final Rectangle intersectionBounds =
-                newBounds.intersection(testBounds);
+                    newBounds.intersection(testBounds);
 
             if (newBounds.equals(intersectionBounds)) {
                 comp.setBounds(newBounds);
@@ -458,7 +452,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Get the look and feel that shall be used.
-     * 
+     *
      * @return the class path of the look and feel that shall be used
      */
     public String getLookAndFeel() {
@@ -467,7 +461,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Get the folder where to store the luaNPC scripts.
-     * 
+     *
      * @return the folder to store the luaNPC scripts
      */
     public String getLuaNpcFolder() {
@@ -477,7 +471,7 @@ public final class Config implements ConfigChangeListener {
     /**
      * Get the list of files that were open the last time the editor was
      * running.
-     * 
+     *
      * @return the list of file paths
      */
     public String[] getOldFiles() {
@@ -486,7 +480,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Get the state of the split pane in the editor view.
-     * 
+     *
      * @return the state of the split pane in the editor view
      */
     public double getSplitPaneState() {
@@ -500,7 +494,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Get the amount of undo operations that are supposed to be stored.
-     * 
+     *
      * @return the amount of undo operations
      */
     public int getUndoCount() {
@@ -509,7 +503,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Get the flag if the editor is supposed to highlight the syntax
-     * 
+     *
      * @return <code>true</code> in case the syntax shall be highlighted
      */
     public boolean getUseSyntaxHighlighting() {
@@ -518,7 +512,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Get the flag if the editor is supposed to decorate the windows.
-     * 
+     *
      * @return <code>true</code> in case the editor is expected to decorate the
      *         windows
      */
@@ -539,7 +533,7 @@ public final class Config implements ConfigChangeListener {
 
         cfg.setDefault(lastFilesKey, "");
         cfg.setDefault(easyNpcFolder,
-            new File(System.getProperty("user.home")));
+                new File(System.getProperty("user.home")));
         cfg.setDefault(lastFilesKey, "");
         cfg.setDefault(lastWindowH, -1);
         cfg.setDefault(lastWindowState, -1);
@@ -555,7 +549,7 @@ public final class Config implements ConfigChangeListener {
         cfg.setDefault(useWindowDeco, true);
         cfg.setDefault(autoBuildKey, true);
         cfg.setDefault(illarion.common.bug.CrashReporter.CFG_KEY,
-            illarion.common.bug.CrashReporter.MODE_ASK);
+                illarion.common.bug.CrashReporter.MODE_ASK);
 
         cfg.addListener(this);
 
@@ -572,7 +566,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Set the new value for the auto building flag.
-     * 
+     *
      * @param autobuild the new value for the auto building flag
      */
     public void setAutoBuild(final boolean autobuild) {
@@ -582,7 +576,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Set the folder where to store the easyNPC scripts.
-     * 
+     *
      * @param newFolder the folder where to store the easyNPC scripts
      */
     public void setEasyNpcFolder(final String newFolder) {
@@ -592,7 +586,7 @@ public final class Config implements ConfigChangeListener {
     /**
      * Set the required values of a window into the properties so it can be
      * restored after the restart.
-     * 
+     *
      * @param comp the window that is the source for the stored data
      */
     public void setLastWindowValues(final JFrame comp) {
@@ -606,7 +600,7 @@ public final class Config implements ConfigChangeListener {
     /**
      * Set the class path of the look and feel that shall be used from the next
      * start of the editor on.
-     * 
+     *
      * @param lookAndFeel the class path of the look and feel
      */
     public void setLookAndFeel(final String lookAndFeel) {
@@ -619,7 +613,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Set the folder where to store the luaNPC scripts.
-     * 
+     *
      * @param newFolder the folder where to store the easyNPC scripts
      */
     public void setLuaNpcFolder(final String newFolder) {
@@ -629,7 +623,7 @@ public final class Config implements ConfigChangeListener {
     /**
      * Set the list of files that shall be opened the next time the editor is
      * started.
-     * 
+     *
      * @param files the files to open
      */
     public void setOldFiles(final String[] files) {
@@ -645,7 +639,7 @@ public final class Config implements ConfigChangeListener {
     /**
      * Save the state of the split pane to the configuration so its restored the
      * next time its load.
-     * 
+     *
      * @param state the state of the split pane
      */
     public void setSplitPaneState(final double state) {
@@ -654,7 +648,7 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Set the amount of undo operations that should be stored.
-     * 
+     *
      * @param count the amount of undo operations that should be stored
      */
     public void setUndoCount(final int count) {
@@ -665,9 +659,9 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Set the flag if the editor is expected to highlight the syntax.
-     * 
+     *
      * @param highlight <code>true</code> in case the editor is expected
-     *            highlight the syntax.
+     *                  highlight the syntax.
      */
     public void setUseSyntaxHighlighting(final boolean highlight) {
         if (getUseSyntaxHighlighting() == highlight) {
@@ -680,9 +674,9 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Set the flag if the editor is expected to decorate the window or not.
-     * 
+     *
      * @param deco <code>true</code> in case the editor is expected to decorate
-     *            the window
+     *             the window
      */
     public void setUseWindowDecoration(final boolean deco) {
         if (getUseWindowDecoration() == deco) {
@@ -708,16 +702,16 @@ public final class Config implements ConfigChangeListener {
             public void run() {
                 requireRestart = false;
                 JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                    "Some of the settings changed require a restart to "
-                        + "take effect.", "Restart needed",
-                    JOptionPane.INFORMATION_MESSAGE);
+                        "Some of the settings changed require a restart to "
+                                + "take effect.", "Restart needed",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }
 
     /**
      * Prepare the proper output of the log files.
-     * 
+     *
      * @param folder the folder the log file is written to
      */
     @SuppressWarnings("nls")
@@ -725,12 +719,12 @@ public final class Config implements ConfigChangeListener {
         final Properties tempProps = new Properties();
         try {
             tempProps.load(Config.class.getClassLoader().getResourceAsStream(
-                "logging.properties"));
+                    "logging.properties"));
             tempProps.put("log4j.appender.IllaLogfileAppender.file", folder
-                + File.separator + "easynpc.log");
+                    + File.separator + "easynpc.log");
             tempProps.put("log4j.reset", "true");
             new PropertyConfigurator().doConfigure(tempProps,
-                LOGGER.getLoggerRepository());
+                    LOGGER.getLoggerRepository());
         } catch (final IOException ex) {
             System.err.println("Error setting up logging environment");
         }
