@@ -36,7 +36,7 @@
     </target>
 
     <target name="build_client_res" description="create the resource of the illarion client"
-            depends="check_optional_dirs, build_client, register_extensions" if="keys.exist" unless="client.uptodate">
+            depends="check_optional_dirs, build_client, register_extensions" if="keys.exist">
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
                 <file name="${client.jar}"/>

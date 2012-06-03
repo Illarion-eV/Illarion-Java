@@ -70,7 +70,7 @@
         <mkdir dir="${classes}"/>
         <javac srcdir="${src}" destdir="${classes}" excludes="**/test/*" source="${source.version}"
                target="${target.version}" encoding="${source.encoding}" compiler="${build.compiler}"
-               debug="${build.debug}" debuglevel="${build.debuglevel}" listfiles="yes">
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
             <classpath>
                 <fileset refid="xz"/>
                 <fileset refid="swingx"/>
@@ -81,7 +81,7 @@
         </javac>
     </target>
 
-    <target name="build_jar">
+    <target name="build_jar" depends="proguard">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/download/**">
             <fileset dir="${classes}">
                 <include name="illarion/download/**"/>
@@ -104,6 +104,7 @@
         </jar>
 
         <jar jarfile="${jar}" basedir="${src}" includes="*.png" update="true"/>
+        <jar jarfile="${jar}" basedir="${src}" includes="logging.properties" update="true"/>
         <jar jarfile="${jar}" basedir="${download}" includes="JNLP-INF/*.jnlp" update="true" compress="false"/>
         <jar jarfile="${jar}" basedir="${src}" includes="messages_de.properties messages_en.properties" update="true"
              index="true"/>
@@ -130,7 +131,14 @@
             <libraryjar refid="nifty"/>
             <libraryjar refid="slick"/>
             <libraryjar refid="tabsplitter"/>
-            <libraryjar path="${java.home}/lib/"/>
+            <libraryjar path="${java.home}/lib/rt.jar"/>
+            <libraryjar path="${java.home}/lib/jce.jar"/>
+            <keep name="org.apache.log4j.ConsoleAppender"/>
+            <keep name="org.apache.log4j.PatternLayout"/>
+            <keepclassmembers name="org.apache.log4j.PatternLayout">
+                <method name="setConversionPattern" type="void" parameters="java.lang.String"/>
+                <method name="getConversionPattern" type="java.lang.String" parameters="void"/>
+            </keepclassmembers>
             <keepclasseswithmembers name="illarion.download.install.Installation">
                 <method access="public static" type="void" name="main" parameters="java.lang.String[]"/>
             </keepclasseswithmembers>
@@ -144,8 +152,11 @@
                 <method name="loadActionMap" type="void"
                         parameters="org.jdesktop.swingx.plaf.basic.core.LazyActionMap"/>
             </keepclasseswithmembers>
-            <dontwarn name="javax.jms.**"/>
             <dontwarn name="javax.mail.**"/>
+            <dontwarn name="javax.jms.**"/>
+            <dontnote name="org.apache.log4j.jmx.Agent"/>
+            <dontnote name="org.apache.log4j.net.ZeroConfSupport"/>
+            <dontnote name="org.apache.log4j.spi.LocationInfo"/>
         </proguard>
 
         <move file="${jar}" tofile="${org.jar}"/>
