@@ -127,6 +127,8 @@ public final class MapDisplayManager
         corridor = FadingCorridor.getInstance();
         origin = new Location();
 
+        legacyRendering = IllaClient.getCfg().getBoolean("legacyRender");
+
         dX = 0;
         dY = 0;
 

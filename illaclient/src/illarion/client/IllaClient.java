@@ -544,6 +544,7 @@ public final class IllaClient {
         cfg.setDefault("fadingTime", 600);
         cfg.setDefault(CFG_FULLSCREEN, false);
         cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800, 600, 32, 60).toString());
+        cfg.setDefault("legacyRender", false);
         cfg.setDefault("savePassword", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
         cfg.setDefault("engine", 1);
