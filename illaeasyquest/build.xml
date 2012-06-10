@@ -72,28 +72,46 @@
         <delete file="${res}/template/handler/filelist"/>
         <delete file="${res}/template/trigger/filelist"/>
         <delete file="${res}/template/condition/filelist"/>
-        <fileset id="handlers_fs" dir="${res}/template/handler">
-            <include name="*.lua"/>
-        </fileset>
-        <fileset id="trigger_fs" dir="${res}/template/trigger">
-            <include name="*.lua"/>
-        </fileset>
-        <fileset id="condition_fs" dir="${res}/template/condition">
-            <include name="*.lua"/>
-        </fileset>
 
-        <pathconvert pathsep="${line.separator}" property="handlers" refid="handlers_fs">
-            <map from="${res}/" to=""/>
-            <map from="\\" to="/"/>
+        <pathconvert pathsep="${line.separator}" property="handlers" preserveduplicates="false" targetos="unix">
+            <fileset dir="${res}/template/handler">
+                <include name="*.lua"/>
+            </fileset>
+            <mapper>
+                <chainedmapper>
+                    <flattenmapper/>
+                    <identitymapper/>
+                    <regexpmapper from="(.*)" to="template/handler/\1"/>
+                </chainedmapper>
+            </mapper>
         </pathconvert>
-        <pathconvert pathsep="${line.separator}" property="trigger" refid="trigger_fs">
-            <map from="${res}/" to=""/>
-            <map from="\\" to="/"/>
+
+        <pathconvert pathsep="${line.separator}" property="trigger" preserveduplicates="false" targetos="unix">
+            <fileset dir="${res}/template/trigger">
+                <include name="*.lua"/>
+            </fileset>
+            <mapper>
+                <chainedmapper>
+                    <flattenmapper/>
+                    <identitymapper/>
+                    <regexpmapper from="(.*)" to="template/trigger/\1"/>
+                </chainedmapper>
+            </mapper>
         </pathconvert>
-        <pathconvert pathsep="${line.separator}" property="condition" refid="condition_fs">
-            <map from="${res}/" to=""/>
-            <map from="\\" to="/"/>
+
+        <pathconvert pathsep="${line.separator}" property="condition" preserveduplicates="false" targetos="unix">
+            <fileset dir="${res}/template/condition">
+                <include name="*.lua"/>
+            </fileset>
+            <mapper>
+                <chainedmapper>
+                    <flattenmapper/>
+                    <identitymapper/>
+                    <regexpmapper from="(.*)" to="template/condition/\1"/>
+                </chainedmapper>
+            </mapper>
         </pathconvert>
+
         <echo file="${res}/template/handler/filelist">${handlers}</echo>
         <echo file="${res}/template/trigger/filelist">${trigger}</echo>
         <echo file="${res}/template/condition/filelist">${condition}</echo>
