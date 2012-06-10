@@ -26,6 +26,7 @@ import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
 import javolution.util.FastComparator;
 import javolution.util.FastTable;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.*;
 import org.newdawn.slick.opengl.renderer.SGL;
 
@@ -113,6 +114,8 @@ public final class MapDisplayManager
     private final MoveAnimation levelAni;
 
     private final Location origin;
+
+    private static final Logger LOGGER = Logger.getLogger(MapDisplayManager.class);
 
     public MapDisplayManager() {
         active = false;
@@ -344,6 +347,10 @@ public final class MapDisplayManager
         Camera.getInstance().setViewport(-offX, -offY, c.getWidth(), c.getHeight());
         Camera.getInstance().clearDirtyAreas();
 
+        if (legacyRendering) {
+            Camera.getInstance().markEverythingDirty();
+        }
+
         synchronized (display) {
             synchronized (GameMap.LIGHT_LOCK) {
                 // draw all items
@@ -358,7 +365,16 @@ public final class MapDisplayManager
         }
     }
 
+    /**
+     * This image is used to render the game screen on. It holds the texture that holds the current graphics of the
+     * game. This will contain {@code null} in case render-to-texture is not supported by the host system.
+     */
     private Image gameScreenImage;
+
+    /**
+     * This variable is set true in case the legacy rendering is active.
+     */
+    private boolean legacyRendering;
 
     /**
      * Render all visible map items
@@ -372,11 +388,12 @@ public final class MapDisplayManager
         }
 
         Graphics usedGraphics = g;
-        if (gameScreenImage == null) {
+        if ((gameScreenImage == null) || legacyRendering) {
             try {
                 gameScreenImage = new Image(c.getWidth(), c.getHeight(), SGL.GL_LINEAR);
             } catch (SlickException e) {
-
+                legacyRendering = true;
+                LOGGER.warn("Rendering to texture fails. Using legacy direct rendering.");
             }
         }
 
@@ -384,9 +401,9 @@ public final class MapDisplayManager
             try {
                 usedGraphics = gameScreenImage.getGraphics();
             } catch (SlickException e) {
-
+                legacyRendering = true;
+                LOGGER.warn("Fetching render to texture context failed. Switching to legacy rendering.");
             }
-
         }
 
         final Camera camera = Camera.getInstance();
