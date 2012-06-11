@@ -186,6 +186,7 @@ public final class Launcher {
         if (currentRes.getVMArguments() != null) {
             vmArguments.addAll(currentRes.getVMArguments());
         }
+        vmArguments.add("-Djava.net.preferIPv4Stack=true");
 
         if (currentRes.getDependencies() != null) {
             for (final Resource nextRes : currentRes.getDependencies()) {

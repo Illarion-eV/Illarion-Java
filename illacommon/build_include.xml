@@ -218,16 +218,6 @@
         <patternset refid="jgraph.pattern" />
     </fileset>
 
-    <!-- JOGL 2.0.0 b224 -->    <!-- http://jogamp.org/ -->
-    <property name="jogl.dir" location="${common}/lib/jogl" />
-    <patternset id="jogl.pattern">
-        <include name="jogl.all.jar" />
-        <include name="gluegen-rt.jar" />
-    </patternset>
-    <fileset id="jogl" dir="${jogl.dir}">
-        <patternset refid="jogl.pattern" />
-    </fileset>
-
     <!-- GNU Trove 3.0.0 -->    <!-- http://trove4j.sourceforge.net/ -->
     <patternset id="trove.pattern">
         <include name="trove.jar" />
@@ -293,9 +283,9 @@
         <patternset refid="laf.pattern" />
     </fileset>
 
-    <!-- SwingX 1.6.2 -->    <!-- http://swinglabs.org/index.jsp -->
+    <!-- SwingX 1.6.3 -->    <!-- http://swinglabs.org/index.jsp -->
     <patternset id="swingx.pattern">
-        <include name="swingx*.jar" />
+        <include name="swingx.jar" />
     </patternset>
     <fileset id="swingx" dir="${common}/lib/swingx">
         <patternset refid="swingx.pattern" />

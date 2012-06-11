@@ -192,13 +192,6 @@ public final class Download implements Callable<DownloadResult> {
 
             connection.connect();
 
-            // System.out.println("Download: " + source.toString()
-            // + " IfLastModified: "
-            // + DateFormat.getDateTimeInstance().format(new Date(lastModified))
-            // + " Last Modified: "
-            // + DateFormat.getDateTimeInstance().format(new
-            // Date(connection.getLastModified())));
-
             if (connection instanceof HttpURLConnection) {
                 final HttpURLConnection httpConn =
                         (HttpURLConnection) connection;
@@ -331,7 +324,7 @@ public final class Download implements Callable<DownloadResult> {
             }
 
             int noTransferCounter = 0;
-            long oldTransferred = transferred;
+            long oldTransferred;
             while (transferred < length) {
                 oldTransferred = transferred;
                 transferred +=
