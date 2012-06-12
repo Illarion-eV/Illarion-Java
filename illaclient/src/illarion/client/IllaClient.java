@@ -207,6 +207,8 @@ public final class IllaClient {
         gameContainer.setTargetFrameRate(60);
 
         try {
+            gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png",
+                    "illarion_client64.png", "illarion_client256.png"});
             gameContainer.start();
         } catch (SlickException e) {
             // TODO Auto-generated catch block
