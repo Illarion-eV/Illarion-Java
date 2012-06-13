@@ -146,9 +146,11 @@ public final class InputReceiver
 
     @Override
     public void mouseDragged(int oldx, int oldy, int newx, int newy) {
-        if (keyDownOnMap[MOVE_KEY]) {
-            EventBus.publish(EB_TOPIC, new DragOnMapEvent(oldx, oldy, newx, newy,
-                    forwardingControl.getInputForwardingControl()));
+        for (int i = 0; i < keyDownOnMap.length; i++) {
+            if (keyDownOnMap[i]) {
+                EventBus.publish(EB_TOPIC, new DragOnMapEvent(oldx, oldy, newx, newy, i,
+                        forwardingControl.getInputForwardingControl()));
+            }
         }
     }
 

@@ -226,12 +226,14 @@ public final class GameMapDragHandler
     @Override
     public void onEvent(final String topic, final DragOnMapEvent data) {
         if (topic.equals(InputReceiver.EB_TOPIC)) {
-            if (handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
+            if ((data.getKey() == 0) && handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
                     data.getForwardingControl())) {
                 return;
             }
 
-            moveToMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
+            if (data.getKey() == 1) {
+                moveToMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
+            }
         }
     }
 }

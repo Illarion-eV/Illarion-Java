@@ -47,6 +47,11 @@ public final class DragOnMapEvent {
     private final int newY;
 
     /**
+     * The key that is used for the dragging operation.
+     */
+    private final int activeKey;
+
+    /**
      * The controls used to override the default forwarding behaviour of the Slick renderer.
      */
     private final ForwardingInputSystem forwardingControl;
@@ -54,19 +59,21 @@ public final class DragOnMapEvent {
     /**
      * Create and initialize such a event.
      *
-     * @param startX the X coordinate where the dragging starts
-     * @param startY the Y coordinate where the dragging starts
-     * @param stopX the X coordinate where the dragging is currently
-     * @param stopY the Y coordinate where the dragging is currently
+     * @param startX                 the X coordinate where the dragging starts
+     * @param startY                 the Y coordinate where the dragging starts
+     * @param stopX                  the X coordinate where the dragging is currently
+     * @param stopY                  the Y coordinate where the dragging is currently
+     * @param pressedKey             the key used for the dragging operation
      * @param inputForwardingControl the control class to change the forwarding behaviour
      */
-    public DragOnMapEvent(final int startX, final int startY, final int stopX, final int stopY,
+    public DragOnMapEvent(final int startX, final int startY, final int stopX, final int stopY, final int pressedKey,
                           final ForwardingInputSystem inputForwardingControl) {
         oldX = startX;
         oldY = startY;
         newX = stopX;
         newY = stopY;
         forwardingControl = inputForwardingControl;
+        activeKey = pressedKey;
     }
 
     /**
@@ -112,5 +119,14 @@ public final class DragOnMapEvent {
      */
     public ForwardingInputSystem getForwardingControl() {
         return forwardingControl;
+    }
+
+    /**
+     * Get the key used for this dragging operation.
+     *
+     * @return the key used for the dragging operation
+     */
+    public int getKey() {
+        return activeKey;
     }
 }
