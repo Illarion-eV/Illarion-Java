@@ -42,24 +42,25 @@ public final class ResourceDatabase
     /**
      * The map of resources stored in this database.
      */
-    private Map<URL, DBResource> resources;
+    private final Map<String, DBResource> resources;
 
     /**
      * The constructor for this database that prepares it for proper operation.
      */
     public ResourceDatabase() {
-        resources = new HashMap<URL, DBResource>();
+        resources = new HashMap<String, DBResource>();
     }
 
     /**
      * Add a file to a resource that is determined using a URL.
      *
      * @param resourceURL the URL of the resource
-     * @param file the file to add to this resource
+     * @param file        the file to add to this resource
      */
     public void addFile(final URL resourceURL, final File file) {
-        if (resources.containsKey(resourceURL)) {
-            resources.get(resourceURL).addFile(file);
+        final String stringURL = resourceURL.toString();
+        if (resources.containsKey(stringURL)) {
+            resources.get(stringURL).addFile(file);
         }
     }
 
@@ -67,14 +68,15 @@ public final class ResourceDatabase
      * Add a new resource to the database. This causes that any old resource that was stored with the same URL is
      * removed.
      *
-     * @param url the URL of the resource
+     * @param url        the URL of the resource
      * @param lastChange the timestamp when this resource was last changed
      */
     public void addResource(final URL url, final long lastChange) {
-        if (resources.containsKey(url)) {
-            resources.remove(url);
+        final String stringURL = url.toString();
+        if (resources.containsKey(stringURL)) {
+            resources.remove(stringURL);
         }
-        resources.put(url, new DBResource(url, lastChange));
+        resources.put(stringURL, new DBResource(url, lastChange));
     }
 
     /**
@@ -84,16 +86,16 @@ public final class ResourceDatabase
      * @return <code>true</code> in case the URL is assigned to a resource in this database
      */
     public boolean containsResource(final URL url) {
-        return resources.containsKey(url);
+        return resources.containsKey(url.toString());
     }
 
     /**
      * Get a resource bound to a URL.
      *
      * @param url the URL
-     * @return the resource connected to the URL or <code>null</code> in case the resource is not set
+     * @return the resource connected to the URL or {@code null} in case the resource is not set
      */
     public DBResource getResource(final URL url) {
-        return resources.get(url);
+        return resources.get(url.toString());
     }
 }

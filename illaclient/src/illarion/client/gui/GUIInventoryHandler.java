@@ -23,6 +23,9 @@ import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
 import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
+import de.lessvoid.nifty.effects.Effect;
+import de.lessvoid.nifty.effects.EffectEventId;
+import de.lessvoid.nifty.effects.impl.Hint;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.ElementShowEvent;
 import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
@@ -34,6 +37,7 @@ import illarion.client.graphics.Item;
 import illarion.client.gui.util.AbstractMultiActionHelper;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.InventoryUpdateEvent;
+import illarion.client.net.server.events.LookAtInventoryEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.World;
 import illarion.client.world.items.Inventory;
@@ -44,6 +48,7 @@ import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This handler takes care for showing and hiding objects in the inventory. Also it monitors all dropping operations on
@@ -167,6 +172,7 @@ public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdat
     private Nifty activeNifty;
     private Screen activeScreen;
     private GetVisibleEventSubscriber visibilityEventSubscriber;
+    private EventSubscriber<LookAtInventoryEvent> lookAtInventoryEventEventSubscriber;
 
     private int clickCount = 0;
     private boolean wasDoubleClick = false;
@@ -202,6 +208,13 @@ public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdat
         slotLabelVisibility = new boolean[Inventory.SLOT_COUNT];
         Arrays.fill(slotLabelVisibility, false);
         visibilityEventSubscriber = new GetVisibleEventSubscriber();
+
+        lookAtInventoryEventEventSubscriber = new EventSubscriber<LookAtInventoryEvent>() {
+            @Override
+            public void onEvent(final LookAtInventoryEvent event) {
+                showHint(event.getSlot(), event.getText(), event.getValue());
+            }
+        };
     }
 
     @Override
@@ -290,6 +303,21 @@ public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdat
         }
     }
 
+    public void showHint(final int slot, final String text, final long value) {
+        final Element element = invSlots[slot];
+        final List<Effect> hintEffects = element.getEffects(EffectEventId.onCustom, Hint.class);
+
+        if (hintEffects.size() != 1) {
+            throw new IllegalStateException("sanity check failed");
+        }
+
+        final Effect effect = hintEffects.get(0);
+
+        effect.getParameters().setProperty("hintText", text);
+
+        element.startEffectWithoutChildren(EffectEventId.onCustom);
+    }
+
     public void toggleInventory() {
         if (inventoryWindow != null) {
             inventoryWindow.setVisible(!inventoryWindow.isVisible());
@@ -301,6 +329,7 @@ public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdat
         activeNifty.subscribeAnnotations(this);
 
         EventBus.subscribe(InventoryUpdateEvent.class, this);
+        EventBus.subscribe(LookAtInventoryEvent.class, lookAtInventoryEventEventSubscriber);
         EventBus.subscribe(InputReceiver.EB_TOPIC, this);
         activeNifty.subscribe(activeScreen, inventoryWindow.getId(), ElementShowEvent.class,
                 visibilityEventSubscriber);

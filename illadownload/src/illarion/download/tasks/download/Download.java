@@ -1,22 +1,24 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.tasks.download;
+
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,10 +34,10 @@ import java.util.concurrent.Callable;
 /**
  * This class describes a single download and is used to download a file and
  * monitor the download.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.01
+ * @since 1.00
  */
 public final class Download implements Callable<DownloadResult> {
     /**
@@ -44,9 +46,9 @@ public final class Download implements Callable<DownloadResult> {
      */
     @SuppressWarnings("nls")
     private static final boolean DO_NOT_DOWNLOAD = Boolean.toString(true)
-        .equalsIgnoreCase(
-            System.getProperty("illarion.download.nodownload",
-                Boolean.FALSE.toString()));
+            .equalsIgnoreCase(
+                    System.getProperty("illarion.download.nodownload",
+                            Boolean.FALSE.toString()));
 
     /**
      * This flag is set true in case the download is canceled.
@@ -86,20 +88,25 @@ public final class Download implements Callable<DownloadResult> {
     private final File target;
 
     /**
+     * This instance of the logger takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Download.class);
+
+    /**
      * Create a new instance of a download. This object will download one file.
-     * 
-     * @param title the name of this download
-     * @param dir the directory the files need to be extraced to
-     * @param sourceURL the URL to download
-     * @param targetFile the target file where the downloaded data is to store
-     *            in
+     *
+     * @param title             the name of this download
+     * @param dir               the directory the files need to be extraced to
+     * @param sourceURL         the URL to download
+     * @param targetFile        the target file where the downloaded data is to store
+     *                          in
      * @param localLastModified the last modified value, only download the file
-     *            in case it was modified later
-     * @param callbackManager the manager that handles this download
+     *                          in case it was modified later
+     * @param callbackManager   the manager that handles this download
      */
     Download(final String title, final String dir, final URL sourceURL,
-        final File targetFile, final long localLastModified,
-        final DownloadManager callbackManager) {
+             final File targetFile, final long localLastModified,
+             final DownloadManager callbackManager) {
         name = title;
         source = sourceURL;
         target = targetFile;
@@ -109,12 +116,13 @@ public final class Download implements Callable<DownloadResult> {
     }
 
     @Override
-    public DownloadResult call() throws Exception {
-        DownloadResult retVal;
+    public DownloadResult call() throws IOException {
+        DownloadResult retVal = null;
 
-        while ((retVal = callImpl()) == null) {
-            // nothing to do here, just trigger the download again and again
+        while (retVal == null) {
+            retVal = callImpl();
         }
+
         manager.reportDownloadFinished(this, retVal);
         return retVal;
     }
@@ -128,7 +136,7 @@ public final class Download implements Callable<DownloadResult> {
 
     /**
      * Get the directory the files need to be extraced to.
-     * 
+     *
      * @return the directory the file needs to be extracted to
      */
     public String getDirectory() {
@@ -137,7 +145,7 @@ public final class Download implements Callable<DownloadResult> {
 
     /**
      * Get the title of this download.
-     * 
+     *
      * @return the title of this download
      */
     public String getName() {
@@ -146,7 +154,7 @@ public final class Download implements Callable<DownloadResult> {
 
     /**
      * Get the source URL of this download.
-     * 
+     *
      * @return the source URL of this download
      */
     public URL getSource() {
@@ -155,7 +163,7 @@ public final class Download implements Callable<DownloadResult> {
 
     /**
      * Get the target file of this download.
-     * 
+     *
      * @return the target file of this download
      */
     public File getTarget() {
@@ -164,15 +172,15 @@ public final class Download implements Callable<DownloadResult> {
 
     /**
      * Prepare this download and fetch the first needed informations about it.
-     * 
+     *
      * @return true in case the download needs to be executed in detail
      */
     @SuppressWarnings("nls")
     public boolean prepare() {
         if (DO_NOT_DOWNLOAD) {
             manager.reportDownloadFinished(this, new DownloadResult(
-                DownloadResult.Results.notModified, "download.not_modified",
-                source, target, lastModified));
+                    DownloadResult.Results.notModified, "download.not_modified",
+                    source, target, lastModified));
             return false;
         }
         try {
@@ -184,16 +192,9 @@ public final class Download implements Callable<DownloadResult> {
 
             connection.connect();
 
-            // System.out.println("Download: " + source.toString()
-            // + " IfLastModified: "
-            // + DateFormat.getDateTimeInstance().format(new Date(lastModified))
-            // + " Last Modified: "
-            // + DateFormat.getDateTimeInstance().format(new
-            // Date(connection.getLastModified())));
-
             if (connection instanceof HttpURLConnection) {
                 final HttpURLConnection httpConn =
-                    (HttpURLConnection) connection;
+                        (HttpURLConnection) connection;
                 switch (httpConn.getResponseCode()) {
                     case HttpURLConnection.HTTP_NOT_MODIFIED:
                         try {
@@ -203,12 +204,12 @@ public final class Download implements Callable<DownloadResult> {
                         }
                         if (target.exists()) {
                             manager.reportDownloadFinished(this,
-                                new DownloadResult(DownloadResult.Results.downloaded, "download.not_modified",
-                                                   source, target, lastModified));
+                                    new DownloadResult(DownloadResult.Results.downloaded, "download.not_modified",
+                                            source, target, lastModified));
                         } else {
                             manager.reportDownloadFinished(this,
-                                new DownloadResult(DownloadResult.Results.notModified, "download.not_modified",
-                                                   source, target, lastModified));
+                                    new DownloadResult(DownloadResult.Results.notModified, "download.not_modified",
+                                            source, target, lastModified));
                         }
                         return false;
                     case HttpURLConnection.HTTP_OK:
@@ -221,9 +222,9 @@ public final class Download implements Callable<DownloadResult> {
                             // nothing to do
                         }
                         manager.reportDownloadFinished(this,
-                            new DownloadResult(
-                                DownloadResult.Results.downloadFailed,
-                                "download.not_found", source, target, 0L));
+                                new DownloadResult(
+                                        DownloadResult.Results.downloadFailed,
+                                        "download.not_found", source, target, 0L));
                         return false;
                 }
             }
@@ -234,8 +235,8 @@ public final class Download implements Callable<DownloadResult> {
             connection.getInputStream().close();
         } catch (final IOException ex) {
             manager.reportDownloadFinished(this, new DownloadResult(
-                DownloadResult.Results.downloadFailed, "download.not_found",
-                source, target, 0L));
+                    DownloadResult.Results.downloadFailed, "download.not_found",
+                    source, target, 0L));
             return false;
         }
         return true;
@@ -244,15 +245,15 @@ public final class Download implements Callable<DownloadResult> {
     /**
      * This is the private function that is called as the call function that
      * takes care for downloading the file.
-     * 
+     *
      * @return the result of the download
-     * @throws Exception in case anything goes wrong
+     * @throws IOException in case the download or storing the download data fails
      */
     @SuppressWarnings("nls")
-    private DownloadResult callImpl() throws Exception {
-        long transfered = 0;
+    private DownloadResult callImpl() throws IOException {
+        long transferred = 0;
         if (target.exists()) {
-            transfered = target.length();
+            transferred = target.length();
         }
 
         URLConnection connection = null;
@@ -272,15 +273,15 @@ public final class Download implements Callable<DownloadResult> {
             manager.reportProgress(this, 0L, length);
 
             onlineFileLastMod = connection.getLastModified();
-            if ((transfered == length) && target.exists()
-                && (target.lastModified() >= onlineFileLastMod)) {
+            if ((transferred == length) && target.exists()
+                    && (target.lastModified() >= onlineFileLastMod)) {
                 return new DownloadResult(DownloadResult.Results.downloaded,
-                    "download.done", source, target, onlineFileLastMod);
+                        "download.done", source, target, onlineFileLastMod);
             }
 
             if (connection instanceof HttpURLConnection) {
                 final HttpURLConnection httpConn =
-                    (HttpURLConnection) connection;
+                        (HttpURLConnection) connection;
                 switch (httpConn.getResponseCode()) {
                     case HttpURLConnection.HTTP_NOT_MODIFIED:
                         try {
@@ -289,9 +290,9 @@ public final class Download implements Callable<DownloadResult> {
                             // nothing to do
                         }
                         return new DownloadResult(
-                            DownloadResult.Results.notModified,
-                            "download.not_modified", source, target,
-                            lastModified);
+                                DownloadResult.Results.notModified,
+                                "download.not_modified", source, target,
+                                lastModified);
                     case HttpURLConnection.HTTP_OK:
                     case HttpURLConnection.HTTP_PARTIAL:
                         break;
@@ -302,16 +303,16 @@ public final class Download implements Callable<DownloadResult> {
                             // nothing to do
                         }
                         return new DownloadResult(
-                            DownloadResult.Results.downloadFailed,
-                            "download.not_found", source, target, 0L);
+                                DownloadResult.Results.downloadFailed,
+                                "download.not_found", source, target, 0L);
                 }
             }
 
             if (target.exists() && !target.delete()) {
                 connection.getInputStream().close();
                 return new DownloadResult(
-                    DownloadResult.Results.downloadFailed,
-                    "download.invalid_target", source, target, 0L);
+                        DownloadResult.Results.downloadFailed,
+                        "download.invalid_target", source, target, 0L);
             }
 
             inChannel = Channels.newChannel(connection.getInputStream());
@@ -323,21 +324,21 @@ public final class Download implements Callable<DownloadResult> {
             }
 
             int noTransferCounter = 0;
-            long oldTransfered = transfered;
-            while (transfered < length) {
-                oldTransfered = transfered;
-                transfered +=
-                    fileChannel.transferFrom(inChannel, transfered,
-                        Math.min(length - transfered, blockLength));
+            long oldTransferred;
+            while (transferred < length) {
+                oldTransferred = transferred;
+                transferred +=
+                        fileChannel.transferFrom(inChannel, transferred,
+                                Math.min(length - transferred, blockLength));
 
-                if (oldTransfered != transfered) {
-                    manager.reportProgress(this, transfered, length);
-                } else {
+                if (oldTransferred == transferred) {
                     noTransferCounter++;
+                } else {
+                    manager.reportProgress(this, transferred, length);
                 }
 
                 if (noTransferCounter == 50) {
-                    System.out.println("Restarting stalled download: " + name);
+                    LOGGER.warn("Restarting stalled download: " + name);
                     // transfer seems stalled -> restarting
                     return null;
                 }
@@ -358,13 +359,17 @@ public final class Download implements Callable<DownloadResult> {
             }
         }
 
-        target.setLastModified(onlineFileLastMod + 1000);
+        if (!target.setLastModified(onlineFileLastMod + 1000)) {
+            return new DownloadResult(
+                    DownloadResult.Results.downloadFailed,
+                    "download.file_failed", source, target, 0L);
+        }
 
         if (canceled) {
             return new DownloadResult(DownloadResult.Results.canceled,
-                "download.canceled", source, target, 0L);
+                    "download.canceled", source, target, 0L);
         }
         return new DownloadResult(DownloadResult.Results.downloaded,
-            "download.done", source, target, onlineFileLastMod);
+                "download.done", source, target, onlineFileLastMod);
     }
 }

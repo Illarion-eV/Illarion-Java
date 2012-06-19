@@ -8,6 +8,7 @@
     <SOURCES>
       <root url="file://$PROJECT_DIR$/illacommon/lib/nifty" />
       <root url="file://$PROJECT_DIR$/illacommon/lib/nifty" />
+      <root url="jar://$PROJECT_DIR$/illacommon/lib/nifty/nifty-1.3.2-SNAPSHOT-sources.jar!/" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/nifty" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/nifty" recursive="false" type="SOURCES" />

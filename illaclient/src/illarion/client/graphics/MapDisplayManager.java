@@ -18,19 +18,17 @@
  */
 package illarion.client.graphics;
 
-import javolution.util.FastComparator;
-import javolution.util.FastTable;
-
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-
 import illarion.client.IllaClient;
 import illarion.client.world.GameMap;
 import illarion.client.world.World;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
+import javolution.util.FastComparator;
+import javolution.util.FastTable;
+import org.apache.log4j.Logger;
+import org.newdawn.slick.*;
+import org.newdawn.slick.opengl.renderer.SGL;
 
 /**
  * The map display manager stores and manages all objects displayed on the map. It takes care for rendering the objects
@@ -117,6 +115,8 @@ public final class MapDisplayManager
 
     private final Location origin;
 
+    private static final Logger LOGGER = Logger.getLogger(MapDisplayManager.class);
+
     public MapDisplayManager() {
         active = false;
         ani = new MoveAnimation(this);
@@ -126,6 +126,8 @@ public final class MapDisplayManager
         display.setValueComparator(displayListComperator);
         corridor = FadingCorridor.getInstance();
         origin = new Location();
+
+        legacyRendering = IllaClient.getCfg().getBoolean("legacyRender");
 
         dX = 0;
         dY = 0;
@@ -258,12 +260,12 @@ public final class MapDisplayManager
 
     private int getMapCenterX() {
         final GameContainer window = IllaClient.getInstance().getContainer();
-        return (window.getWidth() >> 1);
+        return window.getWidth() >> 1;
     }
 
     private int getMapCenterY() {
         final GameContainer window = IllaClient.getInstance().getContainer();
-        return (window.getHeight() >> 1);
+        return window.getHeight() >> 1;
     }
 
     /**
@@ -282,7 +284,7 @@ public final class MapDisplayManager
     /**
      * Display lookat text
      *
-     * @param x screen coordinates
+     * @param x    screen coordinates
      * @param y
      * @param text
      */
@@ -327,14 +329,7 @@ public final class MapDisplayManager
         }
     }
 
-    /**
-     * Render all visible map items
-     *
-     * @param delta the delta time since the last render operation
-     * @param width the width of the area the map is rendered in
-     * @param height the height of the area the map is rendered in
-     */
-    public void render(final Graphics g, final GameContainer c, final int delta) {
+    public void update(final GameContainer c, final int delta) {
         if (!active) {
             return;
         }
@@ -345,10 +340,6 @@ public final class MapDisplayManager
         final int offX = (centerX - origin.getDcX()) + dX;
         final int offY = (centerY - origin.getDcY()) + dY;
 
-        g.pushTransform();
-
-        g.translate(offX, offY);
-
         final Avatar av = World.getAvatar();
         if (av != null) {
             glueAvatarToOrigin(av);
@@ -356,24 +347,93 @@ public final class MapDisplayManager
         }
 
         Camera.getInstance().setViewport(-offX, -offY, c.getWidth(), c.getHeight());
+        Camera.getInstance().clearDirtyAreas();
+
+        if (legacyRendering) {
+            Camera.getInstance().markEverythingDirty();
+        }
 
         synchronized (display) {
             synchronized (GameMap.LIGHT_LOCK) {
                 // draw all items
-                final int itemCount = display.size();
-                for (DisplayItem currentItem : display) {
+                for (final DisplayItem currentItem : display) {
                     currentItem.update(delta);
-                    currentItem.draw(g);
                 }
             }
         }
 
-        g.popTransform();
+        if (fadeOutColor.getAlpha() > 0) {
+            fadeOutColor.a = AnimationUtility.approach(fadeOutColor.getAlpha(), 0, 0, 255, delta) / 255.f;
+        }
+    }
+
+    /**
+     * This image is used to render the game screen on. It holds the texture that holds the current graphics of the
+     * game. This will contain {@code null} in case render-to-texture is not supported by the host system.
+     */
+    private Image gameScreenImage;
+
+    /**
+     * This variable is set true in case the legacy rendering is active.
+     */
+    private boolean legacyRendering;
+
+    /**
+     * Render all visible map items
+     *
+     * @param g the graphics component that is used to render the screen
+     * @param c the game container the map is rendered in
+     */
+    public void render(final Graphics g, final GameContainer c) {
+        if (!active) {
+            return;
+        }
+
+        Graphics usedGraphics = g;
+        if ((gameScreenImage == null) || legacyRendering) {
+            try {
+                gameScreenImage = new Image(c.getWidth(), c.getHeight(), SGL.GL_LINEAR);
+            } catch (SlickException e) {
+                legacyRendering = true;
+                LOGGER.warn("Rendering to texture fails. Using legacy direct rendering.");
+            }
+        }
+
+        if (gameScreenImage != null) {
+            try {
+                usedGraphics = gameScreenImage.getGraphics();
+            } catch (SlickException e) {
+                legacyRendering = true;
+                LOGGER.warn("Fetching render to texture context failed. Switching to legacy rendering.");
+            }
+        }
+
+        final Camera camera = Camera.getInstance();
+
+        usedGraphics.pushTransform();
+
+        usedGraphics.translate(-camera.getViewportOffsetX(), -camera.getViewportOffsetY());
+        Camera.getInstance().clearDirtyAreas(usedGraphics);
+
+        synchronized (display) {
+            synchronized (GameMap.LIGHT_LOCK) {
+                // draw all items
+                for (final DisplayItem currentItem : display) {
+                    currentItem.draw(usedGraphics);
+                }
+            }
+        }
+
+        usedGraphics.popTransform();
+
+        if (gameScreenImage != null) {
+            g.drawImage(gameScreenImage, 0, 0);
+            camera.renderDebug(g);
+        }
 
         if (fadeOutColor.getAlpha() > 0) {
-            fadeOutColor.a = (AnimationUtility.approach(fadeOutColor.getAlpha(), 0, 0, 255, delta)) / 255.f;
-
             g.setColor(fadeOutColor);
+            g.setLineWidth(3.f);
             g.fillRect(0, 0, c.getWidth(), c.getHeight());
         }
     }
@@ -430,9 +490,10 @@ public final class MapDisplayManager
             avatar.animationFinished(false);
         }
         elevation = World.getMap().getElevationAt(origin);
-        dL = -elevation;
         dX = 0;
         dY = 0;
+        dL = -elevation;
+        Camera.getInstance().markEverythingDirty();
     }
 
     /**
@@ -443,9 +504,15 @@ public final class MapDisplayManager
      */
     @Override
     public void setPosition(final int x, final int y, final int z) {
+        if ((dX == x) && (dY == y) && (dL == z)) {
+            return;
+        }
+
         dX = x;
         dY = y;
         dL = z;
+
+        Camera.getInstance().markEverythingDirty();
 
         // Gui.getInstance().getManager().notifyMovement();
     }

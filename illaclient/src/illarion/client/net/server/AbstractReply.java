@@ -18,14 +18,13 @@
  */
 package illarion.client.net.server;
 
-import javolution.context.PoolContext;
-
-import java.io.IOException;
-
 import illarion.client.net.NetCommReader;
 import illarion.client.net.ReplyFactory;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
+import javolution.context.PoolContext;
+
+import java.io.IOException;
 
 /**
  * Default class of a server message. This is the superclass of every server message class.
@@ -35,11 +34,6 @@ import illarion.common.util.RecycleObject;
  */
 public abstract class AbstractReply
         implements RecycleObject {
-    /**
-     * The string that is used to format the text at the {@link #toString(String)} function.
-     */
-    @SuppressWarnings("nls")
-    private static final String TO_STRING_FORMAT = "%1$s(%2$s)";
 
     /**
      * The ID of this server message.
@@ -70,7 +64,7 @@ public abstract class AbstractReply
      * @param reader the receiver that delivers the data that shall be used as location data
      * @return the location that stores the position informations now
      * @throws IOException in case there are not enough bytes in the buffer to decode a location, this exception is
-     * thrown
+     *                     thrown
      */
     protected static Location decodeLocation(final NetCommReader reader)
             throws IOException {
@@ -166,12 +160,17 @@ public abstract class AbstractReply
     public abstract String toString();
 
     /**
-     * Get the string representation of this reply object, with some added parameter informations.
+     * Get the string representation of this reply object, with some added parameter information.
      *
      * @param param the parameters that shall be added to the simple class name that is returned
      * @return the simple class name of this reply class instance along with the content of parameters
      */
-    protected final String toString(final String param) {
-        return String.format(TO_STRING_FORMAT, getClass().getSimpleName(), param);
+    protected final String toString(final CharSequence param) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(getClass().getSimpleName());
+        builder.append('(');
+        builder.append(param);
+        builder.append(')');
+        return builder.toString();
     }
 }

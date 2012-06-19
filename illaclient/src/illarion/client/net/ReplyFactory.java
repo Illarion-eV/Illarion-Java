@@ -18,10 +18,9 @@
  */
 package illarion.client.net;
 
-import javolution.context.PoolContext;
-
 import illarion.client.net.server.*;
 import illarion.common.util.RecycleFactory;
+import javolution.context.PoolContext;
 
 /**
  * The Factory for commands the server sends to the client. This factory prepares and recycles all server messages and
@@ -80,7 +79,7 @@ public final class ReplyFactory
         register(new EffectMsg());
         map(CommandList.MSG_GRAPHIC_FX, CommandList.MSG_SOUND_FX);
 
-        register(new LookatInvMsg());
+        register(new LookAtInvMsg());
         register(new LookatTileMsg());
         register(new LookatShowcaseMsg());
         register(new LookatCharMsg());
@@ -93,6 +92,7 @@ public final class ReplyFactory
 
         register(new DialogInputMsg());
         register(new DialogMessageMsg());
+        register(new DialogMerchantMsg());
 
         finish();
     }

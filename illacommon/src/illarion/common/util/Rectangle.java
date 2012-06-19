@@ -214,8 +214,7 @@ public final class Rectangle
 
     /**
      * Ensure that the current rectangle describes only a area that is also described by another rectangle. So if a
-     * area
-     * if this rectangle is outside the other rectangle it will be cut off.
+     * area if this rectangle is outside the other rectangle it will be cut off.
      *
      * @param other the other rectangle
      */
@@ -237,8 +236,13 @@ public final class Rectangle
      * @return <code>true</code> in case there is an intersection
      */
     public boolean intersects(final Rectangle other) {
-        return ((other.x1 < other.x0) || (other.x1 > x0)) && ((other.y1 < other.y0) || (other.y1 > y0)) && ((x1 < x0)
-                || (x1 > other.x0)) && ((y1 < y0) || (y1 > other.y0));
+        if ((x0 > other.x1) || (x1 < other.x0)) {
+            return false;
+        }
+        if ((y0 > other.y1) || (y1 < other.y0)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -281,9 +285,9 @@ public final class Rectangle
     /**
      * Set the properties of this rectangle.
      *
-     * @param x the new x coordinate of this rectangle
-     * @param y the new y coordinate of this rectangle
-     * @param width the new width of this rectangle
+     * @param x      the new x coordinate of this rectangle
+     * @param y      the new y coordinate of this rectangle
+     * @param width  the new width of this rectangle
      * @param height the new height of this rectangle
      */
     public void set(final int x, final int y, final int width, final int height) {

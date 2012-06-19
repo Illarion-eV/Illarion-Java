@@ -1,3 +1,21 @@
+/*
+ * This file is part of the Illarion Client.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package illarion.client.gui.controller;
 
 import de.lessvoid.nifty.Nifty;
@@ -8,18 +26,7 @@ import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import de.lessvoid.nifty.tools.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.util.Display;
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
-
+import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.Game;
 import illarion.client.IllaClient;
 import illarion.client.graphics.DisplayModeSorter;
@@ -34,19 +41,27 @@ import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
 import illarion.common.graphics.GraphicResolution;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.util.Display;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public final class OptionScreenController implements ScreenController {
 
-	private enum TabType
-	{
+    private enum TabType {
         None,
-		General,
-		Graphic,
-		Audio,
-		Mouse
-	}
+        General,
+        Graphic,
+        Audio,
+        Mouse
+    }
 
-	private TabType currentTab;
+    private TabType currentTab;
     private Screen screen;
     private Element generalPanel;
     private Element graphicPanel;
@@ -58,25 +73,36 @@ public final class OptionScreenController implements ScreenController {
 
     private int ids = 0;
 
-	private Nifty nifty;
+    private Nifty nifty;
 
     @Override
     public void bind(Nifty nifty, Screen screen) {
-    	this.nifty = nifty;
+        this.nifty = nifty;
         this.screen = screen;
 
         Element optionsPanel = screen.findElementByName("optionsPanel");
-        this.generalPanel = new PanelBuilder("generalPanel"){{childLayoutVertical(); visible(false); valignTop();
-            alignCenter();}}
-                .build(nifty, screen, optionsPanel);
-
-        this.graphicPanel = new PanelBuilder("graphicPanel"){{childLayoutVertical(); visible(false); valignTop();
-            alignCenter();}}
-                .build(nifty, screen, optionsPanel);
-
-        this.audioPanel = new PanelBuilder("audioPanel"){{childLayoutVertical(); visible(false);
+        this.generalPanel = new PanelBuilder("generalPanel") {{
+            childLayoutVertical();
+            visible(false);
             valignTop();
-            alignCenter();}}
+            alignCenter();
+        }}
+                .build(nifty, screen, optionsPanel);
+
+        this.graphicPanel = new PanelBuilder("graphicPanel") {{
+            childLayoutVertical();
+            visible(false);
+            valignTop();
+            alignCenter();
+        }}
+                .build(nifty, screen, optionsPanel);
+
+        this.audioPanel = new PanelBuilder("audioPanel") {{
+            childLayoutVertical();
+            visible(false);
+            valignTop();
+            alignCenter();
+        }}
                 .build(nifty, screen, optionsPanel);
 
 
@@ -99,13 +125,12 @@ public final class OptionScreenController implements ScreenController {
         screen.layoutLayers();
     }
 
-    private void initGeneralTab()
-    {
+    private void initGeneralTab() {
         addSpacer(generalPanel);
 
         DropDown<DropDownItem<Integer>> dropDownCharName = addDropDownOption("Characters Name Length: ",
-                                                                             "showNameMode", Integer.class,
-                                                                             options, generalPanel
+                "showNameMode", Integer.class,
+                options, generalPanel
         ).getControl();
 
         dropDownCharName.setWidth(new SizeValue("100px"));
@@ -123,7 +148,7 @@ public final class OptionScreenController implements ScreenController {
         addSpacer(generalPanel);
 
         DropDown<DropDownItem<Integer>> dropDownCrash = addDropDownOption("Crash Reporting: ", CrashReporter.CFG_KEY,
-                                                                          Integer.class, options, generalPanel
+                Integer.class, options, generalPanel
         ).getControl();
 
         dropDownCrash.addItem(new DropDownItem<Integer>(CrashReporter.MODE_ASK, "Ask"));
@@ -137,7 +162,7 @@ public final class OptionScreenController implements ScreenController {
         addSpacer(generalPanel);
 
         DropDown<DropDownItem<String>> dropDownLanguage = addDropDownOption("Language: ", Lang.LOCALE_CFG,
-                                                                            String.class, options, generalPanel
+                String.class, options, generalPanel
         ).getControl();
 
         dropDownLanguage.setWidth(new SizeValue("100px"));
@@ -146,18 +171,17 @@ public final class OptionScreenController implements ScreenController {
 
         selectByKey(cfg.getString(Lang.LOCALE_CFG), dropDownLanguage);
     }
+
     private void initGraphicTab() {
         addSpacer(graphicPanel);
 
         GameContainer container = IllaClient.getInstance().getContainer();
 
         DisplayMode[] displayModes;
-        try{
+        try {
             displayModes = Display.getAvailableDisplayModes(800, 600, container.getScreenWidth(),
-                                                            container.getScreenHeight(), 24, 32, 60, 80);
-        }
-        catch(LWJGLException exc)
-        {
+                    container.getScreenHeight(), 24, 32, 60, 80);
+        } catch (LWJGLException exc) {
             displayModes = new DisplayMode[1];
             displayModes[0] = new DisplayMode(800, 600);
         }
@@ -166,21 +190,19 @@ public final class OptionScreenController implements ScreenController {
         Arrays.sort(displayModes, new DisplayModeSorter());
 
         DropDown<DropDownItem<String>> dropDownResolutions = addDropDownOption("Resolutions: ",
-                                                                               "resolution",
-                                                                               String.class,
-                                                                               options, graphicPanel).getControl();
+                "resolution",
+                String.class,
+                options, graphicPanel).getControl();
 
         dropDownResolutions.setWidth(new SizeValue("210px"));
 
-        for(DisplayMode mode : displayModes)
-        {
+        for (DisplayMode mode : displayModes) {
             GraphicResolution res = new GraphicResolution(mode.getWidth(), mode.getHeight(), mode.getBitsPerPixel(),
-                                                          mode.getFrequency());
+                    mode.getFrequency());
             dropDownResolutions.addItem(new DropDownItem<String>(res.toString(), res.toString()));
         }
 
         selectByKey(cfg.getString("resolution"), dropDownResolutions);
-
 
 
         addSpacer(graphicPanel);
@@ -188,10 +210,12 @@ public final class OptionScreenController implements ScreenController {
         CheckBoxOption checkBoxFullscreen = addCheckBox("Fullscreen: ", "fullscreen", options, graphicPanel);
 
         checkBoxFullscreen.getControl().setChecked(cfg.getBoolean("fullscreen"));
+
+        CheckBoxOption checkBoxLegacy = addCheckBox("Legacy Renderer:", "legacyRenderer", options, graphicPanel);
+        checkBoxLegacy.getControl().setChecked(cfg.getBoolean("legacyRenderer"));
     }
 
-    private void initAudioTab()
-    {
+    private void initAudioTab() {
         addSpacer(audioPanel);
 
         CheckBoxOption soundCheckBoxOption = addCheckBox("Sound On: ", "soundOn", options, audioPanel);
@@ -234,10 +258,9 @@ public final class OptionScreenController implements ScreenController {
 
     public void save() {
 
-        ConfigSystem cfgs = (ConfigSystem)cfg;
+        ConfigSystem cfgs = (ConfigSystem) cfg;
         IllaClient client = IllaClient.getInstance();
-        for(Option option : options)
-        {
+        for (Option option : options) {
             cfgs.set(option.getKey(), option.getValue());
         }
 
@@ -245,35 +268,33 @@ public final class OptionScreenController implements ScreenController {
 
         final GraphicResolution res = new GraphicResolution(cfg.getString("resolution"));
 
-        try{
-            ((AppGameContainer)client.getContainer()).setDisplayMode(res.getWidth(), res.getHeight
+        try {
+            ((AppGameContainer) client.getContainer()).setDisplayMode(res.getWidth(), res.getHeight
                     (), cfg.getBoolean("fullscreen"));
             MapDimensions.getInstance().reportScreenSize(res.getWidth(), res.getHeight());
-        }
-        catch(SlickException exc)
-        {
+        } catch (SlickException exc) {
             // Warn the user that something wrong happened?
         }
 
         Screen screen = nifty.getScreen("login");
-        LoginScreenController loginScreen = (LoginScreenController)screen.getScreenController();
+        LoginScreenController loginScreen = (LoginScreenController) screen.getScreenController();
         loginScreen.resolutionChanged();
         nifty.resolutionChanged();
 
         screen = nifty.getScreen("charSelect");
 
-        CharScreenController charScreen = (CharScreenController)screen.getScreenController();
+        CharScreenController charScreen = (CharScreenController) screen.getScreenController();
         charScreen.resolutionChanged();
 
-        LoadingState loadingState = (LoadingState)client.getGameState(Game.STATE_LOADING);
+        LoadingState loadingState = (LoadingState) client.getGameState(Game.STATE_LOADING);
         screen = loadingState.getNifty().getScreen("loading");
-        LoadScreenController loadScreen = (LoadScreenController)screen.getScreenController();
+        LoadScreenController loadScreen = (LoadScreenController) screen.getScreenController();
         loadScreen.resolutionChanged();
 
 
-        PlayingState playingState = (PlayingState)client.getGameState(Game.STATE_PLAYING);
+        PlayingState playingState = (PlayingState) client.getGameState(Game.STATE_PLAYING);
         screen = playingState.getNifty().getScreen("gamescreen");
-        GameScreenController gameScreen = (GameScreenController)screen.getScreenController();
+        GameScreenController gameScreen = (GameScreenController) screen.getScreenController();
         gameScreen.resolutionChanged();
 
 
@@ -281,7 +302,7 @@ public final class OptionScreenController implements ScreenController {
         graphicPanel.hide();
         audioPanel.hide();
         currentTab = TabType.None;
-    	nifty.gotoScreen("login");
+        nifty.gotoScreen("login");
 
     }
 
@@ -291,12 +312,12 @@ public final class OptionScreenController implements ScreenController {
         audioPanel.hide();
 
         currentTab = TabType.None;
-    	nifty.gotoScreen("login");
+        nifty.gotoScreen("login");
     }
 
-    public void onGraphicTabClick(){
-    	if(currentTab == TabType.Graphic)
-    		return;
+    public void onGraphicTabClick() {
+        if (currentTab == TabType.Graphic)
+            return;
 
         generalPanel.hideWithoutEffect();
         audioPanel.hideWithoutEffect();
@@ -305,9 +326,8 @@ public final class OptionScreenController implements ScreenController {
         graphicPanel.showWithoutEffects();
     }
 
-    public void onGeneralTabClick()
-    {
-        if(currentTab == TabType.General)
+    public void onGeneralTabClick() {
+        if (currentTab == TabType.General)
             return;
 
         graphicPanel.hideWithoutEffect();
@@ -317,8 +337,8 @@ public final class OptionScreenController implements ScreenController {
         generalPanel.showWithoutEffects();
     }
 
-    public void onAudioTabClick(){
-        if(currentTab == TabType.Audio)
+    public void onAudioTabClick() {
+        if (currentTab == TabType.Audio)
             return;
 
         generalPanel.hideWithoutEffect();
@@ -328,8 +348,7 @@ public final class OptionScreenController implements ScreenController {
         audioPanel.showWithoutEffects();
     }
 
-    private Element addOptionLine(String labelString, Element parent)
-    {
+    private Element addOptionLine(String labelString, Element parent) {
         PanelBuilder panelBuilderLine = new PanelBuilder(String.valueOf(ids++));
 
         panelBuilderLine.childLayoutHorizontal();
@@ -351,16 +370,14 @@ public final class OptionScreenController implements ScreenController {
         return panelRight;
     }
 
-    private void addSpacer(Element parent)
-    {
+    private void addSpacer(Element parent) {
         PanelBuilder spacer = new PanelBuilder(String.valueOf(ids++));
         spacer.height("15px");
         spacer.build(nifty, screen, parent);
     }
 
-    private <T> DropDownOption<T>  addDropDownOption(String labelString, String optionKey, Class<T> type,
-                                                     ArrayList<Option> optionList, Element parent)
-    {
+    private <T> DropDownOption<T> addDropDownOption(String labelString, String optionKey, Class<T> type,
+                                                    ArrayList<Option> optionList, Element parent) {
         Element panel = addOptionLine(labelString, parent);
 
         DropDownOption<T> dropDownOption = new DropDownOption<T>(optionKey, panel, nifty, screen);
@@ -369,8 +386,7 @@ public final class OptionScreenController implements ScreenController {
         return dropDownOption;
     }
 
-    private CheckBoxOption addCheckBox(String labelString, String optionKey, ArrayList<Option> optionList, Element parent)
-    {
+    private CheckBoxOption addCheckBox(String labelString, String optionKey, ArrayList<Option> optionList, Element parent) {
         Element panel = addOptionLine(labelString, parent);
 
         CheckBoxOption checkBoxOption = new CheckBoxOption(optionKey, panel, nifty, screen);
@@ -379,8 +395,7 @@ public final class OptionScreenController implements ScreenController {
         return checkBoxOption;
     }
 
-    private SliderOption addSlider(String labelString, String optionKey, ArrayList<Option> optionList, Element parent)
-    {
+    private SliderOption addSlider(String labelString, String optionKey, ArrayList<Option> optionList, Element parent) {
         Element panel = addOptionLine(labelString, parent);
 
         SliderOption sliderOption = new SliderOption(optionKey, panel, nifty, screen);
@@ -389,11 +404,9 @@ public final class OptionScreenController implements ScreenController {
         return sliderOption;
     }
 
-    private void selectByKey(Integer key, DropDown<DropDownItem<Integer>> dropDown){
-        for(DropDownItem<Integer> item : dropDown.getItems())
-        {
-            if(item.getKey().compareTo(key) == 0)
-            {
+    private void selectByKey(Integer key, DropDown<DropDownItem<Integer>> dropDown) {
+        for (DropDownItem<Integer> item : dropDown.getItems()) {
+            if (item.getKey().compareTo(key) == 0) {
                 dropDown.selectItem(item);
 
                 break;
@@ -401,11 +414,9 @@ public final class OptionScreenController implements ScreenController {
         }
     }
 
-    private void selectByKey(String key, DropDown<DropDownItem<String>> dropDown){
-        for(DropDownItem<String> item : dropDown.getItems())
-        {
-            if(item.getKey().compareTo(key) == 0)
-            {
+    private void selectByKey(String key, DropDown<DropDownItem<String>> dropDown) {
+        for (DropDownItem<String> item : dropDown.getItems()) {
+            if (item.getKey().compareTo(key) == 0) {
                 dropDown.selectItem(item);
 
                 break;

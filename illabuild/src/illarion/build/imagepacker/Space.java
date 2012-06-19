@@ -1,28 +1,29 @@
 /*
  * This file is part of the Illarion Build Utility.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Build Utility is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
+ * The Illarion Build Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
  * The Illarion Build Utility is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Build Utility. If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Build Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.build.imagepacker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is used to define the empty space on a texture atlas.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class Space implements TextureElement {
@@ -30,7 +31,7 @@ final class Space implements TextureElement {
      * This is the buffer used to store the unused instances of the space
      * objects.
      */
-    private static final ArrayList<Space> BUFFER = new ArrayList<Space>();
+    private static final List<Space> BUFFER = new ArrayList<Space>();
 
     /**
      * The height of the space.
@@ -61,18 +62,17 @@ final class Space implements TextureElement {
     }
 
     /**
-     * Get a space with a set size and location. This function will either
-     * create a new instance or reuse a old one.
-     * 
-     * @param x the x coordinate of this space
-     * @param y the y coordinate of this space
+     * Get a space with a set size and location. This function will either create a new instance or reuse a old one.
+     *
+     * @param x      the x coordinate of this space
+     * @param y      the y coordinate of this space
      * @param height the height of this space
-     * @param width the width of this space
+     * @param width  the width of this space
      * @return the space instance that is filled with the required values
      */
     public static Space getSpace(final int x, final int y, final int height,
-        final int width) {
-        Space retSpace = null;
+                                 final int width) {
+        Space retSpace;
         if (BUFFER.isEmpty()) {
             retSpace = new Space();
         } else {
@@ -85,17 +85,17 @@ final class Space implements TextureElement {
 
     /**
      * Check if a sprite fits into the space.
-     * 
+     *
      * @param s the sprite to test
      * @return <code>true</code> in case the sprite fits into the space
      */
-    public boolean fitsInside(final TextureElement s) {
-        return ((s.getHeight() <= height) && (s.getWidth() <= width));
+    public boolean isFittingInside(final TextureElement s) {
+        return (s.getHeight() <= height) && (s.getWidth() <= width);
     }
 
     /**
      * Get the height of this space.
-     * 
+     *
      * @return the height of this space
      */
     @Override
@@ -105,7 +105,7 @@ final class Space implements TextureElement {
 
     /**
      * Get the size of this space in pixels.
-     * 
+     *
      * @return the size of this space
      */
     public long getSize() {
@@ -114,7 +114,7 @@ final class Space implements TextureElement {
 
     /**
      * Get the width of this space.
-     * 
+     *
      * @return the width of this space
      */
     @Override
@@ -124,7 +124,7 @@ final class Space implements TextureElement {
 
     /**
      * Get the X coordinate of the origin of this space.
-     * 
+     *
      * @return the x coordinate of this space
      */
     @Override
@@ -134,7 +134,7 @@ final class Space implements TextureElement {
 
     /**
      * Get the Y coordinate of the origin of this space.
-     * 
+     *
      * @return the y coordinate of this space
      */
     @Override
@@ -152,14 +152,14 @@ final class Space implements TextureElement {
     /**
      * Set the size of this space. This function is used to prepare the values
      * that are required for this space.
-     * 
-     * @param posX the x coordinate of the origin of the space
-     * @param posY the y coordinate of the origin of the space
+     *
+     * @param posX        the x coordinate of the origin of the space
+     * @param posY        the y coordinate of the origin of the space
      * @param spaceHeight the height of the space
-     * @param spaceWidth the width of the space
+     * @param spaceWidth  the width of the space
      */
     private void setDim(final int posX, final int posY, final int spaceHeight,
-        final int spaceWidth) {
+                        final int spaceWidth) {
         x = posX;
         y = posY;
         height = spaceHeight;

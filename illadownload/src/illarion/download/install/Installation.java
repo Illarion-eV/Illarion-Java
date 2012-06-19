@@ -1,41 +1,37 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.install;
 
 import illarion.common.util.DirectoryManager;
-
-import illarion.download.install.gui.swing.AppDirectorySWING;
-import illarion.download.install.gui.swing.AppSelectionSWING;
-import illarion.download.install.gui.swing.BaseSWING;
-import illarion.download.install.gui.swing.FailedInformationSWING;
-import illarion.download.install.gui.swing.ProgressSWING;
-import illarion.download.install.gui.swing.UserDirectorySWING;
+import illarion.download.install.gui.swing.*;
 import illarion.download.install.resources.ResourceManager;
 import illarion.download.tasks.clean.Cleaner;
 import illarion.download.tasks.download.DownloadManager;
 import illarion.download.tasks.launch.Launcher;
 import illarion.download.tasks.unpack.FailMonitor;
 import illarion.download.tasks.unpack.UnpackManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 /**
  * This class is used to control the installation chain.
- * 
+ *
  * @author Martin Karing
  * @version 1.01
  * @since 1.00
@@ -53,14 +49,21 @@ public final class Installation {
     private final BaseSWING baseGUI = new BaseSWING();
 
     /**
+     * The logger that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Installation.class);
+
+    /**
      * The main function to start this installation and launching process.
-     * 
+     *
      * @param args the start arguments
      */
     @SuppressWarnings("nls")
     public static void main(final String[] args) {
+        setupLogger();
+
         BaseSWING.updateLookAndFeel();
-        System.out.println("Installation started!");
+        LOGGER.info("Installation started");
         final Installation install = new Installation();
         install.checkAndInstallDirectories();
         install.selectApplication();
@@ -72,6 +75,14 @@ public final class Installation {
     }
 
     /**
+     * Initialize the logging output of this class.
+     */
+    private static void setupLogger() {
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        PropertyConfigurator.configure(classLoader.getResourceAsStream("logging.properties"));
+    }
+
+    /**
      * This function reads the directories needed for the Illarion applications
      * and triggers the installation of those directories in case its needed.
      */
@@ -79,26 +90,24 @@ public final class Installation {
     private void checkAndInstallDirectories() {
         final DirectoryManager manager = DirectoryManager.getInstance();
 
-        System.out.print("Checking data directory...");
-        if (!manager.hasDataDirectory()) {
-            System.out.println("not found");
+        if (manager.hasDataDirectory()) {
+            LOGGER.info("Checking data directory... found");
+        } else {
+            LOGGER.info("Checking data directory... not found");
             final AppDirectorySWING content = new AppDirectorySWING();
             baseGUI.show(content);
 
             content.waitForContinue();
-        } else {
-            System.out.println("found");
         }
 
-        System.out.print("Checking user directory...");
-        if (!manager.hasUserDirectory()) {
-            System.out.println("not found");
+        if (manager.hasUserDirectory()) {
+            LOGGER.info("Checking user directory... found");
+        } else {
+            LOGGER.info("Checking user directory... not found");
             final UserDirectorySWING content = new UserDirectorySWING();
             baseGUI.show(content);
 
             content.waitForContinue();
-        } else {
-            System.out.println("found");
         }
 
         manager.save();
@@ -115,7 +124,7 @@ public final class Installation {
     /**
      * Launch the selected and prepared application.
      */
-    private void launch() {
+    private static void launch() {
         final Launcher launcher = new Launcher();
         launcher.launch();
     }
@@ -156,7 +165,7 @@ public final class Installation {
 
             if (FailMonitor.getInstance().hasErrors()) {
                 final FailedInformationSWING failedInfos =
-                    new FailedInformationSWING();
+                        new FailedInformationSWING();
                 baseGUI.show(failedInfos);
                 failedInfos.waitForContinue();
 
@@ -178,23 +187,23 @@ public final class Installation {
         if ((sysProp != null) && (sysProp.length() > 2)) {
             if (sysProp.equalsIgnoreCase("tsclient")) {
                 ResourceManager.getInstance().setMainResource(
-                    illarion.download.install.resources.dev.Client
-                        .getInstance());
+                        illarion.download.install.resources.dev.Client
+                                .getInstance());
                 return;
             } else if (sysProp.equalsIgnoreCase("mapeditor")) {
                 ResourceManager.getInstance().setMainResource(
-                    illarion.download.install.resources.dev.Mapeditor
-                        .getInstance());
+                        illarion.download.install.resources.dev.Mapeditor
+                                .getInstance());
                 return;
             } else if (sysProp.equalsIgnoreCase("easynpc")) {
                 ResourceManager.getInstance().setMainResource(
-                    illarion.download.install.resources.dev.EasyNpcEditor
-                        .getInstance());
+                        illarion.download.install.resources.dev.EasyNpcEditor
+                                .getInstance());
                 return;
             } else if (sysProp.equalsIgnoreCase("easyquest")) {
                 ResourceManager.getInstance().setMainResource(
-                    illarion.download.install.resources.dev.EasyQuestEditor
-                        .getInstance());
+                        illarion.download.install.resources.dev.EasyQuestEditor
+                                .getInstance());
                 return;
             }
         }
@@ -203,7 +212,7 @@ public final class Installation {
         content.waitForContinue();
 
         ResourceManager.getInstance().setMainResource(
-            content.getSelectedResource());
+                content.getSelectedResource());
     }
 
 }

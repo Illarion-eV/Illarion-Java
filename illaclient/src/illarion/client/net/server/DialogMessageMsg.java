@@ -18,15 +18,13 @@
  */
 package illarion.client.net.server;
 
-import javolution.text.TextBuilder;
-
-import java.io.IOException;
-
-import org.bushe.swing.event.EventBus;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.DialogMessageReceivedEvent;
+import javolution.text.TextBuilder;
+import org.bushe.swing.event.EventBus;
+
+import java.io.IOException;
 
 /**
  * This server message is used to make the client showing a message dialog.
@@ -75,6 +73,11 @@ public final class DialogMessageMsg
         EventBus.publish(new DialogMessageReceivedEvent(dialogId, title, content));
 
         return true;
+    }
+
+    @Override
+    public void reset() {
+        title = null;
     }
 
     @Override

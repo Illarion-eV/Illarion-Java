@@ -18,10 +18,9 @@
  */
 package illarion.client.net;
 
-import javolution.context.PoolContext;
-
 import illarion.client.net.client.*;
 import illarion.common.util.RecycleFactory;
+import javolution.context.PoolContext;
 
 /**
  * The Factory for commands the client sends to the server. This factory prepares and recycles all client commands and
@@ -119,6 +118,7 @@ public final class CommandFactory
 
         register(new CloseDialogInputCmd());
         register(new CloseDialogMessageCmd());
+        register(new TradeItemCmd());
 
         finish();
     }
@@ -152,7 +152,6 @@ public final class CommandFactory
      */
     @SuppressWarnings("unchecked")
     public <T extends AbstractCommand> T getCommand(final int requestId, final Class<T> clazz) {
-        final AbstractCommand cmd = getCommand(requestId);
-        return (T) cmd;
+        return (T) getCommand(requestId);
     }
 }

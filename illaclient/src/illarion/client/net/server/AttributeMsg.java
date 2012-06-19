@@ -25,8 +25,7 @@ import illarion.client.world.World;
 import java.io.IOException;
 
 /**
- * Servermessage: Character attributes (
- * {@link illarion.client.net.CommandList#MSG_ATTRIBUTE}).
+ * Servermessage: Character attributes ({@link CommandList#MSG_ATTRIBUTE}).
  * 
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
@@ -36,25 +35,25 @@ public final class AttributeMsg extends AbstractReply {
      * The string constants for the food level attribute.
      */
     @SuppressWarnings("nls")
-    private static final String FOODLEVEL = "foodlevel".intern();
+    private static final String FOODLEVEL = "foodlevel";
 
     /**
      * The string constants for the hit points attribute.
      */
     @SuppressWarnings("nls")
-    private static final String HITPOINTS = "hitpoints".intern();
+    private static final String HITPOINTS = "hitpoints";
 
     /**
      * The string constants for the mana points attribute.
      */
     @SuppressWarnings("nls")
-    private static final String MANAPOINTS = "mana".intern();
+    private static final String MANAPOINTS = "mana";
 
     /**
      * The string constants for the perception attribute.
      */
     @SuppressWarnings("nls")
-    private static final String PERCEPTION = "perception".intern();
+    private static final String PERCEPTION = "perception";
 
     /**
      * The format string for the {@link #toString()}.

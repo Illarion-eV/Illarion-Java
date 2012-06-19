@@ -18,14 +18,14 @@
  */
 package illarion.download.install.resources.db;
 
+import illarion.common.util.DirectoryManager;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
-
-import illarion.common.util.DirectoryManager;
 
 /**
  * This class represents a single file that was extracted from the downloaded resource files. It contains the
@@ -55,14 +55,7 @@ public final class DBFile
     /**
      * The date when this file was last changed.
      */
-    private long lastchangeDate;
-
-    /**
-     * This constructor is used for reading the serialized object.
-     */
-    public DBFile() {
-        // nothing
-    }
+    private long lastChangeDate;
 
     /**
      * Create a database entry for a new file.
@@ -78,7 +71,7 @@ public final class DBFile
         }
         file = fileEntry;
         checksum = generateChecksum(fileEntry);
-        lastchangeDate = file.lastModified();
+        lastChangeDate = file.lastModified();
     }
 
     /**
@@ -112,27 +105,10 @@ public final class DBFile
                 } catch (final IOException e) {
                     // failed to close the stream, does not matter.
                 }
-                cis = null;
             }
         }
 
         return checksum;
-    }
-
-    /**
-     * Generate the path of the file relative to the data directory.
-     *
-     * @param file the file
-     * @return the relative path to the file
-     */
-    @SuppressWarnings("nls")
-    private static String generateRelativeFilename(final File file) {
-        final String localFileName = file.getAbsolutePath();
-        final String dataDirectory = DirectoryManager.getInstance().getDataDirectory().getAbsolutePath();
-        if (!localFileName.startsWith(dataDirectory)) {
-            throw new IllegalArgumentException("File is not inside the data directory.");
-        }
-        return localFileName.substring(dataDirectory.length());
     }
 
     /**
@@ -149,16 +125,14 @@ public final class DBFile
         if (!(o instanceof DBFile)) {
             return false;
         }
-        if (((DBFile) o).file.equals(file)) {
-            return true;
-        }
-        return false;
+
+        return ((DBFile) o).file.equals(file);
     }
 
     /**
      * Check if the file exists in the data directory.
      *
-     * @return <code>true</code> if the file exists
+     * @return {@code true} if the file exists
      */
     public boolean exists() {
         return file.exists() && file.isFile();
@@ -169,24 +143,24 @@ public final class DBFile
      */
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return file.hashCode();
     }
 
     /**
      * Check if the file in the file system is up to date related to the file stored in this database file.
      *
-     * @return <code>true</code> if the file is up to date
+     * @return {@code true} if the file is up to date
      */
-    public boolean upToDate() {
-        return lastchangeDate == file.lastModified();
+    public boolean isUpToDate() {
+        return lastChangeDate == file.lastModified();
     }
 
     /**
      * Check if the checksum of the file in the file system equals the checksum stored in this file entry.
      *
-     * @return <code>true</code> if the checksum fits
+     * @return {@code true} if the checksum fits
      */
-    public boolean validateChecksum() {
+    public boolean hasValidChecksum() {
         return checksum == generateChecksum(file);
     }
 }

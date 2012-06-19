@@ -119,7 +119,7 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
      *         tile
      */
     public boolean canDrag() {
-        return (isInUseRange() && parentTile.canMoveItem());
+        return isInUseRange() && parentTile.canMoveItem();
     }
 
     /**
@@ -260,7 +260,7 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
      *         anything on this tile or the tile itself
      */
     public boolean isInUseRange() {
-        return (World.getPlayer().getLocation().getDistance(getLocation()) < 2);
+        return World.getPlayer().getLocation().getDistance(getLocation()) < 2;
     }
 
     /**

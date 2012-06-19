@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.config.entries;
 
@@ -24,7 +24,7 @@ import illarion.common.util.FastMath;
 /**
  * This is a configuration entry that is used to display a combo box in the
  * configuration dialog. So a selection of multiple possible values.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class SelectEntry implements ConfigEntry {
@@ -46,7 +46,7 @@ public final class SelectEntry implements ConfigEntry {
      */
     @SuppressWarnings("nls")
     private static final String ERROR_STORE_TYPE =
-        "Illegal store type chosen.";
+            "Illegal store type chosen.";
 
     /**
      * The configuration that is controlled by this text entry.
@@ -76,13 +76,13 @@ public final class SelectEntry implements ConfigEntry {
 
     /**
      * Create a new configuration entry that is handled by this entry.
-     * 
-     * @param entry the configuration key that is handled by this text entry
-     * @param store the method used to store the values in the configuration
+     *
+     * @param entry  the configuration key that is handled by this text entry
+     * @param store  the method used to store the values in the configuration
      * @param option the options to be displayed in this entry
      */
     public SelectEntry(final String entry, final int store,
-        final Object... option) {
+                       final Object[] option) {
         configEntry = entry;
         storeValue = store;
         options = option;
@@ -95,14 +95,14 @@ public final class SelectEntry implements ConfigEntry {
 
     /**
      * Create a new configuration entry that is handled by this entry.
-     * 
-     * @param entry the configuration key that is handled by this text entry
-     * @param store the method used to store the values in the configuration
+     *
+     * @param entry  the configuration key that is handled by this text entry
+     * @param store  the method used to store the values in the configuration
      * @param option the options to be displayed in this entry
-     * @param label the texts displayed for each entry
+     * @param label  the texts displayed for each entry
      */
     public SelectEntry(final String entry, final int store,
-        final Object[] option, final String[] label) {
+                       final Object[] option, final String[] label) {
         configEntry = entry;
         storeValue = store;
         options = option;
@@ -111,8 +111,8 @@ public final class SelectEntry implements ConfigEntry {
 
     /**
      * Create a new configuration entry that is handled by this entry.
-     * 
-     * @param entry the configuration key that is handled by this text entry
+     *
+     * @param entry  the configuration key that is handled by this text entry
      * @param option the options to be displayed in this entry
      */
     public SelectEntry(final String entry, final Object... option) {
@@ -121,26 +121,26 @@ public final class SelectEntry implements ConfigEntry {
 
     /**
      * Create a new configuration entry that is handled by this entry.
-     * 
-     * @param entry the configuration key that is handled by this text entry
+     *
+     * @param entry  the configuration key that is handled by this text entry
      * @param option the options to be displayed in this entry
-     * @param label the texts displayed for each entry
+     * @param label  the texts displayed for each entry
      */
     public SelectEntry(final String entry, final Object[] option,
-        final String[] label) {
+                       final String[] label) {
         this(entry, STORE_INDEX, option, label);
     }
 
     /**
      * Get the index selected of the currently stored list.
-     * 
+     *
      * @return the index that is stored in the GUI currently.
      */
     public int getIndex() {
         switch (storeValue) {
             case STORE_INDEX:
                 return FastMath.clamp(cfg.getInteger(configEntry), 0,
-                    options.length - 1);
+                        options.length - 1);
             case STORE_VALUE:
                 final String value = cfg.getString(configEntry);
                 for (int i = 0; i < options.length; i++) {
@@ -156,7 +156,7 @@ public final class SelectEntry implements ConfigEntry {
 
     /**
      * Get the items in this select entry in the proper order.
-     * 
+     *
      * @return a array of all possible values
      */
     public Object[] getItems() {
@@ -165,14 +165,14 @@ public final class SelectEntry implements ConfigEntry {
 
     /**
      * Get the currently displayed label.
-     * 
+     *
      * @return the label that is supposed to be displayed currently.
      */
     public String getLabel() {
         switch (storeValue) {
             case STORE_INDEX:
                 return labels[FastMath.clamp(cfg.getInteger(configEntry), 0,
-                    options.length - 1)];
+                        options.length - 1)];
             case STORE_VALUE:
                 final String value = cfg.getString(configEntry);
                 for (int i = 0; i < options.length; i++) {
@@ -188,7 +188,7 @@ public final class SelectEntry implements ConfigEntry {
 
     /**
      * Get the names of the items in this select entry in the proper order.
-     * 
+     *
      * @return a array of all possible values
      */
     public String[] getLabels() {
@@ -197,14 +197,14 @@ public final class SelectEntry implements ConfigEntry {
 
     /**
      * Get the value set in the configuration for this check entry.
-     * 
+     *
      * @return the configuration stored for this check entry
      */
     public Object getValue() {
         switch (storeValue) {
             case STORE_INDEX:
                 return options[FastMath.clamp(cfg.getInteger(configEntry), 0,
-                    options.length - 1)];
+                        options.length - 1)];
             case STORE_VALUE:
                 final String value = cfg.getString(configEntry);
                 for (final Object option : options) {
@@ -220,9 +220,9 @@ public final class SelectEntry implements ConfigEntry {
 
     /**
      * Set the configuration handled by this configuration entry.
-     * 
+     *
      * @param config the configuration that is supposed to be handled by this
-     *            configuration entry
+     *               configuration entry
      */
     @Override
     public void setConfig(final Config config) {
@@ -231,7 +231,7 @@ public final class SelectEntry implements ConfigEntry {
 
     /**
      * Set the new value of the configuration entry that is controlled by this.
-     * 
+     *
      * @param newValue the new configuration value
      */
     public void setValue(final int newValue) {
@@ -249,7 +249,7 @@ public final class SelectEntry implements ConfigEntry {
 
     /**
      * Set the new value of the configuration entry that is controlled by this.
-     * 
+     *
      * @param newValue the new configuration value
      */
     public void setValue(final Object newValue) {

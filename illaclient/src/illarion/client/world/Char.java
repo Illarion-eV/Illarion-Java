@@ -561,8 +561,8 @@ public final class Char
             } else if (mode == MOVE_RUN) {
                 startAnimation(CharAnimations.RUN, speed);
             }
-            move.start(tempLoc.getDcX() - loc.getDcX(), (tempLoc.getDcY() + fromElevation) - loc.getDcY(), 0, 0,
-                    +elevation, 0, speed);
+            move.start(tempLoc.getDcX() - loc.getDcX(), (tempLoc.getDcY() - fromElevation) - loc.getDcY(), 0, 0,
+                    -elevation, 0, speed);
         } else {
             // reset last animation result
             dX = 0;
@@ -786,7 +786,7 @@ public final class Char
         }
         loc.set(newLoc);
         elevation = World.getMap().getElevationAt(loc);
-        updatePosition(elevation);
+        updatePosition(-elevation);
         EventBus.publish(new CharMoveEvent(getCharId(), loc));
     }
 
@@ -821,10 +821,10 @@ public final class Char
                 // paste description
                 final String text = avatar.getDescription();
                 // no qualifier, remove ending if present
-                if (text.length() == 0) {
+                if (text.isEmpty()) {
                     result.setLength(0);
                 } else if (standard) {
-                    final int pos = text.indexOf(" ");
+                    final int pos = text.indexOf(' ');
                     if ((pos == 1) || (pos == 2)) {
                         result.append(text.substring(pos + 1));
                     } else {

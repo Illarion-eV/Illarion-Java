@@ -255,7 +255,7 @@ public final class Item extends AbstractEntity implements Resource {
         super.draw(g);
 
         if (displayNumber) {
-            number.draw(g, getDisplayX(), getDisplayY());
+            number.draw(g);
         }
 
         return true;
@@ -537,8 +537,13 @@ public final class Item extends AbstractEntity implements Resource {
         } else {
             if (displayNumber) {
                 number.addToCamera(getDisplayX(), getDisplayY());
+                number.update(delta);
                 displayNumber = false;
             }
+        }
+
+        if ((number != null) && displayNumber) {
+            number.update(delta);
         }
     }
 

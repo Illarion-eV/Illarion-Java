@@ -1,22 +1,29 @@
 /*
  * This file is part of the Illarion Build Utility.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Build Utility is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
+ * The Illarion Build Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
  * The Illarion Build Utility is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Build Utility. If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Build Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.build.resources;
+
+import illarion.common.util.Pack200Helper;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.*;
+import org.tukaani.xz.*;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -32,23 +39,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.AbstractFileSet;
-import org.apache.tools.ant.types.FileList;
-import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.types.Resource;
-import org.apache.tools.ant.types.ZipFileSet;
-
-import illarion.common.util.Pack200Helper;
-
-import org.tukaani.xz.*;
-
 /**
  * This class is used to create resource bundles that contain the Illarion
  * applications and get downloaded.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ResourceCreator extends Task {
@@ -90,6 +84,11 @@ public final class ResourceCreator extends Task {
     private boolean useP200;
 
     /**
+     * This variable is set true in case the resource creator detected a error.
+     */
+    private boolean secondTry = false;
+
+    /**
      * The default constructor that prepares this class for proper operation.
      */
     public ResourceCreator() {
@@ -101,7 +100,7 @@ public final class ResourceCreator extends Task {
 
     /**
      * Adds a list of files to process.
-     * 
+     *
      * @param list a list of files to process
      */
     public void addFilelist(final FileList list) {
@@ -110,7 +109,7 @@ public final class ResourceCreator extends Task {
 
     /**
      * Adds a set of files to process.
-     * 
+     *
      * @param set a set of files to process
      */
     public void addFileset(final FileSet set) {
@@ -119,7 +118,7 @@ public final class ResourceCreator extends Task {
 
     /**
      * Adds a ZIP file set to process to the creator.
-     * 
+     *
      * @param set a set of files to process
      */
     public void addNativeFileset(final ZipFileSet set) {
@@ -136,21 +135,25 @@ public final class ResourceCreator extends Task {
 
             if (targetFile.exists() && !targetFile.delete()) {
                 throw new BuildException(
-                    "Can't access the target file properly"); //$NON-NLS-1$
+                        "Can't access the target file properly"); //$NON-NLS-1$
             }
 
             final LZMA2Options lzmaOptions;
             final X86Options x86Options;
 
             try {
-                lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_MAX);
+                if (secondTry) {
+                    lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_DEFAULT);
+                } else {
+                    lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_MAX);
+                }
                 x86Options = new X86Options();
             } catch (UnsupportedOptionsException e1) {
                 throw new BuildException("Failed to setup compressor.");
             }
 
-            final FilterOptions[] defaultOptions = { lzmaOptions };
-            final FilterOptions[] nativeOptions = { x86Options, lzmaOptions };
+            final FilterOptions[] defaultOptions = {lzmaOptions};
+            final FilterOptions[] nativeOptions = {x86Options, lzmaOptions};
 
             ZipOutputStream zOut = null;
 
@@ -165,7 +168,7 @@ public final class ResourceCreator extends Task {
 
                 for (final AbstractFileSet fileset : filesets) {
                     final DirectoryScanner ds =
-                        fileset.getDirectoryScanner(getProject());
+                            fileset.getDirectoryScanner(getProject());
 
                     Resource res = null;
                     for (final String fileName : ds.getIncludedFiles()) {
@@ -185,7 +188,7 @@ public final class ResourceCreator extends Task {
                 for (final FileList filelist : filelists) {
                     final File dir = filelist.getDir(getProject());
                     for (final String fileName : filelist
-                        .getFiles(getProject())) {
+                            .getFiles(getProject())) {
 
                         InputStream in = null;
                         try {
@@ -203,18 +206,18 @@ public final class ResourceCreator extends Task {
                 boolean firstFile = true;
                 for (final AbstractFileSet fileset : nativeFilesets) {
                     final DirectoryScanner ds =
-                        fileset.getDirectoryScanner(getProject());
+                            fileset.getDirectoryScanner(getProject());
 
                     Resource res = null;
                     for (final String fileName : ds.getIncludedFiles()) {
                         try {
                             res = ds.getResource(fileName);
                             final ZipInputStream nativeIn =
-                                new ZipInputStream(res.getInputStream());
+                                    new ZipInputStream(res.getInputStream());
                             ZipEntry nativeEntry = nativeIn.getNextEntry();
                             while (nativeEntry != null) {
                                 if (!nativeEntry.isDirectory()
-                                    && isNativeFilename(nativeEntry.getName())) {
+                                        && isNativeFilename(nativeEntry.getName())) {
                                     if (firstFile) {
                                         firstFile = false;
                                         zOut.flush();
@@ -222,7 +225,7 @@ public final class ResourceCreator extends Task {
                                         xOut.updateFilters(nativeOptions);
                                     }
                                     handleStream(nativeIn,
-                                        nativeEntry.getName(), zOut);
+                                            nativeEntry.getName(), zOut);
                                     nativeIn.closeEntry();
                                 }
                                 nativeEntry = nativeIn.getNextEntry();
@@ -230,7 +233,7 @@ public final class ResourceCreator extends Task {
                             nativeIn.close();
                         } catch (final Exception ex) {
                             System.out.println("Native resource " + fileName //$NON-NLS-1$
-                                + " not detected as such."); //$NON-NLS-1$
+                                    + " not detected as such."); //$NON-NLS-1$
                             ex.printStackTrace();
                         }
                     }
@@ -251,27 +254,27 @@ public final class ResourceCreator extends Task {
             e.printStackTrace();
             throw e;
         }
-        
+
         /** Checking the created file. */
         BufferedInputStream b = null;
         try {
-            final byte[] tempArray = new byte[1024];
+            final byte[] tempArray = new byte[2048];
             b = new BufferedInputStream(new XZInputStream(new FileInputStream(targetFile)));
-            while (b.read(tempArray) != -1);
+            while (b.read(tempArray) != -1) ;
         } catch (Exception e) {
-            throw new BuildException("Checking the compressed file failed.", e);
-        } finally {
-            if (b != null) {
-                try {
-                    b.close();
-                } catch (IOException e) {
-                    
-                }
+            if (secondTry) {
+                throw new BuildException("Checking the compressed file failed.", e);
             }
+            System.out.println("Compressed data was corrupted. Trying compression again at less aggressive levels.");
+            secondTry = true;
+            closeStream(b);
+            execute();
+        } finally {
+            closeStream(b);
         }
     }
 
-    private void closeStream(final OutputStream outStream) {
+    private void closeStream(final Closeable outStream) {
         if (outStream != null) {
             try {
                 outStream.close();
@@ -284,7 +287,7 @@ public final class ResourceCreator extends Task {
     /**
      * This class is used to dump the files that were copied into the created
      * resource.
-     * 
+     *
      * @param value the new value of this flag
      */
     public void setDumpFileList(final boolean value) {
@@ -293,7 +296,7 @@ public final class ResourceCreator extends Task {
 
     /**
      * Set the target file.
-     * 
+     *
      * @param file the target file
      */
     public void setTarget(final File file) {
@@ -303,7 +306,7 @@ public final class ResourceCreator extends Task {
     /**
      * Set the flag if the input jar files are supposed to be compressed even
      * further using the pack200 compression.
-     * 
+     *
      * @param value the new value of this flag
      */
     public void setUsePack200(final boolean value) {
@@ -313,15 +316,15 @@ public final class ResourceCreator extends Task {
     /**
      * Handle one stream regarding the settings done and add it to the resource
      * output stream.
-     * 
+     *
      * @param sourceStream the source stream that is processed by this class
-     * @param fileName the name of the file to process
+     * @param fileName     the name of the file to process
      * @param outputStream the output stream that receives the data
      * @throws IOException in case the file operations go wrong
      */
     private void handleStream(final InputStream sourceStream,
-        final String fileName, final ZipOutputStream outputStream)
-        throws IOException {
+                              final String fileName, final ZipOutputStream outputStream)
+            throws IOException {
         if (fileList) {
             System.out.println("Added file: " + fileName); //$NON-NLS-1$
         }
@@ -341,7 +344,7 @@ public final class ResourceCreator extends Task {
         if (useP200) {
             final Pack200.Packer packer = Pack200Helper.getPacker();
             final File p200tempFile =
-                File.createTempFile("packing", ".pack200.tmp"); //$NON-NLS-1$ //$NON-NLS-2$
+                    File.createTempFile("packing", ".pack200.tmp"); //$NON-NLS-1$ //$NON-NLS-2$
             tempFile.deleteOnExit();
 
             out = new BufferedOutputStream(new FileOutputStream(p200tempFile));
@@ -360,8 +363,8 @@ public final class ResourceCreator extends Task {
         int position = 0;
         while (position < size) {
             position +=
-                tempFileChannel.transferTo(position, size - position,
-                    outChannel);
+                    tempFileChannel.transferTo(position, size - position,
+                            outChannel);
         }
 
         outputStream.flush();
@@ -371,7 +374,7 @@ public final class ResourceCreator extends Task {
     /**
      * This function checks if a file name has a valid file extension for a
      * native file.
-     * 
+     *
      * @param name the name to check
      * @return <code>true</code> if the name is valid
      */
@@ -396,7 +399,7 @@ public final class ResourceCreator extends Task {
     /**
      * This function copies a stream to a temporary file that is marked for
      * deletion automatically.
-     * 
+     *
      * @param in the input stream, this stream will not be closed automatically
      * @return the pointer to the temporary file
      * @throws IOException in case anything goes wrong
@@ -407,7 +410,7 @@ public final class ResourceCreator extends Task {
 
         ReadableByteChannel inChannel = null;
         FileChannel outChannel = null;
-        
+
         System.gc();
 
         try {
@@ -421,13 +424,13 @@ public final class ResourceCreator extends Task {
                 long position = 0;
                 while (position < size) {
                     position +=
-                        fInChannel.transferTo(position,
-                            Math.min(MAX_TRANSFER_SIZE, size - position),
-                            outChannel);
+                            fInChannel.transferTo(position,
+                                    Math.min(MAX_TRANSFER_SIZE, size - position),
+                                    outChannel);
                 }
             } else {
                 final ByteBuffer tempBuffer =
-                    ByteBuffer.allocateDirect(MAX_TRANSFER_SIZE);
+                        ByteBuffer.allocateDirect(MAX_TRANSFER_SIZE);
 
                 boolean eof = false;
                 while (!eof) {
@@ -451,9 +454,9 @@ public final class ResourceCreator extends Task {
 
     /**
      * Check if the settings of this task are good to be executed.
-     * 
+     *
      * @throws BuildException in case anything at the settings for this task is
-     *             wrong
+     *                        wrong
      */
     @SuppressWarnings("nls")
     private void validate() throws BuildException {

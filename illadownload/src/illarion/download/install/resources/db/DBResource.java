@@ -18,6 +18,8 @@
  */
 package illarion.download.install.resources.db;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
@@ -56,6 +58,11 @@ public final class DBResource
     private URL sourceURL;
 
     /**
+     * The logger that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(DBResource.class);
+
+    /**
      * This constructor is needed for the de-serialization and for nothing else.
      */
     public DBResource() {
@@ -65,7 +72,7 @@ public final class DBResource
     /**
      * Create a new database resource.
      *
-     * @param url the URL that is the source of this resource
+     * @param url     the URL that is the source of this resource
      * @param lastMod the time when the resource was last change, this date has to be reported by the server
      */
     public DBResource(final URL url, final long lastMod) {
@@ -90,7 +97,7 @@ public final class DBResource
      * Check the files on different detail levels.
      *
      * @param level the level to the check
-     * @return <code>true</code> if and only if all files passed the detail check
+     * @return {@code true} if and only if all files passed the detail check
      */
     @SuppressWarnings("nls")
     public boolean checkFiles(final ResourceCheckLevel level) {
@@ -103,19 +110,32 @@ public final class DBResource
                     result = file.exists();
                     break;
                 case detailedCheck:
-                    result = file.exists() && file.upToDate();
+                    result = file.exists() && file.isUpToDate();
                     break;
                 case fullCheck:
-                    result = file.exists() && file.upToDate() && file.validateChecksum();
+                    result = file.exists() && file.isUpToDate() && file.hasValidChecksum();
             }
             fileCount++;
             if (!result) {
                 break;
             }
         }
-        System.out.println("Check or " + sourceURL.getFile() + " took: " + Long.toString(System.currentTimeMillis() -
-                                                                                                 time) + "ms" + " ("
-                                   + Integer.toString(fileCount) + " files): " + (result ? "successfull" : "failed"));
+
+        if (LOGGER.isInfoEnabled()) {
+            final StringBuilder builder = new StringBuilder();
+            builder.append("Check of ");
+            builder.append(sourceURL.getFile());
+            builder.append(" took: ");
+            builder.append(System.currentTimeMillis() - time);
+            builder.append("ms (").append(fileCount).append(" files): ");
+            if (result) {
+                builder.append("SUCCESSFULL");
+            } else {
+                builder.append("FAILURE");
+            }
+
+            LOGGER.info(builder);
+        }
         return result;
     }
 

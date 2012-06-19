@@ -20,10 +20,13 @@
 
 <!-- This control is designed to define the different slots in the inventory of the Illarion Client. -->
 <nifty-controls>
+    <useControls filename="nifty-default-controls.xml"/>
     <controlDefinition name="inventoryslot" controller="org.illarion.nifty.controls.inventoryslot.InventorySlotControl"
                        visibleToMouse="true">
         <effect>
             <onHover name="border" border="1px,1px,1px,1px" color="#f00f,#f00f,#0f0f,#00ff" timeType="infinite"/>
+            <onCustom name="hint" hintStyle="illarion-hint" neverStopRendering="false" length="4000" timeType="linear"
+                    />
         </effect>
         <panel childLayout="center">
             <panel width="100%" height="100%" childLayout="center" visibleToMouse="false">

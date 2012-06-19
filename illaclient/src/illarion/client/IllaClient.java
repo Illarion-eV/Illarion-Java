@@ -204,9 +204,11 @@ public final class IllaClient {
         }
 
         gameContainer.setAlwaysRender(true);
-        //gameContainer.setTargetFrameRate(60);
+        gameContainer.setTargetFrameRate(60);
 
         try {
+            gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png",
+                    "illarion_client64.png", "illarion_client256.png"});
             gameContainer.start();
         } catch (SlickException e) {
             // TODO Auto-generated catch block
@@ -520,7 +522,7 @@ public final class IllaClient {
                 .getProperty("os.arch"));
 
         java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
-        java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
+        //java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
         java.util.logging.Logger.getLogger("javolution").setLevel(java.util.logging.Level.SEVERE);
     }
 
@@ -544,6 +546,7 @@ public final class IllaClient {
         cfg.setDefault("fadingTime", 600);
         cfg.setDefault(CFG_FULLSCREEN, false);
         cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800, 600, 32, 60).toString());
+        cfg.setDefault("legacyRender", false);
         cfg.setDefault("savePassword", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
         cfg.setDefault("engine", 1);

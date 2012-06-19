@@ -64,7 +64,7 @@ public final class Lang
      */
     private Lang() {
         locale = Locale.getDefault();
-        if (locale.getLanguage() == Locale.GERMAN.getLanguage()) {
+        if (locale.getLanguage().equals(Locale.GERMAN.getLanguage())) {
             locale = Locale.GERMAN;
         } else {
             locale = Locale.ENGLISH;

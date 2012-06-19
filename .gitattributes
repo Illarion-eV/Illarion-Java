@@ -1,0 +1,12 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Images
+*.png binary
+*.jpg binary
+*.ico binary
+*.icns binary
+
+# Source Files
+*.java text
+*.lua text

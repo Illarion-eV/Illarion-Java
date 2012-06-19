@@ -23,42 +23,22 @@ package illarion.client.net.server.events;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class DialogMessageReceivedEvent {
-    /**
-     * The title of the dialog.
-     */
-    private final String title;
-
+public final class DialogMessageReceivedEvent extends AbstractDialogReceivedEvent {
     /**
      * The message displayed in the dialog.
      */
     private final String message;
 
     /**
-     * The ID of the dialog that has to be send to notify the server that the dialog was closed.
-     */
-    private final int id;
-
-    /**
      * Create a new instance of this event.
      *
-     * @param dialogId the ID of this dialog
-     * @param dialogTitle the title of the dialog
+     * @param dialogId      the ID of this dialog
+     * @param dialogTitle   the title of the dialog
      * @param dialogMessage the message of the dialog
      */
     public DialogMessageReceivedEvent(final int dialogId, final String dialogTitle, final String dialogMessage) {
-        title = dialogTitle;
+        super(dialogId, dialogTitle);
         message = dialogMessage;
-        id = dialogId;
-    }
-
-    /**
-     * Get the ID of this dialog.
-     *
-     * @return the ID of the dialog
-     */
-    public int getId() {
-        return id;
     }
 
     /**
@@ -68,14 +48,5 @@ public class DialogMessageReceivedEvent {
      */
     public String getMessage() {
         return message;
-    }
-
-    /**
-     * Get the title of the dialog.
-     *
-     * @return the title of the message dialog
-     */
-    public String getTitle() {
-        return title;
     }
 }

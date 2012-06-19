@@ -1,32 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
 <nifty-styles>
 
-  <style id="nifty-panel">
-    <attributes padding="8px,16px,24px,16px" backgroundImage="data/gui/panel/nifty-panel.png" imageMode="resize:28,184,28,28,28,184,28,154,28,184,28,58" />
-  </style>
+    <style id="nifty-panel">
+        <attributes padding="8px,16px,24px,16px" backgroundImage="data/gui/panel/nifty-panel.png"
+                    imageMode="resize:28,184,28,28,28,184,28,154,28,184,28,58"/>
+    </style>
 
-  <style id="nifty-panel-red">
-    <attributes padding="8px,16px,24px,16px" backgroundImage="data/gui/panel/nifty-panel-red.png" imageMode="resize:28,184,28,8,28,184,28,174,28,184,28,58" />
-  </style>
+    <style id="nifty-panel-red">
+        <attributes padding="8px,16px,24px,16px" backgroundImage="data/gui/panel/nifty-panel-red.png"
+                    imageMode="resize:28,184,28,8,28,184,28,174,28,184,28,58"/>
+    </style>
 
-  <style id="nifty-panel-no-shadow">
-    <attributes padding="8px" backgroundImage="data/gui/panel/nifty-panel-no-shadow.png" imageMode="resize:8,210,8,8,8,210,8,209,8,210,8,8" />
-  </style>
+    <style id="nifty-panel-no-shadow">
+        <attributes padding="8px" backgroundImage="data/gui/panel/nifty-panel-no-shadow.png"
+                    imageMode="resize:8,210,8,8,8,210,8,209,8,210,8,8"/>
+    </style>
 
-  <style id="nifty-panel-red-no-shadow">
-    <attributes padding="8px" backgroundImage="data/gui/panel/nifty-panel-red-no-shadow.png" imageMode="resize:8,210,8,8,8,210,8,209,8,210,8,8" />
-  </style>
+    <style id="nifty-panel-red-no-shadow">
+        <attributes padding="8px" backgroundImage="data/gui/panel/nifty-panel-red-no-shadow.png"
+                    imageMode="resize:8,210,8,8,8,210,8,209,8,210,8,8"/>
+    </style>
 
-  <style id="nifty-panel-simple">
-    <attributes padding="5px" backgroundImage="data/gui/panel/nifty-panel-simple.png" imageMode="resize:9,2,9,9,9,2,9,2,9,2,9,9" />
-  </style>
+    <style id="nifty-panel-simple">
+        <attributes padding="5px" backgroundImage="data/gui/panel/nifty-panel-simple.png"
+                    imageMode="resize:9,2,9,9,9,2,9,2,9,2,9,9"/>
+    </style>
 
-  <style id="nifty-panel-bright">
-    <attributes padding="5px" backgroundImage="data/gui/panel/nifty-panel-hint.png" imageMode="resize:8,210,8,8,8,210,8,209,8,210,8,8" />
-  </style>
-  
-  <style id="illarion-textpanel">
-    <attributes padding="5px" backgroundImage="data/gui/textbox.png" imageMode="resize:6,1,6,6,6,1,6,1,6,1,6,6" />
-  </style>
-  
+    <style id="nifty-panel-bright">
+        <attributes padding="5px" backgroundImage="data/gui/panel/nifty-panel-hint.png"
+                    imageMode="resize:8,210,8,8,8,210,8,209,8,210,8,8"/>
+    </style>
+
+    <style id="illarion-textpanel">
+        <attributes padding="5px" backgroundImage="data/gui/textbox.png" imageMode="resize:6,1,6,6,6,1,6,1,6,1,6,6"/>
+    </style>
+
+    <style id="illarion-panel-hint">
+        <attributes padding="5px" backgroundImage="data/gui/panel/illarion-panel-hint.png"
+                    imageMode="resize:8,2,8,8,8,2,8,4,8,2,8,8"/>
+    </style>
+
 </nifty-styles>

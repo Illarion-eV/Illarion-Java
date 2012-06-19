@@ -125,8 +125,8 @@ public class Tile extends AbstractEntity implements Resource {
      * Create a tile and its overlay. Assign variant.
      *
      * @param id complex id
-     * @param x
-     * @param y
+     * @param x  the x coordinate where the tile is supposed to be created
+     * @param y  the y coordinate of the location where the tile is supposed to be created
      * @return
      */
     @SuppressWarnings("nls")
@@ -169,17 +169,17 @@ public class Tile extends AbstractEntity implements Resource {
     /**
      * Draw tile and its overlay
      *
-     * @param x
-     * @param y
-     * @param corridor
+     * @param g the graphics object that is used to render the tile.
      * @return
      */
     @Override
     public boolean draw(final Graphics g) {
-        super.draw(g);
+        if (!super.draw(g)) {
+            return false;
+        }
 
         if (overlay != null) {
-            overlay.draw(g);
+            return overlay.draw(g);
         }
         return true;
     }
@@ -244,7 +244,7 @@ public class Tile extends AbstractEntity implements Resource {
                              final int layer) {
         super.setScreenPos(x, y, z, layer);
         if (overlay != null) {
-            overlay.setScreenPos(x, y, 0, 0);
+            overlay.setScreenPos(x, y, z, layer);
         }
     }
 
