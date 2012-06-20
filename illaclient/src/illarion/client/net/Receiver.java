@@ -78,7 +78,7 @@ final class Receiver extends Thread implements NetCommReader {
      * The buffer that is used to temporary store the decoded characters that
      * were send to the player.
      */
-    private final CharBuffer decodingBuffer = CharBuffer.allocate(255);
+    private final CharBuffer decodingBuffer = CharBuffer.allocate(65535);
 
     /**
      * The input stream of the connection socket of the connection to the
