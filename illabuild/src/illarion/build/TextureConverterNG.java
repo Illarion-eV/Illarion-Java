@@ -351,8 +351,10 @@ public final class TextureConverterNG
     private void analyseAndOrderFile(final File directory, final String filename) {
         final String cleanFileName = filename.replace('\\', '/');
         final FileEntry entry = new FileEntry(directory, cleanFileName);
-        // sort in the files to build the ToDo list
-        if (cleanFileName.endsWith(".png") && !cleanFileName.contains("notouch_")) { //$NON-NLS-1$ //$NON-NLS-2$
+
+        if (cleanFileName.contains("notouch_") || cleanFileName.contains("mouse_cursors")) {
+            miscFiles.add(entry);
+        } else if (cleanFileName.endsWith(".png")) { //$NON-NLS-1$
             if (cleanFileName.contains("nopack_")) { //$NON-NLS-1$
                 textureNoPackFiles.add(entry);
             } else {
@@ -807,19 +809,26 @@ public final class TextureConverterNG
 
         int atlasFiles = packTextures(outJar, folder, packer, null);
 
-        BufferedOutputStream stream;
+        DataOutputStream stream;
         try {
             outJar.putNextEntry(new JarEntry(folder + "atlas.count"));
-            stream = new BufferedOutputStream(outJar);
-            stream.write(atlasFiles);
+            stream = new DataOutputStream(outJar);
+            stream.writeInt(atlasFiles);
             stream.flush();
-            outJar.closeEntry();
         } catch (final IOException e) {
             e.printStackTrace();
             throw new BuildException(e);
         } catch (final Exception e) {
             e.printStackTrace();
             throw new BuildException(e);
+        } finally {
+            try {
+                outJar.closeEntry();
+                outJar.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new BuildException(e);
+            }
         }
     }
 
