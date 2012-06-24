@@ -22,6 +22,10 @@
         <attributes font="textFont"/>
     </style>
 
+    <style id="drop-down-font">
+        <attributes font="textFont"/>
+    </style>
+
     <style id="tab-font">
         <attributes font="textFont"/>
     </style>

@@ -18,55 +18,24 @@
   ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <nifty-styles>
-    <style id="nifty-window#frame">
-        <attributes childLayout="vertical" valign="top" />
-        <effect>
-            <onActive name="border" post="true" color="#2226" border="2px" />
-        </effect>
+    <useStyles filename="panel/nifty-panel.xml"/>
+
+    <style id="nifty-window#frame" base="nifty-panel-window">
+        <attributes childLayout="vertical" valign="top"/>
     </style>
 
     <style id="nifty-window#bar">
-        <attributes width="100%" height="20px" padding="2px" backgroundColor="#333f" childLayout="horizontal" />
+        <attributes width="100%" height="19px" paddingBottom="3px" childLayout="horizontal"/>
     </style>
 
     <style id="nifty-window#title" base="base-font">
-        <attributes width="*" height="20px" align="right" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false" color="#ffff" />
+        <attributes width="*" height="19px" align="right" valign="center" textHAlign="center" textVAlign="center"
+                    visibleToMouse="false" color="#ffff"/>
     </style>
 
     <style id="nifty-window#content">
-        <attributes width="100%" padding="8px" backgroundColor="#9996" childLayout="center" />
+        <attributes width="100%" padding="8px" childLayout="center"/>
     </style>
 
-    <style id="nifty-window#close-button">
-        <attributes backgroundImage="data/gui/window/window-close-button.png" width="14px" height="14px" align="center" valign="center" />
-        <effect>
-            <onHover name="imageOverlayPulsate" filename="data/gui/window/window-close-button-hover.png" post="true" />
-        </effect>
-    </style>
-
-    <style id="inventory-window#frame">
-        <attributes childLayout="vertical" valign="top" />
-        <!-- <effect>
-         <onActive name="border" post="true" color="#f226" border="2px" />
-       </effect> -->
-    </style>
-
-    <style id="inventory-window#bar">
-        <attributes width="100px" height="20px" align="right" backgroundImage="data/gui/inventory_bar.png" childLayout="horizontal" imageMode="resize:0,1,104,10,0,1,104,1,0,1,104,9" />
-    </style>
-
-    <style id="inventory-window#title" base="base-font">
-        <attributes width="*" height="20px" align="center" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false" color="#ffff" />
-    </style>
-
-    <style id="inventory-window#content">
-        <attributes width="100%" height="*" backgroundImage="data/gui/inventory.png" childLayout="center" />
-    </style>
-
-    <style id="inventory-window#close-button">
-        <attributes backgroundImage="data/gui/window/window-close-button.png" width="14px" height="14px" align="center" valign="center" />
-        <effect>
-            <onHover name="imageOverlayPulsate" filename="data/gui/window/window-close-button-hover.png" post="true" />
-        </effect>
-    </style>
+    <style id="nifty-window#close-button" base="nifty-button-close#panel"/>
 </nifty-styles>

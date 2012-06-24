@@ -18,23 +18,101 @@
   ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <nifty-styles>
-    <!-- +++++++++++++++++++++++++++++++++++++ --><!-- style for the button background panel --><!-- +++++++++++++++++++++++++++++++++++++ -->
-    <style id="nifty-button#panel">
-        <attributes backgroundImage="data/gui/button/button.png" imageMode="sprite-resize:100,23,0,10,80,10,11,10,80,10,2,10,80,10,10" paddingLeft="7px" paddingRight="7px" width="100px" height="23px" childLayout="center" visibleToMouse="true" />
+    <!-- Style for the blue button -->
+    <style id="nifty-button-blue#panel">
+        <attributes backgroundImage="data/gui/button/buttonblue.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
+                    paddingLeft="6px" paddingRight="6px" width="100px" height="23px" childLayout="center"
+                    visibleToMouse="true"/>
         <effect>
-            <onHover name="imageOverlay" filename="data/gui/button/button.png" imageMode="sprite-resize:100,23,1,10,80,10,11,10,80,10,2,10,80,10,10" post="true" />
-            <onFocus name="imageOverlay" filename="data/gui/button/button.png" imageMode="sprite-resize:100,23,2,10,80,10,11,10,80,10,2,10,80,10,10" post="true" />
-            <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150" />
-            <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150" />
+            <onHover name="imageOverlay" filename="data/gui/button/buttonblue_hover.png"
+                     imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
+            <onClick name="imageOverlay" filename="data/gui/button/buttonblue_pressed.png"
+                     imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
         </effect>
     </style>
 
-    <!-- +++++++++++++++++++++++++++++++++++++ --><!-- style for the button text --><!-- +++++++++++++++++++++++++++++++++++++ -->
-    <style id="nifty-button#text" base="button-font">
-        <attributes align="center" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false" />
+    <style id="nifty-button-blue#text" base="button-font">
+        <attributes align="center" valign="center" textHAlign="center" textVAlign="center" color="#ffff"/>
         <effect>
-            <onEnabled name="textColorAnimated" startColor="#8886" endColor="#eeef" post="false" length="150" />
-            <onDisabled name="textColorAnimated" startColor="#eeef" endColor="#8886" post="false" length="150" />
+            <onClick name="move" mode="toOffset" direction="bottom" offsetY="1"/>
         </effect>
     </style>
+
+    <!-- Style for the red button -->
+    <style id="nifty-button-red#panel">
+        <attributes backgroundImage="data/gui/button/buttonred.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
+                    paddingLeft="6px" paddingRight="6px" width="100px" height="23px" childLayout="center"
+                    visibleToMouse="true"/>
+        <effect>
+            <onHover name="imageOverlay" filename="data/gui/button/buttonred_hover.png"
+                     imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
+            <onClick name="imageOverlay" filename="data/gui/button/buttonred_pressed.png"
+                     imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
+        </effect>
+    </style>
+
+    <style id="nifty-button-red#text" base="button-font">
+        <attributes align="center" valign="center" textHAlign="center" textVAlign="center" color="#ffff"/>
+        <effect>
+            <onClick name="move" mode="toOffset" direction="bottom" offsetY="1"/>
+        </effect>
+    </style>
+
+    <!-- Style for the gray button -->
+    <style id="nifty-button-gray#panel">
+        <attributes backgroundImage="data/gui/button/buttongray.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
+                    paddingLeft="6px" paddingRight="6px" width="100px" height="23px" childLayout="center"
+                    visibleToMouse="true"/>
+        <effect>
+            <onHover name="imageOverlay" filename="data/gui/button/buttongray_hover.png"
+                     imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
+            <onClick name="imageOverlay" filename="data/gui/button/buttongray_pressed.png"
+                     imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
+        </effect>
+    </style>
+
+    <style id="nifty-button-gray#text" base="button-font">
+        <attributes align="center" valign="center" textHAlign="center" textVAlign="center" color="#ffff"/>
+        <effect>
+            <onClick name="move" mode="toOffset" direction="bottom" offsetY="1"/>
+        </effect>
+    </style>
+
+    <!-- Style for the green button -->
+    <style id="nifty-button-green#panel">
+        <attributes backgroundImage="data/gui/button/buttongreen.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
+                    paddingLeft="6px" paddingRight="6px" width="100px" height="23px" childLayout="center"
+                    visibleToMouse="true"/>
+        <effect>
+            <onHover name="imageOverlay" filename="data/gui/button/buttongreen_hover.png"
+                     imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
+            <onClick name="imageOverlay" filename="data/gui/button/buttongreen_pressed.png"
+                     imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
+        </effect>
+    </style>
+
+    <style id="nifty-button-green#text" base="button-font">
+        <attributes align="center" valign="center" textHAlign="center" textVAlign="center" color="#ffff"/>
+        <effect>
+            <onClick name="move" mode="toOffset" direction="bottom" offsetY="1"/>
+        </effect>
+    </style>
+
+    <!-- Style for the small close button -->
+    <style id="nifty-button-close#panel">
+        <attributes backgroundImage="data/gui/button/buttonclose.png" width="13px" height="14px" childLayout="center"
+                    visibleToMouse="true" align="center" valign="center"/>
+        <effect>
+            <onHover name="imageOverlay" filename="data/gui/button/buttonclose_hover.png" post="true"/>
+            <onClick name="imageOverlay" filename="data/gui/button/buttonclose_pressed.png" post="true"/>
+        </effect>
+    </style>
+
+    <style id="nifty-button-close#text">
+        <attributes width="13px" height="14px"/>
+    </style>
+
+    <!-- Style for the default button -->
+    <style id="nifty-button#panel" base="nifty-button-gray#panel"/>
+    <style id="nifty-button#text" base="nifty-button-gray#text"/>
 </nifty-styles>
