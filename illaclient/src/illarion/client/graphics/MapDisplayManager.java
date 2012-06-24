@@ -389,46 +389,36 @@ public final class MapDisplayManager
             return;
         }
 
-        Graphics usedGraphics = g;
-        if ((gameScreenImage == null) || legacyRendering) {
-            try {
-                gameScreenImage = new Image(c.getWidth(), c.getHeight(), SGL.GL_LINEAR);
-            } catch (SlickException e) {
-                legacyRendering = true;
-                LOGGER.warn("Rendering to texture fails. Using legacy direct rendering.");
+        if (legacyRendering) {
+            renderImpl(g);
+        } else {
+            Graphics usedGraphics = g;
+            if (gameScreenImage == null) {
+                try {
+                    gameScreenImage = new Image(c.getWidth(), c.getHeight(), SGL.GL_LINEAR);
+                } catch (SlickException e) {
+                    legacyRendering = true;
+                    LOGGER.warn("Rendering to texture fails. Using legacy direct rendering.");
+                    render(g, c);
+                    return;
+                }
             }
-        }
 
-        if (gameScreenImage != null) {
             try {
                 usedGraphics = gameScreenImage.getGraphics();
             } catch (SlickException e) {
                 legacyRendering = true;
                 LOGGER.warn("Fetching render to texture context failed. Switching to legacy rendering.");
+                render(g, c);
+                return;
             }
-        }
 
-        final Camera camera = Camera.getInstance();
+            renderImpl(usedGraphics);
 
-        usedGraphics.pushTransform();
-
-        usedGraphics.translate(-camera.getViewportOffsetX(), -camera.getViewportOffsetY());
-        Camera.getInstance().clearDirtyAreas(usedGraphics);
-
-        synchronized (display) {
-            synchronized (GameMap.LIGHT_LOCK) {
-                // draw all items
-                for (final DisplayItem currentItem : display) {
-                    currentItem.draw(usedGraphics);
-                }
+            if (gameScreenImage != null) {
+                g.drawImage(gameScreenImage, 0, 0);
+                Camera.getInstance().renderDebug(g);
             }
-        }
-
-        usedGraphics.popTransform();
-
-        if (gameScreenImage != null) {
-            g.drawImage(gameScreenImage, 0, 0);
-            camera.renderDebug(g);
         }
 
         if (fadeOutColor.getAlpha() > 0) {
@@ -436,6 +426,31 @@ public final class MapDisplayManager
             g.setLineWidth(3.f);
             g.fillRect(0, 0, c.getWidth(), c.getHeight());
         }
+    }
+
+    /**
+     * Implementation of the core rendering function that just renders the map to the assigned graphic context.
+     *
+     * @param g the graphics context used for the render operation
+     */
+    private void renderImpl(final Graphics g) {
+        final Camera camera = Camera.getInstance();
+
+        g.pushTransform();
+
+        g.translate(-camera.getViewportOffsetX(), -camera.getViewportOffsetY());
+        Camera.getInstance().clearDirtyAreas(g);
+
+        synchronized (display) {
+            synchronized (GameMap.LIGHT_LOCK) {
+                // draw all items
+                for (final DisplayItem currentItem : display) {
+                    currentItem.draw(g);
+                }
+            }
+        }
+
+        g.popTransform();
     }
 
     /**
