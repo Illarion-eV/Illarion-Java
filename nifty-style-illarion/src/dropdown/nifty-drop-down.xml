@@ -62,7 +62,7 @@
         <attributes textHAlign="left" textVAlign="center" width="100%"/>
         <effect>
             <onHover name="focus"/>
-            <onHover name="imageOverlay" filename="data/gui/dropdown/dropdownhover.png"
+            <onHover name="imageOverlay" filename="data/gui/dropdown/dropdownbox_hover.png"
                      imageMode="resize:0,1,0,3,0,1,0,1,0,1,0,3" post="false"/>
         </effect>
     </style>
