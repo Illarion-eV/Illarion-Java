@@ -19,6 +19,7 @@
 package illarion.client.gui;
 
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.builder.ControlBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -28,6 +29,8 @@ import illarion.client.net.client.CloseDialogInputCmd;
 import illarion.client.net.client.CloseDialogMessageCmd;
 import illarion.client.net.server.events.DialogInputReceivedEvent;
 import illarion.client.net.server.events.DialogMessageReceivedEvent;
+import illarion.client.util.GameLoopUpdateEvent;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 import org.illarion.nifty.controls.DialogInput;
@@ -35,6 +38,9 @@ import org.illarion.nifty.controls.DialogInputConfirmedEvent;
 import org.illarion.nifty.controls.DialogMessageConfirmedEvent;
 import org.illarion.nifty.controls.dialog.input.builder.DialogInputBuilder;
 import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * This class is the dialog handler that takes care for receiving events to show dialogs. It opens and maintains those
@@ -44,15 +50,39 @@ import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
  */
 public final class DialogHandler
         implements ScreenController {
+
+    private class BuildWrapper {
+        private ControlBuilder builder;
+        private Element parent;
+
+        private BuildWrapper(final ControlBuilder builder, final Element parent) {
+            this.builder = builder;
+            this.parent = parent;
+        }
+
+        public ControlBuilder getBuilder() {
+            return builder;
+        }
+
+        public Element getParent() {
+            return parent;
+        }
+    }
+
+    private static final Logger LOGGER = Logger.getLogger(DialogHandler.class);
     private final EventSubscriber<DialogMessageReceivedEvent> messageEventHandler;
     private final EventSubscriber<DialogMessageConfirmedEvent> messageConfirmationEventHandler;
     private final EventSubscriber<DialogInputReceivedEvent> inputEventHandler;
     private final EventSubscriber<DialogInputConfirmedEvent> inputConfirmationEventHandler;
+    private final EventSubscriber<GameLoopUpdateEvent> gameLoopUpdateEventHandler;
 
+    private final Queue<BuildWrapper> builders;
     private Nifty nifty;
     private Screen screen;
 
     public DialogHandler() {
+        builders = new LinkedList<BuildWrapper>();
+
         messageEventHandler = new EventSubscriber<DialogMessageReceivedEvent>() {
             @Override
             public void onEvent(final DialogMessageReceivedEvent event) {
@@ -93,6 +123,16 @@ public final class DialogHandler
                     cmd.setText("");
                 }
                 cmd.send();
+            }
+        };
+
+        gameLoopUpdateEventHandler = new EventSubscriber<GameLoopUpdateEvent>() {
+            @Override
+            public void onEvent(final GameLoopUpdateEvent event) {
+                BuildWrapper b;
+                while ((b = builders.poll()) != null) {
+                    b.getBuilder().build(nifty, screen, b.getParent());
+                }
             }
         };
     }
