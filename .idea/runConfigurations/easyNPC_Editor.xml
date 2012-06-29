@@ -21,7 +21,6 @@
     <ConfigurationWrapper RunnerId="Run" />
     <method>
       <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/illacommon/build_libs.xml" target="download_everything" />
-      <option name="Make" enabled="true" />
     </method>
   </configuration>
 </component>
