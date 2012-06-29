@@ -42,6 +42,7 @@ import illarion.common.graphics.TextureLoader;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.TableLoader;
+import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -509,13 +510,13 @@ public final class IllaClient {
      */
     @SuppressWarnings("nls")
     private void initLogfiles() {
-        tempProps.put("log4j.appender.IllaLogfileAppender.file", getFile("error.log"));
-        tempProps.put("log4j.appender.ChatAppender.file", getFile("illarion.log"));
-        tempProps.put("log4j.reset", "true");
-        new PropertyConfigurator().doConfigure(tempProps, LOGGER.getLoggerRepository());
-
-        Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
-
+//        tempProps.put("log4j.appender.IllaLogfileAppender.file", getFile("error.log"));
+//        tempProps.put("log4j.appender.ChatAppender.file", getFile("illarion.log"));
+//        tempProps.put("log4j.reset", "true");
+//        new PropertyConfigurator().doConfigure(tempProps, LOGGER.getLoggerRepository());
+//
+//        Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
+        LOGGER.setLevel(Level.OFF);
         LOGGER.info(getVersionText() + " started.");
         LOGGER.info("VM: " + System.getProperty("java.version"));
         LOGGER.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System

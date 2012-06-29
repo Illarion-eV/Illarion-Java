@@ -131,6 +131,7 @@ public final class DialogHandler
             public void onEvent(final GameLoopUpdateEvent event) {
                 BuildWrapper b;
                 while ((b = builders.poll()) != null) {
+                    System.out.println("build " + b);
                     b.getBuilder().build(nifty, screen, b.getParent());
                 }
             }
@@ -149,6 +150,7 @@ public final class DialogHandler
         EventBus.subscribe(DialogMessageConfirmedEvent.class, messageConfirmationEventHandler);
         EventBus.subscribe(DialogInputReceivedEvent.class, inputEventHandler);
         EventBus.subscribe(DialogInputConfirmedEvent.class, inputConfirmationEventHandler);
+        EventBus.subscribe(GameLoopUpdateEvent.class, gameLoopUpdateEventHandler);
     }
 
     @Override
@@ -157,6 +159,7 @@ public final class DialogHandler
         EventBus.unsubscribe(DialogMessageConfirmedEvent.class, messageConfirmationEventHandler);
         EventBus.unsubscribe(DialogInputReceivedEvent.class, inputEventHandler);
         EventBus.unsubscribe(DialogInputConfirmedEvent.class, inputConfirmationEventHandler);
+        EventBus.unsubscribe(GameLoopUpdateEvent.class, gameLoopUpdateEventHandler);
     }
 
     public void showDialogMessage(final int id, final String title, final String message) {
@@ -166,7 +169,9 @@ public final class DialogHandler
         builder.button("OK");
         builder.dialogId(id);
         builder.width(builder.pixels(400));
-        builder.build(nifty, screen, parentAra);
+        builders.add(new BuildWrapper(builder,parentAra));
+        System.out.println("showDialogMessage");
+//        builder.build(nifty, screen, parentAra);
     }
 
     public void showDialogInput(final int id, final String title, final int maxCharacters,
@@ -183,11 +188,12 @@ public final class DialogHandler
             builder.style("llarion-dialog-input-single");
         }
         builder.width(builder.pixels(400));
-
-        try {
-            builder.build(nifty, screen, parentAra);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        builders.add(new BuildWrapper(builder,parentAra));
+        System.out.println("showDialogInput");
+//        try {
+//            builder.build(nifty, screen, parentAra);
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
     }
 }
