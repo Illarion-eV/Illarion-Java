@@ -18,43 +18,23 @@
  */
 package illarion.mapedit;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
-
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
-import illarion.mapedit.crash.DefaultCrashHandler;
-import illarion.mapedit.database.MapDatabaseManager;
-import illarion.mapedit.graphics.MapDisplay;
-import illarion.mapedit.gui.swing.MainFrame;
-import illarion.mapedit.gui.awt.SaveChangedDialog;
-import illarion.mapedit.gui.awt.SplashScreen;
-import illarion.mapedit.input.InputHandler;
-import illarion.mapedit.map.MapStorage;
-
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
-import illarion.common.util.Crypto;
-import illarion.common.util.DirectoryManager;
-import illarion.common.util.Scheduler;
-import illarion.common.util.StoppableStorage;
-import illarion.common.util.TableLoader;
+import illarion.common.util.*;
+import illarion.mapedit.crash.DefaultCrashHandler;
+import illarion.mapedit.gui.MainFrame;
+import org.apache.log4j.*;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
-import illarion.graphics.Graphics;
-
-import illarion.input.Engines;
-import illarion.input.InputManager;
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Main MapEditor class. This class starts the map editor and handles all
  * configuration files and central settings.
- * 
+ *
  * @author Martin Karing
  * @since 0.99
  */
@@ -64,13 +44,6 @@ public final class MapEditor {
      */
     @SuppressWarnings("nls")
     public static final String APPLICATION = "Illarion Mapeditor";
-
-    /**
-     * The default look and feel of the map editor.
-     */
-    @SuppressWarnings("nls")
-    public static final String defaultLookAndFeel =
-        "org.pushingpixels.substance.api.skin.OfficeSilver2007Skin";
 
     /**
      * The version number of the map editor.
@@ -86,7 +59,7 @@ public final class MapEditor {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(MapEditor.class);
+    private static final Logger LOGGER = Logger.getRootLogger();
 
     /**
      * The configuration of the map editor that is used to get the proper
@@ -95,24 +68,15 @@ public final class MapEditor {
     private final ConfigSystem cfg;
 
     /**
-     * The map display that is used to show the tiles on the map.
-     */
-    private MapDisplay display;
-
-    /**
-     * The GUI mainframe.
-     */
-    private MainFrame guiMain;
-
-    /**
      * Constructor of the map editor that loads up all required data.
      */
     @SuppressWarnings("nls")
     public MapEditor() {
-        final String folder = checkFolder();
-        cfg = new ConfigSystem(folder + File.separator + "MapEdit.xcfgz");
-        cfg.setDefault(MapDatabaseManager.CFG_KEY_MAP_DIR,
-            new File(System.getProperty("user.home")));
+
+        final String userDir = checkFolder();
+        initLogging(userDir);
+        LOGGER.debug("UserDir: " + userDir);
+        cfg = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
         cfg.setDefault("hideTiles", false);
         cfg.setDefault("hideItems", false);
         cfg.setDefault("hideGrid", false);
@@ -120,28 +84,19 @@ public final class MapEditor {
         cfg.setDefault("globalHist", false);
         cfg.setDefault("historyLength", 100);
         cfg.setDefault("decorateWindows", true);
-        cfg.setDefault("skin",
-            "org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
-        
-        cfg.set(MapDatabaseManager.CFG_KEY_MAP_DIR, "C:/Users/Martin Karing/Entwicklung/maps/trunk/Testserver");
 
-        CrashReporter.getInstance().setConfig(cfg);
-        CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_AWT);
-        CrashReporter.getInstance().setMessageSource(Lang.getInstance());
-
-        Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler
-            .getInstance());
+        Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
 
         final Crypto crypt = new Crypto();
         crypt.loadPublicKey();
         TableLoader.setCrypto(crypt);
 
-        initLogging(folder);
+
     }
 
     /**
      * Crash the editor with a message.
-     * 
+     *
      * @param message the message the editor is supposed to crash with
      */
     public static void crashEditor(final String message) {
@@ -153,29 +108,14 @@ public final class MapEditor {
      * Stop the map editor correctly.
      */
     public static void exit() {
-        final String[] changedMaps = MapStorage.getInstance().getChangedMaps();
-        if (changedMaps != null) {
-            final SaveChangedDialog diag = new SaveChangedDialog();
-            diag.setUnsavedMaps(changedMaps);
-            diag.setVisible(true);
-
-            if (!diag.isExit()) {
-                return;
-            }
-        }
-        instance.cfg.save();
+        MainFrame.getInstance().exit();
         StoppableStorage.getInstance().shutdown();
-        Graphics.getInstance().getRenderDisplay().stopRendering();
-        Graphics.getInstance().getRenderDisplay().shutdown();
-        instance.guiMain.setVisible(false);
-        instance.guiMain.dispose();
-
         CrashReporter.getInstance().waitForReport();
     }
 
     /**
      * Get the configuration file of the map editor.
-     * 
+     *
      * @return the configuration of the map editor
      */
     public static Config getConfig() {
@@ -186,57 +126,31 @@ public final class MapEditor {
     }
 
     /**
-     * Get the display handler of the map editor.
-     * 
-     * @return the map display of the editor
-     */
-    public static MapDisplay getDisplay() {
-        if (instance == null) {
-            instance = new MapEditor();
-        }
-        return instance.display;
-    }
-
-    /**
-     * Get the mainframe of the GUI.
-     * 
-     * @return the gui mainframe
-     */
-    public static MainFrame getMainFrame() {
-        if (instance == null) {
-            instance = new MapEditor();
-        }
-        return instance.guiMain;
-    }
-
-    /**
      * Main function to call to start the map editor.
-     * 
+     *
      * @param args the argument of the system call
      */
     public static void main(final String[] args) {
-        SplashScreen.getInstance().setVisible(true);
-
         instance = new MapEditor();
+
         CrashReporter.getInstance().setConfig(MapEditor.getConfig());
+        CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_SWING);
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
 
-        MapDatabaseManager.getInstance().configChanged(getConfig(),
-            MapDatabaseManager.CFG_KEY_MAP_DIR);
-
-        Graphics.getInstance().setEngine(illarion.graphics.Engines.jogl);
-        Graphics.getInstance().getRenderDisplay()
-            .setDisplayOptions("jogl.newt", Boolean.TRUE.toString()); //$NON-NLS-1$
-        InputManager.getInstance().setEngine(Engines.newt);
-        Graphics.getInstance().setQuality(Graphics.QUALITY_NORMAL);
         Scheduler.getInstance().start();
-        instance.display = new MapDisplay();
 
-        instance.guiMain = MainFrame.createMainFrame();
+        startGui();
+    }
 
-        instance.display.startRendering();
+    private static void startGui() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                SubstanceLookAndFeel.setSkin("org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
+                MainFrame.getInstance().setVisible(true);
+            }
+        });
 
-        InputHandler.getInstance().start();
     }
 
     /**
@@ -250,7 +164,7 @@ public final class MapEditor {
      * This function determines the user data directory and requests the folder
      * to store the client data in case it is needed. It also performs checks to
      * see if the folder is valid.
-     * 
+     *
      * @return a string with the path to the folder or null in case no folder is
      *         set
      */
@@ -258,34 +172,26 @@ public final class MapEditor {
     private static String checkFolder() {
         if (!DirectoryManager.getInstance().hasUserDirectory()) {
             JOptionPane.showMessageDialog(null,
-                "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
-                    + "Installation is corrupted, please run it again.",
-                "Error", JOptionPane.ERROR_MESSAGE);
+                    "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
+                            + "Installation is corrupted, please run it again.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
 
         return DirectoryManager.getInstance().getUserDirectory()
-            .getAbsolutePath();
+                .getAbsolutePath();
     }
 
     /**
      * Prepare the proper output of the log files.
-     * 
+     *
      * @param folder the folder the log file is written to
      */
     @SuppressWarnings("nls")
-    private void initLogging(final String folder) {
-        final Properties tempProps = new Properties();
-        try {
-            tempProps.load(MapEditor.class.getClassLoader()
-                .getResourceAsStream("logging.properties"));
-            tempProps.put("log4j.appender.IllaLogfileAppender.file", folder
-                + File.separator + "mapedit.log");
-            tempProps.put("log4j.reset", "true");
-            new PropertyConfigurator().doConfigure(tempProps,
-                LOGGER.getLoggerRepository());
-        } catch (final IOException ex) {
-            System.err.println("Error setting up logging environment");
-        }
+    private static void initLogging(final String folder) {
+        LOGGER.setLevel(Level.ALL);
+        Layout consoleLayout = new PatternLayout("%-5p - %d{ISO8601} - [%t]: %m%n");
+        LOGGER.addAppender(new ConsoleAppender(consoleLayout));
+        Layout fileLayout = new PatternLayout("%-5p - %d{ISO8601} - [%t]: %m%n");
     }
 }
