@@ -30,7 +30,11 @@ public class TileData {
 
 
 
-    private final int w, h, x, y, l;
+    private final int w;
+    private final int h;
+    private final int x;
+    private final int y;
+    private final int l;
     private final Tile[][] tileData;
 
     public TileData(final int l, final int x, final int y, final int w, final int h) {
@@ -42,21 +46,19 @@ public class TileData {
         tileData = new Tile[w][h];
     }
 
-    public TileData(final int w, final int h, TileData old) {
+    public TileData(final int w, final int h, final TileData old) {
         this.w = w;
         this.h = h;
-        this.l = old.l;
-        this.x = old.x;
-        this.y = old.y;
+        l = old.l;
+        x = old.x;
+        y = old.y;
 
         tileData = new Tile[w][h];
-        int minWidth = (w < old.tileData.length) ? w : old.tileData.length;
-        int minHeight = (h < old.tileData[0].length) ? h : old.tileData[0].length;
+        final int minWidth = (w < old.tileData.length) ? w : old.tileData.length;
+        final int minHeight = (h < old.tileData[0].length) ? h : old.tileData[0].length;
 
         for (int x = 0; x < minWidth; ++x) {
-            for (int y = 0; y < minHeight; ++y) {
-                tileData[x][y] = old.tileData[x][y];
-            }
+            System.arraycopy(old.tileData[x], 0, tileData[x], 0, minHeight);
         }
     }
 
@@ -88,17 +90,17 @@ public class TileData {
         return l;
     }
 
-    public static TileData fromInputStream(final InputStream is) throws IOException {
-        Scanner scanner = new Scanner(is);
-        int l = Integer.parseInt(scanner.nextLine().substring(3));
-        int x = Integer.parseInt(scanner.nextLine().substring(3));
-        int y = Integer.parseInt(scanner.nextLine().substring(3));
-        int w = Integer.parseInt(scanner.nextLine().substring(3));
-        int h = Integer.parseInt(scanner.nextLine().substring(3));
-        TileData data = new TileData(l,x,y,w,h);
+    public static TileData fromInputStream(final InputStream is) {
+        final Scanner scanner = new Scanner(is);
+        final int l = Integer.parseInt(scanner.nextLine().substring(3));
+        final int x = Integer.parseInt(scanner.nextLine().substring(3));
+        final int y = Integer.parseInt(scanner.nextLine().substring(3));
+        final int w = Integer.parseInt(scanner.nextLine().substring(3));
+        final int h = Integer.parseInt(scanner.nextLine().substring(3));
+        final TileData data = new TileData(l,x,y,w,h);
         while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            Tile t = Tile.fromString(line);
+            final String line = scanner.nextLine();
+            final Tile t = Tile.fromString(line);
             data.tileData[t.getX()][t.getY()] = t;
         }
 
@@ -106,8 +108,8 @@ public class TileData {
     }
 
     public void saveToFile(final File file) throws IOException{
-        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
-        TextBuilder builder = TextBuilder.newInstance();
+        final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
+        final TextBuilder builder = TextBuilder.newInstance();
         builder.append(Map.HEADER_LEVEL).append(l).append(Map.NL);
         builder.append(Map.HEADER_X).append(x).append(Map.NL);
         builder.append(Map.HEADER_Y).append(y).append(Map.NL);

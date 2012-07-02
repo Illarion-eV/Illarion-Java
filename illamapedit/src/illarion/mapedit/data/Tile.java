@@ -23,9 +23,10 @@ package illarion.mapedit.data;
  */
 public class Tile {
 
-    private int x, y;
-    private int id;
-    private int musicID;
+    private final int x;
+    private final int y;
+    private final int id;
+    private final int musicID;
 
     public Tile(final int x, final int y, final int id, final int musicID) {
         this.id = id;
@@ -35,10 +36,10 @@ public class Tile {
     }
 
     public Tile(final Tile old) {
-        this.x = old.x;
-        this.y = old.y;
-        this.id = old.id;
-        this.musicID = old.musicID;
+        x = old.x;
+        y = old.y;
+        id = old.id;
+        musicID = old.musicID;
     }
 
     public int getX() {
@@ -58,7 +59,7 @@ public class Tile {
     }
 
     public static Tile fromString(final String line) {
-        String[] sections = line.split(";");
+        final String[] sections = line.split(";");
         if (sections.length != 5) {
             throw new IllegalArgumentException("Item can only hava 5 sections: " + line);
         }

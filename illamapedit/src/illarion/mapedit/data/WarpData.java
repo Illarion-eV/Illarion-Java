@@ -30,30 +30,30 @@ import java.util.Scanner;
  */
 public class WarpData {
 
-    private List<Warp> warpData;
+    private final List<Warp> warpData;
 
     public WarpData() {
         warpData = new FastList<Warp>();
     }
 
-    public WarpData(WarpData old) {
+    public WarpData(final WarpData old) {
         warpData = new FastList<Warp>(old.warpData);
     }
 
-    private void addWarp(Warp warp) {
+    private void addWarp(final Warp warp) {
         warpData.add(warp);
     }
 
-    private void removeWarp(Warp warp) {
+    private void removeWarp(final Warp warp) {
         warpData.remove(warp);
     }
 
-    public static WarpData fromInputStream(final InputStream is) throws IOException {
-        WarpData data = new WarpData();
-        Scanner scanner = new Scanner(is);
+    public static WarpData fromInputStream(final InputStream is) {
+        final WarpData data = new WarpData();
+        final Scanner scanner = new Scanner(is);
 
         while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
+            final String line = scanner.nextLine();
             data.addWarp(Warp.fromString(line));
         }
 
@@ -61,9 +61,9 @@ public class WarpData {
     }
 
     public void saveToFile(final File file) throws IOException {
-        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
-        TextBuilder builder = TextBuilder.newInstance();
-        for (Warp w : warpData) {
+        final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
+        final TextBuilder builder = TextBuilder.newInstance();
+        for (final Warp w : warpData) {
             builder.append(w.getXStart()).append(Map.DM);
             builder.append(w.getYStart()).append(Map.DM);
             builder.append(w.getXTarget()).append(Map.DM);

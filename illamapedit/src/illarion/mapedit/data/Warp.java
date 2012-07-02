@@ -26,8 +26,11 @@ import javolution.lang.Immutable;
 public class Warp implements Immutable {
 
 
-    private int xStart,yStart;
-    private int xTarget,yTarget, zTarget;
+    private final int xStart;
+    private final int yStart;
+    private final int xTarget;
+    private final int yTarget;
+    private final int zTarget;
     public Warp(final int xStart, final int yStart, final int xTarget, final int yTarget, final int zTarget) {
 
         this.xStart = xStart;
@@ -38,10 +41,11 @@ public class Warp implements Immutable {
     }
 
     public Warp(final Warp old) {
-        this.xStart = old.xStart;
-        this.yStart = old.yStart;
-        this.xTarget = old.xTarget;
-        this.yTarget = old.yTarget;
+        xStart = old.xStart;
+        yStart = old.yStart;
+        xTarget = old.xTarget;
+        yTarget = old.yTarget;
+        zTarget = old.zTarget;
     }
 
     public int getXStart() {
@@ -65,7 +69,7 @@ public class Warp implements Immutable {
     }
 
     public static Warp fromString(final String line) {
-        String[] sections = line.split(";");
+        final String[] sections = line.split(";");
         if (sections.length != 5) {
             throw new IllegalArgumentException("Item can only hava 5 sections: " + line);
         }

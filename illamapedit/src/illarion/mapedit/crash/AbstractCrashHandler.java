@@ -18,15 +18,13 @@
  */
 package illarion.mapedit.crash;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-
-import org.apache.log4j.Logger;
-
-import illarion.mapedit.Lang;
-import illarion.mapedit.MapEditor;
-
 import illarion.common.bug.CrashData;
 import illarion.common.bug.CrashReporter;
+import illarion.mapedit.Lang;
+import illarion.mapedit.MapEditor;
+import org.apache.log4j.Logger;
+
+import java.lang.Thread;
 
 /**
  * This abstract class takes care for fetching uncaught exceptions and tries to
@@ -36,7 +34,7 @@ import illarion.common.bug.CrashReporter;
  * @since 0.99
  * @version 0.99
  */
-abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
+abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
@@ -54,13 +52,13 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * This stores if there is currently a crash handled. In this case all other
      * crashes are ignored for now.
      */
-    private boolean currentlyCrashing = false;
+    private boolean currentlyCrashing;
 
     /**
      * The time stored when this crash occurred last time. In case the same part
      * of the client crashes too frequent the entire client is shutdown.
      */
-    private long lastCrash = 0;
+    private long lastCrash;
 
     /**
      * Fetch a uncaught exception that was thrown and try restart the crashed

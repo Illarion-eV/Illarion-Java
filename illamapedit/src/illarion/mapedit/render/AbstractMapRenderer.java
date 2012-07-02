@@ -30,7 +30,7 @@ public abstract class AbstractMapRenderer {
     private static final int DEFAULT_TILE_SIZE = 32;
     private static final int MIN_RENDER_TILE_SIZE = 10;
 
-    private int sizePerTile;
+    private final int sizePerTile;
     private final MapPanel mapPanel;
 
     public AbstractMapRenderer(final MapPanel mapPanel) {

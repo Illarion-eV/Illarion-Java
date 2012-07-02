@@ -30,13 +30,13 @@ import java.util.Scanner;
 public class ItemData {
 
 
-    private FastList<Item> itemData;
+    private final FastList<Item> itemData;
 
     public ItemData() {
         itemData = new FastList<Item>();
     }
 
-    public ItemData(ItemData old) {
+    public ItemData(final ItemData old) {
         itemData = new FastList<Item>(old.itemData);
     }
 
@@ -48,28 +48,28 @@ public class ItemData {
         itemData.remove(item);
     }
 
-    public static ItemData fromInputStream(final InputStream is) throws IOException {
-        ItemData data = new ItemData();
-        Scanner scanner = new Scanner(is);
+    public static ItemData fromInputStream(final InputStream is) {
+        final ItemData data = new ItemData();
+        final Scanner scanner = new Scanner(is);
 
         while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
+            final String line = scanner.nextLine();
             data.addItem(Item.fromString(line));
         }
         return data;
     }
 
     public void saveToFile(final File file) throws IOException {
-        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
-        TextBuilder builder = TextBuilder.newInstance();
-        for (Item w : itemData) {
+        final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
+        final TextBuilder builder = TextBuilder.newInstance();
+        for (final Item w : itemData) {
             builder.append(w.getX()).append(Map.DM);
             builder.append(w.getY()).append(Map.DM);
             builder.append(0).append(Map.DM);
             builder.append(w.getId()).append(Map.DM);
             builder.append(w.getItemData()).append(Map.DM);
             builder.append(
-                    w.getQuality() == Item.QUALITY_NONE ?
+                    (w.getQuality() == Item.QUALITY_NONE) ?
                             Item.QUALITY_DEFAULT : w.getQuality()).append(Map.NL);
         }
         writer.write(builder.toString());

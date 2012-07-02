@@ -23,47 +23,23 @@ import org.apache.log4j.Logger;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 /**
  * @author Tim
  */
-public class WindowEventListener implements WindowListener {
+public class WindowEventListener extends WindowAdapter {
     private static final Logger LOGGER = Logger.getLogger(WindowEventListener.class);
 
     @Override
-    public void windowOpened(final WindowEvent e) {
-
-    }
-
     public void windowClosing(final WindowEvent e) {
         LOGGER.debug("Closing window.");
         MapEditor.exit();
     }
 
 
+    @Override
     public void windowClosed(final WindowEvent e) {
         LOGGER.debug("Closed window.");
-
-    }
-
-    @Override
-    public void windowIconified(final WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowDeiconified(final WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowActivated(final WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowDeactivated(final WindowEvent e) {
 
     }
 

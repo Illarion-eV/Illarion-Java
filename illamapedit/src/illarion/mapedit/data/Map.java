@@ -52,10 +52,11 @@ public class Map {
      */
     private static final String EXT_WARP_FILE = ".warps.txt";
 
-    private String mapName, path;
-    private TileData tileData;
-    private ItemData itemData;
-    private WarpData warpData;
+    private final String mapName;
+    private final String path;
+    private final TileData tileData;
+    private final ItemData itemData;
+    private final WarpData warpData;
 
     private Map(final TileData tileData, final ItemData itemData, final WarpData warpData,
                 final String path, final String mapName) {
@@ -70,12 +71,13 @@ public class Map {
     public static Map fromBasePath(final String basePath, final String mapName) throws IOException {
 
         String path = basePath;
-        if (!basePath.endsWith(SLASH))
+        if (!basePath.endsWith(SLASH)) {
             path += SLASH;
+        }
         LOGGER.debug("Load Map from " + path + mapName);
-        TileData tileData = TileData.fromInputStream(new FileInputStream(path + mapName + EXT_TILE_FILE));
-        WarpData warpData = WarpData.fromInputStream(new FileInputStream(path + mapName + EXT_WARP_FILE));
-        ItemData itemData = ItemData.fromInputStream(new FileInputStream(path + mapName + EXT_ITEM_FILE));
+        final TileData tileData = TileData.fromInputStream(new FileInputStream(path + mapName + EXT_TILE_FILE));
+        final WarpData warpData = WarpData.fromInputStream(new FileInputStream(path + mapName + EXT_WARP_FILE));
+        final ItemData itemData = ItemData.fromInputStream(new FileInputStream(path + mapName + EXT_ITEM_FILE));
         return new Map(tileData, itemData, warpData, path, mapName);
     }
 

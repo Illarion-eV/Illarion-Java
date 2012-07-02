@@ -65,7 +65,7 @@ public final class MapEditor {
      * The configuration of the map editor that is used to get the proper
      * locations of the maps.
      */
-    private final ConfigSystem cfg;
+    private final ConfigSystem config;
 
     /**
      * Constructor of the map editor that loads up all required data.
@@ -74,16 +74,16 @@ public final class MapEditor {
     public MapEditor() {
 
         final String userDir = checkFolder();
-        initLogging(userDir);
+        initLogging();
         LOGGER.debug("UserDir: " + userDir);
-        cfg = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
-        cfg.setDefault("hideTiles", false);
-        cfg.setDefault("hideItems", false);
-        cfg.setDefault("hideGrid", false);
-        cfg.setDefault("displayMap", 0);
-        cfg.setDefault("globalHist", false);
-        cfg.setDefault("historyLength", 100);
-        cfg.setDefault("decorateWindows", true);
+        config = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
+        config.setDefault("hideTiles", false);
+        config.setDefault("hideItems", false);
+        config.setDefault("hideGrid", false);
+        config.setDefault("displayMap", 0);
+        config.setDefault("globalHist", false);
+        config.setDefault("historyLength", 100);
+        config.setDefault("decorateWindows", true);
 
         Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
 
@@ -109,8 +109,10 @@ public final class MapEditor {
      */
     public static void exit() {
         MainFrame.getInstance().exit();
+        saveConfiguration();
         StoppableStorage.getInstance().shutdown();
         CrashReporter.getInstance().waitForReport();
+
     }
 
     /**
@@ -122,7 +124,7 @@ public final class MapEditor {
         if (instance == null) {
             instance = new MapEditor();
         }
-        return instance.cfg;
+        return instance.config;
     }
 
     /**
@@ -133,7 +135,7 @@ public final class MapEditor {
     public static void main(final String[] args) {
         instance = new MapEditor();
 
-        CrashReporter.getInstance().setConfig(MapEditor.getConfig());
+        CrashReporter.getInstance().setConfig(getConfig());
         CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_SWING);
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
 
@@ -157,7 +159,7 @@ public final class MapEditor {
      * Save the current state of the configuration to the filesystem if needed.
      */
     public static void saveConfiguration() {
-        instance.cfg.save();
+        instance.config.save();
     }
 
     /**
@@ -185,13 +187,17 @@ public final class MapEditor {
     /**
      * Prepare the proper output of the log files.
      *
-     * @param folder the folder the log file is written to
      */
     @SuppressWarnings("nls")
-    private static void initLogging(final String folder) {
+    private static void initLogging() {
         LOGGER.setLevel(Level.ALL);
-        Layout consoleLayout = new PatternLayout("%-5p - %d{ISO8601} - [%t]: %m%n");
+        final Layout consoleLayout = new PatternLayout("%-5p - (%c) - [%t]: %m%n");
         LOGGER.addAppender(new ConsoleAppender(consoleLayout));
-        Layout fileLayout = new PatternLayout("%-5p - %d{ISO8601} - [%t]: %m%n");
+        final Layout fileLayout = new PatternLayout("%-5p - %d{ISO8601} - [%t]: %m%n");
+        try {
+            LOGGER.addAppender(new RollingFileAppender(fileLayout,"mapedit.log"));
+        } catch (IOException e) {
+            LOGGER.warn("Can't write log to file");
+        }
     }
 }

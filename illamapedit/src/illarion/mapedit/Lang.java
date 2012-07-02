@@ -18,15 +18,13 @@
  */
 package illarion.mapedit;
 
+import illarion.common.util.MessageSource;
+import javolution.text.TextBuilder;
+import org.apache.log4j.Logger;
+
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import javolution.text.TextBuilder;
-
-import org.apache.log4j.Logger;
-
-import illarion.common.util.MessageSource;
 
 /**
  * Localized text handler. Loads the localized messages and returns them if
@@ -175,7 +173,7 @@ public final class Lang implements MessageSource {
      * @return true if the language is set to English
      */
     public boolean isEnglish() {
-        return (locale == Locale.ENGLISH);
+        return locale == Locale.ENGLISH;
     }
 
     /**
@@ -184,6 +182,6 @@ public final class Lang implements MessageSource {
      * @return true if the language is set to German
      */
     public boolean isGerman() {
-        return (locale == Locale.GERMAN);
+        return locale == Locale.GERMAN;
     }
 }

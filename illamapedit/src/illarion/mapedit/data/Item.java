@@ -26,9 +26,10 @@ public class Item {
     public static final int QUALITY_DEFAULT = 333;
     public static final int DATA_NONE = 0;
 
-    private int x, y;
-    private int id;
-    private int itemData;
+    private final int x;
+    private final int y;
+    private final int id;
+    private final int itemData;
     private int quality = QUALITY_NONE;
 
     public Item(final int x, final int y, final int id, final int itemData, final int quality) {
@@ -40,11 +41,11 @@ public class Item {
     }
 
     public Item(final Item old) {
-        this.x = old.x;
-        this.y = old.y;
-        this.id = old.id;
-        this.itemData = itemData;
-        this.quality = old.quality;
+        x = old.x;
+        y = old.y;
+        id = old.id;
+        itemData = old.itemData;
+        quality = old.quality;
     }
 
     public int getX() {
@@ -68,8 +69,8 @@ public class Item {
     }
 
     public static Item fromString(final String line) {
-        String[] sections = line.split(";");
-        if (sections.length < 5 || sections.length > 6) {
+        final String[] sections = line.split(";");
+        if ((sections.length < 5) || (sections.length > 6)) {
             throw new IllegalArgumentException("Item can only hava 5-6 sections: " + line);
         }
         return new Item(
@@ -77,7 +78,7 @@ public class Item {
                 Integer.parseInt(sections[1]),
                 Integer.parseInt(sections[3]),
                 Integer.parseInt(sections[4]),
-                sections.length == 6 ? Integer.parseInt(sections[5]) : Item.QUALITY_NONE
+                (sections.length == 6) ? Integer.parseInt(sections[5]) : QUALITY_NONE
         );
 
     }
