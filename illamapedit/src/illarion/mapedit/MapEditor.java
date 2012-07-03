@@ -77,13 +77,9 @@ public final class MapEditor {
         initLogging();
         LOGGER.debug("UserDir: " + userDir);
         config = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
-        config.setDefault("hideTiles", false);
-        config.setDefault("hideItems", false);
-        config.setDefault("hideGrid", false);
-        config.setDefault("displayMap", 0);
+
         config.setDefault("globalHist", false);
         config.setDefault("historyLength", 100);
-        config.setDefault("decorateWindows", true);
 
         Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
 
