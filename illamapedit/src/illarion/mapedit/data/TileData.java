@@ -24,20 +24,38 @@ import java.io.*;
 import java.util.Scanner;
 
 /**
- * Stores all tiles of a map.
+ * Stores all tiles of a map, as well as it's dimensions and position.
+ *
  * @author Tim
  */
 public class TileData {
 
-
+    /**
+     * The dimension, and position of the map.
+     */
     private final MapDimensions mapDimensions;
+
+    /**
+     * The tiles.
+     */
     private final Tile[] tileData;
 
+    /**
+     * Creates a new tiledata object with zero tiles and with the dimension.
+     *
+     * @param mapDimensions
+     */
     public TileData(MapDimensions mapDimensions) {
         this.mapDimensions = mapDimensions;
         tileData = new Tile[mapDimensions.getW() * mapDimensions.getH()];
     }
 
+    /**
+     * Copies an old tiledata object, but adapt the size.
+     *
+     * @param mapDimensions the new dimension.
+     * @param old           the old tiledata object.
+     */
     public TileData(MapDimensions mapDimensions, final TileData old) {
         this.mapDimensions = mapDimensions;
 
@@ -58,20 +76,41 @@ public class TileData {
         System.arraycopy(old.tileData, 0, tileData, 0, minWidth * minHeight);
     }
 
-    public void setTileAt(final Tile tile, final int x, final int y) {
-        int i = y * mapDimensions.getW() + x;
+    /**
+     * Sets a tile at a specified position.
+     *
+     * @param tile the tile to add.
+     */
+    public void setTileAt(final Tile tile) {
+        int i = tile.getY() * mapDimensions.getW() + tile.getX();
         tileData[i] = tile;
     }
 
+    /**
+     * Return a tile at a specified position.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the tile
+     */
     public Tile getTileAt(final int x, final int y) {
         int i = y * mapDimensions.getW() + x;
         return tileData[i];
     }
 
+    /**
+     * @return the map dimension.
+     */
     public MapDimensions getMapDimensions() {
         return mapDimensions;
     }
 
+    /**
+     * Reads the map dimension, the map size and the tiles from the input stream.
+     *
+     * @param is the input stream
+     * @return
+     */
     public static TileData fromInputStream(final InputStream is) {
         final Scanner scanner = new Scanner(is);
         MapDimensions dimensions = new MapDimensions();
@@ -93,6 +132,11 @@ public class TileData {
         return data;
     }
 
+    /**
+     * Saves the map dimension, the map size and the tiles to a given file.
+     * @param file the file to save the data in.
+     * @throws IOException if a error occurs
+     */
     public void saveToFile(final File file) throws IOException {
         final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
         final TextBuilder builder = TextBuilder.newInstance();
