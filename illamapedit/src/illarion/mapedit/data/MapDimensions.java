@@ -67,6 +67,7 @@ public class MapDimensions {
 
     /**
      * Copies the old MapDimension instance.
+     *
      * @param old
      */
     public MapDimensions(final MapDimensions old) {
@@ -86,6 +87,7 @@ public class MapDimensions {
 
     /**
      * Returns the x position of the map.
+     *
      * @return
      */
     public int getX() {
@@ -94,6 +96,7 @@ public class MapDimensions {
 
     /**
      * Sets the x position of the map.
+     *
      * @param x
      */
     public void setX(final int x) {
@@ -102,6 +105,7 @@ public class MapDimensions {
 
     /**
      * Returns the y position of the map.
+     *
      * @return
      */
     public int getY() {
@@ -110,36 +114,73 @@ public class MapDimensions {
 
     /**
      * Sets the y position of the map.
+     *
      * @param y
      */
     public void setY(final int y) {
         this.y = y;
     }
 
+    /**
+     * Returns the level (z coordinate) of the map.
+     *
+     * @return
+     */
     public int getL() {
         return l;
     }
 
+    /**
+     * Sets the level (z coordinate) of the map
+     *
+     * @param l
+     */
     public void setL(final int l) {
         this.l = l;
     }
 
+    /**
+     * Returns the width of the  Map.
+     *
+     * @return
+     */
     public int getW() {
         return w;
     }
 
+    /**
+     * Sets the width of the map.
+     *
+     * @param w
+     */
     public void setW(final int w) {
         this.w = w;
     }
 
+    /**
+     * Returns the height of the map.
+     *
+     * @return
+     */
     public int getH() {
         return h;
     }
 
+    /**
+     * Sets the height of the map.
+     *
+     * @param h
+     */
     public void setH(final int h) {
         this.h = h;
     }
 
+    /**
+     * Returns {@code true} if the given MapDimension is equal.
+     *
+     * @param o the given MapDimension.
+     * @return
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -168,22 +209,24 @@ public class MapDimensions {
         return true;
     }
 
-    @Override
-    public int hashCode() {
-        int result = x;
-        result = 31 * result + y;
-        result = 31 * result + l;
-        result = 31 * result + w;
-        result = 31 * result + h;
-        return result;
-    }
-
+    /**
+     * Converts a map coordinate into a world coordinate.
+     *
+     * @param mapLocation the map coordinate
+     * @return the world coordinate
+     */
     public Location getAsWorldLocation(Location mapLocation) {
         if (mapLocation.getScZ() != l) throw new IllegalArgumentException("Can't calculate the world location if the " +
                 "y value is not equal to the level of the map.");
         return new Location(x + mapLocation.getScX(), y + mapLocation.getScY(), l);
     }
 
+    /**
+     * Converts a world coordinate into a map coordinate.
+     *
+     * @param worldLocation the world coordinate
+     * @return the map coordinate
+     */
     public Location getAsMapLocation(Location worldLocation) {
         if (worldLocation.getScZ() != l) throw new IllegalArgumentException("Can't calculate the map location if the " +
                 "y value is not equal to the level of the map.");

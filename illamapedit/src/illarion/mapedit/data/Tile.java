@@ -19,15 +19,34 @@
 package illarion.mapedit.data;
 
 /**
+ * This object represents a tile with a coordinate, an id and a music id.
  * @author Tim
  */
 public class Tile {
-
+    /**
+     * The x coordinate.
+     */
     private final int x;
+    /**
+     * The y coordinate.
+     */
     private final int y;
+    /**
+     * The tile id.
+     */
     private final int id;
+    /**
+     * The music id.
+     */
     private final int musicID;
 
+    /**
+     * Creates a new tile with the coordinates, the id and the music id.
+     * @param x
+     * @param y
+     * @param id
+     * @param musicID
+     */
     public Tile(final int x, final int y, final int id, final int musicID) {
         this.id = id;
         this.x = x;
@@ -35,6 +54,10 @@ public class Tile {
         this.musicID = musicID;
     }
 
+    /**
+     * Creates a copy of the other tile.
+     * @param old
+     */
     public Tile(final Tile old) {
         x = old.x;
         y = old.y;
@@ -42,22 +65,44 @@ public class Tile {
         musicID = old.musicID;
     }
 
+    /**
+     * Returns the x coordinate.
+     * @return
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Returns the y coordinate.
+     * @return
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Returns the tile id.
+     * @return
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Returns the music id.
+     * @return
+     */
     public int getMusicID() {
         return musicID;
     }
 
+    /**
+     * Loads a tile from a line of a *.tiles.txt file with the format <br/>
+     * {@code [X];[Y];[TileID];[MusikID];0 }
+     * @param line
+     * @return
+     */
     public static Tile fromString(final String line) {
         final String[] sections = line.split(";");
         if (sections.length != 5) {

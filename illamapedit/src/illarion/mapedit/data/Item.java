@@ -129,8 +129,8 @@ public class Item {
     }
 
     /**
-     * Creates a new item from a line of a map file with the following syntax:
-     * {@code [X];[Y];[TileID];[MusicID];0}
+     * Creates a new item from a line of a map file with the following syntax: <br/>
+     * {@code [X];[Y];[Special Flags];[ItemID];[ItemData](;[Qality])}
      * @param line a line of a item map file.
      * @return the generated item.
      */

@@ -24,6 +24,7 @@ import java.io.*;
 import java.util.Scanner;
 
 /**
+ * Stores all tiles of a map.
  * @author Tim
  */
 public class TileData {
