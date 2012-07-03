@@ -29,33 +29,42 @@ import java.util.Scanner;
 public class TileData {
 
 
-
     private final MapDimensions mapDimensions;
-    private final Tile[][] tileData;
+    private final Tile[] tileData;
 
     public TileData(MapDimensions mapDimensions) {
         this.mapDimensions = mapDimensions;
-        tileData = new Tile[mapDimensions.getW()][mapDimensions.getH()];
+        tileData = new Tile[mapDimensions.getW() * mapDimensions.getH()];
     }
 
     public TileData(MapDimensions mapDimensions, final TileData old) {
         this.mapDimensions = mapDimensions;
 
-        tileData = new Tile[mapDimensions.getW()][mapDimensions.getH()];
-        final int minWidth = (mapDimensions.getW() < old.tileData.length) ? mapDimensions.getW() : old.tileData.length;
-        final int minHeight = (mapDimensions.getH() < old.tileData[0].length) ? mapDimensions.getH() : old.tileData[0].length;
-
-        for (int x = 0; x < minWidth; ++x) {
-            System.arraycopy(old.tileData[x], 0, tileData[x], 0, minHeight);
+        tileData = new Tile[mapDimensions.getW() * mapDimensions.getH()];
+        final int minWidth;
+        if (mapDimensions.getW() < old.getMapDimensions().getW()) {
+            minWidth = mapDimensions.getW();
+        } else {
+            minWidth = old.getMapDimensions().getW();
         }
+        final int minHeight;
+        if (mapDimensions.getH() < old.mapDimensions.getH()) {
+            minHeight = mapDimensions.getH();
+        } else {
+            minHeight = old.getMapDimensions().getH();
+        }
+
+        System.arraycopy(old.tileData, 0, tileData, 0, minWidth * minHeight);
     }
 
     public void setTileAt(final Tile tile, final int x, final int y) {
-        tileData[x][y] = tile;
+        int i = y * mapDimensions.getW() + x;
+        tileData[i] = tile;
     }
 
     public Tile getTileAt(final int x, final int y) {
-        return tileData[x][y];
+        int i = y * mapDimensions.getW() + x;
+        return tileData[i];
     }
 
     public MapDimensions getMapDimensions() {
@@ -76,13 +85,14 @@ public class TileData {
         while (scanner.hasNextLine()) {
             final String line = scanner.nextLine();
             final Tile t = Tile.fromString(line);
-            data.tileData[t.getX()][t.getY()] = t;
+            int i = t.getY() * dimensions.getW() + t.getX();
+            data.tileData[i] = t;
         }
 
         return data;
     }
 
-    public void saveToFile(final File file) throws IOException{
+    public void saveToFile(final File file) throws IOException {
         final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
         final TextBuilder builder = TextBuilder.newInstance();
         builder.append(Map.HEADER_LEVEL).append(mapDimensions.getL()).append(Map.NL);
@@ -93,10 +103,11 @@ public class TileData {
 
         for (int y = 0; y < mapDimensions.getH(); ++y) {
             for (int x = 0; x < mapDimensions.getW(); ++x) {
+                int i = y * mapDimensions.getW() + x;
                 builder.append(x).append(Map.DM);
                 builder.append(y).append(Map.DM);
-                builder.append(tileData[x][y].getId()).append(Map.DM);
-                builder.append(tileData[x][y].getMusicID()).append(Map.DM);
+                builder.append(tileData[i].getId()).append(Map.DM);
+                builder.append(tileData[i].getMusicID()).append(Map.DM);
                 builder.append(0).append(Map.NL);
             }
         }
