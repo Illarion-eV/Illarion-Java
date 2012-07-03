@@ -30,32 +30,20 @@ public class TileData {
 
 
 
-    private final int w;
-    private final int h;
-    private final int x;
-    private final int y;
-    private final int l;
+    private final MapDimensions mapDimensions;
     private final Tile[][] tileData;
 
-    public TileData(final int l, final int x, final int y, final int w, final int h) {
-        this.l = l;
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
-        tileData = new Tile[w][h];
+    public TileData(MapDimensions mapDimensions) {
+        this.mapDimensions = mapDimensions;
+        tileData = new Tile[mapDimensions.getW()][mapDimensions.getH()];
     }
 
-    public TileData(final int w, final int h, final TileData old) {
-        this.w = w;
-        this.h = h;
-        l = old.l;
-        x = old.x;
-        y = old.y;
+    public TileData(MapDimensions mapDimensions, final TileData old) {
+        this.mapDimensions = mapDimensions;
 
-        tileData = new Tile[w][h];
-        final int minWidth = (w < old.tileData.length) ? w : old.tileData.length;
-        final int minHeight = (h < old.tileData[0].length) ? h : old.tileData[0].length;
+        tileData = new Tile[mapDimensions.getW()][mapDimensions.getH()];
+        final int minWidth = (mapDimensions.getW() < old.tileData.length) ? mapDimensions.getW() : old.tileData.length;
+        final int minHeight = (mapDimensions.getH() < old.tileData[0].length) ? mapDimensions.getH() : old.tileData[0].length;
 
         for (int x = 0; x < minWidth; ++x) {
             System.arraycopy(old.tileData[x], 0, tileData[x], 0, minHeight);
@@ -70,34 +58,21 @@ public class TileData {
         return tileData[x][y];
     }
 
-    public int getW() {
-        return w;
-    }
-
-    public int getH() {
-        return h;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getL() {
-        return l;
+    public MapDimensions getMapDimensions() {
+        return mapDimensions;
     }
 
     public static TileData fromInputStream(final InputStream is) {
         final Scanner scanner = new Scanner(is);
-        final int l = Integer.parseInt(scanner.nextLine().substring(3));
-        final int x = Integer.parseInt(scanner.nextLine().substring(3));
-        final int y = Integer.parseInt(scanner.nextLine().substring(3));
-        final int w = Integer.parseInt(scanner.nextLine().substring(3));
-        final int h = Integer.parseInt(scanner.nextLine().substring(3));
-        final TileData data = new TileData(l,x,y,w,h);
+        MapDimensions dimensions = new MapDimensions();
+
+        dimensions.setL(Integer.parseInt(scanner.nextLine().substring(3)));
+        dimensions.setX(Integer.parseInt(scanner.nextLine().substring(3)));
+        dimensions.setY(Integer.parseInt(scanner.nextLine().substring(3)));
+        dimensions.setW(Integer.parseInt(scanner.nextLine().substring(3)));
+        dimensions.setH(Integer.parseInt(scanner.nextLine().substring(3)));
+
+        final TileData data = new TileData(dimensions);
         while (scanner.hasNextLine()) {
             final String line = scanner.nextLine();
             final Tile t = Tile.fromString(line);
@@ -110,14 +85,14 @@ public class TileData {
     public void saveToFile(final File file) throws IOException{
         final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
         final TextBuilder builder = TextBuilder.newInstance();
-        builder.append(Map.HEADER_LEVEL).append(l).append(Map.NL);
-        builder.append(Map.HEADER_X).append(x).append(Map.NL);
-        builder.append(Map.HEADER_Y).append(y).append(Map.NL);
-        builder.append(Map.HEADER_WIDTH).append(w).append(Map.NL);
-        builder.append(Map.HEADER_HEIGHT).append(h).append(Map.NL);
+        builder.append(Map.HEADER_LEVEL).append(mapDimensions.getL()).append(Map.NL);
+        builder.append(Map.HEADER_X).append(mapDimensions.getX()).append(Map.NL);
+        builder.append(Map.HEADER_Y).append(mapDimensions.getY()).append(Map.NL);
+        builder.append(Map.HEADER_WIDTH).append(mapDimensions.getW()).append(Map.NL);
+        builder.append(Map.HEADER_HEIGHT).append(mapDimensions.getH()).append(Map.NL);
 
-        for (int y = 0; y < h; ++y) {
-            for (int x = 0; x < w; ++x) {
+        for (int y = 0; y < mapDimensions.getH(); ++y) {
+            for (int x = 0; x < mapDimensions.getW(); ++x) {
                 builder.append(x).append(Map.DM);
                 builder.append(y).append(Map.DM);
                 builder.append(tileData[x][y].getId()).append(Map.DM);

@@ -17,13 +17,9 @@
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * The crash packages contains the different crash handlers that kick in, in
- * case a part of the editor crashes. According to the part of the editor the
- * handlers either try to restart the part of the editor in question or stop the
- * editor completely.
- * 
- * @author Martin Karing
- * @since 0.99
- * @version 0.99
+ * The data package contains classes that represents a map together.
+ * They provide method to Inport/Export the original map files.
+ * @author Tim
  */
-package illarion.mapedit.crash;
+package illarion.mapedit.data;
+

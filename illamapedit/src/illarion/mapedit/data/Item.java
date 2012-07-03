@@ -19,19 +19,55 @@
 package illarion.mapedit.data;
 
 /**
+ * Represents a single item, with a position, an id, a quality, and data.
+ *
  * @author Tim
  */
 public class Item {
+    /**
+     * Represents a not existing qualtity
+     */
     public static final int QUALITY_NONE = -1;
+
+    /**
+     * Represents the default quality, if the {@link Item#quality} is {@link Item#QUALITY_NONE}
+     * time of serialisation
+     */
     public static final int QUALITY_DEFAULT = 333;
+    /**
+     * Represents no data.
+     */
     public static final int DATA_NONE = 0;
 
+    /**
+     * The x coordinate of the item.
+     */
     private final int x;
+    /**
+     * The y coordinate of the item.
+     */
     private final int y;
+    /**
+     * The item id.
+     */
     private final int id;
+    /**
+     * The data of this item.
+     */
     private final int itemData;
-    private int quality = QUALITY_NONE;
+    /**
+     * The quality of this item.
+     */
+    private final int quality ;
 
+    /**
+     * Creates a new Item
+     * @param x The x coordinate of the item.
+     * @param y The y coordinate of the item.
+     * @param id The item id.
+     * @param itemData The data of this item.
+     * @param quality The quality of this item.
+     */
     public Item(final int x, final int y, final int id, final int itemData, final int quality) {
         this.id = id;
         this.x = x;
@@ -40,6 +76,10 @@ public class Item {
         this.quality = quality;
     }
 
+    /**
+     * Creates a new copy of an existing item.
+     * @param old the old instance.
+     */
     public Item(final Item old) {
         x = old.x;
         y = old.y;
@@ -48,26 +88,52 @@ public class Item {
         quality = old.quality;
     }
 
+    /**
+     * Returns the x coordinate of the item relative to the map.
+     * @return the x coordinate
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Returns the y coordinate of the item relative to the map.
+     * @return the y coordinate
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Returns the id of the item.
+     * @return the item id
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Returns the quality of the item.
+     * @return the quality
+     */
     public int getQuality() {
         return quality;
     }
 
+    /**
+     * Returns the data-value of this item.
+     * @return the data-value.
+     */
     public int getItemData() {
         return itemData;
     }
 
+    /**
+     * Creates a new item from a line of a map file with the following syntax:
+     * {@code [X];[Y];[TileID];[MusicID];0}
+     * @param line a line of a item map file.
+     * @return the generated item.
+     */
     public static Item fromString(final String line) {
         final String[] sections = line.split(";");
         if ((sections.length < 5) || (sections.length > 6)) {

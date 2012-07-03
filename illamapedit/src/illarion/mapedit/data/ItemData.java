@@ -25,29 +25,52 @@ import java.io.*;
 import java.util.Scanner;
 
 /**
+ * Represents all items on the map.
  * @author Tim
  */
 public class ItemData {
 
-
+    /**
+     * The collection of all items.
+     */
     private final FastList<Item> itemData;
 
+    /**
+     * Creates a empty ItemData object.
+     */
     public ItemData() {
         itemData = new FastList<Item>();
     }
 
+    /**
+     * Creates a copy of another ItemData instance.
+     * @param old the old instance.
+     */
     public ItemData(final ItemData old) {
         itemData = new FastList<Item>(old.itemData);
     }
 
+    /**
+     * Adds an item to the map.
+     * @param item the item to add.
+     */
     private void addItem(final Item item) {
         itemData.add(item);
     }
 
+    /**
+     * Removes the given item from the map.
+     * @param item the item to remove.
+     */
     private void removeItem(final Item item) {
         itemData.remove(item);
     }
 
+    /**
+     * Loads all items from input stream.
+     * @param is the inputstream (usually a FileInputStream)
+     * @return a new ItemData instances that represents all new items.
+     */
     public static ItemData fromInputStream(final InputStream is) {
         final ItemData data = new ItemData();
         final Scanner scanner = new Scanner(is);
@@ -59,6 +82,11 @@ public class ItemData {
         return data;
     }
 
+    /**
+     * Saves the ItemData in the correct format to the file.
+     * @param file the file.
+     * @throws IOException if an IO error occurs.
+     */
     public void saveToFile(final File file) throws IOException {
         final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
         final TextBuilder builder = TextBuilder.newInstance();
