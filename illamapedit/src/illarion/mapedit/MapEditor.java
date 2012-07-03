@@ -49,7 +49,7 @@ public final class MapEditor {
      * The version number of the map editor.
      */
     @SuppressWarnings("nls")
-    public static final String VERSION = "1.01";
+    public static final String VERSION = "2.0 alpha";
 
     /**
      * The instance of the map editor.
@@ -77,7 +77,7 @@ public final class MapEditor {
         initLogging();
         LOGGER.debug("UserDir: " + userDir);
         config = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
-
+        LOGGER.debug("Config: " + userDir + File.separator + "MapEdit.xcfgz");
         config.setDefault("globalHist", false);
         config.setDefault("historyLength", 100);
 
@@ -109,6 +109,10 @@ public final class MapEditor {
         StoppableStorage.getInstance().shutdown();
         CrashReporter.getInstance().waitForReport();
 
+    }
+
+    public static String getVersion() {
+        return VERSION;
     }
 
     /**

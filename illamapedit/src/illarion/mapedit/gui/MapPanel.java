@@ -18,13 +18,35 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.mapedit.render.AbstractMapRenderer;
+
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author Tim
  */
 public class MapPanel extends JPanel {
 
+    private RepaintManager repaintManager;
+    private AbstractMapRenderer renderer;
 
+    public MapPanel() {
+        super();
+        repaintManager = RepaintManager.currentManager(this);
+        System.out.println(repaintManager);
+        repaintManager.addDirtyRegion(this, 0, 0, 10, 10);
+    }
 
+    @Override
+    public void paintComponent(Graphics gt) {
+        Graphics2D g = (Graphics2D) gt;
+        if (renderer != null){
+            renderer.renderMap((Graphics2D) g);
+        }
+    }
+
+    public Rectangle getDirtyRegion() {
+        return repaintManager.getDirtyRegion(this);
+    }
 }

@@ -27,27 +27,27 @@ import java.awt.*;
  */
 public abstract class AbstractMapRenderer {
 
-    private static final int DEFAULT_TILE_SIZE = 32;
+    private static final int DEFAULT_ZOOM = 32;
     private static final int MIN_RENDER_TILE_SIZE = 10;
 
-    private final int sizePerTile;
+    private final int zoom;
     private final MapPanel mapPanel;
 
     public AbstractMapRenderer(final MapPanel mapPanel) {
-        this(mapPanel, DEFAULT_TILE_SIZE);
+        this(mapPanel, DEFAULT_ZOOM);
     }
 
-    public AbstractMapRenderer(final MapPanel mapPanel, final int sizePerTile) {
+    public AbstractMapRenderer(final MapPanel mapPanel, final int zoom) {
         this.mapPanel = mapPanel;
-        this.sizePerTile = sizePerTile;
+        this.zoom = zoom;
     }
 
     protected Rectangle getRenderRectangle() {
-        return mapPanel.getVisibleRect();
+        return mapPanel.getVisibleRect().intersection(mapPanel.getDirtyRegion());
     }
 
-    protected int getSizePerTile() {
-        return sizePerTile;
+    protected int getZoom() {
+        return zoom;
     }
 
     public abstract void renderMap(Graphics2D graphics);

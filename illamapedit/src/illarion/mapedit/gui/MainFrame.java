@@ -18,16 +18,12 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.mapedit.MapEditor;
 import org.apache.log4j.Logger;
-import org.pushingpixels.flamingo.api.common.JCommandButton;
-import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
-import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
-import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
-import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
-import java.util.Arrays;
+import java.awt.*;
 
 /**
  * @author Tim
@@ -36,9 +32,23 @@ public class MainFrame extends JRibbonFrame {
     private static final MainFrame INSTANCE = new MainFrame();
     private static final Logger LOGGER = Logger.getLogger(MainFrame.class);
 
+    private final MapPanel map;
 
     private MainFrame() {
         addWindowListener(new WindowEventListener());
+        setTitle("Illarion Mapeditor v" + MapEditor.getVersion());
+        setSize(new Dimension(400, 500));
+
+
+        map = new MapPanel();
+
+        add(map);
+
+        RibbonTask task = new RibbonTask("RibbonName",
+                new ClipboardBand());
+
+
+        getRibbon().addTask(task);
 
     }
 
