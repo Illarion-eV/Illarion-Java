@@ -25,7 +25,7 @@ import java.awt.*;
 /**
  * @author Tim
  */
-public abstract class AbstractMapRenderer {
+public abstract class AbstractMapRenderer implements Comparable<AbstractMapRenderer> {
 
     private static final int DEFAULT_ZOOM = 32;
     private static final int MIN_RENDER_TILE_SIZE = 10;
@@ -43,14 +43,29 @@ public abstract class AbstractMapRenderer {
     }
 
     protected Rectangle getRenderRectangle() {
-        return mapPanel.getVisibleRect().intersection(mapPanel.getDirtyRegion());
+        Rectangle dirty = mapPanel.getDirtyRegion();
+        if (dirty == null)
+            return mapPanel.getVisibleRect();
+        return mapPanel.getVisibleRect().intersection(dirty);
     }
 
     protected int getZoom() {
         return zoom;
     }
 
-    public abstract void renderMap(Graphics2D graphics);
+    public abstract void renderMap(final Graphics2D graphics);
 
+    protected abstract int getRenderPriority();
 
+    @Override
+    public int compareTo(AbstractMapRenderer o) {
+        final int i = getRenderPriority(), j = o.getRenderPriority();
+        if (i < j) {
+            return -1;
+        } else if (i == j) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
 }

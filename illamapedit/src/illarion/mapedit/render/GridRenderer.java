@@ -16,34 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.gui;
+package illarion.mapedit.render;
 
-import illarion.mapedit.MapEditor;
-import org.apache.log4j.Logger;
+import illarion.mapedit.gui.MapPanel;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
 
 /**
  * @author Tim
  */
-public class WindowEventListener extends WindowAdapter {
-    private static final Logger LOGGER = Logger.getLogger(WindowEventListener.class);
+public class GridRenderer extends AbstractMapRenderer {
+
+    public GridRenderer(final MapPanel panel) {
+        super(panel);
+    }
 
     @Override
-    public void windowClosing(final WindowEvent e) {
-        LOGGER.debug("Closing window.");
-        MainFrame.getInstance().dispose();
-        MapEditor.exit();
+    public void renderMap(final Graphics2D g) {
+        final int zoom = getZoom();
+        final Rectangle dirty = getRenderRectangle();
+
 
     }
 
-
     @Override
-    public void windowClosed(final WindowEvent e) {
-        LOGGER.debug("Closed window.");
-
-        System.exit(0);
+    protected int getRenderPriority() {
+        return 0;
     }
-
 }

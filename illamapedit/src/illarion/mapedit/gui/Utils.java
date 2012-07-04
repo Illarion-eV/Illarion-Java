@@ -27,7 +27,10 @@ import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 
 /**
@@ -36,7 +39,7 @@ import java.io.IOException;
  * @author Martin Karing
  * @since 1.00
  */
-final class Utils {
+public final class Utils {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
@@ -47,7 +50,7 @@ final class Utils {
         Image image;
         try {
             image = ImageIO.read(Utils.class.getClassLoader()
-                            .getResource(resource));
+                    .getResource(resource));
         } catch (final IOException e) {
             LOGGER.error("Failed to read image: \"" + resource + "\"");
             return null;
@@ -60,4 +63,29 @@ final class Utils {
         return resizeIcon;
     }
 
+    public static void selectAndOpenMapDir() {
+        JFileChooser ch = new JFileChooser();
+        ch.setDialogType(JFileChooser.OPEN_DIALOG);
+        ch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (ch.showOpenDialog(MainFrame.getInstance()) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        File dir = ch.getSelectedFile();
+        selectAndOpenMap(dir);
+    }
+
+    private static void selectAndOpenMap(final File dir) {
+        if (dir == null || !dir.exists() || !dir.isDirectory()) {
+            return;
+        }
+        String[] files = dir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(final File dir, final String name) {
+                return name.endsWith(".tiles.txt");
+            }
+        });
+        for (String f : files) {
+            System.out.println(f);
+        }
+    }
 }

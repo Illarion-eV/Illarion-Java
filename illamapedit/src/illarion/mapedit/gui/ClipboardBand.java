@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.mapedit.Lang;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
@@ -32,13 +33,16 @@ import java.util.List;
  */
 public class ClipboardBand extends JRibbonBand {
     public ClipboardBand() {
-        super("Clipboard",null);
+        super(Lang.getMsg("gui.clipboardband.Name"), null);
 
-        final JCommandButton copy = new JCommandButton("Copy", Utils.getResizableIconFromResource("editcopy.png"));
-        final JCommandButton paste = new JCommandButton("Paste", Utils.getResizableIconFromResource("editpaste.png"));
-        final JCommandButton cut = new JCommandButton("Cut", Utils.getResizableIconFromResource("editcut.png"));
+        final JCommandButton copy = new JCommandButton(Lang.getMsg("gui.clipboardband.Copy"),
+                Utils.getResizableIconFromResource("editcopy.png"));
+        final JCommandButton paste = new JCommandButton(Lang.getMsg("gui.clipboardband.Paste"),
+                Utils.getResizableIconFromResource("editpaste.png"));
+        final JCommandButton cut = new JCommandButton(Lang.getMsg("gui.clipboardband.Cut"),
+                Utils.getResizableIconFromResource("editcut.png"));
 
-        addCommandButton(paste,RibbonElementPriority.TOP);
+        addCommandButton(paste, RibbonElementPriority.TOP);
         addCommandButton(copy, RibbonElementPriority.MEDIUM);
         addCommandButton(cut, RibbonElementPriority.MEDIUM);
 

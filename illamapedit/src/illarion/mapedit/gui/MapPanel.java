@@ -18,7 +18,8 @@
  */
 package illarion.mapedit.gui;
 
-import illarion.mapedit.render.AbstractMapRenderer;
+import illarion.mapedit.data.Map;
+import illarion.mapedit.render.RendererManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,25 +29,37 @@ import java.awt.*;
  */
 public class MapPanel extends JPanel {
 
-    private RepaintManager repaintManager;
-    private AbstractMapRenderer renderer;
+    private final RendererManager rendererManager;
+    private final Rectangle dirty;
+    private Map map;
 
     public MapPanel() {
         super();
-        repaintManager = RepaintManager.currentManager(this);
-        System.out.println(repaintManager);
-        repaintManager.addDirtyRegion(this, 0, 0, 10, 10);
+        rendererManager = RendererManager.getInstance();
+        dirty = new Rectangle(getWidth(), getHeight());
     }
 
     @Override
     public void paintComponent(Graphics gt) {
         Graphics2D g = (Graphics2D) gt;
-        if (renderer != null){
-            renderer.renderMap((Graphics2D) g);
-        }
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        rendererManager.render(g);
+        dirty.x = 0;
+        dirty.y = 0;
+        dirty.width = 0;
+        dirty.height = 0;
     }
 
     public Rectangle getDirtyRegion() {
-        return repaintManager.getDirtyRegion(this);
+        return null;
+    }
+
+    public void addRegionDirty(final int x, final int y, final int w, final int h) {
+        dirty.union(new Rectangle(x, y, w, h));
+    }
+
+    public void setMap(final Map map) {
+
     }
 }

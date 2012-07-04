@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Mapeditor.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Mapeditor is free software: you can redistribute i and/or modify
- * it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Mapeditor is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Mapeditor. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Mapeditor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit;
 
@@ -24,6 +24,8 @@ import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
 import illarion.mapedit.gui.MainFrame;
+import illarion.mapedit.render.GridRenderer;
+import illarion.mapedit.render.RendererManager;
 import org.apache.log4j.*;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
@@ -72,14 +74,15 @@ public final class MapEditor {
      */
     @SuppressWarnings("nls")
     public MapEditor() {
-
-        final String userDir = checkFolder();
         initLogging();
+        final String userDir = checkFolder();
+
         LOGGER.debug("UserDir: " + userDir);
         config = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
         LOGGER.debug("Config: " + userDir + File.separator + "MapEdit.xcfgz");
         config.setDefault("globalHist", false);
         config.setDefault("historyLength", 100);
+        config.setDefault("mapLastOpenDir", new File(System.getProperty("user.home")));
 
         Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
 
@@ -108,7 +111,6 @@ public final class MapEditor {
         saveConfiguration();
         StoppableStorage.getInstance().shutdown();
         CrashReporter.getInstance().waitForReport();
-
     }
 
     public static String getVersion() {
@@ -150,6 +152,7 @@ public final class MapEditor {
             public void run() {
                 SubstanceLookAndFeel.setSkin("org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
                 MainFrame.getInstance().setVisible(true);
+                RendererManager.getInstance().addRenderer(new GridRenderer(MainFrame.getInstance().getMapPanel()));
             }
         });
 
@@ -186,7 +189,6 @@ public final class MapEditor {
 
     /**
      * Prepare the proper output of the log files.
-     *
      */
     @SuppressWarnings("nls")
     private static void initLogging() {
@@ -195,7 +197,7 @@ public final class MapEditor {
         LOGGER.addAppender(new ConsoleAppender(consoleLayout));
         final Layout fileLayout = new PatternLayout("%-5p - %d{ISO8601} - [%t]: %m%n");
         try {
-            LOGGER.addAppender(new RollingFileAppender(fileLayout,"mapedit.log"));
+            LOGGER.addAppender(new RollingFileAppender(fileLayout, "mapedit.log"));
         } catch (IOException e) {
             LOGGER.warn("Can't write log to file");
         }

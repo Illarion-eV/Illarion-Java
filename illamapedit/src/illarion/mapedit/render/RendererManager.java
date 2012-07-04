@@ -16,34 +16,42 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.gui;
+package illarion.mapedit.render;
 
-import illarion.mapedit.MapEditor;
-import org.apache.log4j.Logger;
+import javolution.util.FastList;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Tim
  */
-public class WindowEventListener extends WindowAdapter {
-    private static final Logger LOGGER = Logger.getLogger(WindowEventListener.class);
+public class RendererManager {
+    private static final RendererManager INSTANCE = new RendererManager();
 
-    @Override
-    public void windowClosing(final WindowEvent e) {
-        LOGGER.debug("Closing window.");
-        MainFrame.getInstance().dispose();
-        MapEditor.exit();
+    private final List<AbstractMapRenderer> renderers;
 
+    private RendererManager() {
+        renderers = new FastList<AbstractMapRenderer>();
     }
 
-
-    @Override
-    public void windowClosed(final WindowEvent e) {
-        LOGGER.debug("Closed window.");
-
-        System.exit(0);
+    public void addRenderer(AbstractMapRenderer r) {
+        renderers.add(r);
+        Collections.sort(renderers);
     }
 
+    public void removeRenderer(AbstractMapRenderer r) {
+        renderers.remove(r);
+    }
+
+    public void render(Graphics2D g) {
+        for (AbstractMapRenderer r : renderers) {
+            r.renderMap(g);
+        }
+    }
+
+    public static RendererManager getInstance() {
+        return INSTANCE;
+    }
 }
