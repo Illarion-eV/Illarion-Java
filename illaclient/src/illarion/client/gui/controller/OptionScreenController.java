@@ -77,52 +77,6 @@ public final class OptionScreenController implements ScreenController {
 
     @Override
     public void bind(Nifty nifty, Screen screen) {
-        this.nifty = nifty;
-        this.screen = screen;
-
-        Element optionsPanel = screen.findElementByName("optionsPanel");
-        this.generalPanel = new PanelBuilder("generalPanel") {{
-            childLayoutVertical();
-            visible(false);
-            valignTop();
-            alignCenter();
-        }}
-                .build(nifty, screen, optionsPanel);
-
-        this.graphicPanel = new PanelBuilder("graphicPanel") {{
-            childLayoutVertical();
-            visible(false);
-            valignTop();
-            alignCenter();
-        }}
-                .build(nifty, screen, optionsPanel);
-
-        this.audioPanel = new PanelBuilder("audioPanel") {{
-            childLayoutVertical();
-            visible(false);
-            valignTop();
-            alignCenter();
-        }}
-                .build(nifty, screen, optionsPanel);
-
-
-        this.cfg = IllaClient.getCfg();
-        currentTab = TabType.None;
-
-        initGeneralTab();
-        initGraphicTab();
-        initAudioTab();
-
-        // TODO: For a next coding session, update all caption/text when language is changed.
-        /*screen.findNiftyControl("general", Button.class).setText(Lang.getMsg("option.common"));
-        screen.findNiftyControl("graphic", Button.class).setText(Lang.getMsg("option.graphics"));
-        screen.findNiftyControl("audio", Button.class).setText(Lang.getMsg("option.audio"));
-        screen.findNiftyControl("mouse", Button.class).setText(Lang.getMsg("option.mouse"));
-        screen.findNiftyControl("saveBtn", Button.class).setText(Lang.getMsg("illarion.common.config.gui.Save"));
-        screen.findNiftyControl("cancelBtn", Button.class).setText(Lang.getMsg("illarion.common.config.gui.Cancel"));*/
-
-
-        screen.layoutLayers();
     }
 
     private void initGeneralTab() {
@@ -248,7 +202,6 @@ public final class OptionScreenController implements ScreenController {
     @Override
     public void onStartScreen() {
 
-        onGeneralTabClick();
     }
 
     @Override
