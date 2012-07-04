@@ -42,12 +42,12 @@ public class MainFrame extends JRibbonFrame {
         getRibbon().setApplicationMenu(new MainMenu());
 
 
-        map = new MapPanel();
+        map = MapPanel.getInstance();
 
         add(map);
 
         RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
-                new ClipboardBand());
+                new ClipboardBand(), new ViewBand());
 
 
         getRibbon().addTask(task);

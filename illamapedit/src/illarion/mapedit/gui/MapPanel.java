@@ -23,20 +23,27 @@ import illarion.mapedit.render.RendererManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 /**
  * @author Tim
  */
-public class MapPanel extends JPanel {
-
+public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener {
+    private static final MapPanel INSTANCE = new MapPanel();
     private final RendererManager rendererManager;
     private final Rectangle dirty;
     private Map map;
+    private boolean canDrag;
+    private int clickX, clickY;
 
-    public MapPanel() {
+    private MapPanel() {
         super();
         rendererManager = RendererManager.getInstance();
         dirty = new Rectangle(getWidth(), getHeight());
+        rendererManager.initRenderers(this);
+        addMouseWheelListener(this);
+        addMouseMotionListener(this);
+        addMouseListener(this);
     }
 
     @Override
@@ -44,7 +51,8 @@ public class MapPanel extends JPanel {
         Graphics2D g = (Graphics2D) gt;
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
-        rendererManager.render(g);
+        if (map != null && rendererManager != null)
+            rendererManager.render(g);
         dirty.x = 0;
         dirty.y = 0;
         dirty.width = 0;
@@ -60,6 +68,65 @@ public class MapPanel extends JPanel {
     }
 
     public void setMap(final Map map) {
+        this.map = map;
+        repaint();
+    }
 
+    public Map getMap() {
+        return map;
+    }
+
+    public static MapPanel getInstance() {
+        return INSTANCE;
+    }
+
+    @Override
+    public void mouseWheelMoved(final MouseWheelEvent e) {
+        if (map != null) {
+            rendererManager.changeZoom(e.getWheelRotation() / 2f);
+            repaint();
+        }
+    }
+
+    @Override
+    public void mouseDragged(final MouseEvent e) {
+        if (canDrag && map != null) {
+            rendererManager.changeTranslation(e.getX() - clickX, e.getY() - clickY);
+            clickX = e.getX();
+            clickY = e.getY();
+            repaint();
+        }
+    }
+
+    @Override
+    public void mouseMoved(final MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseClicked(final MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(final MouseEvent e) {
+        if (canDrag && map != null) {
+            clickX = e.getX();
+            clickY = e.getY();
+        }
+    }
+
+    @Override
+    public void mouseReleased(final MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(final MouseEvent e) {
+        canDrag = true;
+    }
+
+    @Override
+    public void mouseExited(final MouseEvent e) {
+        canDrag = false;
     }
 }

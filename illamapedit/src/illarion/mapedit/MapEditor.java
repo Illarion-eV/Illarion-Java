@@ -24,8 +24,6 @@ import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
 import illarion.mapedit.gui.MainFrame;
-import illarion.mapedit.render.GridRenderer;
-import illarion.mapedit.render.RendererManager;
 import org.apache.log4j.*;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
@@ -152,7 +150,7 @@ public final class MapEditor {
             public void run() {
                 SubstanceLookAndFeel.setSkin("org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
                 MainFrame.getInstance().setVisible(true);
-                RendererManager.getInstance().addRenderer(new GridRenderer(MainFrame.getInstance().getMapPanel()));
+
             }
         });
 

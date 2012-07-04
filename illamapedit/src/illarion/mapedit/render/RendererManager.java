@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.render;
 
+import illarion.mapedit.gui.MapPanel;
 import javolution.util.FastList;
 
 import java.awt.*;
@@ -29,11 +30,23 @@ import java.util.List;
  */
 public class RendererManager {
     private static final RendererManager INSTANCE = new RendererManager();
+    private static final int DEFAULT_ZOOM = 5;
+    private static final int MIN_ZOOM = 5;
 
     private final List<AbstractMapRenderer> renderers;
 
+    private float zoom = DEFAULT_ZOOM;
+    private int translationX = 0;
+    private int translationY = 0;
+    private float tileHeight = zoom / 2f;
+    private float tileWidth = zoom;
+
     private RendererManager() {
         renderers = new FastList<AbstractMapRenderer>();
+    }
+
+    public void initRenderers(MapPanel panel) {
+        renderers.add(new GridRenderer(panel));
     }
 
     public void addRenderer(AbstractMapRenderer r) {
@@ -53,5 +66,57 @@ public class RendererManager {
 
     public static RendererManager getInstance() {
         return INSTANCE;
+    }
+
+    public float getTileHeight() {
+        return tileHeight;
+    }
+
+    public float getTileWidth() {
+        return tileWidth;
+    }
+
+    public void setZoom(float zoom) {
+        this.zoom = zoom;
+        tileHeight = zoom / 2f;
+        tileWidth = zoom;
+    }
+
+    public float getZoom() {
+        return zoom;
+    }
+
+    public int getTranslationX() {
+        return translationX;
+    }
+
+    public void setTranslationX(final int translationX) {
+        this.translationX = translationX;
+    }
+
+    public int getTranslationY() {
+        return translationY;
+    }
+
+    public void setTranslationY(final int translationY) {
+        this.translationY = translationY;
+    }
+
+    public void zoomIn() {
+        setZoom(zoom + .1f);
+    }
+
+    public void zoomOut() {
+        setZoom(zoom - .1f);
+
+    }
+
+    public void changeZoom(float amount) {
+        setZoom(zoom + amount);
+    }
+
+    public void changeTranslation(final int x, final int y) {
+        setTranslationX(translationX + x);
+        setTranslationY(translationY + y);
     }
 }

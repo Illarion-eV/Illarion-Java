@@ -48,10 +48,11 @@ public class MainMenu extends RibbonApplicationMenu {
                             public void actionPerformed(final ActionEvent e) {
 
                                 try {
-                                    MainFrame.getInstance().getMapPanel().setMap(MapChooser.getInstance().loadMap());
+                                    MapPanel.getInstance().setMap(MapChooser.getInstance().loadMap());
                                 } catch (IOException e1) {
                                     LOGGER.warn("Can't load map", e1);
                                 }
+
                             }
                         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
 

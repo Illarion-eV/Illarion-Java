@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.render;
 
+import illarion.mapedit.data.Map;
 import illarion.mapedit.gui.MapPanel;
 
 import java.awt.*;
@@ -27,19 +28,12 @@ import java.awt.*;
  */
 public abstract class AbstractMapRenderer implements Comparable<AbstractMapRenderer> {
 
-    private static final int DEFAULT_ZOOM = 32;
-    private static final int MIN_RENDER_TILE_SIZE = 10;
-
-    private final int zoom;
+    private final RendererManager manager;
     private final MapPanel mapPanel;
 
     public AbstractMapRenderer(final MapPanel mapPanel) {
-        this(mapPanel, DEFAULT_ZOOM);
-    }
-
-    public AbstractMapRenderer(final MapPanel mapPanel, final int zoom) {
+        this.manager = RendererManager.getInstance();
         this.mapPanel = mapPanel;
-        this.zoom = zoom;
     }
 
     protected Rectangle getRenderRectangle() {
@@ -49,8 +43,28 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
         return mapPanel.getVisibleRect().intersection(dirty);
     }
 
-    protected int getZoom() {
-        return zoom;
+    protected float getZoom() {
+        return RendererManager.getInstance().getZoom();
+    }
+
+    protected int getTranslateX() {
+        return manager.getTranslationX();
+    }
+
+    protected int getTranslateY() {
+        return manager.getTranslationY();
+    }
+
+    protected float getTileHeight() {
+        return manager.getTileHeight();
+    }
+
+    protected float getTileWidth() {
+        return manager.getTileWidth();
+    }
+
+    protected Map getMap() {
+        return mapPanel.getMap();
     }
 
     public abstract void renderMap(final Graphics2D graphics);
@@ -58,7 +72,7 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
     protected abstract int getRenderPriority();
 
     @Override
-    public int compareTo(AbstractMapRenderer o) {
+    public int compareTo(final AbstractMapRenderer o) {
         final int i = getRenderPriority(), j = o.getRenderPriority();
         if (i < j) {
             return -1;
