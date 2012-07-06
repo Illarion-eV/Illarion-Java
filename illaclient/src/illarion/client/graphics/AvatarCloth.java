@@ -21,7 +21,6 @@ package illarion.client.graphics;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.ClothFactory;
 import illarion.client.resources.Resource;
-import illarion.common.graphics.Sprite;
 import org.newdawn.slick.Color;
 
 /**

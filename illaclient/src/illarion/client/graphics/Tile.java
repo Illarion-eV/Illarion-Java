@@ -21,7 +21,6 @@ package illarion.client.graphics;
 import illarion.client.resources.Resource;
 import illarion.client.resources.TileFactory;
 import illarion.common.graphics.MapVariance;
-import illarion.common.graphics.Sprite;
 import illarion.common.graphics.TileInfo;
 import illarion.common.util.Location;
 import org.newdawn.slick.Color;

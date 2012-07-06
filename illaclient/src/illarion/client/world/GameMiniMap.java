@@ -18,6 +18,17 @@
  */
 package illarion.client.world;
 
+import illarion.client.graphics.Sprite;
+import illarion.client.graphics.Tile;
+import illarion.client.net.server.TileUpdate;
+import illarion.client.resources.TileFactory;
+import illarion.common.graphics.MapColor;
+import illarion.common.util.Location;
+import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -29,18 +40,6 @@ import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
-
-import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
-
-import illarion.client.graphics.Tile;
-import illarion.client.net.server.TileUpdate;
-import illarion.client.resources.TileFactory;
-import illarion.common.graphics.MapColor;
-import illarion.common.graphics.Sprite;
-import illarion.common.util.Location;
 
 /**
  * This class stores a reduced version of the full map the character knows. The map data is packed to a minimized and
@@ -244,7 +243,7 @@ public final class GameMiniMap {
     /**
      * Decode a tile to a image data array.
      *
-     * @param tileData the encoded informations about the tile
+     * @param tileData  the encoded informations about the tile
      * @param imageData the byte array that stores the image data
      */
     private void decodeTile(final short tileData, final ByteBuffer imageData) {
@@ -306,7 +305,7 @@ public final class GameMiniMap {
             prepareUpdateFullImage();
         } else {
             prepareUpdateAreaImage(dirtyAreaX1, dirtyAreaY1, (dirtyAreaX2 - dirtyAreaX1) + 1,
-                                   (dirtyAreaY2 - dirtyAreaY1) + 1);
+                    (dirtyAreaY2 - dirtyAreaY1) + 1);
         }
 
         dirty = false;
@@ -573,7 +572,7 @@ public final class GameMiniMap {
         buffer.flip();
 
         updateBuffers.addLast(buffer);
-        updateAreas.addLast(new int[] {updateAreaX, updateAreaY, updateAreaWidth, updateAreaHeight});
+        updateAreas.addLast(new int[]{updateAreaX, updateAreaY, updateAreaWidth, updateAreaHeight});
     }
 
     /**
@@ -683,8 +682,8 @@ public final class GameMiniMap {
     /**
      * Save the informations about a tile within the map data. This will overwrite any existing data about a tile.
      *
-     * @param loc the location of the tile
-     * @param tileID the ID of tile that is located at the position
+     * @param loc     the location of the tile
+     * @param tileID  the ID of tile that is located at the position
      * @param blocked true in case this tile is not passable
      * @return <code>true</code> in case the new ID of the tile and the already set ID are not equal and the ID did
      *         change this way

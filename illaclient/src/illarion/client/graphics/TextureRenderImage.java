@@ -16,34 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.loading;
+package illarion.client.graphics;
 
-import illarion.client.graphics.SpriteBuffer;
-import org.newdawn.slick.loading.DeferredResource;
-
-import java.io.IOException;
+import de.lessvoid.nifty.slick2d.render.image.ImageSlickRenderImage;
+import org.newdawn.slick.Image;
 
 /**
- * The finishing task for the loading sequence. This one should be called as
- * the last one during the loading sequence.
+ * This class allows accessing the textures from the texture loader by nifty.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class FinishLoading implements DeferredResource {
+public class TextureRenderImage extends ImageSlickRenderImage {
     /**
-     * Perform the finishing tasks of the texture loading.
+     * Default constructor.
+     *
+     * @param image the image that is encapsulated into this class
      */
-    @Override
-    public void load() throws IOException {
-        SpriteBuffer.getInstance().cleanup();
+    public TextureRenderImage(final Image image) {
+        super(image);
     }
 
     /**
-     * The human readable description of this task.
+     * Overwrite the destroy method to avoid that our images get ripped apart.
      */
     @Override
-    public String getDescription() {
-        return null;
+    public void dispose() {
+        // do nothing
     }
-
 }

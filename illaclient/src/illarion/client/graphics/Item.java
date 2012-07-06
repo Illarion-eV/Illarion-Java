@@ -23,7 +23,6 @@ import illarion.client.resources.Resource;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
-import illarion.common.graphics.Sprite;
 import illarion.common.util.Location;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;

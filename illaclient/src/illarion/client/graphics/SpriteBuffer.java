@@ -1,34 +1,34 @@
 /*
- * This file is part of the Illarion Graphics Engine.
+ * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Graphics Engine is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Graphics Engine is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.common.graphics;
+package illarion.client.graphics;
+
+import javolution.text.TextBuilder;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javolution.text.TextBuilder;
-
 /**
  * A function that stores the created sprites and orders them by name of the the
  * sprite so other parts of the client do not create more and more sprites of
  * the same thing to render.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class SpriteBuffer {
@@ -39,7 +39,7 @@ public final class SpriteBuffer {
 
     /**
      * Get the singleton instance of the SpriteBuffer object.
-     * 
+     *
      * @return the singleton instance object
      */
     public static SpriteBuffer getInstance() {
@@ -76,7 +76,7 @@ public final class SpriteBuffer {
      * Drop a sprite from the sprite buffer. A dropped sprite is not available
      * anymore and maybe leads to removing the texture. Its not a good idea to
      * remove sprites with textures that need to be used later.
-     * 
+     *
      * @param droppingSprite the sprite that shall be dropped
      */
     public void dropSprite(final Sprite droppingSprite) {
@@ -101,44 +101,44 @@ public final class SpriteBuffer {
     /**
      * Shorted get Sprite call for textures that do not need a offset and are
      * aligned in the upper left corner.
-     * 
-     * @param path the path the sprite file is located at
-     * @param name the name of the sprite that is searched
+     *
+     * @param path   the path the sprite file is located at
+     * @param name   the name of the sprite that is searched
      * @param smooth true in case the picture needs to be smoothed due resizing
-     *            operations
+     *               operations
      * @return the sprite that was created or loaded from the cache
      */
     public Sprite getSprite(final String path, final String name,
-        final boolean smooth) {
+                            final boolean smooth) {
         return getSprite(path, name, 1, 0, 0, Sprite.HAlign.left,
-            Sprite.VAlign.bottom, smooth, false);
+                Sprite.VAlign.bottom, smooth, false);
     }
 
     /**
      * Get a sprite, either from the cache or generate a new one with the
      * parameters that are handed over here.
-     * 
-     * @param path the path the sprite file is located at
-     * @param name the name of the sprite that is searched
+     *
+     * @param path   the path the sprite file is located at
+     * @param name   the name of the sprite that is searched
      * @param frames the amount of frames or variations this sprite has
-     * @param offX the sprite picture offset in X direction
-     * @param offY the sprite picture offset in Y direction
-     * @param horz the horizontal alignment of the picture
-     * @param vert the vertical alignment of the picture
+     * @param offX   the sprite picture offset in X direction
+     * @param offY   the sprite picture offset in Y direction
+     * @param horz   the horizontal alignment of the picture
+     * @param vert   the vertical alignment of the picture
      * @param smooth true in case the picture needs to be smoothed due resizing
-     *            operations
+     *               operations
      * @param mirror show the sprite horizontal mirrored
      * @return the sprite that was created or loaded from the cache
      */
     @SuppressWarnings("nls")
     public Sprite getSprite(final String path, final String name,
-        final int frames, final int offX, final int offY,
-        final Sprite.HAlign horz, final Sprite.VAlign vert,
-        final boolean smooth, final boolean mirror) {
+                            final int frames, final int offX, final int offY,
+                            final Sprite.HAlign horz, final Sprite.VAlign vert,
+                            final boolean smooth, final boolean mirror) {
 
         if ((frames <= 0) && (name != null)) {
             throw new IllegalArgumentException("Tried to get a sprite with "
-                + "0 or less frames. Sprite source: " + path + "/" + name);
+                    + "0 or less frames. Sprite source: " + path + "/" + name);
         }
 
         TextBuilder nameBuilder = TextBuilder.newInstance();
@@ -178,7 +178,7 @@ public final class SpriteBuffer {
         if (frames == 1) {
 
             retSprite.addImage(TextureLoader.getInstance().getTexture(path,
-                name));
+                    name));
         } else {
             nameBuilder = TextBuilder.newInstance();
             nameBuilder.append(name);
@@ -188,7 +188,7 @@ public final class SpriteBuffer {
                 nameBuilder.setLength(targetLength);
                 nameBuilder.append(i);
                 retSprite.addImage(TextureLoader.getInstance().getTexture(
-                    path, nameBuilder.toString()));
+                        path, nameBuilder.toString()));
             }
             TextBuilder.recycle(nameBuilder);
         }

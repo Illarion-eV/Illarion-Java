@@ -18,7 +18,7 @@
  */
 package illarion.client.loading;
 
-import illarion.common.graphics.TextureLoader;
+import illarion.client.graphics.TextureLoader;
 import org.newdawn.slick.loading.LoadingList;
 
 /**
@@ -42,8 +42,7 @@ public final class Loading {
 
     public static void enlistMissingComponents() {
         if (!loadingDone) {
-            while (!TextureLoader.getInstance().preloadAtlasTextures()) {
-            }
+            TextureLoader.getInstance().enlistAllTextureAtlasLoadQueries();
 
             LoadingList.get().add(new ResourceTableLoading());
             LoadingList.get().add(new GameEnvironmentLoading());

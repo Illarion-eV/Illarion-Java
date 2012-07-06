@@ -22,7 +22,6 @@ import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.Resource;
 import illarion.client.util.Lang;
 import illarion.client.world.World;
-import illarion.common.graphics.Sprite;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
