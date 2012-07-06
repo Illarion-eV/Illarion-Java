@@ -18,7 +18,7 @@
  */
 package illarion.client.graphics;
 
-import illarion.common.util.TextureAtlas;
+import illarion.common.graphics.TextureAtlas;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.XMLPackedSheet;
 

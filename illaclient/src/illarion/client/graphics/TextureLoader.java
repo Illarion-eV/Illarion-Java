@@ -21,7 +21,7 @@ package illarion.client.graphics;
 import de.lessvoid.nifty.slick2d.render.image.SlickLoadImageException;
 import de.lessvoid.nifty.slick2d.render.image.SlickRenderImage;
 import de.lessvoid.nifty.slick2d.render.image.loader.SlickRenderImageLoader;
-import illarion.common.util.AbstractTextureLoader;
+import illarion.common.graphics.AbstractTextureLoader;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
