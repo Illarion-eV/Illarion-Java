@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.graphics;
+package illarion.mapedit.resource.loaders;
 
 import illarion.common.graphics.AbstractTextureLoader;
+import illarion.mapedit.graphics.TextureAtlasAwt;
 import illarion.mapedit.resource.Resource;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -62,7 +63,7 @@ public final class TextureLoaderAwt extends AbstractTextureLoader<TextureAtlasAw
      * The private constructor to prevent the creation of additional instances of this class.
      */
     private TextureLoaderAwt() {
-        // nothing to do
+        super(ITEMS_DIR, TILES_DIR);
     }
 
     @Override

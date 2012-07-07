@@ -23,9 +23,10 @@ import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
-import illarion.mapedit.graphics.TextureLoaderAwt;
 import illarion.mapedit.gui.MainFrame;
 import illarion.mapedit.resource.ResourceManager;
+import illarion.mapedit.resource.loaders.TextureLoaderAwt;
+import illarion.mapedit.resource.loaders.TileLoader;
 import org.apache.log4j.*;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
@@ -140,7 +141,8 @@ public final class MapEditor {
 
         ResourceManager res = ResourceManager.getInstance();
         res.addResources(
-                TextureLoaderAwt.getInstance()
+                TextureLoaderAwt.getInstance(),
+                TileLoader.getInstance()
         );
         while (res.hasNextToLoad()) {
             try {
