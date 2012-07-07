@@ -19,7 +19,7 @@
 package illarion.client.net.server.events;
 
 /**
- * This event is triggered in case the client received a inform message that was issued by the server.
+ * This event is triggered in case the client received a inform message that was issued by a script on the server.
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
