@@ -490,6 +490,10 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
         int result = 0;
         try {
             in = Thread.currentThread().getContextClassLoader().getResourceAsStream(directory + "atlas.count");
+            if (in == null) {
+                return 0;
+            }
+
             final DataInputStream dIn = new DataInputStream(in);
             result = dIn.readInt();
         } catch (final IOException e) {
