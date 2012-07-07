@@ -19,9 +19,14 @@
 package illarion.client.net.server;
 
 import illarion.client.net.NetCommReader;
+import illarion.client.net.server.events.BroadcastInformReceivedEvent;
+import illarion.client.net.server.events.ScriptInformReceivedEvent;
+import illarion.client.net.server.events.ServerInformReceivedEvent;
+import illarion.client.net.server.events.TextToInformReceivedEvent;
 import illarion.client.world.World;
 import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
@@ -64,6 +69,36 @@ public final class InformMsg extends AbstractReply {
 
     @Override
     public boolean executeUpdate() {
+        switch (informType) {
+            case 0:
+                EventBus.publish(new ServerInformReceivedEvent(informText));
+                break;
+            case 1:
+                EventBus.publish(new BroadcastInformReceivedEvent(informText));
+                break;
+            case 2:
+                EventBus.publish(new TextToInformReceivedEvent(informText));
+                break;
+            case 100:
+            case 101:
+            case 102:
+                EventBus.publish(new ScriptInformReceivedEvent(informType - 100, informText));
+                break;
+
+            default:
+                TextBuilder builder = null;
+                try {
+                    builder = TextBuilder.newInstance();
+                    builder.append("Received inform with unknown type: ").append(informType);
+                    builder.append("(").append(informText).append(")");
+                    LOGGER.warn(builder.toString());
+                } finally {
+                    if (builder != null) {
+                        TextBuilder.recycle(builder);
+                    }
+                }
+        }
+
         LOGGER.info(toString());
         World.getChatHandler().handleMessage(informText, World.getPlayer().getLocation()); //TODO Nice output
         return true;
