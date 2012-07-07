@@ -19,11 +19,13 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
+import illarion.mapedit.data.Map;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -39,7 +41,7 @@ public class MainMenu extends RibbonApplicationMenu {
         super();
 
 
-        final RibbonApplicationMenuEntryPrimary newScriptEntry =
+        final RibbonApplicationMenuEntryPrimary menuOpenMap =
                 new RibbonApplicationMenuEntryPrimary(
                         Utils.getResizableIconFromResource("fileopen.png"),
                         Lang.getMsg("gui.mainmenu.Open"),
@@ -51,11 +53,53 @@ public class MainMenu extends RibbonApplicationMenu {
                                     MapPanel.getInstance().setMap(MapChooser.getInstance().loadMap());
                                 } catch (IOException e1) {
                                     LOGGER.warn("Can't load map", e1);
+                                    JOptionPane.showMessageDialog(MainFrame.getInstance(),
+                                            Lang.getMsg("gui.error.LoadMap"),
+                                            Lang.getMsg("gui.error"),
+                                            JOptionPane.ERROR_MESSAGE,
+                                            Utils.getIconFromResource("messagebox_critical.png"));
                                 }
 
                             }
                         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
+        final RibbonApplicationMenuEntryPrimary menuNewMap =
+                new RibbonApplicationMenuEntryPrimary(
+                        Utils.getResizableIconFromResource("filenew.png"),
+                        Lang.getMsg("gui.mainmenu.New"),
+                        new ActionListener() {
+                            @Override
+                            public void actionPerformed(final ActionEvent e) {
+                                MapPanel.getInstance().setMap(MapChooser.getInstance().newMap());
+                            }
+                        }, JCommandButton.CommandButtonKind.ACTION_ONLY
+                );
+        final RibbonApplicationMenuEntryPrimary menuSave =
+                new RibbonApplicationMenuEntryPrimary(
+                        Utils.getResizableIconFromResource("filesave.png"),
+                        Lang.getMsg("gui.mainmenu.Save"),
+                        new ActionListener() {
+                            @Override
+                            public void actionPerformed(final ActionEvent e) {
+                                try {
+                                    Map m = MapPanel.getInstance().getMap();
+                                    if (m != null) {
+                                        m.saveToFiles();
+                                    }
+                                } catch (IOException e1) {
+                                    LOGGER.warn("Can't save map", e1);
+                                    JOptionPane.showMessageDialog(MainFrame.getInstance(),
+                                            Lang.getMsg("gui.error.SaveMap"),
+                                            Lang.getMsg("gui.error"),
+                                            JOptionPane.ERROR_MESSAGE,
+                                            Utils.getIconFromResource("messagebox_critical.png"));
+                                }
+                            }
+                        }, JCommandButton.CommandButtonKind.ACTION_ONLY
+                );
 
-        addMenuEntry(newScriptEntry);
+        addMenuEntry(menuOpenMap);
+        addMenuEntry(menuNewMap);
+        addMenuEntry(menuSave);
+        addMenuSeparator();
     }
 }

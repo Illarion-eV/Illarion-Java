@@ -134,6 +134,7 @@ public class TileData {
 
     /**
      * Saves the map dimension, the map size and the tiles to a given file.
+     *
      * @param file the file to save the data in.
      * @throws IOException if a error occurs
      */
@@ -151,8 +152,8 @@ public class TileData {
                 int i = y * mapDimensions.getW() + x;
                 builder.append(x).append(Map.DM);
                 builder.append(y).append(Map.DM);
-                builder.append(tileData[i].getId()).append(Map.DM);
-                builder.append(tileData[i].getMusicID()).append(Map.DM);
+                builder.append(getID(tileData[i])).append(Map.DM);
+                builder.append(getMusicID(tileData[i])).append(Map.DM);
                 builder.append(0).append(Map.NL);
             }
         }
@@ -160,5 +161,13 @@ public class TileData {
         writer.close();
         TextBuilder.recycle(builder);
 
+    }
+
+    private static int getID(final Tile t) {
+        return (t == null) ? 0 : t.getId();
+    }
+
+    private static int getMusicID(final Tile t) {
+        return (t == null) ? 0 : t.getMusicID();
     }
 }

@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class RendererManager {
     private static final RendererManager INSTANCE = new RendererManager();
-    private static final int DEFAULT_ZOOM = 5;
+    public static final int DEFAULT_ZOOM = 5;
     private static final int MIN_ZOOM = 5;
 
     private final List<AbstractMapRenderer> renderers;
@@ -47,6 +47,7 @@ public class RendererManager {
 
     public void initRenderers(MapPanel panel) {
         renderers.add(new GridRenderer(panel));
+        renderers.add(new InfoRenderer(panel));
     }
 
     public void addRenderer(AbstractMapRenderer r) {

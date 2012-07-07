@@ -62,8 +62,17 @@ public class ViewBand extends JRibbonBand {
             }
         };
 
+        ActionListener zoomOriginalListener = new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RendererManager.getInstance().setZoom(RendererManager.DEFAULT_ZOOM);
+                MapPanel.getInstance().repaint();
+            }
+        };
+
         zoomIn.addActionListener(zoomInListener);
         zoomOut.addActionListener(zoomOutListener);
+        zoomOriginal.addActionListener(zoomOriginalListener);
 
         addCommandButton(zoomOriginal, RibbonElementPriority.TOP);
         addCommandButton(zoomOut, RibbonElementPriority.TOP);

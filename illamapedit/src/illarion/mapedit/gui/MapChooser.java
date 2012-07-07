@@ -23,10 +23,12 @@ import illarion.common.config.ConfigChangeListener;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapDimensions;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -46,7 +48,7 @@ public class MapChooser {
         private final JList<String> list;
 
         public MapSelector(String[] maps) {
-            super();
+            super(MainFrame.getInstance(), Lang.getMsg("gui.chooser"));
             setModal(true);
             setLayout(new BorderLayout());
 
@@ -74,7 +76,82 @@ public class MapChooser {
         }
     }
 
-    private static File lastDir = new File("C:\\Users\\Tim\\Desktop\\illa-dev");
+    private class NewMapInfoDialog extends JDialog {
+
+        private final JSpinner width;
+        private final JSpinner height;
+        private final JSpinner x;
+        private final JSpinner y;
+        private final JSpinner l;
+        private final JTextField name;
+        private File saveDir;
+
+        public NewMapInfoDialog() {
+            super(MainFrame.getInstance(), Lang.getMsg("gui.newmap"));
+            getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+            setResizable(false);
+            setModal(true);
+            width = new JSpinner(new SpinnerNumberModel(100, 0, 100000, 1));
+            height = new JSpinner(new SpinnerNumberModel(100, 0, 100000, 1));
+            x = new JSpinner(new SpinnerNumberModel(0, -10000, 10000, 1));
+            y = new JSpinner(new SpinnerNumberModel(0, -10000, 10000, 1));
+            l = new JSpinner(new SpinnerNumberModel(0, -10000, 10000, 1));
+            name = new JTextField(1);
+            final JButton btn = new JButton(Lang.getMsg("gui.newmap.Ok"));
+            btn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    final JFileChooser ch = new JFileChooser(MapEditor.getConfig().getFile("mapLastOpenDir"));
+                    ch.setDialogType(JFileChooser.OPEN_DIALOG);
+                    ch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+                    if (ch.showOpenDialog(MainFrame.getInstance()) != JFileChooser.APPROVE_OPTION) {
+                        setVisible(false);
+                        return;
+                    }
+                    saveDir = ch.getSelectedFile();
+                    setVisible(false);
+                }
+            });
+
+            Dimension d = width.getPreferredSize();
+            d.width = 100;
+            width.setPreferredSize(d);
+            height.setPreferredSize(d);
+            x.setPreferredSize(d);
+            y.setPreferredSize(d);
+            l.setPreferredSize(d);
+            add(new JLabel(Lang.getMsg("gui.newmap.Width")));
+            add(width);
+            add(new JLabel(Lang.getMsg("gui.newmap.Height")));
+            add(height);
+            add(new JLabel(Lang.getMsg("gui.newmap.X")));
+            add(x);
+            add(new JLabel(Lang.getMsg("gui.newmap.Y")));
+            add(y);
+            add(new JLabel(Lang.getMsg("gui.newmap.Z")));
+            add(l);
+            add(new JLabel(Lang.getMsg("gui.newmap.Name")));
+            add(name);
+            add(btn);
+            doLayout();
+            pack();
+        }
+
+        public Map showDialog() {
+            setVisible(true);
+            dispose();
+            if (saveDir == null) {
+                return null;
+            }
+            return new Map(name.getText(), saveDir.getPath(), new MapDimensions((Integer) x.getValue(), (Integer) y.getValue(),
+                    (Integer) l.getValue(),
+                    (Integer) width.getValue(), (Integer) height.getValue())
+            );
+        }
+    }
+
+    private static File lastDir;
     private static final MapChooser INSTANCE = new MapChooser();
 
     private MapChooser() {
@@ -128,6 +205,8 @@ public class MapChooser {
         JFileChooser ch = new JFileChooser();
         if (isDirOk(lastDir)) {
             ch.setCurrentDirectory(lastDir);
+        } else {
+            ch.setCurrentDirectory(MapEditor.getConfig().getFile("mapLastOpenDir"));
         }
         ch.setDialogType(JFileChooser.OPEN_DIALOG);
         ch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -144,5 +223,9 @@ public class MapChooser {
 
     private static boolean isDirOk(final File f) {
         return (f != null) && f.exists() && f.isDirectory();
+    }
+
+    public Map newMap() {
+        return new NewMapInfoDialog().showDialog();
     }
 }

@@ -29,9 +29,8 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * A small set of static utility functions that help at some points.
@@ -39,7 +38,7 @@ import java.io.IOException;
  * @author Martin Karing
  * @since 1.00
  */
-public final class Utils {
+final class Utils {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
@@ -63,29 +62,15 @@ public final class Utils {
         return resizeIcon;
     }
 
-    public static void selectAndOpenMapDir() {
-        JFileChooser ch = new JFileChooser();
-        ch.setDialogType(JFileChooser.OPEN_DIALOG);
-        ch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        if (ch.showOpenDialog(MainFrame.getInstance()) != JFileChooser.APPROVE_OPTION) {
-            return;
+    public static ImageIcon getIconFromResource(String resource) {
+        URL imgURL = Utils.class.getClassLoader()
+                .getResource(resource);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL, resource);
+        } else {
+            LOGGER.warn("Can't load resource " + resource);
+            return null;
         }
-        File dir = ch.getSelectedFile();
-        selectAndOpenMap(dir);
-    }
 
-    private static void selectAndOpenMap(final File dir) {
-        if (dir == null || !dir.exists() || !dir.isDirectory()) {
-            return;
-        }
-        String[] files = dir.list(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.endsWith(".tiles.txt");
-            }
-        });
-        for (String f : files) {
-            System.out.println(f);
-        }
     }
 }
