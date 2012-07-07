@@ -146,7 +146,7 @@ public final class CommandList {
     public static final int CMD_KEEPALIVE = 0xD8; // NO_UCD
 
     /**
-     * Client command to send the login informations.
+     * Client command to send the login information.
      */
     public static final int CMD_LOGIN = 0x0D;
 
@@ -430,6 +430,11 @@ public final class CommandList {
      * Server message that contains a spoken text or a emote.
      */
     public static final int MSG_SAY = 0xD7;
+
+    /**
+     * Server message that contains a information text for the player.
+     */
+    public static final int MSG_INFORM = 0xD8;
 
     /**
      * Server message that contains a shouted text.

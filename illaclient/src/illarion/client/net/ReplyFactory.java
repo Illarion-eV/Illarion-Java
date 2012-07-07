@@ -73,6 +73,7 @@ public final class ReplyFactory
         register(new SayMsg());
         map(CommandList.MSG_WHISPER, CommandList.MSG_SAY);
         map(CommandList.MSG_SHOUT, CommandList.MSG_SAY);
+        register(new InformMsg());
         register(new IntroduceMsg());
 
         register(new MusicMsg());
