@@ -21,8 +21,8 @@ package illarion.client.resources.loaders;
 import illarion.client.graphics.Tile;
 import illarion.client.resources.ResourceFactory;
 import illarion.common.graphics.TileInfo;
-import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
+import illarion.common.util.TableLoaderTiles;
 import org.apache.log4j.Logger;
 
 /**
@@ -34,58 +34,7 @@ import org.apache.log4j.Logger;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TileLoader extends AbstractResourceLoader<Tile> implements
-        TableLoaderSink {
-    /**
-     * The column index of the minimap color of that tile in the resource table.
-     */
-    private static final int TB_COLOR = 5;
-
-    /**
-     * The column index of the walking cost of that tile in the resource table.
-     */
-    private static final int TB_COST = 9;
-    /**
-     * The column index of the frame count of that tile in the resource table.
-     */
-    private static final int TB_FRAME = 2;
-
-    /**
-     * The column index of the ground type ID of that tile in the resource
-     * table.
-     */
-    private static final int TB_GROUND_ID = 7;
-
-    /**
-     * The column index of the display mode of that tile in the resource table.
-     */
-    private static final int TB_MODE = 3;
-
-    /**
-     * The column index of the file name of that tile in the resource table.
-     */
-    private static final int TB_NAME = 1;
-
-    /**
-     * The column index of the opaque flag of that tile in the resource table.
-     */
-    private static final int TB_OPAQUE = 12;
-
-    /**
-     * The column index of the animation speed of that tile in the resource
-     * table.
-     */
-    private static final int TB_SPEED = 4;
-
-    /**
-     * Tile mode value for animated tiles.
-     */
-    private static final int TILE_MODE_ANIMATED = 1;
-
-    /**
-     * Tile mode value for variant tiles.
-     */
-    private static final int TILE_MODE_VARIANT = 2;
-
+        TableLoaderSink<TableLoaderTiles> {
     /**
      * The logger that is used to report error messages.
      */
@@ -103,7 +52,7 @@ public final class TileLoader extends AbstractResourceLoader<Tile> implements
         final ResourceFactory<Tile> factory = getTargetFactory();
 
         factory.init();
-        new TableLoader("Tiles", this);
+        new TableLoaderTiles("Tiles", this);
         factory.loadingFinished();
 
         return factory;
@@ -113,23 +62,21 @@ public final class TileLoader extends AbstractResourceLoader<Tile> implements
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, final TableLoader loader) {
-        final int id = loader.getInt(TB_GROUND_ID);
-        final int mode = loader.getInt(TB_MODE);
-        final String name = loader.getString(TB_NAME);
+    public boolean processRecord(final int line, final TableLoaderTiles loader) {
+        final int id = loader.getTileId();
+        final int mode = loader.getTileMode();
+        final String name = loader.getResourceName();
         Tile tile = null;
         final TileInfo info =
-                new TileInfo(loader.getInt(TB_COLOR), loader.getInt(TB_COST),
-                        loader.getBoolean(TB_OPAQUE));
+                new TileInfo(loader.getTileColor(), loader.getMovementCost(), loader.isOpaque());
         switch (mode) {
-            case TILE_MODE_ANIMATED:
+            case TableLoaderTiles.TILE_MODE_ANIMATED:
                 tile =
-                        new Tile(id, name, loader.getInt(TB_FRAME),
-                                loader.getInt(TB_SPEED), info);
+                        new Tile(id, name, loader.getFrameCount(), loader.getAnimationSpeed(), info);
                 break;
 
-            case TILE_MODE_VARIANT:
-                tile = new Tile(id, name, loader.getInt(TB_FRAME), 0, info);
+            case TableLoaderTiles.TILE_MODE_VARIANT:
+                tile = new Tile(id, name, loader.getFrameCount(), 0, info);
                 break;
 
             default:
