@@ -79,6 +79,11 @@ public final class TableLoaderTiles extends TableLoader {
     private static final int TB_OPAQUE = 12;
 
     /**
+     * The column index of the comment of that tile in the resource table.
+     */
+    private static final int TB_COMMENT = 10;
+
+    /**
      * The column index of the animation speed of that tile in the resource table.
      */
     private static final int TB_SPEED = 4;
@@ -126,15 +131,6 @@ public final class TableLoaderTiles extends TableLoader {
     }
 
     /**
-     * Get the ID of this item.
-     *
-     * @return the tile ID
-     */
-    public int getTileId() {
-        return getInt(TB_GROUND_ID);
-    }
-
-    /**
      * Get the movement cost for moves on this tile. The higher the cost, the slower the character is expected to move
      * on this tile.
      *
@@ -142,6 +138,24 @@ public final class TableLoaderTiles extends TableLoader {
      */
     public int getMovementCost() {
         return getInt(TB_COST);
+    }
+
+    /**
+     * The english name of the tile.
+     *
+     * @return the english tile name
+     */
+    public String getNameEnglish() {
+        return getString(TB_COMMENT);
+    }
+
+    /**
+     * The german name of the tile.
+     *
+     * @return the german tile name
+     */
+    public String getNameGerman() {
+        return getString(TB_COMMENT);
     }
 
     /**
@@ -162,6 +176,15 @@ public final class TableLoaderTiles extends TableLoader {
      */
     public int getTileColor() {
         return getInt(TB_COLOR);
+    }
+
+    /**
+     * Get the ID of this item.
+     *
+     * @return the tile ID
+     */
+    public int getTileId() {
+        return getInt(TB_GROUND_ID);
     }
 
     /**
