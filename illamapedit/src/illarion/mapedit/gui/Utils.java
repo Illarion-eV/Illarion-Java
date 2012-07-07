@@ -31,6 +31,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 
 /**
  * A small set of static utility functions that help at some points.
@@ -72,5 +73,9 @@ final class Utils {
             return null;
         }
 
+    }
+
+    public static boolean isLanguageGerman() {
+        return Locale.getDefault().equals(Locale.GERMAN);
     }
 }

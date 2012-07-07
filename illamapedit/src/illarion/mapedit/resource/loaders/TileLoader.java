@@ -27,6 +27,7 @@ import javolution.util.FastList;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * @author Tim
@@ -66,18 +67,63 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
         switch (mode) {
             case TableLoaderTiles.TILE_MODE_ANIMATED:
 
-                tile = new TileImg(id, name, loader.getFrameCount(), loader.getAnimationSpeed(), info,
-                        getImages(name, loader.getFrameCount()));
+                if (isLocaleGerman()) {
+                    tile = new TileImg(id,
+                            name,
+                            loader.getFrameCount(),
+                            loader.getAnimationSpeed(),
+                            info,
+                            getImages(name, loader.getFrameCount()),
+                            loader.getNameGerman());
+                } else {
+                    tile = new TileImg(id,
+                            name,
+                            loader.getFrameCount(),
+                            loader.getAnimationSpeed(),
+                            info,
+                            getImages(name, loader.getFrameCount()),
+                            loader.getNameEnglish());
+                }
                 break;
 
             case TableLoaderTiles.TILE_MODE_VARIANT:
-                tile = new TileImg(id, name, loader.getFrameCount(), 0, info,
-                        getImages(name, loader.getFrameCount()));
+                if (isLocaleGerman()) {
+                    tile = new TileImg(id,
+                            name,
+                            loader.getFrameCount(),
+                            0,
+                            info,
+                            getImages(name, loader.getFrameCount()),
+                            loader.getNameGerman());
+                } else {
+                    tile = new TileImg(id,
+                            name,
+                            loader.getFrameCount(),
+                            0,
+                            info,
+                            getImages(name, loader.getFrameCount()),
+                            loader.getNameEnglish());
+                }
                 break;
 
             default:
-                tile = new TileImg(id, name, 1, 0, info,
-                        getImages(name, 1));
+                if (isLocaleGerman()) {
+                    tile = new TileImg(id,
+                            name,
+                            1,
+                            0,
+                            info,
+                            getImages(name, 1),
+                            loader.getNameGerman());
+                } else {
+                    tile = new TileImg(id,
+                            name,
+                            1,
+                            0,
+                            info,
+                            getImages(name, 1),
+                            loader.getNameEnglish());
+                }
                 break;
 
         }
@@ -111,5 +157,14 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
 
     public static TileLoader getInstance() {
         return INSTANCE;
+    }
+
+    private static boolean isLocaleGerman() {
+        return Locale.getDefault().equals(Locale.GERMAN);
+    }
+
+    public TileImg[] getTiles() {
+        TileImg[] t = tiles.toArray(new TileImg[tiles.size()]);
+        return t;
     }
 }

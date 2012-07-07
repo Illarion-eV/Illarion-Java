@@ -85,7 +85,11 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     @Override
     public void mouseWheelMoved(final MouseWheelEvent e) {
         if (map != null) {
-            rendererManager.changeZoom(e.getWheelRotation() / 2f);
+            if (e.getWheelRotation() < 0) {
+                rendererManager.zoomIn();
+            } else if (e.getWheelRotation() > 0) {
+                rendererManager.zoomOut();
+            }
             repaint();
         }
     }

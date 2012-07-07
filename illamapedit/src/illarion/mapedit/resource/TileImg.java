@@ -33,15 +33,18 @@ public class TileImg {
     private final int animationSpeed;
     private final TileInfo info;
     private final Image[] img;
+    private final String description;
 
     public TileImg(final int id, final String name, final int frameCount, final int animationSpeed,
-                   final TileInfo info, final Image[] img) {
+                   final TileInfo info, final Image[] img, final String description) {
         this.id = id;
         this.name = name;
         this.frameCount = frameCount;
         this.animationSpeed = animationSpeed;
         this.info = info;
         this.img = img;
+        this.description = description;
+
     }
 
     public int getId() {
@@ -67,4 +70,9 @@ public class TileImg {
     public Image[] getImg() {
         return img;
     }
+
+    public String getDescription() {
+        return description;
+    }
+
 }

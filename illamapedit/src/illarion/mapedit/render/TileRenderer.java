@@ -18,9 +18,14 @@
  */
 package illarion.mapedit.render;
 
+import illarion.common.util.Location;
+import illarion.mapedit.data.Map;
 import illarion.mapedit.gui.MapPanel;
+import illarion.mapedit.resource.TileImg;
+import illarion.mapedit.resource.loaders.TileLoader;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 /**
  * This renderer should render all tiles.
@@ -28,6 +33,7 @@ import java.awt.*;
  * @author Tim
  */
 public class TileRenderer extends AbstractMapRenderer {
+
     /**
      * Creates a new map renderer
      *
@@ -38,7 +44,40 @@ public class TileRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(final Graphics2D graphics) {
+    public void renderMap(final Graphics2D g) {
+        final Map map = getMap();
+        final int width = map.getW();
+        final int height = map.getH();
+        AffineTransform transform = g.getTransform();
+        g.translate(getTranslateX(), getTranslateY());
+        g.scale(getZoom(), getZoom());
+
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                int xdisp = Location.displayCoordinateX(x, y, 0);
+                int ydisp = Location.displayCoordinateY(x, y, 0);
+                if (getRenderRectangle().contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
+                        (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
+
+                    TileImg t = TileLoader.getInstance().getTileFromId(map.getTileData().getTileAt(x,
+                            y).getId());
+                    if (t != null) {
+                        Image img = t.getImg()[0];
+                        if (img != null) {
+                            g.drawImage(img,
+                                    xdisp,
+                                    ydisp, null);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        g.setTransform(transform);
+    }
+
+    private void paint(final int x, final int y) {
 
     }
 

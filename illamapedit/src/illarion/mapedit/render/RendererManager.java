@@ -32,24 +32,24 @@ import java.util.List;
  */
 public class RendererManager {
     private static final RendererManager INSTANCE = new RendererManager();
-    public static final int DEFAULT_ZOOM = 5;
-    private static final int MIN_ZOOM = 5;
+    public static final float DEFAULT_ZOOM = 1f;
+    private static final float MIN_ZOOM = 0.05f;
 
     private final List<AbstractMapRenderer> renderers;
 
     private float zoom = DEFAULT_ZOOM;
     private int translationX = 0;
     private int translationY = 0;
-    private float tileHeight = zoom / 2f;
-    private float tileWidth = zoom;
+    private float tileHeight = 16;
+    private float tileWidth = 32;
 
     private RendererManager() {
         renderers = new FastList<AbstractMapRenderer>();
     }
 
     public void initRenderers(MapPanel panel) {
-        renderers.add(new GridRenderer(panel));
         renderers.add(new InfoRenderer(panel));
+        renderers.add(new TileRenderer(panel));
     }
 
     public void addRenderer(AbstractMapRenderer r) {
@@ -106,11 +106,11 @@ public class RendererManager {
     }
 
     public void zoomIn() {
-        setZoom(zoom + .1f);
+        setZoom(zoom + zoom * .1f);
     }
 
     public void zoomOut() {
-        setZoom(zoom - .1f);
+        setZoom(zoom - zoom * .1f);
 
     }
 

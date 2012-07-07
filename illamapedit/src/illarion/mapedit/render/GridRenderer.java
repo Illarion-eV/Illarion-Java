@@ -47,18 +47,18 @@ public class GridRenderer extends AbstractMapRenderer {
         final int tx = getTranslateX();
         final int ty = getTranslateY();
 
-        g.setColor(Color.WHITE);
-        for (int i = 0; i < (w + 1); ++i) {
-            final int wid = (int) ((i * getTileWidth()) / 2f);
-            final int hei = (int) ((i * getTileHeight()) / 2f);
-            g.drawLine(tx + wid, ty + (int) (hm * getTileHeight()) + hei, tx + (int) (wm * getTileWidth()) + wid, ty + hei);
-        }
-        for (int i = 0; i < (h + 1); ++i) {
-            final int wid = (int) ((i * getTileWidth()) / 2f);
-            final int hei = (int) ((i * getTileHeight()) / 2f);
-            g.drawLine(tx + wid, (ty + (int) (hm * getTileHeight())) - hei, tx + (int) (wm * getTileWidth()) + wid,
-                    ty + (int) ((h * getTileHeight()) - hei));
-        }
+//        g.setColor(Color.WHITE);
+//        for (int i = 0; i < (w + 1); ++i) {
+//            final int wid = (int) ((i * getTileWidth()) / 2f);
+//            final int hei = (int) ((i * getTileHeight()) / 2f);
+//            g.drawLine(tx + wid, ty + (int) (hm * getTileHeight()) + hei, tx + (int) (wm * getTileWidth()) + wid, ty + hei);
+//        }
+//        for (int i = 0; i < (h + 1); ++i) {
+//            final int wid = (int) ((i * getTileWidth()) / 2f);
+//            final int hei = (int) ((i * getTileHeight()) / 2f);
+//            g.drawLine(tx + wid, (ty + (int) (hm * getTileHeight())) - hei, tx + (int) (wm * getTileWidth()) + wid,
+//                    ty + (int) ((h * getTileHeight()) - hei));
+//        }
     }
 
     @Override

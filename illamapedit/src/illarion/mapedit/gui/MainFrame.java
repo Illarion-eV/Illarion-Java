@@ -43,10 +43,12 @@ public class MainFrame extends JRibbonFrame {
         setSize(new Dimension(400, 500));
         getRibbon().setApplicationMenu(new MainMenu());
 
+        System.out.println(getLayout());
 
         map = MapPanel.getInstance();
 
-        add(map);
+        add(map, BorderLayout.CENTER);
+        add(new TileSelector(), BorderLayout.EAST);
 
         RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
                 new ClipboardBand(), new ViewBand());
