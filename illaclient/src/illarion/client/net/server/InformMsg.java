@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.NetCommReader;
+import illarion.client.world.World;
 import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
 
@@ -64,6 +65,7 @@ public final class InformMsg extends AbstractReply {
     @Override
     public boolean executeUpdate() {
         LOGGER.info(toString());
+        World.getChatHandler().handleMessage(informText, World.getPlayer().getLocation()); //TODO Nice output
         return true;
     }
 
