@@ -34,6 +34,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 
 /**
+ * This class handles the folder and map selections, little dialogs for the map size etz.
+ *
  * @author Tim
  */
 public class MapChooser {

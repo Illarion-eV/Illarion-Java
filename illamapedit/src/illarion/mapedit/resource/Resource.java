@@ -16,34 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.render;
+package illarion.mapedit.resource;
 
-import illarion.mapedit.gui.MapPanel;
-
-import java.awt.*;
+import java.io.IOException;
 
 /**
- * This renderer should render all tiles.
- *
  * @author Tim
  */
-public class TileRenderer extends AbstractMapRenderer {
+public interface Resource {
     /**
-     * Creates a new map renderer
+     * In this methods all data must be loaded.
      *
-     * @param mapPanel The panel, to draw the map on.
+     * @throws IOException if an error occurs.
      */
-    public TileRenderer(final MapPanel mapPanel) {
-        super(mapPanel);
-    }
+    void load() throws IOException;
 
-    @Override
-    public void renderMap(final Graphics2D graphics) {
-
-    }
-
-    @Override
-    protected int getRenderPriority() {
-        return 0;
-    }
+    /**
+     * This method should return a human readable description of the resource.
+     *
+     * @return a the description
+     */
+    String getDescription();
 }

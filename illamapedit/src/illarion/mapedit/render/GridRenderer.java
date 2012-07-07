@@ -25,6 +25,8 @@ import illarion.mapedit.gui.MapPanel;
 import java.awt.*;
 
 /**
+ * This method renders the grid, to see the tiles better.
+ *
  * @author Tim
  */
 public class GridRenderer extends AbstractMapRenderer {

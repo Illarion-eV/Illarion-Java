@@ -26,6 +26,8 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
+ * The map panel is the area, on which the map is rendered.
+ *
  * @author Tim
  */
 public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener {

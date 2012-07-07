@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This class represents the clipboard section in the ribbon.
+ *
  * @author Tim
  */
 public class ClipboardBand extends JRibbonBand {

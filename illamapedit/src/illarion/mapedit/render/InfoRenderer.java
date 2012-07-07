@@ -25,6 +25,8 @@ import illarion.mapedit.gui.MapPanel;
 import java.awt.*;
 
 /**
+ * This renderer renders some useful information's: eg. the size and the position.
+ *
  * @author Tim
  */
 public class InfoRenderer extends AbstractMapRenderer {

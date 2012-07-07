@@ -19,6 +19,7 @@
 package illarion.mapedit.graphics;
 
 import illarion.common.graphics.AbstractTextureLoader;
+import illarion.mapedit.resource.Resource;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -37,7 +38,7 @@ import java.net.URL;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class TextureLoaderAwt extends AbstractTextureLoader<TextureAtlasAwt, BufferedImage> {
+public final class TextureLoaderAwt extends AbstractTextureLoader<TextureAtlasAwt, BufferedImage> implements Resource {
     /**
      * This logger for this class.
      */
@@ -128,5 +129,22 @@ public final class TextureLoaderAwt extends AbstractTextureLoader<TextureAtlasAw
         g2d.dispose();
 
         return newImage;
+    }
+
+    /**
+     * Loads all textures at once
+     *
+     * @throws IOException never
+     */
+    @Override
+    public void load() throws IOException {
+        while (!areAllAtlasLoaded()) {
+            loadNextAtlas();
+        }
+    }
+
+    @Override
+    public String getDescription() {
+        return "Textures";
     }
 }

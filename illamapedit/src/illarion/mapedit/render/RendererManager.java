@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * This class manages all renderers and enables, and disables them.
+ *
  * @author Tim
  */
 public class RendererManager {

@@ -31,6 +31,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 /**
+ * This class represents the main menu.
+ *
  * @author Tim
  */
 public class MainMenu extends RibbonApplicationMenu {

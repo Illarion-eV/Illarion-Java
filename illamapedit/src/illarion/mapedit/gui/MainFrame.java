@@ -27,6 +27,8 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import java.awt.*;
 
 /**
+ * This class represents the whole gui.
+ *
  * @author Tim
  */
 public class MainFrame extends JRibbonFrame {

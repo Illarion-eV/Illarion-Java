@@ -23,7 +23,9 @@ import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
+import illarion.mapedit.graphics.TextureLoaderAwt;
 import illarion.mapedit.gui.MainFrame;
+import illarion.mapedit.resource.ResourceManager;
 import org.apache.log4j.*;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
@@ -135,6 +137,21 @@ public final class MapEditor {
     public static void main(final String[] args) {
         instance = new MapEditor();
 
+
+        ResourceManager res = ResourceManager.getInstance();
+        res.addResources(
+                TextureLoaderAwt.getInstance()
+        );
+        while (res.hasNextToLoad()) {
+            try {
+                LOGGER.debug("Loading " + res.getNextDescription());
+                res.loadNext();
+            } catch (IOException e) {
+                LOGGER.warn(res.getPrevDescription() + " failed!");
+            }
+        }
+
+
         CrashReporter.getInstance().setConfig(getConfig());
         CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_SWING);
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
@@ -144,6 +161,9 @@ public final class MapEditor {
         startGui();
     }
 
+    /**
+     * This method starts up the gui.
+     */
     private static void startGui() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override

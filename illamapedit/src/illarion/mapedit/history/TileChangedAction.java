@@ -28,9 +28,22 @@ import illarion.mapedit.data.Tile;
  */
 public class TileChangedAction implements HistoryAction {
 
+    /**
+     * This variable is true, if the old, and the new tile are equal, and {@link #undo()} and {@link #redo()} should
+     * be ignored.
+     */
     private final boolean ignore;
+    /**
+     * The new tile.
+     */
     private final Tile newTile;
+    /**
+     * The old tile.
+     */
     private final Tile oldTile;
+    /**
+     * The map, on which these changes happened.
+     */
     private final Map map;
 
     public TileChangedAction(final Tile newTile, final Tile oldTile, final Map map) {
@@ -50,12 +63,18 @@ public class TileChangedAction implements HistoryAction {
         }
     }
 
+    /**
+     * Undoes the action.
+     */
     @Override
     public void redo() {
         if (ignore) return;
         map.getTileData().setTileAt(newTile);
     }
 
+    /**
+     * Redoes the action.
+     */
     @Override
     public void undo() {
         if (ignore) return;
