@@ -220,6 +220,10 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      */
     public final I getTexture(final String resource) {
         final int resourceDirIndex = getResourceDirectory(resource);
+        if (resourceDirIndex == -1) {
+            throw new IllegalArgumentException("Requested resource is not present in classpath, " +
+                    "because its root directory is missing.");
+        }
         final String shortResource = resource.substring(getRootDirectory(resourceDirIndex).length(),
                 resource.length());
         return getTexture(resourceDirIndex, shortResource);
