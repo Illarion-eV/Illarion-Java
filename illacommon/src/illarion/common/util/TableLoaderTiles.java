@@ -83,6 +83,10 @@ public final class TableLoaderTiles extends TableLoader {
      */
     private static final int TB_SPEED = 4;
 
+    public TableLoaderTiles(final TableLoaderSink<TableLoaderTiles> callback) {
+        super("Tiles", callback);
+    }
+
     public TableLoaderTiles(final File table, final TableLoaderSink<TableLoaderTiles> callback) {
         super(table, callback);
     }

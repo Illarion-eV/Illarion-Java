@@ -158,6 +158,10 @@ public final class TableLoaderItems extends TableLoader {
      */
     private static final int TB_VARIANCE = 13;
 
+    public TableLoaderItems(final TableLoaderSink<TableLoaderItems> callback) {
+        super("Items", callback);
+    }
+
     public TableLoaderItems(final File table, final TableLoaderSink<TableLoaderItems> callback) {
         super(table, callback);
     }
