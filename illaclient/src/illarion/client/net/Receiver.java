@@ -317,8 +317,8 @@ final class Receiver extends Thread implements NetCommReader {
                             rpl.activate(id);
                             rpl.decode(this);
 
-                            if (true || IllaClient.isDebug(Debug.protocol)) {
-                                LOGGER.warn("REC: " + rpl.toString());
+                            if (IllaClient.isDebug(Debug.protocol)) {
+                                LOGGER.debug("REC: " + rpl.toString());
                             }
 
                             // put decoded command in input queue

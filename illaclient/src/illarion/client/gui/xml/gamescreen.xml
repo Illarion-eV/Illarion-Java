@@ -109,8 +109,8 @@
             </control>
         </layer>
         <layer id="messageOverlay" childLayout="absolute">
-            <panel style="nifty-panel-hint" childLayout="vertical" visible="false" x="-10px" y="30px"
-                   padding-left="15px" id="serverMsgPanel" />
+            <panel childLayout="vertical" backgroundColor="#000000aa" visible="false" visibleToMouse="false" x="5px"
+                   y="30px" id="serverMsgPanel" padding="2px"/>
         </layer>
     </screen>
 </nifty>

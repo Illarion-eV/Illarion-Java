@@ -18,6 +18,7 @@
  */
 package illarion.client.loading;
 
+import illarion.client.graphics.FontLoader;
 import illarion.common.graphics.SpriteBuffer;
 import org.newdawn.slick.loading.DeferredResource;
 
@@ -35,6 +36,7 @@ public final class FinishLoading implements DeferredResource {
      */
     @Override
     public void load() throws IOException {
+        FontLoader.getInstance().prepareAllFonts();
         SpriteBuffer.getInstance().cleanup();
     }
 

@@ -47,6 +47,8 @@ public class GameScreenController
         childControllers.add(new GameMapClickHandler());
         childControllers.add(new GameMapDoubleClickHandler());
         childControllers.add(new GameMapDragHandler());
+
+        childControllers.add(new ServerInformHandler());
     }
 
     @SuppressWarnings("unchecked")
@@ -69,7 +71,6 @@ public class GameScreenController
         for (final ScreenController childController : childControllers) {
             childController.onStartScreen();
         }
-
     }
 
     @Override
