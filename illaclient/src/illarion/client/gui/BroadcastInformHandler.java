@@ -22,12 +22,11 @@ import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.ElementBuilder;
-import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import illarion.client.net.server.events.ServerInformReceivedEvent;
+import illarion.client.net.server.events.BroadcastInformReceivedEvent;
 import illarion.client.util.GameLoopUpdateEvent;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
@@ -37,11 +36,11 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * The task of this handler is to accept and display server informs.
+ * The task of this handler is to accept and display broadcast informs.
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class ServerInformHandler implements EventSubscriber<ServerInformReceivedEvent>, ScreenController {
+public final class BroadcastInformHandler implements EventSubscriber<BroadcastInformReceivedEvent>, ScreenController {
     /**
      * This utility class is a end notification that will trigger the removal of a target element. This is needed to
      * remove the server messages again from the screen.
@@ -63,7 +62,7 @@ public final class ServerInformHandler implements EventSubscriber<ServerInformRe
 
         @Override
         public void perform() {
-            target.markForRemoval(new ServerInformHandler.LayoutElementsEndNotify(target.getParent()));
+            target.markForRemoval(new BroadcastInformHandler.LayoutElementsEndNotify(target.getParent()));
         }
     }
 
@@ -114,7 +113,7 @@ public final class ServerInformHandler implements EventSubscriber<ServerInformRe
 
                 final Element msg = builder.build(parentNifty, parentScreen, parentPanel);
                 msg.showWithoutEffects();
-                msg.hide(new ServerInformHandler.RemoveEndNotify(msg));
+                msg.hide(new BroadcastInformHandler.RemoveEndNotify(msg));
 
                 parentPanel.layoutElements();
             }
@@ -124,7 +123,7 @@ public final class ServerInformHandler implements EventSubscriber<ServerInformRe
     /**
      * The logger that is used for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(ServerInformHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(BroadcastInformHandler.class);
 
     /**
      * This is a reference to the panel that is supposed to be used as container of the server inform messages.
@@ -155,52 +154,48 @@ public final class ServerInformHandler implements EventSubscriber<ServerInformRe
     /**
      * Default constructor that prepares the structures needed for this handler to work properly.
      */
-    public ServerInformHandler() {
+    public BroadcastInformHandler() {
         builderQueue = new ConcurrentLinkedQueue<ElementBuilder>();
 
-        updateEventSubscriber = new ServerInformHandler.GameLoopUpdateEventSubscriber();
+        updateEventSubscriber = new BroadcastInformHandler.GameLoopUpdateEventSubscriber();
     }
 
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
-        parentPanel = screen.findElementByName("serverMsgPanel");
+        parentPanel = screen.findElementByName("broadcastMsgPanel");
     }
 
     @Override
     public void onEndScreen() {
-        EventBus.unsubscribe(ServerInformReceivedEvent.class, this);
+        EventBus.unsubscribe(BroadcastInformReceivedEvent.class, this);
         EventBus.unsubscribe(GameLoopUpdateEvent.class, updateEventSubscriber);
     }
 
     @Override
-    public void onEvent(final ServerInformReceivedEvent event) {
+    public void onEvent(final BroadcastInformReceivedEvent event) {
         if (parentPanel == null) {
             LOGGER.warn("Received server inform before the GUI became ready.");
             return;
         }
 
-        final PanelBuilder panelBuilder = new PanelBuilder();
-        panelBuilder.childLayoutHorizontal();
-
         final LabelBuilder labelBuilder = new LabelBuilder();
-        panelBuilder.control(labelBuilder);
-        labelBuilder.label("Server> " + event.getMessage());
-        labelBuilder.font("consoleFont");
+        labelBuilder.label(event.getMessage());
+        labelBuilder.font("menuFont");
         labelBuilder.visible(false);
         labelBuilder.invisibleToMouse();
 
         final EffectBuilder effectBuilder = new EffectBuilder("hide");
         effectBuilder.startDelay(10000 + (event.getMessage().length() * 50));
-        panelBuilder.onHideEffect(effectBuilder);
+        labelBuilder.onHideEffect(effectBuilder);
 
-        builderQueue.offer(panelBuilder);
+        builderQueue.offer(labelBuilder);
     }
 
     @Override
     public void onStartScreen() {
         EventBus.subscribe(GameLoopUpdateEvent.class, updateEventSubscriber);
-        EventBus.subscribe(ServerInformReceivedEvent.class, this);
+        EventBus.subscribe(BroadcastInformReceivedEvent.class, this);
     }
 }

@@ -49,6 +49,7 @@ public class GameScreenController
         childControllers.add(new GameMapDragHandler());
 
         childControllers.add(new ServerInformHandler());
+        childControllers.add(new BroadcastInformHandler());
     }
 
     @SuppressWarnings("unchecked")
