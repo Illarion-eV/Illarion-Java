@@ -60,8 +60,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
         final int id = loader.getTileId();
         final int mode = loader.getTileMode();
         final String name = loader.getResourceName();
-        final TextureLoaderAwt texture = TextureLoaderAwt.getInstance();
-        TileImg tile = null;
+        TileImg tile;
         final TileInfo info =
                 new TileInfo(loader.getTileColor(), loader.getMovementCost(), loader.isOpaque());
         switch (mode) {
@@ -146,8 +145,8 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
         return imgs;
     }
 
-    public TileImg getTileFromId(int id) {
-        for (TileImg t : tiles) {
+    public TileImg getTileFromId(final int id) {
+        for (final TileImg t : tiles) {
             if (t.getId() == id) {
                 return t;
             }
@@ -164,7 +163,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
     }
 
     public TileImg[] getTiles() {
-        TileImg[] t = tiles.toArray(new TileImg[tiles.size()]);
+        final TileImg[] t = tiles.toArray(new TileImg[tiles.size()]);
         return t;
     }
 }

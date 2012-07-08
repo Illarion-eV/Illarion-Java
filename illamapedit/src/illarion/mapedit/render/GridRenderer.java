@@ -18,8 +18,6 @@
  */
 package illarion.mapedit.render;
 
-import illarion.common.util.FastMath;
-import illarion.mapedit.data.Map;
 import illarion.mapedit.gui.MapPanel;
 
 import java.awt.*;
@@ -37,15 +35,15 @@ public class GridRenderer extends AbstractMapRenderer {
 
     @Override
     public void renderMap(final Graphics2D g) {
-        final float zoom = getZoom();
-        final Map map = getMap();
-        final int w = map.getW();
-        final int h = map.getH();
-        final int wm = map.getW() / 2;
-        final int hm = map.getH() / 2;
-        final float tileSideLength = FastMath.sqrt(FastMath.sqr(w / 2) + FastMath.sqr(h / 2));
-        final int tx = getTranslateX();
-        final int ty = getTranslateY();
+//        final float zoom = getZoom();
+//        final Map map = getMap();
+//        final int w = map.getW();
+//        final int h = map.getH();
+//        final int wm = map.getW() / 2;
+//        final int hm = map.getH() / 2;
+//        final float tileSideLength = FastMath.sqrt(FastMath.sqr(w / 2) + FastMath.sqr(h / 2));
+//        final int tx = getTranslateX();
+//        final int ty = getTranslateY();
 
 //        g.setColor(Color.WHITE);
 //        for (int i = 0; i < (w + 1); ++i) {

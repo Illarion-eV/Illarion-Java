@@ -33,7 +33,7 @@ public class HistoryManager {
      * The singleton instance of the history class that is only used in case
      * there is a global history.
      */
-    private static HistoryManager instance = null;
+    private static HistoryManager instance;
 
     /**
      * The list of history entries that can be done again.

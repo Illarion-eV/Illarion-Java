@@ -71,11 +71,11 @@ public class MapDimensions {
      * @param old
      */
     public MapDimensions(final MapDimensions old) {
-        this.x = old.x;
-        this.y = old.y;
-        this.l = old.l;
-        this.w = old.w;
-        this.h = old.h;
+        x = old.x;
+        y = old.y;
+        l = old.l;
+        w = old.w;
+        h = old.h;
     }
 
     /**
@@ -190,7 +190,7 @@ public class MapDimensions {
             return false;
         }
 
-        MapDimensions that = (MapDimensions) o;
+        final MapDimensions that = (MapDimensions) o;
         if (h != that.h) {
             return false;
         }
@@ -215,9 +215,11 @@ public class MapDimensions {
      * @param mapLocation the map coordinate
      * @return the world coordinate
      */
-    public Location getAsWorldLocation(Location mapLocation) {
-        if (mapLocation.getScZ() != l) throw new IllegalArgumentException("Can't calculate the world location if the " +
-                "y value is not equal to the level of the map.");
+    public Location getAsWorldLocation(final Location mapLocation) {
+        if (mapLocation.getScZ() != l) {
+            throw new IllegalArgumentException("Can't calculate the world location if the " +
+                    "y value is not equal to the level of the map.");
+        }
         return new Location(x + mapLocation.getScX(), y + mapLocation.getScY(), l);
     }
 
@@ -227,9 +229,11 @@ public class MapDimensions {
      * @param worldLocation the world coordinate
      * @return the map coordinate
      */
-    public Location getAsMapLocation(Location worldLocation) {
-        if (worldLocation.getScZ() != l) throw new IllegalArgumentException("Can't calculate the map location if the " +
-                "y value is not equal to the level of the map.");
+    public Location getAsMapLocation(final Location worldLocation) {
+        if (worldLocation.getScZ() != l) {
+            throw new IllegalArgumentException("Can't calculate the map location if the " +
+                    "y value is not equal to the level of the map.");
+        }
 
         return new Location(worldLocation.getScX() - x, worldLocation.getScY() - y, l);
     }

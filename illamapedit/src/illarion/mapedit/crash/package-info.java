@@ -21,7 +21,7 @@
  * case a part of the editor crashes. According to the part of the editor the
  * handlers either try to restart the part of the editor in question or stop the
  * editor completely.
- * 
+ *
  * @author Martin Karing
  * @since 0.99
  * @version 0.99

@@ -40,7 +40,6 @@ public class MainMenu extends RibbonApplicationMenu {
     private static final Logger LOGGER = Logger.getLogger(MainMenu.class);
 
     public MainMenu() {
-        super();
 
 
         final RibbonApplicationMenuEntryPrimary menuOpenMap =
@@ -83,7 +82,7 @@ public class MainMenu extends RibbonApplicationMenu {
                             @Override
                             public void actionPerformed(final ActionEvent e) {
                                 try {
-                                    Map m = MapPanel.getInstance().getMap();
+                                    final Map m = MapPanel.getInstance().getMap();
                                     if (m != null) {
                                         m.saveToFiles();
                                     }

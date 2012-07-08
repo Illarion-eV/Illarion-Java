@@ -34,6 +34,18 @@ import java.awt.geom.AffineTransform;
  */
 public class TileRenderer extends AbstractMapRenderer {
 
+    private static final Color[] TILE_COLORS = {
+            new Color(0, 0, 0), // black
+            new Color(182, 214, 158), // green
+            new Color(155, 120, 90), // brown
+            new Color(175, 183, 165), // gray
+            new Color(126, 193, 238), // blue
+            new Color(255, 255, 204), // yellow
+            new Color(205, 101, 101), // red
+            new Color(255, 255, 255), // white
+            new Color(140, 160, 100) // dark green
+    };
+
     /**
      * Creates a new map renderer
      *
@@ -48,25 +60,32 @@ public class TileRenderer extends AbstractMapRenderer {
         final Map map = getMap();
         final int width = map.getW();
         final int height = map.getH();
-        AffineTransform transform = g.getTransform();
+        final AffineTransform transform = g.getTransform();
         g.translate(getTranslateX(), getTranslateY());
         g.scale(getZoom(), getZoom());
-
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                int xdisp = Location.displayCoordinateX(x, y, 0);
-                int ydisp = Location.displayCoordinateY(x, y, 0);
+                final int xdisp = Location.displayCoordinateX(x, y, 0);
+                final int ydisp = Location.displayCoordinateY(x, y, 0);
                 if (getRenderRectangle().contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 
-                    TileImg t = TileLoader.getInstance().getTileFromId(map.getTileData().getTileAt(x,
+                    final TileImg t = TileLoader.getInstance().getTileFromId(map.getTileData().getTileAt(x,
                             y).getId());
                     if (t != null) {
-                        Image img = t.getImg()[0];
-                        if (img != null) {
-                            g.drawImage(img,
-                                    xdisp,
-                                    ydisp, null);
+                        if (getZoom() > getMinZoom()) {
+                            final Image img = t.getImg()[0];
+                            if (img != null) {
+                                g.drawImage(img,
+                                        xdisp,
+                                        ydisp, null);
+                            }
+                        } else {
+                            final AffineTransform tr = g.getTransform();
+                            g.translate(xdisp, ydisp);
+                            g.setColor(TILE_COLORS[t.getInfo().getMapColor()]);
+                            g.fill(getTilePolygon());
+                            g.setTransform(tr);
                         }
                     }
                 }
@@ -77,12 +96,8 @@ public class TileRenderer extends AbstractMapRenderer {
         g.setTransform(transform);
     }
 
-    private void paint(final int x, final int y) {
-
-    }
-
     @Override
     protected int getRenderPriority() {
-        return 0;
+        return 3;
     }
 }

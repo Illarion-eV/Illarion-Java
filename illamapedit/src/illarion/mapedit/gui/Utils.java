@@ -45,14 +45,17 @@ final class Utils {
      */
     private static final Logger LOGGER = Logger.getLogger(Utils.class);
 
+    private Utils() {
+    }
+
     public static ResizableIcon getResizableIconFromResource(
             final String resource) {
-        Image image;
+        final Image image;
         try {
             image = ImageIO.read(Utils.class.getClassLoader()
                     .getResource(resource));
         } catch (final IOException e) {
-            LOGGER.error("Failed to read image: \"" + resource + "\"");
+            LOGGER.error("Failed to read image: \"" + resource + '"');
             return null;
         }
         final int height = image.getHeight(null);
@@ -63,8 +66,8 @@ final class Utils {
         return resizeIcon;
     }
 
-    public static ImageIcon getIconFromResource(String resource) {
-        URL imgURL = Utils.class.getClassLoader()
+    public static Icon getIconFromResource(final String resource) {
+        final URL imgURL = Utils.class.getClassLoader()
                 .getResource(resource);
         if (imgURL != null) {
             return new ImageIcon(imgURL, resource);

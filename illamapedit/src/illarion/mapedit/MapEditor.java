@@ -139,7 +139,7 @@ public final class MapEditor {
         instance = new MapEditor();
 
 
-        ResourceManager res = ResourceManager.getInstance();
+        final ResourceManager res = ResourceManager.getInstance();
         res.addResources(
                 TextureLoaderAwt.getInstance(),
                 TileLoader.getInstance()

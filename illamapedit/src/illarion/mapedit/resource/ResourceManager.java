@@ -55,7 +55,7 @@ public class ResourceManager {
      *
      * @param r
      */
-    public void addResources(Resource... r) {
+    public void addResources(final Resource... r) {
         res.addAll(Arrays.asList(r));
     }
 

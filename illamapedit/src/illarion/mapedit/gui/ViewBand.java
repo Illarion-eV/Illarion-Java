@@ -46,7 +46,7 @@ public class ViewBand extends JRibbonBand {
         final JCommandButton zoomIn = new JCommandButton(Lang.getMsg("gui.viewband.In"),
                 Utils.getResizableIconFromResource("viewmag+.png"));
 
-        ActionListener zoomOutListener = new ActionListener() {
+        final ActionListener zoomOutListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 RendererManager.getInstance().zoomOut();
@@ -54,7 +54,7 @@ public class ViewBand extends JRibbonBand {
             }
         };
 
-        ActionListener zoomInListener = new ActionListener() {
+        final ActionListener zoomInListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 RendererManager.getInstance().zoomIn();
@@ -62,7 +62,7 @@ public class ViewBand extends JRibbonBand {
             }
         };
 
-        ActionListener zoomOriginalListener = new ActionListener() {
+        final ActionListener zoomOriginalListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 RendererManager.getInstance().setZoom(RendererManager.DEFAULT_ZOOM);

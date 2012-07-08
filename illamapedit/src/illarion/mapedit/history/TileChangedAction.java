@@ -47,10 +47,10 @@ public class TileChangedAction implements HistoryAction {
     private final Map map;
 
     public TileChangedAction(final Tile newTile, final Tile oldTile, final Map map) {
-        if (newTile.getX() != oldTile.getX() || newTile.getY() != newTile.getY()) {
+        if ((newTile.getX() != oldTile.getX()) || (newTile.getY() != newTile.getY())) {
             throw new IllegalArgumentException("The tiles must be on the same location on the map.");
         }
-        if (newTile.getId() == oldTile.getId() && newTile.getMusicID() == oldTile.getMusicID()) {
+        if ((newTile.getId() == oldTile.getId()) && (newTile.getMusicID() == oldTile.getMusicID())) {
             ignore = true;
             this.newTile = null;
             this.oldTile = null;
@@ -68,7 +68,9 @@ public class TileChangedAction implements HistoryAction {
      */
     @Override
     public void redo() {
-        if (ignore) return;
+        if (ignore) {
+            return;
+        }
         map.getTileData().setTileAt(newTile);
     }
 
@@ -77,7 +79,9 @@ public class TileChangedAction implements HistoryAction {
      */
     @Override
     public void undo() {
-        if (ignore) return;
+        if (ignore) {
+            return;
+        }
         map.getTileData().setTileAt(oldTile);
     }
 }

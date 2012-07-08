@@ -62,7 +62,7 @@ public final class HistoryEntry {
      * Redo the actions stored in this entry.
      */
     public void redo() {
-        for (HistoryAction act : actions) {
+        for (final HistoryAction act : actions) {
             act.redo();
         }
     }
@@ -71,7 +71,7 @@ public final class HistoryEntry {
      * Undo the actions stored in this entry.
      */
     public void undo() {
-        for (HistoryAction act : actions) {
+        for (final HistoryAction act : actions) {
             act.undo();
         }
     }

@@ -29,7 +29,7 @@ import java.awt.*;
  * @author Tim
  */
 public abstract class AbstractMapRenderer implements Comparable<AbstractMapRenderer> {
-
+    private static final Shape TILE_POLYGON = new Polygon(new int[]{33, 0, 33, 65}, new int[]{0, 17, 33, 17}, 4);
     /**
      * The render manager.
      */
@@ -45,7 +45,7 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      * @param mapPanel The panel, to draw the map on.
      */
     public AbstractMapRenderer(final MapPanel mapPanel) {
-        this.manager = RendererManager.getInstance();
+        manager = RendererManager.getInstance();
         this.mapPanel = mapPanel;
     }
 
@@ -55,10 +55,7 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      * @return the render rectangle.
      */
     protected Rectangle getRenderRectangle() {
-        Rectangle dirty = mapPanel.getDirtyRegion();
-        if (dirty == null)
-            return mapPanel.getVisibleRect();
-        return mapPanel.getVisibleRect().intersection(dirty);
+        return mapPanel.getVisibleRect();
     }
 
     /**
@@ -66,6 +63,10 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      */
     protected float getZoom() {
         return manager.getZoom();
+    }
+
+    protected Shape getTilePolygon() {
+        return TILE_POLYGON;
     }
 
     /**
@@ -108,11 +109,18 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
     }
 
     /**
+     *
+     */
+    protected float getMinZoom() {
+        return manager.getMinZoom();
+    }
+
+    /**
      * In this method all rendering should be done.
      *
-     * @param graphics the graphics object.
+     * @param g the graphics object.
      */
-    public abstract void renderMap(final Graphics2D graphics);
+    public abstract void renderMap(Graphics2D g);
 
     /**
      * Returns a value. The renderer with the lowest value will be rendered first.
@@ -129,7 +137,8 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      */
     @Override
     public final int compareTo(final AbstractMapRenderer o) {
-        final int i = getRenderPriority(), j = o.getRenderPriority();
+        final int i = getRenderPriority();
+        final int j = o.getRenderPriority();
         if (i < j) {
             return -1;
         } else if (i == j) {

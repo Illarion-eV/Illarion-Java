@@ -156,13 +156,13 @@ public class Map {
      * Loads a map from a *.tiles.txt, *.items.txt and a *.warps.txt file.
      *
      * @param basePath the folder to store the files in.
-     * @param mapName the name of the files, without extension.
-     * @return  the new Map instance.
+     * @param mapName  the name of the files, without extension.
+     * @return the new Map instance.
      * @throws IOException
      */
     public static Map fromBasePath(final String basePath, final String mapName) throws IOException {
 
-        String path = basePath;
+        final String path = basePath;
 
 
         LOGGER.debug("Load Map from " + path + mapName);
@@ -177,6 +177,7 @@ public class Map {
 
     /**
      * Returns the X position of the map.
+     *
      * @return
      */
     public int getX() {
@@ -185,6 +186,7 @@ public class Map {
 
     /**
      * Returns the Y position of the map
+     *
      * @return
      */
     public int getY() {
@@ -193,6 +195,7 @@ public class Map {
 
     /**
      * Returns the height of the map.
+     *
      * @return
      */
     public int getH() {
@@ -201,6 +204,7 @@ public class Map {
 
     /**
      * Returns the width of the map.
+     *
      * @return
      */
     public int getW() {
@@ -209,6 +213,7 @@ public class Map {
 
     /**
      * Returns the level (Z position) of the map.
+     *
      * @return
      */
     public int getL() {
@@ -217,6 +222,7 @@ public class Map {
 
     /**
      * Returns the tile data.
+     *
      * @return
      */
     public TileData getTileData() {
@@ -225,6 +231,7 @@ public class Map {
 
     /**
      * Returns the item data
+     *
      * @return
      */
     public ItemData getItemData() {
@@ -233,6 +240,7 @@ public class Map {
 
     /**
      * Returns the warp data.
+     *
      * @return
      */
     public WarpData getWarpData() {
@@ -241,6 +249,7 @@ public class Map {
 
     /**
      * Saves the files to the path, specified in the constructor.
+     *
      * @throws IOException
      */
     public void saveToFiles() throws IOException {
@@ -249,6 +258,7 @@ public class Map {
 
     /**
      * Saves the files with the name, specified in the constructor but with another path.
+     *
      * @param path the path to save the map in.
      * @throws IOException
      */
@@ -258,6 +268,7 @@ public class Map {
 
     /**
      * Saves the map to a specified directory with a specified name.
+     *
      * @param path the folder to save the map in.
      * @param name the name of the map, without extension.
      * @throws IOException

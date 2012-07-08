@@ -42,7 +42,8 @@ public class TileImg {
         this.frameCount = frameCount;
         this.animationSpeed = animationSpeed;
         this.info = info;
-        this.img = img;
+        this.img = new Image[img.length];
+        System.arraycopy(img, 0, this.img, 0, img.length);
         this.description = description;
 
     }

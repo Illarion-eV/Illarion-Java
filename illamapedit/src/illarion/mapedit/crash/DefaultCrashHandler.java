@@ -24,10 +24,10 @@ package illarion.mapedit.crash;
  * means that its unknown what exactly crashed there is no way in restarting the
  * crashed part. So in this case the editor will be shut down and a error
  * message displayed.
- * 
+ *
  * @author Martin Karing
- * @since 0.99
  * @version 0.99
+ * @since 0.99
  */
 public final class DefaultCrashHandler extends AbstractCrashHandler {
     /**
@@ -35,7 +35,7 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
      * of this one.
      */
     private static final DefaultCrashHandler INSTANCE =
-        new DefaultCrashHandler();
+            new DefaultCrashHandler();
 
     /**
      * The private constructor that is used to avoid the creation of any other
@@ -46,7 +46,7 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance of this class
      */
     public static DefaultCrashHandler getInstance() {
@@ -55,7 +55,7 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
 
     /**
      * Get the message that describes the problem human readable.
-     * 
+     *
      * @return the error message
      */
     @SuppressWarnings("nls")

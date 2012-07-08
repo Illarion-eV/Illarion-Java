@@ -30,24 +30,39 @@ import java.awt.*;
  * @author Tim
  */
 public class InfoRenderer extends AbstractMapRenderer {
-    private static final String NL = System.getProperty("line.separator");
+    private static final Font FONT = new Font("Arial", Font.BOLD, 14);
+    private static final int START_Y = 20;
+    private static final int STEP_Y = 15;
     private final String size;
     private final String pos;
+    private final String zoom;
+    private final String trans;
 
     public InfoRenderer(final MapPanel mapPanel) {
         super(mapPanel);
         size = Lang.getMsg("map.info.Size");
         pos = Lang.getMsg("map.info.Pos");
+        zoom = Lang.getMsg("map.info.Zoom");
+        trans = Lang.getMsg("map.info.Trans");
     }
 
     @Override
     public void renderMap(final Graphics2D g) {
-        Map m = getMap();
-        String s1 = String.format("%1$s (%2$d, %3$d, %4$d)", pos, m.getX(), m.getY(),
+        g.setFont(FONT);
+        g.setColor(Color.WHITE);
+        final Map m = getMap();
+        String[] lines = new String[4];
+        lines[0] = String.format("%1$s (%2$d, %3$d, %4$d)", pos, m.getX(), m.getY(),
                 m.getL());
-        String s2 = String.format("%1$s (%2$d, %3$d)", size, m.getW(), m.getH());
-        g.drawString(s1, 10, 20);
-        g.drawString(s2, 10, 35);
+        lines[1] = String.format("%1$s (%2$d, %3$d)", size, m.getW(), m.getH());
+        lines[2] = String.format("%1$s %2$f", zoom, getZoom());
+        lines[3] = String.format("%1$s (%2$d, %3$d)", trans, getTranslateX(), getTranslateY());
+        int y = START_Y;
+        for (String s : lines) {
+            g.drawString(s, 10, y);
+            y += STEP_Y;
+        }
+
     }
 
     @Override

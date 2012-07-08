@@ -32,37 +32,41 @@ import java.util.List;
  */
 public class RendererManager {
     private static final RendererManager INSTANCE = new RendererManager();
+    private static final int DEFAULT_TILE_HEIGHT = 16;
+    private static final int DEFAULT_TILE_WIDTH = 32;
     public static final float DEFAULT_ZOOM = 1f;
-    private static final float MIN_ZOOM = 0.05f;
+    private static final float MIN_ZOOM = 0.27f;
+    public static final float ZOOM_STEP = .1f;
 
     private final List<AbstractMapRenderer> renderers;
 
     private float zoom = DEFAULT_ZOOM;
-    private int translationX = 0;
-    private int translationY = 0;
-    private float tileHeight = 16;
-    private float tileWidth = 32;
+    private int translationX;
+    private int translationY;
+    private float tileHeight = DEFAULT_TILE_HEIGHT;
+    private float tileWidth = DEFAULT_TILE_WIDTH;
 
     private RendererManager() {
         renderers = new FastList<AbstractMapRenderer>();
     }
 
-    public void initRenderers(MapPanel panel) {
+    public void initRenderers(final MapPanel panel) {
         renderers.add(new InfoRenderer(panel));
         renderers.add(new TileRenderer(panel));
+        Collections.sort(renderers);
     }
 
-    public void addRenderer(AbstractMapRenderer r) {
+    public void addRenderer(final AbstractMapRenderer r) {
         renderers.add(r);
         Collections.sort(renderers);
     }
 
-    public void removeRenderer(AbstractMapRenderer r) {
+    public void removeRenderer(final AbstractMapRenderer r) {
         renderers.remove(r);
     }
 
-    public void render(Graphics2D g) {
-        for (AbstractMapRenderer r : renderers) {
+    public void render(final Graphics2D g) {
+        for (final AbstractMapRenderer r : renderers) {
             r.renderMap(g);
         }
     }
@@ -79,10 +83,10 @@ public class RendererManager {
         return tileWidth;
     }
 
-    public void setZoom(float zoom) {
+    public void setZoom(final float zoom) {
         this.zoom = zoom;
-        tileHeight = zoom / 2f;
-        tileWidth = zoom;
+        tileWidth = DEFAULT_TILE_WIDTH * zoom;
+        tileHeight = DEFAULT_TILE_HEIGHT * zoom;
     }
 
     public float getZoom() {
@@ -106,20 +110,24 @@ public class RendererManager {
     }
 
     public void zoomIn() {
-        setZoom(zoom + zoom * .1f);
+        setZoom(zoom + (zoom * ZOOM_STEP));
     }
 
     public void zoomOut() {
-        setZoom(zoom - zoom * .1f);
+        setZoom(zoom - (zoom * ZOOM_STEP));
 
     }
 
-    public void changeZoom(float amount) {
+    public void changeZoom(final float amount) {
         setZoom(zoom + amount);
     }
 
     public void changeTranslation(final int x, final int y) {
         setTranslationX(translationX + x);
         setTranslationY(translationY + y);
+    }
+
+    public float getMinZoom() {
+        return MIN_ZOOM;
     }
 }

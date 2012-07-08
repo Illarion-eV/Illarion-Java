@@ -31,8 +31,8 @@ public class TileImgCellRenderer extends JPanel implements ListCellRenderer<Tile
     private final JLabel name;
 
     public TileImgCellRenderer() {
-        this.img = new JLabel();
-        this.name = new JLabel();
+        img = new JLabel();
+        name = new JLabel();
 
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 

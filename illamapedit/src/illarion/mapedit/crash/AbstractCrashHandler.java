@@ -24,22 +24,20 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import org.apache.log4j.Logger;
 
-import java.lang.Thread;
-
 /**
  * This abstract class takes care for fetching uncaught exceptions and tries to
  * keep the editor alive just in the way it supposed to be.
- * 
+ *
  * @author Martin Karing
- * @since 0.99
  * @version 0.99
+ * @since 0.99
  */
 abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger
-        .getLogger(AbstractCrashHandler.class);
+            .getLogger(AbstractCrashHandler.class);
 
     /**
      * The time since the last crash in milliseconds that need to have passed to
@@ -63,7 +61,7 @@ abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * Fetch a uncaught exception that was thrown and try restart the crashed
      * part of the client correctly.
-     * 
+     *
      * @param t the thread that crashed
      * @param e the error message it crashed with
      */
@@ -95,7 +93,7 @@ abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
     @SuppressWarnings("nls")
     protected final void crashEditor() {
         MapEditor.crashEditor(Lang.getInstance().getMessage(getCrashMessage())
-            + "\n" + Lang.getInstance().getMessage("crash.fixfailed"));
+                + '\n' + Lang.getInstance().getMessage("crash.fixfailed"));
 
         currentlyCrashing = false;
     }
@@ -103,7 +101,7 @@ abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * Get the message that describes the problem that caused this crash
      * readable for a common player.
-     * 
+     *
      * @return the error message for this problem
      */
     protected abstract String getCrashMessage();
@@ -117,13 +115,13 @@ abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * Send the data about a crash to the Illarion server so some developer is
      * able to look over it.
-     * 
+     *
      * @param t the thread that crashed
      * @param e the reason of the crash
      */
     private void reportError(final Thread t, final Throwable e) {
         CrashReporter.getInstance().reportCrash(
-            new CrashData(MapEditor.APPLICATION, MapEditor.VERSION,
-                getCrashMessage(), t, e));
+                new CrashData(MapEditor.APPLICATION, MapEditor.VERSION,
+                        getCrashMessage(), t, e));
     }
 }

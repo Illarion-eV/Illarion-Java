@@ -127,6 +127,7 @@ public class Warp implements Immutable {
     /**
      * Loads a warppoint from one line of a *.warps.txt file with the following format: <br/>
      * {@code [StartX];[StartY];[TargetX];[TargetY];[TargetZ]}
+     *
      * @param line the string with the data
      * @return the new warp point
      */

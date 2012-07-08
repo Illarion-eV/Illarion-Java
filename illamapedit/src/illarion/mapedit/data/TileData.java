@@ -45,7 +45,7 @@ public class TileData {
      *
      * @param mapDimensions
      */
-    public TileData(MapDimensions mapDimensions) {
+    public TileData(final MapDimensions mapDimensions) {
         this.mapDimensions = mapDimensions;
         tileData = new Tile[mapDimensions.getW() * mapDimensions.getH()];
     }
@@ -56,7 +56,7 @@ public class TileData {
      * @param mapDimensions the new dimension.
      * @param old           the old tiledata object.
      */
-    public TileData(MapDimensions mapDimensions, final TileData old) {
+    public TileData(final MapDimensions mapDimensions, final TileData old) {
         this.mapDimensions = mapDimensions;
 
         tileData = new Tile[mapDimensions.getW() * mapDimensions.getH()];
@@ -82,7 +82,7 @@ public class TileData {
      * @param tile the tile to add.
      */
     public void setTileAt(final Tile tile) {
-        int i = tile.getY() * mapDimensions.getW() + tile.getX();
+        final int i = (tile.getY() * mapDimensions.getW()) + tile.getX();
         tileData[i] = tile;
     }
 
@@ -94,7 +94,7 @@ public class TileData {
      * @return the tile
      */
     public Tile getTileAt(final int x, final int y) {
-        int i = y * mapDimensions.getW() + x;
+        final int i = (y * mapDimensions.getW()) + x;
         return tileData[i];
     }
 
@@ -113,7 +113,7 @@ public class TileData {
      */
     public static TileData fromInputStream(final InputStream is) {
         final Scanner scanner = new Scanner(is);
-        MapDimensions dimensions = new MapDimensions();
+        final MapDimensions dimensions = new MapDimensions();
 
         dimensions.setL(Integer.parseInt(scanner.nextLine().substring(3)));
         dimensions.setX(Integer.parseInt(scanner.nextLine().substring(3)));
@@ -125,7 +125,7 @@ public class TileData {
         while (scanner.hasNextLine()) {
             final String line = scanner.nextLine();
             final Tile t = Tile.fromString(line);
-            int i = t.getY() * dimensions.getW() + t.getX();
+            final int i = (t.getY() * dimensions.getW()) + t.getX();
             data.tileData[i] = t;
         }
 
@@ -149,7 +149,7 @@ public class TileData {
 
         for (int y = 0; y < mapDimensions.getH(); ++y) {
             for (int x = 0; x < mapDimensions.getW(); ++x) {
-                int i = y * mapDimensions.getW() + x;
+                final int i = (y * mapDimensions.getW()) + x;
                 builder.append(x).append(Map.DM);
                 builder.append(y).append(Map.DM);
                 builder.append(getID(tileData[i])).append(Map.DM);

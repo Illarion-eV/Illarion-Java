@@ -44,18 +44,18 @@ public class MapChooser {
         void selected(String s);
     }
 
-    private class MapSelector extends JDialog {
+    private static class MapSelector extends JDialog {
 
 
         private final JList<String> list;
 
-        public MapSelector(String[] maps) {
+        private MapSelector(final String[] maps) {
             super(MainFrame.getInstance(), Lang.getMsg("gui.chooser"));
             setModal(true);
             setLayout(new BorderLayout());
 
             list = new JList<String>(maps);
-            JButton btn = new JButton(Lang.getMsg("gui.chooser.Ok"));
+            final JButton btn = new JButton(Lang.getMsg("gui.chooser.Ok"));
 
             btn.addActionListener(new AbstractAction() {
                 @Override
@@ -78,8 +78,9 @@ public class MapChooser {
         }
     }
 
-    private class NewMapInfoDialog extends JDialog {
-
+    private static class NewMapInfoDialog extends JDialog {
+        private static final int UNSIGNED_MAX = 100000;
+        private static final int SIGNED_MAX = 10000;
         private final JSpinner width;
         private final JSpinner height;
         private final JSpinner x;
@@ -88,16 +89,16 @@ public class MapChooser {
         private final JTextField name;
         private File saveDir;
 
-        public NewMapInfoDialog() {
+        private NewMapInfoDialog() {
             super(MainFrame.getInstance(), Lang.getMsg("gui.newmap"));
             getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
             setResizable(false);
             setModal(true);
-            width = new JSpinner(new SpinnerNumberModel(100, 0, 100000, 1));
-            height = new JSpinner(new SpinnerNumberModel(100, 0, 100000, 1));
-            x = new JSpinner(new SpinnerNumberModel(0, -10000, 10000, 1));
-            y = new JSpinner(new SpinnerNumberModel(0, -10000, 10000, 1));
-            l = new JSpinner(new SpinnerNumberModel(0, -10000, 10000, 1));
+            width = new JSpinner(new SpinnerNumberModel(100, 0, UNSIGNED_MAX, 1));
+            height = new JSpinner(new SpinnerNumberModel(100, 0, UNSIGNED_MAX, 1));
+            x = new JSpinner(new SpinnerNumberModel(0, -SIGNED_MAX, SIGNED_MAX, 1));
+            y = new JSpinner(new SpinnerNumberModel(0, -SIGNED_MAX, SIGNED_MAX, 1));
+            l = new JSpinner(new SpinnerNumberModel(0, -SIGNED_MAX, SIGNED_MAX, 1));
             name = new JTextField(1);
             final JButton btn = new JButton(Lang.getMsg("gui.newmap.Ok"));
             btn.addActionListener(new ActionListener() {
@@ -116,13 +117,6 @@ public class MapChooser {
                 }
             });
 
-            Dimension d = width.getPreferredSize();
-            d.width = 100;
-            width.setPreferredSize(d);
-            height.setPreferredSize(d);
-            x.setPreferredSize(d);
-            y.setPreferredSize(d);
-            l.setPreferredSize(d);
             add(new JLabel(Lang.getMsg("gui.newmap.Width")));
             add(width);
             add(new JLabel(Lang.getMsg("gui.newmap.Height")));
@@ -153,7 +147,7 @@ public class MapChooser {
         }
     }
 
-    private static File lastDir;
+    private File lastDir;
     private static final MapChooser INSTANCE = new MapChooser();
 
     private MapChooser() {
@@ -171,16 +165,17 @@ public class MapChooser {
     }
 
     public Map loadMap() throws IOException {
-        File t = chooseDirectory();
+        final File t = chooseDirectory();
         if (!isDirOk(t)) {
             return null;
         }
-        String[] files = getMaps(t);
-        if (files == null || files.length == 0)
+        final String[] files = getMaps(t);
+        if ((files == null) || (files.length == 0)) {
             return null;
-        String mapS = new MapSelector(files).select();
+        }
+        final String mapS = new MapChooser.MapSelector(files).select();
         System.out.println(mapS);
-        Map m = Map.fromBasePath(t.getPath(), mapS);
+        final Map m = Map.fromBasePath(t.getPath(), mapS);
         return m;
     }
 
@@ -188,7 +183,7 @@ public class MapChooser {
         if (!isDirOk(dir)) {
             return new String[0];
         }
-        String[] maps = dir.list(new FilenameFilter() {
+        final String[] maps = dir.list(new FilenameFilter() {
             @Override
             public boolean accept(final File dir, final String name) {
                 return name.endsWith(".tiles.txt");
@@ -204,7 +199,7 @@ public class MapChooser {
     }
 
     private File chooseDirectory() {
-        JFileChooser ch = new JFileChooser();
+        final JFileChooser ch = new JFileChooser();
         if (isDirOk(lastDir)) {
             ch.setCurrentDirectory(lastDir);
         } else {
@@ -228,6 +223,6 @@ public class MapChooser {
     }
 
     public Map newMap() {
-        return new NewMapInfoDialog().showDialog();
+        return new MapChooser.NewMapInfoDialog().showDialog();
     }
 }

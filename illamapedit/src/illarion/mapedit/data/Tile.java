@@ -20,6 +20,7 @@ package illarion.mapedit.data;
 
 /**
  * This object represents a tile with a coordinate, an id and a music id.
+ *
  * @author Tim
  */
 public class Tile {
@@ -42,6 +43,7 @@ public class Tile {
 
     /**
      * Creates a new tile with the coordinates, the id and the music id.
+     *
      * @param x
      * @param y
      * @param id
@@ -56,6 +58,7 @@ public class Tile {
 
     /**
      * Creates a copy of the other tile.
+     *
      * @param old
      */
     public Tile(final Tile old) {
@@ -67,6 +70,7 @@ public class Tile {
 
     /**
      * Returns the x coordinate.
+     *
      * @return
      */
     public int getX() {
@@ -75,6 +79,7 @@ public class Tile {
 
     /**
      * Returns the y coordinate.
+     *
      * @return
      */
     public int getY() {
@@ -83,6 +88,7 @@ public class Tile {
 
     /**
      * Returns the tile id.
+     *
      * @return
      */
     public int getId() {
@@ -91,6 +97,7 @@ public class Tile {
 
     /**
      * Returns the music id.
+     *
      * @return
      */
     public int getMusicID() {
@@ -100,6 +107,7 @@ public class Tile {
     /**
      * Loads a tile from a line of a *.tiles.txt file with the format <br/>
      * {@code [X];[Y];[TileID];[MusikID];0 }
+     *
      * @param line
      * @return
      */

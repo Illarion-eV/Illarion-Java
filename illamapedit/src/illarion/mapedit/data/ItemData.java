@@ -26,6 +26,7 @@ import java.util.Scanner;
 
 /**
  * Represents all items on the map.
+ *
  * @author Tim
  */
 public class ItemData {
@@ -44,6 +45,7 @@ public class ItemData {
 
     /**
      * Creates a copy of another ItemData instance.
+     *
      * @param old the old instance.
      */
     public ItemData(final ItemData old) {
@@ -52,6 +54,7 @@ public class ItemData {
 
     /**
      * Adds an item to the map.
+     *
      * @param item the item to add.
      */
     private void addItem(final Item item) {
@@ -60,6 +63,7 @@ public class ItemData {
 
     /**
      * Removes the given item from the map.
+     *
      * @param item the item to remove.
      */
     private void removeItem(final Item item) {
@@ -68,6 +72,7 @@ public class ItemData {
 
     /**
      * Loads all items from input stream.
+     *
      * @param is the inputstream (usually a FileInputStream)
      * @return a new ItemData instances that represents all new items.
      */
@@ -84,6 +89,7 @@ public class ItemData {
 
     /**
      * Saves the ItemData in the correct format to the file.
+     *
      * @param file the file.
      * @throws IOException if an IO error occurs.
      */

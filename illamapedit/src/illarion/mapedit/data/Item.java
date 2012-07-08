@@ -58,15 +58,16 @@ public class Item {
     /**
      * The quality of this item.
      */
-    private final int quality ;
+    private final int quality;
 
     /**
      * Creates a new Item
-     * @param x The x coordinate of the item.
-     * @param y The y coordinate of the item.
-     * @param id The item id.
+     *
+     * @param x        The x coordinate of the item.
+     * @param y        The y coordinate of the item.
+     * @param id       The item id.
      * @param itemData The data of this item.
-     * @param quality The quality of this item.
+     * @param quality  The quality of this item.
      */
     public Item(final int x, final int y, final int id, final int itemData, final int quality) {
         this.id = id;
@@ -78,6 +79,7 @@ public class Item {
 
     /**
      * Creates a new copy of an existing item.
+     *
      * @param old the old instance.
      */
     public Item(final Item old) {
@@ -90,6 +92,7 @@ public class Item {
 
     /**
      * Returns the x coordinate of the item relative to the map.
+     *
      * @return the x coordinate
      */
     public int getX() {
@@ -98,6 +101,7 @@ public class Item {
 
     /**
      * Returns the y coordinate of the item relative to the map.
+     *
      * @return the y coordinate
      */
     public int getY() {
@@ -106,6 +110,7 @@ public class Item {
 
     /**
      * Returns the id of the item.
+     *
      * @return the item id
      */
     public int getId() {
@@ -114,6 +119,7 @@ public class Item {
 
     /**
      * Returns the quality of the item.
+     *
      * @return the quality
      */
     public int getQuality() {
@@ -122,6 +128,7 @@ public class Item {
 
     /**
      * Returns the data-value of this item.
+     *
      * @return the data-value.
      */
     public int getItemData() {
@@ -131,6 +138,7 @@ public class Item {
     /**
      * Creates a new item from a line of a map file with the following syntax: <br/>
      * {@code [X];[Y];[Special Flags];[ItemID];[ItemData](;[Qality])}
+     *
      * @param line a line of a item map file.
      * @return the generated item.
      */
