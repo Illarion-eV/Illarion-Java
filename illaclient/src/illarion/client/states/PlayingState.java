@@ -24,7 +24,9 @@ import de.lessvoid.nifty.slick2d.input.SlickSlickInputSystem;
 import illarion.client.Game;
 import illarion.client.Login;
 import illarion.client.input.InputReceiver;
+import illarion.client.util.GameLoopUpdateEvent;
 import illarion.client.world.World;
+import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -64,6 +66,7 @@ public class PlayingState
     @Override
     protected void updateGame(GameContainer container, StateBasedGame game, int delta)
             throws SlickException {
+        EventBus.publish(new GameLoopUpdateEvent());
         World.getMapDisplay().update(container, delta);
         World.getAnimationManager().animate(delta);
     }
