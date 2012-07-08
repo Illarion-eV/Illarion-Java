@@ -36,7 +36,7 @@ import illarion.client.world.World;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
-import illarion.common.graphics.FontLoader;
+import illarion.client.graphics.FontLoader;
 import illarion.common.graphics.GraphicResolution;
 import illarion.common.graphics.TextureLoader;
 import illarion.common.util.Crypto;

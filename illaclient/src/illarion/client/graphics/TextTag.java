@@ -21,7 +21,6 @@ package illarion.client.graphics;
 import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
 import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
 import illarion.client.world.GameFactory;
-import illarion.common.graphics.FontLoader;
 import illarion.common.util.Rectangle;
 import illarion.common.util.RecycleObject;
 import org.newdawn.slick.Color;

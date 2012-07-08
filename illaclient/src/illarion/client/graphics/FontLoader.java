@@ -16,12 +16,11 @@
  * You should have received a copy of the GNU General Public License along with
  * the Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.common.graphics;
+package illarion.client.graphics;
 
 import java.awt.Font;
-import java.awt.FontFormatException;
 import java.io.File;
-import java.io.IOException;
+import java.util.EnumMap;
 import java.util.Map;
 
 import javolution.text.TextBuilder;
@@ -44,56 +43,106 @@ import de.lessvoid.nifty.slick2d.render.font.loader.SlickRenderFontLoader;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class FontLoader implements SlickRenderFontLoader {
-    public static enum Fonts {
-        menu("menuFont", "BlackChancery", 24.f, "normal"), small("smallFont",
-            "Ubuntu", 14.f, "normal"), text("textFont", "Ubuntu", 16.f,
-            "normal");
+    /**
+     * The enumerator of available fonts.
+     */
+    public enum Fonts {
+        /**
+         * Menu font - a large font with fancy characters.
+         */
+        menu("menuFont", "BlackChancery", 24.f, "normal"),
 
+        /**
+         * Small font - a small font that is easily readable.
+         */
+        small("smallFont", "Ubuntu", 14.f, "normal"),
+
+        /**
+         * Text font - the default font for text, larger then the small font but also easily readable.
+         */
+        text("textFont", "Ubuntu", 16.f, "normal"),
+
+        /**
+         * Console font - mono-spaced font suiting console output.
+         */
+        console("consoleFont", "Inconsolata", 12.f, "normal");
+
+        /**
+         * The internal name of the font.
+         */
         private final String internalName;
+        
+        /**
+         * The name of the font fitting the filename of the file that stores this font.
+         */
         private final String fontName;
+
+        /**
+         * The size the font should be rendered as.
+         */
         private final float size;
+
+        /**
+         * The style of the font.
+         */
         private final String style;
 
-        private Fonts(final String name, final String font,
-            final float fontSize, final String fontStyle) {
+        /**
+         * Default constructor for font definitions.
+         * 
+         * @param name the internal name of the font
+         * @param font the name of the font
+         * @param fontSize the size of the font
+         * @param fontStyle the style of the font
+         */
+        Fonts(final String name, final String font, final float fontSize, final String fontStyle) {
             internalName = name;
             fontName = font;
             size = fontSize;
             style = fontStyle;
         }
 
+        /**
+         * Get the name of internal usage of this font.
+         * 
+         * @return the name of the font
+         */
         public String getName() {
             return internalName;
         }
 
+        /**
+         * Get the real name of the font.
+         * 
+         * @return the real font name
+         */
         public String getFontName() {
             return fontName;
         }
 
+        /**
+         * Get the name of the TTF-font file of this font.
+         * 
+         * @return the name of the TTF-font file
+         */
         public String getFontTTFName() {
-            return fontName + ".ttf";
+            return getFontName() + ".ttf";
         }
 
-        public String getFontDataName() {
-            final TextBuilder builder = TextBuilder.newInstance();
-            builder.append(fontName);
-            builder.append(File.separator);
-            builder.append(size, 0, false, false);
-            if (style.equals("italic")) {
-                builder.append("-italic");
-            } else if (style.equals("bold")) {
-                builder.append("-bold");
-            }
-            builder.append(".illaFont");
-            String result = builder.toString();
-            TextBuilder.recycle(builder);
-            return result;
-        }
-
+        /**
+         * Get the size of the font.
+         * 
+         * @return the size of the font
+         */
         public float getFontSize() {
             return size;
         }
 
+        /**
+         * Get the style of the font.
+         * 
+         * @return the font style
+         */
         public String getFontStyle() {
             return style;
         }
@@ -127,13 +176,13 @@ public final class FontLoader implements SlickRenderFontLoader {
     /**
      * Storage of the loaded GL Fonts.
      */
-    private final Map<Fonts, SlickRenderFont> fonts;
+    private final Map<FontLoader.Fonts, SlickRenderFont> fonts;
 
     /**
      * Default constructor.
      */
     private FontLoader() {
-        fonts = new FastMap<Fonts, SlickRenderFont>(3);
+        fonts = new EnumMap<FontLoader.Fonts, SlickRenderFont>(FontLoader.Fonts.class);
     }
 
     /**
@@ -160,9 +209,9 @@ public final class FontLoader implements SlickRenderFontLoader {
      * @return the font itself
      * @throws SlickLoadFontException in case loading the font fails
      */
-    public SlickRenderFont getFont(Fonts font) throws SlickLoadFontException {
+    public SlickRenderFont getFont(FontLoader.Fonts font) throws SlickLoadFontException {
         if (font == null) {
-            font = Fonts.text;
+            font = FontLoader.Fonts.text;
         }
         SlickRenderFont renderableFont = fonts.get(font);
         if (renderableFont == null) {
@@ -180,7 +229,7 @@ public final class FontLoader implements SlickRenderFontLoader {
      * @param font the requested font
      * @return the loaded font
      */
-    public SlickRenderFont getFontSave(Fonts font) {
+    public SlickRenderFont getFontSave(final FontLoader.Fonts font) {
         try {
             return getFont(font);
         } catch (final SlickLoadFontException e) {
@@ -195,8 +244,8 @@ public final class FontLoader implements SlickRenderFontLoader {
      * @return the fitting enumerator entry or <code>null</code> in case no
      *         fitting entry was found
      */
-    private static Fonts toFontEnum(final String name) {
-        for (Fonts font : Fonts.values()) {
+    private static FontLoader.Fonts toFontEnum(final String name) {
+        for (FontLoader.Fonts font : FontLoader.Fonts.values()) {
             if (font.getName().equals(name)) {
                 return font;
             }
@@ -212,7 +261,7 @@ public final class FontLoader implements SlickRenderFontLoader {
      * @throws SlickLoadFontException in case loading the font fails
      */
     @SuppressWarnings("nls")
-    private SlickRenderFont loadFont(final Fonts font)
+    private SlickRenderFont loadFont(final FontLoader.Fonts font)
         throws SlickLoadFontException {
         try {
             Font javaFont =
@@ -230,7 +279,7 @@ public final class FontLoader implements SlickRenderFontLoader {
                 javaFont = javaFont.deriveFont(Font.BOLD, font.getFontSize());
             }
 
-            UnicodeFont uniFont = new UnicodeFont(javaFont);
+            final UnicodeFont uniFont = new UnicodeFont(javaFont);
             uniFont.addAsciiGlyphs();
             uniFont.addGlyphs("•");
             uniFont.getEffects().add(new ColorEffect());
