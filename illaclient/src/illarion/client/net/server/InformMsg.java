@@ -18,12 +18,12 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.BroadcastInformReceivedEvent;
 import illarion.client.net.server.events.ScriptInformReceivedEvent;
 import illarion.client.net.server.events.ServerInformReceivedEvent;
 import illarion.client.net.server.events.TextToInformReceivedEvent;
-import illarion.client.world.World;
 import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
@@ -50,6 +50,13 @@ public final class InformMsg extends AbstractReply {
      * The text of the inform.
      */
     private String informText;
+
+    /**
+     * Constructor of this class.
+     */
+    public InformMsg() {
+        super(CommandList.MSG_INFORM);
+    }
 
     @Override
     public AbstractReply clone() {
@@ -98,9 +105,6 @@ public final class InformMsg extends AbstractReply {
                     }
                 }
         }
-
-        LOGGER.info(toString());
-        World.getChatHandler().handleMessage(informText, World.getPlayer().getLocation()); //TODO Nice output
         return true;
     }
 
