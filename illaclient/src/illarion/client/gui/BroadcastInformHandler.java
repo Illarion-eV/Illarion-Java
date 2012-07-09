@@ -41,26 +41,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public final class BroadcastInformHandler implements EventSubscriber<BroadcastInformReceivedEvent>, ScreenController,
         UpdatableHandler {
-    @Override
-    public void update(final int delta) {
-        while (true) {
-            final ElementBuilder builder = builderQueue.poll();
-            if (builder == null) {
-                return;
-            }
-
-            if (!parentPanel.isVisible()) {
-                parentPanel.show();
-            }
-
-            final Element msg = builder.build(parentNifty, parentScreen, parentPanel);
-            msg.showWithoutEffects();
-            msg.hide(new BroadcastInformHandler.RemoveEndNotify(msg));
-
-            parentPanel.layoutElements();
-        }
-    }
-
     /**
      * This utility class is a end notification that will trigger the removal of a target element. This is needed to
      * remove the server messages again from the screen.
@@ -181,5 +161,25 @@ public final class BroadcastInformHandler implements EventSubscriber<BroadcastIn
     @Override
     public void onStartScreen() {
         EventBus.subscribe(BroadcastInformReceivedEvent.class, this);
+    }
+
+    @Override
+    public void update(final int delta) {
+        while (true) {
+            final ElementBuilder builder = builderQueue.poll();
+            if (builder == null) {
+                return;
+            }
+
+            if (!parentPanel.isVisible()) {
+                parentPanel.show();
+            }
+
+            final Element msg = builder.build(parentNifty, parentScreen, parentPanel);
+            msg.showWithoutEffects();
+            msg.hide(new BroadcastInformHandler.RemoveEndNotify(msg));
+
+            parentPanel.layoutElements();
+        }
     }
 }
