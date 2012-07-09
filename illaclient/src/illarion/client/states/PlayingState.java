@@ -23,20 +23,21 @@ import de.lessvoid.nifty.slick2d.NiftyOverlayBasicGameState;
 import de.lessvoid.nifty.slick2d.input.SlickSlickInputSystem;
 import illarion.client.Game;
 import illarion.client.Login;
+import illarion.client.gui.controller.GameScreenController;
 import illarion.client.input.InputReceiver;
-import illarion.client.util.GameLoopUpdateEvent;
 import illarion.client.world.World;
-import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 /**
+ * This state is active while the player is playing the game.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class PlayingState
-        extends NiftyOverlayBasicGameState {
+public class PlayingState extends NiftyOverlayBasicGameState {
+    private GameScreenController gameScreenController;
 
     /* (non-Javadoc)
     * @see org.newdawn.slick.state.BasicGameState#getID()
@@ -53,26 +54,28 @@ public class PlayingState
     }
 
     @Override
-    protected void prepareNifty(Nifty nifty, StateBasedGame game) {
+    protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
+        gameScreenController = new GameScreenController();
+        nifty.registerScreenController(gameScreenController);
         nifty.fromXmlWithoutStartScreen("illarion/client/gui/xml/gamescreen.xml");
     }
 
     @Override
-    protected void renderGame(GameContainer container, StateBasedGame game, Graphics g)
+    protected void renderGame(final GameContainer container, final StateBasedGame game, final Graphics g)
             throws SlickException {
         World.getMapDisplay().render(g, container);
     }
 
     @Override
-    protected void updateGame(GameContainer container, StateBasedGame game, int delta)
+    protected void updateGame(final GameContainer container, final StateBasedGame game, final int delta)
             throws SlickException {
-        EventBus.publish(new GameLoopUpdateEvent());
+        gameScreenController.onUpdateGame(delta);
         World.getMapDisplay().update(container, delta);
         World.getAnimationManager().animate(delta);
     }
 
     @Override
-    protected void enterState(GameContainer container, StateBasedGame game)
+    protected void enterState(final GameContainer container, final StateBasedGame game)
             throws SlickException {
         getNifty().gotoScreen("gamescreen");
 
@@ -80,7 +83,7 @@ public class PlayingState
     }
 
     @Override
-    protected void leaveState(GameContainer container, StateBasedGame game)
+    protected void leaveState(final GameContainer container, final StateBasedGame game)
             throws SlickException {
         // TODO Auto-generated method stub
 

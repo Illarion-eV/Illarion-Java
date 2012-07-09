@@ -28,7 +28,6 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.net.server.events.ServerInformReceivedEvent;
-import illarion.client.util.GameLoopUpdateEvent;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
@@ -41,7 +40,27 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class ServerInformHandler implements EventSubscriber<ServerInformReceivedEvent>, ScreenController {
+public final class ServerInformHandler implements EventSubscriber<ServerInformReceivedEvent>, ScreenController, UpdatableHandler {
+    @Override
+    public void update(final int delta) {
+        while (true) {
+            final ElementBuilder builder = builderQueue.poll();
+            if (builder == null) {
+                return;
+            }
+
+            if (!parentPanel.isVisible()) {
+                parentPanel.show();
+            }
+
+            final Element msg = builder.build(parentNifty, parentScreen, parentPanel);
+            msg.showWithoutEffects();
+            msg.hide(new ServerInformHandler.RemoveEndNotify(msg));
+
+            parentPanel.layoutElements();
+        }
+    }
+
     /**
      * This utility class is a end notification that will trigger the removal of a target element. This is needed to
      * remove the server messages again from the screen.
@@ -96,32 +115,6 @@ public final class ServerInformHandler implements EventSubscriber<ServerInformRe
     }
 
     /**
-     * This handler is used to monitor update events of the game loop and trigger the creation of all message entries
-     * that were yet not created.
-     */
-    private final class GameLoopUpdateEventSubscriber implements EventSubscriber<GameLoopUpdateEvent> {
-        @Override
-        public void onEvent(final GameLoopUpdateEvent event) {
-            while (true) {
-                final ElementBuilder builder = builderQueue.poll();
-                if (builder == null) {
-                    return;
-                }
-
-                if (!parentPanel.isVisible()) {
-                    parentPanel.show();
-                }
-
-                final Element msg = builder.build(parentNifty, parentScreen, parentPanel);
-                msg.showWithoutEffects();
-                msg.hide(new ServerInformHandler.RemoveEndNotify(msg));
-
-                parentPanel.layoutElements();
-            }
-        }
-    }
-
-    /**
      * The logger that is used for the logging output of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(ServerInformHandler.class);
@@ -147,18 +140,10 @@ public final class ServerInformHandler implements EventSubscriber<ServerInformRe
     private final Queue<ElementBuilder> builderQueue;
 
     /**
-     * This is the update event handler that takes care for building the labels during the update call of the game
-     * loop. This needs to be done in order to stay in synchronization with the Nifty-GUI.
-     */
-    private final EventSubscriber<GameLoopUpdateEvent> updateEventSubscriber;
-
-    /**
      * Default constructor that prepares the structures needed for this handler to work properly.
      */
     public ServerInformHandler() {
         builderQueue = new ConcurrentLinkedQueue<ElementBuilder>();
-
-        updateEventSubscriber = new ServerInformHandler.GameLoopUpdateEventSubscriber();
     }
 
     @Override
@@ -171,7 +156,6 @@ public final class ServerInformHandler implements EventSubscriber<ServerInformRe
     @Override
     public void onEndScreen() {
         EventBus.unsubscribe(ServerInformReceivedEvent.class, this);
-        EventBus.unsubscribe(GameLoopUpdateEvent.class, updateEventSubscriber);
     }
 
     @Override
@@ -200,7 +184,6 @@ public final class ServerInformHandler implements EventSubscriber<ServerInformRe
 
     @Override
     public void onStartScreen() {
-        EventBus.subscribe(GameLoopUpdateEvent.class, updateEventSubscriber);
         EventBus.subscribe(ServerInformReceivedEvent.class, this);
     }
 }

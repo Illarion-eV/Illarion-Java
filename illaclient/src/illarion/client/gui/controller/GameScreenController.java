@@ -26,30 +26,38 @@ import illarion.client.gui.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class GameScreenController
-        implements ScreenController {
+public final class GameScreenController implements ScreenController {
 
     private Nifty parentNifty;
 
     private Collection<ScreenController> childControllers;
+    private Collection<UpdatableHandler> childUpdateControllers;
 
     private boolean notifyResolutionChanged;
 
     public GameScreenController() {
         childControllers = new ArrayList<ScreenController>();
+        childUpdateControllers = new ArrayList<UpdatableHandler>();
 
-        childControllers.add(new GUIChatHandler());
-        childControllers.add(new GUIInventoryHandler());
-        childControllers.add(new CharListHandler());
-        childControllers.add(new DialogHandler());
-        childControllers.add(new ContainerHandler());
+        addHandler(new GUIChatHandler());
+        addHandler(new GUIInventoryHandler());
+        addHandler(new CharListHandler());
+        addHandler(new DialogHandler());
+        addHandler(new ContainerHandler());
 
-        childControllers.add(new GameMapClickHandler());
-        childControllers.add(new GameMapDoubleClickHandler());
-        childControllers.add(new GameMapDragHandler());
+        addHandler(new GameMapClickHandler());
+        addHandler(new GameMapDoubleClickHandler());
+        addHandler(new GameMapDragHandler());
 
-        childControllers.add(new ServerInformHandler());
-        childControllers.add(new BroadcastInformHandler());
+        addHandler(new ServerInformHandler());
+        addHandler(new BroadcastInformHandler());
+    }
+
+    private void addHandler(final ScreenController handler) {
+        childControllers.add(handler);
+        if (handler instanceof UpdatableHandler) {
+            childUpdateControllers.add((UpdatableHandler) handler);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -71,6 +79,18 @@ public class GameScreenController
 
         for (final ScreenController childController : childControllers) {
             childController.onStartScreen();
+        }
+    }
+
+    /**
+     * This function is called once inside the game loop with the delta value of the current update loop. Inside this
+     * functions changes to the actual representation of the GUI should be done.
+     *
+     * @param delta the time since the last update call
+     */
+    public void onUpdateGame(final int delta) {
+        for (final UpdatableHandler childController : childUpdateControllers) {
+            childController.update(delta);
         }
     }
 

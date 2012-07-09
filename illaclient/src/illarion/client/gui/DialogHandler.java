@@ -29,7 +29,6 @@ import illarion.client.net.client.CloseDialogInputCmd;
 import illarion.client.net.client.CloseDialogMessageCmd;
 import illarion.client.net.server.events.DialogInputReceivedEvent;
 import illarion.client.net.server.events.DialogMessageReceivedEvent;
-import illarion.client.util.GameLoopUpdateEvent;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
@@ -48,8 +47,16 @@ import java.util.Queue;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogHandler
-        implements ScreenController {
+public final class DialogHandler implements ScreenController, UpdatableHandler {
+
+    @Override
+    public void update(final int delta) {
+        BuildWrapper b;
+        while ((b = builders.poll()) != null) {
+            System.out.println("build " + b);
+            b.getBuilder().build(nifty, screen, b.getParent());
+        }
+    }
 
     private class BuildWrapper {
         private ControlBuilder builder;
@@ -74,7 +81,6 @@ public final class DialogHandler
     private final EventSubscriber<DialogMessageConfirmedEvent> messageConfirmationEventHandler;
     private final EventSubscriber<DialogInputReceivedEvent> inputEventHandler;
     private final EventSubscriber<DialogInputConfirmedEvent> inputConfirmationEventHandler;
-    private final EventSubscriber<GameLoopUpdateEvent> gameLoopUpdateEventHandler;
 
     private final Queue<BuildWrapper> builders;
     private Nifty nifty;
@@ -125,17 +131,6 @@ public final class DialogHandler
                 cmd.send();
             }
         };
-
-        gameLoopUpdateEventHandler = new EventSubscriber<GameLoopUpdateEvent>() {
-            @Override
-            public void onEvent(final GameLoopUpdateEvent event) {
-                BuildWrapper b;
-                while ((b = builders.poll()) != null) {
-                    System.out.println("build " + b);
-                    b.getBuilder().build(nifty, screen, b.getParent());
-                }
-            }
-        };
     }
 
     public void bind(final Nifty parentNifty, final Screen parentScreen) {
@@ -150,7 +145,6 @@ public final class DialogHandler
         EventBus.subscribe(DialogMessageConfirmedEvent.class, messageConfirmationEventHandler);
         EventBus.subscribe(DialogInputReceivedEvent.class, inputEventHandler);
         EventBus.subscribe(DialogInputConfirmedEvent.class, inputConfirmationEventHandler);
-        EventBus.subscribe(GameLoopUpdateEvent.class, gameLoopUpdateEventHandler);
     }
 
     @Override
@@ -159,7 +153,6 @@ public final class DialogHandler
         EventBus.unsubscribe(DialogMessageConfirmedEvent.class, messageConfirmationEventHandler);
         EventBus.unsubscribe(DialogInputReceivedEvent.class, inputEventHandler);
         EventBus.unsubscribe(DialogInputConfirmedEvent.class, inputConfirmationEventHandler);
-        EventBus.unsubscribe(GameLoopUpdateEvent.class, gameLoopUpdateEventHandler);
     }
 
     public void showDialogMessage(final int id, final String title, final String message) {

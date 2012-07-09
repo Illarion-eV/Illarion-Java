@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright Â© 2012 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.util;
+package illarion.client.gui;
 
 /**
- * @author Tim
+ * This interface has to be implemented by update handlers that want to receive update calls during the main loop.
+ *
+ * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public class GameLoopUpdateEvent {
-
+public interface UpdatableHandler {
+    /**
+     * This function is called once during a update loop. It should be used to perform changes at the optics of the
+     * game.
+     *
+     * @param delta the time since the last update
+     */
+    void update(int delta);
 }
