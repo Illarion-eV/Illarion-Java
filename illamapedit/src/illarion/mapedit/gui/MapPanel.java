@@ -20,6 +20,7 @@ package illarion.mapedit.gui;
 
 import illarion.mapedit.data.Map;
 import illarion.mapedit.render.RendererManager;
+import illarion.mapedit.tools.ToolManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,6 +39,9 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     private boolean canDrag;
     private int clickX;
     private int clickY;
+    private int mouseMapPosX;
+    private int mouseMapPosY;
+    private ToolManager toolManager;
 
     private MapPanel() {
         rendererManager = RendererManager.getInstance();
@@ -64,6 +68,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
 
     public void setMap(final Map map) {
         mapData = map;
+        toolManager = new ToolManager(this, map);
         repaint();
     }
 
@@ -99,10 +104,24 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
 
     @Override
     public void mouseMoved(final MouseEvent e) {
+        mouseMapPosX = Utils.getMapXFormDisp(e.getX(), e.getY(), rendererManager.getTranslationX(),
+                rendererManager.getTranslationY(), rendererManager.getZoom());
+        mouseMapPosY = Utils.getMapYFormDisp(e.getX(), e.getY(), rendererManager.getTranslationX(),
+                rendererManager.getTranslationY(), rendererManager.getZoom());
+        repaint();
     }
 
     @Override
     public void mouseClicked(final MouseEvent e) {
+        if (toolManager == null) {
+            return;
+        }
+        final int x = Utils.getMapXFormDisp(e.getX(), e.getY(), rendererManager.getTranslationX(),
+                rendererManager.getTranslationY(), rendererManager.getZoom());
+        final int y = Utils.getMapYFormDisp(e.getX(), e.getY(), rendererManager.getTranslationX(),
+                rendererManager.getTranslationY(), rendererManager.getZoom());
+        toolManager.clickedAt(x, y);
+        repaint();
     }
 
     @Override
@@ -125,5 +144,13 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     @Override
     public void mouseExited(final MouseEvent e) {
         canDrag = false;
+    }
+
+    public int getMouseMapPosX() {
+        return mouseMapPosX;
+    }
+
+    public int getMouseMapPosY() {
+        return mouseMapPosY;
     }
 }

@@ -278,4 +278,8 @@ public class Map {
         warpData.saveToFile(new File(path, name + EXT_WARP_FILE));
         itemData.saveToFile(new File(path, name + EXT_ITEM_FILE));
     }
+
+    public boolean contains(final int x, final int y) {
+        return x >= 0 && y >= 0 && x < getW() && y < getH();
+    }
 }

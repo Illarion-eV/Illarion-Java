@@ -25,6 +25,7 @@ import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
 import illarion.mapedit.gui.MainFrame;
 import illarion.mapedit.resource.ResourceManager;
+import illarion.mapedit.resource.loaders.ItemLoader;
 import illarion.mapedit.resource.loaders.TextureLoaderAwt;
 import illarion.mapedit.resource.loaders.TileLoader;
 import org.apache.log4j.*;
@@ -142,7 +143,8 @@ public final class MapEditor {
         final ResourceManager res = ResourceManager.getInstance();
         res.addResources(
                 TextureLoaderAwt.getInstance(),
-                TileLoader.getInstance()
+                TileLoader.getInstance(),
+                ItemLoader.getInstance()
         );
         while (res.hasNextToLoad()) {
             try {

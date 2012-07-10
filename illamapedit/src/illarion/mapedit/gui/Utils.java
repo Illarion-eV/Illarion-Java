@@ -22,6 +22,7 @@ package illarion.mapedit.gui;
  * @author Tim
  */
 
+import illarion.common.util.Location;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -31,7 +32,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Locale;
 
 /**
  * A small set of static utility functions that help at some points.
@@ -78,7 +78,19 @@ final class Utils {
 
     }
 
-    public static boolean isLanguageGerman() {
-        return Locale.getDefault().equals(Locale.GERMAN);
+    public static int getMapXFormDisp(final int x, final int y, final int transX, final int transY, final float zoom) {
+        float xr = (x - transX) / zoom;
+        float yr = (y - transY) / zoom;
+        Location mapPos = new Location();
+        mapPos.setDC((int) x, (int) y);
+        return mapPos.getScY() - 1;
+    }
+
+    public static int getMapYFormDisp(final int x, final int y, final int transX, final int transY, final float zoom) {
+        float xr = (x - transX) / zoom;
+        float yr = (y - transY) / zoom;
+        Location mapPos = new Location();
+        mapPos.setDC((int) x, (int) y);
+        return mapPos.getScX();
     }
 }
