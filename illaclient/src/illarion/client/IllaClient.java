@@ -22,6 +22,7 @@ import de.lessvoid.nifty.slick2d.loaders.SlickAddLoaderLocation;
 import de.lessvoid.nifty.slick2d.loaders.SlickRenderFontLoaders;
 import de.lessvoid.nifty.slick2d.loaders.SlickRenderImageLoaders;
 import illarion.client.crash.DefaultCrashHandler;
+import illarion.client.graphics.FontLoader;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.SimpleCmd;
@@ -36,7 +37,6 @@ import illarion.client.world.World;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
-import illarion.client.graphics.FontLoader;
 import illarion.common.graphics.GraphicResolution;
 import illarion.common.graphics.TextureLoader;
 import illarion.common.util.Crypto;
@@ -172,7 +172,7 @@ public final class IllaClient {
         CrashReporter.getInstance().setConfig(getCfg());
 
         try {
-            EventServiceLocator.setEventService(EventServiceLocator.EVENT_BUS_CLASS, new ThreadSafeEventService());
+            EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, new ThreadSafeEventService());
         } catch (EventServiceExistsException e1) {
             LOGGER.error("Failed preparing the EventBus. Settings the Service handler happened too late");
         }
