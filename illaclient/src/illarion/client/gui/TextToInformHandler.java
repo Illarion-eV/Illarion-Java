@@ -24,24 +24,24 @@ import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import illarion.client.net.server.events.BroadcastInformReceivedEvent;
+import illarion.client.net.server.events.TextToInformReceivedEvent;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 
 /**
- * The task of this handler is to accept and display broadcast informs.
+ * The task of this handler is to accept and display text-to informs.
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class BroadcastInformHandler implements EventSubscriber<BroadcastInformReceivedEvent>, ScreenController {
+public final class TextToInformHandler implements EventSubscriber<TextToInformReceivedEvent>, ScreenController {
     /**
      * The logger that is used for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(BroadcastInformHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(TextToInformHandler.class);
 
     /**
-     * This is a reference to the panel that is supposed to be used as container of the server inform messages.
+     * This is a reference to the panel that is supposed to be used as container of the text-to inform messages.
      */
     private Element parentPanel;
 
@@ -55,22 +55,22 @@ public final class BroadcastInformHandler implements EventSubscriber<BroadcastIn
      *
      * @param parentHandler the handler that is supposed to display the messages generated in this class
      */
-    public BroadcastInformHandler(final InformHandler parentHandler) {
+    public TextToInformHandler(final InformHandler parentHandler) {
         informHandler = parentHandler;
     }
 
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
-        parentPanel = screen.findElementByName("broadcastMsgPanel");
+        parentPanel = screen.findElementByName("textToMsgPanel");
     }
 
     @Override
     public void onEndScreen() {
-        EventBus.unsubscribe(BroadcastInformReceivedEvent.class, this);
+        EventBus.unsubscribe(TextToInformReceivedEvent.class, this);
     }
 
     @Override
-    public void onEvent(final BroadcastInformReceivedEvent event) {
+    public void onEvent(final TextToInformReceivedEvent event) {
         if (parentPanel == null) {
             LOGGER.warn("Received server inform before the GUI became ready.");
             return;
@@ -78,7 +78,7 @@ public final class BroadcastInformHandler implements EventSubscriber<BroadcastIn
 
         final LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.label(event.getMessage());
-        labelBuilder.font("menuFont");
+        labelBuilder.font("textFont");
         labelBuilder.invisibleToMouse();
 
         final EffectBuilder effectBuilder = new EffectBuilder("hide");
@@ -90,6 +90,6 @@ public final class BroadcastInformHandler implements EventSubscriber<BroadcastIn
 
     @Override
     public void onStartScreen() {
-        EventBus.subscribe(BroadcastInformReceivedEvent.class, this);
+        EventBus.subscribe(TextToInformReceivedEvent.class, this);
     }
 }

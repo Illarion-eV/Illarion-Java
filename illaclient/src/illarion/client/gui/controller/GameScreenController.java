@@ -49,8 +49,11 @@ public final class GameScreenController implements ScreenController {
         addHandler(new GameMapDoubleClickHandler());
         addHandler(new GameMapDragHandler());
 
-        addHandler(new ServerInformHandler());
-        addHandler(new BroadcastInformHandler());
+        final InformHandler informHandler = new InformHandler();
+        addHandler(informHandler);
+        addHandler(new ServerInformHandler(informHandler));
+        addHandler(new BroadcastInformHandler(informHandler));
+        addHandler(new TextToInformHandler(informHandler));
     }
 
     private void addHandler(final ScreenController handler) {
