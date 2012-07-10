@@ -82,7 +82,7 @@ final class Utils {
         float xr = (x - transX) / zoom;
         float yr = (y - transY) / zoom;
         Location mapPos = new Location();
-        mapPos.setDC((int) x, (int) y);
+        mapPos.setDC((int) xr, (int) yr);
         return mapPos.getScY() - 1;
     }
 
@@ -90,7 +90,7 @@ final class Utils {
         float xr = (x - transX) / zoom;
         float yr = (y - transY) / zoom;
         Location mapPos = new Location();
-        mapPos.setDC((int) x, (int) y);
+        mapPos.setDC((int) xr, (int) yr);
         return mapPos.getScX();
     }
 }

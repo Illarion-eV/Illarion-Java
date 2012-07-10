@@ -41,6 +41,7 @@
     <orderEntry type="library" name="Flamingo" level="project" />
     <orderEntry type="library" name="Substance Look&amp;Feel" level="project" />
     <orderEntry type="library" name="SwingX" level="project" />
+    <orderEntry type="library" name="EventBus" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

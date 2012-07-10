@@ -23,6 +23,7 @@ import illarion.common.util.TableLoaderSink;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.Resource;
 import javolution.util.FastList;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.io.IOException;
@@ -31,6 +32,10 @@ import java.io.IOException;
  * @author Tim
  */
 public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
+    /**
+     * The logger instance for this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
     private static final int DB_INDEX_NAME = 2;
     private static final ItemLoader INSTANCE = new ItemLoader();
     private static final String DIR_IMG_ITEMS = "data/items/";
@@ -62,7 +67,7 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
 
     private Image[] getTextures(final String resourceName, final int frameCount) {
         Image[] imgs = new Image[frameCount];
-        if (frameCount != 1) {
+        if (frameCount == 1) {
             imgs[0] = TextureLoaderAwt.getInstance().getTexture(DIR_IMG_ITEMS + resourceName);
         } else {
             for (int i = 0; i < frameCount; i++) {

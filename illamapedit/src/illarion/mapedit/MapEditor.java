@@ -29,6 +29,9 @@ import illarion.mapedit.resource.loaders.ItemLoader;
 import illarion.mapedit.resource.loaders.TextureLoaderAwt;
 import illarion.mapedit.resource.loaders.TileLoader;
 import org.apache.log4j.*;
+import org.bushe.swing.event.EventServiceExistsException;
+import org.bushe.swing.event.EventServiceLocator;
+import org.bushe.swing.event.SwingEventService;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 import javax.swing.*;
@@ -137,6 +140,7 @@ public final class MapEditor {
      * @param args the argument of the system call
      */
     public static void main(final String[] args) {
+        initEventBus();
         instance = new MapEditor();
 
 
@@ -163,6 +167,14 @@ public final class MapEditor {
         Scheduler.getInstance().start();
 
         startGui();
+    }
+
+    private static void initEventBus() {
+        try {
+            EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_SWING_EVENT_SERVICE, new SwingEventService());
+        } catch (EventServiceExistsException e) {
+            LOGGER.warn("Can't setup the event bus correctly.", e);
+        }
     }
 
     /**

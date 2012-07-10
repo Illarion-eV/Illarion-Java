@@ -18,8 +18,11 @@
  */
 package illarion.mapedit.render;
 
+import illarion.mapedit.events.MapDragedEvent;
 import illarion.mapedit.gui.MapPanel;
 import javolution.util.FastList;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 
 import java.awt.*;
 import java.util.Collections;
@@ -48,6 +51,7 @@ public class RendererManager {
 
     private RendererManager() {
         renderers = new FastList<AbstractMapRenderer>();
+        AnnotationProcessor.process(this);
     }
 
     public void initRenderers(final MapPanel panel) {
@@ -129,5 +133,11 @@ public class RendererManager {
 
     public float getMinZoom() {
         return MIN_ZOOM;
+    }
+
+    @EventSubscriber(eventClass = MapDragedEvent.class)
+    public void onMapDragged(final MapDragedEvent e) {
+        changeTranslation(e.getOffsetX(), e.getOffsetY());
+        MapPanel.getInstance().repaint();
     }
 }

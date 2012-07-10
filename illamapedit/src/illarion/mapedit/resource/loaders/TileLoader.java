@@ -24,6 +24,7 @@ import illarion.common.util.TableLoaderTiles;
 import illarion.mapedit.resource.Resource;
 import illarion.mapedit.resource.TileImg;
 import javolution.util.FastList;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.io.IOException;
@@ -33,7 +34,10 @@ import java.util.Locale;
  * @author Tim
  */
 public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
-
+    /**
+     * The logger instance for this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(TileLoader.class);
     private static final TileLoader INSTANCE = new TileLoader();
     private static final String DIR_IMG_TILES = "data/tiles/";
 
@@ -133,6 +137,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
     }
 
     public Image[] getImages(final String name, final int frames) {
+
         final Image[] imgs = new Image[frames];
         final TextureLoaderAwt tx = TextureLoaderAwt.getInstance();
         if (frames > 1) {
