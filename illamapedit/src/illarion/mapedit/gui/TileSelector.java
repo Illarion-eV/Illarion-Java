@@ -18,24 +18,44 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.mapedit.events.TileSelectedEvent;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.resource.loaders.TileLoader;
+import org.bushe.swing.event.EventBus;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 
 /**
  * @author Tim
  */
-public class TileSelector extends JPanel {
+public class TileSelector extends JFrame {
 
 
     private final JList<TileImg> tileList;
 
 
     public TileSelector() {
+        setDefaultLookAndFeelDecorated(false);
+
         tileList = new JList<TileImg>(TileLoader.getInstance().getTiles());
         tileList.setCellRenderer(new TileImgCellRenderer());
-        add(new JScrollPane(tileList));
+        tileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tileList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(final ListSelectionEvent e) {
+                if (e.getFirstIndex() == e.getLastIndex()) {
+                    EventBus.publish(new TileSelectedEvent(tileList.getSelectedValue()));
+                }
+            }
+        });
+
+        add(new JScrollPane(tileList), BorderLayout.CENTER);
+        pack();
+        doLayout();
+        setVisible(true);
 
     }
 }

@@ -25,16 +25,8 @@ import javolution.lang.Immutable;
  *
  * @author Tim
  */
-public class Warp implements Immutable {
+public class MapWarpPoint implements Immutable {
 
-    /**
-     * The x coordinate of the start point
-     */
-    private final int xStart;
-    /**
-     * The y coordinate of the start point.
-     */
-    private final int yStart;
     /**
      * The x coordinate of the target point.
      */
@@ -51,16 +43,11 @@ public class Warp implements Immutable {
     /**
      * Creates a new Warp object with all necessary data.
      *
-     * @param xStart
-     * @param yStart
      * @param xTarget
      * @param yTarget
      * @param zTarget
      */
-    public Warp(final int xStart, final int yStart, final int xTarget, final int yTarget, final int zTarget) {
-
-        this.xStart = xStart;
-        this.yStart = yStart;
+    public MapWarpPoint(final int xTarget, final int yTarget, final int zTarget) {
         this.xTarget = xTarget;
         this.yTarget = yTarget;
         this.zTarget = zTarget;
@@ -71,31 +58,12 @@ public class Warp implements Immutable {
      *
      * @param old
      */
-    public Warp(final Warp old) {
-        xStart = old.xStart;
-        yStart = old.yStart;
+    public MapWarpPoint(final MapWarpPoint old) {
         xTarget = old.xTarget;
         yTarget = old.yTarget;
         zTarget = old.zTarget;
     }
 
-    /**
-     * Returns the x coordinate of the start point.
-     *
-     * @return
-     */
-    public int getXStart() {
-        return xStart;
-    }
-
-    /**
-     * Returns the y coordinate of the start point.
-     *
-     * @return
-     */
-    public int getYStart() {
-        return yStart;
-    }
 
     /**
      * Returns the x coordinate of the target point.
@@ -122,26 +90,5 @@ public class Warp implements Immutable {
      */
     public int getZTarget() {
         return zTarget;
-    }
-
-    /**
-     * Loads a warppoint from one line of a *.warps.txt file with the following format: <br/>
-     * {@code [StartX];[StartY];[TargetX];[TargetY];[TargetZ]}
-     *
-     * @param line the string with the data
-     * @return the new warp point
-     */
-    public static Warp fromString(final String line) {
-        final String[] sections = line.split(";");
-        if (sections.length != 5) {
-            throw new IllegalArgumentException("Item can only hava 5 sections: " + line);
-        }
-        return new Warp(
-                Integer.parseInt(sections[0]),
-                Integer.parseInt(sections[1]),
-                Integer.parseInt(sections[2]),
-                Integer.parseInt(sections[3]),
-                Integer.parseInt(sections[4])
-        );
     }
 }

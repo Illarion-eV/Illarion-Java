@@ -18,265 +18,101 @@
  */
 package illarion.mapedit.data;
 
-import org.apache.log4j.Logger;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 /**
- * This class represents a whole map, with all tiles, items, and warp points.
- *
  * @author Tim
  */
 public class Map {
 
-    /**
-     * The logger instance for this class.
-     */
-    static final Logger LOGGER = Logger.getLogger(Map.class);
+    private final String name;
+    private final String path;
+    private final int w;
+    private final int h;
+    private final int x;
+    private final int y;
+    private final int z;
 
     /**
-     * The system dependent slash, or backslash.
+     * The tiles.
      */
-    static final String SLASH = System.getProperty("file.separator");
+    private final MapTile[] mapTileData;
 
-    /**
-     * The header in the tiles data that marks the level of the map.
-     */
-    static final String HEADER_LEVEL = "L: ";
-
-    /**
-     * The header in the tiles data that marks the x coordinate of the origin of
-     * the map.
-     */
-    static final String HEADER_X = "X: ";
-
-    /**
-     * The header in the tiles data that marks the y coordinate of the origin of
-     * the map.
-     */
-    static final String HEADER_Y = "Y: ";
-
-    /**
-     * The header in the tiles data that marks the width of the map.
-     */
-    static final String HEADER_WIDTH = "W: ";
-
-    /**
-     * The header in the tiles data that marks the height of the map.
-     */
-    static final String HEADER_HEIGHT = "H: ";
-
-    /**
-     * The char that works as delimiter between the values.
-     */
-    static final char DM = ';';
-
-    /**
-     * The Microsoft Windows newline.
-     */
-    static final String NL = "\r\n";
-
-    /**
-     * The file extension of the items file.
-     */
-    static final String EXT_ITEM_FILE = ".items.txt";
-
-    /**
-     * The file extension of the tiles file.
-     */
-    static final String EXT_TILE_FILE = ".tiles.txt";
-
-    /**
-     * The file extension of the warp fields file.
-     */
-    private static final String EXT_WARP_FILE = ".warps.txt";
-
-    /**
-     * The name of the map.
-     */
-    private String mapName;
-
-    /**
-     * The original path of the map.
-     */
-    private String path;
-
-    /**
-     * The tiles on that map.
-     */
-    private TileData tileData;
-
-    /**
-     * All items on the map.
-     */
-    private ItemData itemData;
-
-    /**
-     * All warp points.
-     */
-    private WarpData warpData;
-
-    /**
-     * Creates a new map instance with a given TileData, ItemData and WarpData.
-     *
-     * @param tileData
-     * @param itemData
-     * @param warpData
-     * @param path     the folder to store the files in.
-     * @param mapName  the name of the files, without extension.
-     */
-    public Map(final TileData tileData, final ItemData itemData, final WarpData warpData,
-               final String path, final String mapName) {
-
+    public Map(final String name, final String path, final int w, final int h,
+               final int x, final int y, final int z) {
+        this.name = name;
         this.path = path;
-        this.mapName = mapName;
-        this.tileData = tileData;
-        this.itemData = itemData;
-        this.warpData = warpData;
+        this.w = w;
+        this.h = h;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        mapTileData = new MapTile[w * h];
     }
 
     /**
-     * Creates a completely new map, with a given path, name and size.
+     * Sets a tile at a specified position.
      *
-     * @param mapName the name of the files, without extension.
-     * @param path    the folder to store the files in.
-     * @param size    the size and position of the map.
+     * @param mapTile the tile to add.
      */
-    public Map(final String mapName, final String path, final MapDimensions size) {
-        this.mapName = mapName;
-        this.path = path;
-        tileData = new TileData(size);
-        itemData = new ItemData();
-        warpData = new WarpData();
+    public void setTileAt(final int x, final int y, final MapTile mapTile) {
+        final int i = (y * w) + x;
+        mapTileData[i] = mapTile;
+    }
+
+    public void addItemAt(final int x, final int y, final MapItem mapItem) {
+        final int i = (y * w) + x;
+        mapTileData[i].getMapItems().add(mapItem);
+    }
+
+    public void setWarptAt(final int x, final int y, final MapWarpPoint warpPoint) {
+        final int i = (y * w) + x;
+        mapTileData[i].setMapWarpPoint(warpPoint);
     }
 
     /**
-     * Loads a map from a *.tiles.txt, *.items.txt and a *.warps.txt file.
+     * Return a tile at a specified position.
      *
-     * @param basePath the folder to store the files in.
-     * @param mapName  the name of the files, without extension.
-     * @return the new Map instance.
-     * @throws IOException
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the tile
      */
-    public static Map fromBasePath(final String basePath, final String mapName) throws IOException {
+    public MapTile getTileAt(final int x, final int y) {
+        final int i = (y * w) + x;
+        if (mapTileData[i] != null) {
+            return mapTileData[i];
+        } else {
+            setTileAt(x, y, new MapTile(0, 0));
+            return getTileAt(x, y);
+        }
 
-        final String path = basePath;
-
-
-        LOGGER.debug("Load Map from " + path + mapName);
-        final TileData tileData =
-                TileData.fromInputStream(new FileInputStream(new File(path, mapName + EXT_TILE_FILE)));
-        final WarpData warpData =
-                WarpData.fromInputStream(new FileInputStream(new File(path, mapName + EXT_WARP_FILE)));
-        final ItemData itemData =
-                ItemData.fromInputStream(new FileInputStream(new File(path, mapName + EXT_ITEM_FILE)));
-        return new Map(tileData, itemData, warpData, path, mapName);
     }
 
-    /**
-     * Returns the X position of the map.
-     *
-     * @return
-     */
-    public int getX() {
-        return tileData.getMapDimensions().getX();
-    }
-
-    /**
-     * Returns the Y position of the map
-     *
-     * @return
-     */
-    public int getY() {
-        return tileData.getMapDimensions().getY();
-    }
-
-    /**
-     * Returns the height of the map.
-     *
-     * @return
-     */
-    public int getH() {
-        return tileData.getMapDimensions().getH();
-    }
-
-    /**
-     * Returns the width of the map.
-     *
-     * @return
-     */
     public int getW() {
-        return tileData.getMapDimensions().getW();
+        return w;
     }
 
-    /**
-     * Returns the level (Z position) of the map.
-     *
-     * @return
-     */
-    public int getL() {
-        return tileData.getMapDimensions().getL();
+    public int getH() {
+        return h;
     }
 
-    /**
-     * Returns the tile data.
-     *
-     * @return
-     */
-    public TileData getTileData() {
-        return tileData;
+    public int getX() {
+        return x;
     }
 
-    /**
-     * Returns the item data
-     *
-     * @return
-     */
-    public ItemData getItemData() {
-        return itemData;
+    public int getY() {
+        return y;
     }
 
-    /**
-     * Returns the warp data.
-     *
-     * @return
-     */
-    public WarpData getWarpData() {
-        return warpData;
+    public int getZ() {
+        return z;
     }
 
-    /**
-     * Saves the files to the path, specified in the constructor.
-     *
-     * @throws IOException
-     */
-    public void saveToFiles() throws IOException {
-        saveToFiles(path, mapName);
+    public String getPath() {
+        return path;
     }
 
-    /**
-     * Saves the files with the name, specified in the constructor but with another path.
-     *
-     * @param path the path to save the map in.
-     * @throws IOException
-     */
-    public void saveToFiles(final String path) throws IOException {
-        saveToFiles(path, mapName);
-    }
-
-    /**
-     * Saves the map to a specified directory with a specified name.
-     *
-     * @param path the folder to save the map in.
-     * @param name the name of the map, without extension.
-     * @throws IOException
-     */
-    public void saveToFiles(final String path, final String name) throws IOException {
-        tileData.saveToFile(new File(path, name + EXT_TILE_FILE));
-        warpData.saveToFile(new File(path, name + EXT_WARP_FILE));
-        itemData.saveToFile(new File(path, name + EXT_ITEM_FILE));
+    public String getName() {
+        return name;
     }
 
     public boolean contains(final int x, final int y) {

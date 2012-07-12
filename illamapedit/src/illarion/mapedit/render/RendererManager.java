@@ -19,8 +19,10 @@
 package illarion.mapedit.render;
 
 import illarion.mapedit.events.MapDragedEvent;
+import illarion.mapedit.events.RepaintRequestEvent;
 import illarion.mapedit.gui.MapPanel;
 import javolution.util.FastList;
+import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
@@ -57,12 +59,14 @@ public class RendererManager {
     public void initRenderers(final MapPanel panel) {
         renderers.add(new InfoRenderer(panel));
         renderers.add(new TileRenderer(panel));
+        renderers.add(new ItemRenderer(panel));
         Collections.sort(renderers);
     }
 
     public void addRenderer(final AbstractMapRenderer r) {
         renderers.add(r);
         Collections.sort(renderers);
+        EventBus.publish(new RepaintRequestEvent());
     }
 
     public void removeRenderer(final AbstractMapRenderer r) {
@@ -91,6 +95,7 @@ public class RendererManager {
         this.zoom = zoom;
         tileWidth = DEFAULT_TILE_WIDTH * zoom;
         tileHeight = DEFAULT_TILE_HEIGHT * zoom;
+        EventBus.publish(new RepaintRequestEvent());
     }
 
     public float getZoom() {
@@ -138,6 +143,6 @@ public class RendererManager {
     @EventSubscriber(eventClass = MapDragedEvent.class)
     public void onMapDragged(final MapDragedEvent e) {
         changeTranslation(e.getOffsetX(), e.getOffsetY());
-        MapPanel.getInstance().repaint();
+        EventBus.publish(new RepaintRequestEvent());
     }
 }

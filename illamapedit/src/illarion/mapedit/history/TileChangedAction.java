@@ -19,7 +19,7 @@
 package illarion.mapedit.history;
 
 import illarion.mapedit.data.Map;
-import illarion.mapedit.data.Tile;
+import illarion.mapedit.data.MapTile;
 
 /**
  * This history action is used when a tile of the map is changed to another tile.
@@ -28,39 +28,28 @@ import illarion.mapedit.data.Tile;
  */
 public class TileChangedAction implements HistoryAction {
 
-    /**
-     * This variable is true, if the old, and the new tile are equal, and {@link #undo()} and {@link #redo()} should
-     * be ignored.
-     */
-    private final boolean ignore;
+    private final int x;
+    private final int y;
     /**
      * The new tile.
      */
-    private final Tile newTile;
+    private final MapTile newTile;
     /**
      * The old tile.
      */
-    private final Tile oldTile;
+    private final MapTile oldTile;
     /**
      * The map, on which these changes happened.
      */
     private final Map map;
 
-    public TileChangedAction(final Tile newTile, final Tile oldTile, final Map map) {
-        if ((newTile.getX() != oldTile.getX()) || (newTile.getY() != newTile.getY())) {
-            throw new IllegalArgumentException("The tiles must be on the same location on the map.");
-        }
-        if ((newTile.getId() == oldTile.getId()) && (newTile.getMusicID() == oldTile.getMusicID())) {
-            ignore = true;
-            this.newTile = null;
-            this.oldTile = null;
-            this.map = null;
-        } else {
-            ignore = false;
-            this.newTile = newTile;
-            this.oldTile = oldTile;
-            this.map = map;
-        }
+    public TileChangedAction(final int x, final int y, final MapTile newTile, final MapTile oldTile, final Map map) {
+        this.x = x;
+        this.y = y;
+        this.newTile = newTile;
+        this.oldTile = oldTile;
+        this.map = map;
+
     }
 
     /**
@@ -68,10 +57,7 @@ public class TileChangedAction implements HistoryAction {
      */
     @Override
     public void redo() {
-        if (ignore) {
-            return;
-        }
-        map.getTileData().setTileAt(newTile);
+        map.setTileAt(x, y, newTile);
     }
 
     /**
@@ -79,9 +65,6 @@ public class TileChangedAction implements HistoryAction {
      */
     @Override
     public void undo() {
-        if (ignore) {
-            return;
-        }
-        map.getTileData().setTileAt(oldTile);
+        map.setTileAt(x, y, oldTile);
     }
 }

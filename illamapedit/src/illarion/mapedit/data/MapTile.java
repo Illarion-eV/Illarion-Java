@@ -18,20 +18,16 @@
  */
 package illarion.mapedit.data;
 
+import javolution.util.FastList;
+
+import java.util.List;
+
 /**
  * This object represents a tile with a coordinate, an id and a music id.
  *
  * @author Tim
  */
-public class Tile {
-    /**
-     * The x coordinate.
-     */
-    private final int x;
-    /**
-     * The y coordinate.
-     */
-    private final int y;
+public class MapTile {
     /**
      * The tile id.
      */
@@ -40,20 +36,26 @@ public class Tile {
      * The music id.
      */
     private final int musicID;
+    /**
+     * The items on top of this tile
+     */
+    private final List<MapItem> mapItems;
+    /**
+     * The warp point on this tile, may be {@code null}.
+     */
+    private MapWarpPoint mapWarpPoint;
 
     /**
      * Creates a new tile with the coordinates, the id and the music id.
      *
-     * @param x
-     * @param y
      * @param id
      * @param musicID
      */
-    public Tile(final int x, final int y, final int id, final int musicID) {
+    public MapTile(final int id, final int musicID) {
         this.id = id;
-        this.x = x;
-        this.y = y;
         this.musicID = musicID;
+        mapItems = new FastList<MapItem>();
+        mapWarpPoint = null;
     }
 
     /**
@@ -61,29 +63,11 @@ public class Tile {
      *
      * @param old
      */
-    public Tile(final Tile old) {
-        x = old.x;
-        y = old.y;
+    public MapTile(final MapTile old) {
         id = old.id;
         musicID = old.musicID;
-    }
-
-    /**
-     * Returns the x coordinate.
-     *
-     * @return
-     */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * Returns the y coordinate.
-     *
-     * @return
-     */
-    public int getY() {
-        return y;
+        mapItems = new FastList<MapItem>(old.mapItems);
+        mapWarpPoint = old.mapWarpPoint;
     }
 
     /**
@@ -105,23 +89,25 @@ public class Tile {
     }
 
     /**
-     * Loads a tile from a line of a *.tiles.txt file with the format <br/>
-     * {@code [X];[Y];[TileID];[MusikID];0 }
-     *
-     * @param line
-     * @return
+     * @return The list of items on this tile.
      */
-    public static Tile fromString(final String line) {
-        final String[] sections = line.split(";");
-        if (sections.length != 5) {
-            throw new IllegalArgumentException("Item can only hava 5 sections: " + line);
-        }
-        return new Tile(
-                Integer.parseInt(sections[0]),
-                Integer.parseInt(sections[1]),
-                Integer.parseInt(sections[2]),
-                Integer.parseInt(sections[3])
-        );
+    public List<MapItem> getMapItems() {
+        return mapItems;
+    }
 
+    /**
+     * @return The warp point on this tile, may be {@code null}.
+     */
+    public MapWarpPoint getMapWarpPoint() {
+        return mapWarpPoint;
+    }
+
+    /**
+     * Sets the warp point of this tile.
+     *
+     * @param mapWarpPoint the new warp, may be {@code null}.
+     */
+    public void setMapWarpPoint(final MapWarpPoint mapWarpPoint) {
+        this.mapWarpPoint = mapWarpPoint;
     }
 }

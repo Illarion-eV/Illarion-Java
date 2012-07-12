@@ -59,12 +59,12 @@ public class InfoRenderer extends AbstractMapRenderer {
 
         String[] lines = new String[5];
         lines[0] = String.format("%1$s (%2$d, %3$d, %4$d)", pos, m.getX(), m.getY(),
-                m.getL());
+                m.getZ());
         lines[1] = String.format("%1$s (%2$d, %3$d)", size, m.getW(), m.getH());
         lines[2] = String.format("%1$s %2$f", zoom, getZoom());
         lines[3] = String.format("%1$s (%2$d, %3$d)", trans, getTranslateX(), getTranslateY());
         if (m.contains(mapX, mapY)) {
-            final String tile = TileLoader.getInstance().getTileFromId(m.getTileData().getTileAt(mapX, mapY).getId()).getDescription();
+            final String tile = TileLoader.getInstance().getTileFromId(m.getTileAt(mapX, mapY).getId()).getDescription();
             lines[4] = String.format("(%d,%d) - %s", mapX, mapY, tile);
         } else {
             lines[4] = "";

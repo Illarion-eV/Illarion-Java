@@ -16,23 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools;
+package illarion.mapedit.events;
+
+import illarion.mapedit.resource.TileImg;
 
 /**
  * @author Tim
  */
-public abstract class AbstractTool {
+public class TileSelectedEvent {
+    private TileImg tileImg;
 
-    private ToolManager manager;
-
-    public abstract void clickedAt(int x, int y);
-
-    public void registerManager(final ToolManager toolManager) {
-        manager = toolManager;
+    public TileSelectedEvent(final TileImg tileImg) {
+        this.tileImg = tileImg;
     }
 
-
-    protected ToolManager getManager() {
-        return manager;
+    public TileImg getTileImg() {
+        return tileImg;
     }
 }

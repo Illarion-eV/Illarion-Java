@@ -18,21 +18,21 @@
  */
 package illarion.mapedit.tools;
 
+import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapTile;
+import illarion.mapedit.resource.TileImg;
+
 /**
  * @author Tim
  */
-public abstract class AbstractTool {
+public class SingleTileTool extends AbstractTool {
 
-    private ToolManager manager;
-
-    public abstract void clickedAt(int x, int y);
-
-    public void registerManager(final ToolManager toolManager) {
-        manager = toolManager;
-    }
-
-
-    protected ToolManager getManager() {
-        return manager;
+    @Override
+    public void clickedAt(final int x, final int y) {
+        Map m = getManager().getMap();
+        TileImg tile = getManager().getSelectedTile();
+        if (tile != null) {
+            m.setTileAt(x, y, new MapTile(tile.getId(), 0));
+        }
     }
 }

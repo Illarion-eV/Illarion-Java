@@ -32,7 +32,7 @@ import java.awt.*;
  * @author Tim
  */
 public class MainFrame extends JRibbonFrame {
-    private static final Dimension WINDOW_SIZE = new Dimension(400, 500);
+    private static final Dimension WINDOW_SIZE = new Dimension(900, 700);
     private static final Logger LOGGER = Logger.getLogger(MainFrame.class);
     private static final MainFrame INSTANCE = new MainFrame();
 
@@ -43,12 +43,11 @@ public class MainFrame extends JRibbonFrame {
         addWindowListener(new WindowEventListener());
         setTitle(Lang.getMsg("application.Name") + MapEditor.getVersion());
         setSize(WINDOW_SIZE);
-        getRibbon().setApplicationMenu(new MainMenu());
+        getRibbon().setApplicationMenu(new MainMenu(this));
 
         map = MapPanel.getInstance();
 
         add(map, BorderLayout.CENTER);
-        add(new TileSelector(), BorderLayout.EAST);
 
         final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
                 new ClipboardBand(), new ViewBand());
@@ -56,7 +55,7 @@ public class MainFrame extends JRibbonFrame {
 
         getRibbon().addTask(task);
         setApplicationIcon(Utils.getResizableIconFromResource("mapedit64.png"));
-
+        new TileSelector();
     }
 
     public static MainFrame getInstance() {

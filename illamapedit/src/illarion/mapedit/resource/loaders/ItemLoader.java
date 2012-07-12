@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.resource.loaders;
 
+import illarion.common.graphics.ItemInfo;
 import illarion.common.util.TableLoaderItems;
 import illarion.common.util.TableLoaderSink;
 import illarion.mapedit.resource.ItemImg;
@@ -56,10 +57,30 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     }
 
     @Override
-    public boolean processRecord(final int line, final TableLoaderItems l) {
-        ItemImg img = new ItemImg(l.getItemId(), l.getResourceName(), l.getOffsetX(), l.getOffsetY(),
-                l.getFrameCount(), l.getAnimationSpeed(), l.getItemMode(),
-                l.getItemLight(), l.getFace(), getTextures(l.getResourceName(), l.getFrameCount()));
+    public boolean processRecord(final int line, final TableLoaderItems loader) {
+        final int mode = loader.getItemMode();
+        final int itemID = loader.getItemId();
+        final int face = loader.getFace();
+        final boolean moveable = loader.isMovable();
+        final int specialFlag = loader.getSpecialFlag();
+        final boolean obstacle = loader.isObstacle();
+        final int variance = loader.getSizeVariance();
+        final int opacity = loader.getOpacity();
+        final int surfaceLevel = loader.getSurfaceLevel();
+        final int itemLight = loader.getItemLight();
+        final int offsetX = loader.getOffsetX();
+        final int offsetY = loader.getOffsetY();
+        final String resourceName = loader.getResourceName();
+        final int frameCount = loader.getFrameCount();
+        final int animationSpeed = loader.getAnimationSpeed();
+
+        final ItemInfo info =
+                ItemInfo.create(face, moveable, specialFlag, obstacle, variance,
+                        opacity, surfaceLevel, itemLight);
+
+        final ItemImg img = new ItemImg(itemID, resourceName, offsetX, offsetY,
+                frameCount, animationSpeed, mode
+                , getTextures(loader.getResourceName(), frameCount), info);
 
         items.add(img);
         return true;
@@ -79,5 +100,14 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
 
     public static ItemLoader getInstance() {
         return INSTANCE;
+    }
+
+    public ItemImg getTileFromId(final int id) {
+        for (final ItemImg t : items) {
+            if (t.getItemId() == id) {
+                return t;
+            }
+        }
+        return null;
     }
 }

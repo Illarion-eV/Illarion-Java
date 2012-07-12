@@ -21,10 +21,13 @@ package illarion.mapedit.gui;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.events.MapClickedEvent;
 import illarion.mapedit.events.MapDragedEvent;
+import illarion.mapedit.events.RepaintRequestEvent;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.tools.ToolManager;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,6 +61,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         addMouseWheelListener(this);
         addMouseMotionListener(this);
         addMouseListener(this);
+        AnnotationProcessor.process(this);
     }
 
     @Override
@@ -76,8 +80,11 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
 
     public void setMap(final Map map) {
         mapData = map;
-        toolManager = new ToolManager(this, map);
-        repaint();
+        if (toolManager != null) {
+            toolManager.dispose();
+        }
+        toolManager = new ToolManager(map);
+        EventBus.publish(new RepaintRequestEvent());
     }
 
     public Map getMap() {
@@ -96,17 +103,15 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
             } else if (e.getWheelRotation() > 0) {
                 rendererManager.zoomOut();
             }
-            repaint();
         }
     }
 
     @Override
     public void mouseDragged(final MouseEvent e) {
-        if (canDrag && (mapData != null)) {
+        if (canDrag && (mapData != null) && (e.getButton() == 3)) {
             EventBus.publish(new MapDragedEvent(e.getX() - clickX, e.getY() - clickY));
             clickX = e.getX();
             clickY = e.getY();
-            repaint();
         }
     }
 
@@ -116,8 +121,6 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         final int transY = rendererManager.getTranslationY();
         mouseMapPosX = Utils.getMapXFormDisp(e.getX(), e.getY(), transX, transY, rendererManager.getZoom());
         mouseMapPosY = Utils.getMapYFormDisp(e.getX(), e.getY(), transX, transY, rendererManager.getZoom());
-
-        repaint();
     }
 
     @Override
@@ -160,5 +163,15 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
 
     public int getMouseMapPosY() {
         return mouseMapPosY;
+    }
+
+    @EventSubscriber(eventClass = RepaintRequestEvent.class)
+    public void onRepaintRequest(final RepaintRequestEvent e) {
+        e.doRepaint(this);
+    }
+
+    @Override
+    public void repaint() {
+        super.repaint();
     }
 }

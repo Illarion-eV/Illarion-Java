@@ -19,9 +19,12 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
+import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapIO;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
+import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 
@@ -39,8 +42,10 @@ public class MainMenu extends RibbonApplicationMenu {
 
     private static final Logger LOGGER = Logger.getLogger(MainMenu.class);
 
-    public MainMenu() {
+    private final JRibbonFrame parent;
 
+    public MainMenu(final JRibbonFrame parent) {
+        this.parent = parent;
 
         final RibbonApplicationMenuEntryPrimary menuOpenMap =
                 new RibbonApplicationMenuEntryPrimary(
@@ -51,7 +56,14 @@ public class MainMenu extends RibbonApplicationMenu {
                             public void actionPerformed(final ActionEvent e) {
 
                                 try {
-                                    MapPanel.getInstance().setMap(MapChooser.getInstance().loadMap());
+                                    MapPanel.getInstance().setMap(MapDialogs.showOpenMapDialog(parent));
+                                } catch (FormatCorruptedException ex) {
+                                    LOGGER.warn("Format wrong.", ex);
+                                    JOptionPane.showMessageDialog(MainFrame.getInstance(),
+                                            ex.getMessage(),
+                                            Lang.getMsg("gui.error"),
+                                            JOptionPane.ERROR_MESSAGE,
+                                            Utils.getIconFromResource("messagebox_critical.png"));
                                 } catch (IOException e1) {
                                     LOGGER.warn("Can't load map", e1);
                                     JOptionPane.showMessageDialog(MainFrame.getInstance(),
@@ -70,7 +82,7 @@ public class MainMenu extends RibbonApplicationMenu {
                         new ActionListener() {
                             @Override
                             public void actionPerformed(final ActionEvent e) {
-                                MapPanel.getInstance().setMap(MapChooser.getInstance().newMap());
+                                MapPanel.getInstance().setMap(MapDialogs.showNewMapDialog(parent));
                             }
                         }, JCommandButton.CommandButtonKind.ACTION_ONLY
                 );
@@ -84,8 +96,9 @@ public class MainMenu extends RibbonApplicationMenu {
                                 try {
                                     final Map m = MapPanel.getInstance().getMap();
                                     if (m != null) {
-                                        m.saveToFiles();
+                                        MapIO.saveMap(m);
                                     }
+
                                 } catch (IOException e1) {
                                     LOGGER.warn("Can't save map", e1);
                                     JOptionPane.showMessageDialog(MainFrame.getInstance(),

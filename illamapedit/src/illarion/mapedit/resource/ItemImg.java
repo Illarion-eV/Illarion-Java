@@ -18,7 +18,7 @@
  */
 package illarion.mapedit.resource;
 
-import javolution.text.TextBuilder;
+import illarion.common.graphics.ItemInfo;
 
 import java.awt.*;
 
@@ -27,7 +27,7 @@ import java.awt.*;
  */
 public class ItemImg {
 
-
+    private final ItemInfo info;
     private final int itemId;
     private final String resourceName;
     private final int offsetX;
@@ -35,8 +35,6 @@ public class ItemImg {
     private final int frameCount;
     private final int animationSpeed;
     private final int itemMode;
-    private final int itemLight;
-    private final int face;
     private Image[] imgs;
 
     public int getItemId() {
@@ -67,18 +65,10 @@ public class ItemImg {
         return itemMode;
     }
 
-    public int getItemLight() {
-        return itemLight;
-    }
-
-    public int getFace() {
-        return face;
-    }
-
     public ItemImg(final int itemId, final String resourceName,
                    final int offsetX, final int offsetY, final int frameCount,
                    final int animationSpeed, final int itemMode,
-                   final int itemLight, final int face, final Image[] imgs) {
+                   final Image[] imgs, final ItemInfo info) {
 
         this.itemId = itemId;
         this.resourceName = resourceName;
@@ -87,25 +77,15 @@ public class ItemImg {
         this.frameCount = frameCount;
         this.animationSpeed = animationSpeed;
         this.itemMode = itemMode;
-        this.itemLight = itemLight;
-        this.face = face;
+
+
+        this.info = info;
         this.imgs = new Image[imgs.length];
         System.arraycopy(imgs, 0, this.imgs, 0, imgs.length);
     }
 
-    @Override
-    public String toString() {
-        TextBuilder b = TextBuilder.newInstance();
-        b.append("ItemImg{").append("itemId=").append(itemId).append(", resourceName='").append(resourceName);
-        b.append('\'').append(", offsetX=").append(offsetX).append(", offsetY=").append(offsetY);
-        b.append(", frameCount=").append(frameCount).append(", animationSpeed=").append(animationSpeed);
-        b.append(", itemMode=").append(itemMode).append(", itemLight=").append(itemLight);
-        b.append(", face=").append(face).append('}');
 
-        try {
-            return b.toString();
-        } finally {
-            TextBuilder.recycle(b);
-        }
+    public Image[] getImgs() {
+        return imgs;
     }
 }

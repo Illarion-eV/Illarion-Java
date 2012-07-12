@@ -16,23 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools;
+package illarion.mapedit.events;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author Tim
  */
-public abstract class AbstractTool {
+public class RepaintRequestEvent {
+    private final Rectangle dirty;
 
-    private ToolManager manager;
-
-    public abstract void clickedAt(int x, int y);
-
-    public void registerManager(final ToolManager toolManager) {
-        manager = toolManager;
+    public RepaintRequestEvent() {
+        this(null);
     }
 
+    public RepaintRequestEvent(final Rectangle dirty) {
+        this.dirty = dirty;
+    }
 
-    protected ToolManager getManager() {
-        return manager;
+    public void doRepaint(final JPanel c) {
+        if (dirty != null) {
+            c.repaint(dirty);
+        } else {
+            c.repaint();
+        }
+
     }
 }

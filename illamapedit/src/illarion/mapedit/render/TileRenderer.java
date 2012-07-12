@@ -70,7 +70,7 @@ public class TileRenderer extends AbstractMapRenderer {
                 if (getRenderRectangle().contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 
-                    final TileImg t = TileLoader.getInstance().getTileFromId(map.getTileData().getTileAt(x,
+                    final TileImg t = TileLoader.getInstance().getTileFromId(map.getTileAt(x,
                             y).getId());
                     if (t != null) {
                         if (getZoom() > getMinZoom()) {

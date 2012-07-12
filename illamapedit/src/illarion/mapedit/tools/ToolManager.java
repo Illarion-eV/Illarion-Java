@@ -19,42 +19,64 @@
 package illarion.mapedit.tools;
 
 import illarion.mapedit.data.Map;
-import illarion.mapedit.gui.MapPanel;
-import illarion.mapedit.resource.loaders.TileLoader;
+import illarion.mapedit.events.MapClickedEvent;
+import illarion.mapedit.events.RepaintRequestEvent;
+import illarion.mapedit.events.TileSelectedEvent;
+import illarion.mapedit.resource.TileImg;
+import illarion.mapedit.util.Disposable;
 import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 
 /**
  * @author Tim
  */
-public final class ToolManager {
+public final class ToolManager implements Disposable {
     private static final Logger LOGGER = Logger.getLogger(ToolManager.class);
 
 
-    private AbstractTool actualTool;
-    private MapPanel mapPanel;
-    private Map map;
+    private final AbstractTool[] actualTool = new AbstractTool[3];
+    private final Map map;
 
-    public ToolManager(final MapPanel mapPanel, final Map map) {
-        this.mapPanel = mapPanel;
+    private TileImg selectedTile;
 
+    public ToolManager(final Map map) {
+        AnnotationProcessor.process(this);
         this.map = map;
+        setTool(new SingleTileTool(), 0);
     }
 
-    public void clickedAt(final int x, final int y) {
-        if (actualTool != null) {
-            actualTool.clickedAt(x, y);
-        }
-        System.out.printf("Clicked at X: %d Y: %d Tile:%s%n", x, y, TileLoader.getInstance().getTileFromId(map.getTileData()
-                .getTileAt(x, y).getId()).getDescription());
-    }
-
-    public void setTool(final AbstractTool tool) {
+    public void setTool(final AbstractTool tool, final int button) {
         if (tool != null)
             tool.registerManager(this);
-        actualTool = tool;
+        actualTool[button] = tool;
     }
 
     public Map getMap() {
         return map;
+    }
+
+    TileImg getSelectedTile() {
+        return selectedTile;
+    }
+
+    @Override
+    public void dispose() {
+        AnnotationProcessor.unprocess(this);
+    }
+
+    @EventSubscriber(eventClass = MapClickedEvent.class)
+    public void clickedAt(final MapClickedEvent e) {
+        final int button = e.getButton() - 1;
+        if ((actualTool != null) && (actualTool.length > button) && (actualTool[button] != null)) {
+            actualTool[button].clickedAt(e.getX(), e.getY());
+            EventBus.publish(new RepaintRequestEvent());
+        }
+    }
+
+    @EventSubscriber(eventClass = TileSelectedEvent.class)
+    public void onTileSelected(TileSelectedEvent e) {
+        selectedTile = e.getTileImg();
     }
 }

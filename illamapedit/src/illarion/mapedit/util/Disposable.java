@@ -16,23 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools;
+package illarion.mapedit.util;
 
 /**
  * @author Tim
  */
-public abstract class AbstractTool {
-
-    private ToolManager manager;
-
-    public abstract void clickedAt(int x, int y);
-
-    public void registerManager(final ToolManager toolManager) {
-        manager = toolManager;
-    }
-
-
-    protected ToolManager getManager() {
-        return manager;
-    }
+public interface Disposable {
+    public void dispose();
 }
