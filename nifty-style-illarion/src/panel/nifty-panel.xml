@@ -23,6 +23,11 @@
                     padding="6px,8px"/>
     </style>
 
+    <style id="nifty-panel-small">
+        <attributes padding="6px,9px" backgroundImage="data/gui/panel/panel-small.png"
+                    imageMode="resize:14,2,14,11,14,2,14,1,14,2,14,11"/>
+    </style>
+
     <style id="nifty-panel-hint">
         <attributes padding="5px" backgroundImage="data/gui/panel/panel-hint.png"
                     imageMode="resize:8,2,8,8,8,2,8,4,8,2,8,8"/>
