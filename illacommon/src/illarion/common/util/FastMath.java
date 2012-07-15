@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.util;
 
@@ -24,7 +24,7 @@ import java.util.Random;
  * This is the Java implementation of the FastMath class. This should only be
  * used in case the native implementation is not available or results in
  * problems.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class FastMath {
@@ -97,25 +97,25 @@ public final class FastMath {
     /**
      * Lookup table for the fast square root table function.
      */
-    private final static int[] SQRT_TABLE = { 0, 16, 22, 27, 32, 35, 39, 42,
-        45, 48, 50, 53, 55, 57, 59, 61, 64, 65, 67, 69, 71, 73, 75, 76, 78,
-        80, 81, 83, 84, 86, 87, 89, 90, 91, 93, 94, 96, 97, 98, 99, 101, 102,
-        103, 104, 106, 107, 108, 109, 110, 112, 113, 114, 115, 116, 117, 118,
-        119, 120, 121, 122, 123, 124, 125, 126, 128, 128, 129, 130, 131, 132,
-        133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 144, 145,
-        146, 147, 148, 149, 150, 150, 151, 152, 153, 154, 155, 155, 156, 157,
-        158, 159, 160, 160, 161, 162, 163, 163, 164, 165, 166, 167, 167, 168,
-        169, 170, 170, 171, 172, 173, 173, 174, 175, 176, 176, 177, 178, 178,
-        179, 180, 181, 181, 182, 183, 183, 184, 185, 185, 186, 187, 187, 188,
-        189, 189, 190, 191, 192, 192, 193, 193, 194, 195, 195, 196, 197, 197,
-        198, 199, 199, 200, 201, 201, 202, 203, 203, 204, 204, 205, 206, 206,
-        207, 208, 208, 209, 209, 210, 211, 211, 212, 212, 213, 214, 214, 215,
-        215, 216, 217, 217, 218, 218, 219, 219, 220, 221, 221, 222, 222, 223,
-        224, 224, 225, 225, 226, 226, 227, 227, 228, 229, 229, 230, 230, 231,
-        231, 232, 232, 233, 234, 234, 235, 235, 236, 236, 237, 237, 238, 238,
-        239, 240, 240, 241, 241, 242, 242, 243, 243, 244, 244, 245, 245, 246,
-        246, 247, 247, 248, 248, 249, 249, 250, 250, 251, 251, 252, 252, 253,
-        253, 254, 254, 255 };
+    private final static int[] SQRT_TABLE = {0, 16, 22, 27, 32, 35, 39, 42,
+            45, 48, 50, 53, 55, 57, 59, 61, 64, 65, 67, 69, 71, 73, 75, 76, 78,
+            80, 81, 83, 84, 86, 87, 89, 90, 91, 93, 94, 96, 97, 98, 99, 101, 102,
+            103, 104, 106, 107, 108, 109, 110, 112, 113, 114, 115, 116, 117, 118,
+            119, 120, 121, 122, 123, 124, 125, 126, 128, 128, 129, 130, 131, 132,
+            133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 144, 145,
+            146, 147, 148, 149, 150, 150, 151, 152, 153, 154, 155, 155, 156, 157,
+            158, 159, 160, 160, 161, 162, 163, 163, 164, 165, 166, 167, 167, 168,
+            169, 170, 170, 171, 172, 173, 173, 174, 175, 176, 176, 177, 178, 178,
+            179, 180, 181, 181, 182, 183, 183, 184, 185, 185, 186, 187, 187, 188,
+            189, 189, 190, 191, 192, 192, 193, 193, 194, 195, 195, 196, 197, 197,
+            198, 199, 199, 200, 201, 201, 202, 203, 203, 204, 204, 205, 206, 206,
+            207, 208, 208, 209, 209, 210, 211, 211, 212, 212, 213, 214, 214, 215,
+            215, 216, 217, 217, 218, 218, 219, 219, 220, 221, 221, 222, 222, 223,
+            224, 224, 225, 225, 226, 226, 227, 227, 228, 229, 229, 230, 230, 231,
+            231, 232, 232, 233, 234, 234, 235, 235, 236, 236, 237, 237, 238, 238,
+            239, 240, 240, 241, 241, 242, 242, 243, 243, 244, 244, 245, 245, 246,
+            246, 247, 247, 248, 248, 249, 249, 250, 250, 251, 251, 252, 252, 253,
+            253, 254, 254, 255};
 
     /**
      * Private constructor to ensure that no instance is created.
@@ -130,7 +130,7 @@ public final class FastMath {
      * This version works on byte values. <br>
      * Special case: In case the argument is set to Byte.MIN_VALUE the result
      * will be Byte.MIN_VALUE as well.
-     * 
+     *
      * @param value the value to work with
      * @return the absolute value of the value supplied as parameter
      * @see #abs(double)
@@ -147,7 +147,7 @@ public final class FastMath {
      * Returns absolute value of a value. This means a negative value gets
      * negated (so it becomes positive) and a positive value remains the same.
      * This version works on double values.
-     * 
+     *
      * @param value the value to work with
      * @return the absolute value of the value supplied as parameter
      * @see #abs(byte)
@@ -167,7 +167,7 @@ public final class FastMath {
      * Returns absolute value of a value. This means a negative value gets
      * negated (so it becomes positive) and a positive value remains the same.
      * This version works on float values.
-     * 
+     *
      * @param value the value to work with
      * @return the absolute value of the value supplied as parameter
      * @see #abs(byte)
@@ -189,7 +189,7 @@ public final class FastMath {
      * This version works on integer values. <br>
      * Special case: In case the argument is set to Integer.MIN_VALUE the result
      * will be Integer.MIN_VALUE as well.
-     * 
+     *
      * @param value the value to work with
      * @return the absolute value of the value supplied as parameter
      * @see #abs(byte)
@@ -208,7 +208,7 @@ public final class FastMath {
      * This version works on long values. <br>
      * Special case: In case the argument is set to Long.MIN_VALUE the result
      * will be Long.MIN_VALUE as well.
-     * 
+     *
      * @param value the value to work with
      * @return the absolute value of the value supplied as parameter
      * @see #abs(byte)
@@ -225,7 +225,7 @@ public final class FastMath {
      * Returns absolute value of a value. This means a negative value gets
      * negated (so it becomes positive) and a positive value remains the same.
      * This version works on short values.
-     * 
+     *
      * @param value the value to work with
      * @return the absolute value of the value supplied as parameter
      * @see #abs(byte)
@@ -243,14 +243,14 @@ public final class FastMath {
      * through pi. This function results in a error message all and is only
      * implemented to ensure that no one calls that function for a false data
      * type by mistake.
-     * 
+     *
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static byte acos(final byte value) {
         throw new OutOfCoffeeException(
-            "A arc cosine from a byte value? No point in that.");
+                "A arc cosine from a byte value? No point in that.");
     }
 
     /**
@@ -260,7 +260,7 @@ public final class FastMath {
      * <li>If the argument is NaN or its absolute value is greater than 1, then
      * the result is NaN.</li>
      * </ul>
-     * 
+     *
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
@@ -285,7 +285,7 @@ public final class FastMath {
      * <li>If the argument is NaN or its absolute value is greater than 1, then
      * the result is NaN.</li>
      * </ul>
-     * 
+     *
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
@@ -308,14 +308,14 @@ public final class FastMath {
      * through pi. This function results in a error message all and is only
      * implemented to ensure that no one calls that function for a false data
      * type by mistake.
-     * 
+     *
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static int acos(final int value) {
         throw new OutOfCoffeeException(
-            "A arc cosine from a integer value? No point in that.");
+                "A arc cosine from a integer value? No point in that.");
     }
 
     /**
@@ -323,14 +323,14 @@ public final class FastMath {
      * through pi. This function results in a error message all and is only
      * implemented to ensure that no one calls that function for a false data
      * type by mistake.
-     * 
+     *
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static long acos(final long value) {
         throw new OutOfCoffeeException(
-            "A arc cosine from a long value? No point in that.");
+                "A arc cosine from a long value? No point in that.");
     }
 
     /**
@@ -338,14 +338,14 @@ public final class FastMath {
      * through pi. This function results in a error message all and is only
      * implemented to ensure that no one calls that function for a false data
      * type by mistake.
-     * 
+     *
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static short acos(final short value) {
         throw new OutOfCoffeeException(
-            "A arc cosine from a short value? No point in that.");
+                "A arc cosine from a short value? No point in that.");
     }
 
     /**
@@ -353,14 +353,14 @@ public final class FastMath {
      * through pi/2. This function results in a error message all and is only
      * implemented to ensure that no one calls that function for a false data
      * type by mistake.
-     * 
+     *
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static byte asin(final byte value) {
         throw new OutOfCoffeeException(
-            "A arc sine from a byte value? No point in that.");
+                "A arc sine from a byte value? No point in that.");
     }
 
     /**
@@ -372,7 +372,7 @@ public final class FastMath {
      * <li>If the argument is zero, then the result is a zero with the same sign
      * as the argument.</li>
      * </ul>
-     * 
+     *
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
@@ -400,7 +400,7 @@ public final class FastMath {
      * <li>If the argument is zero, then the result is a zero with the same sign
      * as the argument.</li>
      * </ul>
-     * 
+     *
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
@@ -424,14 +424,14 @@ public final class FastMath {
      * through pi/2. This function results in a error message all and is only
      * implemented to ensure that no one calls that function for a false data
      * type by mistake.
-     * 
+     *
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static int asin(final int value) {
         throw new OutOfCoffeeException(
-            "A arc sine from a integer value? No point in that.");
+                "A arc sine from a integer value? No point in that.");
     }
 
     /**
@@ -439,14 +439,14 @@ public final class FastMath {
      * through pi/2. This function results in a error message all and is only
      * implemented to ensure that no one calls that function for a false data
      * type by mistake.
-     * 
+     *
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static long asin(final long value) {
         throw new OutOfCoffeeException(
-            "A arc sine from a long value? No point in that.");
+                "A arc sine from a long value? No point in that.");
     }
 
     /**
@@ -454,20 +454,20 @@ public final class FastMath {
      * through pi/2. This function results in a error message all and is only
      * implemented to ensure that no one calls that function for a false data
      * type by mistake.
-     * 
+     *
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static short asin(final short value) {
         throw new OutOfCoffeeException(
-            "A arc sine from a short value? No point in that.");
+                "A arc sine from a short value? No point in that.");
     }
 
     /**
      * Returns the arc tangent of a value; the returned angle is in the range
      * -pi/2 through pi/2. This version of the function works using byte values.
-     * 
+     *
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
@@ -484,7 +484,7 @@ public final class FastMath {
      * <li>If the argument is zero, then the result is a zero with the same sign
      * as the argument.</li>
      * </ul>
-     * 
+     *
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
@@ -501,7 +501,7 @@ public final class FastMath {
      * <li>If the argument is zero, then the result is a zero with the same sign
      * as the argument.</li>
      * </ul>
-     * 
+     *
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
@@ -513,7 +513,7 @@ public final class FastMath {
      * Returns the arc tangent of a value; the returned angle is in the range
      * -pi/2 through pi/2. This version of the function works using integer
      * values.
-     * 
+     *
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
@@ -524,7 +524,7 @@ public final class FastMath {
     /**
      * Returns the arc tangent of a value; the returned angle is in the range
      * -pi/2 through pi/2. This version of the function works using long values.
-     * 
+     *
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
@@ -536,7 +536,7 @@ public final class FastMath {
      * Returns the arc tangent of a value; the returned angle is in the range
      * -pi/2 through pi/2. This version of the function works using short
      * values.
-     * 
+     *
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
@@ -549,11 +549,11 @@ public final class FastMath {
      * <b>This function throws a exception at any time because its absolutely
      * useless to round a byte value. This function is only implemented to
      * prevent useless function calls.</b>
-     * 
+     *
      * @param value the value that needs to be rounded
      * @return the next larger short of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static byte ceil(final byte value) {
         throw new OutOfCoffeeException("Rounding up a byte value? Seriously?");
     }
@@ -562,10 +562,9 @@ public final class FastMath {
      * Round a double value to the next larger long value. Special cases:
      * <ul>
      * <li>If the argument is NaN or infinite, then the result is 0.</li>
-     * <li>If the value is already the integer value, the same value is returned
-     * </li>
+     * <li>If the value is already the integer value, the same value is returned</li>
      * </ul>
-     * 
+     *
      * @param value the value that needs to be rounded
      * @return the next larger long of the argument
      */
@@ -588,10 +587,9 @@ public final class FastMath {
      * Round a float value to the next larger integer value. Special cases:
      * <ul>
      * <li>If the argument is NaN or infinite, then the result is 0.</li>
-     * <li>If the value is already the integer value, the same value is returned
-     * </li>
+     * <li>If the value is already the integer value, the same value is returned</li>
      * </ul>
-     * 
+     *
      * @param value the value that needs to be rounded
      * @return the next larger integer of the argument
      */
@@ -606,7 +604,7 @@ public final class FastMath {
         if (value < 0.f) {
             return (int) value;
         }
-        return ((int) value) + 1;
+        return (int) value + 1;
     }
 
     /**
@@ -614,14 +612,13 @@ public final class FastMath {
      * <b>This function throws a exception at any time because its absolutely
      * useless to round a integer value. This function is only implemented to
      * prevent useless function calls.</b>
-     * 
+     *
      * @param value the value that needs to be rounded
      * @return the next larger integer of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static int ceil(final int value) {
-        throw new OutOfCoffeeException(
-            "Rounding up a integer value? Seriously?");
+        throw new OutOfCoffeeException("Rounding up a integer value? Seriously?");
     }
 
     /**
@@ -629,11 +626,11 @@ public final class FastMath {
      * <b>This function throws a exception at any time because its absolutely
      * useless to round a long value. This function is only implemented to
      * prevent useless function calls.</b>
-     * 
+     *
      * @param value the value that needs to be rounded
      * @return the next larger long of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static long ceil(final long value) {
         throw new OutOfCoffeeException("Rounding up a long value? Seriously?");
     }
@@ -643,11 +640,11 @@ public final class FastMath {
      * <b>This function throws a exception at any time because its absolutely
      * useless to round a short value. This function is only implemented to
      * prevent useless function calls.</b>
-     * 
+     *
      * @param value the value that needs to be rounded
      * @return the next larger short of the argument
      */
-    @SuppressWarnings({ "nls", "unused" })
+    @SuppressWarnings({"nls", "unused"})
     public static short ceil(final short value) {
         throw new OutOfCoffeeException("Rounding up a short value? Seriously?");
     }
@@ -657,26 +654,25 @@ public final class FastMath {
      * maximum value the maximum value is returned. In case the value is smaller
      * then the minimum value, the minimum value is returned. Otherwise the
      * input value is returned.
-     * 
+     *
      * @param value the value that is put into the limits
-     * @param min the minimal allowed value, its not allowed to set NaN here
-     * @param max the maximal allowed value, its not allowed to set NaN here
+     * @param min   the minimal allowed value, its not allowed to set NaN here
+     * @param max   the maximal allowed value, its not allowed to set NaN here
      * @return the input value clamped between the minimal and the maximal
      *         allowed value
      */
     @SuppressWarnings("nls")
     public static byte clamp(final byte value, final byte min, final byte max) {
         if (max < min) {
-            throw new IllegalArgumentException(
-                "Minimal value must not be greater then the maximal value.");
+            throw new IllegalArgumentException("Minimal value must not be greater then the maximal value.");
         }
         if (value >= max) {
             return max;
-        } else if (value <= min) {
-            return min;
-        } else {
-            return value;
         }
+        if (value <= min) {
+            return min;
+        }
+        return value;
     }
 
     /**
@@ -687,34 +683,34 @@ public final class FastMath {
      * <ul>
      * <li>If the input value is NaN the result value will be NaN.</li>
      * </ul>
-     * 
+     *
      * @param value the value that is put into the limits
-     * @param min the minimal allowed value, its not allowed to set NaN here
-     * @param max the maximal allowed value, its not allowed to set NaN here
+     * @param min   the minimal allowed value, its not allowed to set NaN here
+     * @param max   the maximal allowed value, its not allowed to set NaN here
      * @return the input value clamped between the minimal and the maximal
      *         allowed value
      */
     @SuppressWarnings("nls")
     public static double clamp(final double value, final double min,
-        final double max) {
+                               final double max) {
         if (Double.isNaN(value)) {
             return Double.NaN;
         }
         if (Double.isNaN(min) || Double.isNaN(max)) {
             throw new IllegalArgumentException(
-                "NaN is not valid value for the top and bottom border.");
+                    "NaN is not valid value for the top and bottom border.");
         }
         if (max < min) {
             throw new IllegalArgumentException(
-                "Minimal value must not be greater then the maximal value.");
+                    "Minimal value must not be greater then the maximal value.");
         }
         if (value >= max) {
             return max;
-        } else if (value <= min) {
-            return min;
-        } else {
-            return value;
         }
+        if (value <= min) {
+            return min;
+        }
+        return value;
     }
 
     /**
@@ -725,34 +721,32 @@ public final class FastMath {
      * <ul>
      * <li>If the input value is NaN the result value will be NaN.</li>
      * </ul>
-     * 
+     *
      * @param value the value that is put into the limits
-     * @param min the minimal allowed value, its not allowed to set NaN here
-     * @param max the maximal allowed value, its not allowed to set NaN here
+     * @param min   the minimal allowed value, its not allowed to set NaN here
+     * @param max   the maximal allowed value, its not allowed to set NaN here
      * @return the input value clamped between the minimal and the maximal
      *         allowed value
      */
     @SuppressWarnings("nls")
     public static float clamp(final float value, final float min,
-        final float max) {
+                              final float max) {
         if (Float.isNaN(value)) {
             return Float.NaN;
         }
         if (Float.isNaN(min) || Float.isNaN(max)) {
-            throw new IllegalArgumentException(
-                "NaN is not valid value for the top and bottom border.");
+            throw new IllegalArgumentException("NaN is not valid value for the top and bottom border.");
         }
         if (max < min) {
-            throw new IllegalArgumentException(
-                "Minimal value must not be greater then the maximal value.");
+            throw new IllegalArgumentException("Minimal value must not be greater then the maximal value.");
         }
         if (value >= max) {
             return max;
-        } else if (value <= min) {
-            return min;
-        } else {
-            return value;
         }
+        if (value <= min) {
+            return min;
+        }
+        return value;
     }
 
     /**
@@ -760,26 +754,25 @@ public final class FastMath {
      * maximum value the maximum value is returned. In case the value is smaller
      * then the minimum value, the minimum value is returned. Otherwise the
      * input value is returned.
-     * 
+     *
      * @param value the value that is put into the limits
-     * @param min the minimal allowed value, its not allowed to set NaN here
-     * @param max the maximal allowed value, its not allowed to set NaN here
+     * @param min   the minimal allowed value, its not allowed to set NaN here
+     * @param max   the maximal allowed value, its not allowed to set NaN here
      * @return the input value clamped between the minimal and the maximal
      *         allowed value
      */
     @SuppressWarnings("nls")
     public static int clamp(final int value, final int min, final int max) {
         if (max < min) {
-            throw new IllegalArgumentException(
-                "Minimal value must not be greater then the maximal value.");
+            throw new IllegalArgumentException("Minimal value must not be greater then the maximal value.");
         }
         if (value >= max) {
             return max;
-        } else if (value <= min) {
-            return min;
-        } else {
-            return value;
         }
+        if (value <= min) {
+            return min;
+        }
+        return value;
     }
 
     /**
@@ -787,7 +780,7 @@ public final class FastMath {
      * maximum value the maximum value is returned. In case the value is smaller
      * then the minimum value, the minimum value is returned. Otherwise the
      * input value is returned.
-     * 
+     *
      * @param value the value that is put into the limits
      * @param range the range that defines the maximal and the minimal value
      * @return the input value clamped between the minimal and the maximal
@@ -802,26 +795,25 @@ public final class FastMath {
      * maximum value the maximum value is returned. In case the value is smaller
      * then the minimum value, the minimum value is returned. Otherwise the
      * input value is returned.
-     * 
+     *
      * @param value the value that is put into the limits
-     * @param min the minimal allowed value, its not allowed to set NaN here
-     * @param max the maximal allowed value, its not allowed to set NaN here
+     * @param min   the minimal allowed value, its not allowed to set NaN here
+     * @param max   the maximal allowed value, its not allowed to set NaN here
      * @return the input value clamped between the minimal and the maximal
      *         allowed value
      */
     @SuppressWarnings("nls")
     public static long clamp(final long value, final long min, final long max) {
         if (max < min) {
-            throw new IllegalArgumentException(
-                "Minimal value must not be greater then the maximal value.");
+            throw new IllegalArgumentException("Minimal value must not be greater then the maximal value.");
         }
         if (value >= max) {
             return max;
-        } else if (value <= min) {
-            return min;
-        } else {
-            return value;
         }
+        if (value <= min) {
+            return min;
+        }
+        return value;
     }
 
     /**
@@ -829,19 +821,18 @@ public final class FastMath {
      * maximum value the maximum value is returned. In case the value is smaller
      * then the minimum value, the minimum value is returned. Otherwise the
      * input value is returned.
-     * 
+     *
      * @param value the value that is put into the limits
-     * @param min the minimal allowed value, its not allowed to set NaN here
-     * @param max the maximal allowed value, its not allowed to set NaN here
+     * @param min   the minimal allowed value, its not allowed to set NaN here
+     * @param max   the maximal allowed value, its not allowed to set NaN here
      * @return the input value clamped between the minimal and the maximal
      *         allowed value
      */
     @SuppressWarnings("nls")
     public static short clamp(final short value, final short min,
-        final short max) {
+                              final short max) {
         if (max < min) {
-            throw new IllegalArgumentException(
-                "Minimal value must not be greater then the maximal value.");
+            throw new IllegalArgumentException("Minimal value must not be greater then the maximal value.");
         }
         if (value >= max) {
             return max;
@@ -855,13 +846,13 @@ public final class FastMath {
     /**
      * These functions shall produce a value with the magnitude of x and the
      * sign of y.
-     * 
+     *
      * @param magnitude the value that stores the magnitude of the result value
-     * @param sign the value that stores the sign of the result value
+     * @param sign      the value that stores the sign of the result value
      * @return a value with the magnitude of the argument x and the sign of the
      *         argument y
      */
-    public static byte copysign(final byte magnitude, final byte sign) {
+    public static byte copySign(final byte magnitude, final byte sign) {
         if (((magnitude < 0) && (sign > 0)) || ((magnitude > 0) && (sign < 0))) {
             return (byte) -magnitude;
         }
@@ -871,18 +862,17 @@ public final class FastMath {
     /**
      * These functions shall produce a value with the magnitude of x and the
      * sign of y. In case either x or y are NaN the result value is NaN too.
-     * 
+     *
      * @param magnitude the value that stores the magnitude of the result value
-     * @param sign the value that stores the sign of the result value
+     * @param sign      the value that stores the sign of the result value
      * @return a value with the magnitude of the argument x and the sign of the
      *         argument y
      */
-    public static double copysign(final double magnitude, final double sign) {
+    public static double copySign(final double magnitude, final double sign) {
         if (Double.isNaN(magnitude) || Double.isNaN(sign)) {
             return Double.NaN;
         }
-        if (((magnitude < 0.d) && (sign > 0.d))
-            || ((magnitude > 0.d) && (sign < 0.d))) {
+        if (((magnitude < 0.d) && (sign > 0.d)) || ((magnitude > 0.d) && (sign < 0.d))) {
             return -magnitude;
         }
         return magnitude;
@@ -891,18 +881,17 @@ public final class FastMath {
     /**
      * These functions shall produce a value with the magnitude of x and the
      * sign of y. In case either x or y are NaN the result value is NaN too.
-     * 
+     *
      * @param magnitude the value that stores the magnitude of the result value
-     * @param sign the value that stores the sign of the result value
+     * @param sign      the value that stores the sign of the result value
      * @return a value with the magnitude of the argument x and the sign of the
      *         argument y
      */
-    public static float copysign(final float magnitude, final float sign) {
+    public static float copySign(final float magnitude, final float sign) {
         if (Float.isNaN(magnitude) || Float.isNaN(sign)) {
             return Float.NaN;
         }
-        if (((magnitude < 0.f) && (sign > 0.f))
-            || ((magnitude > 0.f) && (sign < 0.f))) {
+        if (((magnitude < 0.f) && (sign > 0.f)) || ((magnitude > 0.f) && (sign < 0.f))) {
             return -magnitude;
         }
         return magnitude;
@@ -911,13 +900,13 @@ public final class FastMath {
     /**
      * These functions shall produce a value with the magnitude of x and the
      * sign of y.
-     * 
+     *
      * @param magnitude the value that stores the magnitude of the result value
-     * @param sign the value that stores the sign of the result value
+     * @param sign      the value that stores the sign of the result value
      * @return a value with the magnitude of the argument x and the sign of the
      *         argument y
      */
-    public static int copysign(final int magnitude, final int sign) {
+    public static int copySign(final int magnitude, final int sign) {
         if (((magnitude < 0) && (sign > 0)) || ((magnitude > 0) && (sign < 0))) {
             return -magnitude;
         }
@@ -927,15 +916,14 @@ public final class FastMath {
     /**
      * These functions shall produce a value with the magnitude of x and the
      * sign of y.
-     * 
+     *
      * @param magnitude the value that stores the magnitude of the result value
-     * @param sign the value that stores the sign of the result value
+     * @param sign      the value that stores the sign of the result value
      * @return a value with the magnitude of the argument x and the sign of the
      *         argument y
      */
-    public static long copysign(final long magnitude, final long sign) {
-        if (((magnitude < 0L) && (sign > 0L))
-            || ((magnitude > 0L) && (sign < 0L))) {
+    public static long copySign(final long magnitude, final long sign) {
+        if (((magnitude < 0L) && (sign > 0L)) || ((magnitude > 0L) && (sign < 0L))) {
             return -magnitude;
         }
         return magnitude;
@@ -944,13 +932,13 @@ public final class FastMath {
     /**
      * These functions shall produce a value with the magnitude of x and the
      * sign of y.
-     * 
+     *
      * @param magnitude the value that stores the magnitude of the result value
-     * @param sign the value that stores the sign of the result value
+     * @param sign      the value that stores the sign of the result value
      * @return a value with the magnitude of the argument x and the sign of the
      *         argument y
      */
-    public static short copysign(final short magnitude, final short sign) {
+    public static short copySign(final short magnitude, final short sign) {
         if (((magnitude < 0) && (sign > 0)) || ((magnitude > 0) && (sign < 0))) {
             return (short) -magnitude;
         }
@@ -959,7 +947,7 @@ public final class FastMath {
 
     /**
      * Returns cosine of a value.
-     * 
+     *
      * @param fValue The value to cosine, in radians.
      * @return the cosine of the value
      */
@@ -969,46 +957,46 @@ public final class FastMath {
 
     /**
      * Check if two values are equal.
-     * 
+     *
      * @param value1 the first value
      * @param value2 the second value
      * @return <code>true</code> if both values are equal
      */
-    public static boolean equal(final int value1, final int value2) {
-        return (value1 == value2);
+    public static boolean equals(final int value1, final int value2) {
+        return value1 == value2;
     }
 
     /**
      * Check if two values are nearly equal.
-     * 
+     *
      * @param value1 the first value
      * @param value2 the second value
-     * @param delta the maximal allowed difference of with values
+     * @param delta  the maximal allowed difference of with values
      * @return <code>true<code> if the difference between both values is less
-     *          or equal then delta
+     *         or equal then delta
      */
-    public static boolean equal(final int value1, final int value2,
-        final int delta) {
-        return (FastMath.abs(value1 - value2) <= delta);
+    public static boolean equals(final int value1, final int value2,
+                                 final int delta) {
+        return abs(value1 - value2) <= delta;
     }
 
     /**
      * Check if two values are nearly equal.
-     * 
+     *
      * @param value1 the first value
      * @param value2 the second value
-     * @param delta the maximal allowed difference of with values
+     * @param delta  the maximal allowed difference of with values
      * @return <code>true<code> if the difference between both values is less
-     *          or equal then delta
+     *         or equal then delta
      */
-    public static boolean equal(final float value1, final float value2,
-        final float delta) {
-        return (FastMath.abs(value1 - value2) <= delta);
+    public static boolean equals(final float value1, final float value2,
+                                 final float delta) {
+        return abs(value1 - value2) <= delta;
     }
 
     /**
      * Returns E^fValue
-     * 
+     *
      * @param fValue Value to raise to a power
      * @return the e^fValue calculation result
      */
@@ -1018,7 +1006,7 @@ public final class FastMath {
 
     /**
      * Returns a number rounded down.
-     * 
+     *
      * @param value The value to round
      * @return The given number rounded down
      */
@@ -1031,7 +1019,7 @@ public final class FastMath {
 
     /**
      * Returns a number rounded down.
-     * 
+     *
      * @param value The value to round
      * @return The given number rounded down
      */
@@ -1044,7 +1032,7 @@ public final class FastMath {
 
     /**
      * Get the inverted square root.
-     * 
+     *
      * @param fValue The value to process.
      * @return the inverted square root value of the parameter
      */
@@ -1055,7 +1043,7 @@ public final class FastMath {
     /**
      * Check if the double value is a real number. This means it not NaN and not
      * infinite.
-     * 
+     *
      * @param dValue the double value to check
      * @return <code>true</code> in case this float value is a real number
      */
@@ -1066,7 +1054,7 @@ public final class FastMath {
     /**
      * Check if the float value is a real number. This means it not NaN and not
      * infinite.
-     * 
+     *
      * @param fValue the float value to check
      * @return <code>true</code> in case this float value is a real number
      */
@@ -1077,7 +1065,7 @@ public final class FastMath {
     /**
      * Check if a number is a valid power of two. Such as the values 2, 4, 8, 16
      * and so on.
-     * 
+     *
      * @param number The number to test.
      * @return <code>true</code> in case the number is a power of two
      */
@@ -1088,14 +1076,14 @@ public final class FastMath {
     /**
      * Linear interpolation from startValue to endValue by the given percent.
      * Basically: ((1 - percent) * startValue) + (percent * endValue)
-     * 
-     * @param percent Percent value to use. Valid values between 0.f and 1.f
+     *
+     * @param percent    Percent value to use. Valid values between 0.f and 1.f
      * @param startValue Beginning value. 0% of f
-     * @param endValue ending value. 100% of f
+     * @param endValue   ending value. 100% of f
      * @return The interpolated value between startValue and endValue.
      */
     public static float LERP(final float percent, final float startValue,
-        final float endValue) {
+                             final float endValue) {
         if (startValue == endValue) {
             return startValue;
         }
@@ -1104,7 +1092,7 @@ public final class FastMath {
 
     /**
      * Returns the log base E of a value.
-     * 
+     *
      * @param fValue The value to log
      * @return The log of fValue base E
      */
@@ -1115,9 +1103,9 @@ public final class FastMath {
     /**
      * Returns the logarithm of value with given base, calculated as
      * log(value)/log(base), so that pow(base, return)==value
-     * 
+     *
      * @param value The value to log
-     * @param base Base of logarithm
+     * @param base  Base of logarithm
      * @return The logarithm of value with given base
      */
     public static float log(final float value, final float base) {
@@ -1126,9 +1114,9 @@ public final class FastMath {
 
     /**
      * Get the next larger power of two number.
-     * 
+     *
      * @param number the number the search for the next larger power of two
-     *            number shall start at
+     *               number shall start at
      * @return the found power of two number
      */
     public static int nearestPowerOfTwo(final int number) {
@@ -1137,7 +1125,7 @@ public final class FastMath {
 
     /**
      * Returns a random float between 0 and 1.
-     * 
+     *
      * @return A random float between <tt>0.0f</tt> (inclusive) to <tt>1.0f</tt>
      *         (exclusive)
      */
@@ -1147,7 +1135,7 @@ public final class FastMath {
 
     /**
      * Returns a random integer value.
-     * 
+     *
      * @return a random integer value, every value a integer can store is
      *         possible
      */
@@ -1157,7 +1145,7 @@ public final class FastMath {
 
     /**
      * Returns a random float between min and max
-     * 
+     *
      * @param min the minimal value of the random number range (inclusive)
      * @param max the maximal value of the random number range (exclusive)
      * @return the generated random number
@@ -1169,14 +1157,14 @@ public final class FastMath {
         }
         if (min > max) {
             throw new IllegalArgumentException(
-                "The minimal value must not be larger then the maximal value.");
+                    "The minimal value must not be larger then the maximal value.");
         }
         return RANDOM.nextInt(max - min) + min;
     }
 
     /**
      * Takes an value and expresses it in terms of min to max.
-     * 
+     *
      * @param val the value to normalize
      * @param min the bottom border of the range the value has to be in
      * @param max the top value of te range the value has to be in
@@ -1184,21 +1172,21 @@ public final class FastMath {
      */
     @SuppressWarnings("nls")
     public static float normalize(final float val, final float min,
-        final float max) {
+                                  final float max) {
         if (Float.isInfinite(val) || Float.isNaN(val)) {
             return 0f;
         }
 
         if (Float.isInfinite(min) || Float.isNaN(min) || Float.isInfinite(max)
-            || Float.isNaN(max)) {
+                || Float.isNaN(max)) {
             throw new IllegalArgumentException(
-                "The minimal and the maximal border must not be NAN or infinite values.");
+                    "The minimal and the maximal border must not be NAN or infinite values.");
         }
         final float range = max - min;
 
         if (range < FLT_EPSILON) {
             throw new IllegalArgumentException(
-                "Range between min and max is too small.");
+                    "Range between min and max is too small.");
         }
         float workVal = val;
         while (workVal > max) {
@@ -1212,8 +1200,8 @@ public final class FastMath {
 
     /**
      * Returns a number raised to an exponent power. fBase^fExponent
-     * 
-     * @param fBase The base value
+     *
+     * @param fBase     The base value
      * @param fExponent The exponent value
      * @return base raised to exponent
      */
@@ -1232,7 +1220,7 @@ public final class FastMath {
      * equal to the value of Long.MAX_VALUE, the result is equal to the value of
      * Long.MAX_VALUE.</li>
      * </ul>
-     * 
+     *
      * @param value the value the closest integer is needed
      * @return the closest integer to the argument
      */
@@ -1260,7 +1248,7 @@ public final class FastMath {
      * equal to the value of Integer.MAX_VALUE, the result is equal to the value
      * of Integer.MAX_VALUE.</li>
      * </ul>
-     * 
+     *
      * @param value the value the closest integer is needed
      * @return the closest integer to the argument
      */
@@ -1284,7 +1272,7 @@ public final class FastMath {
     /**
      * Returns 1 if the number is positive, -1 if the number is negative, and 0
      * otherwise
-     * 
+     *
      * @param fValue The float to examine
      * @return The float's sign
      */
@@ -1295,7 +1283,7 @@ public final class FastMath {
     /**
      * Returns 1 if the number is positive, -1 if the number is negative, and 0
      * otherwise
-     * 
+     *
      * @param iValue The integer to examine
      * @return The integer's sign
      */
@@ -1313,7 +1301,7 @@ public final class FastMath {
 
     /**
      * Returns sine of a value.
-     * 
+     *
      * @param fValue the value to sine, in radians.
      * @return the sine of the value
      */
@@ -1328,7 +1316,7 @@ public final class FastMath {
 
     /**
      * Returns the value squared. fValue ^ 2
-     * 
+     *
      * @param fValue The value to square.
      * @return The square of the given value.
      */
@@ -1338,7 +1326,7 @@ public final class FastMath {
 
     /**
      * Returns the value squared. fValue ^ 2
-     * 
+     *
      * @param iValue The value to square.
      * @return The square of the given value.
      */
@@ -1348,7 +1336,7 @@ public final class FastMath {
 
     /**
      * Returns the square root of a given value.
-     * 
+     *
      * @param fValue The value to square root
      * @return The square root of the given value
      */
@@ -1360,7 +1348,7 @@ public final class FastMath {
      * Returns the integer square root of a integer value. It acts like
      * <code>(int) Math.sqrt(int)</code> for values lower then 289, and for
      * values above it returns values close to the real results.
-     * 
+     *
      * @param iValue the value the square root is needed from
      * @return the square root of the value
      */
@@ -1403,12 +1391,12 @@ public final class FastMath {
             return SQRT_TABLE[iValue] >> 4;
         }
         throw new IllegalArgumentException(
-            "Can't get the square root of a negative number.");
+                "Can't get the square root of a negative number.");
     }
 
     /**
      * Returns the tangent of a value.
-     * 
+     *
      * @param fValue The value to tangent, in radians
      * @return The tangent of fValue
      */
@@ -1422,7 +1410,7 @@ public final class FastMath {
      * results may be very slightly off from what the Math and StrictMath trig
      * functions give due to rounding in the angle reduction but it will be very
      * very close.
-     * 
+     *
      * @param radians the original angle
      * @return the angle within the save limits
      */
