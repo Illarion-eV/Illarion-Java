@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world;
 
@@ -28,7 +28,7 @@ import org.newdawn.slick.Music;
  * playback of the background music according to the settings. Also it ensures
  * that the different overwriting levels of the music are kept as they are
  * supposed to be.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class MusicBox implements Stoppable {
@@ -103,7 +103,7 @@ public final class MusicBox implements Stoppable {
     /**
      * Set the sound ID that is supposed to be played. This will overwrite the
      * default sound track that is set with the music ID embedded to the tiles.
-     * 
+     *
      * @param musicId the ID of the music to play
      */
     public void playMusicTrack(final int musicId) {
@@ -125,7 +125,7 @@ public final class MusicBox implements Stoppable {
      * not perform any additional checks. It will plain and simple start playing
      * the newly chosen sound track now. It does this even in case the current
      * and the new sound track are equal.
-     * 
+     *
      * @param id the ID of the sound track to play
      */
     private void setSoundTrack(final int id) {
@@ -154,9 +154,14 @@ public final class MusicBox implements Stoppable {
      * the soundtrack that is played in case its needed.
      */
     public void updatePlayerLocation() {
-        final int newId =
-            World.getMap().getMapAt(World.getPlayer().getLocation())
-                .getTileMusic();
+        final MapTile tile = World.getMap().getMapAt(World.getPlayer().getLocation());
+
+        final int newId;
+        if (tile == null) {
+            newId = 0;
+        } else {
+            newId = tile.getTileMusic();
+        }
         if (newId != currentDefaultTrack) {
             currentDefaultTrack = newId;
             updateSoundTrack();
