@@ -21,11 +21,9 @@ package illarion.client.states;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.slick2d.NiftyOverlayBasicGameState;
 import de.lessvoid.nifty.slick2d.input.PlainSlickInputSystem;
-
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import illarion.client.Game;
+import illarion.client.gui.controller.LoadScreenController;
+import illarion.client.loading.Loading;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -33,9 +31,9 @@ import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.opengl.SlickCallable;
 import org.newdawn.slick.state.StateBasedGame;
 
-import illarion.client.Game;
-import illarion.client.gui.controller.LoadScreenController;
-import illarion.client.loading.Loading;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This game state is active while the game loads. It takes care for showing the loading screen and to trigger the
@@ -54,7 +52,7 @@ public final class LoadingState
     protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
         controller = new LoadScreenController(game);
         nifty.registerScreenController(controller);
-        nifty.fromXmlWithoutStartScreen("illarion/client/gui/xml/loading.xml");
+        nifty.addXml("illarion/client/gui/xml/loading.xml");
     }
 
     public void enterState(final GameContainer container, final StateBasedGame game)

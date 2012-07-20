@@ -16,13 +16,12 @@
  */
 package illarion.client;
 
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
-
+import de.lessvoid.nifty.slick2d.NiftyStateBasedGame;
 import illarion.client.states.LoadingState;
 import illarion.client.states.LoginState;
 import illarion.client.states.PlayingState;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
 
 /**
  * This is the game Illarion. This class takes care for actually building up Illarion. It will maintain the different
@@ -31,7 +30,7 @@ import illarion.client.states.PlayingState;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Game
-        extends StateBasedGame {
+        extends NiftyStateBasedGame {
     /**
      * The ID of the login state. This is one of the constants to use in order to switch the current state of the game.
      */
@@ -51,7 +50,7 @@ public final class Game
      * Create the game with the fitting title, showing the name of the application and its version.
      */
     public Game() {
-        super(IllaClient.APPLICATION + " " + IllaClient.VERSION);
+        super(IllaClient.APPLICATION + " " + IllaClient.VERSION, true);
     }
 
     /**

@@ -57,7 +57,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
         gameScreenController = new GameScreenController();
         nifty.registerScreenController(gameScreenController);
-        nifty.fromXmlWithoutStartScreen("illarion/client/gui/xml/gamescreen.xml");
+        nifty.addXml("illarion/client/gui/xml/gamescreen.xml");
     }
 
     @Override
