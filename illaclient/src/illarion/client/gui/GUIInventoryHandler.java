@@ -49,6 +49,8 @@ import org.illarion.nifty.controls.InventorySlot;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This handler takes care for showing and hiding objects in the inventory. Also it monitors all dropping operations on
@@ -57,7 +59,8 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdateEvent>,
-        EventTopicSubscriber<String>, ScreenController {
+        EventTopicSubscriber<String>, ScreenController, UpdatableHandler {
+
     /**
      * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
      * so the server can send the commands to clean everything up.
@@ -288,7 +291,21 @@ public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdat
      */
     @Override
     public void onEvent(final InventoryUpdateEvent data) {
-        setSlotItem(data.getSlotId(), data.getItemId(), data.getCount());
+        slotUpdateQueue.offer(data);
+    }
+
+    private final Queue<InventoryUpdateEvent> slotUpdateQueue = new ConcurrentLinkedQueue<InventoryUpdateEvent>();
+
+    @Override
+    public void update(final int delta) {
+        while (true) {
+            final InventoryUpdateEvent data = slotUpdateQueue.poll();
+            if (data == null) {
+                return;
+            }
+
+            setSlotItem(data.getSlotId(), data.getItemId(), data.getCount());
+        }
     }
 
     /*
@@ -297,7 +314,7 @@ public final class GUIInventoryHandler implements EventSubscriber<InventoryUpdat
      * java.lang.Object)
      */
     @Override
-    public void onEvent(String topic, String data) {
+    public void onEvent(final String topic, final String data) {
         if (data.equals("ToggleInventory")) {
             toggleInventory();
         }

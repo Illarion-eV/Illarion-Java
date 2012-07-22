@@ -25,36 +25,31 @@
     <useControls filename="illarion-gamecontrols.xml"/>
 
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
-        <layer id="layer" backgroundColor="#000" childLayout="center" visibleToMouse="true">
+        <layer id="layer" backgroundColor="#0000" childLayout="center">
 
-            <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#000"
-                   childLayout="vertical" visibleToMouse="true">
+            <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
+                   childLayout="vertical">
                 <image filename="data/gui/illarion_title.png" imageMode="normal" align="center"/>
                 <panel height="30px"/>
-                <panel width="400px" align="center" valign="center" backgroundColor="#000" childLayout="vertical"
-                       visibleToMouse="true">
-                    <panel childLayout="horizontal" visibleToMouse="true">
-                        <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
-                            <text font="textFont" text="Account Name:"/>
-                        </panel>
-                        <control name="textfield" id="nameTxt" maxLength="20" visibleToMouse="true"/>
+                <panel width="400px" align="center" valign="center" backgroundColor="#0000" childLayout="vertical">
+                    <panel childLayout="horizontal" visibleToMouse="true" height="24px">
+                        <control name="label" text="Account Name:" textHAlign="left" width="130px"/>
+                        <panel width="10px"/>
+                        <control name="textfield" id="nameTxt" maxLength="20" width="*"/>
                     </panel>
 
-                    <panel childLayout="horizontal" visibleToMouse="true">
-                        <panel childLayout="center" visibleToMouse="false" width="130px" height="30px">
-                            <text font="textFont" text="Password:"/>
-                        </panel>
-                        <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="•"/>
+                    <panel childLayout="horizontal" align="left" height="24px">
+                        <control name="label" text="Password:" textHAlign="left" width="130px"/>
+                        <panel width="10px"/>
+                        <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="•" width="*"/>
                     </panel>
 
                     <panel height="15px"/>
 
-                    <panel childLayout="center" visibleToMouse="true">
-                        <panel childLayout="horizontal" visibleToMouse="true" align="center" height="30px">
-                            <control name="label" text="Passwort merken" align="center"/>
-                            <panel width="10px" align="center"/>
-                            <control id="savePassword" name="checkbox" align="center"/>
-                        </panel>
+                    <panel childLayout="horizontal" align="left" height="24px">
+                        <control name="label" text="Passwort merken" textHAlign="left" width="130px"/>
+                        <panel width="10px"/>
+                        <control id="savePassword" name="checkbox"/>
                     </panel>
 
                     <panel height="30px"/>
@@ -76,6 +71,5 @@
                 </effect>
             </panel>
         </layer>
-        <layer id="windows" childLayout="absolute"/>
     </screen>
 </nifty>

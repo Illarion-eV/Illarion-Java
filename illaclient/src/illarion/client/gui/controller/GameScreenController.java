@@ -54,6 +54,7 @@ public final class GameScreenController implements ScreenController {
         addHandler(new ServerInformHandler(informHandler));
         addHandler(new BroadcastInformHandler(informHandler));
         addHandler(new TextToInformHandler(informHandler));
+        addHandler(new ScriptInformHandler(informHandler));
     }
 
     private void addHandler(final ScreenController handler) {

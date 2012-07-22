@@ -19,85 +19,86 @@
   -->
 <nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
-    <useStyles filename="nifty-illarion-style.xml" />
-    <useControls filename="nifty-default-controls.xml" />
+    <useStyles filename="nifty-illarion-style.xml"/>
+    <useControls filename="nifty-default-controls.xml"/>
 
     <screen id="options" controller="illarion.client.gui.controller.OptionScreenController">
         <layer id="layer2" backgroundColor="#0000" childLayout="center">
-            <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000" childLayout="vertical" visibleToMouse="true">
+            <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
+                   childLayout="vertical" visibleToMouse="true">
                 <control id="tabRoot" name="tabGroup" width="100%" height="100%">
                     <control id="#generalTab" caption="General" name="tab" childLayout="vertical">
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Characters Name Length" />
-                            <panel width="*" />
-                            <control name="dropDown" id="#charNameLength" width="180px" />
+                            <control name="label" text="Characters Name Length"/>
+                            <panel width="*"/>
+                            <control name="dropDown" id="charNameLength" width="180px"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Show Character IDs" />
-                            <panel width="*" />
-                            <control name="checkbox" id="#showChatId" />
+                            <control name="label" text="Show Character IDs"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="showChatId"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Send Crash Reports:" />
-                            <panel width="*" />
-                            <control name="dropDown" id="#sendCrashReports" width="180px" />
+                            <control name="label" text="Send Crash Reports:"/>
+                            <panel width="*"/>
+                            <control name="dropDown" id="sendCrashReports" width="180px"/>
                         </panel>
-                        <panel width="100%" height="*" />
+                        <panel width="100%" height="*"/>
                     </control>
                     <control id="#graphicsTab" caption="Graphics" name="tab" childLayout="vertical">
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Resolution" />
-                            <panel width="*" />
-                            <control name="dropDown" id="#resolutions" width="180px" />
+                            <control name="label" text="Resolution"/>
+                            <panel width="*"/>
+                            <control name="dropDown" id="resolutions" width="180px"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Fullscreen" />
-                            <panel width="*" />
-                            <control name="checkbox" id="#fullscreen" />
+                            <control name="label" text="Fullscreen"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="fullscreen"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Legacy Renderer" />
-                            <panel width="*" />
-                            <control name="checkbox" id="#legacyRender" />
+                            <control name="label" text="Legacy Renderer"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="legacyRender"/>
                         </panel>
-                        <panel width="100%" height="*" />
+                        <panel width="100%" height="*"/>
                     </control>
                     <control id="#soundTab" caption="Sound" name="tab" childLayout="vertical">
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Sound effects on" />
-                            <panel width="*" />
-                            <control name="checkbox" id="#soundOn" />
+                            <control name="label" text="Sound effects on"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="soundOn"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Sound volume (%)" />
-                            <panel width="*" />
-                            <control name="horizontalSlider" min="0" max="100" id="#soundVolume" width="180px" />
+                            <control name="label" text="Sound volume (%)"/>
+                            <panel width="*"/>
+                            <control name="horizontalSlider" min="0" max="100" id="soundVolume" width="180px"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Music on" />
-                            <panel width="*" />
-                            <control name="checkbox" id="#musicOn" />
+                            <control name="label" text="Music on"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="musicOn"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Music volume (%)" />
-                            <panel width="*" />
-                            <control name="horizontalSlider" min="0" max="100" id="#musicVolume" width="180px" />
+                            <control name="label" text="Music volume (%)"/>
+                            <panel width="*"/>
+                            <control name="horizontalSlider" min="0" max="100" id="musicVolume" width="180px"/>
                         </panel>
-                        <panel width="100%" height="*" />
+                        <panel width="100%" height="*"/>
                     </control>
                 </control>
 
                 <panel width="100%" childLayout="center" height="35px">
                     <panel childLayout="horizontal" height="100%" width="235px">
-                        <control name="#saveButton" label="Save" width="100px" height="35px" />
-                        <panel width="35px" />
-                        <control name="#cancelButton" label="Cancel" width="100px" height="35px" />
+                        <control name="#saveButton" label="Save" width="100px" height="35px"/>
+                        <panel width="35px"/>
+                        <control name="#cancelButton" label="Cancel" width="100px" height="35px"/>
                     </panel>
                 </panel>
 
                 <effect>
-                    <onStartScreen name="fade" start="#00" end="#ff" inherit="true" />
-                    <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true" />
+                    <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
+                    <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
                 </effect>
             </panel>
         </layer>
