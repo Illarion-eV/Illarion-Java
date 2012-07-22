@@ -20,21 +20,25 @@
 <nifty-styles xmlns="http://nifty-gui.sourceforge.net/nifty-styles-1.3.xsd"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-styles-1.3.xsd http://nifty-gui.sourceforge.net/nifty-styles-1.3.xsd">
-    <registerMouseCursor id="textFieldCursor" filename="data/gui/textfield/mouse_cursors/mouse-cursor-textfield.png"
-                         hotspotX="3" hotspotY="12"/>
+    <useStyles filename="fonts.xml"/>,
+    <useStyles filename="cursors.xml"/>
 
     <!-- the background of the textfield -->
     <style id="nifty-textfield#panel">
         <attributes childLayout="overlay" height="23px"/>
+        <effect>
+            <onHover name="changeMouseCursor" id="textFieldCursor"/>
+            <onHover name="border" color="#822f" post="true"/>
+        </effect>
     </style>
 
     <!-- the actual input field -->
     <style id="nifty-textfield#field">
-        <attributes childLayout="center" visibleToMouse="true" childClip="true" backgroundColor="#525e51ff"
-                    padding="0px,2px"/>
+        <attributes childLayout="center" childClip="true" backgroundColor="#525e51ff"
+                    padding="0px,2px" visibleToMouse="false"/>
         <effect>
-            <onFocus name="colorBar" color="#264d1cff" post="true" inset="1px"/>
-            <onHover name="changeMouseCursor" id="textFieldCursor"/>
+            <onActive name="border" color="#222f" post="true" inset="1px"/>
+            <onFocus name="colorBar" color="#800f" post="true" inset="1px"/>
             <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150"/>
             <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150"/>
         </effect>
@@ -42,8 +46,8 @@
 
     <!-- the text in the input field -->
     <style id="nifty-textfield#text" base="base-font">
-        <attributes color="#000f" selectionColor="#f00f" visibleToMouse="false" align="left" valign="center"
-                    textHAlign="left"/>
+        <attributes color="#000f" selectionColor="#f00f" align="left" valign="center" textHAlign="left"
+                    visibleToMouse="false" width="100%" height="100%"/>
         <effect>
             <onFocus name="textColor" post="false" color="#cccf"/>
         </effect>
