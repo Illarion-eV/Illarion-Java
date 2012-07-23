@@ -26,14 +26,16 @@
     <!-- the background of the textfield -->
     <style id="chat-textfield#panel">
         <attributes childLayout="overlay" height="23px"/>
+        <effect>
+            <onHover name="changeMouseCursor" id="textFieldCursor"/>
+        </effect>
     </style>
 
     <!-- the actual input field -->
     <style id="chat-textfield#field">
-        <attributes childLayout="center" visibleToMouse="true" childClip="true" backgroundColor="#000"
+        <attributes childLayout="center" childClip="true" backgroundColor="#000"
                     padding="0px,2px"/>
         <effect>
-            <onHover name="changeMouseCursor" id="textFieldCursor"/>
             <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150"/>
             <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150"/>
         </effect>
