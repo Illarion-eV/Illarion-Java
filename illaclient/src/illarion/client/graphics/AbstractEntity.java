@@ -335,9 +335,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
                         offY, horz, vert, smooth, mirror);
         stillFrame = still;
         currentFrame = still;
-        if (baseCol == null) {
-            baseColor = null;
-        } else if (baseCol.equals(DEFAULT_LIGHT)) {
+        if ((baseCol == null) || baseCol.equals(DEFAULT_LIGHT)) {
             baseColor = null;
         } else {
             baseColor = baseCol;

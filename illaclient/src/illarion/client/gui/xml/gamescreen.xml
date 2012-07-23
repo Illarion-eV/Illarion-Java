@@ -120,5 +120,6 @@
                    marginTop="200px" valign="top" align="center" id="textToMsgPanel">
             </panel>
         </layer>
+        <layer id="scriptMessageLayer" childLayout="center"/>
     </screen>
 </nifty>
