@@ -1,48 +1,44 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.bug;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
+import illarion.common.config.Config;
+import illarion.common.util.DirectoryManager;
+import illarion.common.util.MessageSource;
+import javolution.lang.Reflection;
+import javolution.lang.Reflection.Constructor;
+import javolution.text.TextBuilder;
+import org.apache.log4j.Logger;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-
-import javolution.lang.Reflection;
-import javolution.lang.Reflection.Constructor;
-import javolution.text.TextBuilder;
-
-import org.apache.log4j.Logger;
-
-import illarion.common.config.Config;
-import illarion.common.util.MessageSource;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * This class stores the crash reporter itself. It holds all settings done to
  * the reporter and handles sending the crash reports as well as showing the
  * required dialogs.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CrashReporter {
@@ -115,10 +111,10 @@ public final class CrashReporter {
         URL result = null;
         try {
             result =
-                new URL("http://illarion.org/development/java_report.php"); //$NON-NLS-1$
+                    new URL("http://illarion.org/development/java_report.php"); //$NON-NLS-1$
         } catch (final MalformedURLException e) {
             LOGGER.warn("Preparing the crash report target URL failed. " + //$NON-NLS-1$
-                "Crash reporter not functional."); //$NON-NLS-1$
+                    "Crash reporter not functional."); //$NON-NLS-1$
         }
         CRASH_SERVER = result;
     }
@@ -160,17 +156,43 @@ public final class CrashReporter {
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance of this class
      */
     public static CrashReporter getInstance() {
         return INSTANCE;
     }
 
+    public void dumpCrash(final CrashData crash) {
+        final Calendar cal = Calendar.getInstance();
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        final String dateStr = sdf.format(cal.getTime());
+        final File target = new File(DirectoryManager.getInstance().getUserDirectory(), "crash_" + dateStr + ".dump");
+
+        ObjectOutputStream oOut = null;
+        try {
+            oOut = new ObjectOutputStream(new FileOutputStream(target));
+            oOut.writeObject(crash);
+            oOut.flush();
+        } catch (final FileNotFoundException e) {
+            // ignored
+        } catch (final IOException e) {
+            // ignored
+        } finally {
+            if (oOut != null) {
+                try {
+                    oOut.close();
+                } catch (final IOException e) {
+                    // ignored
+                }
+            }
+        }
+    }
+
     /**
      * Report a crash to the Illarion Server in case the application is supposed
      * to do so.
-     * 
+     *
      * @param crash the data about the crash
      */
     public void reportCrash(final CrashData crash) {
@@ -180,10 +202,10 @@ public final class CrashReporter {
     /**
      * Report a crash to the Illarion Server in case the application is supposed
      * to do so.
-     * 
-     * @param crash the data about the crash
+     *
+     * @param crash     the data about the crash
      * @param ownThread <code>true</code> in case the crash report is supposed
-     *            to be started in a additional thread
+     *                  to be started in a additional thread
      */
     @SuppressWarnings("nls")
     public void reportCrash(final CrashData crash, final boolean ownThread) {
@@ -210,16 +232,16 @@ public final class CrashReporter {
                     Constructor constr = null;
                     if (display == DISPLAY_SWING) {
                         constr =
-                            Reflection.getInstance().getConstructor(
-                                "illarion.common.bug.ReportDialogSwing()");
+                                Reflection.getInstance().getConstructor(
+                                        "illarion.common.bug.ReportDialogSwing()");
                     } else if (display == DISPLAY_AWT) {
                         constr =
-                            Reflection.getInstance().getConstructor(
-                                "illarion.common.bug.ReportDialogAwt()");
+                                Reflection.getInstance().getConstructor(
+                                        "illarion.common.bug.ReportDialogAwt()");
                     } else if (display == DISPLAY_SWT) {
                         constr =
-                            Reflection.getInstance().getConstructor(
-                                "illarion.common.bug.ReportDialogSwt()");
+                                Reflection.getInstance().getConstructor(
+                                        "illarion.common.bug.ReportDialogSwt()");
                     }
 
                     if (constr == null) {
@@ -265,7 +287,7 @@ public final class CrashReporter {
 
     /**
      * Set the configuration that is used for this crash reporter.
-     * 
+     *
      * @param config the new configuration
      */
     public void setConfig(final Config config) {
@@ -279,16 +301,16 @@ public final class CrashReporter {
      * Set the display mode that is supposed to be used by the crash reporter.
      * Best select the mode so it fits best to the rest of your GUI. The legal
      * values are {@link #DISPLAY_AWT} and {@link #DISPLAY_SWING}.
-     * 
+     *
      * @param newDisplay the new display value
      * @throws IllegalArgumentException in case a invalid display mode is chosen
      */
     @SuppressWarnings("nls")
     public void setDisplay(final int newDisplay) {
         if ((newDisplay != DISPLAY_AWT) && (newDisplay != DISPLAY_SWING)
-            && (newDisplay != DISPLAY_SWT)) {
+                && (newDisplay != DISPLAY_SWT)) {
             throw new IllegalArgumentException("Illegal display value: "
-                + Integer.toString(newDisplay));
+                    + Integer.toString(newDisplay));
         }
 
         display = newDisplay;
@@ -299,7 +321,7 @@ public final class CrashReporter {
      * this is set to <code>null</code> its impossible to display a window
      * asking the user if the error report shall be send or not. In this case no
      * report message will be send.
-     * 
+     *
      * @param source the new source of messages
      */
     public void setMessageSource(final MessageSource source) {
@@ -325,7 +347,7 @@ public final class CrashReporter {
 
     /**
      * Send the data of the crash to the Illarion server.
-     * 
+     *
      * @param data the data that was collected about the crash
      */
     @SuppressWarnings("nls")
@@ -338,22 +360,22 @@ public final class CrashReporter {
         Reader in = null;
         try {
             final HttpURLConnection conn =
-                (HttpURLConnection) CRASH_SERVER.openConnection();
+                    (HttpURLConnection) CRASH_SERVER.openConnection();
             conn.setDoOutput(true);
             conn.setDoInput(true);
             final TextBuilder queryBuilder = TextBuilder.newInstance();
             queryBuilder.append("os=").append(
-                URLEncoder.encode(CrashData.getOSName(), CHARSET));
+                    URLEncoder.encode(CrashData.getOSName(), CHARSET));
             queryBuilder.append("&app=").append(
-                URLEncoder.encode(data.getApplicationName(), CHARSET));
+                    URLEncoder.encode(data.getApplicationName(), CHARSET));
             queryBuilder.append("&version=").append(
-                URLEncoder.encode(data.getApplicationVersion(), CHARSET));
+                    URLEncoder.encode(data.getApplicationVersion(), CHARSET));
             queryBuilder.append("&thread=").append(
-                URLEncoder.encode(data.getThreadName(), CHARSET));
+                    URLEncoder.encode(data.getThreadName(), CHARSET));
             queryBuilder.append("&exception=").append(
-                URLEncoder.encode(data.getExceptionName(), CHARSET));
+                    URLEncoder.encode(data.getExceptionName(), CHARSET));
             queryBuilder.append("&stack=").append(
-                URLEncoder.encode(data.getStackBacktrace(), CHARSET));
+                    URLEncoder.encode(data.getStackBacktrace(), CHARSET));
             final String query = queryBuilder.toString();
             TextBuilder.recycle(queryBuilder);
 
@@ -363,8 +385,8 @@ public final class CrashReporter {
             output.flush();
 
             in =
-                new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
+                    new BufferedReader(
+                            new InputStreamReader(conn.getInputStream()));
 
             String line;
             while ((line = ((BufferedReader) in).readLine()) != null) {
@@ -372,7 +394,7 @@ public final class CrashReporter {
             }
         } catch (final MalformedURLException ex) {
             LOGGER.error("Target URL for the transfer target was malformed",
-                ex);
+                    ex);
         } catch (final IOException ex) {
             LOGGER.error("Sending the crash report failed", ex);
         } finally {
@@ -397,13 +419,13 @@ public final class CrashReporter {
      * Set a new value for the mode of this crash reporter. The legal values for
      * this mode are {@link #MODE_ALWAYS}, {@link #MODE_ASK} and
      * {@link #MODE_NEVER}.
-     * 
+     *
      * @param newMode the new mode value
      * @throws IllegalArgumentException in case the invalid mode value is chosen
      */
     private void setMode(final int newMode) {
         if ((newMode != MODE_ALWAYS) && (newMode != MODE_ASK)
-            && (newMode != MODE_NEVER)) {
+                && (newMode != MODE_NEVER)) {
             mode = MODE_ASK;
             cfg.set(CFG_KEY, MODE_ASK);
             return;
