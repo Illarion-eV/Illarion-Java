@@ -25,6 +25,7 @@ import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.tools.Color;
 import illarion.client.net.server.events.ScriptInformReceivedEvent;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
@@ -62,7 +63,7 @@ public final class ScriptInformHandler implements EventSubscriber<ScriptInformRe
 
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
-        parentPanel = screen.findElementByName("scriptMessageLayer");
+        parentPanel = screen.findElementByName("scriptMessagePanel");
     }
 
     @Override
@@ -70,10 +71,18 @@ public final class ScriptInformHandler implements EventSubscriber<ScriptInformRe
         EventBus.unsubscribe(ScriptInformReceivedEvent.class, this);
     }
 
+    private static int getDisplayTime(final CharSequence text, final int priority) {
+        if (priority == 0) {
+            return 5000 + (text.length() * 50);
+        } else {
+            return 8000 + (text.length() * 50);
+        }
+    }
+
     @Override
     public void onEvent(final ScriptInformReceivedEvent event) {
         if (parentPanel == null) {
-            LOGGER.warn("Received server inform before the GUI became ready.");
+            LOGGER.warn("Received script inform before the GUI became ready.");
             return;
         }
 
@@ -84,21 +93,37 @@ public final class ScriptInformHandler implements EventSubscriber<ScriptInformRe
         panelBuilder.control(labelBuilder);
         labelBuilder.label(event.getMessage());
         labelBuilder.font("textFont");
+        switch (event.getInformPriority()) {
+            case 1:
+                labelBuilder.color(Color.WHITE);
+                break;
+            case 2:
+                labelBuilder.color(new Color(1.0f, 0.5f, 0.5f, 1.0f));
+                break;
+            default:
+                labelBuilder.color(new Color(0.9f, 0.9f, 0.9f, 1.0f));
+        }
         labelBuilder.invisibleToMouse();
         labelBuilder.valignCenter();
         labelBuilder.alignCenter();
 
         final EffectBuilder moveEffectBuilder = new EffectBuilder("move");
-        moveEffectBuilder.length(10000 + (event.getMessage().length() * 50));
+        moveEffectBuilder.length(getDisplayTime(event.getMessage(), event.getInformPriority()));
         moveEffectBuilder.startDelay(0);
-        moveEffectBuilder.oneShot(true);
         moveEffectBuilder.effectParameter("mode", "toOffset");
-        moveEffectBuilder.effectParameter("direction", "top");
-        moveEffectBuilder.effectParameter("offsetY", "40");
-        panelBuilder.onHideEffect(moveEffectBuilder);
+        moveEffectBuilder.effectParameter("direction", "bottom");
+        moveEffectBuilder.effectParameter("offsetY", "-80");
+        labelBuilder.onHideEffect(moveEffectBuilder);
+
+        final EffectBuilder fadeOutBuilder = new EffectBuilder("fade");
+        fadeOutBuilder.length(getDisplayTime(event.getMessage(), event.getInformPriority()));
+        fadeOutBuilder.startDelay(0);
+        fadeOutBuilder.effectParameter("start", "FF");
+        fadeOutBuilder.effectParameter("end", "00");
+        labelBuilder.onHideEffect(fadeOutBuilder);
 
         final EffectBuilder fadeOutEffectBuilder = new EffectBuilder("hide");
-        fadeOutEffectBuilder.startDelay(10000 + (event.getMessage().length() * 50));
+        fadeOutEffectBuilder.startDelay(getDisplayTime(event.getMessage(), event.getInformPriority()) + 10);
         panelBuilder.onHideEffect(fadeOutEffectBuilder);
 
         informHandler.showInform(panelBuilder, parentPanel);
