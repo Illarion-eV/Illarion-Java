@@ -18,7 +18,6 @@
  */
 package illarion.common.bug;
 
-import com.sun.xml.internal.ws.encoding.soap.SerializationException;
 import javolution.lang.Immutable;
 import javolution.text.TextBuilder;
 
@@ -236,7 +235,7 @@ public final class CrashData implements Immutable, Externalizable {
             description = (String) in.readObject();
             exceptionName = (String) in.readObject();
         } else {
-            throw new SerializationException("Class version invalid. Found: " + Long.toString(fileVersion) +
+            throw new ClassNotFoundException("Class version invalid. Found: " + Long.toString(fileVersion) +
                     " expected: 1");
         }
     }
