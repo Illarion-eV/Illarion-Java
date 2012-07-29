@@ -26,14 +26,6 @@ import de.lessvoid.nifty.controls.ListBoxSelectionChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import gnu.trove.procedure.TObjectProcedure;
-
-import java.lang.ref.WeakReference;
-import java.util.*;
-
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
-import org.bushe.swing.event.EventTopicSubscriber;
-
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.CombatHandler;
@@ -41,6 +33,13 @@ import illarion.client.world.World;
 import illarion.client.world.events.*;
 import illarion.common.util.FastMath;
 import illarion.common.util.Location;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
+import org.bushe.swing.event.EventTopicSubscriber;
+
+import java.lang.ref.WeakReference;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This class takes care for loading the list of nearby characters, NPCs and monsters and to make sure that this list
@@ -50,7 +49,7 @@ import illarion.common.util.Location;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CharListHandler
-        implements EventSubscriber<AbstractCharEvent>, ScreenController {
+        implements EventSubscriber<AbstractCharEvent>, ScreenController, UpdatableHandler {
     private ListBox<GUIEntryWrapper> guiList;
     private DropDown<String> filterSelection;
 
@@ -83,10 +82,12 @@ public final class CharListHandler
     private final EventTopicSubscriber<ListBoxSelectionChangedEvent<GUIEntryWrapper>> selectionChanged;
 
     private final List<WeakReference<Char>> charList;
+    private final Queue<AbstractCharEvent> eventQueue;
     private boolean dirty;
 
     public CharListHandler() {
         charList = new ArrayList<WeakReference<Char>>(5);
+        eventQueue = new ConcurrentLinkedQueue<AbstractCharEvent>();
         dirty = true;
 
         filterChangedEvent = new EventTopicSubscriber<DropDownSelectionChangedEvent<String>>() {
@@ -287,7 +288,25 @@ public final class CharListHandler
     }
 
     @Override
+    public void update(final int delta) {
+        while (true) {
+            final AbstractCharEvent event = eventQueue.poll();
+            if (event == null) {
+                break;
+            }
+
+            handleEvent(event);
+        }
+
+        updateGUI();
+    }
+
+    @Override
     public void onEvent(final AbstractCharEvent event) {
+        eventQueue.offer(event);
+    }
+
+    private void handleEvent(final AbstractCharEvent event) {
         if (event.getEvent().equals(CharRemovedEvent.EVENT)) {
             removeChar(event.getCharId());
         } else if (event.getEvent().equals(CharVisibilityEvent.EVENT)) {
@@ -313,8 +332,6 @@ public final class CharListHandler
         } else if (event.getEvent().equals(CharNameEvent.EVENT)) {
             dirty = true;
         }
-
-        updateGUI();
     }
 
     public void onStartScreen() {
