@@ -19,6 +19,7 @@
 package illarion.client.gui;
 
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.builder.ElementBuilder;
 import de.lessvoid.nifty.controls.ScrollPanel;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
@@ -31,15 +32,20 @@ import illarion.client.input.InputReceiver;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.SayCmd;
+import illarion.client.net.server.events.BroadcastInformReceivedEvent;
+import illarion.client.net.server.events.ScriptInformReceivedEvent;
+import illarion.client.net.server.events.TextToInformReceivedEvent;
 import illarion.client.util.ChatHandler;
-import illarion.client.util.ChatHandler.ChatReceiver;
-import illarion.client.util.ChatHandler.SpeechMode;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
+
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This class takes care to receive chat input from the GUI and sends it to the server. Also it receives chat from the
@@ -47,8 +53,8 @@ import org.bushe.swing.event.EventTopicSubscriber;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GUIChatHandler
-        implements KeyInputHandler, ChatReceiver, EventTopicSubscriber<String>, ScreenController {
+public final class GUIChatHandler implements KeyInputHandler, ChatHandler.ChatReceiver, EventTopicSubscriber<String>,
+        ScreenController, UpdatableHandler {
     /**
      * The log that is used to display the text.
      */
@@ -64,6 +70,82 @@ public final class GUIChatHandler
      */
     private Screen screen;
 
+    /**
+     * The Queue of strings that yet need to be written to the GUI.
+     */
+    private final Queue<String> messageQueue;
+
+    /**
+     * The inform handler for the broadcast inform messages.
+     */
+    private final EventSubscriber<BroadcastInformReceivedEvent> bcInformEventHandler =
+            new EventSubscriber<BroadcastInformReceivedEvent>() {
+                @Override
+                public void onEvent(final BroadcastInformReceivedEvent event) {
+                    final TextBuilder textBuilder = TextBuilder.newInstance();
+                    try {
+                        textBuilder.append(Lang.getMsg("chat.broadcast"));
+                        textBuilder.append(": ");
+                        textBuilder.append(event.getMessage());
+
+                        messageQueue.offer(textBuilder.toString());
+                    } finally {
+                        TextBuilder.recycle(textBuilder);
+                    }
+                }
+            };
+
+    /**
+     * The inform handler for the text to inform messages.
+     */
+    private final EventSubscriber<TextToInformReceivedEvent> ttInformEventHandler =
+            new EventSubscriber<TextToInformReceivedEvent>() {
+                @Override
+                public void onEvent(final TextToInformReceivedEvent event) {
+                    final TextBuilder textBuilder = TextBuilder.newInstance();
+                    try {
+                        textBuilder.append(Lang.getMsg("chat.textto"));
+                        textBuilder.append(": ");
+                        textBuilder.append(event.getMessage());
+
+                        messageQueue.offer(textBuilder.toString());
+                    } finally {
+                        TextBuilder.recycle(textBuilder);
+                    }
+                }
+            };
+
+    /**
+     * The inform handler for the text to inform messages.
+     */
+    private final EventSubscriber<ScriptInformReceivedEvent> scriptInformEventHandler =
+            new EventSubscriber<ScriptInformReceivedEvent>() {
+                @Override
+                public void onEvent(final ScriptInformReceivedEvent event) {
+                    if (event.getInformPriority() == 0) {
+                        return;
+                    }
+
+                    final TextBuilder textBuilder = TextBuilder.newInstance();
+                    try {
+                        textBuilder.append(Lang.getMsg("chat.scriptInform"));
+                        textBuilder.append(": ");
+                        textBuilder.append(event.getMessage());
+
+                        messageQueue.offer(textBuilder.toString());
+                    } finally {
+                        TextBuilder.recycle(textBuilder);
+                    }
+                }
+            };
+
+    /**
+     * The default constructor.
+     */
+    public GUIChatHandler() {
+        messageQueue = new ConcurrentLinkedQueue<String>();
+    }
+
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
         this.screen = screen;
@@ -77,13 +159,21 @@ public final class GUIChatHandler
     @Override
     public void onStartScreen() {
         World.getChatHandler().addChatReceiver(this);
+
         EventBus.subscribe(InputReceiver.EB_TOPIC, this);
+        EventBus.subscribe(BroadcastInformReceivedEvent.class, bcInformEventHandler);
+        EventBus.subscribe(TextToInformReceivedEvent.class, ttInformEventHandler);
+        EventBus.subscribe(ScriptInformReceivedEvent.class, scriptInformEventHandler);
     }
 
     @Override
     public void onEndScreen() {
         World.getChatHandler().removeChatReceiver(this);
+
         EventBus.unsubscribe(InputReceiver.EB_TOPIC, this);
+        EventBus.unsubscribe(BroadcastInformReceivedEvent.class, bcInformEventHandler);
+        EventBus.unsubscribe(TextToInformReceivedEvent.class, ttInformEventHandler);
+        EventBus.unsubscribe(ScriptInformReceivedEvent.class, scriptInformEventHandler);
     }
 
     /**
@@ -93,10 +183,10 @@ public final class GUIChatHandler
     public boolean keyEvent(final NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyInputEvent.SubmitText) {
             if (chatMsg.hasFocus()) {
-                if (chatMsg.getText().length() == 0) {
+                if (chatMsg.getDisplayedText().isEmpty()) {
                     screen.getFocusHandler().setKeyFocus(null);
                 } else {
-                    sendText(chatMsg.getText());
+                    sendText(chatMsg.getDisplayedText());
                     chatMsg.setText("");
                 }
             } else {
@@ -113,7 +203,7 @@ public final class GUIChatHandler
      *
      * @param text the text to send
      */
-    private void sendText(final String text) {
+    private static void sendText(final String text) {
         final SayCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_SAY, SayCmd.class);
         cmd.setText(text);
         cmd.send();
@@ -153,7 +243,7 @@ public final class GUIChatHandler
      * Receive text send from the server and display it in the chat log.
      */
     @Override
-    public void handleText(final String text, final Char chara, final SpeechMode talkMode) {
+    public void handleText(final String text, final Char chara, final ChatHandler.SpeechMode talkMode) {
         final TextBuilder textBuilder = TextBuilder.newInstance();
 
         // get player's name
@@ -165,20 +255,25 @@ public final class GUIChatHandler
         if (talkMode == ChatHandler.SpeechMode.emote) {
             // we need some kind of name
             if (name == null) {
-                name = Lang.getMsg(KEY_SOMEONE);
+                textBuilder.append(Lang.getMsg(KEY_SOMEONE));
+            } else {
+                textBuilder.append(name);
             }
 
-            textBuilder.append(name);
             textBuilder.append(text);
         } else {
             // normal text hears a shout from the distance
             if ((name == null) && (chara == null)) {
-                name = Lang.getMsg(KEY_DISTANCE);
-            } else if ((name == null) && (chara != null)) {
-                name = Lang.getMsg(KEY_SOMEONE) + " (" + Long.toString(chara.getCharId()) + ")";
+                textBuilder.append(Lang.getMsg(KEY_DISTANCE));
+            } else if (name == null) {
+                textBuilder.append(Lang.getMsg(KEY_SOMEONE));
+                textBuilder.append(" (");
+                textBuilder.append(chara.getCharId());
+                textBuilder.append(')');
+            } else {
+                textBuilder.append(name);
             }
 
-            textBuilder.append(name);
             if (chara != null) {
                 if (talkMode == ChatHandler.SpeechMode.shout) {
                     textBuilder.append(' ').append(Lang.getMsg(KEY_SHOUT));
@@ -192,14 +287,8 @@ public final class GUIChatHandler
             textBuilder.append(':').append(' ');
             textBuilder.append(text);
         }
-        Element contentPane = chatLog.getElement().findElementByName("chatLog");
-        LabelBuilder label = new LabelBuilder() {{
-            text(textBuilder.toString());
-            textHAlign(Align.Left);
-            parameter("wrap", "true");
-            width(percentage(100));
-        }};
-        label.build(contentPane.getNifty(), screen, contentPane);
+
+        messageQueue.offer(textBuilder.toString());
 
         TextBuilder.recycle(textBuilder);
     }
@@ -216,6 +305,29 @@ public final class GUIChatHandler
             if (data.equals("SelectChat")) {
                 chatMsg.setFocus();
             }
+        }
+    }
+
+    @Override
+    public void update(final int delta) {
+        Element contentPane = null;
+
+        while (true) {
+            final String message = messageQueue.poll();
+            if (message == null) {
+                break;
+            }
+
+            if (contentPane == null) {
+                contentPane = chatLog.getElement().findElementByName("chatLog");
+            }
+
+            final LabelBuilder label = new LabelBuilder();
+            label.text(message);
+            label.textHAlign(ElementBuilder.Align.Left);
+            label.parameter("wrap", "true");
+            label.width(label.percentage(100));
+            label.build(contentPane.getNifty(), screen, contentPane);
         }
     }
 }
