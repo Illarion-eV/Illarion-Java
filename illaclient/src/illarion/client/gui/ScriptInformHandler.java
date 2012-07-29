@@ -74,9 +74,8 @@ public final class ScriptInformHandler implements EventSubscriber<ScriptInformRe
     private static int getDisplayTime(final CharSequence text, final int priority) {
         if (priority == 0) {
             return 5000 + (text.length() * 50);
-        } else {
-            return 8000 + (text.length() * 50);
         }
+        return 8000 + (text.length() * 50);
     }
 
     @Override
