@@ -82,6 +82,7 @@
                 <fileset refid="tabsplitter"/>
                 <fileset refid="slick"/>
                 <fileset refid="nifty"/>
+                <fileset refid="eventbus"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>
         </javac>
