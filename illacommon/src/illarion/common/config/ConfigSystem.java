@@ -1,33 +1,22 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.config;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import javolution.util.FastComparator;
 import javolution.util.FastMap;
@@ -36,8 +25,15 @@ import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
+
+import java.io.*;
+import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * This is the main class for the configuration system. It contains the storage
@@ -50,31 +46,11 @@ import org.apache.log4j.Logger;
  * access the data of this configuration and are blocked until its save to read
  * again.
  * </p>
- * 
- * @serial exclude
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
+ * @serial exclude
  */
 public class ConfigSystem implements Config {
-    /**
-     * The string in this constant is displayed in case a value is requested
-     * from the configuration that was not set.
-     */
-    private static final String CONFIG_ENTRY_NOT_SET =
-        "No config entry found for: "; //$NON-NLS-1$
-
-    /**
-     * The string in this constant is displayed in case a value requested from
-     * the configuration holds a invalid object.
-     */
-    private static final String CONFIG_ILLEGAL_ENTRY =
-        "Illegal config entry for: "; //$NON-NLS-1$
-
-    /**
-     * This message is displayed in case a listener is added twice.
-     */
-    private static final String DOUBLE_ADD_LISTENER =
-        "Listener double added: "; //$NON-NLS-1$
-
     /**
      * The encoding used to encode the XML configuration files.
      */
@@ -84,13 +60,6 @@ public class ConfigSystem implements Config {
      * The logger instance that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(ConfigSystem.class);
-
-    /**
-     * This message is displayed in case a listener is removed from the
-     * configuration system that was not added.
-     */
-    private static final String REMOVE_NOT_ADDED_LISTENER =
-        "Removed Listener not added: "; //$NON-NLS-1$
 
     /**
      * The name of the root node in the XML file.
@@ -141,7 +110,7 @@ public class ConfigSystem implements Config {
     /**
      * Create a configuration object with a file as source. The configuration
      * system will try to load the data from this source.
-     * 
+     *
      * @param source The configuration file that is supposed to be load
      */
     @SuppressWarnings("nls")
@@ -170,7 +139,7 @@ public class ConfigSystem implements Config {
     /**
      * Create a configuration object with a file as source. The configuration
      * system will try to load the data from this source.
-     * 
+     *
      * @param source The configuration file that is supposed to be load
      */
     public ConfigSystem(final String source) {
@@ -180,9 +149,9 @@ public class ConfigSystem implements Config {
     /**
      * Add a listener to this configuration that monitors changes to the
      * configuration.
-     * 
+     *
      * @param listener the listener that is called in case the configuration
-     *            changes
+     *                 changes
      */
     @Override
     public void addListener(final ConfigChangeListener listener) {
@@ -191,7 +160,7 @@ public class ConfigSystem implements Config {
             if (configListeners == null) {
                 configListeners = FastTable.newInstance();
             } else if (configListeners.contains(listener)) {
-                LOGGER.warn(DOUBLE_ADD_LISTENER + listener.toString());
+                LOGGER.warn("Listener double added: " + listener.toString());
                 return;
             }
 
@@ -205,15 +174,15 @@ public class ConfigSystem implements Config {
      * Add a listener to this configuration that monitors changes to the
      * configuration. In this case the listener will only react on changes to to
      * one key of the configuration.
-     * 
-     * @param key the key that needs to be changed so cause a call of the
-     *            listener
+     *
+     * @param key      the key that needs to be changed so cause a call of the
+     *                 listener
      * @param listener the listener that is called in case the configuration
-     *            changes
+     *                 changes
      */
     @Override
     public void addListener(final String key,
-        final ConfigChangeListener listener) {
+                            final ConfigChangeListener listener) {
         lock.writeLock().lock();
         try {
             if (keyConfigListeners == null) {
@@ -221,12 +190,12 @@ public class ConfigSystem implements Config {
             }
 
             FastTable<ConfigChangeListener> usedTable =
-                keyConfigListeners.get(key);
+                    keyConfigListeners.get(key);
             if (usedTable == null) {
                 usedTable = FastTable.newInstance();
                 keyConfigListeners.put(key, usedTable);
             } else if (usedTable.contains(listener)) {
-                LOGGER.warn(DOUBLE_ADD_LISTENER + listener.toString());
+                LOGGER.warn("Listener double added: " + listener.toString());
                 return;
             }
 
@@ -239,7 +208,7 @@ public class ConfigSystem implements Config {
     /**
      * Get one entry of the configuration file. In this case the value is read
      * as a boolean value.
-     * 
+     *
      * @param key the key of that value
      * @return the value that was read from the configuration or
      *         <code>false</code> in case no value is set
@@ -253,17 +222,17 @@ public class ConfigSystem implements Config {
         }
 
         if (!(value instanceof Boolean)) {
-            LOGGER.warn(CONFIG_ILLEGAL_ENTRY + key);
+            LOGGER.warn("Illegal config entry for: " + key);
             return false;
         }
 
-        return ((Boolean) value).booleanValue();
+        return (Boolean) value;
     }
 
     /**
      * Get one entry of the configuration file. In this case the value is read
      * as a byte value.
-     * 
+     *
      * @param key the key of the value
      * @return the value that was read from the configuration file or 0 in case
      *         there is no value set for this key
@@ -277,17 +246,17 @@ public class ConfigSystem implements Config {
         }
 
         if (!(value instanceof Byte)) {
-            LOGGER.warn(CONFIG_ILLEGAL_ENTRY + key);
+            LOGGER.warn("Illegal config entry for: " + key);
             return 0;
         }
 
-        return ((Byte) value).byteValue();
+        return (Byte) value;
     }
 
     /**
      * Get one entry of the configuration file. In this case the value is read
      * as a double value.
-     * 
+     *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
      *         <code>0</code> in case there is no value set for this key
@@ -301,17 +270,17 @@ public class ConfigSystem implements Config {
         }
 
         if (!(value instanceof Double)) {
-            LOGGER.warn(CONFIG_ILLEGAL_ENTRY + key);
+            LOGGER.warn("Illegal config entry for: " + key);
             return 0.d;
         }
 
-        return ((Double) value).doubleValue();
+        return (Double) value;
     }
 
     /**
      * Get one entry of the configuration file. In this case the value is read
      * as a File value.
-     * 
+     *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
      *         <code>null</code> in case there is no value set for this key
@@ -325,7 +294,7 @@ public class ConfigSystem implements Config {
         }
 
         if (!(value instanceof String)) {
-            LOGGER.warn(CONFIG_ILLEGAL_ENTRY + key);
+            LOGGER.warn("Illegal config entry for: " + key);
             return null;
         }
 
@@ -335,7 +304,7 @@ public class ConfigSystem implements Config {
     /**
      * Get one entry of the configuration file. In this case the value is read
      * as a float value.
-     * 
+     *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
      *         <code>0</code> in case there is no value set for this key
@@ -349,17 +318,17 @@ public class ConfigSystem implements Config {
         }
 
         if (!(value instanceof Float)) {
-            LOGGER.warn(CONFIG_ILLEGAL_ENTRY + key);
+            LOGGER.warn("Illegal config entry for: " + key);
             return 0.f;
         }
 
-        return ((Float) value).floatValue();
+        return (Float) value;
     }
 
     /**
      * Get one entry of the configuration file. In this case the value is read
      * as a integer value.
-     * 
+     *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
      *         <code>0</code> in case there is no value set for this key
@@ -373,17 +342,17 @@ public class ConfigSystem implements Config {
         }
 
         if (!(value instanceof Integer)) {
-            LOGGER.warn(CONFIG_ILLEGAL_ENTRY + key);
+            LOGGER.warn("Illegal config entry for: " + key);
             return 0;
         }
 
-        return ((Integer) value).intValue();
+        return (Integer) value;
     }
 
     /**
      * Get one entry of the configuration file. In this case the value is read
      * as a long value.
-     * 
+     *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
      *         <code>0</code> in case there is no value set for this key
@@ -397,24 +366,24 @@ public class ConfigSystem implements Config {
         }
 
         if (!(value instanceof Long)) {
-            LOGGER.warn(CONFIG_ILLEGAL_ENTRY + key);
+            LOGGER.warn("Illegal config entry for: " + key);
             return 0;
         }
 
-        return ((Long) value).longValue();
+        return (Long) value;
     }
 
     /**
      * Get one entry of the configuration file. In this case the value is read
      * as a Object value.
-     * 
+     *
      * @param key the key of that value
      * @return the value that was read from the configuration or
      *         <code>null</code> in case no value is set
      */
     public Object getObject(final String key) {
-        Object value;
         lock.readLock().lock();
+        Object value;
         try {
             value = configEntries.get(key);
         } finally {
@@ -422,7 +391,7 @@ public class ConfigSystem implements Config {
         }
 
         if (value == null) {
-            LOGGER.warn(CONFIG_ENTRY_NOT_SET + key);
+            LOGGER.warn("No config entry found for: " + key);
             return null;
         }
 
@@ -432,7 +401,7 @@ public class ConfigSystem implements Config {
     /**
      * Get one entry of the configuration file. In this case the value is read
      * as a short value.
-     * 
+     *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
      *         <code>0</code> in case there is no value set for this key
@@ -446,17 +415,17 @@ public class ConfigSystem implements Config {
         }
 
         if (!(value instanceof Short)) {
-            LOGGER.warn(CONFIG_ILLEGAL_ENTRY + key);
+            LOGGER.warn("Illegal config entry for: " + key);
             return 0;
         }
 
-        return ((Short) value).shortValue();
+        return (Short) value;
     }
 
     /**
      * Get one entry of the configuration file. In this case the value is read
      * as a String value.
-     * 
+     *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
      *         <code>null</code> in case there is no value set for this key
@@ -470,7 +439,7 @@ public class ConfigSystem implements Config {
         }
 
         if (!(value instanceof String)) {
-            LOGGER.warn(CONFIG_ILLEGAL_ENTRY + key);
+            LOGGER.warn("Illegal config entry for: " + key);
             return null;
         }
 
@@ -483,7 +452,7 @@ public class ConfigSystem implements Config {
      * absolutely sure what you are doing. This causes that not even the default
      * value is available anymore for that session unless its defined by hand
      * again.
-     * 
+     *
      * @param key the key of the entry that is supposed to be removed
      */
     @Override
@@ -493,7 +462,7 @@ public class ConfigSystem implements Config {
 
     /**
      * Remove a listener from the configuration system.
-     * 
+     *
      * @param listener the listener to remove
      */
     @Override
@@ -501,7 +470,7 @@ public class ConfigSystem implements Config {
         lock.writeLock().lock();
         try {
             if (configListeners == null) {
-                LOGGER.warn(REMOVE_NOT_ADDED_LISTENER + listener.toString());
+                LOGGER.warn("Removed Listener not added: " + listener.toString());
                 return;
             }
 
@@ -511,7 +480,7 @@ public class ConfigSystem implements Config {
                     configListeners = null;
                 }
             } else {
-                LOGGER.warn(REMOVE_NOT_ADDED_LISTENER + listener.toString());
+                LOGGER.warn("Removed Listener not added: " + listener.toString());
             }
         } finally {
             lock.writeLock().unlock();
@@ -521,25 +490,25 @@ public class ConfigSystem implements Config {
     /**
      * Remove a listener from the configuration system. In this case the
      * listener is removed from the monitor of one single key.
-     * 
-     * @param key the key the listener is supposed to be removed from
+     *
+     * @param key      the key the listener is supposed to be removed from
      * @param listener the listener to remove
      */
     @Override
     public void removeListener(final String key,
-        final ConfigChangeListener listener) {
+                               final ConfigChangeListener listener) {
         lock.writeLock().lock();
         try {
             if (keyConfigListeners == null) {
-                LOGGER.warn(REMOVE_NOT_ADDED_LISTENER + listener.toString());
+                LOGGER.warn("Removed Listener not added: " + listener.toString());
                 return;
             }
 
             final FastTable<ConfigChangeListener> usedTable =
-                keyConfigListeners.get(key);
+                    keyConfigListeners.get(key);
 
             if (usedTable == null) {
-                LOGGER.warn(REMOVE_NOT_ADDED_LISTENER + listener.toString());
+                LOGGER.warn("Removed Listener not added: " + listener.toString());
                 return;
             }
 
@@ -554,7 +523,7 @@ public class ConfigSystem implements Config {
                     }
                 }
             } else {
-                LOGGER.warn(REMOVE_NOT_ADDED_LISTENER + listener.toString());
+                LOGGER.warn("Removed Listener not added: " + listener.toString());
                 return;
             }
         } finally {
@@ -579,14 +548,14 @@ public class ConfigSystem implements Config {
 
         if (configFile.exists() && !configFile.isFile()) {
             LOGGER
-                .warn("Configuration not saved: config file set to illegal value.");
+                    .warn("Configuration not saved: config file set to illegal value.");
             return;
         }
 
         if (configFile.exists()) {
             if (!configFile.delete()) {
                 LOGGER
-                    .warn("Configuration not saved: failed to access the config file.");
+                        .warn("Configuration not saved: failed to access the config file.");
                 return;
             }
         }
@@ -595,8 +564,8 @@ public class ConfigSystem implements Config {
         lock.writeLock().lock();
         try {
             xmlWriter =
-                XMLObjectWriter.newInstance(new GZIPOutputStream(
-                    new FileOutputStream(configFile)), ENCODING);
+                    XMLObjectWriter.newInstance(new GZIPOutputStream(
+                            new FileOutputStream(configFile)), ENCODING);
             xmlWriter.setBinding(binding);
             xmlWriter.setIndentation("\t");
 
@@ -607,7 +576,7 @@ public class ConfigSystem implements Config {
             return;
         } catch (final IOException e) {
             LOGGER
-                .error("Configuration not saved: error accessing config file.");
+                    .error("Configuration not saved: error accessing config file.");
             return;
         } finally {
             if (xmlWriter != null) {
@@ -615,7 +584,7 @@ public class ConfigSystem implements Config {
                     xmlWriter.close();
                 } catch (final XMLStreamException e) {
                     LOGGER.error("Error while closing the config file writer",
-                        e);
+                            e);
                 }
                 xmlWriter = null;
             }
@@ -626,8 +595,8 @@ public class ConfigSystem implements Config {
     /**
      * Set one entry of the configuration file to a new value. In this case the
      * value is a boolean value.
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     @Override
@@ -638,8 +607,8 @@ public class ConfigSystem implements Config {
     /**
      * Set one entry of the configuration file to a new value. In this case the
      * value is a byte value.
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     @Override
@@ -650,8 +619,8 @@ public class ConfigSystem implements Config {
     /**
      * Set one entry of the configuration file to a new value. In this case the
      * value is a double value.
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     @Override
@@ -662,8 +631,8 @@ public class ConfigSystem implements Config {
     /**
      * Set one entry of the configuration file to a new value. In this case the
      * value is a file.
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     @Override
@@ -674,8 +643,8 @@ public class ConfigSystem implements Config {
     /**
      * Set one entry of the configuration file to a new value. In this case the
      * value is a float value.
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     @Override
@@ -686,8 +655,8 @@ public class ConfigSystem implements Config {
     /**
      * Set one entry of the configuration file to a new value. In this case the
      * value is a integer value.
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     @Override
@@ -698,8 +667,8 @@ public class ConfigSystem implements Config {
     /**
      * Set one entry of the configuration file to a new value. In this case the
      * value is a integer value.
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     @Override
@@ -710,8 +679,8 @@ public class ConfigSystem implements Config {
     /**
      * Set one entry of the configuration file to a new value. In this case the
      * value is a Object value.
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void set(final String key, final Object value) {
@@ -731,8 +700,8 @@ public class ConfigSystem implements Config {
     /**
      * Set one entry of the configuration file to a new value. In this case the
      * value is a short value.
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     @Override
@@ -743,8 +712,8 @@ public class ConfigSystem implements Config {
     /**
      * Set one entry of the configuration file to a new value. In this case the
      * value is a String value.
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     @Override
@@ -759,8 +728,8 @@ public class ConfigSystem implements Config {
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final boolean value) {
@@ -776,8 +745,8 @@ public class ConfigSystem implements Config {
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final byte value) {
@@ -793,8 +762,8 @@ public class ConfigSystem implements Config {
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final double value) {
@@ -810,8 +779,8 @@ public class ConfigSystem implements Config {
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final File value) {
@@ -827,8 +796,8 @@ public class ConfigSystem implements Config {
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final float value) {
@@ -844,8 +813,8 @@ public class ConfigSystem implements Config {
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final int value) {
@@ -861,8 +830,8 @@ public class ConfigSystem implements Config {
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final long value) {
@@ -878,8 +847,8 @@ public class ConfigSystem implements Config {
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final short value) {
@@ -895,8 +864,8 @@ public class ConfigSystem implements Config {
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
-     * 
-     * @param key the key the value is stored with
+     *
+     * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final String value) {
@@ -924,8 +893,8 @@ public class ConfigSystem implements Config {
         lock.writeLock().lock();
         try {
             xmlReader =
-                XMLObjectReader.newInstance(new GZIPInputStream(
-                    new FileInputStream(configFile)), ENCODING);
+                    XMLObjectReader.newInstance(new GZIPInputStream(
+                            new FileInputStream(configFile)), ENCODING);
             xmlReader.setBinding(binding);
 
             final Map<String, Object> loadedMap = xmlReader.read(ROOT_NAME);
@@ -951,7 +920,7 @@ public class ConfigSystem implements Config {
             return;
         } catch (final IOException e) {
             LOGGER
-                .error("Configuration not loaded: error accessing the file system.");
+                    .error("Configuration not loaded: error accessing the file system.");
             return;
         } finally {
             if (xmlReader != null) {
@@ -959,7 +928,7 @@ public class ConfigSystem implements Config {
                     xmlReader.close();
                 } catch (final XMLStreamException e) {
                     LOGGER.error("Error while closing the config file reader",
-                        e);
+                            e);
                 }
                 xmlReader = null;
             }
@@ -970,11 +939,13 @@ public class ConfigSystem implements Config {
     /**
      * Report the change of a entry of the configuration to all listeners set in
      * this configuration.
-     * 
+     *
      * @param key the key that was changed
      */
     private void reportChangedKey(final String key) {
         changed = true;
+
+        EventBus.publish(key, new ConfigChangedEvent(this, key));
 
         if (configListeners != null) {
             final int count = configListeners.size();
@@ -985,7 +956,7 @@ public class ConfigSystem implements Config {
 
         if (keyConfigListeners != null) {
             final FastTable<ConfigChangeListener> list =
-                keyConfigListeners.get(key);
+                    keyConfigListeners.get(key);
             if (list != null) {
                 final int count = list.size();
                 for (int i = 0; i < count; i++) {
