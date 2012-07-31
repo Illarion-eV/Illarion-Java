@@ -28,6 +28,7 @@ import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.tools.Color;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
@@ -54,6 +55,73 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscriber<String>,
         EventSubscriber<CharTalkingEvent>, ScreenController, UpdatableHandler {
     /**
+     * This utility class is used to store the entries that are not yet displayed in the queue until the GUI is
+     * updated.
+     *
+     * @author Martin Karing &lt;nitram@illarion.org&gt;
+     */
+    private static final class MessageEntry {
+        /**
+         * The text of the entry.
+         */
+        private final String text;
+
+        /**
+         * The color of the entry.
+         */
+        private final Color color;
+
+        /**
+         * Constructor for the entry.
+         *
+         * @param msgText  the text stored in the entry
+         * @param msgColor the color of the entry
+         */
+        MessageEntry(final String msgText, final Color msgColor) {
+            text = msgText;
+            color = msgColor;
+        }
+
+        /**
+         * Get the text that is supposed to be displayed.
+         *
+         * @return the text to display
+         */
+        public String getText() {
+            return text;
+        }
+
+        /**
+         * Get the color of the entry to display.
+         *
+         * @return the color of the entry
+         */
+        public Color getColor() {
+            return color;
+        }
+    }
+
+    /**
+     * The default color of text entries.
+     */
+    private static final Color COLOR_DEFAULT = Color.WHITE;
+
+    /**
+     * The color of shouted or important messages
+     */
+    private static final Color COLOR_SHOUT = new Color(1.f, .3f, .3f, 1.f);
+
+    /**
+     * The color of whispered text.
+     */
+    private static final Color COLOR_WHISPER = new Color(.7f, .7f, .7f, 1.f);
+
+    /**
+     * The color of emoted.
+     */
+    private static final Color COLOR_EMOTE = new Color(.1f, .8f, .1f, 1.f);
+
+    /**
      * The log that is used to display the text.
      */
     private ScrollPanel chatLog;
@@ -71,7 +139,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     /**
      * The Queue of strings that yet need to be written to the GUI.
      */
-    private final Queue<String> messageQueue;
+    private final Queue<GUIChatHandler.MessageEntry> messageQueue;
 
     /**
      * The inform handler for the broadcast inform messages.
@@ -86,7 +154,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
                         textBuilder.append(": ");
                         textBuilder.append(event.getMessage());
 
-                        messageQueue.offer(textBuilder.toString());
+                        messageQueue.offer(new GUIChatHandler.MessageEntry(textBuilder.toString(), COLOR_DEFAULT));
                     } finally {
                         TextBuilder.recycle(textBuilder);
                     }
@@ -106,7 +174,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
                         textBuilder.append(": ");
                         textBuilder.append(event.getMessage());
 
-                        messageQueue.offer(textBuilder.toString());
+                        messageQueue.offer(new GUIChatHandler.MessageEntry(textBuilder.toString(), COLOR_DEFAULT));
                     } finally {
                         TextBuilder.recycle(textBuilder);
                     }
@@ -126,11 +194,19 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
 
                     final TextBuilder textBuilder = TextBuilder.newInstance();
                     try {
+                        final Color usedColor;
+                        if (event.getInformPriority() == 1) {
+                            usedColor = COLOR_DEFAULT;
+                        } else {
+                            usedColor = COLOR_SHOUT;
+                        }
+
+
                         textBuilder.append(Lang.getMsg("chat.scriptInform"));
                         textBuilder.append(": ");
                         textBuilder.append(event.getMessage());
 
-                        messageQueue.offer(textBuilder.toString());
+                        messageQueue.offer(new GUIChatHandler.MessageEntry(textBuilder.toString(), usedColor));
                     } finally {
                         TextBuilder.recycle(textBuilder);
                     }
@@ -141,7 +217,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
      * The default constructor.
      */
     public GUIChatHandler() {
-        messageQueue = new ConcurrentLinkedQueue<String>();
+        messageQueue = new ConcurrentLinkedQueue<GUIChatHandler.MessageEntry>();
     }
 
     @Override
@@ -225,7 +301,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
         Element contentPane = null;
 
         while (true) {
-            final String message = messageQueue.poll();
+            final GUIChatHandler.MessageEntry message = messageQueue.poll();
             if (message == null) {
                 break;
             }
@@ -235,7 +311,8 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
             }
 
             final LabelBuilder label = new LabelBuilder();
-            label.text(message);
+            label.text(message.getText());
+            label.color(message.getColor());
             label.textHAlign(ElementBuilder.Align.Left);
             label.parameter("wrap", "true");
             label.width(label.percentage(100));
@@ -245,6 +322,29 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
 
     @Override
     public void onEvent(final CharTalkingEvent event) {
-        messageQueue.offer(event.getLoggedText());
+        Color usedColor = null;
+        switch (event.getMode()) {
+            case emote:
+                usedColor = COLOR_EMOTE;
+                break;
+            case normal:
+                usedColor = COLOR_DEFAULT;
+                break;
+            case ooc:
+                usedColor = COLOR_WHISPER;
+                break;
+            case shout:
+                usedColor = COLOR_SHOUT;
+                break;
+            case whisper:
+                usedColor = COLOR_WHISPER;
+                break;
+        }
+
+        if (usedColor == null) {
+            throw new IllegalStateException("No color was selected. This can't be happening!");
+        }
+
+        messageQueue.offer(new GUIChatHandler.MessageEntry(event.getLoggedText(), usedColor));
     }
 }
