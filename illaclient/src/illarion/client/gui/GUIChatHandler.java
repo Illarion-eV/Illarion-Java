@@ -35,10 +35,8 @@ import illarion.client.net.client.SayCmd;
 import illarion.client.net.server.events.BroadcastInformReceivedEvent;
 import illarion.client.net.server.events.ScriptInformReceivedEvent;
 import illarion.client.net.server.events.TextToInformReceivedEvent;
-import illarion.client.util.ChatHandler;
 import illarion.client.util.Lang;
-import illarion.client.world.Char;
-import illarion.client.world.World;
+import illarion.client.world.events.CharTalkingEvent;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
@@ -53,8 +51,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GUIChatHandler implements KeyInputHandler, ChatHandler.ChatReceiver, EventTopicSubscriber<String>,
-        ScreenController, UpdatableHandler {
+public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscriber<String>,
+        EventSubscriber<CharTalkingEvent>, ScreenController, UpdatableHandler {
     /**
      * The log that is used to display the text.
      */
@@ -158,8 +156,7 @@ public final class GUIChatHandler implements KeyInputHandler, ChatHandler.ChatRe
 
     @Override
     public void onStartScreen() {
-        World.getChatHandler().addChatReceiver(this);
-
+        EventBus.subscribe(CharTalkingEvent.class, this);
         EventBus.subscribe(InputReceiver.EB_TOPIC, this);
         EventBus.subscribe(BroadcastInformReceivedEvent.class, bcInformEventHandler);
         EventBus.subscribe(TextToInformReceivedEvent.class, ttInformEventHandler);
@@ -168,8 +165,7 @@ public final class GUIChatHandler implements KeyInputHandler, ChatHandler.ChatRe
 
     @Override
     public void onEndScreen() {
-        World.getChatHandler().removeChatReceiver(this);
-
+        EventBus.unsubscribe(CharTalkingEvent.class, this);
         EventBus.unsubscribe(InputReceiver.EB_TOPIC, this);
         EventBus.unsubscribe(BroadcastInformReceivedEvent.class, bcInformEventHandler);
         EventBus.unsubscribe(TextToInformReceivedEvent.class, ttInformEventHandler);
@@ -210,90 +206,6 @@ public final class GUIChatHandler implements KeyInputHandler, ChatHandler.ChatRe
     }
 
     /**
-     * The key for a chat entry in case you hear someone saying something but not the source of the voice.
-     */
-    @SuppressWarnings("nls")
-    private static final String KEY_DISTANCE = "chat.distantShout";
-
-    /**
-     * The key for normal speech.
-     */
-    @SuppressWarnings("nls")
-    private static final String KEY_SAY = "log.say";
-
-    /**
-     * The key for shouting.
-     */
-    @SuppressWarnings("nls")
-    private static final String KEY_SHOUT = "log.shout";
-
-    /**
-     * The key for the language file for the generic "someone" name in the chat.
-     */
-    @SuppressWarnings("nls")
-    private static final String KEY_SOMEONE = "chat.someone";
-
-    /**
-     * The key for whispering.
-     */
-    @SuppressWarnings("nls")
-    private static final String KEY_WHISPER = "log.whisper";
-
-    /**
-     * Receive text send from the server and display it in the chat log.
-     */
-    @Override
-    public void handleText(final String text, final Char chara, final ChatHandler.SpeechMode talkMode) {
-        final TextBuilder textBuilder = TextBuilder.newInstance();
-
-        // get player's name
-        String name = null;
-        if (chara != null) {
-            name = chara.getName();
-        }
-
-        if (talkMode == ChatHandler.SpeechMode.emote) {
-            // we need some kind of name
-            if (name == null) {
-                textBuilder.append(Lang.getMsg(KEY_SOMEONE));
-            } else {
-                textBuilder.append(name);
-            }
-
-            textBuilder.append(text);
-        } else {
-            // normal text hears a shout from the distance
-            if ((name == null) && (chara == null)) {
-                textBuilder.append(Lang.getMsg(KEY_DISTANCE));
-            } else if (name == null) {
-                textBuilder.append(Lang.getMsg(KEY_SOMEONE));
-                textBuilder.append(" (");
-                textBuilder.append(chara.getCharId());
-                textBuilder.append(')');
-            } else {
-                textBuilder.append(name);
-            }
-
-            if (chara != null) {
-                if (talkMode == ChatHandler.SpeechMode.shout) {
-                    textBuilder.append(' ').append(Lang.getMsg(KEY_SHOUT));
-                } else if (talkMode == ChatHandler.SpeechMode.whisper) {
-                    textBuilder.append(' ').append(Lang.getMsg(KEY_WHISPER));
-                } else {
-                    textBuilder.append(' ').append(Lang.getMsg(KEY_SAY));
-                }
-            }
-
-            textBuilder.append(':').append(' ');
-            textBuilder.append(text);
-        }
-
-        messageQueue.offer(textBuilder.toString());
-
-        TextBuilder.recycle(textBuilder);
-    }
-
-    /**
      * Handle the events this handler subscribed to.
      *
      * @param topic the event topic
@@ -329,5 +241,10 @@ public final class GUIChatHandler implements KeyInputHandler, ChatHandler.ChatRe
             label.width(label.percentage(100));
             label.build(contentPane.getNifty(), screen, contentPane);
         }
+    }
+
+    @Override
+    public void onEvent(final CharTalkingEvent event) {
+        messageQueue.offer(event.getLoggedText());
     }
 }

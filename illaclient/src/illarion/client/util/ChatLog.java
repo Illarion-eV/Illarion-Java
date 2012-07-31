@@ -19,13 +19,14 @@
 package illarion.client.util;
 
 import illarion.client.IllaClient;
-import illarion.client.world.Char;
 import illarion.client.world.World;
-import illarion.common.config.Config;
-import illarion.common.config.ConfigChangeListener;
-import javolution.text.TextBuilder;
+import illarion.client.world.events.CharTalkingEvent;
+import illarion.common.config.ConfigChangedEvent;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
+import org.bushe.swing.event.EventTopicSubscriber;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -37,11 +38,9 @@ import java.util.Properties;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ChatLog implements ConfigChangeListener {
-
+public final class ChatLog implements EventTopicSubscriber<ConfigChangedEvent>, EventSubscriber<CharTalkingEvent> {
     /**
-     * The key used for the configuration to store if the text log is enabled or
-     * not.
+     * The key used for the configuration to store if the text log is enabled or not.
      */
     public static final String CFG_TEXTLOG = "textLog"; //$NON-NLS-1$
 
@@ -51,39 +50,8 @@ public final class ChatLog implements ConfigChangeListener {
     private static final ChatLog INSTANCE = new ChatLog();
 
     /**
-     * The key for a chat entry in case you hear someone saying something but
-     * not the source of the voice.
-     */
-    @SuppressWarnings("nls")
-    private static final String KEY_DISTANCE = "chat.distantShout";
-
-    /**
-     * The key for normal speech.
-     */
-    @SuppressWarnings("nls")
-    private static final String KEY_SAY = "log.say";
-
-    /**
-     * The key for shouting.
-     */
-    @SuppressWarnings("nls")
-    private static final String KEY_SHOUT = "log.shout";
-
-    /**
-     * The key for the language file for the generic "someone" name in the chat.
-     */
-    @SuppressWarnings("nls")
-    private static final String KEY_SOMEONE = "chat.someone";
-
-    /**
-     * The key for whispering.
-     */
-    @SuppressWarnings("nls")
-    private static final String KEY_WHISPER = "log.whisper";
-
-    /**
-     * Constant value to determine if the logger is active in general or not. In
-     * case the logging is disabled by the config, nothing will be logged.
+     * Constant value to determine if the logger is active in general or not. In case the logging is disabled by the
+     * config, nothing will be logged.
      */
     private boolean logActive;
 
@@ -94,22 +62,20 @@ public final class ChatLog implements ConfigChangeListener {
     private final Logger logger = Logger.getLogger("CHAT");
 
     /**
-     * Stores the informations if the logger is set up and working. Only in this
-     * case logfiles are written.
+     * Stores the information if the logger is set up and working. Only in this case log files are written.
      */
-    private boolean loggerWorking = false;
+    private boolean loggerWorking;
 
     /**
-     * Private constructor to avoid that any instance but the singleton instance
-     * is created.
+     * Private constructor to avoid that any instance but the singleton instance is created.
      */
     private ChatLog() {
         logActive = IllaClient.getCfg().getBoolean(CFG_TEXTLOG);
-        IllaClient.getCfg().addListener(CFG_TEXTLOG, this);
+        EventBus.subscribe(CFG_TEXTLOG, this);
     }
 
     /**
-     * Get the singleton instance of the chatfile logger.
+     * Get the singleton instance of the chat file logger.
      *
      * @return the singleton instance of this class
      */
@@ -118,29 +84,16 @@ public final class ChatLog implements ConfigChangeListener {
     }
 
     /**
-     * This method is used to monitor changes of the configuration. In case a
-     * change happens the configuration will set the internal values properly
-     * again.
-     */
-    @Override
-    public void configChanged(final Config cfg, final String key) {
-        if (key.equals(CFG_TEXTLOG)) {
-            logActive = cfg.getBoolean(CFG_TEXTLOG);
-        }
-    }
-
-    /**
      * Set up the logger and all needed settings so everything is fine and
      * reading for the logging actions.
      *
-     * @param loggingProps the properties that are used to setup the loggers.
-     *                     These need to be modified in order to set the correct paths to
-     *                     the logfiles
+     * @param loggingProps the properties that are used to setup the loggers. These need to be modified in order to
+     *                     set the correct paths to the log files
      */
     @SuppressWarnings("nls")
     public void init(final Properties loggingProps) {
-        loggingProps.put("log4j.appender.ChatAppender.file", new File(World
-                .getPlayer().getPath(), "illarion.log").getAbsolutePath());
+        loggingProps.put("log4j.appender.ChatAppender.file", new File(World.getPlayer().getPath(),
+                "illarion.log").getAbsolutePath());
         new PropertyConfigurator().doConfigure(loggingProps,
                 logger.getLoggerRepository());
 
@@ -150,69 +103,22 @@ public final class ChatLog implements ConfigChangeListener {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
         logger.info("");
-        logger.info(Lang.getMsg("log.newSession") + " - "
-                + sdf.format(new Date()));
+        logger.info(Lang.getMsg("log.newSession") + " - " + sdf.format(new Date()));
+
+        EventBus.subscribe(CharTalkingEvent.class, this);
     }
 
-    /**
-     * Write a text that was spoken to the the logfile.
-     *
-     * @param chara    the character who spoke the text, null if its unknown what
-     *                 character said the text
-     * @param talkMode the mode the message was talked in (say, whisper, shout)
-     * @param text     the text that was spoken itself
-     */
-    @SuppressWarnings("nls")
-    public void logMessage(final Char chara,
-                           final ChatHandler.SpeechMode talkMode, final String text) {
-
-        if (!loggerWorking || !logActive) {
-            return;
+    @Override
+    public void onEvent(final String topic, final ConfigChangedEvent data) {
+        if (topic.equals(CFG_TEXTLOG)) {
+            logActive = data.getConfig().getBoolean(topic);
         }
+    }
 
-        final TextBuilder textBuilder = TextBuilder.newInstance();
-
-        // get player's name
-        String name = null;
-        if (chara != null) {
-            name = chara.getName();
+    @Override
+    public void onEvent(final CharTalkingEvent event) {
+        if (loggerWorking && logActive) {
+            logger.info(event.getLoggedText());
         }
-
-        if (talkMode == ChatHandler.SpeechMode.emote) {
-            // we need some kind of name
-            if (name == null) {
-                name = Lang.getMsg(KEY_SOMEONE);
-            }
-
-            textBuilder.append(name);
-            textBuilder.append(text);
-        } else {
-            // normal text hears a shout from the distance
-            if ((name == null) && (chara == null)) {
-                name = Lang.getMsg(KEY_DISTANCE);
-            } else if ((name == null) && (chara != null)) {
-                name =
-                        Lang.getMsg(KEY_SOMEONE) + " ("
-                                + Long.toString(chara.getCharId()) + ")";
-            }
-
-            textBuilder.append(name);
-            if (chara != null) {
-                if (talkMode == ChatHandler.SpeechMode.shout) {
-                    textBuilder.append(' ').append(Lang.getMsg(KEY_SHOUT));
-                } else if (talkMode == ChatHandler.SpeechMode.whisper) {
-                    textBuilder.append(' ').append(Lang.getMsg(KEY_WHISPER));
-                } else {
-                    textBuilder.append(' ').append(Lang.getMsg(KEY_SAY));
-                }
-            }
-
-            textBuilder.append(':').append(' ');
-            textBuilder.append(text);
-        }
-
-        // send out the text
-        logger.info(textBuilder.toString());
-        TextBuilder.recycle(textBuilder);
     }
 }

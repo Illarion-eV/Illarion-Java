@@ -18,12 +18,12 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.World;
 import illarion.common.util.Location;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Talking ( {@link illarion.client.net.CommandList#MSG_SAY}).
@@ -31,18 +31,7 @@ import illarion.common.util.Location;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class SayMsg
-        extends AbstractReply {
-    /**
-     * Constant of a header that marks that a text should be shown only in the editor as temporary message.
-     */
-    @SuppressWarnings("nls")
-    private static final String EDITOR_WHISPER_HEADER = "#w ";
-
-    /**
-     * The string length of {@link #EDITOR_WHISPER_HEADER}.
-     */
-    private static final int EDITOR_WHISPER_HEADER_LENGHT = EDITOR_WHISPER_HEADER.length();
+public final class SayMsg extends AbstractReply {
 
     /**
      * The location the text was spoken at.
@@ -117,7 +106,7 @@ public final class SayMsg
         builder.append(loc.toString());
         builder.append(" \"");
         builder.append(text);
-        builder.append("\"");
+        builder.append('"');
         return toString(builder.toString());
     }
 }
