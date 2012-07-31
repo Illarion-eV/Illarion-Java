@@ -20,6 +20,7 @@ package illarion.client.gui;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.EffectBuilder;
+import de.lessvoid.nifty.builder.ElementBuilder;
 import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
@@ -105,6 +106,9 @@ public final class ScriptInformHandler implements EventSubscriber<ScriptInformRe
         labelBuilder.invisibleToMouse();
         labelBuilder.valignCenter();
         labelBuilder.alignCenter();
+        labelBuilder.width(labelBuilder.percentage(100));
+        labelBuilder.textHAlign(ElementBuilder.Align.Center);
+        labelBuilder.parameter("wrap", "true");
 
         final EffectBuilder moveEffectBuilder = new EffectBuilder("move");
         moveEffectBuilder.length(getDisplayTime(event.getMessage(), event.getInformPriority()));
