@@ -26,10 +26,12 @@ import illarion.client.graphics.Avatar;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.RequestAppearanceCmd;
+import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.util.Lang;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
+import illarion.client.world.items.MerchantList;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
 import illarion.common.config.ConfigSystem;
@@ -86,7 +88,7 @@ public final class Player implements ConfigChangeListener {
     private static final int MAXIMUM_LOOKING_AT_RANGE = 6;
 
     /**
-     * The minium range between 2 characters, that can look at each other.
+     * The minimum range between 2 characters, that can look at each other.
      */
     private static final int MINIMUM_LOOKING_AT_RANGE = 2;
 
@@ -163,12 +165,22 @@ public final class Player implements ConfigChangeListener {
     /**
      * This map contains the containers that are known for the player.
      */
-    public final TIntObjectHashMap<ItemContainer> containers;
+    private final TIntObjectHashMap<ItemContainer> containers;
+
+    /**
+     * The map of merchant dialogs that are currently open.
+     */
+    private final TIntObjectHashMap<MerchantList> merchantDialogs;
 
     /**
      * The event subscriber that monitors update events of containers.
      */
-    public final EventSubscriber<OpenContainerEvent> openContainerEventEventSubscriber;
+    private final EventSubscriber<OpenContainerEvent> openContainerEventSubscriber;
+
+    /**
+     * The event subscriber that monitors merchant dialogs.
+     */
+    private final EventSubscriber<DialogMerchantReceivedEvent> dialogMerchantReceivedEventSubscriber;
 
     /**
      * Constructor for the player that receives the character name from the login data automatically.
@@ -196,8 +208,12 @@ public final class Player implements ConfigChangeListener {
             cfg = null;
             movementHandler = null;
             inventory = null;
+
             containers = null;
-            openContainerEventEventSubscriber = null;
+            openContainerEventSubscriber = null;
+
+            merchantDialogs = null;
+            dialogMerchantReceivedEventSubscriber = null;
             return;
         }
 
@@ -211,7 +227,7 @@ public final class Player implements ConfigChangeListener {
         inventory = new Inventory();
         containers = new TIntObjectHashMap<ItemContainer>();
 
-        openContainerEventEventSubscriber = new EventSubscriber<OpenContainerEvent>() {
+        openContainerEventSubscriber = new EventSubscriber<OpenContainerEvent>() {
             @Override
             public void onEvent(final OpenContainerEvent event) {
                 final ItemContainer container = getContainer(event.getContainerId());
@@ -223,13 +239,28 @@ public final class Player implements ConfigChangeListener {
             }
         };
 
+        merchantDialogs = new TIntObjectHashMap<MerchantList>();
+
+        dialogMerchantReceivedEventSubscriber = new EventSubscriber<DialogMerchantReceivedEvent>() {
+            @Override
+            public void onEvent(final DialogMerchantReceivedEvent event) {
+                final MerchantList list = new MerchantList(event.getId(), event.getItemCount());
+                for (int i = 0; i < event.getItemCount(); i++) {
+                    list.setItem(i, event.getItem(i));
+                }
+
+                merchantDialogs.put(event.getId(), list);
+            }
+        };
+
         IllaClient.getCfg().addListener(CFG_SOUND_ON, this);
         IllaClient.getCfg().addListener(CFG_SOUND_VOL, this);
         IllaClient.getCfg().addListener(CFG_MUSIC_ON, this);
         IllaClient.getCfg().addListener(CFG_MUSIC_VOL, this);
 
         updateListener();
-        EventBus.subscribe(OpenContainerEvent.class, openContainerEventEventSubscriber);
+        EventBus.subscribe(OpenContainerEvent.class, openContainerEventSubscriber);
+        EventBus.subscribe(DialogMerchantReceivedEvent.class, dialogMerchantReceivedEventSubscriber);
     }
 
     /**
@@ -247,6 +278,16 @@ public final class Player implements ConfigChangeListener {
             containers.put(id, newContainer);
             return newContainer;
         }
+    }
+
+    /**
+     * Get the merchant list.
+     *
+     * @param id the ID of the list
+     * @return the merchant list assigned to the list
+     */
+    public MerchantList getMerchantList(final int id) {
+        return merchantDialogs.get(id);
     }
 
     /**
