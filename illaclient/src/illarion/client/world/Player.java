@@ -29,6 +29,7 @@ import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.util.Lang;
+import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantList;
@@ -168,9 +169,9 @@ public final class Player implements ConfigChangeListener {
     private final TIntObjectHashMap<ItemContainer> containers;
 
     /**
-     * The map of merchant dialogs that are currently open.
+     * The merchant dialog that is currently open.
      */
-    private final TIntObjectHashMap<MerchantList> merchantDialogs;
+    private MerchantList merchantDialog;
 
     /**
      * The event subscriber that monitors update events of containers.
@@ -212,7 +213,6 @@ public final class Player implements ConfigChangeListener {
             containers = null;
             openContainerEventSubscriber = null;
 
-            merchantDialogs = null;
             dialogMerchantReceivedEventSubscriber = null;
             return;
         }
@@ -239,8 +239,6 @@ public final class Player implements ConfigChangeListener {
             }
         };
 
-        merchantDialogs = new TIntObjectHashMap<MerchantList>();
-
         dialogMerchantReceivedEventSubscriber = new EventSubscriber<DialogMerchantReceivedEvent>() {
             @Override
             public void onEvent(final DialogMerchantReceivedEvent event) {
@@ -249,7 +247,10 @@ public final class Player implements ConfigChangeListener {
                     list.setItem(i, event.getItem(i));
                 }
 
-                merchantDialogs.put(event.getId(), list);
+                if (merchantDialog != null) {
+                    EventBus.publish(new CloseDialogEvent(merchantDialog.getId(), CloseDialogEvent.DialogType.Merchant));
+                }
+                merchantDialog = list;
             }
         };
 
@@ -283,11 +284,10 @@ public final class Player implements ConfigChangeListener {
     /**
      * Get the merchant list.
      *
-     * @param id the ID of the list
-     * @return the merchant list assigned to the list
+     * @return the merchant list
      */
-    public MerchantList getMerchantList(final int id) {
-        return merchantDialogs.get(id);
+    public MerchantList getMerchantList() {
+        return merchantDialog;
     }
 
     /**
