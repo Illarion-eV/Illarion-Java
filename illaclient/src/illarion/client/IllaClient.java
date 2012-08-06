@@ -59,6 +59,7 @@ import java.io.*;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
 
 /**
  * Main Class of the Illarion Client, this loads up the whole game and runs the main loop of the Illarion Client.
@@ -521,7 +522,7 @@ public final class IllaClient {
         LOGGER.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System
                 .getProperty("os.arch"));
 
-        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
+        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(Level.WARNING);
         //java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
         java.util.logging.Logger.getLogger("javolution").setLevel(java.util.logging.Level.SEVERE);
     }
