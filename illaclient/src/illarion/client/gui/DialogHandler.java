@@ -18,28 +18,35 @@
  */
 package illarion.client.gui;
 
+import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.ControlBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.gui.util.NiftyMerchantItem;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.CloseDialogInputCmd;
 import illarion.client.net.client.CloseDialogMessageCmd;
+import illarion.client.net.client.TradeItemCmd;
 import illarion.client.net.server.events.DialogInputReceivedEvent;
+import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.DialogMessageReceivedEvent;
+import illarion.client.world.events.CloseDialogEvent;
 import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
-import org.illarion.nifty.controls.DialogInput;
-import org.illarion.nifty.controls.DialogInputConfirmedEvent;
-import org.illarion.nifty.controls.DialogMessageConfirmedEvent;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
+import org.illarion.nifty.controls.*;
 import org.illarion.nifty.controls.dialog.input.builder.DialogInputBuilder;
+import org.illarion.nifty.controls.dialog.merchant.builder.DialogMerchantBuilder;
 import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
 
-import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is the dialog handler that takes care for receiving events to show dialogs. It opens and maintains those
@@ -51,20 +58,35 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     @Override
     public void update(final int delta) {
-        BuildWrapper b;
-        while ((b = builders.poll()) != null) {
-            System.out.println("build " + b);
-            b.getBuilder().build(nifty, screen, b.getParent());
+        while (true) {
+            final DialogHandler.BuildWrapper wrapper = builders.poll();
+            if (wrapper == null) {
+                break;
+            }
+
+            final Element element = wrapper.getBuilder().build(nifty, screen, wrapper.getParent());
+            wrapper.executeTask(element);
+        }
+
+        while (true) {
+            final CloseDialogEvent closeEvent = closers.poll();
+            if (closeEvent == null) {
+                break;
+            }
+
+            closeDialog(closeEvent);
         }
     }
 
     private class BuildWrapper {
-        private ControlBuilder builder;
-        private Element parent;
+        private final ControlBuilder builder;
+        private final Element parent;
+        private final DialogHandler.PostBuildTask task;
 
-        private BuildWrapper(final ControlBuilder builder, final Element parent) {
+        BuildWrapper(final ControlBuilder builder, final Element parent, final DialogHandler.PostBuildTask task) {
             this.builder = builder;
             this.parent = parent;
+            this.task = task;
         }
 
         public ControlBuilder getBuilder() {
@@ -74,119 +96,226 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         public Element getParent() {
             return parent;
         }
+
+        public void executeTask(final Element createdElement) {
+            if (task != null) {
+                task.run(createdElement);
+            }
+        }
+    }
+
+    private interface PostBuildTask {
+        void run(Element createdElement);
     }
 
     private static final Logger LOGGER = Logger.getLogger(DialogHandler.class);
-    private final EventSubscriber<DialogMessageReceivedEvent> messageEventHandler;
-    private final EventSubscriber<DialogMessageConfirmedEvent> messageConfirmationEventHandler;
-    private final EventSubscriber<DialogInputReceivedEvent> inputEventHandler;
-    private final EventSubscriber<DialogInputConfirmedEvent> inputConfirmationEventHandler;
 
-    private final Queue<BuildWrapper> builders;
+    private final Queue<DialogHandler.BuildWrapper> builders;
+    private final Queue<CloseDialogEvent> closers;
     private Nifty nifty;
     private Screen screen;
 
     public DialogHandler() {
-        builders = new LinkedList<BuildWrapper>();
-
-        messageEventHandler = new EventSubscriber<DialogMessageReceivedEvent>() {
-            @Override
-            public void onEvent(final DialogMessageReceivedEvent event) {
-                showDialogMessage(event.getId(), event.getTitle(), event.getMessage());
-            }
-        };
-
-        inputEventHandler = new EventSubscriber<DialogInputReceivedEvent>() {
-            @Override
-            public void onEvent(final DialogInputReceivedEvent event) {
-                showDialogInput(event.getId(), event.getTitle(), event.getMaxLength(), event.hasMultipleLines());
-            }
-        };
-
-        messageConfirmationEventHandler = new EventSubscriber<DialogMessageConfirmedEvent>() {
-            @Override
-            public void onEvent(final DialogMessageConfirmedEvent event) {
-                final CommandFactory factory = CommandFactory.getInstance();
-                final CloseDialogMessageCmd cmd = factory.getCommand(CommandList.CMD_CLOSE_DIALOG_MSG,
-                        CloseDialogMessageCmd.class);
-                cmd.setDialogId(event.getDialogId());
-                cmd.send();
-            }
-        };
-
-        inputConfirmationEventHandler = new EventSubscriber<DialogInputConfirmedEvent>() {
-            @Override
-            public void onEvent(final DialogInputConfirmedEvent event) {
-                final CommandFactory factory = CommandFactory.getInstance();
-                final CloseDialogInputCmd cmd = factory.getCommand(CommandList.CMD_CLOSE_DIALOG_INPUT,
-                        CloseDialogInputCmd.class);
-                cmd.setDialogId(event.getDialogId());
-                if (event.getPressedButton() == DialogInput.DialogButton.left) {
-                    cmd.setSuccess(true);
-                    cmd.setText(event.getText());
-                } else {
-                    cmd.setSuccess(false);
-                    cmd.setText("");
-                }
-                cmd.send();
-            }
-        };
+        builders = new ConcurrentLinkedQueue<DialogHandler.BuildWrapper>();
+        closers = new ConcurrentLinkedQueue<CloseDialogEvent>();
     }
 
+    @Override
     public void bind(final Nifty parentNifty, final Screen parentScreen) {
         nifty = parentNifty;
         screen = parentScreen;
 
     }
 
+    @EventSubscriber
+    public void handleDialogEvent(final DialogMessageReceivedEvent event) {
+        showDialogMessage(event.getId(), event.getTitle(), event.getMessage());
+    }
+
+    @EventSubscriber
+    public void handleDialogEvent(final DialogInputReceivedEvent event) {
+        showDialogInput(event.getId(), event.getTitle(), event.getMaxLength(), event.hasMultipleLines());
+    }
+
+    @EventSubscriber
+    public void handleMerchantEvent(final DialogMerchantReceivedEvent event) {
+        showMerchantDialog(event);
+    }
+
+    @EventSubscriber
+    public void handleCloseDialogEvent(final CloseDialogEvent event) {
+        closers.offer(event);
+    }
+
+    @SuppressWarnings("MethodMayBeStatic")
+    @NiftyEventSubscriber(pattern = "msgDialog[0-9]+")
+    public void handleMessageConfirmedEvent(final String topic, final DialogMessageConfirmedEvent event) {
+        final CommandFactory factory = CommandFactory.getInstance();
+        final CloseDialogMessageCmd cmd = factory.getCommand(CommandList.CMD_CLOSE_DIALOG_MSG,
+                CloseDialogMessageCmd.class);
+        cmd.setDialogId(event.getDialogId());
+        cmd.send();
+    }
+
+    @SuppressWarnings("MethodMayBeStatic")
+    @NiftyEventSubscriber(pattern = "inputDialog[0-9]+")
+    public void handleInputConfirmedEvent(final String topic, final DialogInputConfirmedEvent event) {
+        final CommandFactory factory = CommandFactory.getInstance();
+        final CloseDialogInputCmd cmd = factory.getCommand(CommandList.CMD_CLOSE_DIALOG_INPUT,
+                CloseDialogInputCmd.class);
+        cmd.setDialogId(event.getDialogId());
+        if (event.getPressedButton() == DialogInput.DialogButton.left) {
+            cmd.setSuccess(true);
+            cmd.setText(event.getText());
+        } else {
+            cmd.setSuccess(false);
+            cmd.setText("");
+        }
+        cmd.send();
+    }
+
+    @SuppressWarnings("MethodMayBeStatic")
+    @NiftyEventSubscriber(pattern = "merchantDialog[0-9]+")
+    public void handleMerchantBuyEvent(final String topic, final DialogMerchantBuyEvent event) {
+        final CommandFactory factory = CommandFactory.getInstance();
+        final TradeItemCmd cmd = factory.getCommand(CommandList.CMD_TRADE_ITEM, TradeItemCmd.class);
+        cmd.setBuy(event.getItem().getIndex(), event.getAmount());
+        cmd.setDialogId(event.getDialogId());
+        cmd.send();
+    }
+
+    @SuppressWarnings("MethodMayBeStatic")
+    @NiftyEventSubscriber(pattern = "merchantDialog[0-9]+")
+    public void handleMerchantCloseEvent(final String topic, final DialogMerchantCloseEvent event) {
+        final CommandFactory factory = CommandFactory.getInstance();
+        final TradeItemCmd cmd = factory.getCommand(CommandList.CMD_TRADE_ITEM, TradeItemCmd.class);
+        cmd.setCloseDialog();
+        cmd.send();
+    }
+
     @Override
     public void onStartScreen() {
-        EventBus.subscribe(DialogMessageReceivedEvent.class, messageEventHandler);
-        EventBus.subscribe(DialogMessageConfirmedEvent.class, messageConfirmationEventHandler);
-        EventBus.subscribe(DialogInputReceivedEvent.class, inputEventHandler);
-        EventBus.subscribe(DialogInputConfirmedEvent.class, inputConfirmationEventHandler);
+        AnnotationProcessor.process(this);
+        nifty.subscribeAnnotations(this);
     }
 
     @Override
     public void onEndScreen() {
-        EventBus.unsubscribe(DialogMessageReceivedEvent.class, messageEventHandler);
-        EventBus.unsubscribe(DialogMessageConfirmedEvent.class, messageConfirmationEventHandler);
-        EventBus.unsubscribe(DialogInputReceivedEvent.class, inputEventHandler);
-        EventBus.unsubscribe(DialogInputConfirmedEvent.class, inputConfirmationEventHandler);
+        AnnotationProcessor.unprocess(this);
+        nifty.unsubscribeAnnotations(this);
     }
 
-    public void showDialogMessage(final int id, final String title, final String message) {
-        final Element parentAra = screen.findElementByName("windows");
-        final DialogMessageBuilder builder = new DialogMessageBuilder("msgDialog" + id, title);
+    private void showDialogMessage(final int id, final String title, final String message) {
+        final Element parentArea = screen.findElementByName("windows");
+        final DialogMessageBuilder builder = new DialogMessageBuilder("msgDialog" + Integer.toString(id), title);
         builder.text(message);
         builder.button("OK");
         builder.dialogId(id);
         builder.width(builder.pixels(400));
-        builders.add(new BuildWrapper(builder, parentAra));
-        System.out.println("showDialogMessage");
-//        builder.build(nifty, screen, parentAra);
+        builders.add(new DialogHandler.BuildWrapper(builder, parentArea, null));
     }
 
-    public void showDialogInput(final int id, final String title, final int maxCharacters,
-                                final boolean multipleLines) {
-        final Element parentAra = screen.findElementByName("windows");
-        final DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + id, title);
+    private void showDialogInput(final int id, final String title, final int maxCharacters,
+                                 final boolean multipleLines) {
+        final Element parentArea = screen.findElementByName("windows");
+        final DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + Integer.toString(id), title);
         builder.buttonLeft("OK");
         builder.buttonRight("Cancel");
         builder.dialogId(id);
         builder.maxLength(maxCharacters);
         if (multipleLines) {
-            builder.style("llarion-dialog-input-multi");
+            builder.style("illarion-dialog-input-multi");
         } else {
-            builder.style("llarion-dialog-input-single");
+            builder.style("illarion-dialog-input-single");
         }
         builder.width(builder.pixels(400));
-        builders.add(new BuildWrapper(builder, parentAra));
-        System.out.println("showDialogInput");
-//        try {
-//            builder.build(nifty, screen, parentAra);
-//        } catch (Throwable e) {
-//            e.printStackTrace();
-//        }
+        builders.add(new DialogHandler.BuildWrapper(builder, parentArea, null));
+    }
+
+    private void showMerchantDialog(final DialogMerchantReceivedEvent event) {
+        final Element parentArea = screen.findElementByName("windows");
+        final DialogMerchantBuilder builder = new DialogMerchantBuilder(
+                "merchantDialog" + Integer.toString(event.getId()), event.getTitle());
+        builder.dialogId(event.getId());
+        builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
+            @Override
+            public void run(final Element createdElement) {
+                final DialogMerchant dialog = createdElement.getNiftyControl(DialogMerchant.class);
+
+                addItemsToDialog(event, dialog);
+            }
+        }));
+    }
+
+    private void addItemsToDialog(final DialogMerchantReceivedEvent event, final DialogMerchant dialog) {
+        for (int i = 0; i < event.getItemCount(); i++) {
+            final NiftyMerchantItem item = new NiftyMerchantItem(nifty, event.getItem(i));
+
+            switch (item.getType()) {
+                case SellingItem:
+                    dialog.addSellingItem(item);
+                    break;
+                case BuyingPrimaryItem:
+                case BuyingSecondaryItem:
+                    dialog.addBuyingItem(item);
+                    break;
+            }
+        }
+    }
+
+    private static final Pattern dialogNamePattern = Pattern.compile("([a-z]+)Dialog([0-9]+)");
+
+    private void closeDialog(final CloseDialogEvent event) {
+        final Element parentArea = screen.findElementByName("windows");
+
+        for (final Element child : parentArea.getElements()) {
+            final Matcher matcher = dialogNamePattern.matcher(child.getId());
+
+            if (!matcher.find()) {
+                continue;
+            }
+
+            try {
+                final String type = matcher.group(1);
+                final int id = Integer.parseInt(matcher.group(2));
+
+                boolean wrongDialogType = false;
+                switch (event.getDialogType()) {
+                    case Any:
+                        break;
+                    case Message:
+                        if (!type.equals("msg")) {
+                            wrongDialogType = true;
+                        }
+                        break;
+                    case Input:
+                        if (!type.equals("input")) {
+                            wrongDialogType = true;
+                        }
+                        break;
+                    case Merchant:
+                        if (!type.equals("merchant")) {
+                            wrongDialogType = true;
+                        }
+                        break;
+                }
+
+                if (wrongDialogType) {
+                    continue;
+                }
+
+                if ((event.getDialogId() == CloseDialogEvent.ALL_DIALOGS) || (event.getDialogId() == id)) {
+                    child.hide(new EndNotify() {
+                        @Override
+                        public void perform() {
+                            child.markForRemoval();
+                        }
+                    });
+                }
+
+            } catch (final NumberFormatException ignored) {
+                // nothing
+            }
+        }
     }
 }
