@@ -28,7 +28,6 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
-import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.DialogMessage;
 import org.illarion.nifty.controls.DialogMessageConfirmedEvent;
@@ -125,7 +124,7 @@ public class DialogMessageControl
         if (alreadyClosed) {
             return;
         }
-        EventBus.publish(new DialogMessageConfirmedEvent(dialogId));
+        niftyInstance.publishEvent(getId(), new DialogMessageConfirmedEvent(dialogId));
         closeWindow();
     }
 

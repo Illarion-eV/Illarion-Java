@@ -25,8 +25,7 @@ import de.lessvoid.nifty.builder.ControlBuilder;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class DialogInputBuilder
-        extends ControlBuilder {
+public class DialogInputBuilder extends ControlBuilder {
     /**
      * Build a new input dialog with a set title and ID.
      *

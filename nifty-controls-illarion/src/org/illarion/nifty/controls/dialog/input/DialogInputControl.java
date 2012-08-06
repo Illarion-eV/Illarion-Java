@@ -28,7 +28,6 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
-import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.DialogInput;
 import org.illarion.nifty.controls.DialogInputConfirmedEvent;
@@ -150,9 +149,11 @@ public class DialogInputControl
         }
 
         if (topic.contains("#buttonLeft")) {
-            EventBus.publish(new DialogInputConfirmedEvent(dialogId, DialogButton.left, getInputText()));
+            niftyInstance.publishEvent(getId(),
+                    new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.left, getInputText()));
         } else {
-            EventBus.publish(new DialogInputConfirmedEvent(dialogId, DialogButton.right, getInputText()));
+            niftyInstance.publishEvent(getId(),
+                    new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.right, getInputText()));
         }
         closeWindow();
     }

@@ -32,8 +32,7 @@ import org.illarion.nifty.controls.DialogInput;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class CreateDialogInputControl
-        extends ControlAttributes {
+public class CreateDialogInputControl extends ControlAttributes {
     /**
      * The identifier string of the input dialog control.
      */
