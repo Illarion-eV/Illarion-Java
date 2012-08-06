@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-styles>
+    <style id="illarion-dialog-merchant#window">
+        <attributes width="320px"/>
+    </style>
+
+    <style id="illarion-dialog-merchant#buyCountSlider">
+        <attributes width="*"/>
+    </style>
+
+    <style id="illarion-dialog-merchant#buyCountAmountDisplay">
+        <attributes font="textFont" width="40px" textHAlign="right"/>
+    </style>
+
+    <style id="illarion-dialog-merchant#buttonLeft">
+        <attributes width="90px" margin="3px"/>
+    </style>
+
+    <style id="illarion-dialog-merchant#buttonRight">
+        <attributes width="90px" margin="3px"/>
+    </style>
+
+    <style id="illarion-dialog-merchant-line#imageDisplay">
+        <attributes width="24px" height="24px" imageMode="resize"/>
+    </style>
+
+    <style id="illarion-dialog-merchant-line#title">
+        <attributes font="textFont"/>
+    </style>
+
+    <style id="illarion-dialog-merchant-line#moneyGoldImage">
+        <attributes image="data/gui/gold.png" height="16px" width="16px"/>
+    </style>
+
+    <style id="illarion-dialog-merchant-line#moneyGoldCount">
+        <attributes font="textFont" width="40px" textHAlign="left"/>
+    </style>
+
+    <style id="illarion-dialog-merchant-line#moneySilverImage">
+        <attributes image="data/gui/silver.png" height="16px" width="16px"/>
+    </style>
+
+    <style id="illarion-dialog-merchant-line#moneySilverCount">
+        <attributes font="textFont" width="40px" textHAlign="left"/>
+    </style>
+
+    <style id="illarion-dialog-merchant-line#moneyCopperImage">
+        <attributes image="data/gui/copper.png" height="16px" width="16px"/>
+    </style>
+
+    <style id="illarion-dialog-merchant-line#moneyCopperCount">
+        <attributes font="textFont" width="40px" textHAlign="left"/>
+    </style>
+</nifty-styles>
