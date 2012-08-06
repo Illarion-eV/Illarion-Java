@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ This file is part of the Illarion Nifty-GUI Controls.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-controls>
+    <resourceBundle id="illarion-dialog-merchant" filename="illarion-dialog-merchant"/>
+
+    <controlDefinition name="dialog-merchant-list-entry" style="illarion-dialog-merchant-line">
+        <panel childLayout="horizontal">
+            <panel childLayout="center">
+                <image id="#imageDisplay"/>
+            </panel>
+            <panel childLayout="vertical">
+                <control name="label" id="#title"/>
+                <panel childLayout="horizontal">
+                    <image id="#moneyGoldImage"/>
+                    <control name="label" id="#moneyGoldCount"/>
+                    <image id="#moneySilverImage"/>
+                    <control name="label" id="#moneySilverCount"/>
+                    <image id="#moneyCopperImage"/>
+                    <control name="label" id="#moneyCopperCount"/>
+                </panel>
+            </panel>
+        </panel>
+    </controlDefinition>
+
+    <controlDefinition name="dialog-merchant" style="illarion-dialog-merchant" visibleToMouse="true"
+                       controller="org.illarion.nifty.controls.dialog.merchant.DialogMerchantControl">
+        <control name="window" title="${illarion-dialog-merchant.title}" id="#window" visibleToMouse="true">
+            <panel childLayout="horizontal">
+                <control name="tabGroup" width="100%">
+                    <control name="tab" caption="${illarion-dialog-merchant.sellTab}" id="#sellingTab">
+                        <panel childLayout="vertical" visibleToMouse="true" width="100%">
+                            <panel width="100%" childLayout="center">
+                                <control name="listBox" id="#sellList" vertical="optional" horizontal="off"
+                                         displayItems="8" selection="Single" width="100%"
+                                         viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
+                                    <control name="dialog-merchant-list-entry"/>
+                                </control>
+                            </panel>
+                            <panel childLayout="vertical" width="100%">
+                                <control name="label" label="${illarion-dialog-merchant.selCount}"
+                                         id="#buyCountLabel" width="100%"/>
+                                <panel childLayout="horizontal">
+                                    <control name="horizontalSlider" min="1" max="255" initial="1" stepSize="1"
+                                             buttonStepSize="25" id="#buyCountSlider"/>
+                                    <control name="label" id="#buyCountAmountDisplay"/>
+                                </panel>
+                            </panel>
+                            <panel id="#buttons" childLayout="center" visibleToMouse="true" width="100%">
+                                <panel childLayout="horizontal" align="center">
+                                    <control name="button" id="#buttonLeft" label="${illarion-dialog-merchant.buy}"/>
+                                    <control name="button" id="#buttonRight" label="${illarion-dialog-merchant.close}"/>
+                                </panel>
+                            </panel>
+                        </panel>
+                    </control>
+                    <control name="tab" caption="${illarion-dialog-merchant.buyTab}" id="#buyingTab">
+                        <panel childLayout="vertical" width="100%">
+                            <control name="label" width="100%" wrap="true"
+                                     label="${illarion-dialog-merchant.buyDescription}"/>
+                            <panel height="5px"/>
+                            <control name="listBox" id="#buyList" vertical="optional" horizontal="off" displayItems="8"
+                                     selection="Single"
+                                     viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
+                                <control name="dialog-merchant-list-entry"/>
+                            </control>
+                        </panel>
+                    </control>
+                </control>
+            </panel>
+        </control>
+    </controlDefinition>
+</nifty-controls>

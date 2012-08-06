@@ -89,6 +89,7 @@
                 <attribute name="Implementation-Version" value="${niftycontrols.version}"/>
             </manifest>
         </jar>
-        <jar jarfile="${jar}" basedir="${niftycontrols}/nifty-controls" update="true" index="true" includes="*.xml"/>
+        <jar jarfile="${jar}" basedir="${niftycontrols}/nifty-controls" update="true" includes="*.xml"/>
+        <jar jarfile="${jar}" basedir="${niftycontrols}/resources" update="true" index="true" includes="*.properties"/>
     </target>
 </project>
