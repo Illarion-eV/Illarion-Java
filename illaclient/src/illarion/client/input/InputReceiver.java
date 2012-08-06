@@ -81,10 +81,10 @@ public final class InputReceiver
         public void executeAction(final int count) {
             switch (count) {
                 case 1:
-                    EventBus.publish(EB_TOPIC, new ClickOnMapEvent(x, y, fwdInputSystem));
+                    EventBus.publish(new ClickOnMapEvent(x, y, fwdInputSystem));
                     break;
                 case 2:
-                    EventBus.publish(EB_TOPIC, new DoubleClickOnMapEvent(x, y, fwdInputSystem));
+                    EventBus.publish(new DoubleClickOnMapEvent(x, y, fwdInputSystem));
                     break;
             }
         }
@@ -148,7 +148,7 @@ public final class InputReceiver
     public void mouseDragged(int oldx, int oldy, int newx, int newy) {
         for (int i = 0; i < keyDownOnMap.length; i++) {
             if (keyDownOnMap[i]) {
-                EventBus.publish(EB_TOPIC, new DragOnMapEvent(oldx, oldy, newx, newy, i,
+                EventBus.publish(new DragOnMapEvent(oldx, oldy, newx, newy, i,
                         forwardingControl.getInputForwardingControl()));
             }
         }

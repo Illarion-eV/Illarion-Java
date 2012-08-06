@@ -25,11 +25,11 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import illarion.client.input.ClickOnMapEvent;
-import illarion.client.input.InputReceiver;
+import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveMapTile;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 
 /**
  * This class is used to monitor all click operations on the game map and notify the interaction manager about a click
@@ -38,7 +38,7 @@ import org.bushe.swing.event.EventTopicSubscriber;
  * @author Vilarion &lt;vilarion@illarion.org&gt;
  */
 public final class GameMapClickHandler
-        implements EventTopicSubscriber<ClickOnMapEvent>, ScreenController {
+        implements ScreenController {
 
     /**
      * The Nifty-GUI instance that is handling the GUI display currently.
@@ -77,12 +77,12 @@ public final class GameMapClickHandler
 
     @Override
     public void onStartScreen() {
-        EventBus.subscribe(InputReceiver.EB_TOPIC, this);
+        AnnotationProcessor.process(this);
     }
 
     @Override
     public void onEndScreen() {
-        EventBus.unsubscribe(InputReceiver.EB_TOPIC, this);
+        AnnotationProcessor.unprocess(this);
     }
 
     public boolean handleClickOnMap(final int x, final int y, final ForwardingInputSystem forwardingControl) {
@@ -115,14 +115,46 @@ public final class GameMapClickHandler
     /**
      * Handle a input event that was published.
      */
-    @Override
-    public void onEvent(final String topic, final ClickOnMapEvent data) {
-        if (topic.equals(InputReceiver.EB_TOPIC)) {
-            if (handleClickOnMap(data.getX(), data.getY(), data.getForwardingControl())) {
-                return;
-            }
+    @EventSubscriber
+    public void handleClickEvent(final ClickOnMapEvent data) {
+        handleClickOnMap(data.getX(), data.getY(), data.getForwardingControl());
 
-            // moveToMouse(data.getX(), data.getY(), data.getForwardingControl());
+        // moveToMouse(data.getX(), data.getY(), data.getForwardingControl());
+    }
+
+    public boolean handleDoubleClickOnMap(final int x, final int y, final ForwardingInputSystem forwardingControl) {
+        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(x, y);
+
+        if (tile == null) {
+            return false;
         }
+
+        if (!tile.isInUseRange()) {
+            return false;
+        }
+
+        if ((activeScreen != null) && (activeNifty != null)) {
+            forwardingControl.releaseExclusiveMouse();
+
+            mouseEvent.initialize(x, y, 0, true, false, false);
+            mouseEvent.setButton0InitialDown(true);
+            activeScreen.mouseEvent(mouseEvent);
+        }
+
+        tile.use();
+
+        return true;
+    }
+
+    /**
+     * Handle a input event that was published.
+     */
+    @EventSubscriber
+    public void handleDoubleClick(final DoubleClickOnMapEvent data) {
+        if (handleDoubleClickOnMap(data.getX(), data.getY(), data.getForwardingControl())) {
+            return;
+        }
+
+        // moveToMouse(data.getX(), data.getY(), data.getForwardingControl());
     }
 }

@@ -31,11 +31,10 @@ import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.Item;
 import illarion.client.input.DragOnMapEvent;
-import illarion.client.input.InputReceiver;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveMapTile;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 
 /**
  * This class is used to monitor all dropping operations on the droppable area over the game map and notify the
@@ -44,7 +43,7 @@ import org.bushe.swing.event.EventTopicSubscriber;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GameMapDragHandler
-        implements EventTopicSubscriber<DragOnMapEvent>, ScreenController {
+        implements ScreenController {
     /**
      * This class is used as end operation to the dragging that started on the map. It takes care that the elements
      * used
@@ -142,13 +141,13 @@ public final class GameMapDragHandler
     @Override
     public void onStartScreen() {
         activeNifty.subscribeAnnotations(this);
-        EventBus.subscribe(InputReceiver.EB_TOPIC, this);
+        AnnotationProcessor.process(this);
     }
 
     @Override
     public void onEndScreen() {
         activeNifty.unsubscribeAnnotations(this);
-        EventBus.unsubscribe(InputReceiver.EB_TOPIC, this);
+        AnnotationProcessor.unprocess(this);
     }
 
     /**
@@ -186,8 +185,8 @@ public final class GameMapDragHandler
             draggedGraphic.resetLayout();
             draggedGraphic.setConstraintWidth(new SizeValue(Integer.toString(width) + "px"));
             draggedGraphic.setConstraintHeight(new SizeValue(Integer.toString(height) + "px"));
-            draggedGraphic.setConstraintX(new SizeValue(Integer.toString(oldx - width / 2) + "px"));
-            draggedGraphic.setConstraintY(new SizeValue(Integer.toString(oldy - height / 2) + "px"));
+            draggedGraphic.setConstraintX(new SizeValue(Integer.toString(oldx - (width / 2)) + "px"));
+            draggedGraphic.setConstraintY(new SizeValue(Integer.toString(oldy - (height / 2)) + "px"));
             draggedGraphic.setVisible(true);
             draggedGraphic.reactivate();
 
@@ -223,17 +222,15 @@ public final class GameMapDragHandler
     /**
      * Handle a input event that was published.
      */
-    @Override
-    public void onEvent(final String topic, final DragOnMapEvent data) {
-        if (topic.equals(InputReceiver.EB_TOPIC)) {
-            if ((data.getKey() == 0) && handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
-                    data.getForwardingControl())) {
-                return;
-            }
+    @EventSubscriber
+    public void handleDragging(final DragOnMapEvent data) {
+        if ((data.getKey() == 0) && handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
+                data.getForwardingControl())) {
+            return;
+        }
 
-            if (data.getKey() == 1) {
-                moveToMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
-            }
+        if (data.getKey() == 1) {
+            moveToMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
         }
     }
 }
