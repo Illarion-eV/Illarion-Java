@@ -24,6 +24,7 @@ import de.lessvoid.nifty.slick2d.input.PlainSlickInputSystem;
 import illarion.client.Game;
 import illarion.client.gui.controller.LoadScreenController;
 import illarion.client.loading.Loading;
+import illarion.client.util.Lang;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -50,8 +51,15 @@ public final class LoadingState
 
     @Override
     protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
+        nifty.setLocale(Lang.getInstance().getLocale());
         controller = new LoadScreenController(game);
         nifty.registerScreenController(controller);
+
+        try {
+            nifty.validateXml("illarion/client/gui/xml/loading.xml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         nifty.addXml("illarion/client/gui/xml/loading.xml");
     }
 

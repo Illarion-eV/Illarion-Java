@@ -25,6 +25,7 @@ import illarion.client.Game;
 import illarion.client.Login;
 import illarion.client.gui.controller.GameScreenController;
 import illarion.client.input.InputReceiver;
+import illarion.client.util.Lang;
 import illarion.client.world.World;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -55,8 +56,15 @@ public class PlayingState extends NiftyOverlayBasicGameState {
 
     @Override
     protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
+        nifty.setLocale(Lang.getInstance().getLocale());
         gameScreenController = new GameScreenController();
         nifty.registerScreenController(gameScreenController);
+
+        try {
+            nifty.validateXml("illarion/client/gui/xml/gamescreen.xml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         nifty.addXml("illarion/client/gui/xml/gamescreen.xml");
     }
 

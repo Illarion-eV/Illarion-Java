@@ -20,12 +20,11 @@ package illarion.client.states;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.slick2d.NiftyBasicGameState;
-
-import org.newdawn.slick.state.StateBasedGame;
-
 import illarion.client.Game;
 import illarion.client.gui.controller.CharScreenController;
 import illarion.client.gui.controller.LoginScreenController;
+import illarion.client.util.Lang;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * This game state is used to display the login and character selection dialog. Also the option dialog is displayed in
@@ -44,7 +43,16 @@ public class LoginState
 
     @Override
     protected void prepareNifty(Nifty nifty, StateBasedGame game) {
+        nifty.setLocale(Lang.getInstance().getLocale());
         nifty.registerScreenController(new LoginScreenController(game), new CharScreenController(game));
+
+        try {
+            nifty.validateXml("illarion/client/gui/xml/login.xml");
+            nifty.validateXml("illarion/client/gui/xml/charselect.xml");
+            nifty.validateXml("illarion/client/gui/xml/options.xml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         nifty.addXml("illarion/client/gui/xml/login.xml");
         nifty.addXml("illarion/client/gui/xml/charselect.xml");
         nifty.addXml("illarion/client/gui/xml/options.xml");
