@@ -26,6 +26,9 @@
 
     <screen id="charSelect" controller="illarion.client.gui.controller.CharScreenController">
         <layer id="layer2" backgroundColor="#0000" childLayout="center">
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
+            </effect>
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" visibleToMouse="true">
                 <image filename="data/gui/illarion_title.png" imageMode="normal" align="center"/>
@@ -50,10 +53,6 @@
                             <interact onRelease="logout()"/>
                         </control>
                     </panel>
-
-                    <effect>
-                        <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
-                    </effect>
                 </panel>
             </panel>
         </layer>

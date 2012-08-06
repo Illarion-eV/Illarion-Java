@@ -24,6 +24,12 @@
 
     <screen id="options" controller="illarion.client.gui.controller.OptionScreenController">
         <layer id="layer2" backgroundColor="#0000" childLayout="center">
+
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
+                <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
+            </effect>
+
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" visibleToMouse="true">
                 <control id="tabRoot" name="tabGroup" width="100%" height="100%">
@@ -95,11 +101,6 @@
                         <control name="#cancelButton" label="Cancel" width="100px" height="35px"/>
                     </panel>
                 </panel>
-
-                <effect>
-                    <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
-                    <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
-                </effect>
             </panel>
         </layer>
     </screen>
