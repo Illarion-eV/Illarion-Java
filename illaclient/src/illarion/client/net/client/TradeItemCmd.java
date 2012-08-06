@@ -134,6 +134,7 @@ public final class TradeItemCmd extends AbstractCommand {
      * @param itemCount the amount of items to buy from this type
      */
     public void setBuy(final int index, final int itemCount) {
+        selectedAction = TradeItemCmd.Action.buy;
         location = (short) index;
         amount = (short) itemCount;
     }

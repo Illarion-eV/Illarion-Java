@@ -26,6 +26,8 @@ import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This server message is used to make the client showing a merchant dialog.
@@ -46,7 +48,7 @@ public final class DialogMerchantMsg extends AbstractReply {
     /**
      * The items that were received from the server.
      */
-    private MerchantItem[] items;
+    private List<MerchantItem> items;
 
     /**
      * Default constructor for the merchant dialog message.
@@ -64,15 +66,33 @@ public final class DialogMerchantMsg extends AbstractReply {
     public void decode(final NetCommReader reader)
             throws IOException {
         title = reader.readString();
+        items = new ArrayList<MerchantItem>();
 
-        final int entries = reader.readUByte();
-        items = new MerchantItem[entries];
-        for (int i = 0; i < entries; i++) {
+        final int entriesSell = reader.readUByte();
+        for (int i = 0; i < entriesSell; i++) {
             final int itemId = reader.readUShort();
             final String name = reader.readString();
             final long itemValue = reader.readUInt();
 
-            items[i] = new MerchantItem(i, itemId, name, itemValue);
+            items.add(new MerchantItem(i, MerchantItem.MerchantItemType.SellingItem, itemId, name, itemValue));
+        }
+
+        final int entriesBuyPrimary = reader.readUByte();
+        for (int i = 0; i < entriesBuyPrimary; i++) {
+            final int itemId = reader.readUShort();
+            final String name = reader.readString();
+            final long itemValue = reader.readUInt();
+
+            items.add(new MerchantItem(i, MerchantItem.MerchantItemType.BuyingPrimaryItem, itemId, name, itemValue));
+        }
+
+        final int entriesBuySecondary = reader.readUByte();
+        for (int i = 0; i < entriesBuySecondary; i++) {
+            final int itemId = reader.readUShort();
+            final String name = reader.readString();
+            final long itemValue = reader.readUInt();
+
+            items.add(new MerchantItem(i, MerchantItem.MerchantItemType.BuyingSecondaryItem, itemId, name, itemValue));
         }
 
         dialogId = reader.readInt();
@@ -83,7 +103,9 @@ public final class DialogMerchantMsg extends AbstractReply {
         if (items == null) {
             throw new IllegalStateException("Can't execute update before it was decoded.");
         }
-        EventBus.publish(new DialogMerchantReceivedEvent(dialogId, title, items));
+
+        final MerchantItem[] itemArray = new MerchantItem[items.size()];
+        EventBus.publish(new DialogMerchantReceivedEvent(dialogId, title, items.toArray(itemArray)));
 
         return true;
     }
@@ -97,12 +119,14 @@ public final class DialogMerchantMsg extends AbstractReply {
     @Override
     public String toString() {
         final TextBuilder builder = TextBuilder.newInstance();
-        builder.append("title: \"").append(title).append("\", ");
-        builder.append("items: \"").append(items.length).append("\", ");
-        builder.append("dialog ID: ").append(dialogId);
+        try {
+            builder.append("title: \"").append(title).append("\", ");
+            builder.append("items: \"").append(items.size()).append("\", ");
+            builder.append("dialog ID: ").append(dialogId);
 
-        final String result = builder.toString();
-        TextBuilder.recycle(builder);
-        return toString(result);
+            return toString(builder.toString());
+        } finally {
+            TextBuilder.recycle(builder);
+        }
     }
 }

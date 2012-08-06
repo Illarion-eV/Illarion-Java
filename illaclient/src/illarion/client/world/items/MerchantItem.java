@@ -25,7 +25,27 @@ import illarion.common.util.Money;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class MerchantItem {
+public class MerchantItem {
+    /**
+     * This enumerator contains all possible item types.
+     */
+    public enum MerchantItemType {
+        /**
+         * This item is a item that is sold by the NPC.
+         */
+        SellingItem,
+
+        /**
+         * This item is a item that is bought by the NPC for a good price.
+         */
+        BuyingPrimaryItem,
+
+        /**
+         * This item is a item that is bought by the NPC for a poor price.
+         */
+        BuyingSecondaryItem
+    }
+
     /**
      * The index of the item inside the list of items as it was transferred.
      */
@@ -47,18 +67,39 @@ public final class MerchantItem {
     private final Money price;
 
     /**
+     * The type of this item.
+     */
+    private final MerchantItem.MerchantItemType type;
+
+    /**
      * Create a new instance of that merchant item.
      *
      * @param itemIndex the index of the item in the list of items that was send by the server
+     * @param itemType  the type of the item
      * @param id        the ID of the item
      * @param itemName  the name of the item
      * @param itemPrice the price of the item in copper coins
      */
-    public MerchantItem(final int itemIndex, final int id, final String itemName, final long itemPrice) {
+    public MerchantItem(final int itemIndex, final MerchantItem.MerchantItemType itemType, final int id,
+                        final String itemName, final long itemPrice) {
         index = itemIndex;
+        type = itemType;
         itemId = id;
         name = itemName;
         price = new Money(itemPrice);
+    }
+
+    /**
+     * Copy constructor that creates a duplicate of the item.
+     *
+     * @param org the original item to be copied
+     */
+    public MerchantItem(final MerchantItem org) {
+        index = org.index;
+        type = org.type;
+        itemId = org.itemId;
+        name = org.name;
+        price = org.price;
     }
 
     /**
@@ -95,5 +136,14 @@ public final class MerchantItem {
      */
     public Money getPrice() {
         return price;
+    }
+
+    /**
+     * Get the type of the item.
+     *
+     * @return the type of the item
+     */
+    public MerchantItem.MerchantItemType getType() {
+        return type;
     }
 }
