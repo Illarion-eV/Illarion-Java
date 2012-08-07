@@ -23,6 +23,7 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.render.NiftyImage;
+import de.lessvoid.nifty.tools.SizeValue;
 import illarion.common.util.Money;
 import org.illarion.nifty.controls.MerchantListEntry;
 
@@ -41,20 +42,20 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
         int imageHeight = itemPicture.getHeight();
         int imageWidth = itemPicture.getWidth();
 
-        if (imageHeight > 24) {
-            imageWidth = (int) ((float) imageWidth * (24.f / imageHeight));
-            imageHeight = 24;
+        if (imageHeight > 46) {
+            imageWidth = (int) ((float) imageWidth * (46.f / imageHeight));
+            imageHeight = 46;
         }
 
-        if (imageWidth > 24) {
-            imageHeight = (int) ((float) imageHeight * (24.f / imageWidth));
-            imageWidth = 24;
+        if (imageWidth > 76) {
+            imageHeight = (int) ((float) imageHeight * (76.f / imageWidth));
+            imageWidth = 76;
         }
 
-        itemImage.setHeight(imageHeight);
-        itemImage.setWidth(imageWidth);
+        itemImage.setConstraintHeight(new SizeValue(Integer.toString(imageHeight) + "px"));
+        itemImage.setConstraintWidth(new SizeValue(Integer.toString(imageWidth) + "px"));
 
-        final Element title = listBoxItem.findElementByName("#title");
+        final Element title = listBoxItem.findElementByName("#itemTitle");
         title.getRenderer(TextRenderer.class).setText(item.getName());
 
         final Money money = item.getPrice();
@@ -68,6 +69,8 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
                 listBoxItem.findElementByName("#moneySilverImage"));
         applyMoneyValues(copper, listBoxItem.findElementByName("#moneyCopperCount"),
                 listBoxItem.findElementByName("#moneyCopperImage"));
+
+        listBoxItem.layoutElements();
     }
 
     /**
@@ -89,6 +92,6 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
 
     @Override
     public int getWidth(final Element element, final MerchantListEntry item) {
-        return 300;
+        return 400;
     }
 }

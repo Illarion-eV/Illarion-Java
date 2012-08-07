@@ -72,11 +72,6 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     private final EventTopicSubscriber<ButtonClickedEvent> buyButtonEventHandler;
 
     /**
-     * The event handler that handles the window closed event.
-     */
-    private final EventTopicSubscriber<WindowClosedEvent> closeWindowEventHandler;
-
-    /**
      * This event handler is used to monitor the slider that sets the amount of items to buy.
      */
     private final EventTopicSubscriber<SliderChangedEvent> sliderChangedEventHandler;
@@ -103,16 +98,6 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
                 niftyInstance.publishEvent(getId(),
                         new DialogMerchantBuyEvent(dialogId, getSelectedItem(), getSelectedIndex(),
                                 getSelectedAmount()));
-            }
-        };
-
-        closeWindowEventHandler = new EventTopicSubscriber<WindowClosedEvent>() {
-            @Override
-            public void onEvent(final String topic, final WindowClosedEvent data) {
-                if (alreadyClosed) {
-                    return;
-                }
-                niftyInstance.publishEvent(getId(), new DialogMerchantCloseEvent(dialogId));
             }
         };
 
@@ -156,7 +141,6 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
         final Element leftButton = getElement().findElementByName("#buttonLeft");
         niftyInstance.subscribe(currentScreen, rightButton.getId(), ButtonClickedEvent.class, closeButtonEventHandler);
         niftyInstance.subscribe(currentScreen, leftButton.getId(), ButtonClickedEvent.class, buyButtonEventHandler);
-        niftyInstance.subscribe(currentScreen, getElement().getId(), WindowClosedEvent.class, closeWindowEventHandler);
         niftyInstance.subscribe(currentScreen, getElement().findElementByName("#buyCountSlider").getId(),
                 SliderChangedEvent.class, sliderChangedEventHandler);
     }
@@ -204,5 +188,11 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     @SuppressWarnings("unchecked")
     private ListBox<MerchantListEntry> getBuyList() {
         return getElement().findNiftyControl("#buyList", ListBox.class);
+    }
+
+    @Override
+    public void closeWindow() {
+        super.closeWindow();
+        niftyInstance.publishEvent(getId(), new DialogMerchantCloseEvent(dialogId));
     }
 }

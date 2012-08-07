@@ -21,18 +21,18 @@
 
     <controlDefinition name="dialog-merchant-list-entry" style="illarion-dialog-merchant-line">
         <panel childLayout="horizontal">
-            <panel childLayout="center" id="#imageContainer">
-                <image id="#imageDisplay"/>
+            <panel childLayout="center" style="#imageContainer">
+                <image id="#imageDisplay" style="#imageDisplay"/>
             </panel>
-            <panel childLayout="vertical" id="#itemInfos">
-                <control name="label" id="#title"/>
+            <panel childLayout="vertical" style="#itemInfos">
+                <control name="label" id="#itemTitle" style="#itemTitle"/>
                 <panel childLayout="horizontal">
-                    <image id="#moneyGoldImage"/>
-                    <control name="label" id="#moneyGoldCount"/>
-                    <image id="#moneySilverImage"/>
-                    <control name="label" id="#moneySilverCount"/>
-                    <image id="#moneyCopperImage"/>
-                    <control name="label" id="#moneyCopperCount"/>
+                    <image id="#moneyGoldImage" style="#moneyGoldImage"/>
+                    <control name="label" id="#moneyGoldCount" style="#moneyGoldCount"/>
+                    <image id="#moneySilverImage" style="#moneySilverImage"/>
+                    <control name="label" id="#moneySilverCount" style="#moneySilverCount"/>
+                    <image id="#moneyCopperImage" style="#moneyCopperImage"/>
+                    <control name="label" id="#moneyCopperCount" style="#moneyCopperCount"/>
                 </panel>
             </panel>
         </panel>
@@ -53,15 +53,16 @@
                                 </control>
                             </panel>
                             <panel childLayout="vertical" width="100%">
-                                <control name="label" label="${illarion-dialog-merchant-bundle.selCount}"
-                                         id="#buyCountLabel" width="100%"/>
+                                <control name="label" text="${illarion-dialog-merchant-bundle.selCount}"
+                                         style="nifty-label" textHAlign="left"/>
                                 <panel childLayout="horizontal">
                                     <control name="horizontalSlider" min="1" max="255" initial="1" stepSize="1"
                                              buttonStepSize="25" id="#buyCountSlider"/>
-                                    <control name="label" id="#buyCountAmountDisplay"/>
+                                    <control name="label" id="#buyCountAmountDisplay" style="nifty-label"
+                                             width="40px" textHAlign="left"/>
                                 </panel>
                             </panel>
-                            <panel id="#buttons" childLayout="center" visibleToMouse="true" width="100%">
+                            <panel childLayout="center" visibleToMouse="true" width="100%" style="#buttons">
                                 <panel childLayout="horizontal" align="center">
                                     <control name="button" id="#buttonLeft"
                                              label="${illarion-dialog-merchant-bundle.buy}"/>
@@ -73,10 +74,10 @@
                     </control>
                     <control name="tab" caption="${illarion-dialog-merchant-bundle.buyTab}" id="#buyingTab">
                         <panel childLayout="vertical" width="100%">
-                            <control name="label" width="100%" wrap="true" id="#buyDescription"
-                                     label="${illarion-dialog-merchant-bundle.buyDescription}"/>
-                            <control name="listBox" id="#buyList" vertical="optional" horizontal="off" displayItems="8"
-                                     selection="Single"
+                            <control name="label" style="nifty-label" wrap="true" width="100%" textHAlign="left"
+                                     text="${illarion-dialog-merchant-bundle.buyDescription}" margin="1px"/>
+                            <control name="listBox" id="#buyList" vertical="on" horizontal="off"
+                                     displayItems="8" selection="Single"
                                      viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
                                 <control name="dialog-merchant-list-entry"/>
                             </control>

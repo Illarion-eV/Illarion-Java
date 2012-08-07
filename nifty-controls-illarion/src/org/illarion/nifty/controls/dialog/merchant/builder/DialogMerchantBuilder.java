@@ -35,7 +35,7 @@ public final class DialogMerchantBuilder extends ControlBuilder {
     public DialogMerchantBuilder(final String id, final String title) {
         super(id, CreateDialogMerchantControl.NAME);
         set("title", title);
-        set("closeable", "false");
+        set("closeable", "true");
         set("hideOnClose", "false");
 
         alignCenter();

@@ -22,67 +22,60 @@
         <attributes/>
     </style>
 
-    <style id="illarion-dialog-merchant#buyCountSlider">
-        <attributes width="*"/>
+    <style id="illarion-dialog-merchant#sellCountLabel" base="nifty-label">
+        <attributes font="textFont" width="100%" textHAlign="left"/>
     </style>
 
-    <style id="illarion-dialog-merchant#buyCountAmountDisplay">
+    <style id="illarion-dialog-merchant#buyCountAmountDisplay" base="nifty-label">
         <attributes font="textFont" width="40px" textHAlign="right"/>
     </style>
 
-    <style id="illarion-dialog-merchant#buyDescription">
-        <attributes font="textFont" textHAlign="left" marginBottom="5px"/>
+    <style id="illarion-dialog-merchant#buyDescription" base="nifty-label">
+        <attributes font="textFont" textHAlign="left" marginBottom="5px" width="100%" height="20px" wrap="true"/>
     </style>
 
-    <style id="illarion-dialog-merchant#buttonLeft">
-        <attributes width="90px" margin="3px"/>
-    </style>
-
-    <style id="illarion-dialog-merchant#buttonRight">
-        <attributes width="90px" margin="3px"/>
-    </style>
 
     <style id="illarion-dialog-merchant-line">
-        <attributes height="30px" margin="1px"/>
+        <attributes height="46px" width="100%" margin="1px" backgroundColor="#88888888"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#imageContainer">
-        <attributes width="24px" height="100%" marginRight="3px"/>
+        <attributes width="76px" height="100%" marginRight="3px"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#imageDisplay">
         <attributes imageMode="normal"/>
     </style>
 
-    <style id="illarion-dialog-merchant-line#imageInfos">
+    <style id="illarion-dialog-merchant-line#itemInfos">
         <attributes width="*"/>
     </style>
 
-    <style id="illarion-dialog-merchant-line#title">
-        <attributes font="textFont"/>
+    <style id="illarion-dialog-merchant-line#itemTitle" base="nifty-label">
+        <attributes font="textFont" width="100%" textHAlign="left"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#moneyGoldImage">
-        <attributes filename="data/gui/gold.png" height="16px" width="16px"/>
+        <attributes filename="data/gui/gold.png" height="16px" width="16px" marginRight="2px"/>
     </style>
 
-    <style id="illarion-dialog-merchant-line#moneyGoldCount">
-        <attributes font="textFont" width="40px" textHAlign="left"/>
+    <style id="illarion-dialog-merchant-line#moneyGoldCount" base="nifty-label">
+        <attributes font="textFont" width="34px" height="16px" textHAlign="left" textVAlign="center"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#moneySilverImage">
-        <attributes filename="data/gui/silver.png" height="16px" width="16px"/>
+        <attributes filename="data/gui/silver.png" height="16px" width="16px" marginRight="2px"/>
     </style>
 
-    <style id="illarion-dialog-merchant-line#moneySilverCount">
-        <attributes font="textFont" width="40px" textHAlign="left"/>
+    <style id="illarion-dialog-merchant-line#moneySilverCount" base="nifty-label">
+        <attributes font="textFont" width="34px" height="16px" textHAlign="left" textVAlign="center"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#moneyCopperImage">
-        <attributes filename="data/gui/copper.png" height="16px" width="16px"/>
+        <attributes filename="data/gui/copper.png" height="16px" width="16px" marginRight="2px"/>
     </style>
 
-    <style id="illarion-dialog-merchant-line#moneyCopperCount">
-        <attributes font="textFont" width="40px" textHAlign="left"/>
+    <style id="illarion-dialog-merchant-line#moneyCopperCount" base="nifty-label">
+        <attributes font="textFont" width="34px" height="16px" textHAlign="left" textVAlign="center"/>
     </style>
 </nifty-styles>
