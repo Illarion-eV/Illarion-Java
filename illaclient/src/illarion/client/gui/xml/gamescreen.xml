@@ -53,6 +53,22 @@
                 </panel>
             </panel>
         </layer>
+        <layer id="serverMessageLayer" childLayout="absolute">
+            <panel childLayout="vertical" backgroundColor="#000000aa" visible="false" visibleToMouse="false" x="5px"
+                   y="30px" id="serverMsgPanel" padding="2px"/>
+        </layer>
+        <layer id="broadcastMessageLayer" childLayout="center">
+            <panel childLayout="center" style="nifty-panel-small" visible="false" visibleToMouse="false"
+                   marginTop="100px" valign="top" align="center" id="broadcastMsgPanel">
+            </panel>
+            <panel childLayout="center" style="nifty-panel-hint" visible="false" visibleToMouse="false"
+                   marginTop="200px" valign="top" align="center" id="textToMsgPanel">
+            </panel>
+        </layer>
+        <layer id="scriptMessageLayer" childLayout="center">
+            <panel childLayout="vertical" visible="false" visibleToMouse="false" id="scriptMessagePanel"
+                   marginBottom="80px" valign="center" align="center"/>
+        </layer>
         <layer id="windows" childLayout="absolute">
             <control id="inventory" name="window" style="nifty-window" title="Inventar" visible="false"
                      width="290px" height="500px" x="400px" hideOnClose="true" visibleToMouse="true">
@@ -107,22 +123,6 @@
                     <panel height="3px"/>
                 </panel>
             </control>
-        </layer>
-        <layer id="serverMessageLayer" childLayout="absolute">
-            <panel childLayout="vertical" backgroundColor="#000000aa" visible="false" visibleToMouse="false" x="5px"
-                   y="30px" id="serverMsgPanel" padding="2px"/>
-        </layer>
-        <layer id="broadcastMessageLayer" childLayout="center">
-            <panel childLayout="center" style="nifty-panel-small" visible="false" visibleToMouse="false"
-                   marginTop="100px" valign="top" align="center" id="broadcastMsgPanel">
-            </panel>
-            <panel childLayout="center" style="nifty-panel-hint" visible="false" visibleToMouse="false"
-                   marginTop="200px" valign="top" align="center" id="textToMsgPanel">
-            </panel>
-        </layer>
-        <layer id="scriptMessageLayer" childLayout="center">
-            <panel childLayout="vertical" visible="false" visibleToMouse="false" id="scriptMessagePanel"
-                   marginBottom="80px" valign="center" align="center"/>
         </layer>
     </screen>
 </nifty>

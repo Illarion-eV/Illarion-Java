@@ -18,8 +18,8 @@
   ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <nifty-styles>
-    <style id="illarion-dialog-merchant#window">
-        <attributes width="320px"/>
+    <style id="illarion-dialog-merchant">
+        <attributes/>
     </style>
 
     <style id="illarion-dialog-merchant#buyCountSlider">
@@ -30,6 +30,10 @@
         <attributes font="textFont" width="40px" textHAlign="right"/>
     </style>
 
+    <style id="illarion-dialog-merchant#buyDescription">
+        <attributes font="textFont" textHAlign="left" marginBottom="5px"/>
+    </style>
+
     <style id="illarion-dialog-merchant#buttonLeft">
         <attributes width="90px" margin="3px"/>
     </style>
@@ -38,8 +42,20 @@
         <attributes width="90px" margin="3px"/>
     </style>
 
+    <style id="illarion-dialog-merchant-line">
+        <attributes height="30px" margin="1px"/>
+    </style>
+
+    <style id="illarion-dialog-merchant-line#imageContainer">
+        <attributes width="24px" height="100%" marginRight="3px"/>
+    </style>
+
     <style id="illarion-dialog-merchant-line#imageDisplay">
-        <attributes width="24px" height="24px" imageMode="resize"/>
+        <attributes imageMode="normal"/>
+    </style>
+
+    <style id="illarion-dialog-merchant-line#imageInfos">
+        <attributes width="*"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#title">
@@ -47,7 +63,7 @@
     </style>
 
     <style id="illarion-dialog-merchant-line#moneyGoldImage">
-        <attributes image="data/gui/gold.png" height="16px" width="16px"/>
+        <attributes filename="data/gui/gold.png" height="16px" width="16px"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#moneyGoldCount">
@@ -55,7 +71,7 @@
     </style>
 
     <style id="illarion-dialog-merchant-line#moneySilverImage">
-        <attributes image="data/gui/silver.png" height="16px" width="16px"/>
+        <attributes filename="data/gui/silver.png" height="16px" width="16px"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#moneySilverCount">
@@ -63,7 +79,7 @@
     </style>
 
     <style id="illarion-dialog-merchant-line#moneyCopperImage">
-        <attributes image="data/gui/copper.png" height="16px" width="16px"/>
+        <attributes filename="data/gui/copper.png" height="16px" width="16px"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#moneyCopperCount">

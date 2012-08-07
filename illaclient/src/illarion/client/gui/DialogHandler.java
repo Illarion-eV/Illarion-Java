@@ -237,6 +237,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         final DialogMerchantBuilder builder = new DialogMerchantBuilder(
                 "merchantDialog" + Integer.toString(event.getId()), event.getTitle());
         builder.dialogId(event.getId());
+        builder.width(builder.pixels(700));
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
             @Override
             public void run(final Element createdElement) {

@@ -96,9 +96,9 @@
 
                 <panel width="100%" childLayout="center" height="35px">
                     <panel childLayout="horizontal" height="100%" width="235px">
-                        <control name="#saveButton" label="Save" width="100px" height="35px"/>
+                        <control name="button" id="#saveButton" label="Save" width="100px" height="35px"/>
                         <panel width="35px"/>
-                        <control name="#cancelButton" label="Cancel" width="100px" height="35px"/>
+                        <control name="button" id="#cancelButton" label="Cancel" width="100px" height="35px"/>
                     </panel>
                 </panel>
             </panel>

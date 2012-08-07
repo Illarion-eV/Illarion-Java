@@ -22,6 +22,7 @@ import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.elements.render.TextRenderer;
+import de.lessvoid.nifty.render.NiftyImage;
 import illarion.common.util.Money;
 import org.illarion.nifty.controls.MerchantListEntry;
 
@@ -34,7 +35,24 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
     @Override
     public void display(final Element listBoxItem, final MerchantListEntry item) {
         final Element itemImage = listBoxItem.findElementByName("#imageDisplay");
-        itemImage.getRenderer(ImageRenderer.class).setImage(item.getItemImage());
+        final NiftyImage itemPicture = item.getItemImage();
+        itemImage.getRenderer(ImageRenderer.class).setImage(itemPicture);
+
+        int imageHeight = itemPicture.getHeight();
+        int imageWidth = itemPicture.getWidth();
+
+        if (imageHeight > 24) {
+            imageWidth = (int) ((float) imageWidth * (24.f / imageHeight));
+            imageHeight = 24;
+        }
+
+        if (imageWidth > 24) {
+            imageHeight = (int) ((float) imageHeight * (24.f / imageWidth));
+            imageWidth = 24;
+        }
+
+        itemImage.setHeight(imageHeight);
+        itemImage.setWidth(imageWidth);
 
         final Element title = listBoxItem.findElementByName("#title");
         title.getRenderer(TextRenderer.class).setText(item.getName());
