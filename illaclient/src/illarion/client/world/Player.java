@@ -251,6 +251,10 @@ public final class Player implements ConfigChangeListener {
 
     @EventSubscriber
     public void onDialogClosedEvent(final CloseDialogEvent event) {
+        if (merchantDialog == null) {
+            return;
+        }
+
         switch (event.getDialogType()) {
             case Any:
             case Merchant:
