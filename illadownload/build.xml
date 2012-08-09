@@ -156,9 +156,11 @@
             </keepclasseswithmembers>
             <dontwarn name="javax.mail.**"/>
             <dontwarn name="javax.jms.**"/>
+            <dontwarn name="de.lessvoid.nifty.**"/>
             <dontnote name="org.apache.log4j.jmx.Agent"/>
             <dontnote name="org.apache.log4j.net.ZeroConfSupport"/>
             <dontnote name="org.apache.log4j.spi.LocationInfo"/>
+            <dontnote name="org.apache.commons.logging.*"/>
         </proguard>
 
         <move file="${jar}" tofile="${org.jar}"/>
