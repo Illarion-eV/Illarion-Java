@@ -27,7 +27,6 @@ import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.DialogMerchant;
-import org.illarion.nifty.controls.DialogMerchantBuyEvent;
 import org.illarion.nifty.controls.DialogMerchantCloseEvent;
 import org.illarion.nifty.controls.MerchantListEntry;
 
@@ -62,9 +61,9 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     private boolean alreadyClosed;
 
     /**
-     * The event handler that handles the events on the buy button.
+     * The event handler that handles the events on the close button.
      */
-    private final EventTopicSubscriber<ButtonClickedEvent> buyButtonEventHandler;
+    private final EventTopicSubscriber<ButtonClickedEvent> closeButtonEventHandler;
 
     /**
      * This event handler is used to monitor the slider that sets the amount of items to buy.
@@ -73,16 +72,14 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
 
     public DialogMerchantControl() {
 
-        buyButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
+        closeButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
             @Override
             public void onEvent(final String topic, final ButtonClickedEvent data) {
                 if (alreadyClosed) {
                     return;
                 }
 
-                niftyInstance.publishEvent(getId(),
-                        new DialogMerchantBuyEvent(dialogId, getSelectedItem(), getSelectedIndex(),
-                                getSelectedAmount()));
+                closeWindow();
             }
         };
 
@@ -103,8 +100,6 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
         currentScreen = screen;
 
         dialogId = Integer.parseInt(controlDefinitionAttributes.get("dialogId"));
-
-        alreadyClosed = false;
     }
 
     @Override
@@ -123,7 +118,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
         parent.layoutElements();
 
         final Element leftButton = getElement().findElementByName("#button");
-        niftyInstance.subscribe(currentScreen, leftButton.getId(), ButtonClickedEvent.class, buyButtonEventHandler);
+        niftyInstance.subscribe(currentScreen, leftButton.getId(), ButtonClickedEvent.class, closeButtonEventHandler);
         niftyInstance.subscribe(currentScreen, getElement().findElementByName("#buyCountSlider").getId(),
                 SliderChangedEvent.class, sliderChangedEventHandler);
     }

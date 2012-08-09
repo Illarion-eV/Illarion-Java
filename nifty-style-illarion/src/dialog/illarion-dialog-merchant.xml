@@ -37,7 +37,7 @@
 
 
     <style id="illarion-dialog-merchant-line">
-        <attributes height="46px" width="100%" margin="1px"/>
+        <attributes height="46px" width="100%" margin="1px" visibleToMouse="true"/>
         <effect>
             <onHover name="colorBar" color="#264d1cff" neverStopRendering="true" timeType="infinite"/>
             <onCustom customKey="focus" name="colorBar" post="false" color="#051901ff" neverStopRendering="true"
@@ -51,15 +51,15 @@
     </style>
 
     <style id="illarion-dialog-merchant-line#imageContainer">
-        <attributes width="76px" height="100%" marginRight="3px"/>
+        <attributes width="76px" height="100%" marginRight="3px" visibleToMouse="false"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#imageDisplay">
-        <attributes imageMode="normal"/>
+        <attributes imageMode="normal" visibleToMouse="false"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#itemInfos">
-        <attributes width="*"/>
+        <attributes width="*" visibleToMouse="false"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#itemTitle" base="nifty-label">

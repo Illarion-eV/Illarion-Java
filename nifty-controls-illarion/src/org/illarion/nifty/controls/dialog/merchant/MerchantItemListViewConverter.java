@@ -92,6 +92,6 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
 
     @Override
     public int getWidth(final Element element, final MerchantListEntry item) {
-        return 400;
+        return element.getWidth();
     }
 }

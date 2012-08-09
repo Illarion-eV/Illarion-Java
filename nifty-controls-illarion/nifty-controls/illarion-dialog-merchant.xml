@@ -42,7 +42,7 @@
         <panel childLayout="vertical" width="100%">
             <panel width="100%" childLayout="center">
                 <control name="listBox" id="#sellList" vertical="on" horizontal="off"
-                         displayItems="8" selection="Single" width="100%"
+                         displayItems="9" selection="Single" width="100%"
                          viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
                     <control name="dialog-merchant-list-entry"/>
                 </control>
@@ -84,7 +84,8 @@
                     </control>
                 </control>
                 <panel childLayout="center" visibleToMouse="true" width="100%" style="#buttons">
-                    <control name="button" id="#button" label="${illarion-dialog-merchant-bundle.buy}"/>
+                    <control name="button" id="#button" label="${illarion-dialog-merchant-bundle.close}"
+                             marginTop="5px"/>
                 </panel>
             </panel>
         </control>
