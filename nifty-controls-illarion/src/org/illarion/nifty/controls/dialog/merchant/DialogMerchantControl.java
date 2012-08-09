@@ -62,11 +62,6 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     private boolean alreadyClosed;
 
     /**
-     * The event handler that handles the clicks on the close button.
-     */
-    private final EventTopicSubscriber<ButtonClickedEvent> closeButtonEventHandler;
-
-    /**
      * The event handler that handles the events on the buy button.
      */
     private final EventTopicSubscriber<ButtonClickedEvent> buyButtonEventHandler;
@@ -77,16 +72,6 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     private final EventTopicSubscriber<SliderChangedEvent> sliderChangedEventHandler;
 
     public DialogMerchantControl() {
-        closeButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
-            @Override
-            public void onEvent(final String topic, final ButtonClickedEvent data) {
-                if (alreadyClosed) {
-                    return;
-                }
-                niftyInstance.publishEvent(getId(), new DialogMerchantCloseEvent(dialogId));
-                closeWindow();
-            }
-        };
 
         buyButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
             @Override
@@ -137,9 +122,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
 
         parent.layoutElements();
 
-        final Element rightButton = getElement().findElementByName("#buttonRight");
-        final Element leftButton = getElement().findElementByName("#buttonLeft");
-        niftyInstance.subscribe(currentScreen, rightButton.getId(), ButtonClickedEvent.class, closeButtonEventHandler);
+        final Element leftButton = getElement().findElementByName("#button");
         niftyInstance.subscribe(currentScreen, leftButton.getId(), ButtonClickedEvent.class, buyButtonEventHandler);
         niftyInstance.subscribe(currentScreen, getElement().findElementByName("#buyCountSlider").getId(),
                 SliderChangedEvent.class, sliderChangedEventHandler);

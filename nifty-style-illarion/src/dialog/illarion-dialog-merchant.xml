@@ -22,21 +22,32 @@
         <attributes/>
     </style>
 
-    <style id="illarion-dialog-merchant#sellCountLabel" base="nifty-label">
+    <style id="illarion-dialog-merchant-sell#sellCountLabel" base="nifty-label">
         <attributes font="textFont" width="100%" textHAlign="left"/>
     </style>
 
-    <style id="illarion-dialog-merchant#buyCountAmountDisplay" base="nifty-label">
-        <attributes font="textFont" width="40px" textHAlign="right"/>
+    <style id="illarion-dialog-merchant-sell#buyCountAmountDisplay" base="nifty-label">
+        <attributes font="textFont" width="50px" textHAlign="right"/>
     </style>
 
-    <style id="illarion-dialog-merchant#buyDescription" base="nifty-label">
-        <attributes font="textFont" textHAlign="left" marginBottom="5px" width="100%" height="20px" wrap="true"/>
+    <style id="illarion-dialog-merchant-buy#buyDescription" base="nifty-label">
+        <attributes font="textFont" textHAlign="left" marginBottom="5px" width="98%" height="20px" wrap="true"
+                    align="left"/>
     </style>
 
 
     <style id="illarion-dialog-merchant-line">
-        <attributes height="46px" width="100%" margin="1px" backgroundColor="#88888888"/>
+        <attributes height="46px" width="100%" margin="1px"/>
+        <effect>
+            <onHover name="colorBar" color="#264d1cff" neverStopRendering="true" timeType="infinite"/>
+            <onCustom customKey="focus" name="colorBar" post="false" color="#051901ff" neverStopRendering="true"
+                      timeType="infinite"/>
+            <onCustom customKey="select" name="colorBar" post="false" color="#051901ff" neverStopRendering="true"
+                      timeType="infinite"/>
+            <onCustom customKey="select" name="textColor" post="false" color="#eeef" neverStopRendering="true"
+                      timeType="infinite"/>
+            <onClick name="focus" targetElement="#parent#parent"/>
+        </effect>
     </style>
 
     <style id="illarion-dialog-merchant-line#imageContainer">
