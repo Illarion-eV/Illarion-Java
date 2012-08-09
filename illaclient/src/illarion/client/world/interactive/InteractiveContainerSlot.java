@@ -22,6 +22,7 @@ import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
 import illarion.client.net.client.*;
+import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
 
 /**
@@ -65,7 +66,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
 
         final DragScInvCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_INV,
                 DragScInvCmd.class);
-        cmd.setSource(parentSlot.getContainerId(), parentSlot.getLocation());
+        cmd.setSource(getContainerId(), parentSlot.getLocation());
         cmd.setTarget(targetSlot.getSlotId());
         cmd.send();
     }
@@ -80,7 +81,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
         final LookatShowcaseCmd cmd =
                 CommandFactory.getInstance().getCommand(
                         CommandList.CMD_LOOKAT_SHOWCASE, LookatShowcaseCmd.class);
-        cmd.setSlot(parentSlot.getContainerId(), parentSlot.getLocation());
+        cmd.setSlot(getContainerId(), parentSlot.getLocation());
         cmd.send();
     }
 
@@ -98,7 +99,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
         final DragScMapCmd cmd =
                 CommandFactory.getInstance().getCommand(
                         CommandList.CMD_DRAG_SC_MAP, DragScMapCmd.class);
-        cmd.setSource(parentSlot.getContainerId(), parentSlot.getLocation());
+        cmd.setSource(getContainerId(), parentSlot.getLocation());
         cmd.setTarget(targetTile.getLocation());
         cmd.send();
     }
@@ -106,7 +107,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
     @Override
     public void dragTo(final InteractiveContainerSlot targetSlot) {
         final DragScScCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_SC, DragScScCmd.class);
-        cmd.setSource(parentSlot.getContainerId(), parentSlot.getLocation());
+        cmd.setSource(getContainerId(), parentSlot.getLocation());
         cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
         cmd.send();
     }
@@ -131,6 +132,10 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
         return parentSlot.getLocation();
     }
 
+    public int getContainerId() {
+        return parentSlot.getContainerId();
+    }
+
     public ContainerSlot getSlot() {
         return parentSlot;
     }
@@ -142,5 +147,19 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      */
     public int getItemId() {
         return parentSlot.getItemID();
+    }
+
+    /**
+     * Sell the item from the slot to the trader.
+     */
+    public void sell() {
+        if (!World.getPlayer().hasMerchantList()) {
+            return;
+        }
+
+        final TradeItemCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_TRADE_ITEM,
+                TradeItemCmd.class);
+        cmd.setSellFromContainer(getContainerId(), getSlotId(), 1);
+        cmd.send();
     }
 }

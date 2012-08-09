@@ -79,6 +79,11 @@ public class InventorySlotControl extends AbstractController implements Inventor
     private Element droppable;
 
     /**
+     * The merchant overlay icon.
+     */
+    private Element merchantOverlay;
+
+    /**
      * This value stores if the label should be visible or not. This is needed to restore the visibility upon request.
      */
     private boolean labelVisible;
@@ -118,6 +123,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
         backgroundImage = element.findElementByName("#backgroundImage");
         backgroundImageLabel = element.findElementByName("#backgroundImageLabel");
         staticBackgroundImage = element.findElementByName("#staticBackgroundImage");
+        merchantOverlay = element.findElementByName("#merchantOverlay");
 
         dragStartEvent = new EventTopicSubscriber<DraggableDragStartedEvent>() {
             @Override
@@ -133,8 +139,10 @@ public class InventorySlotControl extends AbstractController implements Inventor
             }
         };
 
-        if (parameter.containsKey("background")) {
-            setBackgroundImage(nifty.createImage(parameter.getProperty("background"), false));
+        final String background = controlDefinitionAttributes.get("background");
+
+        if (background != null) {
+            setBackgroundImage(nifty.createImage(background, false));
         }
     }
 
@@ -266,6 +274,30 @@ public class InventorySlotControl extends AbstractController implements Inventor
         }
     }
 
+    @Override
+    public void hideMerchantOverlay() {
+        merchantOverlay.hideWithoutEffect();
+    }
+
+    @Override
+    public void showMerchantOverlay(final InventorySlot.MerchantBuyLevel level) {
+        switch (level) {
+            case Copper:
+                merchantOverlay.getRenderer(ImageRenderer.class).setImage(
+                        nifty.createImage("data/gui/copper.png", false));
+                break;
+            case Silver:
+                merchantOverlay.getRenderer(ImageRenderer.class).setImage(
+                        nifty.createImage("data/gui/silver.png", false));
+                break;
+            case Gold:
+                merchantOverlay.getRenderer(ImageRenderer.class).setImage(
+                        nifty.createImage("data/gui/gold.png", false));
+                break;
+        }
+        merchantOverlay.showWithoutEffects();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -276,6 +308,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
 
         retrieveDraggable();
         restoreVisibility();
+        hideMerchantOverlay();
     }
 
     /**

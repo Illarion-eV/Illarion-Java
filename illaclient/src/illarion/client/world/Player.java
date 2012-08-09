@@ -40,7 +40,8 @@ import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.Location;
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 import org.newdawn.slick.openal.SoundStore;
 
 import java.awt.*;
@@ -174,16 +175,6 @@ public final class Player implements ConfigChangeListener {
     private MerchantList merchantDialog;
 
     /**
-     * The event subscriber that monitors update events of containers.
-     */
-    private final EventSubscriber<OpenContainerEvent> openContainerEventSubscriber;
-
-    /**
-     * The event subscriber that monitors merchant dialogs.
-     */
-    private final EventSubscriber<DialogMerchantReceivedEvent> dialogMerchantReceivedEventSubscriber;
-
-    /**
      * Constructor for the player that receives the character name from the login data automatically.
      */
     public Player() {
@@ -211,9 +202,6 @@ public final class Player implements ConfigChangeListener {
             inventory = null;
 
             containers = null;
-            openContainerEventSubscriber = null;
-
-            dialogMerchantReceivedEventSubscriber = null;
             return;
         }
 
@@ -227,41 +215,56 @@ public final class Player implements ConfigChangeListener {
         inventory = new Inventory();
         containers = new TIntObjectHashMap<ItemContainer>();
 
-        openContainerEventSubscriber = new EventSubscriber<OpenContainerEvent>() {
-            @Override
-            public void onEvent(final OpenContainerEvent event) {
-                final ItemContainer container = getContainer(event.getContainerId());
-                final TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
-                while (itr.hasNext()) {
-                    itr.advance();
-                    container.setItem(itr.key(), itr.value().getItemId(), itr.value().getCount());
-                }
-            }
-        };
-
-        dialogMerchantReceivedEventSubscriber = new EventSubscriber<DialogMerchantReceivedEvent>() {
-            @Override
-            public void onEvent(final DialogMerchantReceivedEvent event) {
-                final MerchantList list = new MerchantList(event.getId(), event.getItemCount());
-                for (int i = 0; i < event.getItemCount(); i++) {
-                    list.setItem(i, event.getItem(i));
-                }
-
-                if (merchantDialog != null) {
-                    EventBus.publish(new CloseDialogEvent(merchantDialog.getId(), CloseDialogEvent.DialogType.Merchant));
-                }
-                merchantDialog = list;
-            }
-        };
-
         IllaClient.getCfg().addListener(CFG_SOUND_ON, this);
         IllaClient.getCfg().addListener(CFG_SOUND_VOL, this);
         IllaClient.getCfg().addListener(CFG_MUSIC_ON, this);
         IllaClient.getCfg().addListener(CFG_MUSIC_VOL, this);
 
         updateListener();
-        EventBus.subscribe(OpenContainerEvent.class, openContainerEventSubscriber);
-        EventBus.subscribe(DialogMerchantReceivedEvent.class, dialogMerchantReceivedEventSubscriber);
+        AnnotationProcessor.process(this);
+    }
+
+    @EventSubscriber
+    public void onOpenContainerEvent(final OpenContainerEvent event) {
+        final ItemContainer container = getContainer(event.getContainerId());
+        final TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
+        while (itr.hasNext()) {
+            itr.advance();
+            container.setItem(itr.key(), itr.value().getItemId(), itr.value().getCount());
+        }
+    }
+
+    @EventSubscriber
+    public void onMerchantDialogOpenedEvent(final DialogMerchantReceivedEvent event) {
+        final MerchantList list = new MerchantList(event.getId(), event.getItemCount());
+        for (int i = 0; i < event.getItemCount(); i++) {
+            list.setItem(i, event.getItem(i));
+        }
+
+        final MerchantList oldList = merchantDialog;
+        merchantDialog = list;
+
+        if (oldList != null) {
+            EventBus.publish(new CloseDialogEvent(oldList.getId(), CloseDialogEvent.DialogType.Merchant));
+        }
+    }
+
+    @EventSubscriber
+    public void onDialogClosedEvent(final CloseDialogEvent event) {
+        switch (event.getDialogType()) {
+            case Any:
+            case Merchant:
+                if (event.getDialogId() == merchantDialog.getId()) {
+                    final MerchantList oldList = merchantDialog;
+                    merchantDialog = null;
+                    oldList.closeDialog();
+                }
+
+            case Message:
+                break;
+            case Input:
+                break;
+        }
     }
 
     /**
@@ -288,6 +291,15 @@ public final class Player implements ConfigChangeListener {
      */
     public MerchantList getMerchantList() {
         return merchantDialog;
+    }
+
+    /**
+     * Check if there is currently a merchant list active.
+     *
+     * @return {@code true} in case a merchant list is active
+     */
+    public boolean hasMerchantList() {
+        return merchantDialog != null;
     }
 
     /**

@@ -30,10 +30,10 @@ import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.CloseDialogInputCmd;
 import illarion.client.net.client.CloseDialogMessageCmd;
-import illarion.client.net.client.TradeItemCmd;
 import illarion.client.net.server.events.DialogInputReceivedEvent;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.DialogMessageReceivedEvent;
+import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -177,20 +177,13 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "merchantDialog[0-9]+")
     public void handleMerchantBuyEvent(final String topic, final DialogMerchantBuyEvent event) {
-        final CommandFactory factory = CommandFactory.getInstance();
-        final TradeItemCmd cmd = factory.getCommand(CommandList.CMD_TRADE_ITEM, TradeItemCmd.class);
-        cmd.setBuy(event.getItem().getIndex(), event.getAmount());
-        cmd.setDialogId(event.getDialogId());
-        cmd.send();
+        World.getPlayer().getMerchantList().buyItem(event.getItem().getIndex(), event.getAmount());
     }
 
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "merchantDialog[0-9]+")
     public void handleMerchantCloseEvent(final String topic, final DialogMerchantCloseEvent event) {
-        final CommandFactory factory = CommandFactory.getInstance();
-        final TradeItemCmd cmd = factory.getCommand(CommandList.CMD_TRADE_ITEM, TradeItemCmd.class);
-        cmd.setCloseDialog();
-        cmd.send();
+        World.getPlayer().getMerchantList().closeDialog();
     }
 
     @Override

@@ -31,6 +31,10 @@ import de.lessvoid.nifty.render.NiftyImage;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface InventorySlot extends NiftyControl {
+    enum MerchantBuyLevel {
+        Copper, Silver, Gold
+    }
+
     /**
      * Set the image that is supposed to be displayed in this inventory slot.
      *
@@ -72,4 +76,8 @@ public interface InventorySlot extends NiftyControl {
      * object changed its visibility.
      */
     void restoreVisibility();
+
+    void hideMerchantOverlay();
+
+    void showMerchantOverlay(InventorySlot.MerchantBuyLevel level);
 }

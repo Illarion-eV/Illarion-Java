@@ -30,19 +30,26 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.procedure.TIntObjectProcedure;
 import illarion.client.IllaClient;
 import illarion.client.graphics.Item;
+import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.World;
+import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.ItemContainer;
+import illarion.client.world.items.MerchantItem;
+import illarion.client.world.items.MerchantList;
 import illarion.common.gui.AbstractMultiActionHelper;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 import org.illarion.nifty.controls.itemcontainer.builder.ItemContainerBuilder;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,8 +58,21 @@ import java.util.regex.Pattern;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class ContainerHandler implements ScreenController {
-    private final EventSubscriber<OpenContainerEvent> eventSubscriberOpenContainer;
+public class ContainerHandler implements ScreenController, UpdatableHandler {
+
+    private final Queue<Runnable> updateTasks = new ConcurrentLinkedQueue<Runnable>();
+
+    @Override
+    public void update(final int delta) {
+        while (true) {
+            final Runnable task = updateTasks.poll();
+            if (task == null) {
+                break;
+            }
+
+            task.run();
+        }
+    }
 
     /**
      * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
@@ -134,7 +154,11 @@ public class ContainerHandler implements ScreenController {
                     container = World.getPlayer().getContainer(containerId);
                     slot = container.getSlot(slotId);
 
-                    slot.getInteractive().use();
+                    if (World.getPlayer().hasMerchantList()) {
+                        slot.getInteractive().sell();
+                    } else {
+                        slot.getInteractive().use();
+                    }
                     break;
             }
         }
@@ -159,25 +183,27 @@ public class ContainerHandler implements ScreenController {
 
     public ContainerHandler() {
         itemContainerMap = new TIntObjectHashMap<org.illarion.nifty.controls.ItemContainer>();
+    }
 
-        eventSubscriberOpenContainer = new EventSubscriber<OpenContainerEvent>() {
-            @Override
-            public void onEvent(final OpenContainerEvent event) {
-                try {
-                    if ((activeNifty == null) || (activeScreen == null)) {
-                        return;
-                    }
+    @EventSubscriber
+    public void onOpenContainerEvent(final OpenContainerEvent event) {
+        updateTasks.offer(new ContainerHandler.UpdateContainerTask(event));
+    }
 
-                    if (!isContainerCreated(event.getContainerId())) {
-                        createNewContainer(event);
-                    }
-                    updateContainer(event.getContainerId(), event.getItemIterator());
-                } catch (final RuntimeException e) {
-                    e.printStackTrace();
-                    throw e;
-                }
+    private final class UpdateContainerTask implements Runnable {
+        private final OpenContainerEvent event;
+
+        UpdateContainerTask(final OpenContainerEvent updateEvent) {
+            event = updateEvent;
+        }
+
+        @Override
+        public void run() {
+            if (!isContainerCreated(event.getContainerId())) {
+                createNewContainer(event);
             }
-        };
+            updateContainer(event.getContainerId(), event.getItemIterator());
+        }
     }
 
     private boolean isContainerCreated(final int containerId) {
@@ -195,6 +221,46 @@ public class ContainerHandler implements ScreenController {
         final org.illarion.nifty.controls.ItemContainer conControl = container.getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
 
         itemContainerMap.put(event.getContainerId(), conControl);
+    }
+
+    @EventSubscriber
+    public void onDialogClosedEvent(final CloseDialogEvent event) {
+        switch (event.getDialogType()) {
+            case Any:
+            case Merchant:
+                updateTasks.offer(updateMerchantOverlays);
+
+            case Message:
+                break;
+            case Input:
+                break;
+        }
+    }
+
+    @EventSubscriber
+    public void onMerchantDialogReceivedHandler(final DialogMerchantReceivedEvent event) {
+        updateTasks.offer(updateMerchantOverlays);
+    }
+
+    private final Runnable updateMerchantOverlays = new Runnable() {
+        @Override
+        public void run() {
+            updateAllMerchantOverlays();
+        }
+    };
+
+    private void updateAllMerchantOverlays() {
+        itemContainerMap.forEachEntry(new TIntObjectProcedure<org.illarion.nifty.controls.ItemContainer>() {
+            @Override
+            public boolean execute(final int id, final org.illarion.nifty.controls.ItemContainer itemContainer) {
+                final int slotCount = itemContainer.getSlotCount();
+                for (int i = 0; i < slotCount; i++) {
+                    final InventorySlot conSlot = itemContainer.getSlot(i);
+                    updateMerchantOverlay(conSlot, World.getPlayer().getContainer(id).getSlot(i).getItemID());
+                }
+                return true;
+            }
+        });
     }
 
     private void updateContainer(final int containerId, final TIntObjectIterator<OpenContainerEvent.Item> itr) {
@@ -226,6 +292,7 @@ public class ContainerHandler implements ScreenController {
                 } else {
                     conSlot.hideLabel();
                 }
+                updateMerchantOverlay(conSlot, itemId);
             } else {
                 conSlot.setImage(null);
                 conSlot.hideLabel();
@@ -243,13 +310,14 @@ public class ContainerHandler implements ScreenController {
 
     @Override
     public void onStartScreen() {
-        EventBus.subscribe(OpenContainerEvent.class, eventSubscriberOpenContainer);
+        AnnotationProcessor.process(this);
         activeNifty.subscribeAnnotations(this);
     }
 
     @Override
     public void onEndScreen() {
-        EventBus.unsubscribe(OpenContainerEvent.class, eventSubscriberOpenContainer);
+        AnnotationProcessor.unprocess(this);
+        activeNifty.unsubscribeAnnotations(this);
     }
 
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
@@ -315,5 +383,34 @@ public class ContainerHandler implements ScreenController {
         }
 
         return Integer.parseInt(matcher.group(1));
+    }
+
+    private void updateMerchantOverlay(final InventorySlot slot, final int itemId) {
+        if (itemId == 0) {
+            slot.hideMerchantOverlay();
+            return;
+        }
+
+        final MerchantList merchantList = World.getPlayer().getMerchantList();
+        if (merchantList != null) {
+            for (int i = 0; i < merchantList.getItemCount(); i++) {
+                final MerchantItem item = merchantList.getItem(i);
+                if (item.getItemId() == itemId) {
+                    switch (item.getType()) {
+                        case BuyingPrimaryItem:
+                            slot.showMerchantOverlay(InventorySlot.MerchantBuyLevel.Gold);
+                            return;
+                        case BuyingSecondaryItem:
+                            slot.showMerchantOverlay(InventorySlot.MerchantBuyLevel.Silver);
+                            return;
+                        case SellingItem:
+                            break;
+                    }
+                }
+            }
+            slot.showMerchantOverlay(InventorySlot.MerchantBuyLevel.Copper);
+        } else {
+            slot.hideMerchantOverlay();
+        }
     }
 }

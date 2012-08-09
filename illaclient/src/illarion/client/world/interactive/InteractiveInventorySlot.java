@@ -22,6 +22,7 @@ import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
 import illarion.client.net.client.*;
+import illarion.client.world.World;
 import illarion.client.world.items.InventorySlot;
 
 /**
@@ -114,6 +115,20 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
 
     public boolean acceptItem(final int itemId) {
         return !isValidItem() || (itemId == getItemId());
+    }
+
+    /**
+     * Send the command to the server to sell this item.
+     */
+    public void sell() {
+        if (!World.getPlayer().hasMerchantList()) {
+            return;
+        }
+
+        final TradeItemCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_TRADE_ITEM,
+                TradeItemCmd.class);
+        cmd.setSellFromInventory(getSlotId(), 1);
+        cmd.send();
     }
 
     /**

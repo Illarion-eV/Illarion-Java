@@ -21,6 +21,8 @@ package illarion.client.world.items;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.TradeItemCmd;
+import illarion.client.world.events.CloseDialogEvent;
+import org.bushe.swing.event.EventBus;
 
 /**
  * This classes are used to store to information about the goods a merchant is trading.
@@ -96,6 +98,8 @@ public final class MerchantList {
         cmd.setCloseDialog();
         cmd.setDialogId(listId);
         cmd.send();
+
+        EventBus.publish(new CloseDialogEvent(listId, CloseDialogEvent.DialogType.Merchant));
     }
 
     /**
