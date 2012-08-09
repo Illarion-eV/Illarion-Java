@@ -89,6 +89,7 @@
             <zipgroupfileset refid="swingx"/>
             <zipgroupfileset refid="xz"/>
             <zipgroupfileset refid="log4j"/>
+            <zipgroupfileset refid="eventbus"/>
             <zipfileset src="${common.bin}"/>
             <metainf dir="${download}">
                 <include name="*.txt"/>
