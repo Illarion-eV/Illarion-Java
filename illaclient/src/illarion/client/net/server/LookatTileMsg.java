@@ -18,12 +18,12 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.World;
 import illarion.common.util.Location;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Look at description of a tile ( {@link illarion.client.net.CommandList#MSG_LOOKAT_TILE}).
@@ -85,7 +85,7 @@ public final class LookatTileMsg
         //            .showText(text, null, loc, ChatHandler.SpeechMode.normal);
 
         // for testing lookat only
-        World.getChatHandler().handleMessage(text, null);
+        World.getChatHandler().handleMessage(text, loc);
 
         return true;
     }
