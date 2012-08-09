@@ -21,8 +21,8 @@ package illarion.client.input;
 import de.lessvoid.nifty.slick2d.NiftyInputForwarding;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import illarion.client.IllaClient;
-import illarion.client.gui.util.AbstractMultiActionHelper;
 import illarion.client.world.World;
+import illarion.common.gui.AbstractMultiActionHelper;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.util.InputAdapter;
 

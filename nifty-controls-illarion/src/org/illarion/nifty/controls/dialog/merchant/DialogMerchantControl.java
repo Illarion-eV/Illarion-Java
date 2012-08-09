@@ -27,6 +27,7 @@ import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.DialogMerchant;
+import org.illarion.nifty.controls.DialogMerchantBuyEvent;
 import org.illarion.nifty.controls.DialogMerchantCloseEvent;
 import org.illarion.nifty.controls.MerchantListEntry;
 
@@ -166,6 +167,16 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     @SuppressWarnings("unchecked")
     private ListBox<MerchantListEntry> getBuyList() {
         return getElement().findNiftyControl("#buyList", ListBox.class);
+    }
+
+    public void buyItem(final int index) {
+        final ListBox<MerchantListEntry> sellList = getSellList();
+        niftyInstance.publishEvent(getId(),
+                new DialogMerchantBuyEvent(dialogId, sellList.getItems().get(index), index, getSelectedAmount()));
+    }
+
+    public void buyItem(final MerchantListEntry entry) {
+        buyItem(entry.getIndex());
     }
 
     @Override

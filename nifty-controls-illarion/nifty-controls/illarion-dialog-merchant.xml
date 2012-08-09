@@ -19,7 +19,8 @@
 <nifty-controls>
     <resourceBundle id="illarion-dialog-merchant-bundle" filename="illarion-dialog-merchant"/>
 
-    <controlDefinition name="dialog-merchant-list-entry" style="illarion-dialog-merchant-line">
+    <controlDefinition name="dialog-merchant-list-entry" style="illarion-dialog-merchant-line"
+                       controller="org.illarion.nifty.controls.dialog.merchant.DialogMerchantEntryControl">
         <panel childLayout="horizontal">
             <panel childLayout="center" style="#imageContainer">
                 <image id="#imageDisplay" style="#imageDisplay"/>
@@ -36,15 +37,16 @@
                 </panel>
             </panel>
         </panel>
+        <interact onPrimaryClick="onClick()"/>
     </controlDefinition>
 
     <controlDefinition name="dialog-merchant-sell" style="illarion-dialog-merchant-sell">
         <panel childLayout="vertical" width="100%">
             <panel width="100%" childLayout="center">
                 <control name="listBox" id="#sellList" vertical="on" horizontal="off"
-                         displayItems="9" selection="Single" width="100%"
+                         displayItems="9" selection="Disabled" width="100%"
                          viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
-                    <control name="dialog-merchant-list-entry"/>
+                    <control name="dialog-merchant-list-entry" selectable="true"/>
                 </control>
             </panel>
             <panel childLayout="vertical" width="100%">
@@ -64,9 +66,9 @@
             <control name="label" style="nifty-label" wrap="true" width="100%" textHAlign="left"
                      text="${illarion-dialog-merchant-bundle.buyDescription}" margin="1px"/>
             <control name="listBox" id="#buyList" vertical="on" horizontal="off"
-                     displayItems="8" selection="Single"
+                     displayItems="8" selection="Disabled"
                      viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
-                <control name="dialog-merchant-list-entry"/>
+                <control name="dialog-merchant-list-entry" selectable="false"/>
             </control>
         </panel>
     </controlDefinition>

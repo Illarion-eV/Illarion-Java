@@ -71,6 +71,8 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
                 listBoxItem.findElementByName("#moneyCopperImage"));
 
         listBoxItem.layoutElements();
+
+        listBoxItem.getNiftyControl(DialogMerchantEntryControl.class).setIndex(item.getIndex());
     }
 
     /**
