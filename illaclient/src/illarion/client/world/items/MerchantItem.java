@@ -72,6 +72,31 @@ public class MerchantItem {
     private final MerchantItem.MerchantItemType type;
 
     /**
+     * The amount of items sold at once.
+     */
+    private final int bundleSize;
+
+    /**
+     * Create a new instance of that merchant item.
+     *
+     * @param itemIndex the index of the item in the list of items that was send by the server
+     * @param itemType  the type of the item
+     * @param id        the ID of the item
+     * @param itemName  the name of the item
+     * @param itemPrice the price of the item in copper coins
+     * @param amount    the amount of items sold at once
+     */
+    public MerchantItem(final int itemIndex, final MerchantItem.MerchantItemType itemType, final int id,
+                        final String itemName, final long itemPrice, final int amount) {
+        index = itemIndex;
+        type = itemType;
+        itemId = id;
+        name = itemName;
+        price = new Money(itemPrice);
+        bundleSize = amount;
+    }
+
+    /**
      * Create a new instance of that merchant item.
      *
      * @param itemIndex the index of the item in the list of items that was send by the server
@@ -82,11 +107,7 @@ public class MerchantItem {
      */
     public MerchantItem(final int itemIndex, final MerchantItem.MerchantItemType itemType, final int id,
                         final String itemName, final long itemPrice) {
-        index = itemIndex;
-        type = itemType;
-        itemId = id;
-        name = itemName;
-        price = new Money(itemPrice);
+        this(itemIndex, itemType, id, itemName, itemPrice, 1);
     }
 
     /**
@@ -100,6 +121,7 @@ public class MerchantItem {
         itemId = org.itemId;
         name = org.name;
         price = org.price;
+        bundleSize = org.bundleSize;
     }
 
     /**
