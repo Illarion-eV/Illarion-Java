@@ -18,14 +18,14 @@
  */
 package illarion.download.install.resources.dev;
 
+import illarion.download.install.resources.Resource;
+import illarion.download.install.resources.libs.*;
+import illarion.download.util.Lang;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.libs.*;
-import illarion.download.util.Lang;
 
 /**
  * This resource contains the Illarion easyNPC Editor.
@@ -94,7 +94,7 @@ public final class EasyNpcEditor
         if (dependencies == null) {
             final Collection<Resource> dep = new ArrayList<Resource>();
             dep.add(Javolution.getInstance());
-            dep.add(JSyntaxPane.getInstance());
+            dep.add(RSyntaxTextArea.getInstance());
             dep.add(Log4j.getInstance());
             dep.add(Trove.getInstance());
             dep.add(Substance.getInstance());
