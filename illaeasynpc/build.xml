@@ -80,10 +80,11 @@
                 <fileset refid="trident"/>
                 <fileset refid="flamingo"/>
                 <fileset refid="substance-flamingo"/>
-                <fileset refid="jsyntaxpane"/>
+                <fileset refid="rsyntaxtextarea"/>
                 <fileset refid="javolution"/>
                 <fileset refid="trove"/>
                 <fileset refid="log4j"/>
+                <fileset refid="eventbus"/>
                 <pathelement location="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>
