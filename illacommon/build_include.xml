@@ -17,326 +17,326 @@
   ~ along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <project name="Illarion Build Imports" basedir=".">
-    <dirname property="illacommon.include.dir" file="${ant.file.Illarion Build Imports}" />
+    <dirname property="illacommon.include.dir" file="${ant.file.Illarion Build Imports}"/>
 
-    <property file="${illacommon.include.dir}/local.location.properties" />
-    <property file="${illacommon.include.dir}/location.properties" />
+    <property file="${illacommon.include.dir}/local.location.properties"/>
+    <property file="${illacommon.include.dir}/location.properties"/>
 
-    <import file="${sign}/build_keys.xml" optional="true" />
+    <import file="${sign}/build_keys.xml" optional="true"/>
 
-    <property name="compiled" location="${illacommon.include.dir}/../bin" />
-    <property name="signedcompiled" location="${illacommon.include.dir}/../bin/signed" />
-    <property name="setup" location="${illacommon.include.dir}/../setup" />
-    <property name="setuplib" location="${illacommon.include.dir}/../setup/lib" />
+    <property name="compiled" location="${illacommon.include.dir}/../bin"/>
+    <property name="signedcompiled" location="${illacommon.include.dir}/../bin/signed"/>
+    <property name="setup" location="${illacommon.include.dir}/../setup"/>
+    <property name="setuplib" location="${illacommon.include.dir}/../setup/lib"/>
 
-    <property name="client" location="${illacommon.include.dir}/../illaclient" />
-    <property name="client.bin" location="${compiled}/${client.jar}" />
-    <property name="client.res.deploy" location="${setup}/${client.res}" />
+    <property name="client" location="${illacommon.include.dir}/../illaclient"/>
+    <property name="client.bin" location="${compiled}/${client.jar}"/>
+    <property name="client.res.deploy" location="${setup}/${client.res}"/>
 
-    <property name="common" location="${illacommon.include.dir}/../illacommon" />
-    <property name="common.bin" location="${compiled}/${common.jar}" />
-    <property name="common.res.deploy" location="${setup}/${common.res}" />
+    <property name="common" location="${illacommon.include.dir}/../illacommon"/>
+    <property name="common.bin" location="${compiled}/${common.jar}"/>
+    <property name="common.res.deploy" location="${setup}/${common.res}"/>
 
-    <property name="build" location="${illacommon.include.dir}/../illabuild" />
-    <property name="build.bin" location="${compiled}/${build.jar}" />
+    <property name="build" location="${illacommon.include.dir}/../illabuild"/>
+    <property name="build.bin" location="${compiled}/${build.jar}"/>
 
-    <property name="easynpc" location="${illacommon.include.dir}/../illaeasynpc" />
-    <property name="easynpc.res.deploy" location="${setup}/${easynpc.res}" />
-    <property name="easynpc.bin" location="${compiled}/${easynpc.jar}" />
+    <property name="easynpc" location="${illacommon.include.dir}/../illaeasynpc"/>
+    <property name="easynpc.res.deploy" location="${setup}/${easynpc.res}"/>
+    <property name="easynpc.bin" location="${compiled}/${easynpc.jar}"/>
 
-    <property name="easyquest" location="${illacommon.include.dir}/../illaeasyquest" />
-    <property name="easyquest.res.deploy" location="${setup}/${easyquest.res}" />
-    <property name="easyquest.bin" location="${compiled}/${easyquest.jar}" />
+    <property name="easyquest" location="${illacommon.include.dir}/../illaeasyquest"/>
+    <property name="easyquest.res.deploy" location="${setup}/${easyquest.res}"/>
+    <property name="easyquest.bin" location="${compiled}/${easyquest.jar}"/>
 
-    <property name="mapedit" location="${illacommon.include.dir}/../illamapedit" />
-    <property name="mapedit.res.deploy" location="${setup}/${mapedit.res}" />
-    <property name="mapedit.bin" location="${compiled}/${mapedit.jar}" />
+    <property name="mapedit" location="${illacommon.include.dir}/../illamapedit"/>
+    <property name="mapedit.res.deploy" location="${setup}/${mapedit.res}"/>
+    <property name="mapedit.bin" location="${compiled}/${mapedit.jar}"/>
 
-    <property name="download" location="${illacommon.include.dir}/../illadownload" />
-    <property name="download.bin" location="${compiled}/${download.jar}" />
-    <property name="download.deploy" location="${setup}/${download.jar}" />
+    <property name="download" location="${illacommon.include.dir}/../illadownload"/>
+    <property name="download.bin" location="${compiled}/${download.jar}"/>
+    <property name="download.deploy" location="${setup}/${download.jar}"/>
 
-    <property name="niftycontrols" location="${illacommon.include.dir}/../nifty-controls-illarion" />
-    <property name="niftycontrols.bin" location="${compiled}/${niftycontrols.jar}" />
+    <property name="niftycontrols" location="${illacommon.include.dir}/../nifty-controls-illarion"/>
+    <property name="niftycontrols.bin" location="${compiled}/${niftycontrols.jar}"/>
 
-    <property name="niftystyle" location="${illacommon.include.dir}/../nifty-style-illarion" />
-    <property name="niftystyle.bin" location="${compiled}/${niftystyle.jar}" />
+    <property name="niftystyle" location="${illacommon.include.dir}/../nifty-style-illarion"/>
+    <property name="niftystyle.bin" location="${compiled}/${niftystyle.jar}"/>
 
-    <property name="niftyillarion.res.deploy" location="${setup}/${nifty-illarion.res}" />
+    <property name="niftyillarion.res.deploy" location="${setup}/${nifty-illarion.res}"/>
 
     <!-- Client informations -->
-    <property name="client.version" value="1.22 delta" />
-    <property name="client.vendor" value="Illarion e.V." />
-    <property name="client.name" value="Illarion Client" />
+    <property name="client.version" value="1.22 delta"/>
+    <property name="client.vendor" value="Illarion e.V."/>
+    <property name="client.name" value="Illarion Client"/>
 
     <!-- Common informations -->
-    <property name="common.version" value="1.22" />
-    <property name="common.vendor" value="Illarion e.V." />
-    <property name="common.name" value="Illarion Common Library" />
+    <property name="common.version" value="1.22"/>
+    <property name="common.vendor" value="Illarion e.V."/>
+    <property name="common.name" value="Illarion Common Library"/>
 
     <!-- Resources informations -->
-    <property name="resources.version" value="1.22" />
-    <property name="resources.vendor" value="Illarion e.V." />
-    <property name="resources.name" value="Illarion Resources" />
+    <property name="resources.version" value="1.22"/>
+    <property name="resources.vendor" value="Illarion e.V."/>
+    <property name="resources.name" value="Illarion Resources"/>
 
     <!-- MapEditor informations -->
-    <property name="mapedit.version" value="1.01" />
-    <property name="mapedit.vendor" value="Illarion e.V." />
-    <property name="mapedit.name" value="Illarion Mapeditor" />
+    <property name="mapedit.version" value="1.01"/>
+    <property name="mapedit.vendor" value="Illarion e.V."/>
+    <property name="mapedit.name" value="Illarion Mapeditor"/>
 
     <!-- EasyNPC Editor informations -->
-    <property name="easynpc.version" value="1.02" />
-    <property name="easynpc.vendor" value="Illarion e.V." />
-    <property name="easynpc.name" value="Illarion easyNPC Editor" />
+    <property name="easynpc.version" value="1.02"/>
+    <property name="easynpc.vendor" value="Illarion e.V."/>
+    <property name="easynpc.name" value="Illarion easyNPC Editor"/>
 
     <!-- EasyQuest Editor informations -->
-    <property name="easyquest.version" value="0.00001 alpha" />
-    <property name="easyquest.vendor" value="Illarion e.V." />
-    <property name="easyquest.name" value="Illarion easyQuest Editor" />
+    <property name="easyquest.version" value="0.00001 alpha"/>
+    <property name="easyquest.vendor" value="Illarion e.V."/>
+    <property name="easyquest.name" value="Illarion easyQuest Editor"/>
 
     <!-- Download informations -->
-    <property name="download.version" value="1.00" />
-    <property name="download.vendor" value="Illarion e.V." />
-    <property name="download.name" value="Illarion Webstart download display" />
+    <property name="download.version" value="1.00"/>
+    <property name="download.vendor" value="Illarion e.V."/>
+    <property name="download.name" value="Illarion Webstart download display"/>
 
     <!-- Config informations -->
-    <property name="config.version" value="1.06" />
-    <property name="config.vendor" value="Illarion e.V." />
-    <property name="config.name" value="Illarion Config-Tool" />
+    <property name="config.version" value="1.06"/>
+    <property name="config.vendor" value="Illarion e.V."/>
+    <property name="config.name" value="Illarion Config-Tool"/>
 
     <!-- NiftyControls informations -->
-    <property name="niftycontrols.version" value="1.00" />
-    <property name="niftycontrols.vendor" value="Illarion e.V." />
-    <property name="niftycontrols.name" value="Illarion Nifty Controls" />
+    <property name="niftycontrols.version" value="1.00"/>
+    <property name="niftycontrols.vendor" value="Illarion e.V."/>
+    <property name="niftycontrols.name" value="Illarion Nifty Controls"/>
 
     <!-- NiftyStyles informations -->
-    <property name="niftystyle.version" value="1.00" />
-    <property name="niftystyle.vendor" value="Illarion e.V." />
-    <property name="niftystyle.name" value="Illarion Nifty Style" />
+    <property name="niftystyle.version" value="1.00"/>
+    <property name="niftystyle.vendor" value="Illarion e.V."/>
+    <property name="niftystyle.name" value="Illarion Nifty Style"/>
 
     <!-- Compile informations -->
-    <property name="build.compiler" value="javac1.6" />
-    <property name="build.debug" value="on" />
-    <property name="build.debuglevel" value="lines,vars,source" />
-    <property name="source.version" value="1.6" />
-    <property name="target.version" value="1.6" />
-    <property name="source.encoding" value="UTF-8" />
-    <property name="build.index" value="false" />
+    <property name="build.compiler" value="javac1.6"/>
+    <property name="build.debug" value="on"/>
+    <property name="build.debuglevel" value="lines,vars,source"/>
+    <property name="source.version" value="1.6"/>
+    <property name="target.version" value="1.6"/>
+    <property name="source.encoding" value="UTF-8"/>
+    <property name="build.index" value="false"/>
 
     <!-- Generate the timestamp of the current compile time -->
-    <tstamp />
+    <tstamp/>
 
     <!-- Libraries -->    <!-- Eventbus 1.4 -->    <!-- http://www.javazoom.net/vorbisspi/vorbisspi.html -->
-    <property name="eventbus.dir" location="${common}/lib/eventbus" />
+    <property name="eventbus.dir" location="${common}/lib/eventbus"/>
     <patternset id="eventbus.pattern">
-        <include name="eventbus-1.4.jar" />
+        <include name="eventbus-1.4.jar"/>
     </patternset>
     <fileset id="eventbus" dir="${eventbus.dir}">
-        <patternset refid="eventbus.pattern" />
+        <patternset refid="eventbus.pattern"/>
     </fileset>
 
     <!-- Vorbis SPI 1.0.3 -->    <!-- http://www.javazoom.net/vorbisspi/vorbisspi.html -->
-    <property name="vorbisspi.dir" location="${common}/lib/vorbisspi" />
+    <property name="vorbisspi.dir" location="${common}/lib/vorbisspi"/>
     <patternset id="vorbisspi.pattern">
-        <include name="vorbisspi.jar" />
+        <include name="vorbisspi.jar"/>
     </patternset>
     <fileset id="vorbisspi" dir="${vorbisspi.dir}">
-        <patternset refid="vorbisspi.pattern" />
+        <patternset refid="vorbisspi.pattern"/>
     </fileset>
 
-    <property name="jorbis.dir" location="${common}/lib/jorbis" />
+    <property name="jorbis.dir" location="${common}/lib/jorbis"/>
     <patternset id="jorbis.pattern">
-        <include name="jogg.jar" />
-        <include name="jorbis.jar" />
+        <include name="jogg.jar"/>
+        <include name="jorbis.jar"/>
     </patternset>
     <fileset id="jorbis" dir="${jorbis.dir}">
-        <patternset refid="jorbis.pattern" />
+        <patternset refid="jorbis.pattern"/>
     </fileset>
 
-    <property name="tritonus.dir" location="${common}/lib/tritonus" />
+    <property name="tritonus.dir" location="${common}/lib/tritonus"/>
     <patternset id="tritonus.pattern">
-        <include name="tritonus_share.jar" />
+        <include name="tritonus_share.jar"/>
     </patternset>
     <fileset id="tritonus" dir="${tritonus.dir}">
-        <patternset refid="tritonus.pattern" />
+        <patternset refid="tritonus.pattern"/>
     </fileset>
 
     <!-- Log4j 1.2.15 -->    <!-- http://logging.apache.org/log4j/1.2/index.html -->
     <patternset id="log4j.pattern">
-        <include name="log4j.jar" />
+        <include name="log4j.jar"/>
     </patternset>
     <fileset id="log4j" dir="${common}/lib/log4j">
-        <patternset refid="log4j.pattern" />
+        <patternset refid="log4j.pattern"/>
     </fileset>
 
     <!-- Javolution 5.5.1 -->    <!-- http://javolution.org/ -->
     <patternset id="javolution.pattern">
-        <include name="javolution.jar" />
+        <include name="javolution.jar"/>
     </patternset>
     <fileset id="javolution" dir="${common}/lib/javolution">
-        <patternset refid="javolution.pattern" />
+        <patternset refid="javolution.pattern"/>
     </fileset>
 
     <!-- LWJGL 2.6 -->    <!-- http://www.lwjgl.org/ -->
-    <property name="lwjgl.dir" location="${common}/lib/lwjgl" />
+    <property name="lwjgl.dir" location="${common}/lib/lwjgl"/>
     <patternset id="lwjgl.pattern">
-        <include name="lwjgl.jar" />
-        <include name="lwjgl*.jar" />
-        <include name="AppleJavaExtensions.jar" />
-        <include name="jinput.jar" />
-        <exclude name="*natives*" />
+        <include name="lwjgl.jar"/>
+        <include name="lwjgl*.jar"/>
+        <include name="AppleJavaExtensions.jar"/>
+        <include name="jinput.jar"/>
+        <exclude name="*natives*"/>
     </patternset>
     <fileset id="lwjgl" dir="${lwjgl.dir}">
-        <patternset refid="lwjgl.pattern" />
+        <patternset refid="lwjgl.pattern"/>
     </fileset>
 
     <!-- Slick --><!-- http://slick.cokeandcode.com/ -->
-    <property name="slick.dir" location="${common}/lib/slick" />
+    <property name="slick.dir" location="${common}/lib/slick"/>
     <patternset id="slick.pattern">
-        <include name="slick.jar" />
+        <include name="slick.jar"/>
     </patternset>
     <fileset id="slick" dir="${slick.dir}">
-        <patternset refid="slick.pattern" />
+        <patternset refid="slick.pattern"/>
     </fileset>
 
     <!-- Nifty 1.3.1-SNAPSHOT --><!-- http://nifty-gui.lessvoid.com/ -->
-    <property name="nifty.dir" location="${common}/lib/nifty" />
+    <property name="nifty.dir" location="${common}/lib/nifty"/>
     <patternset id="nifty.pattern">
-        <include name="nifty*.jar" />
-        <exclude name="*sources*" />
+        <include name="nifty*.jar"/>
+        <exclude name="*sources*"/>
     </patternset>
     <fileset id="nifty" dir="${nifty.dir}">
-        <patternset refid="nifty.pattern" />
+        <patternset refid="nifty.pattern"/>
     </fileset>
 
     <!-- JGraph 1.7.1.6 -->    <!-- http://www.jgraph.com/ -->
-    <property name="jgraph.dir" location="${common}/lib/jgraph" />
+    <property name="jgraph.dir" location="${common}/lib/jgraph"/>
     <patternset id="jgraph.pattern">
-        <include name="jgraphx.jar" />
+        <include name="jgraphx.jar"/>
     </patternset>
     <fileset id="jgraph" dir="${jgraph.dir}">
-        <patternset refid="jgraph.pattern" />
+        <patternset refid="jgraph.pattern"/>
     </fileset>
 
     <!-- GNU Trove 3.0.0 -->    <!-- http://trove4j.sourceforge.net/ -->
     <patternset id="trove.pattern">
-        <include name="trove.jar" />
+        <include name="trove.jar"/>
     </patternset>
     <fileset id="trove" dir="${common}/lib/trove">
-        <patternset refid="trove.pattern" />
+        <patternset refid="trove.pattern"/>
     </fileset>
 
     <!-- TWL PNG Decoder --><!-- http://twl.l33tlabs.org -->
     <patternset id="twl.pattern">
-        <include name="PNGDecoder.jar" />
+        <include name="PNGDecoder.jar"/>
     </patternset>
     <fileset id="twl" dir="${common}/lib/twl">
-        <patternset refid="twl.pattern" />
+        <patternset refid="twl.pattern"/>
     </fileset>
 
     <!-- Insubstantial 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
     <patternset id="substance.pattern">
-        <include name="substance.jar" />
+        <include name="substance.jar"/>
     </patternset>
     <fileset id="substance" dir="${common}/lib/substance">
-        <patternset refid="substance.pattern" />
+        <patternset refid="substance.pattern"/>
     </fileset>
 
     <!-- Flamingo Swing component suite 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
     <patternset id="flamingo.pattern">
-        <include name="flamingo.jar" />
+        <include name="flamingo.jar"/>
     </patternset>
     <fileset id="flamingo" dir="${common}/lib/flamingo">
-        <patternset refid="flamingo.pattern" />
+        <patternset refid="flamingo.pattern"/>
     </fileset>
 
     <!-- Substance Flamingo component suite 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
     <patternset id="substance-flamingo.pattern">
-        <include name="substance-flamingo.jar" />
+        <include name="substance-flamingo.jar"/>
     </patternset>
     <fileset id="substance-flamingo" dir="${common}/lib/substance-flamingo">
-        <patternset refid="substance-flamingo.pattern" />
+        <patternset refid="substance-flamingo.pattern"/>
     </fileset>
 
     <!-- Substance SwingX component suite 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
     <patternset id="substance-swingx.pattern">
-        <include name="substance-swingx.jar" />
+        <include name="substance-swingx.jar"/>
     </patternset>
     <fileset id="substance-swingx" dir="${common}/lib/substance-swingx">
-        <patternset refid="substance-swingx.pattern" />
+        <patternset refid="substance-swingx.pattern"/>
     </fileset>
 
     <!-- Trident Animation Library 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
     <patternset id="trident.pattern">
-        <include name="trident.jar" />
+        <include name="trident.jar"/>
     </patternset>
     <fileset id="trident" dir="${common}/lib/trident">
-        <patternset refid="trident.pattern" />
+        <patternset refid="trident.pattern"/>
     </fileset>
 
     <!-- Swing Look and Feel enhancement framework 7.1 -->    <!-- http://insubstantial.posterous.com/ -->
     <patternset id="laf.pattern">
-        <include name="laf-plugin.jar" />
-        <include name="laf-widget.jar" />
+        <include name="laf-plugin.jar"/>
+        <include name="laf-widget.jar"/>
     </patternset>
     <fileset id="laf" dir="${common}/lib/laf">
-        <patternset refid="laf.pattern" />
+        <patternset refid="laf.pattern"/>
     </fileset>
 
     <!-- SwingX 1.6.3 -->    <!-- http://swinglabs.org/index.jsp -->
     <patternset id="swingx.pattern">
-        <include name="swingx.jar" />
+        <include name="swingx.jar"/>
     </patternset>
     <fileset id="swingx" dir="${common}/lib/swingx">
-        <patternset refid="swingx.pattern" />
+        <patternset refid="swingx.pattern"/>
     </fileset>
 
-    <!-- JSyntaxPane 0.9.5 b29 -->    <!-- http://code.google.com/p/jsyntaxpane/ -->
-    <patternset id="jsyntaxpane.pattern">
-        <include name="jsyntaxpane.jar" />
+    <!-- RSyntaxTextArea 2.0.3 -->    <!-- http://sourceforge.net/projects/rsyntaxtextarea/ -->
+    <patternset id="rsyntaxtextarea.pattern">
+        <include name="rsyntaxtextarea.jar"/>
     </patternset>
-    <fileset id="jsyntaxpane" dir="${common}/lib/jsyntaxpane">
-        <patternset refid="jsyntaxpane.pattern" />
+    <fileset id="rsyntaxtextarea" dir="${common}/lib/rsyntaxtextarea">
+        <patternset refid="rsyntaxtextarea.pattern"/>
     </fileset>
 
     <!-- Tabsplitter -->    <!-- http://javadude.com/tools/tabsplitter/index.html -->
     <patternset id="tabsplitter.pattern">
-        <include name="tabsplitter.jar" />
+        <include name="tabsplitter.jar"/>
     </patternset>
     <fileset id="tabsplitter" dir="${common}/lib/tabsplitter">
-        <patternset refid="tabsplitter.pattern" />
+        <patternset refid="tabsplitter.pattern"/>
     </fileset>
 
     <!-- LZMA SDK 9.20 -->    <!-- http://www.7-zip.org/sdk.html -->
     <patternset id="lzma.pattern">
-        <include name="lzma.jar" />
+        <include name="lzma.jar"/>
     </patternset>
     <fileset id="lzma" dir="${common}/lib/lzma">
-        <patternset refid="lzma.pattern" />
+        <patternset refid="lzma.pattern"/>
     </fileset>
 
     <!-- XZ-Java --><!-- https://github.com/jponge/lzma-java -->
     <patternset id="xz.pattern">
-        <include name="xz.jar" />
+        <include name="xz.jar"/>
     </patternset>
     <fileset id="xz" dir="${common}/lib/xz">
-        <patternset refid="xz.pattern" />
+        <patternset refid="xz.pattern"/>
     </fileset>
 
     <!-- Standard Window Toolkit (SWT) 3.6.1 -->    <!-- http://www.eclipse.org/swt/ -->
     <patternset id="swt.pattern">
-        <include name="swt.jar" />
+        <include name="swt.jar"/>
     </patternset>
     <fileset id="swt" dir="${common}/lib/swt">
-        <patternset refid="swt.pattern" />
+        <patternset refid="swt.pattern"/>
     </fileset>
 
     <!-- XPP3 1.1.4c -->    <!-- http://www.extreme.indiana.edu/xgws/xsoap/xpp/ -->
     <patternset id="xpp.pattern">
-        <include name="xpp3*.jar" />
+        <include name="xpp3*.jar"/>
     </patternset>
     <fileset id="xpp" dir="${common}/lib/xpp3">
-        <patternset refid="xpp.pattern" />
+        <patternset refid="xpp.pattern"/>
     </fileset>
 
     <!-- and finally some functions that are used in all build scripts -->    <!--
@@ -344,113 +344,115 @@
         it also. The source file is removed by this function.
     -->
     <target name="deploy">
-        <signjar alias="${storealias}" jar="${target}" storepass="${storepass}" keystore="${keystore}" signedjar="${target}" storetype="${storetype}" />
-        <verifyjar jar="${target}" alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no" storetype="${storetype}" />
-        <mkdir dir="${setup}" />
+        <signjar alias="${storealias}" jar="${target}" storepass="${storepass}" keystore="${keystore}"
+                 signedjar="${target}" storetype="${storetype}"/>
+        <verifyjar jar="${target}" alias="${storealias}" storepass="${storepass}" keystore="${keystore}"
+                   certificates="yes" verbose="no" storetype="${storetype}"/>
+        <mkdir dir="${setup}"/>
 
-        <copy file="${target}" todir="${setup}" />
-        <delete file="${target}" />
+        <copy file="${target}" todir="${setup}"/>
+        <delete file="${target}"/>
     </target>
 
     <target name="init">
-        <mkdir dir="${compiled}" />
-        <mkdir dir="${signedcompiled}" />
+        <mkdir dir="${compiled}"/>
+        <mkdir dir="${signedcompiled}"/>
     </target>
 
     <!-- Install the proguard task -->
     <target name="proguard">
         <!-- Create the proguard task -->
-        <taskdef resource="proguard/ant/task.properties" classpath="${common}/lib/proguard/proguard.jar" />
+        <taskdef resource="proguard/ant/task.properties" classpath="${common}/lib/proguard/proguard.jar"/>
     </target>
 
-    <property name="build.local.dir" location="${illacommon.include.dir}/${build.local}" />
+    <property name="build.local.dir" location="${illacommon.include.dir}/${build.local}"/>
     <target name="get_buildtool">
-        <get dest="${build.local.dir}" src="${build.url}" verbose="true" usetimestamp="true" ignoreerrors="true" />
+        <get dest="${build.local.dir}" src="${build.url}" verbose="true" usetimestamp="true" ignoreerrors="true"/>
     </target>
 
     <target name="register_extensions" depends="get_buildtool">
         <delete failonerror="false">
             <fileset dir="${illacommon.include.dir}">
-                <include name="tempBuildTool_*" />
+                <include name="tempBuildTool_*"/>
             </fileset>
         </delete>
 
-        <tempfile destdir="${illacommon.include.dir}" prefix="tempBuildTool_" property="local.buildtool" />
-        <copy file="${build.local.dir}" tofile="${local.buildtool}" />
+        <tempfile destdir="${illacommon.include.dir}" prefix="tempBuildTool_" property="local.buildtool"/>
+        <copy file="${build.local.dir}" tofile="${local.buildtool}"/>
         <taskdef resource="illarion/build/illabuild.properties">
             <classpath>
-                <pathelement location="${local.buildtool}" />
+                <pathelement location="${local.buildtool}"/>
             </classpath>
         </taskdef>
     </target>
 
-    <target name="buildTasks" depends="register_extensions" />
+    <target name="buildTasks" depends="register_extensions"/>
 
     <target name="native_build_pattern">
         <patternset id="only.windows.32">
-            <exclude name="*linux*" />
-            <exclude name="*x11*" />
-            <exclude name="*osx*" />
-            <exclude name="*solaris*" />
-            <exclude name="*amd64*" />
+            <exclude name="*linux*"/>
+            <exclude name="*x11*"/>
+            <exclude name="*osx*"/>
+            <exclude name="*solaris*"/>
+            <exclude name="*amd64*"/>
         </patternset>
         <patternset id="only.windows.64">
-            <exclude name="*linux*" />
-            <exclude name="*x11*" />
-            <exclude name="*osx*" />
-            <exclude name="*solaris*" />
-            <exclude name="*i586*" />
+            <exclude name="*linux*"/>
+            <exclude name="*x11*"/>
+            <exclude name="*osx*"/>
+            <exclude name="*solaris*"/>
+            <exclude name="*i586*"/>
         </patternset>
         <patternset id="only.linux.32">
-            <exclude name="*.win*" />
-            <exclude name="*-win*" />
-            <exclude name="*osx*" />
-            <exclude name="*solaris*" />
-            <exclude name="*amd64*" />
+            <exclude name="*.win*"/>
+            <exclude name="*-win*"/>
+            <exclude name="*osx*"/>
+            <exclude name="*solaris*"/>
+            <exclude name="*amd64*"/>
         </patternset>
         <patternset id="only.linux.64">
-            <exclude name="*.win*" />
-            <exclude name="*-win*" />
-            <exclude name="*osx*" />
-            <exclude name="*solaris*" />
-            <exclude name="*i586*" />
+            <exclude name="*.win*"/>
+            <exclude name="*-win*"/>
+            <exclude name="*osx*"/>
+            <exclude name="*solaris*"/>
+            <exclude name="*i586*"/>
         </patternset>
         <patternset id="only.macosx">
-            <exclude name="*.win*" />
-            <exclude name="*-win*" />
-            <exclude name="*linux*" />
-            <exclude name="*x11*" />
-            <exclude name="*solaris*" />
-            <exclude name="*i586*" />
-            <exclude name="*amd64*" />
+            <exclude name="*.win*"/>
+            <exclude name="*-win*"/>
+            <exclude name="*linux*"/>
+            <exclude name="*x11*"/>
+            <exclude name="*solaris*"/>
+            <exclude name="*i586*"/>
+            <exclude name="*amd64*"/>
         </patternset>
         <patternset id="only.sunos.32">
-            <exclude name="*.win*" />
-            <exclude name="*-win*" />
-            <exclude name="*linux*" />
-            <exclude name="*osx*" />
-            <exclude name="*amd64*" />
+            <exclude name="*.win*"/>
+            <exclude name="*-win*"/>
+            <exclude name="*linux*"/>
+            <exclude name="*osx*"/>
+            <exclude name="*amd64*"/>
         </patternset>
         <patternset id="only.sunos.64">
-            <exclude name="*.win*" />
-            <exclude name="*-win*" />
-            <exclude name="*linux*" />
-            <exclude name="*osx*" />
-            <exclude name="*i586*" />
+            <exclude name="*.win*"/>
+            <exclude name="*-win*"/>
+            <exclude name="*linux*"/>
+            <exclude name="*osx*"/>
+            <exclude name="*i586*"/>
         </patternset>
     </target>
 
     <target name="check_optional_dirs">
-        <available filepath="${sign}" file="${sign}" property="keys.exist" type="dir" />
+        <available filepath="${sign}" file="${sign}" property="keys.exist" type="dir"/>
         <condition property="not.keys.exist">
             <not>
-                <isset property="keys.exist" />
+                <isset property="keys.exist"/>
             </not>
         </condition>
         <condition property="keys.config.exist" else="not.keys.config.exist">
             <and>
-                <isset property="keys.exist" />
-                <isset property="config.exist" />
+                <isset property="keys.exist"/>
+                <isset property="config.exist"/>
             </and>
         </condition>
     </target>

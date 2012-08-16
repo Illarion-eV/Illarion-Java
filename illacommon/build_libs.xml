@@ -39,7 +39,7 @@
 
         <antcall target="prepare_eventbus"/>
         <antcall target="prepare_javolution"/>
-        <antcall target="prepare_jsyntaxpane"/>
+        <antcall target="prepare_rsyntaxtextarea"/>
         <antcall target="prepare_jgraph"/>
         <antcall target="prepare_log4j"/>
         <antcall target="prepare_lwjgl"/>
@@ -119,17 +119,17 @@
         </resourcebuild>
     </target>
 
-    <target name="prepare_jsyntaxpane" description="prepare the JSYNTAXPANE bundle"
+    <target name="prepare_rsyntaxtextarea" description="prepare the RSYNTAXTEXTAREA bundle"
             depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
         <resourceprepare targetdir="${signedlibs}" usepack200="true">
-            <fileset refid="jsyntaxpane"/>
+            <fileset refid="rsyntaxtextarea"/>
         </resourceprepare>
 
         <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}"
                  storetype="${storetype}">
             <path>
                 <fileset dir="${signedlibs}">
-                    <patternset refid="jsyntaxpane.pattern"/>
+                    <patternset refid="rsyntaxtextarea.pattern"/>
                 </fileset>
             </path>
         </signjar>
@@ -138,14 +138,14 @@
                    storetype="${storetype}">
             <path>
                 <fileset dir="${signedlibs}">
-                    <patternset refid="jsyntaxpane.pattern"/>
+                    <patternset refid="rsyntaxtextarea.pattern"/>
                 </fileset>
             </path>
         </verifyjar>
 
-        <resourcebuild target="${setuplib}/jsyntaxpane.illares" usepack200="true">
+        <resourcebuild target="${setuplib}/rsyntaxtextarea.illares" usepack200="true">
             <fileset dir="${signedlibs}">
-                <patternset refid="jsyntaxpane.pattern"/>
+                <patternset refid="rsyntaxtextarea.pattern"/>
             </fileset>
         </resourcebuild>
     </target>
@@ -961,6 +961,7 @@
     <target name="download_everything" depends="rsc_download,rsc_manual,download_libraries"/>
 
     <target name="rsc_download" description="Download the resources">
+        <mkdir dir="${resources}"/>
         <get src="http://illarion.org/media/java/rsc/rsc_books.jar" dest="${resources}/rsc_books.jar"
              usetimestamp="true" verbose="true"/>
         <get src="http://illarion.org/media/java/rsc/rsc_chars.jar" dest="${resources}/rsc_chars.jar"
