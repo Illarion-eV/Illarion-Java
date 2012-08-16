@@ -26,11 +26,9 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
-import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -51,8 +49,7 @@ import java.util.regex.Pattern;
  * @since 1.00
  */
 public final class Editor extends RTextScrollPane {
-    private static final Pattern fullLinePattern = Pattern.compile("^",
-            Pattern.MULTILINE);
+    private static final Pattern fullLinePattern = Pattern.compile("^", Pattern.MULTILINE);
 
     /**
      * The new line separator used.
@@ -86,20 +83,30 @@ public final class Editor extends RTextScrollPane {
 
     private final Timer timer;
 
-    private final UndoManager undoManager;
-
     /**
      * The default constructor that prepares the editor for the display.
      */
     Editor() {
         super(new RSyntaxTextArea(), true);
+
         editor = getEditor();
         editor.setEditable(true);
         editor.setEnabled(true);
         ((RSyntaxDocument) editor.getDocument()).setSyntaxStyle(new EasyNpcTokenMaker());
         editor.getSyntaxScheme().restoreDefaults(new Font(Font.MONOSPACED, Font.PLAIN, 12), true);
 
-        new RSyntaxTextAreaEditorKit();
+        final MenuElement[] elements = editor.getPopupMenu().getSubElements();
+        for (final MenuElement element : elements) {
+            final AbstractButton button = (AbstractButton) element;
+            if ("Undo".equals(button.getActionCommand()) || "Redo".equals(button.getActionCommand())) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
+                        UndoMonitor.getInstance().updateUndoRedoLater(Editor.this);
+                    }
+                });
+            }
+        }
 
         setViewportView(editor);
 
@@ -117,13 +124,7 @@ public final class Editor extends RTextScrollPane {
         });
         timer.setInitialDelay(1000);
 
-        //editor.setEditorKit(new EasyNpcSyntaxKit());
-
-        undoManager = new UndoManager();
-        undoManager.setLimit(Config.getInstance().getUndoCount());
-        editor.getDocument()
-                .addUndoableEditListener(UndoMonitor.getInstance());
-        editor.getDocument().addUndoableEditListener(undoManager);
+        editor.getDocument().addUndoableEditListener(UndoMonitor.getInstance());
 
         editor.addKeyListener(new KeyListener() {
             @Override
@@ -168,7 +169,7 @@ public final class Editor extends RTextScrollPane {
         MainFrame.getInstance().getErrorArea().removeErrorEditor(this);
         parsedVersion = null;
         errorNpc = null;
-        undoManager.discardAllEdits();
+        editor.discardAllEdits();
     }
 
     public RSyntaxTextArea getEditor() {
@@ -279,10 +280,6 @@ public final class Editor extends RTextScrollPane {
         return retText;
     }
 
-    public UndoManager getUndoManager() {
-        return undoManager;
-    }
-
     /**
      * Display a easy NPC script in this editor.
      *
@@ -300,7 +297,7 @@ public final class Editor extends RTextScrollPane {
         editor.setText(buffer.toString());
         editor.setCaretPosition(0);
         setLoadScriptFile(script.getSourceScriptFile());
-        undoManager.discardAllEdits();
+        editor.discardAllEdits();
     }
 
     public void resetEditorKit() {
@@ -400,5 +397,29 @@ public final class Editor extends RTextScrollPane {
         buffer.delete(selStart, selEnd);
         setScriptText(buffer.toString());
         getFocusToPosition(selStart);
+    }
+
+    @EventTopicSubscriber(topic = "undoLastAction")
+    public void onUndoEvent(final String topic, final ActionEvent event) {
+        if (!isActiveEditor()) {
+            return;
+        }
+
+        if (editor.canUndo()) {
+            editor.undoLastAction();
+        }
+        UndoMonitor.getInstance().updateUndoRedo(this);
+    }
+
+    @EventTopicSubscriber(topic = "redoLastAction")
+    public void onRedoEvent(final String topic, final ActionEvent event) {
+        if (!isActiveEditor()) {
+            return;
+        }
+
+        if (editor.canRedo()) {
+            editor.redoLastAction();
+        }
+        UndoMonitor.getInstance().updateUndoRedo(this);
     }
 }

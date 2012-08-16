@@ -1,42 +1,38 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import illarion.easynpc.Lang;
+import org.bushe.swing.event.EventBusAction;
+import org.pushingpixels.flamingo.api.common.JCommandButton;
+import org.pushingpixels.flamingo.api.common.RichTooltip;
 
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.UndoManager;
-
-import org.pushingpixels.flamingo.api.common.JCommandButton;
-import org.pushingpixels.flamingo.api.common.RichTooltip;
-
-import illarion.easynpc.Lang;
 
 /**
  * This class monitors the undo able actions that can be done and updates the
  * buttons displayed at the top of the editor according to this.
- * 
+ *
  * @author Martin Karing
  * @since 1.01
  */
@@ -62,49 +58,26 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      */
     @SuppressWarnings("nls")
     private UndoMonitor() {
-        undoButton =
-            new JCommandButton(Utils.getResizableIconFromResource("undo.png"));
-        redoButton =
-            new JCommandButton(Utils.getResizableIconFromResource("redo.png"));
+        undoButton = new JCommandButton(Utils.getResizableIconFromResource("undo.png"));
+        redoButton = new JCommandButton(Utils.getResizableIconFromResource("redo.png"));
 
         undoButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-            getClass(), "undoButtonTooltipTitle"), Lang.getMsg(getClass(),
-            "undoButtonTooltip")));
+                getClass(), "undoButtonTooltipTitle"), Lang.getMsg(getClass(),
+                "undoButtonTooltip")));
         redoButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-            getClass(), "redoButtonTooltipTitle"), Lang.getMsg(getClass(),
-            "redoButtonTooltip")));
+                getClass(), "redoButtonTooltipTitle"), Lang.getMsg(getClass(),
+                "redoButtonTooltip")));
 
-        undoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final UndoManager manager =
-                    MainFrame.getInstance().getCurrentScriptEditor()
-                        .getUndoManager();
-                if (manager.canUndo()) {
-                    manager.undo();
-                }
+        undoButton.getActionModel().setActionCommand("undoLastAction");
+        redoButton.getActionModel().setActionCommand("redoLastAction");
 
-                updateUndoRedo(manager);
-            }
-        });
-        redoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final UndoManager manager =
-                    MainFrame.getInstance().getCurrentScriptEditor()
-                        .getUndoManager();
-                if (manager.canRedo()) {
-                    manager.redo();
-                }
-
-                updateUndoRedo(manager);
-            }
-        });
+        undoButton.addActionListener(new EventBusAction());
+        redoButton.addActionListener(new EventBusAction());
     }
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance of this class
      */
     public static UndoMonitor getInstance() {
@@ -113,7 +86,7 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
 
     /**
      * Get the redo button.
-     * 
+     *
      * @return The redo button
      */
     public JCommandButton getRedoButton() {
@@ -122,7 +95,7 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
 
     /**
      * Get the undo button.
-     * 
+     *
      * @return The undo button
      */
     public JCommandButton getUndoButton() {
@@ -138,7 +111,7 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
         final JTabbedPane pane = (JTabbedPane) e.getSource();
         final Editor editor = (Editor) pane.getSelectedComponent();
         if (editor != null) {
-            updateUndoRedo(editor.getUndoManager());
+            updateUndoRedo(editor);
         } else {
             updateUndoRedo(null);
         }
@@ -154,24 +127,39 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
             return;
         }
         final Editor editor = MainFrame.getInstance().getCurrentScriptEditor();
-        updateUndoRedo(editor.getUndoManager());
+        updateUndoRedo(editor);
     }
 
     /**
      * Update the undo and the redo button.
-     * 
+     *
      * @param manager the manger that delivers the data for the state of the
-     *            undo and the redo button, in case the manager is
-     *            <code>null</code> the buttons are disabled
+     *                undo and the redo button, in case the manager is
+     *                <code>null</code> the buttons are disabled
      */
-    void updateUndoRedo(final UndoManager manager) {
+    public void updateUndoRedo(final Editor manager) {
         if (manager == null) {
             redoButton.setEnabled(false);
             undoButton.setEnabled(false);
         } else {
-            redoButton.setEnabled(manager.canRedo());
-            undoButton.setEnabled(manager.canUndo());
+            redoButton.setEnabled(manager.getEditor().canRedo());
+            undoButton.setEnabled(manager.getEditor().canUndo());
         }
     }
 
+    /**
+     * Update the undo and the redo button.
+     *
+     * @param manager the manger that delivers the data for the state of the
+     *                undo and the redo button, in case the manager is
+     *                <code>null</code> the buttons are disabled
+     */
+    public void updateUndoRedoLater(final Editor manager) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                updateUndoRedo(manager);
+            }
+        });
+    }
 }
