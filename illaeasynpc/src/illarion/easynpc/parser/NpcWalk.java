@@ -1,41 +1,39 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parser;
-
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.text.Segment;
-
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
 
 import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedWalkingRadius;
+import jsyntaxpane.Token;
+import jsyntaxpane.TokenType;
+
+import javax.swing.text.Segment;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class handles all values and functions related to NPCs that walk around.
- * 
+ *
  * @author Martin Karing
  * @since 1.00
  */
@@ -46,11 +44,11 @@ public final class NpcWalk implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern RADIUS_LINE = Pattern.compile(
-        "^\\s*(radius)\\s*=\\s*(\\d+)\\s*", Pattern.MULTILINE);
+            "^\\s*(radius)\\s*=\\s*(\\d+)\\s*", Pattern.MULTILINE);
 
     /**
      * Check if the line contains walking data.
-     * 
+     *
      * @param line the line that is supposed to be parsed.
      * @return <code>true</code> in case the line can be parsed by this class
      */
@@ -99,17 +97,17 @@ public final class NpcWalk implements NpcType {
 
         if (matcher.find()) {
             final int walkingRadius = Integer.parseInt(matcher.group(2));
-            npc.addNpcData(ParsedWalkingRadius.getInstance(walkingRadius));
+            npc.addNpcData(new ParsedWalkingRadius(walkingRadius));
         }
     }
 
     @Override
     public void parseSegment(final Segment segment, final int offset,
-        final List<Token> tokens) {
+                             final List<Token> tokens) {
         final Matcher matcher = RADIUS_LINE.matcher(segment);
         while (matcher.find()) {
             tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                matcher.end(1) - matcher.start(1)));
+                    matcher.end(1) - matcher.start(1)));
         }
     }
 }

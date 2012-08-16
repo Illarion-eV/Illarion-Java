@@ -1,27 +1,22 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parsed;
-
-import java.io.IOException;
-import java.io.Writer;
-
-import javolution.context.ObjectFactory;
 
 import illarion.easynpc.data.EquipmentSlots;
 import illarion.easynpc.data.Items;
@@ -29,85 +24,40 @@ import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
+import java.io.IOException;
+import java.io.Writer;
+
 /**
- * This class stores the parsed equipment data that contains informations about
- * what the NPC wears.
- * 
+ * This class stores the parsed equipment data that contains information about what the NPC wears.
+ *
  * @author Martin Karing
- * @version 1.00
- * @since 1.02
  */
 public final class ParsedEquipment implements ParsedData {
-    /**
-     * The factory for the parsed equipment. This stores all formerly created
-     * and currently unused instances of the ParsedEquipment class.
-     * 
-     * @author Martin Karing
-     * @since 1.02
-     * @version 1.02
-     */
-    private static final class ParsedEquipmentFactory extends
-        ObjectFactory<ParsedEquipment> {
-        /**
-         * Public constructor to allow the parent class to create a proper
-         * instance.
-         */
-        public ParsedEquipmentFactory() {
-            // nothing to do
-        }
-
-        /**
-         * Create a new instance of the recycled object.
-         */
-        @Override
-        protected ParsedEquipment create() {
-            return new ParsedEquipment();
-        }
-    }
-
-    /**
-     * The instance of the factory used to create the objects for this class.
-     */
-    private static final ParsedEquipmentFactory FACTORY =
-        new ParsedEquipmentFactory();
-
     /**
      * The format string for the LUA version of this data type.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_FORMAT =
-        "mainNPC:setEquipment(%1$s, %2$s);";
+    private static final String LUA_FORMAT = "mainNPC:setEquipment(%1$s, %2$s);";
 
     /**
      * The item that is supposed to be placed in this slot.
      */
-    private Items item;
+    private final Items item;
 
     /**
      * The equipment slot the item is supposed to be placed in.
      */
-    private EquipmentSlots slot;
+    private final EquipmentSlots slot;
 
     /**
      * Create a instance of the parsed equipment.
-     */
-    ParsedEquipment() {
-        // nothing to do
-    }
-
-    /**
-     * Get a old reused or a newly created instance of this class that stores
-     * the set data.
-     * 
+     *
      * @param itemSlot the slot the item is placed in
      * @param slotItem the item that is placed in the slot
-     * @return the object that stores the data
      */
-    public static ParsedEquipment getInstance(final EquipmentSlots itemSlot,
-        final Items slotItem) {
-        final ParsedEquipment result = FACTORY.object();
-        result.setSlotItem(itemSlot, slotItem);
-        return result;
+    public ParsedEquipment(final EquipmentSlots itemSlot, final Items slotItem) {
+        slot = itemSlot;
+        item = slotItem;
     }
 
     /**
@@ -121,11 +71,11 @@ public final class ParsedEquipment implements ParsedData {
     /**
      * Check if the current NPC stage is effected by this data entries. This
      * will return only <code>true</code> in case the stage is
-     * {@link illarion.easynpc.writer.EasyNpcWriter.WritingStage#clothes}.
+     * {@link EasyNpcWriter.WritingStage#clothes}.
      */
     @Override
     public boolean effectsEasyNpcStage(final EasyNpcWriter.WritingStage stage) {
-        return (stage == EasyNpcWriter.WritingStage.clothes);
+        return stage == EasyNpcWriter.WritingStage.clothes;
     }
 
     /**
@@ -134,7 +84,7 @@ public final class ParsedEquipment implements ParsedData {
      */
     @Override
     public boolean effectsLuaWritingStage(final LuaWriter.WritingStage stage) {
-        return (stage == LuaWriter.WritingStage.clothes);
+        return stage == LuaWriter.WritingStage.Clothes;
     }
 
     /**
@@ -147,29 +97,11 @@ public final class ParsedEquipment implements ParsedData {
     }
 
     /**
-     * Put the instance back into the factory for later reuse.
-     */
-    @Override
-    public void recycle() {
-        reset();
-        FACTORY.recycle(this);
-    }
-
-    /**
-     * Reset this instance to it can be reused later.
-     */
-    @Override
-    public void reset() {
-        item = null;
-        slot = null;
-    }
-
-    /**
      * Write the values stores in this equipment values to the easyNPC script.
      */
     @Override
     public void writeEasyNpc(final Writer target,
-        final EasyNpcWriter.WritingStage stage) throws IOException {
+                             final EasyNpcWriter.WritingStage stage) throws IOException {
         if (!effectsEasyNpcStage(stage)) {
             return;
         }
@@ -202,7 +134,7 @@ public final class ParsedEquipment implements ParsedData {
         }
 
         target.write(Integer.toString(item.getItemId()));
-        target.write(illarion.easynpc.writer.EasyNpcWriter.NL);
+        target.write(EasyNpcWriter.NL);
     }
 
     /**
@@ -210,27 +142,12 @@ public final class ParsedEquipment implements ParsedData {
      */
     @Override
     public void writeLua(final Writer target,
-        final LuaWriter.WritingStage stage) throws IOException {
+                         final LuaWriter.WritingStage stage) throws IOException {
         if (!effectsLuaWritingStage(stage)) {
             return;
         }
 
-        target.write(String.format(LUA_FORMAT,
-            Integer.toString(slot.getLuaId()),
-            Integer.toString(item.getItemId())));
-        target.write(illarion.easynpc.writer.LuaWriter.NL);
+        target.write(String.format(LUA_FORMAT, Integer.toString(slot.getLuaId()), Integer.toString(item.getItemId())));
+        target.write(LuaWriter.NL);
     }
-
-    /**
-     * Set the slot item stored in this instance.
-     * 
-     * @param itemSlot the slot the item is placed in
-     * @param slotItem the item that is placed in the slot
-     */
-    private void setSlotItem(final EquipmentSlots itemSlot,
-        final Items slotItem) {
-        slot = itemSlot;
-        item = slotItem;
-    }
-
 }

@@ -19,48 +19,18 @@
 package illarion.easynpc.parsed.talk.consequences;
 
 import illarion.easynpc.parsed.talk.TalkConsequence;
-import javolution.context.ObjectFactory;
+import illarion.easynpc.writer.LuaWriter;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * This consequence is used to store the data of a warp consequence of a
- * talking line.
+ * This consequence is used to store the data of a warp consequence of a talking line.
  *
  * @author Martin Karing
  * @author Martin Polak
- * @version 1.02
- * @since 1.02
  */
 public final class ConsequenceWarp implements TalkConsequence {
-    /**
-     * The factory class that creates and buffers ConsequenceWarp objects for
-     * later reuse.
-     *
-     * @author Martin Karing
-     * @version 1.02
-     * @since 1.02
-     */
-    private static final class ConsequenceWarpFactory extends
-            ObjectFactory<ConsequenceWarp> {
-        /**
-         * Public constructor to the parent class is able to create a instance
-         * properly.
-         */
-        public ConsequenceWarpFactory() {
-            // nothing to do
-        }
-
-        /**
-         * Create a new instance of this class.
-         */
-        @Override
-        protected ConsequenceWarp create() {
-            return new ConsequenceWarp();
-        }
-    }
-
     /**
      * The format string for the easy NPC code needed for this consequence.
      */
@@ -68,18 +38,10 @@ public final class ConsequenceWarp implements TalkConsequence {
     private static final String EASY_CODE = "warp(%1$s, %2$s, %3$s)";
 
     /**
-     * The factory used to create and reuse objects of this class.
-     */
-    private static final ConsequenceWarpFactory FACTORY =
-            new ConsequenceWarpFactory();
-
-    /**
      * The LUA code needed to be included for a warp consequence.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_CODE =
-            "talkEntry:addConsequence(%1$s.warp(%2$s, %3$s, %4$s));"
-                    + illarion.easynpc.writer.LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.warp(%2$s, %3$s, %4$s));" + LuaWriter.NL;
 
     /**
      * The LUA module that is required for this consequence to work.
@@ -90,33 +52,29 @@ public final class ConsequenceWarp implements TalkConsequence {
     /**
      * The x coordinate of the location that the player is sent to.
      */
-    private int x;
+    private final int x;
 
     /**
      * The y coordinate of the location that the player is sent to.
      */
-    private int y;
+    private final int y;
 
     /**
      * The z coordinate of the location that the player is sent to.
      */
-    private int z;
+    private final int z;
 
     /**
-     * Constructor that limits the access to this class, in order to have only
-     * the factory creating instances.
-     */
-    ConsequenceWarp() {
-        // nothing to do
-    }
-
-    /**
-     * Get a newly created or a old and reused instance of this class.
+     * The constructor that allows setting the target coordinates of the warp.
      *
-     * @return the instance of this class that is now ready to be used
+     * @param posX x-coordinate.
+     * @param posY y-coordinate.
+     * @param posZ z-coordinate.
      */
-    public static ConsequenceWarp getInstance() {
-        return FACTORY.object();
+    public ConsequenceWarp(final int posX, final int posY, final int posZ) {
+        x = posX;
+        y = posY;
+        z = posZ;
     }
 
     /**
@@ -125,38 +83,6 @@ public final class ConsequenceWarp implements TalkConsequence {
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
-    }
-
-    /**
-     * Recycle the object so it can be used again later.
-     */
-    @Override
-    public void recycle() {
-        reset();
-        FACTORY.recycle(this);
-    }
-
-    /**
-     * Reset the state of this instance to its ready to be used later.
-     */
-    @Override
-    public void reset() {
-        x = 0;
-        y = 0;
-        z = 0;
-    }
-
-    /**
-     * Set the data needed for this warp consequence.
-     *
-     * @param posx x-coordinate.
-     * @param posy y-coordinate.
-     * @param posz z-coordinate.
-     */
-    public void setCoordinates(final int posx, final int posy, final int posz) {
-        x = posx;
-        y = posy;
-        z = posz;
     }
 
     /**

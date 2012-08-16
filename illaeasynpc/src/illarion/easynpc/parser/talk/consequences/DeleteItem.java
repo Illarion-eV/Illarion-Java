@@ -1,25 +1,22 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parser.talk.consequences;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import illarion.easynpc.Lang;
 import illarion.easynpc.data.Items;
@@ -29,31 +26,23 @@ import illarion.easynpc.parsed.talk.consequences.ConsequenceDeleteItem;
 import illarion.easynpc.parser.talk.AdvNumber;
 import illarion.easynpc.parser.talk.ConsequenceParser;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
- * This is the delete item consequence. Its able to parse a delete item
- * consequence out of the consequence collection string.
- * 
+ * This is the delete item consequence. Its able to parse a delete item consequence out of the consequence collection
+ * string.
+ *
  * @author Martin Karing
- * @since 1.00
- * @version 1.02
  */
 public final class DeleteItem extends ConsequenceParser {
     /**
-     * A empty string used for some replace operations.
-     */
-    @SuppressWarnings("nls")
-    private static final String EMPTY_STRING = "".intern();
-
-    /**
-     * This pattern is used to find the strings in the condition and to remove
-     * them properly.
+     * This pattern is used to find the strings in the condition and to remove them properly.
      */
     @SuppressWarnings("nls")
     private static final Pattern STRING_FIND =
-        Pattern
-            .compile("\\s*deleteitem\\s*\\(\\s*(\\d{1,4})\\s*[,]\\s*"
-                + AdvNumber.ADV_NUMBER_REGEXP
-                + "\\s*([,]\\s*(\\d+))?\\)\\s*,\\s*", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("\\s*deleteitem\\s*\\(\\s*(\\d{1,4})\\s*[,]\\s*" + AdvNumber.ADV_NUMBER_REGEXP + "\\s*([," +
+                    "]\\s*(\\d+))?\\)\\s*,\\s*", Pattern.CASE_INSENSITIVE);
 
     /**
      * Extract a condition from the working string.
@@ -69,7 +58,7 @@ public final class DeleteItem extends ConsequenceParser {
         if (stringMatcher.find()) {
             final int itemId = Integer.parseInt(stringMatcher.group(1));
             final AdvancedNumber targetValue =
-                AdvNumber.getNumber(stringMatcher.group(2));
+                    AdvNumber.getNumber(stringMatcher.group(2));
 
             final String dataString = stringMatcher.group(4);
             long dataValue = -1L;
@@ -77,11 +66,11 @@ public final class DeleteItem extends ConsequenceParser {
                 dataValue = Long.parseLong(dataString);
             }
 
-            setLine(stringMatcher.replaceFirst(EMPTY_STRING));
+            setLine(stringMatcher.replaceFirst(""));
 
             if (targetValue == null) {
                 reportError(String.format(Lang.getMsg(getClass(), "number"),
-                    stringMatcher.group(3), stringMatcher.group(0)));
+                        stringMatcher.group(3), stringMatcher.group(0)));
                 return extract();
             }
 
@@ -95,19 +84,14 @@ public final class DeleteItem extends ConsequenceParser {
 
             if (item == null) {
                 reportError(String.format(Lang.getMsg(getClass(), "item"),
-                    stringMatcher.group(2), stringMatcher.group(0)));
+                        stringMatcher.group(2), stringMatcher.group(0)));
                 return extract();
             }
 
-            final ConsequenceDeleteItem deleteItemCons =
-                ConsequenceDeleteItem.getInstance();
-
             if (dataValue > -1L) {
-                deleteItemCons.setData(item, targetValue, dataValue);
-            } else {
-                deleteItemCons.setData(item, targetValue);
+                return new ConsequenceDeleteItem(item, targetValue, dataValue);
             }
-            return deleteItemCons;
+            return new ConsequenceDeleteItem(item, targetValue);
         }
 
         return null;

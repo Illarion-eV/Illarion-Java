@@ -1,25 +1,22 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parser.talk;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
@@ -29,11 +26,14 @@ import illarion.easynpc.parsed.ParsedTalk;
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class is used to store talking informations of a NPC. It stores the data
  * about one line of talking with all triggers, answers, consequences and
  * conditions.
- * 
+ *
  * @author Martin Karing
  * @since 1.00
  */
@@ -96,14 +96,12 @@ public final class TalkingLine {
         consPar.add(new illarion.easynpc.parser.talk.consequences.Attribute());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Rune());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Money());
-        consPar
-            .add(new illarion.easynpc.parser.talk.consequences.DeleteItem());
+        consPar.add(new illarion.easynpc.parser.talk.consequences.DeleteItem());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Item());
-        consPar
-            .add(new illarion.easynpc.parser.talk.consequences.Queststatus());
-        consPar
-            .add(new illarion.easynpc.parser.talk.consequences.Rankpoints());
+        consPar.add(new illarion.easynpc.parser.talk.consequences.Queststatus());
+        consPar.add(new illarion.easynpc.parser.talk.consequences.Rankpoints());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Talkstate());
+        consPar.add(new illarion.easynpc.parser.talk.consequences.Trade());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Treasure());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Introduce());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Warp());
@@ -130,7 +128,7 @@ public final class TalkingLine {
             @Override
             public String getDescription() {
                 return Lang.getMsg(TalkingLine.class,
-                    "Conditions.Docu.description");
+                        "Conditions.Docu.description");
             }
 
             @Override
@@ -169,7 +167,7 @@ public final class TalkingLine {
             @Override
             public String getDescription() {
                 return Lang.getMsg(TalkingLine.class,
-                    "Consequence.Docu.description");
+                        "Consequence.Docu.description");
             }
 
             @Override
@@ -186,14 +184,14 @@ public final class TalkingLine {
             @SuppressWarnings("nls")
             public String getTitle() {
                 return Lang
-                    .getMsg(TalkingLine.class, "Consequence.Docu.title");
+                        .getMsg(TalkingLine.class, "Consequence.Docu.title");
             }
         };
     }
 
     /**
      * Get the documentation entry for the conditions.
-     * 
+     *
      * @return the conditions documentation entry
      */
     public DocuEntry getConditionDocuEntry() {
@@ -202,7 +200,7 @@ public final class TalkingLine {
 
     /**
      * Get the documentation entry for the consequences.
-     * 
+     *
      * @return the consequences documentation entry
      */
     public DocuEntry getConsequenceDocuEntry() {
@@ -211,9 +209,9 @@ public final class TalkingLine {
 
     /**
      * Parse a talking line into a properly parsed line.
-     * 
+     *
      * @param line the line to parse
-     * @param npc the npc that receives the data parsed here
+     * @param npc  the npc that receives the data parsed here
      */
     @SuppressWarnings("nls")
     public void parseLine(final EasyNpcScript.Line line, final ParsedNpc npc) {
@@ -224,10 +222,10 @@ public final class TalkingLine {
             return;
         }
 
-        String conditions = workingLines[0] + ",";
-        String consequences = workingLines[1] + ",";
+        String conditions = workingLines[0] + ',';
+        String consequences = workingLines[1] + ',';
 
-        final ParsedTalk parsedLine = ParsedTalk.getInstance();
+        final ParsedTalk parsedLine = new ParsedTalk();
 
         for (final ConditionParser parser : condPar) {
             parser.setLine(conditions);
@@ -265,13 +263,13 @@ public final class TalkingLine {
             parser.cleanup();
         }
 
-        if (conditions.length() > 0) {
+        if (!conditions.isEmpty()) {
             npc.addError(line, Lang.getMsg(getClass(), "remainConditions")
-                + " " + conditions);
+                    + ' ' + conditions);
         }
-        if (consequences.length() > 0) {
+        if (!consequences.isEmpty()) {
             npc.addError(line, Lang.getMsg(getClass(), "remainConsequences")
-                + " " + consequences);
+                    + ' ' + consequences);
         }
 
         npc.addNpcData(parsedLine);

@@ -1,32 +1,22 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parser;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.text.Segment;
-
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
 
 import illarion.easynpc.EasyNpcScript.Line;
 import illarion.easynpc.Lang;
@@ -35,10 +25,18 @@ import illarion.easynpc.data.EquipmentSlots;
 import illarion.easynpc.data.Items;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedEquipment;
+import jsyntaxpane.Token;
+import jsyntaxpane.TokenType;
+
+import javax.swing.text.Segment;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Parser to fetch the equipment a character wears from the easyNPC script.
- * 
+ *
  * @author Martin Karing
  * @version 1.00
  * @since 1.01
@@ -48,7 +46,7 @@ public final class NpcEquipment implements NpcType {
      * This internal class is a helper class for the documentation. Each
      * instance of this class contains the documentation data for one command
      * the NPC Equipment parser manages.
-     * 
+     *
      * @author Martin Karing
      * @version 1.00
      * @since 1.01
@@ -76,9 +74,9 @@ public final class NpcEquipment implements NpcType {
 
         /**
          * The default constructor that prepares the key values.
-         * 
+         *
          * @param name the name that is part of the key value to identify the
-         *            header entry
+         *             header entry
          */
         @SuppressWarnings("nls")
         public ChildDocuClass(final String name) {
@@ -92,7 +90,7 @@ public final class NpcEquipment implements NpcType {
         @Override
         public DocuEntry getChild(final int index) {
             throw new IllegalArgumentException(
-                "There are no childs to request.");
+                    "There are no childs to request.");
         }
 
         @Override
@@ -127,57 +125,57 @@ public final class NpcEquipment implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern ITEM_CHEST = Pattern.compile(
-        "^\\s*(itemChest)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+            "^\\s*(itemChest)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the coat of the NPC.
      */
     @SuppressWarnings("nls")
     private static final Pattern ITEM_COAT = Pattern.compile(
-        "^\\s*(itemCoat)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+            "^\\s*(itemCoat)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the hands of the NPC.
      */
     @SuppressWarnings("nls")
     private static final Pattern ITEM_HANDS = Pattern.compile(
-        "^\\s*(itemHands)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+            "^\\s*(itemHands)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the head of the NPC.
      */
     @SuppressWarnings("nls")
     private static final Pattern ITEM_HEAD = Pattern.compile(
-        "^\\s*(itemHead)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+            "^\\s*(itemHead)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the main hand of the NPC.
      */
     @SuppressWarnings("nls")
     private static final Pattern ITEM_MAIN_HAND = Pattern.compile(
-        "^\\s*(itemMainHand)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+            "^\\s*(itemMainHand)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the second hand of the NPC.
      */
     @SuppressWarnings("nls")
     private static final Pattern ITEM_SECOND_HAND = Pattern
-        .compile("^\\s*(itemSecondHand)\\s*=\\s*([0-9]{1,4})[\\s;]*",
-            Pattern.MULTILINE);
+            .compile("^\\s*(itemSecondHand)\\s*=\\s*([0-9]{1,4})[\\s;]*",
+                    Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the shoes of the NPC.
      */
     @SuppressWarnings("nls")
     private static final Pattern ITEM_SHOES = Pattern.compile(
-        "^\\s*(itemShoes)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+            "^\\s*(itemShoes)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the trousers of the NPC.
      */
     @SuppressWarnings("nls")
     private static final Pattern ITEM_TROUSERS = Pattern.compile(
-        "^\\s*(itemTrousers)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+            "^\\s*(itemTrousers)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The documentation entries for the children of this entry.
@@ -245,7 +243,7 @@ public final class NpcEquipment implements NpcType {
     public DocuEntry getChild(final int index) {
         if ((index < 0) || (index >= docuChildren.length)) {
             throw new IndexOutOfBoundsException(
-                "Index does not match the amount of children.");
+                    "Index does not match the amount of children.");
         }
 
         return docuChildren[index];
@@ -287,8 +285,7 @@ public final class NpcEquipment implements NpcType {
         if (match.find()) {
             final Items item = extractItem(match, line, npc);
             if (item != null) {
-                npc.addNpcData(ParsedEquipment.getInstance(
-                    EquipmentSlots.head, item));
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.head, item));
             }
             return;
         }
@@ -297,8 +294,7 @@ public final class NpcEquipment implements NpcType {
         if (match.find()) {
             final Items item = extractItem(match, line, npc);
             if (item != null) {
-                npc.addNpcData(ParsedEquipment.getInstance(
-                    EquipmentSlots.chest, item));
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.chest, item));
             }
             return;
         }
@@ -307,8 +303,7 @@ public final class NpcEquipment implements NpcType {
         if (match.find()) {
             final Items item = extractItem(match, line, npc);
             if (item != null) {
-                npc.addNpcData(ParsedEquipment.getInstance(
-                    EquipmentSlots.coat, item));
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.coat, item));
             }
             return;
         }
@@ -317,8 +312,7 @@ public final class NpcEquipment implements NpcType {
         if (match.find()) {
             final Items item = extractItem(match, line, npc);
             if (item != null) {
-                npc.addNpcData(ParsedEquipment.getInstance(
-                    EquipmentSlots.mainHand, item));
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.mainHand, item));
             }
             return;
         }
@@ -327,8 +321,7 @@ public final class NpcEquipment implements NpcType {
         if (match.find()) {
             final Items item = extractItem(match, line, npc);
             if (item != null) {
-                npc.addNpcData(ParsedEquipment.getInstance(
-                    EquipmentSlots.secondHand, item));
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.secondHand, item));
             }
             return;
         }
@@ -337,8 +330,7 @@ public final class NpcEquipment implements NpcType {
         if (match.find()) {
             final Items item = extractItem(match, line, npc);
             if (item != null) {
-                npc.addNpcData(ParsedEquipment.getInstance(
-                    EquipmentSlots.hands, item));
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.hands, item));
             }
             return;
         }
@@ -347,8 +339,7 @@ public final class NpcEquipment implements NpcType {
         if (match.find()) {
             final Items item = extractItem(match, line, npc);
             if (item != null) {
-                npc.addNpcData(ParsedEquipment.getInstance(
-                    EquipmentSlots.trousers, item));
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.trousers, item));
             }
             return;
         }
@@ -357,8 +348,7 @@ public final class NpcEquipment implements NpcType {
         if (match.find()) {
             final Items item = extractItem(match, line, npc);
             if (item != null) {
-                npc.addNpcData(ParsedEquipment.getInstance(
-                    EquipmentSlots.feet, item));
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.feet, item));
             }
             return;
         }
@@ -371,7 +361,7 @@ public final class NpcEquipment implements NpcType {
      */
     @Override
     public void parseSegment(final Segment segment, final int offset,
-        final List<Token> tokens) {
+                             final List<Token> tokens) {
         parseSegmentImpl(segment, offset, tokens, ITEM_HEAD);
         parseSegmentImpl(segment, offset, tokens, ITEM_CHEST);
         parseSegmentImpl(segment, offset, tokens, ITEM_COAT);
@@ -386,14 +376,14 @@ public final class NpcEquipment implements NpcType {
      * Extract a item from the matcher. This is a helper function since the
      * pattern in this parser all look nearly the same and the extraction syntax
      * is in all cases the same.
-     * 
+     *
      * @param matcher the matcher to extract the text
-     * @param line the line that is currently handled
-     * @param npc the NPC that is currently processed
+     * @param line    the line that is currently handled
+     * @param npc     the NPC that is currently processed
      * @return the item that was extracted or <code>null</code>
      */
     private Items extractItem(final Matcher matcher, final Line line,
-        final ParsedNpc npc) {
+                              final ParsedNpc npc) {
         final int itemId = Integer.parseInt(matcher.group(2));
 
         Items item = null;
@@ -406,9 +396,9 @@ public final class NpcEquipment implements NpcType {
 
         if (item == null) {
             npc.addError(
-                line,
-                String.format(
-                    Lang.getMsg(getClass(), "item"), Integer.toString(itemId), matcher.group(0))); //$NON-NLS-1$
+                    line,
+                    String.format(
+                            Lang.getMsg(getClass(), "item"), Integer.toString(itemId), matcher.group(0))); //$NON-NLS-1$
         }
 
         return item;
@@ -417,18 +407,18 @@ public final class NpcEquipment implements NpcType {
     /**
      * Additional implementation to parse a segment. This reads all lines in the
      * segment in and matches it against the pattern handed over.
-     * 
+     *
      * @param segment the segment
-     * @param offset the offset to the start of the segment
-     * @param tokens the list of old tokens
+     * @param offset  the offset to the start of the segment
+     * @param tokens  the list of old tokens
      * @param pattern the pattern used to check
      */
     private void parseSegmentImpl(final Segment segment, final int offset,
-        final List<Token> tokens, final Pattern pattern) {
+                                  final List<Token> tokens, final Pattern pattern) {
         final Matcher matcher = pattern.matcher(segment);
         while (matcher.find()) {
             tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                matcher.end(1) - matcher.start(1)));
+                    matcher.end(1) - matcher.start(1)));
         }
     }
 }

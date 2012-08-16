@@ -18,7 +18,6 @@
  */
 package illarion.easynpc.parsed.talk.consequences;
 
-import illarion.easynpc.data.NpcBaseStateToggle;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaWriter;
 
@@ -26,36 +25,23 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * This class is used to store all required values for the talk state consequence.
+ * This class is used to store all required values for the trade consequence.
  *
  * @author Martin Karing
  */
-public final class ConsequenceTalkstate implements TalkConsequence {
+public final class ConsequenceTrade implements TalkConsequence {
+
     /**
-     * The LUA code needed to be included for a talk state consequence.
+     * The LUA code needed to be included for a introduce consequence.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.talkstate(\"%2$s\"));" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.trade());" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_MODULE = BASE_LUA_MODULE + "talkstate";
-
-    /**
-     * The changing command for the basicNPC state.
-     */
-    private final NpcBaseStateToggle mode;
-
-    /**
-     * The constructor to set the talk state that is supposed to be applied with this consequence.
-     *
-     * @param newMode the mode used to change the basic state
-     */
-    public ConsequenceTalkstate(final NpcBaseStateToggle newMode) {
-        mode = newMode;
-    }
+    private static final String LUA_MODULE = BASE_LUA_MODULE + "trade";
 
     /**
      * Get the module that is needed for this consequence to work.
@@ -70,7 +56,7 @@ public final class ConsequenceTalkstate implements TalkConsequence {
      */
     @Override
     public void writeEasyNpc(final Writer target) throws IOException {
-        target.write(mode.name());
+        target.write("trade"); //$NON-NLS-1$
     }
 
     /**
@@ -78,6 +64,6 @@ public final class ConsequenceTalkstate implements TalkConsequence {
      */
     @Override
     public void writeLua(final Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE, mode.name()));
+        target.write(String.format(LUA_CODE, LUA_MODULE));
     }
 }

@@ -1,50 +1,42 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parser;
 
+import illarion.common.util.Location;
+import illarion.easynpc.EasyNpcScript;
+import illarion.easynpc.Lang;
+import illarion.easynpc.ParsedNpc;
+import illarion.easynpc.data.*;
+import illarion.easynpc.docu.DocuEntry;
+import jsyntaxpane.Token;
+import jsyntaxpane.TokenType;
+
+import javax.swing.text.Segment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.text.Segment;
-
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
-
-import illarion.easynpc.EasyNpcScript;
-import illarion.easynpc.Lang;
-import illarion.easynpc.ParsedNpc;
-import illarion.easynpc.data.BooleanFlagValues;
-import illarion.easynpc.data.CharacterDirection;
-import illarion.easynpc.data.CharacterLanguage;
-import illarion.easynpc.data.CharacterRace;
-import illarion.easynpc.data.CharacterSex;
-import illarion.easynpc.data.Towns;
-import illarion.easynpc.docu.DocuEntry;
-
-import illarion.common.util.Location;
-
 /**
  * This NpcType is able to parse the basic informations out of a easyNPC script.
  * Such informations are the name and the location, race and so on of the NPC.
- * 
+ *
  * @author Martin Karing
  * @since 1.00
  */
@@ -53,7 +45,7 @@ public final class NpcBasics implements NpcType {
      * This internal class is a helper class for the documentation. Each
      * instance of this class contains the documentation data for one command
      * the NPC Basics parser manages.
-     * 
+     *
      * @author Martin Karing
      * @since 1.01
      */
@@ -80,9 +72,9 @@ public final class NpcBasics implements NpcType {
 
         /**
          * The default constructor that prepares the key values.
-         * 
+         *
          * @param name the name that is part of the key value to identify the
-         *            header entry
+         *             header entry
          */
         @SuppressWarnings("nls")
         public ChildDocuClass(final String name) {
@@ -96,7 +88,7 @@ public final class NpcBasics implements NpcType {
         @Override
         public DocuEntry getChild(final int index) {
             throw new IllegalArgumentException(
-                "There are no childs to request.");
+                    "There are no childs to request.");
         }
 
         @Override
@@ -131,15 +123,15 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_AFFILIATION = Pattern.compile(
-        "^\\s*(affiliation)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
-        Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+            "^\\s*(affiliation)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to find a author name in this NPC script.
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_AUTHOR = Pattern.compile(
-        "^\\s*(author)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
+            "^\\s*(author)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The header that stores the flag of the NPC is supposed to auto introduce
@@ -147,7 +139,7 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_AUTO_INTRO = Pattern.compile(
-        "^\\s*(autointroduce)\\s*=\\s*([a-z]+)\\s*$", Pattern.CASE_INSENSITIVE
+            "^\\s*(autointroduce)\\s*=\\s*([a-z]+)\\s*$", Pattern.CASE_INSENSITIVE
             | Pattern.MULTILINE);
 
     /**
@@ -156,7 +148,7 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_CONFUSED_DE = Pattern.compile(
-        "^\\s*(wrongLangDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
+            "^\\s*(wrongLangDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
             | Pattern.MULTILINE);
 
     /**
@@ -165,7 +157,7 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_CONFUSED_US = Pattern.compile(
-        "^\\s*(wrongLangUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
+            "^\\s*(wrongLangUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
             | Pattern.MULTILINE);
 
     /**
@@ -173,8 +165,8 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_DEFAULT_LANG = Pattern.compile(
-        "^\\s*(defaultLanguage)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
-        Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+            "^\\s*(defaultLanguage)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to find the looking direction of the NPC in the easyNPC
@@ -182,23 +174,23 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_DIRECTION = Pattern.compile(
-        "^\\s*(dire?c?t?i?o?n?)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
-        Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+            "^\\s*(dire?c?t?i?o?n?)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to find a job of this NPC.
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_JOB = Pattern.compile(
-        "^\\s*(job)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
+            "^\\s*(job)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find a language of this NPC.
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_LANGUAGE = Pattern.compile(
-        "^\\s*(language)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
-        Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+            "^\\s*(language)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The header that stores the German version of the message displayed on a
@@ -206,7 +198,7 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_LOOKAT_DE = Pattern.compile(
-        "^\\s*(lookatDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
+            "^\\s*(lookatDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
             | Pattern.MULTILINE);
 
     /**
@@ -215,7 +207,7 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_LOOKAT_US = Pattern.compile(
-        "^\\s*(lookatUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
+            "^\\s*(lookatUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
             | Pattern.MULTILINE);
 
     /**
@@ -223,24 +215,24 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_NAME = Pattern.compile(
-        "^\\s*(name)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
+            "^\\s*(name)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the position of the NPC in the easyNPC script.
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_POSITION =
-        Pattern
-            .compile(
-                "^\\s*(position)\\s*=\\s*(-*[0-9]+)[, ]+(-*[0-9]+)[, ]+(-*[0-9]+)[\\s;]*",
-                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+            Pattern
+                    .compile(
+                            "^\\s*(position)\\s*=\\s*(-*[0-9]+)[, ]+(-*[0-9]+)[, ]+(-*[0-9]+)[\\s;]*",
+                            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to find the race of the NPC in the easyNPC script.
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_RACE = Pattern.compile(
-        "^\\s*(race)\\s*=\\s*\"*([a-z ]+)\"*[\\s;]*", Pattern.CASE_INSENSITIVE
+            "^\\s*(race)\\s*=\\s*\"*([a-z ]+)\"*[\\s;]*", Pattern.CASE_INSENSITIVE
             | Pattern.MULTILINE);
 
     /**
@@ -248,7 +240,7 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_SEX = Pattern.compile(
-        "^\\s*(sex)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*", Pattern.CASE_INSENSITIVE
+            "^\\s*(sex)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*", Pattern.CASE_INSENSITIVE
             | Pattern.MULTILINE);
 
     /**
@@ -257,7 +249,7 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_USE_DE = Pattern.compile(
-        "^\\s*(useMsgDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
+            "^\\s*(useMsgDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
             | Pattern.MULTILINE);
 
     /**
@@ -266,7 +258,7 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern HEADER_USE_US = Pattern.compile(
-        "^\\s*(useMsgUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
+            "^\\s*(useMsgUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
             | Pattern.MULTILINE);
 
     /**
@@ -403,7 +395,7 @@ public final class NpcBasics implements NpcType {
     @Override
     @SuppressWarnings("nls")
     public void parseLine(final EasyNpcScript.Line lineStruct,
-        final ParsedNpc npc) {
+                          final ParsedNpc npc) {
         Matcher matcher;
 
         final String line = lineStruct.getLine();
@@ -444,7 +436,7 @@ public final class NpcBasics implements NpcType {
             final String dir = matcher.group(2);
 
             for (final CharacterDirection dirConstant : CharacterDirection
-                .values()) {
+                    .values()) {
                 if (dir.equalsIgnoreCase(dirConstant.name())) {
                     npc.setNpcDir(dirConstant);
                     return;
@@ -455,7 +447,7 @@ public final class NpcBasics implements NpcType {
             errorBuilder.append(Lang.getMsg(getClass(), "direction"));
             errorBuilder.append(' ');
             for (final CharacterDirection dirConstant : CharacterDirection
-                .values()) {
+                    .values()) {
                 errorBuilder.append(dirConstant.name());
                 errorBuilder.append(", ");
             }
@@ -592,7 +584,7 @@ public final class NpcBasics implements NpcType {
             final String value = matcher.group(2).trim();
 
             for (final BooleanFlagValues testValue : BooleanFlagValues
-                .values()) {
+                    .values()) {
                 if (testValue.getPattern().matcher(value).matches()) {
                     npc.setAutoIntroduce(testValue);
                     return;
@@ -603,7 +595,7 @@ public final class NpcBasics implements NpcType {
             errorBuilder.append(Lang.getMsg(getClass(), "autoIntro"));
             errorBuilder.append(' ');
             for (final BooleanFlagValues testValue : BooleanFlagValues
-                .values()) {
+                    .values()) {
                 errorBuilder.append(testValue.getEasyNpc());
                 errorBuilder.append(", ");
             }
@@ -619,7 +611,7 @@ public final class NpcBasics implements NpcType {
             if (germanLookAt.replace("\\\"", "''").contains("\"")) {
                 npc.addError(lineStruct, Lang.getMsg(getClass(), "lookat"));
             }
-            npc.setGermanLookat(germanLookAt);
+            npc.setGermanLookAt(germanLookAt);
             return;
         }
 
@@ -629,7 +621,7 @@ public final class NpcBasics implements NpcType {
             if (englishLookAt.replace("\\\"", "''").contains("\"")) {
                 npc.addError(lineStruct, Lang.getMsg(getClass(), "lookat"));
             }
-            npc.setEnglishLookat(englishLookAt);
+            npc.setEnglishLookAt(englishLookAt);
             return;
         }
 
@@ -678,7 +670,7 @@ public final class NpcBasics implements NpcType {
 
     @Override
     public void parseSegment(final Segment segment, final int offset,
-        final List<Token> tokens) {
+                             final List<Token> tokens) {
         parseSegmentImpl(segment, offset, tokens, HEADER_NAME);
         parseSegmentImpl(segment, offset, tokens, HEADER_SEX);
         parseSegmentImpl(segment, offset, tokens, HEADER_DIRECTION);
@@ -701,18 +693,18 @@ public final class NpcBasics implements NpcType {
     /**
      * Additional implementation to parse a segment. This reads all lines in the
      * segment in and matches it against the pattern handed over.
-     * 
+     *
      * @param segment the segment
-     * @param offset the offset to the start of the segment
-     * @param tokens the list of old tokens
+     * @param offset  the offset to the start of the segment
+     * @param tokens  the list of old tokens
      * @param pattern the pattern used to check
      */
     private void parseSegmentImpl(final Segment segment, final int offset,
-        final List<Token> tokens, final Pattern pattern) {
+                                  final List<Token> tokens, final Pattern pattern) {
         final Matcher matcher = pattern.matcher(segment);
         while (matcher.find()) {
             tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                matcher.end(1) - matcher.start(1)));
+                    matcher.end(1) - matcher.start(1)));
         }
     }
 }

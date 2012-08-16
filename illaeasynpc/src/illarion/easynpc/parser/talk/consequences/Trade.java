@@ -19,27 +19,24 @@
 package illarion.easynpc.parser.talk.consequences;
 
 import illarion.easynpc.Lang;
-import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkConsequence;
-import illarion.easynpc.parsed.talk.consequences.ConsequenceTreasure;
-import illarion.easynpc.parser.talk.AdvNumber;
+import illarion.easynpc.parsed.talk.consequences.ConsequenceTrade;
 import illarion.easynpc.parser.talk.ConsequenceParser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This is a treasure consequence. Its used to parse a treasure consequence out of a consequence collection string.
+ * This is the trade consequence. Its able to parse a introduce consequence out of the consequence collection string.
  *
  * @author Martin Karing
  */
-public final class Treasure extends ConsequenceParser {
+public final class Trade extends ConsequenceParser {
     /**
-     * This pattern is used to find the treasure in the consequence and to remove them properly.
+     * This pattern is used to find the introduce command in the condition and to remove them properly.
      */
     @SuppressWarnings("nls")
-    private static final Pattern STRING_FIND = Pattern.compile("\\s*treasure\\s*\\(\\s*" + AdvNumber.ADV_NUMBER_REGEXP
-            + "\\s*\\)\\s*,\\s*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern STRING_FIND = Pattern.compile("\\s*trade\\s*,\\s*", Pattern.CASE_INSENSITIVE);
 
     /**
      * Extract a condition from the working string.
@@ -52,18 +49,9 @@ public final class Treasure extends ConsequenceParser {
         }
 
         final Matcher stringMatcher = STRING_FIND.matcher(getNewLine());
+        setLine(stringMatcher.replaceFirst(""));
         if (stringMatcher.find()) {
-            final AdvancedNumber level = AdvNumber.getNumber(stringMatcher.group(1));
-
-            setLine(stringMatcher.replaceFirst(""));
-
-            if (level == null) {
-                reportError(String.format(Lang.getMsg(getClass(), "number"), stringMatcher.group(1),
-                        stringMatcher.group(0)));
-                return extract();
-            }
-
-            return new ConsequenceTreasure(level);
+            return new ConsequenceTrade();
         }
 
         return null;
