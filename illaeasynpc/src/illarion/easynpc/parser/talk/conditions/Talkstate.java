@@ -23,6 +23,8 @@ import illarion.easynpc.data.NpcBaseState;
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.parsed.talk.conditions.ConditionTalkstate;
 import illarion.easynpc.parser.talk.ConditionParser;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,12 +35,6 @@ import java.util.regex.Pattern;
  * @author Martin Karing
  */
 public final class Talkstate extends ConditionParser {
-    /**
-     * A empty string used for some replace operations.
-     */
-    @SuppressWarnings("nls")
-    private static final String EMPTY_STRING = "".intern();
-
     /**
      * This pattern is used to find the talk state operation in the condition properly.
      */
@@ -60,7 +56,7 @@ public final class Talkstate extends ConditionParser {
         if (stringMatcher.find()) {
             final String stateString = stringMatcher.group(1).toLowerCase();
 
-            setLine(stringMatcher.replaceFirst(EMPTY_STRING));
+            setLine(stringMatcher.replaceFirst(""));
 
             NpcBaseState state = null;
             for (final NpcBaseState st : NpcBaseState.values()) {
@@ -100,5 +96,11 @@ public final class Talkstate extends ConditionParser {
     @Override
     public String getTitle() {
         return Lang.getMsg(getClass(), "Docu.title"); //$NON-NLS-1$
+    }
+
+    @Override
+    public void enlistHighlightedWords(final TokenMap map) {
+        map.put("busy", Token.RESERVED_WORD);
+        map.put("idle", Token.RESERVED_WORD);
     }
 }

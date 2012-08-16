@@ -26,6 +26,9 @@
     <orderEntry type="library" name="Substance Look&amp;Feel" level="project" />
     <orderEntry type="library" name="SwingX" level="project" />
     <orderEntry type="library" name="GnuTrove" level="project" />
+    <orderEntry type="library" name="laf" level="project" />
+    <orderEntry type="library" name="rsyntaxtextarea" level="project" />
+    <orderEntry type="library" name="EventBus" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

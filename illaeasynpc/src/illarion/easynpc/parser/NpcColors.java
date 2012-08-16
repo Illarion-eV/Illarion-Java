@@ -23,42 +23,33 @@ import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedColors;
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
-import javax.swing.text.Segment;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This parser is able to extract the color values of the NPCs from a easyNPC
- * script.
+ * This parser is able to extract the color values of the NPCs from a easyNPC script.
  *
  * @author Martin Karing
- * @version 1.00
- * @since 1.01
  */
 public final class NpcColors implements NpcType {
     /**
      * The pattern to fetch the hair color.
      */
     @SuppressWarnings("nls")
-    private static final Pattern COLOR_HAIR =
-            Pattern
-                    .compile(
-                            "^\\s*(colorHair)\\s*=\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})[\\s;]*",
-                            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern COLOR_HAIR = Pattern.compile(
+            "^\\s*(colorHair)\\s*=\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})[\\s;]*",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to fetch the skin color.
      */
     @SuppressWarnings("nls")
-    private static final Pattern COLOR_SKIN =
-            Pattern
-                    .compile(
-                            "^\\s*(colorSkin)\\s*=\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})[\\s;]*",
-                            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern COLOR_SKIN = Pattern.compile(
+            "^\\s*(colorSkin)\\s*=\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})[\\s;]*",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The documentation entry for the hair color.
@@ -267,19 +258,8 @@ public final class NpcColors implements NpcType {
     }
 
     @Override
-    public void parseSegment(final Segment segment, final int offset,
-                             final List<Token> tokens) {
-        Matcher matcher = COLOR_SKIN.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                    matcher.end(1) - matcher.start(1)));
-        }
-
-        matcher = COLOR_HAIR.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                    matcher.end(1) - matcher.start(1)));
-        }
+    public void enlistHighlightedWords(final TokenMap map) {
+        map.put("colorHair", Token.RESERVED_WORD);
+        map.put("colorSkin", Token.RESERVED_WORD);
     }
-
 }

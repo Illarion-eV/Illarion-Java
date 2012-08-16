@@ -22,6 +22,7 @@ import illarion.easynpc.Lang;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.parsed.talk.consequences.ConsequenceAnswer;
 import illarion.easynpc.parser.talk.ConsequenceParser;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +33,6 @@ import java.util.regex.Pattern;
  * @author Martin Karing
  */
 public final class Answer extends ConsequenceParser {
-
     /**
      * This pattern is used to find the strings in the condition and to remove them properly.
      */
@@ -78,5 +78,10 @@ public final class Answer extends ConsequenceParser {
     @Override
     public String getTitle() {
         return Lang.getMsg(getClass(), "Docu.title"); //$NON-NLS-1$
+    }
+
+    @Override
+    public void enlistHighlightedWords(final TokenMap map) {
+        // nothing
     }
 }

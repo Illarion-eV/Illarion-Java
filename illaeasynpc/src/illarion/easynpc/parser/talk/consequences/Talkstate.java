@@ -23,6 +23,8 @@ import illarion.easynpc.data.NpcBaseStateToggle;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.parsed.talk.consequences.ConsequenceTalkstate;
 import illarion.easynpc.parser.talk.ConsequenceParser;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,5 +97,11 @@ public final class Talkstate extends ConsequenceParser {
     @Override
     public String getTitle() {
         return Lang.getMsg(getClass(), "Docu.title"); //$NON-NLS-1$
+    }
+
+    @Override
+    public void enlistHighlightedWords(final TokenMap map) {
+        map.put("begin", Token.RESERVED_WORD);
+        map.put("end", Token.RESERVED_WORD);
     }
 }

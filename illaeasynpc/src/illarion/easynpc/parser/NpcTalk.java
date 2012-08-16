@@ -1,44 +1,36 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parser;
-
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.text.Segment;
-
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
 
 import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parser.talk.TalkingLine;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
+
+import java.util.regex.Pattern;
 
 /**
- * This class is used to parse the lines from a easyNPC script that are used for
- * talking NPCs.
- * 
+ * This class is used to parse the lines from a easyNPC script that are used for talking NPCs.
+ *
  * @author Martin Karing
- * @since 1.00
  */
 public final class NpcTalk implements NpcType {
     /**
@@ -47,7 +39,7 @@ public final class NpcTalk implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern NORMAL_LINE = Pattern.compile(
-        "^.*[\"].*[^\\\\][\"].*([-][>]).*$", Pattern.MULTILINE);
+            "^.*[\"].*[^\\\\][\"].*([-][>]).*$", Pattern.MULTILINE);
 
     /**
      * The parser that is used to parse one talking line.
@@ -56,7 +48,7 @@ public final class NpcTalk implements NpcType {
 
     /**
      * Check if the line can be parsed as talking trigger.
-     * 
+     *
      * @param lineStruct the line that is supposed to be parsed.
      * @return <code>true</code> in case the line can be parsed by this class
      */
@@ -108,14 +100,14 @@ public final class NpcTalk implements NpcType {
 
     /**
      * Parse the line and add the analyzed values to the parsed NPC.
-     * 
+     *
      * @param lineStruct the line that is parsed
-     * @param npc the NPC that is the target for the parsed values
+     * @param npc        the NPC that is the target for the parsed values
      */
     @Override
     @SuppressWarnings("nls")
     public void parseLine(final EasyNpcScript.Line lineStruct,
-        final ParsedNpc npc) {
+                          final ParsedNpc npc) {
         final String line = lineStruct.getLine();
 
         if (NORMAL_LINE.matcher(line).matches()) {
@@ -127,13 +119,7 @@ public final class NpcTalk implements NpcType {
     }
 
     @Override
-    public void parseSegment(final Segment segment, final int offset,
-        final List<Token> tokens) {
-        final Matcher matcher = NORMAL_LINE.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                matcher.end(1) - matcher.start(1)));
-        }
+    public void enlistHighlightedWords(final TokenMap map) {
+        talkLineParser.enlistHighlightedWords(map);
     }
-
 }

@@ -25,6 +25,8 @@ import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.parsed.talk.conditions.ConditionMoney;
 import illarion.easynpc.parser.talk.AdvNumber;
 import illarion.easynpc.parser.talk.ConditionParser;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,5 +115,10 @@ public final class Money extends ConditionParser {
     @Override
     public String getTitle() {
         return Lang.getMsg(getClass(), "Docu.title"); //$NON-NLS-1$
+    }
+
+    @Override
+    public void enlistHighlightedWords(final TokenMap map) {
+        map.put("money", Token.RESERVED_WORD);
     }
 }

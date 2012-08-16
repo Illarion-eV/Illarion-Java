@@ -22,6 +22,8 @@ import illarion.easynpc.Lang;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.parsed.talk.consequences.ConsequenceInform;
 import illarion.easynpc.parser.talk.ConsequenceParser;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,5 +96,10 @@ public final class Inform extends ConsequenceParser {
     @Override
     public String getTitle() {
         return Lang.getMsg(getClass(), "Docu.title"); //$NON-NLS-1$
+    }
+
+    @Override
+    public void enlistHighlightedWords(final TokenMap map) {
+        map.put("inform", Token.RESERVED_WORD);
     }
 }

@@ -23,21 +23,16 @@ import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedHair;
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
-import javax.swing.text.Segment;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This parser is able to read the definitions for hair and beard of the NPC
- * from the script.
+ * This parser is able to read the definitions for hair and beard of the NPC from the script.
  *
  * @author Martin Karing
- * @version 1.00
- * @since 1.01
  */
 public final class NpcHair implements NpcType {
     /**
@@ -237,24 +232,9 @@ public final class NpcHair implements NpcType {
         }
     }
 
-    /**
-     * Extract the tokens needed for the syntax highlighting from a text
-     * segment.
-     */
     @Override
-    public void parseSegment(final Segment segment, final int offset,
-                             final List<Token> tokens) {
-        Matcher matcher = HAIR_ID.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                    matcher.end(1) - matcher.start(1)));
-        }
-
-        matcher = BEARD_ID.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                    matcher.end(1) - matcher.start(1)));
-        }
+    public void enlistHighlightedWords(final TokenMap map) {
+        map.put("beardID", Token.RESERVED_WORD);
+        map.put("hairID", Token.RESERVED_WORD);
     }
-
 }

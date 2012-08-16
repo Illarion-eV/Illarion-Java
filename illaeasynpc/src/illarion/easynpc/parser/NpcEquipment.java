@@ -25,10 +25,9 @@ import illarion.easynpc.data.EquipmentSlots;
 import illarion.easynpc.data.Items;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedEquipment;
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
-import javax.swing.text.Segment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -38,18 +37,13 @@ import java.util.regex.Pattern;
  * Parser to fetch the equipment a character wears from the easyNPC script.
  *
  * @author Martin Karing
- * @version 1.00
- * @since 1.01
  */
 public final class NpcEquipment implements NpcType {
     /**
-     * This internal class is a helper class for the documentation. Each
-     * instance of this class contains the documentation data for one command
-     * the NPC Equipment parser manages.
+     * This internal class is a helper class for the documentation. Each instance of this class contains the
+     * documentation data for one command the NPC Equipment parser manages.
      *
      * @author Martin Karing
-     * @version 1.00
-     * @since 1.01
      */
     private static final class ChildDocuClass implements DocuEntry {
         /**
@@ -356,20 +350,16 @@ public final class NpcEquipment implements NpcType {
         npc.addError(line, Lang.getMsg(getClass(), "general")); //$NON-NLS-1$
     }
 
-    /**
-     * Parse a segment and extract the tokens for the syntax highlighting.
-     */
     @Override
-    public void parseSegment(final Segment segment, final int offset,
-                             final List<Token> tokens) {
-        parseSegmentImpl(segment, offset, tokens, ITEM_HEAD);
-        parseSegmentImpl(segment, offset, tokens, ITEM_CHEST);
-        parseSegmentImpl(segment, offset, tokens, ITEM_COAT);
-        parseSegmentImpl(segment, offset, tokens, ITEM_MAIN_HAND);
-        parseSegmentImpl(segment, offset, tokens, ITEM_SECOND_HAND);
-        parseSegmentImpl(segment, offset, tokens, ITEM_HANDS);
-        parseSegmentImpl(segment, offset, tokens, ITEM_TROUSERS);
-        parseSegmentImpl(segment, offset, tokens, ITEM_SHOES);
+    public void enlistHighlightedWords(final TokenMap map) {
+        map.put("itemChest", Token.RESERVED_WORD);
+        map.put("itemCoat", Token.RESERVED_WORD);
+        map.put("itemHands", Token.RESERVED_WORD);
+        map.put("itemHead", Token.RESERVED_WORD);
+        map.put("itemMainHand", Token.RESERVED_WORD);
+        map.put("itemSecondHand", Token.RESERVED_WORD);
+        map.put("itemShoes", Token.RESERVED_WORD);
+        map.put("itemTrousers", Token.RESERVED_WORD);
     }
 
     /**
@@ -382,8 +372,7 @@ public final class NpcEquipment implements NpcType {
      * @param npc     the NPC that is currently processed
      * @return the item that was extracted or <code>null</code>
      */
-    private Items extractItem(final Matcher matcher, final Line line,
-                              final ParsedNpc npc) {
+    private Items extractItem(final Matcher matcher, final Line line, final ParsedNpc npc) {
         final int itemId = Integer.parseInt(matcher.group(2));
 
         Items item = null;
@@ -395,30 +384,10 @@ public final class NpcEquipment implements NpcType {
         }
 
         if (item == null) {
-            npc.addError(
-                    line,
-                    String.format(
-                            Lang.getMsg(getClass(), "item"), Integer.toString(itemId), matcher.group(0))); //$NON-NLS-1$
+            npc.addError(line, String.format(Lang.getMsg(getClass(), "item"), Integer.toString(itemId),
+                    matcher.group(0))); //$NON-NLS-1$
         }
 
         return item;
-    }
-
-    /**
-     * Additional implementation to parse a segment. This reads all lines in the
-     * segment in and matches it against the pattern handed over.
-     *
-     * @param segment the segment
-     * @param offset  the offset to the start of the segment
-     * @param tokens  the list of old tokens
-     * @param pattern the pattern used to check
-     */
-    private void parseSegmentImpl(final Segment segment, final int offset,
-                                  final List<Token> tokens, final Pattern pattern) {
-        final Matcher matcher = pattern.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                    matcher.end(1) - matcher.start(1)));
-        }
     }
 }

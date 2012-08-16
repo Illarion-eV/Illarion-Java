@@ -24,11 +24,8 @@ import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedComment;
 import illarion.easynpc.writer.EasyNpcWriter;
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
-import javax.swing.text.Segment;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +34,6 @@ import java.util.regex.Pattern;
  * it so it can be properly insert into the main NPC script.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public final class NpcComment implements NpcType {
 
@@ -45,8 +41,7 @@ public final class NpcComment implements NpcType {
      * The pattern to find out of this line is a comment block
      */
     @SuppressWarnings("nls")
-    private static final Pattern COMMENT_BLOCK = Pattern.compile(
-            "^\\s*--\\s*(.*)$", Pattern.MULTILINE);
+    private static final Pattern COMMENT_BLOCK = Pattern.compile("^\\s*--\\s*(.*)$", Pattern.MULTILINE);
 
     /**
      * Check if the line is a comment block
@@ -106,13 +101,7 @@ public final class NpcComment implements NpcType {
     }
 
     @Override
-    public void parseSegment(final Segment segment, final int offset,
-                             final List<Token> tokens) {
-        final Matcher matcher = COMMENT_BLOCK.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.COMMENT, matcher.start() + offset,
-                    matcher.end() - matcher.start()));
-        }
+    public void enlistHighlightedWords(final TokenMap map) {
+        // nothing
     }
-
 }

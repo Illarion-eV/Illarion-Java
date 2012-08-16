@@ -25,6 +25,7 @@ import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedTalk;
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.parsed.talk.TalkConsequence;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -273,5 +274,15 @@ public final class TalkingLine {
         }
 
         npc.addNpcData(parsedLine);
+    }
+
+    public void enlistHighlightedWords(final TokenMap map) {
+        for (final ConditionParser parser : condPar) {
+            parser.enlistHighlightedWords(map);
+        }
+
+        for (final ConsequenceParser parser : consPar) {
+            parser.enlistHighlightedWords(map);
+        }
     }
 }

@@ -1,27 +1,30 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.data;
+
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 /**
  * This enumerator stores all possible slots for equipment used in the easyNPC
  * scripts.
- * 
+ *
  * @author Martin Karing
  * @version 1.00
  * @since 1.01
@@ -74,7 +77,7 @@ public enum EquipmentSlots {
 
     /**
      * Constructor for the equipment slot that stores the ID needed in LUA.
-     * 
+     *
      * @param id the Id of the slot
      */
     EquipmentSlots(final int id) {
@@ -83,10 +86,21 @@ public enum EquipmentSlots {
 
     /**
      * Get the LUA id of the slot.
-     * 
+     *
      * @return the LUA id of this slot
      */
     public int getLuaId() {
         return slotId;
+    }
+
+    /**
+     * Add this values to the highlighted tokens.
+     *
+     * @param map the map that stores the tokens
+     */
+    public static void enlistHighlightedWords(final TokenMap map) {
+        for (EquipmentSlots slot : EquipmentSlots.values()) {
+            map.put(slot.name(), Token.VARIABLE);
+        }
     }
 }

@@ -1,55 +1,43 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.text.Segment;
-
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
-
-import org.apache.log4j.Logger;
-
-import illarion.easynpc.docu.DocuEntry;
-import illarion.easynpc.gui.Config;
-import illarion.easynpc.parser.NpcType;
-
 import illarion.common.util.Crypto;
 import illarion.common.util.TableLoader;
+import illarion.easynpc.docu.DocuEntry;
+import illarion.easynpc.gui.Config;
+import illarion.easynpc.parser.*;
+import org.apache.log4j.Logger;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * This class parses a easyNPC script that contains the plain script data to a
  * parsed script that contains the analyzed script data.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.01
+ * @since 1.00
  */
 public final class Parser implements DocuEntry {
     /**
@@ -84,8 +72,7 @@ public final class Parser implements DocuEntry {
      * This pattern is used to find a string in the text.
      */
     @SuppressWarnings("nls")
-    private static final Pattern STRING_ENTRY = Pattern.compile(
-        "(\"[^\"]*\")", Pattern.MULTILINE);
+    private static final Pattern STRING_ENTRY = Pattern.compile("(\"[^\"]*\")", Pattern.MULTILINE);
 
     /**
      * The list of NPC types this parser knows.
@@ -93,9 +80,8 @@ public final class Parser implements DocuEntry {
     private final NpcType[] types;
 
     /**
-     * The private constructor to avoid any instances but the singleton
-     * instance. This also prepares the list that are required to work and the
-     * registers the parsers working in this parser.
+     * The private constructor to avoid any instances but the singleton instance. This also prepares the list that
+     * are required to work and the registers the parsers working in this parser.
      */
     @SuppressWarnings("nls")
     private Parser() {
@@ -104,22 +90,23 @@ public final class Parser implements DocuEntry {
         TableLoader.setCrypto(crypt);
 
         final List<NpcType> typeList = new ArrayList<NpcType>();
-        typeList.add(new illarion.easynpc.parser.NpcComment());
-        typeList.add(new illarion.easynpc.parser.NpcBasics());
-        typeList.add(new illarion.easynpc.parser.NpcColors());
-        typeList.add(new illarion.easynpc.parser.NpcHair());
-        typeList.add(new illarion.easynpc.parser.NpcEquipment());
-        typeList.add(new illarion.easynpc.parser.NpcTalk());
-        typeList.add(new illarion.easynpc.parser.NpcEmpty());
-        typeList.add(new illarion.easynpc.parser.NpcCycleText());
-        typeList.add(new illarion.easynpc.parser.NpcWalk());
+        typeList.add(new NpcComment());
+        typeList.add(new NpcBasics());
+        typeList.add(new NpcColors());
+        typeList.add(new NpcHair());
+        typeList.add(new NpcEquipment());
+        typeList.add(new NpcTalk());
+        typeList.add(new NpcEmpty());
+        typeList.add(new NpcCycleText());
+        typeList.add(new NpcWalk());
+        typeList.add(new NpcTradeSimple());
 
         types = typeList.toArray(new NpcType[typeList.size()]);
     }
 
     /**
      * Get the singleton instance of this parser.
-     * 
+     *
      * @return the singleton instance of this class
      */
     public static Parser getInstance() {
@@ -129,9 +116,8 @@ public final class Parser implements DocuEntry {
     /**
      * This function starts the parser without GUI and is used to parse some
      * scripts directly.
-     * 
-     * @param args the path to the script or the folder with the scripts to
-     *            parse
+     *
+     * @param args the path to the script or the folder with the scripts to parse
      * @throws IOException in case the script can't be read
      */
     @SuppressWarnings("nls")
@@ -139,8 +125,7 @@ public final class Parser implements DocuEntry {
         Config.getInstance().init();
 
         if (args.length == 0) {
-            System.out
-                .println("You need to set a script to parse, else nothing can be done.");
+            System.out.println("You need to set a script to parse, else nothing can be done.");
         }
 
         for (final String arg : args) {
@@ -149,19 +134,19 @@ public final class Parser implements DocuEntry {
                 parseScript(sourceFile);
             } else if (sourceFile.exists() && sourceFile.isDirectory()) {
                 final String[] fileNames =
-                    sourceFile.list(new FilenameFilter() {
-                        private static final String fileEnding = ".npc";
+                        sourceFile.list(new FilenameFilter() {
+                            private static final String fileEnding = ".npc";
 
-                        @Override
-                        public boolean accept(final File dir, final String name) {
-                            return name.endsWith(fileEnding);
-                        }
-                    });
+                            @Override
+                            public boolean accept(final File dir, final String name) {
+                                return name.endsWith(fileEnding);
+                            }
+                        });
 
                 for (final String fileName : fileNames) {
                     final File targetFile =
-                        new File(sourceFile.getPath() + File.separator
-                            + fileName);
+                            new File(sourceFile.getPath() + File.separator
+                                    + fileName);
                     parseScript(targetFile);
                 }
             }
@@ -170,7 +155,7 @@ public final class Parser implements DocuEntry {
 
     /**
      * Parse one script.
-     * 
+     *
      * @param file the file of the script to parse
      * @throws IOException in case reading the script fails
      */
@@ -180,15 +165,15 @@ public final class Parser implements DocuEntry {
         final ParsedNpc parsedNPC = Parser.getInstance().parse(script);
 
         System.out.print("File \"" + file.getName() + "\" parsed - Encoding: "
-            + script.getScriptEncoding().name() + " - Errors: ");
+                + script.getScriptEncoding().name() + " - Errors: ");
         if (parsedNPC.hasErrors()) {
             System.out.println(Integer.toString(parsedNPC.getErrorCount()));
             final int errorCount = parsedNPC.getErrorCount();
             for (int i = 0; i < errorCount; ++i) {
                 final ParsedNpc.Error error = parsedNPC.getError(i);
                 System.out.println("\tLine "
-                    + Integer.toString(error.getLine().getLineNumber()) + ": "
-                    + error.getMessage());
+                        + Integer.toString(error.getLine().getLineNumber()) + ": "
+                        + error.getMessage());
             }
             System.out.println();
             return;
@@ -200,18 +185,18 @@ public final class Parser implements DocuEntry {
         writer.setTargetLanguage(ScriptWriter.TARGET_LUA);
         writer.setSource(parsedNPC);
         final File luaTargetFile =
-            new File(file.getParentFile().getParent() + File.separator
-                + parsedNPC.getLuaFilename());
+                new File(file.getParentFile().getParent() + File.separator
+                        + parsedNPC.getLuaFilename());
         Writer outputWriter =
-            new OutputStreamWriter(new FileOutputStream(luaTargetFile),
-                "ISO-8859-1");
+                new OutputStreamWriter(new FileOutputStream(luaTargetFile),
+                        "ISO-8859-1");
         writer.setWritingTarget(outputWriter);
         writer.write();
         outputWriter.close();
 
         writer.setTargetLanguage(ScriptWriter.TARGET_EASY);
         outputWriter =
-            new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+                new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
         writer.setWritingTarget(outputWriter);
         writer.write();
         outputWriter.close();
@@ -255,7 +240,7 @@ public final class Parser implements DocuEntry {
 
     /**
      * Parse the NPC and return the parsed version of the NPC.
-     * 
+     *
      * @param source the easyNPC source script that is supposed to be parsed.
      * @return the parsed version of the NPC
      */
@@ -263,7 +248,7 @@ public final class Parser implements DocuEntry {
     public ParsedNpc parse(final EasyNpcScript source) {
         final long start = System.currentTimeMillis();
         final int count = source.getEntryCount();
-        final ParsedNpc resultNpc = ParsedNpc.getInstance();
+        final ParsedNpc resultNpc = new ParsedNpc();
 
         boolean lineParsed = false;
         EasyNpcScript.Line line = null;
@@ -280,35 +265,19 @@ public final class Parser implements DocuEntry {
 
             if (!lineParsed) {
                 resultNpc.addError(line,
-                    "No parser seems to know what to do with this line.");
+                        "No parser seems to know what to do with this line.");
             }
         }
 
         LOGGER.debug("Parsing the script took "
-            + Long.toString(System.currentTimeMillis() - start) + "ms");
+                + Long.toString(System.currentTimeMillis() - start) + "ms");
 
         return resultNpc;
     }
 
-    /**
-     * Parse a segment of the script. That is used to get the highlighted parts
-     * for the syntax highlighting.
-     * 
-     * @param segment the segment to parse
-     * @param offset the offset of the segment
-     * @param tokens the list of tokens
-     */
-    public void parseSegment(final Segment segment, final int offset,
-        final List<Token> tokens) {
-
-        final Matcher matcher = STRING_ENTRY.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.STRING, matcher.start(1) + offset,
-                matcher.end(1) - matcher.start(1)));
-        }
-
+    public void enlistHighlightedWords(final TokenMap map) {
         for (int parserIdx = 0; parserIdx < types.length; ++parserIdx) {
-            types[parserIdx].parseSegment(segment, offset, tokens);
+            types[parserIdx].enlistHighlightedWords(map);
         }
     }
 }

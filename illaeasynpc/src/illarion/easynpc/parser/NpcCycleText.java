@@ -23,11 +23,9 @@ import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedCycleText;
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
-import javax.swing.text.Segment;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +33,6 @@ import java.util.regex.Pattern;
  * This class handles all cycle text lines.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public final class NpcCycleText implements NpcType {
     /**
@@ -43,10 +40,8 @@ public final class NpcCycleText implements NpcType {
      */
     @SuppressWarnings("nls")
     private static final Pattern CYCLETEXT_LINE =
-            Pattern
-                    .compile(
-                            "^\\s*(cycletext)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$",
-                            Pattern.MULTILINE);
+            Pattern.compile("^\\s*(cycletext)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$",
+                    Pattern.MULTILINE);
 
     /**
      * Check if the line is a comment block
@@ -105,13 +100,7 @@ public final class NpcCycleText implements NpcType {
     }
 
     @Override
-    public void parseSegment(final Segment segment, final int offset,
-                             final List<Token> tokens) {
-        final Matcher matcher = CYCLETEXT_LINE.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                    matcher.end(1) - matcher.start(1)));
-        }
+    public void enlistHighlightedWords(final TokenMap map) {
+        map.put("cycletext", Token.RESERVED_WORD);
     }
-
 }

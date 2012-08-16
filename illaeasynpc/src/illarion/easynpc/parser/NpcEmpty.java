@@ -23,15 +23,13 @@ import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedEmptyLine;
-import jsyntaxpane.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
-import javax.swing.text.Segment;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * This class simply handles all empty lines in a new NPC script. While they do
- * not actually "do" anything they still need to be parsed, else problem occur.
+ * This class simply handles all empty lines in a new NPC script. While they do not actually "do" anything they still
+ * need to be parsed, else problem occur.
  *
  * @author Martin Karing
  */
@@ -93,9 +91,7 @@ public final class NpcEmpty implements NpcType {
     }
 
     @Override
-    public void parseSegment(final Segment segment, final int offset,
-                             final List<Token> tokens) {
-        // nothing to do
+    public void enlistHighlightedWords(final TokenMap map) {
+        // nothing
     }
-
 }

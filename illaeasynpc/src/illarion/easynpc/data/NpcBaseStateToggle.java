@@ -18,26 +18,20 @@
  */
 package illarion.easynpc.data;
 
-import org.fife.ui.rsyntaxtextarea.Token;
-import org.fife.ui.rsyntaxtextarea.TokenMap;
-
 /**
- * The list of character attributes, the easyNPC script and the LUA script is able to use.
+ * This enumerator contains the values used to change the base npc state.
  *
  * @author Martin Karing
  */
-public enum CharacterAttribute {
-    agility, constitution, dexterity, essence, foodlevel, hitpoints,
-    intelligence, manapoints, perception, strength, willpower;
+public enum NpcBaseStateToggle {
+    /**
+     * Set the NPC into the busy talking modus. While this modus is activated
+     * the NPC will not talk to anyone else.
+     */
+    begin,
 
     /**
-     * Add this values to the highlighted tokens.
-     *
-     * @param map the map that stores the tokens
+     * Set the NPC back into the normal modus.
      */
-    public static void enlistHighlightedWords(final TokenMap map) {
-        for (CharacterAttribute attribute : CharacterAttribute.values()) {
-            map.put(attribute.name(), Token.VARIABLE);
-        }
-    }
+    end;
 }

@@ -24,30 +24,26 @@ import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.data.*;
 import illarion.easynpc.docu.DocuEntry;
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
-import javax.swing.text.Segment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This NpcType is able to parse the basic informations out of a easyNPC script.
- * Such informations are the name and the location, race and so on of the NPC.
+ * This NpcType is able to parse the basic information out of a easyNPC script. Such information are the name and
+ * the location, race and so on of the NPC.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public final class NpcBasics implements NpcType {
     /**
-     * This internal class is a helper class for the documentation. Each
-     * instance of this class contains the documentation data for one command
-     * the NPC Basics parser manages.
+     * This internal class is a helper class for the documentation. Each instance of this class contains the
+     * documentation data for one command the NPC Basics parser manages.
      *
      * @author Martin Karing
-     * @since 1.01
      */
     private static final class ChildDocuClass implements DocuEntry {
         /**
@@ -669,42 +665,24 @@ public final class NpcBasics implements NpcType {
     }
 
     @Override
-    public void parseSegment(final Segment segment, final int offset,
-                             final List<Token> tokens) {
-        parseSegmentImpl(segment, offset, tokens, HEADER_NAME);
-        parseSegmentImpl(segment, offset, tokens, HEADER_SEX);
-        parseSegmentImpl(segment, offset, tokens, HEADER_DIRECTION);
-        parseSegmentImpl(segment, offset, tokens, HEADER_RACE);
-        parseSegmentImpl(segment, offset, tokens, HEADER_POSITION);
-        parseSegmentImpl(segment, offset, tokens, HEADER_AUTHOR);
-        parseSegmentImpl(segment, offset, tokens, HEADER_JOB);
-        parseSegmentImpl(segment, offset, tokens, HEADER_AFFILIATION);
-        parseSegmentImpl(segment, offset, tokens, HEADER_LANGUAGE);
-        parseSegmentImpl(segment, offset, tokens, HEADER_DEFAULT_LANG);
-        parseSegmentImpl(segment, offset, tokens, HEADER_LOOKAT_DE);
-        parseSegmentImpl(segment, offset, tokens, HEADER_LOOKAT_US);
-        parseSegmentImpl(segment, offset, tokens, HEADER_USE_DE);
-        parseSegmentImpl(segment, offset, tokens, HEADER_USE_US);
-        parseSegmentImpl(segment, offset, tokens, HEADER_CONFUSED_DE);
-        parseSegmentImpl(segment, offset, tokens, HEADER_CONFUSED_US);
-        parseSegmentImpl(segment, offset, tokens, HEADER_AUTO_INTRO);
-    }
-
-    /**
-     * Additional implementation to parse a segment. This reads all lines in the
-     * segment in and matches it against the pattern handed over.
-     *
-     * @param segment the segment
-     * @param offset  the offset to the start of the segment
-     * @param tokens  the list of old tokens
-     * @param pattern the pattern used to check
-     */
-    private void parseSegmentImpl(final Segment segment, final int offset,
-                                  final List<Token> tokens, final Pattern pattern) {
-        final Matcher matcher = pattern.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                    matcher.end(1) - matcher.start(1)));
-        }
+    public void enlistHighlightedWords(final TokenMap map) {
+        map.put("affiliation", Token.RESERVED_WORD);
+        map.put("author", Token.RESERVED_WORD);
+        map.put("autointroduce", Token.RESERVED_WORD);
+        map.put("wrongLangDE", Token.RESERVED_WORD);
+        map.put("wrongLangUS", Token.RESERVED_WORD);
+        map.put("defaultLanguage", Token.RESERVED_WORD);
+        map.put("dir", Token.RESERVED_WORD);
+        map.put("direction", Token.RESERVED_WORD);
+        map.put("job", Token.RESERVED_WORD);
+        map.put("language", Token.RESERVED_WORD);
+        map.put("lookatDE", Token.RESERVED_WORD);
+        map.put("lookatUS", Token.RESERVED_WORD);
+        map.put("name", Token.RESERVED_WORD);
+        map.put("position", Token.RESERVED_WORD);
+        map.put("race", Token.RESERVED_WORD);
+        map.put("sex", Token.RESERVED_WORD);
+        map.put("useMsgDE", Token.RESERVED_WORD);
+        map.put("useMsgUS", Token.RESERVED_WORD);
     }
 }

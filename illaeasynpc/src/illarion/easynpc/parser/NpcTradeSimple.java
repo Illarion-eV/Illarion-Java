@@ -24,11 +24,9 @@ import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.data.Items;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedTradeSimple;
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
-import javax.swing.text.Segment;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -318,30 +316,10 @@ public final class NpcTradeSimple implements NpcType {
         }
     }
 
-    /**
-     * Extract the tokens needed for the syntax highlighting from a text
-     * segment.
-     */
     @Override
-    public void parseSegment(final Segment segment, final int offset,
-                             final List<Token> tokens) {
-        Matcher matcher = SELL_PATTERN.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                    matcher.end(1) - matcher.start(1)));
-        }
-
-        matcher = BUY_PRIMARY_PATTERN.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                    matcher.end(1) - matcher.start(1)));
-        }
-
-        matcher = BUY_SECONDARY_PATTERN.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                    matcher.end(1) - matcher.start(1)));
-        }
+    public void enlistHighlightedWords(final TokenMap map) {
+        map.put("sellItems", Token.RESERVED_WORD);
+        map.put("buyPrimaryItems", Token.RESERVED_WORD);
+        map.put("buySecondaryItems", Token.RESERVED_WORD);
     }
-
 }

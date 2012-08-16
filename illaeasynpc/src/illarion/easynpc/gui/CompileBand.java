@@ -1,28 +1,25 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
+import illarion.easynpc.Lang;
+import org.bushe.swing.event.EventBusAction;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
@@ -31,11 +28,14 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
-import illarion.easynpc.Lang;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This band holds all buttons regarding the compiling functions of the editor.
- * 
+ *
  * @author Martin Karing
  * @since 1.01
  */
@@ -49,28 +49,28 @@ final class CompileBand extends JRibbonBand {
      * Default constructor that prepares the buttons displayed on this band.
      */
     @SuppressWarnings("nls")
-    public CompileBand() {
+    CompileBand() {
         super(Lang.getMsg(CompileBand.class, "title"), null);
 
         final JCommandButton checkScriptButton =
-            new JCommandButton(Lang.getMsg(getClass(), "checkScript"),
-                Utils.getResizableIconFromResource("agt_reload.png"));
+                new JCommandButton(Lang.getMsg(getClass(), "checkScript"),
+                        Utils.getResizableIconFromResource("agt_reload.png"));
         final JCommandButton parseScriptButton =
-            new JCommandButton(Lang.getMsg(getClass(), "rebuildScript"),
-                Utils.getResizableIconFromResource("rebuild.png"));
+                new JCommandButton(Lang.getMsg(getClass(), "rebuildScript"),
+                        Utils.getResizableIconFromResource("rebuild.png"));
         final JCommandToggleButton autoCheckScriptButton =
-            new JCommandToggleButton(Lang.getMsg(getClass(), "autoCheck"),
-                Utils.getResizableIconFromResource("build.png"));
+                new JCommandToggleButton(Lang.getMsg(getClass(), "autoCheck"),
+                        Utils.getResizableIconFromResource("build.png"));
 
         checkScriptButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-            getClass(), "checkScriptButtonTooltipTitle"), Lang.getMsg(
-            getClass(), "checkScriptButtonTooltip")));
+                getClass(), "checkScriptButtonTooltipTitle"), Lang.getMsg(
+                getClass(), "checkScriptButtonTooltip")));
         parseScriptButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-            getClass(), "parseScriptButtonTooltipTitle"), Lang.getMsg(
-            getClass(), "parseScriptButtonTooltip")));
+                getClass(), "parseScriptButtonTooltipTitle"), Lang.getMsg(
+                getClass(), "parseScriptButtonTooltip")));
         autoCheckScriptButton.setActionRichTooltip(new RichTooltip(Lang
-            .getMsg(getClass(), "autoCheckButtonTooltipTitle"), Lang.getMsg(
-            getClass(), "autoCheckButtonTooltip")));
+                .getMsg(getClass(), "autoCheckButtonTooltipTitle"), Lang.getMsg(
+                getClass(), "autoCheckButtonTooltip")));
         if (Config.getInstance().getAutoBuild()) {
             autoCheckScriptButton.doActionClick();
         }
@@ -79,7 +79,7 @@ final class CompileBand extends JRibbonBand {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 Utils.reparseSilent(MainFrame.getInstance()
-                    .getCurrentScriptEditor());
+                        .getCurrentScriptEditor());
             }
         };
 
@@ -87,7 +87,7 @@ final class CompileBand extends JRibbonBand {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 Utils.reparseScript(MainFrame.getInstance()
-                    .getCurrentScriptEditor());
+                        .getCurrentScriptEditor());
             }
         };
 
@@ -95,9 +95,15 @@ final class CompileBand extends JRibbonBand {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 Config.getInstance().setAutoBuild(
-                    !Config.getInstance().getAutoBuild());
+                        !Config.getInstance().getAutoBuild());
             }
         };
+
+        checkScriptButton.getActionModel().setActionCommand("checkScript");
+        parseScriptButton.getActionModel().setActionCommand("parseScript");
+        autoCheckScriptButton.getActionModel().setActionCommand("autoCheckScript");
+
+        checkScriptButton.addActionListener(new EventBusAction());
 
         checkScriptButton.addActionListener(checkScriptAction);
         parseScriptButton.addActionListener(parseScriptAction);
@@ -108,7 +114,7 @@ final class CompileBand extends JRibbonBand {
         addCommandButton(autoCheckScriptButton, RibbonElementPriority.MEDIUM);
 
         final List<RibbonBandResizePolicy> policies =
-            new ArrayList<RibbonBandResizePolicy>();
+                new ArrayList<RibbonBandResizePolicy>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         setResizePolicies(policies);

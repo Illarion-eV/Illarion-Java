@@ -1,61 +1,46 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc;
 
-import java.util.Collections;
-
-import javolution.context.ObjectFactory;
-import javolution.util.FastTable;
-
-import illarion.easynpc.data.BooleanFlagValues;
-import illarion.easynpc.data.CharacterDirection;
-import illarion.easynpc.data.CharacterLanguage;
-import illarion.easynpc.data.CharacterRace;
-import illarion.easynpc.data.CharacterSex;
-import illarion.easynpc.data.Towns;
+import illarion.common.util.Location;
+import illarion.easynpc.data.*;
 import illarion.easynpc.parsed.ParsedData;
 import illarion.easynpc.writer.EasyNpcWritable;
 import illarion.easynpc.writer.LuaWritable;
+import javolution.util.FastTable;
 
-import illarion.common.util.Location;
-import illarion.common.util.Reusable;
+import java.util.Collections;
 
 /**
- * This class contains a parsed NPC structure. A detailed and analyzed version
- * of a easyNPC script that is easily maintainable by this application and easy
- * to convert into a LUA or a easyNPC script.
- * 
+ * This class contains a parsed NPC structure. A detailed and analyzed version of a easyNPC script that is easily
+ * maintainable by this application and easy to convert into a LUA or a easyNPC script.
+ *
  * @author Martin Karing
- * @since 1.00
- * @version 1.02
  */
-public final class ParsedNpc implements Reusable {
+public final class ParsedNpc {
     /**
-     * This support class is used to store all informations regarding a error
-     * that was found in the script. It stores the position where it was found
-     * as well as the description of the error.
-     * 
+     * This support class is used to store all information regarding a error that was found in the script. It stores
+     * the position where it was found as well as the description of the error.
+     *
      * @author Martin Karing
-     * @since 1.00
-     * @version 1.01
      */
-    public static final class Error implements Comparable<Error> {
+    public static final class Error implements Comparable<ParsedNpc.Error> {
         /**
          * The line the error occurred at.
          */
@@ -68,12 +53,12 @@ public final class ParsedNpc implements Reusable {
 
         /**
          * Create this error message.
-         * 
+         *
          * @param problemLine the line that caused this problem
-         * @param errorMsg the message of this error
+         * @param errorMsg    the message of this error
          */
-        protected Error(final EasyNpcScript.Line problemLine,
-            final String errorMsg) {
+        Error(final EasyNpcScript.Line problemLine,
+              final String errorMsg) {
             line = problemLine;
             message = errorMsg;
         }
@@ -82,13 +67,13 @@ public final class ParsedNpc implements Reusable {
          * Compare method used to sort the errors.
          */
         @Override
-        public int compareTo(final Error o) {
+        public int compareTo(final ParsedNpc.Error o) {
             return line.getLineNumber() - o.line.getLineNumber();
         }
 
         /**
          * Get the line the error occurred on.
-         * 
+         *
          * @return the line with the error
          */
         public EasyNpcScript.Line getLine() {
@@ -97,45 +82,13 @@ public final class ParsedNpc implements Reusable {
 
         /**
          * Get the message describing the error.
-         * 
+         *
          * @return the error message
          */
         public String getMessage() {
             return message;
         }
     }
-
-    /**
-     * The factory for the parsed NPC. This stores all formerly created and
-     * currently unused instances of the ParsedNpc class.
-     * 
-     * @author Martin Karing
-     * @since 1.02
-     * @version 1.02
-     */
-    private static final class ParsedNpcFactory extends
-        ObjectFactory<ParsedNpc> {
-        /**
-         * Public constructor to allow the parent class to create a proper
-         * instance.
-         */
-        public ParsedNpcFactory() {
-            // nothing to do
-        }
-
-        /**
-         * Create a new instance of the recycled object.
-         */
-        @Override
-        protected ParsedNpc create() {
-            return new ParsedNpc();
-        }
-    }
-
-    /**
-     * The instance of the factory used to create the objects for this class.
-     */
-    private static final ParsedNpcFactory FACTORY = new ParsedNpcFactory();
 
     /**
      * The town affiliation of this NPC.
@@ -148,10 +101,9 @@ public final class ParsedNpc implements Reusable {
     private FastTable<String> authors;
 
     /**
-     * The auto introduce flag of the NPC. If this is set to false, the NPC will
-     * not introduce automatically.
+     * The auto introduce flag of the NPC. If this is set to false, the NPC will not introduce automatically.
      */
-    private BooleanFlagValues autoIntroduce = null;
+    private BooleanFlagValues autoIntroduce;
 
     /**
      * The language the NPC is talking by default.
@@ -161,12 +113,12 @@ public final class ParsedNpc implements Reusable {
     /**
      * A list of errors occurred while parsing this NPC.
      */
-    private FastTable<Error> errors;
+    private FastTable<ParsedNpc.Error> errors;
 
     /**
      * Flag that stores if the error messages are sorted correctly or not.
      */
-    private boolean errorsSorted;
+    private boolean errorOrderDirty;
 
     /**
      * The job of the NPC.
@@ -182,13 +134,12 @@ public final class ParsedNpc implements Reusable {
      * The German version of the message displayed in case a character looks at
      * the NPC.
      */
-    private String lookatDe = null;
+    private String lookAtDe;
 
     /**
-     * The English version of the message displayed in case a character looks at
-     * the NPC.
+     * The English version of the message displayed in case a character looks at the NPC.
      */
-    private String lookatUs = null;
+    private String lookAtUs;
 
     /**
      * The additional data the NPC contains.
@@ -221,52 +172,39 @@ public final class ParsedNpc implements Reusable {
     private CharacterSex npcSex;
 
     /**
-     * The German version of the message displayed in case the player uses the
-     * NPC.
+     * The German version of the message displayed in case the player uses the NPC.
      */
-    private String useMsgDe = null;
+    private String useMsgDe;
 
     /**
-     * The English version of the message displayed in case the player uses the
-     * NPC.
+     * The English version of the message displayed in case the player uses the NPC.
      */
-    private String useMsgUs = null;
+    private String useMsgUs;
 
     /**
-     * The German version of the message the NPC speaks in case a character
-     * talks to him in a invalid language.
+     * The German version of the message the NPC speaks in case a character talks to him in a invalid language.
      */
-    private String wrongLanguageDe = null;
+    private String wrongLanguageDe;
 
     /**
-     * The English version of the message the NPC speaks in case a character
-     * talks to him in a invalid language.
+     * The English version of the message the NPC speaks in case a character talks to him in a invalid language.
      */
-    private String wrongLanguageUs = null;
+    private String wrongLanguageUs;
 
     /**
      * Constructor for the class that creates the required object to store all
      * data for this NPC.
      */
-    ParsedNpc() {
-        // nothing to do
-    }
-
-    /**
-     * Get a newly created or a old reused instance of this class that is now
-     * free to be used.
-     * 
-     * @return the instance to use
-     */
-    public static ParsedNpc getInstance() {
-        final ParsedNpc result = FACTORY.object();
-        result.prepareInstance();
-        return result;
+    public ParsedNpc() {
+        affiliation = Towns.None;
+        job = "none"; //$NON-NLS-1$
+        errorOrderDirty = false;
+        defaultLanguage = null;
     }
 
     /**
      * Add one name to the list of authors.
-     * 
+     *
      * @param author the name of the author to add
      */
     public void addAuthor(final String author) {
@@ -279,21 +217,21 @@ public final class ParsedNpc implements Reusable {
     /**
      * Add a error to the list of errors that occurred while this NPC was
      * parsed.
-     * 
-     * @param line the line the error occurred at
+     *
+     * @param line    the line the error occurred at
      * @param message the message describing the error
      */
     public void addError(final EasyNpcScript.Line line, final String message) {
         if (errors == null) {
             errors = FastTable.newInstance();
         }
-        errors.add(new Error(line, message));
-        errorsSorted = false;
+        errors.add(new ParsedNpc.Error(line, message));
+        errorOrderDirty = true;
     }
 
     /**
      * Add a language to the list of languages the NPC is able to speak.
-     * 
+     *
      * @param lang the language to add
      */
     public void addLanguage(final CharacterLanguage lang) {
@@ -307,7 +245,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Add some complex parsed data to this NPC.
-     * 
+     *
      * @param data the data to add
      */
     public void addNpcData(final ParsedData data) {
@@ -319,7 +257,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the affiliation of this NPC.
-     * 
+     *
      * @return the affiliation of this NPC
      */
     public Towns getAffiliation() {
@@ -331,7 +269,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the list of the names of the authors of this script.
-     * 
+     *
      * @return a array of the author names
      */
     public String[] getAuthors() {
@@ -343,7 +281,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the current value of the auto introduce flag.
-     * 
+     *
      * @return the auto introduce flag
      */
     public BooleanFlagValues getAutoIntroduce() {
@@ -355,7 +293,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the amount of data entries that are written in this NPC.
-     * 
+     *
      * @return the amount of data entries
      */
     public int getDataCount() {
@@ -367,7 +305,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the language this character is speaking by default.
-     * 
+     *
      * @return the language this character is speaking by default
      */
     public CharacterLanguage getDefaultLanguage() {
@@ -379,7 +317,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the easyNPC data sources for the writer.
-     * 
+     *
      * @param index the index of the data
      * @return the data at the selected index
      */
@@ -394,21 +332,21 @@ public final class ParsedNpc implements Reusable {
     /**
      * Get the English version of the text that is displayed in case the player
      * looks at the NPC.
-     * 
+     *
      * @return the message
      */
     @SuppressWarnings("nls")
     public String getEnglishLookat() {
-        if (lookatUs == null) {
+        if (lookAtUs == null) {
             return "This is a NPC who's developer was too lazy to type in a description.";
         }
-        return lookatUs;
+        return lookAtUs;
     }
 
     /**
      * Get the English version of the text displayed in case the player uses the
      * NPC.
-     * 
+     *
      * @return the message
      */
     @SuppressWarnings("nls")
@@ -422,7 +360,7 @@ public final class ParsedNpc implements Reusable {
     /**
      * Get the English version of the message that is displayed in case the
      * player talks to the NPC in the wrong language.
-     * 
+     *
      * @return the message
      */
     @SuppressWarnings("nls")
@@ -435,24 +373,24 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the error stored at a index.
-     * 
+     *
      * @param index the index of the error that is requested
      * @return the error stored with this index
      */
-    public Error getError(final int index) {
+    public ParsedNpc.Error getError(final int index) {
         if (errors == null) {
             throw new IndexOutOfBoundsException("No errors stored.");
         }
-        if (!errorsSorted) {
+        if (errorOrderDirty) {
             Collections.sort(errors);
-            errorsSorted = true;
+            errorOrderDirty = false;
         }
         return errors.get(index);
     }
 
     /**
      * Get the amount of errors found in this script.
-     * 
+     *
      * @return the amount of errors in this script.
      */
     public int getErrorCount() {
@@ -465,21 +403,21 @@ public final class ParsedNpc implements Reusable {
     /**
      * Get the German version of the text that is displayed in case the player
      * looks at the NPC.
-     * 
+     *
      * @return the message
      */
     @SuppressWarnings("nls")
     public String getGermanLookat() {
-        if (lookatDe == null) {
+        if (lookAtDe == null) {
             return "Das ist ein NPC dessen Entwickler zu faul war eine Beschreibung einzutragen.";
         }
-        return lookatDe;
+        return lookAtDe;
     }
 
     /**
      * Get the German version of the text displayed in case the player uses the
      * NPC.
-     * 
+     *
      * @return the message
      */
     @SuppressWarnings("nls")
@@ -493,7 +431,7 @@ public final class ParsedNpc implements Reusable {
     /**
      * Get the German version of the message that is displayed in case the
      * player talks to the NPC in the wrong language.
-     * 
+     *
      * @return the message
      */
     @SuppressWarnings("nls")
@@ -506,7 +444,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the Job of this NPC.
-     * 
+     *
      * @return the job of this NPC
      */
     public String getJob() {
@@ -518,7 +456,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the languages this NPC is able to speak.
-     * 
+     *
      * @return the array of languages this NPC is able to speak
      */
     public CharacterLanguage[] getLanguages() {
@@ -549,7 +487,7 @@ public final class ParsedNpc implements Reusable {
             }
 
             final CharacterLanguage[] result =
-                languages.toArray(new CharacterLanguage[languages.size()]);
+                    languages.toArray(new CharacterLanguage[languages.size()]);
             languages.clear();
             return result;
         }
@@ -559,7 +497,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the LUA data sources for the writer.
-     * 
+     *
      * @param index the index of the data
      * @return the data at the selected index
      */
@@ -570,7 +508,7 @@ public final class ParsedNpc implements Reusable {
     /**
      * Get the correct name for the LUA script file according to the data saved
      * in this script.
-     * 
+     *
      * @return the correct lua script file
      */
     @SuppressWarnings("nls")
@@ -580,7 +518,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the looking direction of this NPC.
-     * 
+     *
      * @return the looking direction of this NPC
      */
     public CharacterDirection getNpcDir() {
@@ -592,7 +530,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the name of this NPC.
-     * 
+     *
      * @return the name of this NPC
      */
     public String getNpcName() {
@@ -607,7 +545,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the location of this NPC.
-     * 
+     *
      * @return the current location of this NPC.
      */
     public Location getNpcPos() {
@@ -620,7 +558,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the race of this NPC.
-     * 
+     *
      * @return The current set race of this NPC
      */
     public CharacterRace getNpcRace() {
@@ -632,7 +570,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Get the sex value of this NPC.
-     * 
+     *
      * @return the sex value of this NPC
      */
     public CharacterSex getNpcSex() {
@@ -644,82 +582,16 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Check if the script contains any errors.
-     * 
+     *
      * @return <code>true</code> if there are any errors stored in this parseNPC
      */
     public boolean hasErrors() {
-        if (errors == null) {
-            return false;
-        }
-        return !errors.isEmpty();
-    }
-
-    /**
-     * Put the instance back into the factory for later usage.
-     */
-    @Override
-    public void recycle() {
-        reset();
-        FACTORY.recycle(this);
-    }
-
-    /**
-     * Reset the data stored in this instance.
-     */
-    @Override
-    public void reset() {
-        if (npcData != null) {
-            final int count = npcData.size();
-            for (int i = 0; i < count; i++) {
-                npcData.get(i).recycle();
-            }
-            npcData.clear();
-            FastTable.recycle(npcData);
-            npcData = null;
-        }
-
-        if (authors != null) {
-            authors.clear();
-            FastTable.recycle(authors);
-            authors = null;
-        }
-
-        if (languages != null) {
-            languages.clear();
-            FastTable.recycle(languages);
-            languages = null;
-        }
-
-        if (errors != null) {
-            errors.clear();
-            FastTable.recycle(errors);
-            errors = null;
-            errorsSorted = true;
-        }
-
-        affiliation = null;
-        autoIntroduce = null;
-        defaultLanguage = null;
-        job = null;
-        lookatDe = null;
-        lookatUs = null;
-        npcDir = null;
-
-        if (npcPos != null) {
-            npcPos.recycle();
-            npcPos = null;
-        }
-
-        npcRace = null;
-        useMsgDe = null;
-        useMsgUs = null;
-        wrongLanguageDe = null;
-        wrongLanguageUs = null;
+        return (errors != null) && !errors.isEmpty();
     }
 
     /**
      * Set the affiliation of this NPC.
-     * 
+     *
      * @param aff the affiliation of this NPC
      */
     public void setAffiliation(final Towns aff) {
@@ -728,7 +600,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Set the value for the auto introduce flag.
-     * 
+     *
      * @param newValue the new value for the auto introduce flag
      */
     public void setAutoIntroduce(final BooleanFlagValues newValue) {
@@ -737,7 +609,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Set the language this character is speaking by default.
-     * 
+     *
      * @param lang the language this character is speaking by default
      */
     public void setDefaultLanguage(final CharacterLanguage lang) {
@@ -747,17 +619,17 @@ public final class ParsedNpc implements Reusable {
     /**
      * Set the English version of the text that is displayed in case the player
      * looks at the NPC.
-     * 
+     *
      * @param msg the message
      */
-    public void setEnglishLookat(final String msg) {
-        lookatUs = msg;
+    public void setEnglishLookAt(final String msg) {
+        lookAtUs = msg;
     }
 
     /**
      * Set the English version of the text displayed in case the player uses the
      * NPC.
-     * 
+     *
      * @param msg the message
      */
     public void setEnglishUse(final String msg) {
@@ -767,7 +639,7 @@ public final class ParsedNpc implements Reusable {
     /**
      * Set the English version of the message that is displayed in case the
      * player talks to the NPC in the wrong language.
-     * 
+     *
      * @param msg the message
      */
 
@@ -778,17 +650,17 @@ public final class ParsedNpc implements Reusable {
     /**
      * Set the German version of the text that is displayed in case the player
      * looks at the NPC.
-     * 
+     *
      * @param msg the message
      */
-    public void setGermanLookat(final String msg) {
-        lookatDe = msg;
+    public void setGermanLookAt(final String msg) {
+        lookAtDe = msg;
     }
 
     /**
      * Set the German version of the text displayed in case the player uses the
      * NPC.
-     * 
+     *
      * @param msg the message
      */
     public void setGermanUse(final String msg) {
@@ -798,7 +670,7 @@ public final class ParsedNpc implements Reusable {
     /**
      * Set the German version of the message that is displayed in case the
      * player talks to the NPC in the wrong language.
-     * 
+     *
      * @param msg the message
      */
     public void setGermanWrongLang(final String msg) {
@@ -807,7 +679,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Set the job of this NPC.
-     * 
+     *
      * @param newJob the job of this NPC
      */
     public void setJob(final String newJob) {
@@ -816,7 +688,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Set the new direction of this NPC.
-     * 
+     *
      * @param newNpcDir the new looking direction of this NPC
      */
     public void setNpcDir(final CharacterDirection newNpcDir) {
@@ -825,7 +697,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Set the name of this NPC.
-     * 
+     *
      * @param newNpcName the new name of this NPC.
      */
     public void setNpcName(final String newNpcName) {
@@ -834,7 +706,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Set the position of this NPC.
-     * 
+     *
      * @param newNpcPos the new position of this NPC
      */
     public void setNpcPos(final Location newNpcPos) {
@@ -846,7 +718,7 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Set the race of this NPC to a new value.
-     * 
+     *
      * @param newNpcRace the race of this NPC
      */
     public void setNpcRace(final CharacterRace newNpcRace) {
@@ -855,20 +727,10 @@ public final class ParsedNpc implements Reusable {
 
     /**
      * Set the sex of this NPC to a new value.
-     * 
+     *
      * @param newNpcSex the new sex value of the NPC
      */
     public void setNpcSex(final CharacterSex newNpcSex) {
         npcSex = newNpcSex;
-    }
-
-    /**
-     * Prepare this instance for usage.
-     */
-    private void prepareInstance() {
-        affiliation = Towns.None;
-        job = "none"; //$NON-NLS-1$
-        errorsSorted = true;
-        defaultLanguage = null;
     }
 }

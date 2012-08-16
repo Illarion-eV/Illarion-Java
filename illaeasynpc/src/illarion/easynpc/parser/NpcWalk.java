@@ -23,11 +23,9 @@ import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedWalkingRadius;
-import jsyntaxpane.Token;
-import jsyntaxpane.TokenType;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenMap;
 
-import javax.swing.text.Segment;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,16 +33,13 @@ import java.util.regex.Pattern;
  * This class handles all values and functions related to NPCs that walk around.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public final class NpcWalk implements NpcType {
-
     /**
      * The pattern to find out of this line is a contains walking radius data.
      */
     @SuppressWarnings("nls")
-    private static final Pattern RADIUS_LINE = Pattern.compile(
-            "^\\s*(radius)\\s*=\\s*(\\d+)\\s*", Pattern.MULTILINE);
+    private static final Pattern RADIUS_LINE = Pattern.compile("^\\s*(radius)\\s*=\\s*(\\d+)\\s*", Pattern.MULTILINE);
 
     /**
      * Check if the line contains walking data.
@@ -102,12 +97,7 @@ public final class NpcWalk implements NpcType {
     }
 
     @Override
-    public void parseSegment(final Segment segment, final int offset,
-                             final List<Token> tokens) {
-        final Matcher matcher = RADIUS_LINE.matcher(segment);
-        while (matcher.find()) {
-            tokens.add(new Token(TokenType.KEYWORD, matcher.start(1) + offset,
-                    matcher.end(1) - matcher.start(1)));
-        }
+    public void enlistHighlightedWords(final TokenMap map) {
+        map.put("radius", Token.RESERVED_WORD);
     }
 }
