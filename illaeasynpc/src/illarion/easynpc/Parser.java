@@ -23,12 +23,17 @@ import illarion.common.util.TableLoader;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.gui.Config;
 import illarion.easynpc.parser.*;
+import illarion.easynpc.parser.tasks.ParseScriptTask;
 import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -78,6 +83,11 @@ public final class Parser implements DocuEntry {
     private final NpcType[] types;
 
     /**
+     * This executor service takes care for the asynchronous execution of the parser.
+     */
+    private ExecutorService executorService;
+
+    /**
      * The private constructor to avoid any instances but the singleton instance. This also prepares the list that
      * are required to work and the registers the parsers working in this parser.
      */
@@ -100,6 +110,9 @@ public final class Parser implements DocuEntry {
         typeList.add(new NpcTradeSimple());
 
         types = typeList.toArray(new NpcType[typeList.size()]);
+
+        executorService = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors() * 2, 500,
+                TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
     }
 
     /**
@@ -160,7 +173,7 @@ public final class Parser implements DocuEntry {
     @SuppressWarnings("nls")
     public static void parseScript(final File file) throws IOException {
         final EasyNpcScript script = new EasyNpcScript(file);
-        final ParsedNpc parsedNPC = Parser.getInstance().parse(script);
+        final ParsedNpc parsedNPC = getInstance().parse(script);
 
         System.out.print("File \"" + file.getName() + "\" parsed - Encoding: "
                 + script.getScriptEncoding().name() + " - Errors: ");
@@ -177,10 +190,8 @@ public final class Parser implements DocuEntry {
             return;
         }
 
-        System.out.println("0");
-
         final ScriptWriter writer = new ScriptWriter();
-        writer.setTargetLanguage(ScriptWriter.TARGET_LUA);
+        writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
         writer.setSource(parsedNPC);
         final File luaTargetFile =
                 new File(file.getParentFile().getParent() + File.separator
@@ -192,9 +203,8 @@ public final class Parser implements DocuEntry {
         writer.write();
         outputWriter.close();
 
-        writer.setTargetLanguage(ScriptWriter.TARGET_EASY);
-        outputWriter =
-                new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+        writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.EasyNPC);
+        outputWriter = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
         writer.setWritingTarget(outputWriter);
         writer.write();
         outputWriter.close();
@@ -236,6 +246,17 @@ public final class Parser implements DocuEntry {
         return Lang.getMsg(getClass(), "Docu.title");
     }
 
+
+    /**
+     * Parse the script asynchronously. You have to monitor the event bus for the {@link illarion.easynpc.parser.events.ParserFinishedEvent}
+     * to find out when the parsing is done.
+     *
+     * @param source the script that is parsed
+     */
+    public void parseAsynchronously(final EasyNpcScript source) {
+        executorService.submit(new ParseScriptTask(source));
+    }
+
     /**
      * Parse the NPC and return the parsed version of the NPC.
      *
@@ -262,13 +283,11 @@ public final class Parser implements DocuEntry {
             }
 
             if (!lineParsed) {
-                resultNpc.addError(line,
-                        "No parser seems to know what to do with this line.");
+                resultNpc.addError(line, "No parser seems to know what to do with this line.");
             }
         }
 
-        LOGGER.debug("Parsing the script took "
-                + Long.toString(System.currentTimeMillis() - start) + "ms");
+        LOGGER.debug("Parsing the script took " + Long.toString(System.currentTimeMillis() - start) + "ms");
 
         return resultNpc;
     }

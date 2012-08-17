@@ -22,7 +22,9 @@ import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.Parser;
 import illarion.easynpc.gui.syntax.EasyNpcTokenMaker;
+import illarion.easynpc.parser.events.ParserFinishedEvent;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -46,7 +48,6 @@ import java.util.regex.Pattern;
  * The editor is the area that displays the text of the script.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public final class Editor extends RTextScrollPane {
     private static final Pattern fullLinePattern = Pattern.compile("^", Pattern.MULTILINE);
@@ -117,7 +118,7 @@ public final class Editor extends RTextScrollPane {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 if (Config.getInstance().getAutoBuild()) {
-                    Utils.reparseSilent(parentEditor);
+                    onCheckScript("checkScript", e);
                 }
                 timer.stop();
             }
@@ -429,15 +430,33 @@ public final class Editor extends RTextScrollPane {
             return;
         }
 
-        getParsedData();
+        if (parsedVersion == null) {
+            final EasyNpcScript script = new EasyNpcScript();
+            script.readNPCScript(getScriptText());
+            Parser.getInstance().parseAsynchronously(script);
+        }
     }
 
-    @EventTopicSubscriber(topic = "checkScript")
+    @EventTopicSubscriber(topic = "parseScript")
     public void onParseScript(final String topic, final ActionEvent event) {
         if (!isActiveEditor()) {
             return;
         }
 
         Utils.reparseScript(this);
+    }
+
+    @EventSubscriber
+    public void onParserFinished(final ParserFinishedEvent event) {
+        final ParsedNpc currentData = event.getNpc();
+        if (currentData.hasErrors()) {
+            errorNpc = currentData;
+            parsedVersion = null;
+            MainFrame.getInstance().getErrorArea().addErrorEditor(this);
+        } else {
+            parsedVersion = currentData;
+            errorNpc = null;
+            MainFrame.getInstance().getErrorArea().removeErrorEditor(this);
+        }
     }
 }
