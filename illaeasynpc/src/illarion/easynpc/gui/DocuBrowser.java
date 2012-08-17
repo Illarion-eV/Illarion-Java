@@ -1,55 +1,41 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Point;
-import java.io.IOException;
-import java.util.Enumeration;
-
-import javax.imageio.ImageIO;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreeNode;
-
+import illarion.common.util.ArrayEnumeration;
 import illarion.easynpc.Lang;
 import illarion.easynpc.Parser;
 import illarion.easynpc.docu.DocuEntry;
 
-import illarion.common.util.ArrayEnumeration;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreeNode;
+import java.awt.*;
+import java.io.IOException;
+import java.util.Enumeration;
 
 /**
  * This dialog is the help browser used to display the embedded documentation of
  * the editor.
- * 
+ *
  * @author Martin Karing
  * @since 1.01
  */
@@ -172,21 +158,21 @@ public final class DocuBrowser extends JDialog {
     @SuppressWarnings("nls")
     public DocuBrowser() {
         super(MainFrame.getInstance(),
-            Lang.getMsg(DocuBrowser.class, "title"), false);
+                Lang.getMsg(DocuBrowser.class, "title"), false);
 
         final JSplitPane splitPane =
-            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+                new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
         try {
             setIconImage(ImageIO.read(getClass().getClassLoader()
-                .getResourceAsStream("easynpc16.png")));
+                    .getResourceAsStream("easynpc16.png")));
         } catch (final IOException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
 
         final JTree contentTree =
-            new JTree(new DocuTreeNode(Parser.getInstance()));
+                new JTree(new DocuTreeNode(Parser.getInstance()));
         final JScrollPane contentScroll = new JScrollPane(contentTree);
         contentScroll.setMinimumSize(new Dimension(350, 400));
         contentScroll.setPreferredSize(contentScroll.getMinimumSize());
@@ -205,7 +191,7 @@ public final class DocuBrowser extends JDialog {
             @Override
             public void valueChanged(final TreeSelectionEvent e) {
                 ((DocuTreeNode) e.getPath().getLastPathComponent())
-                    .displayNode();
+                        .displayNode();
             }
         });
 
@@ -224,13 +210,10 @@ public final class DocuBrowser extends JDialog {
         exampleContent = new JTextArea();
         exampleContent.setFont(titleLabel.getFont());
 
-        final Font headlineFont =
-            new Font(titleLabel.getFont().getName(), Font.BOLD, 20);
-        final Font subheadlineFont =
-            new Font(titleLabel.getFont().getName(), Font.BOLD, 18);
-        final Font textsubheadlineFont =
-            new Font(titleLabel.getFont().getName(), titleLabel.getFont()
-                .getStyle(), titleLabel.getFont().getSize());
+        final Font headlineFont = titleLabel.getFont().deriveFont(Font.BOLD, 20.f);
+        final Font subheadlineFont = titleLabel.getFont().deriveFont(Font.BOLD, 18.f);
+        final Font textsubheadlineFont = titleLabel.getFont();
+
         titleLabel.setFont(headlineFont);
         descriptionTitle.setFont(subheadlineFont);
         descriptionTitle.setVisible(false);
@@ -246,7 +229,7 @@ public final class DocuBrowser extends JDialog {
         descriptionPanel.add(descriptionTitle, BorderLayout.NORTH);
         descriptionPanel.add(descriptionContent, BorderLayout.CENTER);
         descriptionPanel.add(Box.createRigidArea(new Dimension(20, 1)),
-            BorderLayout.WEST);
+                BorderLayout.WEST);
 
         syntaxTitle.setFont(subheadlineFont);
         syntaxTitle.setVisible(false);
@@ -262,7 +245,7 @@ public final class DocuBrowser extends JDialog {
         syntaxPanel.add(syntaxTitle, BorderLayout.NORTH);
         syntaxPanel.add(syntaxContent, BorderLayout.CENTER);
         syntaxPanel.add(Box.createRigidArea(new Dimension(20, 1)),
-            BorderLayout.WEST);
+                BorderLayout.WEST);
 
         exampleTitle.setFont(subheadlineFont);
         exampleTitle.setVisible(false);
@@ -278,10 +261,10 @@ public final class DocuBrowser extends JDialog {
         examplePanel.add(exampleTitle, BorderLayout.NORTH);
         examplePanel.add(exampleContent, BorderLayout.CENTER);
         examplePanel.add(Box.createRigidArea(new Dimension(20, 1)),
-            BorderLayout.WEST);
+                BorderLayout.WEST);
 
         final JPanel titlePanel =
-            new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+                new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         titlePanel.add(titleLabel);
         detailsPanel.add(titlePanel);
         detailsPanel.add(Box.createRigidArea(new Dimension(10, 10)));
@@ -296,7 +279,7 @@ public final class DocuBrowser extends JDialog {
         final Point parentPos = getOwner().getLocation();
 
         setLocation(((parentDim.width - getWidth()) / 2) + parentPos.x,
-            ((parentDim.height - getHeight()) / 2) + parentPos.y);
+                ((parentDim.height - getHeight()) / 2) + parentPos.y);
     }
 
     /**
@@ -315,7 +298,7 @@ public final class DocuBrowser extends JDialog {
     /**
      * Update the details view of the browser. This displays all the details
      * needed for each entry.
-     * 
+     *
      * @param entry the entry the details shall be displayed from
      */
     @SuppressWarnings("nls")

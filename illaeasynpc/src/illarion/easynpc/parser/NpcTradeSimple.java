@@ -273,7 +273,8 @@ public final class NpcTradeSimple implements NpcType {
             for (int i = 0; i < itemIds.length; i++) {
                 itemIds[i] = Integer.parseInt(items[i]);
                 if (!Items.contains(itemIds[i])) {
-                    npc.addError(line, Lang.getMsg(getClass(), "illegalItem")); //$NON-NLS-1$
+                    npc.addError(line,
+                            String.format(Lang.getMsg(getClass(), "illegalItem"), Integer.toString(itemIds[i])));
                 }
             }
 
@@ -290,7 +291,8 @@ public final class NpcTradeSimple implements NpcType {
             for (int i = 0; i < itemIds.length; i++) {
                 itemIds[i] = Integer.parseInt(items[i]);
                 if (!Items.contains(itemIds[i])) {
-                    npc.addError(line, Lang.getMsg(getClass(), "illegalItem")); //$NON-NLS-1$
+                    npc.addError(line,
+                            String.format(Lang.getMsg(getClass(), "illegalItem"), Integer.toString(itemIds[i])));
                 }
             }
 

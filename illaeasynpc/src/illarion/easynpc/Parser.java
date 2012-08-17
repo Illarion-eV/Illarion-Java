@@ -32,12 +32,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * This class parses a easyNPC script that contains the plain script data to a
- * parsed script that contains the analyzed script data.
+ * This class parses a easyNPC script that contains the plain script data to a parsed script that contains the
+ * analyzed script data.
  *
  * @author Martin Karing
- * @version 1.01
- * @since 1.00
  */
 public final class Parser implements DocuEntry {
     /**
@@ -47,16 +45,16 @@ public final class Parser implements DocuEntry {
     public static final String APPLICATION = "Illarion easyNPC";
 
     /**
-     * The full name of the application. (Name and Version)
-     */
-    @SuppressWarnings("nls")
-    public static final String FULLNAME = "easyNPC Parser v1.02";
-
-    /**
      * The version and name of this parser.
      */
     @SuppressWarnings("nls")
-    public static final String VERSION = "1.02";
+    public static final String VERSION = "1.2";
+
+    /**
+     * The full name of the application. (Name and Version)
+     */
+    @SuppressWarnings("nls")
+    public static final String FULLNAME = "easyNPC Parser v" + VERSION;
 
     /**
      * The singleton instance of this class.
