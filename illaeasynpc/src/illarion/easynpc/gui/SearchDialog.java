@@ -20,22 +20,21 @@ package illarion.easynpc.gui;
 
 import illarion.easynpc.Lang;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * This is the advanced search dialog that can be used to search and replace
- * contents of the script that is currently load.
+ * This is the advanced search dialog that can be used to search and replace contents of the script that is currently
+ * load.
  *
  * @author Martin Karing
- * @since 1.01
  */
-final class SearchDialog extends JDialog {
+public final class SearchDialog extends JDialog {
     /**
      * The serialization UID of this dialog.
      */
@@ -47,8 +46,7 @@ final class SearchDialog extends JDialog {
      */
     @SuppressWarnings("nls")
     public SearchDialog() {
-        super(MainFrame.getInstance(), Lang
-                .getMsg(SearchDialog.class, "title"), false);
+        super(MainFrame.getInstance(), Lang.getMsg(SearchDialog.class, "title"), false);
 
         final SearchDialog dialog = this;
 
@@ -76,26 +74,17 @@ final class SearchDialog extends JDialog {
         replaceField.setPreferredSize(new Dimension(300, replaceField
                 .getPreferredSize().height));
 
-        final JCheckBox caseSensetiveCheck =
-                new JCheckBox(Lang.getMsg(SearchDialog.class, "caseCheck"));
-        final JCheckBox regExpCheck =
-                new JCheckBox(Lang.getMsg(SearchDialog.class, "regExpCheck"));
+        final JCheckBox caseSensitiveCheck = new JCheckBox(Lang.getMsg(SearchDialog.class, "caseCheck"));
+        final JCheckBox regExpCheck = new JCheckBox(Lang.getMsg(SearchDialog.class, "regExpCheck"));
 
-        final JButton findNextBtn =
-                new JButton(Lang.getMsg(SearchDialog.class, "findNextButton"));
-        final JButton replaceOneBtn =
-                new JButton(Lang.getMsg(SearchDialog.class, "replaceButton"));
-        final JButton replaceAllBtn =
-                new JButton(Lang.getMsg(SearchDialog.class, "replaceAllButton"));
-        final JButton closeBtn =
-                new JButton(Lang.getMsg(SearchDialog.class, "closeButton"));
+        final JButton findNextBtn = new JButton(Lang.getMsg(SearchDialog.class, "findNextButton"));
+        final JButton replaceOneBtn = new JButton(Lang.getMsg(SearchDialog.class, "replaceButton"));
+        final JButton replaceAllBtn = new JButton(Lang.getMsg(SearchDialog.class, "replaceAllButton"));
+        final JButton closeBtn = new JButton(Lang.getMsg(SearchDialog.class, "closeButton"));
         final Dimension buttonDim = findNextBtn.getPreferredSize();
-        buttonDim.width =
-                Math.max(buttonDim.width, replaceOneBtn.getPreferredSize().width);
-        buttonDim.width =
-                Math.max(buttonDim.width, replaceAllBtn.getPreferredSize().width);
-        buttonDim.width =
-                Math.max(buttonDim.width, closeBtn.getPreferredSize().width);
+        buttonDim.width = Math.max(buttonDim.width, replaceOneBtn.getPreferredSize().width);
+        buttonDim.width = Math.max(buttonDim.width, replaceAllBtn.getPreferredSize().width);
+        buttonDim.width = Math.max(buttonDim.width, closeBtn.getPreferredSize().width);
         buttonDim.width += 10;
         findNextBtn.setPreferredSize(buttonDim);
         replaceOneBtn.setPreferredSize(buttonDim);
@@ -105,198 +94,50 @@ final class SearchDialog extends JDialog {
         findNextBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                String searchString = searchText.getText();
-                if (searchString.length() == 0) {
-                    return;
-                }
-                final Editor scriptEditor =
-                        MainFrame.getInstance().getCurrentScriptEditor();
+                final Editor scriptEditor = MainFrame.getInstance().getCurrentScriptEditor();
                 final RSyntaxTextArea editor = scriptEditor.getEditor();
 
-                String editorText = editor.getText();
-                final int startPos = editor.getCaretPosition();
+                final SearchContext search = new SearchContext();
+                search.setSearchFor(searchText.getText());
+                search.setMatchCase(caseSensitiveCheck.isSelected());
+                search.setRegularExpression(regExpCheck.isSelected());
+                search.setSearchForward(true);
 
-                if (regExpCheck.isSelected()) {
-                    try {
-                        Pattern searchPattern;
-                        if (caseSensetiveCheck.isSelected()) {
-                            searchPattern =
-                                    Pattern.compile(searchString,
-                                            Pattern.CASE_INSENSITIVE
-                                                    | Pattern.MULTILINE);
-                        } else {
-                            searchPattern =
-                                    Pattern.compile(searchString,
-                                            Pattern.MULTILINE);
-                        }
-                        final Matcher match =
-                                searchPattern.matcher(editorText);
-                        if (match.find(startPos)) {
-                            editor.setCaretPosition(match.end());
-                            editor.setSelectionStart(match.start());
-                            editor.setSelectionEnd(match.end());
-                            editor.getCaret().setSelectionVisible(true);
-                        }
-                    } catch (final Exception ex) {
-                        return;
-                    }
-                } else {
-                    if (caseSensetiveCheck.isSelected()) {
-                        searchString = searchString.toLowerCase();
-                        editorText = editorText.toLowerCase();
-                    }
-                    final int foundIndex =
-                            editorText.indexOf(searchString, startPos);
-                    if (foundIndex < 0) {
-                        return;
-                    }
-
-                    editor.setCaretPosition(foundIndex + searchString.length());
-                    editor.setSelectionStart(foundIndex);
-                    editor.setSelectionEnd(foundIndex + searchString.length());
-                    editor.getCaret().setSelectionVisible(true);
-                }
+                SearchEngine.find(editor, search);
             }
         });
 
         replaceOneBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                String searchString = searchText.getText();
-                if (searchString.length() == 0) {
-                    return;
-                }
-                final String replaceString = replaceField.getText();
-                final Editor scriptEditor =
-                        MainFrame.getInstance().getCurrentScriptEditor();
+                final Editor scriptEditor = MainFrame.getInstance().getCurrentScriptEditor();
                 final RSyntaxTextArea editor = scriptEditor.getEditor();
 
-                String editorText = editor.getText();
-                final int startPos = editor.getCaretPosition();
+                final SearchContext search = new SearchContext();
+                search.setSearchFor(searchText.getText());
+                search.setReplaceWith(replaceField.getText());
+                search.setMatchCase(caseSensitiveCheck.isSelected());
+                search.setRegularExpression(regExpCheck.isSelected());
+                search.setSearchForward(true);
 
-                if (regExpCheck.isSelected()) {
-                    try {
-                        Pattern searchPattern;
-                        if (caseSensetiveCheck.isSelected()) {
-                            searchPattern =
-                                    Pattern.compile(searchString,
-                                            Pattern.CASE_INSENSITIVE
-                                                    | Pattern.MULTILINE);
-                        } else {
-                            searchPattern =
-                                    Pattern.compile(searchString,
-                                            Pattern.MULTILINE);
-                        }
-                        final Matcher match =
-                                searchPattern.matcher(editorText);
-                        final StringBuffer editorBuffer = new StringBuffer();
-                        int foundStartPos = -1;
-                        if (match.find(startPos)) {
-                            match.appendReplacement(editorBuffer,
-                                    replaceString);
-                            foundStartPos = match.start();
-                        }
-                        match.appendTail(editorBuffer);
-
-                        if (foundStartPos >= 0) {
-                            scriptEditor.setScriptText(editorBuffer.toString());
-                            editor.setCaretPosition(foundStartPos
-                                    + replaceString.length());
-                            editor.setSelectionStart(foundStartPos);
-                            editor.setSelectionEnd(editor.getCaretPosition());
-                            editor.getCaret().setSelectionVisible(true);
-                        }
-                    } catch (final Exception ex) {
-                        return;
-                    }
-                } else {
-                    if (caseSensetiveCheck.isSelected()) {
-                        searchString = searchString.toLowerCase();
-                        editorText = editorText.toLowerCase();
-                    }
-                    final int foundIndex =
-                            editorText.indexOf(searchString, startPos);
-                    if (foundIndex < 0) {
-                        return;
-                    }
-
-                    final StringBuffer editorBuffer =
-                            new StringBuffer(editor.getText());
-                    editorBuffer.delete(foundIndex,
-                            foundIndex + searchString.length());
-                    editorBuffer.insert(foundIndex, replaceString);
-                    scriptEditor.setScriptText(editorBuffer.toString());
-
-                    editor.setCaretPosition(foundIndex
-                            + replaceString.length());
-                    editor.setSelectionStart(foundIndex);
-                    editor.setSelectionEnd(foundIndex + replaceString.length());
-                    editor.getCaret().setSelectionVisible(true);
-                }
+                SearchEngine.replace(editor, search);
             }
         });
 
         replaceAllBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                String searchString = searchText.getText();
-                if (searchString.length() == 0) {
-                    return;
-                }
-                final String replaceString = replaceField.getText();
-                final Editor scriptEditor =
-                        MainFrame.getInstance().getCurrentScriptEditor();
+                final Editor scriptEditor = MainFrame.getInstance().getCurrentScriptEditor();
                 final RSyntaxTextArea editor = scriptEditor.getEditor();
 
-                String editorText = editor.getText();
-                final int startPos = 0;
+                final SearchContext search = new SearchContext();
+                search.setSearchFor(searchText.getText());
+                search.setReplaceWith(replaceField.getText());
+                search.setMatchCase(caseSensitiveCheck.isSelected());
+                search.setRegularExpression(regExpCheck.isSelected());
+                search.setSearchForward(true);
 
-                if (regExpCheck.isSelected()) {
-                    try {
-                        Pattern searchPattern;
-                        if (caseSensetiveCheck.isSelected()) {
-                            searchPattern =
-                                    Pattern.compile(searchString,
-                                            Pattern.CASE_INSENSITIVE
-                                                    | Pattern.MULTILINE);
-                        } else {
-                            searchPattern =
-                                    Pattern.compile(searchString,
-                                            Pattern.MULTILINE);
-                        }
-                        final Matcher match =
-                                searchPattern.matcher(editorText);
-                        scriptEditor.setScriptText(match
-                                .replaceAll(replaceString));
-                    } catch (final Exception ex) {
-                        return;
-                    }
-                } else {
-                    String workingString;
-                    if (caseSensetiveCheck.isSelected()) {
-                        searchString = searchString.toLowerCase();
-                    }
-                    while (true) {
-                        if (caseSensetiveCheck.isSelected()) {
-                            workingString = editorText.toLowerCase();
-                        } else {
-                            workingString = editorText;
-                        }
-                        final int foundIndex =
-                                editorText.indexOf(workingString, startPos);
-                        if (foundIndex < 0) {
-                            break;
-                        }
-
-                        final StringBuffer editorBuffer =
-                                new StringBuffer(editorText);
-                        editorBuffer.delete(foundIndex, foundIndex
-                                + searchString.length());
-                        editorBuffer.insert(foundIndex, replaceString);
-                        editorText = editorBuffer.toString();
-                    }
-                    scriptEditor.setScriptText(editorText);
-                }
+                SearchEngine.replaceAll(editor, search);
             }
         });
 
@@ -333,7 +174,7 @@ final class SearchDialog extends JDialog {
 
         generalConstraints.gridwidth = 1;
         generalConstraints.insets.bottom = 5;
-        mainPanel.add(caseSensetiveCheck, generalConstraints);
+        mainPanel.add(caseSensitiveCheck, generalConstraints);
         generalConstraints.gridwidth = GridBagConstraints.REMAINDER;
         mainPanel.add(new JLabel(), generalConstraints);
 
@@ -350,8 +191,8 @@ final class SearchDialog extends JDialog {
         final Dimension parentDim = getOwner().getSize();
         final Point parentPos = getOwner().getLocation();
 
-        setLocation(((parentDim.width - getSize().width) / 2) + parentPos.x,
-                ((parentDim.height - getSize().height) / 2) + parentPos.y);
+        setLocation(((parentDim.width - getSize().width) / 2) + parentPos.x, ((parentDim.height - getSize().height) /
+                2) + parentPos.y);
         setResizable(false);
     }
 }

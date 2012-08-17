@@ -18,7 +18,8 @@
  */
 package illarion.easynpc.gui;
 
-import illarion.common.config.ConfigChangeListener;
+import illarion.common.bug.CrashReporter;
+import illarion.common.config.ConfigChangedEvent;
 import illarion.common.config.ConfigDialog;
 import illarion.common.config.ConfigSystem;
 import illarion.common.config.entries.CheckEntry;
@@ -30,24 +31,25 @@ import illarion.easynpc.Lang;
 import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.Properties;
 
 /**
- * This class is used to store and to publish the settings used by the editor
- * GUI.
+ * This class is used to store and to publish the settings used by the editor GUI.
  *
  * @author Martin Karing
- * @since 1.00
  */
-public final class Config implements ConfigChangeListener {
+public final class Config {
     /**
      * The class path of the look and feel that is used by default.
      */
@@ -196,7 +198,7 @@ public final class Config implements ConfigChangeListener {
      * is created.
      */
     private Config() {
-        // nothing
+        AnnotationProcessor.process(this);
     }
 
     /**
@@ -241,12 +243,10 @@ public final class Config implements ConfigChangeListener {
         lastOpenedFilesBuffer = null;
     }
 
-    @Override
-    public void configChanged(final illarion.common.config.Config cfg,
-                              final String key) {
-        if (key.equals(usedLookAndFeel)) {
-            SubstanceLookAndFeel
-                    .setSkin(Config.getInstance().getLookAndFeel());
+    @EventTopicSubscriber(topic = usedLookAndFeel)
+    public void onConfigChanged(final String topic, final ConfigChangedEvent event) {
+        if (topic.equals(usedLookAndFeel)) {
+            SubstanceLookAndFeel.setSkin(getLookAndFeel());
             final int count = MainFrame.getInstance().getOpenTabs();
 
             for (int i = 0; i < count; i++) {
@@ -276,7 +276,7 @@ public final class Config implements ConfigChangeListener {
                 undoCountKey, 0, 10000)));
         page.addEntry(new ConfigDialog.Entry(
                 "illarion.easynpc.gui.config.errorReport", new SelectEntry(
-                illarion.common.bug.CrashReporter.CFG_KEY,
+                CrashReporter.CFG_KEY,
                 SelectEntry.STORE_INDEX,
                 new Object[]{
                         Lang.getMsg("illarion.easynpc.gui.config.errorAsk"),
@@ -548,10 +548,7 @@ public final class Config implements ConfigChangeListener {
         cfg.setDefault(useSyntaxHighlight, true);
         cfg.setDefault(useWindowDeco, true);
         cfg.setDefault(autoBuildKey, true);
-        cfg.setDefault(illarion.common.bug.CrashReporter.CFG_KEY,
-                illarion.common.bug.CrashReporter.MODE_ASK);
-
-        cfg.addListener(this);
+        cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
 
         // init values
         autoBuildState = cfg.getBoolean(autoBuildKey);
@@ -728,5 +725,10 @@ public final class Config implements ConfigChangeListener {
         } catch (final IOException ex) {
             System.err.println("Error setting up logging environment");
         }
+    }
+
+    @EventTopicSubscriber(topic = "autoCheckScript")
+    public void onAutoBuildModeChangedEvent(final String topic, final ActionEvent event) {
+        setAutoBuild(!getAutoBuild());
     }
 }

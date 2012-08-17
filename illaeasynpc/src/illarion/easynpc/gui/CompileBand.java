@@ -75,27 +75,10 @@ final class CompileBand extends JRibbonBand {
             autoCheckScriptButton.doActionClick();
         }
 
-        final ActionListener checkScriptAction = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                Utils.reparseSilent(MainFrame.getInstance()
-                        .getCurrentScriptEditor());
-            }
-        };
-
-        final ActionListener parseScriptAction = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                Utils.reparseScript(MainFrame.getInstance()
-                        .getCurrentScriptEditor());
-            }
-        };
-
         final ActionListener autoCheckScriptAction = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                Config.getInstance().setAutoBuild(
-                        !Config.getInstance().getAutoBuild());
+                Config.getInstance().setAutoBuild(!Config.getInstance().getAutoBuild());
             }
         };
 
@@ -104,9 +87,9 @@ final class CompileBand extends JRibbonBand {
         autoCheckScriptButton.getActionModel().setActionCommand("autoCheckScript");
 
         checkScriptButton.addActionListener(new EventBusAction());
+        parseScriptButton.addActionListener(new EventBusAction());
+        autoCheckScriptButton.addActionListener(new EventBusAction());
 
-        checkScriptButton.addActionListener(checkScriptAction);
-        parseScriptButton.addActionListener(parseScriptAction);
         autoCheckScriptButton.addActionListener(autoCheckScriptAction);
 
         addCommandButton(checkScriptButton, RibbonElementPriority.TOP);

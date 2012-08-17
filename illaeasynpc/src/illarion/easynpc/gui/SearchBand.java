@@ -20,6 +20,8 @@ package illarion.easynpc.gui;
 
 import illarion.easynpc.Lang;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
@@ -38,13 +40,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This ribbon band contains the searching utility that can be used in the
- * editor.
+ * This ribbon band contains the searching utility that can be used in the editor.
  *
  * @author Martin Karing
- * @since 1.01
  */
-final class SearchBand extends JRibbonBand {
+public final class SearchBand extends JRibbonBand {
     /**
      * The serialization UID of this search band.
      */
@@ -75,26 +75,17 @@ final class SearchBand extends JRibbonBand {
                 if (e.getKeyCode() != KeyEvent.VK_ENTER) {
                     return;
                 }
-                final String searchText = textBox.getText();
-                if (searchText.length() == 0) {
-                    return;
-                }
-                final Editor scriptEditor =
-                        MainFrame.getInstance().getCurrentScriptEditor();
+
+                final Editor scriptEditor = MainFrame.getInstance().getCurrentScriptEditor();
                 final RSyntaxTextArea editor = scriptEditor.getEditor();
 
-                final String editorText = editor.getText();
-                final int startPos = editor.getCaretPosition();
+                final SearchContext search = new SearchContext();
+                search.setSearchFor(textBox.getText());
+                search.setMatchCase(false);
+                search.setRegularExpression(false);
+                search.setSearchForward(true);
 
-                final int foundIndex =
-                        editorText.indexOf(searchText, startPos);
-                if (foundIndex < 0) {
-                    return;
-                }
-
-                editor.setSelectionStart(foundIndex);
-                editor.setSelectionEnd(foundIndex + searchText.length());
-                editor.getCaret().setSelectionVisible(true);
+                SearchEngine.find(editor, search);
             }
 
             @Override

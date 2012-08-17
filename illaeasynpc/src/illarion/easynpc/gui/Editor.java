@@ -422,4 +422,22 @@ public final class Editor extends RTextScrollPane {
         }
         UndoMonitor.getInstance().updateUndoRedo(this);
     }
+
+    @EventTopicSubscriber(topic = "checkScript")
+    public void onCheckScript(final String topic, final ActionEvent event) {
+        if (!isActiveEditor()) {
+            return;
+        }
+
+        getParsedData();
+    }
+
+    @EventTopicSubscriber(topic = "checkScript")
+    public void onParseScript(final String topic, final ActionEvent event) {
+        if (!isActiveEditor()) {
+            return;
+        }
+
+        Utils.reparseScript(this);
+    }
 }
