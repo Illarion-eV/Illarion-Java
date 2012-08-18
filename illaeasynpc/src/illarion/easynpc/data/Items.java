@@ -107,6 +107,6 @@ public final class Items implements Comparable<Items> {
 
     @Override
     public int compareTo(final Items o) {
-        return Integer.compare(itemId, o.itemId);
+        return Integer.valueOf(itemId).compareTo(o.itemId);
     }
 }
