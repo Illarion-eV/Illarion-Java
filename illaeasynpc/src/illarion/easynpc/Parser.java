@@ -189,6 +189,7 @@ public final class Parser implements DocuEntry {
             System.out.println();
             return;
         }
+        System.out.println("none");
 
         final ScriptWriter writer = new ScriptWriter();
         writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);

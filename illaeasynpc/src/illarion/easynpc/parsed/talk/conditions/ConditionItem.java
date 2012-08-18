@@ -51,7 +51,7 @@ public final class ConditionItem implements TalkCondition {
      * The LUA code needed for this consequence to work.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_CODE = "talkEntry:addCondition(%1$s.item(%2$s, \"%3$s\", \"%4$s\", \"%5$s));"
+    private static final String LUA_CODE = "talkEntry:addCondition(%1$s.item(%2$s, \"%3$s\", \"%4$s\", %5$s));"
             + LuaWriter.NL;
 
     /**
