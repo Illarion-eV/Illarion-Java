@@ -93,6 +93,7 @@ public class ParsedTradeSimple implements ParsedData {
                     target.write(Integer.toString(itemIds[i]));
                 }
             }
+            target.write(EasyNpcWriter.NL);
         }
     }
 
@@ -120,7 +121,7 @@ public class ParsedTradeSimple implements ParsedData {
     public void writeLua(final Writer target, final LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Trading) {
             for (final int itemId : itemIds) {
-                target.write("tradingNPC:addItem(");
+                target.write("tradingNPC:addItem(npc.base.trade.tradeNPCItem(");
                 target.write(Integer.toString(itemId));
                 target.write(",");
                 switch (mode) {
@@ -134,7 +135,7 @@ public class ParsedTradeSimple implements ParsedData {
                         target.write("\"buySecondary\"");
                         break;
                 }
-                target.write(");");
+                target.write("));");
                 target.write(LuaWriter.NL);
             }
         }
