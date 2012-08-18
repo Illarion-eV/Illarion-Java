@@ -38,7 +38,7 @@ public final class Trade extends ConsequenceParser {
      * This pattern is used to find the introduce command in the condition and to remove them properly.
      */
     @SuppressWarnings("nls")
-    private static final Pattern STRING_FIND = Pattern.compile("\\s*trade\\s*,\\s*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern STRING_FIND = Pattern.compile("\\s*trade\\s*,*\\s*", Pattern.CASE_INSENSITIVE);
 
     /**
      * Extract a condition from the working string.
@@ -51,8 +51,8 @@ public final class Trade extends ConsequenceParser {
         }
 
         final Matcher stringMatcher = STRING_FIND.matcher(getNewLine());
-        setLine(stringMatcher.replaceFirst(""));
         if (stringMatcher.find()) {
+            setLine(stringMatcher.replaceFirst(""));
             return new ConsequenceTrade();
         }
 

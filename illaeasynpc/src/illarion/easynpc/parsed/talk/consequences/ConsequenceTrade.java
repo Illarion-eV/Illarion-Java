@@ -35,7 +35,7 @@ public final class ConsequenceTrade implements TalkConsequence {
      * The LUA code needed to be included for a introduce consequence.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.trade());" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.trade(tradingNPC));" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
