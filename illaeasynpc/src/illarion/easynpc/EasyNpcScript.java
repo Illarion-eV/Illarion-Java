@@ -28,19 +28,12 @@ import java.util.Map.Entry;
  * This class contains the script data to a easyNPC script. It contains the
  * plain unparsed script split in logical groups.
  *
- * @author Martin Karing
- * @version 1.01
- * @since 1.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @SuppressWarnings("nls")
 public final class EasyNpcScript {
     /**
-     * The representation of each line in the easyNPC script. It stores the line
-     * number and the text of the lines.
-     *
-     * @author Martin Karing
-     * @version 1.01
-     * @since 1.00
+     * The representation of each line in the easyNPC script. It stores the line number and the text of the lines.
      */
     public static final class Line {
         /**

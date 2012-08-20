@@ -26,7 +26,6 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * positions a item can be searched or created.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public enum ItemPositions {
     /**

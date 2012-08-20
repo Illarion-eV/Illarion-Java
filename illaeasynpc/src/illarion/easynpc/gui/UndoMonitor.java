@@ -34,7 +34,6 @@ import javax.swing.event.UndoableEditListener;
  * buttons displayed at the top of the editor according to this.
  *
  * @author Martin Karing
- * @since 1.01
  */
 public final class UndoMonitor implements UndoableEditListener, ChangeListener {
     /**

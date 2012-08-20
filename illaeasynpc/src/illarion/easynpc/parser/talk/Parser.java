@@ -28,7 +28,6 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * consequences.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public abstract class Parser implements DocuEntry {
     /**

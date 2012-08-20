@@ -42,8 +42,6 @@ public final class NpcEquipment implements NpcType {
     /**
      * This internal class is a helper class for the documentation. Each instance of this class contains the
      * documentation data for one command the NPC Equipment parser manages.
-     *
-     * @author Martin Karing
      */
     private static final class ChildDocuClass implements DocuEntry {
         /**

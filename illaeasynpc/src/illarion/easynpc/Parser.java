@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * This class parses a easyNPC script that contains the plain script data to a parsed script that contains the
  * analyzed script data.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Parser implements DocuEntry {
     /**

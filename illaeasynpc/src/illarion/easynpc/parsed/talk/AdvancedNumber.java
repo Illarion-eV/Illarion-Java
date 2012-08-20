@@ -1,47 +1,39 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parsed.talk;
 
-import javolution.context.ObjectFactory;
-
 import illarion.common.util.Reusable;
+import javolution.context.ObjectFactory;
 
 /**
  * This class is used to store a advanced number value that is possibly used by
  * the easyNPC language. Such a number can contain a normal number, a reference
  * to the last said number or a formula.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
- * @version 1.02
  */
 public final class AdvancedNumber implements Reusable {
     /**
-     * This factory is used to store unused and create new AdvancedNumber
-     * objects.
-     * 
-     * @author Martin Karing
-     * @since 1.02
-     * @version 1.02
+     * This factory is used to store unused and create new AdvancedNumber objects.
      */
     private static final class AdvancedNumberFactory extends
-        ObjectFactory<AdvancedNumber> {
+            ObjectFactory<AdvancedNumber> {
         /**
          * Public constructor to ensure that the parent class is able to create
          * a instance.
@@ -63,7 +55,7 @@ public final class AdvancedNumber implements Reusable {
      * The factory used to create and recycle objects of this type.
      */
     private static final AdvancedNumberFactory FACTORY =
-        new AdvancedNumberFactory();
+            new AdvancedNumberFactory();
 
     /**
      * The type constant for this number to be a calculation constant.
@@ -107,7 +99,7 @@ public final class AdvancedNumber implements Reusable {
     /**
      * Get a instance of the advanced number object. This returns either a old
      * object that is reused or a newly created one.
-     * 
+     *
      * @return the instance that is free to be used
      */
     public static AdvancedNumber getInstance() {
@@ -116,7 +108,7 @@ public final class AdvancedNumber implements Reusable {
 
     /**
      * Get the easyNPC representation of this advanced number value.
-     * 
+     *
      * @return the easyNPC representation of the advanced number
      */
     @SuppressWarnings("nls")
@@ -135,7 +127,7 @@ public final class AdvancedNumber implements Reusable {
 
     /**
      * Get the LUA representation of this advanced number value.
-     * 
+     *
      * @return the LUA representation of the advanced number
      */
     @SuppressWarnings("nls")
@@ -148,7 +140,7 @@ public final class AdvancedNumber implements Reusable {
         }
         if (type == TYPE_EXPRESSION) {
             return "function(number) return ("
-                + expression.replace("%NUMBER", "number") + "); end";
+                    + expression.replace("%NUMBER", "number") + "); end";
         }
         return null;
     }
@@ -175,7 +167,7 @@ public final class AdvancedNumber implements Reusable {
     /**
      * Set the expression of this number. In this case the number stores a
      * calculation expression.
-     * 
+     *
      * @param newExpr the string of the calculation expression
      */
     public void setExpression(final String newExpr) {
@@ -185,7 +177,7 @@ public final class AdvancedNumber implements Reusable {
 
     /**
      * Set this number to be a normal number.
-     * 
+     *
      * @param newValue the value of the number
      */
     public void setNormal(final int newValue) {

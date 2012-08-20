@@ -1,29 +1,28 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.data;
 
 /**
  * This enumerator contains all skills usable with the easyNPC language and all
  * required values to translate them as needed to a LUA script.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  */
 @SuppressWarnings("nls")
 public enum CharacterSkill {
@@ -220,9 +219,9 @@ public enum CharacterSkill {
 
     /**
      * Enumerator constructor, that stores the required data.
-     * 
+     *
      * @param group the group index of this skill
-     * @param name the name of this skill
+     * @param name  the name of this skill
      */
     private CharacterSkill(final int group, final String name) {
         skillGroup = group;
@@ -231,7 +230,7 @@ public enum CharacterSkill {
 
     /**
      * Get the group index of this skill.
-     * 
+     *
      * @return the group index of this skill
      */
     public int getSkillGroup() {
@@ -240,7 +239,7 @@ public enum CharacterSkill {
 
     /**
      * Get the name of this skill required for the LUA and the easyNPC script.
-     * 
+     *
      * @return the name of this skill
      */
     public String getSkillName() {

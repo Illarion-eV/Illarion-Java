@@ -26,7 +26,6 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * needed data about these flags to store them and work with them properly.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public enum CharacterMagicType {
     /**

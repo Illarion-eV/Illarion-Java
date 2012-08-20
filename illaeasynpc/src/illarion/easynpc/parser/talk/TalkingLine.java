@@ -36,7 +36,6 @@ import java.util.List;
  * conditions.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public final class TalkingLine {
     /**

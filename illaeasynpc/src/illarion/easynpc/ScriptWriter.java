@@ -27,7 +27,7 @@ import java.io.Writer;
 /**
  * This class contains all required functions and constants to write a parsed NPC back into a LUA or a easyNPC Script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ScriptWriter {
     /**

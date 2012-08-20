@@ -44,7 +44,6 @@ import java.io.IOException;
  * This is the Main Frame of the display of the easyNPC editor.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public final class MainFrame extends JRibbonFrame { // NO_UCD
     /**

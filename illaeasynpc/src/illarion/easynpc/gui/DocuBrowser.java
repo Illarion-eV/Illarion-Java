@@ -37,7 +37,6 @@ import java.util.Enumeration;
  * the editor.
  *
  * @author Martin Karing
- * @since 1.01
  */
 public final class DocuBrowser extends JDialog {
     private final class DocuTreeNode implements TreeNode {

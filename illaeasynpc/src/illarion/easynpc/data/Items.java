@@ -29,7 +29,6 @@ import java.util.Arrays;
  * with all the values required for the script parser to work properly.
  *
  * @author Martin Karing
- * @since 1.00
  */
 @SuppressWarnings("nls")
 public final class Items implements Comparable<Items> {

@@ -28,19 +28,15 @@ import java.util.Calendar;
 import java.util.Locale;
 
 /**
- * This is the easyNPC writer. It writes from the data supplied by a parsed NPC
- * a easyNPC script with the proper encoding and the latest state of the syntax.
+ * This is the easyNPC writer. It writes from the data supplied by a parsed NPC a easyNPC script with the proper
+ * encoding and the latest state of the syntax.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public final class EasyNpcWriter {
     /**
-     * This enumerator contains the constants to identify the different writing
-     * stages this writer uses during the multi-pass writing.
-     *
-     * @author Martin Karing
-     * @since 1.00
+     * This enumerator contains the constants to identify the different writing stages this writer uses during the
+     * multi-pass writing.
      */
     public enum WritingStage {
         /**

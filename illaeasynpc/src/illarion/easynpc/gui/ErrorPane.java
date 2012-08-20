@@ -1,63 +1,48 @@
 /*
  * This file is part of the Illarion easyNPC Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyNPC Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyNPC Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.gui;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.UIManager;
-import javax.swing.table.AbstractTableModel;
 
 import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
+import java.awt.color.ColorSpace;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+
 /**
  * This error pane is showing all needed components to display the errors
  * occurred in the script.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  */
 final class ErrorPane extends JPanel {
     public static final class ErrorPaneTableModel extends AbstractTableModel {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 1L;
         private final List<Editor> errorEditors = new ArrayList<Editor>();
@@ -88,9 +73,9 @@ final class ErrorPane extends JPanel {
                     localErrors = problemNpc.getErrorCount();
                     if ((errorCount + localErrors) >= (rowIndex + 1)) {
                         final ParsedNpc.Error error =
-                            problemNpc.getError(rowIndex - errorCount);
+                                problemNpc.getError(rowIndex - errorCount);
                         errorEditors.get(i).getLineToFocus(
-                            error.getLine().getLineNumber());
+                                error.getLine().getLineNumber());
                     }
                     errorCount += localErrors;
                 }
@@ -155,13 +140,13 @@ final class ErrorPane extends JPanel {
                             return errorEditors.get(i).getFileName();
                         }
                         final ParsedNpc.Error error =
-                            problemNpc.getError(rowIndex - errorCount);
+                                problemNpc.getError(rowIndex - errorCount);
                         if (columnIndex == 0) {
                             return error.getMessage();
                         }
                         if (columnIndex == 2) {
                             return "line "
-                                + Integer.toString(error.getLine()
+                                    + Integer.toString(error.getLine()
                                     .getLineNumber());
                         }
                     }
@@ -196,7 +181,7 @@ final class ErrorPane extends JPanel {
         super(new BorderLayout(5, 0));
 
         summery =
-            new JLabel(String.format(errorMessage, Integer.toString(20)));
+                new JLabel(String.format(errorMessage, Integer.toString(20)));
         tableModel = new ErrorPaneTableModel();
         errorList = new JTable(tableModel);
 
@@ -235,17 +220,17 @@ final class ErrorPane extends JPanel {
 
         final Icon errorIcon = UIManager.getIcon("OptionPane.errorIcon");
         final ComponentColorModel colorModel =
-            new ComponentColorModel(
-                ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8,
-                    8, 8 }, true, false, Transparency.TRANSLUCENT,
-                DataBuffer.TYPE_BYTE);
+                new ComponentColorModel(
+                        ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[]{8, 8,
+                        8, 8}, true, false, Transparency.TRANSLUCENT,
+                        DataBuffer.TYPE_BYTE);
         final WritableRaster raster =
-            Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
-                errorIcon.getIconWidth(), errorIcon.getIconHeight(), 4, null);
+                Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
+                        errorIcon.getIconWidth(), errorIcon.getIconHeight(), 4, null);
 
         final BufferedImage image =
-            new BufferedImage(colorModel, raster, false,
-                new Hashtable<Object, Object>());
+                new BufferedImage(colorModel, raster, false,
+                        new Hashtable<Object, Object>());
         errorIcon.paintIcon(null, image.getGraphics(), 0, 0);
         new ImageIcon(image.getScaledInstance(14, 14, Image.SCALE_SMOOTH));
 
@@ -273,6 +258,6 @@ final class ErrorPane extends JPanel {
     public void updateErrors() {
         tableModel.fireTableDataChanged();
         summery.setText(String.format(errorMessage,
-            Integer.valueOf(errorList.getRowCount())));
+                Integer.valueOf(errorList.getRowCount())));
     }
 }

@@ -26,8 +26,6 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * scripts.
  *
  * @author Martin Karing
- * @version 1.00
- * @since 1.01
  */
 public enum EquipmentSlots {
     /**

@@ -19,6 +19,7 @@
 package illarion.easynpc.writer;
 
 import illarion.easynpc.ParsedNpc;
+import illarion.easynpc.Parser;
 import illarion.easynpc.data.CharacterLanguage;
 
 import java.io.IOException;
@@ -273,12 +274,12 @@ public final class LuaWriter {
      * @param target the list the modules are stored in
      * @param module the module to add to the list
      */
-    private static void checkModuleAndAdd(final List<String> target, final String module) {
+    private static void checkModuleAndAdd(final Collection<String> target, final String module) {
         if (module == null) {
             return;
         }
-        final int entryCount = target.size();
-        for (String aTarget : target) {
+
+        for (final String aTarget : target) {
             if (aTarget.equals(module)) {
                 return;
             }
@@ -297,10 +298,9 @@ public final class LuaWriter {
     private static boolean checkStageExists(final ParsedNpc source, final LuaWriter.WritingStage stage) {
         final int count = source.getDataCount();
 
-        LuaWritable writeable = null;
         for (int i = 0; i < count; ++i) {
-            writeable = source.getLuaData(i);
-            if (writeable.effectsLuaWritingStage(stage)) {
+            final LuaWritable writable = source.getLuaData(i);
+            if (writable.effectsLuaWritingStage(stage)) {
                 return true;
             }
         }
@@ -363,11 +363,9 @@ public final class LuaWriter {
                 target.write(commentSepLine);
                 target.write(NL);
 
-                target.write(String.format("-- %1$-10s%2$-49s%3$15s --%n",
-                        "NPC Name:", source.getNpcName(), source.getAffiliation()
-                        .name()));
-                target.write(String.format("-- %1$-10s%2$-64s --%n",
-                        "NPC Job:", source.getJob()));
+                target.write(String.format("-- %1$-10s%2$-49s%3$15s --%n", "NPC Name:", source.getNpcName(),
+                        source.getAffiliation().name()));
+                target.write(String.format("-- %1$-10s%2$-64s --%n", "NPC Job:", source.getJob()));
 
                 final String freeLine = String.format("-- %1$74s --%n", "");
                 target.write(freeLine);
@@ -409,11 +407,9 @@ public final class LuaWriter {
                 target.write(freeLine);
 
                 final Calendar cal = Calendar.getInstance();
-                final SimpleDateFormat sdf =
-                        new SimpleDateFormat("MMMMM dd, yyyy", Locale.ENGLISH);
-                target.write(String.format("-- %1$-47s%2$27s --%n",
-                        "Last parsing: " + sdf.format(cal.getTime()),
-                        illarion.easynpc.Parser.FULLNAME));
+                final SimpleDateFormat sdf = new SimpleDateFormat("MMMMM dd, yyyy", Locale.ENGLISH);
+                target.write(String.format("-- %1$-47s%2$27s --%n", "Last parsing: " + sdf.format(cal.getTime()),
+                        Parser.FULLNAME));
 
                 target.write(commentSepLine);
                 target.write(NL);

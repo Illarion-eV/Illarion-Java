@@ -29,7 +29,6 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * assigned to it from the NPC script.
  *
  * @author Martin Karing
- * @since 1.00
  */
 public interface NpcType extends DocuEntry {
     /**

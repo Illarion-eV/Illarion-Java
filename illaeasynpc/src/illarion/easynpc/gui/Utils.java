@@ -40,7 +40,6 @@ import java.net.URLEncoder;
  * A small set of static utility functions that help at some points.
  *
  * @author Martin Karing
- * @since 1.00
  */
 final class Utils {
     /**

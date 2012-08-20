@@ -31,14 +31,12 @@ import java.util.Collections;
  * This class contains a parsed NPC structure. A detailed and analyzed version of a easyNPC script that is easily
  * maintainable by this application and easy to convert into a LUA or a easyNPC script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParsedNpc {
     /**
      * This support class is used to store all information regarding a error that was found in the script. It stores
      * the position where it was found as well as the description of the error.
-     *
-     * @author Martin Karing
      */
     public static final class Error implements Comparable<ParsedNpc.Error> {
         /**
