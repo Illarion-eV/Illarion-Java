@@ -30,7 +30,7 @@ import java.io.Writer;
  * This class is used to store a empty line in the parsed NPC. This is needed to ensure to keep the formatting of the
  * NPC script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParsedEmptyLine implements ParsedData, Immutable {
     /**

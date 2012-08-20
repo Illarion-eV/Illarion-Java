@@ -36,7 +36,7 @@ import java.util.Enumeration;
  * This dialog is the help browser used to display the embedded documentation of
  * the editor.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DocuBrowser extends JDialog {
     private final class DocuTreeNode implements TreeNode {

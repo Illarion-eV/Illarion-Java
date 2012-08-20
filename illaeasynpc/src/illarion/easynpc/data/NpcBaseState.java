@@ -21,7 +21,7 @@ package illarion.easynpc.data;
 /**
  * This parameters contain the possible NPC basic states.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum NpcBaseState {
     /**

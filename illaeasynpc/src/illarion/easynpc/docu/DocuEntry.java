@@ -23,7 +23,7 @@ package illarion.easynpc.docu;
  * documentation framework uses this entries to fetch all needed informations in
  * order to display a proper GUI.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface DocuEntry {
     /**

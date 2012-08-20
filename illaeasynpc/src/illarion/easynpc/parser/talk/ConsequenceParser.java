@@ -24,7 +24,7 @@ import illarion.easynpc.parsed.talk.TalkConsequence;
  * This interface it used by all parsers that aim to parse consequences out of a
  * talking line.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public abstract class ConsequenceParser extends Parser {
     /**

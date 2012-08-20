@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 /**
  * This is a attribute condition. Its able to parse a attribute value out of the NPC condition line.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Attribute extends ConditionParser {
     /**

@@ -24,7 +24,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
 /**
  * This enumerator contains the valid races a player and a NPC can get in the easyNPC language.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum CharacterRace {
     dwarf(1), elf(3), halfling(2), human(0), lizardman(5), orc(4);

@@ -22,7 +22,7 @@ package illarion.easynpc.writer;
  * This class is used to build the SQL Insert statement needed to add the NPC to
  * the Database.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class SQLBuilder {
     /**

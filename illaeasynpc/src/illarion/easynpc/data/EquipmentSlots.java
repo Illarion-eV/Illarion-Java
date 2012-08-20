@@ -25,7 +25,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * This enumerator stores all possible slots for equipment used in the easyNPC
  * scripts.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum EquipmentSlots {
     /**

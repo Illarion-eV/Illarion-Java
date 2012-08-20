@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 /**
  * This is a number condition. Its able to parse a number value out of the NPC condition line.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Number extends ConditionParser {
     /**

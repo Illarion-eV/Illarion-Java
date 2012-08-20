@@ -25,7 +25,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * This enumerator contains the possible values for the sex of a NPC along with all information required to handle
  * this values correctly.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum CharacterSex {
     /**

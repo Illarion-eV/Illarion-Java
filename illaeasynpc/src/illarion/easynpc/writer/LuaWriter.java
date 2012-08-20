@@ -30,7 +30,7 @@ import java.util.*;
 /**
  * This is the LUA writer. It writes the data supplied by a parsed NPC to a lua script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LuaWriter {
     /**

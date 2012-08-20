@@ -21,7 +21,7 @@ package illarion.easynpc.data;
 /**
  * This enumerator contains the values used to change the base npc state.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum NpcBaseStateToggle {
     /**

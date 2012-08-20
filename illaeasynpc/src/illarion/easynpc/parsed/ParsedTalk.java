@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * This class represents a parsed talking line that stores the conditions and consequences stored in this line.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParsedTalk implements ParsedData {
     /**

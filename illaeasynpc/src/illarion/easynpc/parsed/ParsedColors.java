@@ -28,7 +28,7 @@ import java.io.Writer;
 /**
  * This parsed color class stores the color values for the NPC.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParsedColors implements ParsedData {
     /**

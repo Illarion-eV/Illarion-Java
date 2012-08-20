@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 /**
  * This parser is able to extract the color values of the NPCs from a easyNPC script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcColors implements NpcType {
     /**

@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  * This class handles all comment blocks. It extracts the pure text and stores
  * it so it can be properly insert into the main NPC script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcComment implements NpcType {
 

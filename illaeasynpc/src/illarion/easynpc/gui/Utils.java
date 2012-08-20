@@ -39,7 +39,7 @@ import java.net.URLEncoder;
 /**
  * A small set of static utility functions that help at some points.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class Utils {
     /**

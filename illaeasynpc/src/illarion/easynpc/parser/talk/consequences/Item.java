@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 /**
  * This is the item consequence. Its able to parse a item condition out of the consequence collection string.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Item extends ConsequenceParser {
     /**

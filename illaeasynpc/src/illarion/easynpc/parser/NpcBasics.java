@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * This NpcType is able to parse the basic information out of a easyNPC script. Such information are the name and
  * the location, race and so on of the NPC.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcBasics implements NpcType {
     /**

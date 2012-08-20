@@ -24,7 +24,7 @@ import illarion.easynpc.writer.LuaWritable;
 /**
  * This interface is used for generic data a NPC can contain.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface ParsedData extends EasyNpcWritable, LuaWritable {
     // no functions needed by default

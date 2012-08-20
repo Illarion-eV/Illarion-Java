@@ -28,7 +28,7 @@ import java.io.Writer;
 /**
  * This class is used to store all required values for the talk state consequence.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ConsequenceTalkstate implements TalkConsequence {
     /**

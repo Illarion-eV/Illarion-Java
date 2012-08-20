@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * This class simply handles all empty lines in a new NPC script. While they do not actually "do" anything they still
  * need to be parsed, else problem occur.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcEmpty implements NpcType {
     /**

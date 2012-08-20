@@ -25,7 +25,7 @@ package illarion.easynpc.crash;
  * crashed part. So in this case the editor will be shut down and a error
  * message displayed.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DefaultCrashHandler extends AbstractCrashHandler {
     /**

@@ -26,7 +26,7 @@ import javolution.context.ObjectFactory;
  * the easyNPC language. Such a number can contain a normal number, a reference
  * to the last said number or a formula.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class AdvancedNumber implements Reusable {
     /**

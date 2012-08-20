@@ -25,7 +25,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * This enumerator stores all possible types of magic types along with the
  * needed data about these flags to store them and work with them properly.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum CharacterMagicType {
     /**

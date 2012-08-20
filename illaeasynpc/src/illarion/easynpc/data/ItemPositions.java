@@ -25,7 +25,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * This enumerator contains a list of valid locations for a item. At this
  * positions a item can be searched or created.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum ItemPositions {
     /**

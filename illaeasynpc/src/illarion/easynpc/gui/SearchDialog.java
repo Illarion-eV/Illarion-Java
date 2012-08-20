@@ -32,7 +32,7 @@ import java.awt.event.ActionListener;
  * This is the advanced search dialog that can be used to search and replace contents of the script that is currently
  * load.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class SearchDialog extends JDialog {
     /**

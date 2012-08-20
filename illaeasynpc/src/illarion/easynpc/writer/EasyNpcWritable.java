@@ -26,7 +26,7 @@ import java.io.Writer;
  * {@link illarion.easynpc.writer.EasyNpcWriter}. They use this interface to
  * generate the text that needs to be written in to the script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface EasyNpcWritable {
     /**

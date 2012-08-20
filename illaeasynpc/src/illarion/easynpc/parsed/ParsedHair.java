@@ -28,7 +28,7 @@ import java.io.Writer;
 /**
  * This parsed data storage is able to store the hair or the beard ID of the NPC.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParsedHair implements ParsedData {
     /**

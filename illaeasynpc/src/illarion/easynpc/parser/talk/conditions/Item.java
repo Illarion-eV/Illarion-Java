@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 /**
  * This is a item condition. Its able to parse a item value out of the NPC condition line.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Item extends ConditionParser {
     /**

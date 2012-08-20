@@ -35,7 +35,7 @@ import java.util.List;
  * about one line of talking with all triggers, answers, consequences and
  * conditions.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TalkingLine {
     /**

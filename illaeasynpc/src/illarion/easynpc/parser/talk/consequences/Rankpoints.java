@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 /**
  * This is the attribute consequence. Its able to parse a attribute out of the consequence collection string.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Rankpoints extends ConsequenceParser {
     /**

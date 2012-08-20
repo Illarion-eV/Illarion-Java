@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
 /**
  * The editor is the area that displays the text of the script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Editor extends RTextScrollPane {
     private static final Pattern fullLinePattern = Pattern.compile("^", Pattern.MULTILINE);

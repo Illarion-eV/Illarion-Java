@@ -24,7 +24,7 @@ import illarion.easynpc.parsed.talk.TalkCondition;
  * This interface is a talking condition. It covers all possible methods
  * required to have this object acting as a proper condition.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public abstract class ConditionParser extends Parser {
     /**

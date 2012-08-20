@@ -43,7 +43,7 @@ import java.io.IOException;
 /**
  * This is the Main Frame of the display of the easyNPC editor.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class MainFrame extends JRibbonFrame { // NO_UCD
     /**

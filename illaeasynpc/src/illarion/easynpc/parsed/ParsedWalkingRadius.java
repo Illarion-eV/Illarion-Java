@@ -28,7 +28,7 @@ import java.io.Writer;
 /**
  * This class is used to store a walking radius in the parsed NPC.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParsedWalkingRadius implements ParsedData {
     /**

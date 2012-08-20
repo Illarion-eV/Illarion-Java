@@ -24,7 +24,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
 /**
  * This enumerator stores the information about all towns possible to be used in the scripts.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum Towns {
     Cadomyr(true, 1), Free(false, -1), Galmair(true, 3), None(false, -1),

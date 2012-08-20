@@ -24,7 +24,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
 /**
  * The list of character attributes, the easyNPC script and the LUA script is able to use.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum CharacterAttribute {
     agility, constitution, dexterity, essence, foodlevel, hitpoints,

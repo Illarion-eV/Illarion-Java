@@ -33,7 +33,7 @@ import java.io.File;
  * This class prepares the application menu of the editor that offers access to
  * some basic functions.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class MainMenu extends RibbonApplicationMenu {
     /**

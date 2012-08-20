@@ -27,7 +27,7 @@ import java.io.Writer;
 /**
  * This consequence is used to store the data of a warp consequence of a talking line.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Martin Polak
  */
 public final class ConsequenceWarp implements TalkConsequence {

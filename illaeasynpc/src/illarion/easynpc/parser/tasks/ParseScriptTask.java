@@ -29,7 +29,7 @@ import java.util.concurrent.Callable;
 /**
  * This task is used to execute the parsing of a script asynchronously.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class ParseScriptTask implements Callable<ParsedNpc> {
     /**

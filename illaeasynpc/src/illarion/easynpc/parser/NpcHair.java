@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 /**
  * This parser is able to read the definitions for hair and beard of the NPC from the script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcHair implements NpcType {
     /**

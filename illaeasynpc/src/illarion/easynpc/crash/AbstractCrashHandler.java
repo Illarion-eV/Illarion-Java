@@ -31,7 +31,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
  * This abstract class takes care for fetching uncaught exceptions and tries to
  * keep the editor alive just in the way it supposed to be.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
     /**

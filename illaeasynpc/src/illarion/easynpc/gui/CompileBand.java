@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * This band holds all buttons regarding the compiling functions of the editor.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class CompileBand extends JRibbonBand {
     /**

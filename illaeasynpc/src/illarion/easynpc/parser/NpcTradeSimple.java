@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 /**
  * This parser is able to read the definitions for the traded items with the simple syntax.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcTradeSimple implements NpcType {
     /**

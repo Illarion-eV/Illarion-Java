@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 /**
  * This is a treasure consequence. Its used to parse a treasure consequence out of a consequence collection string.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Treasure extends ConsequenceParser {
     /**

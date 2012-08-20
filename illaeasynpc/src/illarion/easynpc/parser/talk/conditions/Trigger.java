@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 /**
  * This is the trigger condition. Its able to parse a trigger out of the condition collection string.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Trigger extends ConditionParser {
     /**

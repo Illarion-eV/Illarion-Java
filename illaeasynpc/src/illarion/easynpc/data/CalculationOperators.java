@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  * This enumerator contains a list of all possible calculation operators that
  * are usable in a LUA and a easyNPC script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum CalculationOperators {
     /**

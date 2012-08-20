@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 /**
  * This constant contains the valid boolean flags for a easyNPC script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum BooleanFlagValues {
     /**

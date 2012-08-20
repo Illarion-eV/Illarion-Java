@@ -28,7 +28,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * into the parsed NPC. Each type requires the ability to parse the lines
  * assigned to it from the NPC script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface NpcType extends DocuEntry {
     /**

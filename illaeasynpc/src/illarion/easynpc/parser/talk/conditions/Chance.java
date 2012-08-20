@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 /**
  * This is a chance condition. Its able to parse a chance value out of the NPC condition line.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Chance extends ConditionParser {
     /**

@@ -30,7 +30,7 @@ import javax.swing.text.Segment;
 /**
  * This is the token generator for the easyNPC language. Don't dare questioning the contents of this script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class EasyNpcTokenMaker extends AbstractTokenMaker {
     @Override

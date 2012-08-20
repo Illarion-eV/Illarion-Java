@@ -31,7 +31,7 @@ import java.util.Locale;
  * This is the easyNPC writer. It writes from the data supplied by a parsed NPC a easyNPC script with the proper
  * encoding and the latest state of the syntax.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class EasyNpcWriter {
     /**

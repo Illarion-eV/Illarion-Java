@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 /**
  * This is a state condition. Its able to parse a state value out of the NPC condition line.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class State extends ConditionParser {
     /**

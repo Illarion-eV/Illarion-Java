@@ -36,7 +36,7 @@ import java.util.List;
  * This error pane is showing all needed components to display the errors
  * occurred in the script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class ErrorPane extends JPanel {
     public static final class ErrorPaneTableModel extends AbstractTableModel {

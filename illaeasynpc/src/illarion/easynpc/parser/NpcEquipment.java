@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 /**
  * Parser to fetch the equipment a character wears from the easyNPC script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcEquipment implements NpcType {
     /**

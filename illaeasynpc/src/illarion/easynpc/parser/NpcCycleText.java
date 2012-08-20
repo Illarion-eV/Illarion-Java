@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 /**
  * This class handles all cycle text lines.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcCycleText implements NpcType {
     /**

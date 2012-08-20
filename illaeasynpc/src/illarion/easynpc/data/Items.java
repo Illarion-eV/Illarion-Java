@@ -28,7 +28,7 @@ import java.util.Arrays;
  * This class loads and stores all items defined in the client database along
  * with all the values required for the script parser to work properly.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @SuppressWarnings("nls")
 public final class Items implements Comparable<Items> {

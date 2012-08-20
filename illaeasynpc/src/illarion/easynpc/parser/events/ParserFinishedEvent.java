@@ -24,7 +24,7 @@ import illarion.easynpc.ParsedNpc;
 /**
  * This is the event generated once the parser finished its task.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParserFinishedEvent {
     /**

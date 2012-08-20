@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  * This is the talk state consequence. Its able to parse a talk state consequence out of the consequence collection
  * string.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Talkstate extends ConsequenceParser {
     /**

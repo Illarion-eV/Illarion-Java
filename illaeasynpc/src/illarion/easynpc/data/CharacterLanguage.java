@@ -24,7 +24,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
 /**
  * This enumerator contains the possible values for the language the character is speaking.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum CharacterLanguage {
     ancient(10), common(0), dwarf(2), elf(3), halfling(5), human(1),

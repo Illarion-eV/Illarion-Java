@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 /**
  * This class is used to parse the lines from a easyNPC script that are used for talking NPCs.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcTalk implements NpcType {
     /**

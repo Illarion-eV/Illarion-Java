@@ -33,7 +33,7 @@ import javax.swing.event.UndoableEditListener;
  * This class monitors the undo able actions that can be done and updates the
  * buttons displayed at the top of the editor according to this.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class UndoMonitor implements UndoableEditListener, ChangeListener {
     /**

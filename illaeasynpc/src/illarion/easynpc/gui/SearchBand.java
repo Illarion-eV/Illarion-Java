@@ -42,7 +42,7 @@ import java.util.List;
 /**
  * This ribbon band contains the searching utility that can be used in the editor.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class SearchBand extends JRibbonBand {
     /**

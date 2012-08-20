@@ -31,7 +31,7 @@ import java.io.Writer;
 /**
  * This class is used to store all required values for the item condition.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ConditionItem implements TalkCondition {
     /**

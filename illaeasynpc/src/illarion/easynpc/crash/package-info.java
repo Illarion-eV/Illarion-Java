@@ -22,6 +22,6 @@
  * handlers either try to restart the part of the editor in question or stop the
  * editor completely.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 package illarion.easynpc.crash;

@@ -26,7 +26,7 @@ import java.io.Writer;
  * supply data to the {@link illarion.easynpc.writer.LuaWriter}. This interface
  * is used to fetch the data that needs to be written into the script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface LuaWritable {
     /**

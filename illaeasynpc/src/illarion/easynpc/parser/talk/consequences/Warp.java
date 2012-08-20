@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 /**
  * This is the warp consequence. Its able to parse a warp condition out of the consequence collection string.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Martin Polak
  */
 public final class Warp extends ConsequenceParser {

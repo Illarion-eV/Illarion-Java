@@ -27,7 +27,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * This parser interface is the shared interface to parse conditions and
  * consequences.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public abstract class Parser implements DocuEntry {
     /**

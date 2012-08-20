@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 /**
  * This class handles all values and functions related to NPCs that walk around.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcWalk implements NpcType {
     /**

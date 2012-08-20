@@ -22,7 +22,7 @@ package illarion.easynpc.data;
  * This enumerator contains all skills usable with the easyNPC language and all
  * required values to translate them as needed to a LUA script.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @SuppressWarnings("nls")
 public enum CharacterSkill {

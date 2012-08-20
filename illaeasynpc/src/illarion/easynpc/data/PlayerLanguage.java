@@ -22,7 +22,7 @@ package illarion.easynpc.data;
  * This enumerator contains the possible languages for the player language
  * values.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum PlayerLanguage {
     /**

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 /**
  * This is the answer consequence. Its able to parse a answer out of the consequence collection string.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Answer extends ConsequenceParser {
     /**

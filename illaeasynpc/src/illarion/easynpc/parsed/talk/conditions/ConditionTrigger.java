@@ -27,7 +27,7 @@ import java.io.Writer;
 /**
  * This class stores a trigger that is used in a condition.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ConditionTrigger implements TalkCondition {
     /**

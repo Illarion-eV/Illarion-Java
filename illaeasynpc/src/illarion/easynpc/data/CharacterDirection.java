@@ -25,7 +25,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
 /**
  * This enumerator contains the valid direction values a easyNPC script is allowed to contain.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum CharacterDirection {
     east(Location.DIR_EAST), north(Location.DIR_NORTH), northeast(

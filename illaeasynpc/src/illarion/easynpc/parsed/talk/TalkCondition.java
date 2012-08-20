@@ -24,7 +24,7 @@ import java.io.Writer;
 /**
  * This interface is the common talking condition interface used to store the conditions of a talking line.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface TalkCondition {
     /**

@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 /**
  * This is the trade consequence. Its able to parse a introduce consequence out of the consequence collection string.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Trade extends ConsequenceParser {
     /**

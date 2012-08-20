@@ -34,7 +34,7 @@ import java.util.List;
  * This is a band for the ribbon bar at the top of the editor. This band allows
  * to access and use the clip board.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class ClipboardBand extends JRibbonBand {
     /**

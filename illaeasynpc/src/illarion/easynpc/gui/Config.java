@@ -47,7 +47,7 @@ import java.util.Properties;
 /**
  * This class is used to store and to publish the settings used by the editor GUI.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Config {
     /**

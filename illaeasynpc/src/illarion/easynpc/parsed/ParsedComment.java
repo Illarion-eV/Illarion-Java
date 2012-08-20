@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 /**
  * This class is used to store a comment block in the parsed NPC.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParsedComment implements ParsedData {
     /**

@@ -30,7 +30,7 @@ import java.io.Writer;
 /**
  * This class stores the parsed equipment data that contains information about what the NPC wears.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParsedEquipment implements ParsedData {
     /**

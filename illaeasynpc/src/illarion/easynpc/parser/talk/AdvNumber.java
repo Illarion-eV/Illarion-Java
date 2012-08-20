@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 /**
  * This class contains the required functions to parse a advanced number out ofba string.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class AdvNumber {
     /**

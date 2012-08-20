@@ -28,7 +28,7 @@ import illarion.easynpc.Parser;
  * exception. To do so this class needs to be initialized. When doing so it
  * changes the system properties in order to bind to the AWT event queue.
  *
- * @author Martin Karing
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class AWTCrashHandler {
     /**
