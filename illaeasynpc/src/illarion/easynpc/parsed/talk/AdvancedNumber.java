@@ -18,9 +18,6 @@
  */
 package illarion.easynpc.parsed.talk;
 
-import illarion.common.util.Reusable;
-import javolution.context.ObjectFactory;
-
 /**
  * This class is used to store a advanced number value that is possibly used by
  * the easyNPC language. Such a number can contain a normal number, a reference
@@ -28,82 +25,69 @@ import javolution.context.ObjectFactory;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class AdvancedNumber implements Reusable {
+public final class AdvancedNumber {
     /**
-     * This factory is used to store unused and create new AdvancedNumber objects.
+     * This enumerator contains the possible values for a advanced number.
      */
-    private static final class AdvancedNumberFactory extends
-            ObjectFactory<AdvancedNumber> {
+    private enum AdvancedNumberType {
         /**
-         * Public constructor to ensure that the parent class is able to create
-         * a instance.
+         * This constant means that the number is a expression.
          */
-        public AdvancedNumberFactory() {
-            // nothing to do
-        }
+        Expression,
 
         /**
-         * Create a new object.
+         * This constant means that the number is the normal number.
          */
-        @Override
-        protected AdvancedNumber create() {
-            return new AdvancedNumber();
-        }
+        Normal,
+
+        /**
+         * This constant means that the number is a reference to the spoken number of the user.
+         */
+        SaidNumber
     }
 
     /**
-     * The factory used to create and recycle objects of this type.
-     */
-    private static final AdvancedNumberFactory FACTORY =
-            new AdvancedNumberFactory();
-
-    /**
-     * The type constant for this number to be a calculation constant.
-     */
-    private static final int TYPE_EXPRESSION = 3;
-
-    /**
-     * The type constant for this number to be a normal number.
-     */
-    private static final int TYPE_NORMAL = 1;
-
-    /**
-     * The type constant for this number to be a spoken number.
-     */
-    private static final int TYPE_SAIDNUMBER = 2;
-
-    /**
-     * The expression stored in this number. This is only used if the type of
-     * this number is {@link #TYPE_EXPRESSION}.
+     * The expression stored in this number. This is only used if the type of this number is
+     * {@link AdvancedNumber.AdvancedNumberType#Expression}.
      */
     private String expression;
 
     /**
      * The type of this number.
      */
-    private int type;
+    private AdvancedNumber.AdvancedNumberType type;
 
     /**
      * The value of this number. This is used in case the type is
-     * {@link #TYPE_NORMAL}.
+     * {@link {@link AdvancedNumber.AdvancedNumberType#Normal}.
      */
     private int value;
 
     /**
-     * Default scope constructor to avoid other classes to create instances.
+     * The default constructor causes this number to be a reference to the number the player spoke last.
      */
-    AdvancedNumber() {
-        // nothing to do
+    public AdvancedNumber() {
+        type = AdvancedNumber.AdvancedNumberType.SaidNumber;
     }
 
     /**
-     * Get a instance of the advanced number object. This returns either a old
-     * object that is reused or a newly created one.
+     * This constructor causes this number to refer to a simple number value.
      *
-     * @return the instance that is free to be used
+     * @param number the number value
      */
-    public static AdvancedNumber getInstance() {
-        return FACTORY.object();
+    public AdvancedNumber(final int number) {
+        type = AdvancedNumber.AdvancedNumberType.Normal;
+        value = number;
+    }
+
+    /**
+     * This constructor causes this number to refer to a expression string.
+     *
+     * @param expressionString the expression string
+     */
+    public AdvancedNumber(final String expressionString) {
+        type = AdvancedNumber.AdvancedNumberType.Expression;
+        expression = expressionString;
     }
 
     /**
@@ -113,14 +97,13 @@ public final class AdvancedNumber implements Reusable {
      */
     @SuppressWarnings("nls")
     public String getEasyNPC() {
-        if (type == TYPE_NORMAL) {
-            return Integer.toString(value);
-        }
-        if (type == TYPE_SAIDNUMBER) {
-            return "%NUMBER";
-        }
-        if (type == TYPE_EXPRESSION) {
-            return "expr( " + expression + ")";
+        switch (type) {
+            case Normal:
+                return Integer.toString(value);
+            case SaidNumber:
+                return "%NUMBER";
+            case Expression:
+                return "expr( " + expression + ')';
         }
         return null;
     }
@@ -132,63 +115,14 @@ public final class AdvancedNumber implements Reusable {
      */
     @SuppressWarnings("nls")
     public String getLua() {
-        if (type == TYPE_NORMAL) {
-            return Integer.toString(value);
-        }
-        if (type == TYPE_SAIDNUMBER) {
-            return "\"%NUMBER\"";
-        }
-        if (type == TYPE_EXPRESSION) {
-            return "function(number) return ("
-                    + expression.replace("%NUMBER", "number") + "); end";
+        switch (type) {
+            case Normal:
+                return Integer.toString(value);
+            case SaidNumber:
+                return "\"%NUMBER\"";
+            case Expression:
+                return "function(number) return (" + expression.replace("%NUMBER", "number") + "); end";
         }
         return null;
-    }
-
-    /**
-     * Recycle the instance and put it back into the factory so it can be reused
-     * later.
-     */
-    @Override
-    public void recycle() {
-        reset();
-        FACTORY.recycle(this);
-    }
-
-    /**
-     * Reset this instace.
-     */
-    @Override
-    public void reset() {
-        expression = null;
-        type = -1;
-    }
-
-    /**
-     * Set the expression of this number. In this case the number stores a
-     * calculation expression.
-     *
-     * @param newExpr the string of the calculation expression
-     */
-    public void setExpression(final String newExpr) {
-        expression = newExpr;
-        type = TYPE_EXPRESSION;
-    }
-
-    /**
-     * Set this number to be a normal number.
-     *
-     * @param newValue the value of the number
-     */
-    public void setNormal(final int newValue) {
-        type = TYPE_NORMAL;
-        value = newValue;
-    }
-
-    /**
-     * Set this number to be a spoken number.
-     */
-    public void setSaidNumber() {
-        type = TYPE_SAIDNUMBER;
     }
 }

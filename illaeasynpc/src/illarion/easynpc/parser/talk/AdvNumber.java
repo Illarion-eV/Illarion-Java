@@ -68,25 +68,19 @@ public final class AdvNumber {
 
         Matcher matcher = NUMBER_PATTERN.matcher(workingLine);
         if (matcher.matches()) {
-            final AdvancedNumber number = AdvancedNumber.getInstance();
             final int value = Integer.parseInt(matcher.group(1));
-            number.setNormal(value);
-            return number;
+            return new AdvancedNumber(value);
         }
 
         matcher = SAIDNUMBER_PATTERN.matcher(workingLine);
         if (matcher.matches()) {
-            final AdvancedNumber number = AdvancedNumber.getInstance();
-            number.setSaidNumber();
-            return number;
+            return new AdvancedNumber();
         }
 
         matcher = EXPRESSION_PATTERN.matcher(workingLine);
         if (matcher.matches()) {
-            final AdvancedNumber number = AdvancedNumber.getInstance();
             final String expression = matcher.group(1).trim();
-            number.setExpression(expression);
-            return number;
+            return new AdvancedNumber(expression);
         }
 
         return null;
