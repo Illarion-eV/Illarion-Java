@@ -42,24 +42,16 @@ public final class DialogMerchantBuyEvent implements NiftyEvent<Void> {
     private final int itemIndex;
 
     /**
-     * The amount of items the player wants to buy.
-     */
-    private final int amount;
-
-    /**
      * Create a new instance of this event and set the ID of the dialog that was used to buy items from.
      *
-     * @param id        the ID of the dialog
-     * @param buyItem   the item to buy
-     * @param buyIndex  the index of the item to buy
-     * @param buyAmount the amount of items to buy
+     * @param id       the ID of the dialog
+     * @param buyItem  the item to buy
+     * @param buyIndex the index of the item to buy
      */
-    public DialogMerchantBuyEvent(final int id, final MerchantListEntry buyItem, final int buyIndex,
-                                  final int buyAmount) {
+    public DialogMerchantBuyEvent(final int id, final MerchantListEntry buyItem, final int buyIndex) {
         dialogId = id;
         item = buyItem;
         itemIndex = buyIndex;
-        amount = buyAmount;
     }
 
     /**
@@ -85,14 +77,5 @@ public final class DialogMerchantBuyEvent implements NiftyEvent<Void> {
      */
     public int getItemIndex() {
         return itemIndex;
-    }
-
-    /**
-     * Get the amount of items the player wants to buy.
-     *
-     * @return the amount of items
-     */
-    public int getAmount() {
-        return amount;
     }
 }

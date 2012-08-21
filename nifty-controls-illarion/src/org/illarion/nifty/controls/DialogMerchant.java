@@ -56,13 +56,6 @@ public interface DialogMerchant extends Window {
     int getSellEntryCount();
 
     /**
-     * Get the selected amount of items that are supposed to be bought at once.
-     *
-     * @return the amount of items to buy at once
-     */
-    int getSelectedAmount();
-
-    /**
      * Get the item that was selected.
      *
      * @return the selected item

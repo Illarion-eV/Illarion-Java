@@ -49,15 +49,6 @@
                     <control name="dialog-merchant-list-entry" selectable="true"/>
                 </control>
             </panel>
-            <panel childLayout="vertical" width="100%">
-                <control name="label" text="${illarion-dialog-merchant-bundle.selCount}"
-                         style="#sellCountLabel"/>
-                <panel childLayout="horizontal">
-                    <control name="horizontalSlider" min="1" max="255" initial="1" stepSize="1"
-                             buttonStepSize="25" id="#buyCountSlider"/>
-                    <control name="label" id="#buyCountAmountDisplay" style="#buyCountAmountDisplay" text="1"/>
-                </panel>
-            </panel>
         </panel>
     </controlDefinition>
 

@@ -26,10 +26,6 @@
         <attributes font="textFont" width="100%" textHAlign="left"/>
     </style>
 
-    <style id="illarion-dialog-merchant-sell#buyCountAmountDisplay" base="nifty-label">
-        <attributes font="textFont" width="50px" textHAlign="right"/>
-    </style>
-
     <style id="illarion-dialog-merchant-buy#buyDescription" base="nifty-label">
         <attributes font="textFont" textHAlign="left" marginBottom="5px" width="98%" height="20px" wrap="true"
                     align="left"/>

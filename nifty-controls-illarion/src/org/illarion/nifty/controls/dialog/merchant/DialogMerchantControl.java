@@ -19,7 +19,8 @@
 package org.illarion.nifty.controls.dialog.merchant;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.controls.*;
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
+import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
@@ -66,29 +67,14 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
      */
     private final EventTopicSubscriber<ButtonClickedEvent> closeButtonEventHandler;
 
-    /**
-     * This event handler is used to monitor the slider that sets the amount of items to buy.
-     */
-    private final EventTopicSubscriber<SliderChangedEvent> sliderChangedEventHandler;
-
     public DialogMerchantControl() {
-
         closeButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
             @Override
             public void onEvent(final String topic, final ButtonClickedEvent data) {
                 if (alreadyClosed) {
                     return;
                 }
-
                 closeWindow();
-            }
-        };
-
-        sliderChangedEventHandler = new EventTopicSubscriber<SliderChangedEvent>() {
-            @Override
-            public void onEvent(final String topic, final SliderChangedEvent data) {
-                getElement().findNiftyControl("#buyCountAmountDisplay", Label.class).setText(
-                        Integer.toString(getSelectedAmount()));
             }
         };
     }
@@ -118,10 +104,8 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
 
         parent.layoutElements();
 
-        final Element leftButton = getElement().findElementByName("#button");
-        niftyInstance.subscribe(currentScreen, leftButton.getId(), ButtonClickedEvent.class, closeButtonEventHandler);
-        niftyInstance.subscribe(currentScreen, getElement().findElementByName("#buyCountSlider").getId(),
-                SliderChangedEvent.class, sliderChangedEventHandler);
+        final Element closeButton = getElement().findElementByName("#button");
+        niftyInstance.subscribe(currentScreen, closeButton.getId(), ButtonClickedEvent.class, closeButtonEventHandler);
     }
 
     @Override
@@ -132,11 +116,6 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     @Override
     public int getSellEntryCount() {
         return getSellList().itemCount();
-    }
-
-    @Override
-    public int getSelectedAmount() {
-        return Math.round(getElement().findNiftyControl("#buyCountSlider", Slider.class).getValue());
     }
 
     @Override
@@ -172,7 +151,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     public void buyItem(final int index) {
         final ListBox<MerchantListEntry> sellList = getSellList();
         niftyInstance.publishEvent(getId(),
-                new DialogMerchantBuyEvent(dialogId, sellList.getItems().get(index), index, getSelectedAmount()));
+                new DialogMerchantBuyEvent(dialogId, sellList.getItems().get(index), index));
     }
 
     public void buyItem(final MerchantListEntry entry) {
