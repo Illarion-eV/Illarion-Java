@@ -52,7 +52,6 @@ public final class ReplyFactory
         register(new AppearanceMsg());
 
         register(new InventoryMsg());
-        register(new MenuMsg());
         register(new ShowcaseMsg());
         register(new CloseShowcaseMsg());
 
