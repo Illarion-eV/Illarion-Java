@@ -177,7 +177,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "merchantDialog[0-9]+")
     public void handleMerchantBuyEvent(final String topic, final DialogMerchantBuyEvent event) {
-        World.getPlayer().getMerchantList().buyItem(event.getItem().getIndex(), event.getAmount());
+        World.getPlayer().getMerchantList().buyItem(event.getItem().getIndex());
     }
 
     @SuppressWarnings("MethodMayBeStatic")

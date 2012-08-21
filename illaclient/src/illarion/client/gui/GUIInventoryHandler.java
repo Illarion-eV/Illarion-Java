@@ -388,6 +388,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
             slotLabelVisibility[slotId] = false;
             invSlot.setImage(null);
             invSlot.hideLabel();
+            updateMerchantOverlay(slotId, itemId);
         }
 
         invSlots[slotId].getParent().layoutElements();

@@ -105,14 +105,22 @@ public final class MerchantList {
     /**
      * Buy this item.
      *
-     * @param item  the index of the item to buy
-     * @param count the amount of items to buy
+     * @param item the index of the item to buy
      */
-    public void buyItem(final MerchantItem item, final int count) {
+    public void buyItem(final MerchantItem item) {
         if (itemList[item.getIndex()] != item) {
             throw new IllegalArgumentException("This item is not part of this merchant list");
         }
-        buyItem(item.getIndex(), count);
+        buyItem(item.getIndex(), item.getBundleSize());
+    }
+
+    /**
+     * Buy this item.
+     *
+     * @param index the index of the item to buy
+     */
+    public void buyItem(final int index) {
+        buyItem(getItem(index));
     }
 
     /**
@@ -123,6 +131,7 @@ public final class MerchantList {
      */
     public void buyItem(final int index, final int count) {
         final TradeItemCmd cmd = (TradeItemCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_TRADE_ITEM);
+        cmd.setDialogId(listId);
         cmd.setBuy(index, count);
         cmd.send();
     }

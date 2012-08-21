@@ -555,7 +555,7 @@ public final class IllaClient {
         final String locale = cfg.getString(Lang.LOCALE_CFG);
         if (locale == null) {
             final String jnlpLocale = System.getProperty("illarion.client.locale");
-            if ((jnlpLocale == null) || jnlpLocale.equals(Lang.LOCALE_CFG_ENGLISH)) {
+            if (Lang.LOCALE_CFG_ENGLISH.equals(jnlpLocale)) {
                 cfg.set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
             } else {
                 cfg.set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_GERMAN);

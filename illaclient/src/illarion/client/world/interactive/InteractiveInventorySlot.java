@@ -128,6 +128,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
         final TradeItemCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_TRADE_ITEM,
                 TradeItemCmd.class);
         cmd.setSellFromInventory(getSlotId(), 1);
+        cmd.setDialogId(World.getPlayer().getMerchantList().getId());
         cmd.send();
     }
 

@@ -168,4 +168,13 @@ public class MerchantItem {
     public MerchantItem.MerchantItemType getType() {
         return type;
     }
+
+    /**
+     * Get the size of a bundle that is bought from the NPC.
+     *
+     * @return the bundle size of this item
+     */
+    public int getBundleSize() {
+        return bundleSize;
+    }
 }

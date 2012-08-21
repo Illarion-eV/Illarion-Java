@@ -160,6 +160,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
         final TradeItemCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_TRADE_ITEM,
                 TradeItemCmd.class);
         cmd.setSellFromContainer(getContainerId(), getSlotId(), 1);
+        cmd.setDialogId(World.getPlayer().getMerchantList().getId());
         cmd.send();
     }
 }

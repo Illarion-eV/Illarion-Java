@@ -50,7 +50,7 @@ public final class TradeItemCmd extends AbstractCommand {
     /**
      * The ID of the dialog to interact with.
      */
-    private int dialogId;
+    private int dialogId = -1;
 
     /**
      * The location for the buy or sell operation.
@@ -146,6 +146,9 @@ public final class TradeItemCmd extends AbstractCommand {
 
     @Override
     public void encode(final NetCommWriter writer) {
+        if (dialogId == -1) {
+            throw new IllegalStateException("Dialog ID was not set properly.");
+        }
         writer.writeInt(dialogId);
         switch (selectedAction) {
             case close:

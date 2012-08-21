@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.util;
 
@@ -39,18 +39,18 @@ import java.util.zip.ZipOutputStream;
  * This class handles everything around the table that stores the names of the
  * current character. It also offers the loaded data to other parts of the
  * client.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NamesTable {
     /**
      * Helper class that is used to write the content of the names table to a
      * byte buffer.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class WriteNameTableHelper implements
-        TIntObjectProcedure<String> {
+            TIntObjectProcedure<String> {
         /**
          * The buffer used to store the data.
          */
@@ -64,13 +64,13 @@ public final class NamesTable {
         /**
          * Constructor of this helper class that fetches the required values to
          * allow this class to work properly.
-         * 
+         *
          * @param parentInstance the NamesTable instance that is using this
-         *            class
-         * @param writeBuffer the buffer that is used to store the data
+         *                       class
+         * @param writeBuffer    the buffer that is used to store the data
          */
         public WriteNameTableHelper(final NamesTable parentInstance,
-            final byte[] writeBuffer) {
+                                    final byte[] writeBuffer) {
             buffer = writeBuffer;
             parent = parentInstance;
         }
@@ -117,7 +117,7 @@ public final class NamesTable {
      * The string of the encoding used for the names table.
      */
     @SuppressWarnings("nls")
-    private static final String ENCODING = "ISO-8859-1".intern();
+    private static final String ENCODING = "ISO-8859-1";
 
     /**
      * The instance of the logger that is used to write out the data.
@@ -158,9 +158,9 @@ public final class NamesTable {
     /**
      * The default constructor that loads the name data from the table file that
      * is specified in the constructor.
-     * 
+     *
      * @param tableFile the table file that is the target and the source of the
-     *            load and save operations this class will perform
+     *                  load and save operations this class will perform
      */
     public NamesTable(final File tableFile) {
         nameTable = tableFile;
@@ -170,8 +170,8 @@ public final class NamesTable {
 
     /**
      * Add a name to the list of names stored here.
-     * 
-     * @param charID the character ID that shall be added to this list
+     *
+     * @param charID   the character ID that shall be added to this list
      * @param charName the name of the character that shall be added
      */
     @SuppressWarnings("boxing")
@@ -182,11 +182,11 @@ public final class NamesTable {
 
     /**
      * Read a string from the input buffer and encode it for further usage.
-     * 
+     *
      * @param buffer the buffer that is used as source for the string data
      * @return the decoded string
      * @throws IOException If there are more byte read then there are written in
-     *             the buffer
+     *                     the buffer
      */
     @SuppressWarnings("nls")
     String decodeString(final byte[] buffer) throws IOException {
@@ -194,7 +194,7 @@ public final class NamesTable {
 
         if ((cursor + len) > buffer.length) {
             throw new IndexOutOfBoundsException(
-                "reading beyond receive buffer");
+                    "reading beyond receive buffer");
         }
 
         final String ret = new String(buffer, cursor, len, ENCODING);
@@ -204,7 +204,7 @@ public final class NamesTable {
 
     /**
      * Get a name from the stored list.
-     * 
+     *
      * @param charID the character ID of the char who's name is wanted
      * @return the name of the character that was found or null
      */
@@ -220,7 +220,7 @@ public final class NamesTable {
     public void saveTable() {
         if (nameTable.exists() && !nameTable.canWrite()) {
             LOGGER.error("Name table File locked, can't write the"
-                + " name table.");
+                    + " name table.");
             return;
         }
 
@@ -250,7 +250,7 @@ public final class NamesTable {
             cipher.init(Cipher.ENCRYPT_MODE, key);
         } catch (final Exception e) {
             LOGGER.error("Problem while creating cipher. File "
-                + "operations disabled.", e);
+                    + "operations disabled.", e);
             fileOperations = false;
             return;
         }
@@ -283,20 +283,20 @@ public final class NamesTable {
             gOutStream.flush();
         } catch (final FileNotFoundException e) {
             LOGGER
-                .error(
-                    "Can't write to the name table file "
-                        + nameTable.getPath(), e);
+                    .error(
+                            "Can't write to the name table file "
+                                    + nameTable.getPath(), e);
         } catch (final IOException e) {
             LOGGER.error(
-                "Error accessing the stream to the file "
-                    + nameTable.getPath(), e);
+                    "Error accessing the stream to the file "
+                            + nameTable.getPath(), e);
         } finally {
             if (gOutStream != null) {
                 try {
                     gOutStream.close();
                 } catch (final IOException e) {
                     LOGGER.error("Closing the file " + nameTable.getPath()
-                        + " correctly failed", e);
+                            + " correctly failed", e);
                 }
             }
         }
@@ -304,24 +304,24 @@ public final class NamesTable {
 
     /**
      * Encode 4 byte to the buffer and encode it as signed integer(32bit).
-     * 
+     *
      * @param buffer the buffer that stores the data for the network interface
-     * @param value the value that shall be encoded
+     * @param value  the value that shall be encoded
      */
     void encodeInteger(final byte[] buffer, final int value) {
         buffer[cursor++] =
-            (byte) ((value & BYTE_MASK_4) >> Byte.SIZE >> Byte.SIZE >> Byte.SIZE);
+                (byte) ((value & BYTE_MASK_4) >> Byte.SIZE >> Byte.SIZE >> Byte.SIZE);
         buffer[cursor++] =
-            (byte) ((value & BYTE_MASK_3) >> Byte.SIZE >> Byte.SIZE);
+                (byte) ((value & BYTE_MASK_3) >> Byte.SIZE >> Byte.SIZE);
         buffer[cursor++] = (byte) ((value & BYTE_MASK_2) >> Byte.SIZE);
         buffer[cursor++] = (byte) (value & BYTE_MASK_1);
     }
 
     /**
      * Encode a string and put it into the buffer.
-     * 
+     *
      * @param buffer the buffer that contains the the already encoded data
-     * @param txt the string that shall be encoded
+     * @param txt    the string that shall be encoded
      */
     @SuppressWarnings("nls")
     void encodeString(final byte[] buffer, final String txt) {
@@ -342,7 +342,7 @@ public final class NamesTable {
     /**
      * Decode one byte from a buffer and use it as unsigned byte. Reading a byte
      * will automatically increase the {@link #cursor} position by one.
-     * 
+     *
      * @param buffer the buffer that contains the data that is encoded
      * @return the decoded unsigned byte
      */
@@ -361,7 +361,7 @@ public final class NamesTable {
 
     /**
      * Read four bytes from the buffer and handle them as a single signed value.
-     * 
+     *
      * @param buffer the buffer contains the data that shall be decoded
      * @return The two bytes in the buffer handled as unsigned 4 byte value
      */
@@ -388,7 +388,7 @@ public final class NamesTable {
 
         if (nameTable == null) {
             throw new IllegalArgumentException("Can't load table from a NULL "
-                + "file");
+                    + "file");
         }
 
         if (!nameTable.exists()) {
@@ -440,7 +440,7 @@ public final class NamesTable {
             int read;
             int totalRead = 0;
             while (0 < (read =
-                gInStream.read(buffer, totalRead, buffer.length - totalRead))) {
+                    gInStream.read(buffer, totalRead, buffer.length - totalRead))) {
                 totalRead += read;
             }
             gInStream.closeEntry();
@@ -460,18 +460,18 @@ public final class NamesTable {
 
         } catch (final FileNotFoundException e) {
             LOGGER.error(
-                "Can't read the name table file " + nameTable.getPath(), e);
+                    "Can't read the name table file " + nameTable.getPath(), e);
         } catch (final IOException e) {
             LOGGER.error(
-                "Error accessing the stream to the file "
-                    + nameTable.getPath(), e);
+                    "Error accessing the stream to the file "
+                            + nameTable.getPath(), e);
         } finally {
             if (gInStream != null) {
                 try {
                     gInStream.close();
                 } catch (final IOException e) {
                     LOGGER.error("Closing the file " + nameTable.getPath()
-                        + " correctly failed", e);
+                            + " correctly failed", e);
                 }
             }
         }
