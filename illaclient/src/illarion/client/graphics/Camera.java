@@ -188,7 +188,8 @@ public final class Camera {
         }
 
         synchronized (dirtyAreas) {
-            for (final Rectangle dirtArea : dirtyAreas) {
+            for (int i = 0, dirtyAreasSize = dirtyAreas.size(); i < dirtyAreasSize; i++) {
+                final Rectangle dirtArea = dirtyAreas.get(i);
                 if (testArea.intersects(dirtArea)) {
                     return dirtArea;
                 }
@@ -207,7 +208,8 @@ public final class Camera {
         }
 
         synchronized (dirtyAreas) {
-            for (final Rectangle dirtArea : dirtyAreas) {
+            for (int i = 0, dirtyAreasSize = dirtyAreas.size(); i < dirtyAreasSize; i++) {
+                final Rectangle dirtArea = dirtyAreas.get(i);
                 fillRenderRect(g, dirtArea);
             }
         }
@@ -230,7 +232,8 @@ public final class Camera {
         }
 
         synchronized (dirtyAreas) {
-            for (final Rectangle dirtArea : dirtyAreas) {
+            for (int i = 0, dirtyAreasSize = dirtyAreas.size(); i < dirtyAreasSize; i++) {
+                final Rectangle dirtArea = dirtyAreas.get(i);
                 debugRenderRect(g, dirtArea);
             }
         }
