@@ -26,8 +26,6 @@ import illarion.client.net.client.*;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.util.Location;
-import illarion.common.util.Reusable;
-import javolution.context.ObjectFactory;
 
 /**
  * This is the interactive representation of a tile on the map.
@@ -35,38 +33,7 @@ import javolution.context.ObjectFactory;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Vilarion &lt;vilarion@illarion.org&gt;
  */
-public class InteractiveMapTile extends AbstractDraggable implements DropTarget, UseTarget, Reusable {
-    /**
-     * This class defines the factory used to generate new instances of the
-     * interactive tiles.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class InteractiveTileFactory extends
-            ObjectFactory<InteractiveMapTile> {
-        /**
-         * Public constructor so the parent class is able to create a instance.
-         */
-        public InteractiveTileFactory() {
-            super();
-        }
-
-        /**
-         * Create a new instance.
-         */
-        @Override
-        protected InteractiveMapTile create() {
-            return new InteractiveMapTile();
-        }
-    }
-
-    /**
-     * The factory used to create new instances of this class and recycle unused
-     * ones.
-     */
-    private static final InteractiveTileFactory FACTORY =
-            new InteractiveTileFactory();
-
+public class InteractiveMapTile extends AbstractDraggable implements DropTarget, UseTarget {
     /**
      * The ID that is needed to tell the server that the operations refer to a
      * tile on the map.
@@ -74,41 +41,26 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
     private static final byte REFERENCE_ID = 1;
 
     /**
-     * Create a duplicate of a existing interactive reference to a tile.
-     *
-     * @param tile the original interactive tile
-     * @return the new interactive tile that refers to the same interactive tile
-     *         as the original one
-     */
-    public static InteractiveMapTile getInteractiveTile(
-            final InteractiveMapTile tile) {
-        final InteractiveMapTile newTile = FACTORY.object();
-        newTile.parentTile = tile.parentTile;
-        return newTile;
-    }
-
-    /**
-     * Create a new instance of the interactive tile that refers to a map tile.
-     *
-     * @param tile the tile its supposed to refer to
-     * @return the new interactive tile that refers to the selected map tile
-     */
-    public static InteractiveMapTile getInteractiveTile(final MapTile tile) {
-        final InteractiveMapTile newTile = FACTORY.object();
-        newTile.parentTile = tile;
-        return newTile;
-    }
-
-    /**
      * The tile this interactive tile refers to.
      */
-    private MapTile parentTile;
+    private final MapTile parentTile;
 
     /**
-     * Private constructor ensuring that only the factory created instances.
+     * Copy constructor.
+     *
+     * @param tile the instance that shall be copied
      */
-    private InteractiveMapTile() {
-        // nothing
+    public InteractiveMapTile(final InteractiveMapTile tile) {
+        parentTile = tile.parentTile;
+    }
+
+    /**
+     * Constructor that allows setting the tile to be used.
+     *
+     * @param tile the tile this interactive class refers to
+     */
+    public InteractiveMapTile(final MapTile tile) {
+        parentTile = tile;
     }
 
     /**
@@ -131,11 +83,9 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
             return;
         }
 
-        final InteractiveMapTile tile =
-                World.getMap().getInteractive()
-                        .getInteractiveTileOnMapLoc(targetChar.getLocation());
+        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnMapLoc(
+                targetChar.getLocation());
         dragTo(tile);
-        tile.recycle();
     }
 
     @Override
@@ -167,10 +117,9 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
             return;
         }
 
-        final DragMapMapCmd cmd =
-                CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_DRAG_MAP_MAP_N + getDirection(),
-                        DragMapMapCmd.class);
+        final DragMapMapCmd cmd = CommandFactory.getInstance().getCommand(
+                CommandList.CMD_DRAG_MAP_MAP_N + getDirection(),
+                DragMapMapCmd.class);
         cmd.setDragTo(targetTile.getLocation());
         cmd.setCounter();
         cmd.send();
@@ -197,18 +146,14 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
 
         final Item topItem = getTopImage();
         if ((topItem != null) && topItem.isContainer()) {
-            final OpenMapCmd containerCmd = CommandFactory.getInstance().getCommand(CommandList
-                    .CMD_OPEN_MAP, OpenMapCmd.class);
+            final OpenMapCmd containerCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_OPEN_MAP, OpenMapCmd.class);
             containerCmd.setPosition(getLocation());
             containerCmd.setShowcase(1);
             containerCmd.send();
             return;
         }
 
-        final UseCmd cmd =
-                CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_USE,
-                        UseCmd.class);
+        final UseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_USE, UseCmd.class);
         cmd.addUse(this);
         cmd.send();
     }
@@ -261,25 +206,6 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
      */
     public boolean isInUseRange() {
         return World.getPlayer().getLocation().getDistance(getLocation()) < 2;
-    }
-
-    /**
-     * Recycle this tile. This should be called once this instance is not needed
-     * anymore.
-     */
-    @Override
-    public void recycle() {
-        reset();
-        FACTORY.recycle(this);
-    }
-
-    /**
-     * Reset this instance. Shouldn't be called as it renders this instance
-     * unusable.
-     */
-    @Override
-    public void reset() {
-        parentTile = null;
     }
 
     /**

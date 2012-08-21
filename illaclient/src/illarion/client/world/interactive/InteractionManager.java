@@ -35,9 +35,7 @@ public final class InteractionManager {
         if (draggedObject == null) {
             return;
         }
-        final InteractiveMapTile targetTile =
-                World.getMap().getInteractive()
-                        .getInteractiveTileOnScreenLoc(x, y);
+        final InteractiveMapTile targetTile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(x, y);
 
         if (targetTile == null) {
             return;

@@ -159,8 +159,6 @@ public final class GameMapDragHandler
         final int dropSpotX = droppedElement.getX() + (droppedElement.getWidth() / 2);
         final int dropSpotY = droppedElement.getY() + (droppedElement.getHeight() / 2);
 
-        droppedElement.setVisible(false);
-
         World.getInteractionManager().dropAtMap(dropSpotX, dropSpotY);
     }
 

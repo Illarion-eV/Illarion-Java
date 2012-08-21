@@ -20,13 +20,6 @@ package illarion.client.world;
 
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.list.array.TShortArrayList;
-import javolution.util.FastTable;
-
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-
 import illarion.client.graphics.AlphaChangeListener;
 import illarion.client.graphics.Effect;
 import illarion.client.graphics.Item;
@@ -41,6 +34,11 @@ import illarion.common.graphics.LightSource;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
+import javolution.util.FastTable;
+import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
+
+import java.util.List;
 
 /**
  * A tile on the map. Contains the tile graphics and items.
@@ -165,7 +163,7 @@ public final class MapTile
      * Add a single item to the item stack. The new item is placed at the last position and is shown on top this way.
      *
      * @param itemId the ID of the item that is created
-     * @param count the count value of the item that is created
+     * @param count  the count value of the item that is created
      */
     public void addItem(final int itemId, final int count) {
         int pos = 0;
@@ -250,8 +248,8 @@ public final class MapTile
      * Update the item at the top position of the stack of items.
      *
      * @param oldItemId the ID of the item that is currently on the top position
-     * @param itemId the new ID that shall be set on the item
-     * @param count the new count value of the item in top position
+     * @param itemId    the new ID that shall be set on the item
+     * @param count     the new count value of the item in top position
      */
     @SuppressWarnings("nls")
     public void changeTopItem(final int oldItemId, final int itemId, final int count) {
@@ -434,7 +432,7 @@ public final class MapTile
      * @return the interactive tile referring to this map tile
      */
     public InteractiveMapTile getInteractive() {
-        return InteractiveMapTile.getInteractiveTile(this);
+        return new InteractiveMapTile(this);
     }
 
     /**
@@ -660,7 +658,7 @@ public final class MapTile
      * Render the light on this tile, using the ambient light of the weather and a factor how much the tile light
      * modifies the ambient light.
      *
-     * @param factor the factor how much the ambient light is modified by the tile light
+     * @param factor       the factor how much the ambient light is modified by the tile light
      * @param ambientLight the ambient light from the weather
      */
     protected void renderLight(final float factor, final Color ambientLight) {
@@ -735,7 +733,7 @@ public final class MapTile
     /**
      * Adjust visiblitiy to match hidden and obstructed flag.
      *
-     * @param hide the target hide flag
+     * @param hide     the target hide flag
      * @param obstruct the target obstruct flag
      * @see illarion.client.world.MapTile#setHidden(boolean)
      * @see illarion.client.world.MapTile#setObstructed(boolean)
@@ -774,8 +772,8 @@ public final class MapTile
     /**
      * Set a item at a special position of the item stack on this tile.
      *
-     * @param index The index within the item list of this tile
-     * @param itemId The new item ID of the item
+     * @param index     The index within the item list of this tile
+     * @param itemId    The new item ID of the item
      * @param itemCount The new count value of this item
      */
     @SuppressWarnings("nls")
@@ -919,9 +917,9 @@ public final class MapTile
     /**
      * Update a single item with new data.
      *
-     * @param item the item that shall be updated
+     * @param item      the item that shall be updated
      * @param itemCount the count value of the new item
-     * @param index the index of the item within the stack of items on this tile
+     * @param index     the index of the item within the stack of items on this tile
      */
     private void updateItem(final Item item, final int itemCount, final int index) {
         // set number
@@ -948,8 +946,8 @@ public final class MapTile
     /**
      * Update all items on the stack of this tile at once.
      *
-     * @param number the new amount of items on this tile
-     * @param itemId the list of item ids for the items on this tile
+     * @param number    the new amount of items on this tile
+     * @param itemId    the list of item ids for the items on this tile
      * @param itemCount the list of count values for the items on this tile
      */
     private void updateItemList(final int number, final TIntArrayList itemId, final TShortArrayList itemCount) {
@@ -972,8 +970,8 @@ public final class MapTile
      * new item data to the client.
      *
      * @param itemNumber Amount of items within the list of items
-     * @param itemId List of the item IDs for all items that shall be created
-     * @param itemCount List of count values for all items
+     * @param itemId     List of the item IDs for all items that shall be created
+     * @param itemCount  List of count values for all items
      */
     public void updateItems(final int itemNumber, final TIntArrayList itemId, final TShortArrayList itemCount) {
         updateItemList(itemNumber, itemId, itemCount);
