@@ -81,8 +81,7 @@ public final class NpcBasics implements NpcType {
         @SuppressWarnings("nls")
         @Override
         public DocuEntry getChild(final int index) {
-            throw new IllegalArgumentException(
-                    "There are no childs to request.");
+            throw new IllegalArgumentException("There are no children to request.");
         }
 
         @Override

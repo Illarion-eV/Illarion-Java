@@ -107,7 +107,7 @@ public enum CharacterMagicType {
      * @param map the map that stores the tokens
      */
     public static void enlistHighlightedWords(final TokenMap map) {
-        for (CharacterMagicType magicType : CharacterMagicType.values()) {
+        for (final CharacterMagicType magicType : CharacterMagicType.values()) {
             map.put(magicType.getMagicTypeName(), Token.VARIABLE);
         }
     }
