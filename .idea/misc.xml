@@ -19,6 +19,12 @@
   </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
+    <list size="4">
+      <item index="0" class="java.lang.String" itemvalue="de.lessvoid.nifty.NiftyEventSubscriber" />
+      <item index="1" class="java.lang.String" itemvalue="org.bushe.swing.event.annotation.EventSubscriber" />
+      <item index="2" class="java.lang.String" itemvalue="org.bushe.swing.event.annotation.EventTopicPatternSubscriber" />
+      <item index="3" class="java.lang.String" itemvalue="org.bushe.swing.event.annotation.EventTopicSubscriber" />
+    </list>
   </component>
   <component name="FindBugsConfigurable">
     <option name="make" value="true" />

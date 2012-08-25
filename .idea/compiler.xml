@@ -18,7 +18,7 @@
       <entry name="?*.lua" />
       <entry name="filelist" />
     </wildcardResourcePatterns>
-    <annotationProcessing enabled="false" useClasspath="true" />
+    <annotationProcessing enabled="true" useClasspath="true" />
   </component>
 </project>
 
