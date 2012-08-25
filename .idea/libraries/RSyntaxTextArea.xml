@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="RSyntaxTextArea">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/rsyntaxtextarea" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/rsyntaxtextarea" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/illacommon/lib/rsyntaxtextarea/rsyntaxtextarea-sources.jar!/" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/rsyntaxtextarea" recursive="false" />
+  </library>
+</component>
