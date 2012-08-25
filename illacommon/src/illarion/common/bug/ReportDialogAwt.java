@@ -85,7 +85,7 @@ public final class ReportDialogAwt implements ReportDialog {
      * The newline string that is used in the dialog.
      */
     @SuppressWarnings("nls")
-    private static final String NL = "\n".intern();
+    private static final String NL = "\n";
 
     /**
      * The data about the crash.
