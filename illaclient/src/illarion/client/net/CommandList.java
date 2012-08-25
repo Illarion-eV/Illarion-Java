@@ -271,6 +271,11 @@ public final class CommandList {
     public static final int CMD_CLOSE_DIALOG_INPUT = 0x50;
 
     /**
+     * Client command that is used to answer a text request.
+     */
+    public static final int CMD_CLOSE_DIALOG_SELECTION = 0x53;
+
+    /**
      * Client command to perform a use action of one or two items on different locations.
      */
     public static final int CMD_USE = 0xFE;
@@ -289,6 +294,11 @@ public final class CommandList {
      * Server message that contains the data of a merchant dialog.
      */
     public static final int MSG_DIALOG_MERCHANT = 0x52;
+
+    /**
+     * Server message that contains the data of a selection dialog.
+     */
+    public static final int MSG_DIALOG_SELECTION = 0x53;
 
     /**
      * Server message that contains the appearance data of a character.

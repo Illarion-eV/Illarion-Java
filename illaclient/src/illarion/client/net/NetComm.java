@@ -29,6 +29,7 @@ import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.lang.String;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -38,55 +39,47 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Network communication interface. All activities like sending and transmitting
- * of messages and commands in handled by this class. It handles the sockets and
- * the in and output queues.
+ * Network communication interface. All activities like sending and transmitting of messages and commands in handled
+ * by this class. It handles the sockets and the in and output queues.
  */
 public final class NetComm {
     /**
-     * This constant holds the encoding for strings that are received from and
-     * send to the server.
+     * This constant holds the encoding for strings that are received from and send to the server.
      */
     @SuppressWarnings("nls")
-    public static final Charset SERVER_STRING_ENCODING = Charset
-        .forName("ISO-8859-1");
+    public static final Charset SERVER_STRING_ENCODING = Charset.forName("ISO-8859-1");
 
     /**
-     * The value that is added and used for the modulus division that is done on
-     * the buffer value before printing it.
+     * The value that is added and used for the modulus division that is done on the buffer value before printing it.
      */
     private static final int CHAR_MOD = 265;
 
     /**
-     * This is the string used to format the debugging output of the received
-     * and transmitted data.
+     * This is the string used to format the debugging output of the received and transmitted data.
      */
     @SuppressWarnings("nls")
     private static final String DUMP_FORMAT_BYTES = "[%1$02X]";
 
     /**
-     * This is the string used to format the debugging output of the total
-     * amount of received bytes.
+     * This is the string used to format the debugging output of the total amount of received bytes.
      */
     @SuppressWarnings("nls")
     private static final String DUMP_FORMAT_TOTAL = "[%1$d byte]";
 
     /**
-     * The value of the first printable character using
-     * {@link java.lang.String#valueOf(char)}.
+     * The value of the first printable character using {@link String#valueOf(char)}.
      */
     private static final int FIRST_PRINT_CHAR = 65;
 
     /**
-     * Delay in ms before the first render of the screen. This is needed to give
-     * the network interface some time to fetch the data.
+     * Delay in ms before the first render of the screen. This is needed to give the network interface some time to
+     * fetch the data.
      */
     private static final int INITIAL_DELAY = 500;
 
     /**
-     * The delay in ms between two keep alive commands that are send to ensure
-     * the server that the client is still working and the connection is stable.
-     * Now set to 10 seconds.
+     * The delay in ms between two keep alive commands that are send to ensure the server that the client is still
+     * working and the connection is stable. Now set to 10 seconds.
      */
     private static final int KEEP_ALIVE_DELAY = 10 * 1000;
 
@@ -96,20 +89,17 @@ public final class NetComm {
     private static final Logger LOGGER = Logger.getLogger(NetComm.class);
 
     /**
-     * General time to wait in case its needed that other threads need to react
-     * on some input.
+     * General time to wait in case its needed that other threads need to react on some input.
      */
     private static final int THREAD_WAIT_TIME = 100;
 
     /**
-     * List of server messages that got received and decoded but were not yet
-     * executed.
+     * List of server messages that got received and decoded but were not yet executed.
      */
     private final BlockingQueue<AbstractReply> inputQueue;
 
     /**
-     * The receiver that accepts and decodes data that was received from the
-     * server.
+     * The receiver that accepts and decodes data that was received from the server.
      */
     private Receiver inputThread;
 
@@ -124,8 +114,8 @@ public final class NetComm {
     private final BlockingQueue<AbstractCommand> outputQueue;
 
     /**
-     * The sender instance that accepts all server client commands that shall be
-     * send and forwards the data to this class.
+     * The sender instance that accepts all server client commands that shall be send and forwards the data to this
+     * class.
      */
     private Sender sender;
 
@@ -146,14 +136,12 @@ public final class NetComm {
     }
 
     /**
-     * New version of the checksum calculation. All bytes from the current
-     * position of the buffer to the limit are included to the calculation. The
-     * limit, mark and position is restored by this function. So the ByteBuffer
-     * is unchanged after the function leaves.
+     * New version of the checksum calculation. All bytes from the current position of the buffer to the limit are
+     * included to the calculation. The limit, mark and position is restored by this function. So the ByteBuffer is
+     * unchanged after the function leaves.
      * 
      * @param buffer the byte buffer that provides the byte data
-     * @param len the amount of byte that shall be included to the checksum
-     *            calculation
+     * @param len the amount of byte that shall be included to the checksum calculation
      * @return the calculated checksum
      */
     public static int getCRC(final ByteBuffer buffer, final int len) {
@@ -172,16 +160,14 @@ public final class NetComm {
     }
 
     /**
-     * This function has only debug purposes and is used to print the contents
-     * of a buffer to the output log. This is used for the debug output when
-     * debugging the protocol. The bytes that are written are all remaining
-     * bytes of the buffer. Also the position of the buffer with point at the
-     * end after this function was called.
+     * This function has only debug purposes and is used to print the contents of a buffer to the output log. This is
+     * used for the debug output when debugging the protocol. The bytes that are written are all remaining bytes of
+     * the buffer. Also the position of the buffer with point at the end after this function was called.
      * 
      * @param prefix The prefix that shall be written first to the log
      * @param buffer The buffer that contains the values that shall be written
      */
-    protected static void dump(final String prefix, final ByteBuffer buffer) {
+    static void dump(final String prefix, final ByteBuffer buffer) {
         final TextBuilder builder = TextBuilder.newInstance();
         final TextBuilder builderText = TextBuilder.newInstance();
 
@@ -211,8 +197,6 @@ public final class NetComm {
         TextBuilder.recycle(builderText);
     }
 
-    private boolean connectCalled = false;
-
     /**
      * Establish a connection with the server.
      * 
@@ -220,13 +204,10 @@ public final class NetComm {
      */
     @SuppressWarnings("nls")
     public boolean connect() {
-        connectCalled = true;
         try {
-            final Servers usedServer =
-                IllaClient.getInstance().getUsedServer();
+            final Servers usedServer = IllaClient.getInstance().getUsedServer();
 
-            final InetSocketAddress address =
-                new InetSocketAddress(usedServer.getServerHost(),
+            final InetSocketAddress address = new InetSocketAddress(usedServer.getServerHost(),
                     usedServer.getServerPort());
             socket = SelectorProvider.provider().openSocketChannel();
             socket.configureBlocking(true);
@@ -238,21 +219,17 @@ public final class NetComm {
                     try {
                         Thread.sleep(1);
                     } catch (final InterruptedException e) {
-                        LOGGER.warn("Waiting time for connection finished got"
-                            + " interrupted");
+                        LOGGER.warn("Waiting time for connection finished got interrupted");
                     }
                 }
             }
 
             sender = new Sender(outputQueue, socket);
-            sender.setUncaughtExceptionHandler(NetCommCrashHandler
-                .getInstance());
+            sender.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
             inputThread = new Receiver(inputQueue, socket);
-            inputThread.setUncaughtExceptionHandler(NetCommCrashHandler
-                .getInstance());
+            inputThread.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
             messageHandler = new MessageExecutor(inputQueue);
-            messageHandler.setUncaughtExceptionHandler(NetCommCrashHandler
-                .getInstance());
+            messageHandler.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
 
             sender.start();
             inputThread.start();
@@ -262,9 +239,7 @@ public final class NetComm {
                 new Timer(INITIAL_DELAY, KEEP_ALIVE_DELAY, new Runnable() {
                     @Override
                     public void run() {
-                        final AbstractCommand cmd =
-                            CommandFactory.getInstance().getCommand(
-                                CommandList.CMD_KEEPALIVE);
+                        final AbstractCommand cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_KEEPALIVE);
                         sendCommand(cmd);
                     }
                 });
@@ -280,8 +255,8 @@ public final class NetComm {
     private Timer keepAliveTimer;
 
     /**
-     * Disconnect the client-server connection and shut the socket along with
-     * all threads for sending and receiving down.
+     * Disconnect the client-server connection and shut the socket along with all threads for sending and receiving
+     * down.
      */
     @SuppressWarnings("nls")
     public void disconnect() {
@@ -327,8 +302,7 @@ public final class NetComm {
     }
 
     /**
-     * Check if the network interface received anything from the server since it
-     * started.
+     * Check if the network interface received anything from the server since it started.
      * 
      * @return true in case anything was received from the server.
      */

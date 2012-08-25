@@ -21,8 +21,8 @@ package illarion.client.net;
 import java.io.IOException;
 
 /**
- * This interface offers the possibility to read from a connection handled by
- * the network communication class of Illarion.
+ * This interface offers the possibility to read from a connection handled by the network communication class of
+ * Illarion.
  * 
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -31,8 +31,7 @@ public interface NetCommReader {
      * Read a single byte from the buffer and handle it as signed byte.
      * 
      * @return The byte from the buffer handled as signed byte
-     * @throws IOException If there are more byte read then there are written in
-     *             the buffer
+     * @throws IOException If there are more byte read then there are written in the buffer
      */
     byte readByte() throws IOException;
 
@@ -40,8 +39,7 @@ public interface NetCommReader {
      * Read four bytes from the buffer and handle them as a single signed value.
      * 
      * @return The two bytes in the buffer handled as signed 4 byte value
-     * @throws IOException If there are more byte read then there are written in
-     *             the buffer
+     * @throws IOException If there are more byte read then there are written in the buffer
      */
     int readInt() throws IOException;
 
@@ -49,8 +47,7 @@ public interface NetCommReader {
      * Read two bytes from the buffer and handle them as a single signed value.
      * 
      * @return The two bytes in the buffer handled as signed 2 byte value
-     * @throws IOException If there are more byte read then there are written in
-     *             the buffer
+     * @throws IOException If there are more byte read then there are written in the buffer
      */
     short readShort() throws IOException;
 
@@ -58,8 +55,7 @@ public interface NetCommReader {
      * Read a string from the input buffer and encode it for further usage.
      * 
      * @return the decoded string
-     * @throws IOException If there are more byte read then there are written in
-     *             the buffer
+     * @throws IOException If there are more byte read then there are written in the buffer
      */
     String readString() throws IOException;
 
@@ -67,8 +63,7 @@ public interface NetCommReader {
      * Read a single byte from the buffer and handle it as unsigned byte.
      * 
      * @return The byte of the buffer handled as unsigned byte.
-     * @throws IOException If there are more byte read then there are written in
-     *             the buffer
+     * @throws IOException If there are more byte read then there are written in the buffer
      */
     short readUByte() throws IOException;
 
@@ -77,8 +72,7 @@ public interface NetCommReader {
      * value.
      * 
      * @return The two bytes in the buffer handled as unsigned 4 byte value
-     * @throws IOException If there are more byte read then there are written in
-     *             the buffer
+     * @throws IOException If there are more byte read then there are written in the buffer
      */
     long readUInt() throws IOException;
 
@@ -87,8 +81,7 @@ public interface NetCommReader {
      * value.
      * 
      * @return The two bytes in the buffer handled as unsigned 2 byte value
-     * @throws IOException If there are more byte read then there are written in
-     *             the buffer
+     * @throws IOException If there are more byte read then there are written in the buffer
      */
     int readUShort() throws IOException;
 }

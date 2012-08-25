@@ -21,8 +21,8 @@ package illarion.client.net;
 import illarion.common.util.Location;
 
 /**
- * This interface offers the possibility to write on a connection handled by the
- * network communication class of Illarion.
+ * This interface offers the possibility to write on a connection handled by the network communication class of
+ * Illarion.
  * 
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */

@@ -93,6 +93,7 @@ public final class ReplyFactory
         register(new DialogInputMsg());
         register(new DialogMessageMsg());
         register(new DialogMerchantMsg());
+        register(new DialogSelectionMsg());
 
         finish();
     }
