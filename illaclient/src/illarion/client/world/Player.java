@@ -29,6 +29,7 @@ import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.util.Lang;
+import illarion.client.world.characters.CharacterAttribute;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
@@ -148,11 +149,6 @@ public final class Player implements ConfigChangeListener {
      * The path to the folder of character specific stuff, like the map or the names table.
      */
     private final File path;
-
-    /**
-     * The perception attribute of the character. This value is used for LOS calculations.
-     */
-    private int perception;
 
     /**
      * The character ID of the player.
@@ -468,7 +464,7 @@ public final class Player implements ConfigChangeListener {
             MapTile tile = null;
             final GameMap map = World.getMap();
             final Point point = new Point();
-            int coverage = World.getWeather().getVisiblity() - ((perception - PERCEPTION_AVERAGE) *
+            int coverage = World.getWeather().getVisiblity() - ((getCharacter().getAttribute(CharacterAttribute.Perception) - PERCEPTION_AVERAGE) *
                     PERCEPTION_COVER_SHARE);
             // skip tile the character is standing on
             for (int i = 1; i < length; i++) {
@@ -576,15 +572,6 @@ public final class Player implements ConfigChangeListener {
         } else {
             World.getPeople().clipCharacters();
         }
-    }
-
-    /**
-     * Set the value of the character attribute "perception".
-     *
-     * @param value The new perception value
-     */
-    public void setPerception(final int value) {
-        perception = value;
     }
 
     /**

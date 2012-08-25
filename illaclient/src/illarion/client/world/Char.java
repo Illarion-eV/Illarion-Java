@@ -25,8 +25,10 @@ import illarion.client.graphics.MoveAnimation;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.LookatCharCmd;
+import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.util.Lang;
+import illarion.client.world.characters.CharacterAttribute;
 import illarion.client.world.events.CharMoveEvent;
 import illarion.client.world.events.CharNameEvent;
 import illarion.client.world.events.CharVisibilityEvent;
@@ -38,7 +40,12 @@ import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 import org.newdawn.slick.Color;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Represents a character: player, monster or npc.
@@ -230,10 +237,6 @@ public final class Char
      */
     private int elevation;
 
-    private int foodpoints;
-
-    private int hitpoints;
-
     /**
      * Last visibility value that was shown. Used for fading in and out animations.
      */
@@ -302,7 +305,12 @@ public final class Char
     /**
      * A list of modified colors of the stuff a avatar wears.
      */
-    private transient final Color[] wearItemsColors = new Color[AvatarClothManager.GROUP_COUNT];
+    private final transient Color[] wearItemsColors = new Color[AvatarClothManager.GROUP_COUNT];
+
+    /**
+     * This map stores the attribute values of this character.
+     */
+    private final Map<CharacterAttribute, Integer> attributes;
 
     /**
      * Constructor to create a new character.
@@ -310,9 +318,32 @@ public final class Char
     public Char() {
         loc = new Location();
         move = new MoveAnimation(this);
+        attributes = new EnumMap<CharacterAttribute, Integer>(CharacterAttribute.class);
         scale = 0;
         animation = CharAnimations.STAND;
         avatarId = -1;
+    }
+
+    /**
+     * Get a specified attribute.
+     *
+     * @param attribute the attribute to fetch
+     * @return the value of the attribute
+     */
+    public int getAttribute(final CharacterAttribute attribute) {
+        if (attributes.containsKey(attribute)) {
+            return attributes.get(attribute);
+        }
+        return 0;
+    }
+
+    @EventSubscriber
+    public void onAttributeUpdateReceived(final AttributeUpdateReceivedEvent event) {
+        if (event.getTargetCharId() != getCharId()) {
+            return;
+        }
+
+        attributes.put(event.getAttribute(), event.getValue());
     }
 
     /**
@@ -322,7 +353,7 @@ public final class Char
      */
     @Override
     public void activate(final int id) {
-        // never happens as character has no direct graphics resources
+        AnnotationProcessor.process(this);
     }
 
     /**
@@ -392,12 +423,14 @@ public final class Char
         return direction;
     }
 
+    @Deprecated
     public int getFoodpoints() {
-        return foodpoints;
+        return getAttribute(CharacterAttribute.FoodPoints);
     }
 
+    @Deprecated
     public int getHitpoints() {
-        return hitpoints;
+        return getAttribute(CharacterAttribute.HitPoints);
     }
 
     /**
@@ -620,6 +653,7 @@ public final class Char
      */
     @Override
     public void reset() {
+        AnnotationProcessor.unprocess(this);
         // stop animation
         move.stop();
         resetAnimation();
@@ -634,6 +668,7 @@ public final class Char
         charId = 0;
         visible = false;
         skinColor = null;
+        attributes.clear();
     }
 
     /**
@@ -764,14 +799,6 @@ public final class Char
     public void setDirection(final int newDirection) {
         direction = newDirection;
         resetAnimation();
-    }
-
-    public void setFoodpoints(final int foodpoints) {
-        this.foodpoints = foodpoints;
-    }
-
-    public void setHitpoints(final int hitpoints) {
-        this.hitpoints = hitpoints;
     }
 
     /**
