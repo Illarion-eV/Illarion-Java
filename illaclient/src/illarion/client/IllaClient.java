@@ -178,7 +178,7 @@ public final class IllaClient {
             LOGGER.error("Failed preparing the EventBus. Settings the Service handler happened too late");
         }
 
-        Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
+        Renderer.setRenderer(Renderer.IMMEDIATE_RENDERER);
 
         SlickRenderImageLoaders.getInstance().addLoader(TextureLoader.getInstance(), SlickAddLoaderLocation.first);
         SlickRenderFontLoaders.getInstance().addLoader(FontLoader.getInstance(), SlickAddLoaderLocation.first);
