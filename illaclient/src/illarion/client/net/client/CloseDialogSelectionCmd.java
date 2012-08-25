@@ -22,22 +22,21 @@ import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
 
 /**
- * Client Command: Send a text that was requested by the server and typed in by the player ( {@link
- * illarion.client.net.CommandList#CMD_CLOSE_DIALOG_INPUT}).
+ * Client Command: This command returns the selection made in a selection dialog to the server ( {@link
+ * illarion.client.net.CommandList#CMD_CLOSE_DIALOG_SELECTION}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class CloseDialogSelectionCmd
-        extends AbstractCommand {
+public final class CloseDialogSelectionCmd extends AbstractCommand {
     /**
      * The ID that was send by the server to initiate text input.
      */
     private int dialogID;
 
     /**
-     * The text that is send to the server.
+     * The index that was selected.
      */
-    private String text;
+    private short selectedIndex;
 
     /**
      * The flag that stores if the input was confirmed or canceled.
@@ -48,7 +47,7 @@ public final class CloseDialogSelectionCmd
      * Default constructor for the text response command.
      */
     public CloseDialogSelectionCmd() {
-        super(CommandList.CMD_CLOSE_DIALOG_INPUT);
+        super(CommandList.CMD_CLOSE_DIALOG_SELECTION);
     }
 
     /**
@@ -74,7 +73,7 @@ public final class CloseDialogSelectionCmd
         } else {
             writer.writeUByte((byte) 0x00);
         }
-        writer.writeString(text);
+        writer.writeUByte(selectedIndex);
     }
 
     /**
@@ -82,7 +81,6 @@ public final class CloseDialogSelectionCmd
      */
     @Override
     public void reset() {
-        text = null;
     }
 
     /**
@@ -95,12 +93,12 @@ public final class CloseDialogSelectionCmd
     }
 
     /**
-     * Set the text that shall be send to the server.
+     * Set the index that was selected.
      *
-     * @param sayText the text that is send
+     * @param index the index that was selected
      */
-    public void setText(final String sayText) {
-        text = sayText;
+    public void setSelectedIndex(final int index) {
+        selectedIndex = (short) index;
     }
 
     /**
@@ -120,6 +118,5 @@ public final class CloseDialogSelectionCmd
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Text Response: " + text);
-    }
+        return toString("Selected index: " + selectedIndex);    }
 }

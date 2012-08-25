@@ -46,7 +46,12 @@ public final class CloseDialogEvent {
         /**
          * This event targets a merchant dialog that is supposed to be closed.
          */
-        Merchant
+        Merchant,
+
+        /**
+         * This event targets a selection dialog that is supposed to be closed.
+         */
+        Selection
     }
 
     /**

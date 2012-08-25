@@ -18,35 +18,62 @@
  */
 package illarion.client.net.server.events;
 
+import illarion.client.world.items.SelectionItem;
+import illarion.common.util.ArrayEnumeration;
+
+import java.util.Iterator;
+
 /**
- * This event is fired in case the client receives a message dialog from the server that is supposed to be displayed.
+ * This event is fired in case the client receives a selection dialog from the server that is supposed to be displayed.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEvent {
+public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEvent implements Iterable<SelectionItem> {
     /**
      * The message displayed in the dialog.
      */
-    private final String message;
+    private final SelectionItem[] options;
 
     /**
      * Create a new instance of this event.
      *
      * @param dialogId      the ID of this dialog
      * @param dialogTitle   the title of the dialog
-     * @param dialogMessage the message of the dialog
+     * @param dialogItems   the items to be displayed in this dialog
      */
-    public DialogSelectionReceivedEvent(final int dialogId, final String dialogTitle, final String dialogMessage) {
+    public DialogSelectionReceivedEvent(final int dialogId, final String dialogTitle,
+                                        final SelectionItem... dialogItems) {
         super(dialogId, dialogTitle);
-        message = dialogMessage;
+        options = dialogItems;
     }
 
     /**
-     * Get the message that is supposed to be displayed in the dialog.
+     * Get the amount of options.
      *
-     * @return the message of the dialog
+     * @return the count of options
      */
-    public String getMessage() {
-        return message;
+    public int getOptionCount() {
+        return options.length;
+    }
+
+    /**
+     * Get the option specified with the index.
+     *
+     * @param index the index of the option
+     * @return the option value
+     * @throws ArrayIndexOutOfBoundsException in case index is less then 0 or larger or equal to {@link
+     * #getOptionCount()}.
+     */
+    public SelectionItem getOption(final int index) {
+        if ((index < 0) || (index >= options.length)) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+
+        return options[index];
+    }
+
+    @Override
+    public Iterator<SelectionItem> iterator() {
+        return new ArrayEnumeration<SelectionItem>(options);
     }
 }
