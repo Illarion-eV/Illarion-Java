@@ -91,14 +91,10 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                         return false;
                     }
 
-                    final Object[] options =
-                            new Object[]{
-                                    Lang.getMsg(MainFrame.class,
-                                            "UnsavedChanges.saveButton"),
-                                    Lang.getMsg(MainFrame.class,
-                                            "UnsavedChanges.discardButton"),
-                                    Lang.getMsg(MainFrame.class,
-                                            "UnsavedChanges.cancelButton")};
+                    final Object[] options = {
+                                    Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
+                                    Lang.getMsg(MainFrame.class, "UnsavedChanges.discardButton"),
+                                    Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
                     final int result =
                             JOptionPane
                                     .showOptionDialog(MainFrame.getInstance(),

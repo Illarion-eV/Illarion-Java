@@ -29,6 +29,7 @@ import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -94,7 +95,7 @@ public final class Editor extends RTextScrollPane {
         editor.setEditable(true);
         editor.setEnabled(true);
         ((RSyntaxDocument) editor.getDocument()).setSyntaxStyle(new EasyNpcTokenMaker());
-        editor.getSyntaxScheme().restoreDefaults(new Font(Font.MONOSPACED, Font.PLAIN, 12), true);
+        editor.getSyntaxScheme().restoreDefaults(null);
 
         final MenuElement[] elements = editor.getPopupMenu().getSubElements();
         for (final MenuElement element : elements) {
