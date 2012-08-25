@@ -18,12 +18,67 @@
  */
 package illarion.client.net.server.events;
 
+import illarion.client.world.characters.CharacterAttribute;
+
 /**
- * Created with IntelliJ IDEA.
- * User: Martin Karing
- * Date: 23.08.12
- * Time: 20:39
- * To change this template use File | Settings | File Templates.
+ * This event is fired in in case a attribute update was received from the server.
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class AttributeUpdateReceivedEvent {
+public final class AttributeUpdateReceivedEvent {
+    /**
+     * The ID of the character this update is meant for.
+     */
+    private final long targetChar;
+
+    /**
+     * The attribute that is altered.
+     */
+    private final CharacterAttribute attribute;
+
+    /**
+     * The new value of the attribute.
+     */
+    private final int value;
+
+    /**
+     * Constructor of the attribute event that allows to set the required values.
+     *
+     * @param charId the ID of the character that is effected by this event
+     * @param changedAttribute the attribute that is changed
+     * @param newValue the new value of the attribute
+     */
+    public AttributeUpdateReceivedEvent(final long charId, final CharacterAttribute changedAttribute,
+                                        final int newValue) {
+        targetChar = charId;
+        attribute = changedAttribute;
+        value = newValue;
+    }
+
+    /**
+     * Get the ID of the target character.
+     *
+     * @return the ID of the target character
+     */
+    public long getTargetCharId() {
+        return targetChar;
+    }
+
+    /**
+     * Get the attribute that was changed by the event.
+     *
+     * @return the attribute
+     */
+    public CharacterAttribute getAttribute() {
+        return attribute;
+    }
+
+    /**
+     * Get the new value of the attribute.
+     *
+     * @return the new value of the attribute
+     */
+    public int getValue() {
+        return value;
+    }
 }

@@ -20,7 +20,10 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
+import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
 import illarion.client.world.World;
+import illarion.client.world.characters.CharacterAttribute;
+import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
@@ -31,30 +34,6 @@ import java.io.IOException;
  * @author Nop
  */
 public final class AttributeMsg extends AbstractReply {
-    /**
-     * The string constants for the food level attribute.
-     */
-    @SuppressWarnings("nls")
-    private static final String FOODLEVEL = "foodlevel";
-
-    /**
-     * The string constants for the hit points attribute.
-     */
-    @SuppressWarnings("nls")
-    private static final String HITPOINTS = "hitpoints";
-
-    /**
-     * The string constants for the mana points attribute.
-     */
-    @SuppressWarnings("nls")
-    private static final String MANAPOINTS = "mana";
-
-    /**
-     * The string constants for the perception attribute.
-     */
-    @SuppressWarnings("nls")
-    private static final String PERCEPTION = "perception";
-
     /**
      * The format string for the {@link #toString()}.
      */
@@ -111,16 +90,12 @@ public final class AttributeMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        if (attribute.equals(HITPOINTS)) {
-            World.getPlayer().getCharacter().setHitpoints(value);
-        } else if (attribute.equals(MANAPOINTS)) {
-            World.getPlayer().getCharacter().setManapoints(value);
-        } else if (attribute.equals(FOODLEVEL)) {
-            World.getPlayer().getCharacter().setFoodpoints(value);
-        } else if (attribute.equals(PERCEPTION)) {
-            //Game.getPlayer().setPerception(value);
+        for (final CharacterAttribute charAttribute : CharacterAttribute.values()) {
+            if (charAttribute.getServerName().equals(attribute)) {
+                EventBus.publish(new AttributeUpdateReceivedEvent(World.getPlayer().getPlayerId(), charAttribute,
+                        value));
+            }
         }
-        // TODO: handle the missing attributes that could be received.
         return true;
     }
 
