@@ -13,7 +13,7 @@ local NPC_TRIGGER_EN = TEXT -- English trigger text -- Auslösender englischer Te
 local NPC_REPLY_DE = TEXT -- German reply text -- Deutscher Antworttext
 local NPC_REPLY_EN = TEXT -- English reply text -- Englischer Antworttext
 
-function receiveText(type, text, PLAYER)
+function receiveText(npc, type, text, PLAYER)
     if ADDITIONALCONDITIONS(PLAYER)
     and PLAYER:getType() == Character.player
     and questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then
@@ -33,7 +33,7 @@ function receiveText(type, text, PLAYER)
 
         if foundTrig then
       
-            thisNPC:talk(Character.say, getNLS(PLAYER, NPC_REPLY_DE, NPC_REPLY_EN))
+            npc:talk(Character.say, getNLS(PLAYER, NPC_REPLY_DE, NPC_REPLY_EN))
             
             HANDLER(PLAYER)
             
