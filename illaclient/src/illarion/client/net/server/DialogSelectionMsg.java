@@ -20,14 +20,12 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.net.server.events.DialogMessageReceivedEvent;
 import illarion.client.net.server.events.DialogSelectionReceivedEvent;
 import illarion.client.world.items.SelectionItem;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * This server message is used to make the client show a selection dialog.
@@ -72,7 +70,7 @@ public final class DialogSelectionMsg
         for (int i = 0; i < itemCount; i++) {
             final int id = reader.readUShort();
             final String name = reader.readString();
-            items[i] = new SelectionItem(id, name);
+            items[i] = new SelectionItem(i, id, name);
         }
         dialogId = reader.readInt();
     }

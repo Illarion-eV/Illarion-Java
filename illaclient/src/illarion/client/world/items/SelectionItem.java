@@ -23,7 +23,12 @@ package illarion.client.world.items;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class SelectionItem {
+public class SelectionItem {
+    /**
+     * The index of this selection item.
+     */
+    private final int index;
+
     /**
      * The ID of the item.
      */
@@ -35,12 +40,25 @@ public final class SelectionItem {
     private final String name;
 
     /**
+     * Copy constructor.
+     *
+     * @param org the original item
+     */
+    protected SelectionItem(final SelectionItem org) {
+        index = org.index;
+        id = org.id;
+        name = org.name;
+    }
+
+    /**
      * Create a new instance of this selection item and set the values needed.
      *
-     * @param itemId the item ID of this item
-     * @param itemName the item name of this item
+     * @param itemIndex the index of this entry
+     * @param itemId    the item ID of this item
+     * @param itemName  the item name of this item
      */
-    public SelectionItem(final int itemId, final String itemName) {
+    public SelectionItem(final int itemIndex, final int itemId, final String itemName) {
+        index = itemIndex;
         id = itemId;
         name = itemName;
     }
@@ -61,5 +79,14 @@ public final class SelectionItem {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Get the index of the item.
+     *
+     * @return the index of the item
+     */
+    public int getIndex() {
+        return index;
     }
 }

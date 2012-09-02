@@ -44,4 +44,5 @@
     <useStyles filename="messagebox/nifty-messagebox.xml"/>
     <useStyles filename="dialog/illarion-dialog-input.xml"/>
     <useStyles filename="dialog/illarion-dialog-merchant.xml"/>
+    <useStyles filename="dialog/illarion-dialog-select.xml"/>
 </nifty-styles>

@@ -18,32 +18,18 @@
  */
 package org.illarion.nifty.controls;
 
-import de.lessvoid.nifty.NiftyEvent;
-
 /**
  * This event is fired in case a message dialog is confirmed.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogMessageConfirmedEvent implements NiftyEvent<Void> {
-    /**
-     * The ID of the dialog.
-     */
-    private final int dialogId;
-
+public final class DialogMessageConfirmedEvent extends DialogEvent {
     /**
      * Create a new instance of this event and set the ID of the dialog that was closed when this event was fired.
      *
      * @param id the ID of the event
      */
     public DialogMessageConfirmedEvent(final int id) {
-        dialogId = id;
-    }
-
-    /**
-     * Get the ID of the dialog that was closed when this event was fired.
-     */
-    public int getDialogId() {
-        return dialogId;
+        super(id);
     }
 }

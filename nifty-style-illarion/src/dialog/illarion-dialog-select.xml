@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-styles>
+    <style id="illarion-dialog-select">
+        <attributes/>
+    </style>
+
+    <style id="illarion-dialog-select-line">
+        <attributes height="46px" width="100%" margin="1px" visibleToMouse="true"/>
+        <effect>
+            <onHover name="colorBar" color="#264d1cff" neverStopRendering="true" timeType="infinite"/>
+        </effect>
+    </style>
+
+    <style id="illarion-dialog-select-line#imageContainer">
+        <attributes width="76px" height="100%" marginRight="3px" visibleToMouse="false"/>
+    </style>
+
+    <style id="illarion-dialog-select-line#imageDisplay">
+        <attributes imageMode="normal" visibleToMouse="false"/>
+    </style>
+
+    <style id="illarion-dialog-select-line#itemInfos">
+        <attributes width="*" visibleToMouse="false"/>
+    </style>
+
+    <style id="illarion-dialog-select-line#itemTitle" base="nifty-label">
+        <attributes font="textFont" width="100%" textHAlign="left" textVAlign="center" height="*"/>
+    </style>
+</nifty-styles>

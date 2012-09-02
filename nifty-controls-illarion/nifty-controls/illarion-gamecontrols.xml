@@ -22,4 +22,5 @@
     <useControls filename="illarion-dialog-message.xml"/>
     <useControls filename="illarion-dialog-input.xml"/>
     <useControls filename="illarion-dialog-merchant.xml"/>
+    <useControls filename="illarion-dialog-select.xml"/>
 </nifty-controls>

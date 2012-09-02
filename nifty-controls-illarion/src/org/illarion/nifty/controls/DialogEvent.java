@@ -18,18 +18,35 @@
  */
 package org.illarion.nifty.controls;
 
+import de.lessvoid.nifty.NiftyEvent;
+
 /**
- * This event is fired in case the player closes the merchant dialog.
+ * This event is the parent of other events that refer to a specified dialog. This class provides a unified way to
+ * refer to the dialog ID.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogMerchantCloseEvent extends DialogEvent {
+public class DialogEvent implements NiftyEvent<Void> {
     /**
-     * Create a new instance of this event and set the ID of the dialog that was closed.
+     * The ID of the dialog.
+     */
+    private final int dialogId;
+
+    /**
+     * Create a new instance of this event and set the ID of the dialog that is referred.
      *
      * @param id the ID of the dialog
      */
-    public DialogMerchantCloseEvent(final int id) {
-        super(id);
+    public DialogEvent(final int id) {
+        dialogId = id;
+    }
+
+    /**
+     * Get the ID of the dialog this event refers to when this event was fired.
+     *
+     * @return the dialog ID
+     */
+    public int getDialogId() {
+        return dialogId;
     }
 }

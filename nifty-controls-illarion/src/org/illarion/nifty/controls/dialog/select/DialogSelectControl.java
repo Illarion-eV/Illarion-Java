@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.nifty.controls.dialog.merchant;
+package org.illarion.nifty.controls.dialog.select;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
@@ -27,21 +27,21 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
 import org.bushe.swing.event.EventTopicSubscriber;
-import org.illarion.nifty.controls.DialogMerchant;
-import org.illarion.nifty.controls.DialogMerchantBuyEvent;
-import org.illarion.nifty.controls.DialogMerchantCloseEvent;
-import org.illarion.nifty.controls.MerchantListEntry;
+import org.illarion.nifty.controls.DialogSelect;
+import org.illarion.nifty.controls.DialogSelectCancelEvent;
+import org.illarion.nifty.controls.DialogSelectSelectEvent;
+import org.illarion.nifty.controls.SelectListEntry;
 
 import java.util.Properties;
 
 /**
- * This is the control class of the merchant dialogs. Not meant to direct usage.
+ * This is the control class of the select dialogs. Not meant to direct usage.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
- * @deprecated Use {@link DialogMerchant}
+ * @deprecated Use {@link DialogSelect}
  */
 @Deprecated
-public final class DialogMerchantControl extends WindowControl implements DialogMerchant {
+public final class DialogSelectControl extends WindowControl implements DialogSelect {
     /**
      * The instance of the Nifty-GUI that is parent to this control.
      */
@@ -67,7 +67,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
      */
     private final EventTopicSubscriber<ButtonClickedEvent> closeButtonEventHandler;
 
-    public DialogMerchantControl() {
+    public DialogSelectControl() {
         closeButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
             @Override
             public void onEvent(final String topic, final ButtonClickedEvent data) {
@@ -109,58 +109,42 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     }
 
     @Override
-    public int getBuyEntryCount() {
-        return getBuyList().itemCount();
+    public int getEntryCount() {
+        return getList().itemCount();
     }
 
     @Override
-    public int getSellEntryCount() {
-        return getSellList().itemCount();
-    }
-
-    @Override
-    public MerchantListEntry getSelectedItem() {
-        return getSellList().getFocusItem();
+    public SelectListEntry getSelectedItem() {
+        return getList().getFocusItem();
     }
 
     @Override
     public int getSelectedIndex() {
-        return getSellList().getFocusItemIndex();
+        return getList().getFocusItemIndex();
     }
 
     @Override
-    public void addSellingItem(final MerchantListEntry entry) {
-        getSellList().addItem(entry);
+    public void addItem(final SelectListEntry entry) {
+        getList().addItem(entry);
     }
 
-    @Override
-    public void addBuyingItem(final MerchantListEntry entry) {
-        getBuyList().addItem(entry);
+    public void selectItem(final int index) {
+        final ListBox<SelectListEntry> list = getList();
+        niftyInstance.publishEvent(getId(), new DialogSelectSelectEvent(dialogId, list.getItems().get(index), index));
+    }
+
+    public void selectItem(final SelectListEntry item) {
+        selectItem(item.getIndex());
     }
 
     @SuppressWarnings("unchecked")
-    private ListBox<MerchantListEntry> getSellList() {
-        return getElement().findNiftyControl("#sellList", ListBox.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    private ListBox<MerchantListEntry> getBuyList() {
-        return getElement().findNiftyControl("#buyList", ListBox.class);
-    }
-
-    public void buyItem(final int index) {
-        final ListBox<MerchantListEntry> sellList = getSellList();
-        niftyInstance.publishEvent(getId(),
-                new DialogMerchantBuyEvent(dialogId, sellList.getItems().get(index), index));
-    }
-
-    public void buyItem(final MerchantListEntry entry) {
-        buyItem(entry.getIndex());
+    private ListBox<SelectListEntry> getList() {
+        return getElement().findNiftyControl("#list", ListBox.class);
     }
 
     @Override
     public void closeWindow() {
         super.closeWindow();
-        niftyInstance.publishEvent(getId(), new DialogMerchantCloseEvent(dialogId));
+        niftyInstance.publishEvent(getId(), new DialogSelectCancelEvent(dialogId));
     }
 }

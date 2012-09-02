@@ -18,18 +18,39 @@
  */
 package org.illarion.nifty.controls;
 
+import de.lessvoid.nifty.controls.Window;
+
 /**
- * This event is fired in case the player closes the merchant dialog.
+ * This interface is used to interact with a select dialog that is displayed inside the GUI.
  *
- * @author Martin Karing &lt;nitram@illarion.org&gt;
+ * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class DialogMerchantCloseEvent extends DialogEvent {
+public interface DialogSelect extends Window {
     /**
-     * Create a new instance of this event and set the ID of the dialog that was closed.
+     * Get the amount of entries on the list.
      *
-     * @param id the ID of the dialog
+     * @return the entry count
      */
-    public DialogMerchantCloseEvent(final int id) {
-        super(id);
-    }
+    int getEntryCount();
+
+    /**
+     * Get the item that was selected.
+     *
+     * @return the selected item
+     */
+    SelectListEntry getSelectedItem();
+
+    /**
+     * Get the selected index.
+     *
+     * @return the index that was selected
+     */
+    int getSelectedIndex();
+
+    /**
+     * Add a item to the list of items.
+     *
+     * @param entry the item to add
+     */
+    void addItem(SelectListEntry entry);
 }

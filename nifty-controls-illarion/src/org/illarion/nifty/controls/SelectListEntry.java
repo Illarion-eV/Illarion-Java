@@ -18,18 +18,32 @@
  */
 package org.illarion.nifty.controls;
 
+import de.lessvoid.nifty.render.NiftyImage;
+
 /**
- * This event is fired in case the player closes the merchant dialog.
+ * This interfaces defines a entry in the select dialog that contains the selectable entry.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogMerchantCloseEvent extends DialogEvent {
+public interface SelectListEntry {
     /**
-     * Create a new instance of this event and set the ID of the dialog that was closed.
+     * Get the image that is supposed to be displayed in the entry.
      *
-     * @param id the ID of the dialog
+     * @return the nifty image to display
      */
-    public DialogMerchantCloseEvent(final int id) {
-        super(id);
-    }
+    NiftyImage getItemImage();
+
+    /**
+     * Get the name of the item.
+     *
+     * @return the name of the item
+     */
+    String getName();
+
+    /**
+     * The index of the select item in the list as it was transferred from the server.
+     *
+     * @return the index
+     */
+    int getIndex();
 }

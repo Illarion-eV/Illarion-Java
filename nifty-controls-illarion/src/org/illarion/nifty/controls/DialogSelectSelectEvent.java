@@ -19,15 +19,15 @@
 package org.illarion.nifty.controls;
 
 /**
- * This event is fired in case the player wants to buy something from the merchant dialog.
+ * This event is fired in case the player selected a entry of the select dialog.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogMerchantBuyEvent extends DialogEvent {
+public final class DialogSelectSelectEvent extends DialogEvent {
     /**
      * The item that was bought.
      */
-    private final MerchantListEntry item;
+    private final SelectListEntry item;
 
     /**
      * The index of the item that is bought.
@@ -35,29 +35,29 @@ public final class DialogMerchantBuyEvent extends DialogEvent {
     private final int itemIndex;
 
     /**
-     * Create a new instance of this event and set the ID of the dialog that was used to buy items from.
+     * Create a new instance of this event and set the ID of the dialog anything was selected from.
      *
      * @param id       the ID of the dialog
-     * @param buyItem  the item to buy
-     * @param buyIndex the index of the item to buy
+     * @param buyItem  the item that was selected
+     * @param buyIndex the index of the item that was selected
      */
-    public DialogMerchantBuyEvent(final int id, final MerchantListEntry buyItem, final int buyIndex) {
+    public DialogSelectSelectEvent(final int id, final SelectListEntry buyItem, final int buyIndex) {
         super(id);
         item = buyItem;
         itemIndex = buyIndex;
     }
 
     /**
-     * Get the item the player wants to buy.
+     * Get the item the player selected
      *
-     * @return the item that is bought
+     * @return the item that is selected
      */
-    public MerchantListEntry getItem() {
+    public SelectListEntry getItem() {
         return item;
     }
 
     /**
-     * Get the index of the item the player buys.
+     * Get the index of the item the player selected
      *
      * @return the index of the item
      */

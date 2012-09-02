@@ -19,17 +19,17 @@
 package org.illarion.nifty.controls;
 
 /**
- * This event is fired in case the player closes the merchant dialog.
+ * This event is fired in case the player closes the select dialog.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogMerchantCloseEvent extends DialogEvent {
+public final class DialogSelectCancelEvent extends DialogEvent {
     /**
      * Create a new instance of this event and set the ID of the dialog that was closed.
      *
      * @param id the ID of the dialog
      */
-    public DialogMerchantCloseEvent(final int id) {
+    public DialogSelectCancelEvent(final int id) {
         super(id);
     }
 }

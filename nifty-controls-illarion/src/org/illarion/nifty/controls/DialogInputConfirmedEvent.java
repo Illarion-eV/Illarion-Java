@@ -18,19 +18,12 @@
  */
 package org.illarion.nifty.controls;
 
-import de.lessvoid.nifty.NiftyEvent;
-
 /**
  * This event is fired in case a input dialog is confirmed.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogInputConfirmedEvent implements NiftyEvent<Void> {
-    /**
-     * The ID of the dialog.
-     */
-    private final int dialogId;
-
+public final class DialogInputConfirmedEvent extends DialogEvent {
     /**
      * The dialog button that was pressed to trigger this event.
      */
@@ -49,16 +42,9 @@ public final class DialogInputConfirmedEvent implements NiftyEvent<Void> {
      * @param inputText     the text that was typed into the text input area of the dialog
      */
     public DialogInputConfirmedEvent(final int id, final DialogInput.DialogButton pressedButton, final String inputText) {
-        dialogId = id;
+        super(id);
         button = pressedButton;
         text = inputText;
-    }
-
-    /**
-     * Get the ID of the dialog that was closed when this event was fired.
-     */
-    public int getDialogId() {
-        return dialogId;
     }
 
     /**
