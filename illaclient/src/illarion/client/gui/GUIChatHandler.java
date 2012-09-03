@@ -318,6 +318,18 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
             label.width(label.percentage(100));
             label.build(contentPane.getNifty(), screen, contentPane);
         }
+
+        if (contentPane != null) {
+            final int entryCount = contentPane.getElements().size();
+            for (int i = 0; i < (entryCount - 200); i++) {
+                contentPane.getElements().get(i).markForRemoval();
+            }
+        }
+
+        if (contentPane != null) {
+            chatLog.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
+            chatLog.setAutoScroll(ScrollPanel.AutoScroll.OFF);
+        }
     }
 
     @Override
