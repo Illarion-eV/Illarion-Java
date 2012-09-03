@@ -20,10 +20,21 @@ package illarion.client.gui;
 
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.ElementBuilder;
+import de.lessvoid.nifty.builder.PanelBuilder;
+import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.tools.Color;
+import illarion.client.net.server.events.BroadcastInformReceivedEvent;
+import illarion.client.net.server.events.ScriptInformReceivedEvent;
+import illarion.client.net.server.events.ServerInformReceivedEvent;
+import illarion.client.net.server.events.TextToInformReceivedEvent;
+import org.apache.log4j.Logger;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -136,6 +147,11 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     }
 
     /**
+     * The logger that is used for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(InformHandler.class);
+
+    /**
      * The instance of the Nifty-GUI this handler is bound to.
      */
     private Nifty parentNifty;
@@ -151,6 +167,26 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     private final Queue<InformHandler.InformBuildTask> builderQueue;
 
     /**
+     * This is the panel that will be parent to all broadcast messages.
+     */
+    private Element broadcastParentPanel;
+
+    /**
+     * This is the panel that will be parent to all server messages.
+     */
+    private Element serverParentPanel;
+
+    /**
+     * This is the panel that will be parent to all text to messages.
+     */
+    private Element textToParentPanel;
+
+    /**
+     * This is the panel that will be parent to all text-to messages.
+     */
+    private Element scriptParentPanel;
+
+    /**
      * Default constructor.
      */
     public InformHandler() {
@@ -161,16 +197,21 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     public void bind(final Nifty nifty, final Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
+
+        broadcastParentPanel = screen.findElementByName("broadcastMsgPanel");
+        serverParentPanel = screen.findElementByName("serverMsgPanel");
+        textToParentPanel = screen.findElementByName("textToMsgPanel");
+        scriptParentPanel = screen.findElementByName("scriptMessagePanel");
     }
 
     @Override
     public void onEndScreen() {
-        // nothing
+        AnnotationProcessor.unprocess(this);
     }
 
     @Override
     public void onStartScreen() {
-        // nothing
+        AnnotationProcessor.process(this);
     }
 
     @Override
@@ -191,6 +232,125 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
             msg.showWithoutEffects();
             msg.hide(new InformHandler.RemoveEndNotify(msg));
         }
+    }
+
+    @EventSubscriber
+    public void onBroadcastInformReceivedEvent(final BroadcastInformReceivedEvent event) {
+        if (broadcastParentPanel == null) {
+            LOGGER.warn("Received server inform before the GUI became ready.");
+            return;
+        }
+
+        final LabelBuilder labelBuilder = new LabelBuilder();
+        labelBuilder.label(event.getMessage());
+        labelBuilder.font("menuFont");
+        labelBuilder.invisibleToMouse();
+
+        final EffectBuilder effectBuilder = new EffectBuilder("hide");
+        effectBuilder.startDelay(10000 + (event.getMessage().length() * 50));
+        labelBuilder.onHideEffect(effectBuilder);
+
+        showInform(labelBuilder, broadcastParentPanel);
+    }
+
+    @EventSubscriber
+    public void onServerInformReceivedEvent(final ServerInformReceivedEvent event) {
+        if (serverParentPanel == null) {
+            LOGGER.warn("Received server inform before the GUI became ready.");
+            return;
+        }
+
+        final PanelBuilder panelBuilder = new PanelBuilder();
+        panelBuilder.childLayoutHorizontal();
+
+        final LabelBuilder labelBuilder = new LabelBuilder();
+        panelBuilder.control(labelBuilder);
+        labelBuilder.label("Server> " + event.getMessage());
+        labelBuilder.font("consoleFont");
+        labelBuilder.invisibleToMouse();
+
+        final EffectBuilder effectBuilder = new EffectBuilder("hide");
+        effectBuilder.startDelay(10000 + (event.getMessage().length() * 50));
+        panelBuilder.onHideEffect(effectBuilder);
+
+        showInform(panelBuilder, serverParentPanel);
+    }
+
+    @EventSubscriber
+    public void onTextToInformReceivedEvent(final TextToInformReceivedEvent event) {
+        if (textToParentPanel == null) {
+            LOGGER.warn("Received server inform before the GUI became ready.");
+            return;
+        }
+
+        final LabelBuilder labelBuilder = new LabelBuilder();
+        labelBuilder.label(event.getMessage());
+        labelBuilder.font("textFont");
+        labelBuilder.invisibleToMouse();
+
+        final EffectBuilder effectBuilder = new EffectBuilder("hide");
+        effectBuilder.startDelay(10000 + (event.getMessage().length() * 50));
+        labelBuilder.onHideEffect(effectBuilder);
+
+        showInform(labelBuilder, textToParentPanel);
+    }
+
+    @EventSubscriber
+    public void onScriptInformReceivedEvent(final ScriptInformReceivedEvent event) {
+        if (scriptParentPanel == null) {
+            LOGGER.warn("Received script inform before the GUI became ready.");
+            return;
+        }
+
+        final PanelBuilder panelBuilder = new PanelBuilder();
+        panelBuilder.childLayoutHorizontal();
+
+        final LabelBuilder labelBuilder = new LabelBuilder();
+        panelBuilder.control(labelBuilder);
+        labelBuilder.label(event.getMessage());
+        labelBuilder.font("textFont");
+        switch (event.getInformPriority()) {
+            case 1:
+                labelBuilder.color(Color.WHITE);
+                break;
+            case 2:
+                labelBuilder.color(new Color(1.0f, 0.5f, 0.5f, 1.0f));
+                break;
+            default:
+                labelBuilder.color(new Color(0.9f, 0.9f, 0.9f, 1.0f));
+        }
+        labelBuilder.invisibleToMouse();
+        labelBuilder.valignCenter();
+        labelBuilder.alignCenter();
+        labelBuilder.width(labelBuilder.percentage(100));
+        labelBuilder.textHAlign(ElementBuilder.Align.Center);
+        labelBuilder.parameter("wrap", "true");
+
+        final EffectBuilder moveEffectBuilder = new EffectBuilder("move");
+        moveEffectBuilder.length(getScriptInformDisplayTime(event.getMessage(), event.getInformPriority()));
+        moveEffectBuilder.startDelay(0);
+        moveEffectBuilder.effectParameter("mode", "toOffset");
+        moveEffectBuilder.effectParameter("direction", "bottom");
+        moveEffectBuilder.effectParameter("offsetY", "-80");
+        labelBuilder.onHideEffect(moveEffectBuilder);
+
+        final EffectBuilder fadeOutBuilder = new EffectBuilder("fade");
+        fadeOutBuilder.length(getScriptInformDisplayTime(event.getMessage(), event.getInformPriority()));
+        fadeOutBuilder.startDelay(0);
+        fadeOutBuilder.effectParameter("start", "FF");
+        fadeOutBuilder.effectParameter("end", "00");
+        labelBuilder.onHideEffect(fadeOutBuilder);
+
+        panelBuilder.onHideEffect(new EffectBuilder("hide"));
+
+        showInform(panelBuilder, scriptParentPanel);
+    }
+
+    private static int getScriptInformDisplayTime(final CharSequence text, final int priority) {
+        if (priority == 0) {
+            return 5000 + (text.length() * 50);
+        }
+        return 8000 + (text.length() * 50);
     }
 
     /**
