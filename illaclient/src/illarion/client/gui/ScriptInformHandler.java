@@ -125,9 +125,7 @@ public final class ScriptInformHandler implements EventSubscriber<ScriptInformRe
         fadeOutBuilder.effectParameter("end", "00");
         labelBuilder.onHideEffect(fadeOutBuilder);
 
-        final EffectBuilder fadeOutEffectBuilder = new EffectBuilder("hide");
-        fadeOutEffectBuilder.startDelay(getDisplayTime(event.getMessage(), event.getInformPriority()) + 10);
-        panelBuilder.onHideEffect(fadeOutEffectBuilder);
+        panelBuilder.onHideEffect(new EffectBuilder("hide"));
 
         informHandler.showInform(panelBuilder, parentPanel);
     }
