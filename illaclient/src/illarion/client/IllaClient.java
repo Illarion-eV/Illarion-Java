@@ -523,8 +523,8 @@ public final class IllaClient {
                 .getProperty("os.arch"));
 
         java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(Level.WARNING);
-        //java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
-        java.util.logging.Logger.getLogger("javolution").setLevel(java.util.logging.Level.SEVERE);
+        java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(Level.WARNING);
+        java.util.logging.Logger.getLogger("javolution").setLevel(Level.WARNING);
     }
 
     private static final String CFG_FULLSCREEN = "fullscreen";
