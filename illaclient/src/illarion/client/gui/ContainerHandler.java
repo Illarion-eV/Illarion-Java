@@ -408,9 +408,7 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
                     }
                 }
             }
-            slot.showMerchantOverlay(InventorySlot.MerchantBuyLevel.Copper);
-        } else {
-            slot.hideMerchantOverlay();
         }
+        slot.hideMerchantOverlay();
     }
 }

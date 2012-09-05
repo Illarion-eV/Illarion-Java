@@ -419,10 +419,8 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
                     }
                 }
             }
-            control.showMerchantOverlay(InventorySlot.MerchantBuyLevel.Copper);
-        } else {
-            control.hideMerchantOverlay();
         }
+        control.hideMerchantOverlay();
     }
 
     @Override
