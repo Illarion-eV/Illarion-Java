@@ -271,14 +271,12 @@ public final class Parser implements DocuEntry {
         final int count = source.getEntryCount();
         final ParsedNpc resultNpc = new ParsedNpc();
 
-        boolean lineParsed = false;
-        EasyNpcScript.Line line = null;
         for (int i = 0; i < count; i++) {
-            line = source.getEntry(i);
-            lineParsed = false;
-            for (int parserIdx = 0; parserIdx < types.length; ++parserIdx) {
-                if (types[parserIdx].canParseLine(line)) {
-                    types[parserIdx].parseLine(line, resultNpc);
+            EasyNpcScript.Line line = source.getEntry(i);
+            boolean lineParsed = false;
+            for (final NpcType type : types) {
+                if (type.canParseLine(line)) {
+                    type.parseLine(line, resultNpc);
                     lineParsed = true;
                     break;
                 }

@@ -49,7 +49,12 @@ public final class ParsedTradeText implements ParsedData {
          * This type stands for a text that is said in case the player cancels the trading with the NPC,
          * without having traded anything.
          */
-        TradingCanceledWithoutTrade
+        TradingCanceledWithoutTrade,
+
+        /**
+         * This type stands for a text that is displayed in case the user tries to sell a invalid item.
+         */
+        WrongItem
     }
 
     /**
@@ -98,6 +103,9 @@ public final class ParsedTradeText implements ParsedData {
             case TradingCanceledWithoutTrade:
                 target.write("tradeFinishedWithoutTradingMsg");
                 break;
+            case WrongItem:
+                target.write("tradeWrongItemMsg");
+                break;
         }
 
         target.write(" \"");
@@ -135,6 +143,9 @@ public final class ParsedTradeText implements ParsedData {
                 break;
             case TradingCanceledWithoutTrade:
                 target.write("addDialogClosedNoTradeMsg");
+                break;
+            case WrongItem:
+                target.write("addWrongItemMsg");
                 break;
         }
 

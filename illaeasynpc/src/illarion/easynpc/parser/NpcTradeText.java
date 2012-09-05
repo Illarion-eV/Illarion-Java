@@ -35,6 +35,8 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcTradeText implements NpcType {
+    private static final Pattern WRONG_ITEM_PATTERN = Pattern.compile(
+            "^\\s*(tradeWrongItemMsg)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$");
     private static final Pattern NOT_ENOUGH_MONEY_PATTERN = Pattern.compile(
             "^\\s*(tradeNotEnoughMoneyMsg)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$");
     private static final Pattern TRADE_ENDED_PATTERN = Pattern.compile(
@@ -60,7 +62,11 @@ public final class NpcTradeText implements NpcType {
                 entry = parseHelper(TRADE_ENDED_NO_ACTION_PATTERN.matcher(line.getLine()),
                         ParsedTradeText.TradeTextType.TradingCanceledWithoutTrade);
                 if (entry == null) {
-                    return;
+                    entry = parseHelper(WRONG_ITEM_PATTERN.matcher(line.getLine()),
+                            ParsedTradeText.TradeTextType.WrongItem);
+                    if (entry == null) {
+                        return;
+                    }
                 }
             }
         }
@@ -89,6 +95,7 @@ public final class NpcTradeText implements NpcType {
         map.put("tradeNotEnoughMoneyMsg", Token.RESERVED_WORD);
         map.put("tradeFinishedMsg", Token.RESERVED_WORD);
         map.put("tradeFinishedWithoutTradingMsg", Token.RESERVED_WORD);
+        map.put("tradeWrongItemMsg", Token.RESERVED_WORD);
     }
 
     @Override
