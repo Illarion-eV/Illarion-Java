@@ -23,7 +23,6 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 
 /**
- *
  * @author Stefano Bonicatti &lt;smjert@gmail.com&gt;
  */
 
@@ -34,8 +33,9 @@ public class DropDownItemViewConverter<T extends DropDownItem> implements DropDo
     public void display(Element itemElement, T item) {
         TextRenderer renderer = itemElement.getRenderer(TextRenderer.class);
 
-        if(renderer != null && item != null)
-            renderer.setText(item.getValue());
+        if ((renderer != null) && (item != null)) {
+            renderer.setText(itemElement.getNifty().specialValuesReplace(item.getValue()));
+        }
     }
 
     @Override
@@ -43,12 +43,11 @@ public class DropDownItemViewConverter<T extends DropDownItem> implements DropDo
         TextRenderer renderer = itemElement.getRenderer(TextRenderer.class);
 
         int width = 0;
-        if(renderer != null && item != null)
-        {
-            width = itemElement.getRenderer(TextRenderer.class).getFont().getWidth(item.getValue());
+        if (renderer != null && item != null) {
+            width = itemElement.getRenderer(TextRenderer.class).getFont().getWidth(itemElement.getNifty()
+                    .specialValuesReplace(item.getValue()));
             return width;
-        }
-        else
+        } else
             return 0;
     }
 }

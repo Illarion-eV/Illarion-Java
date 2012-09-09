@@ -50,6 +50,7 @@ import org.newdawn.slick.SlickException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public final class OptionScreenController implements ScreenController {
 
@@ -75,8 +76,67 @@ public final class OptionScreenController implements ScreenController {
 
     private Nifty nifty;
 
+    private DropDown<String> charNameLength;
+    private CheckBox showCharId;
+    private DropDown<String> sendCrashReports;
+    private DropDown<String> resolutions;
+    private CheckBox fullscreen;
+
     @Override
-    public void bind(Nifty nifty, Screen screen) {
+    public void bind(final Nifty nifty, final Screen screen) {
+        charNameLength = screen.findNiftyControl("charNameLength", DropDown.class);
+        charNameLength.addItem("${options-bundle.charNameDisplay.short}");
+        charNameLength.addItem("${options-bundle.charNameDisplay.long}");
+
+        showCharId = screen.findNiftyControl("showCharId", CheckBox.class);
+
+        sendCrashReports = screen.findNiftyControl("sendCrashReports", DropDown.class);
+        sendCrashReports.addItem("${options-bundle.report.ask}");
+        sendCrashReports.addItem("${options-bundle.report.always}");
+        sendCrashReports.addItem("${options-bundle.report.never}");
+
+        resolutions = screen.findNiftyControl("resolutions", DropDown.class);
+        resolutions.addAllItems(getResolutionList());
+
+        fullscreen = screen.findNiftyControl("fullscreen", CheckBox.class);
+    }
+
+    @Override
+    public void onStartScreen() {
+        charNameLength.selectItemByIndex(IllaClient.getCfg().getInteger(People.CFG_NAMEMODE_KEY) - 1);
+        showCharId.setChecked(IllaClient.getCfg().getBoolean(People.CFG_SHOWID_KEY));
+        sendCrashReports.selectItemByIndex(IllaClient.getCfg().getInteger(CrashReporter.CFG_KEY));
+        resolutions.selectItem(IllaClient.getCfg().getString(IllaClient.CFG_RESOLUTION));
+        fullscreen.setChecked(IllaClient.getCfg().getBoolean(IllaClient.CFG_FULLSCREEN));
+    }
+
+    @Override
+    public void onEndScreen() {
+
+    }
+
+    private List<String> getResolutionList() {
+        final GameContainer container = IllaClient.getInstance().getContainer();
+
+        DisplayMode[] displayModes;
+        try {
+            displayModes = Display.getAvailableDisplayModes(800, 600, container.getScreenWidth(),
+                    container.getScreenHeight(), 24, 32, 40, 120);
+        } catch (LWJGLException exc) {
+            displayModes = new DisplayMode[1];
+            displayModes[0] = new DisplayMode(800, 600);
+        }
+
+        Arrays.sort(displayModes, new DisplayModeSorter());
+
+        final List<String> resList = new ArrayList<String>();
+
+        for (final DisplayMode mode : displayModes) {
+            resList.add(new GraphicResolution(mode.getWidth(), mode.getHeight(), mode.getBitsPerPixel(),
+                    mode.getFrequency()).toString());
+        }
+
+        return resList;
     }
 
     private void initGeneralTab() {
@@ -197,16 +257,6 @@ public final class OptionScreenController implements ScreenController {
         musicSliderOption.getControl().setMax(Player.MAX_CLIENT_VOL);
 
         musicSliderOption.getControl().setValue(cfg.getInteger("musicVolume"));
-    }
-
-    @Override
-    public void onStartScreen() {
-
-    }
-
-    @Override
-    public void onEndScreen() {
-
     }
 
     public void save() {

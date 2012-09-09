@@ -527,8 +527,8 @@ public final class IllaClient {
         java.util.logging.Logger.getLogger("javolution").setLevel(Level.WARNING);
     }
 
-    private static final String CFG_FULLSCREEN = "fullscreen";
-    private static final String CFG_RESOLUTION = "resolution";
+    public static final String CFG_FULLSCREEN = "fullscreen";
+    public static final String CFG_RESOLUTION = "resolution";
 
     /**
      * Prepare the configuration system and the decryption system.

@@ -303,13 +303,13 @@ public final class People
      * The key for the configuration where the name mode is stored.
      */
     @SuppressWarnings("nls")
-    private static final String CFG_NAMEMODE_KEY = "showNameMode";
+    public static final String CFG_NAMEMODE_KEY = "showNameMode";
 
     /**
      * The key for the configuration where the current show ID flag is stored.
      */
     @SuppressWarnings("nls")
-    private static final String CFG_SHOWID_KEY = "showIDs";
+    public static final String CFG_SHOWID_KEY = "showIDs";
 
     /**
      * Default Name of a enemy.

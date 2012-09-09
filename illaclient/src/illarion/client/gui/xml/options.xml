@@ -22,6 +22,8 @@
     <useStyles filename="nifty-illarion-style.xml"/>
     <useControls filename="nifty-default-controls.xml"/>
 
+    <resourceBundle id="options-bundle" filename="options"/>
+
     <screen id="options" controller="illarion.client.gui.controller.OptionScreenController">
         <layer id="layer2" backgroundColor="#0000" childLayout="center">
 
@@ -35,17 +37,17 @@
                 <control id="tabRoot" name="tabGroup" width="100%" height="100%">
                     <control id="#generalTab" caption="General" name="tab" childLayout="vertical">
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Characters Name Length"/>
+                            <control name="label" text="${options-bundle.charNameDisplay}"/>
                             <panel width="*"/>
                             <control name="dropDown" id="charNameLength" width="180px"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Show Character IDs"/>
+                            <control name="label" text="${options-bundle.showCharIDs}"/>
                             <panel width="*"/>
-                            <control name="checkbox" id="showChatId"/>
+                            <control name="checkbox" id="showCharId"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Send Crash Reports:"/>
+                            <control name="label" text="${options-bundle.report}"/>
                             <panel width="*"/>
                             <control name="dropDown" id="sendCrashReports" width="180px"/>
                         </panel>
@@ -53,12 +55,12 @@
                     </control>
                     <control id="#graphicsTab" caption="Graphics" name="tab" childLayout="vertical">
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Resolution"/>
+                            <control name="label" text="${options-bundle.resolution}"/>
                             <panel width="*"/>
                             <control name="dropDown" id="resolutions" width="180px"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="Fullscreen"/>
+                            <control name="label" text="${options-bundle.fullscreen}"/>
                             <panel width="*"/>
                             <control name="checkbox" id="fullscreen"/>
                         </panel>
