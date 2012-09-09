@@ -20,7 +20,6 @@ package illarion.mapedit.render;
 
 import illarion.common.util.Location;
 import illarion.mapedit.data.Map;
-import illarion.mapedit.gui.MapPanel;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.resource.loaders.TileLoader;
 
@@ -48,11 +47,9 @@ public class TileRenderer extends AbstractMapRenderer {
 
     /**
      * Creates a new map renderer
-     *
-     * @param mapPanel The panel, to draw the map on.
      */
-    public TileRenderer(final MapPanel mapPanel) {
-        super(mapPanel);
+    public TileRenderer(final RendererManager manager) {
+        super(manager);
     }
 
     @Override
@@ -66,27 +63,30 @@ public class TileRenderer extends AbstractMapRenderer {
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
                 final int xdisp = Location.displayCoordinateX(x, y, 0);
-                final int ydisp = Location.displayCoordinateY(x, y, 0);
+                final int ydisp = -Location.displayCoordinateY(x, y, 0);
                 if (getRenderRectangle().contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 
                     final TileImg t = TileLoader.getInstance().getTileFromId(map.getTileAt(x,
                             y).getId());
                     if (t != null) {
+                        final AffineTransform tr = g.getTransform();
                         if (getZoom() > getMinZoom()) {
                             final Image img = t.getImg()[0];
                             if (img != null) {
+                                g.translate(xdisp, ydisp);
                                 g.drawImage(img,
-                                        xdisp,
-                                        ydisp, null);
+                                        0,
+                                        0, null);
                             }
                         } else {
-                            final AffineTransform tr = g.getTransform();
+
                             g.translate(xdisp, ydisp);
                             g.setColor(TILE_COLORS[t.getInfo().getMapColor()]);
                             g.fill(getTilePolygon());
-                            g.setTransform(tr);
+
                         }
+                        g.setTransform(tr);
                     }
                 }
             }

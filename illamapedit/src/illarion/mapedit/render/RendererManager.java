@@ -18,9 +18,12 @@
  */
 package illarion.mapedit.render;
 
-import illarion.mapedit.events.MapDragedEvent;
+import illarion.mapedit.events.MapDraggedEvent;
+import illarion.mapedit.events.RendererToggleEvent;
 import illarion.mapedit.events.RepaintRequestEvent;
+import illarion.mapedit.events.ZoomEvent;
 import illarion.mapedit.gui.MapPanel;
+import illarion.mapedit.util.MouseButton;
 import javolution.util.FastList;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -36,7 +39,6 @@ import java.util.List;
  * @author Tim
  */
 public class RendererManager {
-    private static final RendererManager INSTANCE = new RendererManager();
     private static final int DEFAULT_TILE_HEIGHT = 16;
     private static final int DEFAULT_TILE_WIDTH = 32;
     public static final float DEFAULT_ZOOM = 1f;
@@ -50,16 +52,19 @@ public class RendererManager {
     private int translationY;
     private float tileHeight = DEFAULT_TILE_HEIGHT;
     private float tileWidth = DEFAULT_TILE_WIDTH;
+    private MapPanel mapPanel;
 
-    private RendererManager() {
+
+    public RendererManager(final MapPanel mapPanel) {
         renderers = new FastList<AbstractMapRenderer>();
         AnnotationProcessor.process(this);
+        this.mapPanel = mapPanel;
     }
 
     public void initRenderers(final MapPanel panel) {
-        renderers.add(new InfoRenderer(panel));
-        renderers.add(new TileRenderer(panel));
-        renderers.add(new ItemRenderer(panel));
+        renderers.add(new InfoRenderer(this));
+        renderers.add(new TileRenderer(this));
+        renderers.add(new ItemRenderer(this));
         Collections.sort(renderers);
     }
 
@@ -71,16 +76,13 @@ public class RendererManager {
 
     public void removeRenderer(final AbstractMapRenderer r) {
         renderers.remove(r);
+        EventBus.publish(new RepaintRequestEvent());
     }
 
     public void render(final Graphics2D g) {
         for (final AbstractMapRenderer r : renderers) {
             r.renderMap(g);
         }
-    }
-
-    public static RendererManager getInstance() {
-        return INSTANCE;
     }
 
     public float getTileHeight() {
@@ -92,9 +94,13 @@ public class RendererManager {
     }
 
     public void setZoom(final float zoom) {
-        this.zoom = zoom;
+
+        final float dZoom = this.zoom - zoom;
         tileWidth = DEFAULT_TILE_WIDTH * zoom;
         tileHeight = DEFAULT_TILE_HEIGHT * zoom;
+        translationX += translationX * dZoom;
+        translationY += translationY * dZoom;
+        this.zoom = zoom;
         EventBus.publish(new RepaintRequestEvent());
     }
 
@@ -119,7 +125,9 @@ public class RendererManager {
     }
 
     public void zoomIn() {
-        setZoom(zoom + (zoom * ZOOM_STEP));
+        if (zoom < 1) {
+            setZoom(zoom + (zoom * ZOOM_STEP));
+        }
     }
 
     public void zoomOut() {
@@ -140,9 +148,35 @@ public class RendererManager {
         return MIN_ZOOM;
     }
 
-    @EventSubscriber(eventClass = MapDragedEvent.class)
-    public void onMapDragged(final MapDragedEvent e) {
-        changeTranslation(e.getOffsetX(), e.getOffsetY());
-        EventBus.publish(new RepaintRequestEvent());
+    public MapPanel getMapPanel() {
+        return mapPanel;
+    }
+
+    @EventSubscriber(eventClass = RendererToggleEvent.class)
+    public void onRendererToggle(final RendererToggleEvent e) {
+        for (AbstractMapRenderer r : renderers) {
+            if (r.getClass().equals(e.getRendererClass())) {
+                removeRenderer(r);
+                return;
+            }
+        }
+        addRenderer(e.getRenderer(this));
+    }
+
+    @EventSubscriber(eventClass = MapDraggedEvent.class)
+    public void onMapDragged(final MapDraggedEvent e) {
+        if (e.getButton() == MouseButton.RightButton) {
+            changeTranslation(e.getOffsetX(), e.getOffsetY());
+            EventBus.publish(new RepaintRequestEvent());
+        }
+    }
+
+    @EventSubscriber(eventClass = ZoomEvent.class)
+    public void onZoom(final ZoomEvent e) {
+        if (e.isOriginal()) {
+            setZoom(DEFAULT_ZOOM);
+        } else {
+            changeZoom(e.getValue());
+        }
     }
 }

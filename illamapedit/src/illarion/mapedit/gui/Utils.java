@@ -39,7 +39,7 @@ import java.net.URL;
  * @author Martin Karing
  * @since 1.00
  */
-final class Utils {
+public final class Utils {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
@@ -83,7 +83,7 @@ final class Utils {
         float yr = (y - transY) / zoom;
         Location mapPos = new Location();
         mapPos.setDC((int) xr, (int) yr);
-        return mapPos.getScY() - 1;
+        return mapPos.getScX();
     }
 
     public static int getMapYFormDisp(final int x, final int y, final int transX, final int transY, final float zoom) {
@@ -91,6 +91,6 @@ final class Utils {
         float yr = (y - transY) / zoom;
         Location mapPos = new Location();
         mapPos.setDC((int) xr, (int) yr);
-        return mapPos.getScX();
+        return mapPos.getScY() - 1;
     }
 }

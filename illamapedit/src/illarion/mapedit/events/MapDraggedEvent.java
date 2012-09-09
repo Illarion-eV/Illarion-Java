@@ -18,17 +18,21 @@
  */
 package illarion.mapedit.events;
 
+import illarion.mapedit.util.MouseButton;
+
 /**
  * @author Tim
  */
-public class MapDragedEvent {
+public class MapDraggedEvent {
     private final int offsetX;
     private final int offsetY;
+    private final MouseButton button;
 
 
-    public MapDragedEvent(final int offsetX, final int offsetY) {
+    public MapDraggedEvent(final int offsetX, final int offsetY, final MouseButton button) {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
+        this.button = button;
     }
 
     public int getOffsetX() {
@@ -39,4 +43,7 @@ public class MapDragedEvent {
         return offsetY;
     }
 
+    public MouseButton getButton() {
+        return button;
+    }
 }

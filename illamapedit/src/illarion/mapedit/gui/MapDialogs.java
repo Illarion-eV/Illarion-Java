@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.common.config.Config;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.data.Map;
@@ -44,6 +45,7 @@ public class MapDialogs {
         }
     };
     private static File saveDir;
+    private static Config config = MapEditor.getConfig();
 
     private MapDialogs() {
 
@@ -101,12 +103,16 @@ public class MapDialogs {
 
     public static Map showOpenMapDialog(final JFrame owner) throws IOException {
         final JFileChooser ch = new JFileChooser();
+        if (config.getFile("mapLastOpenDir") != null) {
+            ch.setCurrentDirectory(config.getFile("mapLastOpenDir"));
+        }
         ch.setDialogType(JFileChooser.OPEN_DIALOG);
         ch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (ch.showOpenDialog(MainFrame.getInstance()) != JFileChooser.APPROVE_OPTION) {
             return null;
         }
         final File dir = ch.getSelectedFile();
+        config.set("mapLastOpenDir", dir);
         final String[] maps = dir.list(FILTER_TILES);
         for (int i = 0; i < maps.length; ++i) {
             maps[i] = maps[i].substring(0, maps[i].length() - MapIO.EXT_TILE.length());

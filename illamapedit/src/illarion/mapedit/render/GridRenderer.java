@@ -18,8 +18,6 @@
  */
 package illarion.mapedit.render;
 
-import illarion.mapedit.gui.MapPanel;
-
 import java.awt.*;
 
 /**
@@ -29,8 +27,12 @@ import java.awt.*;
  */
 public class GridRenderer extends AbstractMapRenderer {
 
-    public GridRenderer(final MapPanel panel) {
-        super(panel);
+
+    /**
+     * Creates a new map renderer
+     */
+    public GridRenderer(final RendererManager manager) {
+        super(manager);
     }
 
     @Override

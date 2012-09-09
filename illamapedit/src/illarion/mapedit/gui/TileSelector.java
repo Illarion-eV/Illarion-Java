@@ -46,9 +46,7 @@ public class TileSelector extends JFrame {
         tileList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(final ListSelectionEvent e) {
-                if (e.getFirstIndex() == e.getLastIndex()) {
-                    EventBus.publish(new TileSelectedEvent(tileList.getSelectedValue()));
-                }
+                EventBus.publish(new TileSelectedEvent(tileList.getSelectedValue()));
             }
         });
 

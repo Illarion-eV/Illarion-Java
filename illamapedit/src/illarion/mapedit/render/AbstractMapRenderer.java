@@ -41,12 +41,10 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
 
     /**
      * Creates a new map renderer
-     *
-     * @param mapPanel The panel, to draw the map on.
      */
-    public AbstractMapRenderer(final MapPanel mapPanel) {
-        manager = RendererManager.getInstance();
-        this.mapPanel = mapPanel;
+    public AbstractMapRenderer(final RendererManager manager) {
+        this.manager = manager;
+        this.mapPanel = manager.getMapPanel();
     }
 
     /**
@@ -55,7 +53,12 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      * @return the render rectangle.
      */
     protected Rectangle getRenderRectangle() {
-        return mapPanel.getVisibleRect();
+        final Rectangle rect = mapPanel.getVisibleRect();
+        rect.x -= 64 * getZoom();
+        rect.y -= 32 * getZoom();
+        rect.width += 128 * getZoom();
+        rect.height += 64 * getZoom();
+        return rect;
     }
 
     /**
@@ -113,6 +116,10 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      */
     protected float getMinZoom() {
         return manager.getMinZoom();
+    }
+
+    protected RendererManager getManager() {
+        return manager;
     }
 
     /**

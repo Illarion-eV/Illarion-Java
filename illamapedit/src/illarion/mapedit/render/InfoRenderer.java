@@ -20,8 +20,6 @@ package illarion.mapedit.render;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
-import illarion.mapedit.gui.MapPanel;
-import illarion.mapedit.resource.loaders.TileLoader;
 
 import java.awt.*;
 
@@ -34,15 +32,13 @@ public class InfoRenderer extends AbstractMapRenderer {
     private static final Font FONT = new Font("Arial", Font.BOLD, 14);
     private static final int START_Y = 20;
     private static final int STEP_Y = 15;
-    private final MapPanel panel;
     private final String size;
     private final String pos;
     private final String zoom;
     private final String trans;
 
-    public InfoRenderer(final MapPanel mapPanel) {
-        super(mapPanel);
-        panel = mapPanel;
+    public InfoRenderer(final RendererManager manager) {
+        super(manager);
         size = Lang.getMsg("map.info.Size");
         pos = Lang.getMsg("map.info.Pos");
         zoom = Lang.getMsg("map.info.Zoom");
@@ -54,8 +50,10 @@ public class InfoRenderer extends AbstractMapRenderer {
         g.setFont(FONT);
         g.setColor(Color.WHITE);
         final Map m = getMap();
-        final int mapX = panel.getMouseMapPosX();
-        final int mapY = panel.getMouseMapPosY();
+        final int mapX = getManager().getMapPanel().getMouseMapPosX();
+        final int mapY = getManager().getMapPanel().getMouseMapPosY();
+        final int mouseX = getManager().getMapPanel().getMouseMapPosX();
+        final int mouseY = getManager().getMapPanel().getMouseMapPosY();
 
         String[] lines = new String[5];
         lines[0] = String.format("%1$s (%2$d, %3$d, %4$d)", pos, m.getX(), m.getY(),
@@ -63,12 +61,9 @@ public class InfoRenderer extends AbstractMapRenderer {
         lines[1] = String.format("%1$s (%2$d, %3$d)", size, m.getW(), m.getH());
         lines[2] = String.format("%1$s %2$f", zoom, getZoom());
         lines[3] = String.format("%1$s (%2$d, %3$d)", trans, getTranslateX(), getTranslateY());
-        if (m.contains(mapX, mapY)) {
-            final String tile = TileLoader.getInstance().getTileFromId(m.getTileAt(mapX, mapY).getId()).getDescription();
-            lines[4] = String.format("(%d,%d) - %s", mapX, mapY, tile);
-        } else {
-            lines[4] = "";
-        }
+        lines[4] = String.format("Mausposition: (%d,%d) (%d,%d)",
+                mouseX,
+                mouseY, mouseX + m.getX(), mouseY + m.getY());
         int y = START_Y;
         for (String s : lines) {
             g.drawString(s, 10, y);

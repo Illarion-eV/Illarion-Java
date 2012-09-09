@@ -20,10 +20,11 @@ package illarion.mapedit.gui;
 
 import illarion.mapedit.data.Map;
 import illarion.mapedit.events.MapClickedEvent;
-import illarion.mapedit.events.MapDragedEvent;
+import illarion.mapedit.events.MapDraggedEvent;
 import illarion.mapedit.events.RepaintRequestEvent;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.tools.ToolManager;
+import illarion.mapedit.util.MouseButton;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -55,7 +56,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     private ToolManager toolManager;
 
     private MapPanel() {
-        rendererManager = RendererManager.getInstance();
+        rendererManager = new RendererManager(this);
         dirty = new Rectangle(getWidth(), getHeight());
         rendererManager.initRenderers(this);
         addMouseWheelListener(this);
@@ -108,11 +109,23 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
 
     @Override
     public void mouseDragged(final MouseEvent e) {
-        if (canDrag && (mapData != null) && (e.getButton() == 3)) {
-            EventBus.publish(new MapDragedEvent(e.getX() - clickX, e.getY() - clickY));
-            clickX = e.getX();
-            clickY = e.getY();
+        if (!canDrag || (mapData == null)) {
+            return;
         }
+        if ((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
+            EventBus.publish(new MapDraggedEvent(e.getX() - clickX, e.getY() - clickY, MouseButton.RightButton));
+        } else if ((e.getModifiers() & MouseEvent.BUTTON2_MASK) != 0) {
+            EventBus.publish(new MapDraggedEvent(e.getX() - clickX, e.getY() - clickY, MouseButton.MiddleButton));
+        } else if ((e.getModifiers() & MouseEvent.BUTTON1_MASK) != 0) {
+            EventBus.publish(new MapDraggedEvent(e.getX() - clickX, e.getY() - clickY, MouseButton.LeftButton));
+        } else {
+            EventBus.publish(new MapDraggedEvent(e.getX() - clickX, e.getY() - clickY, MouseButton.OtherButton));
+        }
+
+        clickX = e.getX();
+        clickY = e.getY();
+
+
     }
 
     @Override

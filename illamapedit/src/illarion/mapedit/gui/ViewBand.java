@@ -19,7 +19,13 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.render.RendererManager;
+import illarion.mapedit.events.RendererToggleEvent;
+import illarion.mapedit.render.GridRenderer;
+import illarion.mapedit.render.InfoRenderer;
+import illarion.mapedit.render.ItemRenderer;
+import illarion.mapedit.render.TileRenderer;
+import javolution.util.FastList;
+import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
@@ -28,7 +34,6 @@ import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,50 +42,68 @@ import java.util.List;
 public class ViewBand extends JRibbonBand {
 
     public ViewBand() {
-        super(Lang.getMsg("gui.viewband.Name"), Utils.getResizableIconFromResource("viewmag.png"));
+        super(Lang.getMsg("gui.viewband.Name"), null);
 
-        final JCommandButton zoomOriginal = new JCommandButton(Lang.getMsg("gui.viewband.Original"),
-                Utils.getResizableIconFromResource("viewmag1.png"));
-        final JCommandButton zoomOut = new JCommandButton(Lang.getMsg("gui.viewband.Out"),
-                Utils.getResizableIconFromResource("viewmag-.png"));
-        final JCommandButton zoomIn = new JCommandButton(Lang.getMsg("gui.viewband.In"),
-                Utils.getResizableIconFromResource("viewmag+.png"));
+        final JCommandButton tileButton = new JCommandButton(
+                Lang.getMsg("gui.viewband.button.Tile"),
+                Utils.getResizableIconFromResource("file_tiles.png")
+        );
+        final JCommandButton itemButton = new JCommandButton(
+                Lang.getMsg("gui.viewband.button.Item"),
+                Utils.getResizableIconFromResource("file_items.png")
+        );
+        final JCommandButton infoButton = new JCommandButton(
+                Lang.getMsg("gui.viewband.button.Info"),
+                Utils.getResizableIconFromResource("messagebox_warning.png")
+        );
+        final JCommandButton gridButton = new JCommandButton(
+                Lang.getMsg("gui.viewband.button.Grid"),
+                Utils.getResizableIconFromResource("viewGrid.png")
+        );
 
-        final ActionListener zoomOutListener = new ActionListener() {
+        final ActionListener tileListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                RendererManager.getInstance().zoomOut();
-                MapPanel.getInstance().repaint();
+                EventBus.publish(new RendererToggleEvent(TileRenderer.class));
             }
         };
 
-        final ActionListener zoomInListener = new ActionListener() {
+        final ActionListener itemListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                RendererManager.getInstance().zoomIn();
-                MapPanel.getInstance().repaint();
+                EventBus.publish(new RendererToggleEvent(ItemRenderer.class));
             }
         };
 
-        final ActionListener zoomOriginalListener = new ActionListener() {
+        final ActionListener infoListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                RendererManager.getInstance().setZoom(RendererManager.DEFAULT_ZOOM);
-                MapPanel.getInstance().repaint();
+                EventBus.publish(new RendererToggleEvent(InfoRenderer.class));
             }
         };
 
-        zoomIn.addActionListener(zoomInListener);
-        zoomOut.addActionListener(zoomOutListener);
-        zoomOriginal.addActionListener(zoomOriginalListener);
+        final ActionListener gridListener = new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                EventBus.publish(new RendererToggleEvent(GridRenderer.class));
+            }
+        };
 
-        addCommandButton(zoomOriginal, RibbonElementPriority.TOP);
-        addCommandButton(zoomOut, RibbonElementPriority.TOP);
-        addCommandButton(zoomIn, RibbonElementPriority.TOP);
+        tileButton.addActionListener(tileListener);
+        itemButton.addActionListener(itemListener);
+        infoButton.addActionListener(infoListener);
+        gridButton.addActionListener(gridListener);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<RibbonBandResizePolicy>();
-        policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
-        policies.add(new CoreRibbonResizePolicies.High2Low(getControlPanel()));
-        setResizePolicies(policies);
+        addCommandButton(tileButton, RibbonElementPriority.TOP);
+        addCommandButton(itemButton, RibbonElementPriority.TOP);
+        addCommandButton(infoButton, RibbonElementPriority.MEDIUM);
+        addCommandButton(gridButton, RibbonElementPriority.MEDIUM);
+
+        List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
+        resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
+        resize.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
+        resize.add(new CoreRibbonResizePolicies.High2Low(getControlPanel()));
+
+        setResizePolicies(resize);
     }
 }

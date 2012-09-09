@@ -16,29 +16,36 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools;
+package illarion.mapedit.util;
 
-import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapTile;
-import illarion.mapedit.resource.TileImg;
-import org.apache.log4j.Logger;
+import java.awt.*;
 
 /**
  * @author Tim
  */
-public class SingleTileTool extends AbstractTool {
-    /**
-     * The logger instance for this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(SingleTileTool.class);
+public enum MouseButton {
+    NoButton,
+    LeftButton,
+    MiddleButton,
+    RightButton,
+    OtherButton;
 
-    @Override
-    public void clickedAt(final int x, final int y) {
-        Map m = getManager().getMap();
-        TileImg tile = getManager().getSelectedTile();
-        if (tile != null) {
-            m.setTileAt(x, y, new MapTile(tile.getId(), 0));
-            LOGGER.debug("SingleTileTool: " + tile.getDescription());
+    public static MouseButton getButton(final int btn) {
+        switch (btn) {
+            case 0:
+                return NoButton;
+            case 1:
+                return LeftButton;
+            case 2:
+                return MiddleButton;
+            case 3:
+                return LeftButton;
+            default:
+                return OtherButton;
         }
+    }
+
+    public static int getButtonCount() {
+        return MouseInfo.getNumberOfButtons();
     }
 }

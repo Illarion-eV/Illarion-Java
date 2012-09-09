@@ -78,5 +78,6 @@ public final class ToolManager implements Disposable {
     @EventSubscriber(eventClass = TileSelectedEvent.class)
     public void onTileSelected(TileSelectedEvent e) {
         selectedTile = e.getTileImg();
+        LOGGER.debug("Selected: " + e.getTileImg());
     }
 }

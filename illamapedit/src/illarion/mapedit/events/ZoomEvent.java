@@ -16,29 +16,36 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools;
-
-import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapTile;
-import illarion.mapedit.resource.TileImg;
-import org.apache.log4j.Logger;
+package illarion.mapedit.events;
 
 /**
  * @author Tim
  */
-public class SingleTileTool extends AbstractTool {
-    /**
-     * The logger instance for this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(SingleTileTool.class);
+public class ZoomEvent {
 
-    @Override
-    public void clickedAt(final int x, final int y) {
-        Map m = getManager().getMap();
-        TileImg tile = getManager().getSelectedTile();
-        if (tile != null) {
-            m.setTileAt(x, y, new MapTile(tile.getId(), 0));
-            LOGGER.debug("SingleTileTool: " + tile.getDescription());
+    private final boolean original;
+
+    private final float value;
+
+    public ZoomEvent(final float value) {
+        original = false;
+        this.value = value;
+    }
+
+    public ZoomEvent() {
+        original = true;
+        value = 0;
+    }
+
+    public float getValue() {
+        if (original) {
+            throw new IllegalStateException("ZoomEvent has no value if it's 'original'," +
+                    " check that first.");
         }
+        return value;
+    }
+
+    public boolean isOriginal() {
+        return original;
     }
 }
