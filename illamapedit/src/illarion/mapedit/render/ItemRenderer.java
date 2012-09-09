@@ -58,7 +58,6 @@ public class ItemRenderer extends AbstractMapRenderer {
                 final int xdisp = Location.displayCoordinateX(x2, y, 0);
                 final int ydisp = -Location.displayCoordinateY(x2, y, 0);
 
-                //TODO: Tidy this up.
                 if (getRenderRectangle().contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 

@@ -19,9 +19,11 @@
 package illarion.mapedit.tools;
 
 import illarion.mapedit.data.Map;
+import illarion.mapedit.events.ItemSelectedEvent;
 import illarion.mapedit.events.MapClickedEvent;
 import illarion.mapedit.events.RepaintRequestEvent;
 import illarion.mapedit.events.TileSelectedEvent;
+import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.util.Disposable;
 import org.apache.log4j.Logger;
@@ -40,6 +42,7 @@ public final class ToolManager implements Disposable {
     private final Map map;
 
     private TileImg selectedTile;
+    private ItemImg selectedItem;
 
     public ToolManager(final Map map) {
         AnnotationProcessor.process(this);
@@ -79,5 +82,15 @@ public final class ToolManager implements Disposable {
     public void onTileSelected(TileSelectedEvent e) {
         selectedTile = e.getTileImg();
         LOGGER.debug("Selected: " + e.getTileImg());
+    }
+
+    @EventSubscriber(eventClass = ItemSelectedEvent.class)
+    public void onItemSelected(ItemSelectedEvent e) {
+        selectedItem = e.getItemImg();
+        LOGGER.debug("Selected: " + e.getItemImg());
+    }
+
+    ItemImg getSelectedItem() {
+        return selectedItem;
     }
 }

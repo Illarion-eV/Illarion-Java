@@ -34,12 +34,13 @@ import java.awt.*;
 public class MainFrame extends JRibbonFrame {
     private static final Dimension WINDOW_SIZE = new Dimension(900, 700);
     private static final Logger LOGGER = Logger.getLogger(MainFrame.class);
-    private static final MainFrame INSTANCE = new MainFrame();
+    private static MainFrame instance;
 
 
     private final MapPanel map;
 
     private MainFrame() {
+        instance = this;
         addWindowListener(new WindowEventListener());
         setTitle(Lang.getMsg("application.Name") + MapEditor.getVersion());
         setSize(WINDOW_SIZE);
@@ -55,12 +56,13 @@ public class MainFrame extends JRibbonFrame {
 
         getRibbon().addTask(task);
         setApplicationIcon(Utils.getResizableIconFromResource("mapedit64.png"));
-        new TileSelector();
+        new ObjectSelector();
     }
 
     public static MainFrame getInstance() {
-
-        return INSTANCE;
+        if (instance == null)
+            return new MainFrame();
+        return instance;
 
     }
 

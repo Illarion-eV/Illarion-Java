@@ -111,4 +111,9 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
         }
         return null;
     }
+
+    public ItemImg[] getTiles() {
+        final ItemImg[] t = items.toArray(new ItemImg[items.size()]);
+        return t;
+    }
 }

@@ -18,27 +18,34 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.mapedit.Lang;
+import illarion.mapedit.events.ItemSelectedEvent;
 import illarion.mapedit.events.TileSelectedEvent;
+import illarion.mapedit.gui.cellrenderer.ItemImgCellRenderer;
+import illarion.mapedit.gui.cellrenderer.TileImgCellRenderer;
+import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.TileImg;
+import illarion.mapedit.resource.loaders.ItemLoader;
 import illarion.mapedit.resource.loaders.TileLoader;
 import org.bushe.swing.event.EventBus;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
 
 /**
  * @author Tim
  */
-public class TileSelector extends JFrame {
+public class ObjectSelector extends JDialog {
 
 
     private final JList<TileImg> tileList;
+    private final JList<ItemImg> itemList;
 
-
-    public TileSelector() {
+    public ObjectSelector() {
+        super(MainFrame.getInstance());
         setDefaultLookAndFeelDecorated(false);
+        final JTabbedPane tab = new JTabbedPane();
 
         tileList = new JList<TileImg>(TileLoader.getInstance().getTiles());
         tileList.setCellRenderer(new TileImgCellRenderer());
@@ -50,7 +57,20 @@ public class TileSelector extends JFrame {
             }
         });
 
-        add(new JScrollPane(tileList), BorderLayout.CENTER);
+        itemList = new JList<ItemImg>(ItemLoader.getInstance().getTiles());
+        itemList.setCellRenderer(new ItemImgCellRenderer());
+        itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        itemList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(final ListSelectionEvent e) {
+                EventBus.publish(new ItemSelectedEvent(itemList.getSelectedValue()));
+            }
+        });
+
+        add(tab);
+
+        tab.add(Lang.getMsg("gui.selector.tile"), new JScrollPane(tileList));
+        tab.add(Lang.getMsg("gui.selector.item"), new JScrollPane(itemList));
         pack();
         doLayout();
         setVisible(true);

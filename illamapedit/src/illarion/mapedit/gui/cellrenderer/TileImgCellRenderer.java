@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.gui;
+package illarion.mapedit.gui.cellrenderer;
 
 import illarion.mapedit.resource.TileImg;
 
@@ -27,8 +27,10 @@ public class TileImgCellRenderer extends JPanel implements ListCellRenderer<Tile
     private static final Color COLOR_SELECTED = new Color(-6100481);
     private static final Color COLOR_UNSELECTED = new Color(-1246977);
 
+
     private final JLabel img;
     private final JLabel name;
+
 
     public TileImgCellRenderer() {
         img = new JLabel();
@@ -40,7 +42,6 @@ public class TileImgCellRenderer extends JPanel implements ListCellRenderer<Tile
         add(name);
     }
 
-
     @Override
     public Component getListCellRendererComponent(final JList<? extends TileImg> jList, final TileImg value, final int index, final boolean isSelected, final boolean cellHasFocus) {
 
@@ -49,10 +50,6 @@ public class TileImgCellRenderer extends JPanel implements ListCellRenderer<Tile
         } else {
             adjustColors(COLOR_UNSELECTED, this, img, name);
         }
-//        Dimension d = getPreferredSize();
-//        d.width = 100;
-//        d.height = 50;
-//        setPreferredSize(d);
 
         img.setIcon(new ImageIcon(value.getImg()[0]));
 
@@ -64,11 +61,9 @@ public class TileImgCellRenderer extends JPanel implements ListCellRenderer<Tile
         return this;
     }
 
+
     private void adjustColors(final Color bg, final Component... components) {
         for (final Component c : components) {
-//            if (fg != null) {
-//                c.setForeground(fg);
-//            }
             if (bg != null) {
                 c.setBackground(bg);
             }
