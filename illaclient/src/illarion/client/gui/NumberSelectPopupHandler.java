@@ -30,12 +30,16 @@ import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * This class takes care for displaying and controlling the number select popup properly.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class NumberSelectPopupHandler implements ScreenController {
+public class NumberSelectPopupHandler implements ScreenController, UpdatableHandler {
+
     /**
      * This is the callback interface for this class. Once the number select popup is closed for confirmed this one
      * is called.
@@ -84,6 +88,12 @@ public class NumberSelectPopupHandler implements ScreenController {
      */
     private int minNumber;
 
+    private final Queue<Runnable> requestQueue;
+
+    public NumberSelectPopupHandler() {
+        requestQueue = new ConcurrentLinkedQueue<Runnable>();
+    }
+
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
         parentNifty = nifty;
@@ -104,6 +114,23 @@ public class NumberSelectPopupHandler implements ScreenController {
      */
     public void requestNewPopup(final int minValue, final int maxValue,
                                 final NumberSelectPopupHandler.Callback callback) {
+        requestQueue.offer(new Runnable() {
+            @Override
+            public void run() {
+                internalCreateNewPopup(minValue, maxValue, callback);
+            }
+        });
+    }
+
+    /**
+     * This function really creates the new topic.
+     *
+     * @param minValue the minimal value that is allowed to be selected by this number select popup
+     * @param maxValue the maximal value that is allowed to be selected by this number select popup
+     * @param callback the callback that is called in case the user interacts with the popup
+     */
+    private void internalCreateNewPopup(final int minValue, final int maxValue,
+                                        final NumberSelectPopupHandler.Callback callback) {
         cancelActivePopup();
 
         activePopup = parentNifty.createPopup("numberSelect");
@@ -142,6 +169,9 @@ public class NumberSelectPopupHandler implements ScreenController {
         activePopup.addInputHandler(new KeyInputHandler() {
             @Override
             public boolean keyEvent(final NiftyInputEvent inputEvent) {
+                if (inputEvent == null) {
+                    return false;
+                }
                 switch (inputEvent) {
                     case Escape:
                         cancelActivePopup();
@@ -156,6 +186,14 @@ public class NumberSelectPopupHandler implements ScreenController {
         });
 
         textField.setText("");
+    }
+
+    @Override
+    public void update(final int delta) {
+        while (!requestQueue.isEmpty()) {
+            final Runnable task = requestQueue.poll();
+            task.run();
+        }
     }
 
     /**
