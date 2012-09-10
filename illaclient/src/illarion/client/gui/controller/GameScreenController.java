@@ -29,24 +29,30 @@ import java.util.Collection;
 public final class GameScreenController implements ScreenController {
 
     private Nifty parentNifty;
+    private Screen parentScreen;
 
     private Collection<ScreenController> childControllers;
     private Collection<UpdatableHandler> childUpdateControllers;
 
+    private NumberSelectPopupHandler numberPopupHandler;
+
     private boolean notifyResolutionChanged;
 
     public GameScreenController() {
+        numberPopupHandler = new NumberSelectPopupHandler();
+
         childControllers = new ArrayList<ScreenController>();
         childUpdateControllers = new ArrayList<UpdatableHandler>();
 
+        addHandler(numberPopupHandler);
         addHandler(new GUIChatHandler());
-        addHandler(new GUIInventoryHandler());
+        addHandler(new GUIInventoryHandler(numberPopupHandler));
         addHandler(new CharListHandler());
         addHandler(new DialogHandler());
-        addHandler(new ContainerHandler());
+        addHandler(new ContainerHandler(numberPopupHandler));
 
         addHandler(new GameMapClickHandler());
-        addHandler(new GameMapDragHandler());
+        addHandler(new GameMapDragHandler(numberPopupHandler));
 
         addHandler(new InformHandler());
     }
@@ -62,6 +68,7 @@ public final class GameScreenController implements ScreenController {
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
         parentNifty = nifty;
+        parentScreen = screen;
 
         for (final ScreenController childController : childControllers) {
             childController.bind(nifty, screen);

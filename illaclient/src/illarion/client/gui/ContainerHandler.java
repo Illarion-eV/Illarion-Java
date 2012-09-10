@@ -38,6 +38,7 @@ import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
+import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantItem;
@@ -47,6 +48,7 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 import org.illarion.nifty.controls.itemcontainer.builder.ItemContainerBuilder;
+import org.lwjgl.input.Keyboard;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -174,6 +176,8 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
      */
     private Screen activeScreen;
 
+    private final NumberSelectPopupHandler numberSelect;
+
     /**
      * The click helper that is supposed to be used for handling clicks.
      */
@@ -181,8 +185,9 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
 
     private final TIntObjectHashMap<org.illarion.nifty.controls.ItemContainer> itemContainerMap;
 
-    public ContainerHandler() {
+    public ContainerHandler(final NumberSelectPopupHandler numberSelectPopupHandler) {
         itemContainerMap = new TIntObjectHashMap<org.illarion.nifty.controls.ItemContainer>();
+        numberSelect = numberSelectPopupHandler;
     }
 
     @EventSubscriber
@@ -353,7 +358,23 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
                 "visible."
         );
 
-        World.getInteractionManager().dropAtContainer(containerId, slotId);
+        final int amount = World.getInteractionManager().getMovedAmount();
+        final InteractionManager iManager = World.getInteractionManager();
+        if ((amount > 1) && (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))) {
+            numberSelect.requestNewPopup(1, amount, new NumberSelectPopupHandler.Callback() {
+                @Override
+                public void popupCanceled() {
+                    // nothing
+                }
+
+                @Override
+                public void popupConfirmed(final int value) {
+                    iManager.dropAtContainer(containerId, slotId, value);
+                }
+            });
+        } else {
+            iManager.dropAtContainer(containerId, slotId, World.getInteractionManager().getMovedAmount());
+        }
     }
 
     private static final Pattern slotPattern = Pattern.compile("slot([0-9]+)");

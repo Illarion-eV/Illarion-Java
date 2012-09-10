@@ -27,7 +27,7 @@ import illarion.client.net.NetCommWriter;
  *
  * @author Blay09
  */
-public final class DragScScCmd extends AbstractCommand {
+public final class DragScScCmd extends AbstractDragCommand {
 
     /**
      * The source container of the dragging event.
@@ -79,7 +79,7 @@ public final class DragScScCmd extends AbstractCommand {
         writer.writeByte(sourceContainerItem);
         writer.writeByte(targetContainer);
         writer.writeByte(targetContainerItem);
-        writer.writeByte((byte) 1); // Counter
+        writer.writeByte(getCount());
     }
 
     /**
@@ -121,6 +121,8 @@ public final class DragScScCmd extends AbstractCommand {
         sb.append(targetContainer);
         sb.append(" SourceConItemID: ");
         sb.append(targetContainerItem);
+        sb.append(" Count: ");
+        sb.append(getCount());
         return sb.toString();
     }
 

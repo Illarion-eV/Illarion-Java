@@ -49,7 +49,7 @@ public class InteractiveChar extends AbstractDraggable implements DropTarget {
      * Drag one character to another character. Does nothing currently.
      */
     @Override
-    public void dragTo(final InteractiveChar targetChar) {
+    public void dragTo(final InteractiveChar targetChar, final int count) {
         // nothing
     }
 
@@ -57,7 +57,7 @@ public class InteractiveChar extends AbstractDraggable implements DropTarget {
      * Dragging the character into the inventory does nothing at all.
      */
     @Override
-    public void dragTo(final InteractiveInventorySlot targetSlot) {
+    public void dragTo(final InteractiveInventorySlot targetSlot, final int count) {
         // nothing
     }
 
@@ -66,7 +66,7 @@ public class InteractiveChar extends AbstractDraggable implements DropTarget {
      * character.
      */
     @Override
-    public void dragTo(final InteractiveMapTile targetTile) {
+    public void dragTo(final InteractiveMapTile targetTile, final int count) {
         if (!isInInteractionRange()) {
             return;
         }
@@ -87,7 +87,7 @@ public class InteractiveChar extends AbstractDraggable implements DropTarget {
     }
 
     @Override
-    public void dragTo(final InteractiveContainerSlot targetSlot) {
+    public void dragTo(final InteractiveContainerSlot targetSlot, final int count) {
         // nothing
     }
 

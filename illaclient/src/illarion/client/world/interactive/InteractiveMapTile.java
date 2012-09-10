@@ -78,18 +78,18 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
      * Drag something from a map tile to
      */
     @Override
-    public void dragTo(final InteractiveChar targetChar) {
+    public void dragTo(final InteractiveChar targetChar, final int count) {
         if (!canDrag()) {
             return;
         }
 
         final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnMapLoc(
                 targetChar.getLocation());
-        dragTo(tile);
+        dragTo(tile, count);
     }
 
     @Override
-    public void dragTo(final InteractiveInventorySlot targetSlot) {
+    public void dragTo(final InteractiveInventorySlot targetSlot, final int count) {
         if (!canDrag()) {
             return;
         }
@@ -98,11 +98,11 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
             return;
         }
 
-        final DragMapInvCmd cmd =
-                CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_DRAG_MAP_INV, DragMapInvCmd.class);
+        final DragMapInvCmd cmd = CommandFactory.getInstance().getCommand(
+                CommandList.CMD_DRAG_MAP_INV, DragMapInvCmd.class);
         cmd.setDragFrom(getLocation());
         cmd.setDragTo(targetSlot.getSlotId());
+        cmd.setCount(count);
         cmd.send();
     }
 
@@ -112,7 +112,7 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
      * @param targetTile the tile to drag this tile to
      */
     @Override
-    public void dragTo(final InteractiveMapTile targetTile) {
+    public void dragTo(final InteractiveMapTile targetTile, final int count) {
         if (!canDrag()) {
             return;
         }
@@ -121,12 +121,12 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
                 CommandList.CMD_DRAG_MAP_MAP_N + getDirection(),
                 DragMapMapCmd.class);
         cmd.setDragTo(targetTile.getLocation());
-        cmd.setCounter();
+        cmd.setCount(count);
         cmd.send();
     }
 
     @Override
-    public void dragTo(final InteractiveContainerSlot targetSlot) {
+    public void dragTo(final InteractiveContainerSlot targetSlot, final int count) {
         if (!canDrag()) {
             return;
         }
@@ -135,6 +135,7 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
                 DragMapScCmd.class);
         cmd.setSource(getLocation());
         cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
+        cmd.setCount(count);
         cmd.send();
 
     }

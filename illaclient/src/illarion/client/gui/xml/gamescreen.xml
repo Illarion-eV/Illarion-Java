@@ -23,6 +23,8 @@
     <useControls filename="nifty-default-controls.xml"/>
     <useControls filename="illarion-gamecontrols.xml"/>
 
+    <resourceBundle id="gamescreen-bundle" filename="gamescreen"/>
+
     <screen id="gamescreen" controller="illarion.client.gui.controller.GameScreenController">
         <layer id="gameLayer" childLayout="center" backgroundColor="#0000">
             <panel id="gamePanel" height="100%" width="100%" backgroundColor="#0000" visibleToMouse="false"
@@ -70,8 +72,8 @@
                    marginBottom="80px" valign="center" align="center"/>
         </layer>
         <layer id="windows" childLayout="absolute">
-            <control id="inventory" name="window" style="nifty-window" title="Inventar" visible="false"
-                     width="290px" height="500px" x="400px" hideOnClose="true" visibleToMouse="true">
+            <control id="inventory" name="window" style="nifty-window" title="${gamescreen-bundle.inventory}"
+                     visible="false" width="290px" height="500px" x="400px" hideOnClose="true" visibleToMouse="true">
                 <panel childLayout="center">
                     <panel height="448px" width="227px" childLayout="absolute"
                            backgroundImage="data/gui/inventory.png" visibleToMouse="true" halign="center"
@@ -107,8 +109,8 @@
                     </panel>
                 </panel>
             </control>
-            <control id="charlist" name="window" style="nifty-window" title="Charaktere" visible="true"
-                     hideOnClose="true" height="175px" width="250px" x="100px" y="100px">
+            <control id="charlist" name="window" style="nifty-window" title="${gamescreen-bundle.characters}"
+                     visible="true" hideOnClose="true" height="175px" width="250px" x="100px" y="100px">
                 <panel childLayout="vertical">
                     <panel childLayout="horizontal">
                         <control name="label" text="Anzeige:"/>
@@ -125,4 +127,20 @@
             </control>
         </layer>
     </screen>
+
+    <popup id="numberSelect" childLayout="center">
+        <panel style="nifty-panel-small" childLayout="vertical" width="200px" height="60px" id="#numberSelectPopup">
+            <panel childLayout="horizontal">
+                <control name="button" id="#buttonLeft" label="-" width="30px" marginRight="1px"/>
+                <control name="textfield" id="#numberInput" filter="digits" width="*"/>
+                <control name="button" id="#buttonRight" label="+" width="30px" marginLeft="1px"/>
+            </panel>
+            <panel height="*"/>
+            <panel childLayout="horizontal">
+                <control name="button" id="#buttonOkay" label="${gamescreen-bundle.ok}" width="49%"/>
+                <panel width="*"/>
+                <control name="button" id="#buttonCancel" label="${gamescreen-bundle.cancel}" width="49%"/>
+            </panel>
+        </panel>
+    </popup>
 </nifty>

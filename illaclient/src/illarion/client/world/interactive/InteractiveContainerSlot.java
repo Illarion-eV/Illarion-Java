@@ -49,7 +49,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      * Drag a inventory item to a character. Does nothing currently.
      */
     @Override
-    public void dragTo(final InteractiveChar targetChar) {
+    public void dragTo(final InteractiveChar targetChar, final int count) {
         // nothing
     }
 
@@ -59,7 +59,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      * @param targetSlot the slot to drag the item to
      */
     @Override
-    public void dragTo(final InteractiveInventorySlot targetSlot) {
+    public void dragTo(final InteractiveInventorySlot targetSlot, final int count) {
         if (!targetSlot.acceptItem(getItemId())) {
             return;
         }
@@ -68,6 +68,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
                 DragScInvCmd.class);
         cmd.setSource(getContainerId(), parentSlot.getLocation());
         cmd.setTarget(targetSlot.getSlotId());
+        cmd.setCount(count);
         cmd.send();
     }
 
@@ -95,20 +96,22 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      * @param targetTile the target location on the map
      */
     @Override
-    public void dragTo(final InteractiveMapTile targetTile) {
+    public void dragTo(final InteractiveMapTile targetTile, final int count) {
         final DragScMapCmd cmd =
                 CommandFactory.getInstance().getCommand(
                         CommandList.CMD_DRAG_SC_MAP, DragScMapCmd.class);
         cmd.setSource(getContainerId(), parentSlot.getLocation());
         cmd.setTarget(targetTile.getLocation());
+        cmd.setCount(count);
         cmd.send();
     }
 
     @Override
-    public void dragTo(final InteractiveContainerSlot targetSlot) {
+    public void dragTo(final InteractiveContainerSlot targetSlot, final int count) {
         final DragScScCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_SC, DragScScCmd.class);
         cmd.setSource(getContainerId(), parentSlot.getLocation());
         cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
+        cmd.setCount(count);
         cmd.send();
     }
 

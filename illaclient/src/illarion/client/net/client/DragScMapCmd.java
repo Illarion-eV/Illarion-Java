@@ -24,12 +24,11 @@ import illarion.common.util.Location;
 import javolution.text.TextBuilder;
 
 /**
- * Client Command: Dragging an item from a container to the map (
- * {@link illarion.client.net.CommandList#CMD_DRAG_SC_MAP}).
+ * Client Command: Dragging an item from a container to the map (CommandList#CMD_DRAG_SC_MAP}).
  *
  * @author Blay09
  */
-public final class DragScMapCmd extends AbstractCommand {
+public final class DragScMapCmd extends AbstractDragCommand {
 
     /**
      * The source container of the dragging event.
@@ -76,7 +75,7 @@ public final class DragScMapCmd extends AbstractCommand {
         writer.writeByte(sourceContainer);
         writer.writeByte(sourceContainerItem);
         writer.writeLocation(targetLocation);
-        writer.writeByte((byte) 1); // Counter
+        writer.writeByte(getCount());
     }
 
     /**
@@ -115,6 +114,8 @@ public final class DragScMapCmd extends AbstractCommand {
             builder.append(sourceContainerItem);
             builder.append(" TargetLocation: ");
             builder.append(targetLocation.toString());
+            builder.append(" Count: ");
+            builder.append(getCount());
             return builder.toString();
         } finally {
             TextBuilder.recycle(builder);

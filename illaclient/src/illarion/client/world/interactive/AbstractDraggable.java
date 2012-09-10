@@ -31,15 +31,15 @@ public abstract class AbstractDraggable implements Draggable {
      *
      * @param dropTarget the target of the dropping operation
      */
-    public void dragTo(final DropTarget dropTarget) {
+    public void dragTo(final DropTarget dropTarget, final int count) {
         if (dropTarget instanceof InteractiveChar) {
-            dragTo((InteractiveChar) dropTarget);
+            dragTo((InteractiveChar) dropTarget, count);
         } else if (dropTarget instanceof InteractiveInventorySlot) {
-            dragTo((InteractiveInventorySlot) dropTarget);
+            dragTo((InteractiveInventorySlot) dropTarget, count);
         } else if (dropTarget instanceof InteractiveMapTile) {
-            dragTo((InteractiveMapTile) dropTarget);
+            dragTo((InteractiveMapTile) dropTarget, count);
         } else if (dropTarget instanceof InteractiveContainerSlot) {
-            dragTo((InteractiveContainerSlot) dropTarget);
+            dragTo((InteractiveContainerSlot) dropTarget, count);
         }
     }
 }

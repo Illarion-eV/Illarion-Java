@@ -28,7 +28,7 @@ import illarion.common.util.Location;
  *
  * @author Blay09
  */
-public final class DragMapScCmd extends AbstractCommand {
+public final class DragMapScCmd extends AbstractDragCommand {
 
     /**
      * The source location of the dragging event.
@@ -74,7 +74,7 @@ public final class DragMapScCmd extends AbstractCommand {
         writer.writeLocation(sourceLocation);
         writer.writeByte(targetContainer);
         writer.writeByte(targetContainerSlot);
-        writer.writeByte((byte) 1); // Counter
+        writer.writeByte(getCount()); // Counter
     }
 
     /**
@@ -113,5 +113,4 @@ public final class DragMapScCmd extends AbstractCommand {
         sb.append(targetContainerSlot);
         return sb.toString();
     }
-
 }

@@ -27,7 +27,7 @@ import illarion.client.net.NetCommWriter;
  *
  * @author Blay09
  */
-public final class DragScInvCmd extends AbstractCommand {
+public final class DragScInvCmd extends AbstractDragCommand {
 
     /**
      * The source container of the dragging event.
@@ -73,27 +73,27 @@ public final class DragScInvCmd extends AbstractCommand {
         writer.writeByte(sourceContainer);
         writer.writeByte(sourceContainerItem);
         writer.writeByte(targetSlot);
-        writer.writeByte((byte) 1); // Counter
+        writer.writeByte(getCount());
     }
 
     /**
      * Sets the dragging source.
      *
-     * @param Container     the container from which the item was dragged
-     * @param ContainerItem the container item id which was dragged
+     * @param container     the container from which the item was dragged
+     * @param containerItem the container item id which was dragged
      */
-    public void setSource(final int Container, final int ContainerItem) {
-        sourceContainer = (byte) Container;
-        sourceContainerItem = (byte) ContainerItem;
+    public void setSource(final int container, final int containerItem) {
+        sourceContainer = (byte) container;
+        sourceContainerItem = (byte) containerItem;
     }
 
     /**
      * Sets the dragging target.
      *
-     * @param Slot the inventory slot to which the item was dragged.
+     * @param slot the inventory slot to which the item was dragged.
      */
-    public void setTarget(final int Slot) {
-        targetSlot = (byte) Slot;
+    public void setTarget(final int slot) {
+        targetSlot = (byte) slot;
     }
 
     /**
@@ -110,6 +110,8 @@ public final class DragScInvCmd extends AbstractCommand {
         sb.append(" SourceConItemID: ");
         sb.append(sourceContainerItem);
         sb.append(" TargetSlot: ");
+        sb.append(targetSlot);
+        sb.append(" Count: ");
         sb.append(targetSlot);
         return sb.toString();
     }

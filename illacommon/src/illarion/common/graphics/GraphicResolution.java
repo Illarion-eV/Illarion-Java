@@ -60,8 +60,7 @@ public final class GraphicResolution {
      * @param newBpp    the bits per point of this resolution
      * @param refresh   the refresh rate of this resolution in Hz
      */
-    public GraphicResolution(final int newWidth, final int newHeight,
-                             final int newBpp, final int refresh) {
+    public GraphicResolution(final int newWidth, final int newHeight, final int newBpp, final int refresh) {
         height = newHeight;
         width = newWidth;
         bpp = newBpp;

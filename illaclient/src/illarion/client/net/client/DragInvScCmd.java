@@ -22,13 +22,11 @@ import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
 
 /**
- * Client Command: Dragging an item from the inventory to a container (
- * {@link illarion.client.net.CommandList#CMD_DRAG_INV_SC}).
+ * Client Command: Dragging an item from the inventory to a container ({@link CommandList#CMD_DRAG_INV_SC}).
  *
- * @author Blay09
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DragInvScCmd extends AbstractCommand {
-
+public final class DragInvScCmd extends AbstractDragCommand {
     /**
      * The source inventory slot of the dragging event.
      */
@@ -73,7 +71,7 @@ public final class DragInvScCmd extends AbstractCommand {
         writer.writeByte(sourceSlot);
         writer.writeByte(targetContainer);
         writer.writeByte(targetContainerSlot);
-        writer.writeByte((byte) 1); // Counter
+        writer.writeByte(getCount());
     }
 
     /**
@@ -113,5 +111,4 @@ public final class DragInvScCmd extends AbstractCommand {
         sb.append(targetContainerSlot);
         return sb.toString();
     }
-
 }

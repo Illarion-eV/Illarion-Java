@@ -18,11 +18,14 @@
  */
 package illarion.client.world.interactive;
 
+import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.client.world.items.ContainerSlot;
+import illarion.client.world.items.InventorySlot;
 
 /**
- * Main purpose of this class is to interconnect the GUI environment and the map
- * environment to exchange information between both.
+ * Main purpose of this class is to interconnect the GUI environment and the map environment to exchange information
+ * between both.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -30,8 +33,9 @@ public final class InteractionManager {
     private Draggable draggedObject;
     private boolean isDragging;
     private Runnable endOfDragAction;
+    private int amount;
 
-    public void dropAtMap(final int x, final int y) {
+    public void dropAtMap(final int x, final int y, final int count) {
         if (draggedObject == null) {
             return;
         }
@@ -41,11 +45,11 @@ public final class InteractionManager {
             return;
         }
 
-        draggedObject.dragTo(targetTile);
+        draggedObject.dragTo(targetTile, count);
         cancelDragging();
     }
 
-    public void dropAtContainer(final int container, final int slot) {
+    public void dropAtContainer(final int container, final int slot, final int count) {
         if (draggedObject == null) {
             return;
         }
@@ -53,11 +57,11 @@ public final class InteractionManager {
         final InteractiveContainerSlot targetSlot = World.getPlayer().getContainer(container).getSlot(slot)
                 .getInteractive();
 
-        draggedObject.dragTo(targetSlot);
+        draggedObject.dragTo(targetSlot, count);
         cancelDragging();
     }
 
-    public void dropAtInventory(final int slot) {
+    public void dropAtInventory(final int slot, final int count) {
         if (draggedObject == null) {
             return;
         }
@@ -68,7 +72,7 @@ public final class InteractionManager {
             return;
         }
 
-        draggedObject.dragTo(targetSlot);
+        draggedObject.dragTo(targetSlot, count);
         cancelDragging();
     }
 
@@ -88,17 +92,19 @@ public final class InteractionManager {
 
     public void notifyDraggingContainer(final int container, final int slot, final Runnable endOfDragOp) {
         if (!isDragging) {
-            final InteractiveContainerSlot sourceSlot = World.getPlayer().getContainer(container).getSlot(slot)
-                    .getInteractive();
+            final ContainerSlot conSlot = World.getPlayer().getContainer(container).getSlot(slot);
+            final InteractiveContainerSlot sourceSlot = conSlot.getInteractive();
 
             startDragging(sourceSlot);
             endOfDragAction = endOfDragOp;
+            amount = conSlot.getCount();
         }
     }
 
     public void notifyDraggingInventory(final int slot, final Runnable endOfDragOp) {
         if (!isDragging) {
-            final InteractiveInventorySlot sourceSlot = World.getPlayer().getInventory().getItem(slot).getInteractive();
+            final InventorySlot invSlot = World.getPlayer().getInventory().getItem(slot);
+            final InteractiveInventorySlot sourceSlot = invSlot.getInteractive();
 
             if (sourceSlot == null) {
                 return;
@@ -110,21 +116,29 @@ public final class InteractionManager {
 
             startDragging(sourceSlot);
             endOfDragAction = endOfDragOp;
+            amount = invSlot.getCount();
         }
     }
 
-    public void notifyDraggingMap(final InteractiveMapTile targetTile, final Runnable endOfDragOp) {
+    public void notifyDraggingMap(final MapTile targetTile, final Runnable endOfDragOp) {
         if (!isDragging) {
             if (targetTile == null) {
                 return;
             }
 
-            if (!targetTile.canDrag()) {
+            final InteractiveMapTile interactiveMapTile = targetTile.getInteractive();
+
+            if (!interactiveMapTile.canDrag()) {
                 return;
             }
 
-            startDragging(targetTile);
+            startDragging(interactiveMapTile);
             endOfDragAction = endOfDragOp;
+            amount = targetTile.getTopItem().getCount();
         }
+    }
+
+    public int getMovedAmount() {
+        return amount;
     }
 }

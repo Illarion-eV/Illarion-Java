@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.client;
 
@@ -23,18 +23,12 @@ import illarion.client.net.NetCommWriter;
 import illarion.common.util.Location;
 
 /**
- * Client Command: Dragging a item from a inventory slot to the game map (
- * {@link illarion.client.net.CommandList#CMD_DRAG_INV_MAP}).
- * 
+ * Client Command: Dragging a item from a inventory slot to the game map ({@link CommandList#CMD_DRAG_INV_MAP}).
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DragInvMapCmd extends AbstractCommand {
-    /**
-     * Count of Items that shall be moved.
-     */
-    private byte count;
-
+public final class DragInvMapCmd extends AbstractDragCommand {
     /**
      * The location on the map that is the target of the move operation.
      */
@@ -55,7 +49,7 @@ public final class DragInvMapCmd extends AbstractCommand {
 
     /**
      * Create a duplicate of this dragging from inventory to map command.
-     * 
+     *
      * @return new instance of this command
      */
     @Override
@@ -66,32 +60,31 @@ public final class DragInvMapCmd extends AbstractCommand {
     /**
      * Encode the data of this dragging from inventory to map command and put
      * the values into the buffer.
-     * 
+     *
      * @param writer the interface that allows writing data to the network
-     *            communication system
+     *               communication system
      */
     @Override
     public void encode(final NetCommWriter writer) {
         writer.writeByte(srcPos);
         writer.writeLocation(dstLoc);
-        writer.writeByte(count);
+        writer.writeByte(getCount());
     }
 
     /**
      * Set the source inventory slot of this dragging event. When this function
      * is executed also the value of the counter is stored automatically.
-     * 
+     *
      * @param dragSrcPos slot number of the inventory slot where the drag
-     *            started
+     *                   started
      */
     public void setDragFrom(final int dragSrcPos) {
         srcPos = (byte) dragSrcPos;
-        count = 1;
     }
 
     /**
      * The the location on the map that is the target of the dragging operation.
-     * 
+     *
      * @param newLoc the location the object is dragged to
      */
     public void setDragTo(final Location newLoc) {
@@ -100,7 +93,7 @@ public final class DragInvMapCmd extends AbstractCommand {
 
     /**
      * Get the data of this dragging from inventory to map command as string.
-     * 
+     *
      * @return the data of this command as string
      */
     @SuppressWarnings("nls")
@@ -112,7 +105,7 @@ public final class DragInvMapCmd extends AbstractCommand {
         builder.append(" Destination: ");
         builder.append(dstLoc.toString());
         builder.append(" Counter: ");
-        builder.append(count);
+        builder.append(getCount());
         return toString(builder.toString());
     }
 }

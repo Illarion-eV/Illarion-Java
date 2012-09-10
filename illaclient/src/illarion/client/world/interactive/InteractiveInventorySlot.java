@@ -55,7 +55,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      * Drag a inventory item to a character. Does nothing currently.
      */
     @Override
-    public void dragTo(final InteractiveChar targetChar) {
+    public void dragTo(final InteractiveChar targetChar, final int count) {
         // nothing
     }
 
@@ -65,7 +65,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      * @param targetSlot the slot to drag the item to
      */
     @Override
-    public void dragTo(final InteractiveInventorySlot targetSlot) {
+    public void dragTo(final InteractiveInventorySlot targetSlot, final int count) {
         if (!isValidItem()) {
             return;
         }
@@ -78,6 +78,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
                 CommandFactory.getInstance().getCommand(
                         CommandList.CMD_DRAG_INV_INV, DragInvInvCmd.class);
         cmd.setDrag(getSlotId(), targetSlot.getSlotId());
+        cmd.setCount(count);
         cmd.send();
     }
 
@@ -136,9 +137,10 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      * Drag the item in the inventory to a location on the map.
      *
      * @param targetTile the target location on the map
+     * @param count
      */
     @Override
-    public void dragTo(final InteractiveMapTile targetTile) {
+    public void dragTo(final InteractiveMapTile targetTile, final int count) {
         if (!isValidItem()) {
             return;
         }
@@ -148,11 +150,12 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
                         CommandList.CMD_DRAG_INV_MAP, DragInvMapCmd.class);
         cmd.setDragFrom(getSlotId());
         cmd.setDragTo(targetTile.getLocation());
+        cmd.setCount(count);
         cmd.send();
     }
 
     @Override
-    public void dragTo(final InteractiveContainerSlot targetSlot) {
+    public void dragTo(final InteractiveContainerSlot targetSlot, final int count) {
         if (!isValidItem()) {
             return;
         }
@@ -161,6 +164,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
                 DragInvScCmd.class);
         cmd.setSource(getSlotId());
         cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
+        cmd.setCount(count);
         cmd.send();
     }
 

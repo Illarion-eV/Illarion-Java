@@ -29,34 +29,39 @@ public interface Draggable {
      * Drag the object onto a character.
      *
      * @param targetChar the character to drag the object to
+     * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveChar targetChar);
+    void dragTo(InteractiveChar targetChar, int count);
 
     /**
      * Drag the object on a inventory slot.
      *
      * @param targetSlot the slot in the inventory that is the target
+     * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveInventorySlot targetSlot);
+    void dragTo(InteractiveInventorySlot targetSlot, int count);
 
     /**
      * Drag the object to a map tile.
      *
      * @param targetTile the tile the object shall be dragged on
+     * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveMapTile targetTile);
+    void dragTo(InteractiveMapTile targetTile, int count);
 
     /**
      * Drag the object to a container slot.
      *
      * @param targetSlot the target container slot
+     * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveContainerSlot targetSlot);
+    void dragTo(InteractiveContainerSlot targetSlot, int count);
 
     /**
      * Drag this object to a general drop target.
      *
      * @param dropTarget the target of the dropping operation
+     * @param count      the amount of objects to be transferred
      */
-    void dragTo(DropTarget dropTarget);
+    void dragTo(DropTarget dropTarget, int count);
 }

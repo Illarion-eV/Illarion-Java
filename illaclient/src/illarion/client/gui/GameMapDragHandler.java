@@ -31,10 +31,13 @@ import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.Item;
 import illarion.client.input.DragOnMapEvent;
+import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.interactive.InteractiveMapTile;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.lwjgl.input.Keyboard;
 
 /**
  * This class is used to monitor all dropping operations on the droppable area over the game map and notify the
@@ -121,12 +124,14 @@ public final class GameMapDragHandler
      * This operation is executed once a dragging operation is done.
      */
     private Runnable endOfDragOp;
+    private final NumberSelectPopupHandler numberSelect;
 
     /**
      * Default constructor that takes care to initialize the variables required for this class to work.
      */
-    public GameMapDragHandler() {
+    public GameMapDragHandler(final NumberSelectPopupHandler numberSelectPopupHandler) {
         mouseEvent = new NiftyMouseInputEvent();
+        numberSelect = numberSelectPopupHandler;
     }
 
     public void bind(final Nifty nifty, final Screen screen) {
@@ -159,13 +164,29 @@ public final class GameMapDragHandler
         final int dropSpotX = droppedElement.getX() + (droppedElement.getWidth() / 2);
         final int dropSpotY = droppedElement.getY() + (droppedElement.getHeight() / 2);
 
-        World.getInteractionManager().dropAtMap(dropSpotX, dropSpotY);
+        final int amount = World.getInteractionManager().getMovedAmount();
+        final InteractionManager iManager = World.getInteractionManager();
+        if ((amount > 1) && (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))) {
+            numberSelect.requestNewPopup(1, amount, new NumberSelectPopupHandler.Callback() {
+                @Override
+                public void popupCanceled() {
+                    // nothing
+                }
+
+                @Override
+                public void popupConfirmed(final int value) {
+                    iManager.dropAtMap(dropSpotX, dropSpotY, value);
+                }
+            });
+        } else {
+            iManager.dropAtMap(dropSpotX, dropSpotY, World.getInteractionManager().getMovedAmount());
+        }
     }
 
     public boolean handleDragOnMap(final int oldx, final int oldy, final int newx, final int newy,
                                    final ForwardingInputSystem forwardingControl) {
-        final InteractiveMapTile targetTile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(oldx,
-                oldy);
+        final MapTile mapTile = World.getMap().getInteractive().getTileOnScreenLoc(oldx, oldy);
+        final InteractiveMapTile targetTile = mapTile.getInteractive();
 
         if (targetTile == null) {
             return false;
@@ -205,7 +226,7 @@ public final class GameMapDragHandler
             activeScreen.mouseEvent(mouseEvent);
         }
 
-        World.getInteractionManager().notifyDraggingMap(targetTile, endOfDragOp);
+        World.getInteractionManager().notifyDraggingMap(mapTile, endOfDragOp);
 
         return true;
     }

@@ -41,6 +41,7 @@ import illarion.client.net.server.events.LookAtInventoryEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
+import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.MerchantItem;
 import illarion.client.world.items.MerchantList;
@@ -49,6 +50,7 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
+import org.lwjgl.input.Keyboard;
 
 import java.util.Arrays;
 import java.util.List;
@@ -164,6 +166,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     private Element inventoryWindow;
     private Nifty activeNifty;
     private Screen activeScreen;
+    private final NumberSelectPopupHandler numberSelect;
 
     /**
      * The instance of the inventory click helper that is used in this instance of the GUI inventory handler.
@@ -180,7 +183,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         }
     };
 
-    public GUIInventoryHandler() {
+    public GUIInventoryHandler(final NumberSelectPopupHandler numberSelectPopupHandler) {
         slots = new String[Inventory.SLOT_COUNT];
         slots[0] = "invslot_bag";
         slots[1] = "invslot_head";
@@ -204,6 +207,8 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         invSlots = new Element[Inventory.SLOT_COUNT];
         slotLabelVisibility = new boolean[Inventory.SLOT_COUNT];
         Arrays.fill(slotLabelVisibility, false);
+
+        numberSelect = numberSelectPopupHandler;
     }
 
     @EventSubscriber
@@ -318,7 +323,24 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     @NiftyEventSubscriber(pattern = "invslot_.*")
     public void dropInInventory(final String topic, final DroppableDroppedEvent data) {
         final int slotId = getSlotNumber(topic);
-        World.getInteractionManager().dropAtInventory(slotId);
+
+        final int amount = World.getInteractionManager().getMovedAmount();
+        final InteractionManager iManager = World.getInteractionManager();
+        if ((amount > 1) && (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))) {
+            numberSelect.requestNewPopup(1, amount, new NumberSelectPopupHandler.Callback() {
+                @Override
+                public void popupCanceled() {
+                    // nothing
+                }
+
+                @Override
+                public void popupConfirmed(final int value) {
+                    iManager.dropAtInventory(slotId, value);
+                }
+            });
+        } else {
+            iManager.dropAtInventory(slotId, World.getInteractionManager().getMovedAmount());
+        }
     }
 
     @Override

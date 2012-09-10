@@ -1,24 +1,35 @@
 /*
- * This file is part of the Illarion Graphics Engine.
+ * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Graphics Engine is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Graphics Engine is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.graphics;
 
+import de.lessvoid.nifty.slick2d.render.image.SlickLoadImageException;
+import de.lessvoid.nifty.slick2d.render.image.SlickRenderImage;
+import de.lessvoid.nifty.slick2d.render.image.loader.SlickRenderImageLoader;
 import illarion.common.util.NoResourceException;
+import javolution.text.TextBuilder;
+import javolution.util.FastMap;
+import org.apache.log4j.Logger;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.XMLPackedSheet;
+import org.newdawn.slick.loading.DeferredResource;
+import org.newdawn.slick.loading.LoadingList;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -30,25 +41,10 @@ import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.Map;
 
-import javolution.text.TextBuilder;
-import javolution.util.FastMap;
-
-import org.apache.log4j.Logger;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.XMLPackedSheet;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
-
-import de.lessvoid.nifty.slick2d.render.image.ImageSlickRenderImage;
-import de.lessvoid.nifty.slick2d.render.image.SlickLoadImageException;
-import de.lessvoid.nifty.slick2d.render.image.SlickRenderImage;
-import de.lessvoid.nifty.slick2d.render.image.loader.SlickRenderImageLoader;
-
 /**
  * Utility class to load textures. It loads up the Atlas textures and supplies
  * the informations to the sprites that need to render this textures.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TextureLoader implements SlickRenderImageLoader {
@@ -76,7 +72,7 @@ public final class TextureLoader implements SlickRenderImageLoader {
 
     /**
      * Get the singleton instance of the texture loader.
-     * 
+     *
      * @return the singleton instance of this class
      */
     public static TextureLoader getInstance() {
@@ -113,13 +109,13 @@ public final class TextureLoader implements SlickRenderImageLoader {
     @SuppressWarnings("unchecked")
     private TextureLoader() {
         rootDirectories =
-            new String[] { "data/gui/", "data/chars/", "data/items/",
-                "data/tiles/", "data/effects/" };
+                new String[]{"data/gui/", "data/chars/", "data/items/",
+                        "data/tiles/", "data/effects/"};
         Arrays.sort(rootDirectories);
 
         loadedSheets =
-            (Map<String, XMLPackedSheet>[]) Array.newInstance(Map.class,
-                rootDirectories.length);
+                (Map<String, XMLPackedSheet>[]) Array.newInstance(Map.class,
+                        rootDirectories.length);
         lastAtlasIndex = new int[rootDirectories.length];
         Arrays.fill(lastAtlasIndex, -1);
     }
@@ -136,8 +132,8 @@ public final class TextureLoader implements SlickRenderImageLoader {
         int result = 0;
         try {
             in =
-                TextureLoader.class.getClassLoader().getResourceAsStream(
-                    directory + "atlas.count");
+                    TextureLoader.class.getClassLoader().getResourceAsStream(
+                            directory + "atlas.count");
             final BufferedInputStream oIn = new BufferedInputStream(in);
             result = oIn.read();
         } catch (final IOException e) {
@@ -172,7 +168,7 @@ public final class TextureLoader implements SlickRenderImageLoader {
     }
 
     private Map<String, XMLPackedSheet> getSheetMapForDir(
-        final String resourceDir) {
+            final String resourceDir) {
         final int dirIndex = getDirectoryIndex(resourceDir);
 
         Map<String, XMLPackedSheet> sheets = loadedSheets[dirIndex];
@@ -191,7 +187,7 @@ public final class TextureLoader implements SlickRenderImageLoader {
     }
 
     private String getSheetName(final String resourceDir,
-        final String resourceName) {
+                                final String resourceName) {
         final TextBuilder builder = TextBuilder.newInstance();
         builder.append(resourceDir);
         builder.append(resourceName);
@@ -202,15 +198,15 @@ public final class TextureLoader implements SlickRenderImageLoader {
 
     /**
      * Get a texture instance pointing on a image upon a texture atlas.
-     * 
-     * @param resourceName the name of the resource
-     * @param smooth true in case the textures shall be rendered with expensive
-     *            smoothing techniques. Use this for textures that are scaled to
-     *            different sizes.
-     * @param compress allow the system to compress the image in order to speed
-     *            up the application
+     *
+     * @param resourceName   the name of the resource
+     * @param smooth         true in case the textures shall be rendered with expensive
+     *                       smoothing techniques. Use this for textures that are scaled to
+     *                       different sizes.
+     * @param compress       allow the system to compress the image in order to speed
+     *                       up the application
      * @param discardTexData set that the texture shall store the buffer with
-     *            the texture data
+     *                       the texture data
      * @return the texture that marks the image.
      */
     public Image getTexture(final String resourceName) {
@@ -218,28 +214,28 @@ public final class TextureLoader implements SlickRenderImageLoader {
 
         if (resourceDir == null) {
             throw new IllegalArgumentException("Illegal Directory: "
-                + resourceName);
+                    + resourceName);
         }
 
         return getTexture(resourceDir,
-            resourceName.substring(resourceDir.length()));
+                resourceName.substring(resourceDir.length()));
     }
 
     /**
      * Get a texture instance pointing on a image upon a texture atlas.
-     * 
-     * @param resourceDir Directory the resource is located in
+     *
+     * @param resourceDir  Directory the resource is located in
      * @param resourceName the name of the resource excluding the directory
      * @return the texture that marks the image.
      */
     @SuppressWarnings("nls")
     public Image getTexture(final String resourceDir,
-        final String dirtyResourceName) {
+                            final String dirtyResourceName) {
 
         final String resourceName = cleanTextureName(dirtyResourceName);
 
         final Map<String, XMLPackedSheet> currSheetMap =
-            getSheetMapForDir(resourceDir);
+                getSheetMapForDir(resourceDir);
 
         // Check if there is a packed sheet with the exact name of the resource
         if (currSheetMap.containsKey(resourceName)) {
@@ -258,7 +254,7 @@ public final class TextureLoader implements SlickRenderImageLoader {
 
         // Try to find a sheet with the exact name of this resource
         XMLPackedSheet localSheet =
-            loadTextureSheet(resourceDir, resourceName);
+                loadTextureSheet(resourceDir, resourceName);
         if (localSheet != null) {
             return localSheet.getSprite(resourceName);
         }
@@ -271,8 +267,8 @@ public final class TextureLoader implements SlickRenderImageLoader {
             lastAtlasIndex[dirIndex]++;
 
             atlasName =
-                builder.append(ATLAS_BASE_NAME)
-                    .append(lastAtlasIndex[dirIndex]).toString();
+                    builder.append(ATLAS_BASE_NAME)
+                            .append(lastAtlasIndex[dirIndex]).toString();
             localSheet = loadTextureSheet(resourceDir, atlasName);
             if (localSheet == null) {
                 lastAtlasIndex[dirIndex]--;
@@ -304,12 +300,8 @@ public final class TextureLoader implements SlickRenderImageLoader {
     /**
      * Load all atlas files from a directory. This does not actually load the
      * texture. But it generates a task and attaches it to the loading list.
-     * 
+     *
      * @param resourceDir the directory the atlas files are searched in
-     * @param smooth true in case the atlas files shall be scaled smoothly,
-     *            false if not
-     * @param compress allow the system to compress the image in order to save
-     *            storage space
      * @return false if there is still a atlas left to load, true in case all
      *         are loaded up
      */
@@ -320,9 +312,7 @@ public final class TextureLoader implements SlickRenderImageLoader {
         final int dirIndex = getDirectoryIndex(resourceDir);
         lastAtlasIndex[dirIndex]++;
 
-        atlasName =
-            builder.append(ATLAS_BASE_NAME).append(lastAtlasIndex[dirIndex])
-                .toString();
+        atlasName = builder.append(ATLAS_BASE_NAME).append(lastAtlasIndex[dirIndex]).toString();
 
         try {
             LoadingList.get().add(new DeferredTexture(resourceDir, atlasName));
@@ -337,7 +327,7 @@ public final class TextureLoader implements SlickRenderImageLoader {
     /**
      * This is the task that is attached to the loading list in order to load
      * the data of a texture atlas.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private final class DeferredTexture implements DeferredResource {
@@ -353,7 +343,7 @@ public final class TextureLoader implements SlickRenderImageLoader {
 
         /**
          * Create a new deferred texture loading instance.
-         * 
+         *
          * @param resDir the directory of the resource to load
          * @param resTex the name of the texture to load
          */
@@ -362,8 +352,8 @@ public final class TextureLoader implements SlickRenderImageLoader {
             texture = resTex;
 
             final URL testRef =
-                DeferredTexture.class.getClassLoader().getResource(
-                    dir + texture + ".xml");
+                    DeferredTexture.class.getClassLoader().getResource(
+                            dir + texture + ".xml");
             if (testRef == null) {
                 throw new NoResourceException();
             }
@@ -390,17 +380,17 @@ public final class TextureLoader implements SlickRenderImageLoader {
     }
 
     protected XMLPackedSheet loadTextureSheet(final String resourceDir,
-        final String resourceName) {
+                                              final String resourceName) {
 
         XMLPackedSheet result = null;
         final String sheetName = getSheetName(resourceDir, resourceName);
         if (TextureLoader.class.getClassLoader().getResource(
-            sheetName + ".png") == null) {
+                sheetName + ".png") == null) {
             return null;
         }
         try {
             result =
-                new XMLPackedSheet(sheetName + ".png", sheetName + ".xml");
+                    new XMLPackedSheet(sheetName + ".png", sheetName + ".xml");
         } catch (final SlickException e) {
             // resource does not appear to be available
         }
@@ -412,7 +402,7 @@ public final class TextureLoader implements SlickRenderImageLoader {
 
     /**
      * Trigger preloading the atlas textures of all folders.
-     * 
+     *
      * @return false in case there is still something left to load, true in case
      *         everything is loaded up
      */
@@ -422,10 +412,10 @@ public final class TextureLoader implements SlickRenderImageLoader {
 
     /**
      * Trigger preloading the atlas textures of all folders.
-     * 
+     *
      * @param discardTexData in case this is set true the texture data is
-     *            deleted once the texture is load to OpenGL in order to
-     *            preserve memory space
+     *                       deleted once the texture is load to OpenGL in order to
+     *                       preserve memory space
      * @return false in case there is still something left to load, true in case
      *         everything is loaded up
      */
@@ -444,14 +434,14 @@ public final class TextureLoader implements SlickRenderImageLoader {
 
     @Override
     public SlickRenderImage loadImage(final String filename,
-        final boolean filterLinear) throws SlickLoadImageException {
+                                      final boolean filterLinear) throws SlickLoadImageException {
 
         return new TextureRenderImage(
-            AccessController.doPrivileged(new PrivilegedAction<Image>() {
-                @Override
-                public Image run() {
-                    return getTexture(filename);
-                }
-            }));
+                AccessController.doPrivileged(new PrivilegedAction<Image>() {
+                    @Override
+                    public Image run() {
+                        return getTexture(filename);
+                    }
+                }));
     }
 }

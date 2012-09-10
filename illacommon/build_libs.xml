@@ -212,8 +212,7 @@
         </resourcebuild>
     </target>
 
-    <target name="prepare_lwjgl" description="prepare the LWJGL bundle"
-            depends="check_optional_dirs,init_libs,buildTasks,native_build_pattern" if="keys.exist">
+    <target name="create_lwjgl_natives" description="create the native jars for LWJGL">
         <jar jarfile="${common}/lwjgl-natives-windows-i586.jar">
             <fileset dir="${native}/win32">
                 <include name="lwjgl.dll"/>
@@ -328,7 +327,10 @@
                 <patternset refid="lwjgl.natives"/>
             </fileset>
         </move>
+    </target>
 
+    <target name="prepare_lwjgl" description="prepare the LWJGL bundle"
+            depends="check_optional_dirs,init_libs,buildTasks,native_build_pattern" if="keys.exist">
         <resourceprepare targetdir="${signedlibs}" usepack200="true">
             <fileset refid="lwjgl"/>
             <fileset dir="${lwjgl.dir}">

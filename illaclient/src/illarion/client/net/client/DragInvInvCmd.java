@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.client;
 
@@ -22,18 +22,12 @@ import illarion.client.net.CommandList;
 import illarion.client.net.NetCommWriter;
 
 /**
- * Client Command: Dragging a item from one inventory slot to another (
- * {@link illarion.client.net.CommandList#CMD_DRAG_INV_INV}).
- * 
+ * Client Command: Dragging a item from one inventory slot to another ({@link CommandList#CMD_DRAG_INV_INV}).
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DragInvInvCmd extends AbstractCommand {
-    /**
-     * The current counter value.
-     */
-    private byte count;
-
+public final class DragInvInvCmd extends AbstractDragCommand {
     /**
      * The inventory position the drag ends at.
      */
@@ -53,7 +47,7 @@ public final class DragInvInvCmd extends AbstractCommand {
 
     /**
      * Create a duplicate of this dragging from inventory to inventory command.
-     * 
+     *
      * @return new instance of this command
      */
     @Override
@@ -64,36 +58,35 @@ public final class DragInvInvCmd extends AbstractCommand {
     /**
      * Encode the data of this dragging from inventory to inventory command and
      * put the values into the buffer.
-     * 
+     *
      * @param writer the interface that allows writing data to the network
-     *            communication system
+     *               communication system
      */
     @Override
     public void encode(final NetCommWriter writer) {
         writer.writeByte(srcPos);
         writer.writeByte(dstPos);
-        writer.writeByte(count);
+        writer.writeByte(getCount());
     }
 
     /**
      * Set the source and the destination inventory slot of this dragging event.
      * When this function is executed also the value of the counter is stored
      * automatically.
-     * 
+     *
      * @param dragSrcPos slot number of the inventory slot where the drag
-     *            started
+     *                   started
      * @param dragDstPos slot number of the inventory slot where the drag ended
      */
     public void setDrag(final int dragSrcPos, final int dragDstPos) {
         srcPos = (byte) dragSrcPos;
         dstPos = (byte) dragDstPos;
-        count = 1;
     }
 
     /**
      * Get the data of this dragging from inventory to inventory command as
      * string.
-     * 
+     *
      * @return the data of this command as string
      */
     @SuppressWarnings("nls")
@@ -105,7 +98,7 @@ public final class DragInvInvCmd extends AbstractCommand {
         builder.append(" Destination: ");
         builder.append(dstPos);
         builder.append(" Counter: ");
-        builder.append(count);
+        builder.append(getCount());
         return toString(builder.toString());
     }
 }
