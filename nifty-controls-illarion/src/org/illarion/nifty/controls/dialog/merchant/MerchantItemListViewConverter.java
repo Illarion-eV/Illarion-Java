@@ -86,9 +86,15 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
         if (money > 0) {
             textDisplay.getRenderer(TextRenderer.class).setText(Integer.toString(money));
             imageDisplay.setVisible(true);
+            textDisplay.setConstraintWidth(SizeValue.px(34));
+            imageDisplay.setConstraintWidth(SizeValue.px(16));
+            imageDisplay.setMarginRight(SizeValue.px(2));
         } else {
             textDisplay.setVisible(false);
             imageDisplay.setVisible(false);
+            textDisplay.setConstraintWidth(SizeValue.px(0));
+            imageDisplay.setConstraintWidth(SizeValue.px(0));
+            imageDisplay.setMarginRight(SizeValue.px(0));
         }
     }
 
