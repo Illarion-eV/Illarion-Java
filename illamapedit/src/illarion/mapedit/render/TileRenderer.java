@@ -55,8 +55,8 @@ public class TileRenderer extends AbstractMapRenderer {
     @Override
     public void renderMap(final Graphics2D g) {
         final Map map = getMap();
-        final int width = map.getW();
-        final int height = map.getH();
+        final int width = map.getWidth();
+        final int height = map.getHeight();
         final AffineTransform transform = g.getTransform();
         g.translate(getTranslateX(), getTranslateY());
         g.scale(getZoom(), getZoom());

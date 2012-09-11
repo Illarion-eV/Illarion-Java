@@ -16,32 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.render;
+package illarion.mapedit.events;
 
-import java.awt.*;
+import illarion.mapedit.tools.AbstractTool;
+import illarion.mapedit.util.MouseButton;
 
 /**
- * This method renders the grid, to see the tiles better.
- *
  * @author Tim
  */
-public class GridRenderer extends AbstractMapRenderer {
+public class SelectToolEvent {
 
+    private final AbstractTool tool;
+    private final MouseButton button;
 
-    /**
-     * Creates a new map renderer
-     */
-    public GridRenderer(final RendererManager manager) {
-        super(manager);
+    public SelectToolEvent(final AbstractTool tool, final MouseButton button) {
+
+        this.tool = tool;
+        this.button = button;
     }
 
-    @Override
-    public void renderMap(final Graphics2D g) {
-
+    public AbstractTool getTool() {
+        return tool;
     }
 
-    @Override
-    protected int getRenderPriority() {
-        return 0;
+    public MouseButton getButton() {
+        return button;
     }
 }

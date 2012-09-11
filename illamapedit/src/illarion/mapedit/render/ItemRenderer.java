@@ -42,8 +42,8 @@ public class ItemRenderer extends AbstractMapRenderer {
     @Override
     public void renderMap(final Graphics2D g) {
         final Map map = getMap();
-        final int w = map.getW();
-        final int h = map.getH();
+        final int w = map.getWidth();
+        final int h = map.getHeight();
         final AffineTransform t = g.getTransform();
         g.translate(getTranslateX(), getTranslateY());
         g.scale(getZoom(), getZoom());

@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
+ * This class takes care of loading and saving maps
+ *
  * @author Tim
  */
 public class MapIO {
@@ -45,7 +47,17 @@ public class MapIO {
     private MapIO() {
     }
 
+    /**
+     * Loads a map from a specified file
+     *
+     * @param path the path
+     * @param name the map name
+     * @return the map
+     * @throws IOException if an error occurs
+     */
     public static Map loadMap(final String path, final String name) throws IOException {
+
+//        Open the streams for all 3 files, containing the map data
         final File tileFile = new File(path, name + EXT_TILE);
         final File itemFile = new File(path, name + EXT_ITEM);
         final File warpFile = new File(path, name + EXT_WARP);
@@ -53,16 +65,21 @@ public class MapIO {
         final BufferedReader itemInput = new BufferedReader(new InputStreamReader(new FileInputStream(itemFile)));
         final BufferedReader warpInput = new BufferedReader(new InputStreamReader(new FileInputStream(warpFile)));
 
-
+//        Loads the level
         final int z = loadNextHeader(tileInput);
+//        Loads the x position
         final int x = loadNextHeader(tileInput);
+//        Loads the y position
         final int y = loadNextHeader(tileInput);
+//        Loads the width
         final int w = loadNextHeader(tileInput);
+//        Loads the height
         final int h = loadNextHeader(tileInput);
 
         final Map map = new Map(name, path, w, h, x, y, z);
         int i = 0;
         String s;
+//        Load all tiles
         while ((s = tileInput.readLine()) != null) {
             i++;
             final String[] sections = DELIMITER.split(s);
@@ -77,6 +94,7 @@ public class MapIO {
             map.setTileAt(tx, ty, tile);
         }
         i = 0;
+//        Load the items
         while ((s = itemInput.readLine()) != null) {
             i++;
             final String[] sections = DELIMITER.split(s);
@@ -93,6 +111,7 @@ public class MapIO {
             map.addItemAt(ix, iy, item);
         }
         i = 0;
+//        Load the warp points
         while ((s = warpInput.readLine()) != null) {
             i++;
             final String[] sections = DELIMITER.split(s);
@@ -105,20 +124,41 @@ public class MapIO {
             final int ty = Integer.parseInt(sections[3]);
             final int tz = Integer.parseInt(sections[4]);
             final MapWarpPoint warp = new MapWarpPoint(tx, ty, tz);
-            map.setWarptAt(sx, sy, warp);
+            map.setWarpAt(sx, sy, warp);
         }
 
         return map;
     }
 
+    /**
+     * Reads the number, that begins with the 3th character of the line
+     *
+     * @param input
+     * @return
+     * @throws IOException
+     */
     private static int loadNextHeader(final BufferedReader input) throws IOException {
         return Integer.parseInt(input.readLine().substring(3));
     }
 
+    /**
+     * Loads the map, with the map name and path, stored in the map object
+     *
+     * @param map the map to save
+     * @throws IOException
+     */
     public static void saveMap(final Map map) throws IOException {
         saveMap(map, map.getName(), map.getPath());
     }
 
+    /**
+     * Loads the map, with specified the map name and path.
+     *
+     * @param map
+     * @param name
+     * @param path
+     * @throws IOException
+     */
     public static void saveMap(final Map map, final String name, final String path) throws IOException {
         final File tileFile = new File(path, name + EXT_TILE);
         final File itemFile = new File(path, name + EXT_ITEM);
@@ -133,11 +173,11 @@ public class MapIO {
         tileOutput.write(String.format("%s%d%s", HEADER_L, map.getZ(), NEWLINE));
         tileOutput.write(String.format("%s%d%s", HEADER_X, map.getX(), NEWLINE));
         tileOutput.write(String.format("%s%d%s", HEADER_Y, map.getY(), NEWLINE));
-        tileOutput.write(String.format("%s%d%s", HEADER_W, map.getW(), NEWLINE));
-        tileOutput.write(String.format("%s%d%s", HEADER_H, map.getH(), NEWLINE));
+        tileOutput.write(String.format("%s%d%s", HEADER_W, map.getWidth(), NEWLINE));
+        tileOutput.write(String.format("%s%d%s", HEADER_H, map.getHeight(), NEWLINE));
 
-        for (int y = 0; y < map.getW(); ++y) {
-            for (int x = 0; x < map.getH(); ++x) {
+        for (int y = 0; y < map.getWidth(); ++y) {
+            for (int x = 0; x < map.getHeight(); ++x) {
                 final MapTile tile = map.getTileAt(x, y);
                 tileOutput.write(String.format("%d;%d;%d;%d;0%s", x, y, tile.getId(), tile.getMusicID(), NEWLINE));
 

@@ -20,16 +20,38 @@ package illarion.mapedit.data;
 
 
 /**
+ * This class represents a whole map, including name, path, dimensions, and data.
+ *
  * @author Tim
  */
 public class Map {
-
+    /**
+     * The map name
+     */
     private final String name;
+    /**
+     * The path to save this map
+     */
     private final String path;
-    private final int w;
-    private final int h;
+    /**
+     * The width of the map
+     */
+    private final int width;
+    /**
+     * The height of the map
+     */
+    private final int height;
+    /**
+     * The x coordinate of the origin of the map
+     */
     private final int x;
+    /**
+     * The y coordinate
+     */
     private final int y;
+    /**
+     * The map level
+     */
     private final int z;
 
     /**
@@ -37,12 +59,23 @@ public class Map {
      */
     private final MapTile[] mapTileData;
 
+    /**
+     * Creates a new map
+     *
+     * @param name the map name
+     * @param path the map path
+     * @param w    the with of the map
+     * @param h    the height of the map
+     * @param x    the x coordinate of the origin of the map
+     * @param y    the y coordinate of the origin of the map
+     * @param z    the map level (= z coordinate)
+     */
     public Map(final String name, final String path, final int w, final int h,
                final int x, final int y, final int z) {
         this.name = name;
         this.path = path;
-        this.w = w;
-        this.h = h;
+        this.width = w;
+        this.height = h;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -55,17 +88,31 @@ public class Map {
      * @param mapTile the tile to add.
      */
     public void setTileAt(final int x, final int y, final MapTile mapTile) {
-        final int i = (y * w) + x;
+        final int i = (y * width) + x;
         mapTileData[i] = mapTile;
     }
 
+    /**
+     * Adds an item to a specified position.
+     *
+     * @param x       the x coordinate relative to the origin
+     * @param y       the y coordinate relative to the origin
+     * @param mapItem the item  <- u don't sayy ;)
+     */
     public void addItemAt(final int x, final int y, final MapItem mapItem) {
-        final int i = (y * w) + x;
+        final int i = (y * width) + x;
         mapTileData[i].getMapItems().add(mapItem);
     }
 
-    public void setWarptAt(final int x, final int y, final MapWarpPoint warpPoint) {
-        final int i = (y * w) + x;
+    /**
+     * Sets a warp point at to specified tile
+     *
+     * @param x         the x coordinate of the warp point
+     * @param y         the y coordinate of the warp point
+     * @param warpPoint the warp point <- u don't sayy ;)
+     */
+    public void setWarpAt(final int x, final int y, final MapWarpPoint warpPoint) {
+        final int i = (y * width) + x;
         mapTileData[i].setMapWarpPoint(warpPoint);
     }
 
@@ -77,7 +124,7 @@ public class Map {
      * @return the tile
      */
     public MapTile getTileAt(final int x, final int y) {
-        final int i = (y * w) + x;
+        final int i = (y * width) + x;
         if (mapTileData[i] != null) {
             return mapTileData[i];
         } else {
@@ -87,35 +134,63 @@ public class Map {
 
     }
 
-    public int getW() {
-        return w;
+    /**
+     * @return the map width
+     */
+    public int getWidth() {
+        return width;
     }
 
-    public int getH() {
-        return h;
+    /**
+     * @return the map height
+     */
+    public int getHeight() {
+        return height;
     }
 
+    /**
+     * @return the x coordinate of the origin in global coordinates
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * @return the y coordinate of the origin in gobal coordinates
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * @return the map level
+     */
     public int getZ() {
         return z;
     }
 
+    /**
+     * @return the path to save the map
+     */
     public String getPath() {
         return path;
     }
 
+    /**
+     * @return the map name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Checks if the map contains the following coordinates
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return {@code true} if the map contains x and y
+     */
     public boolean contains(final int x, final int y) {
-        return x >= 0 && y >= 0 && x < getW() && y < getH();
+        return x >= 0 && y >= 0 && x < getWidth() && y < getHeight();
     }
 }

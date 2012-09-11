@@ -19,13 +19,11 @@
 package illarion.mapedit.tools;
 
 import illarion.mapedit.data.Map;
-import illarion.mapedit.events.ItemSelectedEvent;
-import illarion.mapedit.events.MapClickedEvent;
-import illarion.mapedit.events.RepaintRequestEvent;
-import illarion.mapedit.events.TileSelectedEvent;
+import illarion.mapedit.events.*;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.util.Disposable;
+import illarion.mapedit.util.MouseButton;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -47,13 +45,13 @@ public final class ToolManager implements Disposable {
     public ToolManager(final Map map) {
         AnnotationProcessor.process(this);
         this.map = map;
-        setTool(new SingleTileTool(), 0);
+        setTool(new SingleTileTool(), MouseButton.LeftButton);
     }
 
-    public void setTool(final AbstractTool tool, final int button) {
+    public void setTool(final AbstractTool tool, final MouseButton button) {
         if (tool != null)
             tool.registerManager(this);
-        actualTool[button] = tool;
+        actualTool[button.ordinal()] = tool;
     }
 
     public Map getMap() {
@@ -62,6 +60,10 @@ public final class ToolManager implements Disposable {
 
     TileImg getSelectedTile() {
         return selectedTile;
+    }
+
+    ItemImg getSelectedItem() {
+        return selectedItem;
     }
 
     @Override
@@ -90,7 +92,9 @@ public final class ToolManager implements Disposable {
         LOGGER.debug("Selected: " + e.getItemImg());
     }
 
-    ItemImg getSelectedItem() {
-        return selectedItem;
+    @EventSubscriber(eventClass = SelectToolEvent.class)
+    public void onSelectTool(SelectToolEvent e) {
+        setTool(e.getTool(), e.getButton());
     }
+
 }
