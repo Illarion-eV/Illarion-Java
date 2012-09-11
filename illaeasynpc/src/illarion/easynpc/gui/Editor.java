@@ -29,7 +29,6 @@ import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
-import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -242,7 +241,7 @@ public final class Editor extends RTextScrollPane {
         }
 
         final EasyNpcScript script = new EasyNpcScript();
-        script.readNPCScript(getScriptText());
+        script.readFromEditor(this);
         currentData = Parser.getInstance().parse(script);
 
         if (currentData.hasErrors()) {
@@ -433,7 +432,7 @@ public final class Editor extends RTextScrollPane {
 
         if (parsedVersion == null) {
             final EasyNpcScript script = new EasyNpcScript();
-            script.readNPCScript(getScriptText());
+            script.readFromEditor(this);
             Parser.getInstance().parseAsynchronously(script);
         }
     }
@@ -449,15 +448,17 @@ public final class Editor extends RTextScrollPane {
 
     @EventSubscriber
     public void onParserFinished(final ParserFinishedEvent event) {
-        final ParsedNpc currentData = event.getNpc();
-        if (currentData.hasErrors()) {
-            errorNpc = currentData;
-            parsedVersion = null;
-            MainFrame.getInstance().getErrorArea().addErrorEditor(this);
-        } else {
-            parsedVersion = currentData;
-            errorNpc = null;
-            MainFrame.getInstance().getErrorArea().removeErrorEditor(this);
+        if (event.getScript().getSourceEditor() == this) {
+            final ParsedNpc currentData = event.getNpc();
+            if (currentData.hasErrors()) {
+                errorNpc = currentData;
+                parsedVersion = null;
+                MainFrame.getInstance().getErrorArea().addErrorEditor(this);
+            } else {
+                parsedVersion = currentData;
+                errorNpc = null;
+                MainFrame.getInstance().getErrorArea().removeErrorEditor(this);
+            }
         }
     }
 }

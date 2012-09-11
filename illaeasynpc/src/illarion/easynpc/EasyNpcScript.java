@@ -18,6 +18,8 @@
  */
 package illarion.easynpc;
 
+import illarion.easynpc.gui.Editor;
+
 import java.io.*;
 import java.nio.charset.*;
 import java.util.ArrayList;
@@ -140,7 +142,7 @@ public final class EasyNpcScript {
      * This list contains all entries in this script written in the order as
      * they are written in the script.
      */
-    private final List<Line> entries;
+    private final List<EasyNpcScript.Line> entries;
 
     /**
      * The file that script was load from.
@@ -148,11 +150,16 @@ public final class EasyNpcScript {
     private File sourceScriptFile;
 
     /**
+     * The editor this easyNPC script was generated from.
+     */
+    private Editor sourceEditor;
+
+    /**
      * Create a new, empty EasyNPC Script. This scripts waits to be filled with
      * new entries.
      */
     public EasyNpcScript() {
-        entries = new ArrayList<Line>();
+        entries = new ArrayList<EasyNpcScript.Line>();
     }
 
     /**
@@ -176,7 +183,7 @@ public final class EasyNpcScript {
      * @param index The index of the entry
      * @return the entry from the script file on the given index
      */
-    public Line getEntry(final int index) {
+    public EasyNpcScript.Line getEntry(final int index) {
         return entries.get(index);
     }
 
@@ -205,6 +212,15 @@ public final class EasyNpcScript {
      */
     public File getSourceScriptFile() {
         return sourceScriptFile;
+    }
+
+    /**
+     * Get the source editor that supplied the data for this script.
+     *
+     * @return the source editor of this script
+     */
+    public Editor getSourceEditor() {
+        return sourceEditor;
     }
 
     /**
@@ -249,6 +265,17 @@ public final class EasyNpcScript {
     }
 
     /**
+     * Read the NPC script data from a editor.
+     *
+     * @param editor the editor that supplies the script data
+     */
+    public void readFromEditor(final Editor editor) {
+        sourceEditor = editor;
+
+        readNPCScript(editor.getScriptText());
+    }
+
+    /**
      * Write the content of this script in the proper format to the disk.
      *
      * @param targetFile the file that is supposed to store the new written
@@ -260,7 +287,7 @@ public final class EasyNpcScript {
                 new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
                         targetFile), "UTF-8"));
 
-        for (final Line line : entries) {
+        for (final EasyNpcScript.Line line : entries) {
             writer.write(line.getLine());
             writer.write(NEW_LINE);
         }
@@ -323,22 +350,22 @@ public final class EasyNpcScript {
             lineNumber++;
             if (line.isEmpty()) {
                 if (!currentlyEmptyBlock) {
-                    entries.add(new Line(lineNumber, line));
+                    entries.add(new EasyNpcScript.Line(lineNumber, line));
                 }
                 currentlyEmptyBlock = true;
                 currentlyCommentBlock = false;
             } else if (line.startsWith(LUA_COMMENT_LEAD)) {
                 if (currentlyCommentBlock) {
-                    final Line lastLine = entries.remove(entries.size() - 1);
-                    entries.add(new Line(lastLine.getLineNumber(), lastLine
+                    final EasyNpcScript.Line lastLine = entries.remove(entries.size() - 1);
+                    entries.add(new EasyNpcScript.Line(lastLine.getLineNumber(), lastLine
                             .getLine() + NEW_LINE + line));
                 } else {
-                    entries.add(new Line(lineNumber, line));
+                    entries.add(new EasyNpcScript.Line(lineNumber, line));
                 }
                 currentlyCommentBlock = true;
                 currentlyEmptyBlock = false;
             } else {
-                entries.add(new Line(lineNumber, line));
+                entries.add(new EasyNpcScript.Line(lineNumber, line));
                 currentlyCommentBlock = false;
                 currentlyEmptyBlock = false;
             }

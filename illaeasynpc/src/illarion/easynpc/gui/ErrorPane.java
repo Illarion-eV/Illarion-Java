@@ -31,6 +31,7 @@ import java.awt.image.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * This error pane is showing all needed components to display the errors
@@ -107,9 +108,8 @@ final class ErrorPane extends JPanel {
         public int getRowCount() {
             int editorCount = errorEditors.size();
             int errorCount = 0;
-            ParsedNpc problemNpc;
             for (int i = 0; i < editorCount; i++) {
-                problemNpc = errorEditors.get(i).getErrorNpc();
+                final ParsedNpc problemNpc = errorEditors.get(i).getErrorNpc();
                 if (problemNpc == null) {
                     errorEditors.remove(i);
                     editorCount--;
@@ -127,27 +127,26 @@ final class ErrorPane extends JPanel {
             int errorCount = 0;
             ParsedNpc problemNpc;
             int localErrors = 0;
-            for (int i = 0; i < editorCount; i++) {
-                problemNpc = errorEditors.get(i).getErrorNpc();
+
+            final ListIterator<Editor> editorItr = errorEditors.listIterator();
+
+            while (editorItr.hasNext()) {
+                final Editor editor = editorItr.next();
+                problemNpc = editor.getErrorNpc();
                 if (problemNpc == null) {
-                    errorEditors.remove(i);
-                    editorCount--;
-                    i--;
+                    editorItr.remove();
                 } else {
                     localErrors = problemNpc.getErrorCount();
                     if ((errorCount + localErrors) >= (rowIndex + 1)) {
                         if (columnIndex == 1) {
-                            return errorEditors.get(i).getFileName();
+                            return editor.getFileName();
                         }
-                        final ParsedNpc.Error error =
-                                problemNpc.getError(rowIndex - errorCount);
+                        final ParsedNpc.Error error = problemNpc.getError(rowIndex - errorCount);
                         if (columnIndex == 0) {
                             return error.getMessage();
                         }
                         if (columnIndex == 2) {
-                            return "line "
-                                    + Integer.toString(error.getLine()
-                                    .getLineNumber());
+                            return "line " + Integer.toString(error.getLine().getLineNumber());
                         }
                     }
                     errorCount += localErrors;
@@ -257,7 +256,6 @@ final class ErrorPane extends JPanel {
 
     public void updateErrors() {
         tableModel.fireTableDataChanged();
-        summery.setText(String.format(errorMessage,
-                Integer.valueOf(errorList.getRowCount())));
+        summery.setText(String.format(errorMessage, Integer.valueOf(errorList.getRowCount())));
     }
 }
