@@ -72,15 +72,15 @@ public final class Item extends ConditionParser {
                 data = ItemData.getData("");
             }
 
-            final String comparator = stringMatcher.group(stringMatcher.groupCount() - 2);
+            final String comparator = stringMatcher.group(stringMatcher.groupCount() - 1);
             final AdvancedNumber targetValue =
-                    AdvNumber.getNumber(stringMatcher.group(stringMatcher.groupCount() - 1));
+                    AdvNumber.getNumber(stringMatcher.group(stringMatcher.groupCount()));
 
             setLine(stringMatcher.replaceFirst(""));
 
             if (targetValue == null) {
                 reportError(String.format(Lang.getMsg(getClass(), "number"),
-                        stringMatcher.group(4), stringMatcher.group(0)));
+                        stringMatcher.group(stringMatcher.groupCount()), stringMatcher.group(0)));
                 return extract();
             }
 
