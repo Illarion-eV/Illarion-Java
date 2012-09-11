@@ -74,7 +74,7 @@ public final class ParsedItemData {
      * @return the data values for the lua script
      */
     public String getLua() {
-        if (hasValues()) {
+        if (!hasValues()) {
             return "nil";
         }
 
