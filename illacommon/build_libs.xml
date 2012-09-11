@@ -331,6 +331,11 @@
 
     <target name="prepare_lwjgl" description="prepare the LWJGL bundle"
             depends="check_optional_dirs,init_libs,buildTasks,native_build_pattern" if="keys.exist">
+
+        <patternset id="lwjgl.natives">
+            <include name="lwjgl-natives-*.jar"/>
+        </patternset>
+
         <resourceprepare targetdir="${signedlibs}" usepack200="true">
             <fileset refid="lwjgl"/>
             <fileset dir="${lwjgl.dir}">
