@@ -20,9 +20,11 @@ package illarion.easynpc.parser.talk.consequences;
 
 import illarion.easynpc.Lang;
 import illarion.easynpc.data.Items;
+import illarion.easynpc.parsed.shared.ParsedItemData;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.parsed.talk.consequences.ConsequenceItem;
+import illarion.easynpc.parser.shared.ItemData;
 import illarion.easynpc.parser.talk.AdvNumber;
 import illarion.easynpc.parser.talk.ConsequenceParser;
 import org.fife.ui.rsyntaxtextarea.Token;
@@ -42,7 +44,7 @@ public final class Item extends ConsequenceParser {
      */
     @SuppressWarnings("nls")
     private static final Pattern STRING_FIND = Pattern.compile("\\s*item\\s*\\(\\s*(\\d{1,4})\\s*[,]\\s*"
-            + AdvNumber.ADV_NUMBER_REGEXP + "\\s*[,]\\s*(\\d+)\\s*[,]\\s*(\\d+)\\s*\\)\\s*,\\s*",
+            + AdvNumber.ADV_NUMBER_REGEXP + "\\s*[,]\\s*(\\d+)\\s*([,]\\s*" + ItemData.REGEXP + "\\s*)?\\)\\s*,\\s*",
             Pattern.CASE_INSENSITIVE);
 
     /**
@@ -58,10 +60,15 @@ public final class Item extends ConsequenceParser {
         final Matcher stringMatcher = STRING_FIND.matcher(getNewLine());
         if (stringMatcher.find()) {
             final int itemId = Integer.parseInt(stringMatcher.group(1));
-            final AdvancedNumber count =
-                    AdvNumber.getNumber(stringMatcher.group(2));
+            final AdvancedNumber count = AdvNumber.getNumber(stringMatcher.group(2));
             final int quality = Integer.parseInt(stringMatcher.group(3));
-            final int data = Integer.parseInt(stringMatcher.group(4));
+
+            final ParsedItemData data;
+            if (stringMatcher.group(4) != null) {
+                data = ItemData.getData(stringMatcher.group(5));
+            } else {
+                data = ItemData.getData("");
+            }
 
             setLine(stringMatcher.replaceFirst(""));
 

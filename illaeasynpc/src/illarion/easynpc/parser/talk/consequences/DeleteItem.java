@@ -20,9 +20,11 @@ package illarion.easynpc.parser.talk.consequences;
 
 import illarion.easynpc.Lang;
 import illarion.easynpc.data.Items;
+import illarion.easynpc.parsed.shared.ParsedItemData;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.parsed.talk.consequences.ConsequenceDeleteItem;
+import illarion.easynpc.parser.shared.ItemData;
 import illarion.easynpc.parser.talk.AdvNumber;
 import illarion.easynpc.parser.talk.ConsequenceParser;
 import org.fife.ui.rsyntaxtextarea.Token;
@@ -43,8 +45,8 @@ public final class DeleteItem extends ConsequenceParser {
      */
     @SuppressWarnings("nls")
     private static final Pattern STRING_FIND =
-            Pattern.compile("\\s*deleteitem\\s*\\(\\s*(\\d{1,4})\\s*[,]\\s*" + AdvNumber.ADV_NUMBER_REGEXP + "\\s*([," +
-                    "]\\s*(\\d+))?\\)\\s*,\\s*", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("\\s*deleteitem\\s*\\(\\s*(\\d{1,4})\\s*[,]\\s*" + AdvNumber.ADV_NUMBER_REGEXP +
+                    "\\s*([,]\\s*" + ItemData.REGEXP + "\\s*)?\\)\\s*,\\s*", Pattern.CASE_INSENSITIVE);
 
     /**
      * Extract a condition from the working string.
@@ -63,9 +65,11 @@ public final class DeleteItem extends ConsequenceParser {
                     AdvNumber.getNumber(stringMatcher.group(2));
 
             final String dataString = stringMatcher.group(4);
-            long dataValue = -1L;
+            final ParsedItemData dataValue;
             if (dataString != null) {
-                dataValue = Long.parseLong(dataString);
+                dataValue = ItemData.getData(stringMatcher.group(5));
+            } else {
+                dataValue = ItemData.getData("");
             }
 
             setLine(stringMatcher.replaceFirst(""));
@@ -90,10 +94,7 @@ public final class DeleteItem extends ConsequenceParser {
                 return extract();
             }
 
-            if (dataValue > -1L) {
-                return new ConsequenceDeleteItem(item, targetValue, dataValue);
-            }
-            return new ConsequenceDeleteItem(item, targetValue);
+            return new ConsequenceDeleteItem(item, targetValue, dataValue);
         }
 
         return null;

@@ -19,6 +19,7 @@
 package illarion.easynpc.parsed.talk.consequences;
 
 import illarion.easynpc.data.Items;
+import illarion.easynpc.parsed.shared.ParsedItemData;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaWriter;
@@ -65,13 +66,9 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
     private static final String LUA_MODULE = BASE_LUA_MODULE + "deleteitem";
 
     /**
-     * The constant for the data value in case there is no data used.
-     */
-    private static final long NO_DATA = -1L;
-    /**
      * The data value for this consequence in case there is any.
      */
-    private final long data;
+    private final ParsedItemData data;
 
     /**
      * The item that is supposed to be deleted by this consequence.
@@ -84,16 +81,6 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
     private final AdvancedNumber value;
 
     /**
-     * The constructor that allows setting the item and the count of items that are created by this consequence.
-     *
-     * @param newItem  the item that is supposed to be deleted
-     * @param newValue the amount of items that is supposed to be deleted
-     */
-    public ConsequenceDeleteItem(final Items newItem, final AdvancedNumber newValue) {
-        this(newItem, newValue, NO_DATA);
-    }
-
-    /**
      * The constructor that allows setting the item, the count and the data of items that are created by this
      * consequence.
      *
@@ -101,7 +88,7 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
      * @param newValue the amount of items that is supposed to be deleted
      * @param newData  the data value that is used for this delete operation
      */
-    public ConsequenceDeleteItem(final Items newItem, final AdvancedNumber newValue, final long newData) {
+    public ConsequenceDeleteItem(final Items newItem, final AdvancedNumber newValue, final ParsedItemData newData) {
         item = newItem;
         value = newValue;
         data = newData;
@@ -120,11 +107,11 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
      */
     @Override
     public void writeEasyNpc(final Writer target) throws IOException {
-        if (data == NO_DATA) {
-            target.write(String.format(EASY_CODE, Integer.toString(item.getItemId()), value.getEasyNPC()));
-        } else {
+        if (data.hasValues()) {
             target.write(String.format(EASY_CODE_DATA, Integer.toString(item.getItemId()), value.getEasyNPC(),
-                    Long.toString(data)));
+                    data.getEasyNPC()));
+        } else {
+            target.write(String.format(EASY_CODE, Integer.toString(item.getItemId()), value.getEasyNPC()));
         }
     }
 
@@ -133,11 +120,7 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
      */
     @Override
     public void writeLua(final Writer target) throws IOException {
-        if (data == NO_DATA) {
-            target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(item.getItemId()), value.getLua()));
-        } else {
-            target.write(String.format(LUA_CODE_DATA, LUA_MODULE, Integer.toString(item.getItemId()), value.getLua(),
-                    Long.toString(data)));
-        }
+        target.write(String.format(LUA_CODE_DATA, LUA_MODULE, Integer.toString(item.getItemId()), value.getLua(),
+                data.getLua()));
     }
 }

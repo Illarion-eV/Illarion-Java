@@ -21,6 +21,7 @@ package illarion.easynpc.parsed.talk.conditions;
 import illarion.easynpc.data.CompareOperators;
 import illarion.easynpc.data.ItemPositions;
 import illarion.easynpc.data.Items;
+import illarion.easynpc.parsed.shared.ParsedItemData;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.writer.LuaWriter;
@@ -48,18 +49,11 @@ public final class ConditionItem implements TalkCondition {
     private static final String EASY_CODE_DATA = "item(%1$s, %2$s, %5$s) %3$s %4$s";
 
     /**
-     * The LUA code needed for this consequence to work.
-     */
-    @SuppressWarnings("nls")
-    private static final String LUA_CODE = "talkEntry:addCondition(%1$s.item(%2$s, \"%3$s\", \"%4$s\", %5$s));"
-            + LuaWriter.NL;
-
-    /**
      * The LUA code needed for this consequence to work. This code uses the additional data parameter this condition
      * can use.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_CODE_DATA =
+    private static final String LUA_CODE =
             "talkEntry:addCondition(%1$s.item(%2$s, \"%3$s\", \"%4$s\", %5$s, %6$s));" + LuaWriter.NL;
 
     /**
@@ -76,7 +70,7 @@ public final class ConditionItem implements TalkCondition {
     /**
      * The data value the search for the item is limited to.
      */
-    private final long data;
+    private final ParsedItemData data;
 
     /**
      * The item that is assigned to this item condition.
@@ -99,19 +93,6 @@ public final class ConditionItem implements TalkCondition {
     private final AdvancedNumber value;
 
     /**
-     * Constructor to set the values of the item along with the default data value
-     *
-     * @param newItem  the item that is stored in this condition
-     * @param pos      the position where to search for this item
-     * @param op       the operation that is used to compare the amount
-     * @param newValue the value the amount of items is compared against
-     */
-    public ConditionItem(final Items newItem, final ItemPositions pos, final CompareOperators op,
-                         final AdvancedNumber newValue) {
-        this(newItem, pos, op, newValue, NO_DATA);
-    }
-
-    /**
      * Constructor to set the values of the item.
      *
      * @param newItem  the item that is stored in this condition
@@ -121,7 +102,7 @@ public final class ConditionItem implements TalkCondition {
      * @param newData  the data value the search is limited to
      */
     public ConditionItem(final Items newItem, final ItemPositions pos, final CompareOperators op,
-                         final AdvancedNumber newValue, final long newData) {
+                         final AdvancedNumber newValue, final ParsedItemData newData) {
         item = newItem;
         itemPos = pos;
         operator = op;
@@ -142,12 +123,12 @@ public final class ConditionItem implements TalkCondition {
      */
     @Override
     public void writeEasyNpc(final Writer target) throws IOException {
-        if (data == NO_DATA) {
+        if (data.hasValues()) {
+            target.write(String.format(EASY_CODE_DATA, Integer.toString(item.getItemId()), itemPos.name(),
+                    operator.getLuaComp(), value.getEasyNPC(), data.getEasyNPC()));
+        } else {
             target.write(String.format(EASY_CODE, Integer.toString(item.getItemId()), itemPos.name(),
                     operator.getLuaComp(), value.getEasyNPC()));
-        } else {
-            target.write(String.format(EASY_CODE_DATA, Integer.toString(item.getItemId()), itemPos.name(),
-                    operator.getLuaComp(), value.getEasyNPC(), Long.toString(data)));
         }
     }
 
@@ -156,12 +137,7 @@ public final class ConditionItem implements TalkCondition {
      */
     @Override
     public void writeLua(final Writer target) throws IOException {
-        if (data == NO_DATA) {
-            target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(item.getItemId()), itemPos.name(),
-                    operator.getLuaComp(), value.getLua()));
-        } else {
-            target.write(String.format(LUA_CODE_DATA, LUA_MODULE, Integer.toString(item.getItemId()), itemPos.name(),
-                    operator.getLuaComp(), value.getLua(), Long.toString(data)));
-        }
+        target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(item.getItemId()), itemPos.name(),
+                operator.getLuaComp(), value.getLua(), data.getEasyNPC()));
     }
 }

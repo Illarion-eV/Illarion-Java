@@ -22,9 +22,11 @@ import illarion.easynpc.Lang;
 import illarion.easynpc.data.CompareOperators;
 import illarion.easynpc.data.ItemPositions;
 import illarion.easynpc.data.Items;
+import illarion.easynpc.parsed.shared.ParsedItemData;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.parsed.talk.conditions.ConditionItem;
+import illarion.easynpc.parser.shared.ItemData;
 import illarion.easynpc.parser.talk.AdvNumber;
 import illarion.easynpc.parser.talk.ConditionParser;
 import org.fife.ui.rsyntaxtextarea.Token;
@@ -44,7 +46,7 @@ public final class Item extends ConditionParser {
      */
     @SuppressWarnings("nls")
     private static final Pattern ITEM_FIND = Pattern.compile("\\s*item\\s*\\(\\s*([\\d]{1,4})\\s*," +
-            "\\s*([a-z]+)\\s*(\\s*,\\s*([\\d]+)\\s*)?\\)\\s*([=~!<>]{1,2})\\s*" + AdvNumber.ADV_NUMBER_REGEXP +
+            "\\s*([a-z]+)\\s*([,]\\s*" + ItemData.REGEXP + "\\s*)?\\)\\s*([=~!<>]{1,2})\\s*" + AdvNumber.ADV_NUMBER_REGEXP +
             "\\s*,\\s*", Pattern.CASE_INSENSITIVE);
 
     /**
@@ -61,15 +63,18 @@ public final class Item extends ConditionParser {
         if (stringMatcher.find()) {
             final int itemId = Integer.parseInt(stringMatcher.group(1));
             final String itemPos = stringMatcher.group(2).toLowerCase();
-            final String comperator = stringMatcher.group(5);
-            final AdvancedNumber targetValue =
-                    AdvNumber.getNumber(stringMatcher.group(6));
 
             final String dataString = stringMatcher.group(4);
-            long data = -1L;
+            final ParsedItemData data;
             if (dataString != null) {
-                data = Long.parseLong(dataString);
+                data = ItemData.getData(stringMatcher.group(5));
+            } else {
+                data = ItemData.getData("");
             }
+
+            final String comparator = stringMatcher.group(stringMatcher.groupCount() - 2);
+            final AdvancedNumber targetValue =
+                    AdvNumber.getNumber(stringMatcher.group(stringMatcher.groupCount() - 1));
 
             setLine(stringMatcher.replaceFirst(""));
 
@@ -109,7 +114,7 @@ public final class Item extends ConditionParser {
 
             CompareOperators operator = null;
             for (final CompareOperators op : CompareOperators.values()) {
-                if (op.getRegexpPattern().matcher(comperator).matches()) {
+                if (op.getRegexpPattern().matcher(comparator).matches()) {
                     operator = op;
                     break;
                 }
@@ -117,13 +122,10 @@ public final class Item extends ConditionParser {
 
             if (operator == null) {
                 reportError(String.format(Lang.getMsg(getClass(), "operator"),
-                        comperator, stringMatcher.group(0)));
+                        comparator, stringMatcher.group(0)));
                 return extract();
             }
 
-            if (data == -1) {
-                return new ConditionItem(item, itemPosition, operator, targetValue);
-            }
             return new ConditionItem(item, itemPosition, operator, targetValue, data);
         }
 
