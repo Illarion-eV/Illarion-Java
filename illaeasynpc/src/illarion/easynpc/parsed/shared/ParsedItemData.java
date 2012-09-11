@@ -47,7 +47,7 @@ public final class ParsedItemData {
      * @return {@code true} in case there are data values encoded here
      */
     public boolean hasValues() {
-        return dataValues.isEmpty();
+        return !dataValues.isEmpty();
     }
 
     /**
@@ -56,7 +56,7 @@ public final class ParsedItemData {
      * @return the data values for easyNPC
      */
     public String getEasyNPC() {
-        if (hasValues()) {
+        if (!hasValues()) {
             return "";
         }
 
@@ -64,7 +64,7 @@ public final class ParsedItemData {
         for (final Map.Entry<String, String> entry : dataValues.entrySet()) {
             sb.append('"').append(entry.getKey()).append("\" = \"").append(entry.getValue()).append("\", ");
         }
-        sb.setLength(sb.length() - 3);
+        sb.setLength(sb.length() - 2);
         return sb.toString();
     }
 

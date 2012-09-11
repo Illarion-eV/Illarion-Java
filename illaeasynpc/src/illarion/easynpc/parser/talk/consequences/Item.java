@@ -44,7 +44,7 @@ public final class Item extends ConsequenceParser {
      */
     @SuppressWarnings("nls")
     private static final Pattern STRING_FIND = Pattern.compile("\\s*item\\s*\\(\\s*(\\d{1,4})\\s*[,]\\s*"
-            + AdvNumber.ADV_NUMBER_REGEXP + "\\s*[,]\\s*(\\d+)\\s*([,]\\s*" + ItemData.REGEXP + "\\s*)?\\)\\s*,\\s*",
+            + AdvNumber.ADV_NUMBER_REGEXP + "\\s*[,]\\s*(\\d+)\\s*([,]\\s*0\\s*)?([,]\\s*" + ItemData.REGEXP + "\\s*)?\\)\\s*,\\s*",
             Pattern.CASE_INSENSITIVE);
 
     /**
@@ -64,8 +64,8 @@ public final class Item extends ConsequenceParser {
             final int quality = Integer.parseInt(stringMatcher.group(3));
 
             final ParsedItemData data;
-            if (stringMatcher.group(4) != null) {
-                data = ItemData.getData(stringMatcher.group(5));
+            if (stringMatcher.group(5) != null) {
+                data = ItemData.getData(stringMatcher.group(6));
             } else {
                 data = ItemData.getData("");
             }
