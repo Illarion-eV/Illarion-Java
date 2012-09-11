@@ -138,6 +138,6 @@ public final class ConditionItem implements TalkCondition {
     @Override
     public void writeLua(final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(item.getItemId()), itemPos.name(),
-                operator.getLuaComp(), value.getLua(), data.getEasyNPC()));
+                operator.getLuaComp(), value.getLua(), data.getLua()));
     }
 }
