@@ -28,21 +28,20 @@
             <onCustom name="hint" hintStyle="illarion-hint" neverStopRendering="false" length="4000" timeType="linear"
                     />
         </effect>
-        <panel childLayout="center">
+        <panel childLayout="center" visibleToMouse="true">
             <panel width="100%" height="100%" childLayout="center" visibleToMouse="false">
                 <image id="#staticBackgroundImage" visible="false"/>
                 <image id="#backgroundImage" visible="false"/>
                 <control id="#backgroundImageLabel" name="label" text="000" align="right" valign="bottom"
-                         visible="false" color="#ff0f" backgroundColor="#bb15"/>
+                         visible="false" color="#ff0f" backgroundColor="#bb15" visibleToMouse="false"/>
                 <image id="#merchantOverlay" visible="false" align="right" valign="top" height="16px" width="16px"/>
             </panel>
 
             <control id="#droppable" name="droppable" height="100%" width="100%" childLayout="center"
                      visibleToMouse="true">
-                <control id="#draggable" name="draggable" enabled="false" childLayout="center" width="100%"
-                         height="100%" visibleToMouse="true">
+                <control id="#draggable" name="draggable" enabled="false" childLayout="center" visibleToMouse="true">
                     <panel width="100%" height="100%" childLayout="center" visibleToMouse="false">
-                        <image id="#draggableImage" width="100%" height="100%" visible="false" visibleToMouse="false"/>
+                        <image id="#draggableImage" visible="false" visibleToMouse="false"/>
                     </panel>
                 </control>
             </control>

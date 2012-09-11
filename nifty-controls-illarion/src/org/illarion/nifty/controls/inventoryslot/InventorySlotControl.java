@@ -166,13 +166,11 @@ public class InventorySlotControl extends AbstractController implements Inventor
                 height = getHeight();
             }
 
-            final SizeValue widthSize =
-                    new SizeValue(Integer.toString(width) + "px");
-            final SizeValue heightSize =
-                    new SizeValue(Integer.toString(height) + "px");
+            final SizeValue widthSize = SizeValue.px(width);
+            final SizeValue heightSize = SizeValue.px(height);
 
-            draggable.setConstraintHeight(heightSize);
-            draggable.setConstraintWidth(widthSize);
+            draggable.setConstraintHeight(SizeValue.px(getHeight()));
+            draggable.setConstraintWidth(SizeValue.px(getWidth()));
             draggedImage.setConstraintHeight(heightSize);
             draggedImage.setConstraintWidth(widthSize);
             backgroundImage.setVisible(true);
