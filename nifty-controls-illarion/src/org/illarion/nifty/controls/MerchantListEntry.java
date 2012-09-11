@@ -49,6 +49,13 @@ public interface MerchantListEntry {
     Money getPrice();
 
     /**
+     * Get the bundle size of the item. This is only required for items that are sold by the NPC.
+     *
+     * @return the amount of items bought at once
+     */
+    int getBundleSize();
+
+    /**
      * The index of the merchant item in the list as it was transferred from the server.
      *
      * @return the index

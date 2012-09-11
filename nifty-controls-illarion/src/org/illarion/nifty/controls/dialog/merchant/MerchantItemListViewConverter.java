@@ -70,6 +70,14 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
         applyMoneyValues(copper, listBoxItem.findElementByName("#moneyCopperCount"),
                 listBoxItem.findElementByName("#moneyCopperImage"));
 
+        final Element bundleSizeDisplay = listBoxItem.findElementByName("#bundleSizeDisplay");
+        if (item.getBundleSize() > 1) {
+            bundleSizeDisplay.setVisible(true);
+            bundleSizeDisplay.getRenderer(TextRenderer.class).setText(Integer.toString(item.getBundleSize()));
+        } else {
+            bundleSizeDisplay.setVisible(false);
+        }
+
         listBoxItem.layoutElements();
 
         listBoxItem.getNiftyControl(DialogMerchantEntryControl.class).setIndex(item.getIndex());

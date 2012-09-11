@@ -24,6 +24,8 @@
         <panel childLayout="horizontal">
             <panel childLayout="center" style="#imageContainer">
                 <image id="#imageDisplay" style="#imageDisplay"/>
+                <control id="#bundleSizeDisplay" name="label" text="000" align="right" valign="bottom"
+                         visible="false" color="#ff0f" backgroundColor="#bb15" visibleToMouse="false"/>
             </panel>
             <panel childLayout="vertical" style="#itemInfos">
                 <control name="label" id="#itemTitle" style="#itemTitle"/>
