@@ -36,26 +36,27 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcTradeSimple implements NpcType {
+    private static String BASE_PATTERN = "^\\s*(%1$s)\\s*=\\s*([0-9\\s,]+)[\\s;]*";
     /**
      * The pattern to fetch the items the NPC sells.
      */
     @SuppressWarnings("nls")
-    private static final Pattern SELL_PATTERN = Pattern.compile("^\\s*(sellItems)\\s*=\\s*([0-9\\s,]+)[\\s;]*",
+    private static final Pattern SELL_PATTERN = Pattern.compile(String.format(BASE_PATTERN, "sellItems"),
             Pattern.CASE_INSENSITIVE);
 
     /**
      * The pattern to fetch the items the NPC buys primary.
      */
     @SuppressWarnings("nls")
-    private static final Pattern BUY_PRIMARY_PATTERN = Pattern.compile(
-            "^\\s*(buyPrimaryItems)\\s*=\\s*([0-9\\s,]+)[\\s;]*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern BUY_PRIMARY_PATTERN = Pattern.compile(String.format(BASE_PATTERN, "buyPrimaryItems"),
+            Pattern.CASE_INSENSITIVE);
 
     /**
      * The pattern to fetch the items the NPC buys secondary.
      */
     @SuppressWarnings("nls")
-    private static final Pattern BUY_SECONDARY_PATTERN = Pattern.compile(
-            "^\\s*(buySecondaryItems)\\s*=\\s*([0-9\\s,]+)[\\s;]*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern BUY_SECONDARY_PATTERN = Pattern.compile(String.format(BASE_PATTERN,
+            "buySecondaryItems"), Pattern.CASE_INSENSITIVE);
 
     /**
      * This pattern is used to split the item id lists
