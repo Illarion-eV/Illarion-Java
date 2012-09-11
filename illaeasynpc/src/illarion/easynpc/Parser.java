@@ -107,6 +107,7 @@ public final class Parser implements DocuEntry {
         typeList.add(new NpcEmpty());
         typeList.add(new NpcCycleText());
         typeList.add(new NpcWalk());
+        typeList.add(new NpcTradeComplex());
         typeList.add(new NpcTradeSimple());
         typeList.add(new NpcTradeText());
 

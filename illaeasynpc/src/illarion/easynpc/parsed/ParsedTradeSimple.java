@@ -24,57 +24,28 @@ import illarion.easynpc.writer.SQLBuilder;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Arrays;
 
 /**
- * This class enables the NPC to trade and stores a single item the NPC is trading.
+ * This class enables the NPC to trade and stores some items the NPC is trading.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class ParsedTradeSimple implements ParsedData {
-    /**
-     * This enumerator is used to define if this entry defines a buying or a selling operation.
-     */
-    public enum TradeMode {
-        /**
-         * The NPC is buying this primary craft item from the player.
-         */
-        buyingPrimary,
-
-        /**
-         * The NPC is buying this secondary craft item from the player.
-         */
-        buyingSecondary,
-
-        /**
-         * The NPC is selling to the player.
-         */
-        selling,
-    }
-
-    /**
-     * The mode of this trading operation.
-     */
-    private final TradeMode mode;
-
+public class ParsedTradeSimple extends AbstractParsedTrade {
     /**
      * The IDs of the items that are supposed to be traded.
      */
     private final int[] itemIds;
 
-    public ParsedTradeSimple(final TradeMode tradeMode, final int... tradeItemIds) {
-        mode = tradeMode;
-        itemIds = tradeItemIds;
-    }
-
-    @Override
-    public boolean effectsEasyNpcStage(final EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.trading;
+    public ParsedTradeSimple(final ParsedTradeSimple.TradeMode tradeMode, final int... tradeItemIds) {
+        super(tradeMode);
+        itemIds = Arrays.copyOf(tradeItemIds, tradeItemIds.length);
     }
 
     @Override
     public void writeEasyNpc(final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
         if (stage == EasyNpcWriter.WritingStage.trading) {
-            switch (mode) {
+            switch (getMode()) {
                 case selling:
                     target.write("sellItems = ");
                     break;
@@ -103,28 +74,13 @@ public class ParsedTradeSimple implements ParsedData {
     }
 
     @Override
-    public boolean effectsLuaWritingStage(final LuaWriter.WritingStage stage) {
-        return stage == LuaWriter.WritingStage.Trading;
-    }
-
-    /**
-     * The modules required for the trader NPC implementation.
-     */
-    private static final String[] MODULES = {"npc.base.basic", "npc.base.trade"};
-
-    @Override
-    public String[] getRequiredModules() {
-        return MODULES;
-    }
-
-    @Override
     public void writeLua(final Writer target, final LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Trading) {
             for (final int itemId : itemIds) {
                 target.write("tradingNPC:addItem(npc.base.trade.tradeNPCItem(");
                 target.write(Integer.toString(itemId));
                 target.write(",");
-                switch (mode) {
+                switch (getMode()) {
                     case selling:
                         target.write("\"sell\"");
                         break;
