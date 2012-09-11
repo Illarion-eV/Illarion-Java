@@ -108,10 +108,19 @@ public final class MerchantList {
      * @param item the index of the item to buy
      */
     public void buyItem(final MerchantItem item) {
+        buyItem(item, item.getBundleSize());
+    }
+
+    /**
+     * Buy this item.
+     *
+     * @param item the index of the item to buy
+     */
+    public void buyItem(final MerchantItem item, final int count) {
         if (itemList[item.getIndex()] != item) {
             throw new IllegalArgumentException("This item is not part of this merchant list");
         }
-        buyItem(item.getIndex(), item.getBundleSize());
+        buyItem(item.getIndex(), count);
     }
 
     /**

@@ -38,6 +38,7 @@ import illarion.client.net.server.events.DialogMessageReceivedEvent;
 import illarion.client.net.server.events.DialogSelectionReceivedEvent;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
+import illarion.client.world.items.MerchantList;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -47,6 +48,7 @@ import org.illarion.nifty.controls.dialog.input.builder.DialogInputBuilder;
 import org.illarion.nifty.controls.dialog.merchant.builder.DialogMerchantBuilder;
 import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
 import org.illarion.nifty.controls.dialog.select.builder.DialogSelectBuilder;
+import org.lwjgl.input.Keyboard;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -119,10 +121,12 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     private final Queue<CloseDialogEvent> closers;
     private Nifty nifty;
     private Screen screen;
+    private final NumberSelectPopupHandler numberSelect;
 
-    public DialogHandler() {
+    public DialogHandler(final NumberSelectPopupHandler numberSelectPopupHandler) {
         builders = new ConcurrentLinkedQueue<DialogHandler.BuildWrapper>();
         closers = new ConcurrentLinkedQueue<CloseDialogEvent>();
+        numberSelect = numberSelectPopupHandler;
     }
 
     @Override
@@ -187,7 +191,28 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "merchantDialog[0-9]+")
     public void handleMerchantBuyEvent(final String topic, final DialogMerchantBuyEvent event) {
-        World.getPlayer().getMerchantList().buyItem(event.getItem().getIndex());
+        final MerchantList list = World.getPlayer().getMerchantList();
+        final int index = event.getItem().getIndex();
+
+        if (list.getItem(index).getBundleSize() == 1) {
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                numberSelect.requestNewPopup(1, 250, new NumberSelectPopupHandler.Callback() {
+                    @Override
+                    public void popupCanceled() {
+                        // nothing
+                    }
+
+                    @Override
+                    public void popupConfirmed(final int value) {
+                        list.buyItem(index, value);
+                    }
+                });
+            } else {
+                list.buyItem(index);
+            }
+        } else {
+            list.buyItem(index);
+        }
     }
 
     @SuppressWarnings("MethodMayBeStatic")
