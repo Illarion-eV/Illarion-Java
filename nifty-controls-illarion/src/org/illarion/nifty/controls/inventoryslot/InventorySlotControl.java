@@ -217,8 +217,6 @@ public class InventorySlotControl extends AbstractController implements Inventor
     @Override
     public void showLabel() {
         if (!backgroundImageLabel.isVisible()) {
-            LOGGER.debug("Showing Label!");
-
             backgroundImageLabel.show();
             backgroundImageLabel.getParent().layoutElements();
         }
@@ -231,8 +229,6 @@ public class InventorySlotControl extends AbstractController implements Inventor
     @Override
     public void hideLabel() {
         if (backgroundImageLabel.isVisible()) {
-            LOGGER.debug("Hiding Label!");
-
             backgroundImageLabel.hide();
             backgroundImageLabel.getParent().layoutElements();
         }
