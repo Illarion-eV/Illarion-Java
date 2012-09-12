@@ -217,7 +217,8 @@ public final class CharListHandler
         final Iterator<WeakReference<Char>> itr = charList.iterator();
         while (itr.hasNext()) {
             final WeakReference<Char> weakChar = itr.next();
-            if ((weakChar.get() == null) || (weakChar.get().getCharId() == charId)) {
+            final Char character = weakChar.get();
+            if ((character == null) || (character.getCharId() == charId)) {
                 itr.remove();
                 dirty = true;
             }
