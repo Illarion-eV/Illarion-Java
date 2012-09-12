@@ -362,10 +362,8 @@ final class Utils {
      * @param script     the text of the script
      * @param targetFile the file that is the target of this writing operation
      */
-    private static void saveEasyNPCImpl(final String script,
-                                        final File targetFile) {
-        final File backupFile =
-                new File(targetFile.getAbsolutePath() + ".bak"); //$NON-NLS-1$
+    private static void saveEasyNPCImpl(final String script, final File targetFile) {
+        final File backupFile = new File(targetFile.getAbsolutePath() + ".bak"); //$NON-NLS-1$
         try {
             if (backupFile.exists()) {
                 backupFile.delete();
