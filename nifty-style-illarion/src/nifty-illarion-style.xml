@@ -45,4 +45,5 @@
     <useStyles filename="dialog/illarion-dialog-input.xml"/>
     <useStyles filename="dialog/illarion-dialog-merchant.xml"/>
     <useStyles filename="dialog/illarion-dialog-select.xml"/>
+    <useStyles filename="tooltip/illarion-tooltip.xml"/>
 </nifty-styles>

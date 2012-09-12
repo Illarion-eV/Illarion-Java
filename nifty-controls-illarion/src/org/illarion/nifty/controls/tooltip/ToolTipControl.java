@@ -25,7 +25,9 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
 import illarion.common.util.Money;
 import org.illarion.nifty.controls.ToolTip;
@@ -52,7 +54,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
 
         if (controlDefinitionAttributes.isSet("producer")) {
             final Label producedBy = element.findNiftyControl("#createdByLabel", Label.class);
-            producedBy.setText(controlDefinitionAttributes.get("producer"));
+            applyTextToLabel(producedBy, controlDefinitionAttributes.get("producer"));
         } else {
             element.findElementByName("#createByLine").markForRemoval();
         }
@@ -70,14 +72,14 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
 
         if (controlDefinitionAttributes.isSet("quality")) {
             final Label producedBy = element.findNiftyControl("#qualityText", Label.class);
-            producedBy.setText(controlDefinitionAttributes.get("quality"));
+            applyTextToLabel(producedBy, controlDefinitionAttributes.get("quality"));
         } else {
             element.findElementByName("#qualityLine").markForRemoval();
         }
 
         if (controlDefinitionAttributes.isSet("durability")) {
             final Label producedBy = element.findNiftyControl("#durabilityText", Label.class);
-            producedBy.setText(controlDefinitionAttributes.get("durability"));
+            applyTextToLabel(producedBy, controlDefinitionAttributes.get("durability"));
         } else {
             element.findElementByName("#durabilityLine").markForRemoval();
         }
@@ -127,18 +129,28 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             return;
         }
 
-        image.getRenderer(ImageRenderer.class).setImage(nifty.createImage(
-                "data/items/" + images + '-' + Integer.toString(gemLevel - 1) + ".png", false));
+        final NiftyImage gemImage = nifty.createImage(
+                "data/items/" + images + '-' + Integer.toString(gemLevel - 1) + ".png", false);
+        image.getRenderer(ImageRenderer.class).setImage(gemImage);
+        image.setConstraintHeight(SizeValue.px(gemImage.getHeight()));
+        image.setConstraintWidth(SizeValue.px(gemImage.getWidth()));
     }
 
     private static void applyMoney(final Element element, final int money, final String elementCount,
                                    final String elementImage) {
         if (money > 0) {
-            element.findNiftyControl(elementCount, Label.class).setText(Integer.toString(money));
+            applyTextToLabel(element.findNiftyControl(elementCount, Label.class), Integer.toString(money));
         } else {
             element.findElementByName(elementImage).markForRemoval();
             element.findElementByName(elementCount).markForRemoval();
         }
+    }
+
+    private static void applyTextToLabel(final Label label, final String text) {
+        final Element labelElement = label.getElement();
+        final TextRenderer renderer = labelElement.getRenderer(TextRenderer.class);
+        renderer.setText(text);
+        labelElement.setConstraintWidth(SizeValue.px(renderer.getTextWidth()));
     }
 
     @Override

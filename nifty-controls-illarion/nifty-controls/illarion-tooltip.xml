@@ -20,44 +20,45 @@
 
 <!-- This control is designed to define the different slots in the inventory of the Illarion Client. -->
 <nifty-controls>
+    <resourceBundle id="illarion-tooltip-bundle" filename="illarion-tooltip"/>
+
     <controlDefinition name="tooltip" controller="org.illarion.nifty.controls.tooltip.ToolTipControl"
-                       visibleToMouse="false">
+                       style="illarion-tooltip" visibleToMouse="false">
         <effect>
             <onShow name="fade" start="#00" end="#ff" length="300"/>
             <onHide name="fade" start="#ff" end="#00" length="300"/>
-            <onHover name="fade" start="#ff" end="#33" length="200"/>
         </effect>
-        <panel childLayout="vertical" visibleToMouse="true" style="nifty-panel-small">
+        <panel childLayout="vertical" visibleToMouse="true" style="#background">
             <control name="label" id="#title" style="#title"/>
             <panel childLayout="horizontal" style="#createByLine" id="#createByLine">
-                <control name="label" style="#createdByTitle" text="Created by:"/>
+                <control name="label" style="#createdByTitle" text="${illarion-tooltip-bundle.createdBy}"/>
                 <control name="label" id="#createdByLabel" style="#createdByLabel"/>
             </panel>
             <panel childLayout="horizontal" style="#worthLine" id="#worthLine">
-                <control name="label" style="#worthLabel" text="Worth:"/>
+                <control name="label" style="#worthLabel" text="${illarion-tooltip-bundle.worth}"/>
                 <image id="#worthGoldImage" style="#worthGoldImage"/>
                 <control name="label" id="#worthGoldCount" style="#worthGoldCount"/>
                 <image id="#worthSilverImage" style="#worthSilverImage"/>
-                <control name="label" id="#moneySilverCount" style="#moneySilverCount"/>
+                <control name="label" id="#worthSilverCount" style="#worthSilverCount"/>
                 <image id="#worthCopperImage" style="#worthCopperImage"/>
                 <control name="label" id="#worthCopperCount" style="#worthCopperCount"/>
             </panel>
-            <panel childLayout="vertical" style="#qualityLine" id="#qualityLine">
-                <control name="label" style="#qualityTitle" text="Quality:"/>
+            <panel childLayout="horizontal" style="#qualityLine" id="#qualityLine">
+                <control name="label" style="#qualityTitle" text="${illarion-tooltip-bundle.quality}"/>
                 <control name="label" style="#qualityText" id="#qualityText"/>
             </panel>
-            <panel childLayout="vertical" style="#durabilityLine" id="#durabilityLine">
-                <control name="label" style="#durabilityTitle" text="Durability:"/>
+            <panel childLayout="horizontal" style="#durabilityLine" id="#durabilityLine">
+                <control name="label" style="#durabilityTitle" text="${illarion-tooltip-bundle.durability}"/>
                 <control name="label" style="#durabilityText" id="#durabilityText"/>
             </panel>
-            <panel childLayout="vertical" style="#gemsLine" id="#gemsLine">
-                <image id="#diamondImage" visible="false"/>
-                <image id="#rubyImage" visible="false"/>
-                <image id="#emeraldImage" visible="false"/>
-                <image id="#blackStoneImage" visible="false"/>
-                <image id="#blueStoneImage" visible="false"/>
-                <image id="#amethystImage" visible="false"/>
-                <image id="#topazImage" visible="false"/>
+            <panel childLayout="horizontal" style="#gemsLine" id="#gemsLine">
+                <image id="#diamondImage" style="#diamondImage" visible="true"/>
+                <image id="#rubyImage" style="#rubyImage" visible="true"/>
+                <image id="#emeraldImage" style="#emeraldImage" visible="true"/>
+                <image id="#blackStoneImage" style="#blackStoneImage" visible="true"/>
+                <image id="#blueStoneImage" style="#blueStoneImage" visible="true"/>
+                <image id="#amethystImage" style="#amethystImage" visible="true"/>
+                <image id="#topazImage" style="#topazImage" visible="true"/>
             </panel>
         </panel>
     </controlDefinition>
