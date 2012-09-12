@@ -26,47 +26,111 @@ import gnu.trove.map.hash.TIntObjectHashMap;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class OpenContainerEvent {
+public final class OpenContainerEvent implements ServerEvent {
+    /**
+     * Get the ID of the container.
+     *
+     * @return the container ID
+     */
     public int getContainerId() {
         return conId;
     }
 
+    /**
+     * Get the amount of slots in this container.
+     *
+     * @return the slot count
+     */
     public int getSlotCount() {
         return slots;
     }
 
+    /**
+     * This class represents a single item that is placed in the container.
+     */
     public static final class Item {
+        /**
+         * The ID of the item.
+         */
         private final int id;
+
+        /**
+         * The size of the item stack.
+         */
         private final int count;
 
+        /**
+         * Constructor for a new item.
+         *
+         * @param itemId    the item ID
+         * @param itemCount the stack count
+         */
         public Item(final int itemId, final int itemCount) {
             id = itemId;
             count = itemCount;
         }
 
+        /**
+         * Get the ID of the item.
+         *
+         * @return the item ID
+         */
         public int getItemId() {
             return id;
         }
 
+        /**
+         * Get the size of the item stack.
+         *
+         * @return the size of the stack
+         */
         public int getCount() {
             return count;
         }
     }
 
+    /**
+     * The items that are stored in the container.
+     */
     private final TIntObjectHashMap<OpenContainerEvent.Item> itemMap;
+
+    /**
+     * The amount of slots in this container.
+     */
     private final int slots;
+
+    /**
+     * The ID of the container.
+     */
     private final int conId;
 
+    /**
+     * Constructor of the container opened event.
+     *
+     * @param containerId the ID of the container
+     * @param slotCount   the amount of slots in the container
+     */
     public OpenContainerEvent(final int containerId, final int slotCount) {
         itemMap = new TIntObjectHashMap<OpenContainerEvent.Item>(15);
         slots = slotCount;
         conId = containerId;
     }
 
+    /**
+     * Add a item to this container.
+     *
+     * @param slot the slot where the item is located
+     * @param item the item to be added
+     */
     public void addItem(final int slot, final OpenContainerEvent.Item item) {
         itemMap.put(slot, item);
     }
 
+    /**
+     * Get the iterator over all the items.
+     *
+     * @return the item iterator
+     */
     public TIntObjectIterator<OpenContainerEvent.Item> getItemIterator() {
         return itemMap.iterator();
     }

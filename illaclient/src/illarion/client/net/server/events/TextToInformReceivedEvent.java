@@ -23,7 +23,7 @@ package illarion.client.net.server.events;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class TextToInformReceivedEvent extends AbstractInformReceivedEvent {
+public final class TextToInformReceivedEvent extends AbstractInformReceivedEvent implements ServerEvent {
     /**
      * Create a new instance of this class and set the message that got send by the inform.
      *

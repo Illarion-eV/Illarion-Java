@@ -25,7 +25,7 @@ import illarion.client.world.characters.CharacterAttribute;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class AttributeUpdateReceivedEvent {
+public final class AttributeUpdateReceivedEvent implements ServerEvent {
     /**
      * The ID of the character this update is meant for.
      */
@@ -44,9 +44,9 @@ public final class AttributeUpdateReceivedEvent {
     /**
      * Constructor of the attribute event that allows to set the required values.
      *
-     * @param charId the ID of the character that is effected by this event
+     * @param charId           the ID of the character that is effected by this event
      * @param changedAttribute the attribute that is changed
-     * @param newValue the new value of the attribute
+     * @param newValue         the new value of the attribute
      */
     public AttributeUpdateReceivedEvent(final long charId, final CharacterAttribute changedAttribute,
                                         final int newValue) {

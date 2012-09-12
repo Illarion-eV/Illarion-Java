@@ -23,7 +23,7 @@ package illarion.client.net.server.events;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class ScriptInformReceivedEvent extends AbstractInformReceivedEvent {
+public final class ScriptInformReceivedEvent extends AbstractInformReceivedEvent implements ServerEvent {
     /**
      * The priority of the inform message.
      */

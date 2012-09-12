@@ -23,7 +23,7 @@ package illarion.client.net.server.events;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogMessageReceivedEvent extends AbstractDialogReceivedEvent {
+public final class DialogMessageReceivedEvent extends AbstractDialogReceivedEvent implements ServerEvent {
     /**
      * The message displayed in the dialog.
      */

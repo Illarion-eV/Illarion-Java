@@ -19,17 +19,10 @@
 package illarion.client.net.server.events;
 
 /**
- * This event is triggered in case the client received a inform message that was issued by the server.
+ * This is the common interface for events that are fired in response to a command that was send from the server to
+ * the client.
  *
- * @author Martin Karing &gt;nitram@illarion.org&lt;
+ * @author Martin Karing $lt;nitram@illarion.org&gt;
  */
-public final class ServerInformReceivedEvent extends AbstractInformReceivedEvent implements ServerEvent {
-    /**
-     * Create a new instance of this class and set the message that got send by the inform.
-     *
-     * @param informMessage the message send by the inform
-     */
-    public ServerInformReceivedEvent(final String informMessage) {
-        super(informMessage);
-    }
+public interface ServerEvent {
 }

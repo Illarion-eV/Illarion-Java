@@ -27,7 +27,7 @@ import java.util.Arrays;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class DialogMerchantReceivedEvent extends AbstractDialogReceivedEvent {
+public final class DialogMerchantReceivedEvent extends AbstractDialogReceivedEvent implements ServerEvent {
     /**
      * The list of items sold by this NPC.
      */

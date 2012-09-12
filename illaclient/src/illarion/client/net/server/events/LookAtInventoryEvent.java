@@ -23,7 +23,7 @@ package illarion.client.net.server.events;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class LookAtInventoryEvent {
+public final class LookAtInventoryEvent implements ServerEvent {
     /**
      * The inventory slot this event is assigned to.
      */

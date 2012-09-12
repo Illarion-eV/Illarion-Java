@@ -28,7 +28,8 @@ import java.util.Iterator;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEvent implements Iterable<SelectionItem> {
+public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEvent implements
+        Iterable<SelectionItem>, ServerEvent {
     /**
      * The message displayed in the dialog.
      */
@@ -37,9 +38,9 @@ public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEv
     /**
      * Create a new instance of this event.
      *
-     * @param dialogId      the ID of this dialog
-     * @param dialogTitle   the title of the dialog
-     * @param dialogItems   the items to be displayed in this dialog
+     * @param dialogId    the ID of this dialog
+     * @param dialogTitle the title of the dialog
+     * @param dialogItems the items to be displayed in this dialog
      */
     public DialogSelectionReceivedEvent(final int dialogId, final String dialogTitle,
                                         final SelectionItem... dialogItems) {
@@ -62,7 +63,7 @@ public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEv
      * @param index the index of the option
      * @return the option value
      * @throws ArrayIndexOutOfBoundsException in case index is less then 0 or larger or equal to {@link
-     * #getOptionCount()}.
+     *                                        #getOptionCount()}.
      */
     public SelectionItem getOption(final int index) {
         if ((index < 0) || (index >= options.length)) {

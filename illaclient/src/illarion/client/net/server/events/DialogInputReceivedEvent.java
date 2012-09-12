@@ -23,7 +23,7 @@ package illarion.client.net.server.events;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogInputReceivedEvent extends AbstractDialogReceivedEvent {
+public final class DialogInputReceivedEvent extends AbstractDialogReceivedEvent implements ServerEvent {
     /**
      * The maximal length that is allowed in this input.
      */
