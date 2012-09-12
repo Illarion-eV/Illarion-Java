@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net;
 
@@ -29,7 +29,6 @@ import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.lang.String;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -139,9 +138,9 @@ public final class NetComm {
      * New version of the checksum calculation. All bytes from the current position of the buffer to the limit are
      * included to the calculation. The limit, mark and position is restored by this function. So the ByteBuffer is
      * unchanged after the function leaves.
-     * 
+     *
      * @param buffer the byte buffer that provides the byte data
-     * @param len the amount of byte that shall be included to the checksum calculation
+     * @param len    the amount of byte that shall be included to the checksum calculation
      * @return the calculated checksum
      */
     public static int getCRC(final ByteBuffer buffer, final int len) {
@@ -163,7 +162,7 @@ public final class NetComm {
      * This function has only debug purposes and is used to print the contents of a buffer to the output log. This is
      * used for the debug output when debugging the protocol. The bytes that are written are all remaining bytes of
      * the buffer. Also the position of the buffer with point at the end after this function was called.
-     * 
+     *
      * @param prefix The prefix that shall be written first to the log
      * @param buffer The buffer that contains the values that shall be written
      */
@@ -171,6 +170,8 @@ public final class NetComm {
         final TextBuilder builder = TextBuilder.newInstance();
         final TextBuilder builderText = TextBuilder.newInstance();
 
+        builder.append(prefix);
+        builder.append(' ');
         int bytes = 0;
         while (buffer.hasRemaining()) {
             final byte bufferValue = buffer.get();
@@ -199,7 +200,7 @@ public final class NetComm {
 
     /**
      * Establish a connection with the server.
-     * 
+     *
      * @return true in case the connection got established. False if not.
      */
     @SuppressWarnings("nls")
@@ -236,13 +237,12 @@ public final class NetComm {
             messageHandler.start();
 
             keepAliveTimer =
-                new Timer(INITIAL_DELAY, KEEP_ALIVE_DELAY, new Runnable() {
-                    @Override
-                    public void run() {
-                        final AbstractCommand cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_KEEPALIVE);
-                        sendCommand(cmd);
-                    }
-                });
+                    new Timer(INITIAL_DELAY, KEEP_ALIVE_DELAY, new Runnable() {
+                        @Override
+                        public void run() {
+                            CommandFactory.getInstance().getCommand(CommandList.CMD_KEEPALIVE).send();
+                        }
+                    });
             keepAliveTimer.setRepeats(true);
             keepAliveTimer.start();
         } catch (final IOException e) {
@@ -303,7 +303,7 @@ public final class NetComm {
 
     /**
      * Check if the network interface received anything from the server since it started.
-     * 
+     *
      * @return true in case anything was received from the server.
      */
     public boolean receivedAnything() {
@@ -312,7 +312,7 @@ public final class NetComm {
 
     /**
      * Put command in send queue so its send at the next send loop.
-     * 
+     *
      * @param cmd the command that shall be added to the queue
      */
     @SuppressWarnings("nls")
@@ -327,7 +327,7 @@ public final class NetComm {
             outputQueue.put(cmd);
         } catch (final InterruptedException e) {
             LOGGER
-                .error("Got interrupted while trying to add a command to to the queue.");
+                    .error("Got interrupted while trying to add a command to to the queue.");
         }
     }
 }

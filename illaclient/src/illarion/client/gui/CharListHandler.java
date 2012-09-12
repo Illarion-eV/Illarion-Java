@@ -225,6 +225,9 @@ public final class CharListHandler
     }
 
     private boolean isAlreadyListed(final Char chara) {
+        if (chara == null) {
+            return true;
+        }
         for (WeakReference<Char> weakChar : charList) {
             if (chara.equals(weakChar.get())) {
                 return true;

@@ -70,13 +70,13 @@ public final class LoadingState
     }
 
     @Override
-    protected void initGameAndGUI(GameContainer container, StateBasedGame game)
+    protected void initGameAndGUI(final GameContainer container, final StateBasedGame game)
             throws SlickException {
         initNifty(container, game, new PlainSlickInputSystem());
     }
 
     @Override
-    protected void leaveState(GameContainer container, StateBasedGame game)
+    protected void leaveState(final GameContainer container, final StateBasedGame game)
             throws SlickException {
 
     }
@@ -87,7 +87,7 @@ public final class LoadingState
     }
 
     @Override
-    protected void renderGame(GameContainer container, StateBasedGame game, Graphics g)
+    protected void renderGame(final GameContainer container, final StateBasedGame game, final Graphics g)
             throws SlickException {
 
         g.clear();
@@ -116,7 +116,7 @@ public final class LoadingState
     }
 
     @Override
-    protected void updateGame(GameContainer container, StateBasedGame game, int delta)
+    protected void updateGame(final GameContainer container, final StateBasedGame game, final int delta)
             throws SlickException {
 
     }
