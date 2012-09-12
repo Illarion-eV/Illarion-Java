@@ -112,7 +112,6 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
 
         @Override
         public void perform() {
-            System.out.println("Marked inform for removal: " + target);
             target.markForRemoval(new InformHandler.LayoutElementsEndNotify(target.getParent()));
         }
     }

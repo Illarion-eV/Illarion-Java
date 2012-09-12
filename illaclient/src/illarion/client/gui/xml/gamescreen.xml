@@ -126,6 +126,7 @@
                 </panel>
             </control>
         </layer>
+        <layer id="tooltipLayer" childLayout="absolute" visibleToMouse="false"/>
     </screen>
 
     <popup id="numberSelect" childLayout="center">

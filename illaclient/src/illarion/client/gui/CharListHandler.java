@@ -19,6 +19,7 @@
 package illarion.client.gui;
 
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.DropDown;
 import de.lessvoid.nifty.controls.DropDownSelectionChangedEvent;
 import de.lessvoid.nifty.controls.ListBox;
@@ -33,9 +34,8 @@ import illarion.client.world.World;
 import illarion.client.world.events.*;
 import illarion.common.util.FastMath;
 import illarion.common.util.Location;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
-import org.bushe.swing.event.EventTopicSubscriber;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -49,8 +49,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CharListHandler
-        implements EventSubscriber<AbstractCharEvent>, ScreenController, UpdatableHandler {
-    private ListBox<GUIEntryWrapper> guiList;
+        implements ScreenController, UpdatableHandler {
+    private ListBox<CharListHandler.GUIEntryWrapper> guiList;
     private DropDown<String> filterSelection;
 
     private boolean ignoreFocusEvents;
@@ -78,9 +78,6 @@ public final class CharListHandler
         }
     }
 
-    private final EventTopicSubscriber<DropDownSelectionChangedEvent<String>> filterChangedEvent;
-    private final EventTopicSubscriber<ListBoxSelectionChangedEvent<GUIEntryWrapper>> selectionChanged;
-
     private final List<WeakReference<Char>> charList;
     private final Queue<AbstractCharEvent> eventQueue;
     private boolean dirty;
@@ -89,34 +86,34 @@ public final class CharListHandler
         charList = new ArrayList<WeakReference<Char>>(5);
         eventQueue = new ConcurrentLinkedQueue<AbstractCharEvent>();
         dirty = true;
-
-        filterChangedEvent = new EventTopicSubscriber<DropDownSelectionChangedEvent<String>>() {
-            @Override
-            public void onEvent(final String topic, final DropDownSelectionChangedEvent<String> data) {
-                dirty = true;
-                updateGUI();
-            }
-        };
-
-        selectionChanged = new EventTopicSubscriber<ListBoxSelectionChangedEvent<GUIEntryWrapper>>() {
-            @Override
-            public void onEvent(final String topic, final ListBoxSelectionChangedEvent<GUIEntryWrapper> data) {
-                if (ignoreFocusEvents) {
-                    return;
-                }
-                if (data.getSelection().isEmpty()) {
-                    CombatHandler.getInstance().setCombatMode(false);
-                }
-                final Char selectedChar = data.getSelection().get(0).getCharacter();
-                if ((selectedChar != null) && CombatHandler.getInstance().canBeAttacked(selectedChar)) {
-                    CombatHandler.getInstance().setCombatMode(true);
-                    CombatHandler.getInstance().setAttackTarget(selectedChar);
-                }
-            }
-        };
     }
 
+    @NiftyEventSubscriber(id = "charlist-list")
+    public void onListBoxChangedEvent(final String topic,
+                                      final ListBoxSelectionChangedEvent<CharListHandler.GUIEntryWrapper> data) {
+        if (ignoreFocusEvents) {
+            return;
+        }
+        if (data.getSelection().isEmpty()) {
+            CombatHandler.getInstance().setCombatMode(false);
+        }
+        final Char selectedChar = data.getSelection().get(0).getCharacter();
+        if ((selectedChar != null) && CombatHandler.getInstance().canBeAttacked(selectedChar)) {
+            CombatHandler.getInstance().setCombatMode(true);
+            CombatHandler.getInstance().setAttackTarget(selectedChar);
+        }
+    }
+
+    @NiftyEventSubscriber(id = "charlist-viewselection")
+    public void onDropDownChangedEvent(final String topic, final DropDownSelectionChangedEvent<String> data) {
+        dirty = true;
+        updateGUI();
+    }
+
+    private Nifty parentNifty;
+
     public void bind(final Nifty nifty, final Screen screen) {
+        parentNifty = nifty;
         guiList = screen.findNiftyControl("charlist-list", ListBox.class);
         filterSelection = screen.findNiftyControl("charlist-viewselection", DropDown.class);
 
@@ -124,10 +121,6 @@ public final class CharListHandler
         filterSelection.addItem(Lang.getMsg("charlist.filter.players_monsters"));
         filterSelection.addItem(Lang.getMsg("charlist.filter.players"));
         filterSelection.addItem(Lang.getMsg("charlist.filter.monsters"));
-
-        EventBus.subscribe(AbstractCharEvent.class, this);
-        nifty.subscribe(screen, "charlist-viewselection", DropDownSelectionChangedEvent.class, filterChangedEvent);
-        nifty.subscribe(screen, "charlist-list", ListBoxSelectionChangedEvent.class, selectionChanged);
 
         ignoreFocusEvents = false;
 
@@ -229,7 +222,7 @@ public final class CharListHandler
         if (chara == null) {
             return true;
         }
-        for (WeakReference<Char> weakChar : charList) {
+        for (final WeakReference<Char> weakChar : charList) {
             if (chara.equals(weakChar.get())) {
                 return true;
             }
@@ -246,12 +239,12 @@ public final class CharListHandler
         dirty = false;
 
         ignoreFocusEvents = true;
-        GUIEntryWrapper selectEntry = null;
+        CharListHandler.GUIEntryWrapper selectEntry = null;
         guiList.clear();
         for (final WeakReference<Char> weakChar : charList) {
             final Char chara = weakChar.get();
             if (showInList(chara)) {
-                final GUIEntryWrapper entry = new GUIEntryWrapper(chara);
+                final CharListHandler.GUIEntryWrapper entry = new CharListHandler.GUIEntryWrapper(chara);
                 guiList.addItem(entry);
                 if (CombatHandler.getInstance().isAttacking(chara)) {
                     selectEntry = entry;
@@ -305,8 +298,8 @@ public final class CharListHandler
         updateGUI();
     }
 
-    @Override
-    public void onEvent(final AbstractCharEvent event) {
+    @EventSubscriber
+    public void onCharacterEventEvent(final AbstractCharEvent event) {
         eventQueue.offer(event);
     }
 
@@ -338,7 +331,10 @@ public final class CharListHandler
         }
     }
 
+    @Override
     public void onStartScreen() {
+        parentNifty.subscribeAnnotations(this);
+        AnnotationProcessor.process(this);
         dirty = true;
         cleanupList();
         updateGUI();
@@ -346,6 +342,7 @@ public final class CharListHandler
 
     @Override
     public void onEndScreen() {
-
+        parentNifty.unsubscribeAnnotations(this);
+        AnnotationProcessor.unprocess(this);
     }
 }
