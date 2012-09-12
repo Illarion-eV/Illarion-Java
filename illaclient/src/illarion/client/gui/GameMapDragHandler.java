@@ -186,6 +186,9 @@ public final class GameMapDragHandler
     public boolean handleDragOnMap(final int oldx, final int oldy, final int newx, final int newy,
                                    final ForwardingInputSystem forwardingControl) {
         final MapTile mapTile = World.getMap().getInteractive().getTileOnScreenLoc(oldx, oldy);
+        if (mapTile == null) {
+            return false;
+        }
         final InteractiveMapTile targetTile = mapTile.getInteractive();
 
         if (targetTile == null) {
