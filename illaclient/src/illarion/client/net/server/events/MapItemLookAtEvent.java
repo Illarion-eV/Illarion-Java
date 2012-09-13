@@ -35,29 +35,33 @@ public final class MapItemLookAtEvent extends AbstractItemLookAtEvent {
     /**
      * Default constructor that allows setting all the parameters of this class.
      *
-     * @param location        the location on the map where the item is located
-     * @param name            the name of the item
-     * @param itemType        the type constant of this item
-     * @param producer        the name of the producer
-     * @param worth           the worth of the item
-     * @param qualityText     the text representing the quality
-     * @param durabilityText  the text representing the durability
-     * @param durability      the value of the durability
-     * @param amethystLevel   the level of the amethyst
-     * @param diamondLevel    the level of the diamond
-     * @param emeraldLevel    the level of the emerald
-     * @param rubyLevel       the level of the ruby
-     * @param blackStoneLevel the level of the blackstone
-     * @param blueStoneLevel  the level of the bluestone
-     * @param topazLevel      the level of the topaz
+     * @param location       the location on the map where the item is located
+     * @param name           the name of the item
+     * @param rareness       the type constant of this item
+     * @param description    the description of this item
+     * @param producer       the name of the producer
+     * @param worth          the worth of the item
+     * @param weight         the weight of this item
+     * @param qualityText    the text representing the quality
+     * @param durabilityText the text representing the durability
+     * @param durability     the value of the durability
+     * @param amethystLevel  the level of the amethyst
+     * @param diamondLevel   the level of the diamond
+     * @param emeraldLevel   the level of the emerald
+     * @param rubyLevel      the level of the ruby
+     * @param obsidianLevel  the level of the obsidian
+     * @param sapphireLevel  the level of the sapphire
+     * @param topazLevel     the level of the topaz
+     * @param bonus          the bonus that is granted by the gems in this item
      */
-    public MapItemLookAtEvent(final Location location, final String name, final int itemType, final String producer,
-                              final Money worth, final String qualityText, final String durabilityText,
-                              final int durability, final int amethystLevel, final int diamondLevel,
-                              final int emeraldLevel, final int rubyLevel, final int blackStoneLevel,
-                              final int blueStoneLevel, final int topazLevel) {
-        super(name, itemType, producer, worth, qualityText, durabilityText, durability, amethystLevel, diamondLevel,
-                emeraldLevel, rubyLevel, blackStoneLevel, blueStoneLevel, topazLevel);
+    public MapItemLookAtEvent(final Location location, final String name, final int rareness, final String description,
+                              final String producer, final Money worth, final int weight,
+                              final String qualityText, final String durabilityText, final int durability,
+                              final int amethystLevel, final int diamondLevel, final int emeraldLevel,
+                              final int rubyLevel, final int obsidianLevel, final int sapphireLevel,
+                              final int topazLevel, final int bonus) {
+        super(name, rareness, description, producer, worth, weight, qualityText, durabilityText, durability,
+                amethystLevel, diamondLevel, emeraldLevel, rubyLevel, obsidianLevel, sapphireLevel, topazLevel, bonus);
         this.location = location;
     }
 

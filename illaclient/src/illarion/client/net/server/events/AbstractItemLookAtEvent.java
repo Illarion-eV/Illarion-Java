@@ -35,7 +35,12 @@ public class AbstractItemLookAtEvent {
     /**
      * The type of the item.
      */
-    private final int itemType;
+    private final int rareness;
+
+    /**
+     * The description of the item.
+     */
+    private final String description;
 
     /**
      * The name of the producer of the item. Can be {@code null} in case there is not producer.
@@ -46,6 +51,11 @@ public class AbstractItemLookAtEvent {
      * The worth of the item that is shown in the tooltip. Can be {@code null} in case this item can't ever be sold.
      */
     private final Money worth;
+
+    /**
+     * The weight of the item.
+     */
+    private final int weight;
 
     /**
      * The text that represents the quality. Can be {@code null} in case this item doesn't have a quality.
@@ -87,16 +97,16 @@ public class AbstractItemLookAtEvent {
     private final int rubyLevel;
 
     /**
-     * The level of the blackstone that is embedded in the item. Valid values from {@code 0} (no blackstone) to
-     * {@code 10} (very strong blackstone)
+     * The level of the obsidian that is embedded in the item. Valid values from {@code 0} (no obsidian) to
+     * {@code 10} (very strong obsidian)
      */
-    private final int blackStoneLevel;
+    private final int obsidianLevel;
 
     /**
-     * The level of the bluestone that is embedded in the item. Valid values from {@code 0} (no bluestone) to
-     * {@code 10} (very strong bluestone)
+     * The level of the sapphire that is embedded in the item. Valid values from {@code 0} (no sapphire) to
+     * {@code 10} (very strong sapphire)
      */
-    private final int blueStoneLevel;
+    private final int sapphireLevel;
 
     /**
      * The level of the topaz that is embedded in the item. Valid values from {@code 0} (no topaz) to {@code 10}
@@ -105,32 +115,43 @@ public class AbstractItemLookAtEvent {
     private final int topazLevel;
 
     /**
+     * The bonus that is granted by the gems.
+     */
+    private final int bonus;
+
+    /**
      * Default constructor that allows setting all the parameters of this class.
      *
-     * @param name            the name of the item
-     * @param itemType        the type constant of this item
-     * @param producer        the name of the producer
-     * @param worth           the worth of the item
-     * @param qualityText     the text representing the quality
-     * @param durabilityText  the text representing the durability
-     * @param durability      the value of the durability
-     * @param amethystLevel   the level of the amethyst
-     * @param diamondLevel    the level of the diamond
-     * @param emeraldLevel    the level of the emerald
-     * @param rubyLevel       the level of the ruby
-     * @param blackStoneLevel the level of the blackstone
-     * @param blueStoneLevel  the level of the bluestone
-     * @param topazLevel      the level of the topaz
+     * @param name           the name of the item
+     * @param rareness       the type constant of this item
+     * @param description    the description of this item
+     * @param producer       the name of the producer
+     * @param worth          the worth of the item
+     * @param weight         the weight of this item
+     * @param qualityText    the text representing the quality
+     * @param durabilityText the text representing the durability
+     * @param durability     the value of the durability
+     * @param amethystLevel  the level of the amethyst
+     * @param diamondLevel   the level of the diamond
+     * @param emeraldLevel   the level of the emerald
+     * @param rubyLevel      the level of the ruby
+     * @param obsidianLevel  the level of the obsidian
+     * @param sapphireLevel  the level of the sapphire
+     * @param topazLevel     the level of the topaz
+     * @param bonus          the bonus that is granted by the gems in this item
      */
-    protected AbstractItemLookAtEvent(final String name, final int itemType, final String producer, final Money worth,
+    protected AbstractItemLookAtEvent(final String name, final int rareness, final String description,
+                                      final String producer, final Money worth, final int weight,
                                       final String qualityText, final String durabilityText, final int durability,
                                       final int amethystLevel, final int diamondLevel, final int emeraldLevel,
-                                      final int rubyLevel, final int blackStoneLevel, final int blueStoneLevel,
-                                      final int topazLevel) {
+                                      final int rubyLevel, final int obsidianLevel, final int sapphireLevel,
+                                      final int topazLevel, final int bonus) {
         this.name = name;
-        this.itemType = itemType;
+        this.rareness = rareness;
+        this.description = description;
         this.producer = producer;
         this.worth = worth;
+        this.weight = weight;
         this.qualityText = qualityText;
         this.durabilityText = durabilityText;
         this.durability = durability;
@@ -138,9 +159,10 @@ public class AbstractItemLookAtEvent {
         this.diamondLevel = diamondLevel;
         this.emeraldLevel = emeraldLevel;
         this.rubyLevel = rubyLevel;
-        this.blackStoneLevel = blackStoneLevel;
-        this.blueStoneLevel = blueStoneLevel;
+        this.obsidianLevel = obsidianLevel;
+        this.sapphireLevel = sapphireLevel;
         this.topazLevel = topazLevel;
+        this.bonus = bonus;
     }
 
     /**
@@ -153,21 +175,21 @@ public class AbstractItemLookAtEvent {
     }
 
     /**
-     * Get the level of the blackstone in this item.
+     * Get the bonus that is granted by the gems in this item.
      *
-     * @return the blackstone level
+     * @return the gem bonus
      */
-    public int getBlackStoneLevel() {
-        return blackStoneLevel;
+    public int getBonus() {
+        return bonus;
     }
 
     /**
-     * Get the level of the bluestone in this item.
+     * Get the item description.
      *
-     * @return the bluestone level
+     * @return the item description
      */
-    public int getBlueStoneLevel() {
-        return blueStoneLevel;
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -207,21 +229,21 @@ public class AbstractItemLookAtEvent {
     }
 
     /**
-     * Get the type of the item.
-     *
-     * @return the type of the item
-     */
-    public int getItemType() {
-        return itemType;
-    }
-
-    /**
      * Get the name of the item.
      *
      * @return the name of the item
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Get the level of the blackstone in this item.
+     *
+     * @return the blackstone level
+     */
+    public int getObsidianLevel() {
+        return obsidianLevel;
     }
 
     /**
@@ -243,6 +265,15 @@ public class AbstractItemLookAtEvent {
     }
 
     /**
+     * Get the type of the item.
+     *
+     * @return the type of the item
+     */
+    public int getRareness() {
+        return rareness;
+    }
+
+    /**
      * Get the level of the ruby in this item.
      *
      * @return the ruby level
@@ -252,12 +283,30 @@ public class AbstractItemLookAtEvent {
     }
 
     /**
+     * Get the level of the bluestone in this item.
+     *
+     * @return the bluestone level
+     */
+    public int getSapphireLevel() {
+        return sapphireLevel;
+    }
+
+    /**
      * Get the level of the topaz in this item.
      *
      * @return the topaz level
      */
     public int getTopazLevel() {
         return topazLevel;
+    }
+
+    /**
+     * Get the weight of the item.
+     *
+     * @return the weight of the item
+     */
+    public int getWeight() {
+        return weight;
     }
 
     /**

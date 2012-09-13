@@ -160,8 +160,8 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         builder.quality(event.getQualityText());
         builder.durability(event.getDurabilityText());
         builder.amethystLevel(event.getAmethystLevel());
-        builder.blackStoneLevel(event.getBlackStoneLevel());
-        builder.blueStoneLevel(event.getBlueStoneLevel());
+        builder.blackStoneLevel(event.getObsidianLevel());
+        builder.blueStoneLevel(event.getSapphireLevel());
         builder.diamondLevel(event.getDiamondLevel());
         builder.emeraldLevel(event.getEmeraldLevel());
         builder.rubyLevel(event.getRubyLevel());
@@ -169,9 +169,6 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
 
         final Element toolTip = builder.build(parentNifty, parentScreen, toolTipLayer);
         toolTip.getParent().layoutElements();
-
-        final int screenWidth = parentScreen.getRootElement().getWidth();
-        final int screenHeight = parentScreen.getRootElement().getHeight();
 
         final int toolTipWidth = toolTip.getWidth();
         final int toolTipHeight = toolTip.getHeight();

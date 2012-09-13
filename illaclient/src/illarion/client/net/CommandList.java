@@ -383,7 +383,12 @@ public final class CommandList {
     /**
      * Server message that contains the data of a lookat event on a map tile.
      */
-    public static final int MSG_LOOKAT_TILE = 0xC0;
+    public static final int MSG_LOOKAT_MAPITEM = 0xC0;
+
+    /**
+     * Server message that contains the data of a lookat event on a map tile.
+     */
+    public static final int MSG_LOOKAT_TILE = 0xBC;
 
     /**
      * Server message that contains the magic flags of the player character.
@@ -399,11 +404,6 @@ public final class CommandList {
      * Server message that contains a map stripe. So all tiles along a stipe and the item on the tiles.
      */
     public static final int MSG_MAP_STRIPE = 0xA1;
-
-    /**
-     * Server message that sends the contents of a menu.
-     */
-    public static final int MSG_MENU = 0xBC;
 
     /**
      * Server message for moving a character. That could be the player character or another character. This message

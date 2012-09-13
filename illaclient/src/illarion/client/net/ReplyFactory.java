@@ -80,8 +80,9 @@ public final class ReplyFactory
         map(CommandList.MSG_GRAPHIC_FX, CommandList.MSG_SOUND_FX);
 
         register(new LookAtInvMsg());
-        register(new LookatTileMsg());
-        register(new LookatShowcaseMsg());
+        register(new LookAtTileMsg());
+        register(new LookAtMapItemMsg());
+        register(new LookAtShowcaseMsg());
         register(new LookatCharMsg());
 
         register(new DateTimeMsg());

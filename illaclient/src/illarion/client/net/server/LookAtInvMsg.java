@@ -20,33 +20,23 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.net.server.events.LookAtInventoryEvent;
+import illarion.client.net.server.events.InventoryItemLookAtEvent;
+import illarion.common.util.Money;
 import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
 /**
- * Servermessage: Look at description of item in the inventory (
- * {@link illarion.client.net.CommandList#MSG_LOOKAT_INV}).
+ * Servermessage: Look at description of item in the inventory ({@link CommandList#MSG_LOOKAT_INV}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class LookAtInvMsg extends AbstractReply {
+public final class LookAtInvMsg extends AbstractItemLookAtMsg {
     /**
      * Inventory slot that message is related to.
      */
     private short slot;
-
-    /**
-     * Text that is shown as look at on the item.
-     */
-    private String text;
-
-    /**
-     * The value of the item in copper coins.
-     */
-    private long value;
 
     /**
      * Default constructor for the inventory item look at text message.
@@ -77,8 +67,7 @@ public final class LookAtInvMsg extends AbstractReply {
     @Override
     public void decode(final NetCommReader reader) throws IOException {
         slot = reader.readUByte();
-        text = reader.readString();
-        value = reader.readUInt();
+        decodeLookAt(reader);
     }
 
     /**
@@ -88,17 +77,11 @@ public final class LookAtInvMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new LookAtInventoryEvent(slot, text, value));
+        EventBus.publish(new InventoryItemLookAtEvent(slot, name, rareness, description, craftedBy, new Money(worth),
+                weight, qualityText, durabilityText, durabilityValue, amethystLevel, diamondLevel, emeraldLevel,
+                rubyLevel, obsidianLevel, sapphireLevel, topazLevel, bonus));
 
         return true;
-    }
-
-    /**
-     * Clean the command up before recycling it.
-     */
-    @Override
-    public void reset() {
-        text = null;
     }
 
     /**
@@ -111,8 +94,6 @@ public final class LookAtInvMsg extends AbstractReply {
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("Slot: ").append(slot);
-        builder.append(" Message: ").append(text);
-        builder.append(" Item value: ").append(value);
         return toString(builder);
     }
 }

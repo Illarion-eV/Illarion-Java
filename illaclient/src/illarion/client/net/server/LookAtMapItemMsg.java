@@ -20,34 +20,29 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
-import illarion.client.world.World;
+import illarion.client.net.server.events.MapItemLookAtEvent;
 import illarion.common.util.Location;
+import illarion.common.util.Money;
+import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
 /**
- * Servermessage: Look at description of a tile ( {@link CommandList#MSG_LOOKAT_TILE}).
+ * Servermessage: Look at description of a map item ( {@link CommandList#MSG_LOOKAT_MAPITEM}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
- * @author Nop
  */
-public final class LookAtTileMsg
-        extends AbstractReply {
+public final class LookAtMapItemMsg extends AbstractItemLookAtMsg {
     /**
      * The location of the tile on the server map.
      */
     private transient Location loc;
 
     /**
-     * The look at text for the tile.
-     */
-    private String text;
-
-    /**
      * Default constructor for the tile look at text message.
      */
-    public LookAtTileMsg() {
-        super(CommandList.MSG_LOOKAT_TILE);
+    public LookAtMapItemMsg() {
+        super(CommandList.MSG_LOOKAT_MAPITEM);
     }
 
     /**
@@ -56,21 +51,21 @@ public final class LookAtTileMsg
      * @return a new instance of this message object
      */
     @Override
-    public LookAtTileMsg clone() {
-        return new LookAtTileMsg();
+    public LookAtMapItemMsg clone() {
+        return new LookAtMapItemMsg();
     }
 
     /**
      * Decode the tile look at text data the receiver got and prepare it for the execution.
      *
      * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
+     * @throws java.io.IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
     public void decode(final NetCommReader reader)
             throws IOException {
         loc = decodeLocation(reader);
-        text = reader.readString();
+        decodeLookAt(reader);
     }
 
     /**
@@ -80,12 +75,9 @@ public final class LookAtTileMsg
      */
     @Override
     public boolean executeUpdate() {
-        World.getMapDisplay().lookAt(loc.getDcX(), loc.getDcY(), text);
-        //        GUI.getInstance().getChatText()
-        //            .showText(text, null, loc, ChatHandler.SpeechMode.normal);
-
-        // for testing lookat only
-        World.getChatHandler().handleMessage(text, loc);
+        EventBus.publish(new MapItemLookAtEvent(loc, name, rareness, description, craftedBy, new Money(worth),
+                weight, qualityText, durabilityText, durabilityValue, amethystLevel, diamondLevel, emeraldLevel,
+                rubyLevel, obsidianLevel, sapphireLevel, topazLevel, bonus));
 
         return true;
     }
@@ -95,7 +87,7 @@ public final class LookAtTileMsg
      */
     @Override
     public void reset() {
-        text = null;
+        super.reset();
         loc = null;
     }
 
@@ -107,6 +99,6 @@ public final class LookAtTileMsg
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Location: " + loc.toString() + " Message: " + text);
+        return toString("Location: " + loc.toString());
     }
 }
