@@ -176,6 +176,10 @@ final class Receiver extends Thread implements NetCommReader {
     public String readString() throws IOException {
         final int len = readUShort();
 
+        if (len == 0) {
+            return "";
+        }
+
         if (len > buffer.remaining()) {
             throw new IndexOutOfBoundsException(
                     "reading beyond receive buffer " + (buffer.remaining() + len));
