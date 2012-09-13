@@ -50,8 +50,8 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 import org.illarion.nifty.controls.itemcontainer.builder.ItemContainerBuilder;
-import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Input;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -225,6 +225,11 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
     };
 
     /**
+     * The input system that is used to query the state of the keyboard.
+     */
+    private Input input;
+
+    /**
      * Constructor of this handler.
      *
      * @param numberSelectPopupHandler the number select handler
@@ -234,27 +239,6 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
         itemContainerMap = new TIntObjectHashMap<org.illarion.nifty.controls.ItemContainer>();
         numberSelect = numberSelectPopupHandler;
         tooltipHandler = tooltip;
-    }
-
-    /**
-     * Close the container as needed.
-     *
-     * @param event the close event that contains the information what dialog is supposed to be closed
-     */
-    @EventSubscriber
-    public void onDialogClosedEvent(final CloseDialogEvent event) {
-        switch (event.getDialogType()) {
-            case Any:
-            case Merchant:
-                updateTasks.offer(updateMerchantOverlays);
-
-            case Message:
-                break;
-            case Input:
-                break;
-            case Selection:
-                break;
-        }
     }
 
     /**
@@ -276,6 +260,37 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
         rect.set(slotElement.getX(), slotElement.getY(), slotElement.getWidth(), slotElement.getHeight());
 
         tooltipHandler.showToolTip(rect, event);
+    }
+
+    /**
+     * Check if a container with a specified ID is already created.
+     *
+     * @param containerId the container ID
+     * @return {@code true} in case the container is already created
+     */
+    private boolean isContainerCreated(final int containerId) {
+        return itemContainerMap.containsKey(containerId);
+    }
+
+    /**
+     * Close the container as needed.
+     *
+     * @param event the close event that contains the information what dialog is supposed to be closed
+     */
+    @EventSubscriber
+    public void onDialogClosedEvent(final CloseDialogEvent event) {
+        switch (event.getDialogType()) {
+            case Any:
+            case Merchant:
+                updateTasks.offer(updateMerchantOverlays);
+
+            case Message:
+                break;
+            case Input:
+                break;
+            case Selection:
+                break;
+        }
     }
 
     /**
@@ -375,7 +390,8 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
         final int containerId = getContainerId(topic);
 
         World.getInteractionManager().notifyDraggingContainer(containerId, slotId,
-                new EndOfDragOperation(data.getSource().getElement().getNiftyControl(InventorySlot.class)));
+                new ContainerHandler.EndOfDragOperation(data.getSource().getElement().getNiftyControl(InventorySlot
+                        .class)));
     }
 
     /**
@@ -396,7 +412,7 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
 
         final int amount = World.getInteractionManager().getMovedAmount();
         final InteractionManager iManager = World.getInteractionManager();
-        if ((amount > 1) && (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))) {
+        if ((amount > 1) && isShiftPressed()) {
             numberSelect.requestNewPopup(1, amount, new NumberSelectPopupHandler.Callback() {
                 @Override
                 public void popupCanceled() {
@@ -411,6 +427,15 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
         } else {
             iManager.dropAtContainer(containerId, slotId, World.getInteractionManager().getMovedAmount());
         }
+    }
+
+    /**
+     * Check if the shift key is pressed on the keyboard.
+     *
+     * @return {@code true} in case the shift key on the keyboard
+     */
+    private boolean isShiftPressed() {
+        return (input != null) && (input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT));
     }
 
     @Override
@@ -433,6 +458,7 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
 
     @Override
     public void update(final GameContainer container, final int delta) {
+        input = container.getInput();
         while (true) {
             final Runnable task = updateTasks.poll();
             if (task == null) {
@@ -459,16 +485,6 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
         final org.illarion.nifty.controls.ItemContainer conControl = container.getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
 
         itemContainerMap.put(event.getContainerId(), conControl);
-    }
-
-    /**
-     * Check if a container with a specified ID is already created.
-     *
-     * @param containerId the container ID
-     * @return {@code true} in case the container is already created
-     */
-    private boolean isContainerCreated(final int containerId) {
-        return itemContainerMap.containsKey(containerId);
     }
 
     /**

@@ -52,8 +52,8 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
-import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Input;
 
 import java.util.Arrays;
 import java.util.List;
@@ -171,6 +171,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     private Screen activeScreen;
     private final NumberSelectPopupHandler numberSelect;
     private final TooltipHandler tooltip;
+    private Input input;
 
     /**
      * The instance of the inventory click helper that is used in this instance of the GUI inventory handler.
@@ -335,13 +336,17 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
                 new GUIInventoryHandler.EndOfDragOperation(invSlots[slotId].getNiftyControl(InventorySlot.class)));
     }
 
+    private boolean isShiftPressed() {
+        return (input != null) && (input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT));
+    }
+
     @NiftyEventSubscriber(pattern = "invslot_.*")
     public void dropInInventory(final String topic, final DroppableDroppedEvent data) {
         final int slotId = getSlotNumber(topic);
 
         final int amount = World.getInteractionManager().getMovedAmount();
         final InteractionManager iManager = World.getInteractionManager();
-        if ((amount > 1) && (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))) {
+        if ((amount > 1) && isShiftPressed()) {
             numberSelect.requestNewPopup(1, amount, new NumberSelectPopupHandler.Callback() {
                 @Override
                 public void popupCanceled() {
@@ -462,6 +467,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
 
     @Override
     public void update(final GameContainer container, final int delta) {
+        input = container.getInput();
         while (true) {
             final Runnable task = updateQueue.poll();
             if (task == null) {
