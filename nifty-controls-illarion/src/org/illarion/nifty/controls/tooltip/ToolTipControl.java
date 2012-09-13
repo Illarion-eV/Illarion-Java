@@ -52,7 +52,8 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         title.setText(controlDefinitionAttributes.get("title"));
         title.setColor(controlDefinitionAttributes.getAsColor("titleColor"));
 
-        if (controlDefinitionAttributes.isSet("producer")) {
+        final String producer = controlDefinitionAttributes.get("producer");
+        if (!isNullOrEmpty(producer)) {
             final Label producedBy = element.findNiftyControl("#createdByLabel", Label.class);
             applyTextToLabel(producedBy, controlDefinitionAttributes.get("producer"));
         } else {
@@ -64,22 +65,24 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         if (isAllNull(money)) {
             element.findElementByName("#worthLine").markForRemoval();
         } else {
-            final Money moneyValue = new Money(Integer.parseInt(money));
+            final Money moneyValue = new Money(Long.parseLong(money));
             applyMoney(element, moneyValue.getGold(), "#worthGoldCount", "#worthGoldImage");
             applyMoney(element, moneyValue.getSilver(), "#worthSilverCount", "#worthSilverImage");
             applyMoney(element, moneyValue.getCopper(), "#worthCopperCount", "#worthCopperImage");
         }
 
-        if (controlDefinitionAttributes.isSet("quality")) {
-            final Label producedBy = element.findNiftyControl("#qualityText", Label.class);
-            applyTextToLabel(producedBy, controlDefinitionAttributes.get("quality"));
+        final String quality = controlDefinitionAttributes.get("quality");
+        if (!isNullOrEmpty(quality)) {
+            final Label qualityText = element.findNiftyControl("#qualityText", Label.class);
+            applyTextToLabel(qualityText, quality);
         } else {
             element.findElementByName("#qualityLine").markForRemoval();
         }
 
-        if (controlDefinitionAttributes.isSet("durability")) {
-            final Label producedBy = element.findNiftyControl("#durabilityText", Label.class);
-            applyTextToLabel(producedBy, controlDefinitionAttributes.get("durability"));
+        final String durability = controlDefinitionAttributes.get("durability");
+        if (!isNullOrEmpty(durability)) {
+            final Label qualityText = element.findNiftyControl("#durabilityText", Label.class);
+            applyTextToLabel(qualityText, durability);
         } else {
             element.findElementByName("#durabilityLine").markForRemoval();
         }
@@ -105,6 +108,10 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         }
 
         element.layoutElements();
+    }
+
+    private static boolean isNullOrEmpty(final String value) {
+        return (value == null) || value.isEmpty();
     }
 
     private static boolean isAllNull(final String... strings) {
