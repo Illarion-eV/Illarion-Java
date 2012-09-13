@@ -28,12 +28,14 @@ import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.effects.impl.Hint;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.ElementShowEvent;
+import de.lessvoid.nifty.elements.events.NiftyMouseMovedEvent;
 import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 import illarion.client.graphics.Item;
+import illarion.client.gui.events.TooltipsRemovedEvent;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.InventoryItemLookAtEvent;
@@ -126,7 +128,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
 
             switch (count) {
                 case 1:
-                    slot.getInteractive().lookAt();
+                    //slot.getInteractive().lookAt();
                     break;
                 case 2:
                     if (World.getPlayer().hasMerchantList()) {
@@ -304,6 +306,26 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     @NiftyEventSubscriber(pattern = "invslot_.*")
     public void cancelDragging(final String topic, final DraggableDragCanceledEvent data) {
         World.getInteractionManager().cancelDragging();
+    }
+
+    private int lastLookedAtSlot = -1;
+
+    @NiftyEventSubscriber(pattern = "invslot_.*")
+    public void onMouseMoveOverInventory(final String topic, final NiftyMouseMovedEvent event) {
+        final int slotId = getSlotNumber(topic);
+
+        if (lastLookedAtSlot == slotId) {
+            return;
+        }
+
+        lastLookedAtSlot = slotId;
+
+        World.getPlayer().getInventory().getItem(slotId).getInteractive().lookAt();
+    }
+
+    @EventSubscriber
+    public void onTooltipsRemovedEventsReceived(final TooltipsRemovedEvent event) {
+        lastLookedAtSlot = -1;
     }
 
     @NiftyEventSubscriber(pattern = "invslot_.*")

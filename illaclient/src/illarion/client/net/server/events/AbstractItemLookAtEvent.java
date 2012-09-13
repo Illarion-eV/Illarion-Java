@@ -27,6 +27,11 @@ import illarion.common.util.Money;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class AbstractItemLookAtEvent {
+    public static final int RARENESS_COMMON = 1;
+    public static final int RARENESS_UNCOMMON = 2;
+    public static final int RARENESS_RARE = 3;
+    public static final int RARENESS_EPIC = 4;
+
     /**
      * The name of the item.
      */

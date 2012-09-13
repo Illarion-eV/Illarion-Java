@@ -18,14 +18,17 @@
  */
 package illarion.client.gui;
 
+import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.Color;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.gui.events.TooltipsRemovedEvent;
 import illarion.client.net.server.events.AbstractItemLookAtEvent;
 import illarion.common.util.Rectangle;
+import org.bushe.swing.event.EventBus;
 import org.illarion.nifty.controls.tooltip.builder.ToolTipBuilder;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
@@ -71,7 +74,12 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         @Override
         public void run() {
             for (final Element element : toolTipLayer.getElements()) {
-                element.hide();
+                element.hide(new EndNotify() {
+                    @Override
+                    public void perform() {
+                        element.markForRemoval();
+                    }
+                });
                 activeTooltipArea = null;
             }
         }
@@ -117,6 +125,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         if (activeTooltipArea != null) {
             if (!activeTooltipArea.isInside(input.getMouseX(), input.getMouseY())) {
                 hideToolTip();
+                EventBus.publish(new TooltipsRemovedEvent());
             }
         }
     }
@@ -136,6 +145,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * @param event    the event that contains the data of the tooltip
      */
     public void showToolTip(final Rectangle location, final AbstractItemLookAtEvent event) {
+        hideToolTip();
         toolTipTasks.offer(new Runnable() {
             @Override
             public void run() {
@@ -145,6 +155,12 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         });
     }
 
+    public boolean isTooltipActive() {
+        return !toolTipLayer.getElements().isEmpty();
+    }
+
+    private long count = Long.MIN_VALUE;
+
     /**
      * Create a new tooltip. This is the internal implementation that is only called from the update loop.
      *
@@ -152,11 +168,32 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * @param event    the event that contains the data of the tooltip
      */
     private void showToolTipImpl(final Rectangle location, final AbstractItemLookAtEvent event) {
-        final ToolTipBuilder builder = new ToolTipBuilder();
+        final ToolTipBuilder builder = new ToolTipBuilder("tooltip-" + Long.toString(count++));
         builder.title(event.getName());
+
+        switch (event.getRareness()) {
+            case AbstractItemLookAtEvent.RARENESS_UNCOMMON:
+                builder.titleColor("#00a500ff");
+                break;
+            case AbstractItemLookAtEvent.RARENESS_RARE:
+                builder.titleColor("#003fbfff");
+                break;
+            case AbstractItemLookAtEvent.RARENESS_EPIC:
+                builder.titleColor("#bb00ffff");
+                break;
+            case AbstractItemLookAtEvent.RARENESS_COMMON:
+            default:
+                builder.titleColor(Color.WHITE);
+                break;
+        }
+
+        builder.description(event.getDescription());
         builder.titleColor(Color.WHITE);
-        builder.producer(event.getName());
-        builder.worth(event.getWorth().getTotalCopper());
+        builder.producer(event.getProducer());
+        builder.worth(event.getWorth().getTotalCopper() / 20);
+        if (event.getWeight() > 0) {
+            builder.weight(Integer.toString(event.getWeight()));
+        }
         builder.quality(event.getQualityText());
         builder.durability(event.getDurabilityText());
         builder.amethystLevel(event.getAmethystLevel());
@@ -167,26 +204,32 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         builder.rubyLevel(event.getRubyLevel());
         builder.topazLevel(event.getTopazLevel());
 
+        if (event.getBonus() > 0) {
+            builder.gemBonus(Integer.toString(event.getBonus()));
+        }
+
         final Element toolTip = builder.build(parentNifty, parentScreen, toolTipLayer);
         toolTip.getParent().layoutElements();
 
         final int toolTipWidth = toolTip.getWidth();
         final int toolTipHeight = toolTip.getHeight();
 
-        final boolean topSide = (location.getTop() - toolTipHeight) > 0;
+        final boolean topSide = (location.getBottom() - toolTipHeight) > 0;
         final boolean leftSide = (location.getRight() - toolTipWidth) < 0;
 
         if (topSide) {
-            toolTip.setConstraintY(SizeValue.px(location.getTop() - toolTip.getHeight()));
+            toolTip.setConstraintY(SizeValue.px(location.getBottom() - toolTip.getHeight()));
         } else {
-            toolTip.setConstraintY(SizeValue.px(location.getBottom()));
+            toolTip.setConstraintY(SizeValue.px(location.getTop()));
         }
 
         if (leftSide) {
-            toolTip.setConstraintX(SizeValue.px(location.getLeft() - toolTip.getWidth()));
+            toolTip.setConstraintX(SizeValue.px(location.getLeft()));
         } else {
-            toolTip.setConstraintX(SizeValue.px(location.getRight()));
+            toolTip.setConstraintX(SizeValue.px(location.getRight() - toolTip.getWidth()));
         }
+
+        System.out.println("Tooltip placement: " + Boolean.toString(topSide) + " " + Boolean.toString(leftSide));
 
         toolTip.getParent().layoutElements();
     }

@@ -54,8 +54,9 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
 
         final String description = controlDefinitionAttributes.get("description");
         if (!isNullOrEmpty(description)) {
-            final Label qualityText = element.findNiftyControl("#description", Label.class);
-            applyTextToLabel(qualityText, description);
+            final Label descriptionLabel = element.findNiftyControl("#description", Label.class);
+            descriptionLabel.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
+            descriptionLabel.setText(description);
         } else {
             element.findElementByName("#description").markForRemoval();
         }

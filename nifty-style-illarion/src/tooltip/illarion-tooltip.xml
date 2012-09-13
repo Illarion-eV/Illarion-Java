@@ -27,11 +27,11 @@
     </style>
 
     <style id="illarion-tooltip#title">
-        <attributes width="100%" font="menuFont" marginBottom="5px"/>
+        <attributes width="100%" font="menuFont" marginBottom="9px" textHAlign="left"/>
     </style>
 
-    <style id="illarion-tooltip#description" base="nifty-panel-small">
-        <attributes width="100%" font="smallFont" textHAlign="left" marginBottom="5px"/>
+    <style id="illarion-tooltip#description">
+        <attributes width="100%" font="smallFont" textHAlign="left" marginBottom="10px" color="#e0e000ff"/>
     </style>
 
     <style id="illarion-tooltip#createByLine">
@@ -138,7 +138,7 @@
         <attributes font="textFont" marginRight="5px"/>
     </style>
 
-    <style id="illarion-tooltip#gemBonusLabel" base="nifty-label">
+    <style id="illarion-tooltip#gemBonusText" base="nifty-label">
         <attributes font="textFont"/>
     </style>
 </nifty-styles>
