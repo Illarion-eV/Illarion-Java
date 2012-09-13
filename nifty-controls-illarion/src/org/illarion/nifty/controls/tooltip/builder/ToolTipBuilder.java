@@ -51,8 +51,8 @@ public class ToolTipBuilder extends ControlBuilder {
         set("producer", value);
     }
 
-    public void worth(final int value) {
-        set("worth", Integer.toString(value));
+    public void worth(final long value) {
+        set("worth", Long.toString(value));
     }
 
     public void quality(final String value) {
