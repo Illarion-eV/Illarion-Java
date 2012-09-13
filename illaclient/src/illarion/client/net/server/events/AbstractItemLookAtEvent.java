@@ -63,6 +63,12 @@ public class AbstractItemLookAtEvent {
     private final int durability;
 
     /**
+     * The level of the amethyst that is embedded in the item. Valid values from {@code 0} (no amethyst) to {@code 10}
+     * (very strong amethyst)
+     */
+    private final int amethystLevel;
+
+    /**
      * The level of the diamond that is embedded in the item. Valid values from {@code 0} (no diamond) to {@code 10}
      * (very strong diamond)
      */
@@ -108,6 +114,7 @@ public class AbstractItemLookAtEvent {
      * @param qualityText     the text representing the quality
      * @param durabilityText  the text representing the durability
      * @param durability      the value of the durability
+     * @param amethystLevel   the level of the amethyst
      * @param diamondLevel    the level of the diamond
      * @param emeraldLevel    the level of the emerald
      * @param rubyLevel       the level of the ruby
@@ -117,8 +124,9 @@ public class AbstractItemLookAtEvent {
      */
     protected AbstractItemLookAtEvent(final String name, final int itemType, final String producer, final Money worth,
                                       final String qualityText, final String durabilityText, final int durability,
-                                      final int diamondLevel, final int emeraldLevel, final int rubyLevel,
-                                      final int blackStoneLevel, final int blueStoneLevel, final int topazLevel) {
+                                      final int amethystLevel, final int diamondLevel, final int emeraldLevel,
+                                      final int rubyLevel, final int blackStoneLevel, final int blueStoneLevel,
+                                      final int topazLevel) {
         this.name = name;
         this.itemType = itemType;
         this.producer = producer;
@@ -126,12 +134,22 @@ public class AbstractItemLookAtEvent {
         this.qualityText = qualityText;
         this.durabilityText = durabilityText;
         this.durability = durability;
+        this.amethystLevel = amethystLevel;
         this.diamondLevel = diamondLevel;
         this.emeraldLevel = emeraldLevel;
         this.rubyLevel = rubyLevel;
         this.blackStoneLevel = blackStoneLevel;
         this.blueStoneLevel = blueStoneLevel;
         this.topazLevel = topazLevel;
+    }
+
+    /**
+     * Get the level of the amethyst in this item.
+     *
+     * @return the amethyst level
+     */
+    public int getAmethystLevel() {
+        return amethystLevel;
     }
 
     /**

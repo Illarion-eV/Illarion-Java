@@ -22,6 +22,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.gui.*;
+import org.newdawn.slick.GameContainer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,22 +32,25 @@ public final class GameScreenController implements ScreenController {
     private Nifty parentNifty;
     private Screen parentScreen;
 
-    private Collection<ScreenController> childControllers;
-    private Collection<UpdatableHandler> childUpdateControllers;
+    private final Collection<ScreenController> childControllers;
+    private final Collection<UpdatableHandler> childUpdateControllers;
 
-    private NumberSelectPopupHandler numberPopupHandler;
+    private final NumberSelectPopupHandler numberPopupHandler;
+    private final TooltipHandler tooltipHandler;
 
     private boolean notifyResolutionChanged;
 
     public GameScreenController() {
         numberPopupHandler = new NumberSelectPopupHandler();
+        tooltipHandler = new TooltipHandler();
 
         childControllers = new ArrayList<ScreenController>();
         childUpdateControllers = new ArrayList<UpdatableHandler>();
 
         addHandler(numberPopupHandler);
+        addHandler(tooltipHandler);
         addHandler(new GUIChatHandler());
-        addHandler(new GUIInventoryHandler(numberPopupHandler));
+        addHandler(new GUIInventoryHandler(numberPopupHandler, tooltipHandler));
         addHandler(new CharListHandler());
         addHandler(new DialogHandler(numberPopupHandler));
         addHandler(new ContainerHandler(numberPopupHandler));
@@ -91,11 +95,12 @@ public final class GameScreenController implements ScreenController {
      * This function is called once inside the game loop with the delta value of the current update loop. Inside this
      * functions changes to the actual representation of the GUI should be done.
      *
-     * @param delta the time since the last update call
+     * @param container the container that displays the game
+     * @param delta     the time since the last update call
      */
-    public void onUpdateGame(final int delta) {
+    public void onUpdateGame(final GameContainer container, final int delta) {
         for (final UpdatableHandler childController : childUpdateControllers) {
-            childController.update(delta);
+            childController.update(container, delta);
         }
     }
 

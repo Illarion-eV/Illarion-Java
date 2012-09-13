@@ -49,6 +49,7 @@ import org.illarion.nifty.controls.dialog.merchant.builder.DialogMerchantBuilder
 import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
 import org.illarion.nifty.controls.dialog.select.builder.DialogSelectBuilder;
 import org.lwjgl.input.Keyboard;
+import org.newdawn.slick.GameContainer;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -64,7 +65,7 @@ import java.util.regex.Pattern;
 public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     @Override
-    public void update(final int delta) {
+    public void update(final GameContainer container, final int delta) {
         while (true) {
             final DialogHandler.BuildWrapper wrapper = builders.poll();
             if (wrapper == null) {

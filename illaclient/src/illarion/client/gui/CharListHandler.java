@@ -36,6 +36,7 @@ import illarion.common.util.FastMath;
 import illarion.common.util.Location;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.newdawn.slick.GameContainer;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -285,7 +286,7 @@ public final class CharListHandler
     }
 
     @Override
-    public void update(final int delta) {
+    public void update(final GameContainer container, final int delta) {
         while (true) {
             final AbstractCharEvent event = eventQueue.poll();
             if (event == null) {

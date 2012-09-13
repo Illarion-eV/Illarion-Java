@@ -29,6 +29,7 @@ import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import org.newdawn.slick.GameContainer;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -189,7 +190,7 @@ public class NumberSelectPopupHandler implements ScreenController, UpdatableHand
     }
 
     @Override
-    public void update(final int delta) {
+    public void update(final GameContainer container, final int delta) {
         while (!requestQueue.isEmpty()) {
             final Runnable task = requestQueue.poll();
             task.run();

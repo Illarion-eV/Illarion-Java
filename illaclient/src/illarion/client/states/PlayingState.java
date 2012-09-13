@@ -77,7 +77,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     @Override
     protected void updateGame(final GameContainer container, final StateBasedGame game, final int delta)
             throws SlickException {
-        gameScreenController.onUpdateGame(delta);
+        gameScreenController.onUpdateGame(container, delta);
         World.getMapDisplay().update(container, delta);
         World.getAnimationManager().animate(delta);
     }

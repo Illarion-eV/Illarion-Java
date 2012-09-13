@@ -18,6 +18,8 @@
  */
 package illarion.client.gui;
 
+import org.newdawn.slick.GameContainer;
+
 /**
  * This interface has to be implemented by update handlers that want to receive update calls during the main loop.
  *
@@ -28,7 +30,8 @@ public interface UpdatableHandler {
      * This function is called once during a update loop. It should be used to perform changes at the optics of the
      * game.
      *
-     * @param delta the time since the last update
+     * @param container the container that contains the game
+     * @param delta     the time since the last update
      */
-    void update(int delta);
+    void update(GameContainer container, int delta);
 }

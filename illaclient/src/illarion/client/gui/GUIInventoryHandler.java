@@ -36,6 +36,7 @@ import illarion.client.IllaClient;
 import illarion.client.graphics.Item;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
+import illarion.client.net.server.events.InventoryItemLookAtEvent;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.net.server.events.LookAtInventoryEvent;
 import illarion.client.resources.ItemFactory;
@@ -46,11 +47,13 @@ import illarion.client.world.items.Inventory;
 import illarion.client.world.items.MerchantItem;
 import illarion.client.world.items.MerchantList;
 import illarion.common.gui.AbstractMultiActionHelper;
+import illarion.common.util.Rectangle;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 import org.lwjgl.input.Keyboard;
+import org.newdawn.slick.GameContainer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -167,6 +170,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     private Nifty activeNifty;
     private Screen activeScreen;
     private final NumberSelectPopupHandler numberSelect;
+    private final TooltipHandler tooltip;
 
     /**
      * The instance of the inventory click helper that is used in this instance of the GUI inventory handler.
@@ -183,7 +187,8 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         }
     };
 
-    public GUIInventoryHandler(final NumberSelectPopupHandler numberSelectPopupHandler) {
+    public GUIInventoryHandler(final NumberSelectPopupHandler numberSelectPopupHandler,
+                               final TooltipHandler tooltipHandler) {
         slots = new String[Inventory.SLOT_COUNT];
         slots[0] = "invslot_bag";
         slots[1] = "invslot_head";
@@ -209,6 +214,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         Arrays.fill(slotLabelVisibility, false);
 
         numberSelect = numberSelectPopupHandler;
+        tooltip = tooltipHandler;
     }
 
     @EventSubscriber
@@ -253,6 +259,15 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     @EventSubscriber
     public void onMerchantDialogReceivedHandler(final DialogMerchantReceivedEvent event) {
         updateQueue.offer(updateMerchantOverlays);
+    }
+
+    @EventSubscriber
+    public void onInventoryItemLookAtHandler(final InventoryItemLookAtEvent event) {
+        final Element slot = invSlots[event.getSlot()];
+        final Rectangle rect = new Rectangle();
+        rect.set(slot.getX(), slot.getY(), slot.getWidth(), slot.getHeight());
+
+        tooltip.showToolTip(rect, event);
     }
 
     @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
@@ -446,7 +461,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     }
 
     @Override
-    public void update(final int delta) {
+    public void update(final GameContainer container, final int delta) {
         while (true) {
             final Runnable task = updateQueue.poll();
             if (task == null) {

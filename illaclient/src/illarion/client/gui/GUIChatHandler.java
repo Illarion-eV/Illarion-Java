@@ -42,6 +42,7 @@ import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.EventTopicSubscriber;
+import org.newdawn.slick.GameContainer;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -297,7 +298,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     }
 
     @Override
-    public void update(final int delta) {
+    public void update(final GameContainer container, final int delta) {
         Element contentPane = null;
 
         while (true) {

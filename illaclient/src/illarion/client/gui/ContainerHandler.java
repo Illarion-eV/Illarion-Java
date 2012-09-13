@@ -49,6 +49,7 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 import org.illarion.nifty.controls.itemcontainer.builder.ItemContainerBuilder;
 import org.lwjgl.input.Keyboard;
+import org.newdawn.slick.GameContainer;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -65,7 +66,7 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
     private final Queue<Runnable> updateTasks = new ConcurrentLinkedQueue<Runnable>();
 
     @Override
-    public void update(final int delta) {
+    public void update(final GameContainer container, final int delta) {
         while (true) {
             final Runnable task = updateTasks.poll();
             if (task == null) {

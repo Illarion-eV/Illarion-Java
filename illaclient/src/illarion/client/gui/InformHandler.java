@@ -35,6 +35,7 @@ import illarion.client.net.server.events.TextToInformReceivedEvent;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.newdawn.slick.GameContainer;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -214,7 +215,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     }
 
     @Override
-    public void update(final int delta) {
+    public void update(final GameContainer container, final int delta) {
         while (true) {
             final InformHandler.InformBuildTask task = builderQueue.poll();
             if (task == null) {
