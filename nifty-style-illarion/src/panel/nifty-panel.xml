@@ -24,7 +24,7 @@
     </style>
 
     <style id="nifty-panel-small">
-        <attributes padding="6px,9px,20px,9px" backgroundImage="data/gui/panel/panel-small.png"
+        <attributes padding="6px,9px,6px,9px" backgroundImage="data/gui/panel/panel-small.png"
                     imageMode="resize:14,2,14,11,14,2,14,1,14,2,14,11"/>
     </style>
 
