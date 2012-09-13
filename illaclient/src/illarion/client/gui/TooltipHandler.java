@@ -188,7 +188,6 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         }
 
         builder.description(event.getDescription());
-        builder.titleColor(Color.WHITE);
         builder.producer(event.getProducer());
         builder.worth(event.getWorth().getTotalCopper() / 20);
         if (event.getWeight() > 0) {
@@ -204,12 +203,17 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         builder.rubyLevel(event.getRubyLevel());
         builder.topazLevel(event.getTopazLevel());
 
+
         if (event.getBonus() > 0) {
             builder.gemBonus(Integer.toString(event.getBonus()));
         }
 
         final Element toolTip = builder.build(parentNifty, parentScreen, toolTipLayer);
         toolTip.getParent().layoutElements();
+
+        if (toolTip.getHeight() == 0) {
+            parentNifty.update();
+        }
 
         final int toolTipWidth = toolTip.getWidth();
         final int toolTipHeight = toolTip.getHeight();

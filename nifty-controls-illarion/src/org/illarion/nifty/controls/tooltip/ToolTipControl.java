@@ -58,7 +58,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             descriptionLabel.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
             descriptionLabel.setText(description);
         } else {
-            element.findElementByName("#description").markForRemoval();
+            removeElement(element.findElementByName("#description"));
         }
 
         final String producer = controlDefinitionAttributes.get("producer");
@@ -66,13 +66,13 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             final Label producedBy = element.findNiftyControl("#createdByLabel", Label.class);
             applyTextToLabel(producedBy, controlDefinitionAttributes.get("producer"));
         } else {
-            element.findElementByName("#createByLine").markForRemoval();
+            removeElement(element.findElementByName("#createByLine"));
         }
 
         final String money = controlDefinitionAttributes.get("worth");
 
         if (isAllNull(money)) {
-            element.findElementByName("#worthLine").markForRemoval();
+            removeElement(element.findElementByName("#worthLine"));
         } else {
             final Money moneyValue = new Money(Long.parseLong(money));
             applyMoney(element, moneyValue.getGold(), "#worthGoldCount", "#worthGoldImage");
@@ -85,7 +85,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             final Label qualityText = element.findNiftyControl("#weightLabel", Label.class);
             applyTextToLabel(qualityText, weight);
         } else {
-            element.findElementByName("#weightLine").markForRemoval();
+            removeElement(element.findElementByName("#weightLine"));
         }
 
         final String quality = controlDefinitionAttributes.get("quality");
@@ -93,7 +93,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             final Label qualityText = element.findNiftyControl("#qualityText", Label.class);
             applyTextToLabel(qualityText, quality);
         } else {
-            element.findElementByName("#qualityLine").markForRemoval();
+            removeElement(element.findElementByName("#qualityLine"));
         }
 
         final String durability = controlDefinitionAttributes.get("durability");
@@ -101,7 +101,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             final Label qualityText = element.findNiftyControl("#durabilityText", Label.class);
             applyTextToLabel(qualityText, durability);
         } else {
-            element.findElementByName("#durabilityLine").markForRemoval();
+            removeElement(element.findElementByName("#durabilityLine"));
         }
 
         final String diamond = controlDefinitionAttributes.get("diamondLevel");
@@ -113,7 +113,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         final String topaz = controlDefinitionAttributes.get("topazLevel");
 
         if (isAllNull(diamond, emerald, ruby, obsidian, sapphire, amethyst, topaz)) {
-            element.findElementByName("#gemsLine").markForRemoval();
+            removeElement(element.findElementByName("#gemsLine"));
         } else {
             applyGem(nifty, element, diamond, "#diamondImage", "diamond");
             applyGem(nifty, element, emerald, "#emeraldImage", "emerald");
@@ -129,10 +129,14 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             final Label qualityText = element.findNiftyControl("#gemBonusText", Label.class);
             applyTextToLabel(qualityText, gemBonus);
         } else {
-            element.findElementByName("#gemBonusLine").markForRemoval();
+            removeElement(element.findElementByName("#gemBonusLine"));
         }
 
         element.layoutElements();
+    }
+
+    private static void removeElement(final Element element) {
+        element.markForRemoval();
     }
 
     private static boolean isNullOrEmpty(final String value) {
