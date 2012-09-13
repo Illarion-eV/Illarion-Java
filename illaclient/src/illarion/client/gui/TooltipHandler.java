@@ -229,8 +229,6 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
             toolTip.setConstraintX(SizeValue.px(location.getRight() - toolTip.getWidth()));
         }
 
-        System.out.println("Tooltip placement: " + Boolean.toString(topSide) + " " + Boolean.toString(leftSide));
-
         toolTip.getParent().layoutElements();
     }
 }
