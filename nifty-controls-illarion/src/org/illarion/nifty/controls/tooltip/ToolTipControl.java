@@ -52,6 +52,14 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         title.setText(controlDefinitionAttributes.get("title"));
         title.setColor(controlDefinitionAttributes.getAsColor("titleColor"));
 
+        final String description = controlDefinitionAttributes.get("description");
+        if (!isNullOrEmpty(description)) {
+            final Label qualityText = element.findNiftyControl("#description", Label.class);
+            applyTextToLabel(qualityText, description);
+        } else {
+            element.findElementByName("#description").markForRemoval();
+        }
+
         final String producer = controlDefinitionAttributes.get("producer");
         if (!isNullOrEmpty(producer)) {
             final Label producedBy = element.findNiftyControl("#createdByLabel", Label.class);
@@ -69,6 +77,14 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             applyMoney(element, moneyValue.getGold(), "#worthGoldCount", "#worthGoldImage");
             applyMoney(element, moneyValue.getSilver(), "#worthSilverCount", "#worthSilverImage");
             applyMoney(element, moneyValue.getCopper(), "#worthCopperCount", "#worthCopperImage");
+        }
+
+        final String weight = controlDefinitionAttributes.get("weight");
+        if (!isNullOrEmpty(weight)) {
+            final Label qualityText = element.findNiftyControl("#weightLabel", Label.class);
+            applyTextToLabel(qualityText, weight);
+        } else {
+            element.findElementByName("#weightLine").markForRemoval();
         }
 
         final String quality = controlDefinitionAttributes.get("quality");
@@ -90,21 +106,29 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         final String diamond = controlDefinitionAttributes.get("diamondLevel");
         final String emerald = controlDefinitionAttributes.get("emeraldLevel");
         final String ruby = controlDefinitionAttributes.get("rubyLevel");
-        final String blackStone = controlDefinitionAttributes.get("blackStoneLevel");
-        final String blueStone = controlDefinitionAttributes.get("blueStoneLevel");
+        final String obsidian = controlDefinitionAttributes.get("obsidianLevel");
+        final String sapphire = controlDefinitionAttributes.get("sapphireLevel");
         final String amethyst = controlDefinitionAttributes.get("amethystLevel");
         final String topaz = controlDefinitionAttributes.get("topazLevel");
 
-        if (isAllNull(diamond, emerald, ruby, blackStone, blueStone, amethyst, topaz)) {
+        if (isAllNull(diamond, emerald, ruby, obsidian, sapphire, amethyst, topaz)) {
             element.findElementByName("#gemsLine").markForRemoval();
         } else {
             applyGem(nifty, element, diamond, "#diamondImage", "diamond");
             applyGem(nifty, element, emerald, "#emeraldImage", "emerald");
             applyGem(nifty, element, ruby, "#rubyImage", "ruby");
-            applyGem(nifty, element, blueStone, "#blueStoneImage", "bluestone");
-            applyGem(nifty, element, blackStone, "#blackStoneImage", "blackstone");
+            applyGem(nifty, element, sapphire, "#sapphireImage", "bluestone");
+            applyGem(nifty, element, obsidian, "#obsidianImage", "blackstone");
             applyGem(nifty, element, amethyst, "#amethystImage", "amethyst");
             applyGem(nifty, element, topaz, "#topazImage", "topaz");
+        }
+
+        final String gemBonus = controlDefinitionAttributes.get("gemBonus");
+        if (!isNullOrEmpty(gemBonus)) {
+            final Label qualityText = element.findNiftyControl("#gemBonusText", Label.class);
+            applyTextToLabel(qualityText, gemBonus);
+        } else {
+            element.findElementByName("#gemBonusLine").markForRemoval();
         }
 
         element.layoutElements();

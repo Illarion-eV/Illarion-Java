@@ -30,6 +30,10 @@
         <attributes width="100%" font="menuFont" marginBottom="5px"/>
     </style>
 
+    <style id="illarion-tooltip#description" base="nifty-panel-small">
+        <attributes width="100%" font="smallFont" textHAlign="left" marginBottom="5px"/>
+    </style>
+
     <style id="illarion-tooltip#createByLine">
         <attributes width="100%" marginBottom="20px"/>
     </style>
@@ -40,6 +44,18 @@
 
     <style id="illarion-tooltip#createdByLabel" base="nifty-label">
         <attributes font="textFont" textHAlign="left" color="#00ff00ff"/>
+    </style>
+
+    <style id="illarion-tooltip#weightLine">
+        <attributes width="100%" marginBottom="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#weightTitle" base="nifty-label">
+        <attributes font="textFont" marginRight="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#weightLabel" base="nifty-label">
+        <attributes font="textFont"/>
     </style>
 
     <style id="illarion-tooltip#worthLine">
@@ -109,8 +125,20 @@
     <style id="illarion-tooltip#diamondImage" base="illarion-tooltip#gemsImage"/>
     <style id="illarion-tooltip#rubyImage" base="illarion-tooltip#gemsImage"/>
     <style id="illarion-tooltip#emeraldImage" base="illarion-tooltip#gemsImage"/>
-    <style id="illarion-tooltip#blackStoneImage" base="illarion-tooltip#gemsImage"/>
-    <style id="illarion-tooltip#blueStoneImage" base="illarion-tooltip#gemsImage"/>
+    <style id="illarion-tooltip#obsidianImage" base="illarion-tooltip#gemsImage"/>
+    <style id="illarion-tooltip#sapphireImage" base="illarion-tooltip#gemsImage"/>
     <style id="illarion-tooltip#amethystImage" base="illarion-tooltip#gemsImage"/>
     <style id="illarion-tooltip#topazImage" base="illarion-tooltip#gemsImage"/>
+
+    <style id="illarion-tooltip#gemBonusLine">
+        <attributes width="100%" marginBottom="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#gemBonusTitle" base="nifty-label">
+        <attributes font="textFont" marginRight="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#gemBonusLabel" base="nifty-label">
+        <attributes font="textFont"/>
+    </style>
 </nifty-styles>

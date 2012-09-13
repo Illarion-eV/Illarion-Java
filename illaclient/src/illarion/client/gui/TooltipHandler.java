@@ -160,8 +160,8 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         builder.quality(event.getQualityText());
         builder.durability(event.getDurabilityText());
         builder.amethystLevel(event.getAmethystLevel());
-        builder.blackStoneLevel(event.getObsidianLevel());
-        builder.blueStoneLevel(event.getSapphireLevel());
+        builder.obsidianLevel(event.getObsidianLevel());
+        builder.sapphireLevel(event.getSapphireLevel());
         builder.diamondLevel(event.getDiamondLevel());
         builder.emeraldLevel(event.getEmeraldLevel());
         builder.rubyLevel(event.getRubyLevel());

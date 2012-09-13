@@ -47,8 +47,16 @@ public class ToolTipBuilder extends ControlBuilder {
         set("titleColor", value);
     }
 
+    public void description(final String value) {
+        set("description", value);
+    }
+
     public void producer(final String value) {
         set("producer", value);
+    }
+
+    public void weight(final String value) {
+        set("weight", value);
     }
 
     public void worth(final long value) {
@@ -75,12 +83,12 @@ public class ToolTipBuilder extends ControlBuilder {
         set("rubyLevel", Integer.toString(value));
     }
 
-    public void blackStoneLevel(final int value) {
-        set("blackStoneLevel", Integer.toString(value));
+    public void obsidianLevel(final int value) {
+        set("obsidianLevel", Integer.toString(value));
     }
 
-    public void blueStoneLevel(final int value) {
-        set("blueStoneLevel", Integer.toString(value));
+    public void sapphireLevel(final int value) {
+        set("sapphireLevel", Integer.toString(value));
     }
 
     public void amethystLevel(final int value) {
@@ -89,5 +97,9 @@ public class ToolTipBuilder extends ControlBuilder {
 
     public void topazLevel(final int value) {
         set("topazLevel", Integer.toString(value));
+    }
+
+    public void gemBonus(final String value) {
+        set("gemBonus", value);
     }
 }

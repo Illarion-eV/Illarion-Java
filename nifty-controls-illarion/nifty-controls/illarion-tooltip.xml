@@ -30,6 +30,7 @@
         </effect>
         <panel childLayout="vertical" visibleToMouse="true" style="#background">
             <control name="label" id="#title" style="#title"/>
+            <control name="label" id="#description" style="#description"/>
             <panel childLayout="horizontal" style="#createByLine" id="#createByLine">
                 <control name="label" style="#createdByTitle" text="${illarion-tooltip-bundle.createdBy}"/>
                 <control name="label" id="#createdByLabel" style="#createdByLabel"/>
@@ -43,6 +44,10 @@
                 <image id="#worthCopperImage" style="#worthCopperImage"/>
                 <control name="label" id="#worthCopperCount" style="#worthCopperCount"/>
             </panel>
+            <panel childLayout="horizontal" style="#weightLine" id="#weightLine">
+                <control name="label" style="#weightTitle" text="${illarion-tooltip-bundle.weight}"/>
+                <control name="label" id="#weightLabel" style="#weightLabel"/>
+            </panel>
             <panel childLayout="horizontal" style="#qualityLine" id="#qualityLine">
                 <control name="label" style="#qualityTitle" text="${illarion-tooltip-bundle.quality}"/>
                 <control name="label" style="#qualityText" id="#qualityText"/>
@@ -55,10 +60,14 @@
                 <image id="#diamondImage" style="#diamondImage" visible="true"/>
                 <image id="#rubyImage" style="#rubyImage" visible="true"/>
                 <image id="#emeraldImage" style="#emeraldImage" visible="true"/>
-                <image id="#blackStoneImage" style="#blackStoneImage" visible="true"/>
-                <image id="#blueStoneImage" style="#blueStoneImage" visible="true"/>
+                <image id="#obsidianImage" style="#obsidianImage" visible="true"/>
+                <image id="#sapphireImage" style="#sapphireImage" visible="true"/>
                 <image id="#amethystImage" style="#amethystImage" visible="true"/>
                 <image id="#topazImage" style="#topazImage" visible="true"/>
+            </panel>
+            <panel childLayout="horizontal" style="#gemBonusLine" id="#gemBonusLine">
+                <control name="label" style="#gemBonusTitle" text="${illarion-tooltip-bundle.gemBonus}"/>
+                <control name="label" style="#gemBonusText" id="#gemBonusText"/>
             </panel>
         </panel>
     </controlDefinition>
