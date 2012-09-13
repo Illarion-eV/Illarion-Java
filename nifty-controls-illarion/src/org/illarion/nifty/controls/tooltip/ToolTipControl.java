@@ -117,8 +117,8 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             applyGem(nifty, element, diamond, "#diamondImage", "diamond");
             applyGem(nifty, element, emerald, "#emeraldImage", "emerald");
             applyGem(nifty, element, ruby, "#rubyImage", "ruby");
-            applyGem(nifty, element, sapphire, "#sapphireImage", "bluestone");
-            applyGem(nifty, element, obsidian, "#obsidianImage", "blackstone");
+            applyGem(nifty, element, sapphire, "#sapphireImage", "sapphire");
+            applyGem(nifty, element, obsidian, "#obsidianImage", "obsidian");
             applyGem(nifty, element, amethyst, "#amethystImage", "amethyst");
             applyGem(nifty, element, topaz, "#topazImage", "topaz");
         }
