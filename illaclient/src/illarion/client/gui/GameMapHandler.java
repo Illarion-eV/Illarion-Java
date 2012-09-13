@@ -30,6 +30,8 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.Item;
+import illarion.client.input.ClickOnMapEvent;
+import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.input.DragOnMapEvent;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
@@ -37,7 +39,8 @@ import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.interactive.InteractiveMapTile;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
-import org.lwjgl.input.Keyboard;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Input;
 
 /**
  * This class is used to monitor all dropping operations on the droppable area over the game map and notify the
@@ -45,8 +48,16 @@ import org.lwjgl.input.Keyboard;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GameMapDragHandler
-        implements ScreenController {
+public final class GameMapHandler
+        implements ScreenController, UpdatableHandler {
+
+    private Input input;
+
+    @Override
+    public void update(final GameContainer container, final int delta) {
+        input = container.getInput();
+    }
+
     /**
      * This class is used as end operation to the dragging that started on the map. It takes care that the elements
      * used
@@ -129,7 +140,7 @@ public final class GameMapDragHandler
     /**
      * Default constructor that takes care to initialize the variables required for this class to work.
      */
-    public GameMapDragHandler(final NumberSelectPopupHandler numberSelectPopupHandler) {
+    public GameMapHandler(final NumberSelectPopupHandler numberSelectPopupHandler) {
         mouseEvent = new NiftyMouseInputEvent();
         numberSelect = numberSelectPopupHandler;
     }
@@ -155,6 +166,10 @@ public final class GameMapDragHandler
         AnnotationProcessor.unprocess(this);
     }
 
+    private boolean isShiftPressed() {
+        return (input != null) && (input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT));
+    }
+
     /**
      * Called in case something is dropped on the game map.
      */
@@ -166,7 +181,7 @@ public final class GameMapDragHandler
 
         final int amount = World.getInteractionManager().getMovedAmount();
         final InteractionManager iManager = World.getInteractionManager();
-        if ((amount > 1) && (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))) {
+        if ((amount > 1) && isShiftPressed()) {
             numberSelect.requestNewPopup(1, amount, new NumberSelectPopupHandler.Callback() {
                 @Override
                 public void popupCanceled() {
@@ -253,6 +268,68 @@ public final class GameMapDragHandler
 
         if (data.getKey() == 1) {
             moveToMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
+        }
+    }
+
+    public boolean handleClickOnMap(final int x, final int y, final ForwardingInputSystem forwardingControl) {
+        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(x, y);
+
+        if (tile == null) {
+            return false;
+        }
+
+        if ((activeScreen != null) && (activeNifty != null)) {
+            forwardingControl.releaseExclusiveMouse();
+
+            mouseEvent.initialize(x, y, 0, true, false, false);
+            mouseEvent.setButton0InitialDown(true);
+            activeScreen.mouseEvent(mouseEvent);
+        }
+
+        tile.lookAt();
+
+        return true;
+    }
+
+    /**
+     * Handle a input event that was published.
+     */
+    @EventSubscriber
+    public void handleClickEvent(final ClickOnMapEvent data) {
+        handleClickOnMap(data.getX(), data.getY(), data.getForwardingControl());
+    }
+
+    private boolean handleDoubleClickOnMap(final int x, final int y, final ForwardingInputSystem forwardingControl) {
+        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(x, y);
+
+        if (tile == null) {
+            return false;
+        }
+
+        if (!tile.isInUseRange()) {
+            return false;
+        }
+
+        if ((activeScreen != null) && (activeNifty != null)) {
+            forwardingControl.releaseExclusiveMouse();
+
+            mouseEvent.initialize(x, y, 0, true, false, false);
+            mouseEvent.setButton0InitialDown(true);
+            activeScreen.mouseEvent(mouseEvent);
+        }
+
+        tile.use();
+
+        return true;
+    }
+
+    /**
+     * Handle a input event that was published.
+     */
+    @EventSubscriber
+    public void handleDoubleClick(final DoubleClickOnMapEvent data) {
+        if (handleDoubleClickOnMap(data.getX(), data.getY(), data.getForwardingControl())) {
+            return;
         }
     }
 }
