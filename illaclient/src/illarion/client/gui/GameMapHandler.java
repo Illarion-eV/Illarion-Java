@@ -29,14 +29,18 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.graphics.Camera;
 import illarion.client.graphics.Item;
+import illarion.client.graphics.Tile;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.input.DragOnMapEvent;
+import illarion.client.net.server.events.MapItemLookAtEvent;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.interactive.InteractiveMapTile;
+import illarion.common.util.Rectangle;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.newdawn.slick.GameContainer;
@@ -140,9 +144,10 @@ public final class GameMapHandler
     /**
      * Default constructor that takes care to initialize the variables required for this class to work.
      */
-    public GameMapHandler(final NumberSelectPopupHandler numberSelectPopupHandler) {
+    public GameMapHandler(final NumberSelectPopupHandler numberSelectPopupHandler, final TooltipHandler tooltip) {
         mouseEvent = new NiftyMouseInputEvent();
         numberSelect = numberSelectPopupHandler;
+        tooltipHandler = tooltip;
     }
 
     public void bind(final Nifty nifty, final Screen screen) {
@@ -331,5 +336,32 @@ public final class GameMapHandler
         if (handleDoubleClickOnMap(data.getX(), data.getY(), data.getForwardingControl())) {
             return;
         }
+    }
+
+    private final TooltipHandler tooltipHandler;
+
+    @EventSubscriber
+    public void onMapItemLookAtEvent(final MapItemLookAtEvent event) {
+        final MapTile tile = World.getMap().getMapAt(event.getLocation());
+        if (tile == null) {
+            return;
+        }
+
+        final Rectangle rect = new Rectangle();
+        final Item item = tile.getTopItem();
+        final int offsetX = Camera.getInstance().getViewportOffsetX();
+        final int offsetY = Camera.getInstance().getViewportOffsetY();
+        if (item != null) {
+            final Rectangle displayRect = item.getDisplayRect();
+            rect.set(displayRect.getX() + offsetX, displayRect.getY() + offsetX, displayRect.getWidth(),
+                    displayRect.getHeight());
+        } else {
+            final Tile graphicalTile = tile.getTile();
+            final Rectangle displayRect = graphicalTile.getDisplayRect();
+            rect.set(displayRect.getX() + offsetX, displayRect.getY() + offsetX, displayRect.getWidth(),
+                    displayRect.getHeight());
+
+        }
+        tooltipHandler.showToolTip(rect, event);
     }
 }

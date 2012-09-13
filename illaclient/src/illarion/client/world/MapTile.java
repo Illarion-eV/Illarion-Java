@@ -840,6 +840,15 @@ public final class MapTile
     }
 
     /**
+     * Get the graphical representation of the tile.
+     *
+     * @return the graphical tile
+     */
+    public Tile getTile() {
+        return tile;
+    }
+
+    /**
      * Set the ID of the tile and change the type of the tile this way. This function also sets up a new tile at this
      * position if there was no. Furthermore all calculations that are needed for a new tile are triggered by this
      * function.
