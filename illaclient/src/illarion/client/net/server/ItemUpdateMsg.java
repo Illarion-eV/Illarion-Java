@@ -19,15 +19,13 @@
 package illarion.client.net.server;
 
 import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.list.array.TShortArrayList;
-
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.util.Location;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Update Items on map ( {@link illarion.client.net.CommandList#MSG_UPDATE_ITEMS}).
@@ -45,7 +43,7 @@ public final class ItemUpdateMsg
     /**
      * Count values for each item on this map tile.
      */
-    private final TShortArrayList itemCount = new TShortArrayList(DEFAULT_SIZE);
+    private final TIntArrayList itemCount = new TIntArrayList(DEFAULT_SIZE);
 
     /**
      * List of the item IDs on this map tile.
@@ -94,7 +92,7 @@ public final class ItemUpdateMsg
 
         for (int i = 0; i < itemNumber; ++i) {
             itemId.add(reader.readUShort());
-            itemCount.add(reader.readUByte());
+            itemCount.add(reader.readUShort());
         }
     }
 

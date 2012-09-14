@@ -66,7 +66,7 @@ public final class DragInvInvCmd extends AbstractDragCommand {
     public void encode(final NetCommWriter writer) {
         writer.writeByte(srcPos);
         writer.writeByte(dstPos);
-        writer.writeByte(getCount());
+        writer.writeUShort(getCount());
     }
 
     /**

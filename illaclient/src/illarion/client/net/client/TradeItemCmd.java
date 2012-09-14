@@ -72,7 +72,7 @@ public final class TradeItemCmd extends AbstractCommand {
     /**
      * This value contains the amount of items to buy or sell in this operation.
      */
-    private short amount;
+    private int amount;
 
     /**
      * The selected action.
@@ -124,7 +124,7 @@ public final class TradeItemCmd extends AbstractCommand {
         selectedAction = TradeItemCmd.Action.sell;
         location = (short) containerId;
         slot = invSlot;
-        amount = (short) itemCount;
+        amount = itemCount;
     }
 
     /**
@@ -136,7 +136,7 @@ public final class TradeItemCmd extends AbstractCommand {
     public void setBuy(final int index, final int itemCount) {
         selectedAction = TradeItemCmd.Action.buy;
         location = (short) index;
-        amount = (short) itemCount;
+        amount = itemCount;
     }
 
     @Override
@@ -158,12 +158,12 @@ public final class TradeItemCmd extends AbstractCommand {
                 writer.writeByte((byte) 1);
                 writer.writeUByte(location);
                 writer.writeUShort(slot);
-                writer.writeUByte(amount);
+                writer.writeUShort(amount);
                 break;
             case buy:
                 writer.writeByte((byte) 2);
                 writer.writeUByte(location);
-                writer.writeUByte(amount);
+                writer.writeUShort(amount);
         }
     }
 

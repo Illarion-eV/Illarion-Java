@@ -70,7 +70,7 @@ public final class DragMapInvCmd extends AbstractDragCommand {
     public void encode(final NetCommWriter writer) {
         writer.writeByte(dir);
         writer.writeByte(dstPos);
-        writer.writeByte(getCount());
+        writer.writeUShort(getCount());
     }
 
     /**

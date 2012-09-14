@@ -18,13 +18,13 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.util.Location;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Add a item on a map tile ( {@link illarion.client.net.CommandList#MSG_PUT_ITEM}).
@@ -47,7 +47,7 @@ public final class PutItemMsg
     /**
      * The count value of the item that is placed on the ground.
      */
-    private short number;
+    private int number;
 
     /**
      * Default constructor for the put item on map message.
@@ -77,7 +77,7 @@ public final class PutItemMsg
             throws IOException {
         loc = decodeLocation(reader);
         itemId = reader.readUShort();
-        number = reader.readUByte();
+        number = reader.readUShort();
     }
 
     /**

@@ -71,7 +71,7 @@ public final class DragMapMapCmd extends AbstractDragCommand {
     @Override
     public void encode(final NetCommWriter writer) {
         writer.writeLocation(dstLoc);
-        writer.writeByte(getCount());
+        writer.writeUShort(getCount());
     }
 
     /**

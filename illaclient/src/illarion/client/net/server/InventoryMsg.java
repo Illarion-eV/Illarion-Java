@@ -36,7 +36,7 @@ public final class InventoryMsg extends AbstractReply {
     /**
      * New count of the item on the position.
      */
-    private short count;
+    private int count;
 
     /**
      * New ID of the item.
@@ -78,7 +78,7 @@ public final class InventoryMsg extends AbstractReply {
     public void decode(final NetCommReader reader) throws IOException {
         location = reader.readUByte();
         itemId = reader.readUShort();
-        count = reader.readUByte();
+        count = reader.readUShort();
     }
 
     /**

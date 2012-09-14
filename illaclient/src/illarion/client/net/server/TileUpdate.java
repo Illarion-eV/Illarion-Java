@@ -1,25 +1,24 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.server;
 
 import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.list.array.TShortArrayList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.MapTile;
 import illarion.common.util.Location;
@@ -30,7 +29,7 @@ import java.io.IOException;
 
 /**
  * Class that stores all needed informations for a update of a single tile.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
@@ -38,7 +37,7 @@ public final class TileUpdate implements Reusable {
     /**
      * The factory that creates instances of the TileUpdate class and stores
      * them for reuse.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class TileUpdateFactory {
@@ -58,7 +57,7 @@ public final class TileUpdate implements Reusable {
         /**
          * Get a new instance of the buffer object. Its either reused or new
          * created.
-         * 
+         *
          * @return the instance that is now ready to be used
          */
         public TileUpdate object() {
@@ -73,7 +72,7 @@ public final class TileUpdate implements Reusable {
 
         /**
          * Recycle the tile update by placing it at the end of the list.
-         * 
+         *
          * @param update the tile update instance to recycle
          */
         public void recycle(final TileUpdate update) {
@@ -84,7 +83,7 @@ public final class TileUpdate implements Reusable {
 
         /**
          * Create a new instance of the managed object.
-         * 
+         *
          * @return the new instance of tile update
          */
         protected TileUpdate create() {
@@ -107,8 +106,8 @@ public final class TileUpdate implements Reusable {
     /**
      * List of count values for the items on this tile.
      */
-    private final TShortArrayList itemCount =
-        new TShortArrayList(DEFAULT_SIZE);
+    private final TIntArrayList itemCount =
+            new TIntArrayList(DEFAULT_SIZE);
 
     /**
      * List of Item IDs on this tile.
@@ -151,7 +150,7 @@ public final class TileUpdate implements Reusable {
     /**
      * Get a instance of the TileUpdate that is currently not in use. Its either
      * taken from the storage or newly created.
-     * 
+     *
      * @return the TileUpdate instance that is now free to be used
      */
     public static TileUpdate getInstance() {
@@ -161,7 +160,7 @@ public final class TileUpdate implements Reusable {
     /**
      * Get the coverage of the map tile that was created by this update. This
      * also clears the reference to the map tile.
-     * 
+     *
      * @return the coverage of the map tile
      */
     public int getCoverage() {
@@ -173,16 +172,16 @@ public final class TileUpdate implements Reusable {
 
     /**
      * Get a list of item counts on this tile.
-     * 
+     *
      * @return the list of item counts
      */
-    public TShortArrayList getItemCount() {
+    public TIntArrayList getItemCount() {
         return itemCount;
     }
 
     /**
      * Get a list of item ids on this tile.
-     * 
+     *
      * @return the list of item ids
      */
     public TIntArrayList getItemId() {
@@ -191,7 +190,7 @@ public final class TileUpdate implements Reusable {
 
     /**
      * Get the number of item stacks on this tile.
-     * 
+     *
      * @return the number of item stacks
      */
     public int getItemNumber() {
@@ -200,7 +199,7 @@ public final class TileUpdate implements Reusable {
 
     /**
      * Get the location of the tile this updates describes.
-     * 
+     *
      * @return the location of the tile.
      */
     public Location getLocation() {
@@ -209,7 +208,7 @@ public final class TileUpdate implements Reusable {
 
     /**
      * Get the ID of the tile this update describes.
-     * 
+     *
      * @return the tile id of the tile this update describes
      */
     public int getTileId() {
@@ -218,7 +217,7 @@ public final class TileUpdate implements Reusable {
 
     /**
      * Get the music ID that is assigned to this tile.
-     * 
+     *
      * @return the music ID of this tile
      */
     public int getTileMusic() {
@@ -227,7 +226,7 @@ public final class TileUpdate implements Reusable {
 
     /**
      * Get if the map tile is blocked by a static item.
-     * 
+     *
      * @return true if the tile is static blocked
      */
     public boolean isBlocked() {
@@ -256,7 +255,7 @@ public final class TileUpdate implements Reusable {
 
     /**
      * Change the location this Tile update points at.
-     * 
+     *
      * @param newLoc the new location.
      */
     public void setLocation(final Location newLoc) {
@@ -267,7 +266,7 @@ public final class TileUpdate implements Reusable {
     /**
      * Set the real map tile that was created by this update, for later usage
      * along with the mini map update.
-     * 
+     *
      * @param newMapTile the map tile that was created by this update
      */
     public void setMapTile(final MapTile newMapTile) {
@@ -277,11 +276,11 @@ public final class TileUpdate implements Reusable {
     /**
      * Decode the tile data the receiver got and store it until the update is
      * executed.
-     * 
+     *
      * @param reader the receiver that got the data from the server that needs
-     *            to be decoded
+     *               to be decoded
      * @throws IOException thrown in case there was not enough data received to
-     *             decode the full message
+     *                     decode the full message
      */
     protected void decode(final NetCommReader reader) throws IOException {
         // read tile attributes
@@ -295,7 +294,7 @@ public final class TileUpdate implements Reusable {
 
         for (int i = 0; i < itemNumber; ++i) {
             itemId.add(reader.readShort());
-            itemCount.add(reader.readUByte());
+            itemCount.add(reader.readUShort());
         }
     }
 }

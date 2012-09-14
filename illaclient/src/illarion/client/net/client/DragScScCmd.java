@@ -79,7 +79,7 @@ public final class DragScScCmd extends AbstractDragCommand {
         writer.writeByte(sourceContainerItem);
         writer.writeByte(targetContainer);
         writer.writeByte(targetContainerItem);
-        writer.writeByte(getCount());
+        writer.writeUShort(getCount());
     }
 
     /**

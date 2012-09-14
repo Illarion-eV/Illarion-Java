@@ -27,7 +27,7 @@ public abstract class AbstractDragCommand extends AbstractCommand {
     /**
      * The amount of items that are supposed to be moved.
      */
-    private byte count;
+    private int count;
 
     /**
      * The constructor of a command. This is used to set the ID of the command.
@@ -43,7 +43,7 @@ public abstract class AbstractDragCommand extends AbstractCommand {
      *
      * @return the items to be moved
      */
-    protected final byte getCount() {
+    protected final int getCount() {
         return count;
     }
 
@@ -53,6 +53,9 @@ public abstract class AbstractDragCommand extends AbstractCommand {
      * @param count the amount of items to move
      */
     public final void setCount(final int count) {
-        this.count = (byte) count;
+        if ((count < 0) || (count > ((2 ^ 16) - 1))) {
+            throw new IllegalArgumentException("Count out of range");
+        }
+        this.count = count;
     }
 }

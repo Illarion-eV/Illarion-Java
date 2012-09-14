@@ -18,13 +18,13 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.util.Location;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Change item on map ( {@link illarion.client.net.CommandList#MSG_CHANGE_ITEM}).
@@ -83,7 +83,7 @@ public final class ChangeItemMsg
         loc = decodeLocation(reader);
         oldItem = reader.readUShort();
         newItem = reader.readUShort();
-        count = reader.readUByte();
+        count = reader.readUShort();
     }
 
     /**
