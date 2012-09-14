@@ -19,23 +19,23 @@
   -->
 <nifty-styles>
     <style id="illarion-tooltip">
-        <attributes width="250px"/>
+        <attributes/>
     </style>
 
     <style id="illarion-tooltip#background" base="nifty-panel-small">
-        <attributes width="100%"/>
+        <attributes/>
     </style>
 
     <style id="illarion-tooltip#title">
-        <attributes width="100%" font="menuFont" marginBottom="9px" textHAlign="left"/>
+        <attributes width="250px" font="menuFont" marginBottom="9px" textHAlign="center"/>
     </style>
 
     <style id="illarion-tooltip#description">
-        <attributes width="100%" font="smallFont" textHAlign="left" marginBottom="10px" color="#e0e000ff"/>
+        <attributes width="250px" font="smallFont" textHAlign="left" marginBottom="10px" color="#e0e000ff"/>
     </style>
 
     <style id="illarion-tooltip#createByLine">
-        <attributes width="100%" marginBottom="20px"/>
+        <attributes width="250px" marginBottom="20px"/>
     </style>
 
     <style id="illarion-tooltip#createdByTitle" base="nifty-label">
@@ -47,7 +47,7 @@
     </style>
 
     <style id="illarion-tooltip#weightLine">
-        <attributes width="100%" marginBottom="5px"/>
+        <attributes width="250px" marginBottom="5px"/>
     </style>
 
     <style id="illarion-tooltip#weightTitle" base="nifty-label">
@@ -59,7 +59,7 @@
     </style>
 
     <style id="illarion-tooltip#worthLine">
-        <attributes width="100%" marginBottom="5px"/>
+        <attributes width="250px" marginBottom="5px"/>
     </style>
 
     <style id="illarion-tooltip#worthLabel" base="nifty-label">
@@ -91,7 +91,7 @@
     </style>
 
     <style id="illarion-tooltip#qualityLine">
-        <attributes width="100%"/>
+        <attributes width="250px"/>
     </style>
 
     <style id="illarion-tooltip#qualityTitle" base="nifty-label">
@@ -103,7 +103,7 @@
     </style>
 
     <style id="illarion-tooltip#durabilityLine">
-        <attributes width="100%" marginBottom="5px"/>
+        <attributes width="250px" marginBottom="5px"/>
     </style>
 
     <style id="illarion-tooltip#durabilityTitle" base="nifty-label">
@@ -115,7 +115,7 @@
     </style>
 
     <style id="illarion-tooltip#gemsLine">
-        <attributes width="100%" align="left" valign="center"/>
+        <attributes width="250px" align="left" valign="center"/>
     </style>
 
     <style id="illarion-tooltip#gemsImage">
@@ -131,7 +131,7 @@
     <style id="illarion-tooltip#topazImage" base="illarion-tooltip#gemsImage"/>
 
     <style id="illarion-tooltip#gemBonusLine">
-        <attributes width="100%" marginBottom="5px"/>
+        <attributes width="250px" marginBottom="5px"/>
     </style>
 
     <style id="illarion-tooltip#gemBonusTitle" base="nifty-label">
