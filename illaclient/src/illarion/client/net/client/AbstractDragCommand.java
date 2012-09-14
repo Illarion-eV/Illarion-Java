@@ -53,7 +53,7 @@ public abstract class AbstractDragCommand extends AbstractCommand {
      * @param count the amount of items to move
      */
     public final void setCount(final int count) {
-        if ((count < 0) || (count > ((2 ^ 16) - 1))) {
+        if ((count < 0) || (count > ((1 << 16) - 1))) {
             throw new IllegalArgumentException("Count out of range");
         }
         this.count = count;

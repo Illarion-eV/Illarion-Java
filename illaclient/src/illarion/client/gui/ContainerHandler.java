@@ -478,8 +478,8 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
         final ItemContainerBuilder builder = new ItemContainerBuilder("#container" + event.getContainerId(),
                 "Tasche");
         builder.slots(event.getSlotCount());
-        builder.slotDim(48, 48);
-        builder.width(builder.pixels(288));
+        builder.slotDim(35, 35);
+        builder.width(builder.pixels(320));
         final Element container = builder.build(activeNifty, activeScreen,
                 activeScreen.findElementByName("windows"));
         final org.illarion.nifty.controls.ItemContainer conControl = container.getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);

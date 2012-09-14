@@ -19,7 +19,6 @@
 package illarion.client.world;
 
 import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.list.array.TShortArrayList;
 import illarion.client.graphics.AlphaChangeListener;
 import illarion.client.graphics.Effect;
 import illarion.client.graphics.Item;
@@ -959,7 +958,7 @@ public final class MapTile
      * @param itemId    the list of item ids for the items on this tile
      * @param itemCount the list of count values for the items on this tile
      */
-    private void updateItemList(final int number, final TIntArrayList itemId, final TShortArrayList itemCount) {
+    private void updateItemList(final int number, final TIntArrayList itemId, final TIntArrayList itemCount) {
         clampItems(number);
         for (int i = 0; i < number; i++) {
             setItem(i, itemId.get(i), itemCount.get(i));
@@ -982,7 +981,7 @@ public final class MapTile
      * @param itemId     List of the item IDs for all items that shall be created
      * @param itemCount  List of count values for all items
      */
-    public void updateItems(final int itemNumber, final TIntArrayList itemId, final TShortArrayList itemCount) {
+    public void updateItems(final int itemNumber, final TIntArrayList itemId, final TIntArrayList itemCount) {
         updateItemList(itemNumber, itemId, itemCount);
         itemChanged();
     }

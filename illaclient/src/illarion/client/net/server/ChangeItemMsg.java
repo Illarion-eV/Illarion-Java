@@ -20,6 +20,7 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.NetCommReader;
+import illarion.client.types.ItemCount;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.util.Location;
@@ -37,7 +38,7 @@ public final class ChangeItemMsg
     /**
      * The new count value of the item.
      */
-    private int count;
+    private ItemCount count;
 
     /**
      * The location on the map this update is performed on.
@@ -83,7 +84,7 @@ public final class ChangeItemMsg
         loc = decodeLocation(reader);
         oldItem = reader.readUShort();
         newItem = reader.readUShort();
-        count = reader.readUShort();
+        count = new ItemCount(reader);
     }
 
     /**
@@ -95,7 +96,7 @@ public final class ChangeItemMsg
     public boolean executeUpdate() {
         final MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
-            tile.changeTopItem(oldItem, newItem, count);
+            tile.changeTopItem(oldItem, newItem, count.getValue());
         }
 
         return true;
@@ -107,6 +108,7 @@ public final class ChangeItemMsg
     @Override
     public void reset() {
         loc = null;
+        count = null;
     }
 
     /**
