@@ -314,13 +314,27 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     public void onMouseMoveOverInventory(final String topic, final NiftyMouseMovedEvent event) {
         final int slotId = getSlotNumber(topic);
 
+        if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) || input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)) {
+            return;
+        }
+
         if (lastLookedAtSlot == slotId) {
             return;
         }
 
-        lastLookedAtSlot = slotId;
+        fetchLookAt(slotId);
+    }
 
-        World.getPlayer().getInventory().getItem(slotId).getInteractive().lookAt();
+    /**
+     * Fetch a look at for a slot. This function does not perform any checks or something. It just requests the look
+     * at. Use with care.
+     *
+     * @param slot the slot to fetch
+     */
+    private void fetchLookAt(final int slot) {
+        lastLookedAtSlot = slot;
+
+        World.getPlayer().getInventory().getItem(slot).getInteractive().lookAt();
     }
 
     @EventSubscriber
@@ -356,6 +370,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         final int slotId = getSlotNumber(topic);
         World.getInteractionManager().notifyDraggingInventory(slotId,
                 new GUIInventoryHandler.EndOfDragOperation(invSlots[slotId].getNiftyControl(InventorySlot.class)));
+        tooltip.hideToolTip();
     }
 
     private boolean isShiftPressed() {
@@ -425,7 +440,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
      * @param itemId the ID of the item that shall be displayed in the slot
      * @param count  the amount of items displayed in this slot
      */
-    public void setSlotItem(final int slotId, final int itemId, final int count) {
+    private void setSlotItem(final int slotId, final int itemId, final int count) {
         if ((slotId < 0) || (slotId >= Inventory.SLOT_COUNT)) {
             throw new IllegalArgumentException("Slot ID out of valid range.");
         }
@@ -448,6 +463,14 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
                 invSlot.hideLabel();
             }
             updateMerchantOverlay(slotId, itemId);
+
+            final Element slot = invSlot.getElement();
+            final Rectangle rect = new Rectangle();
+            rect.set(slot.getX(), slot.getY(), slot.getWidth(), slot.getHeight());
+
+            if (rect.isInside(input.getMouseX(), input.getMouseY())) {
+                fetchLookAt(slotId);
+            }
         } else {
             slotLabelVisibility[slotId] = false;
             invSlot.setImage(null);

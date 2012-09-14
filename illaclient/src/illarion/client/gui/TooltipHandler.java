@@ -68,6 +68,16 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     private Rectangle activeTooltipArea;
 
     /**
+     * The last reported x coordinate of the mouse cursor.
+     */
+    private int lastMouseX;
+
+    /**
+     * The last reported y coordinate of the mouse cursor.
+     */
+    private int lastMouseY;
+
+    /**
      * The task that will clean all opened tooltip.
      */
     private Runnable cleanToolTips = new Runnable() {
@@ -122,8 +132,10 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         }
 
         final Input input = container.getInput();
+        lastMouseX = input.getMouseX();
+        lastMouseY = input.getMouseY();
         if (activeTooltipArea != null) {
-            if (!activeTooltipArea.isInside(input.getMouseX(), input.getMouseY())) {
+            if (!activeTooltipArea.isInside(lastMouseX, lastMouseY)) {
                 hideToolTip();
                 EventBus.publish(new TooltipsRemovedEvent());
             }
@@ -146,6 +158,11 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      */
     public void showToolTip(final Rectangle location, final AbstractItemLookAtEvent event) {
         hideToolTip();
+
+        if (!location.isInside(lastMouseX, lastMouseY)) {
+            return;
+        }
+
         toolTipTasks.offer(new Runnable() {
             @Override
             public void run() {
