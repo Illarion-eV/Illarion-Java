@@ -135,14 +135,31 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         element.layoutElements();
     }
 
+    /**
+     * Remove a element from the tooltip.
+     *
+     * @param element the element to remove
+     */
     private static void removeElement(final Element element) {
         element.markForRemoval();
     }
 
+    /**
+     * Check if a string is {@code null} or a empty string.
+     *
+     * @param value the string to test
+     * @return {@code true} in case the value is {@code null} or in case its a empty string
+     */
     private static boolean isNullOrEmpty(final String value) {
         return (value == null) || value.isEmpty();
     }
 
+    /**
+     * Check if all the strings are {@code null}, or represent the integer value {@code 0}.
+     *
+     * @param strings the stings to test
+     * @return {@code true} in case all strings are {@code null} or equal to {@code Integer.toString(0)}
+     */
     private static boolean isAllNull(final String... strings) {
         for (final String value : strings) {
             if ((value != null) && (Integer.parseInt(value) > 0)) {
@@ -152,16 +169,25 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         return true;
     }
 
+    /**
+     * Apply the the image of a gem to the element.
+     *
+     * @param nifty        the nifty instance
+     * @param element      the root element where all gem images are located
+     * @param gemText      the text that was stores in the attribute that contains the level of the gem
+     * @param elementImage the name of the image element
+     * @param images       the name of the gems
+     */
     private static void applyGem(final Nifty nifty, final Element element, final String gemText,
                                  final String elementImage, final String images) {
         final Element image = element.findElementByName(elementImage);
         if (gemText == null) {
-            image.markForRemoval();
+            removeElement(image);
             return;
         }
         final int gemLevel = Integer.parseInt(gemText);
         if (gemLevel == 0) {
-            image.markForRemoval();
+            removeElement(image);
             return;
         }
 
@@ -172,16 +198,30 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         image.setConstraintWidth(SizeValue.px(gemImage.getWidth()));
     }
 
+    /**
+     * Apply the money values to the element.
+     *
+     * @param element      the root element where the money values are stored in
+     * @param money        the money component that is supposed to be displayed
+     * @param elementCount the element that contains the count of the money component
+     * @param elementImage the element that contains the image of the money component
+     */
     private static void applyMoney(final Element element, final int money, final String elementCount,
                                    final String elementImage) {
         if (money > 0) {
             applyTextToLabel(element.findNiftyControl(elementCount, Label.class), Integer.toString(money));
         } else {
-            element.findElementByName(elementImage).markForRemoval();
-            element.findElementByName(elementCount).markForRemoval();
+            removeElement(element.findElementByName(elementImage));
+            removeElement(element.findElementByName(elementCount));
         }
     }
 
+    /**
+     * Apply some text to a label and resize the label to fit the text.
+     *
+     * @param label the label
+     * @param text  the text to be stored in the label
+     */
     private static void applyTextToLabel(final Label label, final String text) {
         final Element labelElement = label.getElement();
         final TextRenderer renderer = labelElement.getRenderer(TextRenderer.class);
