@@ -20,6 +20,8 @@ package illarion.client.world.items;
 
 import illarion.client.graphics.Item;
 import illarion.client.resources.ItemFactory;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 
 /**
  * This is the abstract item slot that contains all functions shared by the different item slots, like the inventory
@@ -31,12 +33,12 @@ public abstract class AbstractItemSlot {
     /**
      * The count of items on this slot.
      */
-    private int count;
+    private ItemCount count;
 
     /**
      * The ID of the item on this slot.
      */
-    private int itemId;
+    private ItemId itemId;
 
     /**
      * Check if this slot stores a item.
@@ -44,7 +46,7 @@ public abstract class AbstractItemSlot {
      * @return <code>true</code> in case this slot stores a item
      */
     public boolean containsItem() {
-        return itemId != 0;
+        return (itemId != null) && (itemId.getValue() != 0);
     }
 
     /**
@@ -52,7 +54,7 @@ public abstract class AbstractItemSlot {
      *
      * @return the item count
      */
-    public int getCount() {
+    public ItemCount getCount() {
         return count;
     }
 
@@ -61,7 +63,7 @@ public abstract class AbstractItemSlot {
      *
      * @return the ID
      */
-    public int getItemID() {
+    public ItemId getItemID() {
         return itemId;
     }
 
@@ -71,7 +73,7 @@ public abstract class AbstractItemSlot {
      * @return the item
      */
     public Item getItemPrototype() {
-        return ItemFactory.getInstance().getPrototype(itemId);
+        return ItemFactory.getInstance().getPrototype(itemId.getValue());
     }
 
     /**
@@ -80,7 +82,7 @@ public abstract class AbstractItemSlot {
      * @param newId    the ID of the item
      * @param newCount the amount of items
      */
-    public void setData(final int newId, final int newCount) {
+    public void setData(final ItemId newId, final ItemCount newCount) {
         itemId = newId;
         count = newCount;
     }

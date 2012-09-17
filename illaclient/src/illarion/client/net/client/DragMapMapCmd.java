@@ -19,7 +19,7 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
+import illarion.common.net.NetCommWriter;
 import illarion.common.util.Location;
 import javolution.text.TextBuilder;
 
@@ -71,7 +71,7 @@ public final class DragMapMapCmd extends AbstractDragCommand {
     @Override
     public void encode(final NetCommWriter writer) {
         writer.writeLocation(dstLoc);
-        writer.writeUShort(getCount());
+        getCount().encode(writer);
     }
 
     /**

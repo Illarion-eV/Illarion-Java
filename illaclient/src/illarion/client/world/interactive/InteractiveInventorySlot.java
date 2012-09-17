@@ -20,10 +20,12 @@ package illarion.client.world.interactive;
 
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
 import illarion.client.net.client.*;
 import illarion.client.world.World;
 import illarion.client.world.items.InventorySlot;
+import illarion.common.net.NetCommWriter;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 
 /**
  * This class holds the interactive representation of a inventory slot.
@@ -55,7 +57,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      * Drag a inventory item to a character. Does nothing currently.
      */
     @Override
-    public void dragTo(final InteractiveChar targetChar, final int count) {
+    public void dragTo(final InteractiveChar targetChar, final ItemCount count) {
         // nothing
     }
 
@@ -65,7 +67,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      * @param targetSlot the slot to drag the item to
      */
     @Override
-    public void dragTo(final InteractiveInventorySlot targetSlot, final int count) {
+    public void dragTo(final InteractiveInventorySlot targetSlot, final ItemCount count) {
         if (!isValidItem()) {
             return;
         }
@@ -114,8 +116,8 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
         cmd.send();
     }
 
-    public boolean acceptItem(final int itemId) {
-        return !isValidItem() || (itemId == getItemId());
+    public boolean acceptItem(final ItemId itemId) {
+        return !isValidItem() || itemId.equals(getItemId());
     }
 
     /**
@@ -140,7 +142,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      * @param count
      */
     @Override
-    public void dragTo(final InteractiveMapTile targetTile, final int count) {
+    public void dragTo(final InteractiveMapTile targetTile, final ItemCount count) {
         if (!isValidItem()) {
             return;
         }
@@ -155,7 +157,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
     }
 
     @Override
-    public void dragTo(final InteractiveContainerSlot targetSlot, final int count) {
+    public void dragTo(final InteractiveContainerSlot targetSlot, final ItemCount count) {
         if (!isValidItem()) {
             return;
         }
@@ -203,7 +205,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      *
      * @return the ID of the item in this slot
      */
-    public int getItemId() {
+    public ItemId getItemId() {
         return parentItem.getItemID();
     }
 }

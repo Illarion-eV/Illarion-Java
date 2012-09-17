@@ -18,14 +18,17 @@
  */
 package illarion.client.net.server;
 
-import gnu.trove.list.array.TIntArrayList;
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.common.net.NetCommReader;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import illarion.common.util.Location;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Servermessage: Update Items on map ( {@link illarion.client.net.CommandList#MSG_UPDATE_ITEMS}).
@@ -43,12 +46,12 @@ public final class ItemUpdateMsg
     /**
      * Count values for each item on this map tile.
      */
-    private final TIntArrayList itemCount = new TIntArrayList(DEFAULT_SIZE);
+    private final List<ItemCount> itemCount = new ArrayList<ItemCount>(DEFAULT_SIZE);
 
     /**
      * List of the item IDs on this map tile.
      */
-    private final TIntArrayList itemId = new TIntArrayList(DEFAULT_SIZE);
+    private final List<ItemId> itemId = new ArrayList<ItemId>(DEFAULT_SIZE);
 
     /**
      * Amount of item stacks on the map tile.
@@ -91,8 +94,8 @@ public final class ItemUpdateMsg
         itemNumber = reader.readUByte();
 
         for (int i = 0; i < itemNumber; ++i) {
-            itemId.add(reader.readUShort());
-            itemCount.add(reader.readUShort());
+            itemId.add(new ItemId(reader));
+            itemCount.add(new ItemCount(reader));
         }
     }
 

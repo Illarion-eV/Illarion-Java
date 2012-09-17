@@ -34,31 +34,6 @@ public interface ItemContainer extends Window {
     int getSlotCount();
 
     /**
-     * Get the amount of tabs of this item container.
-     *
-     * @return the amount of active tabs
-     */
-    int getTabCount();
-
-    /**
-     * Set the text that is displayed on a tab.
-     *
-     * @param index the index of the text to display
-     * @param text  the new text that is supposed to be displayed
-     * @throws IndexOutOfBoundsException in case index is &lt; 0 or &gt;= {@link #getTabCount()}
-     */
-    void setTabName(int index, String text);
-
-    /**
-     * Get the name that is displayed on a tab of the container.
-     *
-     * @param index the index of the tab
-     * @return the text displayed on the tab
-     * @throws IndexOutOfBoundsException in case index is &lt; 0 or &gt;= {@link #getTabCount()}
-     */
-    String getTabName(int index);
-
-    /**
      * Get one of the inventory slots.
      *
      * @param index the index of the requested slot

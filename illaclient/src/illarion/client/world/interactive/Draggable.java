@@ -18,6 +18,8 @@
  */
 package illarion.client.world.interactive;
 
+import illarion.common.types.ItemCount;
+
 /**
  * This interface is implemented by any interactive instance that can be dragged
  * around.
@@ -31,7 +33,7 @@ public interface Draggable {
      * @param targetChar the character to drag the object to
      * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveChar targetChar, int count);
+    void dragTo(InteractiveChar targetChar, ItemCount count);
 
     /**
      * Drag the object on a inventory slot.
@@ -39,7 +41,7 @@ public interface Draggable {
      * @param targetSlot the slot in the inventory that is the target
      * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveInventorySlot targetSlot, int count);
+    void dragTo(InteractiveInventorySlot targetSlot, ItemCount count);
 
     /**
      * Drag the object to a map tile.
@@ -47,7 +49,7 @@ public interface Draggable {
      * @param targetTile the tile the object shall be dragged on
      * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveMapTile targetTile, int count);
+    void dragTo(InteractiveMapTile targetTile, ItemCount count);
 
     /**
      * Drag the object to a container slot.
@@ -55,7 +57,7 @@ public interface Draggable {
      * @param targetSlot the target container slot
      * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveContainerSlot targetSlot, int count);
+    void dragTo(InteractiveContainerSlot targetSlot, ItemCount count);
 
     /**
      * Drag this object to a general drop target.
@@ -63,5 +65,5 @@ public interface Draggable {
      * @param dropTarget the target of the dropping operation
      * @param count      the amount of objects to be transferred
      */
-    void dragTo(DropTarget dropTarget, int count);
+    void dragTo(DropTarget dropTarget, ItemCount count);
 }

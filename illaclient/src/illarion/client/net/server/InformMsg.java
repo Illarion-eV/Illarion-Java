@@ -19,11 +19,11 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.BroadcastInformReceivedEvent;
 import illarion.client.net.server.events.ScriptInformReceivedEvent;
 import illarion.client.net.server.events.ServerInformReceivedEvent;
 import illarion.client.net.server.events.TextToInformReceivedEvent;
+import illarion.common.net.NetCommReader;
 import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;

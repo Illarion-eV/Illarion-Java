@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net;
 
@@ -22,6 +22,7 @@ import illarion.client.Debug;
 import illarion.client.IllaClient;
 import illarion.client.net.client.AbstractCommand;
 import illarion.client.util.Lang;
+import illarion.common.net.NetCommWriter;
 import illarion.common.util.Location;
 import org.apache.log4j.Logger;
 
@@ -34,7 +35,7 @@ import java.util.concurrent.BlockingQueue;
 /**
  * The Sender class handles all data that is send from the client, encodes the
  * commands and prepares them for sending.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
@@ -60,7 +61,7 @@ final class Sender extends Thread implements NetCommWriter {
      * server.
      */
     private final ByteBuffer buffer = ByteBuffer
-        .allocateDirect(MAX_COMMAND_SIZE);
+            .allocateDirect(MAX_COMMAND_SIZE);
 
     /**
      * The string encoder that is used to encode the strings before they are
@@ -92,14 +93,14 @@ final class Sender extends Thread implements NetCommWriter {
 
     /**
      * The basic constructor for the sender that sets up all needed data.
-     * 
+     *
      * @param outputQueue the list of yet not encoded server commands
-     * @param out the output channel of the socket connection used to send the
-     *            data to the server
+     * @param out         the output channel of the socket connection used to send the
+     *                    data to the server
      */
     @SuppressWarnings("nls")
     protected Sender(final BlockingQueue<AbstractCommand> outputQueue,
-        final WritableByteChannel out) {
+                     final WritableByteChannel out) {
         super("Illarion output thread");
 
         queue = outputQueue;
@@ -114,7 +115,7 @@ final class Sender extends Thread implements NetCommWriter {
     /**
      * The main loop the the server thread. Encodes the commands in the queue
      * and prepares them for sending to the server.
-     * 
+     *
      * @see java.lang.Thread#run()
      */
     @SuppressWarnings("nls")
@@ -167,7 +168,7 @@ final class Sender extends Thread implements NetCommWriter {
     /**
      * Set of the sender is running or not. If this is set to false the sender
      * waits ready but does nothing.
-     * 
+     *
      * @param newRunning the new state of the running flag
      */
     public void setRunning(final boolean newRunning) {
@@ -179,7 +180,7 @@ final class Sender extends Thread implements NetCommWriter {
 
     /**
      * Write 1 byte as signed value to the network.
-     * 
+     *
      * @param value the signed byte that shall be send to the server
      */
     @Override
@@ -189,7 +190,7 @@ final class Sender extends Thread implements NetCommWriter {
 
     /**
      * Write 4 byte as signed value to the network.
-     * 
+     *
      * @param value the signed integer that shall be send to the server
      */
     @Override
@@ -199,7 +200,7 @@ final class Sender extends Thread implements NetCommWriter {
 
     /**
      * Write a location to the network.
-     * 
+     *
      * @param loc the location that shall be send to the server
      */
     @Override
@@ -211,7 +212,7 @@ final class Sender extends Thread implements NetCommWriter {
 
     /**
      * Write 2 byte as signed value to the network.
-     * 
+     *
      * @param value the signed short that shall be send to the server
      */
     @Override
@@ -222,7 +223,7 @@ final class Sender extends Thread implements NetCommWriter {
     /**
      * Write a string to the network. The length header of the string is written
      * automatically and its encoded to the correct CharSet automatically.
-     * 
+     *
      * @param value the string that shall be send to the server
      */
     @Override
@@ -243,7 +244,7 @@ final class Sender extends Thread implements NetCommWriter {
 
     /**
      * Write 1 byte as unsigned value to the network.
-     * 
+     *
      * @param value the value that shall be send as unsigned byte
      */
     @Override
@@ -253,7 +254,7 @@ final class Sender extends Thread implements NetCommWriter {
 
     /**
      * Write 4 byte as unsigned value to the network.
-     * 
+     *
      * @param value the value that shall be send as unsigned integer
      */
     @Override
@@ -263,7 +264,7 @@ final class Sender extends Thread implements NetCommWriter {
 
     /**
      * Write 2 byte as unsigned value to the network.
-     * 
+     *
      * @param value the value that shall be send as unsigned short
      */
     @Override

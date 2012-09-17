@@ -39,6 +39,7 @@ import illarion.client.net.server.events.DialogSelectionReceivedEvent;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.MerchantList;
+import illarion.common.types.ItemCount;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -195,7 +196,9 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         final MerchantList list = World.getPlayer().getMerchantList();
         final int index = event.getItem().getIndex();
 
-        if (list.getItem(index).getBundleSize() == 1) {
+        if (ItemCount.isGreaterOne(list.getItem(index).getBundleSize())) {
+            list.buyItem(index);
+        } else {
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
                 numberSelect.requestNewPopup(1, 250, new NumberSelectPopupHandler.Callback() {
                     @Override
@@ -205,14 +208,12 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
                     @Override
                     public void popupConfirmed(final int value) {
-                        list.buyItem(index, value);
+                        list.buyItem(index, new ItemCount(value));
                     }
                 });
             } else {
                 list.buyItem(index);
             }
-        } else {
-            list.buyItem(index);
         }
     }
 

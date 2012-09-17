@@ -20,10 +20,12 @@ package illarion.client.world.interactive;
 
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
 import illarion.client.net.client.*;
 import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
+import illarion.common.net.NetCommWriter;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 
 /**
  * This class holds the interactive representation of a inventory slot.
@@ -49,7 +51,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      * Drag a inventory item to a character. Does nothing currently.
      */
     @Override
-    public void dragTo(final InteractiveChar targetChar, final int count) {
+    public void dragTo(final InteractiveChar targetChar, final ItemCount count) {
         // nothing
     }
 
@@ -59,7 +61,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      * @param targetSlot the slot to drag the item to
      */
     @Override
-    public void dragTo(final InteractiveInventorySlot targetSlot, final int count) {
+    public void dragTo(final InteractiveInventorySlot targetSlot, final ItemCount count) {
         if (!targetSlot.acceptItem(getItemId())) {
             return;
         }
@@ -86,8 +88,8 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
         cmd.send();
     }
 
-    public boolean acceptItem(final int itemId) {
-        return itemId == getItemId();
+    public boolean acceptItem(final ItemCount itemId) {
+        return itemId.equals(getItemId());
     }
 
     /**
@@ -96,7 +98,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      * @param targetTile the target location on the map
      */
     @Override
-    public void dragTo(final InteractiveMapTile targetTile, final int count) {
+    public void dragTo(final InteractiveMapTile targetTile, final ItemCount count) {
         final DragScMapCmd cmd =
                 CommandFactory.getInstance().getCommand(
                         CommandList.CMD_DRAG_SC_MAP, DragScMapCmd.class);
@@ -107,7 +109,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
     }
 
     @Override
-    public void dragTo(final InteractiveContainerSlot targetSlot, final int count) {
+    public void dragTo(final InteractiveContainerSlot targetSlot, final ItemCount count) {
         final DragScScCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_SC, DragScScCmd.class);
         cmd.setSource(getContainerId(), parentSlot.getLocation());
         cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
@@ -148,7 +150,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      *
      * @return the ID of the item in this slot
      */
-    public int getItemId() {
+    public ItemId getItemId() {
         return parentSlot.getItemID();
     }
 

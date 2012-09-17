@@ -1,31 +1,31 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
+import illarion.common.net.NetCommWriter;
 import javolution.text.TextBuilder;
 
 /**
  * Client Command: Cast a spell (
  * {@link illarion.client.net.CommandList#CMD_CAST}).
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -50,7 +50,7 @@ public final class CastCmd extends AbstractCommand {
 
     /**
      * Create a duplicate of this casting character command.
-     * 
+     *
      * @return new instance of this command
      */
     @Override
@@ -61,9 +61,9 @@ public final class CastCmd extends AbstractCommand {
     /**
      * Encode the data of this casting command and put the values into the
      * buffer.
-     * 
+     *
      * @param writer the interface that allows writing data to the network
-     *            communication system
+     *               communication system
      */
     @Override
     public void encode(final NetCommWriter writer) {
@@ -90,9 +90,9 @@ public final class CastCmd extends AbstractCommand {
     /**
      * Set the ID of the spell that is casted. Every byte set in this ID stands
      * for a selected rune.
-     * 
+     *
      * @param castSpell the ID of the spell that is casted that shall be send by
-     *            this command
+     *                  this command
      */
     public void setSpell(final long castSpell) {
         spell = castSpell;
@@ -100,7 +100,7 @@ public final class CastCmd extends AbstractCommand {
 
     /**
      * Set the target of the spell that is casted.
-     * 
+     *
      * @param execute the target of the spell that is casted
      */
     // public void setTarget(final Reference execute) {
@@ -109,7 +109,7 @@ public final class CastCmd extends AbstractCommand {
 
     /**
      * Get the data of this casting command as string.
-     * 
+     *
      * @return the data of this command as string
      */
     @SuppressWarnings("nls")

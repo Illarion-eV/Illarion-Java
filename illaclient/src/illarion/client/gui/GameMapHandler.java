@@ -40,6 +40,7 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.interactive.InteractiveMapTile;
+import illarion.common.types.ItemCount;
 import illarion.common.util.Rectangle;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -184,10 +185,10 @@ public final class GameMapHandler
         final int dropSpotX = droppedElement.getX() + (droppedElement.getWidth() / 2);
         final int dropSpotY = droppedElement.getY() + (droppedElement.getHeight() / 2);
 
-        final int amount = World.getInteractionManager().getMovedAmount();
+        final ItemCount amount = World.getInteractionManager().getMovedAmount();
         final InteractionManager iManager = World.getInteractionManager();
-        if ((amount > 1) && isShiftPressed()) {
-            numberSelect.requestNewPopup(1, amount, new NumberSelectPopupHandler.Callback() {
+        if (ItemCount.isGreaterOne(amount) && isShiftPressed()) {
+            numberSelect.requestNewPopup(1, amount.getValue(), new NumberSelectPopupHandler.Callback() {
                 @Override
                 public void popupCanceled() {
                     // nothing
@@ -195,7 +196,7 @@ public final class GameMapHandler
 
                 @Override
                 public void popupConfirmed(final int value) {
-                    iManager.dropAtMap(dropSpotX, dropSpotY, value);
+                    iManager.dropAtMap(dropSpotX, dropSpotY, new ItemCount(value));
                 }
             });
         } else {

@@ -19,10 +19,11 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
-import illarion.client.types.ItemCount;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.common.net.NetCommReader;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import illarion.common.util.Location;
 
 import java.io.IOException;
@@ -48,12 +49,12 @@ public final class ChangeItemMsg
     /**
      * The ID of the item after the change.
      */
-    private int newItem;
+    private ItemId newItem;
 
     /**
      * The ID of the item before the change.
      */
-    private int oldItem;
+    private ItemId oldItem;
 
     /**
      * Default constructor for the change item message.
@@ -82,8 +83,8 @@ public final class ChangeItemMsg
     public void decode(final NetCommReader reader)
             throws IOException {
         loc = decodeLocation(reader);
-        oldItem = reader.readUShort();
-        newItem = reader.readUShort();
+        oldItem = new ItemId(reader);
+        newItem = new ItemId(reader);
         count = new ItemCount(reader);
     }
 
@@ -96,7 +97,7 @@ public final class ChangeItemMsg
     public boolean executeUpdate() {
         final MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
-            tile.changeTopItem(oldItem, newItem, count.getValue());
+            tile.changeTopItem(oldItem, newItem, count);
         }
 
         return true;
@@ -109,6 +110,8 @@ public final class ChangeItemMsg
     public void reset() {
         loc = null;
         count = null;
+        newItem = null;
+        oldItem = null;
     }
 
     /**
@@ -126,7 +129,7 @@ public final class ChangeItemMsg
         builder.append(" - count: ");
         builder.append(count);
         builder.append(" at ");
-        builder.append(loc.toString());
+        builder.append(loc);
         return toString(builder.toString());
     }
 }

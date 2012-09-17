@@ -24,6 +24,8 @@ import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.Sprite;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import illarion.common.util.Location;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -57,11 +59,10 @@ public final class Item extends AbstractEntity implements Resource {
     private transient final FrameAnimation ani;
 
     /**
-     * The amount of items that are represented by this item instance. So in
-     * case the number is larger then 1 this item represents a stack of items of
-     * the same kind.
+     * The amount of items that are represented by this item instance. So in case the number is larger then 1 this
+     * item represents a stack of items of the same kind.
      */
-    private int count;
+    private ItemCount count;
 
     private boolean displayNumber = false;
 
@@ -193,9 +194,9 @@ public final class Item extends AbstractEntity implements Resource {
      * @return the item object that shall be used, either a newly created one or
      *         a unused from the recycler
      */
-    public static Item create(final int itemID, final int locColumn,
+    public static Item create(final ItemId itemID, final int locColumn,
                               final int locRow) {
-        final Item item = ItemFactory.getInstance().getCommand(itemID);
+        final Item item = ItemFactory.getInstance().getCommand(itemID.getValue());
         // Set variant and scaling, this functions check on their own if this is
         // allowed
         item.setVariant(locColumn, locRow);
@@ -213,7 +214,7 @@ public final class Item extends AbstractEntity implements Resource {
      * @return the item object that shall be used, either a newly created one or
      *         a unused from the recycler
      */
-    public static Item create(final int itemID, final Location loc) {
+    public static Item create(final ItemId itemID, final Location loc) {
         return create(itemID, loc.getCol(), loc.getRow());
     }
 
@@ -278,7 +279,7 @@ public final class Item extends AbstractEntity implements Resource {
      * @return the number of items on the stack or 1 in case there is just one
      *         item
      */
-    public int getCount() {
+    public ItemCount getCount() {
         return count;
     }
 
@@ -302,6 +303,15 @@ public final class Item extends AbstractEntity implements Resource {
      */
     public int getFace() {
         return info.getFace();
+    }
+
+    /**
+     * Get the ID of this item.
+     *
+     * @return the ID of this item
+     */
+    public ItemId getItemId() {
+        return new ItemId(getId());
     }
 
     /**
@@ -465,17 +475,17 @@ public final class Item extends AbstractEntity implements Resource {
      *                 one a text is displayed next to the item that shown how many
      *                 items are on the stack
      */
-    public void setCount(final int newCount) {
+    public void setCount(final ItemCount newCount) {
         count = newCount;
 
         // write number to text for display
-        if (count > 1) {
+        if (count.getValue() > 1) {
             if (number == null) {
                 number = TextTag.create();
             }
 
             number.setColor(Color.yellow);
-            number.setText(Integer.toString(count));
+            number.setText(Integer.toString(count.getValue()));
             number.setOffset((MapConstants.TILE_W / 2) - number.getHeight()
                     - number.getWidth(), -number.getHeight() / 2);
         } else if (number != null) {
@@ -529,7 +539,7 @@ public final class Item extends AbstractEntity implements Resource {
     public void update(final int delta) {
         super.update(delta);
 
-        if (showNumber && (count > 1) && (number != null)) {
+        if (showNumber && (count.getValue() > 1) && (number != null)) {
             if (!displayNumber) {
                 number.addToCamera(getDisplayX(), getDisplayY());
                 displayNumber = true;

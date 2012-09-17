@@ -1,26 +1,26 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.client;
 
 import illarion.client.net.CommandFactory;
-import illarion.client.net.NetCommWriter;
 import illarion.client.world.World;
+import illarion.common.net.NetCommWriter;
 import illarion.common.util.RecycleObject;
 import javolution.context.PoolContext;
 import javolution.text.TextBuilder;
@@ -31,7 +31,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * Default super class for all commands that get send to a server. This command
  * objects are created by the recycle factory for commands.
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -40,7 +40,7 @@ public abstract class AbstractCommand implements RecycleObject {
      * The instance of the logger that is used to write out the data.
      */
     private static final Logger LOGGER = Logger
-        .getLogger(AbstractCommand.class);
+            .getLogger(AbstractCommand.class);
 
     /**
      * The ID of the command.
@@ -49,7 +49,7 @@ public abstract class AbstractCommand implements RecycleObject {
 
     /**
      * The constructor of a command. This is used to set the ID of the command.
-     * 
+     *
      * @param commId the ID of the command
      */
     protected AbstractCommand(final int commId) {
@@ -58,15 +58,15 @@ public abstract class AbstractCommand implements RecycleObject {
 
     /**
      * Encode a string and put it into the buffer.
-     * 
+     *
      * @param buffer the buffer that contains the the already encoded data
-     * @param pos the first free position in the buffer
-     * @param txt the string that shall be encoded
+     * @param pos    the first free position in the buffer
+     * @param txt    the string that shall be encoded
      * @return the new first free position in the buffer
      */
     @SuppressWarnings("nls")
     protected static int encodeString(final byte[] buffer, final int pos,
-        final String txt) {
+                                      final String txt) {
         int newPos = pos;
         final int len = txt.length();
         buffer[newPos++] = (byte) len;
@@ -86,7 +86,7 @@ public abstract class AbstractCommand implements RecycleObject {
     /**
      * Activate the client command after taking it out of the recycle factory.
      * The ID is set again with this command.
-     * 
+     *
      * @param commId the ID of this command
      */
     @Override
@@ -102,14 +102,14 @@ public abstract class AbstractCommand implements RecycleObject {
 
     /**
      * Encode data for transfer to server. Only for send commands.
-     * 
+     *
      * @param writer the byte buffer the values are added to from index 0 on
      */
     public abstract void encode(final NetCommWriter writer);
 
     /**
      * Get the ID of this client command.
-     * 
+     *
      * @return the ID of the client command that is currently set.
      */
     @Override
@@ -149,7 +149,7 @@ public abstract class AbstractCommand implements RecycleObject {
 
     /**
      * Get the informations about this object as a string.
-     * 
+     *
      * @return the data of the command as string
      */
     @Override
@@ -158,9 +158,9 @@ public abstract class AbstractCommand implements RecycleObject {
     /**
      * Get the simple name of this class along with the parameters of the
      * command.
-     * 
+     *
      * @param param the parameters of the command that shall be displayed along
-     *            with the class name of the command
+     *              with the class name of the command
      * @return the string that contains the simple class name and the parameters
      */
     protected final String toString(final String param) {

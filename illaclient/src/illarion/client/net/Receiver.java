@@ -22,6 +22,7 @@ import illarion.client.Debug;
 import illarion.client.IllaClient;
 import illarion.client.net.server.AbstractReply;
 import illarion.client.util.Lang;
+import illarion.common.net.NetCommReader;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;

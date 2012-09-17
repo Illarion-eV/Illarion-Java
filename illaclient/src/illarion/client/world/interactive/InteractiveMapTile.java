@@ -21,10 +21,12 @@ package illarion.client.world.interactive;
 import illarion.client.graphics.Item;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
 import illarion.client.net.client.*;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.common.net.NetCommWriter;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import illarion.common.util.Location;
 
 /**
@@ -78,7 +80,7 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
      * Drag something from a map tile to
      */
     @Override
-    public void dragTo(final InteractiveChar targetChar, final int count) {
+    public void dragTo(final InteractiveChar targetChar, final ItemCount count) {
         if (!canDrag()) {
             return;
         }
@@ -89,7 +91,7 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
     }
 
     @Override
-    public void dragTo(final InteractiveInventorySlot targetSlot, final int count) {
+    public void dragTo(final InteractiveInventorySlot targetSlot, final ItemCount count) {
         if (!canDrag()) {
             return;
         }
@@ -112,7 +114,7 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
      * @param targetTile the tile to drag this tile to
      */
     @Override
-    public void dragTo(final InteractiveMapTile targetTile, final int count) {
+    public void dragTo(final InteractiveMapTile targetTile, final ItemCount count) {
         if (!canDrag()) {
             return;
         }
@@ -126,7 +128,7 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
     }
 
     @Override
-    public void dragTo(final InteractiveContainerSlot targetSlot, final int count) {
+    public void dragTo(final InteractiveContainerSlot targetSlot, final ItemCount count) {
         if (!canDrag()) {
             return;
         }
@@ -223,7 +225,7 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
      *
      * @return the item ID
      */
-    public int getTopItemId() {
-        return getTopImage().getId();
+    public ItemId getTopItemId() {
+        return getTopImage().getItemId();
     }
 }

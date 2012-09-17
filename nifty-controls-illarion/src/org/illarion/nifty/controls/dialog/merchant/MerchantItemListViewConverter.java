@@ -24,6 +24,7 @@ import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.common.types.ItemCount;
 import illarion.common.util.Money;
 import org.illarion.nifty.controls.MerchantListEntry;
 
@@ -71,9 +72,9 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
                 listBoxItem.findElementByName("#moneyCopperImage"));
 
         final Element bundleSizeDisplay = listBoxItem.findElementByName("#bundleSizeDisplay");
-        if (item.getBundleSize() > 1) {
+        if (ItemCount.isGreaterOne(item.getBundleSize())) {
             bundleSizeDisplay.setVisible(true);
-            bundleSizeDisplay.getRenderer(TextRenderer.class).setText(Integer.toString(item.getBundleSize()));
+            bundleSizeDisplay.getRenderer(TextRenderer.class).setText(Integer.toString(item.getBundleSize().getValue()));
         } else {
             bundleSizeDisplay.setVisible(false);
         }

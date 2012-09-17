@@ -18,6 +18,9 @@
  */
 package illarion.client.net.server.events;
 
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
+
 /**
  * This event is used to publish updates of the inventory to the rest of
  * the client.
@@ -28,7 +31,7 @@ public final class InventoryUpdateEvent implements ServerEvent {
     /**
      * The ID of the item that is now in the inventory slot.
      */
-    private final int item;
+    private final ItemId item;
 
     /**
      * The slot of the inventory.
@@ -38,7 +41,7 @@ public final class InventoryUpdateEvent implements ServerEvent {
     /**
      * The amount of items in this inventory slot.
      */
-    private final int count;
+    private final ItemCount count;
 
     /**
      * Constructor to this update event.
@@ -47,7 +50,7 @@ public final class InventoryUpdateEvent implements ServerEvent {
      * @param slotId the ID of the slot
      * @param count  the amount of items
      */
-    public InventoryUpdateEvent(final int itemId, final int slotId, final int count) {
+    public InventoryUpdateEvent(final ItemId itemId, final int slotId, final ItemCount count) {
         item = itemId;
         slot = slotId;
         this.count = count;
@@ -58,7 +61,7 @@ public final class InventoryUpdateEvent implements ServerEvent {
      *
      * @return the item ID
      */
-    public int getItemId() {
+    public ItemId getItemId() {
         return item;
     }
 
@@ -76,7 +79,7 @@ public final class InventoryUpdateEvent implements ServerEvent {
      *
      * @return the amount of items in the slot
      */
-    public int getCount() {
+    public ItemCount getCount() {
         return count;
     }
 }

@@ -19,6 +19,8 @@
 package illarion.client.world.items;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 
 /**
  * This class represents a item container that is displayed currently by the character.
@@ -62,8 +64,8 @@ public final class ItemContainer {
      * @param id    the ID of the new item
      * @param count the new item count
      */
-    public void setItem(final int slot, final int id, final int count) {
-        if (id == 0) {
+    public void setItem(final int slot, final ItemId id, final ItemCount count) {
+        if (ItemId.isValidItem(id)) {
             removeItem(slot);
         } else {
             final ContainerSlot containerSlot;

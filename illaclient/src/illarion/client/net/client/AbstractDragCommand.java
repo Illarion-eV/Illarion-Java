@@ -18,6 +18,8 @@
  */
 package illarion.client.net.client;
 
+import illarion.common.types.ItemCount;
+
 /**
  * This abstract command contains the shared code of all dragging operations.
  *
@@ -27,7 +29,7 @@ public abstract class AbstractDragCommand extends AbstractCommand {
     /**
      * The amount of items that are supposed to be moved.
      */
-    private int count;
+    private ItemCount count;
 
     /**
      * The constructor of a command. This is used to set the ID of the command.
@@ -43,7 +45,7 @@ public abstract class AbstractDragCommand extends AbstractCommand {
      *
      * @return the items to be moved
      */
-    protected final int getCount() {
+    protected final ItemCount getCount() {
         return count;
     }
 
@@ -52,10 +54,7 @@ public abstract class AbstractDragCommand extends AbstractCommand {
      *
      * @param count the amount of items to move
      */
-    public final void setCount(final int count) {
-        if ((count < 0) || (count > ((1 << 16) - 1))) {
-            throw new IllegalArgumentException("Count out of range");
-        }
+    public final void setCount(final ItemCount count) {
         this.count = count;
     }
 }

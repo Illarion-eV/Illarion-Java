@@ -22,6 +22,7 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.InventorySlot;
+import illarion.common.types.ItemCount;
 
 /**
  * Main purpose of this class is to interconnect the GUI environment and the map environment to exchange information
@@ -33,9 +34,9 @@ public final class InteractionManager {
     private Draggable draggedObject;
     private boolean isDragging;
     private Runnable endOfDragAction;
-    private int amount;
+    private ItemCount amount;
 
-    public void dropAtMap(final int x, final int y, final int count) {
+    public void dropAtMap(final int x, final int y, final ItemCount count) {
         if (draggedObject == null) {
             return;
         }
@@ -49,7 +50,7 @@ public final class InteractionManager {
         cancelDragging();
     }
 
-    public void dropAtContainer(final int container, final int slot, final int count) {
+    public void dropAtContainer(final int container, final int slot, final ItemCount count) {
         if (draggedObject == null) {
             return;
         }
@@ -61,7 +62,7 @@ public final class InteractionManager {
         cancelDragging();
     }
 
-    public void dropAtInventory(final int slot, final int count) {
+    public void dropAtInventory(final int slot, final ItemCount count) {
         if (draggedObject == null) {
             return;
         }
@@ -138,7 +139,7 @@ public final class InteractionManager {
         }
     }
 
-    public int getMovedAmount() {
+    public ItemCount getMovedAmount() {
         return amount;
     }
 }

@@ -18,7 +18,6 @@
  */
 package illarion.client.world;
 
-import gnu.trove.list.array.TIntArrayList;
 import illarion.client.graphics.AlphaChangeListener;
 import illarion.client.graphics.Effect;
 import illarion.client.graphics.Item;
@@ -31,6 +30,8 @@ import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
 import illarion.common.graphics.MapConstants;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 import javolution.util.FastTable;
@@ -164,7 +165,7 @@ public final class MapTile
      * @param itemId the ID of the item that is created
      * @param count  the count value of the item that is created
      */
-    public void addItem(final int itemId, final int count) {
+    public void addItem(final ItemId itemId, final ItemCount count) {
         int pos = 0;
         if (items != null) {
             pos = items.size();
@@ -251,7 +252,7 @@ public final class MapTile
      * @param count     the new count value of the item in top position
      */
     @SuppressWarnings("nls")
-    public void changeTopItem(final int oldItemId, final int itemId, final int count) {
+    public void changeTopItem(final ItemId oldItemId, final ItemId itemId, final ItemCount count) {
         if (items == null) {
             LOGGER.warn("There are no items on this field. Change top impossible.");
             return;
@@ -262,7 +263,7 @@ public final class MapTile
             return;
         }
 
-        if (items.get(pos).getId() == oldItemId) {
+        if (items.get(pos).getItemId().equals(oldItemId)) {
             setItem(pos, itemId, count);
         } else {
             LOGGER.warn("change top item mismatch. Expected " + oldItemId + " found " + items.get(pos).getId());
@@ -776,7 +777,7 @@ public final class MapTile
      * @param itemCount The new count value of this item
      */
     @SuppressWarnings("nls")
-    private void setItem(final int index, final int itemId, final int itemCount) {
+    private void setItem(final int index, final ItemId itemId, final ItemCount itemCount) {
         Item item = null;
         // look for present item in map tile
         List<Item> localItems = items;
@@ -784,7 +785,7 @@ public final class MapTile
             if (index < localItems.size()) {
                 item = localItems.get(index);
                 // just an update of present item
-                if (item.getId() == itemId) {
+                if (item.getItemId() == itemId) {
                     updateItem(item, itemCount, index);
                 } else {
                     // different item: clear old item
@@ -929,7 +930,7 @@ public final class MapTile
      * @param itemCount the count value of the new item
      * @param index     the index of the item within the stack of items on this tile
      */
-    private void updateItem(final Item item, final int itemCount, final int index) {
+    private void updateItem(final Item item, final ItemCount itemCount, final int index) {
         // set number
         item.setCount(itemCount);
         // calculate offset from items carrying other items
@@ -958,7 +959,7 @@ public final class MapTile
      * @param itemId    the list of item ids for the items on this tile
      * @param itemCount the list of count values for the items on this tile
      */
-    private void updateItemList(final int number, final TIntArrayList itemId, final TIntArrayList itemCount) {
+    private void updateItemList(final int number, final List<ItemId> itemId, final List<ItemCount> itemCount) {
         clampItems(number);
         for (int i = 0; i < number; i++) {
             setItem(i, itemId.get(i), itemCount.get(i));
@@ -981,7 +982,7 @@ public final class MapTile
      * @param itemId     List of the item IDs for all items that shall be created
      * @param itemCount  List of count values for all items
      */
-    public void updateItems(final int itemNumber, final TIntArrayList itemId, final TIntArrayList itemCount) {
+    public void updateItems(final int itemNumber, final List<ItemId> itemId, final List<ItemCount> itemCount) {
         updateItemList(itemNumber, itemId, itemCount);
         itemChanged();
     }

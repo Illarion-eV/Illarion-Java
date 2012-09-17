@@ -19,9 +19,9 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.DialogSelectionReceivedEvent;
 import illarion.client.world.items.SelectionItem;
+import illarion.common.net.NetCommReader;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 

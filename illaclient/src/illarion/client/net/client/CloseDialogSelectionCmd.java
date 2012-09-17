@@ -19,7 +19,7 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
+import illarion.common.net.NetCommWriter;
 
 /**
  * Client Command: This command returns the selection made in a selection dialog to the server ( {@link
@@ -118,5 +118,6 @@ public final class CloseDialogSelectionCmd extends AbstractCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Selected index: " + selectedIndex);    }
+        return toString("Selected index: " + selectedIndex);
+    }
 }

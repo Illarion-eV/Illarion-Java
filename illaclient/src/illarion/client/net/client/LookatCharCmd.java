@@ -1,30 +1,30 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
+import illarion.common.net.NetCommWriter;
 
 /**
  * Client Command: Looking at a character (
  * {@link illarion.client.net.CommandList#CMD_LOOKAT_CHAR}).
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -64,7 +64,7 @@ public final class LookatCharCmd extends AbstractCommand {
 
     /**
      * Create a duplicate of this look at character command.
-     * 
+     *
      * @return new instance of this command
      */
     @Override
@@ -75,9 +75,9 @@ public final class LookatCharCmd extends AbstractCommand {
     /**
      * Encode the data of this look at character command and put the values into
      * the buffer.
-     * 
+     *
      * @param writer the interface that allows writing data to the network
-     *            communication system
+     *               communication system
      */
     @Override
     public void encode(final NetCommWriter writer) {
@@ -87,10 +87,10 @@ public final class LookatCharCmd extends AbstractCommand {
 
     /**
      * Set the target of the look at and the way the look at is done.
-     * 
+     *
      * @param lookAtCharId the ID of the char we want to look at
-     * @param lookAtMode the mode of the look at so the method used to look at
-     *            the target character
+     * @param lookAtMode   the mode of the look at so the method used to look at
+     *                     the target character
      */
     public void examine(final long lookAtCharId, final int lookAtMode) {
         charId = lookAtCharId;
@@ -99,7 +99,7 @@ public final class LookatCharCmd extends AbstractCommand {
 
     /**
      * Get the data of this look at character command as string.
-     * 
+     *
      * @return the data of this command as string
      */
     @SuppressWarnings("nls")

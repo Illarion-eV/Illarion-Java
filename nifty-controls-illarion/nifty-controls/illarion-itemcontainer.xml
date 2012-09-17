@@ -20,9 +20,7 @@
     <controlDefinition name="itemcontainer" style="illarion-dialog-input-single" visibleToMouse="true"
                        controller="org.illarion.nifty.controls.itemcontainer.ItemContainerControl">
         <control name="window" title="Container" id="#window" visibleToMouse="true">
-            <panel childLayout="vertical" visibleToMouse="true" width="100%">
-                <control name="tabGroup" id="#mainTabs" width="100%"/>
-            </panel>
+            <panel childLayout="vertical" visibleToMouse="true" id="#contentPanel"/>
         </control>
     </controlDefinition>
 </nifty-controls>

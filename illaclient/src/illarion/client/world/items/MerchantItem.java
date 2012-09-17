@@ -18,6 +18,8 @@
  */
 package illarion.client.world.items;
 
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import illarion.common.util.Money;
 
 /**
@@ -54,7 +56,7 @@ public class MerchantItem {
     /**
      * The ID of the item.
      */
-    private final int itemId;
+    private final ItemId itemId;
 
     /**
      * The name that is supposed to be displayed along with the item.
@@ -74,7 +76,7 @@ public class MerchantItem {
     /**
      * The amount of items sold at once.
      */
-    private final int bundleSize;
+    private final ItemCount bundleSize;
 
     /**
      * Create a new instance of that merchant item.
@@ -86,8 +88,8 @@ public class MerchantItem {
      * @param itemPrice the price of the item in copper coins
      * @param amount    the amount of items sold at once
      */
-    public MerchantItem(final int itemIndex, final MerchantItem.MerchantItemType itemType, final int id,
-                        final String itemName, final long itemPrice, final int amount) {
+    public MerchantItem(final int itemIndex, final MerchantItem.MerchantItemType itemType, final ItemId id,
+                        final String itemName, final long itemPrice, final ItemCount amount) {
         index = itemIndex;
         type = itemType;
         itemId = id;
@@ -105,9 +107,9 @@ public class MerchantItem {
      * @param itemName  the name of the item
      * @param itemPrice the price of the item in copper coins
      */
-    public MerchantItem(final int itemIndex, final MerchantItem.MerchantItemType itemType, final int id,
+    public MerchantItem(final int itemIndex, final MerchantItem.MerchantItemType itemType, final ItemId id,
                         final String itemName, final long itemPrice) {
-        this(itemIndex, itemType, id, itemName, itemPrice, 1);
+        this(itemIndex, itemType, id, itemName, itemPrice, new ItemCount(1));
     }
 
     /**
@@ -138,7 +140,7 @@ public class MerchantItem {
      *
      * @return the item ID
      */
-    public int getItemId() {
+    public ItemId getItemId() {
         return itemId;
     }
 
@@ -174,7 +176,7 @@ public class MerchantItem {
      *
      * @return the bundle size of this item
      */
-    public int getBundleSize() {
+    public ItemCount getBundleSize() {
         return bundleSize;
     }
 }

@@ -1,28 +1,28 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.server;
 
 import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.world.Char;
 import illarion.client.world.World;
+import illarion.common.net.NetCommReader;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 
@@ -31,7 +31,7 @@ import java.io.IOException;
 /**
  * Servermessage: Character appearance (
  * {@link illarion.client.net.CommandList#MSG_APPEARANCE}).
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
@@ -191,7 +191,7 @@ public final class AppearanceMsg extends AbstractReply {
 
     /**
      * Create a new instance of the appearance message as recycle object.
-     * 
+     *
      * @return a new instance of this message object
      */
     @Override
@@ -202,11 +202,11 @@ public final class AppearanceMsg extends AbstractReply {
     /**
      * Decode the appearance data the receiver got and prepare it for the
      * execution.
-     * 
+     *
      * @param reader the receiver that got the data from the server that needs
-     *            to be decoded
+     *               to be decoded
      * @throws IOException thrown in case there was not enough data received to
-     *             decode the full message
+     *                     decode the full message
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
@@ -236,7 +236,7 @@ public final class AppearanceMsg extends AbstractReply {
     /**
      * Execute the message and send the decoded appearance data to the rest of
      * the client.
-     * 
+     *
      * @return true if the execution is done, false if it shall be called again
      */
     @SuppressWarnings("nls")
@@ -286,9 +286,9 @@ public final class AppearanceMsg extends AbstractReply {
         TEMP_COLOR.g = skinColorGreen / 255.f;
         TEMP_COLOR.b = skinColorBlue / 255.f;
         TEMP_COLOR.a = 1.f;
-        
+
         if (skinColorRed != 255 || skinColorGreen != 255 || skinColorBlue != 255) {
-        	ch.setSkinColor(TEMP_COLOR);
+            ch.setSkinColor(TEMP_COLOR);
         } else {
             ch.setSkinColor(null);
         }
@@ -307,7 +307,7 @@ public final class AppearanceMsg extends AbstractReply {
 
     /**
      * Get the data of this appearance message as string.
-     * 
+     *
      * @return the string that contains the values that were decoded for this
      *         message
      */

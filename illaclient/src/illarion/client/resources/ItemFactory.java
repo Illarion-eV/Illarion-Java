@@ -19,6 +19,7 @@
 package illarion.client.resources;
 
 import illarion.client.graphics.Item;
+import illarion.common.types.ItemId;
 import illarion.common.util.RecycleFactory;
 
 /**
@@ -76,4 +77,10 @@ public final class ItemFactory extends RecycleFactory<Item> implements
     public void storeResource(final Item resource) {
         register(resource);
     }
+
+    public Item getPrototype(final ItemId id) {
+        return getPrototype(id.getValue());
+    }
+
+
 }

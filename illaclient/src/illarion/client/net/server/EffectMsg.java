@@ -18,14 +18,14 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.resources.SoundFactory;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.common.net.NetCommReader;
 import illarion.common.util.Location;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Sound or graphic effect ( {@link illarion.client.net.CommandList#MSG_SOUND_FX}, {@link
@@ -86,8 +86,8 @@ public final class EffectMsg
         if (getId() == CommandList.MSG_SOUND_FX) {
             final Location plyLoc = World.getPlayer().getLocation();
             SoundFactory.getInstance().getSound(effectId).playAt(loc.getScX() - plyLoc.getScX(),
-                                                                 loc.getScY() - plyLoc.getScY(),
-                                                                 loc.getScZ() - plyLoc.getScZ());
+                    loc.getScY() - plyLoc.getScY(),
+                    loc.getScZ() - plyLoc.getScZ());
         } else {
             final MapTile tile = World.getMap().getMapAt(loc);
             if (tile != null) {

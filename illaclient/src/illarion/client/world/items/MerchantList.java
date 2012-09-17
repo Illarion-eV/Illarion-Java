@@ -22,6 +22,7 @@ import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.TradeItemCmd;
 import illarion.client.world.events.CloseDialogEvent;
+import illarion.common.types.ItemCount;
 import org.bushe.swing.event.EventBus;
 
 /**
@@ -116,7 +117,7 @@ public final class MerchantList {
      *
      * @param item the index of the item to buy
      */
-    public void buyItem(final MerchantItem item, final int count) {
+    public void buyItem(final MerchantItem item, final ItemCount count) {
         if (itemList[item.getIndex()] != item) {
             throw new IllegalArgumentException("This item is not part of this merchant list");
         }
@@ -138,7 +139,7 @@ public final class MerchantList {
      * @param index the index of the item to buy
      * @param count the amount of items to buy
      */
-    public void buyItem(final int index, final int count) {
+    public void buyItem(final int index, final ItemCount count) {
         final TradeItemCmd cmd = (TradeItemCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_TRADE_ITEM);
         cmd.setDialogId(listId);
         cmd.setBuy(index, count);

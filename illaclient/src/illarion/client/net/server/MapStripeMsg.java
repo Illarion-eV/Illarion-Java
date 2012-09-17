@@ -18,15 +18,14 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.net.CommandList;
+import illarion.client.world.GameMap;
+import illarion.client.world.World;
+import illarion.common.net.NetCommReader;
+import illarion.common.util.Location;
 import javolution.util.FastList;
 
 import java.io.IOException;
-
-import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
-import illarion.client.world.GameMap;
-import illarion.client.world.World;
-import illarion.common.util.Location;
 
 /**
  * Servermessage: Map stripe ( {@link illarion.client.net.CommandList#MSG_MAP_STRIPE}).
@@ -103,7 +102,7 @@ public final class MapStripeMsg
         count = reader.readUByte();
 
         for (int i = 0; i < count; ++i) {
-            final TileUpdate workUpdate = TileUpdate.getInstance();
+            final TileUpdate workUpdate = new TileUpdate();
             workUpdate.setLocation(workLoc);
             workUpdate.decode(reader);
             if (dir == DIR_DOWN) {
@@ -129,8 +128,6 @@ public final class MapStripeMsg
             final TileUpdate currUpdate = tiles.removeFirst();
             map.updateTile(currUpdate);
             map.getMinimap().update(currUpdate);
-            currUpdate.reset();
-            currUpdate.recycle();
         }
         map.finishTileUpdate();
 

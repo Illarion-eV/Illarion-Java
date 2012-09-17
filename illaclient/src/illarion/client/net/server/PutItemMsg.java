@@ -19,9 +19,11 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.common.net.NetCommReader;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import illarion.common.util.Location;
 
 import java.io.IOException;
@@ -37,17 +39,17 @@ public final class PutItemMsg
     /**
      * The ID of the item that is placed on the ground.
      */
-    private int itemId;
+    private ItemId itemId;
 
     /**
      * The location the item is placed at.
      */
-    private transient Location loc;
+    private Location loc;
 
     /**
      * The count value of the item that is placed on the ground.
      */
-    private int number;
+    private ItemCount number;
 
     /**
      * Default constructor for the put item on map message.
@@ -76,8 +78,8 @@ public final class PutItemMsg
     public void decode(final NetCommReader reader)
             throws IOException {
         loc = decodeLocation(reader);
-        itemId = reader.readUShort();
-        number = reader.readUShort();
+        itemId = new ItemId(reader);
+        number = new ItemCount(reader);
     }
 
     /**
@@ -100,6 +102,8 @@ public final class PutItemMsg
     @Override
     public void reset() {
         loc = null;
+        itemId = null;
+        number = null;
     }
 
     /**

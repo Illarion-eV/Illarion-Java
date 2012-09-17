@@ -19,8 +19,10 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.OpenContainerEvent;
+import illarion.common.net.NetCommReader;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
@@ -71,8 +73,8 @@ public final class ShowcaseMsg extends AbstractReply {
 
         for (int i = 0; i < itemAmount; i++) {
             final int itemPos = reader.readUShort();
-            final int itemId = reader.readUShort();
-            final int itemCount = reader.readUShort();
+            final ItemId itemId = new ItemId(reader);
+            final ItemCount itemCount = new ItemCount(reader);
 
             event.addItem(itemPos, new OpenContainerEvent.Item(itemId, itemCount));
         }

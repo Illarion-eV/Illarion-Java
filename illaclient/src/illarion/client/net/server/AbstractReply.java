@@ -18,8 +18,8 @@
  */
 package illarion.client.net.server;
 
-import illarion.client.net.NetCommReader;
 import illarion.client.net.ReplyFactory;
+import illarion.common.net.NetCommReader;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 import javolution.context.PoolContext;

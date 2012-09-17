@@ -19,8 +19,10 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.InventoryUpdateEvent;
+import illarion.common.net.NetCommReader;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
@@ -36,12 +38,12 @@ public final class InventoryMsg extends AbstractReply {
     /**
      * New count of the item on the position.
      */
-    private int count;
+    private ItemCount count;
 
     /**
      * New ID of the item.
      */
-    private int itemId;
+    private ItemId itemId;
 
     /**
      * Position in the inventory.
@@ -77,8 +79,8 @@ public final class InventoryMsg extends AbstractReply {
     @Override
     public void decode(final NetCommReader reader) throws IOException {
         location = reader.readUByte();
-        itemId = reader.readUShort();
-        count = reader.readUShort();
+        itemId = new ItemId(reader);
+        count = new ItemCount(reader);
     }
 
     /**

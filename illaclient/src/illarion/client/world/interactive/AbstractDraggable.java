@@ -18,6 +18,8 @@
  */
 package illarion.client.world.interactive;
 
+import illarion.common.types.ItemCount;
+
 /**
  * This abstract implementation of the draggable interface implements only the
  * general dragTo instance. This implementation forwards the call to the fitting
@@ -31,7 +33,7 @@ public abstract class AbstractDraggable implements Draggable {
      *
      * @param dropTarget the target of the dropping operation
      */
-    public void dragTo(final DropTarget dropTarget, final int count) {
+    public void dragTo(final DropTarget dropTarget, final ItemCount count) {
         if (dropTarget instanceof InteractiveChar) {
             dragTo((InteractiveChar) dropTarget, count);
         } else if (dropTarget instanceof InteractiveInventorySlot) {

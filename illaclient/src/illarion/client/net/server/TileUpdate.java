@@ -18,101 +18,38 @@
  */
 package illarion.client.net.server;
 
-import gnu.trove.list.array.TIntArrayList;
-import illarion.client.net.NetCommReader;
 import illarion.client.world.MapTile;
+import illarion.common.net.NetCommReader;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import illarion.common.util.Location;
-import illarion.common.util.Reusable;
-import javolution.util.FastList;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Class that stores all needed informations for a update of a single tile.
+ * Class that stores all needed information for a update of a single tile.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class TileUpdate implements Reusable {
+public final class TileUpdate {
     /**
-     * The factory that creates instances of the TileUpdate class and stores
-     * them for reuse.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class TileUpdateFactory {
-        /**
-         * The list used to store the currently unused instances of this class.
-         */
-        private final FastList<TileUpdate> buffer;
-
-        /**
-         * A public constructor to create a instance of this class in the parent
-         * class.
-         */
-        public TileUpdateFactory() {
-            buffer = new FastList<TileUpdate>();
-        }
-
-        /**
-         * Get a new instance of the buffer object. Its either reused or new
-         * created.
-         *
-         * @return the instance that is now ready to be used
-         */
-        public TileUpdate object() {
-            synchronized (buffer) {
-                if (!buffer.isEmpty()) {
-                    return buffer.removeLast();
-                }
-            }
-
-            return create();
-        }
-
-        /**
-         * Recycle the tile update by placing it at the end of the list.
-         *
-         * @param update the tile update instance to recycle
-         */
-        public void recycle(final TileUpdate update) {
-            synchronized (buffer) {
-                buffer.addLast(update);
-            }
-        }
-
-        /**
-         * Create a new instance of the managed object.
-         *
-         * @return the new instance of tile update
-         */
-        protected TileUpdate create() {
-            return new TileUpdate();
-        }
-
-    }
-
-    /**
-     * Default size of the arrays that store the items of this tile update. The
-     * size is increased automatically in case its needed.
+     * Default size of the arrays that store the items of this tile update. The size is increased automatically in
+     * case its needed.
      */
     private static final int DEFAULT_SIZE = 5;
 
     /**
-     * The factory that creates and stores the instances of this class.
-     */
-    private static final TileUpdateFactory FACTORY = new TileUpdateFactory();
-
-    /**
      * List of count values for the items on this tile.
      */
-    private final TIntArrayList itemCount =
-            new TIntArrayList(DEFAULT_SIZE);
+    private final List<ItemCount> itemCount = new ArrayList<ItemCount>(DEFAULT_SIZE);
 
     /**
      * List of Item IDs on this tile.
      */
-    private final TIntArrayList itemId = new TIntArrayList(DEFAULT_SIZE);
+    private final List<ItemId> itemId = new ArrayList<ItemId>(DEFAULT_SIZE);
 
     /**
      * Count of item stacks on the tile.
@@ -143,18 +80,8 @@ public final class TileUpdate implements Reusable {
     /**
      * Constructor for this new tile update.
      */
-    TileUpdate() {
+    public TileUpdate() {
         loc = new Location();
-    }
-
-    /**
-     * Get a instance of the TileUpdate that is currently not in use. Its either
-     * taken from the storage or newly created.
-     *
-     * @return the TileUpdate instance that is now free to be used
-     */
-    public static TileUpdate getInstance() {
-        return FACTORY.object();
     }
 
     /**
@@ -175,7 +102,7 @@ public final class TileUpdate implements Reusable {
      *
      * @return the list of item counts
      */
-    public TIntArrayList getItemCount() {
+    public List<ItemCount> getItemCount() {
         return itemCount;
     }
 
@@ -184,7 +111,7 @@ public final class TileUpdate implements Reusable {
      *
      * @return the list of item ids
      */
-    public TIntArrayList getItemId() {
+    public List<ItemId> getItemId() {
         return itemId;
     }
 
@@ -230,27 +157,7 @@ public final class TileUpdate implements Reusable {
      * @return true if the tile is static blocked
      */
     public boolean isBlocked() {
-        return mapTile != null && mapTile.isObstacle();
-    }
-
-    /**
-     * Clean the references from this function in case there are any remaining.
-     * This function should be called after the last operation is done with this
-     * object.
-     */
-    @Override
-    public void recycle() {
-        FACTORY.recycle(this);
-    }
-
-    /**
-     * Reset the state of this instance to make it ready for the next use.
-     */
-    @Override
-    public void reset() {
-        mapTile = null;
-        itemId.reset();
-        itemCount.reset();
+        return (mapTile != null) && mapTile.isObstacle();
     }
 
     /**
@@ -293,8 +200,8 @@ public final class TileUpdate implements Reusable {
         itemNumber = reader.readUByte();
 
         for (int i = 0; i < itemNumber; ++i) {
-            itemId.add(reader.readShort());
-            itemCount.add(reader.readUShort());
+            itemId.add(new ItemId(reader));
+            itemCount.add(new ItemCount(reader));
         }
     }
 }

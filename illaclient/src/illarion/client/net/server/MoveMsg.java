@@ -18,16 +18,15 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
-
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.world.Char;
 import illarion.client.world.PlayerMovement;
 import illarion.client.world.World;
+import illarion.common.net.NetCommReader;
 import illarion.common.util.Location;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Move of a character ( {@link illarion.client.net.CommandList#MSG_MOVE}).

@@ -19,8 +19,8 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.MapItemLookAtEvent;
+import illarion.common.net.NetCommReader;
 import illarion.common.util.Location;
 import illarion.common.util.Money;
 import org.bushe.swing.event.EventBus;

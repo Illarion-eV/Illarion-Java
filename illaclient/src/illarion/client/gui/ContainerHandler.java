@@ -45,6 +45,8 @@ import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantItem;
 import illarion.client.world.items.MerchantList;
 import illarion.common.gui.AbstractMultiActionHelper;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import illarion.common.util.Rectangle;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -410,10 +412,10 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
                 "visible."
         );
 
-        final int amount = World.getInteractionManager().getMovedAmount();
+        final ItemCount amount = World.getInteractionManager().getMovedAmount();
         final InteractionManager iManager = World.getInteractionManager();
-        if ((amount > 1) && isShiftPressed()) {
-            numberSelect.requestNewPopup(1, amount, new NumberSelectPopupHandler.Callback() {
+        if (ItemCount.isGreaterOne(amount) && isShiftPressed()) {
+            numberSelect.requestNewPopup(1, amount.getValue(), new NumberSelectPopupHandler.Callback() {
                 @Override
                 public void popupCanceled() {
                     // nothing
@@ -421,7 +423,7 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
 
                 @Override
                 public void popupConfirmed(final int value) {
-                    iManager.dropAtContainer(containerId, slotId, value);
+                    iManager.dropAtContainer(containerId, slotId, new ItemCount(value));
                 }
             });
         } else {
@@ -510,8 +512,8 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
      * @param slot   the slot to update
      * @param itemId the item ID in this slot
      */
-    private void updateMerchantOverlay(final InventorySlot slot, final int itemId) {
-        if (itemId == 0) {
+    private void updateMerchantOverlay(final InventorySlot slot, final ItemId itemId) {
+        if (!ItemId.isValidItem(itemId)) {
             slot.hideMerchantOverlay();
             return;
         }
@@ -520,7 +522,7 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
         if (merchantList != null) {
             for (int i = 0; i < merchantList.getItemCount(); i++) {
                 final MerchantItem item = merchantList.getItem(i);
-                if (item.getItemId() == itemId) {
+                if (item.getItemId().equals(itemId)) {
                     switch (item.getType()) {
                         case BuyingPrimaryItem:
                             slot.showMerchantOverlay(InventorySlot.MerchantBuyLevel.Gold);
@@ -556,18 +558,18 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
         while (itr.hasNext()) {
             itr.advance();
             final InventorySlot conSlot = conControl.getSlot(itr.key());
-            final int itemId = itr.value().getItemId();
-            final int count = itr.value().getCount();
+            final ItemId itemId = itr.value().getItemId();
+            final ItemCount count = itr.value().getCount();
 
-            if (itemId > 0) {
-                final Item displayedItem = ItemFactory.getInstance().getPrototype(itemId);
+            if (ItemId.isValidItem(itemId)) {
+                final Item displayedItem = ItemFactory.getInstance().getPrototype(itemId.getValue());
 
                 final NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
                         new EntitySlickRenderImage(displayedItem));
 
                 conSlot.setImage(niftyImage);
-                conSlot.setLabelText(Integer.toString(count));
-                if (count > 1) {
+                conSlot.setLabelText(Integer.toString(count.getValue()));
+                if (count.getValue() > 1) {
                     conSlot.showLabel();
                 } else {
                     conSlot.hideLabel();

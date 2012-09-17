@@ -1,30 +1,30 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
+import illarion.common.net.NetCommWriter;
 
 /**
  * Client Command: Send login informations to the server (
  * {@link illarion.client.net.CommandList#CMD_LOGIN}).
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -54,7 +54,7 @@ public final class LoginCmd extends AbstractCommand {
 
     /**
      * Create a duplicate of this login command.
-     * 
+     *
      * @return new instance of this command
      */
     @Override
@@ -64,9 +64,9 @@ public final class LoginCmd extends AbstractCommand {
 
     /**
      * Encode the data of this login command and put the values into the buffer.
-     * 
+     *
      * @param writer the interface that allows writing data to the network
-     *            communication system
+     *               communication system
      */
     @Override
     public void encode(final NetCommWriter writer) {
@@ -87,9 +87,9 @@ public final class LoginCmd extends AbstractCommand {
 
     /**
      * Set the login informations that are used.
-     * 
+     *
      * @param loginname the character name that is used at the login
-     * @param loginpw the plain text password that is used
+     * @param loginpw   the plain text password that is used
      */
     public void setLogin(final String loginname, final String loginpw) {
         charname = loginname;
@@ -100,7 +100,7 @@ public final class LoginCmd extends AbstractCommand {
      * Set the version of the client that is transfered to the server. This is
      * needed to ensure that the user has the newest version of the client that
      * is needed to work correctly with the server.
-     * 
+     *
      * @param clientVersion the client version that is transmitted to the server
      */
     public void setVersion(final int clientVersion) {
@@ -109,7 +109,7 @@ public final class LoginCmd extends AbstractCommand {
 
     /**
      * Get the data of this login command as string.
-     * 
+     *
      * @return the data of this command as string
      */
     @SuppressWarnings("nls")

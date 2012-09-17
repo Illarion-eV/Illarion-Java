@@ -19,6 +19,7 @@
 package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.render.NiftyImage;
+import illarion.common.types.ItemCount;
 import illarion.common.util.Money;
 
 /**
@@ -53,7 +54,7 @@ public interface MerchantListEntry {
      *
      * @return the amount of items bought at once
      */
-    int getBundleSize();
+    ItemCount getBundleSize();
 
     /**
      * The index of the merchant item in the list as it was transferred from the server.

@@ -19,6 +19,8 @@
 package illarion.client.world.items;
 
 import illarion.client.net.server.events.InventoryUpdateEvent;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 
@@ -67,7 +69,7 @@ public final class Inventory implements EventSubscriber<InventoryUpdateEvent> {
      * @param id    the ID of the new item
      * @param count the new item count
      */
-    public void setItem(final int slot, final int id, final int count) {
+    public void setItem(final int slot, final ItemId id, final ItemCount count) {
         slots[slot].setData(id, count);
     }
 

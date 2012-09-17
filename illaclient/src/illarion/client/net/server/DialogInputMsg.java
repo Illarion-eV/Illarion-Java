@@ -19,8 +19,8 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.DialogInputReceivedEvent;
+import illarion.common.net.NetCommReader;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 

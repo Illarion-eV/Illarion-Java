@@ -19,7 +19,7 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
+import illarion.common.net.NetCommWriter;
 
 /**
  * Client Command: Dragging an item from the inventory to a container ({@link CommandList#CMD_DRAG_INV_SC}).
@@ -71,7 +71,7 @@ public final class DragInvScCmd extends AbstractDragCommand {
         writer.writeByte(sourceSlot);
         writer.writeByte(targetContainer);
         writer.writeByte(targetContainerSlot);
-        writer.writeUShort(getCount());
+        getCount().encode(writer);
     }
 
     /**

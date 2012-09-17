@@ -49,6 +49,8 @@ import illarion.client.world.items.Inventory;
 import illarion.client.world.items.MerchantItem;
 import illarion.client.world.items.MerchantList;
 import illarion.common.gui.AbstractMultiActionHelper;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import illarion.common.util.Rectangle;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -381,10 +383,10 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     public void dropInInventory(final String topic, final DroppableDroppedEvent data) {
         final int slotId = getSlotNumber(topic);
 
-        final int amount = World.getInteractionManager().getMovedAmount();
+        final ItemCount amount = World.getInteractionManager().getMovedAmount();
         final InteractionManager iManager = World.getInteractionManager();
-        if ((amount > 1) && isShiftPressed()) {
-            numberSelect.requestNewPopup(1, amount, new NumberSelectPopupHandler.Callback() {
+        if (ItemCount.isGreaterOne(amount) && isShiftPressed()) {
+            numberSelect.requestNewPopup(1, amount.getValue(), new NumberSelectPopupHandler.Callback() {
                 @Override
                 public void popupCanceled() {
                     // nothing
@@ -392,7 +394,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
 
                 @Override
                 public void popupConfirmed(final int value) {
-                    iManager.dropAtInventory(slotId, value);
+                    iManager.dropAtInventory(slotId, new ItemCount(value));
                 }
             });
         } else {
@@ -426,10 +428,9 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         illarion.client.world.items.InventorySlot invSlot;
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
             invSlot = inventory.getItem(i);
-            if (invSlot.getItemID() == 0) {
-                continue;
+            if (ItemId.isValidItem(invSlot.getItemID())) {
+                setSlotItem(invSlot.getSlot(), invSlot.getItemID(), invSlot.getCount());
             }
-            setSlotItem(invSlot.getSlot(), invSlot.getItemID(), invSlot.getCount());
         }
     }
 
@@ -440,22 +441,22 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
      * @param itemId the ID of the item that shall be displayed in the slot
      * @param count  the amount of items displayed in this slot
      */
-    private void setSlotItem(final int slotId, final int itemId, final int count) {
+    private void setSlotItem(final int slotId, final ItemId itemId, final ItemCount count) {
         if ((slotId < 0) || (slotId >= Inventory.SLOT_COUNT)) {
             throw new IllegalArgumentException("Slot ID out of valid range.");
         }
 
         final InventorySlot invSlot = invSlots[slotId].getNiftyControl(InventorySlot.class);
 
-        if (itemId > 0) {
+        if (ItemId.isValidItem(itemId)) {
             final Item displayedItem = ItemFactory.getInstance().getPrototype(itemId);
 
             final NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
                     new EntitySlickRenderImage(displayedItem));
 
             invSlot.setImage(niftyImage);
-            invSlot.setLabelText(Integer.toString(count));
-            if (count > 1) {
+            invSlot.setLabelText(Integer.toString(count.getValue()));
+            if (ItemCount.isGreaterOne(count)) {
                 slotLabelVisibility[slotId] = true;
                 invSlot.showLabel();
             } else {
@@ -481,10 +482,10 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         invSlots[slotId].getParent().layoutElements();
     }
 
-    private void updateMerchantOverlay(final int slot, final int itemId) {
+    private void updateMerchantOverlay(final int slot, final ItemId itemId) {
         final InventorySlot control = invSlots[slot].getNiftyControl(InventorySlot.class);
 
-        if (itemId == 0) {
+        if (ItemId.isValidItem(itemId)) {
             control.hideMerchantOverlay();
             return;
         }
@@ -493,7 +494,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         if (merchantList != null) {
             for (int i = 0; i < merchantList.getItemCount(); i++) {
                 final MerchantItem item = merchantList.getItem(i);
-                if (item.getItemId() == itemId) {
+                if (item.getItemId().equals(itemId)) {
                     switch (item.getType()) {
                         case BuyingPrimaryItem:
                             control.showMerchantOverlay(InventorySlot.MerchantBuyLevel.Gold);

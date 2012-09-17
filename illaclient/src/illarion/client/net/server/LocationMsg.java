@@ -18,13 +18,13 @@
  */
 package illarion.client.net.server;
 
-import java.io.IOException;
-
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.world.World;
 import illarion.common.graphics.LightTracer;
+import illarion.common.net.NetCommReader;
 import illarion.common.util.Location;
+
+import java.io.IOException;
 
 /**
  * Servermessage: Current player position ( {@link illarion.client.net.CommandList#MSG_LOCATION}).

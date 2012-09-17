@@ -20,6 +20,8 @@ package illarion.client.net.server.events;
 
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 
 /**
  * This event is raised in case the server caused the client to open a new item container.
@@ -52,12 +54,12 @@ public final class OpenContainerEvent implements ServerEvent {
         /**
          * The ID of the item.
          */
-        private final int id;
+        private final ItemId id;
 
         /**
          * The size of the item stack.
          */
-        private final int count;
+        private final ItemCount count;
 
         /**
          * Constructor for a new item.
@@ -65,7 +67,7 @@ public final class OpenContainerEvent implements ServerEvent {
          * @param itemId    the item ID
          * @param itemCount the stack count
          */
-        public Item(final int itemId, final int itemCount) {
+        public Item(final ItemId itemId, final ItemCount itemCount) {
             id = itemId;
             count = itemCount;
         }
@@ -75,7 +77,7 @@ public final class OpenContainerEvent implements ServerEvent {
          *
          * @return the item ID
          */
-        public int getItemId() {
+        public ItemId getItemId() {
             return id;
         }
 
@@ -84,7 +86,7 @@ public final class OpenContainerEvent implements ServerEvent {
          *
          * @return the size of the stack
          */
-        public int getCount() {
+        public ItemCount getCount() {
             return count;
         }
     }

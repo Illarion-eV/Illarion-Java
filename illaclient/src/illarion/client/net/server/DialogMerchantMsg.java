@@ -19,9 +19,11 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommReader;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.world.items.MerchantItem;
+import illarion.common.net.NetCommReader;
+import illarion.common.types.ItemCount;
+import illarion.common.types.ItemId;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 
@@ -70,17 +72,17 @@ public final class DialogMerchantMsg extends AbstractReply {
 
         final int entriesSell = reader.readUByte();
         for (int i = 0; i < entriesSell; i++) {
-            final int itemId = reader.readUShort();
+            final ItemId itemId = new ItemId(reader);
             final String name = reader.readString();
             final long itemValue = reader.readUInt();
-            final int bundleSize = reader.readUShort();
+            final ItemCount bundleSize = new ItemCount(reader);
 
             items.add(new MerchantItem(i, MerchantItem.MerchantItemType.SellingItem, itemId, name, itemValue, bundleSize));
         }
 
         final int entriesBuyPrimary = reader.readUByte();
         for (int i = 0; i < entriesBuyPrimary; i++) {
-            final int itemId = reader.readUShort();
+            final ItemId itemId = new ItemId(reader);
             final String name = reader.readString();
             final long itemValue = reader.readUInt();
 
@@ -89,7 +91,7 @@ public final class DialogMerchantMsg extends AbstractReply {
 
         final int entriesBuySecondary = reader.readUByte();
         for (int i = 0; i < entriesBuySecondary; i++) {
-            final int itemId = reader.readUShort();
+            final ItemId itemId = new ItemId(reader);
             final String name = reader.readString();
             final long itemValue = reader.readUInt();
 

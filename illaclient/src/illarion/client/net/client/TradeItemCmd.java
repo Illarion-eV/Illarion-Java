@@ -19,7 +19,8 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
+import illarion.common.net.NetCommWriter;
+import illarion.common.types.ItemCount;
 
 /**
  * This command is used to sell or buy a item or close the merchant dialog.
@@ -72,7 +73,7 @@ public final class TradeItemCmd extends AbstractCommand {
     /**
      * This value contains the amount of items to buy or sell in this operation.
      */
-    private int amount;
+    private ItemCount amount;
 
     /**
      * The selected action.
@@ -109,7 +110,7 @@ public final class TradeItemCmd extends AbstractCommand {
      * @param invSlot   the number of the inventory slot to take the item from
      * @param itemCount the amount of items to sell from this slot
      */
-    public void setSellFromInventory(final int invSlot, final int itemCount) {
+    public void setSellFromInventory(final int invSlot, final ItemCount itemCount) {
         setSellFromContainer(0, invSlot, itemCount);
     }
 
@@ -120,7 +121,7 @@ public final class TradeItemCmd extends AbstractCommand {
      * @param invSlot     the slot of the item to sell inside the container
      * @param itemCount   the amount of items to sell from this slot
      */
-    public void setSellFromContainer(final int containerId, final int invSlot, final int itemCount) {
+    public void setSellFromContainer(final int containerId, final int invSlot, final ItemCount itemCount) {
         selectedAction = TradeItemCmd.Action.sell;
         location = (short) containerId;
         slot = invSlot;
@@ -133,7 +134,7 @@ public final class TradeItemCmd extends AbstractCommand {
      * @param index     the index of the item to buy in the list of item that was send for the menu
      * @param itemCount the amount of items to buy from this type
      */
-    public void setBuy(final int index, final int itemCount) {
+    public void setBuy(final int index, final ItemCount itemCount) {
         selectedAction = TradeItemCmd.Action.buy;
         location = (short) index;
         amount = itemCount;
@@ -158,12 +159,12 @@ public final class TradeItemCmd extends AbstractCommand {
                 writer.writeByte((byte) 1);
                 writer.writeUByte(location);
                 writer.writeUShort(slot);
-                writer.writeUShort(amount);
+                amount.encode(writer);
                 break;
             case buy:
                 writer.writeByte((byte) 2);
                 writer.writeUByte(location);
-                writer.writeUShort(amount);
+                amount.encode(writer);
         }
     }
 

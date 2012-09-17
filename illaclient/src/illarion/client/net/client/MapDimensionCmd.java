@@ -1,29 +1,29 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
+import illarion.common.net.NetCommWriter;
 
 /**
  * Client Command: Request the size of the transfered map.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @see illarion.client.net.CommandList#CMD_MAPDIMENSION
  */
@@ -47,7 +47,7 @@ public class MapDimensionCmd extends AbstractCommand {
 
     /**
      * Create a duplicate of this Map Dimension command.
-     * 
+     *
      * @return new instance of this command
      */
     @Override
@@ -57,9 +57,9 @@ public class MapDimensionCmd extends AbstractCommand {
 
     /**
      * Encode the data of this login command and put the values into the buffer.
-     * 
+     *
      * @param writer the interface that allows writing data to the network
-     *            communication system
+     *               communication system
      */
     @Override
     public void encode(final NetCommWriter writer) {
@@ -69,8 +69,8 @@ public class MapDimensionCmd extends AbstractCommand {
 
     /**
      * Set the dimension of the map that is requested from the server.
-     * 
-     * @param width the half of the needed width in stripes - 1
+     *
+     * @param width  the half of the needed width in stripes - 1
      * @param height the half of the needed height in stripes - 1
      */
     public void setMapDimensions(final int width, final int height) {
@@ -80,7 +80,7 @@ public class MapDimensionCmd extends AbstractCommand {
 
     /**
      * Get the data of this map dimension command as string.
-     * 
+     *
      * @return the data of this command as string
      */
     @SuppressWarnings("nls")

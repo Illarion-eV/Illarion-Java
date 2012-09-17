@@ -18,7 +18,7 @@
  */
 package illarion.client.net.server;
 
-import illarion.client.net.NetCommReader;
+import illarion.common.net.NetCommReader;
 
 import java.io.IOException;
 

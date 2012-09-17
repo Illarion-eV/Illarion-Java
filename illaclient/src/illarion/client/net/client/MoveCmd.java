@@ -1,30 +1,30 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.net.NetCommWriter;
+import illarion.common.net.NetCommWriter;
 
 /**
  * Client Command: Request a move or a push (
  * {@link illarion.client.net.CommandList#CMD_MOVE}).
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -69,7 +69,7 @@ public final class MoveCmd extends AbstractCommand {
 
     /**
      * Create a duplicate of this move command.
-     * 
+     *
      * @return new instance of this command
      */
     @Override
@@ -79,9 +79,9 @@ public final class MoveCmd extends AbstractCommand {
 
     /**
      * Encode the data of this move command and put the values into the buffer.
-     * 
+     *
      * @param writer the interface that allows writing data to the network
-     *            communication system
+     *               communication system
      */
     @Override
     public void encode(final NetCommWriter writer) {
@@ -94,7 +94,7 @@ public final class MoveCmd extends AbstractCommand {
      * Set the ID of the character that shall move. The client is able to use
      * {@link #setDirection(long, int)}. This function is only needed for the
      * load test client.
-     * 
+     *
      * @param moveCharId the ID of the character that shall move
      */
     public void setCharID(final long moveCharId) {
@@ -104,9 +104,9 @@ public final class MoveCmd extends AbstractCommand {
     /**
      * Set the direction of the move and the ID of the character that shall
      * move.
-     * 
+     *
      * @param moveCharId the ID of the character that shall move
-     * @param moveDir the direction the character shall move to
+     * @param moveDir    the direction the character shall move to
      */
     public void setDirection(final long moveCharId, final int moveDir) {
         dir = (byte) moveDir;
@@ -136,7 +136,7 @@ public final class MoveCmd extends AbstractCommand {
 
     /**
      * Get the data of this move command as string.
-     * 
+     *
      * @return the data of this command as string
      */
     @SuppressWarnings("nls")
