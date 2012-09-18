@@ -36,6 +36,7 @@ import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
+import illarion.common.config.ConfigChangedEvent;
 import illarion.common.config.ConfigSystem;
 import illarion.common.graphics.GraphicResolution;
 import illarion.common.graphics.TextureLoader;
@@ -45,9 +46,7 @@ import illarion.common.util.TableLoader;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.bushe.swing.event.EventServiceExistsException;
-import org.bushe.swing.event.EventServiceLocator;
-import org.bushe.swing.event.ThreadSafeEventService;
+import org.bushe.swing.event.*;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -67,7 +66,7 @@ import java.util.logging.Level;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class IllaClient {
+public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent> {
     /**
      * The name of this application.
      */
@@ -205,7 +204,10 @@ public final class IllaClient {
         }
 
         gameContainer.setAlwaysRender(true);
-        gameContainer.setTargetFrameRate(60);
+        gameContainer.setTargetFrameRate(res.getRefreshRate());
+
+        EventBus.subscribe(CFG_FULLSCREEN, this);
+        EventBus.subscribe(CFG_RESOLUTION, this);
 
         try {
             gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png",
@@ -570,5 +572,38 @@ public final class IllaClient {
         crypt.loadPublicKey();
         TableLoader.setCrypto(crypt);
         Lang.getInstance().setConfig(cfg);
+    }
+
+    /**
+     * Handle an event published on a topic.
+     * <p/>
+     * The EventService calls this method on each publication on a matching topic name passed to one of the
+     * EventService's topic-based subscribe methods, specifically, {@link org.bushe.swing.event.EventService#subscribe(String,
+     * org.bushe.swing.event.EventTopicSubscriber)} {@link org.bushe.swing.event.EventService#subscribe(java.util.regex.Pattern, org.bushe.swing.event.EventTopicSubscriber)} {@link
+     * org.bushe.swing.event.EventService#subscribeStrongly(String, org.bushe.swing.event.EventTopicSubscriber)} and {@link org.bushe.swing.event.EventService#subscribeStrongly(java.util.regex.Pattern,
+     * org.bushe.swing.event.EventTopicSubscriber)}.
+     *
+     * @param topic the name of the topic published on
+     * @param data  the data object published on the topic
+     */
+    @Override
+    public void onEvent(final String topic, final ConfigChangedEvent data) {
+        if (CFG_FULLSCREEN.equals(topic)) {
+            try {
+                gameContainer.setFullscreen(cfg.getBoolean(CFG_FULLSCREEN));
+            } catch (SlickException e) {
+                LOGGER.error("Failed to apply fullscreen mode. New requested mode: " +
+                        Boolean.toString(cfg.getBoolean(CFG_FULLSCREEN)));
+            }
+        } else if (CFG_RESOLUTION.equals(topic)) {
+            final GraphicResolution res = new GraphicResolution(cfg.getString(CFG_RESOLUTION));
+            final boolean fullScreen = cfg.getBoolean(CFG_FULLSCREEN);
+            try {
+                gameContainer.setDisplayMode(res.getWidth(), res.getHeight(), fullScreen);
+                gameContainer.setTargetFrameRate(res.getRefreshRate());
+            } catch (SlickException e) {
+                LOGGER.error("Failed to apply graphic mode. New requested mode: " + res.toString());
+            }
+        }
     }
 }

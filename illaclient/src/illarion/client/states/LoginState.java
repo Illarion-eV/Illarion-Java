@@ -21,9 +21,13 @@ package illarion.client.states;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.slick2d.NiftyBasicGameState;
 import illarion.client.Game;
+import illarion.client.IllaClient;
 import illarion.client.gui.controller.CharScreenController;
 import illarion.client.gui.controller.LoginScreenController;
 import illarion.client.util.Lang;
+import illarion.common.config.ConfigChangedEvent;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
 import org.newdawn.slick.state.StateBasedGame;
 
 /**
@@ -33,16 +37,17 @@ import org.newdawn.slick.state.StateBasedGame;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class LoginState
-        extends NiftyBasicGameState {
+        extends NiftyBasicGameState implements EventTopicSubscriber<ConfigChangedEvent> {
     /**
      * Create the game state that handles the login with the identifier that is needed to access it.
      */
     public LoginState() {
         super("login");
+        EventBus.subscribe(IllaClient.CFG_RESOLUTION, this);
     }
 
     @Override
-    protected void prepareNifty(Nifty nifty, StateBasedGame game) {
+    protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
         nifty.setLocale(Lang.getInstance().getLocale());
         nifty.registerScreenController(new LoginScreenController(game), new CharScreenController(game));
 
@@ -61,5 +66,24 @@ public class LoginState
     @Override
     public int getID() {
         return Game.STATE_LOGIN;
+    }
+
+    /**
+     * Handle an event published on a topic.
+     * <p/>
+     * The EventService calls this method on each publication on a matching topic name passed to one of the
+     * EventService's topic-based subscribe methods, specifically, {@link org.bushe.swing.event.EventService#subscribe(String,
+     * org.bushe.swing.event.EventTopicSubscriber)} {@link org.bushe.swing.event.EventService#subscribe(java.util.regex.Pattern, org.bushe.swing.event.EventTopicSubscriber)} {@link
+     * org.bushe.swing.event.EventService#subscribeStrongly(String, org.bushe.swing.event.EventTopicSubscriber)} and {@link org.bushe.swing.event.EventService#subscribeStrongly(java.util.regex.Pattern,
+     * org.bushe.swing.event.EventTopicSubscriber)}.
+     *
+     * @param topic the name of the topic published on
+     * @param data  the data object published on the topic
+     */
+    @Override
+    public void onEvent(final String topic, final ConfigChangedEvent data) {
+        if (getNifty() != null) {
+            getNifty().resolutionChanged();
+        }
     }
 }

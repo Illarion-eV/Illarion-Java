@@ -57,7 +57,7 @@ public final class Game
      * Prepare the list of the game states. Using this class all states of the game are load up.
      */
     @Override
-    public void initStatesList(GameContainer container)
+    public void initStatesList(final GameContainer container)
             throws SlickException {
         addState(new LoginState());
         addState(new LoadingState());
