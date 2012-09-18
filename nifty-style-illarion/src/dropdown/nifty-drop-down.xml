@@ -32,7 +32,7 @@
     </style>
 
     <style id="nifty-drop-down-green#panel-text">
-        <attributes childLayout="center" visibleToMouse="true" childClip="true" padding="0px,4px" width="*"/>
+        <attributes childLayout="center" visibleToMouse="false" childClip="true" padding="0px,4px" width="*"/>
     </style>
 
     <style id="nifty-drop-down-green#text" base="drop-down-font">
@@ -41,12 +41,12 @@
     </style>
 
     <style id="nifty-drop-down-green#panel-icon">
-        <attributes childLayout="center" width="20px" height="*"/>
+        <attributes childLayout="center" height="100%" width="19px" paddingRight="3px" paddingTop="1px"/>
     </style>
 
     <style id="nifty-drop-down-green#icon">
         <attributes filename="data/gui/dropdown/dropdown_arrow.png" valign="center" halign="center" height="9px"
-                    width="14px" visibleToMouse="true"/>
+                    width="14px" visibleToMouse="false"/>
         <effect>
             <onClick name="focus" targetElement="#parent"/>
             <onClick name="move" direction="bottom" mode="toOffset" yOffset="1"/>
@@ -56,6 +56,15 @@
     <style id="nifty-drop-down-green#list-panel">
         <attributes childLayout="vertical" width="*" backgroundImage="data/gui/dropdown/dropdownbox.png"
                     imageMode="resize:4,1,4,0,4,1,4,1,4,1,4,13"/>
+        <effect>
+            <onStartScreen name="clip" length="150" inherit="true" post="false"/>
+            <onStartScreen name="move" length="150" timeType="exp" factor="2.5" mode="fromOffset" offsetY="-100"
+                           inherit="true"/>
+            <onStartScreen name="fade" length="150" startColor="#0000" endColor="#000c" inherit="true"/>
+            <onEndScreen name="clip" length="150" inherit="true" post="false"/>
+            <onEndScreen name="move" length="150" timeType="exp" factor="2.5" mode="toOffset" offsetY="-100"
+                         inherit="true"/>
+        </effect>
     </style>
 
     <style id="nifty-drop-down-green#text-item" base="drop-down-font">
