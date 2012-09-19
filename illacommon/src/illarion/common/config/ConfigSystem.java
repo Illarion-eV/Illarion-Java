@@ -560,12 +560,10 @@ public class ConfigSystem implements Config {
             }
         }
 
-        XMLObjectWriter xmlWriter = null;
         lock.writeLock().lock();
+        XMLObjectWriter xmlWriter = null;
         try {
-            xmlWriter =
-                    XMLObjectWriter.newInstance(new GZIPOutputStream(
-                            new FileOutputStream(configFile)), ENCODING);
+            xmlWriter = XMLObjectWriter.newInstance(new GZIPOutputStream(new FileOutputStream(configFile)), ENCODING);
             xmlWriter.setBinding(binding);
             xmlWriter.setIndentation("\t");
 
@@ -573,11 +571,8 @@ public class ConfigSystem implements Config {
             xmlWriter.flush();
         } catch (final XMLStreamException e) {
             LOGGER.error("Configuration not saved: config data invalid.");
-            return;
         } catch (final IOException e) {
-            LOGGER
-                    .error("Configuration not saved: error accessing config file.");
-            return;
+            LOGGER.error("Configuration not saved: error accessing config file.");
         } finally {
             if (xmlWriter != null) {
                 try {
@@ -586,7 +581,6 @@ public class ConfigSystem implements Config {
                     LOGGER.error("Error while closing the config file writer",
                             e);
                 }
-                xmlWriter = null;
             }
             lock.writeLock().unlock();
         }
