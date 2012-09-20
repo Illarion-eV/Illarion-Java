@@ -266,6 +266,11 @@ public class TextTag implements Drawable, RecycleObject {
     private final Rectangle oldDisplayRect = new Rectangle();
 
     @Override
+    public Rectangle getLastDisplayRect() {
+        return oldDisplayRect;
+    }
+
+    @Override
     public void update(final int delta) {
         if (dirty) {
             dirty = false;

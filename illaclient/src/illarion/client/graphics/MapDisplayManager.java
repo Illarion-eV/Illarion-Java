@@ -24,11 +24,15 @@ import illarion.client.world.World;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.Location;
+import illarion.common.util.Rectangle;
 import javolution.util.FastComparator;
 import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.*;
 import org.newdawn.slick.opengl.renderer.SGL;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The map display manager stores and manages all objects displayed on the map. It takes care for rendering the objects
@@ -318,6 +322,8 @@ public final class MapDisplayManager
         }
     }
 
+    private final List<Rectangle> removedAreaList = new ArrayList<Rectangle>();
+
     /**
      * Remove item from screen
      *
@@ -326,6 +332,7 @@ public final class MapDisplayManager
     public void remove(final DisplayItem item) {
         synchronized (display) {
             display.remove(item);
+            removedAreaList.add(new Rectangle(item.getLastDisplayRect()));
         }
     }
 
@@ -354,6 +361,9 @@ public final class MapDisplayManager
         }
 
         synchronized (display) {
+            for (final Rectangle rect : removedAreaList) {
+                Camera.getInstance().markAreaDirty(rect);
+            }
             synchronized (GameMap.LIGHT_LOCK) {
                 // draw all items
                 for (final DisplayItem currentItem : display) {

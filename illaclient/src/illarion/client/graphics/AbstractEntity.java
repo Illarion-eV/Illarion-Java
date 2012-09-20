@@ -815,6 +815,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         return displayRect;
     }
 
+    public Rectangle getLastDisplayRect() {
+        return lastDisplayRect;
+    }
+
     public final void setEntityAreaDirty() {
         if (wentDirty) {
             wentDirty = false;
