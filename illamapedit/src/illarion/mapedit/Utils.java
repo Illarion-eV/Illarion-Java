@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.gui;
+package illarion.mapedit;
 
 /**
  * @author Tim
@@ -36,7 +36,7 @@ import java.net.URL;
 /**
  * A small set of static utility functions that help at some points.
  *
- * @author Martin Karing
+ * @author Martin Karing, Tim
  * @since 1.00
  */
 public final class Utils {

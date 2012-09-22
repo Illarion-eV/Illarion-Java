@@ -19,6 +19,7 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
+import illarion.mapedit.Utils;
 import illarion.mapedit.events.RendererToggleEvent;
 import illarion.mapedit.render.GridRenderer;
 import illarion.mapedit.render.InfoRenderer;

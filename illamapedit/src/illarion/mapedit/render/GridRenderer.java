@@ -18,7 +18,11 @@
  */
 package illarion.mapedit.render;
 
+import illarion.common.util.Location;
+import illarion.mapedit.data.Map;
+
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 /**
  * This method renders the grid, to see the tiles better.
@@ -37,11 +41,38 @@ public class GridRenderer extends AbstractMapRenderer {
 
     @Override
     public void renderMap(final Graphics2D g) {
+        final Map map = getMap();
+        final int width = map.getWidth();
+        final int height = map.getHeight();
+
+
+        AffineTransform transform = g.getTransform();
+
+        g.translate(getTranslateX(), getTranslateY() + 17 * getZoom());
+        g.scale(getZoom(), getZoom());
+        g.setColor(Color.LIGHT_GRAY);
+        for (int x = 0; x <= width; ++x) {
+            g.drawLine(
+                    Location.displayCoordinateX(x, 0, 0),
+                    Location.displayCoordinateY(x, 0, 0),
+                    Location.displayCoordinateX(x, width, 0),
+                    Location.displayCoordinateY(x, width, 0));
+        }
+
+        for (int y = 0; y <= height; ++y) {
+            g.drawLine(
+                    Location.displayCoordinateX(0, y, 0),
+                    Location.displayCoordinateY(0, y, 0),
+                    Location.displayCoordinateX(height, y, 0),
+                    Location.displayCoordinateY(height, y, 0));
+        }
+
+        g.setTransform(transform);
 
     }
 
     @Override
     protected int getRenderPriority() {
-        return 0;
+        return 6;
     }
 }

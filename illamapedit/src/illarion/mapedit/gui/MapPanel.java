@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.mapedit.Utils;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.events.MapClickedEvent;
 import illarion.mapedit.events.MapDraggedEvent;

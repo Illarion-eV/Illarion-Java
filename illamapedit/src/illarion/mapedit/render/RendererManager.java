@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.render;
 
+import illarion.mapedit.Utils;
 import illarion.mapedit.events.MapDraggedEvent;
 import illarion.mapedit.events.RendererToggleEvent;
 import illarion.mapedit.events.RepaintRequestEvent;
@@ -86,21 +87,31 @@ public class RendererManager {
     }
 
     public float getTileHeight() {
-        return tileHeight;
+        return DEFAULT_TILE_HEIGHT;
     }
 
     public float getTileWidth() {
-        return tileWidth;
+        return DEFAULT_TILE_WIDTH;
     }
 
     public void setZoom(final float zoom) {
+        float oldZoom = this.zoom;
+        float oldTileWith = tileWidth;
+        float oldTileHeight = tileHeight;
 
-        final float dZoom = this.zoom - zoom;
         tileWidth = DEFAULT_TILE_WIDTH * zoom;
         tileHeight = DEFAULT_TILE_HEIGHT * zoom;
-        translationX += translationX * dZoom;
-        translationY += translationY * dZoom;
         this.zoom = zoom;
+
+        //TODO:  Fix this ;-S
+        int oldX = Utils.getMapXFormDisp(0, 0, getTranslationX(), getTranslationY(), oldZoom);
+        int oldY = Utils.getMapYFormDisp(0, 0, getTranslationX(), getTranslationY(), oldZoom);
+
+        int newX = Utils.getMapXFormDisp(0, 0, getTranslationX(), getTranslationY(), zoom);
+        int newY = Utils.getMapYFormDisp(0, 0, getTranslationX(), getTranslationY(), zoom);
+
+        changeTranslation((int) ((newX - oldX) * oldTileWith), (int) ((newY - oldY) * oldTileHeight));
+
         EventBus.publish(new RepaintRequestEvent());
     }
 

@@ -20,6 +20,7 @@ package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
+import illarion.mapedit.Utils;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;

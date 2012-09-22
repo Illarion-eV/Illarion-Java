@@ -19,6 +19,7 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
+import illarion.mapedit.Utils;
 import illarion.mapedit.events.SelectToolEvent;
 import illarion.mapedit.tools.SingleTileTool;
 import illarion.mapedit.util.MouseButton;

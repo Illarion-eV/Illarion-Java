@@ -23,12 +23,15 @@ import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
+import illarion.mapedit.events.MessageStringEvent;
 import illarion.mapedit.gui.MainFrame;
+import illarion.mapedit.gui.SplashScreen;
 import illarion.mapedit.resource.ResourceManager;
 import illarion.mapedit.resource.loaders.ItemLoader;
 import illarion.mapedit.resource.loaders.TextureLoaderAwt;
 import illarion.mapedit.resource.loaders.TileLoader;
 import org.apache.log4j.*;
+import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceExistsException;
 import org.bushe.swing.event.EventServiceLocator;
 import org.bushe.swing.event.SwingEventService;
@@ -140,6 +143,7 @@ public final class MapEditor {
      * @param args the argument of the system call
      */
     public static void main(final String[] args) {
+        SplashScreen.getInstance().setVisible(true);
         initEventBus();
         instance = new MapEditor();
 
@@ -153,6 +157,7 @@ public final class MapEditor {
         while (res.hasNextToLoad()) {
             try {
                 LOGGER.debug("Loading " + res.getNextDescription());
+                EventBus.publish(new MessageStringEvent("Loading " + res.getNextDescription()));
                 res.loadNext();
             } catch (IOException e) {
                 LOGGER.warn(res.getPrevDescription() + " failed!");
@@ -186,7 +191,7 @@ public final class MapEditor {
             public void run() {
                 SubstanceLookAndFeel.setSkin("org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
                 MainFrame.getInstance().setVisible(true);
-
+                SplashScreen.getInstance().setVisible(false);
             }
         });
 
