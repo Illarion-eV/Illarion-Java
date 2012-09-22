@@ -20,36 +20,26 @@ package illarion.mapedit.render;
 
 import illarion.common.util.Location;
 import illarion.mapedit.data.Map;
-import illarion.mapedit.resource.TileImg;
-import illarion.mapedit.resource.loaders.TileLoader;
+import illarion.mapedit.resource.loaders.ImageLoader;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 /**
- * This renderer should render all tiles.
- *
  * @author Tim
  */
-public class TileRenderer extends AbstractMapRenderer {
+public class MusicRenderer extends AbstractMapRenderer {
 
-    private static final Color[] TILE_COLORS = {
-            new Color(0, 0, 0), // black
-            new Color(182, 214, 158), // green
-            new Color(155, 120, 90), // brown
-            new Color(175, 183, 165), // gray
-            new Color(126, 193, 238), // blue
-            new Color(255, 255, 204), // yellow
-            new Color(205, 101, 101), // red
-            new Color(255, 255, 255), // white
-            new Color(140, 160, 100) // dark green
-    };
+    private static Image img;
+    private static final int XOFFSET = 20;
+    private static final int YOFFSET = 10;
 
     /**
      * Creates a new map renderer
      */
-    public TileRenderer(final RendererManager manager) {
+    public MusicRenderer(final RendererManager manager) {
         super(manager);
+        img = ImageLoader.getImage("/sound.png");
     }
 
     @Override
@@ -57,47 +47,32 @@ public class TileRenderer extends AbstractMapRenderer {
         final Map map = getMap();
         final int width = map.getWidth();
         final int height = map.getHeight();
+
         final AffineTransform transform = g.getTransform();
+
         g.translate(getTranslateX(), getTranslateY());
         g.scale(getZoom(), getZoom());
+
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
+                if (map.getTileAt(x, y).getMusicID() == 0) {
+                    continue;
+                }
                 final int xdisp = Location.displayCoordinateX(x, y, 0);
                 final int ydisp = -Location.displayCoordinateY(x, y, 0);
                 if (getRenderRectangle().contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 
-                    final TileImg t = TileLoader.getInstance().getTileFromId(map.getTileAt(x,
-                            y).getId());
-                    if (t != null) {
-                        final AffineTransform tr = g.getTransform();
-                        if (getZoom() > getMinZoom()) {
-                            final Image img = t.getImg()[0];
-                            if (img != null) {
-                                g.translate(xdisp, ydisp);
-                                g.drawImage(img,
-                                        0,
-                                        0, null);
-                            }
-                        } else {
-                            if (t.getInfo().getMapColor() != 0) {
-                                g.translate(xdisp, ydisp);
-                                g.setColor(TILE_COLORS[t.getInfo().getMapColor()]);
-                                g.fill(getTilePolygon());
-                            }
-                        }
-                        g.setTransform(tr);
-                    }
+                    g.drawImage(img, xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()), null);
+
                 }
             }
         }
-
-
         g.setTransform(transform);
     }
 
     @Override
     protected int getRenderPriority() {
-        return 3;
+        return 5;
     }
 }

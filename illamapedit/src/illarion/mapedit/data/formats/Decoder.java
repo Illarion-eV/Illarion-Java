@@ -16,27 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools;
+package illarion.mapedit.data.formats;
 
+import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapItem;
-import illarion.mapedit.resource.ItemImg;
-import org.apache.log4j.Logger;
 
 /**
  * @author Tim
  */
-public class SingleItemTool extends AbstractTool {
+public interface Decoder {
 
-    private static final Logger LOGGER = Logger.getLogger(SingleItemTool.class);
+    void newMap(String name, String path);
 
-    @Override
-    public void clickedAt(final int x, final int y) {
-        final Map m = getManager().getMap();
-        final ItemImg item = getManager().getSelectedItem();
-        if (item != null) {
-            m.getTileAt(x, y).getMapItems().add(new MapItem(item.getItemId(), "", 0));
-            LOGGER.debug("SingleTileTool: " + item.getResourceName());
-        }
-    }
+    void decodeItemLine(String line) throws FormatCorruptedException;
+
+    void decodeTileLine(String line) throws FormatCorruptedException;
+
+    void decodeWarpLine(String line) throws FormatCorruptedException;
+
+    Map getDecodedMap();
 }

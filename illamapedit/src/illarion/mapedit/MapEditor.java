@@ -27,6 +27,7 @@ import illarion.mapedit.events.MessageStringEvent;
 import illarion.mapedit.gui.MainFrame;
 import illarion.mapedit.gui.SplashScreen;
 import illarion.mapedit.resource.ResourceManager;
+import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.resource.loaders.ItemLoader;
 import illarion.mapedit.resource.loaders.TextureLoaderAwt;
 import illarion.mapedit.resource.loaders.TileLoader;
@@ -82,7 +83,7 @@ public final class MapEditor {
      */
     @SuppressWarnings("nls")
     public MapEditor() {
-        initLogging();
+
         final String userDir = checkFolder();
 
         LOGGER.debug("UserDir: " + userDir);
@@ -143,13 +144,15 @@ public final class MapEditor {
      * @param args the argument of the system call
      */
     public static void main(final String[] args) {
-        SplashScreen.getInstance().setVisible(true);
+        initLogging();
         initEventBus();
+        SplashScreen.getInstance().setVisible(true);
         instance = new MapEditor();
 
 
         final ResourceManager res = ResourceManager.getInstance();
         res.addResources(
+                ImageLoader.getInstance(),
                 TextureLoaderAwt.getInstance(),
                 TileLoader.getInstance(),
                 ItemLoader.getInstance()

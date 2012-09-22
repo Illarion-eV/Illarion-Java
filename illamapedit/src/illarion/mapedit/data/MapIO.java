@@ -18,9 +18,11 @@
  */
 package illarion.mapedit.data;
 
-import illarion.mapedit.crash.exceptions.FormatCorruptedException;
+import illarion.mapedit.data.formats.Decoder;
+import illarion.mapedit.data.formats.Version1Decoder;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -30,21 +32,25 @@ import java.util.regex.Pattern;
  * @author Tim
  */
 public class MapIO {
+    private static final String HEADER_V = "V:";
     private static final String HEADER_L = "L:";
     private static final String HEADER_X = "X:";
     private static final String HEADER_Y = "Y:";
     private static final String HEADER_W = "W:";
     private static final String HEADER_H = "H:";
-    private static final String FORMAT_TILE = "[X];[Y];[TileID];[MusikID];0";
-    private static final String FORMAT_ITEM = "[X];[Y];[Special Flags];[ItemID];[ItemData](;[Qality])";
-    private static final String FORMAT_WARP = "[StartX];[StartY];[TargetX];[TargetY];[TargetZ]";
     public static final String EXT_WARP = ".warps.txt";
     public static final String EXT_ITEM = ".items.txt";
     public static final String EXT_TILE = ".tiles.txt";
     private static final String NEWLINE = "\n\r";
-    private static final Pattern DELIMITER = Pattern.compile(";");
+    private static final String VERSION_PATTERN = "V: \\d+";
+    private static final java.util.Map<String, Decoder> DECODERS = new HashMap<String, Decoder>();
+
+    static {
+        DECODERS.put("1", new Version1Decoder());
+    }
 
     private MapIO() {
+
     }
 
     /**
@@ -64,81 +70,36 @@ public class MapIO {
         final BufferedReader tileInput = new BufferedReader(new InputStreamReader(new FileInputStream(tileFile)));
         final BufferedReader itemInput = new BufferedReader(new InputStreamReader(new FileInputStream(itemFile)));
         final BufferedReader warpInput = new BufferedReader(new InputStreamReader(new FileInputStream(warpFile)));
+        final String version;
+        final String versionLine = tileInput.readLine();
+        final Decoder decoder;
+        if (Pattern.matches(VERSION_PATTERN, versionLine)) {
+            version = versionLine.substring(3).trim();
+            decoder = DECODERS.get(version);
+            decoder.newMap(name, path);
+        } else {
+            version = "1";
+            decoder = DECODERS.get(version);
+            decoder.newMap(name, path);
+            decoder.decodeTileLine(versionLine);
+        }
 
-//        Loads the level
-        final int z = loadNextHeader(tileInput);
-//        Loads the x position
-        final int x = loadNextHeader(tileInput);
-//        Loads the y position
-        final int y = loadNextHeader(tileInput);
-//        Loads the width
-        final int w = loadNextHeader(tileInput);
-//        Loads the height
-        final int h = loadNextHeader(tileInput);
 
-        final Map map = new Map(name, path, w, h, x, y, z);
-        int i = 0;
         String s;
-//        Load all tiles
         while ((s = tileInput.readLine()) != null) {
-            i++;
-            final String[] sections = DELIMITER.split(s);
-            if (sections.length != 5) {
-                throw new FormatCorruptedException(tileFile.getPath(), s, i, FORMAT_TILE);
-            }
-            final int tx = Integer.parseInt(sections[0]);
-            final int ty = Integer.parseInt(sections[1]);
-            final int tid = Integer.parseInt(sections[2]);
-            final int tmid = Integer.parseInt(sections[3]);
-            MapTile tile = new MapTile(tid, tmid);
-            map.setTileAt(tx, ty, tile);
+            decoder.decodeTileLine(s);
         }
-        i = 0;
-//        Load the items
+
         while ((s = itemInput.readLine()) != null) {
-            i++;
-            final String[] sections = DELIMITER.split(s);
-            if ((sections.length != 5) && (sections.length != 6)) {
-                throw new FormatCorruptedException(itemFile.getPath(), s, i, FORMAT_ITEM);
-            }
-            final int ix = Integer.parseInt(sections[0]);
-            final int iy = Integer.parseInt(sections[1]);
-            final int iflag = Integer.parseInt(sections[2]);
-            final int iid = Integer.parseInt(sections[3]);
-            final int idata = Integer.parseInt(sections[4]);
-            final int iquality = (sections.length == 6) ? Integer.parseInt(sections[5]) : 0;
-            final MapItem item = new MapItem(iid, idata, iquality);
-            map.addItemAt(ix, iy, item);
+            decoder.decodeItemLine(s);
         }
-        i = 0;
-//        Load the warp points
+
         while ((s = warpInput.readLine()) != null) {
-            i++;
-            final String[] sections = DELIMITER.split(s);
-            if (sections.length != 5) {
-                throw new FormatCorruptedException(warpFile.getPath(), s, i, FORMAT_WARP);
-            }
-            final int sx = Integer.parseInt(sections[0]);
-            final int sy = Integer.parseInt(sections[1]);
-            final int tx = Integer.parseInt(sections[2]);
-            final int ty = Integer.parseInt(sections[3]);
-            final int tz = Integer.parseInt(sections[4]);
-            final MapWarpPoint warp = new MapWarpPoint(tx, ty, tz);
-            map.setWarpAt(sx, sy, warp);
+            decoder.decodeWarpLine(s);
         }
 
-        return map;
-    }
 
-    /**
-     * Reads the number, that begins with the 3th character of the line
-     *
-     * @param input
-     * @return
-     * @throws IOException
-     */
-    private static int loadNextHeader(final BufferedReader input) throws IOException {
-        return Integer.parseInt(input.readLine().substring(3));
+        return decoder.getDecodedMap();
     }
 
     /**
@@ -170,12 +131,13 @@ public class MapIO {
         final BufferedWriter itemOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(itemFile)));
         final BufferedWriter warpOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(warpFile)));
 
-        tileOutput.write(String.format("%s%d%s", HEADER_L, map.getZ(), NEWLINE));
-        tileOutput.write(String.format("%s%d%s", HEADER_X, map.getX(), NEWLINE));
-        tileOutput.write(String.format("%s%d%s", HEADER_Y, map.getY(), NEWLINE));
-        tileOutput.write(String.format("%s%d%s", HEADER_W, map.getWidth(), NEWLINE));
-        tileOutput.write(String.format("%s%d%s", HEADER_H, map.getHeight(), NEWLINE));
-
+        tileOutput.write(String.format("%s %d%s", HEADER_V, 2, NEWLINE));
+        tileOutput.write(String.format("%s %d%s", HEADER_L, map.getZ(), NEWLINE));
+        tileOutput.write(String.format("%s %d%s", HEADER_X, map.getX(), NEWLINE));
+        tileOutput.write(String.format("%s %d%s", HEADER_Y, map.getY(), NEWLINE));
+        tileOutput.write(String.format("%s %d%s", HEADER_W, map.getWidth(), NEWLINE));
+        tileOutput.write(String.format("%s %d%s", HEADER_H, map.getHeight(), NEWLINE));
+//        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
         for (int y = 0; y < map.getWidth(); ++y) {
             for (int x = 0; x < map.getHeight(); ++x) {
                 final MapTile tile = map.getTileAt(x, y);
@@ -184,8 +146,8 @@ public class MapIO {
                 final List<MapItem> items = tile.getMapItems();
                 if ((items != null) && !items.isEmpty()) {
                     for (final MapItem item : items) {
-                        itemOutput.write(String.format("%d;%d;0;%d;%d;%d%s", x, y, item.getId(), item.getItemData(),
-                                item.getQuality(), NEWLINE));
+                        itemOutput.write(String.format("%d;%d;0;%d;%d;%s%s", x, y, item.getId(), item.getQuality(),
+                                item.getItemData(), NEWLINE));
                     }
                 }
                 final MapWarpPoint warp = tile.getMapWarpPoint();

@@ -35,6 +35,7 @@ public class SplashScreen extends JPanel {
     private static final SplashScreen INSTANCE = new SplashScreen();
     private static final Logger LOGGER = Logger.getLogger(SplashScreen.class);
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
+    public static final int HEIGHT_ADJUSTMENT = 30;
     private final JFrame frame;
     private Image img;
     private String message;
@@ -51,7 +52,7 @@ public class SplashScreen extends JPanel {
         } catch (IOException e) {
             LOGGER.warn("Can't read splash image", e);
         }
-        frame.setSize(img.getWidth(null), img.getHeight(null) + 30);
+        frame.setSize(img.getWidth(null), img.getHeight(null) + HEIGHT_ADJUSTMENT);
         final Dimension screenSize =
                 Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation((screenSize.width - img.getWidth(null)) / 2,
@@ -75,8 +76,7 @@ public class SplashScreen extends JPanel {
 
     @Override
     public void paintComponent(final Graphics g) {
-        super.paintComponents(g);
-        System.out.println("Hallo");
+        paintComponents(g);
         g.clearRect(0, 0, getWidth(), getHeight());
         if (img != null) {
             g.drawImage(img, 0, 0, null);
@@ -90,7 +90,7 @@ public class SplashScreen extends JPanel {
     }
 
     @EventSubscriber(eventClass = MessageStringEvent.class)
-    public void onMessageStringEvent(MessageStringEvent e) {
+    public void onMessageStringEvent(final MessageStringEvent e) {
         message = e.getMessage();
         repaint();
     }

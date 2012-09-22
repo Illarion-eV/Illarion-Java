@@ -46,7 +46,7 @@ public class MapItem {
     /**
      * The data of this item.
      */
-    private final int itemData;
+    private final String itemData;
     /**
      * The quality of this item.
      */
@@ -59,7 +59,7 @@ public class MapItem {
      * @param itemData The data of this item.
      * @param quality  The quality of this item.
      */
-    public MapItem(final int itemId, final int itemData, final int quality) {
+    public MapItem(final int itemId, final String itemData, final int quality) {
         this.itemId = itemId;
         this.itemData = itemData;
         this.quality = quality;
@@ -100,7 +100,7 @@ public class MapItem {
      *
      * @return the data-value.
      */
-    public int getItemData() {
+    public String getItemData() {
         return itemData;
     }
 }

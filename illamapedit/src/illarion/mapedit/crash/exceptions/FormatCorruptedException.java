@@ -37,11 +37,11 @@ public class FormatCorruptedException extends IOException {
     /**
      * The nr of the line that contains the error.
      */
-    private final int lineNr;
+    private int lineNr;
     /**
      * The expected content of the line.
      */
-    private final String format;
+    private String format;
 
     /**
      * Creates a new FormatCorruptedException.
@@ -58,6 +58,13 @@ public class FormatCorruptedException extends IOException {
         this.line = line;
         this.lineNr = lineNr;
         this.format = format;
+    }
+
+    public FormatCorruptedException(final String file, final String line) {
+        super(String.format("Format corrupted in file %s. Found:[%s]",
+                file, line));
+        this.file = file;
+        this.line = line;
     }
 
     /**
