@@ -24,7 +24,7 @@ import illarion.mapedit.resource.TileImg;
  * @author Tim
  */
 public class TileSelectedEvent {
-    private TileImg tileImg;
+    private final TileImg tileImg;
 
     public TileSelectedEvent(final TileImg tileImg) {
         this.tileImg = tileImg;

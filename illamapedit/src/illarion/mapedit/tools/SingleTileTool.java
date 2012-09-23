@@ -34,11 +34,16 @@ public class SingleTileTool extends AbstractTool {
 
     @Override
     public void clickedAt(final int x, final int y) {
-        Map m = getManager().getMap();
-        TileImg tile = getManager().getSelectedTile();
+        final Map m = getManager().getMap();
+        final TileImg tile = getManager().getSelectedTile();
         if (tile != null) {
             m.setTileAt(x, y, new MapTile(tile.getId(), 0));
             LOGGER.debug("SingleTileTool: " + tile.getDescription());
         }
+    }
+
+    @Override
+    public void dragged(final int x1, final int y1, final int x2, final int y2) {
+        //Do nothing
     }
 }

@@ -18,30 +18,17 @@
  */
 package illarion.mapedit.tools;
 
-import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapItem;
-import illarion.mapedit.resource.ItemImg;
-import org.apache.log4j.Logger;
-
 /**
  * @author Tim
  */
-public class SingleItemTool extends AbstractTool {
-
-    private static final Logger LOGGER = Logger.getLogger(SingleItemTool.class);
-
+public class DragTool extends AbstractTool {
     @Override
     public void clickedAt(final int x, final int y) {
-        final Map m = getManager().getMap();
-        final ItemImg item = getManager().getSelectedItem();
-        if (item != null) {
-            m.getTileAt(x, y).getMapItems().add(new MapItem(item.getItemId(), "", 0));
-            LOGGER.debug("SingleTileTool: " + item.getResourceName());
-        }
+        //do nothing
     }
 
     @Override
     public void dragged(final int x1, final int y1, final int x2, final int y2) {
-        //do nothing
+        getManager().getRenderer().changeTranslation(x2 - x1, y2 - y1);
     }
 }

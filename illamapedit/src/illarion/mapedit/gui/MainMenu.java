@@ -19,10 +19,10 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.Utils;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapIO;
+import illarion.mapedit.resource.loaders.ImageLoader;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
@@ -50,7 +50,7 @@ public class MainMenu extends RibbonApplicationMenu {
 
         final RibbonApplicationMenuEntryPrimary menuOpenMap =
                 new RibbonApplicationMenuEntryPrimary(
-                        Utils.getResizableIconFromResource("fileopen.png"),
+                        ImageLoader.getResizableIcon("fileopen"),
                         Lang.getMsg("gui.mainmenu.Open"),
                         new ActionListener() {
                             @Override
@@ -64,21 +64,21 @@ public class MainMenu extends RibbonApplicationMenu {
                                             ex.getMessage(),
                                             Lang.getMsg("gui.error"),
                                             JOptionPane.ERROR_MESSAGE,
-                                            Utils.getIconFromResource("messagebox_critical.png"));
+                                            ImageLoader.getImageIcon("messagebox_critical"));
                                 } catch (IOException e1) {
                                     LOGGER.warn("Can't load map", e1);
                                     JOptionPane.showMessageDialog(MainFrame.getInstance(),
                                             Lang.getMsg("gui.error.LoadMap"),
                                             Lang.getMsg("gui.error"),
                                             JOptionPane.ERROR_MESSAGE,
-                                            Utils.getIconFromResource("messagebox_critical.png"));
+                                            ImageLoader.getImageIcon("messagebox_critical"));
                                 }
 
                             }
                         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
         final RibbonApplicationMenuEntryPrimary menuNewMap =
                 new RibbonApplicationMenuEntryPrimary(
-                        Utils.getResizableIconFromResource("filenew.png"),
+                        ImageLoader.getResizableIcon("filenew"),
                         Lang.getMsg("gui.mainmenu.New"),
                         new ActionListener() {
                             @Override
@@ -89,7 +89,7 @@ public class MainMenu extends RibbonApplicationMenu {
                 );
         final RibbonApplicationMenuEntryPrimary menuSave =
                 new RibbonApplicationMenuEntryPrimary(
-                        Utils.getResizableIconFromResource("filesave.png"),
+                        ImageLoader.getResizableIcon("filesave"),
                         Lang.getMsg("gui.mainmenu.Save"),
                         new ActionListener() {
                             @Override
@@ -106,7 +106,7 @@ public class MainMenu extends RibbonApplicationMenu {
                                             Lang.getMsg("gui.error.SaveMap"),
                                             Lang.getMsg("gui.error"),
                                             JOptionPane.ERROR_MESSAGE,
-                                            Utils.getIconFromResource("messagebox_critical.png"));
+                                            ImageLoader.getImageIcon("messagebox_critical"));
                                 }
                             }
                         }, JCommandButton.CommandButtonKind.ACTION_ONLY

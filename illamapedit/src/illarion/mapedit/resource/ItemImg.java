@@ -35,7 +35,7 @@ public class ItemImg {
     private final int frameCount;
     private final int animationSpeed;
     private final int itemMode;
-    private Image[] imgs;
+    private final Image[] imgs;
 
     public int getItemId() {
         return itemId;

@@ -85,7 +85,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         if (toolManager != null) {
             toolManager.dispose();
         }
-        toolManager = new ToolManager(map);
+        toolManager = new ToolManager(map, rendererManager);
         EventBus.publish(new RepaintRequestEvent());
     }
 
@@ -113,15 +113,9 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         if (!canDrag || (mapData == null)) {
             return;
         }
-        if ((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
-            EventBus.publish(new MapDraggedEvent(e.getX() - clickX, e.getY() - clickY, MouseButton.RightButton));
-        } else if ((e.getModifiers() & MouseEvent.BUTTON2_MASK) != 0) {
-            EventBus.publish(new MapDraggedEvent(e.getX() - clickX, e.getY() - clickY, MouseButton.MiddleButton));
-        } else if ((e.getModifiers() & MouseEvent.BUTTON1_MASK) != 0) {
-            EventBus.publish(new MapDraggedEvent(e.getX() - clickX, e.getY() - clickY, MouseButton.LeftButton));
-        } else {
-            EventBus.publish(new MapDraggedEvent(e.getX() - clickX, e.getY() - clickY, MouseButton.OtherButton));
-        }
+
+        EventBus.publish(new MapDraggedEvent(clickX, clickY, e.getX(), e.getY(), MouseButton.fromAwt(e.getModifiers())));
+
 
         clickX = e.getX();
         clickY = e.getY();
@@ -146,7 +140,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
                 rendererManager.getTranslationY(), rendererManager.getZoom());
         final int y = Utils.getMapYFormDisp(e.getX(), e.getY(), rendererManager.getTranslationX(),
                 rendererManager.getTranslationY(), rendererManager.getZoom());
-        EventBus.publish(new MapClickedEvent(x, y, e.getButton()));
+        EventBus.publish(new MapClickedEvent(x, y, MouseButton.fromAwt(e.getModifiers())));
     }
 
     @Override

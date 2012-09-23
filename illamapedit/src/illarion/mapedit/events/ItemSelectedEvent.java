@@ -24,10 +24,10 @@ import illarion.mapedit.resource.ItemImg;
  * @author Tim
  */
 public class ItemSelectedEvent {
-    private ItemImg itemImg;
+    private final ItemImg itemImg;
 
     public ItemSelectedEvent(final ItemImg tileImg) {
-        this.itemImg = tileImg;
+        itemImg = tileImg;
     }
 
     public ItemImg getItemImg() {

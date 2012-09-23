@@ -30,6 +30,7 @@ import java.awt.*;
  */
 public abstract class AbstractMapRenderer implements Comparable<AbstractMapRenderer> {
     private static final Shape TILE_POLYGON = new Polygon(new int[]{33, 0, 33, 65}, new int[]{0, 17, 33, 17}, 4);
+
     /**
      * The render manager.
      */
@@ -39,12 +40,13 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      */
     private final MapPanel mapPanel;
 
+
     /**
      * Creates a new map renderer
      */
     public AbstractMapRenderer(final RendererManager manager) {
         this.manager = manager;
-        this.mapPanel = manager.getMapPanel();
+        mapPanel = manager.getMapPanel();
     }
 
     /**
@@ -54,10 +56,10 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      */
     protected Rectangle getRenderRectangle() {
         final Rectangle rect = mapPanel.getVisibleRect();
-        rect.x -= 64 * getZoom();
-        rect.y -= 32 * getZoom();
-        rect.width += 128 * getZoom();
-        rect.height += 64 * getZoom();
+        rect.x -= manager.getTileWidth() * 2 * getZoom();
+        rect.y -= getTileHeight() * 2 * getZoom();
+        rect.width += getTileWidth() * 4 * getZoom();
+        rect.height += getTileHeight() * 4 * getZoom();
         return rect;
     }
 
@@ -111,9 +113,6 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
         return mapPanel.getMap();
     }
 
-    /**
-     *
-     */
     protected float getMinZoom() {
         return manager.getMinZoom();
     }
@@ -121,6 +120,7 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
     protected RendererManager getManager() {
         return manager;
     }
+
 
     /**
      * In this method all rendering should be done.
@@ -148,10 +148,10 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
         final int j = o.getRenderPriority();
         if (i < j) {
             return -1;
-        } else if (i == j) {
-            return 0;
-        } else {
-            return 1;
         }
+        if (i == j) {
+            return 0;
+        }
+        return 1;
     }
 }

@@ -74,8 +74,8 @@ public class Map {
                final int x, final int y, final int z) {
         this.name = name;
         this.path = path;
-        this.width = w;
-        this.height = h;
+        width = w;
+        height = h;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -127,10 +127,9 @@ public class Map {
         final int i = (y * width) + x;
         if (mapTileData[i] != null) {
             return mapTileData[i];
-        } else {
-            setTileAt(x, y, new MapTile(0, 0));
-            return getTileAt(x, y);
         }
+        setTileAt(x, y, new MapTile(0, 0));
+        return getTileAt(x, y);
 
     }
 
@@ -191,6 +190,6 @@ public class Map {
      * @return {@code true} if the map contains x and y
      */
     public boolean contains(final int x, final int y) {
-        return x >= 0 && y >= 0 && x < getWidth() && y < getHeight();
+        return (x >= 0) && (y >= 0) && (x < getWidth()) && (y < getHeight());
     }
 }

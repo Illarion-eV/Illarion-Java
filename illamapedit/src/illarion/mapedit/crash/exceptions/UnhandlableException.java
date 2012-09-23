@@ -16,32 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools;
-
-import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapItem;
-import illarion.mapedit.resource.ItemImg;
-import org.apache.log4j.Logger;
+package illarion.mapedit.crash.exceptions;
 
 /**
  * @author Tim
  */
-public class SingleItemTool extends AbstractTool {
-
-    private static final Logger LOGGER = Logger.getLogger(SingleItemTool.class);
-
-    @Override
-    public void clickedAt(final int x, final int y) {
-        final Map m = getManager().getMap();
-        final ItemImg item = getManager().getSelectedItem();
-        if (item != null) {
-            m.getTileAt(x, y).getMapItems().add(new MapItem(item.getItemId(), "", 0));
-            LOGGER.debug("SingleTileTool: " + item.getResourceName());
-        }
+public class UnhandlableException extends RuntimeException {
+    public UnhandlableException(final String message) {
+        super(message);
     }
 
-    @Override
-    public void dragged(final int x1, final int y1, final int x2, final int y2) {
-        //do nothing
+    public UnhandlableException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    public UnhandlableException(final Throwable cause) {
+        super(cause);
     }
 }

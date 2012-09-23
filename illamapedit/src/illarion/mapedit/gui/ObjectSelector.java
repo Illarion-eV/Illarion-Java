@@ -36,15 +36,14 @@ import javax.swing.event.ListSelectionListener;
 /**
  * @author Tim
  */
-public class ObjectSelector extends JDialog {
+public class ObjectSelector extends JPanel {
 
 
     private final JList<TileImg> tileList;
     private final JList<ItemImg> itemList;
 
     public ObjectSelector() {
-        super(MainFrame.getInstance());
-        setDefaultLookAndFeelDecorated(false);
+
         final JTabbedPane tab = new JTabbedPane();
 
         tileList = new JList<TileImg>(TileLoader.getInstance().getTiles());
@@ -69,9 +68,12 @@ public class ObjectSelector extends JDialog {
 
         add(tab);
 
+        JScrollPane tileScrollPane = new JScrollPane(tileList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        JScrollPane itemScrollPane = new JScrollPane(itemList);
+
         tab.add(Lang.getMsg("gui.selector.tile"), new JScrollPane(tileList));
         tab.add(Lang.getMsg("gui.selector.item"), new JScrollPane(itemList));
-        pack();
         doLayout();
         setVisible(true);
 

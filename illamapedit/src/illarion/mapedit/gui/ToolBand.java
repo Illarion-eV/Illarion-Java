@@ -19,8 +19,8 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.Utils;
 import illarion.mapedit.events.SelectToolEvent;
+import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.tools.SingleTileTool;
 import illarion.mapedit.util.MouseButton;
 import javolution.util.FastList;
@@ -45,7 +45,7 @@ public class ToolBand extends JRibbonBand {
 
         final JCommandButton singleTileToolBtn = new JCommandButton(
                 Lang.getMsg("gui.toolband.SingleTileTool"),
-                Utils.getResizableIconFromResource("singleSelect.png")
+                ImageLoader.getResizableIcon("singleSelect")
         );
 
         final ActionListener singleTileToolListener = new ActionListener() {
@@ -55,9 +55,11 @@ public class ToolBand extends JRibbonBand {
             }
         };
 
+        singleTileToolBtn.addActionListener(singleTileToolListener);
+
         addCommandButton(singleTileToolBtn, RibbonElementPriority.TOP);
 
-        List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         resize.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         resize.add(new CoreRibbonResizePolicies.High2Low(getControlPanel()));

@@ -25,7 +25,23 @@ public abstract class AbstractTool {
 
     private ToolManager manager;
 
+    /**
+     * X and Y are tile coordinates.
+     *
+     * @param x
+     * @param y
+     */
     public abstract void clickedAt(int x, int y);
+
+    /**
+     * WARNING x1, x2, y1, y2 are pixel coordinates relative to the panel!
+     *
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     */
+    public abstract void dragged(int x1, int y1, int x2, int y2);
 
     public void registerManager(final ToolManager toolManager) {
         manager = toolManager;

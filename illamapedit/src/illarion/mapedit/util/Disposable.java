@@ -22,5 +22,5 @@ package illarion.mapedit.util;
  * @author Tim
  */
 public interface Disposable {
-    public void dispose();
+    void dispose();
 }

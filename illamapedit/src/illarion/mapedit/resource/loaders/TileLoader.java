@@ -64,7 +64,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
         final int id = loader.getTileId();
         final int mode = loader.getTileMode();
         final String name = loader.getResourceName();
-        TileImg tile;
+        final TileImg tile;
         final TileInfo info =
                 new TileInfo(loader.getTileColor(), loader.getMovementCost(), loader.isOpaque());
         switch (mode) {

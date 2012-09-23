@@ -67,10 +67,6 @@ public class ItemRenderer extends AbstractMapRenderer {
                         final ItemImg img = ItemLoader.getInstance().getTileFromId(item.getId());
                         final Image paintImg = img.getImgs()[0];
 
-                        //TODO: Fix item offset with different zoom levels
-                        //is it because of integer rounding?
-
-                        // Hack, correct the wrong drawn tiles. Easier than correct math etc.
                         g.translate(getTileWidth(), getTileHeight());
                         g.translate(xdisp, ydisp);
                         g.translate(img.getOffsetX(), -img.getOffsetY());

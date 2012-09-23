@@ -18,11 +18,16 @@
  */
 package illarion.mapedit.resource.loaders;
 
+import illarion.mapedit.crash.exceptions.ResourceException;
 import illarion.mapedit.resource.Resource;
+import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +41,25 @@ public class ImageLoader implements Resource {
 
 
     private static final String[] files = {
-            "/sound.png"
+            "/sound.png",
+            "/messagebox_critical.png",
+            "/singleSelect.png",
+            "/viewmag.png",
+            "/viewmag1.png",
+            "/viewmag-.png",
+            "/viewmag+.png",
+            "/mapedit64.png",
+            "/fileopen.png",
+            "/filenew.png",
+            "/filesave.png",
+            "/editcopy.png",
+            "/editpaste.png",
+            "/editcut.png",
+            "/file_tiles.png",
+            "/file_items.png",
+            "/messagebox_warning.png",
+            "/viewGrid.png",
+            "/sound.png",
     };
 
     private ImageLoader() {
@@ -47,7 +70,12 @@ public class ImageLoader implements Resource {
     public void load() throws IOException {
         final Class<?> clazz = ImageLoader.class;
         for (final String f : files) {
-            IMAGES.put(f, ImageIO.read(clazz.getResourceAsStream(f)));
+            String key = f.substring(1, f.length() - 4);
+            InputStream is = clazz.getResourceAsStream(f);
+            if (is == null) {
+                throw new IOException(f + " does not exist!");
+            }
+            IMAGES.put(key, ImageIO.read(is));
         }
     }
 
@@ -61,6 +89,23 @@ public class ImageLoader implements Resource {
     }
 
     public static Image getImage(final String key) {
+        if (!IMAGES.containsKey(key))
+            throw new ResourceException(key + " does not exist!");
         return IMAGES.get(key);
+    }
+
+    public static ResizableIcon getResizableIcon(final String key) {
+        Image image = getImage(key);
+
+        final int height = image.getHeight(null);
+        final int width = image.getWidth(null);
+        final ResizableIcon resizeIcon =
+                ImageWrapperResizableIcon.getIcon(image, new Dimension(width,
+                        height));
+        return resizeIcon;
+    }
+
+    public static ImageIcon getImageIcon(final String key) {
+        return new ImageIcon(getImage(key));
     }
 }

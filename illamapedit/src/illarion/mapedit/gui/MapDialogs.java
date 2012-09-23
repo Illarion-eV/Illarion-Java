@@ -45,7 +45,7 @@ public class MapDialogs {
         }
     };
     private static File saveDir;
-    private static Config config = MapEditor.getConfig();
+    private static final Config config = MapEditor.getConfig();
 
     private MapDialogs() {
 
@@ -97,8 +97,12 @@ public class MapDialogs {
         dialog.pack();
         dialog.setVisible(true);
         dialog.dispose();
-        return new Map(name.getText(), saveDir.getPath(), (Integer) width.getValue(), (Integer) height.getValue(),
-                (Integer) x.getValue(), (Integer) y.getValue(), (Integer) l.getValue());
+
+        if (saveDir != null) {
+            return new Map(name.getText(), saveDir.getPath(), (Integer) width.getValue(), (Integer) height.getValue(),
+                    (Integer) x.getValue(), (Integer) y.getValue(), (Integer) l.getValue());
+        }
+        return null;
     }
 
     public static Map showOpenMapDialog(final JFrame owner) throws IOException {

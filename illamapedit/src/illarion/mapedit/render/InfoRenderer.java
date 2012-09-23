@@ -50,12 +50,10 @@ public class InfoRenderer extends AbstractMapRenderer {
         g.setFont(FONT);
         g.setColor(Color.WHITE);
         final Map m = getMap();
-        final int mapX = getManager().getMapPanel().getMouseMapPosX();
-        final int mapY = getManager().getMapPanel().getMouseMapPosY();
         final int mouseX = getManager().getMapPanel().getMouseMapPosX();
         final int mouseY = getManager().getMapPanel().getMouseMapPosY();
 
-        String[] lines = new String[5];
+        final String[] lines = new String[5];
         lines[0] = String.format("%1$s (%2$d, %3$d, %4$d)", pos, m.getX(), m.getY(),
                 m.getZ());
         lines[1] = String.format("%1$s (%2$d, %3$d)", size, m.getWidth(), m.getHeight());
@@ -65,7 +63,7 @@ public class InfoRenderer extends AbstractMapRenderer {
                 mouseX,
                 mouseY, mouseX + m.getX(), mouseY + m.getY());
         int y = START_Y;
-        for (String s : lines) {
+        for (final String s : lines) {
             g.drawString(s, 10, y);
             y += STEP_Y;
         }

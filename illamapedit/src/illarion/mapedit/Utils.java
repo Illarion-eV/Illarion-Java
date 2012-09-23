@@ -24,14 +24,6 @@ package illarion.mapedit;
 
 import illarion.common.util.Location;
 import org.apache.log4j.Logger;
-import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * A small set of static utility functions that help at some points.
@@ -48,48 +40,18 @@ public final class Utils {
     private Utils() {
     }
 
-    public static ResizableIcon getResizableIconFromResource(
-            final String resource) {
-        final Image image;
-        try {
-            image = ImageIO.read(Utils.class.getClassLoader()
-                    .getResource(resource));
-        } catch (final IOException e) {
-            LOGGER.error("Failed to read image: \"" + resource + '"');
-            return null;
-        }
-        final int height = image.getHeight(null);
-        final int width = image.getWidth(null);
-        final ResizableIcon resizeIcon =
-                ImageWrapperResizableIcon.getIcon(image, new Dimension(width,
-                        height));
-        return resizeIcon;
-    }
-
-    public static Icon getIconFromResource(final String resource) {
-        final URL imgURL = Utils.class.getClassLoader()
-                .getResource(resource);
-        if (imgURL != null) {
-            return new ImageIcon(imgURL, resource);
-        } else {
-            LOGGER.warn("Can't load resource " + resource);
-            return null;
-        }
-
-    }
-
     public static int getMapXFormDisp(final int x, final int y, final int transX, final int transY, final float zoom) {
-        float xr = (x - transX) / zoom;
-        float yr = (y - transY) / zoom;
-        Location mapPos = new Location();
+        final float xr = (x - transX) / zoom;
+        final float yr = (y - transY) / zoom;
+        final Location mapPos = new Location();
         mapPos.setDC((int) xr, (int) yr);
         return mapPos.getScX();
     }
 
     public static int getMapYFormDisp(final int x, final int y, final int transX, final int transY, final float zoom) {
-        float xr = (x - transX) / zoom;
-        float yr = (y - transY) / zoom;
-        Location mapPos = new Location();
+        final float xr = (x - transX) / zoom;
+        final float yr = (y - transY) / zoom;
+        final Location mapPos = new Location();
         mapPos.setDC((int) xr, (int) yr);
         return mapPos.getScY() - 1;
     }

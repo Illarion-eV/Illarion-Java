@@ -19,12 +19,9 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.Utils;
 import illarion.mapedit.events.RendererToggleEvent;
-import illarion.mapedit.render.GridRenderer;
-import illarion.mapedit.render.InfoRenderer;
-import illarion.mapedit.render.ItemRenderer;
-import illarion.mapedit.render.TileRenderer;
+import illarion.mapedit.render.*;
+import illarion.mapedit.resource.loaders.ImageLoader;
 import javolution.util.FastList;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
@@ -47,19 +44,23 @@ public class ViewBand extends JRibbonBand {
 
         final JCommandButton tileButton = new JCommandButton(
                 Lang.getMsg("gui.viewband.button.Tile"),
-                Utils.getResizableIconFromResource("file_tiles.png")
+                ImageLoader.getResizableIcon("file_tiles")
         );
         final JCommandButton itemButton = new JCommandButton(
                 Lang.getMsg("gui.viewband.button.Item"),
-                Utils.getResizableIconFromResource("file_items.png")
+                ImageLoader.getResizableIcon("file_items")
         );
         final JCommandButton infoButton = new JCommandButton(
                 Lang.getMsg("gui.viewband.button.Info"),
-                Utils.getResizableIconFromResource("messagebox_warning.png")
+                ImageLoader.getResizableIcon("messagebox_warning")
         );
         final JCommandButton gridButton = new JCommandButton(
                 Lang.getMsg("gui.viewband.button.Grid"),
-                Utils.getResizableIconFromResource("viewGrid.png")
+                ImageLoader.getResizableIcon("viewGrid")
+        );
+        final JCommandButton musicButton = new JCommandButton(
+                Lang.getMsg("gui.viewband.button.Sound"),
+                ImageLoader.getResizableIcon("sound")
         );
 
         final ActionListener tileListener = new ActionListener() {
@@ -90,17 +91,26 @@ public class ViewBand extends JRibbonBand {
             }
         };
 
+        final ActionListener musicListener = new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                EventBus.publish(new RendererToggleEvent(MusicRenderer.class));
+            }
+        };
+
         tileButton.addActionListener(tileListener);
         itemButton.addActionListener(itemListener);
         infoButton.addActionListener(infoListener);
         gridButton.addActionListener(gridListener);
+        musicButton.addActionListener(musicListener);
 
         addCommandButton(tileButton, RibbonElementPriority.TOP);
         addCommandButton(itemButton, RibbonElementPriority.TOP);
         addCommandButton(infoButton, RibbonElementPriority.MEDIUM);
         addCommandButton(gridButton, RibbonElementPriority.MEDIUM);
+        addCommandButton(musicButton, RibbonElementPriority.MEDIUM);
 
-        List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         resize.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         resize.add(new CoreRibbonResizePolicies.High2Low(getControlPanel()));

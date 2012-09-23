@@ -16,34 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.events;
-
-import illarion.mapedit.util.MouseButton;
+package illarion.mapedit.crash.exceptions;
 
 /**
  * @author Tim
  */
-public class MapClickedEvent {
-
-    private final int x;
-    private final int y;
-    private final MouseButton button;
-
-    public MapClickedEvent(final int x, final int y, final MouseButton button) {
-        this.x = x;
-        this.y = y;
-        this.button = button;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public MouseButton getButton() {
-        return button;
+public class ResourceException extends UnhandlableException {
+    public ResourceException(String message) {
+        super(message);
     }
 }

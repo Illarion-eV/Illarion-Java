@@ -19,8 +19,8 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.Utils;
 import illarion.mapedit.events.ZoomEvent;
+import illarion.mapedit.resource.loaders.ImageLoader;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
@@ -38,27 +38,29 @@ import java.util.List;
  */
 public class ZoomBand extends JRibbonBand {
 
+    public static final float ZOOM_STEP = .1f;
+
     public ZoomBand() {
-        super(Lang.getMsg("gui.zoomband.Name"), Utils.getResizableIconFromResource("viewmag.png"));
+        super(Lang.getMsg("gui.zoomband.Name"), ImageLoader.getResizableIcon("viewmag"));
 
         final JCommandButton zoomOriginal = new JCommandButton(Lang.getMsg("gui.zoomband.Original"),
-                Utils.getResizableIconFromResource("viewmag1.png"));
+                ImageLoader.getResizableIcon("viewmag1"));
         final JCommandButton zoomOut = new JCommandButton(Lang.getMsg("gui.zoomband.Out"),
-                Utils.getResizableIconFromResource("viewmag-.png"));
+                ImageLoader.getResizableIcon("viewmag-"));
         final JCommandButton zoomIn = new JCommandButton(Lang.getMsg("gui.zoomband.In"),
-                Utils.getResizableIconFromResource("viewmag+.png"));
+                ImageLoader.getResizableIcon("viewmag+"));
 
         final ActionListener zoomOutListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new ZoomEvent(.1f));
+                EventBus.publish(new ZoomEvent(ZOOM_STEP));
             }
         };
 
         final ActionListener zoomInListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new ZoomEvent(-.1f));
+                EventBus.publish(new ZoomEvent(-ZOOM_STEP));
             }
         };
 

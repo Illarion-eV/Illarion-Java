@@ -18,13 +18,12 @@
  */
 package illarion.mapedit.render;
 
+import illarion.common.util.Rectangle;
 import illarion.mapedit.Utils;
-import illarion.mapedit.events.MapDraggedEvent;
 import illarion.mapedit.events.RendererToggleEvent;
 import illarion.mapedit.events.RepaintRequestEvent;
 import illarion.mapedit.events.ZoomEvent;
 import illarion.mapedit.gui.MapPanel;
-import illarion.mapedit.util.MouseButton;
 import javolution.util.FastList;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -48,12 +47,16 @@ public class RendererManager {
 
     private final List<AbstractMapRenderer> renderers;
 
+    /**
+     * The actual selection. If nothing is selected, the rectangle equals {@code (0, 0, 0, 0)}
+     */
+    private final illarion.common.util.Rectangle selection = new Rectangle();
     private float zoom = DEFAULT_ZOOM;
     private int translationX;
     private int translationY;
     private float tileHeight = DEFAULT_TILE_HEIGHT;
     private float tileWidth = DEFAULT_TILE_WIDTH;
-    private MapPanel mapPanel;
+    private final MapPanel mapPanel;
 
 
     public RendererManager(final MapPanel mapPanel) {
@@ -95,20 +98,20 @@ public class RendererManager {
     }
 
     public void setZoom(final float zoom) {
-        float oldZoom = this.zoom;
-        float oldTileWith = tileWidth;
-        float oldTileHeight = tileHeight;
+        final float oldZoom = this.zoom;
+        final float oldTileWith = tileWidth;
+        final float oldTileHeight = tileHeight;
 
         tileWidth = DEFAULT_TILE_WIDTH * zoom;
         tileHeight = DEFAULT_TILE_HEIGHT * zoom;
         this.zoom = zoom;
 
         //TODO:  Fix this ;-S
-        int oldX = Utils.getMapXFormDisp(0, 0, getTranslationX(), getTranslationY(), oldZoom);
-        int oldY = Utils.getMapYFormDisp(0, 0, getTranslationX(), getTranslationY(), oldZoom);
+        final int oldX = Utils.getMapXFormDisp(0, 0, getTranslationX(), getTranslationY(), oldZoom);
+        final int oldY = Utils.getMapYFormDisp(0, 0, getTranslationX(), getTranslationY(), oldZoom);
 
-        int newX = Utils.getMapXFormDisp(0, 0, getTranslationX(), getTranslationY(), zoom);
-        int newY = Utils.getMapYFormDisp(0, 0, getTranslationX(), getTranslationY(), zoom);
+        final int newX = Utils.getMapXFormDisp(0, 0, getTranslationX(), getTranslationY(), zoom);
+        final int newY = Utils.getMapYFormDisp(0, 0, getTranslationX(), getTranslationY(), zoom);
 
         changeTranslation((int) ((newX - oldX) * oldTileWith), (int) ((newY - oldY) * oldTileHeight));
 
@@ -163,23 +166,28 @@ public class RendererManager {
         return mapPanel;
     }
 
+    /**
+     * Sets a new rectangle as selection.
+     *
+     * @param rect the new rectangle
+     */
+    public void setSelection(illarion.common.util.Rectangle rect) {
+        selection.set(rect);
+    }
+
+    public Rectangle getSelection() {
+        return selection;
+    }
+
     @EventSubscriber(eventClass = RendererToggleEvent.class)
     public void onRendererToggle(final RendererToggleEvent e) {
-        for (AbstractMapRenderer r : renderers) {
+        for (final AbstractMapRenderer r : renderers) {
             if (r.getClass().equals(e.getRendererClass())) {
                 removeRenderer(r);
                 return;
             }
         }
         addRenderer(e.getRenderer(this));
-    }
-
-    @EventSubscriber(eventClass = MapDraggedEvent.class)
-    public void onMapDragged(final MapDraggedEvent e) {
-        if (e.getButton() == MouseButton.RightButton) {
-            changeTranslation(e.getOffsetX(), e.getOffsetY());
-            EventBus.publish(new RepaintRequestEvent());
-        }
     }
 
     @EventSubscriber(eventClass = ZoomEvent.class)

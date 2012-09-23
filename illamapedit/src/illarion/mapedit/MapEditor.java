@@ -23,6 +23,7 @@ import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
+import illarion.mapedit.crash.exceptions.UnhandlableException;
 import illarion.mapedit.events.MessageStringEvent;
 import illarion.mapedit.gui.MainFrame;
 import illarion.mapedit.gui.SplashScreen;
@@ -164,6 +165,8 @@ public final class MapEditor {
                 res.loadNext();
             } catch (IOException e) {
                 LOGGER.warn(res.getPrevDescription() + " failed!");
+//                Crash the editor
+                throw new UnhandlableException("Can't load " + res.getPrevDescription(), e);
             }
         }
 

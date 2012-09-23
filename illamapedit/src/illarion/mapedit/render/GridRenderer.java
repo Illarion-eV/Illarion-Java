@@ -46,9 +46,9 @@ public class GridRenderer extends AbstractMapRenderer {
         final int height = map.getHeight();
 
 
-        AffineTransform transform = g.getTransform();
+        final AffineTransform transform = g.getTransform();
 
-        g.translate(getTranslateX(), getTranslateY() + 17 * getZoom());
+        g.translate(getTranslateX(), getTranslateY() + ((getTileHeight() + 1) * getZoom()));
         g.scale(getZoom(), getZoom());
         g.setColor(Color.LIGHT_GRAY);
         for (int x = 0; x <= width; ++x) {

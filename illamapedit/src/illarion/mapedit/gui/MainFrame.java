@@ -20,11 +20,12 @@ package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
-import illarion.mapedit.Utils;
+import illarion.mapedit.resource.loaders.ImageLoader;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -39,6 +40,7 @@ public class MainFrame extends JRibbonFrame {
 
 
     private final MapPanel map;
+    private final ObjectSelector selector;
 
     private MainFrame() {
         instance = this;
@@ -48,21 +50,24 @@ public class MainFrame extends JRibbonFrame {
         getRibbon().setApplicationMenu(new MainMenu(this));
 
         map = MapPanel.getInstance();
-
+        selector = new ObjectSelector();
+        final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setTopComponent(selector);
         add(map, BorderLayout.CENTER);
-
+        add(splitPane, BorderLayout.EAST);
         final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
                 new ClipboardBand(), new ZoomBand(), new ViewBand(), new ToolBand());
 
 
         getRibbon().addTask(task);
-        setApplicationIcon(Utils.getResizableIconFromResource("mapedit64.png"));
+        setApplicationIcon(ImageLoader.getResizableIcon("mapedit64"));
         new ObjectSelector();
     }
 
     public static MainFrame getInstance() {
-        if (instance == null)
+        if (instance == null) {
             return new MainFrame();
+        }
         return instance;
 
     }
