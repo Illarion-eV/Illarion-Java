@@ -35,7 +35,7 @@ import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantList;
 import illarion.common.config.Config;
-import illarion.common.config.ConfigChangeListener;
+import illarion.common.config.ConfigChangedEvent;
 import illarion.common.config.ConfigSystem;
 import illarion.common.types.CharacterId;
 import illarion.common.util.Bresenham;
@@ -44,6 +44,7 @@ import illarion.common.util.Location;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
 import org.newdawn.slick.openal.SoundStore;
 
 import java.awt.*;
@@ -55,7 +56,7 @@ import java.io.File;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class Player implements ConfigChangeListener {
+public final class Player {
     /**
      * The key in the configuration for the music on/off flag.
      */
@@ -105,16 +106,6 @@ public final class Player implements ConfigChangeListener {
      * Share of one perception point on the coverage of a tile.
      */
     private static final int PERCEPTION_COVER_SHARE = 4;
-
-    /**
-     * Encoding for a left turn.
-     */
-    public static final int TURN_LEFT = 1;
-
-    /**
-     * Encoding for a right turn.
-     */
-    public static final int TURN_RIGHT = -1;
 
     /**
      * The player specific configuration of the client.
@@ -212,11 +203,6 @@ public final class Player implements ConfigChangeListener {
         inventory = new Inventory();
         containers = new TIntObjectHashMap<ItemContainer>();
 
-        IllaClient.getCfg().addListener(CFG_SOUND_ON, this);
-        IllaClient.getCfg().addListener(CFG_SOUND_VOL, this);
-        IllaClient.getCfg().addListener(CFG_MUSIC_ON, this);
-        IllaClient.getCfg().addListener(CFG_MUSIC_VOL, this);
-
         updateListener();
         AnnotationProcessor.process(this);
     }
@@ -266,6 +252,14 @@ public final class Player implements ConfigChangeListener {
             case Input:
                 break;
         }
+    }
+
+    /**
+     * The monitor function that is notified in case the configuration changes and triggers the required updates.
+     */
+    @EventTopicPatternSubscriber(topicPattern = "((music)|(sound))((On)|(Volume))")
+    public void onConfigChangedEvent(final String topic, final ConfigChangedEvent event) {
+        updateListener();
     }
 
     /**
@@ -335,17 +329,6 @@ public final class Player implements ConfigChangeListener {
         visibility += chara.getVisibilityBonus();
 
         return getVisibility(chara.getLocation(), visibility);
-    }
-
-    /**
-     * The monitor function that is notified in case the configuration changes and triggers the required updates.
-     */
-    @Override
-    public void configChanged(final Config config, final String key) {
-        if (key.equals(CFG_SOUND_ON) || key.equals(CFG_SOUND_VOL) || key.equals(CFG_MUSIC_ON) || key.equals
-                (CFG_MUSIC_VOL)) {
-            updateListener();
-        }
     }
 
     /**
@@ -500,7 +483,7 @@ public final class Player implements ConfigChangeListener {
      * @param checkLoc The location that shall be checked
      * @return true if the location is at the same level as the player
      */
-    protected boolean isBaseLevel(final Location checkLoc) {
+    boolean isBaseLevel(final Location checkLoc) {
         return loc.getScZ() == checkLoc.getScZ();
     }
 
@@ -560,7 +543,7 @@ public final class Player implements ConfigChangeListener {
             return;
         }
 
-        final boolean levelChange = (newLoc.getScZ() != loc.getScZ());
+        final boolean levelChange = newLoc.getScZ() != loc.getScZ();
 
         // set logical location
         movementHandler.cancelAutoWalk();
@@ -606,7 +589,7 @@ public final class Player implements ConfigChangeListener {
     /**
      * Update the sound listener of this player.
      */
-    private void updateListener() {
+    private static void updateListener() {
         if (IllaClient.getCfg().getBoolean(CFG_SOUND_ON)) {
             final float effVol = IllaClient.getCfg().getInteger(CFG_SOUND_VOL) / MAX_CLIENT_VOL;
             SoundStore.get().setSoundsOn(true);
