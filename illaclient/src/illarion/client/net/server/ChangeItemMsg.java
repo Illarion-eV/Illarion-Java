@@ -85,7 +85,7 @@ public final class ChangeItemMsg
         loc = decodeLocation(reader);
         oldItem = new ItemId(reader);
         newItem = new ItemId(reader);
-        count = new ItemCount(reader);
+        count = ItemCount.getInstance(reader);
     }
 
     /**

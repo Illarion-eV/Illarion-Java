@@ -394,7 +394,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
 
                 @Override
                 public void popupConfirmed(final int value) {
-                    iManager.dropAtInventory(slotId, new ItemCount(value));
+                    iManager.dropAtInventory(slotId, ItemCount.getInstance(value));
                 }
             });
         } else {

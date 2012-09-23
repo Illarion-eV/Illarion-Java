@@ -423,7 +423,7 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
 
                 @Override
                 public void popupConfirmed(final int value) {
-                    iManager.dropAtContainer(containerId, slotId, new ItemCount(value));
+                    iManager.dropAtContainer(containerId, slotId, ItemCount.getInstance(value));
                 }
             });
         } else {

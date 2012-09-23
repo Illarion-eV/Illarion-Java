@@ -74,7 +74,7 @@ public final class ShowcaseMsg extends AbstractReply {
         for (int i = 0; i < itemAmount; i++) {
             final int itemPos = reader.readUShort();
             final ItemId itemId = new ItemId(reader);
-            final ItemCount itemCount = new ItemCount(reader);
+            final ItemCount itemCount = ItemCount.getInstance(reader);
 
             event.addItem(itemPos, new OpenContainerEvent.Item(itemId, itemCount));
         }

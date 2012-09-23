@@ -208,7 +208,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
                     @Override
                     public void popupConfirmed(final int value) {
-                        list.buyItem(index, new ItemCount(value));
+                        list.buyItem(index, ItemCount.getInstance(value));
                     }
                 });
             } else {

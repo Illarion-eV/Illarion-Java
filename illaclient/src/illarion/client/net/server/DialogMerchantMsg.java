@@ -75,7 +75,7 @@ public final class DialogMerchantMsg extends AbstractReply {
             final ItemId itemId = new ItemId(reader);
             final String name = reader.readString();
             final long itemValue = reader.readUInt();
-            final ItemCount bundleSize = new ItemCount(reader);
+            final ItemCount bundleSize = ItemCount.getInstance(reader);
 
             items.add(new MerchantItem(i, MerchantItem.MerchantItemType.SellingItem, itemId, name, itemValue, bundleSize));
         }

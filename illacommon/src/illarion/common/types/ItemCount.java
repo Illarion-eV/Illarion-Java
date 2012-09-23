@@ -40,9 +40,51 @@ public final class ItemCount {
     public static final int MIN_VALUE = 0;
 
     /**
+     * Stack instance for the count value 0.
+     */
+    public static final ItemCount ZERO = new ItemCount(0);
+
+    /**
+     * Static instance for the count value 1.
+     */
+    public static final ItemCount ONE = new ItemCount(1);
+
+    /**
      * The item count.
      */
     private final int value;
+
+    /**
+     * Fetch a instance of item count.
+     *
+     * @param value the value of the item count
+     * @return the new instance of the item count representing the value
+     * @throws IllegalArgumentException in case the value is less then {@link #MIN_VALUE} or larger then
+     *                                  {@link #MAX_VALUE}.
+     */
+    public static ItemCount getInstance(final int value) {
+        switch (value) {
+            case 0:
+                return ZERO;
+            case 1:
+                return ONE;
+            default:
+                return new ItemCount(value);
+        }
+    }
+
+    /**
+     * Get a new instance from item count.
+     *
+     * @param reader the network reader that is used to fetch the value
+     * @return the new instance of the item count representing the value
+     * @throws IllegalArgumentException in case the value is less then {@link #MIN_VALUE} or larger then
+     *                                  {@link #MAX_VALUE}.
+     * @throws IOException              in case the reading operation fails
+     */
+    public static ItemCount getInstance(final NetCommReader reader) throws IOException {
+        return getInstance(reader.readUShort());
+    }
 
     /**
      * Constructor of this class used to set.
@@ -51,21 +93,11 @@ public final class ItemCount {
      * @throws IllegalArgumentException in case the value is less then {@link #MIN_VALUE} or larger then
      *                                  {@link #MAX_VALUE}.
      */
-    public ItemCount(final int value) {
+    private ItemCount(final int value) {
         if ((value < MIN_VALUE) || (value > MAX_VALUE)) {
             throw new IllegalArgumentException("value is out of range.");
         }
         this.value = value;
-    }
-
-    /**
-     * This constructor is used to decode the item count from the network interface.
-     *
-     * @param reader the reader
-     * @throws IOException in case the reading operation fails for some reason
-     */
-    public ItemCount(final NetCommReader reader) throws IOException {
-        value = reader.readUShort();
     }
 
     public static boolean isGreaterZero(final ItemCount count) {

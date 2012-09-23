@@ -109,7 +109,7 @@ public class MerchantItem {
      */
     public MerchantItem(final int itemIndex, final MerchantItem.MerchantItemType itemType, final ItemId id,
                         final String itemName, final long itemPrice) {
-        this(itemIndex, itemType, id, itemName, itemPrice, new ItemCount(1));
+        this(itemIndex, itemType, id, itemName, itemPrice, ItemCount.getInstance(1));
     }
 
     /**

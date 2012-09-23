@@ -79,7 +79,7 @@ public final class PutItemMsg
             throws IOException {
         loc = decodeLocation(reader);
         itemId = new ItemId(reader);
-        number = new ItemCount(reader);
+        number = ItemCount.getInstance(reader);
     }
 
     /**

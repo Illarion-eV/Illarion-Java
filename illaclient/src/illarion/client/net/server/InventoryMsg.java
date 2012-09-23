@@ -80,7 +80,7 @@ public final class InventoryMsg extends AbstractReply {
     public void decode(final NetCommReader reader) throws IOException {
         location = reader.readUByte();
         itemId = new ItemId(reader);
-        count = new ItemCount(reader);
+        count = ItemCount.getInstance(reader);
     }
 
     /**

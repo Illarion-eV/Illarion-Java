@@ -201,7 +201,7 @@ public final class TileUpdate {
 
         for (int i = 0; i < itemNumber; ++i) {
             itemId.add(new ItemId(reader));
-            itemCount.add(new ItemCount(reader));
+            itemCount.add(ItemCount.getInstance(reader));
         }
     }
 }

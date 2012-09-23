@@ -196,7 +196,7 @@ public final class GameMapHandler
 
                 @Override
                 public void popupConfirmed(final int value) {
-                    iManager.dropAtMap(dropSpotX, dropSpotY, new ItemCount(value));
+                    iManager.dropAtMap(dropSpotX, dropSpotY, ItemCount.getInstance(value));
                 }
             });
         } else {
