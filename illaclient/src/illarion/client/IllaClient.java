@@ -524,9 +524,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         LOGGER.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System
                 .getProperty("os.arch"));
 
-        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(Level.FINER);
-        java.util.logging.Logger.getLogger("de.lessvoid.nifty").setLevel(Level.FINER);
-        java.util.logging.Logger.getLogger("javolution").setLevel(Level.WARNING);
+        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(Level.SEVERE);
+        java.util.logging.Logger.getLogger("de.lessvoid.nifty").setLevel(Level.SEVERE);
+        java.util.logging.Logger.getLogger("javolution").setLevel(Level.SEVERE);
     }
 
     public static final String CFG_FULLSCREEN = "fullscreen";

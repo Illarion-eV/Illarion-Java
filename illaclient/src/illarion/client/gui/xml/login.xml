@@ -71,4 +71,15 @@
             </panel>
         </layer>
     </screen>
+    <popup id="loginError" childLayout="center">
+        <panel style="nifty-panel" childLayout="vertical" width="200px" id="#numberSelectPopup">
+            <control name="label" id="#errorText" width="100%" style="nifty-label"/>
+            <panel height="10px"/>
+            <panel childLayout="center" width="100%">
+                <control name="button" id="#closeButton" label="OK">
+                    <interact onRelease="closeError()"/>
+                </control>
+            </panel>
+        </panel>
+    </popup>
 </nifty>

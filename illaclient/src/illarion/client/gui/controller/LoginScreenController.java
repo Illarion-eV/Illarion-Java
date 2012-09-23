@@ -18,13 +18,12 @@
  */
 package illarion.client.gui.controller;
 
+import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.PanelBuilder;
-import de.lessvoid.nifty.controls.Button;
-import de.lessvoid.nifty.controls.CheckBox;
-import de.lessvoid.nifty.controls.ListBox;
-import de.lessvoid.nifty.controls.TextField;
+import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.loaderv2.types.PanelType;
 import de.lessvoid.nifty.screen.KeyInputHandler;
@@ -49,6 +48,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     private boolean notifyResolutionChanged;
     private boolean firstStart = true;
+    private Element popupError;
 
     private final StateBasedGame game;
 
@@ -75,6 +75,8 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         nameTxt.setText(login.getLoginName());
         passwordTxt.setText(login.getPassword());
         savePassword.setChecked(login.storePassword());
+
+        popupError = nifty.createPopup("loginError");
 
 //    	errorText = screen.findNiftyControl("errorText", Label.class);
 //    	
@@ -111,8 +113,6 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     }
 
     public void login() {
-//        nifty.showPopup(screen, popupLogin.getId(), null);
-
         final Login login = Login.getInstance();
         login.setLoginData(nameTxt.getText(), passwordTxt.getText());
 
@@ -120,15 +120,25 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
         login.requestCharacterList();
 
-//        nifty.closePopup(popupLogin.getId());
-
         if (login.hasError()) {
-//            nifty.showPopup(screen, popupError.getId(), null);
-//            errorText.setText(login.getErrorText());
+            final Label errorText = popupError.findNiftyControl("#errorText", Label.class);
+            errorText.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
+            errorText.setText(login.getErrorText());
+            nifty.showPopup(screen, popupError.getId(), popupError.findElementByName("#closeButton"));
+
             return;
         }
         firstStart = false;
         nifty.gotoScreen("charSelect");
+    }
+
+    public void closeError() {
+        nifty.closePopup(popupError.getId(), new EndNotify() {
+            @Override
+            public void perform() {
+                nameTxt.getElement().setFocus();
+            }
+        });
     }
 
     public void createLabel() {
