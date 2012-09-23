@@ -267,34 +267,18 @@ public final class GameMapHandler
      */
     @EventSubscriber
     public void handleDragging(final DragOnMapEvent data) {
+        if (World.getInteractionManager().isDragging()) {
+            return;
+        }
+
         if ((data.getKey() == 0) && handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
                 data.getForwardingControl())) {
             return;
         }
 
-        if (data.getKey() == 1) {
+        if (data.getKey() == 0) {
             moveToMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
         }
-    }
-
-    public boolean handleClickOnMap(final int x, final int y, final ForwardingInputSystem forwardingControl) {
-        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(x, y);
-
-        if (tile == null) {
-            return false;
-        }
-
-        if ((activeScreen != null) && (activeNifty != null)) {
-            forwardingControl.releaseExclusiveMouse();
-
-            mouseEvent.initialize(x, y, 0, true, false, false);
-            mouseEvent.setButton0InitialDown(true);
-            activeScreen.mouseEvent(mouseEvent);
-        }
-
-        tile.lookAt();
-
-        return true;
     }
 
     /**
@@ -302,31 +286,26 @@ public final class GameMapHandler
      */
     @EventSubscriber
     public void handleClickEvent(final ClickOnMapEvent data) {
-        handleClickOnMap(data.getX(), data.getY(), data.getForwardingControl());
-    }
-
-    private boolean handleDoubleClickOnMap(final int x, final int y, final ForwardingInputSystem forwardingControl) {
-        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(x, y);
-
-        if (tile == null) {
-            return false;
+        if (data.getKey() != 0) {
+            return;
         }
 
-        if (!tile.isInUseRange()) {
-            return false;
+        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(data.getX(),
+                data.getY());
+
+        if (tile == null) {
+            return;
         }
 
         if ((activeScreen != null) && (activeNifty != null)) {
-            forwardingControl.releaseExclusiveMouse();
+            data.getForwardingControl().releaseExclusiveMouse();
 
-            mouseEvent.initialize(x, y, 0, true, false, false);
+            mouseEvent.initialize(data.getX(), data.getY(), data.getKey(), true, false, false);
             mouseEvent.setButton0InitialDown(true);
             activeScreen.mouseEvent(mouseEvent);
         }
 
-        tile.use();
-
-        return true;
+        tile.lookAt();
     }
 
     /**
@@ -334,9 +313,30 @@ public final class GameMapHandler
      */
     @EventSubscriber
     public void handleDoubleClick(final DoubleClickOnMapEvent data) {
-        if (handleDoubleClickOnMap(data.getX(), data.getY(), data.getForwardingControl())) {
+        if (data.getKey() != 0) {
             return;
         }
+
+        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(data.getX(),
+                data.getY());
+
+        if (tile == null) {
+            return;
+        }
+
+        if (!tile.isInUseRange()) {
+            return;
+        }
+
+        if ((activeScreen != null) && (activeNifty != null)) {
+            data.getForwardingControl().releaseExclusiveMouse();
+
+            mouseEvent.initialize(data.getX(), data.getY(), data.getKey(), true, false, false);
+            mouseEvent.setButton0InitialDown(true);
+            activeScreen.mouseEvent(mouseEvent);
+        }
+
+        tile.use();
     }
 
     private final TooltipHandler tooltipHandler;

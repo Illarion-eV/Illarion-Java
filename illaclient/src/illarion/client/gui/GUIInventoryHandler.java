@@ -400,6 +400,8 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         } else {
             iManager.dropAtInventory(slotId, World.getInteractionManager().getMovedAmount());
         }
+
+        inventoryWindow.setFocus();
     }
 
     @Override

@@ -25,59 +25,17 @@ import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
  *
  * @author Vilarion &lt;vilarion@illarion.org&gt;
  */
-public final class ClickOnMapEvent {
-    /**
-     * The x coordinate on the screen where the click occurred.
-     */
-    private final int x;
-
-    /**
-     * The y coordinate on the screen where the click occurred.
-     */
-    private final int y;
-
-    /**
-     * The controls used to override the default forwarding behaviour of the Slick renderer.
-     */
-    private final ForwardingInputSystem forwardingControl;
-
+public final class ClickOnMapEvent extends AbstractMouseOnMapEvent {
     /**
      * Create and initialize such an event.
      *
-     * @param x the x coordinate of the click
-     * @param y the y coordinate of the click
+     * @param key                    the mouse key that was clicked
+     * @param x                      the x coordinate of the click
+     * @param y                      the y coordinate of the click
      * @param inputForwardingControl the control class to change the forwarding behaviour
      */
-    public ClickOnMapEvent(final int x, final int y, final ForwardingInputSystem inputForwardingControl) {
-        this.x = x;
-        this.y = y;
-        forwardingControl = inputForwardingControl;
-    }
-
-    /**
-     * Get the x coordinate on the screen where the click occurred.
-     *
-     * @return the x coordinate of the click
-     */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * Get the y coordinate on the screen where the click occurred.
-     *
-     * @return the y coordinate of the click
-     */
-    public int getY() {
-        return y;
-    }
-
-    /**
-     * Get the input forwarding control that applies to the input event source this event originates from.
-     *
-     * @return the forwarding control
-     */
-    public ForwardingInputSystem getForwardingControl() {
-        return forwardingControl;
+    public ClickOnMapEvent(final int key, final int x, final int y, final ForwardingInputSystem
+            inputForwardingControl) {
+        super(key, x, y, inputForwardingControl);
     }
 }

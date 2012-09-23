@@ -32,7 +32,7 @@ import illarion.common.types.ItemCount;
  */
 public final class InteractionManager {
     private Draggable draggedObject;
-    private boolean isDragging;
+    private boolean dragging;
     private Runnable endOfDragAction;
     private ItemCount amount;
 
@@ -79,7 +79,7 @@ public final class InteractionManager {
 
     public void cancelDragging() {
         draggedObject = null;
-        isDragging = false;
+        dragging = false;
         if (endOfDragAction != null) {
             endOfDragAction.run();
             endOfDragAction = null;
@@ -88,11 +88,11 @@ public final class InteractionManager {
 
     public void startDragging(final Draggable draggable) {
         draggedObject = draggable;
-        isDragging = true;
+        dragging = true;
     }
 
     public void notifyDraggingContainer(final int container, final int slot, final Runnable endOfDragOp) {
-        if (!isDragging) {
+        if (!dragging) {
             final ContainerSlot conSlot = World.getPlayer().getContainer(container).getSlot(slot);
             final InteractiveContainerSlot sourceSlot = conSlot.getInteractive();
 
@@ -103,7 +103,7 @@ public final class InteractionManager {
     }
 
     public void notifyDraggingInventory(final int slot, final Runnable endOfDragOp) {
-        if (!isDragging) {
+        if (!dragging) {
             final InventorySlot invSlot = World.getPlayer().getInventory().getItem(slot);
             final InteractiveInventorySlot sourceSlot = invSlot.getInteractive();
 
@@ -122,7 +122,7 @@ public final class InteractionManager {
     }
 
     public void notifyDraggingMap(final MapTile targetTile, final Runnable endOfDragOp) {
-        if (!isDragging) {
+        if (!dragging) {
             if (targetTile == null) {
                 return;
             }
@@ -141,5 +141,9 @@ public final class InteractionManager {
 
     public ItemCount getMovedAmount() {
         return amount;
+    }
+
+    public boolean isDragging() {
+        return dragging;
     }
 }

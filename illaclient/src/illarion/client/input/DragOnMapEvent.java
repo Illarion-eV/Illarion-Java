@@ -25,7 +25,7 @@ import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DragOnMapEvent {
+public final class DragOnMapEvent extends AbstractMouseOnMapEvent {
     /**
      * The X coordinate on the screen where the dragging operation started.
      */
@@ -35,26 +35,6 @@ public final class DragOnMapEvent {
      * The Y coordinate on the screen where the dragging operation started.
      */
     private final int oldY;
-
-    /**
-     * The X coordinate on the screen where the dragging operation is currently.
-     */
-    private final int newX;
-
-    /**
-     * The Y coordinate on the screen where the dragging operation is currently.
-     */
-    private final int newY;
-
-    /**
-     * The key that is used for the dragging operation.
-     */
-    private final int activeKey;
-
-    /**
-     * The controls used to override the default forwarding behaviour of the Slick renderer.
-     */
-    private final ForwardingInputSystem forwardingControl;
 
     /**
      * Create and initialize such a event.
@@ -68,12 +48,9 @@ public final class DragOnMapEvent {
      */
     public DragOnMapEvent(final int startX, final int startY, final int stopX, final int stopY, final int pressedKey,
                           final ForwardingInputSystem inputForwardingControl) {
+        super(pressedKey, stopX, stopY, inputForwardingControl);
         oldX = startX;
         oldY = startY;
-        newX = stopX;
-        newY = stopY;
-        forwardingControl = inputForwardingControl;
-        activeKey = pressedKey;
     }
 
     /**
@@ -100,7 +77,7 @@ public final class DragOnMapEvent {
      * @return the X coordinate of the current location
      */
     public int getNewX() {
-        return newX;
+        return getX();
     }
 
     /**
@@ -109,24 +86,6 @@ public final class DragOnMapEvent {
      * @return the Y coordinate of the current location
      */
     public int getNewY() {
-        return newY;
-    }
-
-    /**
-     * Get the input forwarding control that apply to the input event source this event originates from.
-     *
-     * @return the forwarding control
-     */
-    public ForwardingInputSystem getForwardingControl() {
-        return forwardingControl;
-    }
-
-    /**
-     * Get the key used for this dragging operation.
-     *
-     * @return the key used for the dragging operation
-     */
-    public int getKey() {
-        return activeKey;
+        return getY();
     }
 }

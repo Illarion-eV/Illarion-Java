@@ -58,6 +58,13 @@ public final class Rectangle
         reset();
     }
 
+    public Rectangle(final Rectangle other) {
+        x0 = other.x0;
+        x1 = other.x1;
+        y0 = other.y0;
+        y1 = other.y1;
+    }
+
     /**
      * Get a instance of the rectangle class. Either a new one or one from the buffer.
      *
