@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipException;
 
 /**
  * This class handles everything around the table that stores the names of the current character. It also offers the
@@ -233,6 +234,8 @@ public final class NamesTable {
                     names.put(charId, characterName);
                 }
             }
+        } catch (final ZipException e) {
+            LOGGER.error("Failed to decode file compression " + nameTable.getPath(), e);
         } catch (final FileNotFoundException e) {
             LOGGER.error("Can't read the name table file " + nameTable.getPath(), e);
         } catch (final IOException e) {
