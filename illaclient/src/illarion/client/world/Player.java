@@ -383,7 +383,7 @@ public final class Player implements ConfigChangeListener {
      */
     @Deprecated
     public Location getFrontLocation() {
-        final Location front = Location.getInstance();
+        final Location front = new Location();
         getFrontLocation(front);
 
         return front;
@@ -545,7 +545,7 @@ public final class Player implements ConfigChangeListener {
      * @return true if it is the player, false if not
      */
     public boolean isPlayer(final CharacterId checkId) {
-        return playerId == checkId;
+        return playerId.equals(checkId);
     }
 
     /**

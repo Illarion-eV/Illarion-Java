@@ -81,6 +81,6 @@ public final class AttackCmd extends AbstractCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("CharID: " + charId);
+        return toString(charId.toString());
     }
 }
