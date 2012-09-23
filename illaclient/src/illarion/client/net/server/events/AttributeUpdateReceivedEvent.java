@@ -19,6 +19,7 @@
 package illarion.client.net.server.events;
 
 import illarion.client.world.characters.CharacterAttribute;
+import illarion.common.types.CharacterId;
 
 /**
  * This event is fired in in case a attribute update was received from the server.
@@ -29,7 +30,7 @@ public final class AttributeUpdateReceivedEvent implements ServerEvent {
     /**
      * The ID of the character this update is meant for.
      */
-    private final long targetChar;
+    private final CharacterId targetChar;
 
     /**
      * The attribute that is altered.
@@ -48,7 +49,7 @@ public final class AttributeUpdateReceivedEvent implements ServerEvent {
      * @param changedAttribute the attribute that is changed
      * @param newValue         the new value of the attribute
      */
-    public AttributeUpdateReceivedEvent(final long charId, final CharacterAttribute changedAttribute,
+    public AttributeUpdateReceivedEvent(final CharacterId charId, final CharacterAttribute changedAttribute,
                                         final int newValue) {
         targetChar = charId;
         attribute = changedAttribute;
@@ -60,7 +61,7 @@ public final class AttributeUpdateReceivedEvent implements ServerEvent {
      *
      * @return the ID of the target character
      */
-    public long getTargetCharId() {
+    public CharacterId getTargetCharId() {
         return targetChar;
     }
 

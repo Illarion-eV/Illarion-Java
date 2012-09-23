@@ -23,6 +23,7 @@ import illarion.client.net.CommandList;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import illarion.common.types.CharacterId;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 
@@ -104,7 +105,7 @@ public final class AppearanceMsg extends AbstractReply {
     /**
      * ID of the character this message is about.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      * The dead flag of the character. <code>true</code> is dead,
@@ -210,7 +211,7 @@ public final class AppearanceMsg extends AbstractReply {
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
-        charId = reader.readUInt();
+        charId = new CharacterId(reader);
         appearance = reader.readUShort();
         size = reader.readUByte();
         visibilityBonus = reader.readByte();
@@ -315,7 +316,6 @@ public final class AppearanceMsg extends AbstractReply {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("ID: ");
         builder.append(charId);
         builder.append(" app=");
         builder.append(appearance);

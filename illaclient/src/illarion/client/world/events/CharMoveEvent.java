@@ -18,6 +18,7 @@
  */
 package illarion.client.world.events;
 
+import illarion.common.types.CharacterId;
 import illarion.common.util.Location;
 
 /**
@@ -40,10 +41,10 @@ public final class CharMoveEvent
     /**
      * Create a character move event that stores the ID of the moved character along with its new location.
      *
-     * @param id the ID of the character
+     * @param id          the ID of the character
      * @param newLocation the new location of the character
      */
-    public CharMoveEvent(final long id, final Location newLocation) {
+    public CharMoveEvent(final CharacterId id, final Location newLocation) {
         super(id);
         loc = newLocation;
     }

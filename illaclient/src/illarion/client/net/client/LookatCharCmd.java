@@ -20,6 +20,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
+import illarion.common.types.CharacterId;
 
 /**
  * Client Command: Looking at a character (
@@ -46,7 +47,7 @@ public final class LookatCharCmd extends AbstractCommand {
     /**
      * The ID of the character we are looking at.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      * The mode that is used to look at the character. So looking in a normal
@@ -81,7 +82,7 @@ public final class LookatCharCmd extends AbstractCommand {
      */
     @Override
     public void encode(final NetCommWriter writer) {
-        writer.writeUInt(charId);
+        charId.encode(writer);
         writer.writeByte(mode);
     }
 
@@ -92,7 +93,7 @@ public final class LookatCharCmd extends AbstractCommand {
      * @param lookAtMode   the mode of the look at so the method used to look at
      *                     the target character
      */
-    public void examine(final long lookAtCharId, final int lookAtMode) {
+    public void examine(final CharacterId lookAtCharId, final int lookAtMode) {
         charId = lookAtCharId;
         mode = (byte) lookAtMode;
     }
@@ -105,6 +106,6 @@ public final class LookatCharCmd extends AbstractCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("ID: " + charId + " mode: " + mode);
+        return toString(charId.toString() + " mode: " + mode);
     }
 }

@@ -18,6 +18,8 @@
  */
 package illarion.client.world.events;
 
+import illarion.common.types.CharacterId;
+
 /**
  * This event is published in case a character is removed from the map.
  *
@@ -35,7 +37,7 @@ public final class CharRemovedEvent
      *
      * @param id the ID of the char to remove
      */
-    public CharRemovedEvent(final long id) {
+    public CharRemovedEvent(final CharacterId id) {
         super(id);
     }
 

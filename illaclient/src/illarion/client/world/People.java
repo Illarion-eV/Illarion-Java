@@ -18,8 +18,6 @@
  */
 package illarion.client.world;
 
-import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.net.CommandFactory;
@@ -30,15 +28,15 @@ import illarion.client.util.NamesTable;
 import illarion.client.world.events.CharRemovedEvent;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
+import illarion.common.types.CharacterId;
 import illarion.common.util.*;
-import javolution.context.ObjectFactory;
 import javolution.text.TextBuilder;
 import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 
 import java.io.File;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -49,256 +47,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public final class People
         implements Stoppable, TableLoaderSink, ConfigChangeListener {
-    /**
-     * This helper class is used to create a procedure that checks and updates the visibility for every character in
-     * the
-     * list.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class CheckVisibilityProcedure
-            implements TObjectProcedure<Char> {
-        /**
-         * A public constructor so the parent class is able to create a instance properly.
-         */
-        public CheckVisibilityProcedure() {
-            // nothing to do
-        }
-
-        /**
-         * This function is executed for each character on the list and updates the visibility value.
-         */
-        @Override
-        public boolean execute(final Char character) {
-            character.setVisible(World.getPlayer().canSee(character));
-            return true;
-        }
-    }
-
-    /**
-     * This helper class the the procedure that helps at clipping the characters on the map. Its used to check all
-     * characters on the map and remove those that moved out of visible range.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private final class ClipCharactersProcedure
-            implements TObjectProcedure<Char> {
-        /**
-         * A public constructor to allow the parent class to create a proper instance.
-         */
-        public ClipCharactersProcedure() {
-            // nothing to do
-        }
-
-        /**
-         * This method is executed for each character on the list. It checks if the character is still in visible range
-         * and deletes the character in case not.
-         */
-        @Override
-        public boolean execute(final Char character) {
-            if (!World.getPlayer().isOnScreen(character.getLocation(), 0)) {
-                addCharacterToRemoveList(character);
-            }
-            return true;
-        }
-    }
-
-    /**
-     * This helper class is used to fetch a character from a location on the map.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class GetCharacterAtProcedure
-            implements Reusable, TObjectProcedure<Char> {
-        /**
-         * This is the factory class of the parent procedure that provides the instances of the procedure in a proper
-         * thread safe way.
-         *
-         * @author Martin Karing &lt;nitram@illarion.org&gt;
-         */
-        private static final class GetCharacterAtProcedureFactory
-                extends ObjectFactory<GetCharacterAtProcedure> {
-            /**
-             * Public constructor so the parent class is able to create a instance.
-             */
-            public GetCharacterAtProcedureFactory() {
-                // nothing to do
-            }
-
-            /**
-             * Get a new instance of the class managed by this factory.
-             *
-             * @return the new class
-             */
-            @Override
-            protected GetCharacterAtProcedure create() {
-                return new GetCharacterAtProcedure();
-            }
-
-        }
-
-        /**
-         * The used instance of the factory of this class. This factory creates and stores the instances of this class.
-         */
-        private static final GetCharacterAtProcedureFactory FACTORY = new GetCharacterAtProcedureFactory();
-
-        /**
-         * Get a instance of this procedure. This instance is either newly created or a old reused one. In any case the
-         * instance is prepared to use the location set with the parameter.
-         *
-         * @param loc the location the returned instance is supposed to use as search instance
-         * @return the instance that is prepared to be used now
-         */
-        public static GetCharacterAtProcedure getInstance(final Location loc) {
-            final GetCharacterAtProcedure result = FACTORY.object();
-            result.searchLoc = loc;
-            return result;
-        }
-
-        /**
-         * The character that is found on the location.
-         */
-        private Char resultChar;
-
-        /**
-         * The location this procedure is excepted to search on.
-         */
-        private Location searchLoc;
-
-        /**
-         * A public constructor to allow the instances of this classes to be created properly.
-         */
-        public GetCharacterAtProcedure() {
-            // nothing to do
-        }
-
-        /**
-         * Execute this procedure at one character. This will check if the currently checked character is on the
-         * location the search is performed on and cancels the search in case the character on the location is found.
-         */
-        @Override
-        public boolean execute(final Char character) {
-            if (character.getLocation().equals(searchLoc)) {
-                resultChar = character;
-                return false;
-            }
-            return true;
-        }
-
-        /**
-         * Get the result of the search operation.
-         *
-         * @return the character found on the location or <code>null</code> in case no character is found
-         */
-        public Char getResult() {
-            return resultChar;
-        }
-
-        /**
-         * Recycle the instance of this procedure so it can be reused later.
-         */
-        @Override
-        public void recycle() {
-            reset();
-            FACTORY.recycle(this);
-        }
-
-        /**
-         * Reset this instance and prepare it for later reuse. This clears the working references that are stored in
-         * this instance.
-         */
-        @Override
-        public void reset() {
-            searchLoc = null;
-            resultChar = null;
-        }
-    }
-
-    /**
-     * This helper class is used to recycle all load character objects. This happens in case the playing session ends.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class RecycleCharProcedure
-            implements TObjectProcedure<Char> {
-        /**
-         * Public constructor to allow the parent class to create a instance of this class properly.
-         */
-        public RecycleCharProcedure() {
-            // nothing to do
-        }
-
-        /**
-         * Execute the recycle on every character in the list this procedure is called on.
-         */
-        @Override
-        public boolean execute(final Char chara) {
-            chara.recycle();
-            return false;
-        }
-    }
-
-    /**
-     * This procedure is used to support the light updates. The method {@link illarion.client.world
-     * .People#updateLight()}
-     * uses the class to trigger a light update for all chars in the list.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class UpdateLightProcedure
-            implements TObjectProcedure<Char> {
-        /**
-         * Public constructor so the parent class is able to create a proper instance.
-         */
-        public UpdateLightProcedure() {
-            // nothing to do
-        }
-
-        /**
-         * This method is executed for every entry in the list. In this case for the currently called entry a light
-         * update is triggered.
-         */
-        @Override
-        public boolean execute(final Char character) {
-            character.updateLight(Char.LIGHT_UPDATE);
-            return true;
-        }
-    }
-
-    /**
-     * This procedure is used to support the name updates. The method {@link illarion.client.world.People#updateLight
-     * ()}
-     * uses the class to trigger a name update for all chars in the list.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class UpdateNameProcedure
-            implements TObjectProcedure<Char> {
-        /**
-         * The people instance that created this instance.
-         */
-        private final People parentPeople;
-
-        /**
-         * Public constructor so the parent class is able to create a proper instance.
-         *
-         * @param parent the parent class that is controlled by this procedure
-         */
-        public UpdateNameProcedure(final People parent) {
-            parentPeople = parent;
-        }
-
-        /**
-         * This method is executed for every entry in the list. In this case for the currently called entry a name
-         * update is triggered.
-         */
-        @Override
-        public boolean execute(final Char character) {
-            parentPeople.updateName(character);
-            return true;
-        }
-    }
-
     /**
      * The key for the configuration where the name mode is stored.
      */
@@ -355,7 +103,7 @@ public final class People
     /**
      * The list of visible characters.
      */
-    private final TLongObjectHashMap<Char> chars;
+    private final Map<CharacterId, Char> chars;
 
     /**
      * The lock that is used to secure the chars table properly.
@@ -363,21 +111,9 @@ public final class People
     private final ReentrantReadWriteLock charsLock;
 
     /**
-     * This is the instance of {@link illarion.client.world.People.CheckVisibilityProcedure} that is used to update the
-     * visibility values of every character.
-     */
-    private final CheckVisibilityProcedure checkVisibilityHelper;
-
-    /**
-     * The instance of {@link illarion.client.world.People.ClipCharactersProcedure} that is used to clip the characters
-     * on the map.
-     */
-    private final ClipCharactersProcedure clipCharactersHelper;
-
-    /**
      * Names of known characters.
      */
-    private NamesTable names = null;
+    private NamesTable names;
 
     /**
      * The character of the player. This one is handled seperated of the rest of the characters.
@@ -400,33 +136,17 @@ public final class People
     private int showMapNames;
 
     /**
-     * The instance of the {@link illarion.client.world.People.UpdateLightProcedure} class that is used to trigger a
-     * light update for all characters.
-     */
-    private final UpdateLightProcedure updateLightHelper;
-    /**
-     * The instance of the {@link illarion.client.world.People.UpdateNameProcedure} class that is used to trigger a
-     * name
-     * update for all characters.
-     */
-    private final UpdateNameProcedure updateNameHelper;
-
-    /**
      * Default constructor. Sets up all needed base variables to init the class.
      */
     public People() {
-        updateLightHelper = new UpdateLightProcedure();
         showMapNames = IllaClient.getCfg().getInteger(CFG_NAMEMODE_KEY);
         showIDs = IllaClient.getCfg().getBoolean(CFG_SHOWID_KEY);
         IllaClient.getCfg().addListener(CFG_NAMEMODE_KEY, this);
         IllaClient.getCfg().addListener(CFG_SHOWID_KEY, this);
 
         removalList = new FastTable<Char>();
-        chars = new TLongObjectHashMap<Char>();
+        chars = new HashMap<CharacterId, Char>();
         charsLock = new ReentrantReadWriteLock();
-        clipCharactersHelper = new ClipCharactersProcedure();
-        checkVisibilityHelper = new CheckVisibilityProcedure();
-        updateNameHelper = new UpdateNameProcedure(this);
 
         final File playerDir = new File(DirectoryManager.getInstance().getUserDirectory(),
                 Login.getInstance().getSelectedCharacterName());
@@ -449,7 +169,7 @@ public final class People
      * @param id the ID of the character
      * @return the character that was requested
      */
-    public Char accessCharacter(final long id) {
+    public Char accessCharacter(final CharacterId id) {
         final Char chara = getCharacter(id);
         if (chara == null) {
             return createNewCharacter(id);
@@ -462,7 +182,7 @@ public final class People
      *
      * @param chara the character that shall be added
      */
-    protected void addCharacter(final Char chara) {
+    void addCharacter(final Char chara) {
         throwPlayerCharacter(chara);
 
         charsLock.writeLock().lock();
@@ -488,10 +208,12 @@ public final class People
     /**
      * Check the visibility for all characters currently on the screen.
      */
-    protected void checkVisibility() {
+    void checkVisibility() {
         charsLock.readLock().lock();
         try {
-            chars.forEachValue(checkVisibilityHelper);
+            for (final Char character : chars.values()) {
+                character.setVisible(World.getPlayer().canSee(character));
+            }
         } finally {
             charsLock.readLock().unlock();
         }
@@ -505,7 +227,7 @@ public final class People
         charsLock.writeLock().lock();
         try {
             if (!removalList.isEmpty()) {
-                for (Char removeChar : removalList) {
+                for (final Char removeChar : removalList) {
                     removeCharacter(removeChar.getCharId());
                 }
                 removalList.clear();
@@ -518,14 +240,16 @@ public final class People
     /**
      * Clear the list of characters and recycle all of them.
      */
-    protected void clear() {
+    void clear() {
         if (CombatHandler.getInstance().isAttacking()) {
             CombatHandler.getInstance().standDown();
         }
         charsLock.writeLock().lock();
         try {
             cleanRemovalList();
-            chars.forEachValue(new RecycleCharProcedure());
+            for (final Char character : chars.values()) {
+                character.recycle();
+            }
             chars.clear();
         } finally {
             charsLock.writeLock().unlock();
@@ -536,10 +260,15 @@ public final class People
      * Check all known characters if they are outside of the screen and hide them from the screen. Save them still to
      * the characters that are known to left the screen.
      */
-    protected void clipCharacters() {
+    void clipCharacters() {
         charsLock.writeLock().lock();
         try {
-            chars.forEachValue(clipCharactersHelper);
+
+            for (final Char character : chars.values()) {
+                if (!World.getPlayer().isOnScreen(character.getLocation(), 0)) {
+                    addCharacterToRemoveList(character);
+                }
+            }
             cleanRemovalList();
         } finally {
             charsLock.writeLock().unlock();
@@ -557,7 +286,10 @@ public final class People
 
         if (key.equals(CFG_NAMEMODE_KEY)) {
             showMapNames = cfg.getInteger(CFG_NAMEMODE_KEY);
-            chars.forEachValue(updateNameHelper);
+
+            for (final Char character : chars.values()) {
+                updateName(character);
+            }
             return;
         }
         if (key.equals(CFG_SHOWID_KEY)) {
@@ -566,12 +298,12 @@ public final class People
     }
 
     /**
-     * This function creates a new character and requests the required informations from the server.
+     * This function creates a new character and requests the required information from the server.
      *
      * @param id the ID of the character to be created
      * @return the created character
      */
-    private Char createNewCharacter(final long id) {
+    private Char createNewCharacter(final CharacterId id) {
         final Char chara = Char.create();
         chara.setCharId(id);
         updateName(chara);
@@ -579,24 +311,11 @@ public final class People
         addCharacter(chara);
 
         // request appearance from server if char is not known
-        final RequestAppearanceCmd cmd = (RequestAppearanceCmd) CommandFactory.getInstance().getCommand(CommandList
-
-
-                .CMD_REQUEST_APPEARANCE);
+        final RequestAppearanceCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_REQUEST_APPEARANCE,
+                RequestAppearanceCmd.class);
         cmd.request(id);
         World.getNet().sendCommand(cmd);
         return chara;
-    }
-
-    public void forAllChars(final TObjectProcedure<Char> procedure) {
-        charsLock.readLock().lock();
-        try {
-            synchronized (GameMap.LIGHT_LOCK) {
-                chars.forEachValue(procedure);
-            }
-        } finally {
-            charsLock.readLock().unlock();
-        }
     }
 
     /**
@@ -605,7 +324,7 @@ public final class People
      * @param id ID of the requested character
      * @return the character or null if it does not exist
      */
-    public Char getCharacter(final long id) {
+    public Char getCharacter(final CharacterId id) {
         if (isPlayerCharacter(id)) {
             return playerChar;
         }
@@ -631,30 +350,30 @@ public final class People
             return playerChar;
         }
 
-        final GetCharacterAtProcedure procedure = GetCharacterAtProcedure.getInstance(loc);
-
         charsLock.readLock().lock();
         try {
-            chars.forEachValue(procedure);
+
+            for (final Char character : chars.values()) {
+                if (character.getLocation().equals(loc)) {
+                    return character;
+                }
+            }
         } finally {
             charsLock.readLock().unlock();
         }
 
-        final Char result = procedure.getResult();
-        procedure.recycle();
-        return result;
+        return null;
     }
 
     /**
      * Get the name of the character. Returns the last known name or someone along with the ID of the character,
-     * in case
-     * its set that the IDs shall be shown.
+     * in case its set that the IDs shall be shown.
      *
-     * @param id ID of the character thats name is wanted
+     * @param id ID of the character who's name is wanted
      * @return the name of the character or null
      */
     @SuppressWarnings("nls")
-    private String getName(final long id) {
+    private String getName(final CharacterId id) {
         String name = null;
 
         if (names != null) {
@@ -684,7 +403,7 @@ public final class People
      * @return the short version of the name of the character
      */
     @SuppressWarnings("nls")
-    private String getShortName(final long id) {
+    private String getShortName(final CharacterId id) {
         String name = null;
 
         if (names != null) {
@@ -694,7 +413,7 @@ public final class People
         // return the id
         if (name == null) {
             if (showIDs) {
-                name = Long.toString(id);
+                name = Long.toString(id.getValue());
             }
         } else { // return text up to first blank
             final int pos = name.indexOf(' ');
@@ -721,7 +440,7 @@ public final class People
      * @param id   the ID of the character that shall get a name
      * @param name the name that the character shall get
      */
-    public void introduce(final long id, final String name) {
+    public void introduce(final CharacterId id, final String name) {
         throwNullException(name);
 
         // update character with his name
@@ -751,8 +470,8 @@ public final class People
      * @param id the id to check
      * @return <code>true</code> in case the player character is set and its ID equals the ID supplied by the argument
      */
-    private boolean isPlayerCharacter(final long id) {
-        return (playerChar != null) && (playerChar.getCharId() == id);
+    private boolean isPlayerCharacter(final CharacterId id) {
+        return (playerChar != null) && playerChar.getCharId().equals(id);
     }
 
     /**
@@ -766,7 +485,7 @@ public final class People
         throwNullException(chara);
         throwPlayerCharacter(chara);
 
-        final long charID = chara.getCharId();
+        final CharacterId charID = chara.getCharId();
 
         if (chara.canHaveName()) {
             String name = names.getName(charID);
@@ -806,9 +525,18 @@ public final class People
     public boolean processRecord(final int line, final TableLoader loader) {
         throwNullException(loader);
 
-        names.addName(loader.getLong(0), loader.getString(1));
+        names.addName(new CharacterId(loader.getLong(0)), loader.getString(1));
 
         return true;
+    }
+
+    /**
+     * Get a collection that contains all the characters currently known.
+     *
+     * @return the list of characters
+     */
+    public Collection<Char> getCharacters() {
+        return Collections.unmodifiableCollection(chars.values());
     }
 
     /**
@@ -817,7 +545,7 @@ public final class People
      *
      * @param id the ID of the character that shall be removed
      */
-    public void removeCharacter(final long id) {
+    public void removeCharacter(final CharacterId id) {
         throwPlayerCharacter(id);
 
         charsLock.writeLock().lock();
@@ -908,15 +636,15 @@ public final class People
      * Set the settings how the name of the characters is shown.
      *
      * @param newShowMapNames the new state of the settings
-     * @see illarion.client.world.People#NAME_SHORT
-     * @see illarion.client.world.People#NAME_LONG
+     * @see People#NAME_SHORT
+     * @see People#NAME_LONG
      */
     public void setShowMapNames(final int newShowMapNames) {
         showMapNames = newShowMapNames;
     }
 
     /**
-     * This function throws a {@link java.lang.IllegalArgumentException} in case the character supplied with the
+     * This function throws a {@link IllegalArgumentException} in case the character supplied with the
      * argument is the player character.
      *
      * @param chara the character to check
@@ -927,14 +655,14 @@ public final class People
     }
 
     /**
-     * This function throws a {@link java.lang.IllegalArgumentException} in case the ID suppled by the argument is the
+     * This function throws a {@link IllegalArgumentException} in case the ID suppled by the argument is the
      * ID of the player character
      *
      * @param id the ID to test
      * @throws IllegalArgumentException in case the argument contains the ID of the player character
      */
     @SuppressWarnings("nls")
-    private void throwPlayerCharacter(final long id) {
+    private void throwPlayerCharacter(final CharacterId id) {
         if (isPlayerCharacter(id)) {
             throw new IllegalArgumentException("The player character can't be used here.");
         }
@@ -962,15 +690,17 @@ public final class People
     /**
      * Force update of light values.
      */
-    protected void updateLight() {
+    void updateLight() {
         if (playerChar != null) {
-            updateLightHelper.execute(playerChar);
+            playerChar.updateLight(Char.LIGHT_UPDATE);
         }
 
         charsLock.readLock().lock();
         try {
             synchronized (GameMap.LIGHT_LOCK) {
-                chars.forEachValue(updateLightHelper);
+                for (final Char character : chars.values()) {
+                    character.updateLight(Char.LIGHT_UPDATE);
+                }
             }
         } finally {
             charsLock.readLock().unlock();
@@ -982,7 +712,7 @@ public final class People
      *
      * @param chara the character that shall be updated
      */
-    protected void updateName(final Char chara) {
+    void updateName(final Char chara) {
         if (showMapNames == NAME_SHORT) {
             chara.setName(getShortName(chara.getCharId()));
         } else {

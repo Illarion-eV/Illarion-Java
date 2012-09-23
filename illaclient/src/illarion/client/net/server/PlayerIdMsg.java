@@ -21,6 +21,7 @@ package illarion.client.net.server;
 import illarion.client.net.CommandList;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import illarion.common.types.CharacterId;
 
 import java.io.IOException;
 
@@ -35,7 +36,7 @@ public final class PlayerIdMsg extends AbstractReply {
     /**
      * The ID if the character, played with this client.
      */
-    private long playerId;
+    private CharacterId playerId;
 
     /**
      * Default constructor for the player id message.
@@ -65,7 +66,7 @@ public final class PlayerIdMsg extends AbstractReply {
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
-        playerId = reader.readUInt();
+        playerId = new CharacterId(reader);
     }
 
     /**
@@ -89,6 +90,6 @@ public final class PlayerIdMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("ID: " + playerId);
+        return toString(playerId.toString());
     }
 }

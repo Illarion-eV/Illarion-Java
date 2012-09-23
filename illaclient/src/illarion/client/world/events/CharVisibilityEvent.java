@@ -18,6 +18,8 @@
  */
 package illarion.client.world.events;
 
+import illarion.common.types.CharacterId;
+
 /**
  * This event is fired upon a change of the visibility of a character.
  *
@@ -39,10 +41,10 @@ public final class CharVisibilityEvent
      * Create a instance of this event and set the ID of the character that changed its visibility and also the new
      * visibility value.
      *
-     * @param id the ID of the character
+     * @param id             the ID of the character
      * @param charVisibility the visibility of the character
      */
-    public CharVisibilityEvent(final long id, final int charVisibility) {
+    public CharVisibilityEvent(final CharacterId id, final int charVisibility) {
         super(id);
         visibility = charVisibility;
     }

@@ -23,6 +23,7 @@ import illarion.client.world.Char;
 import illarion.client.world.PlayerMovement;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import illarion.common.types.CharacterId;
 import illarion.common.util.Location;
 import org.apache.log4j.Logger;
 
@@ -64,7 +65,7 @@ public final class MoveMsg
     /**
      * The ID of the moving character.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      * The new location of the character.
@@ -109,7 +110,7 @@ public final class MoveMsg
     @Override
     public void decode(final NetCommReader reader)
             throws IOException {
-        charId = reader.readUInt();
+        charId = new CharacterId(reader);
         loc = decodeLocation(reader);
         mode = reader.readUByte();
         speed = reader.readUByte();

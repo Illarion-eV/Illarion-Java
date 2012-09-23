@@ -21,6 +21,7 @@ package illarion.client.world;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.AttackCmd;
+import illarion.common.types.CharacterId;
 
 /**
  * This class is used to store and set the current combat mode. It will forward all changes to the combat mode to the
@@ -93,7 +94,7 @@ public final class CombatHandler {
      *
      * @param id the ID of the character to fight
      */
-    private void sendAttackToServer(final long id) {
+    private void sendAttackToServer(final CharacterId id) {
         final AttackCmd cmd = (AttackCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_ATTACK);
         cmd.setTarget(id);
         World.getNet().sendCommand(cmd);

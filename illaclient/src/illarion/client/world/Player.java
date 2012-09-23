@@ -37,6 +37,7 @@ import illarion.client.world.items.MerchantList;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
 import illarion.common.config.ConfigSystem;
+import illarion.common.types.CharacterId;
 import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.Location;
@@ -153,7 +154,7 @@ public final class Player implements ConfigChangeListener {
     /**
      * The character ID of the player.
      */
-    private long playerId;
+    private CharacterId playerId;
 
     /**
      * This flag is changed to {@code true} once the location of the player was set once.
@@ -439,7 +440,7 @@ public final class Player implements ConfigChangeListener {
      *
      * @return The ID of the player character
      */
-    public long getPlayerId() {
+    public CharacterId getPlayerId() {
         return playerId;
     }
 
@@ -543,7 +544,7 @@ public final class Player implements ConfigChangeListener {
      * @param checkId the ID to be checked
      * @return true if it is the player, false if not
      */
-    public boolean isPlayer(final long checkId) {
+    public boolean isPlayer(final CharacterId checkId) {
         return playerId == checkId;
     }
 
@@ -580,7 +581,7 @@ public final class Player implements ConfigChangeListener {
      *
      * @param newPlayerId the new ID of the player
      */
-    public void setPlayerID(final long newPlayerId) {
+    public void setPlayerID(final CharacterId newPlayerId) {
         playerId = newPlayerId;
         character.setCharId(playerId);
 

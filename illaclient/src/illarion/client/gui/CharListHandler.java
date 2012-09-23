@@ -26,12 +26,12 @@ import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.ListBoxSelectionChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.CombatHandler;
 import illarion.client.world.World;
 import illarion.client.world.events.*;
+import illarion.common.types.CharacterId;
 import illarion.common.util.FastMath;
 import illarion.common.util.Location;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -125,16 +125,12 @@ public final class CharListHandler
 
         ignoreFocusEvents = false;
 
-        World.getPeople().forAllChars(new TObjectProcedure<Char>() {
-            @Override
-            public boolean execute(final Char chara) {
-                if (!World.getPlayer().isPlayer(chara.getCharId())) {
-                    charList.add(new WeakReference<Char>(chara));
-                }
-                dirty = true;
-                return true;
+
+        for (final Char character : World.getPeople().getCharacters()) {
+            if (!World.getPlayer().isPlayer(character.getCharId())) {
+                charList.add(new WeakReference<Char>(character));
             }
-        });
+        }
         sortList();
     }
 
@@ -207,12 +203,12 @@ public final class CharListHandler
         });
     }
 
-    private void removeChar(final long charId) {
+    private void removeChar(final CharacterId charId) {
         final Iterator<WeakReference<Char>> itr = charList.iterator();
         while (itr.hasNext()) {
             final WeakReference<Char> weakChar = itr.next();
             final Char character = weakChar.get();
-            if ((character == null) || (character.getCharId() == charId)) {
+            if ((character == null) || character.getCharId().equals(charId)) {
                 itr.remove();
                 dirty = true;
             }

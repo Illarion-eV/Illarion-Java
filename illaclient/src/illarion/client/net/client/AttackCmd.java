@@ -20,6 +20,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
+import illarion.common.types.CharacterId;
 
 /**
  * Client Command: Attacking a character (
@@ -32,7 +33,7 @@ public final class AttackCmd extends AbstractCommand {
     /**
      * The ID of the character that shall be attacked.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      * Default constructor for the attacking character command.
@@ -60,7 +61,7 @@ public final class AttackCmd extends AbstractCommand {
      */
     @Override
     public void encode(final NetCommWriter writer) {
-        writer.writeUInt(charId);
+        charId.encode(writer);
     }
 
     /**
@@ -68,7 +69,7 @@ public final class AttackCmd extends AbstractCommand {
      *
      * @param attCharId the ID of the character that shall be attacked
      */
-    public void setTarget(final long attCharId) {
+    public void setTarget(final CharacterId attCharId) {
         charId = attCharId;
     }
 

@@ -36,6 +36,7 @@ import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
+import illarion.common.types.CharacterId;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 import org.apache.log4j.Logger;
@@ -99,16 +100,6 @@ public final class Char
     private static final float MINIMAL_SCALE = 0.5f;
 
     /**
-     * Type value that the character is a monster.
-     */
-    private static final int MONSTER = 1;
-
-    /**
-     * Mask to check if the character ID belongs to a monster.
-     */
-    private static final long MONSTER_BASE = 0xFE000000L;
-
-    /**
      * Move mode constant for a pushed move.
      */
     public static final int MOVE_PUSH = 0;
@@ -122,21 +113,6 @@ public final class Char
      * Move mode constant for a walking move.
      */
     public static final int MOVE_WALK = 1;
-
-    /**
-     * Type value that the character is a npc.
-     */
-    private static final int NPC = 2;
-
-    /**
-     * Mask to check if the character ID belongs to a npc.
-     */
-    private static final long NPC_BASE = 0xFF000000L;
-
-    /**
-     * Type value that the character is a player.
-     */
-    private static final int PLAYER = 0;
 
     /**
      * Minimum scale. Below the avatar does not get a title for example and is not recognized at all.
@@ -210,7 +186,7 @@ public final class Char
     /**
      * Character ID the the character.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      * Current looking direction of the character.
@@ -282,12 +258,7 @@ public final class Char
     /**
      * The custom color of the characters skin.
      */
-    private transient Color skinColor = null;
-
-    /**
-     * Type of the character.
-     */
-    private int type;
+    private transient Color skinColor;
 
     /**
      * Visibility bonus of the character (for large characters).
@@ -410,7 +381,7 @@ public final class Char
      *
      * @return the ID of the character
      */
-    public long getCharId() {
+    public CharacterId getCharId() {
         return charId;
     }
 
@@ -514,7 +485,7 @@ public final class Char
      * @return true if the character is a monster, false if not.
      */
     public boolean isMonster() {
-        return type == MONSTER;
+        return charId.isMonster();
     }
 
     /**
@@ -523,7 +494,7 @@ public final class Char
      * @return true if the character is a npc, false if not.
      */
     public boolean isNPC() {
-        return type == NPC;
+        return charId.isNPC();
     }
 
     /**
@@ -532,7 +503,7 @@ public final class Char
      * @return {@code true} if the character is a human controlled character
      */
     public boolean isHuman() {
-        return type == PLAYER;
+        return charId.isHuman();
     }
 
     /**
@@ -665,7 +636,7 @@ public final class Char
         dY = 0;
         appearance = 0;
         direction = 0;
-        charId = 0;
+        charId = null;
         visible = false;
         skinColor = null;
         attributes.clear();
@@ -764,18 +735,8 @@ public final class Char
      * @param newCharId new ID of the character
      */
     @SuppressWarnings("nls")
-    public void setCharId(final long newCharId) {
+    public void setCharId(final CharacterId newCharId) {
         charId = newCharId;
-        if (charId > NPC_BASE) {
-            type = NPC;
-        } else if (charId > MONSTER_BASE) {
-            type = MONSTER;
-        } else if (World.getPlayer().isPlayer(charId)) {
-            type = PLAYER;
-        } else {
-            type = PLAYER;
-        }
-
     }
 
     /**
@@ -876,7 +837,7 @@ public final class Char
         // clean up the name
         name = name.trim();
 
-        if ((avatar != null) && (charId > 0) && !World.getPlayer().isPlayer(charId)) {
+        if ((avatar != null) && (charId != null) && !World.getPlayer().isPlayer(charId)) {
             avatar.setName(name);
         }
 

@@ -22,6 +22,7 @@ import illarion.client.net.CommandList;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import illarion.common.types.CharacterId;
 import illarion.common.util.Location;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ public final class TurnCharMsg extends AbstractReply {
     /**
      * The ID of the character that is turned.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      * The new direction of the character.
@@ -73,7 +74,7 @@ public final class TurnCharMsg extends AbstractReply {
     @Override
     public void decode(final NetCommReader reader) throws IOException {
         dir = reader.readUByte();
-        charId = reader.readUInt();
+        charId = new CharacterId(reader);
     }
 
     /**
@@ -122,6 +123,6 @@ public final class TurnCharMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("ID: " + charId + " to " + dir);
+        return toString(charId.toString() + " to " + dir);
     }
 }

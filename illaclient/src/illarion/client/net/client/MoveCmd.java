@@ -20,6 +20,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
+import illarion.common.types.CharacterId;
 
 /**
  * Client Command: Request a move or a push (
@@ -47,7 +48,7 @@ public final class MoveCmd extends AbstractCommand {
     /**
      * The character ID of the char that shall move.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      * The direction the character moves to.
@@ -85,19 +86,19 @@ public final class MoveCmd extends AbstractCommand {
      */
     @Override
     public void encode(final NetCommWriter writer) {
-        writer.writeUInt(charId);
+        charId.encode(writer);
         writer.writeByte(dir);
         writer.writeByte(mode);
     }
 
     /**
      * Set the ID of the character that shall move. The client is able to use
-     * {@link #setDirection(long, int)}. This function is only needed for the
+     * {@link #setDirection(CharacterId, int)}. This function is only needed for the
      * load test client.
      *
      * @param moveCharId the ID of the character that shall move
      */
-    public void setCharID(final long moveCharId) {
+    public void setCharID(final CharacterId moveCharId) {
         charId = moveCharId;
     }
 
@@ -108,7 +109,7 @@ public final class MoveCmd extends AbstractCommand {
      * @param moveCharId the ID of the character that shall move
      * @param moveDir    the direction the character shall move to
      */
-    public void setDirection(final long moveCharId, final int moveDir) {
+    public void setDirection(final CharacterId moveCharId, final int moveDir) {
         dir = (byte) moveDir;
         charId = moveCharId;
     }

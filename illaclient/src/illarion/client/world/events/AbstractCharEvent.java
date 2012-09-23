@@ -19,6 +19,7 @@
 package illarion.client.world.events;
 
 import illarion.client.world.World;
+import illarion.common.types.CharacterId;
 
 /**
  * This class is the abstract event that is extended by all events that are related to a single character.
@@ -29,14 +30,14 @@ public abstract class AbstractCharEvent {
     /**
      * The ID of the character this event is related to.
      */
-    private final long charId;
+    private final CharacterId charId;
 
     /**
      * Create this event and set the character ID of the character this event refers to.
      *
      * @param id the ID of the character
      */
-    protected AbstractCharEvent(final long id) {
+    protected AbstractCharEvent(final CharacterId id) {
         charId = id;
     }
 
@@ -45,7 +46,7 @@ public abstract class AbstractCharEvent {
      *
      * @return the ID of the character
      */
-    public final long getCharId() {
+    public final CharacterId getCharId() {
         return charId;
     }
 

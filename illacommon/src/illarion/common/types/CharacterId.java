@@ -22,17 +22,33 @@ import illarion.common.net.NetCommReader;
 import illarion.common.net.NetCommWriter;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * This class is used to store the ID of a character.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class CharacterId {
+public final class CharacterId implements Serializable {
     /**
      * The maximal value that is valid for the character ID
      */
     public static final long MAX_VALUE = (1L << 32) - 1L;
+
+    /**
+     * This is the mask used to find out the type of the character that is represented by this ID.
+     */
+    private static final int TYPE_MASK = 0xFF000000;
+
+    /**
+     * In case the character ID fits this mask, the character is a NPC.
+     */
+    private static final int NPC_MASK = 0xFF000000;
+
+    /**
+     * In case the character ID fits this mask, the character is a monster.
+     */
+    private static final int MONSTER_MASK = 0xFE000000;
 
     /**
      * The minimal value that is valid for the character ID
@@ -65,7 +81,34 @@ public final class CharacterId {
      * @throws IOException in case the reading operation fails for some reason
      */
     public CharacterId(final NetCommReader reader) throws IOException {
-        this.value = reader.readInt();
+        value = reader.readInt();
+    }
+
+    /**
+     * Check if this character ID is the ID of a NPC.
+     *
+     * @return {@code true} in case this ID marks a NPC
+     */
+    public boolean isNPC() {
+        return (value & TYPE_MASK) == NPC_MASK;
+    }
+
+    /**
+     * Check if this character ID is the ID of a monster.
+     *
+     * @return {@code true} in case this ID marks a monster
+     */
+    public boolean isMonster() {
+        return (value & TYPE_MASK) == MONSTER_MASK;
+    }
+
+    /**
+     * Check if this character ID is the ID of a human controlled character.
+     *
+     * @return {@code true} in case this ID marks a human controlled character
+     */
+    public boolean isHuman() {
+        return !isNPC() && !isMonster();
     }
 
     @Override

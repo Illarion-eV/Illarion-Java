@@ -20,6 +20,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
+import illarion.common.types.CharacterId;
 
 /**
  * Client Command: Request the appearance data of a unknown character (
@@ -32,7 +33,7 @@ public final class RequestAppearanceCmd extends AbstractCommand {
     /**
      * The ID of the characters who's appearance is needed.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      * Default constructor for the request appearance command.
@@ -60,7 +61,7 @@ public final class RequestAppearanceCmd extends AbstractCommand {
      */
     @Override
     public void encode(final NetCommWriter writer) {
-        writer.writeUInt(charId);
+        charId.encode(writer);
     }
 
     /**
@@ -68,7 +69,7 @@ public final class RequestAppearanceCmd extends AbstractCommand {
      *
      * @param requestCharId the ID of the character who's appearance is needed
      */
-    public void request(final long requestCharId) {
+    public void request(final CharacterId requestCharId) {
         charId = requestCharId;
     }
 

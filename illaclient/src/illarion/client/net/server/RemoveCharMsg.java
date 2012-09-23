@@ -21,6 +21,7 @@ package illarion.client.net.server;
 import illarion.client.net.CommandList;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import illarion.common.types.CharacterId;
 
 import java.io.IOException;
 
@@ -35,7 +36,7 @@ public final class RemoveCharMsg extends AbstractReply {
     /**
      * The ID of the character that shall be removed.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      * Default constructor for the remove character message.
@@ -65,7 +66,7 @@ public final class RemoveCharMsg extends AbstractReply {
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
-        charId = reader.readUInt();
+        charId = new CharacterId(reader);
     }
 
     /**
@@ -90,6 +91,6 @@ public final class RemoveCharMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("ID: " + charId);
+        return toString(charId.toString());
     }
 }

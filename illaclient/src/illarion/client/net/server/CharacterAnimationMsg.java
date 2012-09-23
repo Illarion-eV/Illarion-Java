@@ -22,6 +22,7 @@ import illarion.client.net.CommandList;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import illarion.common.types.CharacterId;
 
 import java.io.IOException;
 
@@ -40,7 +41,7 @@ public final class CharacterAnimationMsg extends AbstractReply {
     /**
      * The ID of the character that is animated.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      *
@@ -71,7 +72,7 @@ public final class CharacterAnimationMsg extends AbstractReply {
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
-        charId = reader.readUInt();
+        charId = new CharacterId(reader);
         animationId = reader.readUByte();
     }
 
@@ -101,8 +102,7 @@ public final class CharacterAnimationMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Char: " + Long.toString(charId) + " - Animation ID: "
-                + Integer.toString(animationId));
+        return toString(charId.toString() + " - Animation ID: " + Integer.toString(animationId));
     }
 
 }

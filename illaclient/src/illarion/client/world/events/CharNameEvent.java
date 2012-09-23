@@ -18,6 +18,8 @@
  */
 package illarion.client.world.events;
 
+import illarion.common.types.CharacterId;
+
 /**
  * This event is triggered in case the name of a character is changed.
  *
@@ -31,10 +33,10 @@ public final class CharNameEvent
     /**
      * Create the event and set the ID and the new name of the character that was changed.
      *
-     * @param id the ID of the character
+     * @param id      the ID of the character
      * @param newName the new name of the character
      */
-    public CharNameEvent(final long id, final CharSequence newName) {
+    public CharNameEvent(final CharacterId id, final CharSequence newName) {
         super(id);
         name = newName;
     }

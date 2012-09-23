@@ -21,6 +21,7 @@ package illarion.client.net.server;
 import illarion.client.net.CommandList;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import illarion.common.types.CharacterId;
 
 import java.io.IOException;
 
@@ -35,7 +36,7 @@ public final class IntroduceMsg extends AbstractReply {
     /**
      * The ID of the character who is introduced.
      */
-    private long charId;
+    private CharacterId charId;
 
     /**
      * The name of the character.
@@ -70,7 +71,7 @@ public final class IntroduceMsg extends AbstractReply {
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
-        charId = reader.readUInt();
+        charId = new CharacterId(reader);
         text = reader.readString();
     }
 
@@ -108,7 +109,7 @@ public final class IntroduceMsg extends AbstractReply {
         builder.append(charId);
         builder.append(") is named \"");
         builder.append(text);
-        builder.append("\"");
+        builder.append('"');
         return toString(builder.toString());
     }
 }
