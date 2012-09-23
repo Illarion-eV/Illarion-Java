@@ -24,7 +24,7 @@ import illarion.common.net.NetCommWriter;
 import java.io.IOException;
 
 /**
- * This class is used to store the ID of a character
+ * This class is used to store the ID of a character.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -32,7 +32,7 @@ public final class CharacterId {
     /**
      * The maximal value that is valid for the character ID
      */
-    public static final long MAX_VALUE = Math.round(Math.pow(2, 32)) - 1L;
+    public static final long MAX_VALUE = (1L << 32) - 1L;
 
     /**
      * The minimal value that is valid for the character ID
@@ -42,7 +42,7 @@ public final class CharacterId {
     /**
      * The item count.
      */
-    private final long value;
+    private final int value;
 
     /**
      * Constructor of this class used to set.
@@ -55,7 +55,7 @@ public final class CharacterId {
         if ((value < MIN_VALUE) || (value > MAX_VALUE)) {
             throw new IllegalArgumentException("value is out of range.");
         }
-        this.value = value;
+        this.value = (int) (value % ((1L << Integer.SIZE) - 1));
     }
 
     /**
@@ -65,7 +65,7 @@ public final class CharacterId {
      * @throws IOException in case the reading operation fails for some reason
      */
     public CharacterId(final NetCommReader reader) throws IOException {
-        value = reader.readUInt();
+        this.value = reader.readInt();
     }
 
     @Override
@@ -75,12 +75,12 @@ public final class CharacterId {
 
     @Override
     public int hashCode() {
-        return (int) (value ^ (value >>> 32));
+        return value;
     }
 
     @Override
     public String toString() {
-        return "character ID: " + Long.toString(value);
+        return "character ID: " + Long.toString(getValue());
     }
 
     /**
@@ -89,7 +89,7 @@ public final class CharacterId {
      * @param writer the writer that receives the value
      */
     public void encode(final NetCommWriter writer) {
-        writer.writeUInt(value);
+        writer.writeInt(value);
     }
 
     /**
@@ -108,6 +108,9 @@ public final class CharacterId {
      * @return the item count value
      */
     public long getValue() {
+        if (value < 0) {
+            return value + (1L << Integer.SIZE);
+        }
         return value;
     }
 }
