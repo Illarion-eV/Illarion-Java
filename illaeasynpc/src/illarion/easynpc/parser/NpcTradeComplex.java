@@ -38,16 +38,27 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcTradeComplex implements NpcType {
-    private static String BASE_PATTERN = "^\\s*((sellItem)|(buyPrimaryItem)|(buySecondaryItem))\\s*=\\s*id\\(\\s*" +
-            "(\\d{1,4})\\s*\\)\\s*(,\\s*(de)\\(\\s*\"([^\"]+)\"\\s*\\))?\\s*(,\\s*(en)\\(\\s*\"([^\"]+)\"\\s*\\))" +
-            "?\\s*(,\\s*(price)\\(\\s*(\\d+)\\s*\\))?\\s*(,\\s*(stack)\\(\\s*(\\d+)\\s*\\))?\\s*(," +
-            "\\s*(quality)\\(\\s*(\\d+)\\s*\\))?\\s*(,\\s*(data)\\((" + ItemData.REGEXP + ")\\))?";
+    private static String BASE_PATTERN = "^\\s*((sellItem)|(buyPrimaryItem)|(buySecondaryItem))\\s*=";
+
+    private static final String ID_PATTERN = ",*\\s*id\\s*\\(\\s*(\\d{1,4})\\s*\\)\\s*";
+    private static final String DE_PATTERN = ",*\\s*de\\s*\\(\\s*\"([^\"]+)\"\\s*\\)\\s*";
+    private static final String EN_PATTERN = ",*\\s*en\\s*\\(\\s*\"([^\"]+)\"\\s*\\)\\s*";
+    private static final String PRICE_PATTERN = ",*\\s*price\\s*\\(\\s*(\\d+)\\s*\\)\\s*";
+    private static final String STACK_PATTERN = ",*\\s*stack\\s*\\(\\s*(\\d+)\\s*\\)\\s*";
+    private static final String QUALITY_PATTERN = ",*\\s*quality\\s*\\(\\s*(\\d{3})\\s*\\)\\s*";
+    private static final String DATA_PATTERN = ",*\\s*data\\s*\\(\\s*" + ItemData.REGEXP + "\\s*\\)\\s*";
 
     /**
      * The pattern to fetch the items the NPC buys and sells.
      */
-    @SuppressWarnings("nls")
     private static final Pattern COMPILED_PATTERN = Pattern.compile(BASE_PATTERN, Pattern.CASE_INSENSITIVE);
+    private static final Pattern COMPILED_ID_PATTERN = Pattern.compile(ID_PATTERN, Pattern.CASE_INSENSITIVE);
+    private static final Pattern COMPILED_DE_PATTERN = Pattern.compile(DE_PATTERN, Pattern.CASE_INSENSITIVE);
+    private static final Pattern COMPILED_EN_PATTERN = Pattern.compile(EN_PATTERN, Pattern.CASE_INSENSITIVE);
+    private static final Pattern COMPILED_PRICE_PATTERN = Pattern.compile(PRICE_PATTERN, Pattern.CASE_INSENSITIVE);
+    private static final Pattern COMPILED_STACK_PATTERN = Pattern.compile(STACK_PATTERN, Pattern.CASE_INSENSITIVE);
+    private static final Pattern COMPILED_QUALITY_PATTERN = Pattern.compile(QUALITY_PATTERN, Pattern.CASE_INSENSITIVE);
+    private static final Pattern COMPILED_DATA_PATTERN = Pattern.compile(DATA_PATTERN, Pattern.CASE_INSENSITIVE);
 
     /**
      * The documentation entry for the sell items.
@@ -267,47 +278,76 @@ public final class NpcTradeComplex implements NpcType {
             throw new IllegalStateException("sanity check failed.");
         }
 
-        final int itemId = Integer.parseInt(matcher.group(5));
+        String currentLine = matcher.replaceAll("");
+
+        final Matcher idMatcher = COMPILED_ID_PATTERN.matcher(currentLine);
+        final int itemId;
+        if (idMatcher.find()) {
+            itemId = Integer.parseInt(idMatcher.group(1));
+            currentLine = idMatcher.replaceFirst("");
+        } else {
+            npc.addError(line, "No ID specified.");
+            return;
+        }
+
+        final Matcher deMatcher = COMPILED_DE_PATTERN.matcher(currentLine);
         final String nameDe;
-        if (matcher.group(6) != null) {
-            nameDe = matcher.group(8);
+        if (deMatcher.find()) {
+            nameDe = deMatcher.group(1);
+            currentLine = deMatcher.replaceFirst("");
         } else {
             nameDe = null;
         }
 
+        final Matcher enMatcher = COMPILED_EN_PATTERN.matcher(currentLine);
         final String nameEn;
-        if (matcher.group(9) != null) {
-            nameEn = matcher.group(11);
+        if (enMatcher.find()) {
+            nameEn = enMatcher.group(1);
+            currentLine = enMatcher.replaceFirst("");
         } else {
             nameEn = null;
         }
 
+        final Matcher priceMatcher = COMPILED_PRICE_PATTERN.matcher(currentLine);
         final int price;
-        if (matcher.group(12) != null) {
-            price = Integer.parseInt(matcher.group(14));
+        if (priceMatcher.find()) {
+            price = Integer.parseInt(priceMatcher.group(1));
+            currentLine = priceMatcher.replaceFirst("");
         } else {
             price = 0;
         }
 
+        final Matcher stackMatcher = COMPILED_STACK_PATTERN.matcher(currentLine);
         final int stack;
-        if (matcher.group(15) != null) {
-            stack = Integer.parseInt(matcher.group(17));
+        if (stackMatcher.find()) {
+            stack = Integer.parseInt(stackMatcher.group(1));
+            currentLine = stackMatcher.replaceFirst("");
         } else {
             stack = 0;
         }
 
+        final Matcher qualityMatcher = COMPILED_QUALITY_PATTERN.matcher(currentLine);
         final int quality;
-        if (matcher.group(19) != null) {
-            quality = Integer.parseInt(matcher.group(21));
+        if (qualityMatcher.find()) {
+            quality = Integer.parseInt(qualityMatcher.group(1));
+            currentLine = qualityMatcher.replaceFirst("");
         } else {
             quality = 0;
         }
 
+        final Matcher dataMatcher = COMPILED_DATA_PATTERN.matcher(currentLine);
         final ParsedItemData data;
-        if (matcher.group(23) != null) {
-            data = ItemData.getData(matcher.group(23));
+        if (dataMatcher.find()) {
+            data = ItemData.getData(dataMatcher.group(1));
+            currentLine = dataMatcher.replaceFirst("");
         } else {
             data = ItemData.getData("");
+        }
+
+        currentLine = currentLine.replaceAll("[\\s,]*", "");
+
+        if (!currentLine.isEmpty()) {
+            npc.addError(line, "Found strange remains: " + currentLine);
         }
 
         npc.addNpcData(new ParsedTradeComplex(mode, itemId, nameDe, nameEn, price, stack, quality, data));
