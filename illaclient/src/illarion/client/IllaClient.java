@@ -205,6 +205,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         gameContainer.setAlwaysRender(true);
         gameContainer.setTargetFrameRate(res.getRefreshRate());
+        gameContainer.setForceExit(false);
 
         EventBus.subscribe(CFG_FULLSCREEN, this);
         EventBus.subscribe(CFG_RESOLUTION, this);
@@ -213,10 +214,13 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png",
                     "illarion_client64.png", "illarion_client256.png"});
             gameContainer.start();
+            World.cleanEnvironment();
         } catch (SlickException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        startFinalKiller();
     }
 
     /**

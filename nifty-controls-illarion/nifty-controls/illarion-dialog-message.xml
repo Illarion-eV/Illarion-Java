@@ -20,12 +20,10 @@
     <controlDefinition name="dialog-message" visibleToMouse="true"
                        controller="org.illarion.nifty.controls.dialog.message.DialogMessageControl">
         <control name="window" title="Nachricht" id="#window" visibleToMouse="true">
-            <panel childLayout="vertical" visibleToMouse="true" width="100%">
-                <panel childLayout="center" width="100%">
-                    <control name="label" id="#text" wrap="true" text="-" width="100%"/>
-                </panel>
-                <panel height="5px"/>
-                <panel id="#buttons" childLayout="center" visibleToMouse="true" width="100%">
+            <panel childLayout="vertical" visibleToMouse="true" width="400px">
+                <control name="label" id="#text" text="-" width="400px"/>
+                <panel height="5px" width="1px"/>
+                <panel id="#buttons" childLayout="center" visibleToMouse="true" width="400px">
                     <control name="button" id="#button" label="OK"/>
                 </panel>
             </panel>

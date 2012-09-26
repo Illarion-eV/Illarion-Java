@@ -25,6 +25,7 @@ import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
@@ -74,8 +75,8 @@ public class DialogMessageControl
     private String buttonLabel;
 
     @Override
-    public void bind(Nifty nifty, Screen screen, Element element, Properties parameter,
-                     Attributes controlDefinitionAttributes) {
+    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
+                     final Attributes controlDefinitionAttributes) {
         super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
         niftyInstance = nifty;
         currentScreen = screen;
@@ -108,11 +109,13 @@ public class DialogMessageControl
     }
 
     @Override
-    public void setText(String text) {
+    public void setText(final String text) {
         final Label label = getContent().findNiftyControl("#text", Label.class);
+        label.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
         label.setText(text);
     }
 
+    @Override
     public void setButton(final String text) {
         final Button button = getContent().findNiftyControl("#button", Button.class);
         button.setText(text);

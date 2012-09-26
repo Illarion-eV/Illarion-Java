@@ -266,7 +266,6 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         builder.text(message);
         builder.button("OK");
         builder.dialogId(id);
-        builder.width(builder.pixels(400));
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, null));
     }
 
