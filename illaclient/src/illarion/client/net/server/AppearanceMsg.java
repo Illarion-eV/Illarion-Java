@@ -24,6 +24,7 @@ import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
+import illarion.common.types.ItemId;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 
@@ -89,7 +90,7 @@ public final class AppearanceMsg extends AbstractReply {
     /**
      * The ID of the item on the characters back.
      */
-    private int backItemID;
+    private ItemId backItemId;
 
     /**
      * The ID of the beard of the character.
@@ -99,7 +100,7 @@ public final class AppearanceMsg extends AbstractReply {
     /**
      * The ID of the item on the characters breast.
      */
-    private int breastItemID;
+    private ItemId breastItemId;
 
     /**
      * ID of the character this message is about.
@@ -115,7 +116,7 @@ public final class AppearanceMsg extends AbstractReply {
     /**
      * The ID of the item on the feet of the character.
      */
-    private int feetItemID;
+    private ItemId feetItemId;
 
     /**
      * The blue share of the color of the hair.
@@ -140,22 +141,22 @@ public final class AppearanceMsg extends AbstractReply {
     /**
      * The ID of the item on the head.
      */
-    private int headItemID;
+    private ItemId headItemId;
 
     /**
      * The ID of the item in the left hand.
      */
-    private int leftItemId;
+    private ItemId leftItemId;
 
     /**
      * The ID of the item on the legs of the character.
      */
-    private int legsItemID;
+    private ItemId legsItemId;
 
     /**
      * The ID of the item in the right hand.
      */
-    private int rightItemId;
+    private ItemId rightItemId;
 
     /**
      * Size modificator of the character.
@@ -225,13 +226,13 @@ public final class AppearanceMsg extends AbstractReply {
         skinColorRed = reader.readUByte();
         skinColorGreen = reader.readUByte();
         skinColorBlue = reader.readUByte();
-        headItemID = reader.readUShort();
-        breastItemID = reader.readUShort();
-        backItemID = reader.readUShort();
-        leftItemId = reader.readUShort();
-        rightItemId = reader.readUShort();
-        legsItemID = reader.readUShort();
-        feetItemID = reader.readUShort();
+        headItemId = new ItemId(reader);
+        breastItemId = new ItemId(reader);
+        backItemId = new ItemId(reader);
+        leftItemId = new ItemId(reader);
+        rightItemId = new ItemId(reader);
+        legsItemId = new ItemId(reader);
+        feetItemId = new ItemId(reader);
         attackMode = reader.readUByte();
         deadFlag = reader.readUByte() == 1;
     }
@@ -276,11 +277,11 @@ public final class AppearanceMsg extends AbstractReply {
         ch.resetLight();
         ch.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
         ch.setWearingItem(AvatarClothManager.GROUP_BEARD, beardID);
-        ch.setWearingItem(AvatarClothManager.GROUP_CHEST, breastItemID);
-        ch.setWearingItem(AvatarClothManager.GROUP_COAT, backItemID);
-        ch.setWearingItem(AvatarClothManager.GROUP_HAT, headItemID);
-        ch.setWearingItem(AvatarClothManager.GROUP_TROUSERS, legsItemID);
-        ch.setWearingItem(AvatarClothManager.GROUP_SHOES, feetItemID);
+        ch.setWearingItem(AvatarClothManager.GROUP_CHEST, breastItemId);
+        ch.setWearingItem(AvatarClothManager.GROUP_COAT, backItemId);
+        ch.setWearingItem(AvatarClothManager.GROUP_HAT, headItemId);
+        ch.setWearingItem(AvatarClothManager.GROUP_TROUSERS, legsItemId);
+        ch.setWearingItem(AvatarClothManager.GROUP_SHOES, feetItemId);
 
         ch.setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, rightItemId);
         ch.setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, leftItemId);
@@ -290,7 +291,7 @@ public final class AppearanceMsg extends AbstractReply {
         TEMP_COLOR.b = skinColorBlue / 255.f;
         TEMP_COLOR.a = 1.f;
 
-        if (skinColorRed != 255 || skinColorGreen != 255 || skinColorBlue != 255) {
+        if ((skinColorRed != 255) || (skinColorGreen != 255) || (skinColorBlue != 255)) {
             ch.setSkinColor(TEMP_COLOR);
         } else {
             ch.setSkinColor(null);
