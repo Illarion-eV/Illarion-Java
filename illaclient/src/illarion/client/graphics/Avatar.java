@@ -300,7 +300,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @return <code>true</code> in case the item is defined and renderable
      */
     public boolean clothItemExist(final int group, final int itemID) {
-        return clothes.clothExists(group, itemID);
+        return clothes.doesClothExists(group, itemID);
     }
 
     /**

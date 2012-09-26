@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
@@ -24,7 +24,7 @@ import illarion.client.resources.ItemFactory;
 /**
  * The Cloth manager stores all known clothes and their locations for each known
  * avatar. And allows accessing the cloth definitions.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class AvatarClothManager {
@@ -102,21 +102,21 @@ public final class AvatarClothManager {
     /**
      * The storage for the known clothes of each group.
      */
-    private final ClothFactory[] exsistingClothes;
+    private final ClothFactory[] existingClothes;
 
     /**
      * Constructor for this class. Each avatar needs one instance of this class
      * to get the paper dolling working.
      */
     public AvatarClothManager() {
-        exsistingClothes = new ClothFactory[GROUP_COUNT];
+        existingClothes = new ClothFactory[GROUP_COUNT];
     }
 
     /**
      * Add a item to the storage. It has to be sorted into a group here. Its
      * only possible to define a itemID once per group. But a single item can be
      * defined in multiple groups.
-     * 
+     *
      * @param group the group the item shall be assigned to
      * @param cloth the definition of the cloth itself
      */
@@ -124,41 +124,41 @@ public final class AvatarClothManager {
     public void addCloth(final int group, final AvatarCloth cloth) {
         if ((group < 0) || (group >= GROUP_COUNT)) {
             throw new IllegalArgumentException(
-                "Group needs to be between 0 and " + GROUP_COUNT);
+                    "Group needs to be between 0 and " + GROUP_COUNT);
         }
-        if (exsistingClothes[group] == null) {
-            exsistingClothes[group] = new ClothFactory();
-            exsistingClothes[group].init();
+        if (existingClothes[group] == null) {
+            existingClothes[group] = new ClothFactory();
+            existingClothes[group].init();
         }
-        exsistingClothes[group].storeResource(cloth);
+        existingClothes[group].storeResource(cloth);
     }
 
     /**
      * Check if a cloth item is defined on a specified location.
-     * 
-     * @param group the location of the cloth
+     *
+     * @param group  the location of the cloth
      * @param itemID the item id of the item that shall be checked
      * @return <code>true</code> in case the cloth item is defined for that
      *         location
      */
     @SuppressWarnings("nls")
-    public boolean clothExists(final int group, final int itemID) {
+    public boolean doesClothExists(final int group, final int itemID) {
         if ((group < 0) || (group >= GROUP_COUNT)) {
             throw new IllegalArgumentException(
-                "Group needs to be between 0 and " + GROUP_COUNT);
+                    "Group needs to be between 0 and " + GROUP_COUNT);
         }
-        if (exsistingClothes[group] == null) {
+        if (existingClothes[group] == null) {
             return false;
         }
-        int refID;
+        final int refID;
 
         if ((group == GROUP_HAIR) || (group == GROUP_BEARD)) {
             refID = itemID;
         } else {
-            Item refItem = ItemFactory.getInstance().getPrototype(itemID);
+            final Item refItem = ItemFactory.getInstance().getPrototype(itemID);
             refID = refItem.getPaperdollingId();
         }
-        return exsistingClothes[group].prototypeExists(refID);
+        return existingClothes[group].prototypeExists(refID);
     }
 
     /**
@@ -166,7 +166,7 @@ public final class AvatarClothManager {
      * called after the loading is done to optimize the internal storages.
      */
     public void finish() {
-        for (final ClothFactory factory : exsistingClothes) {
+        for (final ClothFactory factory : existingClothes) {
             if (factory != null) {
                 factory.loadingFinished();
             }
@@ -175,8 +175,8 @@ public final class AvatarClothManager {
 
     /**
      * Get a item from the storage.
-     * 
-     * @param group the group the requested item is assigned to
+     *
+     * @param group  the group the requested item is assigned to
      * @param itemID the item id of the requested item
      * @return the item that was found regarding the parameters or
      *         <code>null</code> in case the requested item was not defined in
@@ -186,13 +186,13 @@ public final class AvatarClothManager {
     public AvatarCloth getCloth(final int group, final int itemID) {
         if ((group < 0) || (group >= GROUP_COUNT)) {
             throw new IllegalArgumentException(
-                "Group needs to be between 0 and " + GROUP_COUNT);
+                    "Group needs to be between 0 and " + GROUP_COUNT);
         }
-        if (exsistingClothes[group] == null) {
+        if (existingClothes[group] == null) {
             return null;
         }
-        int refID;
-        Item refItem;
+        final int refID;
+        final Item refItem;
 
         if ((group == GROUP_HAIR) || (group == GROUP_BEARD)) {
             refID = itemID;
@@ -201,7 +201,7 @@ public final class AvatarClothManager {
             refItem = ItemFactory.getInstance().getPrototype(itemID);
             refID = refItem.getPaperdollingId();
         }
-        final AvatarCloth ret = exsistingClothes[group].getCommand(refID);
+        final AvatarCloth ret = existingClothes[group].getCommand(refID);
         if (ret.getId() == 0) {
             ret.recycle();
             return null;
