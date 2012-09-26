@@ -37,6 +37,7 @@ import illarion.common.graphics.CharAnimations;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
 import illarion.common.types.CharacterId;
+import illarion.common.types.ItemId;
 import illarion.common.util.Location;
 import illarion.common.util.RecycleObject;
 import org.apache.log4j.Logger;
@@ -475,7 +476,7 @@ public final class Char
             return false;
         }
 
-        return avatar == null || avatar.clothItemExist(slot, id);
+        return (avatar == null) || avatar.clothItemExist(slot, id);
 
     }
 
@@ -1121,6 +1122,10 @@ public final class Char
         }
     }
 
+    public void setWearingItem(final int group, final ItemId itemId) {
+        setWearingItem(group, itemId.getValue());
+    }
+
     /**
      * Update the paper doll, so set all items the characters wears to the avatar. Do this in case many cloth parts
      * changed or in case the avatar instance changed.
@@ -1129,22 +1134,25 @@ public final class Char
         if (hasWearingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]) ||
                 hasWearingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND])
                 ) {
-            setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
-            setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+            applyPaperdollingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+            applyPaperdollingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
         } else {
-            setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
-            setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+            applyPaperdollingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+            applyPaperdollingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
         }
         for (int i = 0; i < wearItems.length; ++i) {
             if ((i == AvatarClothManager.GROUP_FIRST_HAND) || (i == AvatarClothManager.GROUP_SECOND_HAND)) {
                 continue;
             }
-            final int itemID = wearItems[i];
-            if (itemID == 0) {
-                avatar.removeClothItem(i);
-            } else {
-                avatar.setClothItem(i, itemID);
-            }
+            applyPaperdollingItem(i, wearItems[i]);
+        }
+    }
+
+    private void applyPaperdollingItem(final int slot, final int itemId) {
+        if (itemId == 0) {
+            avatar.removeClothItem(slot);
+        } else {
+            avatar.setClothItem(slot, itemId);
         }
     }
 
