@@ -946,7 +946,8 @@ public final class Char
     }
 
     /**
-     * Add a item the avatar wears to its current list.
+     * Add a item the avatar wears to its current list. The changes do not become visible until
+     * {@link #updatePaperdoll()} is called.
      *
      * @param slot the slot the item is carried at
      * @param id   the ID of the item the character wears
@@ -965,16 +966,6 @@ public final class Char
         }
 
         wearItems[slot] = id;
-
-        if (avatar == null) {
-            return;
-        }
-
-        if (id == 0) {
-            avatar.removeClothItem(slot);
-        } else {
-            avatar.setClothItem(slot, id);
-        }
     }
 
     /**
@@ -1136,9 +1127,11 @@ public final class Char
                 ) {
             applyPaperdollingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
             applyPaperdollingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+            System.out.println("Hands normal aligned");
         } else {
             applyPaperdollingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
             applyPaperdollingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+            System.out.println("Hands inverse aligned");
         }
         for (int i = 0; i < wearItems.length; ++i) {
             if ((i == AvatarClothManager.GROUP_FIRST_HAND) || (i == AvatarClothManager.GROUP_SECOND_HAND)) {

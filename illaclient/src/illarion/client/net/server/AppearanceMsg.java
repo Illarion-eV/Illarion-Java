@@ -302,6 +302,7 @@ public final class AppearanceMsg extends AbstractReply {
         TEMP_COLOR.b = hairColorBlue / 255.f;
         ch.setClothColor(AvatarClothManager.GROUP_HAIR, TEMP_COLOR);
         ch.setClothColor(AvatarClothManager.GROUP_BEARD, TEMP_COLOR);
+        ch.updatePaperdoll();
         ch.setAlive(!deadFlag);
         ch.updateLight();
 
