@@ -18,16 +18,14 @@
  */
 package illarion.client.net;
 
-import javolution.util.FastList;
-
-import java.util.concurrent.BlockingQueue;
-
-import org.apache.log4j.Logger;
-
 import illarion.client.Debug;
 import illarion.client.IllaClient;
 import illarion.client.net.server.AbstractReply;
 import illarion.common.util.Stoppable;
+import javolution.util.FastList;
+import org.apache.log4j.Logger;
+
+import java.util.concurrent.BlockingQueue;
 
 /**
  * This class will take care that the messages received from the server are executes properly.
@@ -154,9 +152,7 @@ final class MessageExecutor
     @Override
     public void saveShutdown() {
         running = false;
-        synchronized (input) {
-            input.notify();
-        }
+        interrupt();
     }
 
 }

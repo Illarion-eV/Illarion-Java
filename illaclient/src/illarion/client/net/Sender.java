@@ -116,7 +116,7 @@ final class Sender extends Thread implements NetCommWriter {
      * The main loop the the server thread. Encodes the commands in the queue
      * and prepares them for sending to the server.
      *
-     * @see java.lang.Thread#run()
+     * @see Thread#run()
      */
     @SuppressWarnings("nls")
     @Override
@@ -126,8 +126,13 @@ final class Sender extends Thread implements NetCommWriter {
             while (running) {
                 // get first command form out queue
 
-                AbstractCommand cmd;
-                cmd = queue.take();
+                final AbstractCommand cmd;
+                try {
+                    cmd = queue.take();
+                } catch (final InterruptedException e) {
+                    LOGGER.info("Thread \"" + getName() + "\" got interrupted.");
+                    continue;
+                }
 
                 buffer.clear();
                 buffer.put((byte) cmd.getId());
@@ -173,9 +178,7 @@ final class Sender extends Thread implements NetCommWriter {
      */
     public void setRunning(final boolean newRunning) {
         running = newRunning;
-        synchronized (queue) {
-            queue.notify();
-        }
+        interrupt();
     }
 
     /**

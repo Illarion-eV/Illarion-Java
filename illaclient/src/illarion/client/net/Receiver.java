@@ -364,6 +364,7 @@ final class Receiver extends Thread implements NetCommReader {
      */
     public void setRunning(final boolean newRunning) {
         running = newRunning;
+        interrupt();
     }
 
     /**
