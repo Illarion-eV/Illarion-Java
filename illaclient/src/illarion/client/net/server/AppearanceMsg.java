@@ -285,6 +285,7 @@ public final class AppearanceMsg extends AbstractReply {
 
         ch.setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, rightItemId);
         ch.setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, leftItemId);
+        ch.updatePaperdoll();
 
         TEMP_COLOR.r = skinColorRed / 255.f;
         TEMP_COLOR.g = skinColorGreen / 255.f;
@@ -302,7 +303,6 @@ public final class AppearanceMsg extends AbstractReply {
         TEMP_COLOR.b = hairColorBlue / 255.f;
         ch.setClothColor(AvatarClothManager.GROUP_HAIR, TEMP_COLOR);
         ch.setClothColor(AvatarClothManager.GROUP_BEARD, TEMP_COLOR);
-        ch.updatePaperdoll();
         ch.setAlive(!deadFlag);
         ch.updateLight();
 

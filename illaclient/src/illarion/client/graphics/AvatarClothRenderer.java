@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
@@ -29,7 +29,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * This class is able to trigger the rendering of the clothes of a avatar. The
  * render action is invoked in the order that is defined for the direction the
  * parent avatar is looking at.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class AvatarClothRenderer {
@@ -42,7 +42,7 @@ final class AvatarClothRenderer {
 
     static {
         RENDER_DIR =
-            new int[Location.DIR_MOVE8][AvatarClothManager.GROUP_COUNT];
+                new int[Location.DIR_MOVE8][AvatarClothManager.GROUP_COUNT];
 
         int cnt = 0;
         int group = Location.DIR_NORTH;
@@ -206,7 +206,7 @@ final class AvatarClothRenderer {
     /**
      * The copy constructor that is used to create a duplicate of this class in
      * order to get separated instances for each avatar that is needed.
-     * 
+     *
      * @param org the instance of AvatarClothRenderer that shall be copied into
      *            a new instance
      */
@@ -216,8 +216,8 @@ final class AvatarClothRenderer {
 
     /**
      * Create a cloth renderer for a avatar that looks into a defined direction.
-     * 
-     * @param dir the direction this character is looking at.
+     *
+     * @param dir    the direction this character is looking at.
      * @param frames the amount of frames the parent avatar animation contains
      */
     protected AvatarClothRenderer(final int dir, final int frames) {
@@ -232,7 +232,7 @@ final class AvatarClothRenderer {
     /**
      * Set the alpha value of all clothes. This is used to perform a proper
      * fading out effect on all clothes.
-     * 
+     *
      * @param newAlpha the new alpha value
      */
     public void setAlpha(final int newAlpha) {
@@ -256,7 +256,7 @@ final class AvatarClothRenderer {
 
     /**
      * Set the frame that is currently rendered to all clothes.
-     * 
+     *
      * @param frame the index of the frame that shall be rendered
      */
     public void setFrame(final int frame) {
@@ -271,7 +271,7 @@ final class AvatarClothRenderer {
                         currentCloth.setFrame(frame);
                     } else if (currentFrames > 1) {
                         currentCloth
-                            .setFrame((int) (((float) currentFrames * (float) frame) / parentFrames));
+                                .setFrame((int) (((float) currentFrames * (float) frame) / parentFrames));
                     }
                 }
             }
@@ -285,7 +285,7 @@ final class AvatarClothRenderer {
      * light directly, so any change to the instance will be send to the clothes
      * as well. How ever in case the used instance changes, its needed to report
      * this to the clothes.
-     * 
+     *
      * @param light the light object that is send to all currently set clothes
      */
     public void setLight(final Color light) {
@@ -305,9 +305,9 @@ final class AvatarClothRenderer {
     /**
      * Set the scaling value for all clothes so everything is rendered at the
      * proper size.
-     * 
+     *
      * @param newScale the new scaling value to ensure that everything is
-     *            rendered at the proper size
+     *                 rendered at the proper size
      */
     public void setScale(final float newScale) {
         scale = newScale;
@@ -325,8 +325,8 @@ final class AvatarClothRenderer {
 
     /**
      * Change the base color of one cloth.
-     * 
-     * @param slot the slot that shall be changed
+     *
+     * @param slot  the slot that shall be changed
      * @param color the new color that shall be used as base color
      */
     protected void changeBaseColor(final int slot, final Color color) {
@@ -395,16 +395,19 @@ final class AvatarClothRenderer {
      * Set on part of the clothes with a new cloth to wear. This cloth will be
      * rendered at the next run. The current cloth, if any is put back into its
      * factory.
-     * 
+     *
      * @param group the group the item is a part of. So the location its shown
-     *            at
-     * @param item the item that shall be shown itself or <code>null</code> to
-     *            remove the item
+     *              at
+     * @param item  the item that shall be shown itself or <code>null</code> to
+     *              remove the item
      */
     protected void setCloth(final int group, final AvatarCloth item) {
         clothLock.writeLock().lock();
         try {
             if (currentClothes[group] != null) {
+                if (currentClothes[group].getId() == item.getId()) {
+                    return;
+                }
                 currentClothes[group].recycle();
             }
             currentClothes[group] = item;
@@ -428,14 +431,14 @@ final class AvatarClothRenderer {
      * Set the screen position of all clothes that are currently defined in this
      * class. Its needed to call this function when ever the location changes or
      * a cloth is added.
-     * 
-     * @param newX the x coordinate on the screen of this object
-     * @param newY the y coordinate on the screen of this object
-     * @param newZ the z coordinate so the layer of this object
+     *
+     * @param newX     the x coordinate on the screen of this object
+     * @param newY     the y coordinate on the screen of this object
+     * @param newZ     the z coordinate so the layer of this object
      * @param newLayer the global layer of this object
      */
     protected void setScreenLocation(final int newX, final int newY,
-        final int newZ, final int newLayer) {
+                                     final int newZ, final int newLayer) {
         avatarPosX = newX;
         avatarPosY = newY;
         avatarPosZ = newZ;

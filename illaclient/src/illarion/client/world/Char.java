@@ -1142,10 +1142,12 @@ public final class Char
     }
 
     private void applyPaperdollingItem(final int slot, final int itemId) {
-        if (itemId == 0) {
-            avatar.removeClothItem(slot);
-        } else {
-            avatar.setClothItem(slot, itemId);
+        if (avatar != null) {
+            if (itemId == 0) {
+                avatar.removeClothItem(slot);
+            } else {
+                avatar.setClothItem(slot, itemId);
+            }
         }
     }
 
