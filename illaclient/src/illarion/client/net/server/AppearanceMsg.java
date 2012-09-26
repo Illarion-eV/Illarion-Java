@@ -213,7 +213,7 @@ public final class AppearanceMsg extends AbstractReply {
         charId = new CharacterId(reader);
 
         final int race = reader.readUShort();
-        final boolean male = (int) reader.readByte() == 0x00;
+        final boolean male = reader.readUByte() == 0;
         appearance = getAppearance(race, male);
         size = reader.readUByte();
         visibilityBonus = reader.readByte();
@@ -233,7 +233,7 @@ public final class AppearanceMsg extends AbstractReply {
         legsItemID = reader.readUShort();
         feetItemID = reader.readUShort();
         attackMode = reader.readUByte();
-        deadFlag = (reader.readUByte() == 1);
+        deadFlag = reader.readUByte() == 1;
     }
 
     /**

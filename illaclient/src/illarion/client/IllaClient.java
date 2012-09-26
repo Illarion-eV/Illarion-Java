@@ -236,6 +236,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             return;
         }
         exitRequested = true;
+        INSTANCE.gameContainer.exit();
     }
 
     /**

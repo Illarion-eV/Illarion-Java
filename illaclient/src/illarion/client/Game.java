@@ -20,6 +20,8 @@ import de.lessvoid.nifty.slick2d.NiftyStateBasedGame;
 import illarion.client.states.LoadingState;
 import illarion.client.states.LoginState;
 import illarion.client.states.PlayingState;
+import illarion.client.world.events.CloseGameEvent;
+import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 
@@ -62,5 +64,19 @@ public final class Game
         addState(new LoginState());
         addState(new LoadingState());
         addState(new PlayingState());
+    }
+
+    /**
+     * This function is used to fetch the close requests to the application.
+     *
+     * @return {@code true} in case the application is supposed to exit right now.
+     */
+    @Override
+    public boolean closeRequested() {
+        if (getCurrentStateID() == STATE_PLAYING) {
+            EventBus.publish(new CloseGameEvent());
+            return false;
+        }
+        return true;
     }
 }

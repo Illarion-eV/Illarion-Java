@@ -144,4 +144,18 @@
             </panel>
         </panel>
     </popup>
+
+    <popup id="closeApplication" childLayout="center">
+        <panel style="nifty-panel-small" childLayout="vertical">
+            <control name="label" text="${gamescreen-bundle.reallyClose}" width="300px" style="nifty-label"/>
+            <panel height="10px" width="1px"/>
+            <panel childLayout="center" width="300px">
+                <panel childLayout="horizontal" width="200px">
+                    <control name="button" id="#closeYesButton" label="${gamescreen-bundle.yes}" width="95px"
+                             marginRight="10px"/>
+                    <control name="button" id="#closeNoButton" label="${gamescreen-bundle.no}" width="95px"/>
+                </panel>
+            </panel>
+        </panel>
+    </popup>
 </nifty>

@@ -1,0 +1,113 @@
+/*
+ * This file is part of the Illarion Client.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package illarion.client.gui;
+
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
+import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.IllaClient;
+import illarion.client.world.events.CloseGameEvent;
+import org.bushe.swing.event.EventTopicSubscriber;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
+import org.newdawn.slick.GameContainer;
+
+/**
+ * This handler takes action in case the user requests the application to quit. It will display a dialog and once it is
+ * confirmed the application will shut down.
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
+ */
+public class CloseGameHandler implements ScreenController, UpdatableHandler, EventTopicSubscriber<ButtonClickedEvent> {
+    /**
+     * The parent instance of Nifty-GUI.
+     */
+    private Nifty parentNifty;
+
+    /**
+     * The screen this popup is assigned to.
+     */
+    private Screen parentScreen;
+
+    /**
+     * The popup that is supposed to be displayed in case closing the client is requested.
+     */
+    private Element popup;
+
+    /**
+     * This variable is toggled to {@code true} in case the handler is supposed to display the close confirmation
+     * dialog.
+     */
+    private boolean showDialog;
+
+    /**
+     * This variable is {@code true} as long as the close dialog is active.
+     */
+    private boolean dialogActive;
+
+    @Override
+    public void bind(final Nifty nifty, final Screen screen) {
+        parentNifty = nifty;
+        parentScreen = screen;
+
+        popup = nifty.createPopup("closeApplication");
+    }
+
+    @Override
+    public void onStartScreen() {
+        AnnotationProcessor.process(this);
+    }
+
+    @Override
+    public void onEndScreen() {
+        AnnotationProcessor.unprocess(this);
+    }
+
+    @Override
+    public void update(final GameContainer container, final int delta) {
+        if (showDialog && !dialogActive) {
+            parentNifty.showPopup(parentScreen, popup.getId(), null);
+            parentNifty.subscribe(parentScreen, popup.findElementByName("#closeYesButton").getId(),
+                    ButtonClickedEvent.class, this);
+            parentNifty.subscribe(parentScreen, popup.findElementByName("#closeNoButton").getId(),
+                    ButtonClickedEvent.class, this);
+            dialogActive = true;
+            showDialog = false;
+        }
+    }
+
+    @EventSubscriber
+    public void onCloseGameEventReceived(final CloseGameEvent event) {
+        if (!dialogActive) {
+            showDialog = true;
+        }
+    }
+
+    @Override
+    public void onEvent(final String topic, final ButtonClickedEvent data) {
+        if (topic.endsWith("#closeYesButton")) {
+            IllaClient.ensureExit();
+        } else {
+            parentNifty.closePopup(popup.getId());
+            dialogActive = false;
+        }
+    }
+}

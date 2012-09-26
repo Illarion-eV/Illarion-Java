@@ -38,8 +38,6 @@ public final class GameScreenController implements ScreenController {
     private final NumberSelectPopupHandler numberPopupHandler;
     private final TooltipHandler tooltipHandler;
 
-    private boolean notifyResolutionChanged;
-
     public GameScreenController() {
         numberPopupHandler = new NumberSelectPopupHandler();
         tooltipHandler = new TooltipHandler();
@@ -54,6 +52,7 @@ public final class GameScreenController implements ScreenController {
         addHandler(new CharListHandler());
         addHandler(new DialogHandler(numberPopupHandler));
         addHandler(new ContainerHandler(numberPopupHandler, tooltipHandler));
+        addHandler(new CloseGameHandler());
 
         addHandler(new GameMapHandler(numberPopupHandler, tooltipHandler));
 
@@ -80,11 +79,6 @@ public final class GameScreenController implements ScreenController {
 
     @Override
     public void onStartScreen() {
-        if (notifyResolutionChanged) {
-            parentNifty.resolutionChanged();
-            notifyResolutionChanged = false;
-        }
-
         for (final ScreenController childController : childControllers) {
             childController.onStartScreen();
         }
@@ -108,9 +102,5 @@ public final class GameScreenController implements ScreenController {
         for (final ScreenController childController : childControllers) {
             childController.onEndScreen();
         }
-    }
-
-    public void resolutionChanged() {
-        notifyResolutionChanged = true;
     }
 }
