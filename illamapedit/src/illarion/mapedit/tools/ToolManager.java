@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.tools;
 
+import illarion.mapedit.Utils;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.events.*;
 import illarion.mapedit.render.RendererManager;
@@ -37,7 +38,7 @@ public final class ToolManager implements Disposable {
     private static final Logger LOGGER = Logger.getLogger(ToolManager.class);
 
 
-    private final AbstractTool[] actualTool = new AbstractTool[3];
+    private AbstractTool actualTool;
     private final Map map;
 
     private TileImg selectedTile;
@@ -48,14 +49,14 @@ public final class ToolManager implements Disposable {
         this.renderer = render;
         AnnotationProcessor.process(this);
         this.map = map;
-        setTool(new SingleTileTool(), MouseButton.LeftButton);
+        setTool(new SingleTileTool());
     }
 
-    public void setTool(final AbstractTool tool, final MouseButton button) {
+    public void setTool(final AbstractTool tool) {
         if (tool != null) {
             tool.registerManager(this);
         }
-        actualTool[button.ordinal()] = tool;
+        actualTool = tool;
     }
 
     Map getMap() {
@@ -82,19 +83,39 @@ public final class ToolManager implements Disposable {
     @EventSubscriber(eventClass = MapClickedEvent.class)
     public void clickedAt(final MapClickedEvent e) {
         final int button = e.getButton().ordinal();
-        if ((actualTool != null) && (actualTool.length > button) && (actualTool[button] != null)) {
-            actualTool[button].clickedAt(e.getX(), e.getY());
+        if (actualTool != null) {
+            actualTool.clickedAt(e.getX(), e.getY());
             EventBus.publish(new RepaintRequestEvent());
         }
     }
 
     @EventSubscriber(eventClass = MapDraggedEvent.class)
     public void onMapDragged(final MapDraggedEvent e) {
-        final int button = e.getButton().ordinal();
-        if ((actualTool != null) && (actualTool.length > button) && (actualTool[button] != null)) {
-            actualTool[button].dragged(e.getStartX(), e.getStartY(), e.getEndX(), e.getEndY());
-            EventBus.publish(new RepaintRequestEvent());
+        if (e.getButton() == MouseButton.LeftButton) {
+            int x = Utils.getMapXFormDisp(e.getX(), e.getY(), renderer.getTranslationX(), renderer.getTranslationY(),
+                    renderer.getZoom());
+            int y = Utils.getMapYFormDisp(e.getX(), e.getY(), renderer.getTranslationX(), renderer.getTranslationY(),
+                    renderer.getZoom());
+            actualTool.clickedAt(x, y);
         }
+
+        EventBus.publish(new RepaintRequestEvent());
+    }
+
+    @EventSubscriber(eventClass = MapDragFinishedEvent.class)
+    public void onMapDragFinished(final MapDragFinishedEvent e) {
+//
+//        int startX = Math.min(e.getStartX(), e.getEndX());
+//        int startY = Math.min(e.getStartY(), e.getEndY());
+//        int endX = Math.max(e.getStartX(), e.getEndX());
+//        int endY = Math.max(e.getStartY(), e.getEndY());
+//
+//        Vector2i pos = new Vector2i(startX, startY);
+//        Vector2i dim = new Vector2i(endX - startX, endY - startY);
+//        System.out.println(e);
+//        System.out.println(pos + "   " + dim);
+//        actualTool.selected(pos, dim);
+//        EventBus.publish(new RepaintRequestEvent());
     }
 
     @EventSubscriber(eventClass = TileSelectedEvent.class)
@@ -103,15 +124,16 @@ public final class ToolManager implements Disposable {
         LOGGER.debug("Selected: " + e.getTileImg());
     }
 
+
     @EventSubscriber(eventClass = ItemSelectedEvent.class)
     public void onItemSelected(final ItemSelectedEvent e) {
         selectedItem = e.getItemImg();
         LOGGER.debug("Selected: " + e.getItemImg());
     }
 
-    @EventSubscriber(eventClass = SelectToolEvent.class)
-    public void onSelectTool(final SelectToolEvent e) {
-        setTool(e.getTool(), e.getButton());
+    @EventSubscriber(eventClass = ToolSelectedEvent.class)
+    public void onSelectTool(final ToolSelectedEvent e) {
+        setTool(e.getTool());
     }
 
 }

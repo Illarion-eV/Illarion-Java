@@ -20,6 +20,8 @@ package illarion.mapedit.data;
 
 import illarion.mapedit.data.formats.Decoder;
 import illarion.mapedit.data.formats.Version1Decoder;
+import illarion.mapedit.data.formats.Version2Decoder;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.HashMap;
@@ -32,6 +34,7 @@ import java.util.regex.Pattern;
  * @author Tim
  */
 public class MapIO {
+    private static final Logger LOGGER = Logger.getLogger(MapIO.class);
     private static final String HEADER_V = "V:";
     private static final String HEADER_L = "L:";
     private static final String HEADER_X = "X:";
@@ -41,12 +44,13 @@ public class MapIO {
     public static final String EXT_WARP = ".warps.txt";
     public static final String EXT_ITEM = ".items.txt";
     public static final String EXT_TILE = ".tiles.txt";
-    private static final String NEWLINE = "\n\r";
+    private static final char NEWLINE = '\n';
     private static final String VERSION_PATTERN = "V: \\d+";
     private static final java.util.Map<String, Decoder> DECODERS = new HashMap<String, Decoder>();
 
     static {
         DECODERS.put("1", new Version1Decoder());
+        DECODERS.put("2", new Version2Decoder());
     }
 
     private MapIO() {
@@ -62,7 +66,7 @@ public class MapIO {
      * @throws IOException if an error occurs
      */
     public static Map loadMap(final String path, final String name) throws IOException {
-
+        LOGGER.debug("Load map " + name + "  at " + path);
 //        Open the streams for all 3 files, containing the map data
         final File tileFile = new File(path, name + EXT_TILE);
         final File itemFile = new File(path, name + EXT_ITEM);
@@ -73,6 +77,7 @@ public class MapIO {
         final String version;
         final String versionLine = tileInput.readLine();
         final Decoder decoder;
+        System.out.println(versionLine);
         if (Pattern.matches(VERSION_PATTERN, versionLine)) {
             version = versionLine.substring(3).trim();
             decoder = DECODERS.get(version);
@@ -141,19 +146,19 @@ public class MapIO {
         for (int y = 0; y < map.getWidth(); ++y) {
             for (int x = 0; x < map.getHeight(); ++x) {
                 final MapTile tile = map.getTileAt(x, y);
-                tileOutput.write(String.format("%d;%d;%d;%d;0%s", x, y, tile.getId(), tile.getMusicID(), NEWLINE));
+                writeLine(tileOutput, x, y, tile.getId(), tile.getMusicID(), NEWLINE);
 
                 final List<MapItem> items = tile.getMapItems();
-                if ((items != null) && !items.isEmpty()) {
+                if (items != null) {
                     for (final MapItem item : items) {
-                        itemOutput.write(String.format("%d;%d;0;%d;%d;%s%s", x, y, item.getId(), item.getQuality(),
-                                item.getItemData(), NEWLINE));
+                        writeLine(itemOutput, x, y, item.getId(), item.getQuality(),
+                                item.getItemData(), NEWLINE);
                     }
                 }
                 final MapWarpPoint warp = tile.getMapWarpPoint();
                 if (warp != null) {
-                    warpOutput.write(String.format("%d;%d;%d;%d;%d%s", x, y, warp.getXTarget(), warp.getYTarget(),
-                            warp.getZTarget(), NEWLINE));
+                    writeLine(warpOutput, x, y, warp.getXTarget(), warp.getYTarget(),
+                            warp.getZTarget(), NEWLINE);
                 }
             }
         }
@@ -174,4 +179,14 @@ public class MapIO {
         return true;
     }
 
+    private static void writeLine(final BufferedWriter writer, Object... args) throws IOException {
+        for (int i = 0; i < args.length; ++i) {
+            writer.write(args[i].toString());
+            if (i < (args.length - 1)) {
+                writer.write(';');
+            } else {
+                writer.write(NEWLINE);
+            }
+        }
+    }
 }

@@ -18,45 +18,45 @@
  */
 package illarion.mapedit.events;
 
-import illarion.mapedit.util.MouseButton;
-
 /**
  * @author Tim
  */
-public class MapDraggedEvent {
+public class MapDragFinishedEvent {
+    private final int startX;
+    private final int startY;
+    private final int endX;
+    private final int endY;
 
-    private final int x;
-    private final int y;
-    private final int offsetX;
-    private final int offsetY;
-    private final MouseButton button;
-
-
-    public MapDraggedEvent(final int x, final int y, final int offsetX, final int offsetY, final MouseButton button) {
-        this.x = x;
-        this.y = y;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-        this.button = button;
+    public MapDragFinishedEvent(final int startX, final int startY, final int endX, final int endY) {
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
     }
 
-    public int getOffsetX() {
-        return offsetX;
+    public int getEndY() {
+        return endY;
     }
 
-    public int getOffsetY() {
-        return offsetY;
+    public int getEndX() {
+        return endX;
     }
 
-    public MouseButton getButton() {
-        return button;
+    public int getStartY() {
+        return startY;
     }
 
-    public int getX() {
-        return x;
+    public int getStartX() {
+        return startX;
     }
 
-    public int getY() {
-        return y;
+    @Override
+    public String toString() {
+        return "MapDragFinishedEvent{" +
+                "startX=" + startX +
+                ", startY=" + startY +
+                ", endX=" + endX +
+                ", endY=" + endY +
+                '}';
     }
 }

@@ -19,20 +19,20 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.events.SelectToolEvent;
-import illarion.mapedit.resource.loaders.ImageLoader;
+import illarion.mapedit.gui.util.ToolMenuButton;
+import illarion.mapedit.tools.AbstractTool;
+import illarion.mapedit.tools.SingleItemTool;
 import illarion.mapedit.tools.SingleTileTool;
-import illarion.mapedit.util.MouseButton;
 import javolution.util.FastList;
-import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
+import org.pushingpixels.flamingo.api.common.popup.JCommandPopupMenu;
+import org.pushingpixels.flamingo.api.common.popup.JPopupPanel;
+import org.pushingpixels.flamingo.api.common.popup.PopupPanelCallback;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 /**
@@ -43,21 +43,34 @@ public class ToolBand extends JRibbonBand {
     public ToolBand() {
         super(Lang.getMsg("gui.toolband.Name"), null);
 
-        final JCommandButton singleTileToolBtn = new JCommandButton(
-                Lang.getMsg("gui.toolband.SingleTileTool"),
-                ImageLoader.getResizableIcon("singleSelect")
+        final JCommandButton toolButton = new JCommandButton(
+                Lang.getMsg("gui.toolband.Name"),
+                null
         );
+        final JCommandPopupMenu menu = new JCommandPopupMenu();
 
-        final ActionListener singleTileToolListener = new ActionListener() {
+        List<AbstractTool> tools = new FastList<AbstractTool>();
+
+        tools.add(new SingleItemTool());
+        tools.add(new SingleTileTool());
+
+
+        for (AbstractTool t : tools) {
+            menu.addMenuButton(new ToolMenuButton(
+                    t, t.getLocalizedName(), t.getToolIcon()
+            ));
+        }
+
+
+        toolButton.setCommandButtonKind(JCommandButton.CommandButtonKind.POPUP_ONLY);
+        toolButton.setPopupCallback(new PopupPanelCallback() {
             @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new SelectToolEvent(new SingleTileTool(), MouseButton.LeftButton));
+            public JPopupPanel getPopupPanel(final JCommandButton commandButton) {
+                return menu;
             }
-        };
+        });
 
-        singleTileToolBtn.addActionListener(singleTileToolListener);
-
-        addCommandButton(singleTileToolBtn, RibbonElementPriority.TOP);
+        addCommandButton(toolButton, RibbonElementPriority.TOP);
 
         final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));

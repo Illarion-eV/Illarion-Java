@@ -68,8 +68,8 @@ public class Version2Decoder implements Decoder {
     public void decodeItemLine(final String line) throws FormatCorruptedException {
 //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
         final String[] sections = DELIMITER.split(line);
-        if ((sections.length != 5) && (sections.length != 6)) {
-            throw new FormatCorruptedException(path, line);
+        if (sections.length < 5) {
+            throw new FormatCorruptedException("Item", path, line);
         }
         final int ix = Integer.parseInt(sections[0]);
         final int iy = Integer.parseInt(sections[1]);
@@ -89,8 +89,8 @@ public class Version2Decoder implements Decoder {
             return;
         }
         final String[] sections = DELIMITER.split(line);
-        if (sections.length != 5) {
-            throw new FormatCorruptedException(path, line);
+        if (sections.length != 4) {
+            throw new FormatCorruptedException("Tile", path, line);
         }
         final int tx = Integer.parseInt(sections[0]);
         final int ty = Integer.parseInt(sections[1]);
@@ -104,7 +104,7 @@ public class Version2Decoder implements Decoder {
     public void decodeWarpLine(final String line) throws FormatCorruptedException {
         final String[] sections = DELIMITER.split(line);
         if (sections.length != 5) {
-            throw new FormatCorruptedException(path, line);
+            throw new FormatCorruptedException("Warp", path, line);
         }
         final int sx = Integer.parseInt(sections[0]);
         final int sy = Integer.parseInt(sections[1]);
@@ -117,7 +117,7 @@ public class Version2Decoder implements Decoder {
 
     @Override
     public Map getDecodedMap() {
-        return null;
+        return map;
     }
 
     private void decodeHeader(final String line) {

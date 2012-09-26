@@ -16,38 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools;
+package illarion.mapedit.gui.util;
 
-import illarion.mapedit.Lang;
-import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapTile;
-import illarion.mapedit.resource.TileImg;
+import illarion.mapedit.events.ToolSelectedEvent;
+import illarion.mapedit.tools.AbstractTool;
+import org.bushe.swing.event.EventBus;
+import org.pushingpixels.flamingo.api.common.JCommandMenuButton;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * @author Tim
  */
-public class SingleTileTool extends AbstractTool {
+public class ToolMenuButton extends JCommandMenuButton {
+    /**
+     * Creates a new command menu button.
+     *
+     * @param title Command menu button title.
+     * @param icon  Command menu button icon.
+     */
+    public ToolMenuButton(final AbstractTool tool, final String title, ResizableIcon icon) {
+        super(title, icon);
 
-    @Override
-    public void clickedAt(final int x, final int y) {
-        final Map m = getManager().getMap();
-        if (!m.contains(x, y)) {
-            return;
-        }
-        final TileImg tile = getManager().getSelectedTile();
-        if (tile != null) {
-            m.setTileAt(x, y, new MapTile(tile.getId(), 0));
-        }
-    }
-
-    @Override
-    public String getLocalizedName() {
-        return Lang.getMsg("tools.SingleTileTool");
-    }
-
-    @Override
-    public ResizableIcon getToolIcon() {
-        return null;
+        addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                EventBus.publish(new ToolSelectedEvent(tool));
+            }
+        });
     }
 }

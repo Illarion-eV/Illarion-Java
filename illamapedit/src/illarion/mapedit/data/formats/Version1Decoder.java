@@ -71,7 +71,7 @@ public class Version1Decoder implements Decoder {
 
         final String[] sections = DELIMITER.split(line);
         if ((sections.length != 5) && (sections.length != 6)) {
-            throw new FormatCorruptedException(path, line);
+            throw new FormatCorruptedException("(Items) Argument length is lower than 5 or bigger than 6", path, line);
         }
         final int ix = Integer.parseInt(sections[0]);
         final int iy = Integer.parseInt(sections[1]);
@@ -99,7 +99,7 @@ public class Version1Decoder implements Decoder {
 
         final String[] sections = DELIMITER.split(line);
         if (sections.length != 5) {
-            throw new FormatCorruptedException(path, line);
+            throw new FormatCorruptedException("", path, line);
         }
         final int tx = Integer.parseInt(sections[0]);
         final int ty = Integer.parseInt(sections[1]);
@@ -144,7 +144,8 @@ public class Version1Decoder implements Decoder {
     public void decodeWarpLine(final String line) throws FormatCorruptedException {
         final String[] sections = DELIMITER.split(line);
         if (sections.length != 5) {
-            throw new FormatCorruptedException(path, line);
+            throw new FormatCorruptedException("(Warps) Argument length is too height: " + sections.length, path,
+                    line);
         }
         final int sx = Integer.parseInt(sections[0]);
         final int sy = Integer.parseInt(sections[1]);

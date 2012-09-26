@@ -18,10 +18,16 @@
  */
 package illarion.mapedit.tools;
 
+import illarion.mapedit.util.Vector2i;
+import org.apache.log4j.Logger;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+
 /**
  * @author Tim
  */
 public abstract class AbstractTool {
+
+    protected static final Logger LOGGER = Logger.getLogger(AbstractTool.class);
 
     private ToolManager manager;
 
@@ -33,22 +39,25 @@ public abstract class AbstractTool {
      */
     public abstract void clickedAt(int x, int y);
 
-    /**
-     * WARNING x1, x2, y1, y2 are pixel coordinates relative to the panel!
-     *
-     * @param x1
-     * @param y1
-     * @param x2
-     * @param y2
-     */
-    public abstract void dragged(int x1, int y1, int x2, int y2);
+    public void selected(Vector2i pos, Vector2i dim) {
+        for (int i = pos.getX(); i <= dim.getX() + pos.getX(); ++i) {
+            LOGGER.debug("X:" + i + " width:" + dim.getY());
+            for (int j = pos.getY(); j <= dim.getY() + pos.getY(); ++j) {
+                clickedAt(i, j);
+            }
+        }
+    }
 
-    public void registerManager(final ToolManager toolManager) {
+    public abstract String getLocalizedName();
+
+    public abstract ResizableIcon getToolIcon();
+
+    public final void registerManager(final ToolManager toolManager) {
         manager = toolManager;
     }
 
 
-    protected ToolManager getManager() {
+    protected final ToolManager getManager() {
         return manager;
     }
 }

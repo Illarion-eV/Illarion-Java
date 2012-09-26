@@ -242,7 +242,10 @@ public final class MapEditor {
         LOGGER.addAppender(new ConsoleAppender(consoleLayout));
         final Layout fileLayout = new PatternLayout("%-5p - %d{ISO8601} - [%t]: %m%n");
         try {
-            LOGGER.addAppender(new RollingFileAppender(fileLayout, "mapedit.log"));
+            final RollingFileAppender fileAppender = new RollingFileAppender(fileLayout, "mapedit.log");
+            fileAppender.setMaxBackupIndex(9);
+            fileAppender.setMaxFileSize("50KB");
+            LOGGER.addAppender(fileAppender);
         } catch (IOException e) {
             LOGGER.warn("Can't write log to file");
         }

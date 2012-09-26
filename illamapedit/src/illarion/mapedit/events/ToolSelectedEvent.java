@@ -19,27 +19,20 @@
 package illarion.mapedit.events;
 
 import illarion.mapedit.tools.AbstractTool;
-import illarion.mapedit.util.MouseButton;
 
 /**
  * @author Tim
  */
-public class SelectToolEvent {
+public class ToolSelectedEvent {
 
     private final AbstractTool tool;
-    private final MouseButton button;
 
-    public SelectToolEvent(final AbstractTool tool, final MouseButton button) {
+    public ToolSelectedEvent(final AbstractTool tool) {
 
         this.tool = tool;
-        this.button = button;
     }
 
     public AbstractTool getTool() {
         return tool;
-    }
-
-    public MouseButton getButton() {
-        return button;
     }
 }

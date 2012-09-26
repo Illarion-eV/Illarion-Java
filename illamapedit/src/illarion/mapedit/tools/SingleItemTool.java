@@ -18,30 +18,39 @@
  */
 package illarion.mapedit.tools;
 
+import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.resource.ItemImg;
-import org.apache.log4j.Logger;
+import illarion.mapedit.util.Vector2i;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 /**
  * @author Tim
  */
 public class SingleItemTool extends AbstractTool {
 
-    private static final Logger LOGGER = Logger.getLogger(SingleItemTool.class);
-
     @Override
     public void clickedAt(final int x, final int y) {
         final Map m = getManager().getMap();
+        Vector2i pos = new Vector2i(x, y);
+        if (!m.contains(x, y)) {
+            return;
+        }
         final ItemImg item = getManager().getSelectedItem();
         if (item != null) {
             m.getTileAt(x, y).getMapItems().add(new MapItem(item.getItemId(), "", 0));
-            LOGGER.debug("SingleTileTool: " + item.getResourceName());
         }
     }
 
+
     @Override
-    public void dragged(final int x1, final int y1, final int x2, final int y2) {
-        //do nothing
+    public String getLocalizedName() {
+        return Lang.getMsg("tools.SingleItemTool");
+    }
+
+    @Override
+    public ResizableIcon getToolIcon() {
+        return null;
     }
 }

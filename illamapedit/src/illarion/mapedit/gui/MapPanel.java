@@ -21,12 +21,12 @@ package illarion.mapedit.gui;
 import illarion.mapedit.Utils;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.events.MapClickedEvent;
+import illarion.mapedit.events.MapDragFinishedEvent;
 import illarion.mapedit.events.MapDraggedEvent;
 import illarion.mapedit.events.RepaintRequestEvent;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.util.MouseButton;
-import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -41,17 +41,16 @@ import java.awt.event.*;
  * @author Tim
  */
 public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener {
-    /**
-     * The logger instance for this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(MapPanel.class);
     private static final MapPanel INSTANCE = new MapPanel();
     private final RendererManager rendererManager;
     private final Rectangle dirty;
     private Map mapData;
     private boolean canDrag;
+    private boolean isDragging;
     private int clickX;
     private int clickY;
+    private int downClickX;
+    private int downClickY;
     private int mouseMapPosX;
     private int mouseMapPosY;
     private ToolManager toolManager;
@@ -110,17 +109,24 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
 
     @Override
     public void mouseDragged(final MouseEvent e) {
+
         if (!canDrag || (mapData == null)) {
             return;
         }
 
-        EventBus.publish(new MapDraggedEvent(clickX, clickY, e.getX(), e.getY(), MouseButton.fromAwt(e.getModifiers())));
+        final MouseButton btn = MouseButton.fromAwt(e.getModifiers());
 
-
+        if (btn == MouseButton.RightButton) {
+            rendererManager.changeTranslation(e.getX() - clickX, e.getY() - clickY);
+        } else {
+            isDragging = true;
+            if (btn == MouseButton.LeftButton) {
+                EventBus.publish(new MapDraggedEvent(clickX, clickY, e.getX(), e.getY(), btn));
+            }
+        }
+        EventBus.publish(new RepaintRequestEvent());
         clickX = e.getX();
         clickY = e.getY();
-
-
     }
 
     @Override
@@ -129,6 +135,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         final int transY = rendererManager.getTranslationY();
         mouseMapPosX = Utils.getMapXFormDisp(e.getX(), e.getY(), transX, transY, rendererManager.getZoom());
         mouseMapPosY = Utils.getMapYFormDisp(e.getX(), e.getY(), transX, transY, rendererManager.getZoom());
+        EventBus.publish(new RepaintRequestEvent());
     }
 
     @Override
@@ -148,11 +155,28 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         if (canDrag && (mapData != null)) {
             clickX = e.getX();
             clickY = e.getY();
+            downClickX = e.getX();
+            downClickY = e.getY();
         }
     }
 
     @Override
     public void mouseReleased(final MouseEvent e) {
+        if (isDragging) {
+            final int x1 = Utils.getMapXFormDisp(downClickX, downClickY, rendererManager.getTranslationX(),
+                    rendererManager.getTranslationY(), rendererManager.getZoom());
+            final int y1 = Utils.getMapYFormDisp(downClickY, downClickY, rendererManager.getTranslationX(),
+                    rendererManager.getTranslationY(), rendererManager.getZoom());
+            final int x2 = Utils.getMapXFormDisp(e.getX(), e.getY(), rendererManager.getTranslationX(),
+                    rendererManager.getTranslationY(), rendererManager.getZoom());
+            final int y2 = Utils.getMapYFormDisp(e.getX(), e.getY(), rendererManager.getTranslationX(),
+                    rendererManager.getTranslationY(), rendererManager.getZoom());
+
+            if (x1 != x2 && y1 != y2) {
+                EventBus.publish(new MapDragFinishedEvent(x1, y1, x2, y2));
+            }
+        }
+        isDragging = false;
     }
 
     @Override
