@@ -38,7 +38,7 @@ public final class AttributeMsg extends AbstractReply {
      * The format string for the {@link #toString()}.
      */
     @SuppressWarnings("nls")
-    private static final String TO_STRING_FORMAT = "%1$s = %2$d";
+    private static final String TO_STRING_FORMAT = "%3$s: %1$s = %2$d";
 
     /**
      * The ID of the character this attribute update is related to.
@@ -121,6 +121,6 @@ public final class AttributeMsg extends AbstractReply {
      */
     @Override
     public String toString() {
-        return toString(String.format(TO_STRING_FORMAT, attribute, value));
+        return toString(String.format(TO_STRING_FORMAT, attribute, value, targetCharacter));
     }
 }
