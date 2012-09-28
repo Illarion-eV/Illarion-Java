@@ -1139,7 +1139,6 @@ public final class Char
                 setWearingItem(AvatarClothManager.GROUP_COAT, itemId.getValue());
                 break;
         }
-        setWearingItem(slot, itemId.getValue());
     }
 
     /**
@@ -1153,11 +1152,9 @@ public final class Char
                 ) {
             applyPaperdollingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
             applyPaperdollingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
-            System.out.println("Hands normal aligned");
         } else {
             applyPaperdollingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
             applyPaperdollingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
-            System.out.println("Hands inverse aligned");
         }
         for (int i = 0; i < wearItems.length; ++i) {
             if ((i != AvatarClothManager.GROUP_HAIR) && (i != AvatarClothManager.GROUP_BEARD)) {
