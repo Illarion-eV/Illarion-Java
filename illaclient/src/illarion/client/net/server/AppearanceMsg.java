@@ -22,6 +22,7 @@ import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
 import illarion.client.world.Char;
 import illarion.client.world.World;
+import illarion.client.world.items.Inventory;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
@@ -178,11 +179,15 @@ public final class AppearanceMsg extends AbstractReply {
      */
     private short skinColorRed;
 
+    private final ItemId[] itemSlots;
+
     /**
      * Default constructor for the appearance message.
      */
     public AppearanceMsg() {
         super(CommandList.MSG_APPEARANCE);
+
+        itemSlots = new ItemId[Inventory.SLOT_COUNT];
     }
 
     /**
@@ -220,20 +225,10 @@ public final class AppearanceMsg extends AbstractReply {
         skinColorRed = reader.readUByte();
         skinColorGreen = reader.readUByte();
         skinColorBlue = reader.readUByte();
-        headItemId = new ItemId(reader);
-        breastItemId = new ItemId(reader);
-        backItemId = new ItemId(reader);
-        leftItemId = new ItemId(reader);
-        rightItemId = new ItemId(reader);
-        legsItemId = new ItemId(reader);
-        feetItemId = new ItemId(reader);
 
-        new ItemId(reader); //belt 1
-        new ItemId(reader); //belt 2
-        new ItemId(reader); //belt 3
-        new ItemId(reader); //belt 4
-        new ItemId(reader); //belt 5
-        new ItemId(reader); //belt 6
+        for (int i = 0; i < itemSlots.length; i++) {
+            itemSlots[i] = new ItemId(reader);
+        }
 
         attackMode = reader.readUByte();
         deadFlag = reader.readUByte() == 1;
@@ -278,14 +273,10 @@ public final class AppearanceMsg extends AbstractReply {
         ch.resetLight();
         ch.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
         ch.setWearingItem(AvatarClothManager.GROUP_BEARD, beardID);
-        ch.setWearingItem(AvatarClothManager.GROUP_CHEST, breastItemId);
-        ch.setWearingItem(AvatarClothManager.GROUP_COAT, backItemId);
-        ch.setWearingItem(AvatarClothManager.GROUP_HAT, headItemId);
-        ch.setWearingItem(AvatarClothManager.GROUP_TROUSERS, legsItemId);
-        ch.setWearingItem(AvatarClothManager.GROUP_SHOES, feetItemId);
 
-        ch.setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, rightItemId);
-        ch.setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, leftItemId);
+        for (int i = 0; i < itemSlots.length; i++) {
+            ch.setInventoryItem(i, itemSlots[i]);
+        }
         ch.updatePaperdoll();
 
         TEMP_COLOR.r = skinColorRed / 255.f;

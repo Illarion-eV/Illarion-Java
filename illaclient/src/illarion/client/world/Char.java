@@ -959,13 +959,15 @@ public final class Char
             return;
         }
 
-        final int light = ItemFactory.getInstance().getPrototype(id).getItemLight();
+        wearItems[slot] = id;
+    }
+
+    private void applyLightValue(final int itemId) {
+        final int light = ItemFactory.getInstance().getPrototype(itemId).getItemLight();
 
         if (light > lightValue) {
             lightValue = light;
         }
-
-        wearItems[slot] = id;
     }
 
     /**
@@ -1113,8 +1115,31 @@ public final class Char
         }
     }
 
-    public void setWearingItem(final int group, final ItemId itemId) {
-        setWearingItem(group, itemId.getValue());
+    public void setInventoryItem(final int slot, final ItemId itemId) {
+        switch (slot) {
+            case 1:
+                setWearingItem(AvatarClothManager.GROUP_HAT, itemId.getValue());
+                break;
+            case 3:
+                setWearingItem(AvatarClothManager.GROUP_CHEST, itemId.getValue());
+                break;
+            case 5:
+                setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, itemId.getValue());
+                break;
+            case 6:
+                setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, itemId.getValue());
+                break;
+            case 9:
+                setWearingItem(AvatarClothManager.GROUP_TROUSERS, itemId.getValue());
+                break;
+            case 10:
+                setWearingItem(AvatarClothManager.GROUP_SHOES, itemId.getValue());
+                break;
+            case 11:
+                setWearingItem(AvatarClothManager.GROUP_COAT, itemId.getValue());
+                break;
+        }
+        setWearingItem(slot, itemId.getValue());
     }
 
     /**
@@ -1122,6 +1147,7 @@ public final class Char
      * changed or in case the avatar instance changed.
      */
     public void updatePaperdoll() {
+        lightValue = 0;
         if (hasWearingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]) ||
                 hasWearingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND])
                 ) {
@@ -1134,6 +1160,9 @@ public final class Char
             System.out.println("Hands inverse aligned");
         }
         for (int i = 0; i < wearItems.length; ++i) {
+            if ((i != AvatarClothManager.GROUP_HAIR) && (i != AvatarClothManager.GROUP_BEARD)) {
+                applyLightValue(wearItems[i]);
+            }
             if ((i == AvatarClothManager.GROUP_FIRST_HAND) || (i == AvatarClothManager.GROUP_SECOND_HAND)) {
                 continue;
             }
