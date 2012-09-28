@@ -20,9 +20,9 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
-import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
 import illarion.common.net.NetCommReader;
+import illarion.common.types.CharacterId;
 import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
@@ -39,6 +39,11 @@ public final class AttributeMsg extends AbstractReply {
      */
     @SuppressWarnings("nls")
     private static final String TO_STRING_FORMAT = "%1$s = %2$d";
+
+    /**
+     * The ID of the character this attribute update is related to.
+     */
+    private CharacterId targetCharacter;
 
     /**
      * The name of the received attribute.
@@ -78,6 +83,7 @@ public final class AttributeMsg extends AbstractReply {
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
+        targetCharacter = new CharacterId(reader);
         attribute = reader.readString();
         value = reader.readUShort();
     }
@@ -92,8 +98,7 @@ public final class AttributeMsg extends AbstractReply {
     public boolean executeUpdate() {
         for (final CharacterAttribute charAttribute : CharacterAttribute.values()) {
             if (charAttribute.getServerName().equals(attribute)) {
-                EventBus.publish(new AttributeUpdateReceivedEvent(World.getPlayer().getPlayerId(), charAttribute,
-                        value));
+                EventBus.publish(new AttributeUpdateReceivedEvent(targetCharacter, charAttribute, value));
             }
         }
         return true;
@@ -105,6 +110,7 @@ public final class AttributeMsg extends AbstractReply {
     @Override
     public void reset() {
         attribute = null;
+        targetCharacter = null;
     }
 
     /**
