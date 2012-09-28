@@ -179,11 +179,6 @@ public final class AppearanceMsg extends AbstractReply {
     private short skinColorRed;
 
     /**
-     * The visibility bonus for that character.
-     */
-    private byte visibilityBonus;
-
-    /**
      * Default constructor for the appearance message.
      */
     public AppearanceMsg() {
@@ -217,7 +212,6 @@ public final class AppearanceMsg extends AbstractReply {
         final boolean male = reader.readUByte() == 0;
         appearance = getAppearance(race, male);
         size = reader.readUByte();
-        visibilityBonus = reader.readByte();
         hairID = reader.readUByte();
         beardID = reader.readUByte();
         hairColorRed = reader.readUByte();
@@ -233,6 +227,14 @@ public final class AppearanceMsg extends AbstractReply {
         rightItemId = new ItemId(reader);
         legsItemId = new ItemId(reader);
         feetItemId = new ItemId(reader);
+
+        new ItemId(reader); //belt 1
+        new ItemId(reader); //belt 2
+        new ItemId(reader); //belt 3
+        new ItemId(reader); //belt 4
+        new ItemId(reader); //belt 5
+        new ItemId(reader); //belt 6
+
         attackMode = reader.readUByte();
         deadFlag = reader.readUByte() == 1;
     }
@@ -272,7 +274,6 @@ public final class AppearanceMsg extends AbstractReply {
         }
 
         ch.setScale(size / SCALE_MOD);
-        ch.setVisibilityBonus(visibilityBonus);
         ch.setAppearance(appearance);
         ch.resetLight();
         ch.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
@@ -540,8 +541,6 @@ public final class AppearanceMsg extends AbstractReply {
         builder.append(size);
         builder.append(" weapon=");
         builder.append(attackMode);
-        builder.append(" vis=");
-        builder.append(visibilityBonus);
         return toString(builder.toString());
     }
 }
