@@ -249,8 +249,7 @@ public class TextTag implements Drawable, RecycleObject {
         g.setColor(BACK_COLOR);
         g.fillRect(displayRect.getX(), displayRect.getY(), displayRect.getWidth(), displayRect.getHeight());
         TEXT_TAG_FONT.renderText(g, text, displayX - dX, displayY - dY,
-                SlickRenderUtils.convertColorSlickNifty(color, NIFTY_COLOR), 1.f,
-                1.f);
+                SlickRenderUtils.convertColorSlickNifty(color, NIFTY_COLOR), 1.f, 1.f);
 
 
         if (parentDirtyArea != null) {

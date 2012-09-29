@@ -30,6 +30,7 @@ import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.*;
 import org.newdawn.slick.opengl.renderer.SGL;
+import org.newdawn.slick.opengl.shader.ShaderProgram;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -426,7 +427,28 @@ public final class MapDisplayManager
             renderImpl(usedGraphics);
 
             if (gameScreenImage != null) {
-                g.drawImage(gameScreenImage, 0, 0);
+                if (fogShader == null) {
+                    try {
+                        fogShader = ShaderProgram.loadProgram("illarion/client/graphics/shader/fog.vert",
+                                "illarion/client/graphics/shader/fog.frag");
+                    } catch (SlickException e) {
+                        LOGGER.error("Error loading shader!", e);
+                    }
+                }
+
+                if (fogShader != null) {
+                    fogShader.bind();
+                    fogShader.setUniform1i("tex0", 0);
+                    //fogShader.setUniform2f("center", gameScreenImage.getWidth() / 2.f,
+                    //        gameScreenImage.getHeight() / 2.f);
+                    //fogShader.setUniform1f("density", 1.f);
+
+                    g.drawImage(gameScreenImage, 0, 0);
+
+                    fogShader.unbind();
+                } else {
+                    g.drawImage(gameScreenImage, 0, 0);
+                }
                 Camera.getInstance().renderDebug(g);
             }
         }
@@ -437,6 +459,8 @@ public final class MapDisplayManager
             g.fillRect(0, 0, c.getWidth(), c.getHeight());
         }
     }
+
+    private ShaderProgram fogShader = null;
 
     /**
      * Implementation of the core rendering function that just renders the map to the assigned graphic context.

@@ -235,7 +235,7 @@ public final class NamesTable {
                 }
             }
         } catch (final ZipException e) {
-            LOGGER.error("Failed to decode file compression " + nameTable.getPath(), e);
+            LOGGER.error("Failed to decode file compression " + nameTable.getPath());
         } catch (final FileNotFoundException e) {
             LOGGER.error("Can't read the name table file " + nameTable.getPath(), e);
         } catch (final IOException e) {
