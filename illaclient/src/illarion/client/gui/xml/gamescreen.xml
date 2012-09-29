@@ -109,22 +109,6 @@
                     </panel>
                 </panel>
             </control>
-            <control id="charlist" name="window" style="nifty-window" title="${gamescreen-bundle.characters}"
-                     visible="true" hideOnClose="true" height="175px" width="250px" x="100px" y="100px">
-                <panel childLayout="vertical">
-                    <panel childLayout="horizontal">
-                        <control name="label" text="Anzeige:"/>
-                        <panel width="3px"/>
-                        <control id="charlist-viewselection" style="nifty-drop-down" name="dropDown" width="*"/>
-                    </panel>
-                    <panel height="3px"/>
-                    <panel childLayout="center">
-                        <control id="charlist-list" name="listBox" style="nifty-list-box" displayItems="4"
-                                 selection="Single" vertical="on" horizontal="off"/>
-                    </panel>
-                    <panel height="3px"/>
-                </panel>
-            </control>
         </layer>
         <layer id="tooltipLayer" childLayout="absolute" visibleToMouse="false"/>
     </screen>
