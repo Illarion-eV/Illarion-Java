@@ -269,16 +269,19 @@ final class Utils {
                 return Lang.getMsg(Utils.class, "easyNpcScriptsFileType"); //$NON-NLS-1$
             }
         });
-        fileDiag.setCurrentDirectory(new File(Config.getInstance()
-                .getEasyNpcFolder()));
+        fileDiag.setCurrentDirectory(new File(Config.getInstance().getEasyNpcFolder()));
         fileDiag.setSelectedFile(editor.getScriptFile());
-        final int fileReturn =
-                fileDiag.showSaveDialog(MainFrame.getInstance());
+        final int fileReturn = fileDiag.showSaveDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
-            final File targetFile = fileDiag.getSelectedFile();
-            saveEasyNPCImpl(script, targetFile);
-            editor.setLoadScriptFile(targetFile);
-            MainFrame.getInstance().setTabTitle(editor, targetFile.getName());
+            String targetFile = fileDiag.getSelectedFile().getAbsolutePath();
+            if (!targetFile.endsWith(".npc")) {
+                targetFile += ".npc";
+            }
+
+            final File realTargetFile = new File(targetFile);
+            saveEasyNPCImpl(script, realTargetFile);
+            editor.setLoadScriptFile(realTargetFile);
+            MainFrame.getInstance().setTabTitle(editor, realTargetFile.getName());
         }
         editor.saved();
     }
