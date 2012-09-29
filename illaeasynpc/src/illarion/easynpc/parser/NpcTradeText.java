@@ -46,7 +46,8 @@ public final class NpcTradeText implements NpcType {
 
     @Override
     public boolean canParseLine(final EasyNpcScript.Line line) {
-        return NOT_ENOUGH_MONEY_PATTERN.matcher(line.getLine()).matches() ||
+        return WRONG_ITEM_PATTERN.matcher(line.getLine()).matches() ||
+                NOT_ENOUGH_MONEY_PATTERN.matcher(line.getLine()).matches() ||
                 TRADE_ENDED_PATTERN.matcher(line.getLine()).matches() ||
                 TRADE_ENDED_NO_ACTION_PATTERN.matcher(line.getLine()).matches();
     }
