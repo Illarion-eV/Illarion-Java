@@ -17,6 +17,8 @@
       <entry name="?*.key" />
       <entry name="?*.lua" />
       <entry name="filelist" />
+      <entry name="?*.frag" />
+      <entry name="?*.vert" />
     </wildcardResourcePatterns>
     <annotationProcessing enabled="true" useClasspath="true" />
   </component>

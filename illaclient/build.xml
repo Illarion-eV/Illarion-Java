@@ -104,7 +104,8 @@
                 <attribute name="Implementation-Version" value="${client.version}"/>
             </manifest>
         </jar>
-        <jar jarfile="${jar}" basedir="${src}" includes="**/*.xml *.properties *.png" update="true"/>
+        <jar jarfile="${jar}" basedir="${src}" includes="**/*.xml **/*.frag **/*.vert *.properties *.png"
+             update="true"/>
         <jar jarfile="${jar}" basedir="${client}" includes="Illarion.cfg readme.txt" update="true"
              index="${build.index}"/>
     </target>

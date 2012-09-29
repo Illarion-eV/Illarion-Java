@@ -439,9 +439,12 @@ public final class MapDisplayManager
                 if (fogShader != null) {
                     fogShader.bind();
                     fogShader.setUniform1i("tex0", 0);
-                    //fogShader.setUniform2f("center", gameScreenImage.getWidth() / 2.f,
-                    //        gameScreenImage.getHeight() / 2.f);
-                    //fogShader.setUniform1f("density", 1.f);
+
+                    final float x = 0.5f * gameScreenImage.getTextureWidth();
+                    final float y = 0.5f * gameScreenImage.getTextureHeight();
+                    fogShader.setUniform2f("center", x, y);
+                    fogShader.setUniform1f("density", World.getWeather().getFog() *
+                            ((float) gameScreenImage.getHeight() / 200.f));
 
                     g.drawImage(gameScreenImage, 0, 0);
 
