@@ -21,7 +21,7 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-
+import org.illarion.nifty.controls.Progress;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
@@ -29,7 +29,7 @@ public final class LoadScreenController
         implements ScreenController {
 
     private Nifty nifty;
-    private ProgressbarControl progress;
+    private Progress progress;
 
     private final StateBasedGame game;
 
@@ -42,7 +42,7 @@ public final class LoadScreenController
     @Override
     public void bind(Nifty nifty, Screen screen) {
         this.nifty = nifty;
-        progress = screen.findControl("loading", ProgressbarControl.class);
+        progress = screen.findNiftyControl("loading", Progress.class);
     }
 
     @Override
