@@ -564,7 +564,7 @@ public final class Player {
      *
      * @param newPlayerId the new ID of the player
      */
-    public void setPlayerID(final CharacterId newPlayerId) {
+    public void setPlayerId(final CharacterId newPlayerId) {
         playerId = newPlayerId;
         character.setCharId(playerId);
 

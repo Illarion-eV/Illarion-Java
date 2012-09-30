@@ -313,7 +313,7 @@ public final class Char
 
     @EventSubscriber
     public void onAttributeUpdateReceived(final AttributeUpdateReceivedEvent event) {
-        if (event.getTargetCharId() != getCharId()) {
+        if (!event.getTargetCharId().equals(getCharId())) {
             return;
         }
 

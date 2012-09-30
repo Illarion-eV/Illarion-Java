@@ -77,7 +77,7 @@ public final class PlayerIdMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        World.getPlayer().setPlayerID(playerId);
+        World.getPlayer().setPlayerId(playerId);
         return true;
     }
 
