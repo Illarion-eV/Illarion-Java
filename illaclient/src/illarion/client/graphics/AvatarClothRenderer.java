@@ -406,7 +406,7 @@ final class AvatarClothRenderer {
         clothLock.writeLock().lock();
         try {
             if (currentClothes[group] != null) {
-                if (currentClothes[group].getId() == item.getId()) {
+                if ((item != null) && (currentClothes[group].getId() == item.getId())) {
                     return;
                 }
                 currentClothes[group].recycle();
