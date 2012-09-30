@@ -137,12 +137,16 @@ public final class InputReceiver
         keyMapper.handleKeyInput(key);
     }
 
+    @Override
+    public void mouseMoved(final int oldX, final int oldY, final int newX, final int newY) {
+        EventBus.publish(new MoveOnMapEvent(newX, newY));
+    }
+
     /**
      * @see org.newdawn.slick.InputListener#mouseClicked(int, int, int, int)
      */
     @Override
     public void mouseClicked(final int button, final int x, final int y, final int clickCount) {
-        System.out.println("click!");
         buttonMultiClickHelper.setInputData(button, x, y, forwardingControl.getInputForwardingControl());
         buttonMultiClickHelper.pulse();
     }

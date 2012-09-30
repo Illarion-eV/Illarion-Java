@@ -21,7 +21,7 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import illarion.client.gui.*;
+import illarion.client.gui.controller.game.*;
 import org.newdawn.slick.GameContainer;
 
 import java.util.ArrayList;

@@ -89,7 +89,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * The text tag is the small text box shown above the avatar that contains
      * the name of the avatar.
      */
-    private TextTag name;
+    private final AvatarTextTag tag;
 
     /**
      * The x offset value for the image of this avatar. This values are needed
@@ -150,13 +150,11 @@ public final class Avatar extends AbstractEntity implements Resource {
                   final int frames, final int still, final int offX, final int offY,
                   final int shadowOffset, final AvatarInfo avatarInfo,
                   final boolean mirror, final Color color, final int dir) {
-        super(avatarID, CHAR_PATH, resName, frames, still, offX, offY,
-                shadowOffset, Sprite.HAlign.center, Sprite.VAlign.bottom, true,
-                mirror, color);
+        super(avatarID, CHAR_PATH, resName, frames, still, offX, offY, shadowOffset, Sprite.HAlign.center,
+                Sprite.VAlign.bottom, true, mirror, color);
 
         if (avatarInfo == null) {
-            throw new IllegalArgumentException(
-                    "Avatar informations may not be NULL");
+            throw new IllegalArgumentException("Avatar informations may not be NULL");
         }
 
         targetLight = DEFAULT_LIGHT;
@@ -166,6 +164,8 @@ public final class Avatar extends AbstractEntity implements Resource {
         clothRender = new AvatarClothRenderer(dir, frames);
         clothRender.setLight(getLight());
         clothRender.setFrame(0);
+        tag = new AvatarTextTag();
+        tag.setAvatarHeight(getHeight());
         offsetX = offX;
         offsetY = offY;
         if (frames > 1) {
@@ -190,6 +190,8 @@ public final class Avatar extends AbstractEntity implements Resource {
         clothRender = new AvatarClothRenderer(org.clothRender);
         clothRender.setLight(getLight());
         clothRender.setFrame(0);
+        tag = new AvatarTextTag();
+        tag.setAvatarHeight(getHeight());
         offsetX = org.offsetX;
         offsetY = org.offsetY;
 
@@ -319,8 +321,8 @@ public final class Avatar extends AbstractEntity implements Resource {
         // draw the clothes
         clothRender.draw(g);
 
-        if (renderName && (name != null)) {
-            name.draw(g);
+        if (renderName && (tag != null)) {
+            tag.draw(g);
         }
 
         return true;
@@ -444,10 +446,6 @@ public final class Avatar extends AbstractEntity implements Resource {
         hide();
         parentChar = null;
         stopAnimation();
-        if (name != null) {
-            name.recycle();
-            name = null;
-        }
         CharacterFactory.getInstance().recycle(this);
     }
 
@@ -538,18 +536,11 @@ public final class Avatar extends AbstractEntity implements Resource {
      */
     public void setName(final String charName) {
         if (charName.isEmpty()) {
-            if (name != null) {
-                name.recycle();
-                name = null;
-            }
-            return;
+            tag.setCharacterName("unknown");
+        } else {
+            tag.setCharacterName(charName);
         }
-        if (name == null) {
-            name = TextTag.create();
-        }
-        name.setText(charName);
-        name.setColor(Color.yellow);
-        name.setOffset(name.getWidth() / 2, getHeight() + name.getHeight() + 5);
+        tag.setCharNameColor(Color.yellow);
     }
 
     /**
@@ -557,14 +548,42 @@ public final class Avatar extends AbstractEntity implements Resource {
      *
      * @param color the color that is used for the font of the the text that is
      *              shown above the character and shows the name of the character
-     * @see Color
      */
     public void setNameColor(final Color color) {
-        if (name == null) {
-            return;
-        }
+        tag.setCharNameColor(color);
+    }
 
-        name.setColor(color);
+    public void hideHealthPoints() {
+        tag.setHealthState(null);
+    }
+
+    private static final Color COLOR_UNHARMED = new Color(0, 255, 0);
+    private static final Color COLOR_SLIGHTLY_HARMED = new Color(127, 255, 0);
+    private static final Color COLOR_HARMED = new Color(255, 255, 0);
+    private static final Color COLOR_BADLY_HARMED = new Color(255, 127, 0);
+    private static final Color COLOR_NEAR_DEATH = new Color(255, 0, 0);
+    private static final Color COLOR_DEAD = new Color(173, 173, 173);
+
+    public void setHealthPoints(final int value) {
+        if (value == 10000) {
+            tag.setHealthState(Lang.getMsg("char.health.unharmed"));
+            tag.setHealthStateColor(COLOR_UNHARMED);
+        } else if (value > 80000) {
+            tag.setHealthState(Lang.getMsg("char.health.slightlyHarmed"));
+            tag.setHealthStateColor(COLOR_SLIGHTLY_HARMED);
+        } else if (value > 50000) {
+            tag.setHealthState(Lang.getMsg("char.health.harmed"));
+            tag.setHealthStateColor(COLOR_HARMED);
+        } else if (value > 20000) {
+            tag.setHealthState(Lang.getMsg("char.health.badlyHarmed"));
+            tag.setHealthStateColor(COLOR_BADLY_HARMED);
+        } else if (value > 0) {
+            tag.setHealthState(Lang.getMsg("char.health.nearDead"));
+            tag.setHealthStateColor(COLOR_NEAR_DEATH);
+        } else {
+            tag.setHealthState(Lang.getMsg("char.health.dead"));
+            tag.setHealthStateColor(COLOR_DEAD);
+        }
     }
 
     /**
@@ -595,10 +614,6 @@ public final class Avatar extends AbstractEntity implements Resource {
                              final int groupLayer) {
         super.setScreenPos(posX, posY, layerZ, groupLayer);
         clothRender.setScreenLocation(posX, posY, layerZ, groupLayer);
-
-        if ((name != null) && renderName) {
-            name.addToCamera(posX, posY);
-        }
     }
 
     /**
@@ -622,23 +637,23 @@ public final class Avatar extends AbstractEntity implements Resource {
         }
 
         if ((getAlpha() > HIDE_NAME_ALPHA)
-                && (World.getPeople().getShowMapNames() > 0) && (name != null)
+                && (World.getPeople().getShowMapNames() > 0) && (tag != null)
                 && (locLight != null)) {
             if (!renderName) {
-                name.addToCamera(getDisplayX(), getDisplayY());
+                tag.setDisplayLocation(getDisplayX(), getDisplayY());
             }
             renderName = true;
-        } else if (name != null) {
+        } else if (tag != null) {
             if (renderName) {
-                name.addToCamera(getDisplayX(), getDisplayY());
-                name.update(delta);
+                tag.setDisplayLocation(getDisplayX(), getDisplayY());
+                tag.update(delta);
             }
             renderName = false;
         }
 
-        if ((name != null) && renderName) {
-            name.addToCamera(getDisplayX(), getDisplayY());
-            name.update(delta);
+        if ((tag != null) && renderName) {
+            tag.setDisplayLocation(getDisplayX(), getDisplayY());
+            tag.update(delta);
         }
     }
 

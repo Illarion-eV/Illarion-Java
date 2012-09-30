@@ -36,7 +36,9 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -475,46 +477,6 @@ public final class People
     }
 
     /**
-     * Show the dialog for naming a character and fill in the name of the character in case its known already. The
-     * dialog is not shown for monsters and NPCs.
-     *
-     * @param chara The character that shall get named
-     */
-    @SuppressWarnings("nls")
-    public void nameCharacter(final Char chara) {
-        throwNullException(chara);
-        throwPlayerCharacter(chara);
-
-        final CharacterId charID = chara.getCharId();
-
-        if (chara.canHaveName()) {
-            String name = names.getName(charID);
-            // remove markers
-            if ((name != null) && name.startsWith("'")) {
-                name = name.substring(1, name.length() - 1);
-            }
-
-            // Gui.getInstance().getNameRequest()
-            // .request(name, new TextResponse() {
-            // @Override
-            // public boolean checkText(final String text) {
-            // return text.length() > 2;
-            // }
-
-            // @Override
-            // public void textCancelled() {
-            // // nothing to do
-            // }
-
-            // @Override
-            // public void textConfirmed(final String text) {
-            // introduce(charID, "'" + text + "'");
-            // }
-            // });
-        }
-    }
-
-    /**
      * Process a record from the table containing the names and add the name to the name storage of this class.
      *
      * @param line   current line that is handled
@@ -528,15 +490,6 @@ public final class People
         names.addName(new CharacterId(loader.getLong(0)), loader.getString(1));
 
         return true;
-    }
-
-    /**
-     * Get a collection that contains all the characters currently known.
-     *
-     * @return the list of characters
-     */
-    public Collection<Char> getCharacters() {
-        return Collections.unmodifiableCollection(chars.values());
     }
 
     /**
@@ -603,7 +556,7 @@ public final class People
         // final SayCmd cmd =
         // (SayCmd) CommandFactory.getInstance().getCommand(
         // CommandList.CMD_SAY);
-        // cmd.setText(msg.toString());
+        // cmd.setCharacterName(msg.toString());
         // Game.getNet().sendCommand(cmd);
 
         // }

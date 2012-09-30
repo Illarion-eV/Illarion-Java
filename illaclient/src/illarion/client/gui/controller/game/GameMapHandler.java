@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.gui;
+package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
@@ -32,9 +32,11 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.Item;
 import illarion.client.graphics.Tile;
+import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.input.DragOnMapEvent;
+import illarion.client.input.MoveOnMapEvent;
 import illarion.client.net.server.events.MapItemLookAtEvent;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
@@ -306,6 +308,11 @@ public final class GameMapHandler
         }
 
         tile.lookAt();
+    }
+
+    @EventSubscriber
+    public void handleMouseMove(final MoveOnMapEvent event) {
+
     }
 
     /**

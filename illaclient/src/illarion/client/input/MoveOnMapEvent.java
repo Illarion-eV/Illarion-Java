@@ -16,22 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.gui;
-
-import org.newdawn.slick.GameContainer;
+package illarion.client.input;
 
 /**
- * This interface has to be implemented by update handlers that want to receive update calls during the main loop.
+ * This event is published when the mouse is moved on the map.
  *
- * @author Martin Karing &gt;nitram@illarion.org&lt;
+ * @author Vilarion &lt;vilarion@illarion.org&gt;
  */
-public interface UpdatableHandler {
+public final class MoveOnMapEvent extends AbstractMouseLocationEvent {
     /**
-     * This function is called once during a update loop. It should be used to perform changes at the optics of the
-     * game.
+     * Create and initialize such an event.
      *
-     * @param container the container that contains the game
-     * @param delta     the time since the last update
+     * @param x the x coordinate of the click
+     * @param y the y coordinate of the click
      */
-    void update(GameContainer container, int delta);
+    public MoveOnMapEvent(final int x, final int y) {
+        super(x, y);
+    }
 }

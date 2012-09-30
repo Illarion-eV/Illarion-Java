@@ -25,17 +25,7 @@ import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractMouseOnMapEvent {
-    /**
-     * The x coordinate on the screen where the click occurred.
-     */
-    private final int x;
-
-    /**
-     * The y coordinate on the screen where the click occurred.
-     */
-    private final int y;
-
+public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent {
     /**
      * The mouse key that was clicked.
      */
@@ -56,28 +46,9 @@ public abstract class AbstractMouseOnMapEvent {
      */
     protected AbstractMouseOnMapEvent(final int key, final int x, final int y, final ForwardingInputSystem
             inputForwardingControl) {
-        this.x = x;
-        this.y = y;
+        super(x, y);
         this.key = key;
         forwardingControl = inputForwardingControl;
-    }
-
-    /**
-     * Get the x coordinate on the screen where the click occurred.
-     *
-     * @return the x coordinate of the click
-     */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * Get the y coordinate on the screen where the click occurred.
-     *
-     * @return the y coordinate of the click
-     */
-    public int getY() {
-        return y;
     }
 
     /**

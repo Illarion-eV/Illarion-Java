@@ -290,7 +290,9 @@ public final class Char
     public Char() {
         loc = new Location();
         move = new MoveAnimation(this);
+
         attributes = new EnumMap<CharacterAttribute, Integer>(CharacterAttribute.class);
+
         scale = 0;
         animation = CharAnimations.STAND;
         avatarId = -1;
@@ -316,6 +318,10 @@ public final class Char
         }
 
         attributes.put(event.getAttribute(), event.getValue());
+
+        if ((event.getAttribute() == CharacterAttribute.HitPoints) && (avatar != null)) {
+            avatar.setHealthPoints(event.getValue());
+        }
     }
 
     /**
@@ -336,15 +342,6 @@ public final class Char
     @Override
     public void animationFinished(final boolean ok) {
         resetAnimation();
-    }
-
-    /**
-     * Return if the character can be named or not.
-     *
-     * @return true if the character can be named, else if not
-     */
-    public boolean canHaveName() {
-        return !isMonster() && !isNPC();
     }
 
     /**
@@ -838,7 +835,7 @@ public final class Char
         // clean up the name
         name = name.trim();
 
-        if ((avatar != null) && (charId != null) && !World.getPlayer().isPlayer(charId)) {
+        if ((avatar != null) && (charId != null)) {
             avatar.setName(name);
         }
 
@@ -1042,6 +1039,14 @@ public final class Char
 
         setName(name);
         setNameColor(nameColor);
+
+        final Integer healthPoints = attributes.get(CharacterAttribute.HitPoints);
+        if (healthPoints == null) {
+            avatar.setHealthPoints(10000);
+        } else {
+            avatar.setHealthPoints(healthPoints);
+        }
+
         updatePosition(0);
         updateLight(LIGHT_SET);
         avatar.setScale(scale);
