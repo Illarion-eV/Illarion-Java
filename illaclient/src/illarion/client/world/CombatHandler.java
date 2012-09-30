@@ -50,11 +50,6 @@ public final class CombatHandler {
     private Char attackedChar;
 
     /**
-     * Stores the current combat mode.
-     */
-    private boolean combatActive;
-
-    /**
      * Private constructor to ensure that only the singleton instance is created.
      */
     private CombatHandler() {
@@ -77,16 +72,7 @@ public final class CombatHandler {
      * @return <code>true</code> in case the character is the current target
      */
     public boolean isAttacking(final Char testChar) {
-        return ((testChar != null) && (isAttacking()) && (testChar.equals(attackedChar)));
-    }
-
-    /**
-     * Get the current combat mode.
-     *
-     * @return <code>true</code> in case the combat mode is currently active
-     */
-    public boolean isCombatMode() {
-        return combatActive;
+        return (testChar != null) && isAttacking() && testChar.equals(attackedChar);
     }
 
     /**
@@ -98,6 +84,14 @@ public final class CombatHandler {
         final AttackCmd cmd = (AttackCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_ATTACK);
         cmd.setTarget(id);
         World.getNet().sendCommand(cmd);
+    }
+
+    public void toggleAttackOnCharacter(final Char character) {
+        if (isAttacking(character)) {
+            standDown();
+        } else {
+            setAttackTarget(character);
+        }
     }
 
     /**
@@ -116,26 +110,12 @@ public final class CombatHandler {
             attackedChar = character;
             sendAttackToServer(character.getCharId());
             character.setAttackMarker(true);
+            World.getMusicBox().playFightingMusic();
         }
     }
 
     public boolean canBeAttacked(final Char character) {
         return !World.getPlayer().isPlayer(character.getCharId()) && !character.isNPC();
-    }
-
-    /**
-     * Set the new combat mode.
-     *
-     * @param newMode <code>true</code> to enable the combat mode
-     */
-    public void setCombatMode(final boolean newMode) {
-        if (combatActive && !newMode) {
-            combatActive = false;
-            standDown();
-        } else if (!combatActive && newMode) {
-            combatActive = true;
-            World.getMusicBox().playFightingMusic();
-        }
     }
 
     /**
@@ -160,15 +140,5 @@ public final class CombatHandler {
             attackedChar.setAttackMarker(false);
             attackedChar = null;
         }
-    }
-
-    /**
-     * Toggle the combat mode.
-     *
-     * @return <code>true</code> in case the combat mode is now active
-     */
-    public boolean toggleCombatMode() {
-        setCombatMode(!combatActive);
-        return combatActive;
     }
 }

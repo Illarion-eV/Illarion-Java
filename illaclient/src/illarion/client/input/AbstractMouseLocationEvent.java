@@ -18,12 +18,14 @@
  */
 package illarion.client.input;
 
+import illarion.client.graphics.MapInteractionEvent;
+
 /**
  * This event is in general triggered in case the user performs any move or action with the mouse on the map.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractMouseLocationEvent {
+public abstract class AbstractMouseLocationEvent implements MapInteractionEvent {
     /**
      * The x coordinate on the screen where the click occurred.
      */

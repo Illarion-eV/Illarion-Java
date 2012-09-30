@@ -34,6 +34,8 @@ import org.newdawn.slick.opengl.shader.ShaderProgram;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * The map display manager stores and manages all objects displayed on the map. It takes care for rendering the objects
@@ -77,7 +79,7 @@ public final class MapDisplayManager
          */
         @Override
         public int compare(final DisplayItem o1, final DisplayItem o2) {
-            return (o2.getZOrder() - o1.getZOrder());
+            return o2.getZOrder() - o1.getZOrder();
         }
 
         /**
@@ -337,6 +339,17 @@ public final class MapDisplayManager
         }
     }
 
+    private Queue<MapInteractionEvent> eventQueue = new ConcurrentLinkedQueue<MapInteractionEvent>();
+
+    /**
+     * Publish a event to the event queue that is send to all entries on the map display.
+     *
+     * @param event the event to publish
+     */
+    public void publishInteractionEvent(final MapInteractionEvent event) {
+        eventQueue.offer(event);
+    }
+
     public void update(final GameContainer c, final int delta) {
         if (!active) {
             return;
@@ -366,9 +379,22 @@ public final class MapDisplayManager
                 Camera.getInstance().markAreaDirty(rect);
             }
             synchronized (GameMap.LIGHT_LOCK) {
-                // draw all items
-                for (final DisplayItem currentItem : display) {
-                    currentItem.update(c, delta);
+                while (true) {
+                    final MapInteractionEvent event = eventQueue.poll();
+                    if (event == null) {
+                        break;
+                    }
+
+                    for (int i = display.size() - 1; i >= 0; i--) {
+                        if (display.get(i).processEvent(c, delta, event)) {
+                            break;
+                        }
+                    }
+                }
+
+                // update the items
+                for (int i = 0, displaySize = display.size(); i < displaySize; i++) {
+                    display.get(i).update(c, delta);
                 }
             }
         }
@@ -481,8 +507,8 @@ public final class MapDisplayManager
         synchronized (display) {
             synchronized (GameMap.LIGHT_LOCK) {
                 // draw all items
-                for (final DisplayItem currentItem : display) {
-                    currentItem.draw(g);
+                for (int i = 0, displaySize = display.size(); i < displaySize; i++) {
+                    display.get(i).draw(g);
                 }
             }
         }

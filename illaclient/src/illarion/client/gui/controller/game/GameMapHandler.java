@@ -288,26 +288,7 @@ public final class GameMapHandler
      */
     @EventSubscriber
     public void handleClickEvent(final ClickOnMapEvent data) {
-        if (data.getKey() != 0) {
-            return;
-        }
-
-        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(data.getX(),
-                data.getY());
-
-        if (tile == null) {
-            return;
-        }
-
-        if ((activeScreen != null) && (activeNifty != null)) {
-            data.getForwardingControl().releaseExclusiveMouse();
-
-            mouseEvent.initialize(data.getX(), data.getY(), data.getKey(), true, false, false);
-            mouseEvent.setButton0InitialDown(true);
-            activeScreen.mouseEvent(mouseEvent);
-        }
-
-        tile.lookAt();
+        World.getMapDisplay().publishInteractionEvent(data);
     }
 
     @EventSubscriber

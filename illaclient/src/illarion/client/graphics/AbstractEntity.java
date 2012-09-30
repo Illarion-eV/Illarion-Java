@@ -722,6 +722,11 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         setScreenPos(loc.getDcX(), loc.getDcY(), loc.getDcZ(), typeLayer);
     }
 
+    @Override
+    public boolean processEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
+        return false;
+    }
+
     /**
      * Show the entity by adding it to the display list. Remember that its
      * needed to reorder the list after this was done. The reordering is

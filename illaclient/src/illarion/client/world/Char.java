@@ -647,7 +647,7 @@ public final class Char
         animation = CharAnimations.STAND;
         updateAvatar();
         if (avatar != null) {
-            avatar.animate(DEFAULT_ANIMATION_SPEED, this, true);
+            avatar.animate(DEFAULT_ANIMATION_SPEED, true);
         }
     }
 
@@ -984,7 +984,7 @@ public final class Char
         }
         animation = newAnimation;
         updateAvatar();
-        avatar.animate(speed, this, false);
+        avatar.animate(speed, false);
     }
 
     /**
@@ -1017,7 +1017,7 @@ public final class Char
 
         // initialize new avatar
         avatarId = newAvatar;
-        avatar = Avatar.create(avatarId);
+        avatar = Avatar.create(avatarId, this);
 
         if (avatar == null) {
             throw new NullPointerException("Avatar for ID " + Integer.toString(avatarId) + " is NULL.");

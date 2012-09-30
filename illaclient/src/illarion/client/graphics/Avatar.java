@@ -18,9 +18,12 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.input.ClickOnMapEvent;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.Resource;
 import illarion.client.util.Lang;
+import illarion.client.world.Char;
+import illarion.client.world.CombatHandler;
 import illarion.common.graphics.Sprite;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -107,7 +110,7 @@ public final class Avatar extends AbstractEntity implements Resource {
     /**
      * The character that created this avatar.
      */
-    private Animated parentChar;
+    private Char parentChar;
 
     /**
      * Stores if the name shall be rendered or not. It is checked at every
@@ -213,9 +216,11 @@ public final class Avatar extends AbstractEntity implements Resource {
      *                 sex and the direction of the avatar that is needed
      * @return a instance of the needed avatar type
      */
-    public static Avatar create(final int avatarID) {
+    public static Avatar create(final int avatarID, final Char parent) {
         try {
-            return CharacterFactory.getInstance().getCommand(avatarID);
+            final Avatar avatar = CharacterFactory.getInstance().getCommand(avatarID);
+            avatar.parentChar = parent;
+            return avatar;
         } catch (final IndexOutOfBoundsException ex) {
             // ignored
         }
@@ -237,20 +242,15 @@ public final class Avatar extends AbstractEntity implements Resource {
     /**
      * Start a animation for this avatar.
      *
-     * @param speed  the speed of the animation, the larger this value, the
-     *               longer the animation takes to finish
-     * @param parent the parent character that triggered the animation and needs
-     *               to be notified when its finished
-     * @param loop   true in case the animation shall never stop and rather run
-     *               forever
+     * @param speed the speed of the animation, the larger this value, the
+     *              longer the animation takes to finish
+     * @param loop  true in case the animation shall never stop and rather run
+     *              forever
      */
-    public void animate(final int speed, final Animated parent,
-                        final boolean loop) {
+    public void animate(final int speed, final boolean loop) {
         if (ani == null) {
             return;
         }
-
-        parentChar = parent;
 
         ani.updateSpeed(speed);
         if (loop) {
@@ -304,6 +304,26 @@ public final class Avatar extends AbstractEntity implements Resource {
      */
     public boolean clothItemExist(final int group, final int itemID) {
         return clothes.doesClothExists(group, itemID);
+    }
+
+    @Override
+    public boolean processEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
+        if (event instanceof ClickOnMapEvent) {
+            return processEvent(c, delta, (ClickOnMapEvent) event);
+        }
+        return super.processEvent(c, delta, event);
+    }
+
+    private boolean processEvent(final GameContainer c, final int delta, final ClickOnMapEvent event) {
+        if (!isMouseInDisplayRect(event.getX(), event.getY())) {
+            return false;
+        }
+
+        if (event.getKey() == 1) {
+            CombatHandler.getInstance().toggleAttackOnCharacter(parentChar);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -639,11 +659,9 @@ public final class Avatar extends AbstractEntity implements Resource {
         }
 
         final Input input = c.getInput();
-        final int mouseXonDisplay = input.getMouseX() + Camera.getInstance().getViewportOffsetX();
-        final int mouseYonDisplay = input.getMouseY() + Camera.getInstance().getViewportOffsetY();
 
-        renderName = getDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay) || (input.isKeyDown(Input.KEY_LSHIFT)
-                && (getAlpha() > HIDE_NAME_ALPHA));
+        renderName = isMouseInDisplayRect(input) || (input.isKeyDown(Input.KEY_LSHIFT) && (getAlpha() >
+                HIDE_NAME_ALPHA));
 
         if ((tag != null) && renderName) {
             tag.setDisplayLocation(getDisplayX(), getDisplayY());
@@ -651,12 +669,22 @@ public final class Avatar extends AbstractEntity implements Resource {
         }
     }
 
+    private boolean isMouseInDisplayRect(final int mouseX, final int mouseY) {
+        final int mouseXonDisplay = mouseX + Camera.getInstance().getViewportOffsetX();
+        final int mouseYonDisplay = mouseY + Camera.getInstance().getViewportOffsetY();
+
+        return getDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay);
+    }
+
+    private boolean isMouseInDisplayRect(final Input input) {
+        return isMouseInDisplayRect(input.getMouseX(), input.getMouseY());
+    }
+
     /**
      * Cause the current animation of the avatar to stop instantly. The parent
      * character is removed and not notified.
      */
     private void stopAnimation() {
-        parentChar = null;
         if (ani != null) {
             ani.stop();
         }
