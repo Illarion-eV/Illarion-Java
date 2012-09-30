@@ -29,6 +29,7 @@ import illarion.common.util.Location;
 import illarion.common.util.Rectangle;
 import illarion.common.util.RecycleObject;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -742,10 +743,11 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
      * value changes the size of the sprite is requested as update from the
      * entity at the next update.
      *
+     * @param c
      * @param delta the time in milliseconds since the last update
      */
     @Override
-    public void update(final int delta) {
+    public void update(final GameContainer c, final int delta) {
         int xOffset = sprite.getOffsetX() + sprite.getAlignOffsetX();
         int yOffset = sprite.getOffsetY() - sprite.getAlignOffsetY();
 

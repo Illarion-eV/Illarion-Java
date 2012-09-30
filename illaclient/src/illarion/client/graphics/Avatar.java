@@ -21,10 +21,11 @@ package illarion.client.graphics;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.Resource;
 import illarion.client.util.Lang;
-import illarion.client.world.World;
 import illarion.common.graphics.Sprite;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
 
 import java.awt.*;
 
@@ -620,14 +621,15 @@ public final class Avatar extends AbstractEntity implements Resource {
      * Update the values of this avatar entity. The light values, the alpha
      * values as well as the name display is checked using this function.
      *
+     * @param c
      * @param delta the time since the last update in milliseoncs
      */
     @Override
-    public void update(final int delta) {
-        super.update(delta);
+    public void update(final GameContainer c, final int delta) {
+        super.update(c, delta);
 
         clothRender.setAlpha(getAlpha());
-        clothRender.update(delta);
+        clothRender.update(c, delta);
 
         final Color locLight = getLight();
         if (animateLight && (locLight != null)
@@ -636,24 +638,16 @@ public final class Avatar extends AbstractEntity implements Resource {
             animateLight = false;
         }
 
-        if ((getAlpha() > HIDE_NAME_ALPHA)
-                && (World.getPeople().getShowMapNames() > 0) && (tag != null)
-                && (locLight != null)) {
-            if (!renderName) {
-                tag.setDisplayLocation(getDisplayX(), getDisplayY());
-            }
-            renderName = true;
-        } else if (tag != null) {
-            if (renderName) {
-                tag.setDisplayLocation(getDisplayX(), getDisplayY());
-                tag.update(delta);
-            }
-            renderName = false;
-        }
+        final Input input = c.getInput();
+        final int mouseXonDisplay = input.getMouseX() + Camera.getInstance().getViewportOffsetX();
+        final int mouseYonDisplay = input.getMouseY() + Camera.getInstance().getViewportOffsetY();
+
+        renderName = getDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay) || (input.isKeyDown(Input.KEY_LSHIFT)
+                && (getAlpha() > HIDE_NAME_ALPHA));
 
         if ((tag != null) && renderName) {
             tag.setDisplayLocation(getDisplayX(), getDisplayY());
-            tag.update(delta);
+            tag.update(c, delta);
         }
     }
 

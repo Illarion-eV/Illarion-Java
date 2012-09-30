@@ -25,6 +25,7 @@ import illarion.common.graphics.Sprite;
 import illarion.common.graphics.TileInfo;
 import illarion.common.util.Location;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -260,10 +261,10 @@ public class Tile extends AbstractEntity implements Resource {
     }
 
     @Override
-    public void update(final int delta) {
-        super.update(delta);
+    public void update(final GameContainer c, final int delta) {
+        super.update(c, delta);
         if (overlay != null) {
-            overlay.update(delta);
+            overlay.update(c, delta);
         }
     }
 

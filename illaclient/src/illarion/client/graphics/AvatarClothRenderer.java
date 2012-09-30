@@ -20,6 +20,7 @@ package illarion.client.graphics;
 
 import illarion.common.util.Location;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 import java.util.concurrent.locks.ReadWriteLock;
@@ -378,12 +379,12 @@ final class AvatarClothRenderer {
     /**
      * Update all clothes
      */
-    protected void update(final int delta) {
+    protected void update(final GameContainer c, final int delta) {
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
                 if (currentClothes[i] != null) {
-                    currentClothes[i].update(delta);
+                    currentClothes[i].update(c, delta);
                 }
             }
         } finally {

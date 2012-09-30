@@ -23,6 +23,7 @@ import de.lessvoid.nifty.slick2d.render.font.SlickLoadFontException;
 import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
 import illarion.common.util.Rectangle;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -326,7 +327,7 @@ public final class AvatarTextTag implements Drawable {
     }
 
     @Override
-    public void update(final int delta) {
+    public void update(final GameContainer c, final int delta) {
         calculateTextLocations();
         if (dirty) {
             dirty = false;

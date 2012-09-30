@@ -368,7 +368,7 @@ public final class MapDisplayManager
             synchronized (GameMap.LIGHT_LOCK) {
                 // draw all items
                 for (final DisplayItem currentItem : display) {
-                    currentItem.update(delta);
+                    currentItem.update(c, delta);
                 }
             }
         }

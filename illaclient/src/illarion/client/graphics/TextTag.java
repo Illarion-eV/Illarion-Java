@@ -24,6 +24,7 @@ import illarion.client.world.GameFactory;
 import illarion.common.util.Rectangle;
 import illarion.common.util.RecycleObject;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -270,7 +271,7 @@ public class TextTag implements Drawable, RecycleObject {
     }
 
     @Override
-    public void update(final int delta) {
+    public void update(final GameContainer c, final int delta) {
         if (dirty) {
             dirty = false;
             oldDisplayRect.set(displayRect);

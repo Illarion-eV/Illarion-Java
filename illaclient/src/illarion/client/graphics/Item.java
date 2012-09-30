@@ -28,6 +28,7 @@ import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.util.Location;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -533,11 +534,12 @@ public final class Item extends AbstractEntity implements Resource {
      * Update the displayed item. This takes care for fading effects in case
      * needed and for handling the display of the number at the item.
      *
+     * @param c
      * @param delta the time in milliseconds since the last update
      */
     @Override
-    public void update(final int delta) {
-        super.update(delta);
+    public void update(final GameContainer c, final int delta) {
+        super.update(c, delta);
 
         if (showNumber && (count.getValue() > 1) && (number != null)) {
             if (!displayNumber) {
@@ -547,13 +549,13 @@ public final class Item extends AbstractEntity implements Resource {
         } else {
             if (displayNumber) {
                 number.addToCamera(getDisplayX(), getDisplayY());
-                number.update(delta);
+                number.update(c, delta);
                 displayNumber = false;
             }
         }
 
         if ((number != null) && displayNumber) {
-            number.update(delta);
+            number.update(c, delta);
         }
     }
 

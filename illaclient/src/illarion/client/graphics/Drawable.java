@@ -19,6 +19,7 @@
 package illarion.client.graphics;
 
 import illarion.common.util.Rectangle;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -38,9 +39,10 @@ public interface Drawable {
      * Update the alpha value of this component. This is done by considering the
      * size and the location of the component and regarding the alpha target.
      *
+     * @param c
      * @param delta the time in milliseconds since the last update
      */
-    void update(int delta);
+    void update(final GameContainer c, int delta);
 
     /**
      * Get the area covered by this item the last time is was rendered.
