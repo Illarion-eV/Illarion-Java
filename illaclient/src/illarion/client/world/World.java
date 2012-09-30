@@ -51,6 +51,12 @@ public final class World {
             if (INSTANCE.net != null) {
                 INSTANCE.net.disconnect();
             }
+            if (INSTANCE.player != null) {
+                INSTANCE.player.shutdown();
+            }
+            if (INSTANCE.people != null) {
+                INSTANCE.people.saveNames();
+            }
 
             INSTANCE.chatHandler = null;
             INSTANCE.aniManager = null;
@@ -58,6 +64,8 @@ public final class World {
             INSTANCE.map = null;
             INSTANCE.musicBox = null;
             INSTANCE.lights = null;
+
+
             INSTANCE.player = null;
             INSTANCE.people = null;
             INSTANCE.net = null;

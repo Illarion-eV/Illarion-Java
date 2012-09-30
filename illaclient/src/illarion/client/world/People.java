@@ -29,7 +29,10 @@ import illarion.client.world.events.CharRemovedEvent;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
 import illarion.common.types.CharacterId;
-import illarion.common.util.*;
+import illarion.common.util.DirectoryManager;
+import illarion.common.util.Location;
+import illarion.common.util.TableLoader;
+import illarion.common.util.TableLoaderSink;
 import javolution.text.TextBuilder;
 import javolution.util.FastTable;
 import org.apache.log4j.Logger;
@@ -48,7 +51,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author Nop
  */
 public final class People
-        implements Stoppable, TableLoaderSink, ConfigChangeListener {
+        implements TableLoaderSink, ConfigChangeListener {
     /**
      * The key for the configuration where the name mode is stored.
      */
@@ -568,11 +571,6 @@ public final class People
      * Save the table that stores the names of the characters known to the current player character.
      */
     public void saveNames() {
-        names.saveTable();
-    }
-
-    @Override
-    public void saveShutdown() {
         names.saveTable();
     }
 
