@@ -591,7 +591,7 @@ public final class Player {
      */
     private static void updateListener() {
         if (IllaClient.getCfg().getBoolean(CFG_SOUND_ON)) {
-            final float effVol = IllaClient.getCfg().getInteger(CFG_SOUND_VOL) / MAX_CLIENT_VOL;
+            final float effVol = IllaClient.getCfg().getFloat(CFG_SOUND_VOL) / MAX_CLIENT_VOL;
             SoundStore.get().setSoundsOn(true);
             SoundStore.get().setSoundVolume(effVol);
         } else {
@@ -599,7 +599,7 @@ public final class Player {
         }
 
         if (IllaClient.getCfg().getBoolean(CFG_MUSIC_ON)) {
-            final float musVol = IllaClient.getCfg().getInteger(CFG_MUSIC_VOL) / MAX_CLIENT_VOL;
+            final float musVol = IllaClient.getCfg().getFloat(CFG_MUSIC_VOL) / MAX_CLIENT_VOL;
             SoundStore.get().setMusicOn(true);
             SoundStore.get().setMusicVolume(musVol);
         } else {

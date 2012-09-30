@@ -547,9 +547,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("showNameMode", illarion.client.world.People.NAME_SHORT);
         cfg.setDefault("showIDs", false);
         cfg.setDefault("soundOn", true);
-        cfg.setDefault("soundVolume", (int) illarion.client.world.Player.MAX_CLIENT_VOL);
+        cfg.setDefault("soundVolume", illarion.client.world.Player.MAX_CLIENT_VOL);
         cfg.setDefault("musicOn", true);
-        cfg.setDefault("musicVolume", (int) (illarion.client.world.Player.MAX_CLIENT_VOL * 0.75f));
+        cfg.setDefault("musicVolume", illarion.client.world.Player.MAX_CLIENT_VOL * 0.75f);
         cfg.setDefault(illarion.client.util.ChatLog.CFG_TEXTLOG, true);
         cfg.setDefault("fadingTime", 600);
         cfg.setDefault(CFG_FULLSCREEN, false);

@@ -24,9 +24,8 @@ import illarion.common.util.StoppableStorage;
 import org.newdawn.slick.Music;
 
 /**
- * This is the music box. What is does is playing music. This class handles the
- * playback of the background music according to the settings. Also it ensures
- * that the different overwriting levels of the music are kept as they are
+ * This is the music box. What is does is playing music. This class handles the playback of the background music
+ * according to the settings. Also it ensures that the different overwriting levels of the music are kept as they are
  * supposed to be.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -38,8 +37,8 @@ public final class MusicBox implements Stoppable {
     private static final int COMBAT_TRACK = 1;
 
     /**
-     * This is the constant that applies in case no overwrite track is set and
-     * the background music is supposed to play the default music.
+     * This is the constant that applies in case no overwrite track is set and the background music is supposed to
+     * play the default music.
      */
     public static final int NO_TRACK = 0;
 
@@ -54,9 +53,13 @@ public final class MusicBox implements Stoppable {
     private Music currentMusic;
 
     /**
-     * This flag is set <code>true</code> in case the music box is supposed to
-     * play the fighting background music. This overwrites any other track that
-     * is currently played.
+     * The ID of the music that is currently played.
+     */
+    private int currentMusicId;
+
+    /**
+     * This flag is set <code>true</code> in case the music box is supposed to play the fighting background music.
+     * This overwrites any other track that is currently played.
      */
     private boolean fightingMusicPlaying;
 
@@ -78,20 +81,18 @@ public final class MusicBox implements Stoppable {
     }
 
     public boolean isPlaying(final int musicId) {
-        return (overrideSoundId != musicId);
+        return overrideSoundId != musicId;
     }
 
     /**
-     * Play the default music now that is set by the tile the player is standing
-     * on.
+     * Play the default music now that is set by the tile the player is standing on.
      */
     public void playDefaultMusic() {
         playMusicTrack(NO_TRACK);
     }
 
     /**
-     * Play the fighting sound track now. This will overwrite all other
-     * playback.
+     * Play the fighting sound track now. This will overwrite all other playback.
      */
     public void playFightingMusic() {
         if (!fightingMusicPlaying) {
@@ -101,8 +102,8 @@ public final class MusicBox implements Stoppable {
     }
 
     /**
-     * Set the sound ID that is supposed to be played. This will overwrite the
-     * default sound track that is set with the music ID embedded to the tiles.
+     * Set the sound ID that is supposed to be played. This will overwrite the default sound track that is set with
+     * the music ID embedded to the tiles.
      *
      * @param musicId the ID of the music to play
      */
@@ -121,26 +122,32 @@ public final class MusicBox implements Stoppable {
     }
 
     /**
-     * Set the sound track that is supposed to be played now. This function does
-     * not perform any additional checks. It will plain and simple start playing
-     * the newly chosen sound track now. It does this even in case the current
+     * Set the sound track that is supposed to be played now. This function does not perform any additional checks.
+     * It will plain and simple start playing the newly chosen sound track now. It does this even in case the current
      * and the new sound track are equal.
      *
      * @param id the ID of the sound track to play
      */
     private void setSoundTrack(final int id) {
-        if (id == NO_TRACK) {
-            currentMusic.stop();
-            currentMusic = null;
+        if (currentMusicId == id) {
             return;
         }
+        currentMusicId = id;
+
+        if (id == NO_TRACK) {
+            if (currentMusic != null) {
+                currentMusic.stop();
+                currentMusic = null;
+            }
+            return;
+        }
+
         currentMusic = SongFactory.getInstance().getSong(id);
         currentMusic.loop();
     }
 
     /**
-     * Stop playing the fighting music and fall back to the last sound track
-     * played.
+     * Stop playing the fighting music and fall back to the last sound track played.
      */
     public void stopFightingMusic() {
         if (fightingMusicPlaying) {
@@ -150,8 +157,8 @@ public final class MusicBox implements Stoppable {
     }
 
     /**
-     * Update the location where the player is currently at. This will update
-     * the soundtrack that is played in case its needed.
+     * Update the location where the player is currently at. This will update the soundtrack that is played in case
+     * its needed.
      */
     public void updatePlayerLocation() {
         final MapTile tile = World.getMap().getMapAt(World.getPlayer().getLocation());
@@ -169,17 +176,16 @@ public final class MusicBox implements Stoppable {
     }
 
     /**
-     * Calling this function will cause the sound track to restart. It will
-     * select the required sound track based upon the current state of the
-     * music.
+     * Calling this function will cause the sound track to restart. It will select the required sound track based
+     * upon the current state of the music.
      */
     private void updateSoundTrack() {
         if (fightingMusicPlaying) {
             setSoundTrack(COMBAT_TRACK);
-        }
-        if (overrideSoundId > NO_TRACK) {
+        } else if (overrideSoundId > NO_TRACK) {
             setSoundTrack(overrideSoundId);
+        } else {
+            setSoundTrack(currentDefaultTrack);
         }
-        setSoundTrack(currentDefaultTrack);
     }
 }
