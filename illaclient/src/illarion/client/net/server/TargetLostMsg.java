@@ -20,73 +20,56 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.OpenContainerEvent;
+import illarion.client.world.CombatHandler;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.ItemCount;
-import illarion.common.types.ItemId;
-import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
 /**
- * Servermessage: Content of a container ({@link CommandList#MSG_SHOWCASE}).
+ * Servermessage: This message is received in case the current attack target is lost.
  *
- * @author Blay09
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-@ReplyMessage(replyId = CommandList.MSG_SHOWCASE)
-public final class ShowcaseMsg extends AbstractReply {
-    private OpenContainerEvent event;
-
+@ReplyMessage(replyId = CommandList.MSG_TARGET_LOST)
+public final class TargetLostMsg extends AbstractReply {
     /**
-     * Decode the container data the receiver got and prepare it for the
-     * execution.
+     * Decode the simple data the receiver got and prepare it for the execution.
+     * Since simple messages contain no data, this function does nothing at all.
      *
      * @param reader the receiver that got the data from the server that needs
      *               to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     *                     decode the full message
+     * @throws java.io.IOException thrown in case there was not enough data received to
+     *                             decode the full message
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
-        final int containerId = reader.readUByte();
-        final int containerSize = reader.readUShort();
-        final int itemAmount = reader.readUShort();
-
-        event = new OpenContainerEvent(containerId, containerSize);
-
-        for (int i = 0; i < itemAmount; i++) {
-            final int itemPos = reader.readUShort();
-            final ItemId itemId = new ItemId(reader);
-            final ItemCount itemCount = ItemCount.getInstance(reader);
-
-            event.addItem(itemPos, new OpenContainerEvent.Item(itemId, itemCount));
-        }
+        // nothing to decode
     }
 
     /**
-     * Execute the container message and send the decoded data to the rest of
-     * the client.
+     * Execute the simple message and send the decoded data to the rest of the
+     * client.
      *
      * @return true if the execution is done, false if it shall be called again
      */
+    @SuppressWarnings("nls")
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(event);
-        event = null;
+        CombatHandler.getInstance().targetLost();
         return true;
     }
 
     /**
-     * Get the data of this container message as string.
+     * Get the data of this simple message as string.
      *
      * @return the string that contains the values that were decoded for this
      *         message
+     * @see AbstractReply#toString()
      */
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("ItemContainer: " + event.getContainerId());
+        return toString("target lost");
     }
 }

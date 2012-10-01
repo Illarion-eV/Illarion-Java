@@ -20,6 +20,7 @@ package illarion.client.net.server;
 
 import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.client.world.items.Inventory;
@@ -37,6 +38,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_APPEARANCE)
 public final class AppearanceMsg extends AbstractReply {
     /**
      * The instance of the logger that is used to write out the data.
@@ -185,19 +187,7 @@ public final class AppearanceMsg extends AbstractReply {
      * Default constructor for the appearance message.
      */
     public AppearanceMsg() {
-        super(CommandList.MSG_APPEARANCE);
-
         itemSlots = new ItemId[Inventory.SLOT_COUNT];
-    }
-
-    /**
-     * Create a new instance of the appearance message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public AppearanceMsg clone() {
-        return new AppearanceMsg();
     }
 
     /**

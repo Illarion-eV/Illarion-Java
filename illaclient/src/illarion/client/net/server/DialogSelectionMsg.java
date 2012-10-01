@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.DialogSelectionReceivedEvent;
 import illarion.client.world.items.SelectionItem;
 import illarion.common.net.NetCommReader;
@@ -32,6 +33,7 @@ import java.io.IOException;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ReplyMessage(replyId = CommandList.MSG_DIALOG_SELECTION)
 public final class DialogSelectionMsg
         extends AbstractReply {
     /**
@@ -48,18 +50,6 @@ public final class DialogSelectionMsg
      * The items read from the dialog.
      */
     private SelectionItem[] items;
-
-    /**
-     * Default constructor for the message dialog message.
-     */
-    public DialogSelectionMsg() {
-        super(CommandList.MSG_DIALOG_SELECTION);
-    }
-
-    @Override
-    public AbstractReply clone() {
-        return new DialogSelectionMsg();
-    }
 
     @Override
     public void decode(final NetCommReader reader)
@@ -80,12 +70,6 @@ public final class DialogSelectionMsg
         EventBus.publish(new DialogSelectionReceivedEvent(dialogId, title, items));
 
         return true;
-    }
-
-    @Override
-    public void reset() {
-        title = null;
-        items = null;
     }
 
     @Override

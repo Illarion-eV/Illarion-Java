@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 
@@ -31,28 +32,12 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_MUSIC)
 public final class MusicMsg extends AbstractReply {
     /**
      * The ID of the song that shall be played.
      */
     private int song;
-
-    /**
-     * Default constructor for the play music message.
-     */
-    public MusicMsg() {
-        super(CommandList.MSG_MUSIC);
-    }
-
-    /**
-     * Create a new instance of the play music message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public MusicMsg clone() {
-        return new MusicMsg();
-    }
 
     /**
      * Decode the play music data the receiver got and prepare it for the

@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.common.net.NetCommReader;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_MAGIC_FLAG)
 public final class MagicFlagMsg extends AbstractReply {
     /**
      * Flags of the magic that are available. So the runes a character is
@@ -41,23 +43,6 @@ public final class MagicFlagMsg extends AbstractReply {
      * Type of magic that is used. Such a magician, druid, bard, priest.
      */
     private short type;
-
-    /**
-     * Default constructor for the magic flags message.
-     */
-    public MagicFlagMsg() {
-        super(CommandList.MSG_MAGIC_FLAG);
-    }
-
-    /**
-     * Create a new instance of the magic flags message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public MagicFlagMsg clone() {
-        return new MagicFlagMsg();
-    }
 
     /**
      * Decode the magic flags data the receiver got and prepare it for the

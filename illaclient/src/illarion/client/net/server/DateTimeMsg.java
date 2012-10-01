@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.DateTimeUpdateEvent;
 import illarion.common.net.NetCommReader;
 import org.bushe.swing.event.EventBus;
@@ -32,6 +33,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_DATETIME)
 public final class DateTimeMsg extends AbstractReply {
     /**
      * The format of the string used in the {@link #toString()} function.
@@ -64,23 +66,6 @@ public final class DateTimeMsg extends AbstractReply {
      * Year of the current IG time.
      */
     private int year;
-
-    /**
-     * Default constructor for the date and time message.
-     */
-    public DateTimeMsg() {
-        super(CommandList.MSG_DATETIME);
-    }
-
-    /**
-     * Create a new instance of the date and time message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public DateTimeMsg clone() {
-        return new DateTimeMsg();
-    }
 
     /**
      * Decode the date and time data the receiver got and prepare it for the

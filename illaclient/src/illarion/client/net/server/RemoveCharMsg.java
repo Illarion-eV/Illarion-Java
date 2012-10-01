@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
@@ -32,28 +33,12 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_REMOVE_CHAR)
 public final class RemoveCharMsg extends AbstractReply {
     /**
      * The ID of the character that shall be removed.
      */
     private CharacterId charId;
-
-    /**
-     * Default constructor for the remove character message.
-     */
-    public RemoveCharMsg() {
-        super(CommandList.MSG_REMOVE_CHAR);
-    }
-
-    /**
-     * Create a new instance of the remove character message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public RemoveCharMsg clone() {
-        return new RemoveCharMsg();
-    }
 
     /**
      * Decode the remove character data the receiver got and prepare it for the

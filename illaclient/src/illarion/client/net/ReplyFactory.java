@@ -18,85 +18,127 @@
  */
 package illarion.client.net;
 
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.*;
-import illarion.common.util.RecycleFactory;
-import javolution.context.PoolContext;
+import org.apache.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * The Factory for commands the server sends to the client. This factory prepares and recycles all server messages and
- * set the needed mapping.
+ * The Factory for commands the server sends to the client. This factory creates the required message objects on
+ * demand.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
- * @author Nop
  */
-public final class ReplyFactory
-        extends RecycleFactory<AbstractReply> {
+public final class ReplyFactory {
     /**
      * The singleton instance of this factory.
      */
     private static final ReplyFactory INSTANCE = new ReplyFactory();
 
     /**
-     * The default constructor of the factory. This registers all commands and sets up all needed mappings.
+     * The logger that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(ReplyFactory.class);
+
+    /**
+     * This map stores the message classes along with the IDs of the command encoded in them.
+     */
+    private final Map<Integer, Class<? extends AbstractReply>> replyMap;
+
+    /**
+     * The default constructor of the factory. This registers all commands.
      */
     private ReplyFactory() {
-        super();
+        replyMap = new HashMap<Integer, Class<? extends AbstractReply>>();
 
-        register(new DisconnectMsg());
+        register(AppearanceMsg.class);
+        register(AttackMsg.class);
+        register(AttributeMsg.class);
+        register(BookMsg.class);
+        register(ChangeItemMsg.class);
+        register(CharacterAnimationMsg.class);
+        register(CloseShowcaseMsg.class);
+        register(DateTimeMsg.class);
+        register(DialogInputMsg.class);
+        register(DialogMerchantMsg.class);
+        register(DialogSelectionMsg.class);
+        register(DisconnectMsg.class);
+        register(GraphicEffectMsg.class);
+        register(InformMsg.class);
+        register(IntroduceMsg.class);
+        register(InventoryMsg.class);
+        register(ItemUpdateMsg.class);
+        register(LocationMsg.class);
+        register(LookAtCharMsg.class);
+        register(LookAtInvMsg.class);
+        register(LookAtMapItemMsg.class);
+        register(LookAtShowcaseMsg.class);
+        register(LookAtTileMsg.class);
+        register(MagicFlagMsg.class);
+        register(MapCompleteMsg.class);
+        register(MapStripeMsg.class);
+        register(MoveMsg.class);
+        register(MusicMsg.class);
+        register(PlayerIdMsg.class);
+        register(PutItemMsg.class);
+        register(RemoveCharMsg.class);
+        register(RemoveItemMsg.class);
+        register(SayMsg.class);
+        register(ShowcaseMsg.class);
+        register(SkillMsg.class);
+        register(SoundEffectMsg.class);
+        register(TargetLostMsg.class);
+        register(TurnCharMsg.class);
+        register(WeatherMsg.class);
+    }
 
-        register(new PlayerIdMsg());
-        register(new LocationMsg());
-        register(new SkillMsg());
-        register(new AttributeMsg());
-        register(new MagicFlagMsg());
-        register(new AppearanceMsg());
+    /**
+     * Register a class as replay message class. Those classes need to implement the {@link AbstractReply} interface
+     * and they require the contain the {@link ReplyMessage} annotation.
+     *
+     * @param clazz the class to register as reply.
+     */
+    private void register(final Class<? extends AbstractReply> clazz) {
+        final ReplyMessage messageData = clazz.getAnnotation(ReplyMessage.class);
 
-        register(new InventoryMsg());
-        register(new ShowcaseMsg());
-        register(new CloseShowcaseMsg());
+        if (messageData == null) {
+            LOGGER.error("Illegal class supplied to register! No annotation: " + clazz.getName());
+            return;
+        }
 
-        register(new MoveMsg());
-        register(new MapStripeMsg());
-        register(new RemoveItemMsg());
-        register(new PutItemMsg());
-        register(new ChangeItemMsg());
-        register(new ItemUpdateMsg());
+        if (replyMap.containsKey(messageData.replyId())) {
+            LOGGER.error("Class with duplicated key: " + clazz.getName());
+            return;
+        }
 
-        register(new SimpleMsg(CommandList.MSG_ATTACK));
-        map(CommandList.MSG_TARGET_LOST, CommandList.MSG_ATTACK);
-        map(CommandList.MSG_MAP_COMPLETE, CommandList.MSG_ATTACK);
+        replyMap.put(messageData.replyId(), clazz);
+    }
 
-        register(new TurnCharMsg());
-        register(new RemoveCharMsg());
+    /**
+     * Get a replay instance. This class will check if there is any reply fitting the ID registered and create a new
+     * instance of it.
+     *
+     * @param id the ID of the reply
+     * @return the newly created reply instance
+     */
+    public AbstractReply getReply(final int id) {
+        final Class<? extends AbstractReply> replyClass = replyMap.get(id);
 
-        register(new SayMsg());
-        map(CommandList.MSG_WHISPER, CommandList.MSG_SAY);
-        map(CommandList.MSG_SHOUT, CommandList.MSG_SAY);
-        register(new InformMsg());
-        register(new IntroduceMsg());
+        if (replyClass == null) {
+            LOGGER.error("Illegal reply requested. ID: " + Integer.toString(id));
+            return null;
+        }
 
-        register(new MusicMsg());
-        register(new EffectMsg());
-        map(CommandList.MSG_GRAPHIC_FX, CommandList.MSG_SOUND_FX);
-
-        register(new LookAtInvMsg());
-        register(new LookAtTileMsg());
-        register(new LookAtMapItemMsg());
-        register(new LookAtShowcaseMsg());
-        register(new LookatCharMsg());
-
-        register(new DateTimeMsg());
-        register(new WeatherMsg());
-
-        register(new CharacterAnimationMsg());
-        register(new BookMsg());
-
-        register(new DialogInputMsg());
-        register(new DialogMessageMsg());
-        register(new DialogMerchantMsg());
-        register(new DialogSelectionMsg());
-
-        finish();
+        try {
+            return replyClass.newInstance();
+        } catch (InstantiationException e) {
+            LOGGER.error("Failed to create instance of reply class!", e);
+        } catch (IllegalAccessException e) {
+            LOGGER.error("Access to reply class constructor was denied.", e);
+        }
+        return null;
     }
 
     /**
@@ -106,19 +148,5 @@ public final class ReplyFactory
      */
     public static ReplyFactory getInstance() {
         return INSTANCE;
-    }
-
-    /**
-     * Get the AbstractReply requested from this factory. This method is implemented in addition in order to ensure the
-     * execution in the PoolContext.
-     */
-    @Override
-    public AbstractReply getCommand(final int requestId) {
-        PoolContext.enter();
-        try {
-            return super.getCommand(requestId);
-        } finally {
-            PoolContext.exit();
-        }
     }
 }

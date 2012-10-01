@@ -19,8 +19,8 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.resources.SoundFactory;
-import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.util.Location;
@@ -28,13 +28,13 @@ import illarion.common.util.Location;
 import java.io.IOException;
 
 /**
- * Servermessage: Sound or graphic effect ( {@link illarion.client.net.CommandList#MSG_SOUND_FX}, {@link
- * illarion.client.net.CommandList#MSG_GRAPHIC_FX}).
+ * Servermessage: Sound effect ( {@link CommandList#MSG_SOUND_FX}.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class EffectMsg
+@ReplyMessage(replyId = CommandList.MSG_SOUND_FX)
+public final class SoundEffectMsg
         extends AbstractReply {
     /**
      * ID of the effect that shall be shown.
@@ -45,23 +45,6 @@ public final class EffectMsg
      * The location the effect occurs on.
      */
     private transient Location loc;
-
-    /**
-     * Default constructor for the effect message.
-     */
-    public EffectMsg() {
-        super(CommandList.MSG_SOUND_FX);
-    }
-
-    /**
-     * Create a new instance of the effect message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public EffectMsg clone() {
-        return new EffectMsg();
-    }
 
     /**
      * Decode the effect data the receiver got and prepare it for the execution.
@@ -83,27 +66,11 @@ public final class EffectMsg
      */
     @Override
     public boolean executeUpdate() {
-        if (getId() == CommandList.MSG_SOUND_FX) {
-            final Location plyLoc = World.getPlayer().getLocation();
-            SoundFactory.getInstance().getSound(effectId).playAt(loc.getScX() - plyLoc.getScX(),
-                    loc.getScY() - plyLoc.getScY(),
-                    loc.getScZ() - plyLoc.getScZ());
-        } else {
-            final MapTile tile = World.getMap().getMapAt(loc);
-            if (tile != null) {
-                tile.showEffect(effectId);
-            }
-
-        }
+        final Location plyLoc = World.getPlayer().getLocation();
+        SoundFactory.getInstance().getSound(effectId).playAt(loc.getScX() - plyLoc.getScX(),
+                loc.getScY() - plyLoc.getScY(),
+                loc.getScZ() - plyLoc.getScZ());
         return true;
-    }
-
-    /**
-     * Clean up all references that are not needed anymore.
-     */
-    @Override
-    public void reset() {
-        loc = null;
     }
 
     /**
@@ -114,9 +81,6 @@ public final class EffectMsg
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        if (getId() == CommandList.MSG_SOUND_FX) {
-            return toString("Sound: " + effectId);
-        }
-        return toString("Effect: " + effectId);
+        return toString("Sound: " + effectId);
     }
 }

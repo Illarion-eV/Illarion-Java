@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.common.net.NetCommReader;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_SKILL)
 public final class SkillMsg extends AbstractReply {
     /**
      * The ID of the group the skill is displayed in.
@@ -49,23 +51,6 @@ public final class SkillMsg extends AbstractReply {
      * The new value of the skill.
      */
     private int value;
-
-    /**
-     * Default constructor for the skill message.
-     */
-    public SkillMsg() {
-        super(CommandList.MSG_SKILL);
-    }
-
-    /**
-     * Create a new instance of the skill message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public SkillMsg clone() {
-        return new SkillMsg();
-    }
 
     /**
      * Decode the skill data the receiver got and prepare it for the execution.
@@ -94,14 +79,6 @@ public final class SkillMsg extends AbstractReply {
         // Gui.getInstance().getSkills().update(group, skill, value, minor);
 
         return true;
-    }
-
-    /**
-     * Clean the command up before recycling it.
-     */
-    @Override
-    public void reset() {
-        skill = null;
     }
 
     /**

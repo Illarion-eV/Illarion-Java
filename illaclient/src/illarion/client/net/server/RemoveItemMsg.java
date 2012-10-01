@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
@@ -32,29 +33,13 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_REMOVE_ITEM)
 public final class RemoveItemMsg
         extends AbstractReply {
     /**
      * The location the top item shall be removed from.
      */
     private transient Location loc;
-
-    /**
-     * Default constructor for the remove top item message.
-     */
-    public RemoveItemMsg() {
-        super(CommandList.MSG_REMOVE_ITEM);
-    }
-
-    /**
-     * Create a new instance of the remove top item message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public RemoveItemMsg clone() {
-        return new RemoveItemMsg();
-    }
 
     /**
      * Decode the remove top item data the receiver got and prepare it for the execution.
@@ -81,14 +66,6 @@ public final class RemoveItemMsg
         }
 
         return true;
-    }
-
-    /**
-     * Cleanup the references in this object that are not needed any longer.
-     */
-    @Override
-    public void reset() {
-        loc = null;
     }
 
     /**

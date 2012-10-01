@@ -21,6 +21,7 @@ package illarion.client.net.server;
 import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.util.Lang;
 import illarion.common.net.NetCommReader;
 
@@ -33,6 +34,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_DISCONNECT)
 public final class DisconnectMsg extends AbstractReply {
     /**
      * String Builder that supports to build the needed error string for the
@@ -54,23 +56,6 @@ public final class DisconnectMsg extends AbstractReply {
      * The ID of the logout reason.
      */
     private short reason;
-
-    /**
-     * Default constructor for the disconnect message.
-     */
-    public DisconnectMsg() {
-        super(CommandList.MSG_DISCONNECT);
-    }
-
-    /**
-     * Create a new instance of the disconnect message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public DisconnectMsg clone() {
-        return new DisconnectMsg();
-    }
 
     /**
      * Decode the disconnect data the receiver got and prepare it for the

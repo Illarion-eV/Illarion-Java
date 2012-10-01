@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
@@ -32,6 +33,7 @@ import java.io.IOException;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ReplyMessage(replyId = CommandList.MSG_CHARACTER_ANIMATION)
 public final class CharacterAnimationMsg extends AbstractReply {
     /**
      * The ID of the animation that is shown.
@@ -42,13 +44,6 @@ public final class CharacterAnimationMsg extends AbstractReply {
      * The ID of the character that is animated.
      */
     private CharacterId charId;
-
-    /**
-     *
-     */
-    public CharacterAnimationMsg() {
-        super(CommandList.MSG_CHARACTER_ANIMATION);
-    }
 
     /**
      * Create a new instance of the character animation message as recycle

@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
@@ -34,6 +35,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_TURN_CHAR)
 public final class TurnCharMsg extends AbstractReply {
     /**
      * The ID of the character that is turned.
@@ -44,23 +46,6 @@ public final class TurnCharMsg extends AbstractReply {
      * The new direction of the character.
      */
     private short dir;
-
-    /**
-     * Default constructor for the character turn message.
-     */
-    public TurnCharMsg() {
-        super(CommandList.MSG_TURN_CHAR);
-    }
-
-    /**
-     * Create a new instance of the character turn message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public TurnCharMsg clone() {
-        return new TurnCharMsg();
-    }
 
     /**
      * Decode the character turn data the receiver got and prepare it for the

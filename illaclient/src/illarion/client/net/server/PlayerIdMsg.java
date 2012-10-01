@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
@@ -32,28 +33,12 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_PLAYER_ID)
 public final class PlayerIdMsg extends AbstractReply {
     /**
      * The ID if the character, played with this client.
      */
     private CharacterId playerId;
-
-    /**
-     * Default constructor for the player id message.
-     */
-    public PlayerIdMsg() {
-        super(CommandList.MSG_PLAYER_ID);
-    }
-
-    /**
-     * Create a new instance of the player id message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public PlayerIdMsg clone() {
-        return new PlayerIdMsg();
-    }
 
     /**
      * Decode the player id data the receiver got and prepare it for the

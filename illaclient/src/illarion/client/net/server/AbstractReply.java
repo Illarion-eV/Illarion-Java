@@ -18,11 +18,8 @@
  */
 package illarion.client.net.server;
 
-import illarion.client.net.ReplyFactory;
 import illarion.common.net.NetCommReader;
 import illarion.common.util.Location;
-import illarion.common.util.RecycleObject;
-import javolution.context.PoolContext;
 
 import java.io.IOException;
 
@@ -32,30 +29,11 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public abstract class AbstractReply
-        implements RecycleObject {
-
-    /**
-     * The ID of this server message.
-     */
-    private int id;
-
+public abstract class AbstractReply {
     /**
      * Default constructor for a server message.
      */
     protected AbstractReply() {
-        // constructor does not need to do anything. A empty reply with a
-        // undefined ID
-    }
-
-    /**
-     * Constructor for a server message that also set the ID of this server message. Child classes should call this
-     * function in order to set up the server message class correctly.
-     *
-     * @param newId the ID of the server message this reply instance represents.
-     */
-    protected AbstractReply(final int newId) {
-        id = newId;
     }
 
     /**
@@ -74,23 +52,6 @@ public abstract class AbstractReply
     }
 
     /**
-     * Activate the object with a different ID. To change the ID of this server reply and set up all needed new data,
-     * this function can be used.
-     *
-     * @param newId the new ID this object gets
-     */
-    @Override
-    public final void activate(final int newId) {
-        id = newId;
-    }
-
-    /**
-     * Create a new instance of the abstract reply.
-     */
-    @Override
-    public abstract AbstractReply clone();
-
-    /**
      * Decode data from server receive buffer. And store the data for later execution.
      *
      * @param reader the receiver that stores the data that shall be decoded in this function
@@ -107,17 +68,6 @@ public abstract class AbstractReply
     public abstract boolean executeUpdate();
 
     /**
-     * Get the ID of this reply.
-     *
-     * @return the new object ID
-     * @see illarion.common.util.RecycleObject#getId()
-     */
-    @Override
-    public final int getId() {
-        return id;
-    }
-
-    /**
      * Check if the message can be executed right now. The update is not executed now in case this function returns
      * false.
      *
@@ -125,30 +75,6 @@ public abstract class AbstractReply
      */
     public boolean processNow() {
         return true;
-    }
-
-    /**
-     * Recycle the object, so put it back into the recycle factory for later reuse.
-     *
-     * @see illarion.common.util.RecycleObject#recycle()
-     */
-    @Override
-    public final void recycle() {
-        PoolContext.enter();
-        try {
-            ReplyFactory.getInstance().recycle(this);
-        } finally {
-            PoolContext.exit();
-        }
-    }
-
-    /**
-     * Clean up the server reply class and prepare it for reuse. This is called just before the function is put back
-     * into the recycle factory.
-     */
-    @Override
-    public void reset() {
-        // nothing to clear by default
     }
 
     /**

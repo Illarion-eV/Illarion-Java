@@ -100,7 +100,6 @@ final class MessageExecutor
             if (!delayedQueue.isEmpty() && delayedQueue.getFirst().processNow()) {
                 final AbstractReply rpl = delayedQueue.removeFirst();
                 rpl.executeUpdate();
-                rpl.recycle();
                 continue;
             }
 
@@ -131,8 +130,6 @@ final class MessageExecutor
                     if (IllaClient.isDebug(Debug.net)) {
                         LOGGER.debug("finished " + rpl.toString());
                     }
-
-                    rpl.recycle();
                 } else {
                     if (IllaClient.isDebug(Debug.net)) {
                         LOGGER.debug("repeating " + rpl.toString());

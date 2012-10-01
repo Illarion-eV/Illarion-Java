@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.ContainerItemLookAtEvent;
 import illarion.common.net.NetCommReader;
 import illarion.common.util.Money;
@@ -32,6 +33,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_LOOKAT_SHOWCASE)
 public final class LookAtShowcaseMsg extends AbstractItemLookAtMsg {
     /**
      * Showcase this message is related to.
@@ -42,24 +44,6 @@ public final class LookAtShowcaseMsg extends AbstractItemLookAtMsg {
      * The slot in the showcase that message is related to.
      */
     private short slot;
-
-    /**
-     * Default constructor for the showcase item look at text message.
-     */
-    public LookAtShowcaseMsg() {
-        super(CommandList.MSG_LOOKAT_SHOWCASE);
-    }
-
-    /**
-     * Create a new instance of the showcase item look at text message as
-     * recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public LookAtShowcaseMsg clone() {
-        return new LookAtShowcaseMsg();
-    }
 
     /**
      * Decode the showcase item look at text data the receiver got and prepare

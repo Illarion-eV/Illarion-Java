@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
@@ -34,6 +35,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_PUT_ITEM)
 public final class PutItemMsg
         extends AbstractReply {
     /**
@@ -50,23 +52,6 @@ public final class PutItemMsg
      * The count value of the item that is placed on the ground.
      */
     private ItemCount number;
-
-    /**
-     * Default constructor for the put item on map message.
-     */
-    public PutItemMsg() {
-        super(CommandList.MSG_PUT_ITEM);
-    }
-
-    /**
-     * Create a new instance of the put item on map message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public PutItemMsg clone() {
-        return new PutItemMsg();
-    }
 
     /**
      * Decode the put item on map data the receiver got and prepare it for the execution.
@@ -94,16 +79,6 @@ public final class PutItemMsg
             tile.addItem(itemId, number);
         }
         return true;
-    }
-
-    /**
-     * Cleanup the references in this object that are not needed any longer.
-     */
-    @Override
-    public void reset() {
-        loc = null;
-        itemId = null;
-        number = null;
     }
 
     /**

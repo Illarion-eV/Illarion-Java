@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
 import illarion.client.world.characters.CharacterAttribute;
 import illarion.common.net.NetCommReader;
@@ -33,6 +34,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_ATTRIBUTE)
 public final class AttributeMsg extends AbstractReply {
     /**
      * The format string for the {@link #toString()}.
@@ -54,23 +56,6 @@ public final class AttributeMsg extends AbstractReply {
      * The value of the received attribute.
      */
     private int value;
-
-    /**
-     * Default constructor for the attribute message.
-     */
-    public AttributeMsg() {
-        super(CommandList.MSG_ATTRIBUTE);
-    }
-
-    /**
-     * Create a new instance of the attribute message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public AttributeMsg clone() {
-        return new AttributeMsg();
-    }
 
     /**
      * Decode the attribute data the receiver got and prepare it for the
@@ -102,15 +87,6 @@ public final class AttributeMsg extends AbstractReply {
             }
         }
         return true;
-    }
-
-    /**
-     * Clean the command up before recycling it.
-     */
-    @Override
-    public void reset() {
-        attribute = null;
-        targetCharacter = null;
     }
 
     /**

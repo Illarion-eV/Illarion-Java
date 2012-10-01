@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.InventoryItemLookAtEvent;
 import illarion.common.net.NetCommReader;
 import illarion.common.util.Money;
@@ -32,28 +33,12 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_LOOKAT_INV)
 public final class LookAtInvMsg extends AbstractItemLookAtMsg {
     /**
      * Inventory slot that message is related to.
      */
     private short slot;
-
-    /**
-     * Default constructor for the inventory item look at text message.
-     */
-    public LookAtInvMsg() {
-        super(CommandList.MSG_LOOKAT_INV);
-    }
-
-    /**
-     * Create a new instance of the inventory item look at text message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public LookAtInvMsg clone() {
-        return new LookAtInvMsg();
-    }
 
     /**
      * Decode the inventory item look at text data the receiver got and prepare

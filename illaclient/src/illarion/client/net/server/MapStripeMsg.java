@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.GameMap;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
@@ -33,6 +34,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_MAP_STRIPE)
 public final class MapStripeMsg
         extends AbstractReply {
     /**
@@ -64,23 +66,6 @@ public final class MapStripeMsg
      * The list of tiles that are inside the update and all containing informations.
      */
     private final FastList<TileUpdate> tiles = new FastList<TileUpdate>();
-
-    /**
-     * Default constructor for the map stripe message.
-     */
-    public MapStripeMsg() {
-        super(CommandList.MSG_MAP_STRIPE);
-    }
-
-    /**
-     * Create a new instance of the map stripe message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public MapStripeMsg clone() {
-        return new MapStripeMsg();
-    }
 
     /**
      * Decode the map stripe data the receiver got and prepare it for the execution.
@@ -149,14 +134,6 @@ public final class MapStripeMsg
     @Override
     public boolean processNow() {
         return true;// Gui.getInstance().getClock().isSet();
-    }
-
-    /**
-     * Cleanup the references that are not needed anymore.
-     */
-    @Override
-    public void reset() {
-        loc = null;
     }
 
     /**

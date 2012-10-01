@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.DialogMessageReceivedEvent;
 import illarion.common.net.NetCommReader;
 import javolution.text.TextBuilder;
@@ -31,6 +32,7 @@ import java.io.IOException;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ReplyMessage(replyId = CommandList.MSG_DIALOG_MSG)
 public final class DialogMessageMsg
         extends AbstractReply {
     /**
@@ -48,18 +50,6 @@ public final class DialogMessageMsg
      */
     private int dialogId;
 
-    /**
-     * Default constructor for the message dialog message.
-     */
-    public DialogMessageMsg() {
-        super(CommandList.MSG_DIALOG_MSG);
-    }
-
-    @Override
-    public AbstractReply clone() {
-        return new DialogMessageMsg();
-    }
-
     @Override
     public void decode(final NetCommReader reader)
             throws IOException {
@@ -73,11 +63,6 @@ public final class DialogMessageMsg
         EventBus.publish(new DialogMessageReceivedEvent(dialogId, title, content));
 
         return true;
-    }
-
-    @Override
-    public void reset() {
-        title = null;
     }
 
     @Override

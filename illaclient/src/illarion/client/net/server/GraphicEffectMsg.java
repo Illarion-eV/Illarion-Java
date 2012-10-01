@@ -20,6 +20,7 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.util.Location;
@@ -27,62 +28,59 @@ import illarion.common.util.Location;
 import java.io.IOException;
 
 /**
- * Servermessage: Look at description of a tile ( {@link CommandList#MSG_LOOKAT_TILE}).
+ * Servermessage: Graphic effect ( {@link CommandList#MSG_GRAPHIC_FX}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-@ReplyMessage(replyId = CommandList.MSG_LOOKAT_TILE)
-public final class LookAtTileMsg
+@ReplyMessage(replyId = CommandList.MSG_GRAPHIC_FX)
+public final class GraphicEffectMsg
         extends AbstractReply {
     /**
-     * The location of the tile on the server map.
+     * ID of the effect that shall be shown.
+     */
+    private int effectId;
+
+    /**
+     * The location the effect occurs on.
      */
     private transient Location loc;
 
     /**
-     * The look at text for the tile.
-     */
-    private String text;
-
-    /**
-     * Decode the tile look at text data the receiver got and prepare it for the execution.
+     * Decode the effect data the receiver got and prepare it for the execution.
      *
      * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
+     * @throws java.io.IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
     public void decode(final NetCommReader reader)
             throws IOException {
         loc = decodeLocation(reader);
-        text = reader.readString();
+        effectId = reader.readUShort();
     }
 
     /**
-     * Execute the tile look at text message and send the decoded data to the rest of the client.
+     * Execute the effect message and send the decoded data to the rest of the client.
      *
      * @return true if the execution is done, false if it shall be called again
      */
     @Override
     public boolean executeUpdate() {
-        World.getMapDisplay().lookAt(loc.getDcX(), loc.getDcY(), text);
-        //        GUI.getInstance().getChatText()
-        //            .showText(text, null, loc, ChatHandler.SpeechMode.normal);
-
-        // for testing lookat only
-        World.getChatHandler().handleMessage(text, loc);
-
+        final MapTile tile = World.getMap().getMapAt(loc);
+        if (tile != null) {
+            tile.showEffect(effectId);
+        }
         return true;
     }
 
     /**
-     * Get the data of this tile look at text message as string.
+     * Get the data of this effect message as string.
      *
      * @return the string that contains the values that were decoded for this message
      */
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Location: " + loc.toString() + " Message: " + text);
+        return toString("Graphic Effect: " + effectId);
     }
 }

@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.DialogInputReceivedEvent;
 import illarion.common.net.NetCommReader;
 import javolution.text.TextBuilder;
@@ -31,6 +32,7 @@ import java.io.IOException;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ReplyMessage(replyId = CommandList.MSG_DIALOG_INPUT)
 public final class DialogInputMsg
         extends AbstractReply {
     /**
@@ -52,23 +54,6 @@ public final class DialogInputMsg
      * The ID of this request.
      */
     private int requestId;
-
-    /**
-     * Default constructor for the effect message.
-     */
-    public DialogInputMsg() {
-        super(CommandList.MSG_DIALOG_INPUT);
-    }
-
-    /**
-     * Create a new instance of the text request message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public DialogInputMsg clone() {
-        return new DialogInputMsg();
-    }
 
     /**
      * Decode the text request the receiver got and prepare it for the execution.
@@ -96,14 +81,6 @@ public final class DialogInputMsg
         EventBus.publish(new DialogInputReceivedEvent(requestId, title, maxCharacters, multiLine));
 
         return true;
-    }
-
-    /**
-     * Clean up all references that are not needed anymore.
-     */
-    @Override
-    public void reset() {
-        title = null;
     }
 
     /**

@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
@@ -34,6 +35,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_INVENTORY)
 public final class InventoryMsg extends AbstractReply {
     /**
      * New count of the item on the position.
@@ -49,23 +51,6 @@ public final class InventoryMsg extends AbstractReply {
      * Position in the inventory.
      */
     private short location;
-
-    /**
-     * Default constructor for the inventory item message.
-     */
-    public InventoryMsg() {
-        super(CommandList.MSG_INVENTORY);
-    }
-
-    /**
-     * Create a new instance of the inventory item message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public InventoryMsg clone() {
-        return new InventoryMsg();
-    }
 
     /**
      * Decode the inventory item data the receiver got and prepare it for the

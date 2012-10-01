@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
@@ -36,6 +37,7 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_UPDATE_ITEMS)
 public final class ItemUpdateMsg
         extends AbstractReply {
     /**
@@ -62,23 +64,6 @@ public final class ItemUpdateMsg
      * Position of the server map that is updated.
      */
     private transient Location loc;
-
-    /**
-     * Default constructor for the items on tile message.
-     */
-    public ItemUpdateMsg() {
-        super(CommandList.MSG_UPDATE_ITEMS);
-    }
-
-    /**
-     * Create a new instance of the items on tile message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public ItemUpdateMsg clone() {
-        return new ItemUpdateMsg();
-    }
 
     /**
      * Decode the items on tile data the receiver got and prepare it for the execution.
@@ -112,16 +97,6 @@ public final class ItemUpdateMsg
         }
 
         return true;
-    }
-
-    /**
-     * Clean up this instance before its moved back into the buffer.
-     */
-    @Override
-    public void reset() {
-        itemId.clear();
-        itemCount.clear();
-        loc = null;
     }
 
     /**

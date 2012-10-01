@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.common.net.NetCommReader;
 
 import java.io.IOException;
@@ -31,28 +32,12 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_CLOSE_SHOWCASE)
 public final class CloseShowcaseMsg extends AbstractReply {
     /**
      * The container that shall be closed.
      */
     private short sc;
-
-    /**
-     * Default constructor for the close container message.
-     */
-    public CloseShowcaseMsg() {
-        super(CommandList.MSG_CLOSE_SHOWCASE);
-    }
-
-    /**
-     * Create a new instance of the close container message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public CloseShowcaseMsg clone() {
-        return new CloseShowcaseMsg();
-    }
 
     /**
      * Decode the close container data the receiver got and prepare it for the

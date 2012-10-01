@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.BroadcastInformReceivedEvent;
 import illarion.client.net.server.events.ScriptInformReceivedEvent;
 import illarion.client.net.server.events.ServerInformReceivedEvent;
@@ -35,6 +36,7 @@ import java.io.IOException;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
+@ReplyMessage(replyId = CommandList.MSG_INFORM)
 public final class InformMsg extends AbstractReply {
     /**
      * The logger that is used for the log output of this class.
@@ -51,27 +53,10 @@ public final class InformMsg extends AbstractReply {
      */
     private String informText;
 
-    /**
-     * Constructor of this class.
-     */
-    public InformMsg() {
-        super(CommandList.MSG_INFORM);
-    }
-
-    @Override
-    public AbstractReply clone() {
-        return new InformMsg();
-    }
-
     @Override
     public void decode(final NetCommReader reader) throws IOException {
         informType = reader.readUByte();
         informText = reader.readString();
-    }
-
-    @Override
-    public void reset() {
-        informText = null;
     }
 
     @Override

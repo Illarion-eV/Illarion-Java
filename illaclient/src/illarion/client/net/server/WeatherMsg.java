@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.Weather;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
@@ -32,6 +33,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_WEATHER)
 public final class WeatherMsg extends AbstractReply {
     /**
      * The new value for the clouds.
@@ -72,23 +74,6 @@ public final class WeatherMsg extends AbstractReply {
      * The new wind value.
      */
     private byte wind;
-
-    /**
-     * Default constructor for the weather update message.
-     */
-    public WeatherMsg() {
-        super(CommandList.MSG_WEATHER);
-    }
-
-    /**
-     * Create a new instance of the weather update message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public WeatherMsg clone() {
-        return new WeatherMsg();
-    }
 
     /**
      * Decode the weather update data the receiver got and prepare it for the

@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.graphics.LightTracer;
 import illarion.common.net.NetCommReader;
@@ -32,29 +33,13 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_LOCATION)
 public final class LocationMsg
         extends AbstractReply {
     /**
      * The location of the player.
      */
     private transient Location loc;
-
-    /**
-     * Default constructor for the player location message.
-     */
-    public LocationMsg() {
-        super(CommandList.MSG_LOCATION);
-    }
-
-    /**
-     * Create a new instance of the player location message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public LocationMsg clone() {
-        return new LocationMsg();
-    }
 
     /**
      * Decode the player location data the receiver got and prepare it for the execution.
@@ -101,14 +86,6 @@ public final class LocationMsg
     @Override
     public boolean processNow() {
         return World.getPlayer() != null;
-    }
-
-    /**
-     * Clean up all references that are not needed anymore.
-     */
-    @Override
-    public void reset() {
-        loc = null;
     }
 
     /**

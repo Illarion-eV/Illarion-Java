@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.util.BookFactory;
 import illarion.common.net.NetCommReader;
 
@@ -29,29 +30,13 @@ import java.io.IOException;
  *
  * @author Blay09
  */
+@ReplyMessage(replyId = CommandList.MSG_BOOK)
 public final class BookMsg extends AbstractReply {
 
     /**
      * The book id that was sent.
      */
     private int bookid;
-
-    /**
-     * Default constructor for the book message.
-     */
-    public BookMsg() {
-        super(CommandList.MSG_BOOK);
-    }
-
-    /**
-     * Create a new instance of the book message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public BookMsg clone() {
-        return new BookMsg();
-    }
 
     /**
      * Decode the book data the receiver got and prepare it for the execution.
@@ -78,14 +63,6 @@ public final class BookMsg extends AbstractReply {
             //GUI.getInstance().getBookWindow().setVisible(true);
         }
         return true;
-    }
-
-    /**
-     * Clean the command up before recycling it.
-     */
-    @Override
-    public void reset() {
-        bookid = 0;
     }
 
     /**

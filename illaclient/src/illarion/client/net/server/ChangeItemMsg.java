@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
@@ -34,6 +35,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_CHANGE_ITEM)
 public final class ChangeItemMsg
         extends AbstractReply {
     /**
@@ -55,23 +57,6 @@ public final class ChangeItemMsg
      * The ID of the item before the change.
      */
     private ItemId oldItem;
-
-    /**
-     * Default constructor for the change item message.
-     */
-    public ChangeItemMsg() {
-        super(CommandList.MSG_CHANGE_ITEM);
-    }
-
-    /**
-     * Create a new instance of the change item message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public ChangeItemMsg clone() {
-        return new ChangeItemMsg();
-    }
 
     /**
      * Decode the change item data the receiver got and prepare it for the execution.
@@ -101,17 +86,6 @@ public final class ChangeItemMsg
         }
 
         return true;
-    }
-
-    /**
-     * Cleanup the object and release all unneeded references.
-     */
-    @Override
-    public void reset() {
-        loc = null;
-        count = null;
-        newItem = null;
-        oldItem = null;
     }
 
     /**

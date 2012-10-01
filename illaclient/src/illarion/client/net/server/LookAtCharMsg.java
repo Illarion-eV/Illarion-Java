@@ -20,69 +20,68 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.util.Location;
 
 import java.io.IOException;
 
 /**
- * Servermessage: Look at description of a tile ( {@link CommandList#MSG_LOOKAT_TILE}).
+ * Servermessage: Look at description of a character (
+ * {@link illarion.client.net.CommandList#MSG_LOOKAT_CHAR}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-@ReplyMessage(replyId = CommandList.MSG_LOOKAT_TILE)
-public final class LookAtTileMsg
-        extends AbstractReply {
+@ReplyMessage(replyId = CommandList.MSG_LOOKAT_CHAR)
+public final class LookAtCharMsg extends AbstractReply {
     /**
-     * The location of the tile on the server map.
+     * The ID of the character the look at text is related to.
      */
-    private transient Location loc;
+    private long charId;
 
     /**
-     * The look at text for the tile.
+     * The text that is the look at result.
      */
     private String text;
 
     /**
-     * Decode the tile look at text data the receiver got and prepare it for the execution.
+     * Decode the character look at text data the receiver got and prepare it
+     * for the execution.
      *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
+     * @param reader the receiver that got the data from the server that needs
+     *               to be decoded
+     * @throws IOException thrown in case there was not enough data received to
+     *                     decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader)
-            throws IOException {
-        loc = decodeLocation(reader);
+    public void decode(final NetCommReader reader) throws IOException {
+        charId = reader.readUInt();
         text = reader.readString();
     }
 
     /**
-     * Execute the tile look at text message and send the decoded data to the rest of the client.
+     * Execute the character look at text message and send the decoded data to
+     * the rest of the client.
      *
      * @return true if the execution is done, false if it shall be called again
      */
     @Override
     public boolean executeUpdate() {
-        World.getMapDisplay().lookAt(loc.getDcX(), loc.getDcY(), text);
-        //        GUI.getInstance().getChatText()
-        //            .showText(text, null, loc, ChatHandler.SpeechMode.normal);
-
-        // for testing lookat only
-        World.getChatHandler().handleMessage(text, loc);
-
+        // final Char ch = Game.getPeople().getCharacter(charId);
+        // if (ch != null) {
+        // ch.showText(text, SpeechMode.normal);
+        // }
         return true;
     }
 
     /**
-     * Get the data of this tile look at text message as string.
+     * Get the data of this character look at text message as string.
      *
-     * @return the string that contains the values that were decoded for this message
+     * @return the string that contains the values that were decoded for this
+     *         message
      */
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Location: " + loc.toString() + " Message: " + text);
+        return toString("Char: " + charId + " Message: " + text);
     }
 }

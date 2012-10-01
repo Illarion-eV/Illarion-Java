@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
@@ -32,6 +33,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_INTRODUCE)
 public final class IntroduceMsg extends AbstractReply {
     /**
      * The ID of the character who is introduced.
@@ -42,23 +44,6 @@ public final class IntroduceMsg extends AbstractReply {
      * The name of the character.
      */
     private String text;
-
-    /**
-     * Default constructor for the introduce message.
-     */
-    public IntroduceMsg() {
-        super(CommandList.MSG_INTRODUCE);
-    }
-
-    /**
-     * Create a new instance of the introduce message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public IntroduceMsg clone() {
-        return new IntroduceMsg();
-    }
 
     /**
      * Decode the introduce data the receiver got and prepare it for the
@@ -85,14 +70,6 @@ public final class IntroduceMsg extends AbstractReply {
     public boolean executeUpdate() {
         World.getPeople().introduce(charId, text);
         return true;
-    }
-
-    /**
-     * Clean the command up before recycling it.
-     */
-    @Override
-    public void reset() {
-        text = null;
     }
 
     /**

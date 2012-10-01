@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.world.items.MerchantItem;
 import illarion.common.net.NetCommReader;
@@ -36,6 +37,7 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ReplyMessage(replyId = CommandList.MSG_DIALOG_MERCHANT)
 public final class DialogMerchantMsg extends AbstractReply {
     /**
      * The title of the dialog window.
@@ -51,18 +53,6 @@ public final class DialogMerchantMsg extends AbstractReply {
      * The items that were received from the server.
      */
     private List<MerchantItem> items;
-
-    /**
-     * Default constructor for the merchant dialog message.
-     */
-    public DialogMerchantMsg() {
-        super(CommandList.MSG_DIALOG_MERCHANT);
-    }
-
-    @Override
-    public AbstractReply clone() {
-        return new DialogMerchantMsg();
-    }
 
     @Override
     public void decode(final NetCommReader reader)
@@ -111,12 +101,6 @@ public final class DialogMerchantMsg extends AbstractReply {
         EventBus.publish(new DialogMerchantReceivedEvent(dialogId, title, items.toArray(itemArray)));
 
         return true;
-    }
-
-    @Override
-    public void reset() {
-        title = null;
-        items = null;
     }
 
     @Override

@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.util.Location;
@@ -31,6 +32,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_SAY)
 public final class SayMsg extends AbstractReply {
 
     /**
@@ -42,23 +44,6 @@ public final class SayMsg extends AbstractReply {
      * The text that was actually spoken.
      */
     private String text;
-
-    /**
-     * Default constructor for the talking message.
-     */
-    public SayMsg() {
-        super(CommandList.MSG_SAY);
-    }
-
-    /**
-     * Create a new instance of the talking message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public SayMsg clone() {
-        return new SayMsg();
-    }
 
     /**
      * Decode the talking data the receiver got and prepare it for the execution.
@@ -82,15 +67,6 @@ public final class SayMsg extends AbstractReply {
     public boolean executeUpdate() {
         World.getChatHandler().handleMessage(text, loc);
         return true;
-    }
-
-    /**
-     * Clean the command up before recycling it.
-     */
-    @Override
-    public void reset() {
-        text = null;
-        loc = null;
     }
 
     /**

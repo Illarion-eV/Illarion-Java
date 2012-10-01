@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.MapItemLookAtEvent;
 import illarion.common.net.NetCommReader;
 import illarion.common.util.Location;
@@ -32,28 +33,12 @@ import java.io.IOException;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ReplyMessage(replyId = CommandList.MSG_LOOKAT_MAPITEM)
 public final class LookAtMapItemMsg extends AbstractItemLookAtMsg {
     /**
      * The location of the tile on the server map.
      */
     private transient Location loc;
-
-    /**
-     * Default constructor for the tile look at text message.
-     */
-    public LookAtMapItemMsg() {
-        super(CommandList.MSG_LOOKAT_MAPITEM);
-    }
-
-    /**
-     * Create a new instance of the tile look at text message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public LookAtMapItemMsg clone() {
-        return new LookAtMapItemMsg();
-    }
 
     /**
      * Decode the tile look at text data the receiver got and prepare it for the execution.
@@ -80,15 +65,6 @@ public final class LookAtMapItemMsg extends AbstractItemLookAtMsg {
                 rubyLevel, obsidianLevel, sapphireLevel, topazLevel, bonus));
 
         return true;
-    }
-
-    /**
-     * Clean the command up before recycling it.
-     */
-    @Override
-    public void reset() {
-        super.reset();
-        loc = null;
     }
 
     /**

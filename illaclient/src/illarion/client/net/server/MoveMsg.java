@@ -19,6 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
+import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.Char;
 import illarion.client.world.PlayerMovement;
 import illarion.client.world.World;
@@ -35,6 +36,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@ReplyMessage(replyId = CommandList.MSG_MOVE)
 public final class MoveMsg
         extends AbstractReply {
     /**
@@ -82,23 +84,6 @@ public final class MoveMsg
      * The moving speed of the character.
      */
     private short speed;
-
-    /**
-     * Default constructor for the character move message.
-     */
-    public MoveMsg() {
-        activate(CommandList.MSG_MOVE);
-    }
-
-    /**
-     * Create a new instance of the character move message as recycle object.
-     *
-     * @return a new instance of this message object
-     */
-    @Override
-    public MoveMsg clone() {
-        return new MoveMsg();
-    }
 
     /**
      * Decode the character move data the receiver got and prepare it for the execution.
@@ -164,14 +149,6 @@ public final class MoveMsg
         }
 
         return true;
-    }
-
-    /**
-     * Clean up the objects that are not needed any longer.
-     */
-    @Override
-    public void reset() {
-        loc = null;
     }
 
     /**

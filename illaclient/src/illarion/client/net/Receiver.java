@@ -315,19 +315,17 @@ final class Receiver extends Thread implements NetCommReader {
 
                         // decode
                         try {
-                            final AbstractReply rpl =
-                                    ReplyFactory.getInstance().getCommand(id);
+                            final AbstractReply rpl = ReplyFactory.getInstance().getReply(id);
+                            if (rpl != null) {
+                                rpl.decode(this);
 
-                            // explicitly set id for mapped commands
-                            rpl.activate(id);
-                            rpl.decode(this);
+                                if (IllaClient.isDebug(Debug.protocol)) {
+                                    LOGGER.debug("REC: " + rpl.toString());
+                                }
 
-                            if (IllaClient.isDebug(Debug.protocol)) {
-                                LOGGER.debug("REC: " + rpl.toString());
+                                // put decoded command in input queue
+                                queue.put(rpl);
                             }
-
-                            // put decoded command in input queue
-                            queue.put(rpl);
                         } catch (final IllegalArgumentException ex) {
                             LOGGER.error("Invalid command id received "
                                     + Integer.toHexString(id));
@@ -339,8 +337,7 @@ final class Receiver extends Thread implements NetCommReader {
                 }
             } catch (final IOException e) {
                 if (running) {
-                    LOGGER.fatal("The connection to the server is not"
-                            + " working anymore.", e);
+                    LOGGER.fatal("The connection to the server is not working anymore.", e);
                     IllaClient.fallbackToLogin(Lang.getMsg("error.receiver"));
                     running = false;
                     return;

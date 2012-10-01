@@ -48,16 +48,6 @@ public abstract class AbstractItemLookAtMsg extends AbstractReply {
     protected short bonus;
 
     /**
-     * Constructor for a server message that also set the ID of this server message. Child classes should call this
-     * function in order to set up the server message class correctly.
-     *
-     * @param newId the ID of the server message this reply instance represents.
-     */
-    protected AbstractItemLookAtMsg(final int newId) {
-        super(newId);
-    }
-
-    /**
      * Decode look at data from server receive buffer. And store the data for later execution.
      *
      * @param reader the receiver that stores the data that shall be decoded in this function
@@ -81,15 +71,5 @@ public abstract class AbstractItemLookAtMsg extends AbstractReply {
         obsidianLevel = reader.readUByte();
         topazLevel = reader.readUByte();
         bonus = reader.readUByte();
-    }
-
-    @Override
-    public void reset() {
-        super.reset();
-        name = null;
-        description = null;
-        craftedBy = null;
-        qualityText = null;
-        durabilityText = null;
     }
 }
