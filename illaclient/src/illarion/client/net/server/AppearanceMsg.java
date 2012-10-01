@@ -21,13 +21,16 @@ package illarion.client.net.server;
 import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
 import illarion.client.world.Char;
 import illarion.client.world.World;
+import illarion.client.world.characters.CharacterAttribute;
 import illarion.client.world.items.Inventory;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Color;
 
 import java.io.IOException;
@@ -46,8 +49,7 @@ public final class AppearanceMsg extends AbstractReply {
     private static final Logger LOGGER = Logger.getLogger(AppearanceMsg.class);
 
     /**
-     * Conversation value for the scale value received from the server and the
-     * value the client actually uses.
+     * Conversation value for the scale value received from the server and the value the client actually uses.
      */
     private static final float SCALE_MOD = 100.f;
 
@@ -91,19 +93,9 @@ public final class AppearanceMsg extends AbstractReply {
     private short attackMode;
 
     /**
-     * The ID of the item on the characters back.
-     */
-    private ItemId backItemId;
-
-    /**
      * The ID of the beard of the character.
      */
     private short beardID;
-
-    /**
-     * The ID of the item on the characters breast.
-     */
-    private ItemId breastItemId;
 
     /**
      * ID of the character this message is about.
@@ -115,12 +107,6 @@ public final class AppearanceMsg extends AbstractReply {
      * <code>false</code> is alive.
      */
     private boolean deadFlag;
-
-    /**
-     * The ID of the item on the feet of the character.
-     */
-    private ItemId feetItemId;
-
     /**
      * The blue share of the color of the hair.
      */
@@ -142,26 +128,6 @@ public final class AppearanceMsg extends AbstractReply {
     private short hairID;
 
     /**
-     * The ID of the item on the head.
-     */
-    private ItemId headItemId;
-
-    /**
-     * The ID of the item in the left hand.
-     */
-    private ItemId leftItemId;
-
-    /**
-     * The ID of the item on the legs of the character.
-     */
-    private ItemId legsItemId;
-
-    /**
-     * The ID of the item in the right hand.
-     */
-    private ItemId rightItemId;
-
-    /**
      * Size modificator of the character.
      */
     private short size;
@@ -181,6 +147,14 @@ public final class AppearanceMsg extends AbstractReply {
      */
     private short skinColorRed;
 
+    /**
+     * The hit points of the character.
+     */
+    private int hitPoints;
+
+    /**
+     * The slots of the inventory that is required to display the paperdolling of this character.
+     */
     private final ItemId[] itemSlots;
 
     /**
@@ -206,6 +180,7 @@ public final class AppearanceMsg extends AbstractReply {
         final int race = reader.readUShort();
         final boolean male = reader.readUByte() == 0;
         appearance = getAppearance(race, male);
+        hitPoints = reader.readUShort();
         size = reader.readUByte();
         hairID = reader.readUByte();
         beardID = reader.readUByte();
@@ -289,6 +264,8 @@ public final class AppearanceMsg extends AbstractReply {
         ch.updateLight();
 
         ch.setVisible(World.getPlayer().canSee(ch));
+
+        EventBus.publish(new AttributeUpdateReceivedEvent(charId, CharacterAttribute.HitPoints, hitPoints));
         return true;
     }
 
