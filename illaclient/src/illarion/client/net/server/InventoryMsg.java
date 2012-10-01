@@ -92,9 +92,9 @@ public final class InventoryMsg extends AbstractReply {
         final StringBuilder builder = new StringBuilder();
         builder.append("pos: ");
         builder.append(location);
-        builder.append(" itemid: ");
+        builder.append(' ');
         builder.append(itemId);
-        builder.append(" count: ");
+        builder.append(' ');
         builder.append(count);
         return toString(builder.toString());
     }
