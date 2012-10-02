@@ -25,11 +25,11 @@
     </style>
 
     <style id="nifty-window#bar">
-        <attributes width="*" height="19px" paddingBottom="3px" childLayout="horizontal"/>
+        <attributes height="19px" paddingBottom="3px" childLayout="horizontal"/>
     </style>
 
     <style id="nifty-window#title" base="base-font">
-        <attributes height="19px" align="right" valign="center" textHAlign="center" textVAlign="center"
+        <attributes width="*" height="19px" align="right" valign="center" textHAlign="center" textVAlign="center"
                     visibleToMouse="false" color="#ffff"/>
     </style>
 
