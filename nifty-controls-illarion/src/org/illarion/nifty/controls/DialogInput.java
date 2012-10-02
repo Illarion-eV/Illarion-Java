@@ -55,4 +55,11 @@ public interface DialogInput extends Window {
      * @param length the maximal amount of characters
      */
     void setMaximalLength(int length);
+
+    /**
+     * Set the description text.
+     *
+     * @param text the text shown as description
+     */
+    void setDescription(String text);
 }

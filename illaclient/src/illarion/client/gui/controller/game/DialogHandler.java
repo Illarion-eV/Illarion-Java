@@ -145,7 +145,8 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     @EventSubscriber
     public void handleInputDialogEvent(final DialogInputReceivedEvent event) {
-        showDialogInput(event.getId(), event.getTitle(), event.getMaxLength(), event.hasMultipleLines());
+        showDialogInput(event.getId(), event.getTitle(), event.getDescription(), event.getMaxLength(),
+                event.hasMultipleLines());
     }
 
     @EventSubscriber
@@ -269,10 +270,11 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, null));
     }
 
-    private void showDialogInput(final int id, final String title, final int maxCharacters,
+    private void showDialogInput(final int id, final String title, final String description, final int maxCharacters,
                                  final boolean multipleLines) {
         final Element parentArea = screen.findElementByName("windows");
         final DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + Integer.toString(id), title);
+        builder.description(description);
         builder.buttonLeft("OK");
         builder.buttonRight("Cancel");
         builder.dialogId(id);
@@ -282,7 +284,6 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         } else {
             builder.style("illarion-dialog-input-single");
         }
-        builder.width(builder.pixels(400));
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, null));
     }
 

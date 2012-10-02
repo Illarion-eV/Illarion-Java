@@ -41,6 +41,11 @@ public final class DialogInputMsg
     private String title;
 
     /**
+     * The description text that is displayed in this dialog.
+     */
+    private String description;
+
+    /**
      * The flag if the text input is supposed to be multi-lined or not.
      */
     private boolean multiLine;
@@ -65,6 +70,7 @@ public final class DialogInputMsg
     public void decode(final NetCommReader reader)
             throws IOException {
         title = reader.readString();
+        description = reader.readString();
         multiLine = reader.readByte() != 0;
         maxCharacters = reader.readUShort();
         requestId = reader.readInt();
@@ -78,7 +84,7 @@ public final class DialogInputMsg
     @Override
     public boolean executeUpdate() {
         System.out.println(toString());
-        EventBus.publish(new DialogInputReceivedEvent(requestId, title, maxCharacters, multiLine));
+        EventBus.publish(new DialogInputReceivedEvent(requestId, title, description, maxCharacters, multiLine));
 
         return true;
     }

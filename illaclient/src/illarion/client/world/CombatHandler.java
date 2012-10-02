@@ -126,7 +126,6 @@ public final class CombatHandler {
     public void standDown() {
         if (attackedChar != null) {
             World.getNet().sendCommand(CommandFactory.getInstance().getCommand(CommandList.CMD_STAND_DOWN));
-            World.getMusicBox().stopFightingMusic();
             attackedChar = null;
         }
     }
@@ -138,6 +137,7 @@ public final class CombatHandler {
     public void targetLost() {
         if (attackedChar != null) {
             attackedChar.setAttackMarker(false);
+            World.getMusicBox().stopFightingMusic();
             attackedChar = null;
         }
     }

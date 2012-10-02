@@ -18,9 +18,21 @@
   ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <nifty-styles>
-    <style id="illarion-dialog-input-single#input">
-        <attributes wrap="false" width="100%" margin="3px"/>
+    <useStyles filename="textfield/nifty-textfield.xml"/>
+
+    <style id="illarion-dialog-input-single">
+        <attributes width="400px"/>
     </style>
+
+    <style id="illarion-dialog-input-single#input" base="nifty-textfield">
+        <attributes wrap="false" width="*" margin="3px"/>
+    </style>
+
+    <style id="illarion-dialog-input-single#input#panel" base="nifty-textfield#panel"/>
+    <style id="illarion-dialog-input-single#input#field" base="nifty-textfield#field"/>
+    <style id="illarion-dialog-input-single#input#text" base="nifty-textfield#text"/>
+    <style id="illarion-dialog-input-single#input#cursor-panel" base="nifty-textfield#cursor-panel"/>
+    <style id="illarion-dialog-input-single#input#cursor" base="nifty-textfield#cursor"/>
 
     <style id="illarion-dialog-input-single#buttonLeft">
         <attributes margin="3px"/>
@@ -30,9 +42,19 @@
         <attributes margin="3px"/>
     </style>
 
-    <style id="illarion-dialog-input-multi#input">
-        <attributes wrap="true" width="100%" height="50px" margin="3px"/>
+    <style id="illarion-dialog-input-multi">
+        <attributes width="400px"/>
     </style>
+
+    <style id="illarion-dialog-input-multi#input" base="nifty-textfield">
+        <attributes wrap="true" width="*" height="50px" margin="3px"/>
+    </style>
+
+    <style id="illarion-dialog-input-multi#input#panel" base="nifty-textfield#panel"/>
+    <style id="illarion-dialog-input-multi#input#field" base="nifty-textfield#field"/>
+    <style id="illarion-dialog-input-multi#input#text" base="nifty-textfield#text"/>
+    <style id="illarion-dialog-input-multi#input#cursor-panel" base="nifty-textfield#cursor-panel"/>
+    <style id="illarion-dialog-input-multi#input#cursor" base="nifty-textfield#cursor"/>
 
     <style id="illarion-dialog-input-multi#buttonLeft">
         <attributes margin="3px"/>

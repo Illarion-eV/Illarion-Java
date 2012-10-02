@@ -30,7 +30,7 @@ import illarion.client.IllaClient;
 import illarion.client.graphics.DisplayModeSorter;
 import illarion.client.world.People;
 import illarion.common.bug.CrashReporter;
-import illarion.common.config.ConfigSystem;
+import illarion.common.config.Config;
 import illarion.common.graphics.GraphicResolution;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.DisplayMode;
@@ -44,6 +44,7 @@ import java.util.List;
 public final class OptionScreenController implements ScreenController {
 
     private Nifty nifty;
+    private Screen screen;
 
     private DropDown<String> charNameLength;
     private CheckBox showCharId;
@@ -60,6 +61,7 @@ public final class OptionScreenController implements ScreenController {
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
         this.nifty = nifty;
+        this.screen = screen;
 
         charNameLength = screen.findNiftyControl("charNameLength", DropDown.class);
         charNameLength.addItem("${options-bundle.charNameDisplay.short}");
@@ -99,12 +101,14 @@ public final class OptionScreenController implements ScreenController {
         musicVolume.setValue(IllaClient.getCfg().getFloat("musicVolume"));
 
         nifty.subscribeAnnotations(this);
+
+        System.err.println(screen.debugOutput());
     }
 
     @NiftyEventSubscriber(id = "saveButton")
     public void onSaveButtonClickedEvent(final String topic, final ButtonClickedEvent event) {
         nifty.gotoScreen("login");
-        final ConfigSystem configSystem = (ConfigSystem) IllaClient.getCfg();
+        final Config configSystem = IllaClient.getCfg();
 
         configSystem.set(People.CFG_NAMEMODE_KEY, charNameLength.getSelectedIndex() + 1);
         configSystem.set(People.CFG_SHOWID_KEY, showCharId.isChecked());

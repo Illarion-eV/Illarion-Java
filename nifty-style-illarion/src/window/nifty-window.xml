@@ -34,7 +34,7 @@
     </style>
 
     <style id="nifty-window#content">
-        <attributes width="100%" height="*" padding="8px" childLayout="center"/>
+        <attributes width="100%" padding="8px" childLayout="center"/>
     </style>
 
     <style id="nifty-window#close-button" base="nifty-button-close#panel"/>

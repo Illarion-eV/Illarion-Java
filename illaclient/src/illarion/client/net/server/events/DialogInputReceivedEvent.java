@@ -35,18 +35,25 @@ public final class DialogInputReceivedEvent extends AbstractDialogReceivedEvent 
     private final boolean multiple;
 
     /**
+     * The description displayed in the dialog.
+     */
+    private final String description;
+
+    /**
      * Create a new instance of this event.
      *
-     * @param dialogId      the ID of this dialog
-     * @param dialogTitle   the title of the dialog
-     * @param maxLength     the maximal mount of characters to type in
-     * @param multipleLines the multiple line flag of this dialog
+     * @param dialogId          the ID of this dialog
+     * @param dialogTitle       the title of the dialog
+     * @param dialogDescription the description in the dialog
+     * @param maxLength         the maximal mount of characters to type in
+     * @param multipleLines     the multiple line flag of this dialog
      */
-    public DialogInputReceivedEvent(final int dialogId, final String dialogTitle, final int maxLength,
-                                    final boolean multipleLines) {
+    public DialogInputReceivedEvent(final int dialogId, final String dialogTitle, final String dialogDescription,
+                                    final int maxLength, final boolean multipleLines) {
         super(dialogId, dialogTitle);
         length = maxLength;
         multiple = multipleLines;
+        description = dialogDescription;
     }
 
     /**
@@ -65,5 +72,14 @@ public final class DialogInputReceivedEvent extends AbstractDialogReceivedEvent 
      */
     public boolean hasMultipleLines() {
         return multiple;
+    }
+
+    /**
+     * Get the description that is supposed to be displayed in the dialog.
+     *
+     * @return
+     */
+    public String getDescription() {
+        return description;
     }
 }

@@ -22,6 +22,7 @@ import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
+import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
@@ -78,6 +79,11 @@ public class DialogInputControl
      */
     private int maxLength;
 
+    /**
+     * The text that is displayed as description in this dialog.
+     */
+    private String description;
+
     @Override
     public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
                      final Attributes controlDefinitionAttributes) {
@@ -91,6 +97,8 @@ public class DialogInputControl
         buttonLabelRight = controlDefinitionAttributes.get("buttonRight");
         maxLength = controlDefinitionAttributes.getAsInteger("maxLength", 65535);
 
+        description = controlDefinitionAttributes.getWithDefault("description", "");
+
         alreadyClosed = false;
     }
 
@@ -98,6 +106,7 @@ public class DialogInputControl
     public void onStartScreen() {
         setButtonLabel(DialogInput.DialogButton.left, buttonLabelLeft);
         setButtonLabel(DialogInput.DialogButton.right, buttonLabelRight);
+        setDescription(description);
         setMaximalLength(maxLength);
 
         super.onStartScreen();
@@ -140,6 +149,15 @@ public class DialogInputControl
             throw new IllegalArgumentException("Failed to fetch input field.");
         }
         field.setMaxLength(length);
+    }
+
+    @Override
+    public void setDescription(final String text) {
+        final Label label = getContent().findNiftyControl("#description", Label.class);
+        if (label == null) {
+            throw new IllegalArgumentException("Failed to fetch description label.");
+        }
+        label.setText(text);
     }
 
     @Override

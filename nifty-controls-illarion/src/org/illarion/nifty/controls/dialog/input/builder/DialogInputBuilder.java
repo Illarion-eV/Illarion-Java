@@ -77,4 +77,13 @@ public class DialogInputBuilder extends ControlBuilder {
     public void maxLength(final int maxChars) {
         set("maxLength", Integer.toString(maxChars));
     }
+
+    /**
+     * Set the text that is displayed as description.
+     *
+     * @param text the description text
+     */
+    public void description(final String text) {
+        set("description", text);
+    }
 }
