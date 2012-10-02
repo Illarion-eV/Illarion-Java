@@ -21,11 +21,11 @@
     <useStyles filename="textfield/nifty-textfield.xml"/>
 
     <style id="illarion-dialog-input-single">
-        <attributes width="400px"/>
+        <attributes/>
     </style>
 
     <style id="illarion-dialog-input-single#input" base="nifty-textfield">
-        <attributes wrap="false" width="*" margin="3px"/>
+        <attributes wrap="false" margin="3px"/>
     </style>
 
     <style id="illarion-dialog-input-single#input#panel" base="nifty-textfield#panel"/>

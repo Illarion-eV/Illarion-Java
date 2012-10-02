@@ -19,16 +19,16 @@
 <nifty-controls>
     <controlDefinition name="dialog-input" style="illarion-dialog-input-single" visibleToMouse="true"
                        controller="org.illarion.nifty.controls.dialog.input.DialogInputControl">
-        <control name="window" title="Nachricht" id="#window" visibleToMouse="true" width="400px">
+        <control name="window" title="Nachricht" id="#window" visibleToMouse="true" width="422px">
             <panel childLayout="vertical" visibleToMouse="true" width="380px">
                 <control name="label" id="#description" style="nifty-label" wrap="true" width="380px"/>
                 <panel height="5px" width="1px"/>
                 <control name="textfield" id="#input" maxlength="65536" width="380px"/>
                 <panel height="5px" width="1px"/>
-                <panel id="#buttons" style="#buttons" childLayout="center" visibleToMouse="true" width="100%">
+                <panel id="#buttons" childLayout="center" visibleToMouse="true" width="380px">
                     <panel childLayout="horizontal" align="center">
-                        <control name="button" id="#buttonLeft" label="OK"/>
-                        <control name="button" id="#buttonRight" label="Cancel"/>
+                        <control name="button" id="#buttonLeft" label="OK" width="80px"/>
+                        <control name="button" id="#buttonRight" label="Cancel" width="80px"/>
                     </panel>
                 </panel>
             </panel>

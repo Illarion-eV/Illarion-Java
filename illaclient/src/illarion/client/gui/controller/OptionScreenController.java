@@ -101,8 +101,6 @@ public final class OptionScreenController implements ScreenController {
         musicVolume.setValue(IllaClient.getCfg().getFloat("musicVolume"));
 
         nifty.subscribeAnnotations(this);
-
-        System.err.println(screen.debugOutput());
     }
 
     @NiftyEventSubscriber(id = "saveButton")
