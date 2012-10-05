@@ -36,6 +36,11 @@ public final class CommandList {
     public static final int CMD_TRADE_ITEM = 0x52;
 
     /**
+     * Client command that allows interaction with a trading dialog.
+     */
+    public static final int CMD_CRAFT_ITEM = 0x54;
+
+    /**
      * Client command to start attacking another character.
      */
     public static final int CMD_ATTACK = 0xFA;
@@ -299,6 +304,11 @@ public final class CommandList {
      * Server message that contains the data of a selection dialog.
      */
     public static final int MSG_DIALOG_SELECTION = 0x53;
+
+    /**
+     * Server message that contains the data of a crafting dialog.
+     */
+    public static final int MSG_DIALOG_CRAFTING = 0x54;
 
     /**
      * Server message that contains the appearance data of a character.

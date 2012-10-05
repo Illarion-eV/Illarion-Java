@@ -20,40 +20,37 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.DialogInputReceivedEvent;
+import illarion.client.net.server.events.DialogCraftingReceivedEvent;
+import illarion.client.world.items.CraftingIngredientItem;
+import illarion.client.world.items.CraftingItem;
 import illarion.common.net.NetCommReader;
+import illarion.common.types.ItemId;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
 /**
- * Servermessage: Text Request ( {@link illarion.client.net.CommandList#MSG_DIALOG_INPUT}).
+ * Servermessage: Crafting Request ({@link CommandList#MSG_DIALOG_INPUT}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@ReplyMessage(replyId = CommandList.MSG_DIALOG_INPUT)
-public final class DialogInputMsg
-        extends AbstractReply {
+@ReplyMessage(replyId = CommandList.MSG_DIALOG_CRAFTING)
+public final class DialogCraftingMsg extends AbstractReply {
     /**
      * The title that is supposed to be displayed in the dialog.
      */
     private String title;
 
     /**
-     * The description text that is displayed in this dialog.
+     * The group names
      */
-    private String description;
+    private String[] groups;
 
     /**
-     * The flag if the text input is supposed to be multi-lined or not.
+     * The crafting item.
      */
-    private boolean multiLine;
-
-    /**
-     * The maximal amount of characters that are valid to be input.
-     */
-    private int maxCharacters;
+    private CraftingItem[] craftItems;
 
     /**
      * The ID of this request.
@@ -70,9 +67,31 @@ public final class DialogInputMsg
     public void decode(final NetCommReader reader)
             throws IOException {
         title = reader.readString();
-        description = reader.readString();
-        multiLine = reader.readByte() != 0;
-        maxCharacters = reader.readUShort();
+
+        groups = new String[reader.readUByte()];
+        for (int i = 0; i < groups.length; i++) {
+            groups[i] = reader.readString();
+        }
+
+        craftItems = new CraftingItem[reader.readUByte()];
+        for (int i = 0; i < craftItems.length; i++) {
+            final int group = reader.readUByte();
+            final ItemId itemId = new ItemId(reader);
+            final String name = reader.readString();
+            final int buildItem = reader.readUShort();
+            final int craftStackSize = reader.readUByte();
+
+            final CraftingIngredientItem[] ingredients = new CraftingIngredientItem[reader.readUByte()];
+            for (int k = 0; k < ingredients.length; k++) {
+                final ItemId ingredientId = new ItemId(reader);
+                final int ingredientCount = reader.readUByte();
+
+                ingredients[i] = new CraftingIngredientItem(ingredientId, ingredientCount);
+            }
+
+            craftItems[i] = new CraftingItem(group, itemId, name, buildItem, craftStackSize, ingredients);
+        }
+
         requestId = reader.readInt();
     }
 
@@ -83,7 +102,7 @@ public final class DialogInputMsg
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new DialogInputReceivedEvent(requestId, title, description, maxCharacters, multiLine));
+        EventBus.publish(new DialogCraftingReceivedEvent(requestId, title, groups, craftItems));
 
         return true;
     }
@@ -100,8 +119,6 @@ public final class DialogInputMsg
         try {
             builder.append("title: ").append(title);
             builder.append(" id: ").append(requestId);
-            builder.append(" maximal characters: ").append(maxCharacters);
-            builder.append(" support multiline: ").append(multiLine);
             return toString(builder.toString());
         } finally {
             TextBuilder.recycle(builder);

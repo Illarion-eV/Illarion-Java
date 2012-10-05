@@ -119,6 +119,7 @@ public final class CommandFactory
         register(new CloseDialogInputCmd());
         register(new CloseDialogMessageCmd());
         register(new TradeItemCmd());
+        register(new CraftItemCmd());
         register(new CloseDialogSelectionCmd());
 
         finish();
