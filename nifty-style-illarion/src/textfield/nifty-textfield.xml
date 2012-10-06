@@ -28,7 +28,7 @@
         <attributes childLayout="overlay" height="23px"/>
         <effect>
             <onHover name="changeMouseCursor" id="textFieldCursor"/>
-            <onHover name="border" color="#822f" post="true"/>
+            <onHover name="border" color="#1F3A1CFF" post="true"/>
         </effect>
     </style>
 
@@ -38,7 +38,7 @@
                     padding="0px,2px"/>
         <effect>
             <onActive name="border" color="#222f" post="true" inset="1px"/>
-            <onFocus name="colorBar" color="#800f" post="true" inset="1px"/>
+            <onFocus name="colorBar" color="#305B2CFF" post="true" inset="1px"/>
             <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150"/>
             <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150"/>
         </effect>
