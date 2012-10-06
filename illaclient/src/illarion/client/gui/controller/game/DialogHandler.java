@@ -25,6 +25,7 @@ import de.lessvoid.nifty.builder.ControlBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.gui.util.NiftyCraftingItem;
 import illarion.client.gui.util.NiftyMerchantItem;
 import illarion.client.gui.util.NiftySelectItem;
 import illarion.client.net.CommandFactory;
@@ -32,10 +33,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.client.CloseDialogInputCmd;
 import illarion.client.net.client.CloseDialogMessageCmd;
 import illarion.client.net.client.CloseDialogSelectionCmd;
-import illarion.client.net.server.events.DialogInputReceivedEvent;
-import illarion.client.net.server.events.DialogMerchantReceivedEvent;
-import illarion.client.net.server.events.DialogMessageReceivedEvent;
-import illarion.client.net.server.events.DialogSelectionReceivedEvent;
+import illarion.client.net.server.events.*;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.MerchantList;
@@ -45,6 +43,7 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.nifty.controls.*;
+import org.illarion.nifty.controls.dialog.crafting.builder.DialogCraftingBuilder;
 import org.illarion.nifty.controls.dialog.input.builder.DialogInputBuilder;
 import org.illarion.nifty.controls.dialog.merchant.builder.DialogMerchantBuilder;
 import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
@@ -147,6 +146,11 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     public void handleInputDialogEvent(final DialogInputReceivedEvent event) {
         showDialogInput(event.getId(), event.getTitle(), event.getDescription(), event.getMaxLength(),
                 event.hasMultipleLines());
+    }
+
+    @EventSubscriber
+    public void handleCraftingDialogEvent(final DialogCraftingReceivedEvent event) {
+        showCraftingDialog(event);
     }
 
     @EventSubscriber
@@ -319,6 +323,22 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         }));
     }
 
+    private void showCraftingDialog(final DialogCraftingReceivedEvent event) {
+        final Element parentArea = screen.findElementByName("windows");
+        final DialogCraftingBuilder builder = new DialogCraftingBuilder("craftingDialog" +
+                Integer.toString(event.getRequestId()), event.getTitle());
+        builder.dialogId(event.getRequestId());
+        builder.width(builder.pixels(500));
+        builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
+            @Override
+            public void run(final Element createdElement) {
+                final DialogCrafting dialog = createdElement.getNiftyControl(DialogCrafting.class);
+
+                addCraftingItemsToDialog(event, dialog);
+            }
+        }));
+    }
+
     private void addMerchantItemsToDialog(final DialogMerchantReceivedEvent event, final DialogMerchant dialog) {
         for (int i = 0; i < event.getItemCount(); i++) {
             final NiftyMerchantItem item = new NiftyMerchantItem(nifty, event.getItem(i));
@@ -338,6 +358,12 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     private void addSelectItemsToDialog(final DialogSelectionReceivedEvent event, final DialogSelect dialog) {
         for (int i = 0; i < event.getOptionCount(); i++) {
             dialog.addItem(new NiftySelectItem(nifty, event.getOption(i)));
+        }
+    }
+
+    private void addCraftingItemsToDialog(final DialogCraftingReceivedEvent event, final DialogCrafting dialog) {
+        for (int i = 0; i < event.getCraftingItemCount(); i++) {
+            dialog.addCraftingItems(new NiftyCraftingItem(nifty, event.getCraftingItem(i)));
         }
     }
 

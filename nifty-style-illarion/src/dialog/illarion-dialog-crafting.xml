@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-styles>
+    <useStyles filename="label/nifty-label.xml"/>
+    <useStyles filename="textfield/nifty-textfield.xml"/>
+    <useStyles filename="listbox/nifty-listbox-style.xml"/>
+
+    <style id="illarion-dialog-crafting">
+        <attributes childLayout="vertical"/>
+    </style>
+    <style id="illarion-dialog-crafting#craftItemList" base="nifty-listbox">
+        <attributes childLayout="vertical" width="450px"/>
+    </style>
+    <style id="illarion-dialog-crafting#craftItemList#scrollpanel" base="nifty-listbox#scrollpanel"/>
+    <style id="illarion-dialog-crafting#craftItemList#bottom-right" base="nifty-listbox#bottom-right"/>
+
+    <style id="illarion-dialog-crafting#selectedItemImage">
+        <attributes width="64px" height="64px"/>
+    </style>
+
+    <style id="illarion-dialog-crafting#selectedItemName" base="nifty-label">
+        <attributes width="*" height="64px" textHAlign="left" textVAlign="center"/>
+    </style>
+
+    <style id="illarion-dialog-crafting#productionTime" base="nifty-label">
+        <attributes width="*"/>
+    </style>
+
+    <style id="illarion-dialog-crafting#ingredients">
+        <attributes/>
+    </style>
+</nifty-styles>

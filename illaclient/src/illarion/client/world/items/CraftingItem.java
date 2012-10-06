@@ -78,6 +78,11 @@ public class CraftingItem {
         this.ingredients = Arrays.copyOf(ingredients, ingredients.length);
     }
 
+    public CraftingItem(final CraftingItem org) {
+        this(org.getGroup(), org.getItemId(), org.getName(), org.getBuildTime(), org.getBuildStackSize(),
+                org.ingredients);
+    }
+
     /**
      * The group index this item is assigned to.
      *
