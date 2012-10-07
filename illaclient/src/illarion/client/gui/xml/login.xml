@@ -58,12 +58,12 @@
 
                     <panel height="30px"/>
                     <panel childLayout="horizontal" visibleToMouse="true">
-                        <panel width="90px" height="35px"/>
-                        <control id="loginBtn" name="button" label="Einloggen" width="100px" height="35px">
+                        <control id="loginBtn" name="button" label="Einloggen" width="100px" height="35px"
+                                 marginLeft="90px">
                             <interact onRelease="login()"/>
                         </control>
-                        <panel width="20px" height="35px"/>
-                        <control id="optionBtn" name="button" label="Optionen" width="100px" height="35px">
+                        <control id="optionBtn" name="button" label="Optionen" width="100px" height="35px"
+                                 marginLeft="20px">
                             <interact onRelease="options()"/>
                         </control>
                     </panel>
