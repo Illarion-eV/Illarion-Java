@@ -33,39 +33,34 @@
 
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical">
-                <image filename="data/gui/illarion_title.png" imageMode="normal" align="center"/>
-                <panel height="30px"/>
+                <image filename="data/gui/illarion_title.png" imageMode="normal" align="center" marginBottom="30px"/>
                 <panel width="400px" align="center" valign="center" backgroundColor="#0000" childLayout="vertical">
                     <panel childLayout="horizontal" visibleToMouse="true" height="24px">
                         <control name="label" text="Account Name:" textHAlign="left" width="130px"/>
-                        <panel width="10px"/>
-                        <control name="textfield" id="nameTxt" maxLength="20" width="*"/>
+                        <control name="textfield" id="nameTxt" maxLength="20" width="*" marginLeft="10px"/>
                     </panel>
 
-                    <panel childLayout="horizontal" align="left" height="24px">
+                    <panel childLayout="horizontal" align="left" height="24px" marginBottom="15px">
                         <control name="label" text="Password:" textHAlign="left" width="130px"/>
-                        <panel width="10px"/>
-                        <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="•" width="*"/>
+                        <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="•"
+                                 width="*" marginLeft="10px"/>
                     </panel>
 
-                    <panel height="15px"/>
-
-                    <panel childLayout="horizontal" align="left" height="24px">
+                    <panel childLayout="horizontal" align="left" height="24px" marginBottom="30px">
                         <control name="label" text="Passwort merken" textHAlign="left" width="130px"/>
-                        <panel width="10px"/>
-                        <control id="savePassword" name="checkbox"/>
+                        <control id="savePassword" name="checkbox" marginLeft="10px"/>
                     </panel>
 
-                    <panel height="30px"/>
-                    <panel childLayout="horizontal" visibleToMouse="true">
-                        <control id="loginBtn" name="button" label="Einloggen" width="100px" height="35px"
-                                 marginLeft="90px">
-                            <interact onRelease="login()"/>
-                        </control>
-                        <control id="optionBtn" name="button" label="Optionen" width="100px" height="35px"
-                                 marginLeft="20px">
-                            <interact onRelease="options()"/>
-                        </control>
+                    <panel width="400px" childLayout="center">
+                        <panel childLayout="horizontal" visibleToMouse="true">
+                            <control id="loginBtn" name="button" label="Einloggen" width="100px" height="35px">
+                                <interact onRelease="login()"/>
+                            </control>
+                            <control id="optionBtn" name="button" label="Optionen" width="100px" height="35px"
+                                     marginLeft="20px">
+                                <interact onRelease="options()"/>
+                            </control>
+                        </panel>
                     </panel>
                 </panel>
             </panel>
