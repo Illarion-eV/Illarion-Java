@@ -18,6 +18,10 @@
   ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <nifty-styles>
+    <style id="illarion-progress">
+        <attributes height="28px"/>
+    </style>
+
     <style id="illarion-progress#background">
         <attributes backgroundImage="data/gui/progressbar/progressbar-outer.png"
                     imageMode="resize:13,2,13,13,13,2,13,2,13,2,13,13" minImageWidth="28"/>

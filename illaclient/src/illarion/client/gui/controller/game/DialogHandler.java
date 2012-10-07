@@ -334,6 +334,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
             public void run(final Element createdElement) {
                 final DialogCrafting dialog = createdElement.getNiftyControl(DialogCrafting.class);
 
+                System.out.println("Showing crafting dialog");
                 addCraftingItemsToDialog(event, dialog);
             }
         }));
@@ -362,7 +363,9 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     private void addCraftingItemsToDialog(final DialogCraftingReceivedEvent event, final DialogCrafting dialog) {
+        System.out.println("adding crafting items: " + event.getCraftingItemCount());
         for (int i = 0; i < event.getCraftingItemCount(); i++) {
+            System.out.println("adding crafting item " + Integer.toString(i));
             dialog.addCraftingItems(new NiftyCraftingItem(nifty, event.getCraftingItem(i)));
         }
     }

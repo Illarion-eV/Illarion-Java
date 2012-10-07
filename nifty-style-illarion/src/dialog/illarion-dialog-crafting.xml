@@ -18,32 +18,46 @@
   ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <nifty-styles>
-    <useStyles filename="label/nifty-label.xml"/>
-    <useStyles filename="textfield/nifty-textfield.xml"/>
-    <useStyles filename="listbox/nifty-listbox-style.xml"/>
+    <useStyles filename="window/nifty-window.xml"/>
 
-    <style id="illarion-dialog-crafting">
-        <attributes childLayout="vertical"/>
-    </style>
-    <style id="illarion-dialog-crafting#craftItemList" base="nifty-listbox">
+    <style id="illarion-dialog-crafting-content" base="nifty-listbox">
         <attributes childLayout="vertical" width="450px"/>
     </style>
-    <style id="illarion-dialog-crafting#craftItemList#scrollpanel" base="nifty-listbox#scrollpanel"/>
-    <style id="illarion-dialog-crafting#craftItemList#bottom-right" base="nifty-listbox#bottom-right"/>
+    <style id="illarion-dialog-crafting-content#craftItemList" base="nifty-listbox">
+        <attributes childLayout="vertical" width="450px"/>
+    </style>
+    <style id="illarion-dialog-crafting-content#scrollpanel" base="nifty-listbox#scrollpanel"/>
+    <style id="illarion-dialog-crafting-content#bottom-right" base="nifty-listbox#bottom-right"/>
 
-    <style id="illarion-dialog-crafting#selectedItemImage">
-        <attributes width="64px" height="64px"/>
+    <style id="illarion-dialog-crafting-content#selectedItemInfos">
+        <attributes childLayout="horizontal" width="450px"/>
     </style>
 
-    <style id="illarion-dialog-crafting#selectedItemName" base="nifty-label">
+    <style id="illarion-dialog-crafting-content#selectedItemImageWrapper">
+        <attributes width="64px" height="64px" childLayout="center"/>
+    </style>
+
+    <style id="illarion-dialog-crafting-content#selectedItemImage">
+        <attributes/>
+    </style>
+
+    <style id="illarion-dialog-crafting-content#selectedItemName" base="nifty-label">
         <attributes width="*" height="64px" textHAlign="left" textVAlign="center"/>
     </style>
 
-    <style id="illarion-dialog-crafting#productionTime" base="nifty-label">
-        <attributes width="*"/>
+    <style id="illarion-dialog-crafting-content#productionTime" base="nifty-label">
+        <attributes width="450px" textHAlign="left"/>
     </style>
 
-    <style id="illarion-dialog-crafting#ingredients">
-        <attributes/>
+    <style id="illarion-dialog-crafting-content#ingredients">
+        <attributes width="450px" childLayout="vertical" height="0px"/>
+    </style>
+
+    <style id="illarion-dialog-crafting-content#buttonLine">
+        <attributes childLayout="center" width="450px"/>
+    </style>
+
+    <style id="illarion-dialog-crafting-content#buttonWrapper">
+        <attributes childLayout="horizontal"/>
     </style>
 </nifty-styles>

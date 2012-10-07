@@ -21,19 +21,22 @@
 
     <controlDefinition name="dialog-crafting" style="illarion-dialog-crafting" visibleToMouse="true"
                        controller="org.illarion.nifty.controls.dialog.crafting.DialogCraftingControl">
-        <control name="window" title="${illarion-dialog-crafting-bundle.title}" visibleToMouse="true">
-            <panel childLayout="vertical">
+        <control name="window" id="#window" title="${illarion-dialog-crafting-bundle.title}"
+                 visibleToMouse="true" height="430px">
+            <panel style="illarion-dialog-crafting-content">
                 <control name="listBox" id="#craftItemList" style="#craftItemList" vertical="on" horizontal="off"
                          displayItems="9"/>
-                <panel childLayout="horizontal">
-                    <image id="#selectedItemImage" style="#selectedItemImage"/>
+                <panel style="#selectedItemInfos">
+                    <panel style="#selectedItemImageWrapper">
+                        <image id="#selectedItemImage" style="#selectedItemImage"/>
+                    </panel>
                     <control name="label" id="#selectedItemName" style="#selectedItemName"/>
                 </panel>
                 <control name="label" id="#productionTime" style="#productionTime"/>
                 <panel id="#ingredients" style="#ingredients"/>
                 <control name="progress" id="#progress"/>
-                <panel childLayout="center">
-                    <panel childLayout="horizontal">
+                <panel style="#buttonLine">
+                    <panel style="#buttonWrapper">
                         <control name="button" label="${illarion-dialog-crafting-bundle.craft}" id="#craftButton"/>
                         <control name="button" label="${illarion-dialog-crafting-bundle.cancel}" id="#cancelButton"/>
                     </panel>

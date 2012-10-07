@@ -26,10 +26,12 @@ import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.ListBoxSelectionChangedEvent;
+import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.elements.render.TextRenderer;
+import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
@@ -96,6 +98,8 @@ public class DialogCraftingControl
         element.setConstraintY(new SizeValue(Integer.toString(y) + "px"));
 
         parent.layoutElements();
+
+        niftyInstance.subscribeAnnotations(this);
     }
 
     @Override
@@ -144,7 +148,7 @@ public class DialogCraftingControl
         }
     }
 
-    @NiftyEventSubscriber(id = "#craftItemList")
+    @NiftyEventSubscriber(pattern = ".*#craftItemList")
     public void onListFocusChanged(final String topic,
                                    final ListBoxSelectionChangedEvent<DialogCraftingControl.ListEntry> event) {
         final List<DialogCraftingControl.ListEntry> selection = event.getSelection();
@@ -156,9 +160,30 @@ public class DialogCraftingControl
         setSelectedItem(selectedEntry);
     }
 
+    private static void applyImage(final Element element, final NiftyImage image, final int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        if (width > maxSize) {
+            height *= width / maxSize;
+            width = maxSize;
+        }
+        if (height > maxSize) {
+            width *= height / maxSize;
+            height = maxSize;
+        }
+
+        final SizeValue widthSize = SizeValue.px(width);
+        final SizeValue heightSize = SizeValue.px(height);
+
+        element.getRenderer(ImageRenderer.class).setImage(image);
+        element.setConstraintHeight(heightSize);
+        element.setConstraintWidth(widthSize);
+    }
+
     private void setSelectedItem(final CraftingListEntry selectedEntry) {
         final Element image = getElement().findElementByName("#selectedItemImage");
-        image.getRenderer(ImageRenderer.class).setImage(selectedEntry.getImage());
+        applyImage(image, selectedEntry.getImage(), 64);
+
 
         final Element title = getElement().findElementByName("#selectedItemName");
         title.getRenderer(TextRenderer.class).setText(selectedEntry.getName());
@@ -168,6 +193,7 @@ public class DialogCraftingControl
                 Double.toString(selectedEntry.getCraftTime()) + "s");
 
         final Element ingredientsPanel = getElement().findElementByName("#ingredients");
+        ingredientsPanel.setConstraintHeight(SizeValue.wildcard());
         final List<Element> elements = ingredientsPanel.getElements();
 
         for (final Element element : elements) {
@@ -177,17 +203,39 @@ public class DialogCraftingControl
         final int ingredientsAmount = selectedEntry.getIngredientCount();
         Element currentPanel = null;
         for (int i = 0; i < ingredientsAmount; i++) {
-            if ((i % 5) == 0) {
+            if ((i % 10) == 0) {
                 final PanelBuilder builder = new PanelBuilder();
                 builder.childLayoutHorizontal();
+                builder.width("450px");
+                builder.height("32px");
+                builder.marginBottom("1px");
+                builder.marginTop("1px");
                 currentPanel = builder.build(niftyInstance, currentScreen, ingredientsPanel);
             }
 
+            final PanelBuilder panelBuilder = new PanelBuilder();
+            panelBuilder.margin("1px");
+            panelBuilder.childLayoutCenter();
+            panelBuilder.width("32px");
+            panelBuilder.height("32px");
             final ImageBuilder builder = new ImageBuilder();
-            builder.width("48px");
-            builder.height("48px");
-            final Element currentImage = builder.build(niftyInstance, currentScreen, currentPanel);
-            currentImage.getRenderer(ImageRenderer.class).setImage(selectedEntry.getIngredientImage(i));
+            panelBuilder.image(builder);
+
+            if (selectedEntry.getIngredientCount(i) > 1) {
+                final LabelBuilder labelBuilder = new LabelBuilder();
+                labelBuilder.text(Integer.toString(selectedEntry.getIngredientCount(i)));
+                labelBuilder.alignRight();
+                labelBuilder.valignBottom();
+                labelBuilder.color("#ff0f");
+                labelBuilder.backgroundColor("#bb15");
+                labelBuilder.visibleToMouse(false);
+
+                panelBuilder.control(labelBuilder);
+            }
+
+
+            final Element currentImage = panelBuilder.build(niftyInstance, currentScreen, currentPanel);
+            applyImage(currentImage.getElements().get(0), selectedEntry.getIngredientImage(i), 32);
         }
     }
 

@@ -86,7 +86,7 @@ public final class DialogCraftingMsg extends AbstractReply {
                 final ItemId ingredientId = new ItemId(reader);
                 final int ingredientCount = reader.readUByte();
 
-                ingredients[i] = new CraftingIngredientItem(ingredientId, ingredientCount);
+                ingredients[k] = new CraftingIngredientItem(ingredientId, ingredientCount);
             }
 
             craftItems[i] = new CraftingItem(group, itemId, name, buildItem, craftStackSize, ingredients);
