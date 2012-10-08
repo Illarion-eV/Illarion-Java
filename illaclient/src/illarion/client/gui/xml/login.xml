@@ -24,6 +24,8 @@
     <useControls filename="nifty-default-controls.xml"/>
     <useControls filename="illarion-gamecontrols.xml"/>
 
+    <resourceBundle id="login-bundle" filename="login"/>
+
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
         <layer id="layer" backgroundColor="#0000" childLayout="center">
             <effect>
@@ -31,35 +33,30 @@
                 <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
             </effect>
 
-            <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
-                   childLayout="vertical">
+            <panel height="300px" width="400px" childLayout="vertical">
                 <image filename="data/gui/illarion_title.png" imageMode="normal" align="center" marginBottom="30px"/>
-                <panel width="400px" align="center" valign="center" backgroundColor="#0000" childLayout="vertical">
-                    <panel childLayout="horizontal" visibleToMouse="true" height="24px">
-                        <control name="label" text="Account Name:" textHAlign="left" width="130px"/>
-                        <control name="textfield" id="nameTxt" maxLength="20" width="*" marginLeft="10px"/>
+                <panel childLayout="vertical">
+                    <panel childLayout="horizontal" marginBottom="2px">
+                        <control name="label" text="${login-bundle.account}" textHAlign="left" width="130px"/>
+                        <control name="textfield" id="nameTxt" maxLength="20" marginLeft="10px"/>
                     </panel>
 
-                    <panel childLayout="horizontal" align="left" height="24px" marginBottom="15px">
-                        <control name="label" text="Password:" textHAlign="left" width="130px"/>
-                        <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="•"
-                                 width="*" marginLeft="10px"/>
+                    <panel childLayout="horizontal" marginBottom="15px">
+                        <control name="label" text="${login-bundle.password}" textHAlign="left" width="130px"/>
+                        <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="•" marginLeft="10px"/>
                     </panel>
 
-                    <panel childLayout="horizontal" align="left" height="24px" marginBottom="30px">
-                        <control name="label" text="Passwort merken" textHAlign="left" width="130px"/>
+                    <panel childLayout="horizontal" marginBottom="30px">
+                        <control name="label" text="${login-bundle.savePassword}" textHAlign="left" width="130px"/>
                         <control id="savePassword" name="checkbox" marginLeft="10px"/>
                     </panel>
 
-                    <panel width="400px" childLayout="center">
+                    <panel width="100%" childLayout="center">
                         <panel childLayout="horizontal" visibleToMouse="true">
-                            <control id="loginBtn" name="button" label="Einloggen" width="100px" height="35px">
-                                <interact onRelease="login()"/>
-                            </control>
-                            <control id="optionBtn" name="button" label="Optionen" width="100px" height="35px"
-                                     marginLeft="20px">
-                                <interact onRelease="options()"/>
-                            </control>
+                            <control id="loginBtn" name="button" label="${login-bundle.login}" width="100px"
+                                     height="35px"/>
+                            <control id="optionBtn" name="button" label="${login-bundle.options}" width="100px"
+                                     height="35px" marginLeft="20px"/>
                         </panel>
                     </panel>
                 </panel>
@@ -69,11 +66,8 @@
     <popup id="loginError" childLayout="center">
         <panel style="nifty-panel" childLayout="vertical" id="#numberSelectPopup">
             <control name="label" id="#errorText" width="200px" style="nifty-label"/>
-            <panel height="10px" width="1px"/>
-            <panel childLayout="center" width="200px">
-                <control name="button" id="#closeButton" label="OK">
-                    <interact onRelease="closeError()"/>
-                </control>
+            <panel childLayout="center" width="200px" marginTop="10px">
+                <control name="button" id="errorButtonClose" label="OK"/>
             </panel>
         </panel>
     </popup>

@@ -99,8 +99,6 @@ public final class OptionScreenController implements ScreenController {
         soundVolume.setValue(IllaClient.getCfg().getFloat("soundVolume"));
         musicOn.setChecked(IllaClient.getCfg().getBoolean("musicOn"));
         musicVolume.setValue(IllaClient.getCfg().getFloat("musicVolume"));
-
-        nifty.subscribeAnnotations(this);
     }
 
     @NiftyEventSubscriber(id = "saveButton")
@@ -130,7 +128,6 @@ public final class OptionScreenController implements ScreenController {
 
     @Override
     public void onEndScreen() {
-        nifty.unsubscribeAnnotations(this);
     }
 
     private List<String> getResolutionList() {

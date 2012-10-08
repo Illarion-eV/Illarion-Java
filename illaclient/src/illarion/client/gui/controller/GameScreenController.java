@@ -29,18 +29,12 @@ import java.util.Collection;
 
 public final class GameScreenController implements ScreenController {
 
-    private Nifty parentNifty;
-    private Screen parentScreen;
-
     private final Collection<ScreenController> childControllers;
     private final Collection<UpdatableHandler> childUpdateControllers;
 
-    private final NumberSelectPopupHandler numberPopupHandler;
-    private final TooltipHandler tooltipHandler;
-
     public GameScreenController() {
-        numberPopupHandler = new NumberSelectPopupHandler();
-        tooltipHandler = new TooltipHandler();
+        final NumberSelectPopupHandler numberPopupHandler = new NumberSelectPopupHandler();
+        final TooltipHandler tooltipHandler = new TooltipHandler();
 
         childControllers = new ArrayList<ScreenController>();
         childUpdateControllers = new ArrayList<UpdatableHandler>();
@@ -68,8 +62,6 @@ public final class GameScreenController implements ScreenController {
     @SuppressWarnings("unchecked")
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
-        parentNifty = nifty;
-        parentScreen = screen;
 
         for (final ScreenController childController : childControllers) {
             childController.bind(nifty, screen);
