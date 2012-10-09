@@ -49,7 +49,7 @@ public class LoginState
     @Override
     protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
         nifty.setLocale(Lang.getInstance().getLocale());
-        nifty.registerScreenController(new LoginScreenController(game), new CharScreenController(game));
+        nifty.registerScreenController(new LoginScreenController(), new CharScreenController(game));
 
         try {
             nifty.validateXml("illarion/client/gui/xml/login.xml");

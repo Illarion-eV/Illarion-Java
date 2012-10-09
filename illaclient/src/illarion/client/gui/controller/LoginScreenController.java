@@ -21,7 +21,6 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.Label;
@@ -29,29 +28,52 @@ import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.Login;
-import org.newdawn.slick.state.StateBasedGame;
 
-
+/**
+ * This is the screen controller that takes care of displaying the login screen.
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
+ */
 public final class LoginScreenController implements ScreenController, KeyInputHandler {
-
+    /**
+     * The instance of the Nifty-GUI that was bound to this controller.
+     */
     private Nifty nifty;
+
+    /**
+     * The screen this controller is a part of.
+     */
     private Screen screen;
 
+    /**
+     * The text field that contains the login name.
+     */
     private TextField nameTxt;
+
+    /**
+     * The text field that contains the password.
+     */
     private TextField passwordTxt;
+
+    /**
+     * The checkbox that is ticked in case the password is supposed to be saved.
+     */
     private CheckBox savePassword;
 
-
-    private boolean notifyResolutionChanged;
-    private boolean firstStart = true;
+    /**
+     * The generated popup that is shown in case a error occurred during the login.
+     */
     private Element popupError;
 
-    public LoginScreenController(final StateBasedGame game) {
-    }
+    /**
+     * This variable is set true in case the popup is visible.
+     */
+    private boolean popupIsVisible;
 
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
@@ -76,20 +98,6 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     @Override
     public void onStartScreen() {
-        if (!firstStart) {
-            final Login login = Login.getInstance();
-            passwordTxt.setText(login.getPassword());
-        }
-
-        if (notifyResolutionChanged) {
-            nifty.resolutionChanged();
-            notifyResolutionChanged = false;
-        }
-    }
-
-
-    public void resolutionChanged() {
-        notifyResolutionChanged = true;
     }
 
     @Override
@@ -113,7 +121,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     private void login() {
         final Login login = Login.getInstance();
-        login.setLoginData(nameTxt.getText(), passwordTxt.getText());
+        login.setLoginData(nameTxt.getRealText(), passwordTxt.getRealText());
 
         login.storeData(savePassword.isChecked());
 
@@ -124,10 +132,10 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             errorText.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
             errorText.setText(login.getErrorText());
             nifty.showPopup(screen, popupError.getId(), popupError.findElementByName("#closeButton"));
+            popupIsVisible = true;
 
             return;
         }
-        firstStart = false;
         nifty.gotoScreen("charSelect");
     }
 
@@ -136,36 +144,23 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             @Override
             public void perform() {
                 nameTxt.getElement().setFocus();
+                popupIsVisible = false;
             }
         });
     }
 
-    public void createLabel() {
-        final PanelBuilder builder = new PanelBuilder() {{
-            width("200px");
-            height("200px");
-            backgroundColor("#f00f");
-            valignCenter();
-            alignCenter();
-        }};
-        final String myX = Integer.toString(nifty.getNiftyMouse().getX()) + "px";
-        final String myY = Integer.toString(nifty.getNiftyMouse().getY()) + "px";
-        builder.x(myX);
-        builder.y(myY);
-        final Element parent = screen.findElementByName("windows");
-        builder.build(nifty, screen, parent);
-
-    }
-
     private void options() {
-        firstStart = false;
         nifty.gotoScreen("options");
     }
 
     @Override
     public boolean keyEvent(final NiftyInputEvent inputEvent) {
-        if (inputEvent == NiftyInputEvent.SubmitText) {
-            login();
+        if (inputEvent == NiftyStandardInputEvent.SubmitText) {
+            if (popupIsVisible) {
+                closeError();
+            } else {
+                login();
+            }
             return true;
         }
         return false;
