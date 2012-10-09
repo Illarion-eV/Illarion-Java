@@ -18,20 +18,20 @@
  */
 package illarion.download.install.resources.libs;
 
+import illarion.download.install.resources.Resource;
+import illarion.download.util.Lang;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import illarion.download.install.resources.Resource;
-import illarion.download.util.Lang;
-
 /**
  * This resource contains the Nifty-GUI.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
 public final class NiftyGui
         implements LibraryResource {
@@ -71,7 +71,7 @@ public final class NiftyGui
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance
      */
     public static Resource getInstance() {
@@ -87,9 +87,9 @@ public final class NiftyGui
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             final String dir = LibraryDirectory.getInstance().getDirectory();
-            cp.add(new File(dir, "nifty-1.3.2-SNAPSHOT.jar")); //$NON-NLS-1$
-            cp.add(new File(dir, "nifty-default-controls-1.3.2-SNAPSHOT.jar")); //$NON-NLS-1$
-            cp.add(new File(dir, "nifty-slick-renderer-1.3.2-SNAPSHOT.jar")); //$NON-NLS-1$
+            cp.add(new File(dir, "nifty-1.4.0-SNAPSHOT.jar")); //$NON-NLS-1$
+            cp.add(new File(dir, "nifty-default-controls-1.4.0-SNAPSHOT.jar")); //$NON-NLS-1$
+            cp.add(new File(dir, "nifty-slick-renderer-1.4.0-SNAPSHOT.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -145,7 +145,7 @@ public final class NiftyGui
             final Collection<URL> res = new ArrayList<URL>();
             try {
                 res.add(new URL(ONLINE_PATH
-                    + "nifty" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                        + "nifty" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (final Exception e) {
                 // Catch everything and do nothing!
             }
