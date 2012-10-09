@@ -26,7 +26,7 @@ import de.lessvoid.nifty.NiftyEvent;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class DialogEvent implements NiftyEvent<Void> {
+public class DialogEvent implements NiftyEvent {
     /**
      * The ID of the dialog.
      */

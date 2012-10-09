@@ -25,6 +25,7 @@ import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -254,7 +255,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
      */
     @Override
     public boolean keyEvent(final NiftyInputEvent inputEvent) {
-        if (inputEvent == NiftyInputEvent.SubmitText) {
+        if (inputEvent == NiftyStandardInputEvent.SubmitText) {
             if (chatMsg.hasFocus()) {
                 if (chatMsg.getDisplayedText().isEmpty()) {
                     screen.getFocusHandler().setKeyFocus(null);

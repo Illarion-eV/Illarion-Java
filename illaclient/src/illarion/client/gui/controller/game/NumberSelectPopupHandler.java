@@ -26,6 +26,7 @@ import de.lessvoid.nifty.controls.textfield.filter.input.TextFieldInputCharFilte
 import de.lessvoid.nifty.controls.textfield.format.TextFieldDisplayFormat;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -170,10 +171,10 @@ public class NumberSelectPopupHandler implements ScreenController, UpdatableHand
         activePopup.addInputHandler(new KeyInputHandler() {
             @Override
             public boolean keyEvent(final NiftyInputEvent inputEvent) {
-                if (inputEvent == null) {
+                if (!(inputEvent instanceof NiftyStandardInputEvent)) {
                     return false;
                 }
-                switch (inputEvent) {
+                switch ((NiftyStandardInputEvent) inputEvent) {
                     case Escape:
                         cancelActivePopup();
                         return true;
