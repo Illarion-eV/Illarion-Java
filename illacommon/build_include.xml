@@ -199,7 +199,7 @@
         <patternset refid="slick.pattern"/>
     </fileset>
 
-    <!-- Nifty 1.3.1-SNAPSHOT --><!-- http://nifty-gui.lessvoid.com/ -->
+    <!-- Nifty 1.4.0-SNAPSHOT --><!-- http://nifty-gui.lessvoid.com/ -->
     <property name="nifty.dir" location="${common}/lib/nifty"/>
     <patternset id="nifty.pattern">
         <include name="nifty*.jar"/>
