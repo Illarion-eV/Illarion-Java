@@ -23,9 +23,6 @@ import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
 import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
-import de.lessvoid.nifty.effects.Effect;
-import de.lessvoid.nifty.effects.EffectEventId;
-import de.lessvoid.nifty.effects.impl.Hint;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.ElementShowEvent;
 import de.lessvoid.nifty.elements.events.NiftyMouseMovedEvent;
@@ -41,7 +38,6 @@ import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.InventoryItemLookAtEvent;
 import illarion.client.net.server.events.InventoryUpdateEvent;
-import illarion.client.net.server.events.LookAtInventoryEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
@@ -61,7 +57,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -226,26 +221,6 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     @EventSubscriber
     public void onInventoryUpdateEvent(final InventoryUpdateEvent event) {
         updateQueue.offer(new GUIInventoryHandler.InventorySlotUpdate(event));
-    }
-
-    @EventSubscriber
-    public void onLookAtInventoryEvent(final LookAtInventoryEvent event) {
-        showHint(event.getSlot(), event.getText(), event.getValue());
-    }
-
-    public void showHint(final int slot, final String text, final long value) {
-        final Element element = invSlots[slot];
-        final List<Effect> hintEffects = element.getEffects(EffectEventId.onCustom, Hint.class);
-
-        if (hintEffects.size() != 1) {
-            throw new IllegalStateException("sanity check failed");
-        }
-
-        final Effect effect = hintEffects.get(0);
-
-        effect.getParameters().setProperty("hintText", text);
-
-        element.startEffectWithoutChildren(EffectEventId.onCustom);
     }
 
     @EventSubscriber

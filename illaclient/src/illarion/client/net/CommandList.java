@@ -401,6 +401,11 @@ public final class CommandList {
     public static final int MSG_LOOKAT_TILE = 0xBC;
 
     /**
+     * Client command to look at a dialog item.
+     */
+    public static final int MSG_LOOKAT_DIALOG_ITEM = 0xB5;
+
+    /**
      * Server message that contains the magic flags of the player character.
      */
     public static final int MSG_MAGIC_FLAG = 0xB8;
