@@ -187,7 +187,7 @@ public final class NamesTable {
             return;
         }
 
-        final String charName = Login.getInstance().getSelectedCharacterName();
+        final String charName = Login.getInstance().getLoginCharacter();
         byte[] conversationString;
         try {
             conversationString = charName.getBytes("ISO-8859-1");

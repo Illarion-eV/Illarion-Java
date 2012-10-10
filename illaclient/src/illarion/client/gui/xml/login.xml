@@ -65,10 +65,15 @@
     </screen>
     <popup id="loginError" childLayout="center">
         <panel style="nifty-panel" childLayout="vertical" id="#numberSelectPopup">
-            <control name="label" id="#errorText" width="200px" style="nifty-label"/>
-            <panel childLayout="center" width="200px" marginTop="10px">
+            <control name="label" id="#errorText" width="300px" style="nifty-label" wrap="true"/>
+            <panel childLayout="center" width="300px" marginTop="10px">
                 <control name="button" id="errorButtonClose" label="OK"/>
             </panel>
+        </panel>
+    </popup>
+    <popup id="receivingCharacters" childLayout="center">
+        <panel style="nifty-panel-small" childLayout="vertical">
+            <control name="label" style="nifty-label" text="${login-bundle.receivingCharacters}"/>
         </panel>
     </popup>
 </nifty>

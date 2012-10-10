@@ -27,7 +27,6 @@ import illarion.client.util.Lang;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
 import illarion.common.util.Base64;
-import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -46,7 +45,10 @@ import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * This class is used to store the login parameters and handle the requests that
@@ -55,7 +57,8 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Login {
-    private static final class CharEntry {
+
+    public static final class CharEntry {
         private final String charName;
         private final int charStatus;
 
@@ -75,11 +78,11 @@ public final class Login {
 
     private String loginName;
     private String password;
-    private CharEntry selectedChar;
-    private final List<CharEntry> charList;
+    private String loginCharacter;
+    private List<Login.CharEntry> charList;
 
     private Login() {
-        charList = new FastTable<CharEntry>();
+        charList = new ArrayList<Login.CharEntry>();
     }
 
     private static final Login INSTANCE = new Login();
@@ -124,8 +127,35 @@ public final class Login {
         return password;
     }
 
-    public void requestCharacterList() {
-        lastError = -1;
+    public interface RequestCharListCallback {
+        void finishedRequest(int errorCode);
+    }
+
+    private final class RequestCharacterListTask implements Callable<Void> {
+        private final Login.RequestCharListCallback callback;
+
+        private RequestCharacterListTask(final Login.RequestCharListCallback callback) {
+            this.callback = callback;
+        }
+
+        /**
+         * Computes a result, or throws an exception if unable to do so.
+         *
+         * @return computed result
+         * @throws Exception if unable to compute a result
+         */
+        @Override
+        public Void call() throws Exception {
+            requestCharacterListInternal(callback);
+            return null;
+        }
+    }
+
+    public void requestCharacterList(final Login.RequestCharListCallback resultCallback) {
+        World.getExecutorService().submit(new Login.RequestCharacterListTask(resultCallback));
+    }
+
+    private void requestCharacterListInternal(final Login.RequestCharListCallback resultCallback) {
         final String serverURI = Servers.testserver.getServerHost();
         try {
 
@@ -156,12 +186,12 @@ public final class Login {
             final DocumentBuilder db = dbf.newDocumentBuilder();
             final Document doc = db.parse(conn.getInputStream());
 
-            readXML(doc);
+            readXML(doc, resultCallback);
         } catch (final UnknownHostException e) {
-            lastError = 2;
+            resultCallback.finishedRequest(2);
             LOGGER.error("Failed to resolve hostname, for fetching the charlist");
         } catch (final Exception e) {
-            lastError = 2;
+            resultCallback.finishedRequest(2);
             LOGGER.error("Loading the charlist from the server failed");
         }
     }
@@ -178,123 +208,69 @@ public final class Login {
      */
     private static final Logger LOGGER = Logger.getLogger(Login.class);
 
-    private int lastError = -1;
-
-    public boolean hasError() {
-        return (lastError != -1);
-    }
-
-    public int getErrorId() {
-        return lastError;
-    }
-
-    public String getErrorText() {
-        return Lang.getMsg("login.error." + Integer.toString(lastError));
-    }
-
-    private void readXML(final Node root) {
-        lastError = -1;
-        if (!root.getNodeName().equals("chars")
-                && !root.getNodeName().equals(NODE_NAME_ERROR)) {
-            final NodeList childs = root.getChildNodes();
-            final int count = childs.getLength();
+    private void readXML(final Node root, final Login.RequestCharListCallback resultCallback) {
+        if (!"chars".equals(root.getNodeName()) && !NODE_NAME_ERROR.equals(root.getNodeName())) {
+            final NodeList children = root.getChildNodes();
+            final int count = children.getLength();
             for (int i = 0; i < count; i++) {
-                readXML(childs.item(i));
+                readXML(children.item(i), resultCallback);
             }
             return;
         }
-        if (root.getNodeName().equals(NODE_NAME_ERROR)) {
-            lastError = Integer.parseInt(root.getAttributes().getNamedItem("id").getNodeValue());
+        if (NODE_NAME_ERROR.equals(root.getNodeName())) {
+            final int error = Integer.parseInt(root.getAttributes().getNamedItem("id").getNodeValue());
+            resultCallback.finishedRequest(error);
             return;
         }
-        final NodeList childs = root.getChildNodes();
-        final int count = childs.getLength();
+        final NodeList children = root.getChildNodes();
+        final int count = children.getLength();
 
-        final String accLang =
-                root.getAttributes().getNamedItem("lang").getNodeValue();
-        if (accLang.equals("de") && Lang.getInstance().isEnglish()) {
+        final String accLang = root.getAttributes().getNamedItem("lang").getNodeValue();
+        if ("de".equals(accLang) && Lang.getInstance().isEnglish()) {
             IllaClient.getCfg().set("locale", "de");
             Lang.getInstance().recheckLocale();
-        } else if (accLang.equals("us") && Lang.getInstance().isGerman()) {
+        } else if ("us".equals(accLang) && Lang.getInstance().isGerman()) {
             IllaClient.getCfg().set("locale", "en");
             Lang.getInstance().recheckLocale();
         }
 
-        boolean foundSomething = false;
+        charList.clear();
         for (int i = 0; i < count; i++) {
-            final Node charNode = childs.item(i);
-            if (!foundSomething) {
-                foundSomething = true;
-                charList.clear();
-            }
+            final Node charNode = children.item(i);
             final String charName = charNode.getTextContent();
-            final int status =
-                    Integer.parseInt(charNode.getAttributes()
-                            .getNamedItem("status").getNodeValue());
-            final String charServer =
-                    charNode.getAttributes().getNamedItem("server")
-                            .getNodeValue();
+            final int status = Integer.parseInt(charNode.getAttributes().getNamedItem("status").getNodeValue());
+            final String charServer = charNode.getAttributes().getNamedItem("server").getNodeValue();
 
-            final CharEntry addChar = new CharEntry(charName, status);
+            final Login.CharEntry addChar = new Login.CharEntry(charName, status);
 
-            if (charServer.equals("testserver")) {
+            if ("testserver".equals(charServer)) {
                 charList.add(addChar);
             }
         }
 
-        if (!foundSomething) {
-            charList.clear();
-        }
+        resultCallback.finishedRequest(0);
     }
 
-    public int getCharacterCount() {
-        return charList.size();
+    public List<Login.CharEntry> getCharacterList() {
+        return Collections.unmodifiableList(charList);
     }
 
-    public String getCharacterName(final int index) {
-        return charList.get(index).getName();
+    public void setLoginCharacter(final String character) {
+        loginCharacter = character;
     }
 
-    public int getCharacterStatus(final int index) {
-        return charList.get(index).getStatus();
-    }
-
-    public boolean selectCharacter(final int index) {
-
-        if (index < 0 || charList.size() < (index + 1))
-            return false;
-
-        selectedChar = charList.get(index);
-        return true;
-    }
-
-    public boolean selectCharacter(final String charName) {
-        for (CharEntry chars : charList) {
-            if (chars.getName().equals(charName)) {
-                selectedChar = chars;
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public String getSelectedCharacterName() {
-        return selectedChar.getName();
+    public String getLoginCharacter() {
+        return loginCharacter;
     }
 
     public boolean login() {
-        if (selectedChar == null) {
-            return false;
-        }
-
         final NetComm netComm = World.getNet();
         if (!netComm.connect()) {
             return false;
         }
 
         final LoginCmd loginCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_LOGIN, LoginCmd.class);
-        loginCmd.setLogin(getSelectedCharacterName(), password);
+        loginCmd.setLogin(loginCharacter, password);
         loginCmd.setVersion(Servers.testserver.getClientVersion());
         loginCmd.send();
 

@@ -26,8 +26,10 @@ import illarion.client.gui.controller.CharScreenController;
 import illarion.client.gui.controller.LoginScreenController;
 import illarion.client.util.Lang;
 import illarion.common.config.ConfigChangedEvent;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.state.StateBasedGame;
 
 /**
@@ -39,6 +41,16 @@ import org.newdawn.slick.state.StateBasedGame;
 public class LoginState
         extends NiftyBasicGameState implements EventTopicSubscriber<ConfigChangedEvent> {
     /**
+     * The screen controller that takes care for the login screen.
+     */
+    private LoginScreenController loginScreenController;
+
+    /**
+     * The logger that is used for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(LoginState.class);
+
+    /**
      * Create the game state that handles the login with the identifier that is needed to access it.
      */
     public LoginState() {
@@ -49,18 +61,28 @@ public class LoginState
     @Override
     protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
         nifty.setLocale(Lang.getInstance().getLocale());
-        nifty.registerScreenController(new LoginScreenController(), new CharScreenController(game));
 
+        loginScreenController = new LoginScreenController();
+        nifty.registerScreenController(loginScreenController, new CharScreenController(game));
+
+        loadXML(nifty, "illarion/client/gui/xml/login.xml");
+        loadXML(nifty, "illarion/client/gui/xml/charselect.xml");
+        loadXML(nifty, "illarion/client/gui/xml/options.xml");
+    }
+
+    /**
+     * Load the XML file after validating its contents.
+     *
+     * @param nifty   the instance of Nifty the files are supposed to be applied to
+     * @param xmlFile the XML file that is supposed to be load
+     */
+    private static void loadXML(final Nifty nifty, final String xmlFile) {
         try {
-            nifty.validateXml("illarion/client/gui/xml/login.xml");
-            nifty.validateXml("illarion/client/gui/xml/charselect.xml");
-            nifty.validateXml("illarion/client/gui/xml/options.xml");
+            nifty.validateXml(xmlFile);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Validation of the XML file \"" + xmlFile + "\" failed.", e);
         }
-        nifty.addXml("illarion/client/gui/xml/login.xml");
-        nifty.addXml("illarion/client/gui/xml/charselect.xml");
-        nifty.addXml("illarion/client/gui/xml/options.xml");
+        nifty.addXml(xmlFile);
     }
 
     @Override
@@ -69,20 +91,18 @@ public class LoginState
     }
 
     /**
-     * Handle an event published on a topic.
-     * <p/>
-     * The EventService calls this method on each publication on a matching topic name passed to one of the
-     * EventService's topic-based subscribe methods, specifically, {@link org.bushe.swing.event.EventService#subscribe(String,
-     * org.bushe.swing.event.EventTopicSubscriber)} {@link org.bushe.swing.event.EventService#subscribe(java.util.regex.Pattern, org.bushe.swing.event.EventTopicSubscriber)} {@link
-     * org.bushe.swing.event.EventService#subscribeStrongly(String, org.bushe.swing.event.EventTopicSubscriber)} and {@link org.bushe.swing.event.EventService#subscribeStrongly(java.util.regex.Pattern,
-     * org.bushe.swing.event.EventTopicSubscriber)}.
-     *
-     * @param topic the name of the topic published on
-     * @param data  the data object published on the topic
+     * Updating the game is not needed in this implementation as only the GUI is displayed.
      */
     @Override
+    protected void updateGame(final GameContainer container, final StateBasedGame game, final int delta) {
+        if (loginScreenController != null) {
+            loginScreenController.update();
+        }
+    }
+
+    @Override
     public void onEvent(final String topic, final ConfigChangedEvent data) {
-        if (getNifty() != null) {
+        if (IllaClient.CFG_RESOLUTION.equals(topic) && (getNifty() != null)) {
             getNifty().resolutionChanged();
         }
     }

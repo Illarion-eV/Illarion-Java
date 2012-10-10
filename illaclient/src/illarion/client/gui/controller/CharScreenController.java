@@ -64,22 +64,19 @@ public class CharScreenController implements ScreenController {
     }
 
     private void fillMyListBox() {
-
-        final Login login = Login.getInstance();
-        for (int i = 0; i < login.getCharacterCount(); i++) {
-            listBox.addItem(login.getCharacterName(i));
+        for (final Login.CharEntry entry : Login.getInstance().getCharacterList()) {
+            listBox.addItem(entry.getName());
         }
     }
 
     public void play() {
-        boolean found = Login.getInstance().selectCharacter(listBox.getFocusItemIndex());
-
-        if (!found) {
+        if (listBox.getSelection().isEmpty()) {
             statusLabel.setText("No character selected");
             statusLabel.getElement().getParent().layoutElements();
             return;
         }
 
+        Login.getInstance().setLoginCharacter(listBox.getSelection().get(0));
         game.enterState(Game.STATE_LOADING, new FadeOutTransition(), null);
     }
 

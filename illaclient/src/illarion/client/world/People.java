@@ -154,7 +154,7 @@ public final class People
         charsLock = new ReentrantReadWriteLock();
 
         final File playerDir = new File(DirectoryManager.getInstance().getUserDirectory(),
-                Login.getInstance().getSelectedCharacterName());
+                Login.getInstance().getLoginCharacter());
         final File nameTable = new File(playerDir, "names.tbl");
         final File nameTableNew = new File(playerDir, "names.dat");
         names = new NamesTable(nameTableNew);

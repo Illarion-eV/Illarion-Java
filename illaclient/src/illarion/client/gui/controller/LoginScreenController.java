@@ -26,13 +26,13 @@ import de.lessvoid.nifty.controls.CheckBox;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.Login;
+import illarion.client.util.Lang;
 
 /**
  * This is the screen controller that takes care of displaying the login screen.
@@ -71,9 +71,36 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     private Element popupError;
 
     /**
+     * The generated popup that is shown while the client is busy fetching the characters from the server.
+     */
+    private Element popupReceiveChars;
+
+    /**
      * This variable is set true in case the popup is visible.
      */
     private boolean popupIsVisible;
+
+    /**
+     * This value is set {@code true} in case a new response was received from the server that needs to be processed
+     * upon the next update loop.
+     */
+    private boolean receivedLoginResponse;
+
+    /**
+     * The last error code that was received from the server. This will be {@code 0} in case there was no error or
+     * any larger value in case there is a error.
+     */
+    private int lastErrorCode;
+
+    /**
+     * Get the text that describes a error code.
+     *
+     * @param error the error code
+     * @return the localized text that describes the error for the player
+     */
+    public static String getErrorText(final int error) {
+        return Lang.getMsg("login.error." + Integer.toString(error));
+    }
 
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
@@ -94,6 +121,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         savePassword.setChecked(login.storePassword());
 
         popupError = nifty.createPopup("loginError");
+        popupReceiveChars = nifty.createPopup("receivingCharacters");
     }
 
     @Override
@@ -104,51 +132,97 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     public void onEndScreen() {
     }
 
+    /**
+     * This function is called in case the login button is clicked.
+     *
+     * @param topic the topic of the event
+     * @param event the data of the event
+     */
     @NiftyEventSubscriber(id = "loginBtn")
     public void onLoginButtonClicked(final String topic, final ButtonClickedEvent event) {
         login();
     }
 
+    /**
+     * This function is called in case the option button is clicked.
+     *
+     * @param topic the topic of the event
+     * @param event the data of the event
+     */
     @NiftyEventSubscriber(id = "optionBtn")
     public void onOptionsButtonClicked(final String topic, final ButtonClickedEvent event) {
         options();
     }
 
+    /**
+     * This function is called in case the close button in the error popup is clicked.
+     *
+     * @param topic the topic of the event
+     * @param event the data of the event
+     */
     @NiftyEventSubscriber(id = "errorButtonClose")
     public void onCloseErrorButtonClicked(final String topic, final ButtonClickedEvent event) {
         closeError();
     }
 
+    /**
+     * This function triggers the login process. It will request the character list of the player from the server.
+     */
     private void login() {
+        nifty.showPopup(screen, popupReceiveChars.getId(), null);
         final Login login = Login.getInstance();
         login.setLoginData(nameTxt.getRealText(), passwordTxt.getRealText());
 
         login.storeData(savePassword.isChecked());
 
-        login.requestCharacterList();
-
-        if (login.hasError()) {
-            final Label errorText = popupError.findNiftyControl("#errorText", Label.class);
-            errorText.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
-            errorText.setText(login.getErrorText());
-            nifty.showPopup(screen, popupError.getId(), popupError.findElementByName("#closeButton"));
-            popupIsVisible = true;
-
-            return;
-        }
-        nifty.gotoScreen("charSelect");
-    }
-
-    private void closeError() {
-        nifty.closePopup(popupError.getId(), new EndNotify() {
+        login.requestCharacterList(new Login.RequestCharListCallback() {
             @Override
-            public void perform() {
-                nameTxt.getElement().setFocus();
-                popupIsVisible = false;
+            public void finishedRequest(final int errorCode) {
+                lastErrorCode = errorCode;
+                receivedLoginResponse = true;
+
+                nifty.closePopup(popupReceiveChars.getId());
             }
         });
     }
 
+    /**
+     * This function has to be called at every update loop of Nifty. It will ensure that all updates are processed
+     * synchronized to the Nifty-GUI update loop.
+     */
+    public void update() {
+        if (!receivedLoginResponse) {
+            return;
+        }
+
+        receivedLoginResponse = false;
+
+        if (lastErrorCode > 0) {
+            final Label errorText = popupError.findNiftyControl("#errorText", Label.class);
+            errorText.setText(getErrorText(lastErrorCode));
+            nifty.showPopup(screen, popupError.getId(), popupError.findElementByName("#closeButton"));
+            popupIsVisible = true;
+        } else {
+            nifty.gotoScreen("charSelect");
+        }
+    }
+
+    /**
+     * This function closes the error popup that is displayed in case the login to the server failed.
+     */
+    private void closeError() {
+        popupIsVisible = false;
+        nifty.closePopup(popupError.getId(), new EndNotify() {
+            @Override
+            public void perform() {
+                nameTxt.getElement().setFocus();
+            }
+        });
+    }
+
+    /**
+     * This function switches the screen to the option screen.
+     */
     private void options() {
         nifty.gotoScreen("options");
     }

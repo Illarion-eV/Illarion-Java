@@ -95,7 +95,7 @@ public final class DisconnectMsg extends AbstractReply {
         BUILDER.append("\n");
         BUILDER.append(Lang.getMsg("logout.char"));
         BUILDER.append(" ");
-        BUILDER.append(Login.getInstance().getSelectedCharacterName());
+        BUILDER.append(Login.getInstance().getLoginCharacter());
         IllaClient.fallbackToLogin(BUILDER.toString());
         return true;
     }

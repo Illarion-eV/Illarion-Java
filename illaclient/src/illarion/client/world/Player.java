@@ -166,7 +166,7 @@ public final class Player {
      * Constructor for the player that receives the character name from the login data automatically.
      */
     public Player() {
-        this(Login.getInstance().getSelectedCharacterName());
+        this(Login.getInstance().getLoginCharacter());
     }
 
     /**
