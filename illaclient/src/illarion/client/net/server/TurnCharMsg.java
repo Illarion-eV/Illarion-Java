@@ -24,7 +24,7 @@ import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 import java.io.IOException;
 

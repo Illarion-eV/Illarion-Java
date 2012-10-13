@@ -18,7 +18,7 @@
  */
 package illarion.client.graphics;
 
-import illarion.common.util.Rectangle;
+import illarion.common.types.Rectangle;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 

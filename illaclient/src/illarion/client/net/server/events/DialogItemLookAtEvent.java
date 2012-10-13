@@ -18,7 +18,7 @@
  */
 package illarion.client.net.server.events;
 
-import illarion.common.util.Money;
+import illarion.common.types.Money;
 
 /**
  * This event is generated in case a look at event for a dialog is received.

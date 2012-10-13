@@ -27,7 +27,7 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 /**
  * This is the interactive representation of a tile on the map.

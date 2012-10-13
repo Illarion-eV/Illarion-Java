@@ -26,7 +26,7 @@ import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.Sprite;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;

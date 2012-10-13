@@ -24,7 +24,7 @@ import illarion.client.net.client.MoveCmd;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.types.ItemCount;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 /**
  * This class represents the interactive variant of a character.

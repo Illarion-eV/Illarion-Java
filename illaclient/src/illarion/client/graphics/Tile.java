@@ -23,7 +23,7 @@ import illarion.client.resources.TileFactory;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.Sprite;
 import illarion.common.graphics.TileInfo;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;

@@ -20,7 +20,7 @@ package illarion.client.graphics;
 
 import illarion.client.Debug;
 import illarion.client.IllaClient;
-import illarion.common.util.Rectangle;
+import illarion.common.types.Rectangle;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 

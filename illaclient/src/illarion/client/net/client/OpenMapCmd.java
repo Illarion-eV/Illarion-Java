@@ -21,7 +21,7 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.client.world.World;
 import illarion.common.net.NetCommWriter;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 /**
  * Client Command: Open a container on the map (

@@ -1,32 +1,31 @@
 /*
- * This file is part of the Illarion Graphics Engine.
+ * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Graphics Engine is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Graphics Engine is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.graphics;
 
+import illarion.common.types.Location;
 import org.newdawn.slick.Color;
-
-import illarion.common.util.Location;
 
 /**
  * The lightmap interface is used to handle the light effects on the map. It
  * allows to set, render and reset light and allows to check if a tile blocks
  * the line of sight or accepts no light.
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -40,17 +39,17 @@ public interface LightingMap {
     /**
      * Determines whether a map location accepts the light from a specific
      * direction.
-     * 
+     *
      * @param loc the location on that is checked
-     * @param dx x part of the direction of the light ray
-     * @param dy y part of the direction of the light ray
+     * @param dx  x part of the direction of the light ray
+     * @param dy  y part of the direction of the light ray
      * @return true if location accepts from this direction
      */
     boolean acceptsLight(Location loc, int dx, int dy);
 
     /**
      * Determines whether a map location blocks the flow of light.
-     * 
+     *
      * @param loc the location on the map
      * @return obscurity, 0 is for free view, {@link #BLOCKED_VIEW} for fully
      *         blocked
@@ -69,8 +68,8 @@ public interface LightingMap {
 
     /**
      * Assign the cumulative light value to a map tile.
-     * 
-     * @param loc the location on the map the light is assigned to
+     *
+     * @param loc   the location on the map the light is assigned to
      * @param color the color that is assigned to the tile
      */
     void setLight(Location loc, Color color);

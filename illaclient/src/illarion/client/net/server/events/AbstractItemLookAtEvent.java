@@ -18,7 +18,7 @@
  */
 package illarion.client.net.server.events;
 
-import illarion.common.util.Money;
+import illarion.common.types.Money;
 
 /**
  * This is the abstract item look-at event. Its awesome.

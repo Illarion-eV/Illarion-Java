@@ -22,7 +22,7 @@ import illarion.client.world.MapTile;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 import java.io.IOException;
 import java.util.ArrayList;

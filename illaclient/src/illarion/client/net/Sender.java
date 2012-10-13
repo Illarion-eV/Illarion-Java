@@ -23,7 +23,7 @@ import illarion.client.IllaClient;
 import illarion.client.net.client.AbstractCommand;
 import illarion.client.util.Lang;
 import illarion.common.net.NetCommWriter;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import org.apache.log4j.Logger;
 
 import java.nio.ByteBuffer;

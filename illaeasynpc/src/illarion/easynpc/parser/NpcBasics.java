@@ -18,7 +18,7 @@
  */
 package illarion.easynpc.parser;
 
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;

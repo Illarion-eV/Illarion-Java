@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world;
 
@@ -27,7 +27,7 @@ import illarion.client.world.interactive.InteractiveMap;
 import illarion.common.graphics.ColorHelper;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.LightingMap;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
 import org.newdawn.slick.Color;
@@ -39,7 +39,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * This handler stores all map data and ensures the updates of the map. This
  * class is fully thread save for all actions. Clipping, hiding effects and map
  * optimization is done by the GameMapProcessor.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GameMap implements LightingMap, Stoppable {
@@ -47,11 +47,11 @@ public final class GameMap implements LightingMap, Stoppable {
      * The class that is used as helper class to clear all the tiles on the map.
      * Executing this will cause every tile to be cleared. Once this is done
      * they can be removed from the tile list.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class ClearHelper implements
-        TObjectProcedure<MapTile> {
+            TObjectProcedure<MapTile> {
         /**
          * Default constructor
          */
@@ -62,7 +62,7 @@ public final class GameMap implements LightingMap, Stoppable {
         /**
          * Executed for every tile on the map. It will trigger the recycle
          * method for each tile.
-         * 
+         *
          * @param tile the tile to clear
          * @return <code>true</code> in any case
          */
@@ -77,11 +77,11 @@ public final class GameMap implements LightingMap, Stoppable {
      * This is a supporter class for the
      * {@link illarion.client.world.GameMap#renderLights()} function and it
      * triggers the renderLight function on each tile its called on.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class RenderLightsHelper implements
-        TObjectProcedure<MapTile> {
+            TObjectProcedure<MapTile> {
         /**
          * The factor of the influence of the ambient light on this tile.
          */
@@ -102,7 +102,7 @@ public final class GameMap implements LightingMap, Stoppable {
         /**
          * Trigger the renderLight function on one tile with the parameters that
          * were setup.
-         * 
+         *
          * @param tile the tile that gets its lights rendered now
          * @return <code>true</code> at all times
          */
@@ -117,10 +117,10 @@ public final class GameMap implements LightingMap, Stoppable {
         /**
          * Setup the helper class by setting the factor of influence of the
          * ambient light and the ambient light color itself.
-         * 
+         *
          * @param newAmbientFactor the factor of influence of the ambient light
-         *            color
-         * @param ambientLight the ambient light color itself
+         *                         color
+         * @param ambientLight     the ambient light color itself
          */
         void setup(final float newAmbientFactor, final Color ambientLight) {
             factor = newAmbientFactor;
@@ -132,11 +132,11 @@ public final class GameMap implements LightingMap, Stoppable {
      * This class is a helper class to reset the lights. Each tile this class is
      * executed receives a reset trigger for the light value of the tile. This
      * should be done before new light values are rendered on the tile.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class ResetLightsHelper implements
-        TObjectProcedure<MapTile> {
+            TObjectProcedure<MapTile> {
         /**
          * Default constructor.
          */
@@ -146,7 +146,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
         /**
          * This method causes the tile its called for to reset the light.
-         * 
+         *
          * @param tile the tile to reset
          * @return <code>true</code> in all cases
          */
@@ -161,11 +161,11 @@ public final class GameMap implements LightingMap, Stoppable {
      * This class is used to reset the hiding state of each tile in order to
      * reset the things the map processor did. This is needed in case the map
      * processor is restarted after a error.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class ResetMapProcessorHelper implements
-        TObjectProcedure<MapTile> {
+            TObjectProcedure<MapTile> {
         /**
          * Default constructor.
          */
@@ -176,7 +176,7 @@ public final class GameMap implements LightingMap, Stoppable {
         /**
          * The hiding values of the tile this method is called for receives a
          * reset.
-         * 
+         *
          * @param tile the tile to reset
          * @return <code>true</code> in all cases
          */
@@ -234,14 +234,14 @@ public final class GameMap implements LightingMap, Stoppable {
      * A helper class for rendering the light values on all map tiles.
      */
     private final RenderLightsHelper renderLightsHelper =
-        new RenderLightsHelper();
+            new RenderLightsHelper();
 
     /**
      * This is a helper procedure that will trigger a reset on all tiles its
      * called upon.
      */
     private final TObjectProcedure<MapTile> resetLightsHelper =
-        new ResetLightsHelper();
+            new ResetLightsHelper();
 
     /**
      * The tiles of the map. The key of the hash map is the location key of the
@@ -269,15 +269,15 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * Determines whether a map location accepts the light from a specific
      * direction.
-     * 
-     * @param loc the location of the tile
+     *
+     * @param loc    the location of the tile
      * @param deltaX the X-Delta of the light ray direction
      * @param deltaY the Y-Delta of the light ray direction
      * @return true if the position accepts the light, false if not
      */
     @Override
     public boolean acceptsLight(final Location loc, final int deltaX,
-        final int deltaY) {
+                                final int deltaY) {
         final MapTile tile = getMapAt(loc);
         if (tile != null) {
             switch (tile.getFace()) {
@@ -301,7 +301,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Determines how much the tile blocks the view.
-     * 
+     *
      * @param loc the location of the tile
      * @return obscurity of the tile, 0 for clear view
      *         {@link illarion.common.graphics.LightingMap#BLOCKED_VIEW} for
@@ -351,7 +351,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Get item elevation on a special position.
-     * 
+     *
      * @param loc the location that shall be checked
      * @return the elevation value
      */
@@ -365,7 +365,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Get the interactive map that is used to interact with this map.
-     * 
+     *
      * @return the map used to interact with this map
      */
     public InteractiveMap getInteractive() {
@@ -374,7 +374,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Get a map tile at a specified location.
-     * 
+     *
      * @param posX the x coordinate of the location of the searched tile
      * @param posY the y coordinate of the location of the searched tile
      * @param posZ the z coordinate of the location of the searched tile
@@ -386,7 +386,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Get a map tile at a specified location.
-     * 
+     *
      * @param loc the location on the map
      * @return the map tile at the location or <code>null</code>
      */
@@ -396,7 +396,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Get a map tile at a specified location.
-     * 
+     *
      * @param key the key of the location
      * @return the map tile at the location or <code>null</code>
      */
@@ -409,7 +409,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Get the overview map handler that is used currently.
-     * 
+     *
      * @return the object that handles the overview map
      */
     public GameMiniMap getMinimap() {
@@ -418,7 +418,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Check if there is a tile at one location on the map.
-     * 
+     *
      * @param posX the x coordinate of the location of the searched tile
      * @param posY the y coordinate of the location of the searched tile
      * @param posZ the z coordinate of the location of the searched tile
@@ -430,7 +430,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Check if there is a tile at one location on the map.
-     * 
+     *
      * @param loc the location on the map
      * @return <code>true</code> in case there is a tile at this position
      */
@@ -440,7 +440,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Check if there is a tile at one location on the map.
-     * 
+     *
      * @param key the key to the location on the map
      * @return <code>true</code> in case there is a tile at this position
      */
@@ -458,7 +458,7 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * Process all tiles in the storage. The procedure in the parameter is
      * called for every tile that is currently known.
-     * 
+     *
      * @param procedure the procedure that is called for every tile
      */
     public void processTiles(final TLongObjectProcedure<MapTile> procedure) {
@@ -472,7 +472,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Remove a tile by its key from the map.
-     * 
+     *
      * @param key the key of the tile that is to be removed
      */
     public void removeTile(final long key) {
@@ -491,7 +491,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Remove a tile from the map.
-     * 
+     *
      * @param tile the tile that is to be removed
      */
     public void removeTile(final MapTile tile) {
@@ -505,8 +505,8 @@ public final class GameMap implements LightingMap, Stoppable {
     @Override
     public void renderLights() {
         final float factor =
-            1.f - ColorHelper.getLuminationf(World.getWeather()
-                .getAmbientLight());
+                1.f - ColorHelper.getLuminationf(World.getWeather()
+                        .getAmbientLight());
 
         renderLightsHelper.setup(factor, World.getWeather().getAmbientLight());
 
@@ -549,7 +549,7 @@ public final class GameMap implements LightingMap, Stoppable {
         }
         processor = new GameMapProcessor(this);
         processor.setUncaughtExceptionHandler(MapProcessorCrashHandler
-            .getInstance());
+                .getInstance());
         processor.start();
     }
 
@@ -565,8 +565,8 @@ public final class GameMap implements LightingMap, Stoppable {
 
     /**
      * Set a light color on a tile.
-     * 
-     * @param loc the location of the map tile on the server map
+     *
+     * @param loc   the location of the map tile on the server map
      * @param color the color that shall be set for this tile
      * @see illarion.common.graphics.LightingMap#setLight(Location, SpriteColor)
      */
@@ -590,7 +590,7 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * Update the data of a tile. This does nothing but forwarding the location
      * of the tile to the map processor so it checks the tile again.
-     * 
+     *
      * @param tile the tile to check again
      */
     public void updateTile(final MapTile tile) {
@@ -602,7 +602,7 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * Perform a update of a single map tile regarding the update informations.
      * This can add a new tile, update a old one or delete one tile.
-     * 
+     *
      * @param updateData the data of the update
      */
     @SuppressWarnings("nls")

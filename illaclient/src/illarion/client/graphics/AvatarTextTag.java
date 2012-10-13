@@ -21,7 +21,7 @@ package illarion.client.graphics;
 import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
 import de.lessvoid.nifty.slick2d.render.font.SlickLoadFontException;
 import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
-import illarion.common.util.Rectangle;
+import illarion.common.types.Rectangle;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;

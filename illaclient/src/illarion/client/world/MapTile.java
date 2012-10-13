@@ -32,7 +32,7 @@ import illarion.common.graphics.LightSource;
 import illarion.common.graphics.MapConstants;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import illarion.common.util.RecycleObject;
 import javolution.util.FastTable;
 import org.apache.log4j.Logger;

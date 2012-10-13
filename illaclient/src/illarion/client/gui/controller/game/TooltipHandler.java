@@ -27,7 +27,7 @@ import de.lessvoid.nifty.tools.Color;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.gui.events.TooltipsRemovedEvent;
 import illarion.client.net.server.events.AbstractItemLookAtEvent;
-import illarion.common.util.Rectangle;
+import illarion.common.types.Rectangle;
 import org.bushe.swing.event.EventBus;
 import org.illarion.nifty.controls.tooltip.builder.ToolTipBuilder;
 import org.newdawn.slick.GameContainer;

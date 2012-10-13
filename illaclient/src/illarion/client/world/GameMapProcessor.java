@@ -21,7 +21,7 @@ package illarion.client.world;
 import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.procedure.TLongObjectProcedure;
 import illarion.client.graphics.MapDisplayManager;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import org.apache.log4j.Logger;
 
 /**

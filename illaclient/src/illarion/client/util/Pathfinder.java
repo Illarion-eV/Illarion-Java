@@ -18,13 +18,12 @@
  */
 package illarion.client.util;
 
-import javolution.util.FastComparator;
-import javolution.util.FastTable;
-
 import illarion.client.crash.PathfinderCrashHandler;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
+import javolution.util.FastComparator;
+import javolution.util.FastTable;
 
 /**
  * Pathfinder to search the best way between two locations. Using the A*-algorithm.
@@ -128,8 +127,8 @@ public final class Pathfinder
      * Search a path between two locations.
      *
      * @param pathStart the location where the path starts
-     * @param pathDest the location where the path ends
-     * @param pathRec the class that receives the resulting path
+     * @param pathDest  the location where the path ends
+     * @param pathRec   the class that receives the resulting path
      */
     public void findPath(final Location pathStart, final Location pathDest, final PathReceiver pathRec) {
         startLoc.set(pathStart);

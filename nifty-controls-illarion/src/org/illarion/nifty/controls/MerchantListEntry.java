@@ -20,7 +20,7 @@ package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.render.NiftyImage;
 import illarion.common.types.ItemCount;
-import illarion.common.util.Money;
+import illarion.common.types.Money;
 
 /**
  * This interfaces defines a entry in the merchant dialog that contains one item to buy.

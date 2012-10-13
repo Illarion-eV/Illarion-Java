@@ -25,7 +25,7 @@ import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.common.types.ItemCount;
-import illarion.common.util.Money;
+import illarion.common.types.Money;
 import org.illarion.nifty.controls.MerchantListEntry;
 
 /**

@@ -29,7 +29,7 @@ import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
-import illarion.common.util.Money;
+import illarion.common.types.Money;
 import org.illarion.nifty.controls.ToolTip;
 
 import java.util.Properties;

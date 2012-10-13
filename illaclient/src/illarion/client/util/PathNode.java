@@ -20,12 +20,11 @@ package illarion.client.util;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.procedure.TObjectProcedure;
-import javolution.context.ObjectFactory;
-
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import illarion.common.util.Reusable;
+import javolution.context.ObjectFactory;
 
 /**
  * A single path node that is used during the path finding and represents a single step on the path that is searched or

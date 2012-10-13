@@ -1,31 +1,30 @@
 /*
- * This file is part of the Illarion Graphics Engine.
+ * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Graphics Engine is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Graphics Engine is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.graphics;
 
-import illarion.common.util.Location;
-
+import illarion.common.types.Location;
 import org.apache.log4j.Logger;
 
 /**
  * A ray node is one node on the path of a light to a destination. It knows all
  * its child nodes around.
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -82,9 +81,9 @@ public final class RayNode {
     /**
      * Create a ray node. A node created with this constructor is placed at the
      * origin of the light as the root node.
-     * 
+     *
      * @param size the length of the rays of the light this node is a part of,
-     *            its used to calculate the intensity of the light
+     *             its used to calculate the intensity of the light
      */
     public RayNode(final float size) {
         this(0, 0, 0, size);
@@ -93,17 +92,17 @@ public final class RayNode {
     /**
      * Create a ray node at a location. The location is relative to the origin
      * of the light.
-     * 
-     * @param posX the relative x coordinate to the origin of the light
-     * @param posY the relative y coordinate to the origin of the light
+     *
+     * @param posX      the relative x coordinate to the origin of the light
+     * @param posY      the relative y coordinate to the origin of the light
      * @param nodeLevel the level of the node, means how many steps the node is
-     *            away from the origin of the light or how many nodes are in
-     *            front of this ray node. The root ray node is level 0
-     * @param size the length of the rays of the light this node is a part of,
-     *            its used to calculate the intensity of the light
+     *                  away from the origin of the light or how many nodes are in
+     *                  front of this ray node. The root ray node is level 0
+     * @param size      the length of the rays of the light this node is a part of,
+     *                  its used to calculate the intensity of the light
      */
     public RayNode(final int posX, final int posY, final int nodeLevel,
-        final float size) {
+                   final float size) {
         level = nodeLevel;
         x = posX;
         y = posY;
@@ -116,13 +115,13 @@ public final class RayNode {
     /**
      * Create a ray node at a location. The location is relative to the origin
      * of the light.
-     * 
-     * @param loc the location of the ray node relative to the origin of the
-     *            light
+     *
+     * @param loc       the location of the ray node relative to the origin of the
+     *                  light
      * @param nodeLevel the level of the node, means how many steps the node is
-     *            away from the origin of the light
-     * @param size the length of the rays of the light this node is a part of,
-     *            its used to calculate the intensity of the light
+     *                  away from the origin of the light
+     * @param size      the length of the rays of the light this node is a part of,
+     *                  its used to calculate the intensity of the light
      */
     public RayNode(final Location loc, final int nodeLevel, final float size) {
         this(loc.getScX(), loc.getScY(), nodeLevel, size);
@@ -134,16 +133,16 @@ public final class RayNode {
      * there is no node added in this step and if the node is still not created
      * its created now. This function is called recursively up until the length
      * of the path.
-     * 
+     *
      * @param xPath the array of relative x coordinates to the parent node
      * @param yPath the array of relative y coordinates to the parent node
-     * @param len the length of the ray, means the coordinate values in the
-     *            arrays for this ray
+     * @param len   the length of the ray, means the coordinate values in the
+     *              arrays for this ray
      * @param index the current position on the ray
-     * @param size real length of the ray
+     * @param size  real length of the ray
      */
     public void addRay(final int[] xPath, final int[] yPath, final int len,
-        final int index, final float size) {
+                       final int index, final float size) {
         // there are more points on the path
         if (index < len) {
             final int nx = xPath[index];
@@ -183,16 +182,16 @@ public final class RayNode {
      * the ray stops at this location and the following ray nodes are not
      * rendered applies anymore, that leads to the point that the light has no
      * influence anymore.
-     * 
-     * @param shadowMap the map that is the target of the apply operation and
-     *            gives the data how much light is blocked out by the tiles
+     *
+     * @param shadowMap       the map that is the target of the apply operation and
+     *                        gives the data how much light is blocked out by the tiles
      * @param globalIntensity global intensity modificator that reduces the
-     *            default intensity of the light by the glowing intensity of the
-     *            light in order to make the light generally weaker
+     *                        default intensity of the light by the glowing intensity of the
+     *                        light in order to make the light generally weaker
      */
     public void apply(final LightSource shadowMap, final float globalIntensity) {
         int blocked =
-            shadowMap.setIntensity(x, y, globalIntensity * intensity);
+                shadowMap.setIntensity(x, y, globalIntensity * intensity);
         float newIntensity = globalIntensity;
         // never block light source itself, remove when blocking is variable
         if (level == 0) {
@@ -232,7 +231,7 @@ public final class RayNode {
 
     /**
      * Create a string representation of this ray node.
-     * 
+     *
      * @return the string representation of this ray node
      * @see java.lang.Object#toString()
      */

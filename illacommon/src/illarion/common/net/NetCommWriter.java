@@ -18,7 +18,7 @@
  */
 package illarion.common.net;
 
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 /**
  * This interface offers the possibility to write on a connection handled by the network communication class of

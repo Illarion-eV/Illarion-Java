@@ -18,7 +18,7 @@
  */
 package illarion.easynpc.data;
 
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 

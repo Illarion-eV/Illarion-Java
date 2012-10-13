@@ -18,9 +18,6 @@
  */
 package illarion.client.world;
 
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
-
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.input.InputReceiver;
@@ -31,8 +28,10 @@ import illarion.client.util.Path;
 import illarion.client.util.PathNode;
 import illarion.client.util.PathReceiver;
 import illarion.client.util.Pathfinder;
+import illarion.common.types.Location;
 import illarion.common.util.FastMath;
-import illarion.common.util.Location;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventTopicSubscriber;
 
 /**
  * The player movement class takes and handles all move requests and orders that are needed to move the player
@@ -185,9 +184,9 @@ public final class PlayerMovement
     /**
      * Perform the move of a player character after the move was confirmed by the player.
      *
-     * @param mode the moving method that was send by the server
+     * @param mode   the moving method that was send by the server
      * @param target the target location of the character after the move
-     * @param speed the speed of the move
+     * @param speed  the speed of the move
      */
     public void acknowledgeMove(final int mode, final Location target, final int speed) {
         lastMoveRequest = Location.DIR_ZERO;
@@ -329,9 +328,9 @@ public final class PlayerMovement
      * Perform a move of the player character. This function does not perform any checks. It just does the move no
      * matter what the status of everything is.
      *
-     * @param mode the movement mode, allowed values are {@link #MOVE_MODE_WALK} and {@link #MOVE_MODE_RUN}
+     * @param mode   the movement mode, allowed values are {@link #MOVE_MODE_WALK} and {@link #MOVE_MODE_RUN}
      * @param target the target location where the character shall be located at at the end of the move
-     * @param speed the speed of the walk that determines how long the animation takes
+     * @param speed  the speed of the walk that determines how long the animation takes
      */
     private void performMove(final int mode, final Location target, final int speed) {
         // final illarion.client.guiNG.ChatEditor editor =
@@ -370,7 +369,7 @@ public final class PlayerMovement
      * already earlier so the movement looks all in all smooth.
      *
      * @param direction the direction the move shall be performed in
-     * @param mode the mode of the move that shall be performed
+     * @param mode      the mode of the move that shall be performed
      */
     public void requestMove(final int direction, final int mode) {
         requestMove(direction, mode, true);
@@ -382,8 +381,8 @@ public final class PlayerMovement
      * is one and depending on how far the old move is processed already, its possible that a new move is requested
      * already earlier so the movement looks all in all smooth.
      *
-     * @param direction the direction the move shall be performed in
-     * @param mode the mode of the move that shall be performed
+     * @param direction    the direction the move shall be performed in
+     * @param mode         the mode of the move that shall be performed
      * @param stopAutoMove <code>true</code> in case this request shall remove the currently running automated movement
      */
     @SuppressWarnings("nls")
@@ -421,7 +420,7 @@ public final class PlayerMovement
     /**
      * This function needs to be triggered in case a turn needs to be done.
      *
-     * @param direction the direction the player wants his character to look at
+     * @param direction    the direction the player wants his character to look at
      * @param stopAutoMove <code>true</code> in case this request shall remove the currently running automated movement
      */
     private void requestTurn(final int direction, final boolean stopAutoMove) {
@@ -441,7 +440,7 @@ public final class PlayerMovement
      * Send the movement command to the server.
      *
      * @param direction the direction of the requested move
-     * @param mode the mode of the requested move
+     * @param mode      the mode of the requested move
      */
     private void sendMoveToServer(final int direction, final int mode) {
         final MoveCmd cmd = (MoveCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_MOVE);

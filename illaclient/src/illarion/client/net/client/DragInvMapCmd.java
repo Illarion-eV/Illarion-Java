@@ -20,7 +20,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 /**
  * Client Command: Dragging a item from a inventory slot to the game map ({@link CommandList#CMD_DRAG_INV_MAP}).

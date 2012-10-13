@@ -18,6 +18,8 @@
  */
 package illarion.common.util;
 
+import illarion.common.types.Range;
+
 import java.util.Random;
 
 /**

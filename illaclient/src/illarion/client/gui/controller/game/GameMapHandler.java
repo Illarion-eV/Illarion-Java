@@ -43,7 +43,7 @@ import illarion.client.world.World;
 import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.common.types.ItemCount;
-import illarion.common.util.Rectangle;
+import illarion.common.types.Rectangle;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.newdawn.slick.GameContainer;

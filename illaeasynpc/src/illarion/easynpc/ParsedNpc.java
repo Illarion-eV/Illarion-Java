@@ -18,7 +18,7 @@
  */
 package illarion.easynpc;
 
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import illarion.easynpc.data.*;
 import illarion.easynpc.parsed.ParsedData;
 import illarion.easynpc.writer.EasyNpcWritable;

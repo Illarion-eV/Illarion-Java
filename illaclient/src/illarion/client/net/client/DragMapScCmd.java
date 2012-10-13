@@ -20,7 +20,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 /**
  * Client Command: Dragging an item from the map to a container (

@@ -48,7 +48,7 @@ import illarion.client.world.items.MerchantList;
 import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.util.Rectangle;
+import illarion.common.types.Rectangle;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;

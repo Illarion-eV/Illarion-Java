@@ -19,7 +19,7 @@
 package illarion.client.net.server;
 
 import illarion.common.net.NetCommReader;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 import java.io.IOException;
 

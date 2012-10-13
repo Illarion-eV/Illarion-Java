@@ -20,7 +20,7 @@ package illarion.client.world.events;
 
 import illarion.client.util.ChatHandler;
 import illarion.client.world.Char;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 /**
  * This event is generated once a character is talking on the map. Its produces by the chat handler and contains all

@@ -21,7 +21,7 @@ package illarion.client.util;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.client.world.events.CharTalkingEvent;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Color;

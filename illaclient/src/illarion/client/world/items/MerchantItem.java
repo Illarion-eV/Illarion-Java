@@ -20,7 +20,7 @@ package illarion.client.world.items;
 
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.util.Money;
+import illarion.common.types.Money;
 
 /**
  * This class is able to store a single item that is sold by a NPC merchant.

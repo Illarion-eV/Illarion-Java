@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.common.util;
+package illarion.common.types;
 
 import java.io.Serializable;
 

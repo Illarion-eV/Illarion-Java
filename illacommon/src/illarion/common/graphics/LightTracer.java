@@ -1,32 +1,30 @@
 /*
- * This file is part of the Illarion Graphics Engine.
+ * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Graphics Engine is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Graphics Engine is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.graphics;
 
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
+import javolution.util.FastList;
+import org.apache.log4j.Logger;
 
 import java.util.Iterator;
-
-import javolution.util.FastList;
-
-import org.apache.log4j.Logger;
 
 /**
  * Manager class that handles the light. It stores the pre-calculated light rays
@@ -36,7 +34,7 @@ import org.apache.log4j.Logger;
  * The whole calculations are threaded, so the light map that is the target of
  * all calculation results needs to be thread save.
  * </p>
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -74,7 +72,7 @@ public final class LightTracer extends Thread implements Stoppable {
     /**
      * Get the current base level and so the current z level of the player
      * location.
-     * 
+     *
      * @return the z level of the player location
      */
     public static int getBaseLevel() {
@@ -83,7 +81,7 @@ public final class LightTracer extends Thread implements Stoppable {
 
     /**
      * Get the pre-calculated light rays for a given size of the light.
-     * 
+     *
      * @param size the length of the ray that is needed
      * @return the pre-calculated rays.
      */
@@ -99,7 +97,7 @@ public final class LightTracer extends Thread implements Stoppable {
     /**
      * Set the current base level. The base level always has to be the level the
      * player character is on.
-     * 
+     *
      * @param lvl the current z level of the player character location
      */
     public static void setBaseLevel(final int lvl) {
@@ -160,7 +158,7 @@ public final class LightTracer extends Thread implements Stoppable {
     /**
      * Default constructor of the light tracer. This tracer handles all light
      * sources that are on the map source that is set with the parameter.
-     * 
+     *
      * @param tracerMapSource the map the lights this tracer handles are on
      */
     @SuppressWarnings("nls")
@@ -178,9 +176,9 @@ public final class LightTracer extends Thread implements Stoppable {
      * Add a light source to the list of light sources of this tracer. This
      * causes that this light source is taken into account and is rendered by
      * this light tracer if requested.
-     * 
+     *
      * @param light the light that shall be added to the light tracer and so to
-     *            the game screen
+     *              the game screen
      */
     public void add(final LightSource light) {
         light.setMapSource(mapSource);
@@ -226,7 +224,7 @@ public final class LightTracer extends Thread implements Stoppable {
     /**
      * Check if the light tracer is dirty and is not done yet calculating all
      * the lights on the map.
-     * 
+     *
      * @return true if there are still calculations left to do
      */
     public boolean isDirty() {
@@ -235,7 +233,7 @@ public final class LightTracer extends Thread implements Stoppable {
 
     /**
      * Check if there are no lights set.
-     * 
+     *
      * @return true in case this tracer does not handle any lights currently
      */
     public boolean isEmpty() {
@@ -244,7 +242,7 @@ public final class LightTracer extends Thread implements Stoppable {
 
     /**
      * Notify light system about relevant change.
-     * 
+     *
      * @param x the x coordinate of the location the change occurred at
      * @param y the y coordinate of the location the change occurred at
      * @param z the z coordinate of the location the change occurred at
@@ -264,7 +262,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * account in case its within the range of their rays. So every change on
      * the map should be reported to the tracer no matter if a light is around
      * this location or not.
-     * 
+     *
      * @param loc the location the change occurred at
      */
     public void notifyChange(final Location loc) {
@@ -311,7 +309,7 @@ public final class LightTracer extends Thread implements Stoppable {
 
     /**
      * Move a light to the dirty lights list to have it updated at the next run.
-     * 
+     *
      * @param light the light that shall be updated.
      */
     public void refreshLight(final LightSource light) {
@@ -330,7 +328,7 @@ public final class LightTracer extends Thread implements Stoppable {
     /**
      * Remove a light source from this tracer. This causes that the light is not
      * any longer calculated and rendered.
-     * 
+     *
      * @param light the light source that shall be removed
      * @return true in case the light got removed, false if this operation
      *         failed
@@ -394,7 +392,7 @@ public final class LightTracer extends Thread implements Stoppable {
             synchronized (lightsListsLock) {
                 if (dirty && !pause) {
                     if (!tinyLights.isEmpty()
-                        && ((tinyLights.size() - 1) > lastTinyIndex)) {
+                            && ((tinyLights.size() - 1) > lastTinyIndex)) {
                         lastTinyIndex++;
                         light = tinyLights.get(lastTinyIndex);
                     } else if (!dirtyLights.isEmpty()) {
@@ -412,7 +410,7 @@ public final class LightTracer extends Thread implements Stoppable {
                         lightsListsLock.wait();
                     } catch (final InterruptedException e) {
                         LOGGER.debug(
-                            "Light tracer woken up for unknown reasons", e);
+                                "Light tracer woken up for unknown reasons", e);
                     }
 
                 }
@@ -443,7 +441,7 @@ public final class LightTracer extends Thread implements Stoppable {
     /**
      * Update the dirty flag of the light tracer. This also triggers a
      * recalculation of the entire map in case the flag becomes dirty.
-     * 
+     *
      * @param newDirty the new value of the dirty flag
      */
     private void setDirty(final boolean newDirty) {
@@ -461,7 +459,7 @@ public final class LightTracer extends Thread implements Stoppable {
     /**
      * Set the running value to a new state. This is the only way to stop the
      * light tracer thread from calculating stuff.
-     * 
+     *
      * @param newRunning <code>false</code> to stop the light tracer thread
      */
     public void setRunning(final boolean newRunning) {

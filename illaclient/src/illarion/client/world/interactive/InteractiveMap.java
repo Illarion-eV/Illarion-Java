@@ -22,7 +22,8 @@ import illarion.client.graphics.MapDisplayManager;
 import illarion.client.world.GameMap;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
+
 import static illarion.client.graphics.MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
 
 /**

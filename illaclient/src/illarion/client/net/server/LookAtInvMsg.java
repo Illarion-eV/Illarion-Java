@@ -22,7 +22,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.InventoryItemLookAtEvent;
 import illarion.common.net.NetCommReader;
-import illarion.common.util.Money;
+import illarion.common.types.Money;
 import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;

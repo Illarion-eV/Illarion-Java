@@ -19,7 +19,7 @@
 package illarion.client.world.events;
 
 import illarion.common.types.CharacterId;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 /**
  * This is the event that is published in case a character is moved on the map.

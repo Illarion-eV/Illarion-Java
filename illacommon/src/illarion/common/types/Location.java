@@ -16,14 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.common.util;
-
-import javolution.text.TextBuilder;
-
-import java.io.Serializable;
+package illarion.common.types;
 
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
+import illarion.common.util.FastMath;
+import javolution.text.TextBuilder;
+
+import java.io.Serializable;
 
 /**
  * Storage for the server map and all recalculation function for the Client screen representations.
@@ -759,7 +759,7 @@ public class Location
      */
     public void setKey(final long key) {
         setSC((int) (((key % KEY_MOD_Z) / KEY_MOD_X) - (KEY_MOD_X / 2)), (int) (key % KEY_MOD_Z % KEY_MOD_X),
-              (int) ((key / KEY_MOD_Z) - (KEY_MOD_Z / 2)));
+                (int) ((key / KEY_MOD_Z) - (KEY_MOD_Z / 2)));
     }
 
     /**

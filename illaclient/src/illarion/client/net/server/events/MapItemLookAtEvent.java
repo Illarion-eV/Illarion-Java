@@ -18,8 +18,8 @@
  */
 package illarion.client.net.server.events;
 
-import illarion.common.util.Location;
-import illarion.common.util.Money;
+import illarion.common.types.Location;
+import illarion.common.types.Money;
 
 /**
  * This event is generated in case the client receives a tooltip for a map item from the server.

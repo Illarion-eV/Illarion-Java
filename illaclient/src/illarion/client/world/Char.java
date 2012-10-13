@@ -38,7 +38,7 @@ import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import illarion.common.util.RecycleObject;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;

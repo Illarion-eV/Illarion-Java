@@ -25,7 +25,7 @@ import illarion.client.world.PlayerMovement;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;

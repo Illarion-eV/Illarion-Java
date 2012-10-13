@@ -1,29 +1,31 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.util;
 
-import java.awt.Point;
+import illarion.common.types.Location;
+
+import java.awt.*;
 
 /**
  * Line calculation by Bresenham. This class is used to calculate a line between
  * 2 points in 2D space on a tiles map.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
@@ -63,7 +65,7 @@ public final class Bresenham {
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance
      */
     public static Bresenham getInstance() {
@@ -72,7 +74,7 @@ public final class Bresenham {
 
     /**
      * Reverse order of points if they do not start with given point.
-     * 
+     *
      * @param sx x coordinate of the expected starting point
      * @param sy y coordinate of the expected starting point
      */
@@ -102,14 +104,14 @@ public final class Bresenham {
      * this line calculation is removed also instantly as the next calculation
      * is performed. So ensure to copy the data of this lines in oder to store
      * them and do not just save the references to the arrays.
-     * 
+     *
      * @param x0 the x coordinate of the start location of the line
      * @param y0 the y coordinate of the start location of the line
      * @param x1 the x coordinate of the target location of the line
      * @param y1 the y coordinate of the target location of the line
      */
     public void calculate(final int x0, final int y0, final int x1,
-        final int y1) {
+                          final int y1) {
         length = 0;
 
         int currX = x0;
@@ -161,7 +163,7 @@ public final class Bresenham {
 
     /**
      * Calculate a line between the two locations.
-     * 
+     *
      * @param loc0 the start location of the calculation
      * @param loc1 the target location of the calculation
      * @see #calculate(int, int, int, int)
@@ -170,18 +172,18 @@ public final class Bresenham {
     public void calculate(final Location loc0, final Location loc1) {
         if (loc0 == null) {
             throw new IllegalArgumentException(
-                "Start location (loc0) must not be null.");
+                    "Start location (loc0) must not be null.");
         }
         if (loc1 == null) {
             throw new IllegalArgumentException(
-                "Start location (loc1) must not be null.");
+                    "Start location (loc1) must not be null.");
         }
         calculate(loc0.getScX(), loc0.getScY(), loc1.getScX(), loc1.getScY());
     }
 
     /**
      * Get the length of the line that was calculated at the last run.
-     * 
+     *
      * @return the length of the line
      */
     public int getLength() {
@@ -191,7 +193,7 @@ public final class Bresenham {
     /**
      * Get a point out of the list of points that were calculated at the last
      * run of this function.
-     * 
+     *
      * @param index the index of the point in the list of points
      * @param point the object the point data is stored in
      * @return true in case the index was valid and the point data got stored in
@@ -217,7 +219,7 @@ public final class Bresenham {
      * is only valid for the line until a new line is calculated. Its
      * overwritten then. Do also not perform any writing actions on this list
      * from outside of this class in order to prevent maleforming this list.
-     * 
+     *
      * @return the list of x coordinates
      */
     public int[] getX() {
@@ -229,7 +231,7 @@ public final class Bresenham {
      * is only valid for the line until a new line is calculated. Its
      * overwritten then. Do also not perform any writing actions on this list
      * from outside of this class in order to prevent maleforming this list.
-     * 
+     *
      * @return the list of y coordinates
      */
     public int[] getY() {
@@ -249,7 +251,7 @@ public final class Bresenham {
     /**
      * Add a point to the list of points that were calculated. The length of the
      * line in automatically increased by one after calling this function.
-     * 
+     *
      * @param px the x-coordinate of the point that shall be added
      * @param py the y-coordinate of the point that shall be added
      */
@@ -257,7 +259,7 @@ public final class Bresenham {
     private void addPoint(final int px, final int py) {
         if (length > (MAX_LINE_LENGTH - 1)) {
             throw new IllegalStateException(
-                "Bresenham line is getting too long.");
+                    "Bresenham line is getting too long.");
         }
         x[length] = px;
         y[length] = py;

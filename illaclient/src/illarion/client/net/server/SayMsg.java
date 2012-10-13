@@ -22,7 +22,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.util.Location;
+import illarion.common.types.Location;
 
 import java.io.IOException;
 
