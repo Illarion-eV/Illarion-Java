@@ -18,37 +18,18 @@
  */
 package org.illarion.nifty.controls;
 
-import de.lessvoid.nifty.controls.Window;
-import de.lessvoid.nifty.elements.Element;
-
 /**
- * This interface is used to interact with a merchant dialog that is displayed inside the GUI.
+ * This event is fired in case the player closes the crafting dialog.
  *
- * @author Martin Karing &gt;nitram@illarion.org&lt;
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface DialogCrafting extends Window {
+public final class DialogCraftingCloseEvent extends DialogEvent {
     /**
-     * This enumerator identifies the buttons displayed on this dialog.
+     * Create a new instance of this event and set the ID of the dialog that was closed.
+     *
+     * @param id the ID of the dialog
      */
-    enum DialogButtons {
-        /**
-         * The button that reads craft.
-         */
-        craft,
-
-        /**
-         * The button that reads close.
-         */
-        close;
+    public DialogCraftingCloseEvent(final int id) {
+        super(id);
     }
-
-    int getCraftingItemCount();
-
-    int getSelectedCraftingItem();
-
-    Element getCraftingItemDisplay();
-
-    Element getIngredientItemDisplay(int index);
-
-    void addCraftingItems(CraftingListEntry... entries);
 }

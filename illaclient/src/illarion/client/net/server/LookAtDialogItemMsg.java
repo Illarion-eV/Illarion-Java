@@ -62,7 +62,7 @@ public final class LookAtDialogItemMsg extends AbstractItemLookAtMsg {
                 slotId = reader.readUByte();
                 secondarySlotId = reader.readUByte();
             default:
-                LOGGER.error("Illegal type ID");
+                LOGGER.error("Illegal type ID: " + Integer.toString(type));
                 return;
         }
 
@@ -81,13 +81,15 @@ public final class LookAtDialogItemMsg extends AbstractItemLookAtMsg {
                 EventBus.publish(new DialogItemLookAtEvent(dialogId, slotId, name, rareness, description, craftedBy,
                         new Money(worth), weight, qualityText, durabilityText, durabilityValue, amethystLevel,
                         diamondLevel, emeraldLevel, rubyLevel, obsidianLevel, sapphireLevel, topazLevel, bonus));
+                break;
             case 1:
                 EventBus.publish(new DialogSecondaryItemLookAtEvent(dialogId, slotId, secondarySlotId, name,
                         rareness, description, craftedBy, new Money(worth), weight, qualityText, durabilityText,
                         durabilityValue, amethystLevel, diamondLevel, emeraldLevel, rubyLevel, obsidianLevel,
                         sapphireLevel, topazLevel, bonus));
+                break;
             default:
-                LOGGER.error("Illegal type ID");
+                LOGGER.error("Illegal type ID " + Integer.toString(type));
         }
 
         return true;

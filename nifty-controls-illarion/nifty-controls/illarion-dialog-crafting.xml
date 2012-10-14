@@ -26,7 +26,7 @@
             <panel style="illarion-dialog-crafting-content">
                 <control name="listBox" id="#craftItemList" style="#craftItemList" vertical="on" horizontal="off"
                          displayItems="9"/>
-                <panel style="#selectedItemInfos">
+                <panel id="#selectedItemInfos" style="#selectedItemInfos" visibleToMouse="true">
                     <panel style="#selectedItemImageWrapper">
                         <image id="#selectedItemImage" style="#selectedItemImage"/>
                     </panel>

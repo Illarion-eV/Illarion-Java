@@ -25,6 +25,7 @@ import de.lessvoid.nifty.builder.ControlBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.gui.events.TooltipsRemovedEvent;
 import illarion.client.gui.util.NiftyCraftingItem;
 import illarion.client.gui.util.NiftyMerchantItem;
 import illarion.client.gui.util.NiftySelectItem;
@@ -33,11 +34,13 @@ import illarion.client.net.CommandList;
 import illarion.client.net.client.CloseDialogInputCmd;
 import illarion.client.net.client.CloseDialogMessageCmd;
 import illarion.client.net.client.CloseDialogSelectionCmd;
+import illarion.client.net.client.CraftItemCmd;
 import illarion.client.net.server.events.*;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.MerchantList;
 import illarion.common.types.ItemCount;
+import illarion.common.types.Rectangle;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -50,6 +53,7 @@ import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
 import org.illarion.nifty.controls.dialog.select.builder.DialogSelectBuilder;
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Input;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -64,8 +68,11 @@ import java.util.regex.Pattern;
  */
 public final class DialogHandler implements ScreenController, UpdatableHandler {
 
+    private Input input;
+
     @Override
     public void update(final GameContainer container, final int delta) {
+        input = container.getInput();
         while (true) {
             final DialogHandler.BuildWrapper wrapper = builders.poll();
             if (wrapper == null) {
@@ -123,8 +130,10 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     private Nifty nifty;
     private Screen screen;
     private final NumberSelectPopupHandler numberSelect;
+    private final TooltipHandler tooltipHandler;
 
-    public DialogHandler(final NumberSelectPopupHandler numberSelectPopupHandler) {
+    public DialogHandler(final NumberSelectPopupHandler numberSelectPopupHandler, final TooltipHandler tooltipHandler) {
+        this.tooltipHandler = tooltipHandler;
         builders = new ConcurrentLinkedQueue<DialogHandler.BuildWrapper>();
         closers = new ConcurrentLinkedQueue<CloseDialogEvent>();
         numberSelect = numberSelectPopupHandler;
@@ -166,6 +175,91 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     @EventSubscriber
     public void handleCloseDialogEvent(final CloseDialogEvent event) {
         closers.offer(event);
+    }
+
+    private int lastCraftingTooltip = -2;
+
+    @EventSubscriber
+    public void handleTooltipRemovedEvent(final TooltipsRemovedEvent event) {
+        lastCraftingTooltip = -2;
+
+        if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) || input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)) {
+            return;
+        }
+    }
+
+    @EventSubscriber
+    public void handleDialogItemLookAtEvent(final DialogItemLookAtEvent event) {
+        final Element dialogElement = screen.findElementByName("craftingDialog" +
+                Integer.toString(event.getDialogId()));
+        if (dialogElement == null) {
+            return;
+        }
+        final DialogCrafting craftDialog = dialogElement.getNiftyControl(DialogCrafting.class);
+
+        if (craftDialog.getSelectedCraftingItem() == event.getSlot()) {
+            final Element targetElement = craftDialog.getCraftingItemDisplay();
+            final Rectangle elementRectangle = new Rectangle();
+            elementRectangle.set(targetElement.getX(), targetElement.getY(), targetElement.getWidth(),
+                    targetElement.getHeight());
+            tooltipHandler.showToolTip(elementRectangle, event);
+        }
+    }
+
+    @EventSubscriber
+    public void handleDialogSecondaryItemLookAtEvent(final DialogSecondaryItemLookAtEvent event) {
+        final Element dialogElement = screen.findElementByName("craftingDialog" +
+                Integer.toString(event.getDialogId()));
+        if (dialogElement == null) {
+            return;
+        }
+        final DialogCrafting craftDialog = dialogElement.getNiftyControl(DialogCrafting.class);
+        if (craftDialog.getSelectedCraftingItem() == event.getSlot()) {
+            final Element targetElement = craftDialog.getIngredientItemDisplay(event.getSecondarySlot());
+            final Rectangle elementRectangle = new Rectangle();
+            elementRectangle.set(targetElement.getX(), targetElement.getY(), targetElement.getWidth(),
+                    targetElement.getHeight());
+            tooltipHandler.showToolTip(elementRectangle, event);
+        }
+    }
+
+    @NiftyEventSubscriber(pattern = "craftingDialog[0-9]+")
+    public void handleCraftingItemLookAtEvent(final String topic, final DialogCraftingLookAtItemEvent event) {
+        if (lastCraftingTooltip == -1) {
+            return;
+        }
+
+        if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) || input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)) {
+            return;
+        }
+
+        final CommandFactory factory = CommandFactory.getInstance();
+        final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
+        cmd.setLookAtItem(event.getItemIndex());
+        cmd.setDialogId(event.getDialogId());
+        cmd.send();
+
+        lastCraftingTooltip = -1;
+    }
+
+    @NiftyEventSubscriber(pattern = "craftingDialog[0-9]+")
+    public void handleCraftingIngredientLookAtEvent(final String topic,
+                                                    final DialogCraftingLookAtIngredientItemEvent event) {
+        if (lastCraftingTooltip == event.getIngredientIndex()) {
+            return;
+        }
+
+        if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) || input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)) {
+            return;
+        }
+
+        final CommandFactory factory = CommandFactory.getInstance();
+        final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
+        cmd.setLookAtIngredient(event.getItemIndex(), event.getIngredientIndex());
+        cmd.setDialogId(event.getDialogId());
+        cmd.send();
+
+        lastCraftingTooltip = event.getIngredientIndex();
     }
 
     @SuppressWarnings("MethodMayBeStatic")
@@ -363,9 +457,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     private void addCraftingItemsToDialog(final DialogCraftingReceivedEvent event, final DialogCrafting dialog) {
-        System.out.println("adding crafting items: " + event.getCraftingItemCount());
         for (int i = 0; i < event.getCraftingItemCount(); i++) {
-            System.out.println("adding crafting item " + Integer.toString(i));
             dialog.addCraftingItems(new NiftyCraftingItem(nifty, event.getCraftingItem(i)));
         }
     }
