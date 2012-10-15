@@ -61,6 +61,7 @@ public final class LookAtDialogItemMsg extends AbstractItemLookAtMsg {
             case 1:
                 slotId = reader.readUByte();
                 secondarySlotId = reader.readUByte();
+                break;
             default:
                 LOGGER.error("Illegal type ID: " + Integer.toString(type));
                 return;
