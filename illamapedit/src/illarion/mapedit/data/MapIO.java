@@ -92,15 +92,15 @@ public class MapIO {
 
 
         String s;
-        while ((s = tileInput.readLine()) != null) {
+        while ((s = tileInput.readLine()) != null && !s.isEmpty()) {
             decoder.decodeTileLine(s);
         }
 
-        while ((s = itemInput.readLine()) != null) {
+        while ((s = itemInput.readLine()) != null && !s.isEmpty()) {
             decoder.decodeItemLine(s);
         }
 
-        while ((s = warpInput.readLine()) != null) {
+        while ((s = warpInput.readLine()) != null && !s.isEmpty()) {
             decoder.decodeWarpLine(s);
         }
 
@@ -135,9 +135,11 @@ public class MapIO {
         final File tileFile = new File(path, name + EXT_TILE);
         final File itemFile = new File(path, name + EXT_ITEM);
         final File warpFile = new File(path, name + EXT_WARP);
+
         if (!checkFile(tileFile) || !checkFile(itemFile) || !checkFile(warpFile)) {
             throw new IOException("Files are folders or can't be created.");
         }
+
         final BufferedWriter tileOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tileFile)));
         final BufferedWriter itemOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(itemFile)));
         final BufferedWriter warpOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(warpFile)));
@@ -168,6 +170,9 @@ public class MapIO {
                 }
             }
         }
+        tileOutput.close();
+        itemOutput.close();
+        warpOutput.close();
     }
 
     private static boolean checkFile(final File file) {
