@@ -60,6 +60,9 @@ public class ImageLoader implements Resource {
             "/messagebox_warning.png",
             "/viewGrid.png",
             "/sound.png",
+            "/reload.png",
+            "/undo.png",
+            "/redo.png",
     };
 
     private ImageLoader() {

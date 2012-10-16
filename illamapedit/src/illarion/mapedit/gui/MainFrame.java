@@ -56,7 +56,7 @@ public class MainFrame extends JRibbonFrame {
         add(map, BorderLayout.CENTER);
         add(splitPane, BorderLayout.EAST);
         final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
-                new ClipboardBand(), new ZoomBand(), new ViewBand(), new ToolBand());
+                new ClipboardBand(), new HistoryBand(), new ZoomBand(), new ViewBand(), new ToolBand());
 
 
         getRibbon().addTask(task);
