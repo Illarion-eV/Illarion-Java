@@ -32,6 +32,8 @@ import java.util.List;
  * @author Tim
  */
 public class ItemRenderer extends AbstractMapRenderer {
+
+
     /**
      * Creates a new map renderer
      */
@@ -47,39 +49,66 @@ public class ItemRenderer extends AbstractMapRenderer {
         final AffineTransform t = g.getTransform();
         g.translate(getTranslateX(), getTranslateY());
         g.scale(getZoom(), getZoom());
-        for (int x = w - 1; x >= 0; --x) {
-            for (int y = 0, x2 = x; (x2 <= (w - 1)) && (y < h); ++y, ++x2) {
 
-                final List<MapItem> items = map.getTileAt(x2, y).getMapItems();
-                if (items.isEmpty()) {
-                    continue;
-                }
+        //counter for iterations, not needed for logic
+        int counter = 1;
 
-                final int xdisp = Location.displayCoordinateX(x2, y, 0);
-                final int ydisp = -Location.displayCoordinateY(x2, y, 0);
-
-                if (getRenderRectangle().contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
-                        (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
-
-                    final AffineTransform tr = g.getTransform();
-                    for (final MapItem item : items) {
-
-                        final ItemImg img = ItemLoader.getInstance().getTileFromId(item.getId());
-                        final Image paintImg = img.getImgs()[0];
-
-                        g.translate(getTileWidth(), getTileHeight());
-                        g.translate(xdisp, ydisp);
-                        g.translate(img.getOffsetX(), -img.getOffsetY());
-                        g.translate(-paintImg.getWidth(null) / 2, -paintImg.getHeight(null));
-
-                        g.drawImage(img.getImgs()[0], 0, 0, null);
-                        g.setTransform(tr);
-                    }
+        //actual H-Position
+        int actualH = 0;
+        //the start-w-position of the current diagonal iteration
+        int iterationStartW = map.getWidth() - 1;
+        //actual W-Position
+        int actualW = iterationStartW;
+        //iterate diagonal until iterations can reach the nearest tile
+        while (iterationStartW > -map.getHeight() && actualH < map.getHeight()) {
+            render(actualW, actualH, map, g);
+            //iterate diagonal
+            actualH++;
+            actualW++;
+            //iteration will end at max W or at max H
+            if (actualW >= map.getWidth() || actualH >= map.getHeight()) {
+                //start at the next lower W position
+                actualW = --iterationStartW;
+                if (actualW < 0) {
+                    //in case of the lower-left half start at left side and lower
+                    actualH = -actualW;
+                    actualW = 0;
+                } else {
+                    //otherwise start at h = 0
+                    actualH = 0;
                 }
             }
+
+        }
+        g.setTransform(t);
+    }
+
+    private void render(final int x, final int y, final Map map, Graphics2D g) {
+        final List<MapItem> items = map.getTileAt(x, y).getMapItems();
+        if (items.isEmpty()) {
+            return;
         }
 
-        g.setTransform(t);
+        final int xdisp = Location.displayCoordinateX(x, y, 0);
+        final int ydisp = -Location.displayCoordinateY(x, y, 0);
+        if (getRenderRectangle().contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
+                (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
+
+            final AffineTransform tr = g.getTransform();
+            for (final MapItem item : items) {
+
+                final ItemImg img = ItemLoader.getInstance().getTileFromId(item.getId());
+                final Image paintImg = img.getImgs()[0];
+
+                g.translate(getTileWidth(), getTileHeight());
+                g.translate(xdisp, ydisp);
+                g.translate(img.getOffsetX(), -img.getOffsetY());
+                g.translate(-paintImg.getWidth(null) / 2, -paintImg.getHeight(null));
+
+                g.drawImage(img.getImgs()[0], 0, 0, null);
+                g.setTransform(tr);
+            }
+        }
     }
 
     @Override

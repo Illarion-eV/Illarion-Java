@@ -77,13 +77,14 @@ public class MapIO {
         final String version;
         final String versionLine = tileInput.readLine();
         final Decoder decoder;
-        System.out.println(versionLine);
         if (Pattern.matches(VERSION_PATTERN, versionLine)) {
             version = versionLine.substring(3).trim();
+            LOGGER.debug("Mapfileversion: " + version);
             decoder = DECODERS.get(version);
             decoder.newMap(name, path);
         } else {
             version = "1";
+            LOGGER.debug("Mapfileversion: " + version);
             decoder = DECODERS.get(version);
             decoder.newMap(name, path);
             decoder.decodeTileLine(versionLine);
@@ -103,8 +104,13 @@ public class MapIO {
             decoder.decodeWarpLine(s);
         }
 
+        Map m = decoder.getDecodedMap();
 
-        return decoder.getDecodedMap();
+        LOGGER.debug(String.format("W=%d; H=%d; X=%d; Y=%d; L=%d;", m.getWidth(), m.getHeight(), m.getX(), m.getY(),
+                m.getY()));
+
+
+        return m;
     }
 
     /**
