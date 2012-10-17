@@ -51,7 +51,7 @@ public class GridRenderer extends AbstractMapRenderer {
         g.translate(getTranslateX(), getTranslateY() + ((getTileHeight() + 1) * getZoom()));
         g.scale(getZoom(), getZoom());
         g.setColor(Color.LIGHT_GRAY);
-        for (int x = 0; x <= width; ++x) {
+        for (int x = 0; x <= height; ++x) {
             g.drawLine(
                     Location.displayCoordinateX(x, 0, 0),
                     Location.displayCoordinateY(x, 0, 0),
@@ -59,7 +59,7 @@ public class GridRenderer extends AbstractMapRenderer {
                     Location.displayCoordinateY(x, width, 0));
         }
 
-        for (int y = 0; y <= height; ++y) {
+        for (int y = 0; y <= width; ++y) {
             g.drawLine(
                     Location.displayCoordinateX(0, y, 0),
                     Location.displayCoordinateY(0, y, 0),
