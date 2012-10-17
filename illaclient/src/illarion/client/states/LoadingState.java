@@ -63,6 +63,7 @@ public final class LoadingState
         nifty.addXml("illarion/client/gui/xml/loading.xml");
     }
 
+    @Override
     public void enterState(final GameContainer container, final StateBasedGame game)
             throws SlickException {
         Loading.enlistMissingComponents();

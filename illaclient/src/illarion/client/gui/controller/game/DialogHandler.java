@@ -262,6 +262,25 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         lastCraftingTooltip = event.getIngredientIndex();
     }
 
+    @NiftyEventSubscriber(pattern = "craftingDialog[0-9]+")
+    public void handleCraftingCraftItemEvent(final String topic, final DialogCraftingCraftEvent event) {
+        final CommandFactory factory = CommandFactory.getInstance();
+        final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
+        cmd.setCraftItem(event.getItemIndex(), 1);
+        cmd.setDialogId(event.getDialogId());
+        cmd.send();
+    }
+
+    @NiftyEventSubscriber(pattern = "craftingDialog[0-9]+")
+    public void handleCraftingCloseDialogEvent(final String topic, final DialogCraftingCloseEvent event) {
+        final CommandFactory factory = CommandFactory.getInstance();
+        final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
+        cmd.setCloseDialog();
+        cmd.setDialogId(event.getDialogId());
+        cmd.send();
+        EventBus.publish(new CloseDialogEvent(event.getDialogId(), CloseDialogEvent.DialogType.Crafting));
+    }
+
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "msgDialog[0-9]+")
     public void handleMessageConfirmedEvent(final String topic, final DialogMessageConfirmedEvent event) {
@@ -498,6 +517,11 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
                         }
                     case Selection:
                         if (!type.equals("select")) {
+                            wrongDialogType = true;
+                        }
+                        break;
+                    case Crafting:
+                        if (!type.equals("crafting")) {
                             wrongDialogType = true;
                         }
                         break;

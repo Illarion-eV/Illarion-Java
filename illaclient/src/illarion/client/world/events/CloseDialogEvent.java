@@ -48,7 +48,7 @@ public final class CloseDialogEvent {
          */
         Merchant,
 
-        /**
+        Crafting, /**
          * This event targets a selection dialog that is supposed to be closed.
          */
         Selection
