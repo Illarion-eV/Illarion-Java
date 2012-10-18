@@ -22,13 +22,22 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.resource.ItemImg;
+import illarion.mapedit.tools.panel.SingleItemPanel;
 import illarion.mapedit.util.Vector2i;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+
+import javax.swing.*;
 
 /**
  * @author Tim
  */
 public class SingleItemTool extends AbstractTool {
+
+    public final SingleItemPanel panel;
+
+    public SingleItemTool() {
+        panel = new SingleItemPanel();
+    }
 
     @Override
     public void clickedAt(final int x, final int y) {
@@ -53,4 +62,10 @@ public class SingleItemTool extends AbstractTool {
     public ResizableIcon getToolIcon() {
         return null;
     }
+
+    @Override
+    public JPanel getSettingsPanel() {
+        return panel;
+    }
+
 }

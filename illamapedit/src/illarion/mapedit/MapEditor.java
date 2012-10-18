@@ -221,6 +221,7 @@ public final class MapEditor {
     @SuppressWarnings("nls")
     private static String checkFolder() {
         if (!DirectoryManager.getInstance().hasUserDirectory()) {
+            SplashScreen.getInstance().setVisible(false);
             JOptionPane.showMessageDialog(null,
                     "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
                             + "Installation is corrupted, please run it again.",

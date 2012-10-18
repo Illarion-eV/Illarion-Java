@@ -22,6 +22,8 @@ import illarion.mapedit.util.Vector2i;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.swing.*;
+
 /**
  * @author Tim
  */
@@ -51,6 +53,8 @@ public abstract class AbstractTool {
     public abstract String getLocalizedName();
 
     public abstract ResizableIcon getToolIcon();
+
+    public abstract JPanel getSettingsPanel();
 
     public final void registerManager(final ToolManager toolManager) {
         manager = toolManager;

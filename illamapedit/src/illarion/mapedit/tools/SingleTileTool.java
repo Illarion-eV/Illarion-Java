@@ -22,12 +22,21 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.resource.TileImg;
+import illarion.mapedit.tools.panel.SingleTilePanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+
+import javax.swing.*;
 
 /**
  * @author Tim
  */
 public class SingleTileTool extends AbstractTool {
+
+    private final SingleTilePanel panel;
+
+    public SingleTileTool() {
+        panel = new SingleTilePanel();
+    }
 
     @Override
     public void clickedAt(final int x, final int y) {
@@ -49,5 +58,10 @@ public class SingleTileTool extends AbstractTool {
     @Override
     public ResizableIcon getToolIcon() {
         return null;
+    }
+
+    @Override
+    public JPanel getSettingsPanel() {
+        return panel;
     }
 }
