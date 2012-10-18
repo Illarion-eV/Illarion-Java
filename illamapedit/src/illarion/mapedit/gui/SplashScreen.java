@@ -36,6 +36,7 @@ public class SplashScreen extends JPanel {
     private static final Logger LOGGER = Logger.getLogger(SplashScreen.class);
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     public static final int HEIGHT_ADJUSTMENT = 30;
+    private static final int FONT_SIZE = 20;
     private final JFrame frame;
     private Image img;
     private String message;
@@ -84,7 +85,7 @@ public class SplashScreen extends JPanel {
 
         if (message != null) {
             g.setColor(Color.RED);
-            g.setFont(new Font("Arial", Font.BOLD, 20));
+            g.setFont(new Font("Arial", Font.BOLD, FONT_SIZE));
             g.drawString(message, 5, img.getHeight(null));
         }
     }

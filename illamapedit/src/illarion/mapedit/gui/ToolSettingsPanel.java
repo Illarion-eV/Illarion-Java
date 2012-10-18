@@ -31,12 +31,13 @@ import java.awt.*;
  */
 public class ToolSettingsPanel extends JPanel {
     public static final Logger LOGGER = Logger.getLogger(ToolSettingsPanel.class);
+    private static final int WIDTH = 200;
     private JComponent lastChild;
 
     public ToolSettingsPanel() {
         AnnotationProcessor.process(this);
         setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(200,0));
+        setPreferredSize(new Dimension(WIDTH,0));
     }
 
     @SuppressWarnings("unused")
