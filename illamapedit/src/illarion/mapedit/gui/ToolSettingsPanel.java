@@ -39,8 +39,9 @@ public class ToolSettingsPanel extends JPanel {
         setPreferredSize(new Dimension(200,0));
     }
 
+    @SuppressWarnings("unused")
     @EventSubscriber(eventClass = ToolSelectedEvent.class)
-    public void onToolSelected(ToolSelectedEvent e) {
+    public void onToolSelected(final ToolSelectedEvent e) {
         LOGGER.debug("Tool Selected " + e.getTool());
         if (lastChild != null) {
             remove(lastChild);
@@ -51,6 +52,7 @@ public class ToolSettingsPanel extends JPanel {
             add(lastChild, BorderLayout.CENTER);
             lastChild.setVisible(true);
         }
+        validate();
         repaint();
     }
 }

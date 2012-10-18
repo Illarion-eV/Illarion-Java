@@ -28,25 +28,15 @@ import java.awt.*;
  */
 public class ItemImgCellRenderer extends JPanel implements ListCellRenderer<ItemImg> {
 
+    private static final int MAX_WIDTH = 75;
+    private static final int MAX_HEIGHT = 50;
     private static final Color COLOR_SELECTED = new Color(-6100481);
-    private static final Color COLOR_UNSELECTED = new Color(-1246977);
 
-    private final JLabel img;
-    private final JLabel name;
+    private Image image;
+    private String name;
+    private boolean selected;
 
     private Dimension size;
-
-    public ItemImgCellRenderer() {
-        img = new JLabel();
-        name = new JLabel();
-
-        img.setMaximumSize(new Dimension(50,100));
-
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-
-        add(img);
-        add(name);
-    }
 
     @Override
     public Dimension getPreferredSize() {
@@ -57,24 +47,29 @@ public class ItemImgCellRenderer extends JPanel implements ListCellRenderer<Item
     public Component getListCellRendererComponent(final JList<? extends ItemImg> jList, final ItemImg value,
                                                   final int index, final boolean isSelected, final boolean cellHasFocus) {
 
-        if (isSelected) {
-            adjustColors(COLOR_SELECTED, this, img, name);
-        } else {
-            adjustColors(COLOR_UNSELECTED, this, img, name);
-        }
+        selected = isSelected;
 
-        img.setIcon(new ImageIcon(value.getImgs()[0]));
+        image = value.getImgs()[0];
+        name = value.getResourceName();
+        size = new Dimension(MAX_WIDTH * 2, MAX_HEIGHT);
 
-        name.setText(value.getResourceName());
-        size = new Dimension(super.getPreferredSize().width, value.getImgs()[0].getHeight(null) + 10);
         return this;
     }
 
-    private static void adjustColors(final Color bg, final Component... components) {
-        for (final Component c : components) {
-            if (bg != null) {
-                c.setBackground(bg);
-            }
+
+    @Override
+    protected void paintComponent(final Graphics g) {
+        final int w = image.getWidth(null);
+        final int h = image.getHeight(null);
+        final Dimension size = getPreferredSize();
+
+        if (selected) {
+            g.setColor(COLOR_SELECTED);
+            g.fillRect(0, 0, size.width, size.height);
         }
+        g.setColor(Color.BLACK);
+        g.drawImage(image, 0, 0, Math.min(w, MAX_WIDTH), Math.min(h, MAX_HEIGHT), null);
+        g.drawString(name, MAX_WIDTH, 10);
+
     }
 }
