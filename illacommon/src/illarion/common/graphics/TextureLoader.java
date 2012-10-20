@@ -264,6 +264,7 @@ public final class TextureLoader implements SlickRenderImageLoader {
         final TextBuilder builder = TextBuilder.newInstance();
         final int dirIndex = getDirectoryIndex(resourceDir);
         while (true) {
+            builder.clear();
             lastAtlasIndex[dirIndex]++;
 
             atlasName =
