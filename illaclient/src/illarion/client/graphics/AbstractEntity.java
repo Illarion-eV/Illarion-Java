@@ -347,6 +347,34 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     }
 
     /**
+     * Construct a entity based on a sprite image and a location.
+     *
+     * @param entityId        the ID of the entity
+     * @param displayedSprite the sprite that is displayed in this entity
+     * @param still           the first and the last frame of the frame animation
+     * @param shadowOffset    the shadow offset if the entity image, so the space
+     *                        that does not apply to the fading corridor
+     * @param baseCol         the base color of the image, the image will be always
+     *                        colored with this color, set it to <code>null</code> in case
+     *                        there is not recoloring needed
+     */
+    protected AbstractEntity(final int entityId, final Sprite displayedSprite, final int still,
+                             final int shadowOffset, final Color baseCol) {
+
+        sprite = displayedSprite;
+        stillFrame = still;
+        currentFrame = still;
+        if ((baseCol == null) || baseCol.equals(DEFAULT_LIGHT)) {
+            baseColor = null;
+        } else {
+            baseColor = baseCol;
+        }
+
+        entityID = entityId;
+        offS = shadowOffset;
+    }
+
+    /**
      * Activate this entity. The entity may be requested with a new ID due some
      * mappings of the recycle factory. So set the new ID of the entity on this
      * entity instance.

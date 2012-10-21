@@ -21,7 +21,10 @@ package org.illarion.nifty.controls.progress;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.AbstractController;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.render.image.ImageMode;
+import de.lessvoid.nifty.render.image.ImageModeFactory;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
@@ -38,6 +41,10 @@ import java.util.Properties;
 public final class ProgressControl extends AbstractController implements Progress {
     private int minImageWidth;
     private int maxWidth;
+    private ImageMode originalImageMode;
+    private ImageMode unscaledImageMode;
+    private boolean currentOriginalMode;
+    private float currentProgress;
 
     @Override
     public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
@@ -45,11 +52,17 @@ public final class ProgressControl extends AbstractController implements Progres
         bind(element);
 
         minImageWidth = Integer.parseInt(parameter.getProperty("minImageWidth", "0"));
+        final Element fill = getElement().findElementByName("#fill");
+        originalImageMode = fill.getRenderer(ImageRenderer.class).getImage().getImageMode();
+        unscaledImageMode = ImageModeFactory.getSharedInstance().createImageMode("fullimage", "direct");
+        currentOriginalMode = true;
+        currentProgress = 0.f;
     }
 
     @Override
     public void onStartScreen() {
         maxWidth = getElement().findElementByName("#fillArea").getWidth();
+        setProgress(currentProgress);
     }
 
     @Override
@@ -64,6 +77,7 @@ public final class ProgressControl extends AbstractController implements Progres
      */
     @Override
     public void setProgress(final float value) {
+        currentProgress = value;
         final Element wrapper = getElement().findElementByName("#fillWrapper");
         final Element fill = getElement().findElementByName("#fill");
 
@@ -78,8 +92,16 @@ public final class ProgressControl extends AbstractController implements Progres
 
         final int width = Math.round(maxWidth * usedValue);
 
-        fill.setConstraintWidth(SizeValue.px(Math.max(width, minImageWidth)));
+        fill.setConstraintWidth(SizeValue.px(width));
         wrapper.setConstraintWidth(SizeValue.px(width));
+
+        if ((width < minImageWidth) && currentOriginalMode) {
+            fill.getRenderer(ImageRenderer.class).getImage().setImageMode(unscaledImageMode);
+            currentOriginalMode = false;
+        } else if (!currentOriginalMode) {
+            fill.getRenderer(ImageRenderer.class).getImage().setImageMode(originalImageMode);
+            currentOriginalMode = true;
+        }
 
         getElement().layoutElements();
     }

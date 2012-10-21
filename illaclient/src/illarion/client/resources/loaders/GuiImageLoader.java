@@ -34,8 +34,7 @@ import org.apache.log4j.Logger;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GuiImageLoader extends AbstractResourceLoader<GuiImage> implements
-        TableLoaderSink {
+public final class GuiImageLoader extends AbstractResourceLoader<GuiImage> implements TableLoaderSink {
     /**
      * The path inside the resources where the GUI images are stored.
      */
@@ -102,9 +101,7 @@ public final class GuiImageLoader extends AbstractResourceLoader<GuiImage> imple
                             loader.getInt(TB_OFFY), Sprite.HAlign.left,
                             Sprite.VAlign.top, true, false)));
         } catch (final IllegalStateException ex) {
-            logger
-                    .error("Failed adding GUI image to internal factory. Filename: "
-                            + name);
+            logger.error("Failed adding GUI image to internal factory. Filename: " + name);
         }
 
         return true;

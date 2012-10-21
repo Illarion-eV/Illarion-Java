@@ -18,13 +18,14 @@
   ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <nifty-styles>
+    <!-- Default Progress Bar -->
     <style id="illarion-progress">
-        <attributes height="28px"/>
+        <attributes height="28px" minImageWidth="28"/>
     </style>
 
     <style id="illarion-progress#background">
         <attributes backgroundImage="data/gui/progressbar/progressbar-outer.png"
-                    imageMode="resize:13,2,13,13,13,2,13,2,13,2,13,13" minImageWidth="28"/>
+                    imageMode="resize:13,2,13,13,13,2,13,2,13,2,13,13"/>
     </style>
 
     <style id="illarion-progress#fillArea">
@@ -38,5 +39,74 @@
     <style id="illarion-progress#fill">
         <attributes filename="data/gui/progressbar/progressbar-inner.png" width="28px"
                     height="100%" imageMode="resize:13,2,13,13,13,2,13,2,13,2,13,13"/>
+    </style>
+
+    <!-- Hitpoints Bar -->
+    <style id="illarion-health-bar">
+        <attributes height="12px" minImageWidth="11"/>
+    </style>
+
+    <style id="illarion-health-bar#background">
+        <attributes backgroundImage="data/gui/progressbar/HP_e.png"
+                    imageMode="resize:8,1,8,0,8,1,8,12,8,1,8,0"/>
+    </style>
+
+    <style id="illarion-health-bar#fillArea">
+        <attributes height="10px" marginTop="1px" marginBottom="1px" marginLeft="3px" marginRight="3px"/>
+    </style>
+
+    <style id="illarion-health-bar#fillWrapper">
+        <attributes height="100%"/>
+    </style>
+
+    <style id="illarion-health-bar#fill">
+        <attributes filename="data/gui/progressbar/HP.png" width="11px"
+                    height="100%" imageMode="resize:5,1,5,0,5,1,5,10,5,1,5,0"/>
+    </style>
+
+    <!-- Manapoints Bar -->
+    <style id="illarion-mana-bar">
+        <attributes height="12px" minImageWidth="11"/>
+    </style>
+
+    <style id="illarion-mana-bar#background">
+        <attributes backgroundImage="data/gui/progressbar/MP_e.png"
+                    imageMode="resize:8,1,8,0,8,1,8,12,8,1,8,0"/>
+    </style>
+
+    <style id="illarion-mana-bar#fillArea">
+        <attributes height="10px" marginTop="1px" marginBottom="1px" marginLeft="3px" marginRight="3px"/>
+    </style>
+
+    <style id="illarion-mana-bar#fillWrapper">
+        <attributes height="100%"/>
+    </style>
+
+    <style id="illarion-mana-bar#fill">
+        <attributes filename="data/gui/progressbar/MP.png" width="11px"
+                    height="100%" imageMode="resize:5,1,5,0,5,1,5,10,5,1,5,0"/>
+    </style>
+
+    <!-- Foodpoints Bar -->
+    <style id="illarion-food-bar">
+        <attributes height="12px" minImageWidth="11"/>
+    </style>
+
+    <style id="illarion-food-bar#background">
+        <attributes backgroundImage="data/gui/progressbar/FP_e.png"
+                    imageMode="resize:8,1,8,0,8,1,8,12,8,1,8,0"/>
+    </style>
+
+    <style id="illarion-food-bar#fillArea">
+        <attributes height="10px" marginTop="1px" marginBottom="1px" marginLeft="3px" marginRight="3px"/>
+    </style>
+
+    <style id="illarion-food-bar#fillWrapper">
+        <attributes height="100%"/>
+    </style>
+
+    <style id="illarion-food-bar#fill">
+        <attributes filename="data/gui/progressbar/FP.png" width="11px"
+                    height="100%" imageMode="resize:5,1,5,0,5,1,5,10,5,1,5,0"/>
     </style>
 </nifty-styles>

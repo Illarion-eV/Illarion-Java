@@ -713,18 +713,7 @@ public final class Char
             return;
         }
 
-        if (activate) {
-            avatar.setBaseColor(COMBAT_COLOR);
-
-            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                avatar.changeClothColor(i, COMBAT_COLOR);
-            }
-        } else {
-            avatar.changeBaseColor(skinColor);
-            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                avatar.changeClothColor(i, wearItemsColors[i]);
-            }
-        }
+        avatar.setAttackMarkerVisible(activate);
     }
 
     /**
@@ -1051,6 +1040,7 @@ public final class Char
         updateLight(LIGHT_SET);
         avatar.setScale(scale);
         avatar.setAlpha(oldAlpha);
+        avatar.setAttackMarkerVisible(CombatHandler.getInstance().isAttacking(this));
         avatar.show();
     }
 

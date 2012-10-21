@@ -20,17 +20,18 @@ package illarion.client.graphics;
 
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.resources.CharacterFactory;
+import illarion.client.resources.GuiImageFactory;
 import illarion.client.resources.Resource;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.CombatHandler;
 import illarion.common.graphics.Sprite;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 
-import java.awt.*;
 
 /**
  * Class for the avatar of a characters. The avatar is the visual representation
@@ -83,6 +84,11 @@ public final class Avatar extends AbstractEntity implements Resource {
     private final transient AvatarClothRenderer clothRender;
 
     /**
+     * The mark that is displayed in case the character is the target of a attack.
+     */
+    private final AvatarMarker attackMark;
+
+    /**
      * The information data of the avatar. This offers the possibility to send a
      * set of information about the description of the characters avatar in
      * both languages and the visibility modifier information to other classes.
@@ -111,6 +117,19 @@ public final class Avatar extends AbstractEntity implements Resource {
      * The character that created this avatar.
      */
     private Char parentChar;
+
+    public boolean isAttackMarkerVisible() {
+        return attackMarkerVisible;
+    }
+
+    public void setAttackMarkerVisible(final boolean attackMarkerVisible) {
+        this.attackMarkerVisible = attackMarkerVisible;
+    }
+
+    /**
+     * This variable changes to true in case the attack marker is supposed to be displayed.
+     */
+    private boolean attackMarkerVisible;
 
     /**
      * Stores if the name shall be rendered or not. It is checked at every
@@ -161,6 +180,10 @@ public final class Avatar extends AbstractEntity implements Resource {
             throw new IllegalArgumentException("Avatar informations may not be NULL");
         }
 
+        final Sprite attackMarkSprite = GuiImageFactory.getInstance().getObject("attackMarker");
+        attackMarkSprite.setAlign(Sprite.HAlign.center, Sprite.VAlign.middle);
+        attackMark = new AvatarMarker(5, attackMarkSprite, 0, Color.white);
+
         targetLight = DEFAULT_LIGHT;
         animateLight = false;
         info = avatarInfo;
@@ -190,6 +213,7 @@ public final class Avatar extends AbstractEntity implements Resource {
     private Avatar(final Avatar org) {
         super(org);
         info = org.info;
+        attackMark = org.attackMark;
         clothes = org.clothes;
         clothRender = new AvatarClothRenderer(org.clothRender);
         clothRender.setLight(getLight());
@@ -326,6 +350,8 @@ public final class Avatar extends AbstractEntity implements Resource {
         return false;
     }
 
+    private static final Logger LOGGER = Logger.getLogger(Avatar.class);
+
     /**
      * Draw the avatar to the game screen. Calling this function causes the
      * light value to approach the target light in case the light values are
@@ -336,6 +362,10 @@ public final class Avatar extends AbstractEntity implements Resource {
      */
     @Override
     public boolean draw(final Graphics g) {
+        if (isAttackMarkerVisible()) {
+            attackMark.draw(g);
+        }
+
         // draw the avatar, naked!! :O
         super.draw(g);
 
@@ -402,41 +432,6 @@ public final class Avatar extends AbstractEntity implements Resource {
     }
 
     /**
-     * Get the bounding rectangle of the image of this avatar. This includes the
-     * height, width and the location of the image on the screen. The location
-     * that is set within the rectangle is the location of the origin of the
-     * avatar so the rectangle does not mark the borders of the avatar for sure.
-     *
-     * @return the rectangle of the the avatar image
-     * @deprecated better use {@link #getRectangle(Rectangle)} to avoid the
-     *             creation of too many instances of the rectangle object. This
-     *             function creates a new instance of rectangle right away.
-     */
-    @Deprecated
-    public Rectangle getRectangle() {
-        final Rectangle retRect = new Rectangle();
-        getRectangle(retRect);
-        return retRect;
-    }
-
-    /**
-     * Get the bounding rectangle of the image of this avatar. This includes the
-     * height, width and the location of the image on the screen. The location
-     * that is set within the rectangle is the location of the origin of the
-     * avatar so the rectangle does not mark the borders of the avatar for sure.
-     *
-     * @param targetRectangle the rectangle object that is the target of the
-     *                        bounding rectangle. The bounding data is set to this
-     *                        rectangle.
-     */
-    public void getRectangle(final Rectangle targetRectangle) {
-        targetRectangle.x = getDisplayX() - (getWidth() >> 1);
-        targetRectangle.y = getDisplayY();
-        targetRectangle.width = getWidth();
-        targetRectangle.height = getHeight();
-    }
-
-    /**
      * Get the visibility modifier of the avatar.
      *
      * @return the visibility modifier of the avatar, the value is handled as
@@ -493,6 +488,7 @@ public final class Avatar extends AbstractEntity implements Resource {
         clothRender.clear();
         clothRender.setLight(getLight());
         animateLight = false;
+        attackMarkerVisible = false;
     }
 
     /**
@@ -530,6 +526,7 @@ public final class Avatar extends AbstractEntity implements Resource {
     public void setLight(final Color light) {
         super.setLight(light);
         clothRender.setLight(light);
+        attackMark.setLight(light);
         animateLight = false;
     }
 
@@ -547,6 +544,7 @@ public final class Avatar extends AbstractEntity implements Resource {
         final Color tempLight = new Color(currLight);
         setLight(tempLight);
         clothRender.setLight(tempLight);
+        attackMark.setLight(tempLight);
         animateLight = true;
     }
 
@@ -635,6 +633,7 @@ public final class Avatar extends AbstractEntity implements Resource {
                              final int groupLayer) {
         super.setScreenPos(posX, posY, layerZ, groupLayer);
         clothRender.setScreenLocation(posX, posY, layerZ, groupLayer);
+        attackMark.setScreenPos(posX, posY, layerZ, groupLayer);
     }
 
     /**
@@ -642,7 +641,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * values as well as the name display is checked using this function.
      *
      * @param c
-     * @param delta the time since the last update in milliseoncs
+     * @param delta the time since the last update in milliseconds
      */
     @Override
     public void update(final GameContainer c, final int delta) {
@@ -667,7 +666,24 @@ public final class Avatar extends AbstractEntity implements Resource {
             tag.setDisplayLocation(getDisplayX(), getDisplayY());
             tag.update(c, delta);
         }
+
+        if ((renderName != oldRenderName) && (tag != null)) {
+            Camera.getInstance().markAreaDirty(tag.getLastDisplayRect());
+            oldRenderName = renderName;
+        }
+
+        if (isAttackMarkerVisible()) {
+            attackMark.setAlpha(getAlpha());
+            attackMark.update(c, delta);
+        } else if (oldAttackMarkVisible) {
+            Camera.getInstance().markAreaDirty(attackMark.getLastDisplayRect());
+        }
+
+        oldAttackMarkVisible = isAttackMarkerVisible();
     }
+
+    private boolean oldAttackMarkVisible;
+    private boolean oldRenderName;
 
     private boolean isMouseInDisplayRect(final int mouseX, final int mouseY) {
         final int mouseXonDisplay = mouseX + Camera.getInstance().getViewportOffsetX();

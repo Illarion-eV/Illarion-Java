@@ -23,7 +23,7 @@
                        controller="org.illarion.nifty.controls.dialog.crafting.DialogCraftingControl">
         <control name="window" id="#window" title="${illarion-dialog-crafting-bundle.title}"
                  visibleToMouse="true" height="430px">
-            <panel style="illarion-dialog-crafting-content">
+            <panel style="illarion-dialog-crafting-content" visibleToMouse="true">
                 <control name="listBox" id="#craftItemList" style="#craftItemList" vertical="on" horizontal="off"
                          displayItems="9"/>
                 <panel id="#selectedItemInfos" style="#selectedItemInfos" visibleToMouse="true">

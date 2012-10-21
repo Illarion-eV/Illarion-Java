@@ -49,6 +49,7 @@ public final class ResourceTableLoading implements DeferredResource {
         taskList.add(new ClothLoader().setTarget(new ClothFactoryRelay()));
         taskList.add(new EffectLoader().setTarget(EffectFactory.getInstance()));
         taskList.add(new RuneLoader().setTarget(RuneFactory.getInstance()));
+        taskList.add(new GuiImageLoader().setTarget(GuiImageFactory.getInstance()));
 
         try {
             World.getExecutorService().invokeAll(taskList);

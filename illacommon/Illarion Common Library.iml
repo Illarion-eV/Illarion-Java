@@ -10,13 +10,13 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="library" name="Javolution" level="project" />
     <orderEntry type="library" name="log4j" level="project" />
-    <orderEntry type="library" name="Slick" level="project" />
     <orderEntry type="library" name="SWT" level="project" />
     <orderEntry type="library" name="Tabsplitter" level="project" />
     <orderEntry type="library" name="GnuTrove" level="project" />
     <orderEntry type="library" name="XZ for Java" level="project" />
     <orderEntry type="library" name="EventBus" level="project" />
     <orderEntry type="library" name="Nifty-GUI" level="project" />
+    <orderEntry type="library" name="Slick" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
