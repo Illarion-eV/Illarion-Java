@@ -36,9 +36,12 @@
             </panel>
         </layer>
         <layer id="mainLayer" backgroundColor="#0000" childLayout="center">
-            <panel height="100%" width="100%" align="left" valign="bottom" backgroundColor="#0000"
-                   childLayout="vertical" visibleToMouse="false">
-                <text id="main" font="textFont" text=""/>
+            <panel align="center" valign="bottom" width="400px" childLayout="vertical">
+                <control name="progress" style="illarion-health-bar" width="100%" id="healthBar"/>
+                <panel width="100%" childLayout="horizontal">
+                    <control name="progress" style="illarion-mana-bar" width="50%" id="manaBar"/>
+                    <control name="progress" style="illarion-food-bar" width="50%" id="foodBar"/>
+                </panel>
             </panel>
         </layer>
         <layer id="chatLayer" backgroundColor="#0000" childLayout="center">

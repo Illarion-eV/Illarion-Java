@@ -46,6 +46,7 @@ public final class GameScreenController implements ScreenController {
         addHandler(new DialogHandler(numberPopupHandler, tooltipHandler));
         addHandler(new ContainerHandler(numberPopupHandler, tooltipHandler));
         addHandler(new CloseGameHandler());
+        addHandler(new CharStatusHandler());
 
         addHandler(new GameMapHandler(numberPopupHandler, tooltipHandler));
 

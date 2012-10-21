@@ -48,11 +48,11 @@
 
     <style id="illarion-health-bar#background">
         <attributes backgroundImage="data/gui/progressbar/HP_e.png"
-                    imageMode="resize:8,1,8,0,8,1,8,12,8,1,8,0"/>
+                    imageMode="resize:8,1,8,5,8,1,8,2,8,1,8,5" padding="1px,3px"/>
     </style>
 
     <style id="illarion-health-bar#fillArea">
-        <attributes height="10px" marginTop="1px" marginBottom="1px" marginLeft="3px" marginRight="3px"/>
+        <attributes width="100%" height="10px"/>
     </style>
 
     <style id="illarion-health-bar#fillWrapper">
@@ -61,7 +61,7 @@
 
     <style id="illarion-health-bar#fill">
         <attributes filename="data/gui/progressbar/HP.png" width="11px"
-                    height="100%" imageMode="resize:5,1,5,0,5,1,5,10,5,1,5,0"/>
+                    height="100%" imageMode="resize:5,1,5,4,5,1,5,2,5,1,5,4"/>
     </style>
 
     <!-- Manapoints Bar -->
@@ -71,11 +71,11 @@
 
     <style id="illarion-mana-bar#background">
         <attributes backgroundImage="data/gui/progressbar/MP_e.png"
-                    imageMode="resize:8,1,8,0,8,1,8,12,8,1,8,0"/>
+                    imageMode="resize:8,1,8,5,8,1,8,2,8,1,8,5" padding="1px,3px"/>
     </style>
 
     <style id="illarion-mana-bar#fillArea">
-        <attributes height="10px" marginTop="1px" marginBottom="1px" marginLeft="3px" marginRight="3px"/>
+        <attributes width="100%" height="10px"/>
     </style>
 
     <style id="illarion-mana-bar#fillWrapper">
@@ -84,7 +84,7 @@
 
     <style id="illarion-mana-bar#fill">
         <attributes filename="data/gui/progressbar/MP.png" width="11px"
-                    height="100%" imageMode="resize:5,1,5,0,5,1,5,10,5,1,5,0"/>
+                    height="100%" imageMode="resize:5,1,5,4,5,1,5,2,5,1,5,4"/>
     </style>
 
     <!-- Foodpoints Bar -->
@@ -94,11 +94,11 @@
 
     <style id="illarion-food-bar#background">
         <attributes backgroundImage="data/gui/progressbar/FP_e.png"
-                    imageMode="resize:8,1,8,0,8,1,8,12,8,1,8,0"/>
+                    imageMode="resize:8,1,8,5,8,1,8,2,8,1,8,5" padding="1px,3px"/>
     </style>
 
     <style id="illarion-food-bar#fillArea">
-        <attributes height="10px" marginTop="1px" marginBottom="1px" marginLeft="3px" marginRight="3px"/>
+        <attributes width="100%" height="10px"/>
     </style>
 
     <style id="illarion-food-bar#fillWrapper">
@@ -107,6 +107,6 @@
 
     <style id="illarion-food-bar#fill">
         <attributes filename="data/gui/progressbar/FP.png" width="11px"
-                    height="100%" imageMode="resize:5,1,5,0,5,1,5,10,5,1,5,0"/>
+                    height="100%" imageMode="resize:5,1,5,4,5,1,5,2,5,1,5,4"/>
     </style>
 </nifty-styles>

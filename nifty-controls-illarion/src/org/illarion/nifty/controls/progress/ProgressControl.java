@@ -62,7 +62,9 @@ public final class ProgressControl extends AbstractController implements Progres
     @Override
     public void onStartScreen() {
         maxWidth = getElement().findElementByName("#fillArea").getWidth();
-        setProgress(currentProgress);
+        final float oldCurrentProgress = currentProgress;
+        currentProgress = 2.f;
+        setProgress(oldCurrentProgress);
     }
 
     @Override
@@ -77,7 +79,6 @@ public final class ProgressControl extends AbstractController implements Progres
      */
     @Override
     public void setProgress(final float value) {
-        currentProgress = value;
         final Element wrapper = getElement().findElementByName("#fillWrapper");
         final Element fill = getElement().findElementByName("#fill");
 
@@ -89,6 +90,12 @@ public final class ProgressControl extends AbstractController implements Progres
         } else {
             usedValue = value;
         }
+
+        if (Math.abs(currentProgress - usedValue) < 0.001f) {
+            return;
+        }
+
+        currentProgress = usedValue;
 
         final int width = Math.round(maxWidth * usedValue);
 
