@@ -19,7 +19,6 @@
 package illarion.client.input;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
-
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Input;
 
@@ -33,6 +32,9 @@ public final class KeyMapper {
 
     public KeyMapper() {
         inputMap = new TIntObjectHashMap<String>();
+
+        inputMap.put(Input.KEY_ESCAPE, "CloseGame");
+
         inputMap.put(Input.KEY_I, "ToggleInventory");
         inputMap.put(Input.KEY_ENTER, "SelectChat");
 

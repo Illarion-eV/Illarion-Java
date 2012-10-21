@@ -24,7 +24,9 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
+import illarion.client.input.InputReceiver;
 import illarion.client.world.events.CloseGameEvent;
+import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -91,6 +93,13 @@ public class CloseGameHandler implements ScreenController, UpdatableHandler, Eve
                     ButtonClickedEvent.class, this);
             dialogActive = true;
             showDialog = false;
+        }
+    }
+
+    @org.bushe.swing.event.annotation.EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
+    public void onInputEventReceived(final String topic, final String command) {
+        if ("CloseGame".equals(command)) {
+            EventBus.publish(new CloseGameEvent());
         }
     }
 
