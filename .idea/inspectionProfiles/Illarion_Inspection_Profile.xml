@@ -225,7 +225,7 @@
       <option name="m_ignoreEmptyMethods" value="true" />
     </inspection_tool>
     <inspection_tool class="MethodNamesDifferOnlyByCase" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="MethodOnlyUsedFromInnerClass" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="MethodOnlyUsedFromInnerClass" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoreMethodsAccessedFromAnonymousClass" value="true" />
       <option name="ignoreStaticMethodsFromNonStaticInnerClass" value="false" />
       <option name="onlyReportStaticMethods" value="false" />
@@ -391,7 +391,7 @@
     <inspection_tool class="UnnecessarySuperQualifier" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryThis" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnqualifiedInnerClassAccess" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoreReferencesToLocalInnerClasses" value="false" />
+      <option name="ignoreReferencesToLocalInnerClasses" value="true" />
     </inspection_tool>
     <inspection_tool class="UpperCaseFieldNameNotConstant" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UseOfAWTPeerClass" enabled="true" level="WARNING" enabled_by_default="true" />
