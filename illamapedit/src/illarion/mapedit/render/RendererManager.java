@@ -28,6 +28,7 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,7 +66,6 @@ public class RendererManager {
 
     //TODO: Move this
     public void initRenderers() {
-        renderers.add(new InfoRenderer(this));
         renderers.add(new TileRenderer(this));
         renderers.add(new ItemRenderer(this));
         Collections.sort(renderers);
@@ -83,8 +83,14 @@ public class RendererManager {
     }
 
     public void render(final Map map, final Rectangle viewport, final Graphics2D g) {
+        final AffineTransform t = g.getTransform();
         for (final AbstractMapRenderer r : renderers) {
+            g.translate(translationX, translationY);
+            g.translate(-viewport.width / 2, -viewport.height / 2);
+            g.scale(getZoom(), getZoom());
+            g.translate((viewport.width / 2) / getZoom(), (viewport.height / 2) / getZoom());
             r.renderMap(map, viewport, g);
+            g.setTransform(t);
         }
     }
 

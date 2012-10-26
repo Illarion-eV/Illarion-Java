@@ -49,10 +49,6 @@ public class MusicRenderer extends AbstractMapRenderer {
         final int height = map.getHeight();
         final int z = map.getZ();
         final AffineTransform transform = g.getTransform();
-        g.translate(-viewport.width / 2, -viewport.height / 2);
-        g.scale(getZoom(), getZoom());
-        g.translate(viewport.width / 2, viewport.height / 2);
-        g.translate(getTranslateX(), getTranslateY());
 
 
         for (int x = 0; x < width; ++x) {

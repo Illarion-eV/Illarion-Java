@@ -47,12 +47,7 @@ public class GridRenderer extends AbstractMapRenderer {
 
         final AffineTransform transform = g.getTransform();
 
-        g.translate(getTranslateX(), getTranslateY() + ((getTileHeight() + 1) * getZoom()));
-        g.translate(viewport.width / 2, viewport.height / 2);
-        System.out.println("Translate: ");
-        g.scale(getZoom(), getZoom());
-        g.translate(-viewport.width / 2, -viewport.height / 2);
-
+        g.translate(0, getTileHeight() + 1);
 
         g.setColor(Color.LIGHT_GRAY);
         for (int x = 0; x <= height; ++x) {
@@ -70,6 +65,7 @@ public class GridRenderer extends AbstractMapRenderer {
                     SwingLocation.displayCoordinateX(height, y, z),
                     SwingLocation.displayCoordinateY(height, y, z));
         }
+
 
         g.setTransform(transform);
 

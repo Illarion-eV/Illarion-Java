@@ -45,10 +45,6 @@ public class ItemRenderer extends AbstractMapRenderer {
     public void renderMap(final Map map, final Rectangle viewport, final Graphics2D g) {
         final AffineTransform t = g.getTransform();
 
-        g.translate(-viewport.width / 2, -viewport.height / 2);
-        g.scale(getZoom(), getZoom());
-        g.translate(viewport.width / 2, viewport.height / 2);
-        g.translate(getTranslateX(), getTranslateY());
 
         //actual H-Position
         int actualH = 0;
