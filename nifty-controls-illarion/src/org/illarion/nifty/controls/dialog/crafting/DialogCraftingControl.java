@@ -424,4 +424,9 @@ public class DialogCraftingControl
             list.addItem(new DialogCraftingControl.ListEntry(entry));
         }
     }
+
+    @Override
+    public void setProgress(final float progress) {
+        getContent().findNiftyControl("#progress", Progress.class).setProgress(progress);
+    }
 }

@@ -51,4 +51,6 @@ public interface DialogCrafting extends Window {
     Element getIngredientItemDisplay(int index);
 
     void addCraftingItems(CraftingListEntry... entries);
+
+    void setProgress(float progress);
 }
