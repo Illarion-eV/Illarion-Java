@@ -18,33 +18,32 @@
  */
 package illarion.mapedit.tools.panel.components;
 
+import illarion.mapedit.events.TileSelectedEvent;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.resource.loaders.TileLoader;
 import illarion.mapedit.tools.panel.cellrenderer.TileImgCellRenderer;
+import org.bushe.swing.event.EventBus;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class TileList extends JPanel {
-    public interface TileSelectedListener {
-        void selectedItem(TileImg img);
-    }
 
-    private final JList<TileImg> itemList;
+    private final JList<TileImg> tileList;
 
-    public TileList(final TileList.TileSelectedListener tileSelectedListener) {
+    public TileList() {
 
-        itemList = new JList<TileImg>(TileLoader.getInstance().getTiles());
-        itemList.setCellRenderer(new TileImgCellRenderer());
-        itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        itemList.addListSelectionListener(new ListSelectionListener() {
+        tileList = new JList<TileImg>(TileLoader.getInstance().getTiles());
+        tileList.setCellRenderer(new TileImgCellRenderer());
+        tileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tileList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(final ListSelectionEvent e) {
-                tileSelectedListener.selectedItem(itemList.getSelectedValue());
+                EventBus.publish(new TileSelectedEvent(tileList.getSelectedValue()));
             }
         });
-        final JScrollPane scrollPane = new JScrollPane(itemList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        final JScrollPane scrollPane = new JScrollPane(tileList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane);
     }

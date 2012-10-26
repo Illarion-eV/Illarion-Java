@@ -18,8 +18,8 @@
  */
 package illarion.mapedit.render;
 
-import illarion.common.util.Location;
 import illarion.mapedit.data.Map;
+import illarion.mapedit.util.SwingLocation;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -40,31 +40,35 @@ public class GridRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(final Graphics2D g) {
-        final Map map = getMap();
+    public void renderMap(final Map map, final Rectangle viewport, final Graphics2D g) {
         final int width = map.getWidth();
         final int height = map.getHeight();
-
+        final int z = map.getZ();
 
         final AffineTransform transform = g.getTransform();
 
         g.translate(getTranslateX(), getTranslateY() + ((getTileHeight() + 1) * getZoom()));
+        g.translate(viewport.width / 2, viewport.height / 2);
+        System.out.println("Translate: ");
         g.scale(getZoom(), getZoom());
+        g.translate(-viewport.width / 2, -viewport.height / 2);
+
+
         g.setColor(Color.LIGHT_GRAY);
         for (int x = 0; x <= height; ++x) {
             g.drawLine(
-                    Location.displayCoordinateX(x, 0, 0),
-                    Location.displayCoordinateY(x, 0, 0),
-                    Location.displayCoordinateX(x, width, 0),
-                    Location.displayCoordinateY(x, width, 0));
+                    SwingLocation.displayCoordinateX(x, 0, z),
+                    SwingLocation.displayCoordinateY(x, 0, z),
+                    SwingLocation.displayCoordinateX(x, width, z),
+                    SwingLocation.displayCoordinateY(x, width, z));
         }
 
         for (int y = 0; y <= width; ++y) {
             g.drawLine(
-                    Location.displayCoordinateX(0, y, 0),
-                    Location.displayCoordinateY(0, y, 0),
-                    Location.displayCoordinateX(height, y, 0),
-                    Location.displayCoordinateY(height, y, 0));
+                    SwingLocation.displayCoordinateX(0, y, z),
+                    SwingLocation.displayCoordinateY(0, y, z),
+                    SwingLocation.displayCoordinateX(height, y, z),
+                    SwingLocation.displayCoordinateY(height, y, z));
         }
 
         g.setTransform(transform);

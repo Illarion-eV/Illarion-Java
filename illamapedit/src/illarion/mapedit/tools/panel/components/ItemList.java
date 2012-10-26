@@ -18,9 +18,11 @@
  */
 package illarion.mapedit.tools.panel.components;
 
+import illarion.mapedit.events.ItemSelectedEvent;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.loaders.ItemLoader;
 import illarion.mapedit.tools.panel.cellrenderer.ItemImgCellRenderer;
+import org.bushe.swing.event.EventBus;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -28,13 +30,9 @@ import javax.swing.event.ListSelectionListener;
 
 public class ItemList extends JPanel {
 
-    public interface ItemSelectedListener {
-        void selectedItem(ItemImg img);
-    }
-
     private final JList<ItemImg> itemList;
 
-    public ItemList(final ItemList.ItemSelectedListener itemSelectedListener) {
+    public ItemList() {
 
         itemList = new JList<ItemImg>(ItemLoader.getInstance().getTiles());
         itemList.setCellRenderer(new ItemImgCellRenderer());
@@ -42,7 +40,7 @@ public class ItemList extends JPanel {
         itemList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(final ListSelectionEvent e) {
-                itemSelectedListener.selectedItem(itemList.getSelectedValue());
+                EventBus.publish(new ItemSelectedEvent(itemList.getSelectedValue()));
             }
         });
         final JScrollPane scrollPane = new JScrollPane(itemList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,

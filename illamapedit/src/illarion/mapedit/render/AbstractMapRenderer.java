@@ -19,7 +19,6 @@
 package illarion.mapedit.render;
 
 import illarion.mapedit.data.Map;
-import illarion.mapedit.gui.MapPanel;
 
 import java.awt.*;
 
@@ -35,10 +34,6 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      * The render manager.
      */
     private final RendererManager manager;
-    /**
-     * The panel, to draw the map on.
-     */
-    private final MapPanel mapPanel;
 
 
     /**
@@ -46,21 +41,6 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      */
     public AbstractMapRenderer(final RendererManager manager) {
         this.manager = manager;
-        mapPanel = manager.getMapPanel();
-    }
-
-    /**
-     * Returns the rectangle, that needs to be redrawn.
-     *
-     * @return the render rectangle.
-     */
-    protected Rectangle getRenderRectangle() {
-        final Rectangle rect = mapPanel.getVisibleRect();
-        rect.x -= manager.getTileWidth() * 2 * getZoom();
-        rect.y -= getTileHeight() * 2 * getZoom();
-        rect.width += getTileWidth() * 4 * getZoom();
-        rect.height += getTileHeight() * 4 * getZoom();
-        return rect;
     }
 
     /**
@@ -104,15 +84,6 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
         return manager.getTileWidth();
     }
 
-    /**
-     * The map holds all tile, warp and item-data.
-     *
-     * @return the map to draw.
-     */
-    protected Map getMap() {
-        return mapPanel.getMap();
-    }
-
     protected float getMinZoom() {
         return manager.getMinZoom();
     }
@@ -127,7 +98,7 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      *
      * @param g the graphics object.
      */
-    public abstract void renderMap(Graphics2D g);
+    public abstract void renderMap(Map map, Rectangle viewport, Graphics2D g);
 
     /**
      * Returns a value. The renderer with the lowest value will be rendered first.

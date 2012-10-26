@@ -18,6 +18,8 @@
  */
 package illarion.mapedit.render;
 
+import illarion.mapedit.data.Map;
+
 import java.awt.*;
 
 
@@ -31,7 +33,7 @@ public class SelectionRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(final Graphics2D g) {
+    public void renderMap(final Map map, final Rectangle viewport, final Graphics2D g) {
 
     }
 

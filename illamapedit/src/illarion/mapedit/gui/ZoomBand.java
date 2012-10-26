@@ -19,7 +19,7 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.events.ZoomEvent;
+import illarion.mapedit.events.map.ZoomEvent;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandButton;

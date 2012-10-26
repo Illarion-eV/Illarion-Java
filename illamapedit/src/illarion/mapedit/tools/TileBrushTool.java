@@ -22,7 +22,7 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.resource.TileImg;
-import illarion.mapedit.tools.panel.SingleTilePanel;
+import illarion.mapedit.tools.panel.TileBrushPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.swing.*;
@@ -30,29 +30,36 @@ import javax.swing.*;
 /**
  * @author Tim
  */
-public class SingleTileTool extends AbstractTool {
+public class TileBrushTool extends AbstractTool {
 
-    private final SingleTilePanel panel;
+    private final TileBrushPanel panel;
 
-    public SingleTileTool() {
-        panel = new SingleTilePanel();
+    private int radius = 1;
+
+    public TileBrushTool() {
+        panel = new TileBrushPanel(this);
     }
 
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
-        System.out.println("SingleTileTool.clickedAt(" + x + ',' + y + ')');
-        if (!map.contains(x, y)) {
-            return;
-        }
         final TileImg tile = getManager().getSelectedTile();
-        if (tile != null) {
-            map.setTileAt(x, y, new MapTile(tile.getId(), map.getTileAt(x, y)));
+        System.out.println("TileBrushTool.clickedAt(" + x + ", " + y + ", map);");
+        for (int i = x - radius; i <= (x + radius); i++) {
+            for (int j = y - radius; j <= (y + radius); j++) {
+                if (!map.contains(i, j)) {
+                    System.out.println(i + "   " + j + "  no");
+                    continue;
+                }
+                System.out.println(i + "   " + j + "  ok");
+                map.setTileAt(i, j, new MapTile(tile.getId(), map.getTileAt(i, j)));
+            }
+
         }
     }
 
     @Override
     public String getLocalizedName() {
-        return Lang.getMsg("tools.SingleTileTool");
+        return Lang.getMsg("tools.TileBrushTool");
     }
 
     @Override
@@ -67,6 +74,6 @@ public class SingleTileTool extends AbstractTool {
 
     @Override
     public void settingsChanged() {
-
+        radius = panel.getRadius();
     }
 }

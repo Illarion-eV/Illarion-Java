@@ -18,10 +18,7 @@
  */
 package illarion.mapedit.tools.panel;
 
-import illarion.mapedit.events.ItemSelectedEvent;
-import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.tools.panel.components.ItemList;
-import org.bushe.swing.event.EventBus;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,12 +30,7 @@ public class SingleItemPanel extends JPanel {
 
     public SingleItemPanel() {
         setLayout(new BorderLayout());
-        final ItemList list = new ItemList(new ItemList.ItemSelectedListener() {
-            @Override
-            public void selectedItem(final ItemImg img) {
-                EventBus.publish(new ItemSelectedEvent(img));
-            }
-        });
-        add(list,BorderLayout.CENTER);
+        final ItemList list = new ItemList();
+        add(list, BorderLayout.CENTER);
     }
 }

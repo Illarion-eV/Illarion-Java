@@ -23,7 +23,6 @@ import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.tools.panel.SingleItemPanel;
-import illarion.mapedit.util.Vector2i;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.swing.*;
@@ -40,18 +39,15 @@ public class SingleItemTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y) {
-        final Map m = getManager().getMap();
-        Vector2i pos = new Vector2i(x, y);
-        if (!m.contains(x, y)) {
+    public void clickedAt(final int x, final int y, final Map map) {
+        if (!map.contains(x, y)) {
             return;
         }
         final ItemImg item = getManager().getSelectedItem();
         if (item != null) {
-            m.getTileAt(x, y).getMapItems().add(new MapItem(item.getItemId(), "", 0));
+            map.getTileAt(x, y).getMapItems().add(new MapItem(item.getItemId(), "", 0));
         }
     }
-
 
     @Override
     public String getLocalizedName() {
@@ -68,4 +64,8 @@ public class SingleItemTool extends AbstractTool {
         return panel;
     }
 
+    @Override
+    public void settingsChanged() {
+
+    }
 }

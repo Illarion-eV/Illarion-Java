@@ -42,7 +42,6 @@ public class WindowEventListener extends WindowAdapter {
     @Override
     public void windowClosed(final WindowEvent e) {
         LOGGER.debug("Closed window.");
-
         System.exit(0);
     }
 

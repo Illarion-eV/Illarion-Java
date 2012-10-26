@@ -31,6 +31,7 @@ public class ItemImgCellRenderer extends JPanel implements ListCellRenderer<Item
     private static final int MAX_WIDTH = 75;
     private static final int MAX_HEIGHT = 50;
     private static final Color COLOR_SELECTED = new Color(-6100481);
+    private static final Color COLOR_UNSELECTED = new Color(-1246977);
 
     private Image image;
     private String name;
@@ -65,8 +66,10 @@ public class ItemImgCellRenderer extends JPanel implements ListCellRenderer<Item
 
         if (selected) {
             g.setColor(COLOR_SELECTED);
-            g.fillRect(0, 0, size.width, size.height);
+        } else {
+            g.setColor(COLOR_UNSELECTED);
         }
+        g.fillRect(0, 0, size.width, size.height);
         g.setColor(Color.BLACK);
         g.drawImage(image, 0, 0, Math.min(w, MAX_WIDTH), Math.min(h, MAX_HEIGHT), null);
         g.drawString(name, MAX_WIDTH, 10);

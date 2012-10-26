@@ -18,9 +18,9 @@
  */
 package illarion.mapedit.render;
 
-import illarion.common.util.Location;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.resource.loaders.ImageLoader;
+import illarion.mapedit.util.SwingLocation;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -30,40 +30,42 @@ import java.awt.geom.AffineTransform;
  */
 public class MusicRenderer extends AbstractMapRenderer {
 
-    private static Image img;
     private static final int XOFFSET = 20;
     private static final int YOFFSET = 10;
+
+    private final Image image;
 
     /**
      * Creates a new map renderer
      */
     public MusicRenderer(final RendererManager manager) {
         super(manager);
-        img = ImageLoader.getImage("/sound.png");
+        image = ImageLoader.getImage("sound");
     }
 
     @Override
-    public void renderMap(final Graphics2D g) {
-        final Map map = getMap();
+    public void renderMap(final Map map, final Rectangle viewport, final Graphics2D g) {
         final int width = map.getWidth();
         final int height = map.getHeight();
-
+        final int z = map.getZ();
         final AffineTransform transform = g.getTransform();
-
-        g.translate(getTranslateX(), getTranslateY());
+        g.translate(-viewport.width / 2, -viewport.height / 2);
         g.scale(getZoom(), getZoom());
+        g.translate(viewport.width / 2, viewport.height / 2);
+        g.translate(getTranslateX(), getTranslateY());
+
 
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
                 if (map.getTileAt(x, y).getMusicID() == 0) {
                     continue;
                 }
-                final int xdisp = Location.displayCoordinateX(x, y, 0);
-                final int ydisp = -Location.displayCoordinateY(x, y, 0);
-                if (getRenderRectangle().contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
+                final int xdisp = SwingLocation.displayCoordinateX(x, y, z);
+                final int ydisp = SwingLocation.displayCoordinateY(x, y, z);
+                if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 
-                    g.drawImage(img, xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()), null);
+                    g.drawImage(image, xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()), null);
 
                 }
             }

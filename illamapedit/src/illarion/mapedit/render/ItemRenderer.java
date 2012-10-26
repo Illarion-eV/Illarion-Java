@@ -18,11 +18,11 @@
  */
 package illarion.mapedit.render;
 
-import illarion.common.util.Location;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.loaders.ItemLoader;
+import illarion.mapedit.util.SwingLocation;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -42,16 +42,13 @@ public class ItemRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(final Graphics2D g) {
-        final Map map = getMap();
-        final int w = map.getWidth();
-        final int h = map.getHeight();
+    public void renderMap(final Map map, final Rectangle viewport, final Graphics2D g) {
         final AffineTransform t = g.getTransform();
-        g.translate(getTranslateX(), getTranslateY());
-        g.scale(getZoom(), getZoom());
 
-        //counter for iterations, not needed for logic
-        int counter = 1;
+        g.translate(-viewport.width / 2, -viewport.height / 2);
+        g.scale(getZoom(), getZoom());
+        g.translate(viewport.width / 2, viewport.height / 2);
+        g.translate(getTranslateX(), getTranslateY());
 
         //actual H-Position
         int actualH = 0;
@@ -60,13 +57,13 @@ public class ItemRenderer extends AbstractMapRenderer {
         //actual W-Position
         int actualW = iterationStartW;
         //iterate diagonal until iterations can reach the nearest tile
-        while (iterationStartW > -map.getHeight() && actualH < map.getHeight()) {
-            render(actualW, actualH, map, g);
+        while ((iterationStartW > -map.getHeight()) && (actualH < map.getHeight())) {
+            render(actualW, actualH, viewport, map, g);
             //iterate diagonal
             actualH++;
             actualW++;
             //iteration will end at max W or at max H
-            if (actualW >= map.getWidth() || actualH >= map.getHeight()) {
+            if ((actualW >= map.getWidth()) || (actualH >= map.getHeight())) {
                 //start at the next lower W position
                 actualW = --iterationStartW;
                 if (actualW < 0) {
@@ -83,15 +80,16 @@ public class ItemRenderer extends AbstractMapRenderer {
         g.setTransform(t);
     }
 
-    private void render(final int x, final int y, final Map map, Graphics2D g) {
+    private void render(final int x, final int y, final Rectangle viewport, final Map map, final Graphics2D g) {
+        final int z = map.getZ();
         final List<MapItem> items = map.getTileAt(x, y).getMapItems();
         if (items.isEmpty()) {
             return;
         }
 
-        final int xdisp = Location.displayCoordinateX(x, y, 0);
-        final int ydisp = -Location.displayCoordinateY(x, y, 0);
-        if (getRenderRectangle().contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
+        final int xdisp = SwingLocation.displayCoordinateX(x, y, z);
+        final int ydisp = SwingLocation.displayCoordinateY(x, y, z);
+        if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                 (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 
             final AffineTransform tr = g.getTransform();

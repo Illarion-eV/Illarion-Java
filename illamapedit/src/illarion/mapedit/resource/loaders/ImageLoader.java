@@ -18,8 +18,8 @@
  */
 package illarion.mapedit.resource.loaders;
 
-import illarion.mapedit.crash.exceptions.ResourceException;
 import illarion.mapedit.resource.Resource;
+import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
@@ -35,7 +35,7 @@ import java.util.Map;
  * @author Tim
  */
 public class ImageLoader implements Resource {
-
+    private static final Logger LOGGER = Logger.getLogger(ImageLoader.class);
     private static final ImageLoader INSTANCE = new ImageLoader();
     private static final Map<String, Image> IMAGES = new HashMap<String, Image>();
 
@@ -94,7 +94,8 @@ public class ImageLoader implements Resource {
 
     public static Image getImage(final String key) {
         if (!IMAGES.containsKey(key)) {
-            throw new ResourceException(key + " does not exist!");
+            LOGGER.warn("Image [" + key + "] does not exist!");
+            return null;
         }
         return IMAGES.get(key);
     }

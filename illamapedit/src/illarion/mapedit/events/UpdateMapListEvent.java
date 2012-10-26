@@ -18,45 +18,22 @@
  */
 package illarion.mapedit.events;
 
+import illarion.mapedit.data.Map;
+
+import java.util.List;
+
 /**
  * @author Tim
  */
-public class MapDragFinishedEvent {
-    private final int startX;
-    private final int startY;
-    private final int endX;
-    private final int endY;
+public class UpdateMapListEvent {
+    private final List<Map> maps;
 
-    public MapDragFinishedEvent(final int startX, final int startY, final int endX, final int endY) {
-        this.startX = startX;
-        this.startY = startY;
-        this.endX = endX;
-        this.endY = endY;
+
+    public UpdateMapListEvent(final List<Map> maps) {
+        this.maps = maps;
     }
 
-    public int getEndY() {
-        return endY;
-    }
-
-    public int getEndX() {
-        return endX;
-    }
-
-    public int getStartY() {
-        return startY;
-    }
-
-    public int getStartX() {
-        return startX;
-    }
-
-    @Override
-    public String toString() {
-        return "MapDragFinishedEvent{" +
-                "startX=" + startX +
-                ", startY=" + startY +
-                ", endX=" + endX +
-                ", endY=" + endY +
-                '}';
+    public List<Map> getMaps() {
+        return maps;
     }
 }

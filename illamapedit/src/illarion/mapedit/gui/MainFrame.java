@@ -18,10 +18,11 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.common.config.Config;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
+import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.loaders.ImageLoader;
-import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 
@@ -34,26 +35,31 @@ import java.awt.*;
  */
 public class MainFrame extends JRibbonFrame {
     private static final Dimension WINDOW_SIZE = new Dimension(900, 700);
-    private static final Logger LOGGER = Logger.getLogger(MainFrame.class);
     private static MainFrame instance;
 
 
-    private final MapPanel map;
+    private final MapPanel mapPanel;
     private final ToolSettingsPanel settingsPanel;
+    private final Config config;
 
-    private MainFrame() {
+    public MainFrame(final GuiController controller, final Config config) {
+        this.config = config;
+        mapPanel = new MapPanel(controller);
+        settingsPanel = new ToolSettingsPanel();
         instance = this;
+    }
+
+    public void initialize() {
         addWindowListener(new WindowEventListener());
         setTitle(Lang.getMsg("application.Name") + MapEditor.getVersion());
         setSize(WINDOW_SIZE);
-        getRibbon().setApplicationMenu(new MainMenu(this));
+        getRibbon().setApplicationMenu(new MainMenu());
 
-        map = MapPanel.getInstance();
-        settingsPanel = new ToolSettingsPanel();
-        add(map, BorderLayout.CENTER);
+        add(mapPanel, BorderLayout.CENTER);
         add(settingsPanel, BorderLayout.EAST);
         final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
-                new ClipboardBand(), new HistoryBand(), new ZoomBand(), new ViewBand(), new ToolBand());
+                new ClipboardBand(), new HistoryBand(), new ZoomBand(), new ViewBand(), new MapFileBand(config),
+                new ToolBand());
 
 
         getRibbon().addTask(task);
@@ -62,18 +68,15 @@ public class MainFrame extends JRibbonFrame {
     }
 
     public static MainFrame getInstance() {
-        if (instance == null) {
-            return new MainFrame();
-        }
         return instance;
 
     }
 
-    public MapPanel getMapPanel() {
-        return map;
-    }
-
     public void exit() {
         dispose();
+    }
+
+    public RendererManager getRendererManager() {
+        return mapPanel.getRenderManager();
     }
 }

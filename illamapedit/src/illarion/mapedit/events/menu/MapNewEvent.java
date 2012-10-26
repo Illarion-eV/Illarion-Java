@@ -16,34 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.events;
-
-import illarion.mapedit.util.MouseButton;
+package illarion.mapedit.events.menu;
 
 /**
  * @author Tim
  */
-public class MapClickedEvent {
+public class MapNewEvent {
 
-    private final int x;
-    private final int y;
-    private final MouseButton button;
+    public MapNewEvent() {
 
-    public MapClickedEvent(final int x, final int y, final MouseButton button) {
-        this.x = x;
-        this.y = y;
-        this.button = button;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public MouseButton getButton() {
-        return button;
-    }
 }

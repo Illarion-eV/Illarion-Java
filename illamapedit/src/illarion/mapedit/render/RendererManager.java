@@ -18,12 +18,10 @@
  */
 package illarion.mapedit.render;
 
-import illarion.common.util.Rectangle;
-import illarion.mapedit.Utils;
-import illarion.mapedit.events.RendererToggleEvent;
-import illarion.mapedit.events.RepaintRequestEvent;
-import illarion.mapedit.events.ZoomEvent;
-import illarion.mapedit.gui.MapPanel;
+import illarion.mapedit.data.Map;
+import illarion.mapedit.events.map.RendererToggleEvent;
+import illarion.mapedit.events.map.RepaintRequestEvent;
+import illarion.mapedit.events.map.ZoomEvent;
 import javolution.util.FastList;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -50,22 +48,23 @@ public class RendererManager {
     /**
      * The actual selection. If nothing is selected, the rectangle equals {@code (0, 0, 0, 0)}
      */
-    private final illarion.common.util.Rectangle selection = new Rectangle();
+    private final Rectangle selection = new Rectangle();
     private float zoom = DEFAULT_ZOOM;
     private int translationX;
     private int translationY;
+    private int defaultTranslationX;
+    private int defaultTranslationY;
     private float tileHeight = DEFAULT_TILE_HEIGHT;
     private float tileWidth = DEFAULT_TILE_WIDTH;
-    private final MapPanel mapPanel;
 
 
-    public RendererManager(final MapPanel mapPanel) {
+    public RendererManager() {
         renderers = new FastList<AbstractMapRenderer>();
         AnnotationProcessor.process(this);
-        this.mapPanel = mapPanel;
     }
 
-    public void initRenderers(final MapPanel panel) {
+    //TODO: Move this
+    public void initRenderers() {
         renderers.add(new InfoRenderer(this));
         renderers.add(new TileRenderer(this));
         renderers.add(new ItemRenderer(this));
@@ -83,37 +82,25 @@ public class RendererManager {
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    public void render(final Graphics2D g) {
+    public void render(final Map map, final Rectangle viewport, final Graphics2D g) {
         for (final AbstractMapRenderer r : renderers) {
-            r.renderMap(g);
+            r.renderMap(map, viewport, g);
         }
     }
 
-    public float getTileHeight() {
+    public static float getTileHeight() {
         return DEFAULT_TILE_HEIGHT;
     }
 
-    public float getTileWidth() {
+    public static float getTileWidth() {
         return DEFAULT_TILE_WIDTH;
     }
 
     public void setZoom(final float zoom) {
-        final float oldZoom = this.zoom;
-        final float oldTileWith = tileWidth;
-        final float oldTileHeight = tileHeight;
-
         tileWidth = DEFAULT_TILE_WIDTH * zoom;
         tileHeight = DEFAULT_TILE_HEIGHT * zoom;
         this.zoom = zoom;
 
-        //TODO:  Fix this ;-S
-        final int oldX = Utils.getMapXFormDisp(0, 0, getTranslationX(), getTranslationY(), oldZoom);
-        final int oldY = Utils.getMapYFormDisp(0, 0, getTranslationX(), getTranslationY(), oldZoom);
-
-        final int newX = Utils.getMapXFormDisp(0, 0, getTranslationX(), getTranslationY(), zoom);
-        final int newY = Utils.getMapYFormDisp(0, 0, getTranslationX(), getTranslationY(), zoom);
-
-        changeTranslation((int) ((newX - oldX) * oldTileWith), (int) ((newY - oldY) * oldTileHeight));
 
         EventBus.publish(new RepaintRequestEvent());
     }
@@ -162,21 +149,25 @@ public class RendererManager {
         return MIN_ZOOM;
     }
 
-    public MapPanel getMapPanel() {
-        return mapPanel;
-    }
-
     /**
      * Sets a new rectangle as selection.
      *
      * @param rect the new rectangle
      */
-    public void setSelection(illarion.common.util.Rectangle rect) {
-        selection.set(rect);
+    public void setSelection(final Rectangle rect) {
+        selection.setBounds(rect);
     }
 
     public Rectangle getSelection() {
         return selection;
+    }
+
+    public void setDefaultTranslationY(final int defaultTranslationY) {
+        this.defaultTranslationY = defaultTranslationY;
+    }
+
+    public void setDefaultTranslationX(final int defaultTranslationX) {
+        this.defaultTranslationX = defaultTranslationX;
     }
 
     @EventSubscriber(eventClass = RendererToggleEvent.class)
@@ -194,6 +185,8 @@ public class RendererManager {
     public void onZoom(final ZoomEvent e) {
         if (e.isOriginal()) {
             setZoom(DEFAULT_ZOOM);
+            setTranslationX(defaultTranslationX);
+            setTranslationY(defaultTranslationY);
         } else {
             changeZoom(e.getValue());
         }

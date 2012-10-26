@@ -16,31 +16,36 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.events;
-
-import javax.swing.*;
-import java.awt.*;
+package illarion.mapedit.events.map;
 
 /**
  * @author Tim
  */
-public class RepaintRequestEvent {
-    private final Rectangle dirty;
+public class ZoomEvent {
 
-    public RepaintRequestEvent() {
-        this(null);
+    private final boolean original;
+
+    private final float value;
+
+    public ZoomEvent(final float value) {
+        original = false;
+        this.value = value;
     }
 
-    public RepaintRequestEvent(final Rectangle dirty) {
-        this.dirty = dirty;
+    public ZoomEvent() {
+        original = true;
+        value = 0;
     }
 
-    public void doRepaint(final JPanel c) {
-        if (dirty != null) {
-            c.repaint(dirty);
-        } else {
-            c.repaint();
+    public float getValue() {
+        if (original) {
+            throw new IllegalStateException("ZoomEvent has no value if it's 'original'," +
+                    " check that first.");
         }
+        return value;
+    }
 
+    public boolean isOriginal() {
+        return original;
     }
 }

@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.events;
+package illarion.mapedit.events.map;
 
+import illarion.mapedit.data.Map;
 import illarion.mapedit.util.MouseButton;
 
 /**
@@ -30,14 +31,18 @@ public class MapDraggedEvent {
     private final int offsetX;
     private final int offsetY;
     private final MouseButton button;
+    private final Map map;
 
 
-    public MapDraggedEvent(final int x, final int y, final int offsetX, final int offsetY, final MouseButton button) {
+    public MapDraggedEvent(final int x, final int y, final int offsetX, final int offsetY, final MouseButton button,
+                           final Map map
+    ) {
         this.x = x;
         this.y = y;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.button = button;
+        this.map = map;
     }
 
     public int getOffsetX() {
@@ -58,5 +63,9 @@ public class MapDraggedEvent {
 
     public int getY() {
         return y;
+    }
+
+    public Map getMap() {
+        return map;
     }
 }

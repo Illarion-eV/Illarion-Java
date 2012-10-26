@@ -192,4 +192,13 @@ public class Map {
     public boolean contains(final int x, final int y) {
         return (x >= 0) && (y >= 0) && (x < getWidth()) && (y < getHeight());
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Map map = (Map) obj;
+        return name.equals(map.name) && path.equals(map.path);
+    }
 }

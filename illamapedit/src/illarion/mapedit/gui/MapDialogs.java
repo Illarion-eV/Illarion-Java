@@ -35,6 +35,7 @@ import java.io.IOException;
 /**
  * @author Tim
  */
+//TODO: Show them in an own Task (IO or something)
 public class MapDialogs {
     private static final int UNSIGNED_MAX = 100000;
     private static final int SIGNED_MAX = 10000;

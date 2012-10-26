@@ -16,21 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools.panel;
-
-import illarion.mapedit.tools.panel.components.TileList;
-
-import javax.swing.*;
-import java.awt.*;
+package illarion.mapedit.events.menu;
 
 /**
  * @author Tim
  */
-public class SingleTilePanel extends JPanel {
+public class MapSelectedEvent {
+    private final int index;
 
-    public SingleTilePanel() {
-        setLayout(new BorderLayout());
-        final TileList list = new TileList();
-        add(list, BorderLayout.CENTER);
+    public MapSelectedEvent(final int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
     }
 }

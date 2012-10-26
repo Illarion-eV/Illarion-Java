@@ -21,6 +21,7 @@ package illarion.mapedit.events;
 /**
  * @author Tim
  */
+//TODO Refactor this
 public class MessageStringEvent {
     private final String message;
 

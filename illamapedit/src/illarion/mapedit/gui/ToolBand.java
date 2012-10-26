@@ -23,6 +23,7 @@ import illarion.mapedit.gui.util.ToolMenuButton;
 import illarion.mapedit.tools.AbstractTool;
 import illarion.mapedit.tools.SingleItemTool;
 import illarion.mapedit.tools.SingleTileTool;
+import illarion.mapedit.tools.TileBrushTool;
 import javolution.util.FastList;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.popup.JCommandPopupMenu;
@@ -40,6 +41,8 @@ import java.util.List;
  */
 public class ToolBand extends JRibbonBand {
 
+
+
     public ToolBand() {
         super(Lang.getMsg("gui.toolband.Name"), null);
 
@@ -49,11 +52,14 @@ public class ToolBand extends JRibbonBand {
         );
         final JCommandPopupMenu menu = new JCommandPopupMenu();
 
+
         List<AbstractTool> tools = new FastList<AbstractTool>();
 
+
+        //TOOLS HERE
         tools.add(new SingleItemTool());
         tools.add(new SingleTileTool());
-
+        tools.add(new TileBrushTool());
 
         for (AbstractTool t : tools) {
             menu.addMenuButton(new ToolMenuButton(
@@ -79,4 +85,6 @@ public class ToolBand extends JRibbonBand {
 
         setResizePolicies(resize);
     }
+
+
 }

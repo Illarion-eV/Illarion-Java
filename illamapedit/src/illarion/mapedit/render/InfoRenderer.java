@@ -46,22 +46,17 @@ public class InfoRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(final Graphics2D g) {
+    public void renderMap(final Map map, final Rectangle viewport, final Graphics2D g) {
         g.setFont(FONT);
         g.setColor(Color.WHITE);
-        final Map m = getMap();
-        final int mouseX = getManager().getMapPanel().getMouseMapPosX();
-        final int mouseY = getManager().getMapPanel().getMouseMapPosY();
 
-        final String[] lines = new String[5];
-        lines[0] = String.format("%1$s (%2$d, %3$d, %4$d)", pos, m.getX(), m.getY(),
-                m.getZ());
-        lines[1] = String.format("%1$s (%2$d, %3$d)", size, m.getWidth(), m.getHeight());
+        final String[] lines = new String[4];
+        lines[0] = String.format("%1$s (%2$d, %3$d, %4$d)", pos, map.getX(), map.getY(),
+                map.getZ());
+        lines[1] = String.format("%1$s (%2$d, %3$d)", size, map.getWidth(), map.getHeight());
         lines[2] = String.format("%1$s %2$f", zoom, getZoom());
         lines[3] = String.format("%1$s (%2$d, %3$d)", trans, getTranslateX(), getTranslateY());
-        lines[4] = String.format("Mausposition: (%d,%d) (%d,%d)",
-                mouseX,
-                mouseY, mouseX + m.getX(), mouseY + m.getY());
+
         int y = START_Y;
         for (final String s : lines) {
             g.drawString(s, 10, y);

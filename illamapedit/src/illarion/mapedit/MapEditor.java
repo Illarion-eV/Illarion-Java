@@ -23,25 +23,19 @@ import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
-import illarion.mapedit.crash.exceptions.UnhandlableException;
-import illarion.mapedit.events.MessageStringEvent;
+import illarion.mapedit.gui.GuiController;
 import illarion.mapedit.gui.MainFrame;
 import illarion.mapedit.gui.SplashScreen;
-import illarion.mapedit.resource.ResourceManager;
-import illarion.mapedit.resource.loaders.ImageLoader;
-import illarion.mapedit.resource.loaders.ItemLoader;
-import illarion.mapedit.resource.loaders.TextureLoaderAwt;
-import illarion.mapedit.resource.loaders.TileLoader;
+import illarion.mapedit.util.JavaLogToLog4J;
 import org.apache.log4j.*;
-import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceExistsException;
 import org.bushe.swing.event.EventServiceLocator;
 import org.bushe.swing.event.SwingEventService;
-import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Handler;
 
 /**
  * Main MapEditor class. This class starts the map editor and handles all
@@ -87,19 +81,12 @@ public final class MapEditor {
 
         final String userDir = checkFolder();
 
-        LOGGER.debug("UserDir: " + userDir);
         config = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
-        LOGGER.debug("Config: " + userDir + File.separator + "MapEdit.xcfgz");
-        config.setDefault("globalHist", false);
-        config.setDefault("historyLength", 100);
         config.setDefault("mapLastOpenDir", new File(System.getProperty("user.home")));
-
-        Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
 
         final Crypto crypt = new Crypto();
         crypt.loadPublicKey();
         TableLoader.setCrypto(crypt);
-
 
     }
 
@@ -146,38 +133,31 @@ public final class MapEditor {
      */
     public static void main(final String[] args) {
         initLogging();
+        initExceptionHandler();
         initEventBus();
-        SplashScreen.getInstance().setVisible(true);
+
+
+        GuiController controller = new GuiController(getConfig());
+        controller.initialize();
         instance = new MapEditor();
-
-
-        final ResourceManager res = ResourceManager.getInstance();
-        res.addResources(
-                ImageLoader.getInstance(),
-                TextureLoaderAwt.getInstance(),
-                TileLoader.getInstance(),
-                ItemLoader.getInstance()
-        );
-        while (res.hasNextToLoad()) {
-            try {
-                LOGGER.debug("Loading " + res.getNextDescription());
-                EventBus.publish(new MessageStringEvent("Loading " + res.getNextDescription()));
-                res.loadNext();
-            } catch (IOException e) {
-                LOGGER.warn(res.getPrevDescription() + " failed!");
-//                Crash the editor
-                throw new UnhandlableException("Can't load " + res.getPrevDescription(), e);
-            }
-        }
-
-
-        CrashReporter.getInstance().setConfig(getConfig());
-        CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_SWING);
-        CrashReporter.getInstance().setMessageSource(Lang.getInstance());
 
         Scheduler.getInstance().start();
 
-        startGui();
+        controller.start();
+    }
+
+    private static void initExceptionHandler() {
+        CrashReporter.getInstance().setConfig(getConfig());
+        CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_SWING);
+        CrashReporter.getInstance().setMessageSource(Lang.getInstance());
+        Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
+        Thread.currentThread().setUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Thread.currentThread().setUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
+            }
+        });
     }
 
     private static void initEventBus() {
@@ -186,21 +166,6 @@ public final class MapEditor {
         } catch (EventServiceExistsException e) {
             LOGGER.warn("Can't setup the event bus correctly.", e);
         }
-    }
-
-    /**
-     * This method starts up the gui.
-     */
-    private static void startGui() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                SubstanceLookAndFeel.setSkin("org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
-                MainFrame.getInstance().setVisible(true);
-                SplashScreen.getInstance().setVisible(false);
-            }
-        });
-
     }
 
     /**
@@ -238,6 +203,13 @@ public final class MapEditor {
      */
     @SuppressWarnings("nls")
     private static void initLogging() {
+        java.util.logging.Logger logger = java.util.logging.Logger.getGlobal();
+        //Remove Console handler
+        Handler[] handlers = logger.getHandlers();
+        for (Handler handler : handlers) {
+            logger.removeHandler(handler);
+        }
+        logger.addHandler(new JavaLogToLog4J());
         LOGGER.setLevel(Level.ALL);
         final Layout consoleLayout = new PatternLayout("%-5p - (%c) - [%t]: %m%n");
         LOGGER.addAppender(new ConsoleAppender(consoleLayout));

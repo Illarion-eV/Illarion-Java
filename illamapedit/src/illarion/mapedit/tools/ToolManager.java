@@ -18,9 +18,14 @@
  */
 package illarion.mapedit.tools;
 
-import illarion.mapedit.Utils;
-import illarion.mapedit.data.Map;
-import illarion.mapedit.events.*;
+import illarion.mapedit.events.ItemSelectedEvent;
+import illarion.mapedit.events.TileSelectedEvent;
+import illarion.mapedit.events.ToolSelectedEvent;
+import illarion.mapedit.events.map.MapClickedEvent;
+import illarion.mapedit.events.map.MapDragFinishedEvent;
+import illarion.mapedit.events.map.MapDraggedEvent;
+import illarion.mapedit.events.map.RepaintRequestEvent;
+import illarion.mapedit.gui.GuiController;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.TileImg;
@@ -39,16 +44,16 @@ public final class ToolManager implements Disposable {
 
 
     private AbstractTool actualTool;
-    private final Map map;
 
     private TileImg selectedTile;
     private ItemImg selectedItem;
-    private RendererManager renderer;
+    private final GuiController controller;
+    private final RendererManager renderer;
 
-    public ToolManager(final Map map, final RendererManager render) {
-        this.renderer = render;
+    public ToolManager(final GuiController controller, final RendererManager renderer) {
+        this.controller = controller;
+        this.renderer = renderer;
         AnnotationProcessor.process(this);
-        this.map = map;
         setTool(new SingleTileTool());
     }
 
@@ -57,10 +62,6 @@ public final class ToolManager implements Disposable {
             tool.registerManager(this);
         }
         actualTool = tool;
-    }
-
-    Map getMap() {
-        return map;
     }
 
     TileImg getSelectedTile() {
@@ -80,58 +81,47 @@ public final class ToolManager implements Disposable {
         AnnotationProcessor.unprocess(this);
     }
 
-    @EventSubscriber(eventClass = MapClickedEvent.class)
+    @EventSubscriber()
     public void clickedAt(final MapClickedEvent e) {
-        final int button = e.getButton().ordinal();
-        if (actualTool != null) {
-            actualTool.clickedAt(e.getX(), e.getY());
+        if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
+            actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
         }
     }
 
-    @EventSubscriber(eventClass = MapDraggedEvent.class)
+    @EventSubscriber()
     public void onMapDragged(final MapDraggedEvent e) {
         if (e.getButton() == MouseButton.LeftButton) {
-            int x = Utils.getMapXFormDisp(e.getX(), e.getY(), renderer.getTranslationX(), renderer.getTranslationY(),
-                    renderer.getZoom());
-            int y = Utils.getMapYFormDisp(e.getX(), e.getY(), renderer.getTranslationX(), renderer.getTranslationY(),
-                    renderer.getZoom());
-            actualTool.clickedAt(x, y);
+
+            actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
         }
 
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    @EventSubscriber(eventClass = MapDragFinishedEvent.class)
-    public void onMapDragFinished(final MapDragFinishedEvent e) {
-//
-//        int startX = Math.min(e.getStartX(), e.getEndX());
-//        int startY = Math.min(e.getStartY(), e.getEndY());
-//        int endX = Math.max(e.getStartX(), e.getEndX());
-//        int endY = Math.max(e.getStartY(), e.getEndY());
-//
-//        Vector2i pos = new Vector2i(startX, startY);
-//        Vector2i dim = new Vector2i(endX - startX, endY - startY);
-//        System.out.println(e);
-//        System.out.println(pos + "   " + dim);
-//        actualTool.selected(pos, dim);
-//        EventBus.publish(new RepaintRequestEvent());
+    public GuiController getController() {
+        return controller;
     }
 
-    @EventSubscriber(eventClass = TileSelectedEvent.class)
+    @EventSubscriber()
+    public void onMapDragFinished(final MapDragFinishedEvent e) {
+
+    }
+
+    @EventSubscriber()
     public void onTileSelected(final TileSelectedEvent e) {
         selectedTile = e.getTileImg();
-        LOGGER.debug("Selected: " + e.getTileImg());
+        LOGGER.debug("Selected: " + e.getTileImg().getName());
     }
 
 
-    @EventSubscriber(eventClass = ItemSelectedEvent.class)
+    @EventSubscriber()
     public void onItemSelected(final ItemSelectedEvent e) {
         selectedItem = e.getItemImg();
         LOGGER.debug("Selected: " + e.getItemImg());
     }
 
-    @EventSubscriber(eventClass = ToolSelectedEvent.class)
+    @EventSubscriber()
     public void onSelectTool(final ToolSelectedEvent e) {
         setTool(e.getTool());
     }

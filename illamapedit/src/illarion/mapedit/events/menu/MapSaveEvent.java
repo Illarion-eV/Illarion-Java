@@ -16,36 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.events;
+package illarion.mapedit.events.menu;
+
+import java.io.File;
 
 /**
  * @author Tim
  */
-public class ZoomEvent {
+public class MapSaveEvent {
 
-    private final boolean original;
+    private final File path;
 
-    private final float value;
+    public MapSaveEvent(final File path) {
 
-    public ZoomEvent(final float value) {
-        original = false;
-        this.value = value;
+        this.path = path;
     }
 
-    public ZoomEvent() {
-        original = true;
-        value = 0;
+    public MapSaveEvent() {
+
+        this.path = null;
     }
 
-    public float getValue() {
-        if (original) {
-            throw new IllegalStateException("ZoomEvent has no value if it's 'original'," +
-                    " check that first.");
-        }
-        return value;
-    }
-
-    public boolean isOriginal() {
-        return original;
+    public File getPath() {
+        return path;
     }
 }

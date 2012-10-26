@@ -19,7 +19,7 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.events.RendererToggleEvent;
+import illarion.mapedit.events.map.RendererToggleEvent;
 import illarion.mapedit.render.*;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import javolution.util.FastList;

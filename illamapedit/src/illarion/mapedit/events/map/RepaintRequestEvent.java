@@ -16,9 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools.panel;
-
-import illarion.mapedit.tools.panel.components.TileList;
+package illarion.mapedit.events.map;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,11 +24,23 @@ import java.awt.*;
 /**
  * @author Tim
  */
-public class SingleTilePanel extends JPanel {
+public class RepaintRequestEvent {
+    private final Rectangle dirty;
 
-    public SingleTilePanel() {
-        setLayout(new BorderLayout());
-        final TileList list = new TileList();
-        add(list, BorderLayout.CENTER);
+    public RepaintRequestEvent() {
+        this(null);
+    }
+
+    public RepaintRequestEvent(final Rectangle dirty) {
+        this.dirty = dirty;
+    }
+
+    public void doRepaint(final JPanel c) {
+        if (dirty != null) {
+            c.repaint(dirty);
+        } else {
+            c.repaint();
+        }
+
     }
 }

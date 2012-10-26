@@ -16,49 +16,52 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools;
+package illarion.mapedit.gui.util;
 
 import illarion.mapedit.data.Map;
-import illarion.mapedit.tools.panel.SettingsChangedListener;
-import org.apache.log4j.Logger;
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.swing.*;
+import java.util.List;
 
 /**
  * @author Tim
  */
-public abstract class AbstractTool implements SettingsChangedListener {
+public class MapComboBoxModel extends AbstractListModel<String> implements ComboBoxModel<String> {
 
-    protected static final Logger LOGGER = Logger.getLogger(AbstractTool.class);
+    private List<Map> objects;
 
-    private ToolManager manager;
+    private Object selected;
 
-    /**
-     * X and Y are tile coordinates.
-     *
-     * @param x
-     * @param y
-     */
-    public abstract void clickedAt(int x, int y, Map map);
-
-    public abstract String getLocalizedName();
-
-    public abstract ResizableIcon getToolIcon();
-
-    public abstract JPanel getSettingsPanel();
-
-    public final void registerManager(final ToolManager toolManager) {
-        manager = toolManager;
+    public MapComboBoxModel(final List<Map> objects) {
+        this.objects = objects;
     }
 
-
-    protected final ToolManager getManager() {
-        return manager;
+    public void updateList(List<Map> l) {
+        objects = l;
+        fireContentsChanged(this, 0, objects.size());
     }
 
     @Override
-    public void settingsChanged() {
+    public int getSize() {
+        if (objects == null || objects.size() == 0) {
+            return 0;
+        }
+        return objects.size();
+    }
 
+    @Override
+    public String getElementAt(final int index) {
+
+        return objects.get(index).getName();
+    }
+
+    @Override
+    public void setSelectedItem(final Object anItem) {
+        selected = anItem;
+    }
+
+    @Override
+    public Object getSelectedItem() {
+        return selected;
     }
 }

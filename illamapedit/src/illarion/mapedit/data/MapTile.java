@@ -71,6 +71,19 @@ public class MapTile {
     }
 
     /**
+     * Creates a copy of the other tile but with a different id.
+     *
+     * @param id  the new id
+     * @param old the old tile.
+     */
+    public MapTile(final int id, final MapTile old) {
+        this.id = id;
+        musicID = old.musicID;
+        mapItems = new FastList<MapItem>(old.mapItems);
+        mapWarpPoint = old.mapWarpPoint;
+    }
+
+    /**
      * Returns the tile id.
      *
      * @return
