@@ -9,6 +9,7 @@
 /illacommon/local*
 /illacommon/illabuild.jar
 /illacommon/tempBuildTool_*
+/illacommon/src/skills.xml
 /illaeasyquest/res/template/*/filelist
 /keys
 /bin

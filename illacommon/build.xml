@@ -30,7 +30,7 @@
     <property name="test" location="${common}/test"/>
 
     <target name="build_common" description="build common jar file"
-            depends="init, compile_common, build_jar"
+            depends="init, download_skills, compile_common, build_jar"
             unless="common.uptodate">
         <move file="${jar}" tofile="${common.bin}"/>
     </target>
@@ -68,6 +68,10 @@
         </resourcebuild>
     </target>
 
+    <target name="download_skills">
+        <get src="http://illarion.org/data/xml_skills.php" dest="${src}/skills.xml"/>
+    </target>
+
     <target name="compile_common">
         <delete dir="${classes}"/>
         <mkdir dir="${classes}"/>
@@ -102,5 +106,6 @@
             </manifest>
         </jar>
         <jar jarfile="${jar}" basedir="${src}" includes="public.key" update="true" index="${build.index}"/>
+        <jar jarfile="${jar}" basedir="${src}" includes="skills.xml" update="true" index="${build.index}"/>
     </target>
 </project>
