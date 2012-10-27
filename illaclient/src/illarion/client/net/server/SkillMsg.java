@@ -33,19 +33,14 @@ import java.io.IOException;
 @ReplyMessage(replyId = CommandList.MSG_SKILL)
 public final class SkillMsg extends AbstractReply {
     /**
-     * The ID of the group the skill is displayed in.
-     */
-    private short group;
-
-    /**
      * The current minor skill points of that skill.
      */
     private int minor;
 
     /**
-     * The skill that is updated.
+     * The ID of the skill that is used
      */
-    private String skill;
+    private int skill;
 
     /**
      * The new value of the skill.
@@ -62,8 +57,7 @@ public final class SkillMsg extends AbstractReply {
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
-        skill = reader.readString();
-        group = reader.readUByte();
+        skill = reader.readUByte();
         value = reader.readUShort();
         minor = reader.readUShort();
     }
@@ -91,9 +85,6 @@ public final class SkillMsg extends AbstractReply {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Group: ");
-        builder.append(group);
-        builder.append(' ');
         builder.append(skill);
         builder.append(": ");
         builder.append(value);
