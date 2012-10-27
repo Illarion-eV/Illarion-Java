@@ -50,4 +50,13 @@ public final class DialogSelectBuilder extends ControlBuilder {
     public void dialogId(final int id) {
         set("dialogId", Integer.toString(id));
     }
+
+    /**
+     * Set the message that is supposed to be displayed in the dialog.
+     *
+     * @param text the message shown in this dialog
+     */
+    public void message(final String text) {
+        set("message", text);
+    }
 }

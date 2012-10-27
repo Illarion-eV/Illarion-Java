@@ -425,6 +425,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         final DialogSelectBuilder builder = new DialogSelectBuilder(
                 "selectDialog" + Integer.toString(event.getId()), event.getTitle());
         builder.dialogId(event.getId());
+        builder.message(event.getMessage());
         builder.width(builder.pixels(500));
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
             @Override

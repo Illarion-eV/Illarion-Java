@@ -20,6 +20,7 @@ package org.illarion.nifty.controls.dialog.select;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
+import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
@@ -87,6 +88,8 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
         currentScreen = screen;
 
         dialogId = Integer.parseInt(controlDefinitionAttributes.get("dialogId"));
+        element.findNiftyControl("#message", Label.class).setText(
+                controlDefinitionAttributes.getWithDefault("message", ""));
     }
 
     @Override

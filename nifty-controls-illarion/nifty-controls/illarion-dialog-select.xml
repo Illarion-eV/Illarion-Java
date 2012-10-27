@@ -34,6 +34,7 @@
                        controller="org.illarion.nifty.controls.dialog.select.DialogSelectControl">
         <control name="window" title="Nachricht" id="#window" visibleToMouse="true">
             <panel childLayout="vertical" visibleToMouse="true" width="100%">
+                <control name="label" style="nifty-label" id="#message" width="100%" padding="5px" wrap="true"/>
                 <panel width="100%" childLayout="center">
                     <control name="listBox" id="#list" vertical="optional" horizontal="off"
                              displayItems="4" selection="Disabled" width="100%"
