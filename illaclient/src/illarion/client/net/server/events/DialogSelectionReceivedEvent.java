@@ -36,15 +36,22 @@ public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEv
     private final SelectionItem[] options;
 
     /**
+     * This string that is supposed to be displayed in the dialog.
+     */
+    private final String message;
+
+    /**
      * Create a new instance of this event.
      *
      * @param dialogId    the ID of this dialog
      * @param dialogTitle the title of the dialog
+     * @param message
      * @param dialogItems the items to be displayed in this dialog
      */
     public DialogSelectionReceivedEvent(final int dialogId, final String dialogTitle,
-                                        final SelectionItem... dialogItems) {
+                                        final String message, final SelectionItem... dialogItems) {
         super(dialogId, dialogTitle);
+        this.message = message;
         options = dialogItems;
     }
 
@@ -55,6 +62,15 @@ public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEv
      */
     public int getOptionCount() {
         return options.length;
+    }
+
+    /**
+     * Get the message that is supposed to be displayed in the selection dialog.
+     *
+     * @return the message to be displayed in the dialog
+     */
+    public String getMessage() {
+        return message;
     }
 
     /**

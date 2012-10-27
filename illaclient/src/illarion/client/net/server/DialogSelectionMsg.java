@@ -42,6 +42,11 @@ public final class DialogSelectionMsg
     private String title;
 
     /**
+     * The message that is displayed inside this selection dialog.
+     */
+    private String message;
+
+    /**
      * The ID of the dialog that needs to be returned in order to inform the server that the window was closed.
      */
     private int dialogId;
@@ -55,6 +60,7 @@ public final class DialogSelectionMsg
     public void decode(final NetCommReader reader)
             throws IOException {
         title = reader.readString();
+        message = reader.readString();
         final int itemCount = reader.readByte();
         items = new SelectionItem[itemCount];
         for (int i = 0; i < itemCount; i++) {
@@ -67,7 +73,7 @@ public final class DialogSelectionMsg
 
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new DialogSelectionReceivedEvent(dialogId, title, items));
+        EventBus.publish(new DialogSelectionReceivedEvent(dialogId, title, message, items));
 
         return true;
     }
