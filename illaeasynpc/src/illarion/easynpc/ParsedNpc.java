@@ -548,7 +548,7 @@ public final class ParsedNpc {
      */
     public Location getNpcPos() {
         if (npcPos == null) {
-            npcPos = Location.getInstance();
+            npcPos = new Location();
             npcPos.setDC(0, 0, 0);
         }
         return npcPos;
@@ -708,9 +708,6 @@ public final class ParsedNpc {
      * @param newNpcPos the new position of this NPC
      */
     public void setNpcPos(final Location newNpcPos) {
-        if (npcPos != null) {
-            npcPos.recycle();
-        }
         npcPos = newNpcPos;
     }
 

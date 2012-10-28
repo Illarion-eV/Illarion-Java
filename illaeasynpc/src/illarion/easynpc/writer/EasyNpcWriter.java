@@ -408,7 +408,9 @@ public final class EasyNpcWriter {
 
         for (int i = 0; i < count; ++i) {
             final EasyNpcWritable writeable = source.getEasyNpcData(i);
-            writeable.writeEasyNpc(target, stage);
+            if (writeable.effectsEasyNpcStage(stage)) {
+                writeable.writeEasyNpc(target, stage);
+            }
         }
     }
 }

@@ -18,9 +18,9 @@
  */
 package illarion.easynpc.parser.talk.consequences;
 
+import illarion.common.data.Skills;
 import illarion.easynpc.Lang;
 import illarion.easynpc.data.CalculationOperators;
-import illarion.easynpc.data.CharacterSkill;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.parsed.talk.consequences.ConsequenceSkill;
@@ -63,13 +63,7 @@ public final class Skill extends ConsequenceParser {
 
             setLine(stringMatcher.replaceFirst(""));
 
-            CharacterSkill skill = null;
-            for (final CharacterSkill testSkill : CharacterSkill.values()) {
-                if (skillName.contains(testSkill.getSkillName())) {
-                    skill = testSkill;
-                    break;
-                }
-            }
+            illarion.common.data.Skill skill = Skills.getInstance().getSkill(skillName);
 
             if (skill == null) {
                 reportError(String.format(Lang.getMsg(getClass(), "name"), skillName, stringMatcher.group(0)));

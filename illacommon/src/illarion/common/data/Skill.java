@@ -25,6 +25,11 @@ package illarion.common.data;
  */
 public final class Skill {
     /**
+     * The name of the skill.
+     */
+    private final String name;
+
+    /**
      * The name of the skill in english.
      */
     private final String nameEnglish;
@@ -48,12 +53,15 @@ public final class Skill {
      * Create a new instance of the skill class.
      *
      * @param skillId    the ID of the skill
+     * @param skillName  the name of the skill
      * @param german     the german name of the skill
      * @param english    the english name of the skill
      * @param skillGroup the group this skill belong to
      */
-    Skill(final int skillId, final String german, final String english, final SkillGroup skillGroup) {
+    Skill(final int skillId, final String skillName, final String german, final String english,
+          final SkillGroup skillGroup) {
         id = skillId;
+        name = skillName;
         nameEnglish = english;
         nameGerman = german;
         group = skillGroup;
@@ -76,6 +84,15 @@ public final class Skill {
      */
     public SkillGroup getGroup() {
         return group;
+    }
+
+    /**
+     * Get the name of the skill. This name is mainly required for the scripts.
+     *
+     * @return the name of the skills
+     */
+    public String getName() {
+        return name;
     }
 
     /**

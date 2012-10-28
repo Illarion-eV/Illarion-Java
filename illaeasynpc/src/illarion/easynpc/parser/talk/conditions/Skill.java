@@ -18,8 +18,8 @@
  */
 package illarion.easynpc.parser.talk.conditions;
 
+import illarion.common.data.Skills;
 import illarion.easynpc.Lang;
-import illarion.easynpc.data.CharacterSkill;
 import illarion.easynpc.data.CompareOperators;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkCondition;
@@ -72,13 +72,7 @@ public final class Skill extends ConditionParser {
                 return extract();
             }
 
-            CharacterSkill skill = null;
-            for (final CharacterSkill sk : CharacterSkill.values()) {
-                if (skillName.contains(sk.getSkillName())) {
-                    skill = sk;
-                    break;
-                }
-            }
+            illarion.common.data.Skill skill = Skills.getInstance().getSkill(skillName);
 
             if (skill == null) {
                 reportError(String.format(Lang.getMsg(getClass(), "skill"),

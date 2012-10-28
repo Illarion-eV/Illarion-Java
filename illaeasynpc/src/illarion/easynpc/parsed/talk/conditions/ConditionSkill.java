@@ -18,7 +18,7 @@
  */
 package illarion.easynpc.parsed.talk.conditions;
 
-import illarion.easynpc.data.CharacterSkill;
+import illarion.common.data.Skill;
 import illarion.easynpc.data.CompareOperators;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkCondition;
@@ -43,7 +43,7 @@ public final class ConditionSkill implements TalkCondition {
      * The LUA code needed for this consequence to work.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_CODE = "talkEntry:addCondition(%1$s.skill(%2$s, \"%3$s\", \"%4$s\", %5$s));"
+    private static final String LUA_CODE = "talkEntry:addCondition(%1$s.skill(Character.%2$s, \"%3$s\", %4$s));"
             + LuaWriter.NL;
 
     /**
@@ -59,7 +59,7 @@ public final class ConditionSkill implements TalkCondition {
     /**
      * The skill that is checked by this skill condition.
      */
-    private final CharacterSkill skill;
+    private final Skill skill;
 
     /**
      * The value of the skill that is used for the compare operation.
@@ -73,7 +73,7 @@ public final class ConditionSkill implements TalkCondition {
      * @param op        the compare operator used for the condition
      * @param newValue  the value used to compare against
      */
-    public ConditionSkill(final CharacterSkill skillData, final CompareOperators op, final AdvancedNumber newValue) {
+    public ConditionSkill(final Skill skillData, final CompareOperators op, final AdvancedNumber newValue) {
         skill = skillData;
         operator = op;
         value = newValue;
@@ -92,7 +92,7 @@ public final class ConditionSkill implements TalkCondition {
      */
     @Override
     public void writeEasyNpc(final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, skill.getSkillName(), operator.getLuaComp(), value.getEasyNPC()));
+        target.write(String.format(EASY_CODE, skill.getName(), operator.getLuaComp(), value.getEasyNPC()));
     }
 
     /**
@@ -100,7 +100,6 @@ public final class ConditionSkill implements TalkCondition {
      */
     @Override
     public void writeLua(final Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(skill.getSkillGroup()),
-                skill.getSkillName(), operator.getLuaComp(), value.getLua()));
+        target.write(String.format(LUA_CODE, LUA_MODULE, skill.getName(), operator.getLuaComp(), value.getLua()));
     }
 }

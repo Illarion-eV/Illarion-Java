@@ -112,10 +112,11 @@ class SkillLoader {
         if ("skill".equals(parsedNode.getNodeName())) {
             final NamedNodeMap attributes = parsedNode.getAttributes();
             final int id = Integer.parseInt(attributes.getNamedItem("id").getNodeValue());
+            final String name = attributes.getNamedItem("name").getNodeValue();
             final String german = attributes.getNamedItem("german").getNodeValue();
             final String english = attributes.getNamedItem("english").getNodeValue();
 
-            final Skill skill = new Skill(id, german, english, parentGroup);
+            final Skill skill = new Skill(id, name, german, english, parentGroup);
             Skills.getInstance().addSkill(skill);
         }
     }

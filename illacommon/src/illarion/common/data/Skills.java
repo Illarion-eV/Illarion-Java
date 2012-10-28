@@ -18,6 +18,8 @@
  */
 package illarion.common.data;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,5 +78,48 @@ public class Skills {
      */
     public Skill getSkill(final int id) {
         return skillMap.get(id);
+    }
+
+    /**
+     * This function tries to match the name given as parameter to one of the skills.
+     *
+     * @param name the name of the skill
+     * @return the matched skill
+     */
+    public Skill getSkill(final String name) {
+        final String cleanName = name.trim();
+        if ("lumberjacking".equalsIgnoreCase(cleanName)) {
+            return getSkill("woodcutting");
+        }
+
+        if ("peasantry".equalsIgnoreCase(cleanName)) {
+            return getSkill("farming");
+        }
+
+        if ("baking".equalsIgnoreCase(cleanName)) {
+            return getSkill("cooking");
+        }
+
+        for (final Skill skill : skillMap.values()) {
+            if (cleanName.equalsIgnoreCase(skill.getName()) || cleanName.equalsIgnoreCase(skill.getNameGerman()) ||
+                    cleanName.equalsIgnoreCase(skill.getNameEnglish())) {
+                return skill;
+            }
+        }
+
+        if (cleanName.contains(" ")) {
+            return getSkill(cleanName.replace(" ", ""));
+        }
+
+        return null;
+    }
+
+    /**
+     * Get a list of all skills that are known to this class.
+     *
+     * @return the list of all skills known to this class
+     */
+    public Collection<Skill> getSkills() {
+        return Collections.unmodifiableCollection(skillMap.values());
     }
 }

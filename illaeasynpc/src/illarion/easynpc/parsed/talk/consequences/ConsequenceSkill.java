@@ -18,8 +18,8 @@
  */
 package illarion.easynpc.parsed.talk.consequences;
 
+import illarion.common.data.Skill;
 import illarion.easynpc.data.CalculationOperators;
-import illarion.easynpc.data.CharacterSkill;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaWriter;
@@ -43,7 +43,7 @@ public final class ConsequenceSkill implements TalkConsequence {
      * The LUA code needed to be included for a skill consequence.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.skill(%2$s, \"%3$s\", \"%4$s\", %5$s));"
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.skill(Character.%2$s, \"%3$s\", %4$s));"
             + LuaWriter.NL;
 
     /**
@@ -60,7 +60,7 @@ public final class ConsequenceSkill implements TalkConsequence {
     /**
      * The skill effected by this skill consequence.
      */
-    private final CharacterSkill skill;
+    private final Skill skill;
 
     /**
      * The value the skill is altered with.
@@ -74,7 +74,7 @@ public final class ConsequenceSkill implements TalkConsequence {
      * @param op       the operator used to change the skill
      * @param newValue the value used to change the skill
      */
-    public ConsequenceSkill(final CharacterSkill newSkill, final CalculationOperators op,
+    public ConsequenceSkill(final Skill newSkill, final CalculationOperators op,
                             final AdvancedNumber newValue) {
         skill = newSkill;
         operator = op;
@@ -94,7 +94,7 @@ public final class ConsequenceSkill implements TalkConsequence {
      */
     @Override
     public void writeEasyNpc(final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, skill.getSkillName(), operator.getLuaOp(), value.getEasyNPC()));
+        target.write(String.format(EASY_CODE, skill.getName(), operator.getLuaOp(), value.getEasyNPC()));
     }
 
     /**
@@ -102,7 +102,6 @@ public final class ConsequenceSkill implements TalkConsequence {
      */
     @Override
     public void writeLua(final Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(skill.getSkillGroup()),
-                skill.getSkillName(), operator.getLuaOp(), value.getLua()));
+        target.write(String.format(LUA_CODE, LUA_MODULE, skill.getName(), operator.getLuaOp(), value.getLua()));
     }
 }

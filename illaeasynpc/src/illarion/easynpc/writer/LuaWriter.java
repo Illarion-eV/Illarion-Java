@@ -605,7 +605,9 @@ public final class LuaWriter {
         LuaWritable writeable = null;
         for (int i = 0; i < count; ++i) {
             writeable = source.getLuaData(i);
-            writeable.writeLua(target, stage);
+            if (writeable.effectsLuaWritingStage(stage)) {
+                writeable.writeLua(target, stage);
+            }
         }
     }
 }
