@@ -39,8 +39,7 @@ public abstract class AbstractCommand implements RecycleObject {
     /**
      * The instance of the logger that is used to write out the data.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(AbstractCommand.class);
+    private static final Logger LOGGER = Logger.getLogger(AbstractCommand.class);
 
     /**
      * The ID of the command.
@@ -105,7 +104,7 @@ public abstract class AbstractCommand implements RecycleObject {
      *
      * @param writer the byte buffer the values are added to from index 0 on
      */
-    public abstract void encode(final NetCommWriter writer);
+    public abstract void encode(NetCommWriter writer);
 
     /**
      * Get the ID of this client command.

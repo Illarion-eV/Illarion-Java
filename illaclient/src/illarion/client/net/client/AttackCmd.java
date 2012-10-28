@@ -23,8 +23,7 @@ import illarion.common.net.NetCommWriter;
 import illarion.common.types.CharacterId;
 
 /**
- * Client Command: Attacking a character (
- * {@link illarion.client.net.CommandList#CMD_ATTACK}).
+ * Client Command: Attacking a character ({@link CommandList#CMD_ATTACK}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;

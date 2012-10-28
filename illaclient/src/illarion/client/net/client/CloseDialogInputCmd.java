@@ -22,8 +22,8 @@ import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 
 /**
- * Client Command: Send a text that was requested by the server and typed in by the player ( {@link
- * illarion.client.net.CommandList#CMD_CLOSE_DIALOG_INPUT}).
+ * Client Command: Send a text that was requested by the server and typed in by the player
+ * ({@link CommandList#CMD_CLOSE_DIALOG_INPUT}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */

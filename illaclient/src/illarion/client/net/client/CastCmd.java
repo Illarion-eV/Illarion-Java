@@ -23,8 +23,7 @@ import illarion.common.net.NetCommWriter;
 import javolution.text.TextBuilder;
 
 /**
- * Client Command: Cast a spell (
- * {@link illarion.client.net.CommandList#CMD_CAST}).
+ * Client Command: Cast a spell ({@link CommandList#CMD_CAST}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -36,8 +35,7 @@ public final class CastCmd extends AbstractCommand {
     private long spell;
 
     /**
-     * The target of the spell. Could be a char or a tile or something like
-     * this.
+     * The target of the spell. Could be a char or a tile or something like this.
      */
     // private transient Reference target;
 

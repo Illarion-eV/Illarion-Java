@@ -25,7 +25,7 @@ import illarion.common.net.NetCommReader;
 import java.io.IOException;
 
 /**
- * Servermessage: Attack message received in caes the player is attacking someone.
+ * Server Message: Attack message received in case the player is attacking someone.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
@@ -33,13 +33,11 @@ import java.io.IOException;
 @ReplyMessage(replyId = CommandList.MSG_ATTACK)
 public final class AttackMsg extends AbstractReply {
     /**
-     * Decode the simple data the receiver got and prepare it for the execution.
-     * Since simple messages contain no data, this function does nothing at all.
+     * Decode the simple data the receiver got and prepare it for the execution. Since simple messages contain no
+     * data, this function does nothing at all.
      *
-     * @param reader the receiver that got the data from the server that needs
-     *               to be decoded
-     * @throws java.io.IOException thrown in case there was not enough data received to
-     *                             decode the full message
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
@@ -47,8 +45,7 @@ public final class AttackMsg extends AbstractReply {
     }
 
     /**
-     * Execute the simple message and send the decoded data to the rest of the
-     * client.
+     * Execute the simple message and send the decoded data to the rest of the client.
      *
      * @return true if the execution is done, false if it shall be called again
      */
@@ -61,8 +58,7 @@ public final class AttackMsg extends AbstractReply {
     /**
      * Get the data of this simple message as string.
      *
-     * @return the string that contains the values that were decoded for this
-     *         message
+     * @return the string that contains the values that were decoded for this  message
      * @see AbstractReply#toString()
      */
     @SuppressWarnings("nls")
