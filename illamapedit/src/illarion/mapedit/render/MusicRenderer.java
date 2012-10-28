@@ -44,10 +44,10 @@ public class MusicRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(final Map map, final Rectangle viewport, final Graphics2D g) {
+    public void renderMap(final Map map, final Rectangle viewport, final int level, final Graphics2D g) {
         final int width = map.getWidth();
         final int height = map.getHeight();
-        final int z = map.getZ();
+        final int z = map.getZ() - level;
         final AffineTransform transform = g.getTransform();
 
 

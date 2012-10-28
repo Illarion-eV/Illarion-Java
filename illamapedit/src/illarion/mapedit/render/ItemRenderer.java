@@ -42,7 +42,7 @@ public class ItemRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(final Map map, final Rectangle viewport, final Graphics2D g) {
+    public void renderMap(final Map map, final Rectangle viewport, final int level, final Graphics2D g) {
         final AffineTransform t = g.getTransform();
 
 
@@ -54,7 +54,7 @@ public class ItemRenderer extends AbstractMapRenderer {
         int actualW = iterationStartW;
         //iterate diagonal until iterations can reach the nearest tile
         while ((iterationStartW > -map.getHeight()) && (actualH < map.getHeight())) {
-            render(actualW, actualH, viewport, map, g);
+            render(actualW, actualH, viewport, map, level, g);
             //iterate diagonal
             actualH++;
             actualW++;
@@ -76,8 +76,8 @@ public class ItemRenderer extends AbstractMapRenderer {
         g.setTransform(t);
     }
 
-    private void render(final int x, final int y, final Rectangle viewport, final Map map, final Graphics2D g) {
-        final int z = map.getZ();
+    private void render(final int x, final int y, final Rectangle viewport, final Map map, final int level, final Graphics2D g) {
+        final int z = map.getZ() - level;
         final List<MapItem> items = map.getTileAt(x, y).getMapItems();
         if (items.isEmpty()) {
             return;
@@ -92,15 +92,17 @@ public class ItemRenderer extends AbstractMapRenderer {
             for (final MapItem item : items) {
 
                 final ItemImg img = ItemLoader.getInstance().getTileFromId(item.getId());
-                final Image paintImg = img.getImgs()[0];
+                if (img != null && img.getImgs() != null) {
+                    final Image paintImg = img.getImgs()[0];
 
-                g.translate(getTileWidth(), getTileHeight());
-                g.translate(xdisp, ydisp);
-                g.translate(img.getOffsetX(), -img.getOffsetY());
-                g.translate(-paintImg.getWidth(null) / 2, -paintImg.getHeight(null));
+                    g.translate(getTileWidth(), getTileHeight());
+                    g.translate(xdisp, ydisp);
+                    g.translate(img.getOffsetX(), -img.getOffsetY());
+                    g.translate(-paintImg.getWidth(null) / 2, -paintImg.getHeight(null));
 
-                g.drawImage(img.getImgs()[0], 0, 0, null);
-                g.setTransform(tr);
+                    g.drawImage(img.getImgs()[0], 0, 0, null);
+                    g.setTransform(tr);
+                }
             }
         }
     }

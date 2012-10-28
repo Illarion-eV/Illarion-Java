@@ -211,9 +211,10 @@ public class GuiController {
     @EventSubscriber
     public void onMapSelected(final MapSelectedEvent e) {
         selected = maps.get(e.getIndex());
-        int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), selected.getZ());
-        int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), selected.getZ());
+        int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
+        int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
         RendererManager manager = mainFrame.getRendererManager();
+        manager.setSelectedLevel(selected.getZ());
         manager.setTranslationX(-x);
         manager.setTranslationY(-y);
         manager.setDefaultTranslationX(-x);

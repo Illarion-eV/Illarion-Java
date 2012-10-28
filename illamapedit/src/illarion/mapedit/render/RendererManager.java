@@ -22,7 +22,9 @@ import illarion.mapedit.data.Map;
 import illarion.mapedit.events.map.RendererToggleEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.events.map.ZoomEvent;
+import illarion.mapedit.util.Vector2i;
 import javolution.util.FastList;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -38,6 +40,7 @@ import java.util.List;
  * @author Tim
  */
 public class RendererManager {
+    private static final Logger LOGGER = Logger.getLogger(RendererManager.class);
     private static final int DEFAULT_TILE_HEIGHT = 16;
     private static final int DEFAULT_TILE_WIDTH = 32;
     public static final float DEFAULT_ZOOM = 1f;
@@ -55,8 +58,11 @@ public class RendererManager {
     private int translationY;
     private int defaultTranslationX;
     private int defaultTranslationY;
-    private float tileHeight = DEFAULT_TILE_HEIGHT;
-    private float tileWidth = DEFAULT_TILE_WIDTH;
+    private float zoomPointX;
+    private float zoomPointY;
+    private int actualLevel;
+    private Rectangle panelViewport;
+    private illarion.common.util.Rectangle mapViewport;
 
 
     public RendererManager() {
@@ -84,14 +90,13 @@ public class RendererManager {
 
     public void render(final Map map, final Rectangle viewport, final Graphics2D g) {
         final AffineTransform t = g.getTransform();
+        g.translate(translationX - (zoomPointX * 2), translationY - (zoomPointY * 2));
+        g.scale(getZoom(), getZoom());
+        g.translate((zoomPointX * 2) / zoom, (zoomPointY * 2) / zoom);
         for (final AbstractMapRenderer r : renderers) {
-            g.translate(translationX, translationY);
-            g.translate(-viewport.width / 2, -viewport.height / 2);
-            g.scale(getZoom(), getZoom());
-            g.translate((viewport.width / 2) / getZoom(), (viewport.height / 2) / getZoom());
-            r.renderMap(map, viewport, g);
-            g.setTransform(t);
+            r.renderMap(map, viewport, actualLevel, g);
         }
+        g.setTransform(t);
     }
 
     public static float getTileHeight() {
@@ -103,12 +108,24 @@ public class RendererManager {
     }
 
     public void setZoom(final float zoom) {
-        tileWidth = DEFAULT_TILE_WIDTH * zoom;
-        tileHeight = DEFAULT_TILE_HEIGHT * zoom;
+        LOGGER.debug("SetZoom(" + zoom + ");");
         this.zoom = zoom;
+        //TODO: Include zoomPoint in event.
+        Vector2i zoomPoint = new Vector2i(panelViewport.width / 2, panelViewport.height / 2);
 
+        //TODO: Rename these variables
+        zoomPointX = zoomPoint.getX();
+        zoomPointY = zoomPoint.getY() /** zoom*/;
+
+
+        calculateMapViewport();
 
         EventBus.publish(new RepaintRequestEvent());
+    }
+
+    private void calculateMapViewport() {
+        mapViewport.set(mapViewport.getX(), mapViewport.getY(), (int) (panelViewport.getWidth() / zoom),
+                (int) (panelViewport.getHeight() / zoom));
     }
 
     public float getZoom() {
@@ -133,13 +150,14 @@ public class RendererManager {
 
     public void zoomIn() {
         if (zoom < 1) {
-            setZoom(zoom + (zoom * ZOOM_STEP));
+            setZoom(zoom + ZOOM_STEP);
         }
     }
 
     public void zoomOut() {
-        setZoom(zoom - (zoom * ZOOM_STEP));
-
+        if (zoom > 0) {
+            setZoom(zoom - ZOOM_STEP);
+        }
     }
 
     public void changeZoom(final float amount) {
@@ -153,6 +171,15 @@ public class RendererManager {
 
     public float getMinZoom() {
         return MIN_ZOOM;
+    }
+
+    public void setPanelViewport(Rectangle panelViewport) {
+        this.panelViewport = panelViewport;
+        if (mapViewport == null) {
+            mapViewport = new illarion.common.util.Rectangle();
+        }
+        this.mapViewport.set(translationX, translationY, panelViewport.width, panelViewport.height);
+        calculateMapViewport();
     }
 
     /**
@@ -176,7 +203,7 @@ public class RendererManager {
         this.defaultTranslationX = defaultTranslationX;
     }
 
-    @EventSubscriber(eventClass = RendererToggleEvent.class)
+    @EventSubscriber
     public void onRendererToggle(final RendererToggleEvent e) {
         for (final AbstractMapRenderer r : renderers) {
             if (r.getClass().equals(e.getRendererClass())) {
@@ -187,7 +214,7 @@ public class RendererManager {
         addRenderer(e.getRenderer(this));
     }
 
-    @EventSubscriber(eventClass = ZoomEvent.class)
+    @EventSubscriber
     public void onZoom(final ZoomEvent e) {
         if (e.isOriginal()) {
             setZoom(DEFAULT_ZOOM);
@@ -196,5 +223,9 @@ public class RendererManager {
         } else {
             changeZoom(e.getValue());
         }
+    }
+
+    public void setSelectedLevel(final int level) {
+        this.actualLevel = level;
     }
 }

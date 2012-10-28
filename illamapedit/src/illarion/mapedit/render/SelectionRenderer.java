@@ -33,7 +33,7 @@ public class SelectionRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(final Map map, final Rectangle viewport, final Graphics2D g) {
+    public void renderMap(final Map map, final Rectangle viewport, final int level, final Graphics2D g) {
 
     }
 

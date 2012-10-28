@@ -40,7 +40,7 @@ import java.awt.event.*;
  *
  * @author Tim
  */
-public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener {
+public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener, ComponentListener {
     private final RendererManager rendererManager;
     private final Rectangle dirty;
     private boolean canDrag;
@@ -61,7 +61,9 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         addMouseWheelListener(this);
         addMouseMotionListener(this);
         addMouseListener(this);
+        addComponentListener(this);
         AnnotationProcessor.process(this);
+
     }
 
     @Override
@@ -173,17 +175,32 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         canDrag = false;
     }
 
-    @EventSubscriber(eventClass = RepaintRequestEvent.class)
-    public void onRepaintRequest(final RepaintRequestEvent e) {
-        e.doRepaint(this);
+    public RendererManager getRenderManager() {
+        return rendererManager;
     }
 
     @Override
-    public void repaint() {
-        super.repaint();
+    public void componentResized(final ComponentEvent e) {
+        rendererManager.setPanelViewport(getVisibleRect());
     }
 
-    public RendererManager getRenderManager() {
-        return rendererManager;
+    @Override
+    public void componentMoved(final ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentShown(final ComponentEvent e) {
+        rendererManager.setPanelViewport(getVisibleRect());
+    }
+
+    @Override
+    public void componentHidden(final ComponentEvent e) {
+
+    }
+
+    @EventSubscriber
+    public void onRepaintRequest(final RepaintRequestEvent e) {
+        e.doRepaint(this);
     }
 }

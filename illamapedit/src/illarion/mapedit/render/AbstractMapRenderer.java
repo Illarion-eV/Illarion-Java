@@ -98,7 +98,7 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      *
      * @param g the graphics object.
      */
-    public abstract void renderMap(Map map, Rectangle viewport, Graphics2D g);
+    public abstract void renderMap(Map map, Rectangle viewport, int level, Graphics2D g);
 
     /**
      * Returns a value. The renderer with the lowest value will be rendered first.
