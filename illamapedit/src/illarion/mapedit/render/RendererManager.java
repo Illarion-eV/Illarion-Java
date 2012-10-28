@@ -90,13 +90,16 @@ public class RendererManager {
 
     public void render(final Map map, final Rectangle viewport, final Graphics2D g) {
         final AffineTransform t = g.getTransform();
-        g.translate(translationX - (zoomPointX * 2), translationY - (zoomPointY * 2));
+        g.translate(translationX, translationY);
         g.scale(getZoom(), getZoom());
-        g.translate((zoomPointX * 2) / zoom, (zoomPointY * 2) / zoom);
         for (final AbstractMapRenderer r : renderers) {
             r.renderMap(map, viewport, actualLevel, g);
         }
+
         g.setTransform(t);
+
+        g.setColor(Color.RED);
+        g.drawRect(panelViewport.width / 2, panelViewport.height / 2, 1, 1);
     }
 
     public static float getTileHeight() {
@@ -107,18 +110,49 @@ public class RendererManager {
         return DEFAULT_TILE_WIDTH;
     }
 
+    public void setZoom(final float zoom, final Vector2i zoomPoint) {
+        final int viewportWidth = panelViewport.width;
+        final int viewportHeight = panelViewport.height;
+
+        final float relativeX = zoomPoint.getX() / (float) viewportWidth;
+        final float relativeY = zoomPoint.getY() / (float) viewportHeight;
+
+        final float oldViewportWidth = viewportWidth / this.zoom;
+        final float oldViewportHeight = viewportHeight / this.zoom;
+
+        final float newViewportWidth = viewportWidth / zoom;
+        final float newViewportHeight = viewportHeight / zoom;
+
+        final int fixX = Math.round((newViewportWidth - oldViewportWidth) * relativeX);
+        final int fixY = Math.round((newViewportHeight - oldViewportHeight) * relativeY);
+
+        translationX /= this.zoom;
+        translationY /= this.zoom;
+
+        translationX += fixX;
+        translationY += fixY;
+
+        translationX *= zoom;
+        translationY *= zoom;
+
+        this.zoom = zoom;
+    }
+
     public void setZoom(final float zoom) {
         LOGGER.debug("SetZoom(" + zoom + ");");
-        this.zoom = zoom;
+
+        //this.zoom = zoom;
         //TODO: Include zoomPoint in event.
         Vector2i zoomPoint = new Vector2i(panelViewport.width / 2, panelViewport.height / 2);
 
+        setZoom(zoom, zoomPoint);
+
         //TODO: Rename these variables
-        zoomPointX = zoomPoint.getX();
-        zoomPointY = zoomPoint.getY() /** zoom*/;
+        //zoomPointX = zoomPoint.getX();
+        //zoomPointY = zoomPoint.getY() /** zoom*/;
 
 
-        calculateMapViewport();
+        //calculateMapViewport();
 
         EventBus.publish(new RepaintRequestEvent());
     }
