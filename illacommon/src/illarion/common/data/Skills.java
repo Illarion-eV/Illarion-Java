@@ -87,7 +87,15 @@ public class Skills {
      * @return the matched skill
      */
     public Skill getSkill(final String name) {
-        final String cleanName = name.trim();
+        final String cleanName = name.trim().toLowerCase();
+
+        for (final Skill skill : skillMap.values()) {
+            if (cleanName.equalsIgnoreCase(skill.getName()) || cleanName.equalsIgnoreCase(skill.getNameGerman()) ||
+                    cleanName.equalsIgnoreCase(skill.getNameEnglish())) {
+                return skill;
+            }
+        }
+
         if ("lumberjacking".equalsIgnoreCase(cleanName)) {
             return getSkill("woodcutting");
         }
@@ -96,15 +104,9 @@ public class Skills {
             return getSkill("farming");
         }
 
-        if ("baking".equalsIgnoreCase(cleanName)) {
-            return getSkill("cooking");
-        }
-
-        for (final Skill skill : skillMap.values()) {
-            if (cleanName.equalsIgnoreCase(skill.getName()) || cleanName.equalsIgnoreCase(skill.getNameGerman()) ||
-                    cleanName.equalsIgnoreCase(skill.getNameEnglish())) {
-                return skill;
-            }
+        if ((cleanName.contains("baking") || cleanName.contains("cooking")) &&
+                !"cookingAndBaking".equalsIgnoreCase(cleanName)) {
+            return getSkill("cookingAndBaking");
         }
 
         if (cleanName.contains(" ")) {
