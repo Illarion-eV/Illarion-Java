@@ -20,38 +20,25 @@ package illarion.mapedit.tools;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapTile;
-import illarion.mapedit.resource.TileImg;
-import illarion.mapedit.tools.panel.SingleTilePanel;
+import illarion.mapedit.data.MapItem;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.swing.*;
+import java.util.List;
 
 /**
  * @author Tim
  */
-public class SingleTileTool extends AbstractTool {
-
-    private final SingleTilePanel panel;
-
-    public SingleTileTool() {
-        panel = new SingleTilePanel();
-    }
-
+public class ItemEraserTool extends AbstractTool {
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
-        if (!map.contains(x, y)) {
-            return;
-        }
-        final TileImg tile = getManager().getSelectedTile();
-        if (tile != null) {
-            map.setTileAt(x, y, new MapTile(tile.getId(), map.getTileAt(x, y)));
-        }
+        List<MapItem> items = map.getTileAt(x, y).getMapItems();
+        items.clear();
     }
 
     @Override
     public String getLocalizedName() {
-        return Lang.getMsg("tools.SingleTileTool");
+        return Lang.getMsg("tools.ItemEraserTool");
     }
 
     @Override
@@ -61,11 +48,6 @@ public class SingleTileTool extends AbstractTool {
 
     @Override
     public JPanel getSettingsPanel() {
-        return panel;
-    }
-
-    @Override
-    public void settingsChanged() {
-
+        return null;
     }
 }

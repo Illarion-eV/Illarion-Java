@@ -27,6 +27,7 @@ import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.util.MouseButton;
 import illarion.mapedit.util.SwingLocation;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -41,6 +42,7 @@ import java.awt.event.*;
  * @author Tim
  */
 public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener, ComponentListener {
+    private static final Logger LOGGER = Logger.getLogger(MapPanel.class);
     private final RendererManager rendererManager;
     private final Rectangle dirty;
     private boolean canDrag;
@@ -106,7 +108,11 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         } else {
             isDragging = true;
             if (btn == MouseButton.LeftButton) {
-                EventBus.publish(new MapDraggedEvent(clickX, clickY, e.getX(), e.getY(), btn,
+                final int x = SwingLocation.mapCoordinateX(clickX, clickY, rendererManager.getTranslationX(),
+                        rendererManager.getTranslationY(), rendererManager.getZoom());
+                final int y = SwingLocation.mapCoordinateY(clickX, clickY, rendererManager.getTranslationX(),
+                        rendererManager.getTranslationY(), rendererManager.getZoom());
+                EventBus.publish(new MapDraggedEvent(x, y, e.getX(), e.getY(), btn,
                         controller.getSelected()));
             }
         }
@@ -124,9 +130,9 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         if (toolManager == null) {
             return;
         }
-        final int x = SwingLocation.mapCoordinateX(e.getX(), e.getY(), controller.getSelected().getZ(), rendererManager.getTranslationX(),
+        final int x = SwingLocation.mapCoordinateX(e.getX(), e.getY(), rendererManager.getTranslationX(),
                 rendererManager.getTranslationY(), rendererManager.getZoom());
-        final int y = SwingLocation.mapCoordinateY(e.getX(), e.getY(), controller.getSelected().getZ(), rendererManager.getTranslationX(),
+        final int y = SwingLocation.mapCoordinateY(e.getX(), e.getY(), rendererManager.getTranslationX(),
                 rendererManager.getTranslationY(), rendererManager.getZoom());
 
         if (controller.getSelected() != null) {
@@ -149,15 +155,14 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     public void mouseReleased(final MouseEvent e) {
         if (isDragging) {
             final int x1 = SwingLocation.mapCoordinateX(downClickX, downClickY, rendererManager.getTranslationX(),
-                    rendererManager.getTranslationY(), controller.getSelected().getZ(), rendererManager.getZoom());
-            final int y1 = SwingLocation.mapCoordinateY(downClickY, downClickY, rendererManager.getTranslationX(),
-                    rendererManager.getTranslationY(), controller.getSelected().getZ(), rendererManager.getZoom());
+                    rendererManager.getTranslationY(), rendererManager.getZoom());
+            final int y1 = SwingLocation.mapCoordinateY(downClickX, downClickY, rendererManager.getTranslationX(),
+                    rendererManager.getTranslationY(), rendererManager.getZoom());
             final int x2 = SwingLocation.mapCoordinateX(e.getX(), e.getY(), rendererManager.getTranslationX(),
-                    rendererManager.getTranslationY(), controller.getSelected().getZ(), rendererManager.getZoom());
+                    rendererManager.getTranslationY(), rendererManager.getZoom());
             final int y2 = SwingLocation.mapCoordinateY(e.getX(), e.getY(), rendererManager.getTranslationX(),
-                    rendererManager.getTranslationY(), controller.getSelected().getZ(), rendererManager.getZoom());
-
-            if (x1 != x2 && y1 != y2) {
+                    rendererManager.getTranslationY(), rendererManager.getZoom());
+            if ((x1 != x2) && (y1 != y2)) {
                 EventBus.publish(new MapDragFinishedEvent(x1, y1, x2, y2));
             }
         }
