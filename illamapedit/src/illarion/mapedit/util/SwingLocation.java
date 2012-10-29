@@ -33,6 +33,7 @@ public class SwingLocation {
 
     public static int mapCoordinateX(final int x, final int y, final int layer, final int transX, final int transY,
                                      final float zoom) {
+        //TODO: Fix this. Its broken because of the fixed zooming
         final float xr = (x - transX) / zoom;
         final float yr = (y - transY) / zoom;
         DUMMY.reset();

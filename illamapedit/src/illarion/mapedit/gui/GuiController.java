@@ -143,6 +143,9 @@ public class GuiController {
     public void addMap(final Map map) {
         if (!maps.contains(map) && (map != null)) {
             maps.add(map);
+            if (maps.size() == 1) {
+                selected = map;
+            }
         }
         EventBus.publish(new UpdateMapListEvent(maps));
         EventBus.publish(new RepaintRequestEvent());

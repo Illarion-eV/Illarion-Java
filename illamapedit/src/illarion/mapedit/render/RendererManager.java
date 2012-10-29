@@ -58,11 +58,8 @@ public class RendererManager {
     private int translationY;
     private int defaultTranslationX;
     private int defaultTranslationY;
-    private float zoomPointX;
-    private float zoomPointY;
     private int actualLevel;
     private Rectangle panelViewport;
-    private illarion.common.util.Rectangle mapViewport;
 
 
     public RendererManager() {
@@ -95,11 +92,7 @@ public class RendererManager {
         for (final AbstractMapRenderer r : renderers) {
             r.renderMap(map, viewport, actualLevel, g);
         }
-
         g.setTransform(t);
-
-        g.setColor(Color.RED);
-        g.drawRect(panelViewport.width / 2, panelViewport.height / 2, 1, 1);
     }
 
     public static float getTileHeight() {
@@ -139,27 +132,15 @@ public class RendererManager {
     }
 
     public void setZoom(final float zoom) {
-        LOGGER.debug("SetZoom(" + zoom + ");");
-
-        //this.zoom = zoom;
         //TODO: Include zoomPoint in event.
+        if ((zoom < .1) || (zoom > 1)) {
+            return;
+        }
         Vector2i zoomPoint = new Vector2i(panelViewport.width / 2, panelViewport.height / 2);
 
         setZoom(zoom, zoomPoint);
 
-        //TODO: Rename these variables
-        //zoomPointX = zoomPoint.getX();
-        //zoomPointY = zoomPoint.getY() /** zoom*/;
-
-
-        //calculateMapViewport();
-
         EventBus.publish(new RepaintRequestEvent());
-    }
-
-    private void calculateMapViewport() {
-        mapViewport.set(mapViewport.getX(), mapViewport.getY(), (int) (panelViewport.getWidth() / zoom),
-                (int) (panelViewport.getHeight() / zoom));
     }
 
     public float getZoom() {
@@ -207,13 +188,15 @@ public class RendererManager {
         return MIN_ZOOM;
     }
 
-    public void setPanelViewport(Rectangle panelViewport) {
-        this.panelViewport = panelViewport;
-        if (mapViewport == null) {
-            mapViewport = new illarion.common.util.Rectangle();
+    public void setPanelViewport(final Rectangle panelViewport) {
+        if (panelViewport == null) {
+            LOGGER.warn("SetPanelViewport: panelViewport is null");
+            return;
         }
-        this.mapViewport.set(translationX, translationY, panelViewport.width, panelViewport.height);
-        calculateMapViewport();
+        if (this.panelViewport == null) {
+            this.panelViewport = new Rectangle();
+        }
+        this.panelViewport.setRect(panelViewport.x, panelViewport.y, panelViewport.width, panelViewport.height);
     }
 
     /**
@@ -237,6 +220,10 @@ public class RendererManager {
         this.defaultTranslationX = defaultTranslationX;
     }
 
+    public void setSelectedLevel(final int level) {
+        this.actualLevel = level;
+    }
+
     @EventSubscriber
     public void onRendererToggle(final RendererToggleEvent e) {
         for (final AbstractMapRenderer r : renderers) {
@@ -257,9 +244,5 @@ public class RendererManager {
         } else {
             changeZoom(e.getValue());
         }
-    }
-
-    public void setSelectedLevel(final int level) {
-        this.actualLevel = level;
     }
 }

@@ -124,7 +124,6 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         if (toolManager == null) {
             return;
         }
-        //FIXME: Fix layer value not included!!
         final int x = SwingLocation.mapCoordinateX(e.getX(), e.getY(), controller.getSelected().getZ(), rendererManager.getTranslationX(),
                 rendererManager.getTranslationY(), rendererManager.getZoom());
         final int y = SwingLocation.mapCoordinateY(e.getX(), e.getY(), controller.getSelected().getZ(), rendererManager.getTranslationX(),

@@ -81,7 +81,11 @@ public final class ToolManager implements Disposable {
         AnnotationProcessor.unprocess(this);
     }
 
-    @EventSubscriber()
+    public GuiController getController() {
+        return controller;
+    }
+
+    @EventSubscriber
     public void clickedAt(final MapClickedEvent e) {
         if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
@@ -89,39 +93,33 @@ public final class ToolManager implements Disposable {
         }
     }
 
-    @EventSubscriber()
+    @EventSubscriber
     public void onMapDragged(final MapDraggedEvent e) {
         if (e.getButton() == MouseButton.LeftButton) {
-
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
+            EventBus.publish(new RepaintRequestEvent());
         }
-
-        EventBus.publish(new RepaintRequestEvent());
     }
 
-    public GuiController getController() {
-        return controller;
-    }
-
-    @EventSubscriber()
+    @EventSubscriber
     public void onMapDragFinished(final MapDragFinishedEvent e) {
 
     }
 
-    @EventSubscriber()
+    @EventSubscriber
     public void onTileSelected(final TileSelectedEvent e) {
         selectedTile = e.getTileImg();
         LOGGER.debug("Selected: " + e.getTileImg().getName());
     }
 
 
-    @EventSubscriber()
+    @EventSubscriber
     public void onItemSelected(final ItemSelectedEvent e) {
         selectedItem = e.getItemImg();
         LOGGER.debug("Selected: " + e.getItemImg());
     }
 
-    @EventSubscriber()
+    @EventSubscriber
     public void onSelectTool(final ToolSelectedEvent e) {
         setTool(e.getTool());
     }
