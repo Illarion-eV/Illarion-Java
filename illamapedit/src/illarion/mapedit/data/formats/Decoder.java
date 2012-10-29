@@ -28,11 +28,11 @@ public interface Decoder {
 
     void newMap(String name, String path);
 
-    void decodeItemLine(String line) throws FormatCorruptedException;
+    void decodeItemLine(String line, int i) throws FormatCorruptedException;
 
-    void decodeTileLine(String line) throws FormatCorruptedException;
+    void decodeTileLine(String line, int i) throws FormatCorruptedException;
 
-    void decodeWarpLine(String line) throws FormatCorruptedException;
+    void decodeWarpLine(String line, int i) throws FormatCorruptedException;
 
     Map getDecodedMap();
 }

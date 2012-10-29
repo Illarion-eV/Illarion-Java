@@ -67,11 +67,12 @@ public class Version1Decoder implements Decoder {
 
 
     @Override
-    public void decodeItemLine(final String line) throws FormatCorruptedException {
+    public void decodeItemLine(final String line, final int i) throws FormatCorruptedException {
 
         final String[] sections = DELIMITER.split(line);
         if ((sections.length != 5) && (sections.length != 6)) {
-            throw new FormatCorruptedException("(Items) Argument length is lower than 5 or bigger than 6", path, line);
+            throw new FormatCorruptedException("(Items) Argument length is lower than 5 or bigger than 6", path,
+                    line);
         }
         final int ix = Integer.parseInt(sections[0]);
         final int iy = Integer.parseInt(sections[1]);
@@ -79,6 +80,7 @@ public class Version1Decoder implements Decoder {
         final int idata = Integer.parseInt(sections[4]);
         final int iquality = (sections.length == 6) ? Integer.parseInt(sections[5]) : 0;
         String s = null;
+        //TODO: Remove this from here
         if (idata != 0) {
             s = JOptionPane.showInputDialog("Itemdata '" + idata + "' at " + ix + "," + iy + " isn't compatible with the " +
                     "actual " +
@@ -90,9 +92,8 @@ public class Version1Decoder implements Decoder {
     }
 
     @Override
-    public void decodeTileLine(final String line) throws FormatCorruptedException {
+    public void decodeTileLine(final String line, final int i) throws FormatCorruptedException {
         if (map == null) {
-
             decodeHeader(line);
             return;
         }
@@ -141,7 +142,7 @@ public class Version1Decoder implements Decoder {
     }
 
     @Override
-    public void decodeWarpLine(final String line) throws FormatCorruptedException {
+    public void decodeWarpLine(final String line, final int i) throws FormatCorruptedException {
         final String[] sections = DELIMITER.split(line);
         if (sections.length != 5) {
             throw new FormatCorruptedException("(Warps) Argument length is too height: " + sections.length, path,

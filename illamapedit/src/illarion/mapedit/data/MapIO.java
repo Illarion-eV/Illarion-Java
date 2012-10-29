@@ -87,21 +87,21 @@ public class MapIO {
             LOGGER.debug("Mapfileversion: " + version);
             decoder = DECODERS.get(version);
             decoder.newMap(name, path);
-            decoder.decodeTileLine(versionLine);
+            decoder.decodeTileLine(versionLine, 0);
         }
 
 
         String s;
-        while ((s = tileInput.readLine()) != null && !s.isEmpty()) {
-            decoder.decodeTileLine(s);
+        for (int i = 0; ((s = tileInput.readLine()) != null) && !s.isEmpty(); i++) {
+            decoder.decodeTileLine(s, i);
         }
 
-        while ((s = itemInput.readLine()) != null && !s.isEmpty()) {
-            decoder.decodeItemLine(s);
+        for (int i = 0; ((s = itemInput.readLine()) != null) && !s.isEmpty(); i++) {
+            decoder.decodeItemLine(s, i);
         }
 
-        while ((s = warpInput.readLine()) != null && !s.isEmpty()) {
-            decoder.decodeWarpLine(s);
+        for (int i = 0; ((s = warpInput.readLine()) != null) && !s.isEmpty(); i++) {
+            decoder.decodeWarpLine(s, i);
         }
 
         Map m = decoder.getDecodedMap();
@@ -154,19 +154,22 @@ public class MapIO {
         for (int y = 0; y < map.getWidth(); ++y) {
             for (int x = 0; x < map.getHeight(); ++x) {
                 final MapTile tile = map.getTileAt(x, y);
-                writeLine(tileOutput, x, y, tile.getId(), tile.getMusicID(), NEWLINE);
+                writeLine(tileOutput, x, y, tile.getId(), tile.getMusicID());
 
                 final List<MapItem> items = tile.getMapItems();
                 if (items != null) {
                     for (final MapItem item : items) {
-                        writeLine(itemOutput, x, y, item.getId(), item.getQuality(),
-                                item.getItemData(), NEWLINE);
+                        if (item.getItemData().isEmpty()) {
+                            writeLine(itemOutput, x, y, item.getId(), item.getQuality());
+                        } else {
+                            writeLine(itemOutput, x, y, item.getId(), item.getQuality(), item.getItemData());
+                        }
                     }
                 }
                 final MapWarpPoint warp = tile.getMapWarpPoint();
                 if (warp != null) {
                     writeLine(warpOutput, x, y, warp.getXTarget(), warp.getYTarget(),
-                            warp.getZTarget(), NEWLINE);
+                            warp.getZTarget());
                 }
             }
         }
@@ -194,6 +197,7 @@ public class MapIO {
         for (int i = 0; i < args.length; ++i) {
             writer.write(args[i].toString());
             if (i < (args.length - 1)) {
+
                 writer.write(';');
             } else {
                 writer.write(NEWLINE);

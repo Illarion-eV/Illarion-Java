@@ -65,10 +65,10 @@ public class Version2Decoder implements Decoder {
     }
 
     @Override
-    public void decodeItemLine(final String line) throws FormatCorruptedException {
+    public void decodeItemLine(final String line, final int i) throws FormatCorruptedException {
 //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
         final String[] sections = DELIMITER.split(line);
-        if (sections.length < 5) {
+        if (sections.length < 4) {
             throw new FormatCorruptedException("Item", path, line);
         }
         final int ix = Integer.parseInt(sections[0]);
@@ -81,7 +81,7 @@ public class Version2Decoder implements Decoder {
     }
 
     @Override
-    public void decodeTileLine(final String line) throws FormatCorruptedException {
+    public void decodeTileLine(final String line, final int i) throws FormatCorruptedException {
 //        <dx>;<dy>;<tileID>;<musicID>
 
         if (map == null) {
@@ -101,7 +101,7 @@ public class Version2Decoder implements Decoder {
     }
 
     @Override
-    public void decodeWarpLine(final String line) throws FormatCorruptedException {
+    public void decodeWarpLine(final String line, final int i) throws FormatCorruptedException {
         final String[] sections = DELIMITER.split(line);
         if (sections.length != 5) {
             throw new FormatCorruptedException("Warp", path, line);
