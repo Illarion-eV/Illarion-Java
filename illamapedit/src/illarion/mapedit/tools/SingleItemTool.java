@@ -26,6 +26,7 @@ import illarion.mapedit.tools.panel.SingleItemPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.swing.*;
+import java.util.List;
 
 /**
  * @author Tim
@@ -45,7 +46,11 @@ public class SingleItemTool extends AbstractTool {
         }
         final ItemImg item = getManager().getSelectedItem();
         if (item != null) {
-            map.getTileAt(x, y).getMapItems().add(new MapItem(item.getItemId(), "", 0));
+            final List<MapItem> items = map.getTileAt(x, y).getMapItems();
+            final MapItem i = new MapItem(item.getItemId(), "", 0);
+            if (!items.contains(i)) {
+                items.add(i);
+            }
         }
     }
 

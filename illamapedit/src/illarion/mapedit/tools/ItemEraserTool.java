@@ -32,7 +32,10 @@ import java.util.List;
 public class ItemEraserTool extends AbstractTool {
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
-        List<MapItem> items = map.getTileAt(x, y).getMapItems();
+        if (!map.contains(x, y)) {
+            return;
+        }
+        final List<MapItem> items = map.getTileAt(x, y).getMapItems();
         items.clear();
     }
 

@@ -88,7 +88,6 @@ public class MapFileBand extends JRibbonBand {
             @Override
             public void itemStateChanged(final ItemEvent e) {
                 if (e.getStateChange() != ItemEvent.SELECTED) {
-                    System.out.println(e.getStateChange());
                     return;
                 }
                 EventBus.publish(new MapSelectedEvent(mapSelector.getSelectedIndex()));

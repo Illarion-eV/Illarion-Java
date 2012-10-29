@@ -103,4 +103,12 @@ public class MapItem {
     public String getItemData() {
         return itemData;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (getClass() != obj.getClass())
+            return false;
+        MapItem it = (MapItem) obj;
+        return it.itemId == itemId;
+    }
 }

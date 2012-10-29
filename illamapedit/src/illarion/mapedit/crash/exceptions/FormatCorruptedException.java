@@ -60,21 +60,6 @@ public class FormatCorruptedException extends IOException {
         this.format = format;
     }
 
-    public FormatCorruptedException(final String message, final String file, final String line) {
-        super(String.format("[" + message + "] in file %s. Found:[%s]",
-                file, line));
-        this.file = file;
-        this.line = line;
-    }
-
-    public FormatCorruptedException(final String file, final String line) {
-        super(String.format("Format corrupted in file %s. Found:[%s]",
-                file, line));
-
-        this.file = file;
-        this.line = line;
-    }
-
     /**
      * @return the filepath
      */

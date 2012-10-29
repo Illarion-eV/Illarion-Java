@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.data;
 
+import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.formats.Decoder;
 import illarion.mapedit.data.formats.Version1Decoder;
 import illarion.mapedit.data.formats.Version2Decoder;
@@ -90,20 +91,24 @@ public class MapIO {
             decoder.decodeTileLine(versionLine, 0);
         }
 
+        try {
+            String s;
+            for (int i = 0; ((s = tileInput.readLine()) != null) && !s.isEmpty(); i++) {
+                decoder.decodeTileLine(s, i);
+            }
 
-        String s;
-        for (int i = 0; ((s = tileInput.readLine()) != null) && !s.isEmpty(); i++) {
-            decoder.decodeTileLine(s, i);
+            for (int i = 0; ((s = itemInput.readLine()) != null) && !s.isEmpty(); i++) {
+                decoder.decodeItemLine(s, i);
+            }
+
+            for (int i = 0; ((s = warpInput.readLine()) != null) && !s.isEmpty(); i++) {
+                decoder.decodeWarpLine(s, i);
+            }
+        } catch (FormatCorruptedException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IOException("Unknown error occurred", e);
         }
-
-        for (int i = 0; ((s = itemInput.readLine()) != null) && !s.isEmpty(); i++) {
-            decoder.decodeItemLine(s, i);
-        }
-
-        for (int i = 0; ((s = warpInput.readLine()) != null) && !s.isEmpty(); i++) {
-            decoder.decodeWarpLine(s, i);
-        }
-
         Map m = decoder.getDecodedMap();
 
         LOGGER.debug(String.format("W=%d; H=%d; X=%d; Y=%d; L=%d;", m.getWidth(), m.getHeight(), m.getX(), m.getY(),

@@ -43,14 +43,11 @@ public class TileBrushTool extends AbstractTool {
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
         final TileImg tile = getManager().getSelectedTile();
-        System.out.println("TileBrushTool.clickedAt(" + x + ", " + y + ", map);");
-        for (int i = x - radius; i <= (x + radius); i++) {
-            for (int j = y - radius; j <= (y + radius); j++) {
+        for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
+            for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
                 if (!map.contains(i, j)) {
-                    System.out.println(i + "   " + j + "  no");
                     continue;
                 }
-                System.out.println(i + "   " + j + "  ok");
                 map.setTileAt(i, j, new MapTile(tile.getId(), map.getTileAt(i, j)));
             }
 

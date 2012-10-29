@@ -50,7 +50,6 @@ public class MainMenu extends RibbonApplicationMenu {
                         new ActionListener() {
                             @Override
                             public void actionPerformed(final ActionEvent e) {
-                                System.out.println("...");
                                 EventBus.publish(new MapOpenEvent());
                             }
                         }, JCommandButton.CommandButtonKind.ACTION_ONLY);

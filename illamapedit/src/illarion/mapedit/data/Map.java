@@ -101,7 +101,6 @@ public class Map {
      */
     public void addItemAt(final int x, final int y, final MapItem mapItem) {
         final int i = (y * width) + x;
-        System.out.println(x + " " + y);
         mapTileData[i].getMapItems().add(mapItem);
     }
 
