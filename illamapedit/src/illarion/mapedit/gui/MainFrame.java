@@ -64,7 +64,7 @@ public class MainFrame extends JRibbonFrame {
 
         getRibbon().addTask(task);
         setApplicationIcon(ImageLoader.getResizableIcon("mapedit64"));
-        new ToolSettingsPanel();
+        //new ToolSettingsPanel();
     }
 
     public static MainFrame getInstance() {
