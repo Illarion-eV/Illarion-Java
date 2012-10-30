@@ -311,6 +311,11 @@ public final class CommandList {
     public static final int MSG_DIALOG_CRAFTING = 0x54;
 
     /**
+     * Server message that contains the update of a crafting dialog.
+     */
+    public static final int MSG_DIALOG_CRAFTING_UPDATE = 0x55;
+
+    /**
      * Server message that contains the appearance data of a character.
      */
     public static final int MSG_APPEARANCE = 0xE1;
