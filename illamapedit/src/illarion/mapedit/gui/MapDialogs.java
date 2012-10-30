@@ -148,7 +148,10 @@ public class MapDialogs {
         return MapIO.loadMap(dir.getPath(), list.getSelectedValue());
     }
 
-    public static void showSaveDialog() {
-
+    public static boolean isShowSaveDialog() {
+        final int answer = JOptionPane.showConfirmDialog(null, Lang.getMsg("gui.info.unsaved"),
+                Lang.getMsg("gui.info.unsaved.Title"),
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        return answer == JOptionPane.YES_OPTION;
     }
 }

@@ -20,7 +20,10 @@ package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.events.map.RendererToggleEvent;
-import illarion.mapedit.render.*;
+import illarion.mapedit.render.GridRenderer;
+import illarion.mapedit.render.ItemRenderer;
+import illarion.mapedit.render.MusicRenderer;
+import illarion.mapedit.render.TileRenderer;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import javolution.util.FastList;
 import org.bushe.swing.event.EventBus;
@@ -50,10 +53,6 @@ public class ViewBand extends JRibbonBand {
                 Lang.getMsg("gui.viewband.button.Item"),
                 ImageLoader.getResizableIcon("file_items")
         );
-        final JCommandButton infoButton = new JCommandButton(
-                Lang.getMsg("gui.viewband.button.Info"),
-                ImageLoader.getResizableIcon("messagebox_warning")
-        );
         final JCommandButton gridButton = new JCommandButton(
                 Lang.getMsg("gui.viewband.button.Grid"),
                 ImageLoader.getResizableIcon("viewGrid")
@@ -77,12 +76,6 @@ public class ViewBand extends JRibbonBand {
             }
         };
 
-        final ActionListener infoListener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new RendererToggleEvent(InfoRenderer.class));
-            }
-        };
 
         final ActionListener gridListener = new ActionListener() {
             @Override
@@ -100,13 +93,11 @@ public class ViewBand extends JRibbonBand {
 
         tileButton.addActionListener(tileListener);
         itemButton.addActionListener(itemListener);
-        infoButton.addActionListener(infoListener);
         gridButton.addActionListener(gridListener);
         musicButton.addActionListener(musicListener);
 
         addCommandButton(tileButton, RibbonElementPriority.TOP);
         addCommandButton(itemButton, RibbonElementPriority.TOP);
-        addCommandButton(infoButton, RibbonElementPriority.MEDIUM);
         addCommandButton(gridButton, RibbonElementPriority.MEDIUM);
         addCommandButton(musicButton, RibbonElementPriority.MEDIUM);
 

@@ -49,8 +49,8 @@ public class MainFrame extends JRibbonFrame {
         instance = this;
     }
 
-    public void initialize() {
-        addWindowListener(new WindowEventListener());
+    public void initialize(final GuiController controller) {
+        addWindowListener(controller);
         setTitle(Lang.getMsg("application.Name") + MapEditor.getVersion());
         setSize(WINDOW_SIZE);
         getRibbon().setApplicationMenu(new MainMenu());
@@ -58,7 +58,7 @@ public class MainFrame extends JRibbonFrame {
         add(mapPanel, BorderLayout.CENTER);
         add(settingsPanel, BorderLayout.EAST);
         final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
-                new ClipboardBand(), new HistoryBand(), new ZoomBand(), new ViewBand(), new MapFileBand(config),
+                /*new ClipboardBand(),*/ new HistoryBand(), new ZoomBand(), new ViewBand(), new MapFileBand(config),
                 new ToolBand());
 
 

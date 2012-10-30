@@ -45,6 +45,9 @@ public class TileBrushTool extends AbstractTool {
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
         final TileImg tile = getManager().getSelectedTile();
+        if (tile == null) {
+            return;
+        }
         final GroupAction action = new GroupAction();
         for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
             for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {

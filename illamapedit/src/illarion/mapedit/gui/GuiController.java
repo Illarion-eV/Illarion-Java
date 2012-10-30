@@ -85,6 +85,7 @@ public class GuiController implements WindowListener {
         resourceManager = ResourceManager.getInstance();
         historyManager = new HistoryManager();
         maps = new FastList<Map>(1);
+        saved = true;
     }
 
     public void start() {
@@ -129,7 +130,7 @@ public class GuiController implements WindowListener {
      * This method starts up the gui.
      */
     private void startGui() {
-        mainFrame.initialize();
+        mainFrame.initialize(this);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -198,13 +199,15 @@ public class GuiController implements WindowListener {
             mainFrame.dispose();
             MapEditor.exit();
         } else {
-            MapDialogs.showSaveDialog();
+            if (MapDialogs.isShowSaveDialog()) {
+                onMapSave(new MapSaveEvent());
+            }
         }
     }
 
     @Override
     public void windowClosed(final WindowEvent e) {
-        //TODO: Close
+        System.exit(0);
     }
 
     @Override
@@ -246,10 +249,10 @@ public class GuiController implements WindowListener {
                 JOptionPane.showMessageDialog(MainFrame.getInstance(),
                         Lang.getMsg("gui.error.SaveMap"),
                         Lang.getMsg("gui.error"),
-                        JOptionPane.ERROR_MESSAGE,
-                        ImageLoader.getImageIcon("messagebox_critical"));
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
+        saved = true;
         EventBus.publish(new UpdateMapListEvent(maps));
     }
 

@@ -91,6 +91,7 @@ public final class ToolManager implements Disposable {
         if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
+            controller.setSaved(false);
         }
     }
 
@@ -99,6 +100,7 @@ public final class ToolManager implements Disposable {
         if (e.getButton() == MouseButton.LeftButton) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
+            controller.setSaved(false);
         }
     }
 
