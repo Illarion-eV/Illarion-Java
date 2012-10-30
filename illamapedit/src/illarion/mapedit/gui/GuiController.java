@@ -177,6 +177,7 @@ public class GuiController implements WindowListener {
         int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
         int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
         RendererManager manager = mainFrame.getRendererManager();
+        manager.setZoom(1f);
         manager.setSelectedLevel(selected.getZ());
         manager.setTranslationX(-x);
         manager.setTranslationY(-y);

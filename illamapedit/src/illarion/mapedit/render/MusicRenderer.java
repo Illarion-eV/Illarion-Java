@@ -56,8 +56,8 @@ public class MusicRenderer extends AbstractMapRenderer {
                 if (map.getTileAt(x, y).getMusicID() == 0) {
                     continue;
                 }
-                final int xdisp = SwingLocation.displayCoordinateX(x, y, z);
-                final int ydisp = SwingLocation.displayCoordinateY(x, y, z);
+                final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
+                final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
                 if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 

@@ -67,10 +67,10 @@ public class RendererManager {
         AnnotationProcessor.process(this);
     }
 
-    //TODO: Move this
     public void initRenderers() {
         renderers.add(new TileRenderer(this));
         renderers.add(new ItemRenderer(this));
+        renderers.add(new MusicRenderer(this));
         Collections.sort(renderers);
     }
 

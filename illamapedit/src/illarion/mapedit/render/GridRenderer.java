@@ -44,26 +44,24 @@ public class GridRenderer extends AbstractMapRenderer {
         final int width = map.getWidth();
         final int height = map.getHeight();
         final int z = map.getZ() - level;
-
         final AffineTransform transform = g.getTransform();
 
         g.translate(0, getTileHeight() + 1);
 
         g.setColor(Color.LIGHT_GRAY);
-        for (int x = 0; x <= height; ++x) {
+        for (int x = 0; x <= width; ++x) {
             g.drawLine(
-                    SwingLocation.displayCoordinateX(x, 0, z),
-                    SwingLocation.displayCoordinateY(x, 0, z),
-                    SwingLocation.displayCoordinateX(x, width, z),
-                    SwingLocation.displayCoordinateY(x, width, z));
+                    SwingLocation.displayCoordinateX(x + map.getX(), map.getY(), z),
+                    SwingLocation.displayCoordinateY(x + map.getX(), map.getY(), z),
+                    SwingLocation.displayCoordinateX(x + map.getX(), height + map.getY(), z),
+                    SwingLocation.displayCoordinateY(x + map.getX(), height + map.getY(), z));
         }
-
-        for (int y = 0; y <= width; ++y) {
+        for (int y = 0; y <= height; ++y) {
             g.drawLine(
-                    SwingLocation.displayCoordinateX(0, y, z),
-                    SwingLocation.displayCoordinateY(0, y, z),
-                    SwingLocation.displayCoordinateX(height, y, z),
-                    SwingLocation.displayCoordinateY(height, y, z));
+                    SwingLocation.displayCoordinateX(map.getX(), y + map.getY(), z),
+                    SwingLocation.displayCoordinateY(map.getX(), y + map.getY(), z),
+                    SwingLocation.displayCoordinateX(width + map.getX(), y + map.getY(), z),
+                    SwingLocation.displayCoordinateY(width + map.getX(), y + map.getY(), z));
         }
 
 

@@ -61,8 +61,8 @@ public class TileRenderer extends AbstractMapRenderer {
 
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                final int xdisp = SwingLocation.displayCoordinateX(x, y, z);
-                final int ydisp = SwingLocation.displayCoordinateY(x, y, z);
+                final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
+                final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
                 if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 
