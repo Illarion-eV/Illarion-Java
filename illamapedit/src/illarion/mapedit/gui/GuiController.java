@@ -130,11 +130,11 @@ public class GuiController implements WindowListener {
      * This method starts up the gui.
      */
     private void startGui() {
-        mainFrame.initialize(this);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 SubstanceLookAndFeel.setSkin("org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
+                mainFrame.initialize(GuiController.this);
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
                 splashScreen.setVisible(false);
