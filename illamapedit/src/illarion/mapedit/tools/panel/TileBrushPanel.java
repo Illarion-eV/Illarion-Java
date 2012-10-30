@@ -31,17 +31,20 @@ import java.awt.*;
  */
 public class TileBrushPanel extends JPanel {
     private final JSpinner radiusSpinner;
-    private final SettingsChangedListener listener;
 
 
     public TileBrushPanel(final SettingsChangedListener listener) {
-        setLayout(new GridBagLayout());
-        final GridBagConstraints gbc = new GridBagConstraints();
+        super(new BorderLayout());
 
-        this.listener = listener;
+        add(new TileList(), BorderLayout.CENTER);
 
+        final JPanel brushSizePanel = new JPanel(new BorderLayout(5, 0));
         final JLabel radiusLabel = new JLabel(Lang.getMsg("tools.TileBrushTool.Radius"));
         radiusSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 10, 1));
+        brushSizePanel.add(radiusLabel, BorderLayout.WEST);
+        brushSizePanel.add(radiusSpinner, BorderLayout.CENTER);
+
+        add(brushSizePanel, BorderLayout.SOUTH);
 
         radiusSpinner.addChangeListener(new ChangeListener() {
             @Override
@@ -49,15 +52,6 @@ public class TileBrushPanel extends JPanel {
                 listener.settingsChanged();
             }
         });
-        gbc.gridy = 1;
-        gbc.gridx = 0;
-        gbc.gridwidth = 2;
-        add(new TileList());
-        gbc.gridwidth = 1;
-        gbc.gridy = 1;
-        add(radiusLabel, gbc);
-        gbc.gridx = 1;
-        add(radiusSpinner, gbc);
     }
 
     public int getRadius() {

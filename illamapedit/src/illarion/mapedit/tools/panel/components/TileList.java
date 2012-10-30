@@ -28,11 +28,12 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public class TileList extends JPanel {
+public class TileList extends JScrollPane {
 
     private final JList<TileImg> tileList;
 
     public TileList() {
+        super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         tileList = new JList<TileImg>(TileLoader.getInstance().getTiles());
         tileList.setCellRenderer(new TileImgCellRenderer());
@@ -43,8 +44,7 @@ public class TileList extends JPanel {
                 EventBus.publish(new TileSelectedEvent(tileList.getSelectedValue()));
             }
         });
-        final JScrollPane scrollPane = new JScrollPane(tileList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        add(scrollPane);
+
+        setViewportView(tileList);
     }
 }
