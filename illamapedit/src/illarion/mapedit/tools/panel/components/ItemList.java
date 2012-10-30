@@ -28,11 +28,12 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public class ItemList extends JPanel {
+public class ItemList extends JScrollPane {
 
     private final JList<ItemImg> itemList;
 
     public ItemList() {
+        super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         itemList = new JList<ItemImg>(ItemLoader.getInstance().getTiles());
         itemList.setCellRenderer(new ItemImgCellRenderer());
@@ -43,8 +44,6 @@ public class ItemList extends JPanel {
                 EventBus.publish(new ItemSelectedEvent(itemList.getSelectedValue()));
             }
         });
-        final JScrollPane scrollPane = new JScrollPane(itemList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        add(scrollPane);
+        setViewportView(itemList);
     }
 }

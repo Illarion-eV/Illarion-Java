@@ -29,7 +29,7 @@ import java.awt.*;
 public class SingleTilePanel extends JPanel {
 
     public SingleTilePanel() {
-        setLayout(new BorderLayout());
+        super(new BorderLayout());
         final TileList list = new TileList();
         add(list, BorderLayout.CENTER);
     }

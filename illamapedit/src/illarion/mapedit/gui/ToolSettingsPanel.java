@@ -35,21 +35,20 @@ public class ToolSettingsPanel extends JPanel {
     private JComponent lastChild;
 
     public ToolSettingsPanel() {
+        super(new BorderLayout());
         AnnotationProcessor.process(this);
-        setLayout(new BorderLayout());
         setPreferredSize(new Dimension(WIDTH, 0));
     }
 
     @SuppressWarnings("unused")
     @EventSubscriber(eventClass = ToolSelectedEvent.class)
     public void onToolSelected(final ToolSelectedEvent e) {
-        if (lastChild != null) {
-            remove(lastChild);
-        }
+        LOGGER.debug("Tool Selected " + e.getTool());
+        removeAll();
         lastChild = e.getTool().getSettingsPanel();
         if (lastChild != null) {
-            add(lastChild, BorderLayout.CENTER);
             lastChild.setVisible(true);
+            add(lastChild, BorderLayout.CENTER);
         }
         validate();
         repaint();
