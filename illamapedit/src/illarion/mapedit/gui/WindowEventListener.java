@@ -32,7 +32,6 @@ public class WindowEventListener extends WindowAdapter {
 
     @Override
     public void windowClosing(final WindowEvent e) {
-        LOGGER.debug("Closing window.");
         MainFrame.getInstance().dispose();
         MapEditor.exit();
 
@@ -41,7 +40,6 @@ public class WindowEventListener extends WindowAdapter {
 
     @Override
     public void windowClosed(final WindowEvent e) {
-        LOGGER.debug("Closed window.");
         System.exit(0);
     }
 

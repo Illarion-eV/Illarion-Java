@@ -37,13 +37,13 @@ public class SplashScreen extends JPanel {
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     public static final int HEIGHT_ADJUSTMENT = 30;
     private static final int FONT_SIZE = 20;
-    private final JFrame frame;
+    private final Frame frame;
     private Image img;
     private String message;
 
     private SplashScreen() {
-        frame = new JFrame();
-        frame.setAlwaysOnTop(true);
+        frame = new Frame("Loading MapEditor");
+        frame.setAutoRequestFocus(true);
         frame.setUndecorated(true);
         frame.setBackground(TRANSPARENT);
         setBackground(TRANSPARENT);

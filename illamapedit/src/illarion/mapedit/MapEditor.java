@@ -31,6 +31,7 @@ import org.apache.log4j.*;
 import org.bushe.swing.event.EventServiceExistsException;
 import org.bushe.swing.event.EventServiceLocator;
 import org.bushe.swing.event.SwingEventService;
+import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 import javax.swing.*;
 import java.io.File;
@@ -135,7 +136,8 @@ public final class MapEditor {
         initLogging();
         initExceptionHandler();
         initEventBus();
-
+        JRibbonFrame.setDefaultLookAndFeelDecorated(true);
+        JDialog.setDefaultLookAndFeelDecorated(true);
 
         GuiController controller = new GuiController(getConfig());
         controller.initialize();

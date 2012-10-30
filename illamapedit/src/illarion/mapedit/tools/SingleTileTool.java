@@ -45,8 +45,8 @@ public class SingleTileTool extends AbstractTool {
             return;
         }
         final TileImg tile = getManager().getSelectedTile();
-        if (tile != null) {
-            MapTile newTile = new MapTile(tile.getId(), map.getTileAt(x, y));
+        if ((tile != null) && (map.getTileAt(x, y).getId() != tile.getId())) {
+            final MapTile newTile = new MapTile(tile.getId(), map.getTileAt(x, y));
             getHistory().addEntry(new TileIDChangedAction(x, y, map.getTileAt(x, y), newTile, map));
             map.setTileAt(x, y, newTile);
         }

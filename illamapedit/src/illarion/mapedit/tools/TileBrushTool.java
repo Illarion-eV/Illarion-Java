@@ -51,11 +51,15 @@ public class TileBrushTool extends AbstractTool {
                 if (!map.contains(i, j)) {
                     continue;
                 }
-                final MapTile newTile = new MapTile(tile.getId(), map.getTileAt(i, j));
-                action.addAction(new TileIDChangedAction(i, j, map.getTileAt(i, j), newTile, map));
-                map.setTileAt(i, j, newTile);
+                if (map.getTileAt(i, j).getId() != tile.getId()) {
+                    final MapTile newTile = new MapTile(tile.getId(), map.getTileAt(i, j));
+                    action.addAction(new TileIDChangedAction(i, j, map.getTileAt(i, j), newTile, map));
+                    map.setTileAt(i, j, newTile);
+                }
             }
-
+        }
+        if (!action.isEmpty()) {
+            getHistory().addEntry(action);
         }
     }
 

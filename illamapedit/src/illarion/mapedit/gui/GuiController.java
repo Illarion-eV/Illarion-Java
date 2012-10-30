@@ -20,6 +20,7 @@ package illarion.mapedit.gui;
 
 import illarion.common.config.Config;
 import illarion.mapedit.Lang;
+import illarion.mapedit.MapEditor;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.crash.exceptions.UnhandlableException;
 import illarion.mapedit.data.Map;
@@ -75,9 +76,10 @@ public class GuiController implements WindowListener {
 
     private boolean started;
 
+    private boolean saved;
+
     public GuiController(final Config config) {
         AnnotationProcessor.process(this);
-        //TODO: Remove singletons;
         splashScreen = SplashScreen.getInstance();
         mainFrame = new MainFrame(this, config);
         resourceManager = ResourceManager.getInstance();
@@ -132,6 +134,7 @@ public class GuiController implements WindowListener {
             @Override
             public void run() {
                 SubstanceLookAndFeel.setSkin("org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
+                mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
                 splashScreen.setVisible(false);
             }
@@ -190,7 +193,13 @@ public class GuiController implements WindowListener {
 
     @Override
     public void windowClosing(final WindowEvent e) {
-        //TODO: Ask for save
+        if (saved) {
+            LOGGER.debug("Closing window.");
+            mainFrame.dispose();
+            MapEditor.exit();
+        } else {
+            MapDialogs.showSaveDialog();
+        }
     }
 
     @Override
@@ -272,5 +281,9 @@ public class GuiController implements WindowListener {
 
     public HistoryManager getHistoryManager() {
         return historyManager;
+    }
+
+    public void setSaved(final boolean saved) {
+        this.saved = saved;
     }
 }

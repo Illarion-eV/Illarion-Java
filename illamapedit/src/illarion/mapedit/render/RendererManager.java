@@ -132,10 +132,11 @@ public class RendererManager {
     }
 
     public void setZoom(final float zoom) {
-        //TODO: Include zoomPoint in event.
+
         if ((zoom < .1) || (zoom > 1)) {
             return;
         }
+        //TODO: Include zoomPoint in event.
         Vector2i zoomPoint = new Vector2i(panelViewport.width / 2, panelViewport.height / 2);
 
         setZoom(zoom, zoomPoint);

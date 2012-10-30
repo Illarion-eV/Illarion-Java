@@ -61,6 +61,7 @@ public class HistoryManager {
      */
     @SuppressWarnings("nls")
     public void addEntry(final HistoryAction entry) {
+        System.out.println("add: " + entry);
         undoList.addLast(entry);
         redoList.clear();
         while (undoList.size() > MAX_HISTORY_LENGHT) {
@@ -103,6 +104,7 @@ public class HistoryManager {
     public void undo() {
         if (canUndo()) {
             final HistoryAction entry = undoList.removeLast();
+            System.out.println("Undo: " + entry);
             entry.undo();
             redoList.addLast(entry);
         }

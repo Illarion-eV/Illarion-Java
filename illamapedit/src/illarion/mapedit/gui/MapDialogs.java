@@ -35,7 +35,6 @@ import java.io.IOException;
 /**
  * @author Tim
  */
-//TODO: Show them in an own Task (IO or something)
 public class MapDialogs {
     private static final int UNSIGNED_MAX = 100000;
     private static final int SIGNED_MAX = 10000;
@@ -147,5 +146,9 @@ public class MapDialogs {
             return null;
         }
         return MapIO.loadMap(dir.getPath(), list.getSelectedValue());
+    }
+
+    public static void showSaveDialog() {
+
     }
 }

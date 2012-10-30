@@ -48,4 +48,8 @@ public class GroupAction extends HistoryAction {
             a.undo();
         }
     }
+
+    public boolean isEmpty() {
+        return actions.isEmpty();
+    }
 }
