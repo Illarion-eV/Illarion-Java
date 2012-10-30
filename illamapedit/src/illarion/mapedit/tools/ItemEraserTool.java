@@ -21,6 +21,8 @@ package illarion.mapedit.tools;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
+import illarion.mapedit.history.GroupAction;
+import illarion.mapedit.history.ItemPlacedAction;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.swing.*;
@@ -30,12 +32,18 @@ import java.util.List;
  * @author Tim
  */
 public class ItemEraserTool extends AbstractTool {
+
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
         if (!map.contains(x, y)) {
             return;
         }
         final List<MapItem> items = map.getTileAt(x, y).getMapItems();
+        final GroupAction action = new GroupAction();
+        for (final MapItem item : items) {
+            action.addAction(new ItemPlacedAction(x, y, item, null, map));
+        }
+        getHistory().addEntry(action);
         items.clear();
     }
 

@@ -19,25 +19,34 @@
 package illarion.mapedit.history;
 
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapWarpPoint;
 
 /**
  * @author Tim
  */
-public abstract class HistoryAction {
+public class WarpPlacedAction extends HistoryAction {
 
-    protected final Map map;
 
-    protected HistoryAction(final Map map) {
-        this.map = map;
+    private final int x;
+    private final int y;
+    private final MapWarpPoint old;
+    private final MapWarpPoint newt;
+
+    public WarpPlacedAction(final int x, final int y, final MapWarpPoint old, final MapWarpPoint newt, final Map map) {
+        super(map);
+        this.x = x;
+        this.y = y;
+        this.old = old;
+        this.newt = newt;
     }
 
-    /**
-     * Perform the action again.
-     */
-    abstract void redo();
+    @Override
+    public void redo() {
+        map.getTileAt(x, y).setMapWarpPoint(newt);
+    }
 
-    /**
-     * Undo the action.
-     */
-    abstract void undo();
+    @Override
+    public void undo() {
+        map.getTileAt(x, y).setMapWarpPoint(old);
+    }
 }

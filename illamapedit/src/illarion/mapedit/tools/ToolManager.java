@@ -26,6 +26,7 @@ import illarion.mapedit.events.map.MapDragFinishedEvent;
 import illarion.mapedit.events.map.MapDraggedEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.gui.GuiController;
+import illarion.mapedit.history.HistoryManager;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.TileImg;
@@ -42,13 +43,12 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 public final class ToolManager implements Disposable {
     private static final Logger LOGGER = Logger.getLogger(ToolManager.class);
 
-
-    private AbstractTool actualTool;
-
-    private TileImg selectedTile;
-    private ItemImg selectedItem;
     private final GuiController controller;
     private final RendererManager renderer;
+
+    private AbstractTool actualTool;
+    private TileImg selectedTile;
+    private ItemImg selectedItem;
 
     public ToolManager(final GuiController controller, final RendererManager renderer) {
         this.controller = controller;
@@ -85,6 +85,7 @@ public final class ToolManager implements Disposable {
         return controller;
     }
 
+
     @EventSubscriber
     public void clickedAt(final MapClickedEvent e) {
         if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
@@ -109,14 +110,12 @@ public final class ToolManager implements Disposable {
     @EventSubscriber
     public void onTileSelected(final TileSelectedEvent e) {
         selectedTile = e.getTileImg();
-        LOGGER.debug("Selected: " + e.getTileImg().getName());
     }
 
 
     @EventSubscriber
     public void onItemSelected(final ItemSelectedEvent e) {
         selectedItem = e.getItemImg();
-        LOGGER.debug("Selected: " + e.getItemImg());
     }
 
     @EventSubscriber
@@ -124,4 +123,7 @@ public final class ToolManager implements Disposable {
         setTool(e.getTool());
     }
 
+    public HistoryManager getHistory() {
+        return controller.getHistoryManager();
+    }
 }

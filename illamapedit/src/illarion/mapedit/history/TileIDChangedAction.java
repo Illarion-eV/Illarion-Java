@@ -22,49 +22,30 @@ import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
 
 /**
- * This history action is used when a tile of the map is changed to another tile.
- *
  * @author Tim
  */
-public class TileChangedAction implements HistoryAction {
+public class TileIDChangedAction extends HistoryAction {
 
     private final int x;
     private final int y;
-    /**
-     * The new tile.
-     */
-    private final MapTile newTile;
-    /**
-     * The old tile.
-     */
-    private final MapTile oldTile;
-    /**
-     * The map, on which these changes happened.
-     */
-    private final Map map;
+    private final MapTile old;
+    private final MapTile newt;
 
-    public TileChangedAction(final int x, final int y, final MapTile newTile, final MapTile oldTile, final Map map) {
+    public TileIDChangedAction(final int x, final int y, final MapTile old, final MapTile newt, final Map map) {
+        super(map);
         this.x = x;
         this.y = y;
-        this.newTile = newTile;
-        this.oldTile = oldTile;
-        this.map = map;
-
+        this.old = old;
+        this.newt = newt;
     }
 
-    /**
-     * Undoes the action.
-     */
     @Override
     public void redo() {
-        map.setTileAt(x, y, newTile);
+        map.setTileAt(x, y, new MapTile(newt.getId(), map.getTileAt(x, y)));
     }
 
-    /**
-     * Redoes the action.
-     */
     @Override
     public void undo() {
-        map.setTileAt(x, y, oldTile);
+        map.setTileAt(x, y, new MapTile(old.getId(), map.getTileAt(x, y)));
     }
 }

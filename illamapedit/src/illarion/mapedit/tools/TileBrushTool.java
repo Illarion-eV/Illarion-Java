@@ -21,6 +21,8 @@ package illarion.mapedit.tools;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.history.GroupAction;
+import illarion.mapedit.history.TileIDChangedAction;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.tools.panel.TileBrushPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -43,12 +45,15 @@ public class TileBrushTool extends AbstractTool {
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
         final TileImg tile = getManager().getSelectedTile();
+        final GroupAction action = new GroupAction();
         for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
             for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
                 if (!map.contains(i, j)) {
                     continue;
                 }
-                map.setTileAt(i, j, new MapTile(tile.getId(), map.getTileAt(i, j)));
+                final MapTile newTile = new MapTile(tile.getId(), map.getTileAt(i, j));
+                action.addAction(new TileIDChangedAction(i, j, map.getTileAt(i, j), newTile, map));
+                map.setTileAt(i, j, newTile);
             }
 
         }

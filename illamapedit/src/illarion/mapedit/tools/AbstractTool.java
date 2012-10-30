@@ -19,6 +19,7 @@
 package illarion.mapedit.tools;
 
 import illarion.mapedit.data.Map;
+import illarion.mapedit.history.HistoryManager;
 import illarion.mapedit.tools.panel.SettingsChangedListener;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -31,6 +32,8 @@ import javax.swing.*;
 public abstract class AbstractTool implements SettingsChangedListener {
 
     protected static final Logger LOGGER = Logger.getLogger(AbstractTool.class);
+
+    private HistoryManager history;
 
     private ToolManager manager;
 
@@ -50,11 +53,16 @@ public abstract class AbstractTool implements SettingsChangedListener {
 
     public final void registerManager(final ToolManager toolManager) {
         manager = toolManager;
+        history = toolManager.getHistory();
     }
 
 
     protected final ToolManager getManager() {
         return manager;
+    }
+
+    protected final HistoryManager getHistory() {
+        return history;
     }
 
     @Override

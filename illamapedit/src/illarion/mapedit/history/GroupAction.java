@@ -18,26 +18,34 @@
  */
 package illarion.mapedit.history;
 
-import illarion.mapedit.data.Map;
+import javolution.util.FastList;
 
 /**
  * @author Tim
  */
-public abstract class HistoryAction {
+public class GroupAction extends HistoryAction {
+    private final FastList<HistoryAction> actions;
 
-    protected final Map map;
-
-    protected HistoryAction(final Map map) {
-        this.map = map;
+    public GroupAction() {
+        super(null);
+        actions = new FastList<HistoryAction>();
     }
 
-    /**
-     * Perform the action again.
-     */
-    abstract void redo();
+    public void addAction(final HistoryAction action) {
+        actions.add(action);
+    }
 
-    /**
-     * Undo the action.
-     */
-    abstract void undo();
+    @Override
+    public void redo() {
+        for (HistoryAction a : actions) {
+            a.redo();
+        }
+    }
+
+    @Override
+    public void undo() {
+        for (HistoryAction a : actions) {
+            a.undo();
+        }
+    }
 }

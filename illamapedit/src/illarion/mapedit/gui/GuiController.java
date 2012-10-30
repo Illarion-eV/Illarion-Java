@@ -31,6 +31,7 @@ import illarion.mapedit.events.menu.MapNewEvent;
 import illarion.mapedit.events.menu.MapOpenEvent;
 import illarion.mapedit.events.menu.MapSaveEvent;
 import illarion.mapedit.events.menu.MapSelectedEvent;
+import illarion.mapedit.history.HistoryManager;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.ResourceManager;
 import illarion.mapedit.resource.loaders.ImageLoader;
@@ -38,6 +39,7 @@ import illarion.mapedit.resource.loaders.ItemLoader;
 import illarion.mapedit.resource.loaders.TextureLoaderAwt;
 import illarion.mapedit.resource.loaders.TileLoader;
 import illarion.mapedit.util.SwingLocation;
+import javolution.util.FastList;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -45,15 +47,17 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 import javax.swing.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class should contain the model, and control the view, nicely separated from each other.
  *
  * @author Tim
  */
-public class GuiController {
+public class GuiController implements WindowListener {
 
     private static final Logger LOGGER = Logger.getLogger(GuiController.class);
 
@@ -63,7 +67,9 @@ public class GuiController {
 
     private final ResourceManager resourceManager;
 
-    private final ArrayList<Map> maps;
+    private final List<Map> maps;
+
+    private final HistoryManager historyManager;
 
     private Map selected;
 
@@ -75,7 +81,8 @@ public class GuiController {
         splashScreen = SplashScreen.getInstance();
         mainFrame = new MainFrame(this, config);
         resourceManager = ResourceManager.getInstance();
-        maps = new ArrayList<Map>(1);
+        historyManager = new HistoryManager();
+        maps = new FastList<Map>(1);
     }
 
     public void start() {
@@ -108,7 +115,7 @@ public class GuiController {
         }
     }
 
-    public ArrayList<Map> getMaps() {
+    public List<Map> getMaps() {
         return maps;
     }
 
@@ -157,6 +164,58 @@ public class GuiController {
         }
         EventBus.publish(new UpdateMapListEvent(maps));
         EventBus.publish(new RepaintRequestEvent());
+    }
+
+
+    @EventSubscriber
+    public void onMapSelected(final MapSelectedEvent e) {
+        selected = maps.get(e.getIndex());
+        int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
+        int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
+        RendererManager manager = mainFrame.getRendererManager();
+        manager.setSelectedLevel(selected.getZ());
+        manager.setTranslationX(-x);
+        manager.setTranslationY(-y);
+        manager.setDefaultTranslationX(-x);
+        manager.setDefaultTranslationY(-y);
+
+        EventBus.publish(new RepaintRequestEvent());
+    }
+
+
+    @Override
+    public void windowOpened(final WindowEvent e) {
+        //DO NOTHING
+    }
+
+    @Override
+    public void windowClosing(final WindowEvent e) {
+        //TODO: Ask for save
+    }
+
+    @Override
+    public void windowClosed(final WindowEvent e) {
+        //TODO: Close
+    }
+
+    @Override
+    public void windowIconified(final WindowEvent e) {
+        //DO NOTHING
+    }
+
+    @Override
+    public void windowDeiconified(final WindowEvent e) {
+        //DO NOTHING
+    }
+
+    @Override
+    public void windowActivated(final WindowEvent e) {
+        //DO NOTHING
+    }
+
+    @Override
+    public void windowDeactivated(final WindowEvent e) {
+
     }
 
     @EventSubscriber
@@ -211,20 +270,7 @@ public class GuiController {
 
     }
 
-    @EventSubscriber
-    public void onMapSelected(final MapSelectedEvent e) {
-        selected = maps.get(e.getIndex());
-        int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
-        int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
-        RendererManager manager = mainFrame.getRendererManager();
-        manager.setSelectedLevel(selected.getZ());
-        manager.setTranslationX(-x);
-        manager.setTranslationY(-y);
-        manager.setDefaultTranslationX(-x);
-        manager.setDefaultTranslationY(-y);
-
-        EventBus.publish(new RepaintRequestEvent());
+    public HistoryManager getHistoryManager() {
+        return historyManager;
     }
-
-
 }

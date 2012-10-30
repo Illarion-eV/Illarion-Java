@@ -18,59 +18,38 @@
  */
 package illarion.mapedit.history;
 
-import illarion.mapedit.MapEditor;
+import illarion.mapedit.events.HistoryEvent;
+import illarion.mapedit.events.map.RepaintRequestEvent;
 import javolution.util.FastList;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 
 /**
  * The HistoryManager class stores the chain of all history entries that are connected
  * to this history and allows undoing and redoing this actions.
+ * TODO: Non-Singleton
+ * TODO: USE IT!!
  *
- * @author Martin Karing
+ * @author Martin Karing, Tim
  * @since 0.99
  */
 public class HistoryManager {
-    /**
-     * The singleton instance of the history class that is only used in case
-     * there is a global history.
-     */
-    private static HistoryManager instance;
-
+    private static final int MAX_HISTORY_LENGHT = 100;
     /**
      * The list of history entries that can be done again.
      */
-    private final FastList<HistoryEntry> redoList;
+    private final FastList<HistoryAction> redoList;
 
     /**
      * The list of history entries that can be undone.
      */
-    private final FastList<HistoryEntry> undoList;
+    private final FastList<HistoryAction> undoList;
 
-    /**
-     * Private constructor to prepare the history to work and not avoid any
-     * instances created outside the {@link #getInstance()} method.
-     */
-    private HistoryManager() {
-        undoList = new FastList<HistoryEntry>();
-        redoList = new FastList<HistoryEntry>();
-    }
-
-    /**
-     * Get a instance of the history class. In case the configuration is set to
-     * use a global history always the same history is returned. Else new
-     * instances are created at every call.
-     *
-     * @return the singleton instance of this class or a new instance, depending
-     *         on the configuration settings
-     */
-    @SuppressWarnings("nls")
-    public static HistoryManager getInstance() {
-        if (MapEditor.getConfig().getBoolean("globalHist")) {
-            if (instance == null) {
-                instance = new HistoryManager();
-            }
-            return instance;
-        }
-        return new HistoryManager();
+    public HistoryManager() {
+        AnnotationProcessor.process(this);
+        undoList = new FastList<HistoryAction>();
+        redoList = new FastList<HistoryAction>();
     }
 
     /**
@@ -81,12 +60,10 @@ public class HistoryManager {
      * @param entry the entry to add to this list
      */
     @SuppressWarnings("nls")
-    public void addEntry(final HistoryEntry entry) {
+    public void addEntry(final HistoryAction entry) {
         undoList.addLast(entry);
         redoList.clear();
-        final int maxLength =
-                MapEditor.getConfig().getInteger("historyLength");
-        while (undoList.size() > maxLength) {
+        while (undoList.size() > MAX_HISTORY_LENGHT) {
             undoList.removeFirst();
         }
     }
@@ -114,7 +91,7 @@ public class HistoryManager {
      */
     public void redo() {
         if (canRedo()) {
-            final HistoryEntry entry = redoList.removeLast();
+            final HistoryAction entry = redoList.removeLast();
             entry.redo();
             undoList.addLast(entry);
         }
@@ -125,9 +102,19 @@ public class HistoryManager {
      */
     public void undo() {
         if (canUndo()) {
-            final HistoryEntry entry = undoList.removeLast();
+            final HistoryAction entry = undoList.removeLast();
             entry.undo();
             redoList.addLast(entry);
         }
+    }
+
+    @EventSubscriber
+    public void onHistoryEvent(final HistoryEvent e) {
+        if (e.isUndo()) {
+            undo();
+        } else {
+            redo();
+        }
+        EventBus.publish(new RepaintRequestEvent());
     }
 }

@@ -21,6 +21,7 @@ package illarion.mapedit.tools;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.history.TileIDChangedAction;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.tools.panel.SingleTilePanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -45,7 +46,9 @@ public class SingleTileTool extends AbstractTool {
         }
         final TileImg tile = getManager().getSelectedTile();
         if (tile != null) {
-            map.setTileAt(x, y, new MapTile(tile.getId(), map.getTileAt(x, y)));
+            MapTile newTile = new MapTile(tile.getId(), map.getTileAt(x, y));
+            getHistory().addEntry(new TileIDChangedAction(x, y, map.getTileAt(x, y), newTile, map));
+            map.setTileAt(x, y, newTile);
         }
     }
 

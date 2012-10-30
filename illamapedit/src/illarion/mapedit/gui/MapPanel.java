@@ -51,7 +51,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     private int clickY;
     private int downClickX;
     private int downClickY;
-    private ToolManager toolManager;
+    private final ToolManager toolManager;
     private final GuiController controller;
 
     public MapPanel(final GuiController controller) {

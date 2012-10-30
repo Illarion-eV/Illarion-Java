@@ -21,6 +21,7 @@ package illarion.mapedit.tools;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
+import illarion.mapedit.history.ItemPlacedAction;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.tools.panel.SingleItemPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -49,6 +50,7 @@ public class SingleItemTool extends AbstractTool {
             final List<MapItem> items = map.getTileAt(x, y).getMapItems();
             final MapItem i = new MapItem(item.getItemId(), "", 0);
             if (!items.contains(i)) {
+                getHistory().addEntry(new ItemPlacedAction(x, y, null, i, map));
                 items.add(i);
             }
         }
