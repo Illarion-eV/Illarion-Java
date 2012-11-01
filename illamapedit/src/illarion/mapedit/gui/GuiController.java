@@ -35,10 +35,7 @@ import illarion.mapedit.events.menu.MapSelectedEvent;
 import illarion.mapedit.history.HistoryManager;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.ResourceManager;
-import illarion.mapedit.resource.loaders.ImageLoader;
-import illarion.mapedit.resource.loaders.ItemLoader;
-import illarion.mapedit.resource.loaders.TextureLoaderAwt;
-import illarion.mapedit.resource.loaders.TileLoader;
+import illarion.mapedit.resource.loaders.*;
 import illarion.mapedit.util.SwingLocation;
 import javolution.util.FastList;
 import org.apache.log4j.Logger;
@@ -103,7 +100,8 @@ public class GuiController implements WindowListener {
                 ImageLoader.getInstance(),
                 TextureLoaderAwt.getInstance(),
                 TileLoader.getInstance(),
-                ItemLoader.getInstance()
+                ItemLoader.getInstance(),
+                OverlayLoader.getInstance()
         );
         while (resourceManager.hasNextToLoad()) {
             try {
@@ -208,6 +206,7 @@ public class GuiController implements WindowListener {
 
     @Override
     public void windowClosed(final WindowEvent e) {
+        LOGGER.debug("Exit");
         System.exit(0);
     }
 
@@ -228,7 +227,7 @@ public class GuiController implements WindowListener {
 
     @Override
     public void windowDeactivated(final WindowEvent e) {
-
+        //DO NOTHING
     }
 
     @EventSubscriber
