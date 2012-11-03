@@ -408,7 +408,7 @@ public final class LuaWriter {
 
                 final Calendar cal = Calendar.getInstance();
                 final SimpleDateFormat sdf = new SimpleDateFormat("MMMMM dd, yyyy", Locale.ENGLISH);
-                target.write(String.format("-- %1$-47s%2$27s --%n", "Last parsing: " + sdf.format(cal.getTime()),
+                target.write(String.format("-- %1$-47s%2$27s --%n", "",
                         Parser.FULLNAME));
 
                 target.write(commentSepLine);

@@ -358,8 +358,7 @@ public final class EasyNpcWriter {
                 final SimpleDateFormat sdf =
                         new SimpleDateFormat("MMMMM dd, yyyy", Locale.ENGLISH);
                 target.write(String.format("-- %1$-47s%2$27s --%n",
-                        "Last parsing: " + sdf.format(cal.getTime()),
-                        illarion.easynpc.Parser.FULLNAME));
+                        "", illarion.easynpc.Parser.FULLNAME));
 
                 target
                         .write("--------------------------------------------------------------------------------");
