@@ -150,6 +150,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
         return imgs;
     }
 
+    //TODO: Improve this
     public TileImg getTileFromId(final int id) {
         for (final TileImg t : tiles) {
             if (t.getId() == id) {

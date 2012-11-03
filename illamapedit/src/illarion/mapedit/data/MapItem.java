@@ -18,12 +18,14 @@
  */
 package illarion.mapedit.data;
 
+import javolution.lang.Immutable;
+
 /**
  * Represents a single item, with a position, an id, a quality, and data.
  *
  * @author Tim
  */
-public class MapItem {
+public class MapItem implements Immutable {
     /**
      * Represents a not existing qualtity
      */
@@ -106,9 +108,10 @@ public class MapItem {
 
     @Override
     public boolean equals(final Object obj) {
-        if (getClass() != obj.getClass())
+        if (getClass() != obj.getClass()) {
             return false;
-        MapItem it = (MapItem) obj;
+        }
+        final MapItem it = (MapItem) obj;
         return it.itemId == itemId;
     }
 }

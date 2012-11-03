@@ -18,18 +18,26 @@
  */
 package illarion.mapedit.resource;
 
+import java.awt.*;
+
 /**
  * @author Tim
  */
 public class Overlay {
+    private static final int BASE_MASK = 0x001F;
+    private static final int OVERLAY_MASK = 0x03E0;
+    private static final int SHAPE_MASK = 0xFC00;
+
     private final int tileID;
     private final String fileName;
-    private final String layer;
+    private final int layer;
+    private final Image[] imgs;
 
-    public Overlay(final int tileID, final String fileName, final String layer) {
+    public Overlay(final int tileID, final String fileName, final int layer, final Image[] imgs) {
         this.tileID = tileID;
         this.fileName = fileName;
         this.layer = layer;
+        this.imgs = imgs;
     }
 
     public int getTileID() {
@@ -40,7 +48,51 @@ public class Overlay {
         return fileName;
     }
 
-    public String getLayer() {
+    public int getLayer() {
         return layer;
     }
+
+    public Image[] getImgs() {
+        return imgs;
+    }
+
+    /**
+     * Returns the overlay id of the tile
+     *
+     * @param id
+     * @return
+     */
+    public static int overlayID(final int id) {
+        if ((id & SHAPE_MASK) > 0) {
+            return (id & OVERLAY_MASK) >> 5;
+        }
+        return 0;
+    }
+
+    public static int shapeID(final int id) {
+        final int shape = (id & SHAPE_MASK) >> 10;
+        if (shape <= 0) {
+            return 0;
+        }
+        return shape;
+    }
+
+    /**
+     * Return the base id of a tile
+     *
+     * @param id
+     * @return
+     */
+    public static int baseID(final int id) {
+        if ((id & SHAPE_MASK) > 0) {
+            return id & BASE_MASK;
+        }
+        return id;
+    }
+
+    public static int generateTileId(final int baseId, final int overlayId, final int shapeId) {
+        return (baseId & BASE_MASK) | ((overlayId << 5) & OVERLAY_MASK) | ((shapeId << 10) & SHAPE_MASK);
+    }
+
+
 }

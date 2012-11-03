@@ -22,10 +22,8 @@ import illarion.common.config.Config;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
-import illarion.mapedit.crash.exceptions.UnhandlableException;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapIO;
-import illarion.mapedit.events.MessageStringEvent;
 import illarion.mapedit.events.UpdateMapListEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.events.menu.MapNewEvent;
@@ -35,7 +33,7 @@ import illarion.mapedit.events.menu.MapSelectedEvent;
 import illarion.mapedit.history.HistoryManager;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.ResourceManager;
-import illarion.mapedit.resource.loaders.*;
+import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
 import javolution.util.FastList;
 import org.apache.log4j.Logger;
@@ -90,31 +88,9 @@ public class GuiController implements WindowListener {
             throw new IllegalStateException("The Controller can't be started twice");
         }
         started = true;
-
-        loadResources();
         startGui();
     }
 
-    private void loadResources() {
-        resourceManager.addResources(
-                ImageLoader.getInstance(),
-                TextureLoaderAwt.getInstance(),
-                TileLoader.getInstance(),
-                ItemLoader.getInstance(),
-                OverlayLoader.getInstance()
-        );
-        while (resourceManager.hasNextToLoad()) {
-            try {
-                LOGGER.debug("Loading " + resourceManager.getNextDescription());
-                EventBus.publish(new MessageStringEvent("Loading " + resourceManager.getNextDescription()));
-                resourceManager.loadNext();
-            } catch (IOException e) {
-                LOGGER.warn(resourceManager.getPrevDescription() + " failed!");
-//                Crash the editor
-                throw new UnhandlableException("Can't load " + resourceManager.getPrevDescription(), e);
-            }
-        }
-    }
 
     public List<Map> getMaps() {
         return maps;

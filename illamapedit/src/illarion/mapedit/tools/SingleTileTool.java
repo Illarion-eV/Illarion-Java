@@ -18,10 +18,12 @@
  */
 package illarion.mapedit.tools;
 
+import illarion.common.util.Location;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.history.TileIDChangedAction;
+import illarion.mapedit.processing.MapTransitions;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.tools.panel.SingleTilePanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -45,11 +47,17 @@ public class SingleTileTool extends AbstractTool {
             return;
         }
         final TileImg tile = getManager().getSelectedTile();
-        if ((tile != null) && (map.getTileAt(x, y).getId() != tile.getId())) {
-            final MapTile newTile = new MapTile(tile.getId(), map.getTileAt(x, y));
-            getHistory().addEntry(new TileIDChangedAction(x, y, map.getTileAt(x, y), newTile, map));
-            map.setTileAt(x, y, newTile);
+
+        if ((tile == null) || (map.getTileAt(x, y).getId() == tile.getId())) {
+            return;
         }
+        final int tileId = tile.getId();
+
+        final MapTile newTile = new MapTile(tileId, map.getTileAt(x, y));
+        getHistory().addEntry(new TileIDChangedAction(x, y, map.getTileAt(x, y), newTile, map));
+        map.setTileAt(x, y, newTile);
+        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y));
+
     }
 
     @Override

@@ -35,7 +35,7 @@ public class ItemList extends JScrollPane {
     public ItemList() {
         super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        itemList = new JList<ItemImg>(ItemLoader.getInstance().getTiles());
+        itemList = new JList<ItemImg>(ItemLoader.getInstance().getItems());
         itemList.setCellRenderer(new ItemImgCellRenderer());
         itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         itemList.addListSelectionListener(new ListSelectionListener() {

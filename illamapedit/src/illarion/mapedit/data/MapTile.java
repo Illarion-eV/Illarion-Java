@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.data;
 
+import illarion.mapedit.resource.Overlay;
 import javolution.util.FastList;
 
 import java.util.List;
@@ -33,6 +34,14 @@ public class MapTile {
      */
     private final int id;
     /**
+     * The ID of the overlay.
+     */
+    private final int overlayID;
+    /**
+     * The id of the shape
+     */
+    private final int shapeID;
+    /**
      * The music id.
      */
     private final int musicID;
@@ -45,17 +54,27 @@ public class MapTile {
      */
     private MapWarpPoint mapWarpPoint;
 
+    public MapTile(final int baseId, final int overlayID, final int shapeID, final int musicID,
+                   final List<MapItem> mapItems, final MapWarpPoint mapWarpPoint) {
+        id = baseId;
+        this.overlayID = overlayID;
+        this.shapeID = shapeID;
+        this.musicID = musicID;
+        this.mapWarpPoint = mapWarpPoint;
+        this.mapItems = new FastList<MapItem>();
+        if (mapItems != null) {
+            this.mapItems.addAll(mapItems);
+        }
+    }
+
     /**
      * Creates a new tile with the coordinates, the id and the music id.
      *
      * @param id
      * @param musicID
      */
-    public MapTile(final int id, final int musicID) {
-        this.id = id;
-        this.musicID = musicID;
-        mapItems = new FastList<MapItem>();
-        mapWarpPoint = null;
+    public MapTile(final int id, final int overlayID, final int shapeID, final int musicID) {
+        this(id, overlayID, shapeID, musicID, null, null);
     }
 
     /**
@@ -64,23 +83,24 @@ public class MapTile {
      * @param old
      */
     public MapTile(final MapTile old) {
-        id = old.id;
-        musicID = old.musicID;
-        mapItems = new FastList<MapItem>(old.mapItems);
-        mapWarpPoint = old.mapWarpPoint;
+        this(old.id, old.overlayID, old.shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
     }
 
-    /**
-     * Creates a copy of the other tile but with a different id.
-     *
-     * @param id  the new id
-     * @param old the old tile.
-     */
     public MapTile(final int id, final MapTile old) {
-        this.id = id;
-        musicID = old.musicID;
-        mapItems = new FastList<MapItem>(old.mapItems);
-        mapWarpPoint = old.mapWarpPoint;
+        this((Overlay.shapeID(id) == 0) ? id : Overlay.baseID(id),
+                (Overlay.shapeID(id) == 0) ? 0 : Overlay.overlayID(id),
+                Overlay.shapeID(id),
+                old.musicID,
+                old.mapItems,
+                old.mapWarpPoint);
+    }
+
+    public MapTile(final int overlayID, final int shapeID, MapTile old) {
+        this(old.id, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
+    }
+
+    public MapTile(final int baseID, final int overlayID, final int shapeID, MapTile old) {
+        this(baseID, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
     }
 
     /**
@@ -102,6 +122,8 @@ public class MapTile {
     }
 
     /**
+     * TODO: Remove that
+     *
      * @return The list of items on this tile.
      */
     public List<MapItem> getMapItems() {
@@ -113,6 +135,14 @@ public class MapTile {
      */
     public MapWarpPoint getMapWarpPoint() {
         return mapWarpPoint;
+    }
+
+    public int getOverlayID() {
+        return overlayID;
+    }
+
+    public int getShapeID() {
+        return shapeID;
     }
 
     /**

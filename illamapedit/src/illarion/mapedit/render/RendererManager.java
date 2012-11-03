@@ -71,6 +71,7 @@ public class RendererManager {
         renderers.add(new TileRenderer(this));
         renderers.add(new ItemRenderer(this));
         renderers.add(new MusicRenderer(this));
+        renderers.add(new OverlayRenderer(this));
         Collections.sort(renderers);
     }
 

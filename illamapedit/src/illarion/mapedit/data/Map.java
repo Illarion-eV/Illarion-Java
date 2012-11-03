@@ -19,6 +19,8 @@
 package illarion.mapedit.data;
 
 
+import illarion.common.util.Location;
+
 /**
  * This class represents a whole map, including name, path, dimensions, and data.
  *
@@ -92,6 +94,10 @@ public class Map {
         mapTileData[i] = mapTile;
     }
 
+    public void setTileAt(final Location loc, final MapTile mapTile) {
+        setTileAt(loc.getRow(), loc.getCol(), mapTile);
+    }
+
     /**
      * Adds an item to a specified position.
      *
@@ -124,13 +130,20 @@ public class Map {
      * @return the tile
      */
     public MapTile getTileAt(final int x, final int y) {
+        if (!contains(x, y)) {
+            return null;
+        }
         final int i = (y * width) + x;
         if (mapTileData[i] != null) {
             return mapTileData[i];
         }
-        setTileAt(x, y, new MapTile(0, 0));
+        setTileAt(x, y, new MapTile(0, 0, 0, 0));
         return getTileAt(x, y);
 
+    }
+
+    public MapTile getTileAt(final Location loc) {
+        return getTileAt(loc.getRow(), loc.getCol());
     }
 
     /**
@@ -201,4 +214,6 @@ public class Map {
         final Map map = (Map) obj;
         return name.equals(map.name) && path.equals(map.path);
     }
+
+
 }

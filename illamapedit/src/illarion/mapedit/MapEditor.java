@@ -23,11 +23,16 @@ import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
+import illarion.mapedit.crash.exceptions.UnhandlableException;
+import illarion.mapedit.events.MessageStringEvent;
 import illarion.mapedit.gui.GuiController;
 import illarion.mapedit.gui.MainFrame;
 import illarion.mapedit.gui.SplashScreen;
+import illarion.mapedit.resource.ResourceManager;
+import illarion.mapedit.resource.loaders.*;
 import illarion.mapedit.util.JavaLogToLog4J;
 import org.apache.log4j.*;
+import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventServiceExistsException;
 import org.bushe.swing.event.EventServiceLocator;
 import org.bushe.swing.event.SwingEventService;
@@ -138,7 +143,7 @@ public final class MapEditor {
         initEventBus();
         JRibbonFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
-
+        loadResources();
         GuiController controller = new GuiController(getConfig());
         controller.initialize();
         instance = new MapEditor();
@@ -146,6 +151,28 @@ public final class MapEditor {
         Scheduler.getInstance().start();
 
         controller.start();
+    }
+
+    private static void loadResources() {
+        ResourceManager resourceManager = ResourceManager.getInstance();
+        resourceManager.addResources(
+                ImageLoader.getInstance(),
+                TextureLoaderAwt.getInstance(),
+                TileLoader.getInstance(),
+                ItemLoader.getInstance(),
+                OverlayLoader.getInstance()
+        );
+        while (resourceManager.hasNextToLoad()) {
+            try {
+                LOGGER.debug("Loading " + resourceManager.getNextDescription());
+                EventBus.publish(new MessageStringEvent("Loading " + resourceManager.getNextDescription()));
+                resourceManager.loadNext();
+            } catch (IOException e) {
+                LOGGER.warn(resourceManager.getPrevDescription() + " failed!");
+//                Crash the editor
+                throw new UnhandlableException("Can't load " + resourceManager.getPrevDescription(), e);
+            }
+        }
     }
 
     private static void initExceptionHandler() {
@@ -205,10 +232,10 @@ public final class MapEditor {
      */
     @SuppressWarnings("nls")
     private static void initLogging() {
-        java.util.logging.Logger logger = java.util.logging.Logger.getGlobal();
+        final java.util.logging.Logger logger = java.util.logging.Logger.getGlobal();
         //Remove Console handler
-        Handler[] handlers = logger.getHandlers();
-        for (Handler handler : handlers) {
+        final Handler[] handlers = logger.getHandlers();
+        for (final Handler handler : handlers) {
             logger.removeHandler(handler);
         }
         logger.addHandler(new JavaLogToLog4J());

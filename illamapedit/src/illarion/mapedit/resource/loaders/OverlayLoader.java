@@ -18,12 +18,13 @@
  */
 package illarion.mapedit.resource.loaders;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.common.util.TableLoaderOverlay;
 import illarion.common.util.TableLoaderSink;
 import illarion.mapedit.resource.Overlay;
 import illarion.mapedit.resource.Resource;
-import javolution.util.FastList;
 
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -32,8 +33,10 @@ import java.io.IOException;
 public class OverlayLoader implements TableLoaderSink<TableLoaderOverlay>, Resource {
 
     private static final OverlayLoader INSTANCE = new OverlayLoader();
+    private static final int SHAPE_COUNT = 28;
+    private static final String DIR_IMG_TILES = "data/tiles/";
 
-    private final FastList<Overlay> overlays = new FastList<Overlay>();
+    private final TIntObjectHashMap<Overlay> overlays = new TIntObjectHashMap<Overlay>();
 
 
     public static OverlayLoader getInstance() {
@@ -52,7 +55,21 @@ public class OverlayLoader implements TableLoaderSink<TableLoaderOverlay>, Resou
 
     @Override
     public boolean processRecord(final int line, final TableLoaderOverlay loader) {
-        overlays.add(new Overlay(loader.getTileId(), loader.getOverlayFile(), loader.getLayer()));
+        Image[] imgs = new Image[SHAPE_COUNT];
+        for (int i = 0; i < SHAPE_COUNT; i++) {
+            imgs[i] = TextureLoaderAwt.getInstance().
+                    getTexture(String.format("%s%s-%d.png", DIR_IMG_TILES, loader.getOverlayFile(), i));
+        }
+        overlays.put(loader.getTileId(), new Overlay(loader.getTileId(), loader.getOverlayFile(),
+                loader.getLayer(), imgs));
         return true;
+    }
+
+    //TODO: Improve this
+    public Overlay getOverlayFromId(final int id) {
+        if (overlays.contains(id)) {
+            return overlays.get(id);
+        }
+        return null;
     }
 }

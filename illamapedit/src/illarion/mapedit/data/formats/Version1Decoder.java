@@ -23,6 +23,7 @@ import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.data.MapWarpPoint;
+import illarion.mapedit.resource.Overlay;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -107,7 +108,12 @@ public class Version1Decoder implements Decoder {
         final int ty = Integer.parseInt(sections[1]);
         final int tid = Integer.parseInt(sections[2]);
         final int tmid = Integer.parseInt(sections[3]);
-        final MapTile tile = new MapTile(tid, tmid);
+        final MapTile tile;
+        if (Overlay.shapeID(tid) == 0) {
+            tile = new MapTile(tid, 0, 0, tmid);
+        } else {
+            tile = new MapTile(Overlay.baseID(tid), Overlay.overlayID(tid), Overlay.shapeID(tid), tmid);
+        }
         map.setTileAt(tx, ty, tile);
     }
 

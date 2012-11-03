@@ -52,6 +52,12 @@ public class TileBrushPanel extends JPanel {
                 listener.settingsChanged();
             }
         });
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                listener.settingsChanged();
+            }
+        });
     }
 
     public int getRadius() {

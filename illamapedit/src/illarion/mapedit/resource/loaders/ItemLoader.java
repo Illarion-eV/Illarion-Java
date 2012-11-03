@@ -18,12 +18,12 @@
  */
 package illarion.mapedit.resource.loaders;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.util.TableLoaderItems;
 import illarion.common.util.TableLoaderSink;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.Resource;
-import javolution.util.FastList;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
@@ -40,7 +40,7 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     private static final int DB_INDEX_NAME = 2;
     private static final ItemLoader INSTANCE = new ItemLoader();
     private static final String DIR_IMG_ITEMS = "data/items/";
-    private final FastList<ItemImg> items = new FastList<ItemImg>();
+    private final TIntObjectHashMap<ItemImg> items = new TIntObjectHashMap<ItemImg>();
 
     private ItemLoader() {
 
@@ -82,7 +82,7 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
                 frameCount, animationSpeed, mode
                 , getTextures(loader.getResourceName(), frameCount), info);
 
-        items.add(img);
+        items.put(img.getItemId(), img);
         return true;
     }
 
@@ -104,16 +104,14 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     }
 
     public ItemImg getTileFromId(final int id) {
-        for (final ItemImg t : items) {
-            if (t.getItemId() == id) {
-                return t;
-            }
+        if (items.contains(id)) {
+            return items.get(id);
         }
         return null;
     }
 
-    public ItemImg[] getTiles() {
-        final ItemImg[] t = items.toArray(new ItemImg[items.size()]);
+    public ItemImg[] getItems() {
+        final ItemImg[] t = items.values(new ItemImg[items.size()]);
         return t;
     }
 }

@@ -19,7 +19,9 @@
 package illarion.mapedit.render;
 
 import illarion.mapedit.data.Map;
-import illarion.mapedit.resource.loaders.ImageLoader;
+import illarion.mapedit.data.MapTile;
+import illarion.mapedit.resource.Overlay;
+import illarion.mapedit.resource.loaders.OverlayLoader;
 import illarion.mapedit.util.SwingLocation;
 
 import java.awt.*;
@@ -28,19 +30,13 @@ import java.awt.geom.AffineTransform;
 /**
  * @author Tim
  */
-public class MusicRenderer extends AbstractMapRenderer {
-
-    private static final int XOFFSET = 20;
-    private static final int YOFFSET = 10;
-
-    private final Image image;
+public class OverlayRenderer extends AbstractMapRenderer {
 
     /**
      * Creates a new map renderer
      */
-    public MusicRenderer(final RendererManager manager) {
+    public OverlayRenderer(final RendererManager manager) {
         super(manager);
-        image = ImageLoader.getImage("sound");
     }
 
     @Override
@@ -50,27 +46,38 @@ public class MusicRenderer extends AbstractMapRenderer {
         final int z = map.getZ() - level;
         final AffineTransform transform = g.getTransform();
 
-
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                if (map.getTileAt(x, y).getMusicID() == 0) {
-                    continue;
-                }
                 final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
                 final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
                 if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
+                    final MapTile tile = map.getTileAt(x, y);
+                    final Overlay o = OverlayLoader.getInstance().getOverlayFromId(tile.getOverlayID());
 
-                    g.drawImage(image, xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()), null);
-
+                    if (o != null) {
+                        final AffineTransform tr = g.getTransform();
+                        if (getZoom() > getMinZoom()) {
+                            final Image img = o.getImgs()[tile.getShapeID() - 1];
+                            if (img != null) {
+                                g.translate(xdisp, ydisp);
+                                g.drawImage(img,
+                                        0,
+                                        0, null);
+                            }
+                        }
+                        g.setTransform(tr);
+                    }
                 }
             }
         }
+
+
         g.setTransform(transform);
     }
 
     @Override
     protected int getRenderPriority() {
-        return 6;
+        return 4;
     }
 }

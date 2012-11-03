@@ -92,7 +92,7 @@ public class ItemRenderer extends AbstractMapRenderer {
             for (final MapItem item : items) {
 
                 final ItemImg img = ItemLoader.getInstance().getTileFromId(item.getId());
-                if (img != null && img.getImgs() != null) {
+                if ((img != null) && (img.getImgs() != null)) {
                     final Image paintImg = img.getImgs()[0];
 
                     g.translate(getTileWidth(), getTileHeight());
@@ -109,6 +109,6 @@ public class ItemRenderer extends AbstractMapRenderer {
 
     @Override
     protected int getRenderPriority() {
-        return 4;
+        return 5;
     }
 }
