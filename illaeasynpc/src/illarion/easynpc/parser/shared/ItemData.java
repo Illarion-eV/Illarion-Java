@@ -34,7 +34,7 @@ public final class ItemData {
     /**
      * This pattern should be added at the point of the search regexp to find data patterns at the location.
      */
-    public static final String REGEXP = "((\"[^\"]+\"\\s*=\\s*\"[^\"]+\",*)+)";
+    public static final String REGEXP = "((\"[^\"]+\"\\s*=\\s*\"[^\"]+\"\\s*,*\\s*)+)";
 
     /**
      * The compiled pattern used to read the item data values.
