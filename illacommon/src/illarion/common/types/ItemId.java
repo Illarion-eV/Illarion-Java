@@ -28,7 +28,7 @@ import java.io.IOException;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ItemId {
+public final class ItemId implements Comparable<ItemId> {
     /**
      * The maximal value that is valid for the item ID.
      */
@@ -120,5 +120,16 @@ public final class ItemId {
      */
     public int getValue() {
         return value;
+    }
+
+    @Override
+    public int compareTo(final ItemId o) {
+        if (value == o.value) {
+            return 0;
+        }
+        if (getValue() < o.getValue()) {
+            return -1;
+        }
+        return 1;
     }
 }

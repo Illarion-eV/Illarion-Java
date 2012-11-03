@@ -28,7 +28,7 @@ import java.io.IOException;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ItemCount {
+public final class ItemCount implements Comparable<ItemCount> {
     /**
      * The maximal value that is valid for the item count.
      */
@@ -149,5 +149,16 @@ public final class ItemCount {
      */
     public int getValue() {
         return value;
+    }
+
+    @Override
+    public int compareTo(final ItemCount o) {
+        if (value == o.value) {
+            return 0;
+        }
+        if (getValue() < o.getValue()) {
+            return -1;
+        }
+        return 1;
     }
 }

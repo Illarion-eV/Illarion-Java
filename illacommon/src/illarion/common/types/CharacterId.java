@@ -29,7 +29,7 @@ import java.io.Serializable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class CharacterId implements Serializable {
+public final class CharacterId implements Serializable, Comparable<CharacterId> {
     /**
      * The maximal value that is valid for the character ID
      */
@@ -155,5 +155,16 @@ public final class CharacterId implements Serializable {
             return value + (1L << Integer.SIZE);
         }
         return value;
+    }
+
+    @Override
+    public int compareTo(final CharacterId o) {
+        if (value == o.value) {
+            return 0;
+        }
+        if (getValue() < o.getValue()) {
+            return -1;
+        }
+        return 1;
     }
 }
