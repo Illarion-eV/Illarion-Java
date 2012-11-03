@@ -27,7 +27,7 @@ public class TableLoaderOverlay extends TableLoader {
 
     public static final int TB_OVERLAY_FILE = 1;
 
-    public static final int TB_LAYER = 2;
+    public static final int TB_LAYER = 3;
 
     public <T extends TableLoader> TableLoaderOverlay(final TableLoaderSink<T> callback) {
         super("Overlays", callback);
@@ -41,7 +41,7 @@ public class TableLoaderOverlay extends TableLoader {
         return getString(TB_OVERLAY_FILE);
     }
 
-    public String getLayer() {
-        return getString(TB_LAYER);
+    public int getLayer() {
+        return getInt(TB_LAYER);
     }
 }
