@@ -23,9 +23,6 @@ import illarion.easynpc.data.CharacterLanguage;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 
 /**
  * This is the easyNPC writer. It writes from the data supplied by a parsed NPC a easyNPC script with the proper
@@ -352,11 +349,6 @@ public final class EasyNpcWriter {
                     }
                 }
 
-                target.write(freeLine);
-
-                final Calendar cal = Calendar.getInstance();
-                final SimpleDateFormat sdf =
-                        new SimpleDateFormat("MMMMM dd, yyyy", Locale.ENGLISH);
                 target.write(String.format("-- %1$-47s%2$27s --%n",
                         "", illarion.easynpc.Parser.FULLNAME));
 

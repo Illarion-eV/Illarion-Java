@@ -24,8 +24,10 @@ import illarion.easynpc.data.CharacterLanguage;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This is the LUA writer. It writes the data supplied by a parsed NPC to a lua script.
@@ -404,10 +406,6 @@ public final class LuaWriter {
                     }
                 }
 
-                target.write(freeLine);
-
-                final Calendar cal = Calendar.getInstance();
-                final SimpleDateFormat sdf = new SimpleDateFormat("MMMMM dd, yyyy", Locale.ENGLISH);
                 target.write(String.format("-- %1$-47s%2$27s --%n", "",
                         Parser.FULLNAME));
 
