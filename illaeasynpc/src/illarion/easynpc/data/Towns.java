@@ -27,7 +27,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum Towns {
-    Cadomyr(true, 1), Free(false, -1), Galmair(true, 3), None(false, -1),
+    Cadomyr(true, 1), Free(false, -1), Galmair(true, 3), None(false, 0),
     Runewick(true, 2);
 
     /**
@@ -47,7 +47,7 @@ public enum Towns {
      * @param rankpoints <code>true</code> in case this constant can be used for
      *                   rankpoints
      */
-    private Towns(final boolean rankpoints, final int factionId) {
+    Towns(final boolean rankpoints, final int factionId) {
         rankpt = rankpoints;
         id = factionId;
     }
@@ -67,7 +67,7 @@ public enum Towns {
      * @return <code>true</code> in case this constant can be used for
      *         rankpoints
      */
-    public boolean validForRankpoints() {
+    public boolean isValidForRankpoints() {
         return rankpt;
     }
 

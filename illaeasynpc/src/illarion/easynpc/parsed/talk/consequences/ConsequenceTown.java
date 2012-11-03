@@ -18,8 +18,7 @@
  */
 package illarion.easynpc.parsed.talk.consequences;
 
-import illarion.easynpc.data.CalculationOperators;
-import illarion.easynpc.parsed.talk.AdvancedNumber;
+import illarion.easynpc.data.Towns;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaWriter;
 
@@ -27,49 +26,42 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * This class is used to store all required values for the attribute consequence.
+ * This class is used to store all required values for the town consequence.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ConsequenceRankpoints implements TalkConsequence {
+public final class ConsequenceTown implements TalkConsequence {
     /**
      * The easyNPC code needed for this consequence.
      */
     @SuppressWarnings("nls")
-    private static final String EASY_CODE = "rankpoints %1$s %2$s";
+    private static final String EASY_CODE = "town = %1$s";
 
     /**
      * The LUA code needed to be included for a quest status consequence.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.rankpoints(\"%2$s\", %3$s));"
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.town(\"=\", \"%2$s\"));"
             + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_MODULE = BASE_LUA_MODULE + "rankpoints";
+    private static final String LUA_MODULE = BASE_LUA_MODULE + "town";
 
     /**
-     * The operator used to alter the rankpoints.
+     * The town the player will get assigned to.
      */
-    private final CalculationOperators operator;
+    private final Towns town;
 
     /**
-     * The value the rankpoints are altered with.
-     */
-    private final AdvancedNumber value;
-
-    /**
-     * Constructor that allows setting the parameter of this rank-point consequence.
+     * Constructor that allows setting the parameter of this town consequence.
      *
-     * @param op       the operator the rankpoints are altered by
-     * @param newValue the value the rankpoints are altered with
+     * @param newTown the town the player is getting assigned to
      */
-    public ConsequenceRankpoints(final CalculationOperators op, final AdvancedNumber newValue) {
-        operator = op;
-        value = newValue;
+    public ConsequenceTown(final Towns newTown) {
+        town = newTown;
     }
 
     /**
@@ -85,7 +77,7 @@ public final class ConsequenceRankpoints implements TalkConsequence {
      */
     @Override
     public void writeEasyNpc(final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, operator.getLuaOp(), value.getEasyNPC()));
+        target.write(String.format(EASY_CODE, town.name()));
     }
 
     /**
@@ -93,6 +85,6 @@ public final class ConsequenceRankpoints implements TalkConsequence {
      */
     @Override
     public void writeLua(final Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE, operator.getLuaOp(), value.getLua()));
+        target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(town.getFactionId())));
     }
 }

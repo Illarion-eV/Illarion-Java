@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.easynpc.parser.talk.conditions;
+package illarion.easynpc.parser.talk.consequences;
 
 import illarion.easynpc.Lang;
 import illarion.easynpc.data.Towns;
-import illarion.easynpc.parsed.talk.TalkCondition;
-import illarion.easynpc.parsed.talk.conditions.ConditionTown;
-import illarion.easynpc.parser.talk.ConditionParser;
+import illarion.easynpc.parsed.talk.TalkConsequence;
+import illarion.easynpc.parsed.talk.consequences.ConsequenceTown;
+import illarion.easynpc.parser.talk.ConsequenceParser;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
@@ -30,16 +30,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This is a town condition. Its able to parse a town value out of the NPC condition line.
+ * This is the town consequence. Its able to parse the changing command for the town the player is assigned to.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class Town extends ConditionParser {
+public final class Town extends ConsequenceParser {
     /**
-     * This pattern is used to find the town operation in the condition properly.
+     * This pattern is used to find the strings in the condition and to remove them properly.
      */
     @SuppressWarnings("nls")
-    private static final Pattern TOWN_FIND = Pattern.compile("\\s*town\\s*=\\s*([A-Za-z]+)\\s*,\\s*",
+    private static final Pattern STRING_FIND = Pattern.compile("\\s*town\\s*=\\s*([a-z]+)\\s*",
             Pattern.CASE_INSENSITIVE);
 
     /**
@@ -47,33 +47,31 @@ public final class Town extends ConditionParser {
      */
     @Override
     @SuppressWarnings("nls")
-    public TalkCondition extract() {
+    public TalkConsequence extract() {
         if (getNewLine() == null) {
             throw new IllegalStateException("Can't extract if no state set.");
         }
 
-        final Matcher stringMatcher = TOWN_FIND.matcher(getNewLine());
+        final Matcher stringMatcher = STRING_FIND.matcher(getNewLine());
         if (stringMatcher.find()) {
-            final String townString = stringMatcher.group(1);
+            final String townName = stringMatcher.group(1);
 
             setLine(stringMatcher.replaceFirst(""));
 
             Towns town = null;
             for (final Towns testTown : Towns.values()) {
-                if (testTown.isValidForRankpoints()
-                        && townString.equalsIgnoreCase(testTown.name())) {
+                if (townName.equalsIgnoreCase(testTown.name())) {
                     town = testTown;
                     break;
                 }
             }
 
             if (town == null) {
-                reportError(String.format(Lang.getMsg(getClass(), "town"),
-                        townString, stringMatcher.group(0)));
+                reportError(String.format(Lang.getMsg(getClass(), "town"), townName, stringMatcher.group(0)));
                 return extract();
             }
 
-            return new ConditionTown(town);
+            return new ConsequenceTown(town);
         }
 
         return null;
@@ -101,6 +99,6 @@ public final class Town extends ConditionParser {
 
     @Override
     public void enlistHighlightedWords(final TokenMap map) {
-        map.put("town", Token.RESERVED_WORD);
+        map.put("rankpoints", Token.RESERVED_WORD);
     }
 }

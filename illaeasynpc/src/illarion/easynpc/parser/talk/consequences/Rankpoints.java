@@ -20,7 +20,6 @@ package illarion.easynpc.parser.talk.consequences;
 
 import illarion.easynpc.Lang;
 import illarion.easynpc.data.CalculationOperators;
-import illarion.easynpc.data.Towns;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.parsed.talk.consequences.ConsequenceRankpoints;
@@ -42,8 +41,8 @@ public final class Rankpoints extends ConsequenceParser {
      * This pattern is used to find the strings in the condition and to remove them properly.
      */
     @SuppressWarnings("nls")
-    private static final Pattern STRING_FIND = Pattern.compile("\\s*rankpoints\\s*\\([\\s]*([a-z]+)[\\s]*\\)\\s*" +
-            "([+\\-=]+)\\s*" + AdvNumber.ADV_NUMBER_REGEXP + "\\s*,\\s*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern STRING_FIND = Pattern.compile("\\s*rankpoints\\s*([+\\-=]+)\\s*" +
+            AdvNumber.ADV_NUMBER_REGEXP + "\\s*,\\s*", Pattern.CASE_INSENSITIVE);
 
     /**
      * Extract a condition from the working string.
@@ -57,24 +56,10 @@ public final class Rankpoints extends ConsequenceParser {
 
         final Matcher stringMatcher = STRING_FIND.matcher(getNewLine());
         if (stringMatcher.find()) {
-            final String groupName = stringMatcher.group(1);
-            final String operation = stringMatcher.group(2);
-            final AdvancedNumber targetValue = AdvNumber.getNumber(stringMatcher.group(3));
+            final String operation = stringMatcher.group(1);
+            final AdvancedNumber targetValue = AdvNumber.getNumber(stringMatcher.group(2));
 
             setLine(stringMatcher.replaceFirst(""));
-
-            Towns town = null;
-            for (final Towns testTown : Towns.values()) {
-                if (testTown.validForRankpoints() && groupName.equalsIgnoreCase(testTown.name())) {
-                    town = testTown;
-                    break;
-                }
-            }
-
-            if (town == null) {
-                reportError(String.format(Lang.getMsg(getClass(), "group"), groupName, stringMatcher.group(0)));
-                return extract();
-            }
 
             if (targetValue == null) {
                 reportError(String.format(Lang.getMsg(getClass(), "number"), stringMatcher.group(3),
@@ -95,7 +80,7 @@ public final class Rankpoints extends ConsequenceParser {
                 return extract();
             }
 
-            return new ConsequenceRankpoints(town, operator, targetValue);
+            return new ConsequenceRankpoints(operator, targetValue);
         }
 
         return null;
