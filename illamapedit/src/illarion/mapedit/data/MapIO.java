@@ -130,7 +130,6 @@ public class MapIO {
 
     /**
      * Loads the map, with specified the map name and path.
-     * //TODO: Clean this up && let tiles,items,warps serialize themselves.
      *
      * @param map
      * @param name
@@ -156,7 +155,6 @@ public class MapIO {
         tileOutput.write(String.format("%s %d%s", HEADER_Y, map.getY(), NEWLINE));
         tileOutput.write(String.format("%s %d%s", HEADER_W, map.getWidth(), NEWLINE));
         tileOutput.write(String.format("%s %d%s", HEADER_H, map.getHeight(), NEWLINE));
-        //TODO: Save overlays
         for (int y = 0; y < map.getWidth(); ++y) {
             for (int x = 0; x < map.getHeight(); ++x) {
                 final MapTile tile = map.getTileAt(x, y);

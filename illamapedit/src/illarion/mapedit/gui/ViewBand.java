@@ -20,20 +20,16 @@ package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.events.map.RendererToggleEvent;
-import illarion.mapedit.render.GridRenderer;
-import illarion.mapedit.render.ItemRenderer;
-import illarion.mapedit.render.MusicRenderer;
-import illarion.mapedit.render.TileRenderer;
+import illarion.mapedit.events.util.ActionEventPublisher;
+import illarion.mapedit.render.*;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import javolution.util.FastList;
-import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -62,34 +58,14 @@ public class ViewBand extends JRibbonBand {
                 ImageLoader.getResizableIcon("sound")
         );
 
-        final ActionListener tileListener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new RendererToggleEvent(TileRenderer.class));
-            }
-        };
+        final ActionListener tileListener = new ActionEventPublisher(
+                new RendererToggleEvent(TileRenderer.class),
+                new RendererToggleEvent(OverlayRenderer.class)
+        );
 
-        final ActionListener itemListener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new RendererToggleEvent(ItemRenderer.class));
-            }
-        };
-
-
-        final ActionListener gridListener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new RendererToggleEvent(GridRenderer.class));
-            }
-        };
-
-        final ActionListener musicListener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new RendererToggleEvent(MusicRenderer.class));
-            }
-        };
+        final ActionListener itemListener = new ActionEventPublisher(new RendererToggleEvent(ItemRenderer.class));
+        final ActionListener gridListener = new ActionEventPublisher(new RendererToggleEvent(GridRenderer.class));
+        final ActionListener musicListener = new ActionEventPublisher(new RendererToggleEvent(MusicRenderer.class));
 
         tileButton.addActionListener(tileListener);
         itemButton.addActionListener(itemListener);

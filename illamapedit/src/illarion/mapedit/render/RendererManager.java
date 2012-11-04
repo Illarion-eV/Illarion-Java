@@ -87,11 +87,17 @@ public class RendererManager {
     }
 
     public void render(final Map map, final Rectangle viewport, final Graphics2D g) {
+        final Rectangle renderViewport = new Rectangle(
+                (int) (viewport.x - (getTileWidth() * getZoom())),
+                (int) (viewport.y - (getTileHeight() * getZoom())),
+                (int) (viewport.width + (2 * getTileWidth() * getZoom())),
+                (int) (viewport.height + (2 * getTileHeight() * getZoom()))
+        );
         final AffineTransform t = g.getTransform();
         g.translate(translationX, translationY);
         g.scale(getZoom(), getZoom());
         for (final AbstractMapRenderer r : renderers) {
-            r.renderMap(map, viewport, actualLevel, g);
+            r.renderMap(map, renderViewport, actualLevel, g);
         }
         g.setTransform(t);
     }

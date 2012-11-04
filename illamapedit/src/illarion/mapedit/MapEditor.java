@@ -141,10 +141,11 @@ public final class MapEditor {
         initLogging();
         initExceptionHandler();
         initEventBus();
+        SplashScreen.getInstance().setVisible(true);
         JRibbonFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
         loadResources();
-        GuiController controller = new GuiController(getConfig());
+        final GuiController controller = new GuiController(getConfig());
         controller.initialize();
         instance = new MapEditor();
 
@@ -154,7 +155,7 @@ public final class MapEditor {
     }
 
     private static void loadResources() {
-        ResourceManager resourceManager = ResourceManager.getInstance();
+        final ResourceManager resourceManager = ResourceManager.getInstance();
         resourceManager.addResources(
                 ImageLoader.getInstance(),
                 TextureLoaderAwt.getInstance(),
@@ -165,7 +166,6 @@ public final class MapEditor {
         while (resourceManager.hasNextToLoad()) {
             try {
                 LOGGER.debug("Loading " + resourceManager.getNextDescription());
-                //TODO: Remove this
                 EventBus.publish(new MessageStringEvent("Loading " + resourceManager.getNextDescription()));
                 resourceManager.loadNext();
             } catch (IOException e) {

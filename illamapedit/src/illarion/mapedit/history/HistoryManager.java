@@ -29,8 +29,6 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 /**
  * The HistoryManager class stores the chain of all history entries that are connected
  * to this history and allows undoing and redoing this actions.
- * TODO: Non-Singleton
- * TODO: USE IT!!
  *
  * @author Martin Karing, Tim
  * @since 0.99
