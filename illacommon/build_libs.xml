@@ -31,11 +31,8 @@
     <property name="signedlibs" location="${common}/lib/signed"/>
 
     <target name="prepare_all" description="Build all libraries again as needed."
-            depends="init_libs,check_libs_compiled_uptodate"
+            depends="init_libs,get_buildtool,check_libs_compiled_uptodate"
             unless="libs.compiled.uptodate">
-
-        <copy file="${common}/libs-all.zip" tofile="${common}/libs-all-compiled.zip" failonerror="no"
-              preservelastmodified="on"/>
 
         <antcall target="prepare_eventbus"/>
         <antcall target="prepare_javolution"/>
@@ -55,6 +52,11 @@
         <antcall target="prepare_trove"/>
         <antcall target="prepare_vorbisspi"/>
         <antcall target="prepare_xpp3"/>
+
+        <copy file="${common}/libs-all.zip" tofile="${common}/libs-all-compiled.zip" failonerror="no"
+              preservelastmodified="on"/>
+        <copy file="${build.local.dir}" tofile="${common}/illabuild.compiled.jar" failonerror="no"
+              preservelastmodified="on"/>
     </target>
 
     <target name="prepare_eventbus" description="prepare the EVENTBUS bundle"
@@ -859,9 +861,15 @@
         <uptodate property="libs.uptodate" srcfile="${common}/libs-all.zip" targetfile="${common}/libs-all-old.zip"/>
     </target>
 
-    <target name="check_libs_compiled_uptodate">
+    <target name="check_libs_compiled_uptodate" depends="get_buildtool, check_buildtool_uptodate"
+            if="buildtool.uptodate">
         <uptodate property="libs.compiled.uptodate" srcfile="${common}/libs-all.zip"
                   targetfile="${common}/libs-all-compiled.zip"/>
+    </target>
+
+    <target name="check_buildtool_uptodate">
+        <uptodate property="buildtool.uptodate" srcfile="${build.local.dir}"
+                  targetfile="${common}/illabuild.compiled.jar"/>
     </target>
 
     <target name="extract_libs" depends="check_libs_uptodate" unless="libs.uptodate">
