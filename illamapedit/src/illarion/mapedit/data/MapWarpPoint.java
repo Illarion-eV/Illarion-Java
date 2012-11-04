@@ -106,7 +106,7 @@ public class MapWarpPoint implements Immutable {
 
         builder.append(xTarget).append(';');
         builder.append(yTarget).append(';');
-        builder.append(zTarget).append(';');
+        builder.append(zTarget);
 
         try {
             return builder.toString();
