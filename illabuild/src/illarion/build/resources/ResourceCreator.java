@@ -142,19 +142,24 @@ public final class ResourceCreator extends Task {
 
             final LZMA2Options lzmaOptions;
             final X86Options x86Options;
+            int usedCheck = XZ.CHECK_CRC64;
 
             try {
-                switch (trial) {
+                final int presetTrial = (trial - 1) % (LZMA2Options.PRESET_MAX + 1);
+                final int usedPreset = LZMA2Options.PRESET_MAX - presetTrial;
+                lzmaOptions = new LZMA2Options(usedPreset);
+
+                switch ((trial - 1) / (LZMA2Options.PRESET_MAX + 1)) {
+                    case 0:
+                        usedCheck = XZ.CHECK_CRC64;
+                        break;
                     case 1:
-                        lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_MAX);
+                        usedCheck = XZ.CHECK_SHA256;
                         break;
                     case 2:
-                        lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_DEFAULT);
+                        usedCheck = XZ.CHECK_CRC32;
                         break;
                     case 3:
-                        lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_MIN);
-                        break;
-                    default:
                         if (useP200) {
                             useP200 = false;
                             trial = 0;
@@ -176,7 +181,7 @@ public final class ResourceCreator extends Task {
 
             try {
                 final FileOutputStream fOut = new FileOutputStream(targetFile);
-                final XZOutputStream xOut = new XZOutputStream(fOut, defaultOptions);
+                final XZOutputStream xOut = new XZOutputStream(fOut, defaultOptions, usedCheck);
                 final BufferedOutputStream bOut = new BufferedOutputStream(xOut);
                 zOut = new ZipOutputStream(bOut);
 
@@ -282,7 +287,8 @@ public final class ResourceCreator extends Task {
             while (b.read(tempArray) != -1) {
             }
         } catch (Exception e) {
-            System.out.println("Compressed data was corrupted. Trying compression again at less aggressive levels.");
+            System.out.println("Trial #" + Integer.toString(trial) + " Compressed data was corrupted ("
+                    + e.getMessage() + "). Trying compression again at less aggressive levels.");
             closeStream(b);
             execute();
         } finally {
@@ -369,7 +375,6 @@ public final class ResourceCreator extends Task {
             packer.pack(new JarFile(tempFile), out);
             out.flush();
             out.close();
-            out = null;
 
             tempFile = p200tempFile;
         }
@@ -378,11 +383,9 @@ public final class ResourceCreator extends Task {
         final long size = tempFileChannel.size();
         outChannel = Channels.newChannel(outputStream);
 
-        int position = 0;
+        long position = 0L;
         while (position < size) {
-            position +=
-                    tempFileChannel.transferTo(position, size - position,
-                            outChannel);
+            position += tempFileChannel.transferTo(position, size - position, outChannel);
         }
 
         outputStream.flush();
