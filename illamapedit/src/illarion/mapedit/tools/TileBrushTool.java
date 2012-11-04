@@ -18,11 +18,13 @@
  */
 package illarion.mapedit.tools;
 
+import illarion.common.util.Location;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.TileIDChangedAction;
+import illarion.mapedit.processing.MapTransitions;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.tools.panel.TileBrushPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -58,6 +60,8 @@ public class TileBrushTool extends AbstractTool {
                     final MapTile newTile = new MapTile(tile.getId(), map.getTileAt(i, j));
                     action.addAction(new TileIDChangedAction(i, j, map.getTileAt(i, j), newTile, map));
                     map.setTileAt(i, j, newTile);
+                    //TODO: Optimize this
+                    MapTransitions.getInstance().checkTileAndSurround(map, new Location(i, j, 0));
                 }
             }
         }

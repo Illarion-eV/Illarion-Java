@@ -283,6 +283,22 @@ public final class MapTransitions {
     }
 
     /**
+     * Checks all tiles in the map.
+     * WARNING: This may be very slow.
+     *
+     * @param map
+     */
+    public void checkMap(final Map map) {
+        Location loc = new Location();
+        for (int x = 0; x < map.getWidth(); x++) {
+            for (int y = 0; y < map.getHeight(); y++) {
+                loc.setSC(x, y, 0);
+                checkTile(map, loc);
+            }
+        }
+    }
+
+    /**
      * Check the found tiles and generate a list with all tile IDs that occur at
      * least 2 times around the center tile. The IDs of the found tiles are
      * stored in {@link #foundTiles} then.
