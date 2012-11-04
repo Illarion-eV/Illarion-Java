@@ -40,7 +40,7 @@ public class TileBrushPanel extends JPanel {
 
         final JPanel brushSizePanel = new JPanel(new BorderLayout(5, 0));
         final JLabel radiusLabel = new JLabel(Lang.getMsg("tools.TileBrushTool.Radius"));
-        radiusSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 10, 1));
+        radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
         brushSizePanel.add(radiusLabel, BorderLayout.WEST);
         brushSizePanel.add(radiusSpinner, BorderLayout.CENTER);
 
