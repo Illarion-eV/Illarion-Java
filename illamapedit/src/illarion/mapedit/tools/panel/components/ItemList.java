@@ -30,18 +30,18 @@ import javax.swing.event.ListSelectionListener;
 
 public class ItemList extends JScrollPane {
 
-    private final JList<ItemImg> itemList;
+    private final JList itemList;
 
     public ItemList() {
         super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        itemList = new JList<ItemImg>(ItemLoader.getInstance().getItems());
+        itemList = new JList(ItemLoader.getInstance().getItems());
         itemList.setCellRenderer(new ItemImgCellRenderer());
         itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         itemList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(final ListSelectionEvent e) {
-                EventBus.publish(new ItemSelectedEvent(itemList.getSelectedValue()));
+                EventBus.publish(new ItemSelectedEvent((ItemImg) itemList.getSelectedValue()));
             }
         });
         setViewportView(itemList);

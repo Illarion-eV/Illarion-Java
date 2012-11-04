@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author Tim
  */
-public class MapComboBoxModel extends AbstractListModel<String> implements ComboBoxModel<String> {
+public class MapComboBoxModel extends AbstractListModel implements ComboBoxModel {
 
     private List<Map> objects;
 

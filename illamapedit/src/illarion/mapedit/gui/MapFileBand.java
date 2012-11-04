@@ -66,12 +66,12 @@ public class MapFileBand extends JRibbonBand {
         for (int i = 0; i < maps.length; ++i) {
             maps[i] = maps[i].substring(0, maps[i].length() - MapIO.EXT_TILE.length());
         }
-        final JList<String> list = new JList<String>(maps);
+        final JList list = new JList(maps);
         list.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(final ListSelectionEvent e) {
                 if (list.getSelectedValue() != null) {
-                    EventBus.publish(new MapOpenEvent(dir.getPath(), list.getSelectedValue()));
+                    EventBus.publish(new MapOpenEvent(dir.getPath(), (String) list.getSelectedValue()));
                 }
             }
         });
@@ -82,7 +82,7 @@ public class MapFileBand extends JRibbonBand {
 
         model = new MapComboBoxModel(null);
 
-        final JComboBox<String> mapSelector = new JComboBox<String>(model);
+        final JComboBox mapSelector = new JComboBox(model);
 
         mapSelector.addItemListener(new ItemListener() {
             @Override

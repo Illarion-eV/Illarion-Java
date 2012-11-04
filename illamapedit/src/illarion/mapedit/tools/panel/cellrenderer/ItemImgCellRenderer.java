@@ -26,7 +26,7 @@ import java.awt.*;
 /**
  * @author Tim
  */
-public class ItemImgCellRenderer extends JPanel implements ListCellRenderer<ItemImg> {
+public class ItemImgCellRenderer extends JPanel implements ListCellRenderer {
 
     private static final int MAX_WIDTH = 75;
     private static final int MAX_HEIGHT = 50;
@@ -45,9 +45,9 @@ public class ItemImgCellRenderer extends JPanel implements ListCellRenderer<Item
     }
 
     @Override
-    public Component getListCellRendererComponent(final JList<? extends ItemImg> jList, final ItemImg value,
+    public Component getListCellRendererComponent(final JList jList, final Object val,
                                                   final int index, final boolean isSelected, final boolean cellHasFocus) {
-
+        final ItemImg value = (ItemImg) val;
         selected = isSelected;
 
         image = value.getImgs()[0];
