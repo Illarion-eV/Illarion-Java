@@ -83,6 +83,7 @@
                 <fileset refid="javolution"/>
                 <fileset refid="trove"/>
                 <fileset refid="log4j"/>
+                <fileset refid="eventbus"/>
                 <pathelement location="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>

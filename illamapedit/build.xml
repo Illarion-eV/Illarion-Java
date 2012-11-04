@@ -81,7 +81,6 @@
                 <fileset refid="substance"/>
                 <fileset refid="flamingo"/>
                 <fileset refid="substance-flamingo"/>
-                <fileset refid="swingx"/>
                 <fileset refid="eventbus"/>
                 <pathelement location="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
