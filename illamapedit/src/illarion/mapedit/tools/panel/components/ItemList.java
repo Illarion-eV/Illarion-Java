@@ -34,7 +34,7 @@ public class ItemList extends JScrollPane {
 
     public ItemList() {
         super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
+        //TODO: sort by categories
         itemList = new JList(ItemLoader.getInstance().getItems());
         itemList.setCellRenderer(new ItemImgCellRenderer());
         itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

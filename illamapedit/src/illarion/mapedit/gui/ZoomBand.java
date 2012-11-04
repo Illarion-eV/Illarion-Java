@@ -53,14 +53,14 @@ public class ZoomBand extends JRibbonBand {
         final ActionListener zoomOutListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new ZoomEvent(ZOOM_STEP));
+                EventBus.publish(new ZoomEvent(-ZOOM_STEP));
             }
         };
 
         final ActionListener zoomInListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new ZoomEvent(-ZOOM_STEP));
+                EventBus.publish(new ZoomEvent(ZOOM_STEP));
             }
         };
 
