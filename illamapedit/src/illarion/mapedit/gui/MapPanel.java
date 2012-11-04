@@ -96,8 +96,8 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
 
     @Override
     public void mouseDragged(final MouseEvent e) {
-
-        if (!canDrag || !controller.isMapLoaded()) {
+        final Map selected = controller.getSelected();
+        if (!canDrag || !controller.isMapLoaded() || (selected == null)) {
             return;
         }
 
@@ -112,8 +112,8 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
                         rendererManager.getTranslationY(), rendererManager.getZoom());
                 final int y = SwingLocation.mapCoordinateY(clickX, clickY, rendererManager.getTranslationX(),
                         rendererManager.getTranslationY(), rendererManager.getZoom());
-                EventBus.publish(new MapDraggedEvent(x, y, e.getX(), e.getY(), btn,
-                        controller.getSelected()));
+                EventBus.publish(new MapDraggedEvent(x - selected.getX(), y - selected.getY(), e.getX(), e.getY(), btn,
+                        selected));
             }
         }
         EventBus.publish(new RepaintRequestEvent());
@@ -134,10 +134,11 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
                 rendererManager.getTranslationY(), rendererManager.getZoom());
         final int y = SwingLocation.mapCoordinateY(e.getX(), e.getY(), rendererManager.getTranslationX(),
                 rendererManager.getTranslationY(), rendererManager.getZoom());
-
-        if (controller.getSelected() != null) {
-            EventBus.publish(new MapClickedEvent(x, y, MouseButton.fromAwt(e.getModifiers()),
-                    controller.getSelected()));
+        final Map selected = controller.getSelected();
+        if (selected != null) {
+            EventBus.publish(new MapClickedEvent(x - selected.getX(), y - selected.getY(),
+                    MouseButton.fromAwt(e.getModifiers()),
+                    selected));
         }
     }
 

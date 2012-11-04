@@ -136,7 +136,7 @@ public class Map {
         if (mapTileData[i] != null) {
             return mapTileData[i];
         }
-        setTileAt(x, y, new MapTile(0, 0, 0, 0));
+        setTileAt(x, y, MapTile.MapTileFactory.createNew(0, 0, 0, 0));
         return getTileAt(x, y);
 
     }

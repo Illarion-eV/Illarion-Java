@@ -18,14 +18,12 @@
  */
 package illarion.mapedit.tools;
 
-import illarion.common.types.Location;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
-import illarion.mapedit.history.TileIDChangedAction;
-import illarion.mapedit.processing.MapTransitions;
-import illarion.mapedit.resource.TileImg;
-import illarion.mapedit.tools.panel.SingleTilePanel;
+import illarion.mapedit.history.MusicIDChangedAction;
+import illarion.mapedit.tools.panel.MusicPanel;
+import illarion.mapedit.tools.panel.SettingsChangedListener;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.swing.*;
@@ -33,35 +31,33 @@ import javax.swing.*;
 /**
  * @author Tim
  */
-public class SingleTileTool extends AbstractTool {
+public class MusicTool extends AbstractTool {
 
-    private final SingleTilePanel panel;
+    private final MusicPanel panel;
 
-    public SingleTileTool() {
-        panel = new SingleTilePanel();
+    private int musicID = 0;
+
+    public MusicTool() {
+        this.panel = new MusicPanel(new SettingsChangedListener() {
+            @Override
+            public void settingsChanged() {
+                musicID = panel.getMusicID();
+            }
+        });
     }
 
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
-        if (!map.contains(x, y)) {
+        if (map.getTileAt(x, y).getMusicID() == musicID) {
             return;
         }
-        final TileImg tile = getManager().getSelectedTile();
-
-        if ((tile == null) || (map.getTileAt(x, y).getId() == tile.getId())) {
-            return;
-        }
-        final int tileId = tile.getId();
-
-        final MapTile newTile = MapTile.MapTileFactory.setId(tileId, map.getTileAt(x, y));
-        getHistory().addEntry(new TileIDChangedAction(x, y, map.getTileAt(x, y), newTile, map));
-        map.setTileAt(x, y, newTile);
-        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
+        getHistory().addEntry(new MusicIDChangedAction(x, y, map.getTileAt(x, y).getMusicID(), musicID, map));
+        map.setTileAt(x, y, MapTile.MapTileFactory.setMusicId(musicID, map.getTileAt(x, y)));
     }
 
     @Override
     public String getLocalizedName() {
-        return Lang.getMsg("tools.SingleTileTool");
+        return Lang.getMsg("tools.MusicTool");
     }
 
     @Override
@@ -72,10 +68,5 @@ public class SingleTileTool extends AbstractTool {
     @Override
     public JPanel getSettingsPanel() {
         return panel;
-    }
-
-    @Override
-    public void settingsChanged() {
-
     }
 }
