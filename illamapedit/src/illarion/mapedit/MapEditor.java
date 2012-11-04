@@ -233,7 +233,8 @@ public final class MapEditor {
      */
     @SuppressWarnings("nls")
     private static void initLogging() {
-        final java.util.logging.Logger logger = java.util.logging.Logger.getGlobal();
+        final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(java.util.logging.Logger
+                .GLOBAL_LOGGER_NAME);
         //Remove Console handler
         final Handler[] handlers = logger.getHandlers();
         for (final Handler handler : handlers) {

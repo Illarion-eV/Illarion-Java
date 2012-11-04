@@ -43,7 +43,6 @@ public class SplashScreen extends JPanel {
 
     private SplashScreen() {
         frame = new Frame("Loading MapEditor");
-        frame.setAutoRequestFocus(true);
         frame.setUndecorated(true);
         frame.setBackground(TRANSPARENT);
         setBackground(TRANSPARENT);

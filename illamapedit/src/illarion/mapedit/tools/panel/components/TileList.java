@@ -30,18 +30,18 @@ import javax.swing.event.ListSelectionListener;
 
 public class TileList extends JScrollPane {
 
-    private final JList<TileImg> tileList;
+    private final JList tileList;
 
     public TileList() {
         super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        tileList = new JList<TileImg>(TileLoader.getInstance().getTiles());
+        tileList = new JList(TileLoader.getInstance().getTiles());
         tileList.setCellRenderer(new TileImgCellRenderer());
         tileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tileList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(final ListSelectionEvent e) {
-                EventBus.publish(new TileSelectedEvent(tileList.getSelectedValue()));
+                EventBus.publish(new TileSelectedEvent((TileImg) tileList.getSelectedValue()));
             }
         });
 

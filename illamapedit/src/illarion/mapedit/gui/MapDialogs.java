@@ -125,7 +125,7 @@ public class MapDialogs {
         dialog.setModal(true);
         dialog.setLayout(new BorderLayout());
 
-        final JList<String> list = new JList<String>(maps);
+        final JList list = new JList(maps);
         final JButton btn = new JButton(Lang.getMsg("gui.chooser.Ok"));
 
         btn.addActionListener(new AbstractAction() {
@@ -145,7 +145,7 @@ public class MapDialogs {
         if (list.getSelectedValue() == null) {
             return null;
         }
-        return MapIO.loadMap(dir.getPath(), list.getSelectedValue());
+        return MapIO.loadMap(dir.getPath(), (String) list.getSelectedValue());
     }
 
     public static boolean isShowSaveDialog() {
