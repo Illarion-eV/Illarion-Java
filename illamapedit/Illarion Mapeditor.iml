@@ -38,9 +38,10 @@
     </orderEntry>
     <orderEntry type="library" name="Javolution" level="project" />
     <orderEntry type="library" name="log4j" level="project" />
-    <orderEntry type="library" name="GnuTrove" level="project" />
     <orderEntry type="library" name="Flamingo" level="project" />
     <orderEntry type="library" name="Substance Look&amp;Feel" level="project" />
+    <orderEntry type="library" name="EventBus" level="project" />
+    <orderEntry type="library" name="GnuTrove" level="project" />
     <orderEntry type="library" name="SwingX" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">

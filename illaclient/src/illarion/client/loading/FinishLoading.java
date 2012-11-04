@@ -18,7 +18,7 @@
  */
 package illarion.client.loading;
 
-import illarion.common.graphics.SpriteBuffer;
+import illarion.client.graphics.SpriteBuffer;
 import org.newdawn.slick.loading.DeferredResource;
 
 import java.io.IOException;

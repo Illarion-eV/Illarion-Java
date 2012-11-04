@@ -23,7 +23,6 @@ import illarion.client.resources.Resource;
 import illarion.client.world.World;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
-import illarion.common.graphics.Sprite;
 import illarion.common.types.Location;
 
 /**

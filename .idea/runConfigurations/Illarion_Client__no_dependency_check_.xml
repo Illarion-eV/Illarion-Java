@@ -23,9 +23,6 @@
     <ConfigurationWrapper RunnerId="Debug" />
     <ConfigurationWrapper RunnerId="Profile " />
     <ConfigurationWrapper RunnerId="Run" />
-    <method>
-      <option name="AntTarget" enabled="false" />
-      <option name="Make" enabled="true" />
-    </method>
+    <method />
   </configuration>
 </component>

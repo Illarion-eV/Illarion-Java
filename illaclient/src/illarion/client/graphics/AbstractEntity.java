@@ -22,8 +22,6 @@ import illarion.client.IllaClient;
 import illarion.client.world.World;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
-import illarion.common.graphics.Sprite;
-import illarion.common.graphics.SpriteBuffer;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;

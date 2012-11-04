@@ -19,7 +19,6 @@
 package illarion.client.graphics;
 
 import illarion.client.resources.Resource;
-import illarion.common.graphics.Sprite;
 
 /**
  * This class is used to store the name and the sprite of a GUI image.

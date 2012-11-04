@@ -56,7 +56,7 @@
         <ant antfile="${niftystyle}/build.xml" target="build_nifty_style_res"/>
 
         <ant antfile="${client}/build.xml" target="build_client_res"/>
-        <!--<ant antfile="${mapedit}/build.xml" target="build_mapedit_res" />-->
+        <ant antfile="${mapedit}/build.xml" target="build_mapedit_res"/>
         <ant antfile="${easynpc}/build.xml" target="build_easynpc_res"/>
         <ant antfile="${easyquest}/build.xml" target="build_easyquest_res"/>
 

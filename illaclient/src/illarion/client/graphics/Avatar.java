@@ -25,7 +25,6 @@ import illarion.client.resources.Resource;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.CombatHandler;
-import illarion.common.graphics.Sprite;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;

@@ -18,7 +18,6 @@
  */
 package illarion.client.graphics;
 
-import illarion.common.graphics.Sprite;
 import org.newdawn.slick.Color;
 
 /**

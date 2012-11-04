@@ -18,11 +18,11 @@
  */
 package illarion.client.world;
 
+import illarion.client.graphics.Sprite;
 import illarion.client.graphics.Tile;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.resources.TileFactory;
 import illarion.common.graphics.MapColor;
-import illarion.common.graphics.Sprite;
 import illarion.common.types.Location;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;

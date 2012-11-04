@@ -20,7 +20,6 @@ package illarion.client.graphics;
 
 import illarion.client.resources.Resource;
 import illarion.client.resources.RuneFactory;
-import illarion.common.graphics.Sprite;
 
 /**
  * Created: 20.08.2005 17:39:11

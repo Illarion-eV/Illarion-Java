@@ -1,47 +1,43 @@
 /*
  * This file is part of the Illarion Mapeditor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute i and/or modify
- * it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Mapeditor is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Mapeditor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Mapeditor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.crash;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-
-import org.apache.log4j.Logger;
-
-import illarion.mapedit.Lang;
-import illarion.mapedit.MapEditor;
-
 import illarion.common.bug.CrashData;
 import illarion.common.bug.CrashReporter;
+import illarion.mapedit.Lang;
+import illarion.mapedit.MapEditor;
+import org.apache.log4j.Logger;
 
 /**
  * This abstract class takes care for fetching uncaught exceptions and tries to
  * keep the editor alive just in the way it supposed to be.
- * 
+ *
  * @author Martin Karing
- * @since 0.99
  * @version 0.99
+ * @since 0.99
  */
-abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
+abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger
-        .getLogger(AbstractCrashHandler.class);
+            .getLogger(AbstractCrashHandler.class);
 
     /**
      * The time since the last crash in milliseconds that need to have passed to
@@ -54,18 +50,18 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * This stores if there is currently a crash handled. In this case all other
      * crashes are ignored for now.
      */
-    private boolean currentlyCrashing = false;
+    private boolean currentlyCrashing;
 
     /**
      * The time stored when this crash occurred last time. In case the same part
      * of the client crashes too frequent the entire client is shutdown.
      */
-    private long lastCrash = 0;
+    private long lastCrash;
 
     /**
      * Fetch a uncaught exception that was thrown and try restart the crashed
      * part of the client correctly.
-     * 
+     *
      * @param t the thread that crashed
      * @param e the error message it crashed with
      */
@@ -97,7 +93,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
     @SuppressWarnings("nls")
     protected final void crashEditor() {
         MapEditor.crashEditor(Lang.getInstance().getMessage(getCrashMessage())
-            + "\n" + Lang.getInstance().getMessage("crash.fixfailed"));
+                + '\n' + Lang.getInstance().getMessage("crash.fixfailed"));
 
         currentlyCrashing = false;
     }
@@ -105,7 +101,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
     /**
      * Get the message that describes the problem that caused this crash
      * readable for a common player.
-     * 
+     *
      * @return the error message for this problem
      */
     protected abstract String getCrashMessage();
@@ -119,13 +115,13 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
     /**
      * Send the data about a crash to the Illarion server so some developer is
      * able to look over it.
-     * 
+     *
      * @param t the thread that crashed
      * @param e the reason of the crash
      */
     private void reportError(final Thread t, final Throwable e) {
         CrashReporter.getInstance().reportCrash(
-            new CrashData(MapEditor.APPLICATION, MapEditor.VERSION,
-                getCrashMessage(), t, e));
+                new CrashData(MapEditor.APPLICATION, MapEditor.VERSION,
+                        getCrashMessage(), t, e));
     }
 }

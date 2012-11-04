@@ -20,7 +20,6 @@ package illarion.client.graphics;
 
 import illarion.client.resources.OverlayFactory;
 import illarion.client.resources.Resource;
-import illarion.common.graphics.Sprite;
 import illarion.common.util.RecycleObject;
 import org.apache.log4j.Logger;
 

@@ -78,15 +78,16 @@ public final class ResourceCreator extends Task {
     private File targetFile;
 
     /**
-     * This variable to set to <code>true</code> in case pack200 is supposed to
+     * This variable to set to {@code true} in case pack200 is supposed to
      * be used to compress the data further.
      */
     private boolean useP200;
 
     /**
-     * This variable is set true in case the resource creator detected a error.
+     * This variable marks the trial of the creator. Different trials with step by step lower the efficiency of the
+     * compressor in order to get a valid build.
      */
-    private boolean secondTry = false;
+    private int trial = 0;
 
     /**
      * The default constructor that prepares this class for proper operation.
@@ -130,6 +131,7 @@ public final class ResourceCreator extends Task {
      */
     @Override
     public void execute() throws BuildException {
+        trial++;
         try {
             validate();
 
@@ -142,10 +144,25 @@ public final class ResourceCreator extends Task {
             final X86Options x86Options;
 
             try {
-                if (secondTry) {
-                    lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_DEFAULT);
-                } else {
-                    lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_MAX);
+                switch (trial) {
+                    case 1:
+                        lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_MAX);
+                        break;
+                    case 2:
+                        lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_DEFAULT);
+                        break;
+                    case 3:
+                        lzmaOptions = new LZMA2Options(LZMA2Options.PRESET_MIN);
+                        break;
+                    default:
+                        if (useP200) {
+                            useP200 = false;
+                            trial = 0;
+                            execute();
+                            return;
+                        }
+                        System.err.println("No more trials left to build resource file. Build failed.");
+                        throw new BuildException("Failed to create resource bundle: " + targetFile.getName());
                 }
                 x86Options = new X86Options();
             } catch (UnsupportedOptionsException e1) {
@@ -202,6 +219,7 @@ public final class ResourceCreator extends Task {
                     }
                 }
 
+                final boolean orgUseP200 = useP200;
                 useP200 = false;
                 boolean firstFile = true;
                 for (final AbstractFileSet fileset : nativeFilesets) {
@@ -241,6 +259,8 @@ public final class ResourceCreator extends Task {
 
                 zOut.flush();
                 zOut.finish();
+
+                useP200 = orgUseP200;
             } catch (final FileNotFoundException e) {
                 throw new BuildException(e);
             } catch (final IOException e) {
@@ -249,7 +269,6 @@ public final class ResourceCreator extends Task {
                 closeStream(zOut);
             }
 
-            System.out.print("Creating " + targetFile.getName() + " is done."); //$NON-NLS-1$ //$NON-NLS-2$
         } catch (final BuildException e) {
             e.printStackTrace();
             throw e;
@@ -260,21 +279,20 @@ public final class ResourceCreator extends Task {
         try {
             final byte[] tempArray = new byte[2048];
             b = new BufferedInputStream(new XZInputStream(new FileInputStream(targetFile)));
-            while (b.read(tempArray) != -1) ;
-        } catch (Exception e) {
-            if (secondTry) {
-                throw new BuildException("Checking the compressed file failed.", e);
+            while (b.read(tempArray) != -1) {
             }
+        } catch (Exception e) {
             System.out.println("Compressed data was corrupted. Trying compression again at less aggressive levels.");
-            secondTry = true;
             closeStream(b);
             execute();
         } finally {
             closeStream(b);
         }
+
+        System.out.print("Creating " + targetFile.getName() + " is done."); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void closeStream(final Closeable outStream) {
+    private static void closeStream(final Closeable outStream) {
         if (outStream != null) {
             try {
                 outStream.close();

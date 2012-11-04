@@ -19,7 +19,7 @@
 package illarion.client.resources;
 
 import illarion.client.graphics.GuiImage;
-import illarion.common.graphics.Sprite;
+import illarion.client.graphics.Sprite;
 import illarion.common.util.ObjectSource;
 import javolution.util.FastComparator;
 import javolution.util.FastMap;

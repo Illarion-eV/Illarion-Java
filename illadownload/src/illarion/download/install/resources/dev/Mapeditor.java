@@ -1,41 +1,38 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.install.resources.dev;
+
+import illarion.download.install.resources.Resource;
+import illarion.download.install.resources.libs.*;
+import illarion.download.util.Lang;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.libs.Javolution;
-import illarion.download.install.resources.libs.Log4j;
-import illarion.download.install.resources.libs.Tabsplitter;
-import illarion.download.install.resources.libs.Trove;
-import illarion.download.util.Lang;
-
 /**
  * This resource contains the Illarion Mapeditor.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
 public final class Mapeditor implements DevelopmentResource {
     /**
@@ -74,7 +71,7 @@ public final class Mapeditor implements DevelopmentResource {
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance
      */
     public static Resource getInstance() {
@@ -90,7 +87,7 @@ public final class Mapeditor implements DevelopmentResource {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                "illarion_mapeditor.jar")); //$NON-NLS-1$
+                    "illarion_mapeditor.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -107,7 +104,10 @@ public final class Mapeditor implements DevelopmentResource {
             dep.add(Javolution.getInstance());
             dep.add(Log4j.getInstance());
             dep.add(Trove.getInstance());
-            dep.add(Tabsplitter.getInstance());
+            dep.add(Substance.getInstance());
+            dep.add(Flamingo.getInstance());
+            dep.add(SubstanceFlamingo.getInstance());
+            dep.add(EventBus.getInstance());
             dep.add(Common.getInstance());
 
             dep.add(Items.getInstance());
@@ -153,7 +153,7 @@ public final class Mapeditor implements DevelopmentResource {
             final Collection<URL> res = new ArrayList<URL>();
             try {
                 res.add(new URL(ONLINE_PATH
-                    + "illarion_mapeditor" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                        + "illarion_mapeditor" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (final Exception e) {
                 // Catch everything and do nothing!
             }
@@ -179,8 +179,8 @@ public final class Mapeditor implements DevelopmentResource {
     public Collection<String> getVMArguments() {
         if (vmArguments == null) {
             final Collection<String> vmArgs = new ArrayList<String>();
-            vmArgs.add("-Xmx1024m"); //$NON-NLS-1$
-            vmArgs.add("-Xms800m"); //$NON-NLS-1$
+            //vmArgs.add("-Xmx1024m"); //$NON-NLS-1$
+            //vmArgs.add("-Xms800m"); //$NON-NLS-1$
 
             vmArguments = vmArgs;
         }
