@@ -71,8 +71,20 @@ public class ItemImgCellRenderer extends JPanel implements ListCellRenderer {
         }
         g.fillRect(0, 0, size.width, size.height);
         g.setColor(Color.BLACK);
-        //TODO: use the right proportions
-        g.drawImage(image, 0, 0, Math.min(w, MAX_WIDTH), Math.min(h, MAX_HEIGHT), null);
+
+        final int newWidth;
+        final int newHeight;
+
+        if (w > h) {
+            newWidth = Math.min(w, MAX_WIDTH);
+            newHeight = (int) (((float) h / (float) w) * (float) newWidth);
+        } else {
+            newHeight = Math.min(h, MAX_HEIGHT);
+            newWidth = (int) (((float) w / (float) h) * (float) newHeight);
+        }
+
+
+        g.drawImage(image, 0, 0, newWidth, newHeight, null);
         g.drawString(name, MAX_WIDTH, 10);
 
     }

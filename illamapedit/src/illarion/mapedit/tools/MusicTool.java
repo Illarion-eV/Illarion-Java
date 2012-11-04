@@ -29,6 +29,10 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import javax.swing.*;
 
 /**
+ * TODO: Bigger brush
+ * TODO: Play music
+ * TODO: Load ids from table
+ *
  * @author Tim
  */
 public class MusicTool extends AbstractTool {
