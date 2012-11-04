@@ -165,6 +165,7 @@ public final class MapEditor {
         while (resourceManager.hasNextToLoad()) {
             try {
                 LOGGER.debug("Loading " + resourceManager.getNextDescription());
+                //TODO: Remove this
                 EventBus.publish(new MessageStringEvent("Loading " + resourceManager.getNextDescription()));
                 resourceManager.loadNext();
             } catch (IOException e) {

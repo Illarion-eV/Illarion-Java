@@ -21,12 +21,17 @@ package illarion.mapedit.gui;
 import illarion.common.config.Config;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
+import illarion.mapedit.events.HistoryEvent;
+import illarion.mapedit.events.menu.MapSaveEvent;
+import illarion.mapedit.events.util.ActionEventPublisher;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.loaders.ImageLoader;
+import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 
 import java.awt.*;
+import java.awt.event.WindowListener;
 
 /**
  * This class represents the whole gui.
@@ -49,16 +54,28 @@ public class MainFrame extends JRibbonFrame {
         instance = this;
     }
 
-    public void initialize(final GuiController controller) {
+    public void initialize(final WindowListener controller) {
         addWindowListener(controller);
         setTitle(Lang.getMsg("application.Name") + MapEditor.getVersion());
         setSize(WINDOW_SIZE);
         getRibbon().setApplicationMenu(new MainMenu());
 
+        final JCommandButton saveBtn = new JCommandButton(ImageLoader.getResizableIcon("filesave"));
+        final JCommandButton undoBtn = new JCommandButton(ImageLoader.getResizableIcon("undo"));
+        final JCommandButton redoBtn = new JCommandButton(ImageLoader.getResizableIcon("redo"));
+
+        saveBtn.addActionListener(new ActionEventPublisher(new MapSaveEvent()));
+        undoBtn.addActionListener(new ActionEventPublisher(new HistoryEvent(true)));
+        redoBtn.addActionListener(new ActionEventPublisher(new HistoryEvent(false)));
+
+        getRibbon().addTaskbarComponent(saveBtn);
+        getRibbon().addTaskbarComponent(undoBtn);
+        getRibbon().addTaskbarComponent(redoBtn);
+
         add(mapPanel, BorderLayout.CENTER);
         add(settingsPanel, BorderLayout.EAST);
         final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
-                /*new ClipboardBand(),*/ new HistoryBand(), new ZoomBand(), new ViewBand(), new MapFileBand(config),
+                /*new ClipboardBand(),*/  new ViewBand(), new ZoomBand(), new MapFileBand(config),
                 new ToolBand());
 
 
