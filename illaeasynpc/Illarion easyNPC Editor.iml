@@ -25,7 +25,6 @@
     <orderEntry type="library" name="Substance Look&amp;Feel" level="project" />
     <orderEntry type="library" name="SwingX" level="project" />
     <orderEntry type="library" name="GnuTrove" level="project" />
-    <orderEntry type="library" name="laf" level="project" />
     <orderEntry type="library" name="RSyntaxTextArea" level="project" />
     <orderEntry type="library" name="EventBus" level="project" />
   </component>
