@@ -24,6 +24,7 @@ import illarion.mapedit.data.MapItem;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.data.MapWarpPoint;
 import illarion.mapedit.resource.Overlay;
+import illarion.mapedit.resource.loaders.ItemLoader;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -83,10 +84,10 @@ public class Version1Decoder implements Decoder {
         String s = null;
         //TODO: Remove this from here
         if (idata != 0) {
-            s = JOptionPane.showInputDialog("Itemdata '" + idata + "' at " + ix + "," + iy + " isn't compatible with the " +
-                    "actual " +
-                    "fileversion" +
-                    "\n enter data in the format key1=value1;key2=value2");
+            s = JOptionPane.showInputDialog(String.format("Itemdata '%d' at %d,%d (%s) isn't compatible with the " +
+                    "actual fileversion\n enter data in the format key1=value1;key2=value2",
+                    idata, ix, iy, ItemLoader.getInstance().getTileFromId(iid).getResourceName()));
+
         }
         final MapItem item = new MapItem(iid, (s == null) ? "" : s, iquality);
         map.addItemAt(ix, iy, item);

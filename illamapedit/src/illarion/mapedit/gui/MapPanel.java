@@ -134,10 +134,11 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
                 rendererManager.getTranslationY(), rendererManager.getZoom());
         final int y = SwingLocation.mapCoordinateY(e.getX(), e.getY(), rendererManager.getTranslationX(),
                 rendererManager.getTranslationY(), rendererManager.getZoom());
-
-        if (controller.getSelected() != null) {
-            EventBus.publish(new MapClickedEvent(x, y, MouseButton.fromAwt(e.getModifiers()),
-                    controller.getSelected()));
+        final Map selected = controller.getSelected();
+        if (selected != null) {
+            EventBus.publish(new MapClickedEvent(x - selected.getX(), y - selected.getY(),
+                    MouseButton.fromAwt(e.getModifiers()),
+                    selected));
         }
     }
 
