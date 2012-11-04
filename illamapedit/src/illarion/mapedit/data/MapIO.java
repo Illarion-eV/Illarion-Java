@@ -156,27 +156,24 @@ public class MapIO {
         tileOutput.write(String.format("%s %d%s", HEADER_Y, map.getY(), NEWLINE));
         tileOutput.write(String.format("%s %d%s", HEADER_W, map.getWidth(), NEWLINE));
         tileOutput.write(String.format("%s %d%s", HEADER_H, map.getHeight(), NEWLINE));
-//        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
         //TODO: Save overlays
         for (int y = 0; y < map.getWidth(); ++y) {
             for (int x = 0; x < map.getHeight(); ++x) {
                 final MapTile tile = map.getTileAt(x, y);
-                writeLine(tileOutput, x, y, tile.getId(), tile.getMusicID());
+
+                //        <dx>;<dy>;<tileID>;<musicID>
+                writeLine(tileOutput, String.format("%d;%d;%s", x, y, tile));
 
                 final List<MapItem> items = tile.getMapItems();
                 if (items != null) {
                     for (final MapItem item : items) {
-                        if (item.getItemData().isEmpty()) {
-                            writeLine(itemOutput, x, y, item.getId(), item.getQuality());
-                        } else {
-                            writeLine(itemOutput, x, y, item.getId(), item.getQuality(), item.getItemData());
-                        }
+                        //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
+                        writeLine(itemOutput, String.format("%d;%d;%s", x, y, item));
                     }
                 }
                 final MapWarpPoint warp = tile.getMapWarpPoint();
                 if (warp != null) {
-                    writeLine(warpOutput, x, y, warp.getXTarget(), warp.getYTarget(),
-                            warp.getZTarget());
+                    writeLine(warpOutput, String.format("%d,%d,%s", x, y, warp));
                 }
             }
         }
@@ -210,5 +207,10 @@ public class MapIO {
                 writer.write(NEWLINE);
             }
         }
+    }
+
+    private static void writeLine(final BufferedWriter writer, String str) throws IOException {
+        writer.write(str);
+        writer.write(NEWLINE);
     }
 }

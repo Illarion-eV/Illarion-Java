@@ -110,6 +110,7 @@ public class Version2Decoder implements Decoder {
 
     @Override
     public void decodeWarpLine(final String line, final int i) throws FormatCorruptedException {
+        // <sx>;<sy>;<tx>;<ty>;<tz>
         final String[] sections = DELIMITER.split(line);
         if (sections.length != 5) {
             throw new FormatCorruptedException(path + ".warps.txt", line, i,

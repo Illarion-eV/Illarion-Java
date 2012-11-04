@@ -19,6 +19,7 @@
 package illarion.mapedit.data;
 
 import illarion.mapedit.resource.Overlay;
+import javolution.text.TextBuilder;
 import javolution.util.FastList;
 
 import java.util.List;
@@ -152,5 +153,30 @@ public class MapTile {
      */
     public void setMapWarpPoint(final MapWarpPoint mapWarpPoint) {
         this.mapWarpPoint = mapWarpPoint;
+    }
+
+    /**
+     * Serializes the current tile to a string in the following format: <br>
+     * {@code <tileID>;<musicID>}
+     *
+     * @return
+     */
+    @Override
+    public String toString() {
+        TextBuilder builder = TextBuilder.newInstance();
+
+        if (shapeID == 0) {
+            builder.append(id);
+        } else {
+            builder.append(Overlay.generateTileId(id, overlayID, shapeID));
+        }
+        builder.append(';');
+        builder.append(musicID);
+
+        try {
+            return builder.toString();
+        } finally {
+            TextBuilder.recycle(builder);
+        }
     }
 }
