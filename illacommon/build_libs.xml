@@ -509,7 +509,7 @@
 
     <target name="prepare_substance" description="prepare the SUBSTANCE bundle"
             depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
-        <property name="use.pack200" value="true"/>
+        <property name="use.pack200" value="false"/>
 
         <resourceprepare targetdir="${signedlibs}" usepack200="${use.pack200}">
             <fileset refid="substance"/>
