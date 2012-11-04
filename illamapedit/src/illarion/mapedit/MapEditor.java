@@ -145,7 +145,7 @@ public final class MapEditor {
         JRibbonFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
         loadResources();
-        GuiController controller = new GuiController(getConfig());
+        final GuiController controller = new GuiController(getConfig());
         controller.initialize();
         instance = new MapEditor();
 
@@ -155,7 +155,7 @@ public final class MapEditor {
     }
 
     private static void loadResources() {
-        ResourceManager resourceManager = ResourceManager.getInstance();
+        final ResourceManager resourceManager = ResourceManager.getInstance();
         resourceManager.addResources(
                 ImageLoader.getInstance(),
                 TextureLoaderAwt.getInstance(),
