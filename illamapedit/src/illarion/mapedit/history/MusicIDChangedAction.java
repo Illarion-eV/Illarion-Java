@@ -18,38 +18,35 @@
  */
 package illarion.mapedit.history;
 
-import illarion.common.types.Location;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
-import illarion.mapedit.processing.MapTransitions;
 
 /**
  * @author Tim
  */
-public class TileIDChangedAction extends HistoryAction {
+public class MusicIDChangedAction extends HistoryAction {
+
 
     private final int x;
     private final int y;
-    private final MapTile old;
-    private final MapTile newt;
+    private final int oldID;
+    private final int newID;
 
-    public TileIDChangedAction(final int x, final int y, final MapTile old, final MapTile newt, final Map map) {
+    public MusicIDChangedAction(final int x, final int y, final int oldID, final int newID, final Map map) {
         super(map);
         this.x = x;
         this.y = y;
-        this.old = old;
-        this.newt = newt;
+        this.oldID = oldID;
+        this.newID = newID;
     }
 
     @Override
-    public void redo() {
-        map.setTileAt(x, y, MapTile.MapTileFactory.setId(newt.getId(), map.getTileAt(x, y)));
-        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
+    void redo() {
+        map.setTileAt(x, y, MapTile.MapTileFactory.setMusicId(newID, map.getTileAt(x, y)));
     }
 
     @Override
-    public void undo() {
-        map.setTileAt(x, y, MapTile.MapTileFactory.setId(old.getId(), map.getTileAt(x, y)));
-        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
+    void undo() {
+        map.setTileAt(x, y, MapTile.MapTileFactory.setMusicId(oldID, map.getTileAt(x, y)));
     }
 }

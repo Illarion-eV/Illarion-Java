@@ -53,7 +53,8 @@ public class MusicRenderer extends AbstractMapRenderer {
 
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                if (map.getTileAt(x, y).getMusicID() == 0) {
+                final Integer id = map.getTileAt(x, y).getMusicID();
+                if (id == 0) {
                     continue;
                 }
                 final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
@@ -62,7 +63,8 @@ public class MusicRenderer extends AbstractMapRenderer {
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 
                     g.drawImage(image, xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()), null);
-
+                    g.setColor(Color.RED);
+                    g.drawString(Integer.toString(id), xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()));
                 }
             }
         }

@@ -171,7 +171,6 @@ public class RendererManager {
         this.translationY = translationY;
     }
 
-    //TODO: Fix inverted zooming
     public void zoomIn() {
         if (zoom < 1) {
             setZoom(zoom + ZOOM_STEP);

@@ -57,6 +57,7 @@ public class ToolBand extends JRibbonBand {
         tools.add(new SingleTileTool());
         tools.add(new TileBrushTool());
         tools.add(new ItemEraserTool());
+        tools.add(new MusicTool());
 
         for (AbstractTool t : tools) {
             menu.addMenuButton(new ToolMenuButton(

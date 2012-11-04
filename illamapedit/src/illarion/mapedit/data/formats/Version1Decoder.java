@@ -110,9 +110,9 @@ public class Version1Decoder implements Decoder {
         final int tmid = Integer.parseInt(sections[3]);
         final MapTile tile;
         if (Overlay.shapeID(tid) == 0) {
-            tile = new MapTile(tid, 0, 0, tmid);
+            tile = MapTile.MapTileFactory.createNew(tid, 0, 0, tmid);
         } else {
-            tile = new MapTile(Overlay.baseID(tid), Overlay.overlayID(tid), Overlay.shapeID(tid), tmid);
+            tile = MapTile.MapTileFactory.createNew(Overlay.baseID(tid), Overlay.overlayID(tid), Overlay.shapeID(tid), tmid);
         }
         map.setTileAt(tx, ty, tile);
     }
