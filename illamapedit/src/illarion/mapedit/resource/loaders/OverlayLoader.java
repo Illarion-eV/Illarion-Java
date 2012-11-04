@@ -65,7 +65,6 @@ public class OverlayLoader implements TableLoaderSink<TableLoaderOverlay>, Resou
         return true;
     }
 
-    //TODO: Improve this
     public Overlay getOverlayFromId(final int id) {
         if (overlays.contains(id)) {
             return overlays.get(id);

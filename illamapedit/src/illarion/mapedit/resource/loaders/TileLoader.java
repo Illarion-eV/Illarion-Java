@@ -18,12 +18,12 @@
  */
 package illarion.mapedit.resource.loaders;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.common.graphics.TileInfo;
 import illarion.common.util.TableLoaderSink;
 import illarion.common.util.TableLoaderTiles;
 import illarion.mapedit.resource.Resource;
 import illarion.mapedit.resource.TileImg;
-import javolution.util.FastList;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
@@ -41,7 +41,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
     private static final TileLoader INSTANCE = new TileLoader();
     private static final String DIR_IMG_TILES = "data/tiles/";
 
-    private final FastList<TileImg> tiles = new FastList<TileImg>();
+    private final TIntObjectHashMap<TileImg> tiles = new TIntObjectHashMap<TileImg>();
 
     private TileLoader() {
     }
@@ -131,7 +131,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
 
         }
 
-        tiles.add(tile);
+        tiles.put(tile.getId(), tile);
 
         return true;
     }
@@ -150,12 +150,9 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
         return imgs;
     }
 
-    //TODO: Improve this
     public TileImg getTileFromId(final int id) {
-        for (final TileImg t : tiles) {
-            if (t.getId() == id) {
-                return t;
-            }
+        if (tiles.contains(id)) {
+            return tiles.get(id);
         }
         return null;
     }
@@ -169,7 +166,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
     }
 
     public TileImg[] getTiles() {
-        final TileImg[] t = tiles.toArray(new TileImg[tiles.size()]);
+        final TileImg[] t = tiles.values(new TileImg[tiles.size()]);
         return t;
     }
 }
