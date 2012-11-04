@@ -28,7 +28,6 @@
     <property name="res" location="${easynpc}/res"/>
     <property name="classes" location="${easynpc}/antclasses"/>
     <property name="jar" location="${easynpc}/${easynpc.jar}"/>
-    <property name="jar_res" location="${easynpc}/illarion_easynpc_resources.jar"/>
 
     <target name="build_easynpc" description="build easynpc editor jar file"
             depends="init, compile_easynpc, build_jar" unless="easynpc.uptodate">
