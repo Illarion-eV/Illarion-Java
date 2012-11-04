@@ -280,19 +280,20 @@ public final class ResourceCreator extends Task {
         }
 
         /** Checking the created file. */
-        BufferedInputStream b = null;
+        BufferedInputStream bInStream = null;
         try {
+            bInStream = new BufferedInputStream(new XZInputStream(new FileInputStream(targetFile)));
             final byte[] tempArray = new byte[2048];
-            b = new BufferedInputStream(new XZInputStream(new FileInputStream(targetFile)));
-            while (b.read(tempArray) != -1) {
+            while (bInStream.read(tempArray) != -1) {
             }
         } catch (Exception e) {
             System.out.println("Trial #" + Integer.toString(trial) + " Compressed data was corrupted ("
                     + e.getMessage() + "). Trying compression again at less aggressive levels.");
-            closeStream(b);
+            closeStream(bInStream);
             execute();
+            return;
         } finally {
-            closeStream(b);
+            closeStream(bInStream);
         }
 
         System.out.print("Creating " + targetFile.getName() + " is done."); //$NON-NLS-1$ //$NON-NLS-2$
