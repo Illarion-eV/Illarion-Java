@@ -169,19 +169,19 @@ public class GuiController implements WindowListener {
 
     @Override
     public void windowClosing(final WindowEvent e) {
-        if (saved) {
-            LOGGER.debug("Closing window.");
-            mainFrame.dispose();
-            MapEditor.exit();
-        } else {
+        if (!saved) {
             if (MapDialogs.isShowSaveDialog()) {
                 onMapSave(new MapSaveEvent());
             }
         }
+        LOGGER.debug("Closing window.");
+        mainFrame.dispose();
+        MapEditor.exit();
     }
 
     @Override
     public void windowClosed(final WindowEvent e) {
+
         LOGGER.debug("Exit");
         System.exit(0);
     }
