@@ -29,15 +29,16 @@ import java.awt.event.ActionListener;
 public class ActionEventPublisher implements ActionListener {
 
 
-    private final Object event;
+    private final Object[] event;
 
-    public ActionEventPublisher(final Object event) {
-
+    public ActionEventPublisher(final Object... event) {
         this.event = event;
     }
 
     @Override
-    public void actionPerformed(final ActionEvent e) {
-        EventBus.publish(event);
+    public void actionPerformed(final ActionEvent ignore) {
+        for (final Object e : event) {
+            EventBus.publish(e);
+        }
     }
 }
