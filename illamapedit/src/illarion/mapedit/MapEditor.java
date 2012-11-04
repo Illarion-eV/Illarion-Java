@@ -141,6 +141,7 @@ public final class MapEditor {
         initLogging();
         initExceptionHandler();
         initEventBus();
+        SplashScreen.getInstance().setVisible(true);
         JRibbonFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
         loadResources();

@@ -118,7 +118,7 @@ public class GuiController implements WindowListener {
     }
 
     public void initialize() {
-        splashScreen.setVisible(true);
+
     }
 
     public Map getSelected() {
