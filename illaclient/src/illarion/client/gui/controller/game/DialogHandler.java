@@ -188,14 +188,20 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         }
     }
 
+    private DialogCrafting getCraftingDialog(final int id) {
+        final Element dialogElement = screen.findElementByName("craftingDialog" + Integer.toString(id));
+        if (dialogElement == null) {
+            return null;
+        }
+        return dialogElement.getNiftyControl(DialogCrafting.class);
+    }
+
     @EventSubscriber
     public void handleDialogItemLookAtEvent(final DialogItemLookAtEvent event) {
-        final Element dialogElement = screen.findElementByName("craftingDialog" +
-                Integer.toString(event.getDialogId()));
-        if (dialogElement == null) {
+        final DialogCrafting craftDialog = getCraftingDialog(event.getDialogId());
+        if (craftDialog == null) {
             return;
         }
-        final DialogCrafting craftDialog = dialogElement.getNiftyControl(DialogCrafting.class);
 
         if (craftDialog.getSelectedCraftingItem() == event.getSlot()) {
             final Element targetElement = craftDialog.getCraftingItemDisplay();
@@ -208,18 +214,35 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     @EventSubscriber
     public void handleDialogSecondaryItemLookAtEvent(final DialogSecondaryItemLookAtEvent event) {
-        final Element dialogElement = screen.findElementByName("craftingDialog" +
-                Integer.toString(event.getDialogId()));
-        if (dialogElement == null) {
+        final DialogCrafting craftDialog = getCraftingDialog(event.getDialogId());
+        if (craftDialog == null) {
             return;
         }
-        final DialogCrafting craftDialog = dialogElement.getNiftyControl(DialogCrafting.class);
+
         if (craftDialog.getSelectedCraftingItem() == event.getSlot()) {
             final Element targetElement = craftDialog.getIngredientItemDisplay(event.getSecondarySlot());
             final Rectangle elementRectangle = new Rectangle();
             elementRectangle.set(targetElement.getX(), targetElement.getY(), targetElement.getWidth(),
                     targetElement.getHeight());
             tooltipHandler.showToolTip(elementRectangle, event);
+        }
+    }
+
+    @EventSubscriber
+    public void handleDialogCraftingUpdateEvent(final DialogCraftingUpdateReceivedEvent event) {
+        final DialogCrafting craftDialog = getCraftingDialog(event.getId());
+        if (craftDialog == null) {
+            return;
+        }
+
+        switch (event.getType()) {
+            case Completed:
+                craftDialog.setProgress(0.f);
+                break;
+            case Aborted:
+                craftDialog.setProgress(0.f);
+                break;
+            case Start:
         }
     }
 
