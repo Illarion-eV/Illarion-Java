@@ -56,8 +56,7 @@ public class SingleTileTool extends AbstractTool {
         final MapTile newTile = new MapTile(tileId, map.getTileAt(x, y));
         getHistory().addEntry(new TileIDChangedAction(x, y, map.getTileAt(x, y), newTile, map));
         map.setTileAt(x, y, newTile);
-        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y));
-
+        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
     }
 
     @Override

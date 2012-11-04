@@ -18,8 +18,10 @@
  */
 package illarion.mapedit.history;
 
+import illarion.common.util.Location;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.processing.MapTransitions;
 
 /**
  * @author Tim
@@ -42,10 +44,12 @@ public class TileIDChangedAction extends HistoryAction {
     @Override
     public void redo() {
         map.setTileAt(x, y, new MapTile(newt.getId(), map.getTileAt(x, y)));
+        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
     }
 
     @Override
     public void undo() {
         map.setTileAt(x, y, new MapTile(old.getId(), map.getTileAt(x, y)));
+        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
     }
 }

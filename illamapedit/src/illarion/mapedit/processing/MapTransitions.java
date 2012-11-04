@@ -244,8 +244,8 @@ public final class MapTransitions {
      *
      * @param loc the location of the tile to check
      */
-    public void checkTile(final Map map, final Location loc) {
-        placeTransition(map, loc);
+    public void checkTile(final Map map, final Location loc/*, final GroupAction history*/) {
+        placeTransition(map, loc/*, history*/);
     }
 
     /**
@@ -253,7 +253,7 @@ public final class MapTransitions {
      *
      * @param loc the location to check
      */
-    public void checkTileAndSurround(final Map map, final Location loc) {
+    public void checkTileAndSurround(final Map map, final Location loc/*, final GroupAction history*/) {
         checkTile(map, loc);
         final Location tempLoc = new Location();
 
@@ -415,7 +415,7 @@ public final class MapTransitions {
      *
      * @param loc the location where a transition could be placed
      */
-    private void placeTransition(final Map map, final Location loc) {
+    private void placeTransition(final Map map, final Location loc/*, final GroupAction history*/) {
         final MapTile centerTile = map.getTileAt(loc);
         if (centerTile == null) {
             return;
@@ -438,11 +438,14 @@ public final class MapTransitions {
             if (maskId == -1) {
                 continue;
             }
-
-            map.setTileAt(loc, new MapTile(centerTileId, testId, maskId + 1, centerTile));
+            final MapTile newTile = new MapTile(centerTileId, testId, maskId + 1, centerTile);
+            //history.addAction(new TileIDChangedAction(loc.getScX(), loc.getScY(), map.getTileAt(loc), newTile, map));
+            map.setTileAt(loc, newTile);
             return;
         }
-        map.setTileAt(loc, new MapTile(centerTileId, centerTile));
+        final MapTile newTile = new MapTile(centerTileId, centerTile);
+        //history.addAction(new TileIDChangedAction(loc.getScX(), loc.getScY(), map.getTileAt(loc), newTile, map));
+        map.setTileAt(loc, newTile);
     }
 
     /**

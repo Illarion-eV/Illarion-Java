@@ -95,7 +95,7 @@ public class Map {
     }
 
     public void setTileAt(final Location loc, final MapTile mapTile) {
-        setTileAt(loc.getRow(), loc.getCol(), mapTile);
+        setTileAt(loc.getScX(), loc.getScY(), mapTile);
     }
 
     /**
@@ -143,7 +143,7 @@ public class Map {
     }
 
     public MapTile getTileAt(final Location loc) {
-        return getTileAt(loc.getRow(), loc.getCol());
+        return getTileAt(loc.getScX(), loc.getScY());
     }
 
     /**
