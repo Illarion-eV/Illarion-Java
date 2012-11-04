@@ -51,7 +51,6 @@ public class ItemPlacedAction extends HistoryAction {
 
     @Override
     public void undo() {
-        System.out.println(newt + "  " + old);
         if (newt != null) {
             map.getTileAt(x, y).getMapItems().remove(newt);
         }
