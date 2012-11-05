@@ -21,36 +21,44 @@ package illarion.mapedit.tools.panel;
 import illarion.mapedit.Lang;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * @author Tim
  */
 public class MusicPanel extends JPanel {
-    private final JSpinner spinner;
 
-    public MusicPanel(final SettingsChangedListener listener) {
-        setLayout(new GridBagLayout());
-        GridBagConstraints gb = new GridBagConstraints();
+    private final JSpinner spinner;
+    private final JCheckBox delCheckBox;
+
+    public MusicPanel() {
+        setLayout(new BorderLayout());
+
+        final JPanel northPanel = new JPanel(new GridLayout(0, 2));
 
         spinner = new JSpinner(new SpinnerNumberModel(0, 0, 9000, 1));
-        spinner.addChangeListener(new ChangeListener() {
+        delCheckBox = new JCheckBox();
+
+        delCheckBox.addActionListener(new ActionListener() {
             @Override
-            public void stateChanged(final ChangeEvent e) {
-                listener.settingsChanged();
+            public void actionPerformed(final ActionEvent e) {
+                spinner.setEnabled(!delCheckBox.isSelected());
             }
         });
-        gb.gridx = 0;
-        gb.gridy = 0;
 
-        add(new JLabel(Lang.getMsg("tools.MusicTool.MusicID")), gb);
-        gb.gridx++;
-        add(spinner, gb);
+        northPanel.add(new JLabel(Lang.getMsg("tools.MusicTool.MusicID")));
+        northPanel.add(spinner);
+        northPanel.add(new JLabel(Lang.getMsg("tools.MusicTool.Delete")));
+        northPanel.add(delCheckBox);
+        add(northPanel, BorderLayout.NORTH);
     }
 
     public int getMusicID() {
-        return (Integer) spinner.getValue();
+        if (delCheckBox.isEnabled()) {
+            return (Integer) spinner.getValue();
+        }
+        return 0;
     }
 }

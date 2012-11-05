@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="vorbisspi">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/vorbisspi" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/vorbisspi" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/vorbisspi" recursive="false" />
+  </library>
+</component>

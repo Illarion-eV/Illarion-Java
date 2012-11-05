@@ -23,31 +23,30 @@ import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.history.MusicIDChangedAction;
 import illarion.mapedit.tools.panel.MusicPanel;
-import illarion.mapedit.tools.panel.SettingsChangedListener;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.swing.*;
 
 /**
+ * TODO: Bigger brush
+ * TODO: Play music
+ * TODO: Load ids from table
+ *
  * @author Tim
  */
 public class MusicTool extends AbstractTool {
 
     private final MusicPanel panel;
 
-    private int musicID = 0;
 
     public MusicTool() {
-        this.panel = new MusicPanel(new SettingsChangedListener() {
-            @Override
-            public void settingsChanged() {
-                musicID = panel.getMusicID();
-            }
-        });
+        panel = new MusicPanel();
     }
 
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
+        final int musicID = panel.getMusicID();
+        System.out.println(x + "  " + y);
         if (map.getTileAt(x, y).getMusicID() == musicID) {
             return;
         }

@@ -31,6 +31,7 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -49,7 +50,7 @@ public class ToolBand extends JRibbonBand {
         final JCommandPopupMenu menu = new JCommandPopupMenu();
 
 
-        List<AbstractTool> tools = new FastList<AbstractTool>();
+        final Collection<AbstractTool> tools = new FastList<AbstractTool>();
 
 
         //TOOLS HERE
@@ -57,9 +58,11 @@ public class ToolBand extends JRibbonBand {
         tools.add(new SingleTileTool());
         tools.add(new TileBrushTool());
         tools.add(new ItemEraserTool());
+        tools.add(new TileEraserTool());
         tools.add(new MusicTool());
+        tools.add(new WarpTool());
 
-        for (AbstractTool t : tools) {
+        for (final AbstractTool t : tools) {
             menu.addMenuButton(new ToolMenuButton(
                     t, t.getLocalizedName(), t.getToolIcon()
             ));

@@ -82,7 +82,6 @@ public class Version1Decoder implements Decoder {
         final int idata = Integer.parseInt(sections[4]);
         final int iquality = (sections.length == 6) ? Integer.parseInt(sections[5]) : 0;
         String s = null;
-        //TODO: Remove this from here
         if (idata != 0) {
             s = JOptionPane.showInputDialog(String.format("Itemdata '%d' at %d,%d (%s) isn't compatible with the " +
                     "actual fileversion\n enter data in the format key1=value1;key2=value2",

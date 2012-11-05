@@ -35,6 +35,7 @@ import java.awt.event.WindowListener;
 
 /**
  * This class represents the whole gui.
+ * TODO: save window dimensions.
  *
  * @author Tim
  */
@@ -75,7 +76,7 @@ public class MainFrame extends JRibbonFrame {
         add(mapPanel, BorderLayout.CENTER);
         add(settingsPanel, BorderLayout.EAST);
         final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
-                /*new ClipboardBand(),*/  new ViewBand(), new ZoomBand(), new MapFileBand(config),
+                /*new ClipboardBand(),*/  new ViewBand(getRendererManager()), new ZoomBand(), new MapFileBand(config),
                 new ToolBand());
 
 

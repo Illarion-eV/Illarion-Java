@@ -20,45 +20,37 @@ package illarion.mapedit.tools;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapItem;
-import illarion.mapedit.history.ItemPlacedAction;
-import illarion.mapedit.resource.ItemImg;
-import illarion.mapedit.tools.panel.SingleItemPanel;
+import illarion.mapedit.data.MapWarpPoint;
+import illarion.mapedit.history.WarpPlacedAction;
+import illarion.mapedit.tools.panel.WarpPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.swing.*;
-import java.util.List;
 
 /**
+ * TODO: Implement it
+ *
  * @author Tim
  */
-public class SingleItemTool extends AbstractTool {
+public class WarpTool extends AbstractTool {
 
-    public final SingleItemPanel panel;
-
-    public SingleItemTool() {
-        panel = new SingleItemPanel();
-    }
+    private final WarpPanel panel = new WarpPanel();
 
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
-        if (!map.contains(x, y)) {
-            return;
+        final MapWarpPoint point;
+        if (panel.isDelete()) {
+            point = null;
+        } else {
+            point = new MapWarpPoint(panel.getTargetX(), panel.getTargetY(), panel.getTargetZ());
         }
-        final ItemImg item = getManager().getSelectedItem();
-        if (item != null) {
-            final List<MapItem> items = map.getTileAt(x, y).getMapItems();
-            final MapItem i = new MapItem(item.getItemId(), "", 0);
-            if (!items.contains(i)) {
-                getHistory().addEntry(new ItemPlacedAction(x, y, null, i, map));
-                items.add(i);
-            }
-        }
+        getHistory().addEntry(new WarpPlacedAction(x, y, map.getTileAt(x, y).getMapWarpPoint(), point, map));
+        map.getTileAt(x, y).setMapWarpPoint(point);
     }
 
     @Override
     public String getLocalizedName() {
-        return Lang.getMsg("tools.SingleItemTool");
+        return Lang.getMsg("tools.WarpTool");
     }
 
     @Override

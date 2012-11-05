@@ -16,29 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.render;
+package illarion.mapedit.tools;
 
+import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapTile;
+import illarion.mapedit.history.TileIDChangedAction;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
-import java.awt.*;
-
+import javax.swing.*;
 
 /**
  * @author Tim
  */
-public class SelectionRenderer extends AbstractMapRenderer {
+public class TileEraserTool extends AbstractTool {
 
-    public SelectionRenderer(RendererManager manager) {
-        super(manager);
+    @Override
+    public void clickedAt(final int x, final int y, final Map map) {
+        final MapTile nt = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
+        getHistory().addEntry(new TileIDChangedAction(x, y, map.getTileAt(x, y), nt, map));
+        map.setTileAt(x, y, nt);
     }
 
     @Override
-    public void renderMap(final Map map, final Rectangle viewport, final int level, final Graphics2D g) {
-
+    public String getLocalizedName() {
+        return Lang.getMsg("tools.TileEraser");
     }
 
     @Override
-    protected int getRenderPriority() {
-        return 0;
+    public ResizableIcon getToolIcon() {
+        return null;
+    }
+
+    @Override
+    public JPanel getSettingsPanel() {
+        return null;
     }
 }
