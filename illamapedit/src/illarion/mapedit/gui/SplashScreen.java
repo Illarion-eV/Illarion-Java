@@ -85,7 +85,7 @@ public class SplashScreen extends JPanel {
         if (message != null) {
             g.setColor(Color.RED);
             g.setFont(new Font("Arial", Font.BOLD, FONT_SIZE));
-            g.drawString(message, 5, img.getHeight(null));
+            g.drawString(message, 5, (img.getHeight(null) + HEIGHT_ADJUSTMENT) - 10);
         }
     }
 
