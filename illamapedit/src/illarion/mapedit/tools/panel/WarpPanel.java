@@ -22,6 +22,8 @@ import illarion.mapedit.Lang;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * @author Tim
@@ -31,6 +33,7 @@ public class WarpPanel extends JPanel {
     public final JSpinner xSpinner;
     public final JSpinner ySpinner;
     public final JSpinner zSpinner;
+    public final JCheckBox delCheckBox;
 
     public WarpPanel() {
         super(new BorderLayout());
@@ -39,12 +42,25 @@ public class WarpPanel extends JPanel {
         ySpinner = new JSpinner(new SpinnerNumberModel(0, -1000000, 1000000, 1));
         zSpinner = new JSpinner(new SpinnerNumberModel(0, -1000000, 1000000, 1));
 
+        delCheckBox = new JCheckBox();
+
+        delCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                xSpinner.setEnabled(!delCheckBox.isSelected());
+                ySpinner.setEnabled(!delCheckBox.isSelected());
+                zSpinner.setEnabled(!delCheckBox.isSelected());
+            }
+        });
+
         panel.add(new JLabel(Lang.getMsg("tools.WarpTool.TargetX")));
         panel.add(xSpinner);
         panel.add(new JLabel(Lang.getMsg("tools.WarpTool.TargetY")));
         panel.add(ySpinner);
         panel.add(new JLabel(Lang.getMsg("tools.WarpTool.TargetZ")));
         panel.add(zSpinner);
+        panel.add(new JLabel(Lang.getMsg("tools.WarpTool.Delete")));
+        panel.add(delCheckBox);
         add(panel, BorderLayout.NORTH);
     }
 
@@ -58,5 +74,9 @@ public class WarpPanel extends JPanel {
 
     public int getTargetZ() {
         return (Integer) zSpinner.getValue();
+    }
+
+    public boolean isDelete() {
+        return delCheckBox.isSelected();
     }
 }

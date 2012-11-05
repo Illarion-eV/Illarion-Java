@@ -38,7 +38,12 @@ public class WarpTool extends AbstractTool {
 
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
-        final MapWarpPoint point = new MapWarpPoint(panel.getTargetX(), panel.getTargetY(), panel.getTargetZ());
+        final MapWarpPoint point;
+        if (panel.isDelete()) {
+            point = null;
+        } else {
+            point = new MapWarpPoint(panel.getTargetX(), panel.getTargetY(), panel.getTargetZ());
+        }
         getHistory().addEntry(new WarpPlacedAction(x, y, map.getTileAt(x, y).getMapWarpPoint(), point, map));
         map.getTileAt(x, y).setMapWarpPoint(point);
     }
