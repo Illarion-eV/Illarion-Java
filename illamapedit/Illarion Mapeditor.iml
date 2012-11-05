@@ -43,6 +43,9 @@
     <orderEntry type="library" name="EventBus" level="project" />
     <orderEntry type="library" name="GnuTrove" level="project" />
     <orderEntry type="library" name="SwingX" level="project" />
+    <orderEntry type="library" name="JOrbis" level="project" />
+    <orderEntry type="library" name="vorbisspi" level="project" />
+    <orderEntry type="library" name="tritonus" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
