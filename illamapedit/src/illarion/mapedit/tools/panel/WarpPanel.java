@@ -18,7 +18,10 @@
  */
 package illarion.mapedit.tools.panel;
 
+import illarion.mapedit.Lang;
+
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author Tim
@@ -30,20 +33,30 @@ public class WarpPanel extends JPanel {
     public final JSpinner zSpinner;
 
     public WarpPanel() {
+        super(new BorderLayout());
+        final JPanel panel = new JPanel(new GridLayout(0, 2));
         xSpinner = new JSpinner(new SpinnerNumberModel(0, -1000000, 1000000, 1));
         ySpinner = new JSpinner(new SpinnerNumberModel(0, -1000000, 1000000, 1));
         zSpinner = new JSpinner(new SpinnerNumberModel(0, -1000000, 1000000, 1));
+
+        panel.add(new JLabel(Lang.getMsg("tools.WarpTool.TargetX")));
+        panel.add(xSpinner);
+        panel.add(new JLabel(Lang.getMsg("tools.WarpTool.TargetY")));
+        panel.add(ySpinner);
+        panel.add(new JLabel(Lang.getMsg("tools.WarpTool.TargetZ")));
+        panel.add(zSpinner);
+        add(panel, BorderLayout.NORTH);
     }
 
-    public int getX() {
+    public int getTargetX() {
         return (Integer) xSpinner.getValue();
     }
 
-    public int getY() {
+    public int getTargetY() {
         return (Integer) ySpinner.getValue();
     }
 
-    public int getZ() {
+    public int getTargetZ() {
         return (Integer) zSpinner.getValue();
     }
 }

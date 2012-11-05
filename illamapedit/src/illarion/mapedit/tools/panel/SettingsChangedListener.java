@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.tools.panel;
 
+//TODO: Remove that
 public interface SettingsChangedListener {
     void settingsChanged();
 }

@@ -41,6 +41,7 @@ public class ViewBand extends JRibbonBand {
     public ViewBand() {
         super(Lang.getMsg("gui.viewband.Name"), null);
 
+        //TODO: Simplify this
         final JCommandButton tileButton = new JCommandButton(
                 Lang.getMsg("gui.viewband.button.Tile"),
                 ImageLoader.getResizableIcon("file_tiles")
@@ -57,6 +58,10 @@ public class ViewBand extends JRibbonBand {
                 Lang.getMsg("gui.viewband.button.Sound"),
                 ImageLoader.getResizableIcon("sound")
         );
+        final JCommandButton warpButton = new JCommandButton(
+                Lang.getMsg("gui.viewband.button.Warps"),
+                null
+        );
 
         final ActionListener tileListener = new ActionEventPublisher(
                 new RendererToggleEvent(TileRenderer.class),
@@ -66,16 +71,19 @@ public class ViewBand extends JRibbonBand {
         final ActionListener itemListener = new ActionEventPublisher(new RendererToggleEvent(ItemRenderer.class));
         final ActionListener gridListener = new ActionEventPublisher(new RendererToggleEvent(GridRenderer.class));
         final ActionListener musicListener = new ActionEventPublisher(new RendererToggleEvent(MusicRenderer.class));
+        final ActionListener warpListener = new ActionEventPublisher(new RendererToggleEvent(WarpRenderer.class));
 
         tileButton.addActionListener(tileListener);
         itemButton.addActionListener(itemListener);
         gridButton.addActionListener(gridListener);
         musicButton.addActionListener(musicListener);
+        warpButton.addActionListener(warpListener);
 
         addCommandButton(tileButton, RibbonElementPriority.TOP);
         addCommandButton(itemButton, RibbonElementPriority.TOP);
         addCommandButton(gridButton, RibbonElementPriority.MEDIUM);
         addCommandButton(musicButton, RibbonElementPriority.MEDIUM);
+        addCommandButton(warpButton, RibbonElementPriority.MEDIUM);
 
         final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));

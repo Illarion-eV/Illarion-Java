@@ -32,8 +32,9 @@ public class MusicPanel extends JPanel {
     private final JSpinner spinner;
 
     public MusicPanel(final SettingsChangedListener listener) {
-        setLayout(new GridBagLayout());
-        GridBagConstraints gb = new GridBagConstraints();
+        setLayout(new BorderLayout());
+
+        final JPanel northPanel = new JPanel(new GridLayout(0, 2));
 
         spinner = new JSpinner(new SpinnerNumberModel(0, 0, 9000, 1));
         spinner.addChangeListener(new ChangeListener() {
@@ -42,12 +43,10 @@ public class MusicPanel extends JPanel {
                 listener.settingsChanged();
             }
         });
-        gb.gridx = 0;
-        gb.gridy = 0;
 
-        add(new JLabel(Lang.getMsg("tools.MusicTool.MusicID")), gb);
-        gb.gridx++;
-        add(spinner, gb);
+        northPanel.add(new JLabel(Lang.getMsg("tools.MusicTool.MusicID")));
+        northPanel.add(spinner);
+        add(northPanel, BorderLayout.NORTH);
     }
 
     public int getMusicID() {

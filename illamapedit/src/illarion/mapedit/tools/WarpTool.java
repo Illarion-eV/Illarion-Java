@@ -20,6 +20,8 @@ package illarion.mapedit.tools;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapWarpPoint;
+import illarion.mapedit.history.WarpPlacedAction;
 import illarion.mapedit.tools.panel.WarpPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
@@ -36,12 +38,14 @@ public class WarpTool extends AbstractTool {
 
     @Override
     public void clickedAt(final int x, final int y, final Map map) {
-
+        final MapWarpPoint point = new MapWarpPoint(panel.getTargetX(), panel.getTargetY(), panel.getTargetZ());
+        getHistory().addEntry(new WarpPlacedAction(x, y, map.getTileAt(x, y).getMapWarpPoint(), point, map));
+        map.getTileAt(x, y).setMapWarpPoint(point);
     }
 
     @Override
     public String getLocalizedName() {
-        return Lang.getMsg("tools.TileEraser");
+        return Lang.getMsg("tools.WarpTool");
     }
 
     @Override

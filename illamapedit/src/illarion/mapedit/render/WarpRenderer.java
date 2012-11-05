@@ -19,7 +19,7 @@
 package illarion.mapedit.render;
 
 import illarion.mapedit.data.Map;
-import illarion.mapedit.resource.loaders.ImageLoader;
+import illarion.mapedit.data.MapWarpPoint;
 import illarion.mapedit.util.SwingLocation;
 
 import java.awt.*;
@@ -28,19 +28,15 @@ import java.awt.geom.AffineTransform;
 /**
  * @author Tim
  */
-public class MusicRenderer extends AbstractMapRenderer {
-
+public class WarpRenderer extends AbstractMapRenderer {
     private static final int XOFFSET = 20;
     private static final int YOFFSET = 10;
-
-    private final Image image;
 
     /**
      * Creates a new map renderer
      */
-    public MusicRenderer(final RendererManager manager) {
+    public WarpRenderer(final RendererManager manager) {
         super(manager);
-        image = ImageLoader.getImage("sound");
     }
 
     @Override
@@ -53,8 +49,8 @@ public class MusicRenderer extends AbstractMapRenderer {
 
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                final int id = map.getTileAt(x, y).getMusicID();
-                if (id == 0) {
+                final MapWarpPoint wp = map.getTileAt(x, y).getMapWarpPoint();
+                if (wp == null) {
                     continue;
                 }
                 final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
@@ -62,9 +58,15 @@ public class MusicRenderer extends AbstractMapRenderer {
                 if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 
-                    g.drawImage(image, xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()), null);
                     g.setColor(Color.RED);
-                    g.drawString(Integer.toString(id), xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()));
+                    g.drawString("Warp", xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()));
+                    g.drawString("X: " + wp.getXTarget(),
+                            xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 10) * getZoom()));
+                    g.drawString("Y: " + wp.getYTarget(),
+                            xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 20) * getZoom()));
+                    g.drawString("Z: " + wp.getZTarget(),
+                            xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 30) * getZoom()));
+
                 }
             }
         }
@@ -73,6 +75,6 @@ public class MusicRenderer extends AbstractMapRenderer {
 
     @Override
     protected int getRenderPriority() {
-        return 7;
+        return 6;
     }
 }
