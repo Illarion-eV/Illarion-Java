@@ -19,7 +19,10 @@
 package illarion.mapedit.render;
 
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapTile;
+import illarion.mapedit.resource.Overlay;
 import illarion.mapedit.resource.TileImg;
+import illarion.mapedit.resource.loaders.OverlayLoader;
 import illarion.mapedit.resource.loaders.TileLoader;
 import illarion.mapedit.util.SwingLocation;
 
@@ -66,8 +69,9 @@ public class TileRenderer extends AbstractMapRenderer {
                 if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 
-                    final TileImg t = TileLoader.getInstance().getTileFromId(map.getTileAt(x,
-                            y).getId());
+                    final MapTile mt = map.getTileAt(x, y);
+                    final TileImg t = TileLoader.getInstance().getTileFromId(mt.getId());
+                    final Overlay o = OverlayLoader.getInstance().getOverlayFromId(mt.getOverlayID());
                     if (t != null) {
                         final AffineTransform tr = g.getTransform();
                         if (getZoom() > getMinZoom()) {
@@ -75,6 +79,12 @@ public class TileRenderer extends AbstractMapRenderer {
                             if (img != null) {
                                 g.translate(xdisp, ydisp);
                                 g.drawImage(img,
+                                        0,
+                                        0, null);
+                            }
+                            final Image ovlimg = o.getImgs()[mt.getShapeID() - 1];
+                            if (ovlimg != null) {
+                                g.drawImage(ovlimg,
                                         0,
                                         0, null);
                             }
