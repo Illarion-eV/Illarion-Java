@@ -18,9 +18,11 @@
  */
 package illarion.mapedit.render;
 
+import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapWarpPoint;
 import illarion.mapedit.util.SwingLocation;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -76,5 +78,20 @@ public class WarpRenderer extends AbstractMapRenderer {
     @Override
     protected int getRenderPriority() {
         return 6;
+    }
+
+    @Override
+    public String getLocalizedName() {
+        return Lang.getMsg("renderer.Warps");
+    }
+
+    @Override
+    public ResizableIcon getRendererIcon() {
+        return null;
+    }
+
+    @Override
+    public boolean isDefaultOn() {
+        return false;
     }
 }

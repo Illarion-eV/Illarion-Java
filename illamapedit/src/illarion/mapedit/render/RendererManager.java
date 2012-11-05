@@ -19,7 +19,6 @@
 package illarion.mapedit.render;
 
 import illarion.mapedit.data.Map;
-import illarion.mapedit.events.map.RendererToggleEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.events.map.ZoomEvent;
 import illarion.mapedit.util.Vector2i;
@@ -65,14 +64,6 @@ public class RendererManager {
     public RendererManager() {
         renderers = new FastList<AbstractMapRenderer>();
         AnnotationProcessor.process(this);
-    }
-
-    public void initRenderers() {
-        renderers.add(new TileRenderer(this));
-        renderers.add(new ItemRenderer(this));
-        renderers.add(new MusicRenderer(this));
-        renderers.add(new OverlayRenderer(this));
-        Collections.sort(renderers);
     }
 
     public void addRenderer(final AbstractMapRenderer r) {
@@ -230,17 +221,6 @@ public class RendererManager {
 
     public void setSelectedLevel(final int level) {
         this.actualLevel = level;
-    }
-
-    @EventSubscriber
-    public void onRendererToggle(final RendererToggleEvent e) {
-        for (final AbstractMapRenderer r : renderers) {
-            if (r.getClass().equals(e.getRendererClass())) {
-                removeRenderer(r);
-                return;
-            }
-        }
-        addRenderer(e.getRenderer(this));
     }
 
     @EventSubscriber

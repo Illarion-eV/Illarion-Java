@@ -59,7 +59,6 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         rendererManager = new RendererManager();
         toolManager = new ToolManager(controller, rendererManager);
         dirty = new Rectangle(getWidth(), getHeight());
-        rendererManager.initRenderers();
         addMouseWheelListener(this);
         addMouseMotionListener(this);
         addMouseListener(this);

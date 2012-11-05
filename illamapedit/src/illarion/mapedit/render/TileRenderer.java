@@ -18,13 +18,17 @@
  */
 package illarion.mapedit.render;
 
+import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.resource.Overlay;
 import illarion.mapedit.resource.TileImg;
+import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.resource.loaders.OverlayLoader;
 import illarion.mapedit.resource.loaders.TileLoader;
 import illarion.mapedit.util.SwingLocation;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -82,11 +86,13 @@ public class TileRenderer extends AbstractMapRenderer {
                                         0,
                                         0, null);
                             }
-                            final Image ovlimg = o.getImgs()[mt.getShapeID() - 1];
-                            if (ovlimg != null) {
-                                g.drawImage(ovlimg,
-                                        0,
-                                        0, null);
+                            if (o != null) {
+                                final Image ovlimg = o.getImgs()[mt.getShapeID() - 1];
+                                if (ovlimg != null) {
+                                    g.drawImage(ovlimg,
+                                            0,
+                                            0, null);
+                                }
                             }
                         } else {
                             if (t.getInfo().getMapColor() != 0) {
@@ -108,5 +114,25 @@ public class TileRenderer extends AbstractMapRenderer {
     @Override
     protected int getRenderPriority() {
         return 3;
+    }
+
+    @Override
+    public String getLocalizedName() {
+        return Lang.getMsg("renderer.Tile");
+    }
+
+    @Override
+    public ResizableIcon getRendererIcon() {
+        return ImageLoader.getResizableIcon("file_tiles");
+    }
+
+    @Override
+    public boolean isDefaultOn() {
+        return true;
+    }
+
+    @Override
+    public RibbonElementPriority getPriority() {
+        return RibbonElementPriority.TOP;
     }
 }

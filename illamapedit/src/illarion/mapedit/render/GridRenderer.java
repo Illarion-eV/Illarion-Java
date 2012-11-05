@@ -18,8 +18,11 @@
  */
 package illarion.mapedit.render;
 
+import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
+import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -72,5 +75,20 @@ public class GridRenderer extends AbstractMapRenderer {
     @Override
     protected int getRenderPriority() {
         return 6;
+    }
+
+    @Override
+    public String getLocalizedName() {
+        return Lang.getMsg("renderer.Grid");
+    }
+
+    @Override
+    public ResizableIcon getRendererIcon() {
+        return ImageLoader.getResizableIcon("viewGrid");
+    }
+
+    @Override
+    public boolean isDefaultOn() {
+        return false;
     }
 }

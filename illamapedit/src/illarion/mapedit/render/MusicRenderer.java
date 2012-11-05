@@ -18,9 +18,11 @@
  */
 package illarion.mapedit.render;
 
+import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -74,5 +76,20 @@ public class MusicRenderer extends AbstractMapRenderer {
     @Override
     protected int getRenderPriority() {
         return 7;
+    }
+
+    @Override
+    public String getLocalizedName() {
+        return Lang.getMsg("renderer.Sound");
+    }
+
+    @Override
+    public ResizableIcon getRendererIcon() {
+        return ImageLoader.getResizableIcon("sound");
+    }
+
+    @Override
+    public boolean isDefaultOn() {
+        return false;
     }
 }
