@@ -24,7 +24,7 @@ import illarion.mapedit.events.util.ActionEventPublisher;
 import illarion.mapedit.render.*;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import javolution.util.FastList;
-import org.pushingpixels.flamingo.api.common.JCommandButton;
+import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
@@ -42,23 +42,23 @@ public class ViewBand extends JRibbonBand {
         super(Lang.getMsg("gui.viewband.Name"), null);
 
         //TODO: Simplify this
-        final JCommandButton tileButton = new JCommandButton(
+        final JCommandToggleButton tileButton = new JCommandToggleButton(
                 Lang.getMsg("gui.viewband.button.Tile"),
                 ImageLoader.getResizableIcon("file_tiles")
         );
-        final JCommandButton itemButton = new JCommandButton(
+        final JCommandToggleButton itemButton = new JCommandToggleButton(
                 Lang.getMsg("gui.viewband.button.Item"),
                 ImageLoader.getResizableIcon("file_items")
         );
-        final JCommandButton gridButton = new JCommandButton(
+        final JCommandToggleButton gridButton = new JCommandToggleButton(
                 Lang.getMsg("gui.viewband.button.Grid"),
                 ImageLoader.getResizableIcon("viewGrid")
         );
-        final JCommandButton musicButton = new JCommandButton(
+        final JCommandToggleButton musicButton = new JCommandToggleButton(
                 Lang.getMsg("gui.viewband.button.Sound"),
                 ImageLoader.getResizableIcon("sound")
         );
-        final JCommandButton warpButton = new JCommandButton(
+        final JCommandToggleButton warpButton = new JCommandToggleButton(
                 Lang.getMsg("gui.viewband.button.Warps"),
                 null
         );

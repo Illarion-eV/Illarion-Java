@@ -70,9 +70,4 @@ public class SingleItemTool extends AbstractTool {
     public JPanel getSettingsPanel() {
         return panel;
     }
-
-    @Override
-    public void settingsChanged() {
-
-    }
 }

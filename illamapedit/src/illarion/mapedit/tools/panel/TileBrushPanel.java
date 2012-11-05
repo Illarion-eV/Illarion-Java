@@ -22,8 +22,6 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.tools.panel.components.TileList;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 
 /**
@@ -33,7 +31,7 @@ public class TileBrushPanel extends JPanel {
     private final JSpinner radiusSpinner;
 
 
-    public TileBrushPanel(final SettingsChangedListener listener) {
+    public TileBrushPanel() {
         super(new BorderLayout());
 
         add(new TileList(), BorderLayout.CENTER);
@@ -45,19 +43,6 @@ public class TileBrushPanel extends JPanel {
         brushSizePanel.add(radiusSpinner, BorderLayout.CENTER);
 
         add(brushSizePanel, BorderLayout.SOUTH);
-
-        radiusSpinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(final ChangeEvent e) {
-                listener.settingsChanged();
-            }
-        });
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                listener.settingsChanged();
-            }
-        });
     }
 
     public int getRadius() {
