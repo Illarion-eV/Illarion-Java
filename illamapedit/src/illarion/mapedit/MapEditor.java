@@ -19,7 +19,6 @@
 package illarion.mapedit;
 
 import illarion.common.bug.CrashReporter;
-import illarion.common.config.Config;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
@@ -33,9 +32,6 @@ import illarion.mapedit.resource.loaders.*;
 import illarion.mapedit.util.JavaLogToLog4J;
 import org.apache.log4j.*;
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventServiceExistsException;
-import org.bushe.swing.event.EventServiceLocator;
-import org.bushe.swing.event.SwingEventService;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 import javax.swing.*;
@@ -125,7 +121,7 @@ public final class MapEditor {
      *
      * @return the configuration of the map editor
      */
-    public static Config getConfig() {
+    public static ConfigSystem getConfig() {
         if (instance == null) {
             instance = new MapEditor();
         }
@@ -139,7 +135,9 @@ public final class MapEditor {
      */
     public static void main(final String[] args) {
         initLogging();
+        initConfig();
         initExceptionHandler();
+
         initEventBus();
         SplashScreen.getInstance().setVisible(true);
         JRibbonFrame.setDefaultLookAndFeelDecorated(true);
@@ -152,6 +150,12 @@ public final class MapEditor {
         Scheduler.getInstance().start();
 
         controller.start();
+    }
+
+    private static void initConfig() {
+        final ConfigSystem c = getConfig();
+        c.setDefault("errorReport", 0);
+
     }
 
     private static void loadResources() {
@@ -191,11 +195,11 @@ public final class MapEditor {
     }
 
     private static void initEventBus() {
-        try {
+        /*try {
             EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_SWING_EVENT_SERVICE, new SwingEventService());
         } catch (EventServiceExistsException e) {
             LOGGER.warn("Can't setup the event bus correctly.", e);
-        }
+        }*/
     }
 
     /**

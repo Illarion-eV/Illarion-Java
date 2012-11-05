@@ -22,6 +22,7 @@ import illarion.mapedit.resource.Overlay;
 import javolution.text.TextBuilder;
 import javolution.util.FastList;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -30,6 +31,42 @@ import java.util.List;
  * @author Tim
  */
 public class MapTile {
+
+    public static class MapTileFactory {
+
+        private MapTileFactory() {
+            //NOTHING TO DO
+        }
+
+        public static MapTile setMusicId(final int musicID, final MapTile old) {
+            return new MapTile(old.id, old.overlayID, old.shapeID, musicID, old.mapItems, old.mapWarpPoint);
+        }
+
+        public static MapTile setId(final int id, final MapTile old) {
+            final int baseId = (Overlay.shapeID(id) == 0) ? id : Overlay.baseID(id);
+            final int overlayId = (Overlay.shapeID(id) == 0) ? 0 : Overlay.overlayID(id);
+            final int shapeId = Overlay.shapeID(id);
+            return new MapTile(baseId, overlayId, shapeId, old.musicID, old.mapItems, old.mapWarpPoint);
+        }
+
+        public static MapTile setOverlay(final int overlayID, final int shapeID, final MapTile old) {
+            return new MapTile(old.id, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
+        }
+
+        public static MapTile setOverlay(final int baseID, final int overlayID, final int shapeID, MapTile old) {
+            return new MapTile(baseID, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
+        }
+
+        public static MapTile createNew(final int id, final int overlayID, final int shapeID, final int musicID) {
+            return new MapTile(id, overlayID, shapeID, musicID, null, null);
+        }
+
+        public static MapTile copy(final MapTile old) {
+            return new MapTile(old.id, old.overlayID, old.shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
+        }
+    }
+
+
     /**
      * The tile id.
      */
@@ -55,8 +92,9 @@ public class MapTile {
      */
     private MapWarpPoint mapWarpPoint;
 
+
     public MapTile(final int baseId, final int overlayID, final int shapeID, final int musicID,
-                   final List<MapItem> mapItems, final MapWarpPoint mapWarpPoint) {
+                   final Collection<MapItem> mapItems, final MapWarpPoint mapWarpPoint) {
         id = baseId;
         this.overlayID = overlayID;
         this.shapeID = shapeID;
@@ -74,40 +112,38 @@ public class MapTile {
      * @param id
      * @param musicID
      */
-    public MapTile(final int id, final int overlayID, final int shapeID, final int musicID) {
+    /*public MapTile(final int id, final int overlayID, final int shapeID, final int musicID) {
         this(id, overlayID, shapeID, musicID, null, null);
-    }
+    }*/
 
     /**
      * Creates a copy of the other tile.
      *
      * @param old
      */
-    public MapTile(final MapTile old) {
+    /*public MapTile(final MapTile old) {
         this(old.id, old.overlayID, old.shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
-    }
-
-    public MapTile(final int id, final MapTile old) {
+    }*/
+    /*public MapTile(final int id, final MapTile old) {
         this((Overlay.shapeID(id) == 0) ? id : Overlay.baseID(id),
                 (Overlay.shapeID(id) == 0) ? 0 : Overlay.overlayID(id),
                 Overlay.shapeID(id),
                 old.musicID,
                 old.mapItems,
                 old.mapWarpPoint);
-    }
-
-    public MapTile(final int overlayID, final int shapeID, MapTile old) {
+    }*/
+    /*public MapTile(final int overlayID, final int shapeID, MapTile old) {
         this(old.id, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
-    }
+    }*/
 
-    public MapTile(final int baseID, final int overlayID, final int shapeID, MapTile old) {
+    /*public MapTile(final int baseID, final int overlayID, final int shapeID, MapTile old) {
         this(baseID, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
-    }
+    }*/
 
     /**
      * Returns the tile id.
      *
-     * @return
+     * @return id
      */
     public int getId() {
         return id;
@@ -116,7 +152,7 @@ public class MapTile {
     /**
      * Returns the music id.
      *
-     * @return
+     * @return music id
      */
     public int getMusicID() {
         return musicID;
@@ -159,11 +195,11 @@ public class MapTile {
      * Serializes the current tile to a string in the following format: <br>
      * {@code <tileID>;<musicID>}
      *
-     * @return
+     * @return tileID;musicID
      */
     @Override
     public String toString() {
-        TextBuilder builder = TextBuilder.newInstance();
+        final TextBuilder builder = TextBuilder.newInstance();
 
         if (shapeID == 0) {
             builder.append(id);

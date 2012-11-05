@@ -454,12 +454,12 @@ public final class MapTransitions {
             if (maskId == -1) {
                 continue;
             }
-            final MapTile newTile = new MapTile(centerTileId, testId, maskId + 1, centerTile);
+            final MapTile newTile = MapTile.MapTileFactory.setOverlay(centerTileId, testId, maskId + 1, centerTile);
             //history.addAction(new TileIDChangedAction(loc.getScX(), loc.getScY(), map.getTileAt(loc), newTile, map));
             map.setTileAt(loc, newTile);
             return;
         }
-        final MapTile newTile = new MapTile(centerTileId, centerTile);
+        final MapTile newTile = MapTile.MapTileFactory.setId(centerTileId, centerTile);
         //history.addAction(new TileIDChangedAction(loc.getScX(), loc.getScY(), map.getTileAt(loc), newTile, map));
         map.setTileAt(loc, newTile);
     }

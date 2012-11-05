@@ -171,7 +171,7 @@ public class MapIO {
                 }
                 final MapWarpPoint warp = tile.getMapWarpPoint();
                 if (warp != null) {
-                    writeLine(warpOutput, String.format("%d,%d,%s", x, y, warp));
+                    writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
                 }
             }
         }

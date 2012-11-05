@@ -19,7 +19,6 @@
 package illarion.mapedit.tools.panel;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.tools.panel.components.TileList;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -29,39 +28,29 @@ import java.awt.*;
 /**
  * @author Tim
  */
-public class TileBrushPanel extends JPanel {
-    private final JSpinner radiusSpinner;
+public class MusicPanel extends JPanel {
+    private final JSpinner spinner;
 
+    public MusicPanel(final SettingsChangedListener listener) {
+        setLayout(new GridBagLayout());
+        GridBagConstraints gb = new GridBagConstraints();
 
-    public TileBrushPanel(final SettingsChangedListener listener) {
-        super(new BorderLayout());
-
-        add(new TileList(), BorderLayout.CENTER);
-
-        final JPanel brushSizePanel = new JPanel(new BorderLayout(5, 0));
-        final JLabel radiusLabel = new JLabel(Lang.getMsg("tools.TileBrushTool.Radius"));
-        radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
-        brushSizePanel.add(radiusLabel, BorderLayout.WEST);
-        brushSizePanel.add(radiusSpinner, BorderLayout.CENTER);
-
-        add(brushSizePanel, BorderLayout.SOUTH);
-
-        radiusSpinner.addChangeListener(new ChangeListener() {
+        spinner = new JSpinner(new SpinnerNumberModel(0, 0, 9000, 1));
+        spinner.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(final ChangeEvent e) {
                 listener.settingsChanged();
             }
         });
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                listener.settingsChanged();
-            }
-        });
+        gb.gridx = 0;
+        gb.gridy = 0;
+
+        add(new JLabel(Lang.getMsg("tools.MusicTool.MusicID")), gb);
+        gb.gridx++;
+        add(spinner, gb);
     }
 
-    public int getRadius() {
-        return (Integer) radiusSpinner.getValue();
+    public int getMusicID() {
+        return (Integer) spinner.getValue();
     }
-
 }

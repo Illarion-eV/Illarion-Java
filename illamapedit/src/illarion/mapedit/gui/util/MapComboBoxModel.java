@@ -43,7 +43,7 @@ public class MapComboBoxModel extends AbstractListModel implements ComboBoxModel
 
     @Override
     public int getSize() {
-        if (objects == null || objects.size() == 0) {
+        if ((objects == null) || (objects.size() == 0)) {
             return 0;
         }
         return objects.size();
