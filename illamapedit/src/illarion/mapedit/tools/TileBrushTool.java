@@ -38,10 +38,9 @@ public class TileBrushTool extends AbstractTool {
 
     private final TileBrushPanel panel;
 
-    private int radius = 1;
 
     public TileBrushTool() {
-        panel = new TileBrushPanel(this);
+        panel = new TileBrushPanel();
     }
 
     @Override
@@ -50,6 +49,7 @@ public class TileBrushTool extends AbstractTool {
         if (tile == null) {
             return;
         }
+        final int radius = panel.getRadius();
         final GroupAction action = new GroupAction();
         for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
             for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
@@ -83,10 +83,5 @@ public class TileBrushTool extends AbstractTool {
     @Override
     public JPanel getSettingsPanel() {
         return panel;
-    }
-
-    @Override
-    public void settingsChanged() {
-        radius = panel.getRadius();
     }
 }

@@ -19,17 +19,14 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.events.map.RendererToggleEvent;
-import illarion.mapedit.events.util.ActionEventPublisher;
 import illarion.mapedit.render.*;
-import illarion.mapedit.resource.loaders.ImageLoader;
 import javolution.util.FastList;
-import org.pushingpixels.flamingo.api.common.JCommandButton;
+import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
-import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -38,44 +35,37 @@ import java.util.List;
  */
 public class ViewBand extends JRibbonBand {
 
-    public ViewBand() {
+    public ViewBand(final RendererManager manager) {
         super(Lang.getMsg("gui.viewband.Name"), null);
 
-        final JCommandButton tileButton = new JCommandButton(
-                Lang.getMsg("gui.viewband.button.Tile"),
-                ImageLoader.getResizableIcon("file_tiles")
-        );
-        final JCommandButton itemButton = new JCommandButton(
-                Lang.getMsg("gui.viewband.button.Item"),
-                ImageLoader.getResizableIcon("file_items")
-        );
-        final JCommandButton gridButton = new JCommandButton(
-                Lang.getMsg("gui.viewband.button.Grid"),
-                ImageLoader.getResizableIcon("viewGrid")
-        );
-        final JCommandButton musicButton = new JCommandButton(
-                Lang.getMsg("gui.viewband.button.Sound"),
-                ImageLoader.getResizableIcon("sound")
-        );
+        final List<AbstractMapRenderer> r = new FastList<AbstractMapRenderer>();
 
-        final ActionListener tileListener = new ActionEventPublisher(
-                new RendererToggleEvent(TileRenderer.class),
-                new RendererToggleEvent(OverlayRenderer.class)
-        );
+        r.add(new TileRenderer(manager));
+        r.add(new ItemRenderer(manager));
+        r.add(new GridRenderer(manager));
+        r.add(new MusicRenderer(manager));
+        r.add(new WarpRenderer(manager));
 
-        final ActionListener itemListener = new ActionEventPublisher(new RendererToggleEvent(ItemRenderer.class));
-        final ActionListener gridListener = new ActionEventPublisher(new RendererToggleEvent(GridRenderer.class));
-        final ActionListener musicListener = new ActionEventPublisher(new RendererToggleEvent(MusicRenderer.class));
-
-        tileButton.addActionListener(tileListener);
-        itemButton.addActionListener(itemListener);
-        gridButton.addActionListener(gridListener);
-        musicButton.addActionListener(musicListener);
-
-        addCommandButton(tileButton, RibbonElementPriority.TOP);
-        addCommandButton(itemButton, RibbonElementPriority.TOP);
-        addCommandButton(gridButton, RibbonElementPriority.MEDIUM);
-        addCommandButton(musicButton, RibbonElementPriority.MEDIUM);
+        for (final AbstractMapRenderer re : r) {
+            final JCommandToggleButton btn = new JCommandToggleButton(
+                    re.getLocalizedName(), re.getRendererIcon()
+            );
+            btn.getActionModel().setSelected(re.isDefaultOn());
+            btn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    if (btn.getActionModel().isSelected()) {
+                        manager.addRenderer(re);
+                    } else {
+                        manager.removeRenderer(re);
+                    }
+                }
+            });
+            if (re.isDefaultOn()) {
+                manager.addRenderer(re);
+            }
+            addCommandButton(btn, re.getPriority());
+        }
 
         final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));

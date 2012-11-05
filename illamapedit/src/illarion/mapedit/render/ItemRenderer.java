@@ -18,11 +18,15 @@
  */
 package illarion.mapedit.render;
 
+import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.resource.ItemImg;
+import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.resource.loaders.ItemLoader;
 import illarion.mapedit.util.SwingLocation;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -110,5 +114,25 @@ public class ItemRenderer extends AbstractMapRenderer {
     @Override
     protected int getRenderPriority() {
         return 5;
+    }
+
+    @Override
+    public String getLocalizedName() {
+        return Lang.getMsg("renderer.Item");
+    }
+
+    @Override
+    public ResizableIcon getRendererIcon() {
+        return ImageLoader.getResizableIcon("file_items");
+    }
+
+    @Override
+    public boolean isDefaultOn() {
+        return true;
+    }
+
+    @Override
+    public RibbonElementPriority getPriority() {
+        return RibbonElementPriority.TOP;
     }
 }

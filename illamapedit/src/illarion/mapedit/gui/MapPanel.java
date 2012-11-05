@@ -59,7 +59,6 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         rendererManager = new RendererManager();
         toolManager = new ToolManager(controller, rendererManager);
         dirty = new Rectangle(getWidth(), getHeight());
-        rendererManager.initRenderers();
         addMouseWheelListener(this);
         addMouseMotionListener(this);
         addMouseListener(this);
@@ -109,11 +108,13 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
             isDragging = true;
             if (btn == MouseButton.LeftButton) {
                 final int x = SwingLocation.mapCoordinateX(clickX, clickY, rendererManager.getTranslationX(),
-                        rendererManager.getTranslationY(), rendererManager.getZoom());
+                        rendererManager.getTranslationY(), rendererManager.getZoom()) - selected.getX();
                 final int y = SwingLocation.mapCoordinateY(clickX, clickY, rendererManager.getTranslationX(),
-                        rendererManager.getTranslationY(), rendererManager.getZoom());
-                EventBus.publish(new MapDraggedEvent(x - selected.getX(), y - selected.getY(), e.getX(), e.getY(), btn,
-                        selected));
+                        rendererManager.getTranslationY(), rendererManager.getZoom()) - selected.getY();
+                if (selected.contains(x, y)) {
+                    EventBus.publish(new MapDraggedEvent(x, y, e.getX(), e.getY(), btn,
+                            selected));
+                }
             }
         }
         EventBus.publish(new RepaintRequestEvent());
@@ -127,16 +128,18 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
 
     @Override
     public void mouseClicked(final MouseEvent e) {
-        if (toolManager == null) {
+        final Map selected = controller.getSelected();
+        if ((toolManager == null) || (selected == null)) {
             return;
         }
+
         final int x = SwingLocation.mapCoordinateX(e.getX(), e.getY(), rendererManager.getTranslationX(),
-                rendererManager.getTranslationY(), rendererManager.getZoom());
+                rendererManager.getTranslationY(), rendererManager.getZoom()) - selected.getX();
         final int y = SwingLocation.mapCoordinateY(e.getX(), e.getY(), rendererManager.getTranslationX(),
-                rendererManager.getTranslationY(), rendererManager.getZoom());
-        final Map selected = controller.getSelected();
-        if (selected != null) {
-            EventBus.publish(new MapClickedEvent(x - selected.getX(), y - selected.getY(),
+                rendererManager.getTranslationY(), rendererManager.getZoom()) - selected.getY();
+
+        if (selected.contains(x, y)) {
+            EventBus.publish(new MapClickedEvent(x, y,
                     MouseButton.fromAwt(e.getModifiers()),
                     selected));
         }

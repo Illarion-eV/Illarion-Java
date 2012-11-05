@@ -18,11 +18,11 @@
  */
 package illarion.mapedit.render;
 
+import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapTile;
-import illarion.mapedit.resource.Overlay;
-import illarion.mapedit.resource.loaders.OverlayLoader;
+import illarion.mapedit.data.MapWarpPoint;
 import illarion.mapedit.util.SwingLocation;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -30,12 +30,14 @@ import java.awt.geom.AffineTransform;
 /**
  * @author Tim
  */
-public class OverlayRenderer extends AbstractMapRenderer {
+public class WarpRenderer extends AbstractMapRenderer {
+    private static final int XOFFSET = 20;
+    private static final int YOFFSET = 10;
 
     /**
      * Creates a new map renderer
      */
-    public OverlayRenderer(final RendererManager manager) {
+    public WarpRenderer(final RendererManager manager) {
         super(manager);
     }
 
@@ -46,38 +48,50 @@ public class OverlayRenderer extends AbstractMapRenderer {
         final int z = map.getZ() - level;
         final AffineTransform transform = g.getTransform();
 
+
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
+                final MapWarpPoint wp = map.getTileAt(x, y).getMapWarpPoint();
+                if (wp == null) {
+                    continue;
+                }
                 final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
                 final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
                 if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
-                    final MapTile tile = map.getTileAt(x, y);
-                    final Overlay o = OverlayLoader.getInstance().getOverlayFromId(tile.getOverlayID());
 
-                    if (o != null) {
-                        final AffineTransform tr = g.getTransform();
-                        if (getZoom() > getMinZoom()) {
-                            final Image img = o.getImgs()[tile.getShapeID() - 1];
-                            if (img != null) {
-                                g.translate(xdisp, ydisp);
-                                g.drawImage(img,
-                                        0,
-                                        0, null);
-                            }
-                        }
-                        g.setTransform(tr);
-                    }
+                    g.setColor(Color.RED);
+                    g.drawString("Warp", xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()));
+                    g.drawString("X: " + wp.getXTarget(),
+                            xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 10) * getZoom()));
+                    g.drawString("Y: " + wp.getYTarget(),
+                            xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 20) * getZoom()));
+                    g.drawString("Z: " + wp.getZTarget(),
+                            xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 30) * getZoom()));
+
                 }
             }
         }
-
-
         g.setTransform(transform);
     }
 
     @Override
     protected int getRenderPriority() {
-        return 4;
+        return 6;
+    }
+
+    @Override
+    public String getLocalizedName() {
+        return Lang.getMsg("renderer.Warps");
+    }
+
+    @Override
+    public ResizableIcon getRendererIcon() {
+        return null;
+    }
+
+    @Override
+    public boolean isDefaultOn() {
+        return false;
     }
 }

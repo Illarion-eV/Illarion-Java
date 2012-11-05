@@ -73,9 +73,4 @@ public class SingleTileTool extends AbstractTool {
     public JPanel getSettingsPanel() {
         return panel;
     }
-
-    @Override
-    public void settingsChanged() {
-
-    }
 }

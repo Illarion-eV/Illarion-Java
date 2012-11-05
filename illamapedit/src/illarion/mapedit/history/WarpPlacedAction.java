@@ -26,27 +26,27 @@ import illarion.mapedit.data.MapWarpPoint;
  */
 public class WarpPlacedAction extends HistoryAction {
 
-
     private final int x;
     private final int y;
-    private final MapWarpPoint old;
-    private final MapWarpPoint newt;
+    private final MapWarpPoint oldWP;
+    private final MapWarpPoint newWP;
 
-    public WarpPlacedAction(final int x, final int y, final MapWarpPoint old, final MapWarpPoint newt, final Map map) {
+    public WarpPlacedAction(final int x, final int y, final MapWarpPoint oldWP,
+                            final MapWarpPoint newWP, final Map map) {
         super(map);
         this.x = x;
         this.y = y;
-        this.old = old;
-        this.newt = newt;
+        this.oldWP = oldWP;
+        this.newWP = newWP;
     }
 
     @Override
-    public void redo() {
-        map.getTileAt(x, y).setMapWarpPoint(newt);
+    void redo() {
+        map.getTileAt(x, y).setMapWarpPoint(newWP);
     }
 
     @Override
-    public void undo() {
-        map.getTileAt(x, y).setMapWarpPoint(old);
+    void undo() {
+        map.getTileAt(x, y).setMapWarpPoint(oldWP);
     }
 }

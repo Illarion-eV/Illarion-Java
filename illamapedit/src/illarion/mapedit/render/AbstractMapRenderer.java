@@ -19,6 +19,8 @@
 package illarion.mapedit.render;
 
 import illarion.mapedit.data.Map;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 
 import java.awt.*;
 
@@ -107,6 +109,10 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      */
     protected abstract int getRenderPriority();
 
+    public abstract String getLocalizedName();
+
+    public abstract ResizableIcon getRendererIcon();
+
     /**
      * This method is for sorting the renderers in the correct order.
      *
@@ -124,5 +130,11 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
             return 0;
         }
         return 1;
+    }
+
+    public abstract boolean isDefaultOn();
+
+    public RibbonElementPriority getPriority() {
+        return RibbonElementPriority.MEDIUM;
     }
 }
