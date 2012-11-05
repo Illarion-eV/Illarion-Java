@@ -1,37 +1,24 @@
 /*
  * This file is part of the Illarion Build Utility.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Build Utility is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
+ * The Illarion Build Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
  * The Illarion Build Utility is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Build Utility. If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Build Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.build.resources;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.jar.JarFile;
-import java.util.jar.JarOutputStream;
-import java.util.jar.Pack200;
-import java.util.logging.Logger;
-
+import illarion.common.util.Pack200Helper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
@@ -40,7 +27,14 @@ import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.ZipFileSet;
 
-import illarion.common.util.Pack200Helper;
+import java.io.*;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Pack200;
+import java.util.logging.Logger;
 
 /**
  * This class is a ant task that is used to prepare resources for the resource
@@ -48,7 +42,7 @@ import illarion.common.util.Pack200Helper;
  * signed and load into the resource bundles. In case no task is needed to be
  * done this task does simply copy the files in question. No matter the settings
  * the files created will hold exactly the same name as before.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ResourcePreparer extends Task {
@@ -77,7 +71,7 @@ public final class ResourcePreparer extends Task {
      * The logger used to print messages from this class.
      */
     private static final Logger LOGGER = Logger
-        .getLogger(ResourcePreparer.class.getName());
+            .getLogger(ResourcePreparer.class.getName());
 
     /**
      * The default constructor that prepares this class for proper operation.
@@ -90,7 +84,7 @@ public final class ResourcePreparer extends Task {
 
     /**
      * Adds a list of files to process.
-     * 
+     *
      * @param list a list of files to process
      */
     public void addFilelist(final FileList list) {
@@ -99,7 +93,7 @@ public final class ResourcePreparer extends Task {
 
     /**
      * Adds a set of files to process.
-     * 
+     *
      * @param set a set of files to process
      */
     public void addFileset(final FileSet set) {
@@ -108,7 +102,7 @@ public final class ResourcePreparer extends Task {
 
     /**
      * Adds a ZIP file set to process to the creator.
-     * 
+     *
      * @param set a set of files to process
      */
     public void addZipfileset(final ZipFileSet set) {
@@ -118,7 +112,7 @@ public final class ResourcePreparer extends Task {
     /**
      * Set the group of ZIP files. All ZIP files in the file set are added to
      * the main list of file sets.
-     * 
+     *
      * @param set the set of zip files
      */
     public void addZipGroupFileset(final FileSet set) {
@@ -145,7 +139,7 @@ public final class ResourcePreparer extends Task {
         try {
             for (final AbstractFileSet fileset : filesets) {
                 final DirectoryScanner ds =
-                    fileset.getDirectoryScanner(getProject());
+                        fileset.getDirectoryScanner(getProject());
 
                 final File dir = fileset.getDir(getProject());
                 for (final String fileName : ds.getIncludedFiles()) {
@@ -179,7 +173,7 @@ public final class ResourcePreparer extends Task {
 
     /**
      * Set the target file.
-     * 
+     *
      * @param dir the directory where the target files are supposed to be moved
      */
     public void setTargetDir(final File dir) {
@@ -189,7 +183,7 @@ public final class ResourcePreparer extends Task {
     /**
      * Set the flag if the input jar files are supposed to be compressed even
      * further using the pack200 compression.
-     * 
+     *
      * @param value the new value of this flag
      */
     public void setUsePack200(final boolean value) {
@@ -198,7 +192,7 @@ public final class ResourcePreparer extends Task {
 
     /**
      * Process a single file.
-     * 
+     *
      * @param file the file to process
      * @throws IOException in case anything goes wrong
      */
@@ -206,8 +200,7 @@ public final class ResourcePreparer extends Task {
         if (useP200) {
             final int count = processFileP200(file, 0L);
             if (count > 1) {
-                LOGGER.warning("Required " + Integer.toString(count)
-                    + " rounds stabilise " + file.getName());
+                System.out.println("Required " + Integer.toString(count) + " rounds stabilise " + file.getName());
             }
         } else {
             processFileNormal(file);
@@ -217,19 +210,19 @@ public final class ResourcePreparer extends Task {
     /**
      * This is the function that processes the files with normal settings.
      * Currently that just copies the file to its new location.
-     * 
+     *
      * @param file the file to process
      * @throws IOException in case anything goes wrong
      */
     private void processFileNormal(final File file) throws IOException {
         final File destFile = new File(targetDir, file.getName());
-        
+
         if (file.equals(destFile)) {
             return;
         }
-        
+
         final File tempFile =
-            File.createTempFile("temp_", ".illares.tmp", targetDir);
+                File.createTempFile("temp_", ".illares.tmp", targetDir);
 
         FileChannel source = null;
         FileChannel destination = null;
@@ -237,7 +230,12 @@ public final class ResourcePreparer extends Task {
         try {
             source = new FileInputStream(file).getChannel();
             destination = new FileOutputStream(tempFile).getChannel();
-            destination.transferFrom(source, 0, source.size());
+
+            final long totalSize = source.size();
+            long transferredSize = 0L;
+            while (transferredSize < totalSize) {
+                transferredSize += destination.transferFrom(source, transferredSize, source.size() - transferredSize);
+            }
         } finally {
             if (source != null) {
                 source.close();
@@ -248,7 +246,9 @@ public final class ResourcePreparer extends Task {
         }
 
         if (destFile.exists()) {
-            destFile.delete();
+            if (!destFile.delete()) {
+                destFile.deleteOnExit();
+            }
         }
         if (!tempFile.renameTo(destFile)) {
             throw new IOException("Failed to move the temporary file into place.");
@@ -260,18 +260,18 @@ public final class ResourcePreparer extends Task {
      * The resulting effect is that this file is packed and unpacked again to
      * the destination directory. This will be repeated until the file does not
      * change anymore.
-     * 
-     * @param file the file to process
+     *
+     * @param file     the file to process
      * @param lastSize the last size of the file, set this parameter at the
-     *            first call to 0. It is used to the recursive calls of this
-     *            function
+     *                 first call to 0. It is used to the recursive calls of this
+     *                 function
      * @throws IOException in case anything goes wrong
      */
     private int processFileP200(final File file, final long lastSize)
-        throws IOException {
+            throws IOException {
         final File tempFile = File.createTempFile("p200temp", ".pack.tmp");
         tempFile.deleteOnExit();
-        
+
         final File destFile = new File(targetDir, file.getName());
 
         final Pack200.Packer packer = Pack200Helper.getPacker();
@@ -286,7 +286,7 @@ public final class ResourcePreparer extends Task {
             out.flush();
             out.close();
             out = null;
-            
+
             if (destFile.exists()) {
                 if (!destFile.delete()) {
                     throw new IOException("Can't delete old destination file.");
@@ -297,8 +297,8 @@ public final class ResourcePreparer extends Task {
             }
 
             jOut =
-                new JarOutputStream(new BufferedOutputStream(
-                    new FileOutputStream(destFile)));
+                    new JarOutputStream(new BufferedOutputStream(
+                            new FileOutputStream(destFile)));
             unpacker.unpack(tempFile, jOut);
             jOut.finish();
             jOut.flush();
@@ -321,9 +321,9 @@ public final class ResourcePreparer extends Task {
 
     /**
      * Check if the settings of this task are good to be executed.
-     * 
+     *
      * @throws BuildException in case anything at the settings for this task is
-     *             wrong
+     *                        wrong
      */
     @SuppressWarnings("nls")
     private void validate() throws BuildException {
