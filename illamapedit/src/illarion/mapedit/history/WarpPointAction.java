@@ -16,41 +16,37 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools;
+package illarion.mapedit.history;
 
-import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
-import illarion.mapedit.tools.panel.WarpPanel;
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
-
-import javax.swing.*;
+import illarion.mapedit.data.MapWarpPoint;
 
 /**
- * TODO: Implement it
- *
  * @author Tim
  */
-public class WarpTool extends AbstractTool {
+public class WarpPointAction extends HistoryAction {
 
-    private final WarpPanel panel = new WarpPanel();
+    private final int x;
+    private final int y;
+    private final MapWarpPoint oldWP;
+    private final MapWarpPoint newWP;
 
-    @Override
-    public void clickedAt(final int x, final int y, final Map map) {
-
+    protected WarpPointAction(final int x, final int y, final MapWarpPoint oldWP,
+                              final MapWarpPoint newWP, final Map map) {
+        super(map);
+        this.x = x;
+        this.y = y;
+        this.oldWP = oldWP;
+        this.newWP = newWP;
     }
 
     @Override
-    public String getLocalizedName() {
-        return Lang.getMsg("tools.TileEraser");
+    void redo() {
+        map.getTileAt(x, y).setMapWarpPoint(newWP);
     }
 
     @Override
-    public ResizableIcon getToolIcon() {
-        return null;
-    }
-
-    @Override
-    public JPanel getSettingsPanel() {
-        return panel;
+    void undo() {
+        map.getTileAt(x, y).setMapWarpPoint(oldWP);
     }
 }

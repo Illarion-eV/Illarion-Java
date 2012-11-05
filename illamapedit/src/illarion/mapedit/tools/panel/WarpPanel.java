@@ -16,41 +16,34 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.tools;
-
-import illarion.mapedit.Lang;
-import illarion.mapedit.data.Map;
-import illarion.mapedit.tools.panel.WarpPanel;
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+package illarion.mapedit.tools.panel;
 
 import javax.swing.*;
 
 /**
- * TODO: Implement it
- *
  * @author Tim
  */
-public class WarpTool extends AbstractTool {
+public class WarpPanel extends JPanel {
 
-    private final WarpPanel panel = new WarpPanel();
+    public final JSpinner xSpinner;
+    public final JSpinner ySpinner;
+    public final JSpinner zSpinner;
 
-    @Override
-    public void clickedAt(final int x, final int y, final Map map) {
-
+    public WarpPanel() {
+        xSpinner = new JSpinner(new SpinnerNumberModel(0, -1000000, 1000000, 1));
+        ySpinner = new JSpinner(new SpinnerNumberModel(0, -1000000, 1000000, 1));
+        zSpinner = new JSpinner(new SpinnerNumberModel(0, -1000000, 1000000, 1));
     }
 
-    @Override
-    public String getLocalizedName() {
-        return Lang.getMsg("tools.TileEraser");
+    public int getX() {
+        return (Integer) xSpinner.getValue();
     }
 
-    @Override
-    public ResizableIcon getToolIcon() {
-        return null;
+    public int getY() {
+        return (Integer) ySpinner.getValue();
     }
 
-    @Override
-    public JPanel getSettingsPanel() {
-        return panel;
+    public int getZ() {
+        return (Integer) zSpinner.getValue();
     }
 }
