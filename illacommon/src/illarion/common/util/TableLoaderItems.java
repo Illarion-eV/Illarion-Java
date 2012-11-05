@@ -95,6 +95,11 @@ public final class TableLoaderItems extends TableLoader {
     private static final int TB_LIGHT = 20;
 
     /**
+     * The table index of the group for the map editor.
+     */
+    private static final int TB_MAP_EDITOR_GROUP = 19;
+
+    /**
      * The table index of the mode of the item that is used to determine if the item is a animated one or one with
      * variances.
      */
@@ -274,9 +279,21 @@ public final class TableLoaderItems extends TableLoader {
      * Get the mode value of the item. This stores if its a simple item, a animated item or a item with variances.
      *
      * @return the mode of the item
+     * @see #ITEM_MODE_ANIMATION
+     * @see #ITEM_MODE_SIMPLE
+     * @see #ITEM_MODE_VARIANCES
      */
     public int getItemMode() {
         return getInt(TB_MODE);
+    }
+
+    /**
+     * Get the ID of the map editor group that is assigned to this item.
+     *
+     * @return the map editor group ID
+     */
+    public int getMapEditorGroup() {
+        return getInt(TB_MAP_EDITOR_GROUP);
     }
 
     /**
