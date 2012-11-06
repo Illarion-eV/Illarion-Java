@@ -18,6 +18,8 @@
  */
 package illarion.mapedit.events.map;
 
+import illarion.mapedit.util.Vector2i;
+
 /**
  * @author Tim
  */
@@ -26,13 +28,16 @@ public class ZoomEvent {
     private final boolean original;
 
     private final float value;
+    private final Vector2i pos;
 
-    public ZoomEvent(final float value) {
+    public ZoomEvent(final float value, final Vector2i pos) {
+        this.pos = pos;
         original = false;
         this.value = value;
     }
 
     public ZoomEvent() {
+        pos = null;
         original = true;
         value = 0;
     }
@@ -47,5 +52,9 @@ public class ZoomEvent {
 
     public boolean isOriginal() {
         return original;
+    }
+
+    public Vector2i getPos() {
+        return pos;
     }
 }

@@ -27,6 +27,7 @@ import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.util.MouseButton;
 import illarion.mapedit.util.SwingLocation;
+import illarion.mapedit.util.Vector2i;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -86,9 +87,9 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     public void mouseWheelMoved(final MouseWheelEvent e) {
         if (controller.isMapLoaded()) {
             if (e.getWheelRotation() < 0) {
-                rendererManager.zoomIn();
+                rendererManager.zoomIn(new Vector2i(e.getX(), e.getY()));
             } else if (e.getWheelRotation() > 0) {
-                rendererManager.zoomOut();
+                rendererManager.zoomOut(new Vector2i(e.getX(), e.getY()));
             }
         }
     }
