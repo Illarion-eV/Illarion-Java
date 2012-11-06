@@ -23,6 +23,7 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.events.HistoryEvent;
 import illarion.mapedit.events.menu.MapSaveEvent;
+import illarion.mapedit.events.menu.ShowHelpDialogEvent;
 import illarion.mapedit.events.util.ActionEventPublisher;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.loaders.ImageLoader;
@@ -43,7 +44,7 @@ public class MainFrame extends JRibbonFrame {
     private static final Dimension WINDOW_SIZE = new Dimension(900, 700);
     private static MainFrame instance;
 
-
+    private final HelpDialog helpDialog;
     private final MapPanel mapPanel;
     private final ToolSettingsPanel settingsPanel;
     private final Config config;
@@ -53,6 +54,7 @@ public class MainFrame extends JRibbonFrame {
         mapPanel = new MapPanel(controller);
         settingsPanel = new ToolSettingsPanel();
         instance = this;
+        helpDialog = new HelpDialog();
     }
 
     public void initialize(final WindowListener controller) {
@@ -60,6 +62,7 @@ public class MainFrame extends JRibbonFrame {
         setTitle(Lang.getMsg("application.Name") + MapEditor.getVersion());
         setSize(WINDOW_SIZE);
         getRibbon().setApplicationMenu(new MainMenu());
+        getRibbon().configureHelp(ImageLoader.getResizableIcon("help"), new ActionEventPublisher(new ShowHelpDialogEvent()));
 
         final JCommandButton saveBtn = new JCommandButton(ImageLoader.getResizableIcon("filesave"));
         final JCommandButton undoBtn = new JCommandButton(ImageLoader.getResizableIcon("undo"));

@@ -63,6 +63,7 @@ public class ImageLoader implements Resource {
             "reload.png",
             "undo.png",
             "redo.png",
+            "help.png",
     };
 
     private ImageLoader() {
