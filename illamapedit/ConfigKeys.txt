@@ -1,2 +1,3 @@
 mapLastOpenDir  =   last opened dir
 errorReport     =   error report (ALWAYS, NEVER, ASK)
+windowSize      =   WindowX;WindowY;WindowW;WindowH
