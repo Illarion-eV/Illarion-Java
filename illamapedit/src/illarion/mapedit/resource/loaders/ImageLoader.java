@@ -59,7 +59,6 @@ public class ImageLoader implements Resource {
             "file_items.png",
             "messagebox_warning.png",
             "viewGrid.png",
-            "sound.png",
             "reload.png",
             "undo.png",
             "redo.png",

@@ -18,10 +18,7 @@
  */
 package illarion.mapedit.gui;
 
-import illarion.mapedit.events.MessageStringEvent;
 import org.apache.log4j.Logger;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -67,11 +64,6 @@ public class SplashScreen extends JPanel {
     @Override
     public void setVisible(final boolean aFlag) {
         frame.setVisible(aFlag);
-        if (aFlag) {
-            AnnotationProcessor.process(this);
-        } else {
-            AnnotationProcessor.unprocess(this);
-        }
     }
 
     @Override
@@ -84,15 +76,14 @@ public class SplashScreen extends JPanel {
 
         if (message != null) {
             g.setColor(Color.RED);
+            //TODO: make font static
             g.setFont(new Font("Arial", Font.BOLD, FONT_SIZE));
             g.drawString(message, 5, (img.getHeight(null) + HEIGHT_ADJUSTMENT) - 10);
         }
     }
 
-    @EventSubscriber(eventClass = MessageStringEvent.class)
-    public void onMessageStringEvent(final MessageStringEvent e) {
-        message = e.getMessage();
+    public void setMessage(final String string) {
+        message = string;
         repaint();
     }
-
 }

@@ -23,7 +23,6 @@ import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
 import illarion.mapedit.crash.exceptions.UnhandlableException;
-import illarion.mapedit.events.MessageStringEvent;
 import illarion.mapedit.gui.GuiController;
 import illarion.mapedit.gui.MainFrame;
 import illarion.mapedit.gui.SplashScreen;
@@ -31,7 +30,6 @@ import illarion.mapedit.resource.ResourceManager;
 import illarion.mapedit.resource.loaders.*;
 import illarion.mapedit.util.JavaLogToLog4J;
 import org.apache.log4j.*;
-import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 import javax.swing.*;
@@ -170,7 +168,7 @@ public final class MapEditor {
         while (resourceManager.hasNextToLoad()) {
             try {
                 LOGGER.debug("Loading " + resourceManager.getNextDescription());
-                EventBus.publish(new MessageStringEvent("Loading " + resourceManager.getNextDescription()));
+                SplashScreen.getInstance().setMessage("Loading " + resourceManager.getNextDescription());
                 resourceManager.loadNext();
             } catch (IOException e) {
                 LOGGER.warn(resourceManager.getPrevDescription() + " failed!");
