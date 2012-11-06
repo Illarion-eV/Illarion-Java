@@ -58,7 +58,7 @@ public class MainFrame extends JRibbonFrame {
     public void initialize(final WindowListener controller) {
         addWindowListener(controller);
         setTitle(Lang.getMsg("application.Name") + MapEditor.getVersion());
-        setSize(WINDOW_SIZE);
+        setSize(getSavedDimension());
         getRibbon().setApplicationMenu(new MainMenu());
 
         final JCommandButton saveBtn = new JCommandButton(ImageLoader.getResizableIcon("filesave"));
@@ -92,9 +92,20 @@ public class MainFrame extends JRibbonFrame {
 
     public void exit() {
         dispose();
+        config.set("windowSizeW", getSize().width);
+        config.set("windowSizeH", getSize().height);
     }
 
     public RendererManager getRendererManager() {
         return mapPanel.getRenderManager();
+    }
+
+    private Dimension getSavedDimension() {
+        final int w = config.getInteger("windowSizeW");
+        final int h = config.getInteger("windowSizeH");
+        if ((w != 0) && (h != 0)) {
+            return new Dimension(w, h);
+        }
+        return WINDOW_SIZE;
     }
 }

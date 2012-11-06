@@ -105,9 +105,9 @@ public final class MapEditor {
      */
     public static void exit() {
         MainFrame.getInstance().exit();
-        saveConfiguration();
         StoppableStorage.getInstance().shutdown();
         CrashReporter.getInstance().waitForReport();
+        saveConfiguration();
     }
 
     public static String getVersion() {
@@ -204,7 +204,8 @@ public final class MapEditor {
      * Save the current state of the configuration to the filesystem if needed.
      */
     public static void saveConfiguration() {
-        instance.config.save();
+        //TODO: Fix not saved
+        getConfig().save();
     }
 
     /**

@@ -175,13 +175,11 @@ public class GuiController implements WindowListener {
             }
         }
         LOGGER.debug("Closing window.");
-        mainFrame.dispose();
         MapEditor.exit();
     }
 
     @Override
     public void windowClosed(final WindowEvent e) {
-
         LOGGER.debug("Exit");
         System.exit(0);
     }
