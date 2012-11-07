@@ -163,6 +163,7 @@ public final class MapEditor {
                 TextureLoaderAwt.getInstance(),
                 TileLoader.getInstance(),
                 ItemLoader.getInstance(),
+                ItemGroupLoader.getInstance(),
                 OverlayLoader.getInstance()
         );
         while (resourceManager.hasNextToLoad()) {
