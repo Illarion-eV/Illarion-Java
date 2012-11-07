@@ -114,8 +114,7 @@ public class TableLoader {
                     is.close();
                 }
             } catch (final IOException e) {
-                LOGGER
-                        .error("Unable to close data file " + table.getPath(), e);
+                LOGGER.error("Unable to close data file " + table.getPath(), e);
             }
         }
     }
@@ -336,7 +335,7 @@ public class TableLoader {
         // read all lines
         while ((line = in.readLine()) != null) {
             // skip comments and empty lines
-            if ((line.length() == 0) || line.startsWith("#")) {
+            if (line.isEmpty() || line.startsWith("#")) {
                 continue;
             }
 

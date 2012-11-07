@@ -20,7 +20,6 @@ package illarion.common.util;
 
 import illarion.common.graphics.ItemInfo;
 
-import java.io.File;
 import java.io.InputStream;
 
 /**
@@ -164,27 +163,15 @@ public final class TableLoaderItems extends TableLoader {
     private static final int TB_VARIANCE = 13;
 
     public TableLoaderItems(final TableLoaderSink<TableLoaderItems> callback) {
-        super("Items", callback);
-    }
-
-    public TableLoaderItems(final File table, final TableLoaderSink<TableLoaderItems> callback) {
-        super(table, callback);
+        this("Items", callback);
     }
 
     public TableLoaderItems(final String table, final TableLoaderSink<TableLoaderItems> callback) {
-        super(table, callback);
+        super(table, true, callback, ",");
     }
 
-    public TableLoaderItems(final File table, final TableLoaderSink<TableLoaderItems> callback, final String tableDelim) {
-        super(table, callback, tableDelim);
-    }
-
-    public TableLoaderItems(final InputStream resource, final boolean ndsc, final TableLoaderSink<TableLoaderItems> callback, final String tableDelim) {
-        super(resource, ndsc, callback, tableDelim);
-    }
-
-    public TableLoaderItems(final String table, final boolean ndsc, final TableLoaderSink<TableLoaderItems> callback, final String tableDelim) {
-        super(table, ndsc, callback, tableDelim);
+    public TableLoaderItems(final InputStream resource, final TableLoaderSink<TableLoaderItems> callback) {
+        super(resource, true, callback, ",");
     }
 
     /**
