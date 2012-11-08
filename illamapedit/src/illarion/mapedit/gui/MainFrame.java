@@ -35,7 +35,6 @@ import java.awt.event.WindowListener;
 
 /**
  * This class represents the whole gui.
- * TODO: save window dimensions.
  *
  * @author Tim
  */

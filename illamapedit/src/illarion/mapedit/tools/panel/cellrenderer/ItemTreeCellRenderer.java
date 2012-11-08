@@ -32,7 +32,7 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
     private static final int MAX_WIDTH = 75;
     private static final int MAX_HEIGHT = 50;
     public static final Color COLOR_SELECTED = new Color(-6100481);
-    public static final Color COLOR_UNSELECTED = new Color(-1246977);
+    public static final Font FONT = new Font("Arial", Font.BOLD, 12);
 
     private final JLabel label = new JLabel();
     private Image image;
@@ -70,7 +70,6 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
         image = value.getImgs()[0];
         name = value.getResourceName();
         size = new Dimension(MAX_WIDTH * 2, MAX_HEIGHT);
-
         return this;
     }
 
@@ -99,9 +98,9 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
             newWidth = (int) (((float) w / (float) h) * (float) newHeight);
         }
 
-
+        g.setFont(FONT);
         g.drawImage(image, 0, 0, newWidth, newHeight, null);
-        g.drawString(name, MAX_WIDTH, 10);
+        g.drawString(name, MAX_WIDTH - 5, 10);
 
     }
 }

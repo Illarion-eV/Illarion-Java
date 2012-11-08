@@ -39,12 +39,14 @@ public class ItemEraserTool extends AbstractTool {
             return;
         }
         final List<MapItem> items = map.getTileAt(x, y).getMapItems();
-        final GroupAction action = new GroupAction();
-        for (final MapItem item : items) {
-            action.addAction(new ItemPlacedAction(x, y, item, null, map));
+        if (!items.isEmpty()) {
+            final GroupAction action = new GroupAction();
+            for (final MapItem item : items) {
+                action.addAction(new ItemPlacedAction(x, y, item, null, map));
+            }
+            getHistory().addEntry(action);
+            items.clear();
         }
-        getHistory().addEntry(action);
-        items.clear();
     }
 
     @Override

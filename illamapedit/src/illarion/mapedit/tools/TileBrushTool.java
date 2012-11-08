@@ -60,7 +60,6 @@ public class TileBrushTool extends AbstractTool {
                     final MapTile newTile = MapTile.MapTileFactory.setId(tile.getId(), map.getTileAt(i, j));
                     action.addAction(new TileIDChangedAction(i, j, map.getTileAt(i, j), newTile, map));
                     map.setTileAt(i, j, newTile);
-                    //TODO: Optimize this
                     MapTransitions.getInstance().checkTileAndSurround(map, new Location(i, j, 0));
                 }
             }

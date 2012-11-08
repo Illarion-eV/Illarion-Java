@@ -77,7 +77,7 @@ public class MapFileBand extends JRibbonBand {
         });
 
 
-        //TODO: Does not work
+        //TODO: Find better way of make more rows visible.
         list.setVisibleRowCount(8);
 
         model = new MapComboBoxModel(null);

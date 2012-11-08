@@ -165,6 +165,7 @@ public class ItemTree extends JScrollPane {
 
     public ItemTree() {
         final JTree tree = new JTree(new ItemGroupModel(ItemLoader.getInstance().getItems()));
+        tree.setToggleClickCount(1);
         setViewportView(tree);
         tree.setEditable(false);
         tree.setCellEditor(null);
