@@ -152,6 +152,7 @@ public final class MapEditor {
         controller.start();
     }
 
+
     private static void initConfig() {
         final ConfigSystem c = getConfig();
         c.setDefault("errorReport", 0);

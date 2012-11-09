@@ -18,11 +18,53 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.mapedit.Lang;
+import illarion.mapedit.events.menu.ShowHelpDialogEvent;
+import illarion.mapedit.gui.docu.DocuPage;
+import illarion.mapedit.gui.docu.DocuTreeModel;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
+import org.jdesktop.swingx.JXTree;
+
 import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import java.awt.*;
+import java.io.File;
+import java.net.URI;
 
 /**
  * @author Tim
  */
 public class HelpDialog extends JDialog {
 
+    public HelpDialog(final JFrame frame) {
+        super(frame, Lang.getMsg("gui.docu.Name"), false);
+        AnnotationProcessor.process(this);
+        setLayout(new BorderLayout());
+
+        final JEditorPane html = new JEditorPane();
+        final JXTree tree = new JXTree(new DocuTreeModel());
+
+        tree.addTreeSelectionListener(new TreeSelectionListener() {
+            @Override
+            public void valueChanged(final TreeSelectionEvent e) {
+                final Object o = e.getPath().getPath()[e.getPath().getPath().length - 1];
+                if (o instanceof File) {
+                    final URI uri = ((File) o).toURI();
+                    final DocuPage page = new DocuPage(uri);
+                    page.applyPage(html);
+                }
+            }
+        });
+
+        add(html, BorderLayout.CENTER);
+        add(tree, BorderLayout.WEST);
+        pack();
+    }
+
+    @EventSubscriber
+    public void onShowHelpDialog(final ShowHelpDialogEvent e) {
+        setVisible(true);
+    }
 }

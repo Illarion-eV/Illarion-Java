@@ -54,7 +54,7 @@ public class MainFrame extends JRibbonFrame {
         mapPanel = new MapPanel(controller);
         settingsPanel = new ToolSettingsPanel();
         instance = this;
-        helpDialog = new HelpDialog();
+        helpDialog = new HelpDialog(this);
     }
 
     public void initialize(final WindowListener controller) {

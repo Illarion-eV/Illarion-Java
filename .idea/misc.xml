@@ -48,6 +48,12 @@
     <option name="LOCALE" />
     <option name="OPEN_IN_BROWSER" value="true" />
   </component>
+  <component name="JenkinsControlComponent">
+    <option name="enableJobAutoRefresh" value="true" />
+    <option name="jobRefreshPeriod" value="5" />
+    <option name="lastSelectedView" value="All" />
+    <option name="serverUrl" value="http://illarion.org:8080" />
+  </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="javax.annotation.Nullable" />
     <option name="myDefaultNotNull" value="javax.annotation.Nonnull" />

@@ -18,33 +18,51 @@
  */
 package illarion.mapedit.gui.docu;
 
-import java.awt.*;
+import illarion.mapedit.Lang;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 
 /**
  * @author Tim
  */
-public class DocuPage {
+public class DocuPage implements HyperlinkListener {
+    private static final Logger LOGGER = Logger.getLogger(DocuPage.class);
+    private URL url;
 
-    private final String name;
-    private final String text;
-    private final Image img;
-
-    public DocuPage(final String name, final String text, final Image img) {
-
-        this.name = name;
-        this.text = text;
-        this.img = img;
+    public DocuPage(final URI url) {
+        try {
+            this.url = url.toURL();
+        } catch (MalformedURLException e) {
+            this.url = null;
+        }
     }
 
-    public String getName() {
-        return name;
+    public void applyPage(final JEditorPane pane) {
+        pane.setEditable(false);
+        if (url == null) {
+            pane.setText(Lang.getMsg("gui.docu.IOError"));
+            pane.setContentType("text/plain");
+            return;
+        }
+        try {
+            pane.setPage(url);
+            pane.setContentType("text/html");
+        } catch (IOException e) {
+            pane.setText(Lang.getMsg("gui.docu.IOError"));
+            pane.setContentType("text/plain");
+        }
+        pane.addHyperlinkListener(this);
     }
 
-    public String getText() {
-        return text;
-    }
-
-    public Image getImg() {
-        return img;
+    @Override
+    public void hyperlinkUpdate(final HyperlinkEvent e) {
+        LOGGER.debug("Hyperlink pressed: " + e.getURL());
     }
 }
