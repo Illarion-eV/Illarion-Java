@@ -321,7 +321,7 @@ public class TableLoader {
      * @throws IOException in case there is something wrong with the ressource
      *                     stream
      */
-    @SuppressWarnings("nls")
+    @SuppressWarnings({"nls", "unchecked"})
     private <T extends TableLoader> void loadTable(final InputStream rsc, final boolean ndsc,
                                                    final TableLoaderSink<T> callback) throws IOException {
 
