@@ -20,46 +20,48 @@ package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.events.menu.ShowHelpDialogEvent;
-import illarion.mapedit.gui.docu.DocuPage;
-import illarion.mapedit.gui.docu.DocuTreeModel;
+import illarion.mapedit.resource.loaders.DocuLoader;
+import javolution.text.TextBuilder;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.jdesktop.swingx.JXTree;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
-import java.io.File;
-import java.net.URI;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * @author Tim
  */
-public class HelpDialog extends JDialog {
+public class HelpDialog extends JDialog implements HyperlinkListener, TreeSelectionListener {
+    private static final Logger LOGGER = Logger.getLogger(HelpDialog.class);
+    private final JEditorPane html;
 
     public HelpDialog(final JFrame frame) {
         super(frame, Lang.getMsg("gui.docu.Name"), false);
         AnnotationProcessor.process(this);
         setLayout(new BorderLayout());
 
-        final JEditorPane html = new JEditorPane();
-        final JXTree tree = new JXTree(new DocuTreeModel());
+        html = new JEditorPane(new HTMLEditorKit().getContentType(), "");
+        final JXTree tree = new JXTree(DocuLoader.getInstance());
 
-        tree.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
-            public void valueChanged(final TreeSelectionEvent e) {
-                final Object o = e.getPath().getPath()[e.getPath().getPath().length - 1];
-                if (o instanceof File) {
-                    final URI uri = ((File) o).toURI();
-                    final DocuPage page = new DocuPage(uri);
-                    page.applyPage(html);
-                }
-            }
-        });
+        html.setEditable(false);
+        setMinimumSize(new Dimension(700, 100));
+        html.addHyperlinkListener(this);
 
-        add(html, BorderLayout.CENTER);
-        add(tree, BorderLayout.WEST);
+        tree.addTreeSelectionListener(this);
+        add(new JScrollPane(html,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        add(new JScrollPane(tree), BorderLayout.WEST);
         pack();
     }
 
@@ -67,4 +69,51 @@ public class HelpDialog extends JDialog {
     public void onShowHelpDialog(final ShowHelpDialogEvent e) {
         setVisible(true);
     }
+
+    @Override
+    public void hyperlinkUpdate(final HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (Desktop.isDesktopSupported()) {
+                        try {
+                            Desktop.getDesktop().browse(e.getURL().toURI());
+                        } catch (IOException e1) {
+                            LOGGER.warn("Can't launch browser: ", e1);
+                        } catch (URISyntaxException e1) {
+                            LOGGER.warn("Can't launch browser: ", e1);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void valueChanged(final TreeSelectionEvent e) {
+        final Object[] path = e.getPath().getPath();
+        if (path[path.length - 1] instanceof DocuLoader.Folder) {
+            return;
+        }
+        final TextBuilder b = TextBuilder.newInstance();
+        try {
+            for (final Object o : path) {
+                final DocuLoader.File file = (DocuLoader.File) o;
+                b.append(file.getPath());
+                if (!file.isFile()) {
+                    b.append('/');
+                }
+            }
+            final URL url = HelpDialog.class.getResource(b.toString());
+            html.setContentType("text/html");
+            html.setPage(url);
+        } catch (IOException e1) {
+            html.setContentType("text/plain");
+            html.setText(Lang.getMsg("gui.docu.IOError") + '\n' + b.toString());
+        } finally {
+            TextBuilder.recycle(b);
+        }
+    }
+
 }
