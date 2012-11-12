@@ -70,14 +70,14 @@ public class MapFileBand extends JRibbonBand {
         list.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(final ListSelectionEvent e) {
-                if (list.getSelectedValue() != null) {
+                if (e.getValueIsAdjusting() && (list.getSelectedValue() != null)) {
                     EventBus.publish(new MapOpenEvent(dir.getPath(), (String) list.getSelectedValue()));
                 }
             }
         });
 
 
-        //TODO: Find better way of make more rows visible.
+        //TODO: Find better way to make more rows visible.
         list.setVisibleRowCount(8);
 
         model = new MapComboBoxModel(null);
