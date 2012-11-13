@@ -228,23 +228,23 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         }
     }
 
-    @EventSubscriber
-    public void handleDialogCraftingUpdateEvent(final DialogCraftingUpdateReceivedEvent event) {
-        final DialogCrafting craftDialog = getCraftingDialog(event.getId());
-        if (craftDialog == null) {
-            return;
-        }
+    /* @EventSubscriber
+ public void handleDialogCraftingUpdateEvent(final DialogCraftingUpdateReceivedEvent event) {
+     final DialogCrafting craftDialog = getCraftingDialog(event.getId());
+     if (craftDialog == null) {
+         return;
+     }
 
-        switch (event.getType()) {
-            case Completed:
-                craftDialog.setProgress(0.f);
-                break;
-            case Aborted:
-                craftDialog.setProgress(0.f);
-                break;
-            case Start:
-        }
-    }
+     switch (event.getType()) {
+         case Completed:
+             craftDialog.setProgress(0.f);
+             break;
+         case Aborted:
+             craftDialog.setProgress(0.f);
+             break;
+         case Start:
+     }
+ }   */
 
     @NiftyEventSubscriber(pattern = "craftingDialog[0-9]+")
     public void handleCraftingItemLookAtEvent(final String topic, final DialogCraftingLookAtItemEvent event) {

@@ -20,7 +20,9 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.DialogCraftingUpdateReceivedEvent;
+import illarion.client.net.server.events.DialogCraftingUpdateAbortedReceivedEvent;
+import illarion.client.net.server.events.DialogCraftingUpdateCompletedReceivedEvent;
+import illarion.client.net.server.events.DialogCraftingUpdateStartReceivedEvent;
 import illarion.common.net.NetCommReader;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
@@ -66,6 +68,11 @@ public final class DialogCraftingUpdateMsg
     private int requestId;
 
     /**
+     * The amount of remaining items that still need to be produced.
+     */
+    private int remaining;
+
+    /**
      * Decode the text request the receiver got and prepare it for the execution.
      *
      * @param reader the receiver that got the data from the server that needs to be decoded
@@ -77,6 +84,9 @@ public final class DialogCraftingUpdateMsg
         type = reader.readUByte();
         if (type == START) {
             requiredTime = reader.readUShort();
+        }
+        if (type == COMPLETE) {
+            remaining = reader.readUByte();
         }
         requestId = reader.readInt();
     }
@@ -90,16 +100,13 @@ public final class DialogCraftingUpdateMsg
     public boolean executeUpdate() {
         switch (type) {
             case START:
-                EventBus.publish(new DialogCraftingUpdateReceivedEvent(requestId,
-                        DialogCraftingUpdateReceivedEvent.UpdateType.Start, requiredTime));
+                EventBus.publish(new DialogCraftingUpdateStartReceivedEvent(requestId, requiredTime));
                 break;
             case COMPLETE:
-                EventBus.publish(new DialogCraftingUpdateReceivedEvent(requestId,
-                        DialogCraftingUpdateReceivedEvent.UpdateType.Completed));
+                EventBus.publish(new DialogCraftingUpdateCompletedReceivedEvent(requestId, remaining));
                 break;
             case ABORTED:
-                EventBus.publish(new DialogCraftingUpdateReceivedEvent(requestId,
-                        DialogCraftingUpdateReceivedEvent.UpdateType.Aborted));
+                EventBus.publish(new DialogCraftingUpdateAbortedReceivedEvent(requestId));
                 break;
         }
 
