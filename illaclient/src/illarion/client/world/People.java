@@ -490,7 +490,12 @@ public final class People
     public boolean processRecord(final int line, final TableLoader loader) {
         throwNullException(loader);
 
-        names.addName(new CharacterId(loader.getLong(0)), loader.getString(1));
+        try {
+            names.addName(new CharacterId(loader.getLong(0)), loader.getString(1));
+        } catch (final IllegalArgumentException e) {
+            LOGGER.warn("Illegal entry in old name file found: " + Long.toString(loader.getLong(0)) + " - " +
+                    loader.getString(1));
+        }
 
         return true;
     }

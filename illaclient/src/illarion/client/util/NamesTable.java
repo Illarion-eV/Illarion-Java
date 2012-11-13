@@ -153,8 +153,6 @@ public final class NamesTable {
                 oOutStream.writeObject(values.getKey());
                 oOutStream.writeObject(values.getValue());
             }
-
-            oOutStream.flush();
         } catch (final FileNotFoundException e) {
             LOGGER.error("Can't write to the name table file " + nameTable.getPath(), e);
         } catch (final IOException e) {
@@ -162,6 +160,7 @@ public final class NamesTable {
         } finally {
             if (outputStream != null) {
                 try {
+                    outputStream.flush();
                     outputStream.close();
                 } catch (final IOException e) {
                     LOGGER.error("Closing the file " + nameTable.getPath() + " correctly failed", e);
