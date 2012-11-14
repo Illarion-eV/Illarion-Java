@@ -47,6 +47,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.bushe.swing.event.*;
+import org.lwjgl.Sys;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -215,9 +216,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                     "illarion_client64.png", "illarion_client256.png"});
             gameContainer.start();
             World.cleanEnvironment();
-        } catch (SlickException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (final Exception e) {
+            LOGGER.fatal("Exception while launching game.", e);
+            Sys.alert("Error", "The client caused a error while starting up: " + e.getMessage());
         }
 
         startFinalKiller();
