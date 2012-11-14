@@ -69,7 +69,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      */
     public CharacterId(final long value) {
         if ((value < MIN_VALUE) || (value > MAX_VALUE)) {
-            throw new IllegalArgumentException("value is out of range.");
+            throw new IllegalArgumentException("value (" + Long.toString(value) + ") is out of range.");
         }
         this.value = (int) (value % ((1L << Integer.SIZE) - 1));
     }

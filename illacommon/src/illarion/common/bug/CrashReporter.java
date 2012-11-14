@@ -164,6 +164,11 @@ public final class CrashReporter {
     }
 
     public void dumpCrash(final CrashData crash) {
+        LOGGER.fatal("Fatal error occured: " + crash.getDescription());
+        LOGGER.fatal("Fatal error exception: " + crash.getExceptionName());
+        LOGGER.fatal("Fatal error thread: " + crash.getThreadName());
+        LOGGER.fatal("Fatal error backgrace: " + crash.getStackBacktrace());
+        LOGGER.fatal(crash.getApplicationName() + " is going down. Brace for impact.");
         final Calendar cal = Calendar.getInstance();
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         final String dateStr = sdf.format(cal.getTime());
