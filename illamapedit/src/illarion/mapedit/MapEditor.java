@@ -150,6 +150,7 @@ public final class MapEditor {
         controller.start();
     }
 
+
     private static void initConfig() {
         final ConfigSystem c = getConfig();
         c.setDefault("errorReport", 0);
@@ -164,7 +165,8 @@ public final class MapEditor {
                 TileLoader.getInstance(),
                 ItemLoader.getInstance(),
                 ItemGroupLoader.getInstance(),
-                OverlayLoader.getInstance()
+                OverlayLoader.getInstance(),
+                DocuLoader.getInstance()
         );
         while (resourceManager.hasNextToLoad()) {
             try {

@@ -234,9 +234,9 @@ public class GuiController implements WindowListener {
     @EventSubscriber
     public void onMapSelected(final MapSelectedEvent e) {
         selected = maps.get(e.getIndex());
-        int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
-        int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
-        RendererManager manager = mainFrame.getRendererManager();
+        final int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
+        final int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
+        final RendererManager manager = mainFrame.getRendererManager();
         manager.setZoom(1f);
         manager.setSelectedLevel(selected.getZ());
         manager.setTranslationX(-x);
