@@ -36,6 +36,7 @@ public class ItemImg {
     private final int animationSpeed;
     private final int itemMode;
     private final Image[] imgs;
+    private final int editorGroup;
 
     public int getItemId() {
         return itemId;
@@ -66,12 +67,13 @@ public class ItemImg {
     }
 
     public ItemImg(final int itemId, final String resourceName,
-                   final int offsetX, final int offsetY, final int frameCount,
+                   final int editorGroup, final int offsetX, final int offsetY, final int frameCount,
                    final int animationSpeed, final int itemMode,
                    final Image[] imgs, final ItemInfo info) {
 
         this.itemId = itemId;
         this.resourceName = resourceName;
+        this.editorGroup = editorGroup;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.frameCount = frameCount;
@@ -87,5 +89,9 @@ public class ItemImg {
 
     public Image[] getImgs() {
         return imgs;
+    }
+
+    public int getEditorGroup() {
+        return editorGroup;
     }
 }

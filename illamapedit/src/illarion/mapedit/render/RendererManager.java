@@ -48,10 +48,6 @@ public class RendererManager {
 
     private final List<AbstractMapRenderer> renderers;
 
-    /**
-     * The actual selection. If nothing is selected, the rectangle equals {@code (0, 0, 0, 0)}
-     */
-    private final Rectangle selection = new Rectangle();
     private float zoom = DEFAULT_ZOOM;
     private int translationX;
     private int translationY;
@@ -102,6 +98,13 @@ public class RendererManager {
     }
 
     public void setZoom(final float zoom, final Vector2i zoomPoint) {
+        if (zoomPoint == null) {
+            setZoom(zoom);
+            return;
+        }
+        if ((zoom < .1) || (zoom > 1)) {
+            return;
+        }
         final int viewportWidth = panelViewport.width;
         final int viewportHeight = panelViewport.height;
 
@@ -127,19 +130,15 @@ public class RendererManager {
         translationY *= zoom;
 
         this.zoom = zoom;
+        EventBus.publish(new RepaintRequestEvent());
     }
 
     public void setZoom(final float zoom) {
-
         if ((zoom < .1) || (zoom > 1)) {
             return;
         }
-        //TODO: Include zoomPoint in event.
-        Vector2i zoomPoint = new Vector2i(panelViewport.width / 2, panelViewport.height / 2);
-
+        final Vector2i zoomPoint = new Vector2i(panelViewport.width / 2, panelViewport.height / 2);
         setZoom(zoom, zoomPoint);
-
-        EventBus.publish(new RepaintRequestEvent());
     }
 
     public float getZoom() {
@@ -162,20 +161,20 @@ public class RendererManager {
         this.translationY = translationY;
     }
 
-    public void zoomIn() {
+    public void zoomIn(final Vector2i pos) {
         if (zoom < 1) {
-            setZoom(zoom + ZOOM_STEP);
+            setZoom(zoom + ZOOM_STEP, pos);
         }
     }
 
-    public void zoomOut() {
+    public void zoomOut(final Vector2i pos) {
         if (zoom > 0) {
-            setZoom(zoom - ZOOM_STEP);
+            setZoom(zoom - ZOOM_STEP, pos);
         }
     }
 
-    public void changeZoom(final float amount) {
-        setZoom(zoom + amount);
+    public void changeZoom(final float amount, final Vector2i pos) {
+        setZoom(zoom + amount, pos);
     }
 
     public void changeTranslation(final int x, final int y) {
@@ -198,18 +197,6 @@ public class RendererManager {
         this.panelViewport.setRect(panelViewport.x, panelViewport.y, panelViewport.width, panelViewport.height);
     }
 
-    /**
-     * Sets a new rectangle as selection.
-     *
-     * @param rect the new rectangle
-     */
-    public void setSelection(final Rectangle rect) {
-        selection.setBounds(rect);
-    }
-
-    public Rectangle getSelection() {
-        return selection;
-    }
 
     public void setDefaultTranslationY(final int defaultTranslationY) {
         this.defaultTranslationY = defaultTranslationY;
@@ -220,7 +207,7 @@ public class RendererManager {
     }
 
     public void setSelectedLevel(final int level) {
-        this.actualLevel = level;
+        actualLevel = level;
     }
 
     @EventSubscriber
@@ -230,7 +217,7 @@ public class RendererManager {
             setTranslationX(defaultTranslationX);
             setTranslationY(defaultTranslationY);
         } else {
-            changeZoom(e.getValue());
+            changeZoom(e.getValue(), e.getPos());
         }
     }
 }

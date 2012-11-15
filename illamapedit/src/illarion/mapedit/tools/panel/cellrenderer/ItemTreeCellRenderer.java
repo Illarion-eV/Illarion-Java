@@ -21,23 +21,30 @@ package illarion.mapedit.tools.panel.cellrenderer;
 import illarion.mapedit.resource.ItemImg;
 
 import javax.swing.*;
+import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
 
 /**
  * @author Tim
  */
-public class ItemImgCellRenderer extends JPanel implements ListCellRenderer {
+public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
 
     private static final int MAX_WIDTH = 75;
     private static final int MAX_HEIGHT = 50;
-    private static final Color COLOR_SELECTED = new Color(-6100481);
-    private static final Color COLOR_UNSELECTED = new Color(-1246977);
+    public static final Color COLOR_SELECTED = new Color(-6100481);
+    public static final Font FONT = new Font("Arial", Font.BOLD, 12);
 
+    private final JLabel label = new JLabel();
     private Image image;
     private String name;
     private boolean selected;
 
     private Dimension size;
+    private final Color unselected;
+
+    public ItemTreeCellRenderer(final Color unselected) {
+        this.unselected = unselected;
+    }
 
     @Override
     public Dimension getPreferredSize() {
@@ -45,18 +52,26 @@ public class ItemImgCellRenderer extends JPanel implements ListCellRenderer {
     }
 
     @Override
-    public Component getListCellRendererComponent(final JList jList, final Object val,
-                                                  final int index, final boolean isSelected, final boolean cellHasFocus) {
+    public Component getTreeCellRendererComponent(final JTree tree, final Object val, final boolean isSelected,
+                                                  final boolean expanded, final boolean leaf, final int row,
+                                                  final boolean hasFocus) {
+        if (!(val instanceof ItemImg)) {
+            if (isSelected) {
+                label.setBackground(COLOR_SELECTED);
+            } else {
+                label.setBackground(unselected);
+            }
+            label.setText(val.toString());
+            return label;
+        }
         final ItemImg value = (ItemImg) val;
         selected = isSelected;
 
         image = value.getImgs()[0];
         name = value.getResourceName();
         size = new Dimension(MAX_WIDTH * 2, MAX_HEIGHT);
-
         return this;
     }
-
 
     @Override
     protected void paintComponent(final Graphics g) {
@@ -67,7 +82,7 @@ public class ItemImgCellRenderer extends JPanel implements ListCellRenderer {
         if (selected) {
             g.setColor(COLOR_SELECTED);
         } else {
-            g.setColor(COLOR_UNSELECTED);
+            g.setColor(unselected);
         }
         g.fillRect(0, 0, size.width, size.height);
         g.setColor(Color.BLACK);
@@ -83,9 +98,9 @@ public class ItemImgCellRenderer extends JPanel implements ListCellRenderer {
             newWidth = (int) (((float) w / (float) h) * (float) newHeight);
         }
 
-
+        g.setFont(FONT);
         g.drawImage(image, 0, 0, newWidth, newHeight, null);
-        g.drawString(name, MAX_WIDTH, 10);
+        g.drawString(name, MAX_WIDTH - 5, 10);
 
     }
 }

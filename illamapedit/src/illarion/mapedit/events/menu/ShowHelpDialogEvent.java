@@ -16,20 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.events;
+package illarion.mapedit.events.menu;
 
 /**
  * @author Tim
  */
-//TODO Refactor this
-public class MessageStringEvent {
-    private final String message;
-
-    public MessageStringEvent(final String message) {
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
+public class ShowHelpDialogEvent {
+    //DUMMY
 }

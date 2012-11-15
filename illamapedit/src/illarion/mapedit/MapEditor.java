@@ -23,7 +23,6 @@ import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
 import illarion.mapedit.crash.exceptions.UnhandlableException;
-import illarion.mapedit.events.MessageStringEvent;
 import illarion.mapedit.gui.GuiController;
 import illarion.mapedit.gui.MainFrame;
 import illarion.mapedit.gui.SplashScreen;
@@ -31,7 +30,6 @@ import illarion.mapedit.resource.ResourceManager;
 import illarion.mapedit.resource.loaders.*;
 import illarion.mapedit.util.JavaLogToLog4J;
 import org.apache.log4j.*;
-import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 import javax.swing.*;
@@ -107,9 +105,9 @@ public final class MapEditor {
      */
     public static void exit() {
         MainFrame.getInstance().exit();
-        saveConfiguration();
         StoppableStorage.getInstance().shutdown();
         CrashReporter.getInstance().waitForReport();
+        saveConfiguration();
     }
 
     public static String getVersion() {
@@ -152,6 +150,7 @@ public final class MapEditor {
         controller.start();
     }
 
+
     private static void initConfig() {
         final ConfigSystem c = getConfig();
         c.setDefault("errorReport", 0);
@@ -165,12 +164,14 @@ public final class MapEditor {
                 TextureLoaderAwt.getInstance(),
                 TileLoader.getInstance(),
                 ItemLoader.getInstance(),
-                OverlayLoader.getInstance()
+                ItemGroupLoader.getInstance(),
+                OverlayLoader.getInstance(),
+                DocuLoader.getInstance()
         );
         while (resourceManager.hasNextToLoad()) {
             try {
                 LOGGER.debug("Loading " + resourceManager.getNextDescription());
-                EventBus.publish(new MessageStringEvent("Loading " + resourceManager.getNextDescription()));
+                SplashScreen.getInstance().setMessage("Loading " + resourceManager.getNextDescription());
                 resourceManager.loadNext();
             } catch (IOException e) {
                 LOGGER.warn(resourceManager.getPrevDescription() + " failed!");
@@ -206,7 +207,8 @@ public final class MapEditor {
      * Save the current state of the configuration to the filesystem if needed.
      */
     public static void saveConfiguration() {
-        instance.config.save();
+        //TODO: Fix not saved
+        getConfig().save();
     }
 
     /**
