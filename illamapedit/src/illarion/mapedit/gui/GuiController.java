@@ -33,7 +33,6 @@ import illarion.mapedit.events.menu.MapSaveEvent;
 import illarion.mapedit.events.menu.MapSelectedEvent;
 import illarion.mapedit.history.HistoryManager;
 import illarion.mapedit.render.RendererManager;
-import illarion.mapedit.resource.ResourceManager;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
 import javolution.util.FastList;
@@ -46,8 +45,8 @@ import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.util.List;
 
@@ -56,15 +55,13 @@ import java.util.List;
  *
  * @author Tim
  */
-public class GuiController implements WindowListener {
+public class GuiController extends WindowAdapter {
 
     private static final Logger LOGGER = Logger.getLogger(GuiController.class);
 
     private final MainFrame mainFrame;
 
     private final SplashScreen splashScreen;
-
-    private final ResourceManager resourceManager;
 
     private final List<Map> maps;
 
@@ -74,16 +71,15 @@ public class GuiController implements WindowListener {
 
     private boolean started;
 
-    private boolean saved;
+    private boolean notSaved;
 
     public GuiController(final Config config) {
         AnnotationProcessor.process(this);
         splashScreen = SplashScreen.getInstance();
         mainFrame = new MainFrame(this, config);
-        resourceManager = ResourceManager.getInstance();
         historyManager = new HistoryManager();
         maps = new FastList<Map>(1);
-        saved = true;
+        notSaved = false;
     }
 
     public void start() {
@@ -135,7 +131,7 @@ public class GuiController implements WindowListener {
                 selected = map;
             }
         }
-        EventBus.publish(new UpdateMapListEvent(maps));
+        EventBus.publish(new UpdateMapListEvent(maps, maps.size() - 1));
         EventBus.publish(new RepaintRequestEvent());
     }
 
@@ -150,7 +146,7 @@ public class GuiController implements WindowListener {
                 }
             }
         }
-        EventBus.publish(new UpdateMapListEvent(maps));
+        EventBus.publish(new UpdateMapListEvent(maps, maps.indexOf(selected)));
         EventBus.publish(new RepaintRequestEvent());
     }
 
@@ -159,18 +155,13 @@ public class GuiController implements WindowListener {
     }
 
     public void setSaved(final boolean saved) {
-        this.saved = saved;
+        notSaved = !saved;
     }
 
-
-    @Override
-    public void windowOpened(final WindowEvent e) {
-        //DO NOTHING
-    }
 
     @Override
     public void windowClosing(final WindowEvent e) {
-        if (!saved) {
+        if (notSaved) {
             if (MapDialogs.isShowSaveDialog()) {
                 onMapSave(new MapSaveEvent());
             }
@@ -185,26 +176,6 @@ public class GuiController implements WindowListener {
         System.exit(0);
     }
 
-    @Override
-    public void windowIconified(final WindowEvent e) {
-        //DO NOTHING
-    }
-
-    @Override
-    public void windowDeiconified(final WindowEvent e) {
-        //DO NOTHING
-    }
-
-    @Override
-    public void windowActivated(final WindowEvent e) {
-        //DO NOTHING
-    }
-
-    @Override
-    public void windowDeactivated(final WindowEvent e) {
-        //DO NOTHING
-    }
-
     @EventSubscriber
     public void onMapNew(final MapNewEvent e) {
         addMap(MapDialogs.showNewMapDialog(mainFrame));
@@ -212,7 +183,7 @@ public class GuiController implements WindowListener {
 
     @EventSubscriber
     public void onMapSave(final MapSaveEvent e) {
-        for (Map map : maps) {
+        for (final Map map : maps) {
             try {
 
                 if (map != null) {
@@ -227,8 +198,8 @@ public class GuiController implements WindowListener {
                         JOptionPane.ERROR_MESSAGE);
             }
         }
-        saved = true;
-        EventBus.publish(new UpdateMapListEvent(maps));
+        notSaved = false;
+        EventBus.publish(new UpdateMapListEvent(maps, maps.indexOf(selected)));
     }
 
     @EventSubscriber
@@ -250,15 +221,17 @@ public class GuiController implements WindowListener {
     @EventSubscriber
     public void onMapOpen(final MapOpenEvent e) {
         try {
-            final Map map;
+            final Map[] map;
             if (e.getPath() == null) {
                 map = MapDialogs.showOpenMapDialog(mainFrame);
             } else {
-                map = MapIO.loadMap(e.getPath(), e.getName());
+                map = new Map[1];
+                map[0] = MapIO.loadMap(e.getPath(), e.getName());
             }
-
-            if (!maps.contains(map)) {
-                addMap(map);
+            for (final Map m : map) {
+                if (!maps.contains(m)) {
+                    addMap(m);
+                }
             }
         } catch (FormatCorruptedException ex) {
             LOGGER.warn("Format wrong.", ex);
