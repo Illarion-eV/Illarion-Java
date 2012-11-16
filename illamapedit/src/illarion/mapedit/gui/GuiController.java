@@ -24,6 +24,7 @@ import illarion.mapedit.MapEditor;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapIO;
+import illarion.mapedit.events.GlobalActionEvents;
 import illarion.mapedit.events.UpdateMapListEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.events.menu.MapNewEvent;
@@ -40,9 +41,11 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
@@ -138,27 +141,25 @@ public class GuiController implements WindowListener {
 
     public void removeMap(final Map map) {
         if (maps.contains(map) && (map != null)) {
-            maps.add(map);
+            maps.remove(map);
+            if (selected == map) {
+                if (maps.isEmpty()) {
+                    selected = null;
+                } else {
+                    selected = maps.get(0);
+                }
+            }
         }
         EventBus.publish(new UpdateMapListEvent(maps));
         EventBus.publish(new RepaintRequestEvent());
     }
 
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
 
-    @EventSubscriber
-    public void onMapSelected(final MapSelectedEvent e) {
-        selected = maps.get(e.getIndex());
-        int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
-        int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
-        RendererManager manager = mainFrame.getRendererManager();
-        manager.setZoom(1f);
-        manager.setSelectedLevel(selected.getZ());
-        manager.setTranslationX(-x);
-        manager.setTranslationY(-y);
-        manager.setDefaultTranslationX(-x);
-        manager.setDefaultTranslationY(-y);
-
-        EventBus.publish(new RepaintRequestEvent());
+    public void setSaved(final boolean saved) {
+        this.saved = saved;
     }
 
 
@@ -175,13 +176,11 @@ public class GuiController implements WindowListener {
             }
         }
         LOGGER.debug("Closing window.");
-        mainFrame.dispose();
         MapEditor.exit();
     }
 
     @Override
     public void windowClosed(final WindowEvent e) {
-
         LOGGER.debug("Exit");
         System.exit(0);
     }
@@ -233,12 +232,33 @@ public class GuiController implements WindowListener {
     }
 
     @EventSubscriber
+    public void onMapSelected(final MapSelectedEvent e) {
+        selected = maps.get(e.getIndex());
+        final int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
+        final int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
+        final RendererManager manager = mainFrame.getRendererManager();
+        manager.setZoom(1f);
+        manager.setSelectedLevel(selected.getZ());
+        manager.setTranslationX(-x);
+        manager.setTranslationY(-y);
+        manager.setDefaultTranslationX(-x);
+        manager.setDefaultTranslationY(-y);
+
+        EventBus.publish(new RepaintRequestEvent());
+    }
+
+    @EventSubscriber
     public void onMapOpen(final MapOpenEvent e) {
         try {
+            final Map map;
             if (e.getPath() == null) {
-                addMap(MapDialogs.showOpenMapDialog(mainFrame));
+                map = MapDialogs.showOpenMapDialog(mainFrame);
             } else {
-                addMap(MapIO.loadMap(e.getPath(), e.getName()));
+                map = MapIO.loadMap(e.getPath(), e.getName());
+            }
+
+            if (!maps.contains(map)) {
+                addMap(map);
             }
         } catch (FormatCorruptedException ex) {
             LOGGER.warn("Format wrong.", ex);
@@ -255,14 +275,10 @@ public class GuiController implements WindowListener {
                     JOptionPane.ERROR_MESSAGE,
                     ImageLoader.getImageIcon("messagebox_critical"));
         }
-
     }
 
-    public HistoryManager getHistoryManager() {
-        return historyManager;
-    }
-
-    public void setSaved(final boolean saved) {
-        this.saved = saved;
+    @EventTopicSubscriber(topic = GlobalActionEvents.CLOSE_MAP)
+    public void onMapClosed(final String topic, final ActionEvent event) {
+        removeMap(selected);
     }
 }

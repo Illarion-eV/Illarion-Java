@@ -26,7 +26,6 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import javax.swing.*;
 
 /**
- * TODO: Implement music tool
  * TODO: Implement random tile tool
  * TODO: Implement random item tool
  *

@@ -28,8 +28,6 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import javax.swing.*;
 
 /**
- * TODO: Implement it
- *
  * @author Tim
  */
 public class WarpTool extends AbstractTool {

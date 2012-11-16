@@ -21,12 +21,15 @@ package illarion.mapedit.gui;
 import illarion.common.config.Config;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.MapIO;
+import illarion.mapedit.events.GlobalActionEvents;
 import illarion.mapedit.events.UpdateMapListEvent;
 import illarion.mapedit.events.menu.MapOpenEvent;
 import illarion.mapedit.events.menu.MapSelectedEvent;
 import illarion.mapedit.gui.util.MapComboBoxModel;
+import illarion.mapedit.resource.loaders.ImageLoader;
 import javolution.util.FastList;
 import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventBusAction;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
@@ -70,19 +73,19 @@ public class MapFileBand extends JRibbonBand {
         list.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(final ListSelectionEvent e) {
-                if (list.getSelectedValue() != null) {
+                if (e.getValueIsAdjusting() && (list.getSelectedValue() != null)) {
                     EventBus.publish(new MapOpenEvent(dir.getPath(), (String) list.getSelectedValue()));
+                    list.clearSelection();
                 }
             }
         });
 
-
-        //TODO: Does not work
-        list.setVisibleRowCount(8);
-
         model = new MapComboBoxModel(null);
 
         final JComboBox mapSelector = new JComboBox(model);
+        final JButton close = new JButton(ImageLoader.getImageIcon("close"));
+        close.setActionCommand(GlobalActionEvents.CLOSE_MAP);
+        close.addActionListener(new EventBusAction(GlobalActionEvents.CLOSE_MAP, null));
 
         mapSelector.addItemListener(new ItemListener() {
             @Override
@@ -97,6 +100,7 @@ public class MapFileBand extends JRibbonBand {
 
         addRibbonComponent(new JRibbonComponent(new JScrollPane(list)));
         addRibbonComponent(new JRibbonComponent(mapSelector));
+        addRibbonComponent(new JRibbonComponent(close));
 
         final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));

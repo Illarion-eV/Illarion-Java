@@ -18,7 +18,7 @@
  */
 package illarion.mapedit.tools.panel;
 
-import illarion.mapedit.tools.panel.components.ItemList;
+import illarion.mapedit.tools.panel.components.ItemTree;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +30,8 @@ public class SingleItemPanel extends JPanel {
 
     public SingleItemPanel() {
         super(new BorderLayout());
-        final ItemList list = new ItemList();
+        //final ItemList list = new ItemList();
+        final ItemTree list = new ItemTree();
         add(list, BorderLayout.CENTER);
     }
 }
