@@ -112,10 +112,9 @@ public class MapFileBand extends JRibbonBand {
 
     @EventSubscriber
     public void onUpdateMapList(final UpdateMapListEvent e) {
-        final boolean firstMap = (model.getSize() == 0) && !e.getMaps().isEmpty();
         model.updateList(e.getMaps());
-        if (firstMap) {
-            model.setSelectedItem(e.getMaps().get(0).getName());
-        }
+
+        model.setSelectedItem(model.getElementAt(e.getSelectedIndex()));
+        EventBus.publish(new MapSelectedEvent(e.getSelectedIndex()));
     }
 }
