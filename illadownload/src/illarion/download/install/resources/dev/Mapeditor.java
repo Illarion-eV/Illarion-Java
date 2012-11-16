@@ -109,10 +109,14 @@ public final class Mapeditor implements DevelopmentResource {
             dep.add(SubstanceFlamingo.getInstance());
             dep.add(EventBus.getInstance());
             dep.add(Common.getInstance());
+            dep.add(SwingX.getInstance());
+            dep.add(SubstanceSwingX.getInstance());
+            dep.add(VorbisSPI.getInstance());
 
             dep.add(Items.getInstance());
             dep.add(Tables.getInstance());
             dep.add(Tiles.getInstance());
+            dep.add(Sounds.getInstance());
 
             dependencies = dep;
         }
