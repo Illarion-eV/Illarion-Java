@@ -221,14 +221,17 @@ public class GuiController extends WindowAdapter {
     @EventSubscriber
     public void onMapOpen(final MapOpenEvent e) {
         try {
-            final Map map;
+            final Map[] map;
             if (e.getPath() == null) {
                 map = MapDialogs.showOpenMapDialog(mainFrame);
             } else {
-                map = MapIO.loadMap(e.getPath(), e.getName());
+                map = new Map[1];
+                map[0] = MapIO.loadMap(e.getPath(), e.getName());
             }
-            if (!maps.contains(map)) {
-                addMap(map);
+            for (final Map m : map) {
+                if (!maps.contains(m)) {
+                    addMap(m);
+                }
             }
         } catch (FormatCorruptedException ex) {
             LOGGER.warn("Format wrong.", ex);

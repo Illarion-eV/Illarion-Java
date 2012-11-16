@@ -105,7 +105,7 @@ public class MapDialogs {
         return null;
     }
 
-    public static Map showOpenMapDialog(final JFrame owner) throws IOException {
+    public static Map[] showOpenMapDialog(final JFrame owner) throws IOException {
         final JFileChooser ch = new JFileChooser();
         if (config.getFile("mapLastOpenDir") != null) {
             ch.setCurrentDirectory(config.getFile("mapLastOpenDir"));
@@ -142,10 +142,12 @@ public class MapDialogs {
         dialog.pack();
         dialog.setVisible(true);
         dialog.dispose();
-        if (list.getSelectedValue() == null) {
-            return null;
+
+        Map[] loadedMaps = new Map[list.getSelectedIndices().length];
+        for (int i = 0; i < list.getSelectedIndices().length; i++) {
+            loadedMaps[i] = MapIO.loadMap(dir.getPath(), (String) list.getSelectedValues()[i]);
         }
-        return MapIO.loadMap(dir.getPath(), (String) list.getSelectedValue());
+        return loadedMaps;
     }
 
     public static boolean isShowSaveDialog() {
