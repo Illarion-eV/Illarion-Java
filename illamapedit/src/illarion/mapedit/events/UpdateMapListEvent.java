@@ -26,14 +26,20 @@ import java.util.List;
  * @author Tim
  */
 public class UpdateMapListEvent {
+
     private final List<Map> maps;
+    private final int selectedIndex;
 
-
-    public UpdateMapListEvent(final List<Map> maps) {
+    public UpdateMapListEvent(final List<Map> maps, final int selectedIndex) {
         this.maps = maps;
+        this.selectedIndex = selectedIndex;
     }
 
     public List<Map> getMaps() {
         return maps;
+    }
+
+    public int getSelectedIndex() {
+        return selectedIndex;
     }
 }
