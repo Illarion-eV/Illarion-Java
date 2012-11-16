@@ -23,6 +23,7 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.events.HistoryEvent;
 import illarion.mapedit.events.menu.MapSaveEvent;
+import illarion.mapedit.events.menu.ShowHelpDialogEvent;
 import illarion.mapedit.events.util.ActionEventPublisher;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.loaders.ImageLoader;
@@ -35,7 +36,6 @@ import java.awt.event.WindowListener;
 
 /**
  * This class represents the whole gui.
- * TODO: save window dimensions.
  *
  * @author Tim
  */
@@ -43,7 +43,7 @@ public class MainFrame extends JRibbonFrame {
     private static final Dimension WINDOW_SIZE = new Dimension(900, 700);
     private static MainFrame instance;
 
-
+    private final HelpDialog helpDialog;
     private final MapPanel mapPanel;
     private final ToolSettingsPanel settingsPanel;
     private final Config config;
@@ -53,13 +53,15 @@ public class MainFrame extends JRibbonFrame {
         mapPanel = new MapPanel(controller);
         settingsPanel = new ToolSettingsPanel();
         instance = this;
+        helpDialog = new HelpDialog(this);
     }
 
     public void initialize(final WindowListener controller) {
         addWindowListener(controller);
         setTitle(Lang.getMsg("application.Name") + MapEditor.getVersion());
-        setSize(WINDOW_SIZE);
+        setSize(getSavedDimension());
         getRibbon().setApplicationMenu(new MainMenu());
+        getRibbon().configureHelp(ImageLoader.getResizableIcon("help"), new ActionEventPublisher(new ShowHelpDialogEvent()));
 
         final JCommandButton saveBtn = new JCommandButton(ImageLoader.getResizableIcon("filesave"));
         final JCommandButton undoBtn = new JCommandButton(ImageLoader.getResizableIcon("undo"));
@@ -92,9 +94,20 @@ public class MainFrame extends JRibbonFrame {
 
     public void exit() {
         dispose();
+        config.set("windowSizeW", getSize().width);
+        config.set("windowSizeH", getSize().height);
     }
 
     public RendererManager getRendererManager() {
         return mapPanel.getRenderManager();
+    }
+
+    private Dimension getSavedDimension() {
+        final int w = config.getInteger("windowSizeW");
+        final int h = config.getInteger("windowSizeH");
+        if ((w != 0) && (h != 0)) {
+            return new Dimension(w, h);
+        }
+        return WINDOW_SIZE;
     }
 }

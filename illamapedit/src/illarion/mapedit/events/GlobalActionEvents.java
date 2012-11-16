@@ -16,45 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.events.map;
-
-import illarion.mapedit.util.Vector2i;
+package illarion.mapedit.events;
 
 /**
  * @author Tim
  */
-public class ZoomEvent {
-
-    private final boolean original;
-
-    private final float value;
-    private final Vector2i pos;
-
-    public ZoomEvent(final float value, final Vector2i pos) {
-        this.pos = pos;
-        original = false;
-        this.value = value;
-    }
-
-    public ZoomEvent() {
-        pos = null;
-        original = true;
-        value = 0;
-    }
-
-    public float getValue() {
-        if (original) {
-            throw new IllegalStateException("ZoomEvent has no value if it's 'original'," +
-                    " check that first.");
-        }
-        return value;
-    }
-
-    public boolean isOriginal() {
-        return original;
-    }
-
-    public Vector2i getPos() {
-        return pos;
-    }
+public class GlobalActionEvents {
+    public static final String CLOSE_MAP = "close map";
 }

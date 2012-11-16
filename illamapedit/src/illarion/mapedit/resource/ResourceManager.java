@@ -112,6 +112,9 @@ public class ResourceManager {
      * @return
      */
     public String getPrevDescription() {
+        if (index <= 0) {
+            return "";
+        }
         return res.get(index - 1).getDescription();
     }
 }

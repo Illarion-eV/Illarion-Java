@@ -159,8 +159,6 @@ public class MapTile {
     }
 
     /**
-     * TODO: Remove that
-     *
      * @return The list of items on this tile.
      */
     public List<MapItem> getMapItems() {
