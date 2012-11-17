@@ -36,6 +36,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library name="rsc_sounds.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_sounds.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Javolution" level="project" />
     <orderEntry type="library" name="log4j" level="project" />
     <orderEntry type="library" name="Flamingo" level="project" />
