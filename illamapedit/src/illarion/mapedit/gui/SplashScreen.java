@@ -49,8 +49,7 @@ public class SplashScreen extends JWindow {
         setSize(img.getWidth(null), img.getHeight(null) + HEIGHT_ADJUSTMENT);
         final Dimension screenSize =
                 Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation((screenSize.width - img.getWidth(null)) / 2,
-                (screenSize.height - img.getHeight(null)) / 2);
+        setLocationRelativeTo(null);
         background = makeScreenShot();
         message = "Starting..";
     }
