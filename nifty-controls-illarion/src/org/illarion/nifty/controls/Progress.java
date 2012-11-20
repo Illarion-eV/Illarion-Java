@@ -29,5 +29,5 @@ public interface Progress extends NiftyControl {
      *
      * @param value the progress value
      */
-    void setProgress(float value);
+    void setProgress(double value);
 }
