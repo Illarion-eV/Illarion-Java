@@ -44,6 +44,7 @@ import org.illarion.nifty.controls.*;
 import org.illarion.nifty.effects.DoubleEffect;
 
 import java.security.InvalidParameterException;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -187,6 +188,7 @@ public class DialogCraftingControl
     private final MouseOverIngredientItemEventSubscriber mouseOverIngredientEventHandler;
     private final IncreaseAmountButtonEventSubscriber increaseAmountButtonEventHandler;
     private final DecreaseAmountButtonEventSubscriber decreaseAmountButtonEventHandler;
+    private final DecimalFormat timeFormat;
 
     public DialogCraftingControl() {
         craftButtonEventHandler = new CraftButtonClickedEventSubscriber();
@@ -198,6 +200,7 @@ public class DialogCraftingControl
         decreaseAmountButtonEventHandler = new DecreaseAmountButtonEventSubscriber();
 
         treeRootNode = new TreeItem<ListEntry>();
+        timeFormat = new DecimalFormat("#0.0");
     }
 
     @Override
@@ -401,7 +404,7 @@ public class DialogCraftingControl
 
         final Element productionTime = getContent().findElementByName("#productionTime");
         productionTime.getRenderer(TextRenderer.class).setText("${illarion-dialog-crafting-bundle.craftTime}: " +
-                Double.toString(selectedEntry.getCraftTime()) + "s");
+                timeFormat.format(selectedEntry.getCraftTime()) + "s");
 
         final Element ingredientsPanel = getContent().findElementByName("#ingredients");
 
