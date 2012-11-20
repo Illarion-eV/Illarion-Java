@@ -28,34 +28,40 @@ import java.io.IOException;
 /**
  * @author Tim
  */
-public class SplashScreen extends JPanel {
+public class SplashScreen extends JWindow {
     private static final SplashScreen INSTANCE = new SplashScreen();
     private static final Logger LOGGER = Logger.getLogger(SplashScreen.class);
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     public static final int HEIGHT_ADJUSTMENT = 30;
     private static final int FONT_SIZE = 20;
     public static final Font FONT = new Font("Arial", Font.BOLD, FONT_SIZE);
-    private final Frame frame;
+    private final Image background;
     private Image img;
     private String message;
 
     private SplashScreen() {
-        frame = new Frame("Loading MapEditor");
-        frame.setUndecorated(true);
-        frame.setBackground(TRANSPARENT);
-        setBackground(TRANSPARENT);
-        frame.add(this);
+        getContentPane().setBackground(TRANSPARENT);
         try {
             img = ImageIO.read(SplashScreen.class.getResource("/mapeditsplash.png"));
         } catch (IOException e) {
             LOGGER.warn("Can't read splash image", e);
         }
-        frame.setSize(img.getWidth(null), img.getHeight(null) + HEIGHT_ADJUSTMENT);
+        setSize(img.getWidth(null), img.getHeight(null) + HEIGHT_ADJUSTMENT);
         final Dimension screenSize =
                 Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation((screenSize.width - img.getWidth(null)) / 2,
-                (screenSize.height - img.getHeight(null)) / 2);
+        setLocationRelativeTo(null);
+        background = makeScreenShot();
         message = "Starting..";
+    }
+
+    private Image makeScreenShot() {
+        try {
+            Robot r = new Robot();
+            return r.createScreenCapture(new Rectangle(getX(), getY(), getWidth(), getHeight()));
+        } catch (AWTException e) {
+            return null;
+        }
+
     }
 
     public static SplashScreen getInstance() {
@@ -63,14 +69,10 @@ public class SplashScreen extends JPanel {
     }
 
     @Override
-    public void setVisible(final boolean aFlag) {
-        frame.setVisible(aFlag);
-    }
-
-    @Override
-    public void paintComponent(final Graphics g) {
-        paintComponents(g);
-        g.clearRect(0, 0, getWidth(), getHeight());
+    public void paint(final Graphics g) {
+        if (background != null) {
+            g.drawImage(background, 0, 0, null);
+        }
         if (img != null) {
             g.drawImage(img, 0, 0, null);
         }
