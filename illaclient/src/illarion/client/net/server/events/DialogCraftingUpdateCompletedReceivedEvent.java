@@ -55,7 +55,7 @@ public class DialogCraftingUpdateCompletedReceivedEvent {
      *
      * @return the ID of the dialog
      */
-    public int getId() {
+    public int getDialogId() {
         return requestId;
     }
 

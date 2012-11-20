@@ -19,22 +19,30 @@
 <nifty-controls>
     <resourceBundle id="illarion-dialog-crafting-bundle" filename="illarion-dialog-crafting"/>
 
-    <controlDefinition name="dialog-crafting" style="illarion-dialog-crafting" visibleToMouse="true"
+    <controlDefinition name="dialog-crafting" visibleToMouse="true"
                        controller="org.illarion.nifty.controls.dialog.crafting.DialogCraftingControl">
         <control name="window" id="#window" title="${illarion-dialog-crafting-bundle.title}"
-                 visibleToMouse="true" height="440px">
+                 visibleToMouse="true">
             <panel style="illarion-dialog-crafting-content" visibleToMouse="true">
                 <control name="treeBox" id="#craftItemList" style="#craftItemList" vertical="on" horizontal="off"
                          displayItems="9"/>
                 <panel id="#selectedItemInfos" style="#selectedItemInfos" visibleToMouse="true">
                     <panel style="#selectedItemImageWrapper">
                         <image id="#selectedItemImage" style="#selectedItemImage"/>
+                        <control name="label" id="#selectedItemAmount" text="000" style="#selectedItemAmount"
+                                 visible="false"/>
                     </panel>
                     <control name="label" id="#selectedItemName" style="#selectedItemName"/>
                 </panel>
-                <control name="label" id="#productionTime" style="#productionTime"/>
-                <panel id="#ingredients" style="#ingredients"/>
-                <control name="progress" id="#progress" marginBottom="5px"/>
+                <control name="label" id="#productionTime" style="#productionTime"
+                         text="${illarion-dialog-crafting-bundle.craftTime}:"/>
+                <panel id="#ingredients" style="#ingredients" marginBottom="5px"/>
+                <control name="progress" id="#progress" marginBottom="5px">
+                    <effect>
+                        <onCustom customKey="automaticProgress" name="DoubleEffect"
+                                  targetClass="org.illarion.nifty.controls.Progress" targetMethod="setProgress"/>
+                    </effect>
+                </control>
                 <panel style="#buttonLine">
                     <panel style="#buttonWrapper">
                         <control name="button" id="#buttonAmountDown" label="-" width="30px" marginRight="1px"/>

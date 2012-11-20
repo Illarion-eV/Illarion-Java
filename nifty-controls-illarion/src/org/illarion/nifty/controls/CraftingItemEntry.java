@@ -91,4 +91,11 @@ public interface CraftingItemEntry extends CraftingTreeItem {
      * @return the name of the item
      */
     String getName();
+
+    /**
+     * Get size of the stack that is created at once.
+     *
+     * @return the size of the stack that is build
+     */
+    int getBuildStackSize();
 }

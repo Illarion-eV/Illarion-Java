@@ -23,6 +23,8 @@
     <useControls filename="nifty-default-controls.xml"/>
     <useControls filename="illarion-gamecontrols.xml"/>
 
+    <registerEffect name="DoubleEffect" class="org.illarion.nifty.effects.DoubleEffect"/>
+
     <resourceBundle id="gamescreen-bundle" filename="gamescreen"/>
 
     <screen id="gamescreen" controller="illarion.client.gui.controller.GameScreenController">

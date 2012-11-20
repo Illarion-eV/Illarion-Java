@@ -230,23 +230,35 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         }
     }
 
-    /* @EventSubscriber
- public void handleDialogCraftingUpdateEvent(final DialogCraftingUpdateReceivedEvent event) {
-     final DialogCrafting craftDialog = getCraftingDialog(event.getId());
-     if (craftDialog == null) {
-         return;
-     }
+    @EventSubscriber
+    public void handleDialogCraftingUpdateStartEvent(final DialogCraftingUpdateStartReceivedEvent event) {
+        final DialogCrafting craftDialog = getCraftingDialog(event.getDialogId());
+        if (craftDialog == null) {
+            return;
+        }
 
-     switch (event.getType()) {
-         case Completed:
-             craftDialog.setProgress(0.f);
-             break;
-         case Aborted:
-             craftDialog.setProgress(0.f);
-             break;
-         case Start:
-     }
- }   */
+        craftDialog.startProgress((double) event.getRequiredTime() / 10.0);
+    }
+
+    @EventSubscriber
+    public void handleDialogCraftingUpdateAbortedEvent(final DialogCraftingUpdateAbortedReceivedEvent event) {
+        final DialogCrafting craftDialog = getCraftingDialog(event.getDialogId());
+        if (craftDialog == null) {
+            return;
+        }
+
+        craftDialog.setProgress(0.f);
+    }
+
+    @EventSubscriber
+    public void handleDialogCraftingUpdateCompletedEvent(final DialogCraftingUpdateCompletedReceivedEvent event) {
+        final DialogCrafting craftDialog = getCraftingDialog(event.getDialogId());
+        if (craftDialog == null) {
+            return;
+        }
+
+        craftDialog.setProgress(1.f);
+    }
 
     @NiftyEventSubscriber(pattern = "craftingDialog[0-9]+")
     public void handleCraftingItemLookAtEvent(final String topic, final DialogCraftingLookAtItemEvent event) {

@@ -38,11 +38,15 @@
     </style>
 
     <style id="illarion-dialog-crafting-content#selectedItemImage">
-        <attributes/>
+        <attributes valign="center" align="center"/>
+    </style>
+
+    <style id="illarion-dialog-crafting-content#selectedItemAmount" base="nifty-label">
+        <attributes align="right" valign="bottom" color="#ff0f" backgroundColor="#bb15" visibleToMouse="false"/>
     </style>
 
     <style id="illarion-dialog-crafting-content#selectedItemName" base="nifty-label">
-        <attributes width="*" height="64px" textHAlign="left" textVAlign="center"/>
+        <attributes width="*" marginLeft="10px" height="64px" textHAlign="left" textVAlign="center"/>
     </style>
 
     <style id="illarion-dialog-crafting-content#productionTime" base="nifty-label">
@@ -50,7 +54,7 @@
     </style>
 
     <style id="illarion-dialog-crafting-content#ingredients">
-        <attributes width="450px" childLayout="vertical" height="0px"/>
+        <attributes width="450px" childLayout="vertical" height="34px"/>
     </style>
 
     <style id="illarion-dialog-crafting-content#buttonLine">

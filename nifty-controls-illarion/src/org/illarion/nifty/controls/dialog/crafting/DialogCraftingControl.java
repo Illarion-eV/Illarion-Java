@@ -27,17 +27,21 @@ import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.controls.textfield.filter.input.TextFieldInputCharFilter;
 import de.lessvoid.nifty.controls.textfield.format.TextFieldDisplayFormat;
 import de.lessvoid.nifty.controls.window.WindowControl;
+import de.lessvoid.nifty.effects.Effect;
+import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.NiftyMouseMovedEvent;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.layout.align.HorizontalAlign;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.*;
+import org.illarion.nifty.effects.DoubleEffect;
 
 import java.security.InvalidParameterException;
 import java.util.List;
@@ -353,6 +357,21 @@ public class DialogCraftingControl
         element.setConstraintWidth(widthSize);
     }
 
+    public void startProgress(final double seconds) {
+        final Element progressBar = getContent().findElementByName("#progress");
+        progressBar.getNiftyControl(Progress.class).setProgress(0.f);
+
+        final List<Effect> effects = progressBar.getEffects(EffectEventId.onCustom, DoubleEffect.class);
+        if (effects.isEmpty()) {
+            return;
+        }
+
+        final Effect effect = effects.get(0);
+        effect.getParameters().setProperty("length", Integer.toString((int) (seconds * 1000.0)));
+
+        progressBar.startEffect(EffectEventId.onCustom, null, "automaticProgress");
+    }
+
     /**
      * Show the details of one item in the details part of the crafting window.
      *
@@ -362,18 +381,29 @@ public class DialogCraftingControl
         if (selectedEntry == null) {
             return;
         }
-        final Element image = getElement().findElementByName("#selectedItemImage");
+        final Element image = getContent().findElementByName("#selectedItemImage");
         applyImage(image, selectedEntry.getImage(), 64);
 
-        final Element title = getElement().findElementByName("#selectedItemName");
+        final Label imageAmount = getContent().findNiftyControl("#selectedItemAmount", Label.class);
+        if (selectedEntry.getBuildStackSize() == 1) {
+            imageAmount.getElement().hide();
+        } else {
+            final Element imageAmountElement = imageAmount.getElement();
+            final TextRenderer textRenderer = imageAmountElement.getRenderer(TextRenderer.class);
+            textRenderer.setText(Integer.toString(selectedEntry.getBuildStackSize()));
+            imageAmountElement.setConstraintWidth(SizeValue.px(textRenderer.getTextWidth()));
+            imageAmountElement.setConstraintHorizontalAlign(HorizontalAlign.right);
+            imageAmountElement.show();
+        }
+
+        final Element title = getContent().findElementByName("#selectedItemName");
         title.getRenderer(TextRenderer.class).setText(selectedEntry.getName());
 
-        final Element productionTime = getElement().findElementByName("#productionTime");
-        productionTime.getRenderer(TextRenderer.class).setText("Production time: " +
+        final Element productionTime = getContent().findElementByName("#productionTime");
+        productionTime.getRenderer(TextRenderer.class).setText("${illarion-dialog-crafting-bundle.craftTime}: " +
                 Double.toString(selectedEntry.getCraftTime()) + "s");
 
-        final Element ingredientsPanel = getElement().findElementByName("#ingredients");
-        ingredientsPanel.setConstraintHeight(SizeValue.wildcard());
+        final Element ingredientsPanel = getContent().findElementByName("#ingredients");
 
         final int ingredientsAmount = selectedEntry.getIngredientCount();
         Element currentPanel = null;
@@ -391,12 +421,15 @@ public class DialogCraftingControl
         while (deleteIngredientImage(ingredientsPanel, index)) {
             index++;
         }
-        int panelIndex = (ingredientsAmount % 10) + 1;
+        int panelIndex = (ingredientsAmount / 10) + 1;
         while (deleteIngredientPanel(ingredientsPanel, panelIndex)) {
             panelIndex++;
         }
 
-        getElement().layoutElements();
+        ingredientsPanel.setConstraintHeight(SizeValue.px(((ingredientsAmount / 10) + 1) * 34));
+
+        getElement().getNifty().getCurrentScreen().resetLayout();
+        getElement().getNifty().getCurrentScreen().layoutLayers();
     }
 
     private boolean deleteIngredientPanel(final Element ingredientsPanel, final int index) {
@@ -515,6 +548,8 @@ public class DialogCraftingControl
 
     @Override
     public void setProgress(final float progress) {
-        getContent().findNiftyControl("#progress", Progress.class).setProgress(progress);
+        final Element progressBar = getContent().findElementByName("#progress");
+        progressBar.stopEffect(EffectEventId.onCustom);
+        progressBar.getNiftyControl(Progress.class).setProgress(progress);
     }
 }

@@ -79,4 +79,12 @@ public interface DialogCrafting extends Window {
      * @param progress the new value for the progress
      */
     void setProgress(float progress);
+
+    /**
+     * This function triggers the automatic progress display. It moves the progress bar from 0% to 100% within the
+     * time specified.
+     *
+     * @param seconds the time in seconds to fill the progress bar
+     */
+    void startProgress(double seconds);
 }
