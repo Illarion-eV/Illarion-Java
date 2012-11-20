@@ -18,34 +18,25 @@
  */
 package org.illarion.nifty.controls;
 
+import java.util.List;
+
 /**
- * This event is fired in case the player looks at a item in the crafting dialog.
+ * This interface defines a category of items that can be crafted.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogCraftingLookAtItemEvent extends DialogEvent {
+public interface CraftingCategoryEntry extends CraftingTreeItem {
     /**
-     * The item the player is looking at.
+     * Get the name of this category.
+     *
+     * @return the name of the category
      */
-    private final CraftingItemEntry item;
+    String getCategoryName();
 
     /**
-     * Create a new instance of this event.
+     * Get the items that are part of this category.
      *
-     * @param id   the ID of the dialog
-     * @param item the item the player is looking at
+     * @return the items that are listed as part of this category
      */
-    public DialogCraftingLookAtItemEvent(final int id, final CraftingItemEntry item) {
-        super(id);
-        this.item = item;
-    }
-
-    /**
-     * Get the item the player is looking at.
-     *
-     * @return the item
-     */
-    public CraftingItemEntry getItem() {
-        return item;
-    }
+    List<CraftingItemEntry> getChildren();
 }

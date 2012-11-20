@@ -54,10 +54,10 @@
     </style>
 
     <style id="illarion-dialog-crafting-content#buttonLine">
-        <attributes childLayout="center" width="450px"/>
+        <attributes childLayout="center" width="450px" marginTop="10px"/>
     </style>
 
     <style id="illarion-dialog-crafting-content#buttonWrapper">
-        <attributes childLayout="horizontal"/>
+        <attributes childLayout="horizontal" align="right"/>
     </style>
 </nifty-styles>

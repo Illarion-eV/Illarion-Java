@@ -460,6 +460,7 @@ public final class Avatar extends AbstractEntity implements Resource {
     public void recycle() {
         hide();
         parentChar = null;
+        attackMarkerVisible = false;
         stopAnimation();
         CharacterFactory.getInstance().recycle(this);
     }

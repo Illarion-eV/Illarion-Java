@@ -22,11 +22,10 @@ import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.ImageBuilder;
 import de.lessvoid.nifty.builder.PanelBuilder;
-import de.lessvoid.nifty.controls.ButtonClickedEvent;
-import de.lessvoid.nifty.controls.Label;
-import de.lessvoid.nifty.controls.ListBox;
-import de.lessvoid.nifty.controls.ListBoxSelectionChangedEvent;
+import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
+import de.lessvoid.nifty.controls.textfield.filter.input.TextFieldInputCharFilter;
+import de.lessvoid.nifty.controls.textfield.format.TextFieldDisplayFormat;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.NiftyMouseMovedEvent;
@@ -56,19 +55,24 @@ public class DialogCraftingControl
         extends WindowControl
         implements DialogCrafting, EventTopicSubscriber<ButtonClickedEvent> {
 
+    /**
+     * This subscriber is used to keep track on clicks on the "craft" button in the crafting dialog.
+     */
     private final class CraftButtonClickedEventSubscriber implements EventTopicSubscriber<ButtonClickedEvent> {
         @Override
         public void onEvent(final String topic, final ButtonClickedEvent data) {
-            final int selectedItem = getSelectedCraftingItem();
-            if (selectedItem == -1) {
+            final CraftingItemEntry selectedItem = getSelectedCraftingItem();
+            if (selectedItem == null) {
                 return;
             }
 
-            niftyInstance.publishEvent(getId(), new DialogCraftingCraftEvent(dialogId, getItem(selectedItem),
-                    selectedItem, 1));
+            niftyInstance.publishEvent(getId(), new DialogCraftingCraftEvent(dialogId, selectedItem, getAmount()));
         }
     }
 
+    /**
+     * This subscriber is used to keep track on clicks on the "close" button in the crafting dialog.
+     */
     private final class CloseButtonClickedEventSubscriber implements EventTopicSubscriber<ButtonClickedEvent> {
         @Override
         public void onEvent(final String topic, final ButtonClickedEvent data) {
@@ -78,36 +82,40 @@ public class DialogCraftingControl
     }
 
     private final class SelectCraftItemEventSubscriber implements
-            EventTopicSubscriber<ListBoxSelectionChangedEvent<ListEntry>> {
+            EventTopicSubscriber<TreeItemSelectionChangedEvent<ListEntry>> {
         @Override
-        public void onEvent(final String topic, final ListBoxSelectionChangedEvent<ListEntry> data) {
-            final List<ListEntry> selection = data.getSelection();
+        public void onEvent(final String topic, final TreeItemSelectionChangedEvent<ListEntry> data) {
+            final List<TreeItem<ListEntry>> selection = data.getSelection();
             if (selection.isEmpty()) {
                 return;
             }
 
-            final CraftingListEntry selectedEntry = selection.get(0).entry;
-            setSelectedItem(selectedEntry);
+            final CraftingTreeItem selectedEntry = selection.get(0).getValue().entry;
+
+            if (selectedEntry instanceof CraftingCategoryEntry) {
+                setSelectedItem(null);
+            } else {
+                setSelectedItem((CraftingItemEntry) selectedEntry);
+            }
         }
     }
 
     private final class MouseOverItemEventSubscriber implements EventTopicSubscriber<NiftyMouseMovedEvent> {
         @Override
         public void onEvent(final String topic, final NiftyMouseMovedEvent data) {
-            final int selectedItem = getSelectedCraftingItem();
-            if (selectedItem == -1) {
+            final CraftingItemEntry selectedItem = getSelectedCraftingItem();
+            if (selectedItem == null) {
                 return;
             }
-            niftyInstance.publishEvent(getId(), new DialogCraftingLookAtItemEvent(dialogId, getItem(selectedItem),
-                    selectedItem));
+            niftyInstance.publishEvent(getId(), new DialogCraftingLookAtItemEvent(dialogId, selectedItem));
         }
     }
 
     private final class MouseOverIngredientItemEventSubscriber implements EventTopicSubscriber<NiftyMouseMovedEvent> {
         @Override
         public void onEvent(final String topic, final NiftyMouseMovedEvent data) {
-            final int selectedItem = getSelectedCraftingItem();
-            if (selectedItem == -1) {
+            final CraftingItemEntry selectedItem = getSelectedCraftingItem();
+            if (selectedItem == null) {
                 return;
             }
             final Matcher matcher = INGREDIENT_INDEX_PATTERN.matcher(topic);
@@ -118,7 +126,26 @@ public class DialogCraftingControl
             final int ingredientId = Integer.parseInt(matcher.group(1));
 
             niftyInstance.publishEvent(getId(), new DialogCraftingLookAtIngredientItemEvent(dialogId,
-                    getItem(selectedItem), selectedItem, ingredientId));
+                    selectedItem, ingredientId));
+        }
+    }
+
+    private final class IncreaseAmountButtonEventSubscriber implements EventTopicSubscriber<ButtonClickedEvent> {
+        @Override
+        public void onEvent(final String topic, final ButtonClickedEvent data) {
+            getAmountTextField().setText(Integer.toString(getAmount() + 1));
+        }
+    }
+
+    private final class DecreaseAmountButtonEventSubscriber implements EventTopicSubscriber<ButtonClickedEvent> {
+        @Override
+        public void onEvent(final String topic, final ButtonClickedEvent data) {
+            final int newAmount = getAmount() - 1;
+            if (newAmount <= 1) {
+                getAmountTextField().setText("");
+            } else {
+                getAmountTextField().setText(Integer.toString(newAmount));
+            }
         }
     }
 
@@ -144,11 +171,18 @@ public class DialogCraftingControl
      */
     private boolean alreadyClosed;
 
+    /**
+     * The root node of the tree that displays all the crafting items.
+     */
+    private TreeItem<ListEntry> treeRootNode;
+
     private final CraftButtonClickedEventSubscriber craftButtonEventHandler;
     private final CloseButtonClickedEventSubscriber closeButtonEventHandler;
     private final SelectCraftItemEventSubscriber listSelectionChangedEventHandler;
     private final MouseOverItemEventSubscriber mouseOverItemEventHandler;
     private final MouseOverIngredientItemEventSubscriber mouseOverIngredientEventHandler;
+    private final IncreaseAmountButtonEventSubscriber increaseAmountButtonEventHandler;
+    private final DecreaseAmountButtonEventSubscriber decreaseAmountButtonEventHandler;
 
     public DialogCraftingControl() {
         craftButtonEventHandler = new CraftButtonClickedEventSubscriber();
@@ -156,6 +190,10 @@ public class DialogCraftingControl
         listSelectionChangedEventHandler = new SelectCraftItemEventSubscriber();
         mouseOverItemEventHandler = new MouseOverItemEventSubscriber();
         mouseOverIngredientEventHandler = new MouseOverIngredientItemEventSubscriber();
+        increaseAmountButtonEventHandler = new IncreaseAmountButtonEventSubscriber();
+        decreaseAmountButtonEventHandler = new DecreaseAmountButtonEventSubscriber();
+
+        treeRootNode = new TreeItem<ListEntry>();
     }
 
     @Override
@@ -168,6 +206,31 @@ public class DialogCraftingControl
         dialogId = Integer.parseInt(controlDefinitionAttributes.get("dialogId"));
 
         alreadyClosed = false;
+
+        getAmountTextField().enableInputFilter(new TextFieldInputCharFilter() {
+            @Override
+            public boolean acceptInput(final int index, final char newChar) {
+                if (!Character.isDigit(newChar)) {
+                    return false;
+                }
+                final String currentText = getAmountTextField().getRealText();
+                final StringBuilder buffer = new StringBuilder(currentText);
+                buffer.insert(index, newChar);
+
+                final int value = Integer.parseInt(buffer.toString());
+                return value > 0;
+            }
+        });
+
+        getAmountTextField().setFormat(new TextFieldDisplayFormat() {
+            @Override
+            public CharSequence getDisplaySequence(final CharSequence original, final int start, final int end) {
+                if (original.length() == 0) {
+                    return Integer.toString(1);
+                }
+                return original.subSequence(start, end);
+            }
+        });
     }
 
     @Override
@@ -189,6 +252,10 @@ public class DialogCraftingControl
                 ButtonClickedEvent.class, craftButtonEventHandler);
         niftyInstance.subscribe(currentScreen, getContent().findElementByName("#cancelButton").getId(),
                 ButtonClickedEvent.class, closeButtonEventHandler);
+        niftyInstance.subscribe(currentScreen, getContent().findElementByName("#buttonAmountUp").getId(),
+                ButtonClickedEvent.class, increaseAmountButtonEventHandler);
+        niftyInstance.subscribe(currentScreen, getContent().findElementByName("#buttonAmountDown").getId(),
+                ButtonClickedEvent.class, decreaseAmountButtonEventHandler);
         niftyInstance.subscribe(currentScreen, getItemList().getElement().getId(),
                 ListBoxSelectionChangedEvent.class, listSelectionChangedEventHandler);
         niftyInstance.subscribe(currentScreen, getContent().findElementByName("#selectedItemInfos").getId(),
@@ -217,21 +284,17 @@ public class DialogCraftingControl
     }
 
     @Override
-    public int getCraftingItemCount() {
-        return getItemList().itemCount();
-    }
-
-    @Override
-    public int getSelectedCraftingItem() {
-        final List<Integer> selectedIndices = getItemList().getSelectedIndices();
-        if (selectedIndices.isEmpty()) {
-            return -1;
+    public CraftingItemEntry getSelectedCraftingItem() {
+        final List<TreeItem<ListEntry>> selection = getItemList().getSelection();
+        if (selection.isEmpty()) {
+            return null;
         }
-        return selectedIndices.get(0);
-    }
 
-    public CraftingListEntry getItem(final int index) {
-        return getItemList().getItems().get(index).entry;
+        final CraftingTreeItem treeItem = selection.get(0).getValue().entry;
+        if (treeItem instanceof CraftingItemEntry) {
+            return (CraftingItemEntry) treeItem;
+        }
+        return null;
     }
 
     @Override
@@ -245,15 +308,28 @@ public class DialogCraftingControl
         return ingredientsPanel.findElementByName("#ingredient" + Integer.toString(index));
     }
 
-    private static final class ListEntry {
-        private final CraftingListEntry entry;
+    /**
+     * Get the text field that takes care for showing the amount of items that get produced at once.
+     *
+     * @return the amount textfield
+     */
+    public TextField getAmountTextField() {
+        return getElement().findNiftyControl("#amountInput", TextField.class);
+    }
 
-        private ListEntry(final CraftingListEntry entry) {
+    public int getAmount() {
+        return Integer.parseInt(getAmountTextField().getDisplayedText());
+    }
+
+    private static final class ListEntry {
+        private final CraftingTreeItem entry;
+
+        private ListEntry(final CraftingTreeItem entry) {
             this.entry = entry;
         }
 
         public String toString() {
-            return entry.getName();
+            return entry.getTreeLabel();
         }
     }
 
@@ -282,7 +358,10 @@ public class DialogCraftingControl
      *
      * @param selectedEntry the entry that is supposed to be displayed in detail
      */
-    private void setSelectedItem(final CraftingListEntry selectedEntry) {
+    private void setSelectedItem(final CraftingItemEntry selectedEntry) {
+        if (selectedEntry == null) {
+            return;
+        }
         final Element image = getElement().findElementByName("#selectedItemImage");
         applyImage(image, selectedEntry.getImage(), 64);
 
@@ -305,7 +384,7 @@ public class DialogCraftingControl
 
             final Element currentImage = getIngredientImage(ingredientsPanel.getId(), currentPanel, i % 10);
             applyImage(currentImage.getElements().get(0), selectedEntry.getIngredientImage(i), 32);
-            showIngredientAmount(currentImage, selectedEntry.getIngredientCount(i));
+            showIngredientAmount(currentImage, selectedEntry.getIngredientAmount(i));
         }
 
         int index = ingredientsAmount;
@@ -316,6 +395,8 @@ public class DialogCraftingControl
         while (deleteIngredientPanel(ingredientsPanel, panelIndex)) {
             panelIndex++;
         }
+
+        getElement().layoutElements();
     }
 
     private boolean deleteIngredientPanel(final Element ingredientsPanel, final int index) {
@@ -413,16 +494,23 @@ public class DialogCraftingControl
     }
 
     @SuppressWarnings("unchecked")
-    private ListBox<DialogCraftingControl.ListEntry> getItemList() {
-        return getContent().findNiftyControl("#craftItemList", ListBox.class);
+    private TreeBox<ListEntry> getItemList() {
+        return getContent().findNiftyControl("#craftItemList", TreeBox.class);
     }
 
     @Override
-    public void addCraftingItems(final CraftingListEntry... entries) {
-        final ListBox<DialogCraftingControl.ListEntry> list = getItemList();
-        for (final CraftingListEntry entry : entries) {
-            list.addItem(new DialogCraftingControl.ListEntry(entry));
+    public void addCraftingItems(final CraftingCategoryEntry... entries) {
+        final TreeBox<DialogCraftingControl.ListEntry> list = getItemList();
+
+        for (final CraftingCategoryEntry entry : entries) {
+            final TreeItem<ListEntry> categoryItem = new TreeItem<ListEntry>(new ListEntry(entry));
+            for (final CraftingItemEntry itemEntry : entry.getChildren()) {
+                categoryItem.addTreeItem(new TreeItem<ListEntry>(new ListEntry(itemEntry)));
+            }
+            treeRootNode.addTreeItem(categoryItem);
         }
+
+        list.setTree(treeRootNode);
     }
 
     @Override

@@ -26,6 +26,7 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.gui.events.TooltipsRemovedEvent;
+import illarion.client.gui.util.NiftyCraftingCategory;
 import illarion.client.gui.util.NiftyCraftingItem;
 import illarion.client.gui.util.NiftyMerchantItem;
 import illarion.client.gui.util.NiftySelectItem;
@@ -38,6 +39,7 @@ import illarion.client.net.client.CraftItemCmd;
 import illarion.client.net.server.events.*;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
+import illarion.client.world.items.CraftingItem;
 import illarion.client.world.items.MerchantList;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Rectangle;
@@ -203,7 +205,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
             return;
         }
 
-        if (craftDialog.getSelectedCraftingItem() == event.getSlot()) {
+        if (craftDialog.getSelectedCraftingItem().getItemIndex() == event.getSlot()) {
             final Element targetElement = craftDialog.getCraftingItemDisplay();
             final Rectangle elementRectangle = new Rectangle();
             elementRectangle.set(targetElement.getX(), targetElement.getY(), targetElement.getWidth(),
@@ -219,7 +221,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
             return;
         }
 
-        if (craftDialog.getSelectedCraftingItem() == event.getSlot()) {
+        if (craftDialog.getSelectedCraftingItem().getItemIndex() == event.getSlot()) {
             final Element targetElement = craftDialog.getIngredientItemDisplay(event.getSecondarySlot());
             final Rectangle elementRectangle = new Rectangle();
             elementRectangle.set(targetElement.getX(), targetElement.getY(), targetElement.getWidth(),
@@ -258,7 +260,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
         final CommandFactory factory = CommandFactory.getInstance();
         final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
-        cmd.setLookAtItem(event.getItemIndex());
+        cmd.setLookAtItem(event.getItem().getItemIndex());
         cmd.setDialogId(event.getDialogId());
         cmd.send();
 
@@ -278,7 +280,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
         final CommandFactory factory = CommandFactory.getInstance();
         final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
-        cmd.setLookAtIngredient(event.getItemIndex(), event.getIngredientIndex());
+        cmd.setLookAtIngredient(event.getItem().getItemIndex(), event.getIngredientIndex());
         cmd.setDialogId(event.getDialogId());
         cmd.send();
 
@@ -289,7 +291,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     public void handleCraftingCraftItemEvent(final String topic, final DialogCraftingCraftEvent event) {
         final CommandFactory factory = CommandFactory.getInstance();
         final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
-        cmd.setCraftItem(event.getItemIndex(), 1);
+        cmd.setCraftItem(event.getItem().getItemIndex(), event.getCount());
         cmd.setDialogId(event.getDialogId());
         cmd.send();
     }
@@ -500,8 +502,29 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     private void addCraftingItemsToDialog(final DialogCraftingReceivedEvent event, final DialogCrafting dialog) {
+        final NiftyCraftingCategory[] categories = new NiftyCraftingCategory[event.getGroupCount()];
+        for (int i = 0; i < event.getGroupCount(); i++) {
+            categories[i] = new NiftyCraftingCategory(event.getGroupTitle(i));
+        }
+
+        boolean addedToUnknown = false;
+        final NiftyCraftingCategory unknownCat = new NiftyCraftingCategory("not assigned");
+
         for (int i = 0; i < event.getCraftingItemCount(); i++) {
-            dialog.addCraftingItems(new NiftyCraftingItem(nifty, event.getCraftingItem(i)));
+            final CraftingItem item = event.getCraftingItem(i);
+            final int groupId = item.getGroup();
+            if ((groupId < 0) || (groupId >= categories.length)) {
+                addedToUnknown = true;
+                unknownCat.addChild(new NiftyCraftingItem(nifty, i, item));
+                LOGGER.warn("Crafting item with illegal group received: " + Integer.toString(groupId));
+            } else {
+                categories[item.getGroup()].addChild(new NiftyCraftingItem(nifty, i, item));
+            }
+        }
+
+        dialog.addCraftingItems(categories);
+        if (addedToUnknown) {
+            dialog.addCraftingItems(unknownCat);
         }
     }
 
