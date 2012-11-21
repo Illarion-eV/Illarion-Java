@@ -27,6 +27,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.Game;
 import illarion.client.Login;
+import illarion.client.util.Lang;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
@@ -47,6 +48,7 @@ public class CharScreenController implements ScreenController {
     @Override
     public void bind(Nifty nifty, Screen screen) {
         this.nifty = nifty;
+        nifty.setLocale(Lang.getInstance().getLocale());
         listBox = (ListBox<String>) screen.findNiftyControl("myListBox", ListBox.class);
         fillMyListBox();
         statusLabel = screen.findNiftyControl("statusText", Label.class);
