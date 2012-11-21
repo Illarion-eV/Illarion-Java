@@ -19,7 +19,6 @@
 package illarion.client.util;
 
 import illarion.client.Login;
-import illarion.client.world.World;
 import illarion.common.types.CharacterId;
 import org.apache.log4j.Logger;
 
@@ -109,7 +108,7 @@ public final class NamesTable {
             return;
         }
 
-        final String charName = World.getPlayer().getCharacter().getName();
+        final String charName = Login.getInstance().getLoginCharacter();
         byte[] conversationString;
         try {
             conversationString = charName.getBytes("ISO-8859-1");
@@ -147,7 +146,7 @@ public final class NamesTable {
 
             outputStream = oOutStream;
 
-            oOutStream.writeObject(World.getPlayer().getCharacter().getName());
+            oOutStream.writeObject(charName);
             oOutStream.writeInt(names.size());
             for (final Map.Entry<CharacterId, String> values : names.entrySet()) {
                 oOutStream.writeObject(values.getKey());
