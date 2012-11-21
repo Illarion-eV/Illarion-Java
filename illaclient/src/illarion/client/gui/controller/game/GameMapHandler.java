@@ -273,8 +273,9 @@ public final class GameMapHandler
             return;
         }
 
-        if ((data.getKey() == 0) && handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
-                data.getForwardingControl())) {
+        if ((data.getKey() == 0) && World.getPlayer().getMovementHandler().isMovingTowards() &&
+                handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
+                        data.getForwardingControl())) {
             return;
         }
 

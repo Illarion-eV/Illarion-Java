@@ -324,6 +324,10 @@ public final class PlayerMovement
         return moving;
     }
 
+    public boolean isMovingTowards() {
+        return walkTowards;
+    }
+
     /**
      * Perform a move of the player character. This function does not perform any checks. It just does the move no
      * matter what the status of everything is.
