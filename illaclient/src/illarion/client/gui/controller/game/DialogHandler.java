@@ -257,7 +257,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
             return;
         }
 
-        craftDialog.setProgress(1.f);
+        craftDialog.setProgress(0.f);
     }
 
     @NiftyEventSubscriber(pattern = "craftingDialog[0-9]+")
