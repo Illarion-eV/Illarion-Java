@@ -371,6 +371,7 @@ public class DialogCraftingControl
 
         final Effect effect = effects.get(0);
         effect.getParameters().setProperty("length", Integer.toString((int) (seconds * 1000.0)));
+        effect.updateParameters();
 
         progressBar.startEffect(EffectEventId.onCustom, null, "automaticProgress");
     }
