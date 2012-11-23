@@ -83,10 +83,8 @@ public final class DialogCraftingUpdateMsg
             throws IOException {
         type = reader.readUByte();
         if (type == START) {
-            requiredTime = reader.readUShort();
-        }
-        if (type == COMPLETE) {
             remaining = reader.readUByte();
+            requiredTime = reader.readUShort();
         }
         requestId = reader.readInt();
     }
@@ -100,10 +98,10 @@ public final class DialogCraftingUpdateMsg
     public boolean executeUpdate() {
         switch (type) {
             case START:
-                EventBus.publish(new DialogCraftingUpdateStartReceivedEvent(requestId, requiredTime));
+                EventBus.publish(new DialogCraftingUpdateStartReceivedEvent(requestId, remaining, requiredTime));
                 break;
             case COMPLETE:
-                EventBus.publish(new DialogCraftingUpdateCompletedReceivedEvent(requestId, remaining));
+                EventBus.publish(new DialogCraftingUpdateCompletedReceivedEvent(requestId));
                 break;
             case ABORTED:
                 EventBus.publish(new DialogCraftingUpdateAbortedReceivedEvent(requestId));

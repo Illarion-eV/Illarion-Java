@@ -30,24 +30,13 @@ public class DialogCraftingUpdateCompletedReceivedEvent {
     private final int requestId;
 
     /**
-     * The amount of items that remain to be produced automatically.
-     */
-    private final int remaining;
-
-    /**
      * Create a new instance of this event.
      *
      * @param requestId the ID of the dialog that is updated
-     * @param remaining the amount of items remaining to be produced
-     * @throws IllegalArgumentException in case the {@code remaining} is less then {@code 0}
+     * @throws IllegalArgumentException in case
      */
-    public DialogCraftingUpdateCompletedReceivedEvent(final int requestId, final int remaining) {
-        if (remaining < 0) {
-            throw new IllegalArgumentException("The remaining item count must not be less then zero");
-        }
-
+    public DialogCraftingUpdateCompletedReceivedEvent(final int requestId) {
         this.requestId = requestId;
-        this.remaining = remaining;
     }
 
     /**
@@ -57,14 +46,5 @@ public class DialogCraftingUpdateCompletedReceivedEvent {
      */
     public int getDialogId() {
         return requestId;
-    }
-
-    /**
-     * Get the amount of items remaining to be produced.
-     *
-     * @return the amount of items remaining
-     */
-    public int getRemaining() {
-        return remaining;
     }
 }
