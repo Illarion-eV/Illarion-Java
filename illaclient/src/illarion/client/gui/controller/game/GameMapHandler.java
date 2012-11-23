@@ -273,15 +273,26 @@ public final class GameMapHandler
             return;
         }
 
-        if ((data.getKey() == 0) && World.getPlayer().getMovementHandler().isMovingTowards() &&
+        switch (data.getKey()) {
+            case 0:
+                handlePrimaryKeyDrag(data);
+                break;
+        }
+    }
+
+    /**
+     * Handle dragging events from the primary mouse key.
+     *
+     * @param data the event data
+     */
+    public void handlePrimaryKeyDrag(final DragOnMapEvent data) {
+        if (!World.getPlayer().getMovementHandler().isMovingTowards() &&
                 handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
                         data.getForwardingControl())) {
             return;
         }
 
-        if (data.getKey() == 0) {
-            moveToMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
-        }
+        moveToMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
     }
 
     /**
