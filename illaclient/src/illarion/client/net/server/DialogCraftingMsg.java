@@ -75,6 +75,7 @@ public final class DialogCraftingMsg extends AbstractReply {
 
         craftItems = new CraftingItem[reader.readUByte()];
         for (int i = 0; i < craftItems.length; i++) {
+            final int itemIndex = reader.readUByte();
             final int group = reader.readUByte();
             final ItemId itemId = new ItemId(reader);
             final String name = reader.readString();
@@ -89,7 +90,7 @@ public final class DialogCraftingMsg extends AbstractReply {
                 ingredients[k] = new CraftingIngredientItem(ingredientId, ingredientCount);
             }
 
-            craftItems[i] = new CraftingItem(group, itemId, name, buildItem, craftStackSize, ingredients);
+            craftItems[i] = new CraftingItem(itemIndex, group, itemId, name, buildItem, craftStackSize, ingredients);
         }
 
         requestId = reader.readInt();
