@@ -165,6 +165,8 @@ public final class PlayerMovement
 
     private boolean walkTowards = false;
 
+    private boolean mouseMovementActive = false;
+
     private int walkTowardsDir = Location.DIR_ZERO;
 
     private int walkTowardsMode = -1;
@@ -324,8 +326,8 @@ public final class PlayerMovement
         return moving;
     }
 
-    public boolean isMovingTowards() {
-        return walkTowards;
+    public boolean isMouseMovementActive() {
+        return mouseMovementActive;
     }
 
     /**
@@ -499,6 +501,7 @@ public final class PlayerMovement
         // GUI.getInstance().getMouseCursor()
         // .setCursor(MarkerFactory.CRSR_NORMAL);
         walkTowards = false;
+        mouseMovementActive = false;
     }
 
     /**
@@ -576,6 +579,8 @@ public final class PlayerMovement
             // .setCursor(MarkerFactory.CRSR_WALK_N);
             walkTowardsDir = Location.DIR_NORTH;
         }
+
+        mouseMovementActive = true;
 
         if (walkTowardsMode == MOVE_MODE_NONE) {
             walkTowards = false;

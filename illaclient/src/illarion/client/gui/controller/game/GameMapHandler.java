@@ -286,7 +286,7 @@ public final class GameMapHandler
      * @param data the event data
      */
     public void handlePrimaryKeyDrag(final DragOnMapEvent data) {
-        if (!World.getPlayer().getMovementHandler().isMovingTowards() &&
+        if (!World.getPlayer().getMovementHandler().isMouseMovementActive() &&
                 handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
                         data.getForwardingControl())) {
             return;
