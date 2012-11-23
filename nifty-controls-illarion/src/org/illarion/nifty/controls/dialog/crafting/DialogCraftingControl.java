@@ -304,6 +304,46 @@ public class DialogCraftingControl
         return null;
     }
 
+    /**
+     * Remove everything from the current item list.
+     */
+    @Override
+    public void clearItemList() {
+        treeRootNode = new TreeItem<ListEntry>();
+        getItemList().setTree(treeRootNode);
+    }
+
+    /**
+     * Select a item by the item index of the entry.
+     */
+    @Override
+    public void selectItemByItemIndex(final int index) {
+        TreeItem<ListEntry> selectedEntry = null;
+        for (final TreeItem<ListEntry> categoryTreeItem : treeRootNode) {
+            for (final TreeItem<ListEntry> itemTreeItem : categoryTreeItem) {
+                final CraftingItemEntry currentItem = (CraftingItemEntry) itemTreeItem.getValue().entry;
+                if (currentItem.getItemIndex() == index) {
+                    selectedEntry = itemTreeItem;
+                    break;
+                }
+            }
+
+            if (selectedEntry != null) {
+                break;
+            }
+        }
+
+        if (selectedEntry == null) {
+            return;
+        }
+
+        selectedEntry.getParentItem().setExpanded(true);
+
+        final TreeBox<ListEntry> tree = getItemList();
+        tree.setTree(treeRootNode);
+        tree.selectItem(selectedEntry);
+    }
+
     @Override
     public Element getCraftingItemDisplay() {
         return getElement().findElementByName("#selectedItemInfos");

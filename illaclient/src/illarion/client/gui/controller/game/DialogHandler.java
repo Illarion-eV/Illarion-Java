@@ -475,20 +475,29 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     private void showCraftingDialog(final DialogCraftingReceivedEvent event) {
-        final Element parentArea = screen.findElementByName("windows");
-        final DialogCraftingBuilder builder = new DialogCraftingBuilder("craftingDialog" +
-                Integer.toString(event.getRequestId()), event.getTitle());
-        builder.dialogId(event.getRequestId());
-        builder.width(builder.pixels(500));
-        builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
-            @Override
-            public void run(final Element createdElement) {
-                final DialogCrafting dialog = createdElement.getNiftyControl(DialogCrafting.class);
+        final DialogCrafting existingDialog = getCraftingDialog(event.getRequestId());
 
-                System.out.println("Showing crafting dialog");
-                addCraftingItemsToDialog(event, dialog);
-            }
-        }));
+        if (existingDialog == null) {
+            final Element parentArea = screen.findElementByName("windows");
+            final DialogCraftingBuilder builder = new DialogCraftingBuilder("craftingDialog" +
+                    Integer.toString(event.getRequestId()), event.getTitle());
+            builder.dialogId(event.getRequestId());
+            builder.width(builder.pixels(500));
+            builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
+                @Override
+                public void run(final Element createdElement) {
+                    final DialogCrafting dialog = createdElement.getNiftyControl(DialogCrafting.class);
+                    addCraftingItemsToDialog(event, dialog);
+                }
+            }));
+        } else {
+            final int selectedIndex = existingDialog.getSelectedCraftingItem().getItemIndex();
+
+            existingDialog.clearItemList();
+            addCraftingItemsToDialog(event, existingDialog);
+
+            existingDialog.selectItemByItemIndex(selectedIndex);
+        }
     }
 
     private void addMerchantItemsToDialog(final DialogMerchantReceivedEvent event, final DialogMerchant dialog) {

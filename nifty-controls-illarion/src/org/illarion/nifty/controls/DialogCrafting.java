@@ -74,6 +74,16 @@ public interface DialogCrafting extends Window {
     CraftingItemEntry getSelectedCraftingItem();
 
     /**
+     * Remove everything from the current item list.
+     */
+    void clearItemList();
+
+    /**
+     * Select a item by the item index of the entry.
+     */
+    void selectItemByItemIndex(int index);
+
+    /**
      * Set the displayed state of the progress.
      *
      * @param progress the new value for the progress
