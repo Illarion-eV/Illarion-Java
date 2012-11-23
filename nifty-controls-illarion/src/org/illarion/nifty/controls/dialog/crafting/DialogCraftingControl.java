@@ -342,6 +342,7 @@ public class DialogCraftingControl
         final TreeBox<ListEntry> tree = getItemList();
         tree.setTree(treeRootNode);
         tree.selectItem(selectedEntry);
+        setSelectedItem((CraftingItemEntry) selectedEntry.getValue().entry);
     }
 
     @Override
