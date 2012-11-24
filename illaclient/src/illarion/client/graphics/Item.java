@@ -67,8 +67,6 @@ public final class Item extends AbstractEntity implements Resource {
      */
     private ItemCount count;
 
-    private boolean displayNumber = false;
-
     /**
      * General informations about the item that do not vary from item instance
      * to instance and are stores in only one object for all instances of the
@@ -99,11 +97,9 @@ public final class Item extends AbstractEntity implements Resource {
     private MapTile parentTile;
 
     /**
-     * This indicates of the number of the item shall be shown. This number
-     * shows how many items are on this stack. Its only useful to show this in
-     * case the item actually is a stack, so {@link #count} is greater then 1
-     * and the item is the only one or the one at the top position on one
-     * location.
+     * This indicates of the number of the item shall be shown. This number shows how many items are on this stack.
+     * Its only useful to show this in case the item actually is a stack, so {@link #count} is greater then 1 and the
+     * item is the only one or the one at the top position on one location.
      */
     private boolean showNumber;
 
@@ -266,7 +262,7 @@ public final class Item extends AbstractEntity implements Resource {
     public boolean draw(final Graphics g) {
         super.draw(g);
 
-        if (displayNumber) {
+        if (showNumber && (number != null)) {
             number.draw(g);
         }
 
@@ -569,20 +565,8 @@ public final class Item extends AbstractEntity implements Resource {
     public void update(final GameContainer c, final int delta) {
         super.update(c, delta);
 
-        if (showNumber && (count.getValue() > 1) && (number != null)) {
-            if (!displayNumber) {
-                number.addToCamera(getDisplayX(), getDisplayY());
-                displayNumber = true;
-            }
-        } else {
-            if (displayNumber) {
-                number.addToCamera(getDisplayX(), getDisplayY());
-                number.update(c, delta);
-                displayNumber = false;
-            }
-        }
-
-        if ((number != null) && displayNumber) {
+        if (showNumber && (number != null)) {
+            number.addToCamera(getDisplayX(), getDisplayY());
             number.update(c, delta);
         }
     }
