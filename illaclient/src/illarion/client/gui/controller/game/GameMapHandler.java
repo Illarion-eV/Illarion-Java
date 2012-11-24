@@ -319,30 +319,7 @@ public final class GameMapHandler
      */
     @EventSubscriber
     public void handleDoubleClick(final DoubleClickOnMapEvent data) {
-        if (data.getKey() != 0) {
-            return;
-        }
-
-        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(data.getX(),
-                data.getY());
-
-        if (tile == null) {
-            return;
-        }
-
-        if (!tile.isInUseRange()) {
-            return;
-        }
-
-        if ((activeScreen != null) && (activeNifty != null)) {
-            data.getForwardingControl().releaseExclusiveMouse();
-
-            mouseEvent.initialize(data.getX(), data.getY(), data.getKey(), true, false, false);
-            mouseEvent.setButton0InitialDown(true);
-            activeScreen.mouseEvent(mouseEvent);
-        }
-
-        tile.use();
+        World.getMapDisplay().publishInteractionEvent(data);
     }
 
     private final TooltipHandler tooltipHandler;

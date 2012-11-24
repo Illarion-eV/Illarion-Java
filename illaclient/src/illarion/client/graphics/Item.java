@@ -18,6 +18,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.input.MoveOnMapEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.Resource;
@@ -332,6 +333,19 @@ public final class Item extends AbstractEntity implements Resource {
             if (!LookAtTracker.isLookAtObject(parentTile)) {
                 LookAtTracker.setLookAtObject(parentTile);
                 parentTile.getInteractive().lookAt();
+            }
+            return true;
+        }
+
+        if (event instanceof DoubleClickOnMapEvent) {
+            final DoubleClickOnMapEvent moveEvent = (DoubleClickOnMapEvent) event;
+            if (!isMouseInDisplayRect(moveEvent.getX(), moveEvent.getY())) {
+                return false;
+            }
+
+            if (!LookAtTracker.isLookAtObject(parentTile)) {
+                LookAtTracker.setLookAtObject(parentTile);
+                parentTile.getInteractive().use();
             }
             return true;
         }
