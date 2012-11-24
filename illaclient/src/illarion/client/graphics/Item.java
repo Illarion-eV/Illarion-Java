@@ -18,8 +18,11 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.input.MoveOnMapEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.Resource;
+import illarion.client.util.LookAtTracker;
+import illarion.client.world.MapTile;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
@@ -89,6 +92,11 @@ public final class Item extends AbstractEntity implements Resource {
      * The reference ID of this item to the paperdolling object.
      */
     private final int paperdollingID;
+
+    /**
+     * The tile this item is located on.
+     */
+    private MapTile parentTile;
 
     /**
      * This indicates of the number of the item shall be shown. This number
@@ -191,16 +199,18 @@ public final class Item extends AbstractEntity implements Resource {
      * @param itemID    the ID of the item that shall be created
      * @param locColumn the column on the map where the item shall be created
      * @param locRow    the row on the map where the item shall be created
+     * @param parent    the tile this item is located on
      * @return the item object that shall be used, either a newly created one or
      *         a unused from the recycler
      */
     public static Item create(final ItemId itemID, final int locColumn,
-                              final int locRow) {
+                              final int locRow, final MapTile parent) {
         final Item item = ItemFactory.getInstance().getCommand(itemID.getValue());
         // Set variant and scaling, this functions check on their own if this is
         // allowed
         item.setVariant(locColumn, locRow);
         item.setScale(locColumn, locRow);
+        item.parentTile = parent;
         return item;
     }
 
@@ -211,11 +221,12 @@ public final class Item extends AbstractEntity implements Resource {
      *
      * @param itemID the ID of the item that shall be created
      * @param loc    the location where the item shall be shown
+     * @param parent the tile this item is located on
      * @return the item object that shall be used, either a newly created one or
      *         a unused from the recycler
      */
-    public static Item create(final ItemId itemID, final Location loc) {
-        return create(itemID, loc.getCol(), loc.getRow());
+    public static Item create(final ItemId itemID, final Location loc, final MapTile parent) {
+        return create(itemID, loc.getCol(), loc.getRow(), parent);
     }
 
     /**
@@ -312,6 +323,23 @@ public final class Item extends AbstractEntity implements Resource {
      */
     public ItemId getItemId() {
         return new ItemId(getId());
+    }
+
+    @Override
+    public boolean processEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
+        if (event instanceof MoveOnMapEvent) {
+            final MoveOnMapEvent moveEvent = (MoveOnMapEvent) event;
+            if (!isMouseInDisplayRect(moveEvent.getX(), moveEvent.getY())) {
+                return false;
+            }
+
+            if (!LookAtTracker.isLookAtObject(parentTile)) {
+                LookAtTracker.setLookAtObject(parentTile);
+                parentTile.getInteractive().lookAt();
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -447,6 +475,7 @@ public final class Item extends AbstractEntity implements Resource {
             number.recycle();
             number = null;
         }
+        parentTile = null;
     }
 
     /**

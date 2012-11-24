@@ -602,7 +602,7 @@ public final class MapTile
     }
 
     /**
-     * Requesting the lookat informations for a tile from the server.
+     * Requesting the lookat information for a tile from the server.
      */
     public void lookAt() {
         final LookatTileCmd cmd = (LookatTileCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_LOOKAT_TILE);
@@ -806,7 +806,7 @@ public final class MapTile
         // add a new item
         if (item == null) {
             // create new item
-            item = Item.create(itemId, loc);
+            item = Item.create(itemId, loc, this);
             item.setLight(light);
 
             updateItem(item, itemCount, index);

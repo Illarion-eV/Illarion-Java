@@ -326,6 +326,11 @@ public final class PlayerMovement
         return moving;
     }
 
+    /**
+     * Check if the character is currently moved and turned by mouse control.
+     *
+     * @return {@code true} in case the character is currently moving by the mouse
+     */
     public boolean isMouseMovementActive() {
         return mouseMovementActive;
     }
@@ -497,6 +502,10 @@ public final class PlayerMovement
         animationFinished(false);
     }
 
+    /**
+     * Stop walking towards the mouse cursor. This stops all movement towards a direction and is releases the mouse
+     * movement. Once this is called {@link #isMouseMovementActive()} will return {@code false}.
+     */
     public void stopWalkTowards() {
         // GUI.getInstance().getMouseCursor()
         // .setCursor(MarkerFactory.CRSR_NORMAL);

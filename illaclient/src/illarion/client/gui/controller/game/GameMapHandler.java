@@ -31,7 +31,6 @@ import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.Item;
-import illarion.client.graphics.Tile;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.input.DoubleClickOnMapEvent;
@@ -305,7 +304,14 @@ public final class GameMapHandler
 
     @EventSubscriber
     public void handleMouseMove(final MoveOnMapEvent event) {
+        if (World.getInteractionManager().isDragging()) {
+            return;
+        }
+        if (World.getPlayer().getMovementHandler().isMouseMovementActive()) {
+            return;
+        }
 
+        World.getMapDisplay().publishInteractionEvent(event);
     }
 
     /**
@@ -343,26 +349,19 @@ public final class GameMapHandler
 
     @EventSubscriber
     public void onMapItemLookAtEvent(final MapItemLookAtEvent event) {
-        final MapTile tile = World.getMap().getMapAt(event.getLocation());
-        if (tile == null) {
+        final MapTile targetTile = World.getMap().getMapAt(event.getLocation());
+        if (targetTile == null) {
             return;
         }
 
-        final Rectangle rect = new Rectangle();
-        final Item item = tile.getTopItem();
-        final int offsetX = Camera.getInstance().getViewportOffsetX();
-        final int offsetY = Camera.getInstance().getViewportOffsetY();
-        if (item != null) {
-            final Rectangle displayRect = item.getDisplayRect();
-            rect.set(displayRect.getX() + offsetX, displayRect.getY() + offsetX, displayRect.getWidth(),
-                    displayRect.getHeight());
-        } else {
-            final Tile graphicalTile = tile.getTile();
-            final Rectangle displayRect = graphicalTile.getDisplayRect();
-            rect.set(displayRect.getX() + offsetX, displayRect.getY() + offsetX, displayRect.getWidth(),
-                    displayRect.getHeight());
-
+        final Item targetItem = targetTile.getTopItem();
+        if (targetItem == null) {
+            return;
         }
-        tooltipHandler.showToolTip(rect, event);
+
+        final Rectangle originalDisplayRect = targetItem.getDisplayRect();
+        final Rectangle fixedRectangle = new Rectangle(originalDisplayRect);
+        fixedRectangle.move(-Camera.getInstance().getViewportOffsetX(), -Camera.getInstance().getViewportOffsetY());
+        tooltipHandler.showToolTip(fixedRectangle, event);
     }
 }
