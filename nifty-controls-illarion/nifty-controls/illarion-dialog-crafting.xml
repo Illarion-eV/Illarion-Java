@@ -36,7 +36,7 @@
                 </panel>
                 <control name="label" id="#productionTime" style="#productionTime"
                          text="${illarion-dialog-crafting-bundle.craftTime}:"/>
-                <panel id="#ingredients" style="#ingredients" marginBottom="5px"/>
+                <panel id="#ingredients" style="#ingredients" marginBottom="10px"/>
                 <control name="progress" id="#progress" marginBottom="5px">
                     <effect>
                         <onCustom customKey="automaticProgress" name="DoubleEffect"

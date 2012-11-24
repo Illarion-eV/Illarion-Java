@@ -60,6 +60,8 @@ public class DialogCraftingControl
         extends WindowControl
         implements DialogCrafting, EventTopicSubscriber<ButtonClickedEvent> {
 
+    private static final int INGREDIENT_IMAGE_SIZE = 32;
+
     /**
      * This subscriber is used to keep track on clicks on the "craft" button in the crafting dialog.
      */
@@ -427,7 +429,7 @@ public class DialogCraftingControl
             return;
         }
         final Element image = getContent().findElementByName("#selectedItemImage");
-        applyImage(image, selectedEntry.getImage(), 64);
+        applyImage(image, selectedEntry.getImage(), 56);
 
         final Label imageAmount = getContent().findNiftyControl("#selectedItemAmount", Label.class);
         if (selectedEntry.getBuildStackSize() == 1) {
@@ -458,7 +460,7 @@ public class DialogCraftingControl
             }
 
             final Element currentImage = getIngredientImage(ingredientsPanel.getId(), currentPanel, i % 10);
-            applyImage(currentImage.getElements().get(0), selectedEntry.getIngredientImage(i), 32);
+            applyImage(currentImage.getElements().get(0), selectedEntry.getIngredientImage(i), INGREDIENT_IMAGE_SIZE);
             showIngredientAmount(currentImage, selectedEntry.getIngredientAmount(i));
         }
 
@@ -470,8 +472,6 @@ public class DialogCraftingControl
         while (deleteIngredientPanel(ingredientsPanel, panelIndex)) {
             panelIndex++;
         }
-
-        ingredientsPanel.setConstraintHeight(SizeValue.px(((ingredientsAmount / 10) + 1) * 34));
 
         getElement().getNifty().getCurrentScreen().resetLayout();
         getElement().getNifty().getCurrentScreen().layoutLayers();
@@ -497,9 +497,7 @@ public class DialogCraftingControl
         final PanelBuilder builder = new PanelBuilder();
         builder.childLayoutHorizontal();
         builder.width("450px");
-        builder.height("32px");
-        builder.marginBottom("1px");
-        builder.marginTop("1px");
+        builder.height(SizeValue.px(INGREDIENT_IMAGE_SIZE + 10).toString());
         return builder.build(niftyInstance, currentScreen, ingredientsPanel);
     }
 
@@ -525,8 +523,9 @@ public class DialogCraftingControl
         final PanelBuilder panelBuilder = new PanelBuilder(parentId + "#ingredient" + Integer.toString(index));
         panelBuilder.margin("1px");
         panelBuilder.childLayoutCenter();
-        panelBuilder.width("32px");
-        panelBuilder.height("32px");
+        panelBuilder.width(SizeValue.px(INGREDIENT_IMAGE_SIZE + 8).toString());
+        panelBuilder.height(SizeValue.px(INGREDIENT_IMAGE_SIZE + 8).toString());
+        panelBuilder.style("nifty-panel-item");
         panelBuilder.visibleToMouse();
         final ImageBuilder builder = new ImageBuilder();
         panelBuilder.image(builder);
@@ -558,6 +557,8 @@ public class DialogCraftingControl
                 labelBuilder.text(Integer.toString(count));
                 labelBuilder.alignRight();
                 labelBuilder.valignBottom();
+                labelBuilder.marginBottom("4px");
+                labelBuilder.marginRight("4px");
                 labelBuilder.color("#ff0f");
                 labelBuilder.backgroundColor("#bb15");
                 labelBuilder.visibleToMouse(false);

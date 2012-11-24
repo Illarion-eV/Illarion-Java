@@ -38,4 +38,10 @@
                     imageMode="resize:23,4,23,59,23,4,23,1,23,4,23,48"
                     padding="3px,13px"/>
     </style>
+
+    <style id="nifty-panel-item">
+        <attributes backgroundImage="data/gui/panel/itemborder.png"
+                    imageMode="resize:4,1,4,4,4,1,4,1,4,1,4,4"
+                    padding="4px"/>
+    </style>
 </nifty-styles>
