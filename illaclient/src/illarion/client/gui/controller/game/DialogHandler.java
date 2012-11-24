@@ -25,6 +25,7 @@ import de.lessvoid.nifty.builder.ControlBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.gui.events.TooltipsRemovedEvent;
 import illarion.client.gui.util.NiftyCraftingCategory;
 import illarion.client.gui.util.NiftyCraftingItem;
@@ -83,6 +84,11 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
             final Element element = wrapper.getBuilder().build(nifty, screen, wrapper.getParent());
             wrapper.executeTask(element);
+
+            element.layoutElements();
+            element.setConstraintX(SizeValue.px((wrapper.getParent().getWidth() - element.getWidth()) / 2));
+            element.setConstraintY(SizeValue.px((wrapper.getParent().getHeight() - element.getHeight()) / 2));
+            wrapper.getParent().layoutElements();
         }
 
         while (true) {
