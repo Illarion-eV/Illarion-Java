@@ -19,7 +19,7 @@
 <nifty-controls>
     <resourceBundle id="illarion-dialog-crafting-bundle" filename="illarion-dialog-crafting"/>
 
-    <controlDefinition name="dialog-crafting" visibleToMouse="true"
+    <controlDefinition name="dialog-crafting" visibleToMouse="true" style="illarion-dialog-crafting"
                        controller="org.illarion.nifty.controls.dialog.crafting.DialogCraftingControl">
         <control name="window" id="#window" title="${illarion-dialog-crafting-bundle.title}"
                  visibleToMouse="true">

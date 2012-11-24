@@ -482,7 +482,6 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
             final DialogCraftingBuilder builder = new DialogCraftingBuilder("craftingDialog" +
                     Integer.toString(event.getRequestId()), event.getTitle());
             builder.dialogId(event.getRequestId());
-            builder.width(builder.pixels(500));
             builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
                 @Override
                 public void run(final Element createdElement) {

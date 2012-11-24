@@ -20,7 +20,10 @@
 <nifty-styles>
     <useStyles filename="window/nifty-window.xml"/>
 
-    <style id="illarion-dialog-crafting-content" base="nifty-listbox">
+    <style id="illarion-dialog-crafting">
+        <attributes childLayout="vertical" width="492px"/>
+    </style>
+    <style id="illarion-dialog-crafting-content">
         <attributes childLayout="vertical" width="450px"/>
     </style>
     <style id="illarion-dialog-crafting-content#craftItemList" base="nifty-listbox">
