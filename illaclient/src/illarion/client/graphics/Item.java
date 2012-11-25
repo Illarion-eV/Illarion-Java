@@ -19,7 +19,7 @@
 package illarion.client.graphics;
 
 import illarion.client.input.DoubleClickOnMapEvent;
-import illarion.client.input.MoveOnMapEvent;
+import illarion.client.input.PointOnMapEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.Resource;
 import illarion.client.util.LookAtTracker;
@@ -328,8 +328,8 @@ public final class Item extends AbstractEntity implements Resource {
             return false;
         }
 
-        if (event instanceof MoveOnMapEvent) {
-            final MoveOnMapEvent moveEvent = (MoveOnMapEvent) event;
+        if (event instanceof PointOnMapEvent) {
+            final PointOnMapEvent moveEvent = (PointOnMapEvent) event;
             if (!isMouseInDisplayRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }

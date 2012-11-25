@@ -100,6 +100,9 @@ public final class InputReceiver
         }
     }
 
+    /**
+     * This class is used as helper for the point at events.
+     */
     private static final class PointAtHelper extends AbstractMultiActionHelper {
         /**
          * The x coordinate of the last reported click.
@@ -111,6 +114,9 @@ public final class InputReceiver
          */
         private int y;
 
+        /**
+         * Default constructor.
+         */
         private PointAtHelper() {
             super(50);
         }
@@ -153,19 +159,24 @@ public final class InputReceiver
     private Input input;
 
     /**
-     * The instance of the button multiclick helper that is used in this instance of the input receiver.
+     * The instance of the button multi-click helper that is used in this instance of the input receiver.
      */
     private final ButtonMultiClickHelper buttonMultiClickHelper = new ButtonMultiClickHelper();
 
+    /**
+     * The instance of the point at helper used by this instance of the input receiver.
+     */
     private final PointAtHelper pointAtHelper = new PointAtHelper();
 
+    /**
+     * Create a new instance of the input receiver.
+     *
+     * @param forwardingInputSystem the forwarding system for the Nifty input
+     */
     public InputReceiver(final NiftyInputForwarding forwardingInputSystem) {
         forwardingControl = forwardingInputSystem;
     }
 
-    /**
-     * @see org.newdawn.slick.InputListener#keyPressed(int, char)
-     */
     @Override
     public void keyPressed(final int key, final char c) {
         keyMapper.handleKeyInput(key);
