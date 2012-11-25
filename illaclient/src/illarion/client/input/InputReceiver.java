@@ -100,6 +100,38 @@ public final class InputReceiver
         }
     }
 
+    private static final class PointAtHelper extends AbstractMultiActionHelper {
+        /**
+         * The x coordinate of the last reported click.
+         */
+        private int x;
+
+        /**
+         * The Y coordinate of the last reported click.
+         */
+        private int y;
+
+        private PointAtHelper() {
+            super(50);
+        }
+
+        /**
+         * Update the data that is needed to report the state of the last move properly.
+         *
+         * @param posX the x coordinate where the click happened
+         * @param posY the y coordinate where the click happened
+         */
+        public void setInputData(final int posX, final int posY) {
+            x = posX;
+            y = posY;
+        }
+
+        @Override
+        public void executeAction(final int count) {
+            EventBus.publish(new PointOnMapEvent(x, y));
+        }
+    }
+
     /**
      * The topic that is in general used to publish input events.
      */
@@ -125,6 +157,8 @@ public final class InputReceiver
      */
     private final ButtonMultiClickHelper buttonMultiClickHelper = new ButtonMultiClickHelper();
 
+    private final PointAtHelper pointAtHelper = new PointAtHelper();
+
     public InputReceiver(final NiftyInputForwarding forwardingInputSystem) {
         forwardingControl = forwardingInputSystem;
     }
@@ -139,6 +173,8 @@ public final class InputReceiver
 
     @Override
     public void mouseMoved(final int oldX, final int oldY, final int newX, final int newY) {
+        pointAtHelper.setInputData(newX, newY);
+        pointAtHelper.pulse();
         EventBus.publish(new MoveOnMapEvent(newX, newY));
     }
 

@@ -32,10 +32,7 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.Item;
 import illarion.client.gui.EntitySlickRenderImage;
-import illarion.client.input.ClickOnMapEvent;
-import illarion.client.input.DoubleClickOnMapEvent;
-import illarion.client.input.DragOnMapEvent;
-import illarion.client.input.MoveOnMapEvent;
+import illarion.client.input.*;
 import illarion.client.net.server.events.MapItemLookAtEvent;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
@@ -300,6 +297,18 @@ public final class GameMapHandler
     @EventSubscriber
     public void handleClickEvent(final ClickOnMapEvent data) {
         World.getMapDisplay().publishInteractionEvent(data);
+    }
+
+    @EventSubscriber
+    public void handlePointAt(final PointOnMapEvent event) {
+        if (World.getInteractionManager().isDragging()) {
+            return;
+        }
+        if (World.getPlayer().getMovementHandler().isMouseMovementActive()) {
+            return;
+        }
+
+        World.getMapDisplay().publishInteractionEvent(event);
     }
 
     @EventSubscriber
