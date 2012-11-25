@@ -324,6 +324,10 @@ public final class Item extends AbstractEntity implements Resource {
 
     @Override
     public boolean processEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
+        if (!parentTile.isAtPlayerLevel()) {
+            return false;
+        }
+
         if (event instanceof MoveOnMapEvent) {
             final MoveOnMapEvent moveEvent = (MoveOnMapEvent) event;
             if (!isMouseInDisplayRect(moveEvent.getX(), moveEvent.getY())) {
@@ -343,10 +347,7 @@ public final class Item extends AbstractEntity implements Resource {
                 return false;
             }
 
-            if (!LookAtTracker.isLookAtObject(parentTile)) {
-                LookAtTracker.setLookAtObject(parentTile);
-                parentTile.getInteractive().use();
-            }
+            parentTile.getInteractive().use();
             return true;
         }
         return false;
