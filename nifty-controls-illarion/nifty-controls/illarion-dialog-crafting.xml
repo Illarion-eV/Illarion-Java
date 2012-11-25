@@ -45,10 +45,9 @@
                 </control>
                 <panel style="#buttonLine">
                     <panel style="#buttonWrapper">
-                        <control name="button" id="#buttonAmountDown" label="-" width="30px" marginRight="1px"/>
+                        <control name="button" id="#buttonAmountDown" label="-" width="30px"/>
                         <control name="textfield" id="#amountInput" filter="digits" width="60px"/>
-                        <control name="button" id="#buttonAmountUp" label="+" width="30px" marginLeft="1px"
-                                 marginRight="5px"/>
+                        <control name="button" id="#buttonAmountUp" label="+" width="30px" marginRight="5px"/>
                         <control name="button" label="${illarion-dialog-crafting-bundle.craft}" id="#craftButton"
                                  marginRight="5px"/>
                         <control name="button" label="${illarion-dialog-crafting-bundle.cancel}" id="#cancelButton"/>
