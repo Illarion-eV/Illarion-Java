@@ -21,12 +21,14 @@ package illarion.client.world;
 import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
 import de.lessvoid.nifty.slick2d.render.image.SlickRenderImage;
 import illarion.client.graphics.Tile;
+import illarion.client.gui.events.HideMiniMap;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.resources.TileFactory;
 import illarion.common.graphics.MapColor;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
 import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -62,6 +64,9 @@ public final class GameMiniMap {
          */
         private final Color slickColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
 
+        /**
+         * The shader required to render the map.
+         */
         private ShaderProgram miniMapShader;
 
         @Override
@@ -76,13 +81,19 @@ public final class GameMiniMap {
                                 final int srcX, final int srcY, final int srcW, final int srcH,
                                 final de.lessvoid.nifty.tools.Color color, final float scale, final int centerX,
                                 final int centerY) {
+            if (!enabled) {
+                return;
+            }
+
             if (miniMapShader == null) {
                 try {
                     miniMapShader = ShaderProgram.loadProgram(
                             "illarion/client/graphics/shader/minimap.vert",
                             "illarion/client/graphics/shader/minimap.frag");
                 } catch (SlickException e) {
+                    disableMiniMap();
                     LOGGER.error("Error loading shader!", e);
+                    return;
                 }
             }
             g.pushTransform();
@@ -220,12 +231,20 @@ public final class GameMiniMap {
      */
     private final List<Rectangle> updateAreas;
 
+    /**
+     * The maximal size of a area that is updated at once.
+     */
     private final int MAX_UPDATE_AREA_SIZE = 64;
 
     /**
      * The texture that is used to draw the world map sprite.
      */
     private Image worldmapTexture;
+
+    /**
+     * This flag is turned true in case rendering the mini map is disabled.
+     */
+    private boolean enabled;
 
     /**
      * Constructor of the game map that sets up all instance variables.
@@ -236,6 +255,7 @@ public final class GameMiniMap {
         loadedMap = false;
 
         updateAreas = new ArrayList<Rectangle>();
+        enabled = true;
     }
 
     public SlickRenderImage getMiniMap() {
@@ -258,6 +278,11 @@ public final class GameMiniMap {
             y = 0;
             x += MAX_UPDATE_AREA_SIZE;
         }
+    }
+
+    private void disableMiniMap() {
+        enabled = false;
+        EventBus.publish(new HideMiniMap());
     }
 
     private void drawTile(final short tileData, final Graphics graphics) {
@@ -459,6 +484,10 @@ public final class GameMiniMap {
      * dirty this will trigger a update of the whole map.
      */
     public void render() {
+        if (!enabled) {
+            return;
+        }
+
         if (worldmapTexture == null) {
             try {
                 worldmapTexture = Image.createOffscreenImage(WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
@@ -466,8 +495,9 @@ public final class GameMiniMap {
                 g.setColor(Color.black);
                 g.fillRect(0, 0, WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
             } catch (final SlickException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.error("Failed to create minimap texture.", e);
+                disableMiniMap();
+                return;
             }
         }
         if (!loadedMap || loadingMap) {
