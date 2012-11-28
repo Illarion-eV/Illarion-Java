@@ -154,11 +154,6 @@ public final class InputReceiver
     private final NiftyInputForwarding forwardingControl;
 
     /**
-     * Slicks input system that is monitored here.
-     */
-    private Input input;
-
-    /**
      * The instance of the button multi-click helper that is used in this instance of the input receiver.
      */
     private final ButtonMultiClickHelper buttonMultiClickHelper = new ButtonMultiClickHelper();
@@ -212,7 +207,6 @@ public final class InputReceiver
 
     @Override
     public void setInput(final Input input) {
-        this.input = input;
     }
 
     @Override
