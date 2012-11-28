@@ -96,31 +96,26 @@ public final class GameMiniMap {
                     return;
                 }
             }
+
             g.pushTransform();
             g.translate(centerX, centerY);
             g.scale(scale, scale);
             g.rotate(0, 0, -45.f);
             g.translate(-centerX, -centerY);
 
-            if (miniMapShader != null) {
-                miniMapShader.bind();
-                miniMapShader.setUniform1i("tex0", 0);
+            miniMapShader.bind();
+            miniMapShader.setUniform1i("tex0", 0);
 
-                final float miniMapCenterX = (minimapOriginX + (MINI_MAP_WIDTH / 2.f)) / WORLDMAP_WIDTH;
-                final float miniMapCenterY = (minimapOriginY + (MINI_MAP_HEIGHT / 2.f)) / WORLDMAP_HEIGHT;
-                miniMapShader.setUniform2f("center", miniMapCenterX, miniMapCenterY);
-                miniMapShader.setUniform1f("radius", (float) MINI_MAP_HEIGHT / 2.f / (float) WORLDMAP_HEIGHT);
+            final float miniMapCenterX = (minimapOriginX + (MINI_MAP_WIDTH / 2.f)) / WORLDMAP_WIDTH;
+            final float miniMapCenterY = (minimapOriginY + (MINI_MAP_HEIGHT / 2.f)) / WORLDMAP_HEIGHT;
+            miniMapShader.setUniform2f("center", miniMapCenterX, miniMapCenterY);
+            miniMapShader.setUniform1f("radius", (float) MINI_MAP_HEIGHT / 2.f / (float) WORLDMAP_HEIGHT);
 
-                g.drawImage(worldmapTexture, x, y, x + w, y + h, srcX + minimapOriginX, srcY + minimapOriginY,
-                        srcX + minimapOriginX + srcW, srcY + minimapOriginY + srcH,
-                        SlickRenderUtils.convertColorNiftySlick(color, slickColor));
+            g.drawImage(worldmapTexture, x, y, x + w, y + h, srcX + minimapOriginX, srcY + minimapOriginY,
+                    srcX + minimapOriginX + srcW, srcY + minimapOriginY + srcH,
+                    SlickRenderUtils.convertColorNiftySlick(color, slickColor));
 
-                miniMapShader.unbind();
-            } else {
-                g.drawImage(worldmapTexture, x, y, x + w, y + h, srcX + minimapOriginX, srcY + minimapOriginY,
-                        srcX + minimapOriginX + srcW, srcY + minimapOriginY + srcH,
-                        SlickRenderUtils.convertColorNiftySlick(color, slickColor));
-            }
+            miniMapShader.unbind();
 
             g.popTransform();
         }
