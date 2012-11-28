@@ -58,6 +58,10 @@ public final class Rectangle
         reset();
     }
 
+    public Rectangle(final int x, final int y, final int width, final int height) {
+        set(x, y, width, height);
+    }
+
     public Rectangle(final Rectangle other) {
         x0 = other.x0;
         x1 = other.x1;

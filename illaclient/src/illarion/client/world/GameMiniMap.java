@@ -18,16 +18,20 @@
  */
 package illarion.client.world;
 
-import illarion.client.graphics.Sprite;
+import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
+import de.lessvoid.nifty.slick2d.render.image.SlickRenderImage;
 import illarion.client.graphics.Tile;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.resources.TileFactory;
 import illarion.common.graphics.MapColor;
 import illarion.common.types.Location;
+import illarion.common.types.Rectangle;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.shader.ShaderProgram;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -35,11 +39,10 @@ import java.nio.ByteOrder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.util.LinkedList;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * This class stores a reduced version of the full map the character knows. The map data is packed to a minimized and
@@ -49,14 +52,88 @@ import java.util.zip.InflaterInputStream;
  */
 public final class GameMiniMap {
     /**
+     * This class is used to render the minimap to a GUI element. This is a special implementation of the render
+     * image for the Nifty-GUI as the image needs to move around as the player moves.
+     */
+    private final class GameMiniMapRenderImage implements SlickRenderImage {
+        /**
+         * This instance of a slick color is used to avoid the need to create a new color instance every time this
+         * image is rendered.
+         */
+        private final Color slickColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+
+        private ShaderProgram miniMapShader;
+
+        @Override
+        public void renderImage(final Graphics g, final int x, final int y, final int width, final int height,
+                                final de.lessvoid.nifty.tools.Color color, final float scale) {
+            renderImage(g, x, y, width, height, 0, 0, MINI_MAP_WIDTH, MINI_MAP_HEIGHT, color, scale, MINI_MAP_WIDTH / 2,
+                    MINI_MAP_HEIGHT / 2);
+        }
+
+        @Override
+        public void renderImage(final Graphics g, final int x, final int y, final int w, final int h,
+                                final int srcX, final int srcY, final int srcW, final int srcH,
+                                final de.lessvoid.nifty.tools.Color color, final float scale, final int centerX,
+                                final int centerY) {
+            if (miniMapShader == null) {
+                try {
+                    miniMapShader = ShaderProgram.loadProgram(
+                            "illarion/client/graphics/shader/minimap.vert",
+                            "illarion/client/graphics/shader/minimap.frag");
+                } catch (SlickException e) {
+                    LOGGER.error("Error loading shader!", e);
+                }
+            }
+            g.pushTransform();
+            g.translate(centerX, centerY);
+            g.scale(scale, scale);
+            g.rotate(0, 0, -45.f);
+            g.translate(-centerX, -centerY);
+
+            if (miniMapShader != null) {
+                miniMapShader.bind();
+                miniMapShader.setUniform1i("tex0", 0);
+
+                final float miniMapCenterX = (minimapOriginX + (MINI_MAP_WIDTH / 2.f)) / WORLDMAP_WIDTH;
+                final float miniMapCenterY = (minimapOriginY + (MINI_MAP_HEIGHT / 2.f)) / WORLDMAP_HEIGHT;
+                miniMapShader.setUniform2f("center", miniMapCenterX, miniMapCenterY);
+                miniMapShader.setUniform1f("radius", (float) MINI_MAP_HEIGHT / 2.f / (float) WORLDMAP_HEIGHT);
+
+                g.drawImage(worldmapTexture, x, y, x + w, y + h, srcX + minimapOriginX, srcY + minimapOriginY,
+                        srcX + minimapOriginX + srcW, srcY + minimapOriginY + srcH,
+                        SlickRenderUtils.convertColorNiftySlick(color, slickColor));
+
+                miniMapShader.unbind();
+            } else {
+                g.drawImage(worldmapTexture, x, y, x + w, y + h, srcX + minimapOriginX, srcY + minimapOriginY,
+                        srcX + minimapOriginX + srcW, srcY + minimapOriginY + srcH,
+                        SlickRenderUtils.convertColorNiftySlick(color, slickColor));
+            }
+
+            g.popTransform();
+        }
+
+        @Override
+        public int getWidth() {
+            return MINI_MAP_WIDTH;
+        }
+
+        @Override
+        public int getHeight() {
+            return MINI_MAP_HEIGHT;
+        }
+
+        @Override
+        public void dispose() {
+            // nothing
+        }
+    }
+
+    /**
      * The modifier value that is multiplied to the color values in case the tile is blocked.
      */
     private static final float BLOCKED_COLOR_MOD = 0.7f;
-
-    /**
-     * The string builder that is used to create the strings for this class.
-     */
-    private static final StringBuilder BUILDER = new StringBuilder();
 
     /**
      * The bytes that are reserved for one tile in the internal storage.
@@ -67,11 +144,6 @@ public final class GameMiniMap {
      * The log file handler that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(GameMiniMap.class);
-
-    /**
-     * The minimal height and width of the texture area that is updated during a full texture update.
-     */
-    private static final int MINIMAL_UPDATE_AREA = 4;
 
     /**
      * Indicated how many bits the blocked bit is shifted.
@@ -104,32 +176,6 @@ public final class GameMiniMap {
     public static final int WORLDMAP_WIDTH = 1024;
 
     /**
-     * The dirty flag, this will be true in case there are any changes on the map that were yet not transfered to the
-     * world map texture.
-     */
-    private boolean dirty = false;
-
-    /**
-     * The X coordinate of the first point that describes the dirty rectangle of the map.
-     */
-    private int dirtyAreaX1;
-
-    /**
-     * The X coordinate of the second point that describes the dirty rectangle of the map.
-     */
-    private int dirtyAreaX2;
-
-    /**
-     * The Y coordinate of the first point that describes the dirty rectangle of the map.
-     */
-    private int dirtyAreaY1;
-
-    /**
-     * The Y coordinate of the second point that describes the dirty rectangle of the map.
-     */
-    private int dirtyAreaY2;
-
-    /**
      * Indicates if a map is loaded or not.
      */
     private boolean loadedMap;
@@ -137,7 +183,7 @@ public final class GameMiniMap {
     /**
      * This variable stores if the map is currently loaded.
      */
-    private volatile boolean loadingMap = false;
+    private volatile boolean loadingMap;
 
     /**
      * The data storage for the map data that was loaded in this mini map.
@@ -162,32 +208,19 @@ public final class GameMiniMap {
     /**
      * The height of the overview map in tiles.
      */
-    private int minimapHeight = 256;
+    private static final int MINI_MAP_HEIGHT = 162;
 
     /**
      * The width of the overview map in tiles.
      */
-    private int minimapWidth = 256;
+    private static final int MINI_MAP_WIDTH = 162;
 
     /**
-     * The area position and sizes for the updates.
+     * The areas that require a update.
      */
-    private final LinkedList<int[]> updateAreas = new LinkedList<int[]>();
+    private final List<Rectangle> updateAreas;
 
-    /**
-     * The byte buffers that stored the required data for the minimap updates.
-     */
-    private final LinkedList<ByteBuffer> updateBuffers = new LinkedList<ByteBuffer>();
-
-    /**
-     * This variable is used to reduce the amount of minimap updates triggered.
-     */
-    private int updateSlowdown = 0;
-
-    /**
-     * The sprite that is used the draw the world map.
-     */
-    private Sprite worldmap;
+    private final int MAX_UPDATE_AREA_SIZE = 64;
 
     /**
      * The texture that is used to draw the world map sprite.
@@ -202,77 +235,59 @@ public final class GameMiniMap {
         mapData.order(ByteOrder.nativeOrder());
         loadedMap = false;
 
-        // minimap = Graphics.getInstance().getSprite(1);
-        // minimap.addTexture(minimapTexture);
+        updateAreas = new ArrayList<Rectangle>();
     }
 
-    // @Override
-    // public void endSession() {
-    // finishUpdate();
-    // saveMap();
-    //
-    // updateAreas.clear();
-    // updateBuffers.clear();
-    //
-    // dirty = false;
-    // dirtyAreaX1 = 0;
-    // dirtyAreaX2 = 0;
-    // dirtyAreaY1 = 0;
-    // dirtyAreaY2 = 0;
-    //
-    // mapLevel = 0;
-    // mapOriginX = 0;
-    // mapOriginY = 0;
-    //
-    // minimapHeight = 256;
-    // minimapWidth = 256;
-    //
-    // loadedMap = false;
-    // loadingMap = false;
-    //
-    // updateSlowdown = 0;
-    //
-    // mapData.clear();
-    // final byte nullByte = (byte) 0;
-    // while (mapData.hasRemaining()) {
-    // mapData.put(nullByte);
-    // }
-    // mapData.clear();
-    // }
+    public SlickRenderImage getMiniMap() {
+        return new GameMiniMapRenderImage();
+    }
 
     /**
-     * Decode a tile to a image data array.
-     *
-     * @param tileData  the encoded informations about the tile
-     * @param imageData the byte array that stores the image data
+     * Once this function is called the mini map will be rendered completely again.
      */
-    private void decodeTile(final short tileData, final ByteBuffer imageData) {
+    public void performFullUpdate() {
+        updateAreas.clear();
+
+        int x = 0;
+        int y = 0;
+        while (x < WORLDMAP_WIDTH) {
+            while (y < WORLDMAP_HEIGHT) {
+                updateAreas.add(new Rectangle(x, y, MAX_UPDATE_AREA_SIZE, MAX_UPDATE_AREA_SIZE));
+                y += MAX_UPDATE_AREA_SIZE;
+            }
+            y = 0;
+            x += MAX_UPDATE_AREA_SIZE;
+        }
+    }
+
+    private void drawTile(final short tileData, final Graphics graphics) {
         final byte tileID = (byte) (tileData & TILE_ID_MASK);
+        final Color drawColor;
         if (tileID == 0) {
-            imageData.put((byte) 0).put((byte) 0).put((byte) 0).put((byte) 0);
-            return;
+            drawColor = Color.black;
+        } else {
+            final byte tileOverlayID = (byte) ((tileData >> SHIFT_OVERLAY) & TILE_OVERLAY_MASK);
+            final boolean tileBlocked = (tileData >> SHIFT_BLOCKED) > 0;
+
+            final Color tileColor = MapColor.getColor(TileFactory.getInstance().getMapColor(tileID));
+
+            drawColor = new Color(tileColor);
+
+            if (tileOverlayID > 0) {
+                final Color overlayTileColor = MapColor.getColor(TileFactory.getInstance().getMapColor(tileOverlayID));
+
+                drawColor.r += (overlayTileColor.r - tileColor.r) / 2.f;
+                drawColor.g += (overlayTileColor.g - tileColor.g) / 2.f;
+                drawColor.b += (overlayTileColor.b - tileColor.b) / 2.f;
+            }
+            if (tileBlocked) {
+                drawColor.scale(BLOCKED_COLOR_MOD);
+                drawColor.a = 1.f;
+            }
         }
-        final byte tileOverlayID = (byte) ((tileData >> SHIFT_OVERLAY) & TILE_OVERLAY_MASK);
-        final boolean tileBlocked = ((tileData >> SHIFT_BLOCKED) > 0);
 
-        final Color tileColor = MapColor.getColor(TileFactory.getInstance().getMapColor(tileID));
-
-        final Color colorValue = new Color(tileColor);
-
-        if (tileOverlayID > 0) {
-            final Color overlayTileColor = MapColor.getColor(TileFactory.getInstance().getMapColor(tileOverlayID));
-
-            colorValue.r += (overlayTileColor.r - tileColor.r) / 2.f;
-            colorValue.g += (overlayTileColor.g - tileColor.g) / 2.f;
-            colorValue.b += (overlayTileColor.b - tileColor.b) / 2.f;
-        }
-        if (tileBlocked) {
-            colorValue.scale(BLOCKED_COLOR_MOD);
-        }
-        imageData.put((byte) (colorValue.getRedByte() & 0xFF));
-        imageData.put((byte) (colorValue.getGreenByte() & 0xFF));
-        imageData.put((byte) (colorValue.getBlueByte() & 0xFF));
-        imageData.put((byte) -1);
+        graphics.setColor(drawColor);
+        graphics.fillRect(0.f, 0.f, 1.f, 1.f);
     }
 
     /**
@@ -282,33 +297,18 @@ public final class GameMiniMap {
      * @return the index of the location in the map data buffer
      */
     private int encodeLocation(final Location loc) {
-        return ((loc.getScY() - mapOriginY) * WORLDMAP_WIDTH * BYTES_PER_TILE) + ((loc.getScX() - mapOriginX) *
-                BYTES_PER_TILE);
+        return encodeLocation(loc.getScX(), loc.getScY());
     }
 
     /**
-     * This update prepares a minimap update and stores the required data to the buffer to the render thread is able to
-     * update the minimap according to this update.
+     * Encode a server location to the index in the map data buffer.
+     *
+     * @param x the x coordinate of the location on the map
+     * @param y the y coordinate of the location on the map
+     * @return the index of the location in the map data buffer
      */
-    public void finishUpdate() {
-        if (!dirty || !loadedMap || loadingMap) {
-            return;
-        }
-
-        updateSlowdown = ++updateSlowdown % 2;
-        if (updateSlowdown != 0) {
-            return;
-        }
-
-        if ((dirtyAreaX1 == mapOriginX) && (dirtyAreaY1 == mapOriginY) && (dirtyAreaX2 == ((mapOriginX +
-                WORLDMAP_WIDTH) - 1)) && (dirtyAreaY2 == ((mapOriginY + WORLDMAP_HEIGHT) - 1))) {
-            prepareUpdateFullImage();
-        } else {
-            prepareUpdateAreaImage(dirtyAreaX1, dirtyAreaY1, (dirtyAreaX2 - dirtyAreaX1) + 1,
-                    (dirtyAreaY2 - dirtyAreaY1) + 1);
-        }
-
-        dirty = false;
+    private int encodeLocation(final int x, final int y) {
+        return ((y - mapOriginY) * WORLDMAP_WIDTH * BYTES_PER_TILE) + ((x - mapOriginX) * BYTES_PER_TILE);
     }
 
     /**
@@ -320,13 +320,14 @@ public final class GameMiniMap {
      */
     @SuppressWarnings("nls")
     private File getCurrentMapFilename() {
-        BUILDER.setLength(0);
-        BUILDER.append("map");
-        BUILDER.append(mapOriginX / WORLDMAP_WIDTH);
-        BUILDER.append(mapOriginY / WORLDMAP_HEIGHT);
-        BUILDER.append(mapLevel);
-        BUILDER.append(".dat");
-        return new File(World.getPlayer().getPath(), BUILDER.toString());
+        final StringBuilder builder = new StringBuilder();
+        builder.setLength(0);
+        builder.append("map");
+        builder.append(mapOriginX / WORLDMAP_WIDTH);
+        builder.append(mapOriginY / WORLDMAP_HEIGHT);
+        builder.append(mapLevel);
+        builder.append(".dat");
+        return new File(World.getPlayer().getPath(), builder.toString());
     }
 
     /**
@@ -393,24 +394,6 @@ public final class GameMiniMap {
     }
 
     /**
-     * Get the zoom value of the minimap.
-     *
-     * @return the value of the zoom on the minimap
-     */
-    public int getMinimapZoom() {
-        return minimapHeight;
-    }
-
-    /**
-     * Get the sprite that is used to draw the world map.
-     *
-     * @return the sprite that holds the world map
-     */
-    public Sprite getWorldmap() {
-        return worldmap;
-    }
-
-    /**
      * Load a empty map in case it was not possible to load it from a file. This creates a full new map and ensures
      * that
      * there are no remaining from the last loaded map in.
@@ -422,7 +405,6 @@ public final class GameMiniMap {
             mapData.put((byte) 0);
         }
         loadedMap = true;
-        prepareUpdateFullImage();
         loadingMap = false;
     }
 
@@ -439,13 +421,11 @@ public final class GameMiniMap {
             return;
         }
 
-        FileInputStream inStream = null;
-        InflaterInputStream dInStream = null;
-        final Inflater inf = new Inflater();
+        InputStream inStream = null;
         try {
             inStream = new FileInputStream(mapFile);
-            dInStream = new InflaterInputStream(inStream, inf);
-            final ReadableByteChannel inChannel = Channels.newChannel(dInStream);
+            GZIPInputStream gInStream = new GZIPInputStream(inStream);
+            final ReadableByteChannel inChannel = Channels.newChannel(gInStream);
 
             synchronized (mapData) {
                 mapData.rewind();
@@ -457,22 +437,11 @@ public final class GameMiniMap {
                 inChannel.close();
             }
 
-            dirty = true;
-            dirtyAreaX1 = mapOriginX;
-            dirtyAreaY1 = mapOriginY;
-            dirtyAreaX2 = (mapOriginX + WORLDMAP_WIDTH) - 1;
-            dirtyAreaY2 = (mapOriginY + WORLDMAP_HEIGHT) - 1;
+            performFullUpdate();
         } catch (final IOException e) {
             LOGGER.error("Failed loading the map data from its file.", e);
             loadEmptyMap();
         } finally {
-            if (dInStream != null) {
-                try {
-                    dInStream.close();
-                } catch (final IOException e) {
-                    LOGGER.error("Failed closing the file stream.");
-                }
-            }
             if (inStream != null) {
                 try {
                     inStream.close();
@@ -481,129 +450,8 @@ public final class GameMiniMap {
                 }
             }
         }
-        inf.end();
         loadedMap = true;
         loadingMap = false;
-    }
-
-    /**
-     * In case there is a update of the map prepared, put it into place. This will always write one update to the
-     * minimap per call. In case there is more then one update, the function has to be called multiple times.
-     */
-    @SuppressWarnings("nls")
-    private void performUpdate() {
-        if (updateAreas.isEmpty() || updateBuffers.isEmpty()) {
-            return;
-        }
-
-        updateAreas.removeFirst();
-        updateBuffers.removeFirst();
-
-        // if (atlas.getTextureID() != 0) {
-        // final long beforeTime = System.currentTimeMillis();
-        // atlas.updateTextureArea(updateSize[0], updateSize[1],
-        // updateSize[2], updateSize[3], updateBuffer);
-        // LOGGER.info("Changing Minimap Texture took "
-        // + Long.toString(System.currentTimeMillis() - beforeTime)
-        // + "ms");
-        // } else if ((updateSize[0] == 0) && (updateSize[1] == 0)
-        // && (updateSize[2] == WORLDMAP_WIDTH)
-        // && (updateSize[3] == WORLDMAP_HEIGHT)) {
-        // atlas.setTextureImage(updateBuffer);
-        // atlas.activateTexture(true, true);
-        //
-        // worldmapTexture.setParent(atlas);
-        // minimapTexture.setParent(atlas);
-        // }
-    }
-
-    /**
-     * Prepare a update of a given area of the map. This encodes all required data to a buffer and stores it so the
-     * render thread can copy the data to the minimap texture.
-     *
-     * @param x the x coordinate of the area to update
-     * @param y the y coordinate of the area to update
-     * @param w the width of the area to update
-     * @param h the height of the area to update
-     */
-    private void prepareUpdateAreaImage(final int x, final int y, final int w, final int h) {
-
-        // the origin needs to be a multiple of 4
-        final int originX = (x - mapOriginX) - ((x - mapOriginX) % 4);
-        final int originY = (y - mapOriginY) - ((y - mapOriginY) % 4);
-
-        final int neededWidth = w + ((x - mapOriginX) % 4);
-        final int neededHeight = h + ((y - mapOriginY) % 4);
-
-        int updateAreaWidth = 1;
-        while ((updateAreaWidth < neededWidth) || (updateAreaWidth < MINIMAL_UPDATE_AREA)) {
-            updateAreaWidth <<= 1;
-        }
-
-        int updateAreaHeight = 1;
-        while ((updateAreaHeight < neededHeight) || (updateAreaHeight < MINIMAL_UPDATE_AREA)) {
-            updateAreaHeight <<= 1;
-        }
-
-        int updateAreaX = originX;
-        if ((updateAreaX + updateAreaWidth) >= WORLDMAP_WIDTH) {
-            updateAreaX = WORLDMAP_WIDTH - updateAreaWidth;
-        }
-
-        int updateAreaY = originY;
-        if ((updateAreaY + updateAreaHeight) >= WORLDMAP_HEIGHT) {
-            updateAreaY = WORLDMAP_HEIGHT - updateAreaHeight;
-        }
-
-        final ByteBuffer buffer = ByteBuffer.allocateDirect(updateAreaWidth * updateAreaHeight * 4);
-
-        synchronized (mapData) {
-            mapData.rewind();
-            final int limitY = updateAreaY + updateAreaHeight;
-            final int limitX = updateAreaX + updateAreaWidth;
-            for (int currY = updateAreaY; currY < limitY; ++currY) {
-                mapData.position((currY * WORLDMAP_WIDTH * BYTES_PER_TILE) + (updateAreaX * BYTES_PER_TILE));
-                for (int currX = updateAreaX; currX < limitX; ++currX) {
-                    decodeTile(mapData.getShort(), buffer);
-                }
-            }
-        }
-
-        buffer.flip();
-
-        updateBuffers.addLast(buffer);
-        updateAreas.addLast(new int[]{updateAreaX, updateAreaY, updateAreaWidth, updateAreaHeight});
-    }
-
-    /**
-     * Update the whole image of the world map.
-     */
-    @SuppressWarnings("nls")
-    private void prepareUpdateFullImage() {
-        LOGGER.info("Full Minimap Update triggered");
-
-        // final ByteBuffer buffer =
-        // ByteBuffer.allocateDirect(WORLDMAP_WIDTH * WORLDMAP_HEIGHT * 4);
-        //
-        // synchronized (mapData) {
-        // mapData.rewind();
-        //
-        // try {
-        // while (mapData.remaining() > 0) {
-        // decodeTile(mapData.getShort(), buffer);
-        // }
-        // } catch (final ArrayIndexOutOfBoundsException ex1) {
-        // LOGGER.error(
-        // "Map data corrupted, discard map and load blank map", ex1);
-        // loadEmptyMap();
-        // }
-        // }
-        //
-        // buffer.flip();
-        //
-        // updateBuffers.addLast(buffer);
-        // updateAreas
-        // .addLast(new int[] { 0, 0, WORLDMAP_WIDTH, WORLDMAP_HEIGHT });
     }
 
     /**
@@ -613,9 +461,10 @@ public final class GameMiniMap {
     public void render() {
         if (worldmapTexture == null) {
             try {
-                worldmapTexture = new Image(WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
-                worldmap = new Sprite(1);
-                worldmap.addImage(worldmapTexture);
+                worldmapTexture = Image.createOffscreenImage(WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
+                final Graphics g = worldmapTexture.getGraphics();
+                g.setColor(Color.black);
+                g.fillRect(0, 0, WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
             } catch (final SlickException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -625,7 +474,51 @@ public final class GameMiniMap {
             return;
         }
 
-        performUpdate();
+        try {
+            drawMap();
+        } catch (SlickException e) {
+            LOGGER.error("Drawing the minimap failed!", e);
+        }
+    }
+
+    private void drawMapArea(final Rectangle rectangle) throws SlickException {
+        final Graphics graphics = worldmapTexture.getGraphics();
+        graphics.setColor(Color.black);
+        graphics.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+
+        for (int x = rectangle.getLeft(); x < rectangle.getRight(); x++) {
+            for (int y = rectangle.getBottom(); y < rectangle.getTop(); y++) {
+                final int location = encodeLocation(x, y);
+
+                final short tileData = mapData.getShort(location);
+
+                if (tileData == 0) {
+                    continue;
+                }
+
+                graphics.translate(x, y);
+                drawTile(tileData, graphics);
+                graphics.translate(-x, -y);
+            }
+        }
+    }
+
+    private void drawMap() throws SlickException {
+        if (updateAreas.isEmpty()) {
+            return;
+        }
+
+        final Rectangle miniMapRect = new Rectangle(minimapOriginX, minimapOriginY, MINI_MAP_WIDTH, MINI_MAP_HEIGHT);
+
+        for (int i = 0, count = updateAreas.size(); i < count; i++) {
+            final Rectangle testRect = updateAreas.get(i);
+            if (testRect.intersects(miniMapRect)) {
+                drawMapArea(updateAreas.remove(i));
+                return;
+            }
+        }
+
+        drawMapArea(updateAreas.remove(0));
     }
 
     /**
@@ -649,13 +542,10 @@ public final class GameMiniMap {
             return;
         }
         WritableByteChannel outChannel = null;
-        final Deflater def = new Deflater();
-        def.setLevel(Deflater.BEST_COMPRESSION);
-        def.setStrategy(Deflater.DEFAULT_STRATEGY);
         try {
             final FileOutputStream outStream = new FileOutputStream(mapFile);
-            final DeflaterOutputStream dOutStream = new DeflaterOutputStream(outStream, def);
-            outChannel = Channels.newChannel(dOutStream);
+            final GZIPOutputStream gOutStream = new GZIPOutputStream(outStream);
+            outChannel = Channels.newChannel(gOutStream);
             synchronized (mapData) {
                 mapData.rewind();
                 int toWrite = mapData.remaining();
@@ -676,11 +566,10 @@ public final class GameMiniMap {
                 }
             }
         }
-        def.end();
     }
 
     /**
-     * Save the informations about a tile within the map data. This will overwrite any existing data about a tile.
+     * Save the information about a tile within the map data. This will overwrite any existing data about a tile.
      *
      * @param loc     the location of the tile
      * @param tileID  the ID of tile that is located at the position
@@ -714,19 +603,6 @@ public final class GameMiniMap {
     }
 
     /**
-     * Set the zoom value of the minimap.
-     *
-     * @param zoom the new zoom value
-     */
-    public void setMinimapZoom(final int zoom) {
-        if ((zoom > 90) && (zoom < 256) && (zoom != minimapHeight)) {
-            minimapHeight = zoom;
-            minimapWidth = zoom;
-            setPlayerLocation(World.getPlayer().getLocation());
-        }
-    }
-
-    /**
      * Set the location of the player. This tells the world map handler what map it needs to draw.
      *
      * @param playerLoc the location of the player
@@ -757,23 +633,26 @@ public final class GameMiniMap {
             loadMap();
         }
 
-        int minimapOriginX = playerLoc.getScX() - mapOriginX - (minimapWidth >> 1);
-        int minimapOriginY = playerLoc.getScY() - mapOriginY - (minimapHeight >> 1);
+        int minimapOriginX = playerLoc.getScX() - mapOriginX - (MINI_MAP_WIDTH >> 1);
+        int minimapOriginY = playerLoc.getScY() - mapOriginY - (MINI_MAP_HEIGHT >> 1);
 
         if (minimapOriginX < 0) {
             minimapOriginX = 0;
-        } else if ((minimapOriginX + minimapWidth) >= WORLDMAP_WIDTH) {
-            minimapOriginX = WORLDMAP_WIDTH - minimapWidth - 1;
+        } else if ((minimapOriginX + MINI_MAP_WIDTH) >= WORLDMAP_WIDTH) {
+            minimapOriginX = WORLDMAP_WIDTH - MINI_MAP_WIDTH - 1;
         }
         if (minimapOriginY < 0) {
             minimapOriginY = 0;
-        } else if ((minimapOriginY + minimapHeight) >= WORLDMAP_HEIGHT) {
-            minimapOriginY = WORLDMAP_HEIGHT - minimapHeight - 1;
+        } else if ((minimapOriginY + MINI_MAP_HEIGHT) >= WORLDMAP_HEIGHT) {
+            minimapOriginY = WORLDMAP_HEIGHT - MINI_MAP_HEIGHT - 1;
         }
 
-        // minimapTexture.setImageLocation(minimapOriginX, minimapOriginY);
-        // minimap.setOffset(minimapOffsetX, minimapOffsetY);
+        this.minimapOriginX = minimapOriginX;
+        this.minimapOriginY = minimapOriginY;
     }
+
+    private int minimapOriginX;
+    private int minimapOriginY;
 
     /**
      * Update one tile of the overview map.
@@ -790,42 +669,7 @@ public final class GameMiniMap {
         }
 
         if (saveTile(tileLoc, updateData.getTileId(), updateData.isBlocked())) {
-            if (!dirty) {
-                dirtyAreaX1 = tileLoc.getScX();
-                dirtyAreaY1 = tileLoc.getScY();
-                dirtyAreaX2 = dirtyAreaX1;
-                dirtyAreaY2 = dirtyAreaY1;
-                dirty = true;
-            } else {
-                dirtyAreaX1 = Math.min(dirtyAreaX1, tileLoc.getScX());
-                dirtyAreaY1 = Math.min(dirtyAreaY1, tileLoc.getScY());
-                dirtyAreaX2 = Math.max(dirtyAreaX2, tileLoc.getScX());
-                dirtyAreaY2 = Math.max(dirtyAreaY2, tileLoc.getScY());
-            }
-        }
-    }
-
-    /**
-     * Increase the zoom on the minimap. This will increase the size of the pixels on the minimap until a maximal value
-     * is reached.
-     */
-    public void zoomMinimapIn() {
-        if (minimapHeight > 90) {
-            minimapHeight--;
-            minimapWidth--;
-            setPlayerLocation(World.getPlayer().getLocation());
-        }
-    }
-
-    /**
-     * Decrease the zoom on the minimap. This will decrease the size of the pixels on the minimap until a minimal value
-     * is reached.
-     */
-    public void zoomMinimapOut() {
-        if (minimapHeight < 256) {
-            minimapHeight++;
-            minimapWidth++;
-            setPlayerLocation(World.getPlayer().getLocation());
+            updateAreas.add(new Rectangle(tileLoc.getScX() - mapOriginX, tileLoc.getScY() - mapOriginY, 1, 1));
         }
     }
 }

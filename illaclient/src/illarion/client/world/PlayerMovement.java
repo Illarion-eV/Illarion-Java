@@ -499,7 +499,6 @@ public final class PlayerMovement
         moveAnimation.removeTarget(this);
         stopWalkTowards();
         cancelAutoWalk();
-        animationFinished(false);
     }
 
     /**

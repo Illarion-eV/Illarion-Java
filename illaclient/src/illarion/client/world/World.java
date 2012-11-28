@@ -57,6 +57,9 @@ public final class World {
             if (INSTANCE.people != null) {
                 INSTANCE.people.saveNames();
             }
+            if (INSTANCE.map != null) {
+                INSTANCE.map.getMinimap().saveMap();
+            }
 
             INSTANCE.chatHandler = null;
             INSTANCE.aniManager = null;

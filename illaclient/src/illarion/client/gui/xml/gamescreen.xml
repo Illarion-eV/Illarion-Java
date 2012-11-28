@@ -45,6 +45,10 @@
                     <control name="progress" style="illarion-food-bar" width="50%" id="foodBar"/>
                 </panel>
             </panel>
+            <panel align="right" valign="top" width="189px" height="190px" childLayout="center">
+                <image id="miniMapImage" width="162px" height="162px"/>
+                <image width="189px" height="190px" filename="data/gui/minimap.png"/>
+            </panel>
         </layer>
         <layer id="chatLayer" backgroundColor="#0000" childLayout="center">
             <panel height="201px" width="610px" align="left" valign="bottom" backgroundColor="#0000"

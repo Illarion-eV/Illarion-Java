@@ -19,9 +19,12 @@
 package illarion.client.gui.controller;
 
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.elements.render.ImageRenderer;
+import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.gui.controller.game.*;
+import illarion.client.world.World;
 import org.newdawn.slick.GameContainer;
 
 import java.util.ArrayList;
@@ -63,10 +66,12 @@ public final class GameScreenController implements ScreenController {
     @SuppressWarnings("unchecked")
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
-
         for (final ScreenController childController : childControllers) {
             childController.bind(nifty, screen);
         }
+
+        screen.findElementByName("miniMapImage").getRenderer(ImageRenderer.class).setImage(
+                new NiftyImage(nifty.getRenderEngine(), World.getMap().getMinimap().getMiniMap()));
     }
 
     @Override

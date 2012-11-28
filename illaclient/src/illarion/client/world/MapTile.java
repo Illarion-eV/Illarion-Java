@@ -975,6 +975,15 @@ public final class MapTile
     }
 
     /**
+     * Check if this tile is at the same level as the player.
+     *
+     * @return {@code true} in case the tile is on the same level as the player
+     */
+    public boolean isAtPlayerLevel() {
+        return World.getPlayer().isBaseLevel(getLocation());
+    }
+
+    /**
      * Update the entire item list. This function is called by the net interface in case the server sends a full set of
      * new item data to the client.
      *
