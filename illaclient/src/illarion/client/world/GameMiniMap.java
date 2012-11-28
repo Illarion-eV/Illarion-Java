@@ -267,7 +267,7 @@ public final class GameMiniMap {
         int y = 0;
         while (x < WORLDMAP_WIDTH) {
             while (y < WORLDMAP_HEIGHT) {
-                updateAreas.add(new Rectangle(x, y, MAX_UPDATE_AREA_SIZE, MAX_UPDATE_AREA_SIZE));
+                addUpdateArea(new Rectangle(x, y, MAX_UPDATE_AREA_SIZE, MAX_UPDATE_AREA_SIZE));
                 y += MAX_UPDATE_AREA_SIZE;
             }
             y = 0;
@@ -432,7 +432,7 @@ public final class GameMiniMap {
      * Load a map from its file. Any other formerly loaded map is discarded when this happens.
      */
     @SuppressWarnings("nls")
-    protected void loadMap() {
+    public void loadMap() {
         loadingMap = true;
         final File mapFile = getCurrentMapFilename();
 
@@ -443,9 +443,8 @@ public final class GameMiniMap {
 
         InputStream inStream = null;
         try {
-            inStream = new FileInputStream(mapFile);
-            GZIPInputStream gInStream = new GZIPInputStream(inStream);
-            final ReadableByteChannel inChannel = Channels.newChannel(gInStream);
+            inStream = new GZIPInputStream(new FileInputStream(mapFile));
+            final ReadableByteChannel inChannel = Channels.newChannel(inStream);
 
             synchronized (mapData) {
                 mapData.rewind();
@@ -528,22 +527,46 @@ public final class GameMiniMap {
         }
     }
 
+    private boolean miniMapUpdated;
+
+    private void addUpdateArea(final Rectangle rect) {
+        updateAreas.add(rect);
+        miniMapUpdated = false;
+    }
+
     private void drawMap() throws SlickException {
         if (updateAreas.isEmpty()) {
             return;
         }
 
-        final Rectangle miniMapRect = new Rectangle(minimapOriginX, minimapOriginY, MINI_MAP_WIDTH, MINI_MAP_HEIGHT);
+        final int allowedArea = MAX_UPDATE_AREA_SIZE * MAX_UPDATE_AREA_SIZE;
+        int processedArea = 0;
 
-        for (int i = 0, count = updateAreas.size(); i < count; i++) {
-            final Rectangle testRect = updateAreas.get(i);
-            if (testRect.intersects(miniMapRect)) {
-                drawMapArea(updateAreas.remove(i));
-                return;
+        if (!miniMapUpdated) {
+            final Rectangle miniMapRect = new Rectangle(minimapOriginX, minimapOriginY, MINI_MAP_WIDTH, MINI_MAP_HEIGHT);
+
+            for (int i = 0; i < updateAreas.size(); i++) {
+                final Rectangle testRect = updateAreas.get(i);
+                if (testRect.intersects(miniMapRect)) {
+                    final int currentArea = testRect.getArea();
+                    drawMapArea(updateAreas.remove(i));
+
+                    processedArea += currentArea;
+                    if (processedArea >= allowedArea) {
+                        return;
+                    }
+                    --i;
+                }
             }
         }
 
-        drawMapArea(updateAreas.remove(0));
+        miniMapUpdated = true;
+
+        if ((processedArea < allowedArea) && !updateAreas.isEmpty()) {
+            final Rectangle currentArea = updateAreas.remove(0);
+            processedArea += currentArea.getArea();
+            drawMapArea(currentArea);
+        }
     }
 
     /**
@@ -694,7 +717,7 @@ public final class GameMiniMap {
         }
 
         if (saveTile(tileLoc, updateData.getTileId(), updateData.isBlocked())) {
-            updateAreas.add(new Rectangle(tileLoc.getScX() - mapOriginX, tileLoc.getScY() - mapOriginY, 1, 1));
+            addUpdateArea(new Rectangle(tileLoc.getScX() - mapOriginX, tileLoc.getScY() - mapOriginY, 1, 1));
         }
     }
 }

@@ -341,4 +341,8 @@ public final class Rectangle
     public java.awt.Rectangle toNative() {
         return new java.awt.Rectangle(x0, y0, x1 - x0, y1 - y0);
     }
+
+    public int getArea() {
+        return getWidth() * getHeight();
+    }
 }

@@ -103,7 +103,7 @@ public final class MapTile
     /**
      * Location of the tile.
      */
-    private transient Location loc;
+    private final Location loc;
 
     /**
      * Flag if there is still work to do for the LOS calculation on this tile.
@@ -142,6 +142,7 @@ public final class MapTile
      */
     @SuppressWarnings("nls")
     public MapTile() {
+        loc = new Location();
         tileId = ID_NONE;
         tile = null;
         lightSrc = null;
@@ -156,7 +157,6 @@ public final class MapTile
      */
     @Override
     public void activate(final int id) {
-        loc = new Location();
     }
 
     /**
@@ -616,7 +616,6 @@ public final class MapTile
      */
     @Override
     public void recycle() {
-        loc = null;
         GameFactory.getInstance().recycle(this);
     }
 

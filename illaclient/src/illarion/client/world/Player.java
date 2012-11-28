@@ -466,7 +466,7 @@ public final class Player {
      * @return true if the location is at the same level as the player
      */
     boolean isBaseLevel(final Location checkLoc) {
-        return loc.getScZ() == checkLoc.getScZ();
+        return getLocation().getScZ() == checkLoc.getScZ();
     }
 
     /**
