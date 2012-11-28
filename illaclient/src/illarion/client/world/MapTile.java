@@ -811,7 +811,12 @@ public final class MapTile
 
             updateItem(item, itemCount, index);
             // display on screen
-            item.show();
+
+            if (isHidden()) {
+                item.hide();
+            } else {
+                item.show();
+            }
 
             // add it to list
             if (index < items.size()) {
