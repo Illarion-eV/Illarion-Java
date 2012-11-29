@@ -28,6 +28,8 @@ import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.util.InputAdapter;
 
+import java.util.Arrays;
+
 /**
  * This class is used to receive and forward all user input.
  *
@@ -164,12 +166,20 @@ public final class InputReceiver
     private final PointAtHelper pointAtHelper = new PointAtHelper();
 
     /**
+     * This arrays stores the last received changes of the mouse buttons. This is done to avoid handling drags that
+     * did not start on the map.
+     */
+    private final boolean[] buttonDownReceived;
+
+    /**
      * Create a new instance of the input receiver.
      *
      * @param forwardingInputSystem the forwarding system for the Nifty input
      */
     public InputReceiver(final NiftyInputForwarding forwardingInputSystem) {
         forwardingControl = forwardingInputSystem;
+        buttonDownReceived = new boolean[Mouse.getButtonCount()];
+        Arrays.fill(buttonDownReceived, false);
     }
 
     @Override
@@ -197,7 +207,7 @@ public final class InputReceiver
     public void mouseDragged(final int oldx, final int oldy, final int newx, final int newy) {
         buttonMultiClickHelper.reset();
         for (int i = 0; i < Mouse.getButtonCount(); i++) {
-            if (Mouse.isButtonDown(i)) {
+            if (buttonDownReceived[i]) {
                 EventBus.publish(new DragOnMapEvent(oldx, oldy, newx, newy, i,
                         forwardingControl.getInputForwardingControl()));
                 return;
@@ -210,7 +220,17 @@ public final class InputReceiver
     }
 
     @Override
+    public void mousePressed(final int button, final int x, final int y) {
+        if ((button >= 0) && (button < buttonDownReceived.length)) {
+            buttonDownReceived[button] = true;
+        }
+    }
+
+    @Override
     public void mouseReleased(final int button, final int x, final int y) {
+        if ((button >= 0) && (button < buttonDownReceived.length)) {
+            buttonDownReceived[button] = false;
+        }
         World.getPlayer().getMovementHandler().stopWalkTowards();
         if (forwardingControl.isInputForwardingSupported()) {
             forwardingControl.getInputForwardingControl().releaseExclusiveMouse();
