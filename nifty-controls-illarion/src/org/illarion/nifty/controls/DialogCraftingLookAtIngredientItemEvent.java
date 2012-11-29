@@ -27,12 +27,7 @@ public final class DialogCraftingLookAtIngredientItemEvent extends DialogEvent {
     /**
      * The item that is parent to the ingredient.
      */
-    private final CraftingListEntry item;
-
-    /**
-     * The index that is parent to the ingredient.
-     */
-    private final int itemIndex;
+    private final CraftingItemEntry item;
 
     /**
      * The index of the ingredient the player is looking at.
@@ -44,13 +39,11 @@ public final class DialogCraftingLookAtIngredientItemEvent extends DialogEvent {
      *
      * @param id              the ID of the dialog
      * @param item            the item the player is looking at
-     * @param itemIndex       the index of the item the player is looking at
-     * @param ingredientIndex the index of the ingredient the player is looing at
+     * @param ingredientIndex the index of the ingredient the player is looking at
      */
-    public DialogCraftingLookAtIngredientItemEvent(final int id, final CraftingListEntry item, final int itemIndex, final int ingredientIndex) {
+    public DialogCraftingLookAtIngredientItemEvent(final int id, final CraftingItemEntry item, final int ingredientIndex) {
         super(id);
         this.item = item;
-        this.itemIndex = itemIndex;
         this.ingredientIndex = ingredientIndex;
     }
 
@@ -59,17 +52,8 @@ public final class DialogCraftingLookAtIngredientItemEvent extends DialogEvent {
      *
      * @return the item
      */
-    public CraftingListEntry getItem() {
+    public CraftingItemEntry getItem() {
         return item;
-    }
-
-    /**
-     * Get the index of the item the player is looking at
-     *
-     * @return the index of the item
-     */
-    public int getItemIndex() {
-        return itemIndex;
     }
 
     /**

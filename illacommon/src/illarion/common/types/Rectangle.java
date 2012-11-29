@@ -58,6 +58,10 @@ public final class Rectangle
         reset();
     }
 
+    public Rectangle(final int x, final int y, final int width, final int height) {
+        set(x, y, width, height);
+    }
+
     public Rectangle(final Rectangle other) {
         x0 = other.x0;
         x1 = other.x1;
@@ -220,6 +224,19 @@ public final class Rectangle
     }
 
     /**
+     * Move the current location of the rectangle without changing its height and width.
+     *
+     * @param x the change value for the x coordinate
+     * @param y the change value for the y coordinate
+     */
+    public void move(final int x, final int y) {
+        x0 += x;
+        x1 += x;
+        y0 += y;
+        y1 += y;
+    }
+
+    /**
      * Ensure that the current rectangle describes only a area that is also described by another rectangle. So if a
      * area if this rectangle is outside the other rectangle it will be cut off.
      *
@@ -323,5 +340,9 @@ public final class Rectangle
      */
     public java.awt.Rectangle toNative() {
         return new java.awt.Rectangle(x0, y0, x1 - x0, y1 - y0);
+    }
+
+    public int getArea() {
+        return getWidth() * getHeight();
     }
 }

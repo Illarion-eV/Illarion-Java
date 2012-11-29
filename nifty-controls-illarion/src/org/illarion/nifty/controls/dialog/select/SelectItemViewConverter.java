@@ -35,12 +35,17 @@ public final class SelectItemViewConverter implements ListBox.ListBoxViewConvert
     @Override
     public void display(final Element listBoxItem, final SelectListEntry item) {
         final Element itemImage = listBoxItem.findElementByName("#imageDisplay");
+        final Element itemImageContainer = itemImage.getParent();
         final NiftyImage itemPicture = item.getItemImage();
         if (itemPicture == null) {
-            itemImage.getParent().hideWithoutEffect();
+            itemImageContainer.hideWithoutEffect();
             itemImage.hideWithoutEffect();
+            itemImageContainer.setConstraintHeight(SizeValue.px(0));
+            itemImageContainer.setConstraintWidth(SizeValue.px(0));
+            itemImage.setConstraintHeight(SizeValue.px(0));
+            itemImage.setConstraintWidth(SizeValue.px(0));
         } else {
-            itemImage.getParent().showWithoutEffects();
+            itemImageContainer.showWithoutEffects();
             itemImage.showWithoutEffects();
 
             itemImage.getRenderer(ImageRenderer.class).setImage(itemPicture);
@@ -58,16 +63,17 @@ public final class SelectItemViewConverter implements ListBox.ListBoxViewConvert
                 imageWidth = 76;
             }
 
-            itemImage.setConstraintHeight(new SizeValue(Integer.toString(imageHeight) + "px"));
-            itemImage.setConstraintWidth(new SizeValue(Integer.toString(imageWidth) + "px"));
-
-            final Element title = listBoxItem.findElementByName("#itemTitle");
-            title.getRenderer(TextRenderer.class).setText(item.getName());
-
-            listBoxItem.layoutElements();
-
-            listBoxItem.getNiftyControl(DialogSelectEntryControl.class).setIndex(item.getIndex());
+            itemImageContainer.setConstraintHeight(SizeValue.px(46));
+            itemImageContainer.setConstraintWidth(SizeValue.px(76));
+            itemImage.setConstraintHeight(SizeValue.px(imageHeight));
+            itemImage.setConstraintWidth(SizeValue.px(imageWidth));
         }
+
+        final Element title = listBoxItem.findElementByName("#itemTitle");
+        title.getRenderer(TextRenderer.class).setText(item.getName());
+
+        listBoxItem.layoutElements();
+        listBoxItem.getNiftyControl(DialogSelectEntryControl.class).setIndex(item.getIndex());
     }
 
     @Override

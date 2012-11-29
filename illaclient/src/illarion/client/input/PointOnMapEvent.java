@@ -16,35 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.net.server.events;
+package illarion.client.input;
 
 /**
- * This event is send once the server sends a completed event for a crafting dialog
+ * This event is published when the mouse is pointing on the map. This means that the event is only invoked in case
+ * the mouse rests in one place for some time.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class DialogCraftingUpdateCompletedReceivedEvent {
+public final class PointOnMapEvent extends AbstractMouseLocationEvent {
     /**
-     * The ID of the dialog.
-     */
-    private final int requestId;
-
-    /**
-     * Create a new instance of this event.
+     * Create and initialize such an event.
      *
-     * @param requestId the ID of the dialog that is updated
-     * @throws IllegalArgumentException in case
+     * @param x the x coordinate of the click
+     * @param y the y coordinate of the click
      */
-    public DialogCraftingUpdateCompletedReceivedEvent(final int requestId) {
-        this.requestId = requestId;
-    }
-
-    /**
-     * Get the ID of this dialog.
-     *
-     * @return the ID of the dialog
-     */
-    public int getDialogId() {
-        return requestId;
+    public PointOnMapEvent(final int x, final int y) {
+        super(x, y);
     }
 }

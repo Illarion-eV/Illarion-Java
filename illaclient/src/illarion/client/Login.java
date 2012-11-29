@@ -227,10 +227,10 @@ public final class Login {
 
         final String accLang = root.getAttributes().getNamedItem("lang").getNodeValue();
         if ("de".equals(accLang) && Lang.getInstance().isEnglish()) {
-            IllaClient.getCfg().set("locale", "de");
+            IllaClient.getCfg().set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_GERMAN);
             Lang.getInstance().recheckLocale();
         } else if ("us".equals(accLang) && Lang.getInstance().isGerman()) {
-            IllaClient.getCfg().set("locale", "en");
+            IllaClient.getCfg().set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
             Lang.getInstance().recheckLocale();
         }
 

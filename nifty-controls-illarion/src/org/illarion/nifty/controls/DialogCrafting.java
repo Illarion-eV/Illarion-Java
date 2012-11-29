@@ -42,15 +42,59 @@ public interface DialogCrafting extends Window {
         close;
     }
 
-    int getCraftingItemCount();
+    /**
+     * Add a category along with its items to the list.
+     *
+     * @param entries the categories to add
+     */
+    void addCraftingItems(CraftingCategoryEntry... entries);
 
-    int getSelectedCraftingItem();
-
+    /**
+     * Get the Nifty element that displays the crafting item.
+     *
+     * @return the Nifty element that is displaying the selected item
+     */
     Element getCraftingItemDisplay();
 
+    /**
+     * Get the nifty element that takes care or displaying the specified ingredient.
+     *
+     * @param index the index of the ingredient to show
+     * @return the element of the ingredient
+     * @throws IndexOutOfBoundsException in case {@code index} is less then 0 or larger or equal to the amount of
+     *                                   ingredients of the selected item
+     */
     Element getIngredientItemDisplay(int index);
 
-    void addCraftingItems(CraftingListEntry... entries);
+    /**
+     * Get the item that was selected in this dialog.
+     *
+     * @return the item that is selected
+     */
+    CraftingItemEntry getSelectedCraftingItem();
 
+    /**
+     * Remove everything from the current item list.
+     */
+    void clearItemList();
+
+    /**
+     * Select a item by the item index of the entry.
+     */
+    void selectItemByItemIndex(int index);
+
+    /**
+     * Set the displayed state of the progress.
+     *
+     * @param progress the new value for the progress
+     */
     void setProgress(float progress);
+
+    /**
+     * This function triggers the automatic progress display. It moves the progress bar from 0% to 100% within the
+     * time specified.
+     *
+     * @param seconds the time in seconds to fill the progress bar
+     */
+    void startProgress(double seconds);
 }

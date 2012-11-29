@@ -22,10 +22,9 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.render.NiftyImage;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.resources.ItemFactory;
-import illarion.client.world.items.CraftingIngredientItem;
 import illarion.client.world.items.CraftingItem;
 import illarion.common.types.ItemId;
-import org.illarion.nifty.controls.CraftingListEntry;
+import org.illarion.nifty.controls.CraftingItemEntry;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,35 +33,11 @@ import org.illarion.nifty.controls.CraftingListEntry;
  * Time: 13:35
  * To change this template use File | Settings | File Templates.
  */
-public class NiftyCraftingItem extends CraftingItem implements CraftingListEntry {
+public class NiftyCraftingItem extends CraftingItem implements CraftingItemEntry {
     private final NiftyImage craftImage;
     private final NiftyImage[] ingredientImages;
 
-    /**
-     * Constructor that applies all required values.
-     *
-     * @param group          the group this item belongs to
-     * @param itemId         the ID of the item that is crafted
-     * @param name           the name of the item that is crafted
-     * @param buildTime      the time required to craft this item
-     * @param buildStackSize the amount of items crafted at once
-     * @param ingredients    the ingredients required to build this
-     */
-    public NiftyCraftingItem(final Nifty nifty, final int group, final ItemId itemId, final String name,
-                             final int buildTime, final int buildStackSize, final CraftingIngredientItem[] ingredients) {
-        super(group, itemId, name, buildTime, buildStackSize, ingredients);
-
-        craftImage = new NiftyImage(nifty.getRenderEngine(),
-                new EntitySlickRenderImage(ItemFactory.getInstance().getPrototype(itemId)));
-
-        ingredientImages = new NiftyImage[ingredients.length];
-        for (int i = 0; i < ingredientImages.length; i++) {
-            ingredientImages[i] = new NiftyImage(nifty.getRenderEngine(),
-                    new EntitySlickRenderImage(ItemFactory.getInstance().getPrototype(ingredients[i].getItemId())));
-        }
-    }
-
-    public NiftyCraftingItem(final Nifty nifty, final CraftingItem org) {
+    public NiftyCraftingItem(final Nifty nifty, final int index, final CraftingItem org) {
         super(org);
 
         craftImage = new NiftyImage(nifty.getRenderEngine(),
@@ -81,7 +56,7 @@ public class NiftyCraftingItem extends CraftingItem implements CraftingListEntry
     }
 
     @Override
-    public int getIngredientCount(final int index) {
+    public int getIngredientAmount(final int index) {
         return getIngredient(index).getCount();
     }
 
@@ -103,5 +78,15 @@ public class NiftyCraftingItem extends CraftingItem implements CraftingListEntry
     @Override
     public NiftyImage getIngredientImage(final int index) {
         return ingredientImages[index];
+    }
+
+    /**
+     * Get the text displayed in the tree.
+     *
+     * @return the text to display in the tree
+     */
+    @Override
+    public String getTreeLabel() {
+        return getName();
     }
 }

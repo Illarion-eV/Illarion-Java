@@ -34,9 +34,7 @@ import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantList;
-import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
-import illarion.common.config.ConfigSystem;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.Bresenham;
@@ -106,11 +104,6 @@ public final class Player {
      * Share of one perception point on the coverage of a tile.
      */
     private static final int PERCEPTION_COVER_SHARE = 4;
-
-    /**
-     * The player specific configuration of the client.
-     */
-    private final ConfigSystem cfg;
 
     /**
      * The graphical representation of the character.
@@ -185,7 +178,6 @@ public final class Player {
 
         if (!path.isDirectory() && !path.mkdir()) {
             IllaClient.fallbackToLogin(Lang.getMsg("error.character_settings"));
-            cfg = null;
             movementHandler = null;
             inventory = null;
 
@@ -193,7 +185,6 @@ public final class Player {
             return;
         }
 
-        cfg = new ConfigSystem(new File(path, "Player.xml.gz"));
         character.setName(name);
         // character.setVisible(Char.VISIBILITY_MAX);
         World.getPeople().setPlayerCharacter(character);
@@ -341,15 +332,6 @@ public final class Player {
     }
 
     /**
-     * Get the configuration interface for the character specific settings.
-     *
-     * @return the configuration interface
-     */
-    public Config getCfg() {
-        return cfg;
-    }
-
-    /**
      * Get the graphical representation of the players character.
      *
      * @return The character of the player
@@ -484,7 +466,7 @@ public final class Player {
      * @return true if the location is at the same level as the player
      */
     boolean isBaseLevel(final Location checkLoc) {
-        return loc.getScZ() == checkLoc.getScZ();
+        return getLocation().getScZ() == checkLoc.getScZ();
     }
 
     /**

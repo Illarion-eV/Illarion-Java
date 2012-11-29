@@ -31,12 +31,8 @@ import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.Item;
-import illarion.client.graphics.Tile;
 import illarion.client.gui.EntitySlickRenderImage;
-import illarion.client.input.ClickOnMapEvent;
-import illarion.client.input.DoubleClickOnMapEvent;
-import illarion.client.input.DragOnMapEvent;
-import illarion.client.input.MoveOnMapEvent;
+import illarion.client.input.*;
 import illarion.client.net.server.events.MapItemLookAtEvent;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
@@ -273,14 +269,26 @@ public final class GameMapHandler
             return;
         }
 
-        if ((data.getKey() == 0) && handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
-                data.getForwardingControl())) {
+        switch (data.getKey()) {
+            case 0:
+                handlePrimaryKeyDrag(data);
+                break;
+        }
+    }
+
+    /**
+     * Handle dragging events from the primary mouse key.
+     *
+     * @param data the event data
+     */
+    public void handlePrimaryKeyDrag(final DragOnMapEvent data) {
+        if (!World.getPlayer().getMovementHandler().isMouseMovementActive() &&
+                handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
+                        data.getForwardingControl())) {
             return;
         }
 
-        if (data.getKey() == 0) {
-            moveToMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
-        }
+        moveToMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
     }
 
     /**
@@ -292,8 +300,27 @@ public final class GameMapHandler
     }
 
     @EventSubscriber
-    public void handleMouseMove(final MoveOnMapEvent event) {
+    public void handlePointAt(final PointOnMapEvent event) {
+        if (World.getInteractionManager().isDragging()) {
+            return;
+        }
+        if (World.getPlayer().getMovementHandler().isMouseMovementActive()) {
+            return;
+        }
 
+        World.getMapDisplay().publishInteractionEvent(event);
+    }
+
+    @EventSubscriber
+    public void handleMouseMove(final MoveOnMapEvent event) {
+        if (World.getInteractionManager().isDragging()) {
+            return;
+        }
+        if (World.getPlayer().getMovementHandler().isMouseMovementActive()) {
+            return;
+        }
+
+        World.getMapDisplay().publishInteractionEvent(event);
     }
 
     /**
@@ -301,56 +328,26 @@ public final class GameMapHandler
      */
     @EventSubscriber
     public void handleDoubleClick(final DoubleClickOnMapEvent data) {
-        if (data.getKey() != 0) {
-            return;
-        }
-
-        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(data.getX(),
-                data.getY());
-
-        if (tile == null) {
-            return;
-        }
-
-        if (!tile.isInUseRange()) {
-            return;
-        }
-
-        if ((activeScreen != null) && (activeNifty != null)) {
-            data.getForwardingControl().releaseExclusiveMouse();
-
-            mouseEvent.initialize(data.getX(), data.getY(), data.getKey(), true, false, false);
-            mouseEvent.setButton0InitialDown(true);
-            activeScreen.mouseEvent(mouseEvent);
-        }
-
-        tile.use();
+        World.getMapDisplay().publishInteractionEvent(data);
     }
 
     private final TooltipHandler tooltipHandler;
 
     @EventSubscriber
     public void onMapItemLookAtEvent(final MapItemLookAtEvent event) {
-        final MapTile tile = World.getMap().getMapAt(event.getLocation());
-        if (tile == null) {
+        final MapTile targetTile = World.getMap().getMapAt(event.getLocation());
+        if (targetTile == null) {
             return;
         }
 
-        final Rectangle rect = new Rectangle();
-        final Item item = tile.getTopItem();
-        final int offsetX = Camera.getInstance().getViewportOffsetX();
-        final int offsetY = Camera.getInstance().getViewportOffsetY();
-        if (item != null) {
-            final Rectangle displayRect = item.getDisplayRect();
-            rect.set(displayRect.getX() + offsetX, displayRect.getY() + offsetX, displayRect.getWidth(),
-                    displayRect.getHeight());
-        } else {
-            final Tile graphicalTile = tile.getTile();
-            final Rectangle displayRect = graphicalTile.getDisplayRect();
-            rect.set(displayRect.getX() + offsetX, displayRect.getY() + offsetX, displayRect.getWidth(),
-                    displayRect.getHeight());
-
+        final Item targetItem = targetTile.getTopItem();
+        if (targetItem == null) {
+            return;
         }
-        tooltipHandler.showToolTip(rect, event);
+
+        final Rectangle originalDisplayRect = targetItem.getDisplayRect();
+        final Rectangle fixedRectangle = new Rectangle(originalDisplayRect);
+        fixedRectangle.move(-Camera.getInstance().getViewportOffsetX(), -Camera.getInstance().getViewportOffsetY());
+        tooltipHandler.showToolTip(fixedRectangle, event);
     }
 }

@@ -49,6 +49,7 @@ public final class GameScreenController implements ScreenController {
         addHandler(new CharStatusHandler());
 
         addHandler(new GameMapHandler(numberPopupHandler, tooltipHandler));
+        addHandler(new GameMiniMapHandler());
 
         addHandler(new InformHandler());
     }
@@ -63,7 +64,6 @@ public final class GameScreenController implements ScreenController {
     @SuppressWarnings("unchecked")
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
-
         for (final ScreenController childController : childControllers) {
             childController.bind(nifty, screen);
         }

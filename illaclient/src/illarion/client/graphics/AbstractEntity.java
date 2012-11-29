@@ -29,6 +29,7 @@ import illarion.common.util.RecycleObject;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
 
 /**
  * The entity is a object that is shown in the game. It contains a sprite and possibly a frame animation. Also it
@@ -751,6 +752,17 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     @Override
     public boolean processEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
         return false;
+    }
+
+    protected boolean isMouseInDisplayRect(final int mouseX, final int mouseY) {
+        final int mouseXonDisplay = mouseX + Camera.getInstance().getViewportOffsetX();
+        final int mouseYonDisplay = mouseY + Camera.getInstance().getViewportOffsetY();
+
+        return getDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay);
+    }
+
+    protected boolean isMouseInDisplayRect(final Input input) {
+        return isMouseInDisplayRect(input.getMouseX(), input.getMouseY());
     }
 
     /**

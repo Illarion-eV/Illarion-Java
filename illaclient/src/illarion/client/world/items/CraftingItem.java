@@ -29,6 +29,11 @@ import java.util.Arrays;
  */
 public class CraftingItem {
     /**
+     * The index of this item in the list.
+     */
+    private final int itemIndex;
+
+    /**
      * The group index this crafting belongs to.
      */
     private final int group;
@@ -61,6 +66,7 @@ public class CraftingItem {
     /**
      * Constructor that applies all required values.
      *
+     * @param itemIndex      the index of this item
      * @param group          the group this item belongs to
      * @param itemId         the ID of the item that is crafted
      * @param name           the name of the item that is crafted
@@ -68,8 +74,9 @@ public class CraftingItem {
      * @param buildStackSize the amount of items crafted at once
      * @param ingredients    the ingredients required to build this
      */
-    public CraftingItem(final int group, final ItemId itemId, final String name, final int buildTime,
-                        final int buildStackSize, final CraftingIngredientItem[] ingredients) {
+    public CraftingItem(final int itemIndex, final int group, final ItemId itemId, final String name,
+                        final int buildTime, final int buildStackSize, final CraftingIngredientItem[] ingredients) {
+        this.itemIndex = itemIndex;
         this.group = group;
         this.itemId = itemId;
         this.name = name;
@@ -79,8 +86,17 @@ public class CraftingItem {
     }
 
     public CraftingItem(final CraftingItem org) {
-        this(org.getGroup(), org.getItemId(), org.getName(), org.getBuildTime(), org.getBuildStackSize(),
-                org.ingredients);
+        this(org.getItemIndex(), org.getGroup(), org.getItemId(), org.getName(), org.getBuildTime(),
+                org.getBuildStackSize(), org.ingredients);
+    }
+
+    /**
+     * Get the index of this item.
+     *
+     * @return the index of the item
+     */
+    public int getItemIndex() {
+        return itemIndex;
     }
 
     /**

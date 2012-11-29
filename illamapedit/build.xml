@@ -106,8 +106,8 @@
         <jar jarfile="${jar}" basedir="${src}" includes="*.png" update="true"/>
         <jar jarfile="${jar}" basedir="${src}" includes="messages_*.properties" update="true"/>
         <jar jarfile="${jar}" basedir="${res}" includes="*.png" update="true"/>
-        <jar jarfile="${jar}" basedir="${res}" includes="*.txt" update="true"/>
-        <jar jarfile="${jar}" basedir="${res}" includes="*.html" update="true"/>
+        <jar jarfile="${jar}" basedir="${res}" includes="**/*.txt" update="true"/>
+        <jar jarfile="${jar}" basedir="${res}" includes="**/*.html" update="true"/>
         <jar jarfile="${jar}" basedir="${src}" includes="logging.properties" update="true" index="${build.index}"/>
     </target>
 </project>

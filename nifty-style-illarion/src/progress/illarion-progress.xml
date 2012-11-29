@@ -20,12 +20,12 @@
 <nifty-styles>
     <!-- Default Progress Bar -->
     <style id="illarion-progress">
-        <attributes height="28px" minImageWidth="28"/>
+        <attributes height="18px" minImageWidth="6"/>
     </style>
 
     <style id="illarion-progress#background">
         <attributes backgroundImage="data/gui/progressbar/progressbar-outer.png"
-                    imageMode="resize:13,2,13,13,13,2,13,2,13,2,13,13"/>
+                    imageMode="resize:8,2,8,9,8,2,8,2,8,2,8,9" padding="2px,3px"/>
     </style>
 
     <style id="illarion-progress#fillArea">
@@ -37,8 +37,8 @@
     </style>
 
     <style id="illarion-progress#fill">
-        <attributes filename="data/gui/progressbar/progressbar-inner.png" width="28px"
-                    height="100%" imageMode="resize:13,2,13,13,13,2,13,2,13,2,13,13"/>
+        <attributes filename="data/gui/progressbar/progressbar-inner.png" width="6px"
+                    height="100%" imageMode="resize:2,2,2,2,2,2,2,12,2,2,2,2"/>
     </style>
 
     <!-- Hitpoints Bar -->

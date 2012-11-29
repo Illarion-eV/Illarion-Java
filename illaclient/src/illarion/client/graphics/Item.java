@@ -18,8 +18,12 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.input.DoubleClickOnMapEvent;
+import illarion.client.input.PointOnMapEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.Resource;
+import illarion.client.util.LookAtTracker;
+import illarion.client.world.MapTile;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
@@ -64,8 +68,6 @@ public final class Item extends AbstractEntity implements Resource {
      */
     private ItemCount count;
 
-    private boolean displayNumber = false;
-
     /**
      * General informations about the item that do not vary from item instance
      * to instance and are stores in only one object for all instances of the
@@ -91,11 +93,14 @@ public final class Item extends AbstractEntity implements Resource {
     private final int paperdollingID;
 
     /**
-     * This indicates of the number of the item shall be shown. This number
-     * shows how many items are on this stack. Its only useful to show this in
-     * case the item actually is a stack, so {@link #count} is greater then 1
-     * and the item is the only one or the one at the top position on one
-     * location.
+     * The tile this item is located on.
+     */
+    private MapTile parentTile;
+
+    /**
+     * This indicates of the number of the item shall be shown. This number shows how many items are on this stack.
+     * Its only useful to show this in case the item actually is a stack, so {@link #count} is greater then 1 and the
+     * item is the only one or the one at the top position on one location.
      */
     private boolean showNumber;
 
@@ -191,16 +196,18 @@ public final class Item extends AbstractEntity implements Resource {
      * @param itemID    the ID of the item that shall be created
      * @param locColumn the column on the map where the item shall be created
      * @param locRow    the row on the map where the item shall be created
+     * @param parent    the tile this item is located on
      * @return the item object that shall be used, either a newly created one or
      *         a unused from the recycler
      */
     public static Item create(final ItemId itemID, final int locColumn,
-                              final int locRow) {
+                              final int locRow, final MapTile parent) {
         final Item item = ItemFactory.getInstance().getCommand(itemID.getValue());
         // Set variant and scaling, this functions check on their own if this is
         // allowed
         item.setVariant(locColumn, locRow);
         item.setScale(locColumn, locRow);
+        item.parentTile = parent;
         return item;
     }
 
@@ -211,11 +218,12 @@ public final class Item extends AbstractEntity implements Resource {
      *
      * @param itemID the ID of the item that shall be created
      * @param loc    the location where the item shall be shown
+     * @param parent the tile this item is located on
      * @return the item object that shall be used, either a newly created one or
      *         a unused from the recycler
      */
-    public static Item create(final ItemId itemID, final Location loc) {
-        return create(itemID, loc.getCol(), loc.getRow());
+    public static Item create(final ItemId itemID, final Location loc, final MapTile parent) {
+        return create(itemID, loc.getCol(), loc.getRow(), parent);
     }
 
     /**
@@ -255,7 +263,7 @@ public final class Item extends AbstractEntity implements Resource {
     public boolean draw(final Graphics g) {
         super.draw(g);
 
-        if (displayNumber) {
+        if (showNumber && (number != null)) {
             number.draw(g);
         }
 
@@ -312,6 +320,37 @@ public final class Item extends AbstractEntity implements Resource {
      */
     public ItemId getItemId() {
         return new ItemId(getId());
+    }
+
+    @Override
+    public boolean processEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
+        if (!parentTile.isAtPlayerLevel()) {
+            return false;
+        }
+
+        if (event instanceof PointOnMapEvent) {
+            final PointOnMapEvent moveEvent = (PointOnMapEvent) event;
+            if (!isMouseInDisplayRect(moveEvent.getX(), moveEvent.getY())) {
+                return false;
+            }
+
+            if (!LookAtTracker.isLookAtObject(parentTile)) {
+                LookAtTracker.setLookAtObject(parentTile);
+                parentTile.getInteractive().lookAt();
+            }
+            return true;
+        }
+
+        if (event instanceof DoubleClickOnMapEvent) {
+            final DoubleClickOnMapEvent moveEvent = (DoubleClickOnMapEvent) event;
+            if (!isMouseInDisplayRect(moveEvent.getX(), moveEvent.getY())) {
+                return false;
+            }
+
+            parentTile.getInteractive().use();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -447,6 +486,7 @@ public final class Item extends AbstractEntity implements Resource {
             number.recycle();
             number = null;
         }
+        parentTile = null;
     }
 
     /**
@@ -540,20 +580,8 @@ public final class Item extends AbstractEntity implements Resource {
     public void update(final GameContainer c, final int delta) {
         super.update(c, delta);
 
-        if (showNumber && (count.getValue() > 1) && (number != null)) {
-            if (!displayNumber) {
-                number.addToCamera(getDisplayX(), getDisplayY());
-                displayNumber = true;
-            }
-        } else {
-            if (displayNumber) {
-                number.addToCamera(getDisplayX(), getDisplayY());
-                number.update(c, delta);
-                displayNumber = false;
-            }
-        }
-
-        if ((number != null) && displayNumber) {
+        if (showNumber && (number != null)) {
+            number.addToCamera(getDisplayX(), getDisplayY());
             number.update(c, delta);
         }
     }

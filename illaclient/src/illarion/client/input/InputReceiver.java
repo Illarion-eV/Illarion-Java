@@ -101,6 +101,44 @@ public final class InputReceiver
     }
 
     /**
+     * This class is used as helper for the point at events.
+     */
+    private static final class PointAtHelper extends AbstractMultiActionHelper {
+        /**
+         * The x coordinate of the last reported click.
+         */
+        private int x;
+
+        /**
+         * The Y coordinate of the last reported click.
+         */
+        private int y;
+
+        /**
+         * Default constructor.
+         */
+        private PointAtHelper() {
+            super(50);
+        }
+
+        /**
+         * Update the data that is needed to report the state of the last move properly.
+         *
+         * @param posX the x coordinate where the click happened
+         * @param posY the y coordinate where the click happened
+         */
+        public void setInputData(final int posX, final int posY) {
+            x = posX;
+            y = posY;
+        }
+
+        @Override
+        public void executeAction(final int count) {
+            EventBus.publish(new PointOnMapEvent(x, y));
+        }
+    }
+
+    /**
      * The topic that is in general used to publish input events.
      */
     public static final String EB_TOPIC = "InputEvent";
@@ -116,22 +154,24 @@ public final class InputReceiver
     private final NiftyInputForwarding forwardingControl;
 
     /**
-     * Slicks input system that is monitored here.
-     */
-    private Input input;
-
-    /**
-     * The instance of the button multiclick helper that is used in this instance of the input receiver.
+     * The instance of the button multi-click helper that is used in this instance of the input receiver.
      */
     private final ButtonMultiClickHelper buttonMultiClickHelper = new ButtonMultiClickHelper();
 
+    /**
+     * The instance of the point at helper used by this instance of the input receiver.
+     */
+    private final PointAtHelper pointAtHelper = new PointAtHelper();
+
+    /**
+     * Create a new instance of the input receiver.
+     *
+     * @param forwardingInputSystem the forwarding system for the Nifty input
+     */
     public InputReceiver(final NiftyInputForwarding forwardingInputSystem) {
         forwardingControl = forwardingInputSystem;
     }
 
-    /**
-     * @see org.newdawn.slick.InputListener#keyPressed(int, char)
-     */
     @Override
     public void keyPressed(final int key, final char c) {
         keyMapper.handleKeyInput(key);
@@ -139,6 +179,8 @@ public final class InputReceiver
 
     @Override
     public void mouseMoved(final int oldX, final int oldY, final int newX, final int newY) {
+        pointAtHelper.setInputData(newX, newY);
+        pointAtHelper.pulse();
         EventBus.publish(new MoveOnMapEvent(newX, newY));
     }
 
@@ -165,7 +207,6 @@ public final class InputReceiver
 
     @Override
     public void setInput(final Input input) {
-        this.input = input;
     }
 
     @Override

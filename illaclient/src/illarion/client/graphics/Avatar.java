@@ -337,6 +337,14 @@ public final class Avatar extends AbstractEntity implements Resource {
         return super.processEvent(c, delta, event);
     }
 
+    /**
+     * This function handles click events on the avatars.
+     *
+     * @param c     the game container
+     * @param delta the time since the last update
+     * @param event the event that actually happened
+     * @return {@code true} in case the event was handled
+     */
     private boolean processEvent(final GameContainer c, final int delta, final ClickOnMapEvent event) {
         if (!isMouseInDisplayRect(event.getX(), event.getY())) {
             return false;
@@ -460,6 +468,7 @@ public final class Avatar extends AbstractEntity implements Resource {
     public void recycle() {
         hide();
         parentChar = null;
+        attackMarkerVisible = false;
         stopAnimation();
         CharacterFactory.getInstance().recycle(this);
     }
@@ -683,17 +692,6 @@ public final class Avatar extends AbstractEntity implements Resource {
 
     private boolean oldAttackMarkVisible;
     private boolean oldRenderName;
-
-    private boolean isMouseInDisplayRect(final int mouseX, final int mouseY) {
-        final int mouseXonDisplay = mouseX + Camera.getInstance().getViewportOffsetX();
-        final int mouseYonDisplay = mouseY + Camera.getInstance().getViewportOffsetY();
-
-        return getDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay);
-    }
-
-    private boolean isMouseInDisplayRect(final Input input) {
-        return isMouseInDisplayRect(input.getMouseX(), input.getMouseY());
-    }
 
     /**
      * Cause the current animation of the avatar to stop instantly. The parent

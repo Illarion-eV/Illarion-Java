@@ -221,6 +221,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             Sys.alert("Error", "The client caused a error while starting up: " + e.getMessage());
         }
 
+        cfg.save();
+
         startFinalKiller();
     }
 

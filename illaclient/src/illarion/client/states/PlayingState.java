@@ -71,6 +71,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     @Override
     protected void renderGame(final GameContainer container, final StateBasedGame game, final Graphics g)
             throws SlickException {
+        World.getMap().getMinimap().render();
         World.getMapDisplay().render(g, container);
     }
 

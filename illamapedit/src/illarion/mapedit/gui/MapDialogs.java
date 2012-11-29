@@ -55,6 +55,7 @@ public class MapDialogs {
         final JDialog dialog = new JDialog(owner, Lang.getMsg("gui.newmap"));
         dialog.getContentPane().setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.PAGE_AXIS));
         dialog.setResizable(false);
+        dialog.setLocationRelativeTo(null);
         dialog.setModal(true);
         final JSpinner width = new JSpinner(new SpinnerNumberModel(100, 0, UNSIGNED_MAX, 1));
         final JSpinner height = new JSpinner(new SpinnerNumberModel(100, 0, UNSIGNED_MAX, 1));
@@ -123,6 +124,7 @@ public class MapDialogs {
         }
         final JDialog dialog = new JDialog(owner, Lang.getMsg("gui.chooser"));
         dialog.setModal(true);
+        dialog.setLocationRelativeTo(null);
         dialog.setLayout(new BorderLayout());
 
         final JList list = new JList(maps);

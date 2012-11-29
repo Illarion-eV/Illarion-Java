@@ -35,18 +35,30 @@ public class DialogCraftingUpdateStartReceivedEvent {
     private final int requiredTime;
 
     /**
+     * The amount of items that remain to be produced automatically.
+     */
+    private final int remaining;
+
+    /**
      * Create a new instance of this event.
      *
      * @param requestId    the ID of the dialog that is updated
+     * @param remaining    the amount of items remaining to be produced
      * @param requiredTime the time required to finish the operation started with this update
-     * @throws IllegalArgumentException in case the {@code requiredTime} is less then {@code 0}
+     * @throws IllegalArgumentException in case the {@code requiredTime} parameter is less then {@code 0} or in case
+     *                                  the {@code remaining} parameter is less then {@code 0}
      */
-    public DialogCraftingUpdateStartReceivedEvent(final int requestId, final int requiredTime) {
+    public DialogCraftingUpdateStartReceivedEvent(final int requestId, final int remaining, final int requiredTime) {
         if (requiredTime < 0) {
             throw new IllegalArgumentException("The time must not be less then zero");
         }
+        if (remaining < 0) {
+            throw new IllegalArgumentException("The remaining item count must not be less then zero");
+        }
+
 
         this.requestId = requestId;
+        this.remaining = remaining;
         this.requiredTime = requiredTime;
     }
 
@@ -55,7 +67,7 @@ public class DialogCraftingUpdateStartReceivedEvent {
      *
      * @return the ID of the dialog
      */
-    public int getId() {
+    public int getDialogId() {
         return requestId;
     }
 
@@ -66,5 +78,14 @@ public class DialogCraftingUpdateStartReceivedEvent {
      */
     public int getRequiredTime() {
         return requiredTime;
+    }
+
+    /**
+     * Get the amount of items remaining to be produced.
+     *
+     * @return the amount of items remaining
+     */
+    public int getRemaining() {
+        return remaining;
     }
 }

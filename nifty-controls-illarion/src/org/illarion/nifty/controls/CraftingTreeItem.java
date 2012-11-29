@@ -18,33 +18,16 @@
  */
 package org.illarion.nifty.controls;
 
-import de.lessvoid.nifty.render.NiftyImage;
-import illarion.common.types.ItemId;
-
 /**
- * Created with IntelliJ IDEA.
- * User: Martin Karing
- * Date: 05.10.12
- * Time: 19:50
- * To change this template use File | Settings | File Templates.
+ * This is the parent interface for all crafting elements displayed in the tree.
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface CraftingListEntry {
-    int getIngredientCount();
-
-    ItemId getIngredientItemId(int index);
-
-    int getIngredientCount(int index);
-
-    String getName();
-
-    NiftyImage getImage();
-
+public interface CraftingTreeItem {
     /**
-     * Get the crafting time in seconds.
+     * Get the text displayed in the tree.
      *
-     * @return the crafting time in seconds
+     * @return the text to display in the tree
      */
-    double getCraftTime();
-
-    NiftyImage getIngredientImage(int index);
+    String getTreeLabel();
 }

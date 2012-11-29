@@ -536,6 +536,7 @@ public class ConfigSystem implements Config {
      * This only saves the configuration to the file system. The data is still
      * available in this class.
      */
+    @Override
     @SuppressWarnings("nls")
     public void save() {
         if (!changed) {
@@ -547,15 +548,13 @@ public class ConfigSystem implements Config {
         }
 
         if (configFile.exists() && !configFile.isFile()) {
-            LOGGER
-                    .warn("Configuration not saved: config file set to illegal value.");
+            LOGGER.warn("Configuration not saved: config file set to illegal value.");
             return;
         }
 
         if (configFile.exists()) {
             if (!configFile.delete()) {
-                LOGGER
-                        .warn("Configuration not saved: failed to access the config file.");
+                LOGGER.warn("Configuration not saved: failed to access the config file.");
                 return;
             }
         }
@@ -913,8 +912,7 @@ public class ConfigSystem implements Config {
             LOGGER.error("Configuration not loaded: config file invalid.");
             return;
         } catch (final IOException e) {
-            LOGGER
-                    .error("Configuration not loaded: error accessing the file system.");
+            LOGGER.error("Configuration not loaded: error accessing the file system.");
             return;
         } finally {
             if (xmlReader != null) {

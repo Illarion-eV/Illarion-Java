@@ -44,7 +44,7 @@ public final class ProgressControl extends AbstractController implements Progres
     private ImageMode originalImageMode;
     private ImageMode unscaledImageMode;
     private boolean currentOriginalMode;
-    private float currentProgress;
+    private double currentProgress;
 
     @Override
     public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
@@ -56,13 +56,13 @@ public final class ProgressControl extends AbstractController implements Progres
         originalImageMode = fill.getRenderer(ImageRenderer.class).getImage().getImageMode();
         unscaledImageMode = ImageModeFactory.getSharedInstance().createImageMode("fullimage", "direct");
         currentOriginalMode = true;
-        currentProgress = 0.f;
+        currentProgress = 0.0;
     }
 
     @Override
     public void onStartScreen() {
         maxWidth = getElement().findElementByName("#fillArea").getWidth();
-        final float oldCurrentProgress = currentProgress;
+        final double oldCurrentProgress = currentProgress;
         currentProgress = 2.f;
         setProgress(oldCurrentProgress);
     }
@@ -78,11 +78,11 @@ public final class ProgressControl extends AbstractController implements Progres
      * @param value the progress value
      */
     @Override
-    public void setProgress(final float value) {
+    public void setProgress(final double value) {
         final Element wrapper = getElement().findElementByName("#fillWrapper");
         final Element fill = getElement().findElementByName("#fill");
 
-        final float usedValue;
+        final double usedValue;
         if (value < 0.f) {
             usedValue = 0.f;
         } else if (value > 1.f) {
@@ -91,13 +91,13 @@ public final class ProgressControl extends AbstractController implements Progres
             usedValue = value;
         }
 
-        if (Math.abs(currentProgress - usedValue) < 0.001f) {
+        if (Math.abs(currentProgress - usedValue) < 0.001) {
             return;
         }
 
         currentProgress = usedValue;
 
-        final int width = Math.round(maxWidth * usedValue);
+        final int width = (int) Math.round(maxWidth * usedValue);
 
         fill.setConstraintWidth(SizeValue.px(width));
         wrapper.setConstraintWidth(SizeValue.px(width));

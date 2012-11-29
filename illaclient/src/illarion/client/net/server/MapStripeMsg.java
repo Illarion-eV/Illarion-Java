@@ -117,11 +117,6 @@ public final class MapStripeMsg
         map.finishTileUpdate();
 
         World.getLights().refresh();
-
-        if (World.getMapDisplay().isActive()) {
-            map.getMinimap().finishUpdate();
-        }
-
         return true;
     }
 

@@ -27,12 +27,7 @@ public final class DialogCraftingCraftEvent extends DialogEvent {
     /**
      * The item that was bought.
      */
-    private final CraftingListEntry item;
-
-    /**
-     * The index of the item that is bought.
-     */
-    private final int itemIndex;
+    private final CraftingItemEntry item;
 
     /**
      * The amount of items to craft
@@ -44,14 +39,11 @@ public final class DialogCraftingCraftEvent extends DialogEvent {
      *
      * @param id         the ID of the dialog
      * @param craftItem  the item to craft
-     * @param craftIndex the index of the item to craft
      * @param craftCount the amount of items to craft
      */
-    public DialogCraftingCraftEvent(final int id, final CraftingListEntry craftItem, final int craftIndex,
-                                    final int craftCount) {
+    public DialogCraftingCraftEvent(final int id, final CraftingItemEntry craftItem, final int craftCount) {
         super(id);
         item = craftItem;
-        itemIndex = craftIndex;
         count = craftCount;
     }
 
@@ -60,17 +52,8 @@ public final class DialogCraftingCraftEvent extends DialogEvent {
      *
      * @return the item that is created
      */
-    public CraftingListEntry getItem() {
+    public CraftingItemEntry getItem() {
         return item;
-    }
-
-    /**
-     * Get the index of the item the player crafts.
-     *
-     * @return the index of the item
-     */
-    public int getItemIndex() {
-        return itemIndex;
     }
 
     /**

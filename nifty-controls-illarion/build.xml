@@ -80,7 +80,7 @@
     </target>
 
     <target name="build_jar">
-        <jar jarfile="${jar}" basedir="${classes}" includes="org/illarion/nifty/controls/**">
+        <jar jarfile="${jar}" basedir="${classes}" includes="org/illarion/nifty/**">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Built-Date" value="${TODAY}"/>

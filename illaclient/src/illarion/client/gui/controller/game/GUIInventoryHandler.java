@@ -33,12 +33,12 @@ import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 import illarion.client.graphics.Item;
 import illarion.client.gui.EntitySlickRenderImage;
-import illarion.client.gui.events.TooltipsRemovedEvent;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.InventoryItemLookAtEvent;
 import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
+import illarion.client.util.LookAtTracker;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.interactive.InteractionManager;
@@ -286,8 +286,6 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         World.getInteractionManager().cancelDragging();
     }
 
-    private int lastLookedAtSlot = -1;
-
     @NiftyEventSubscriber(pattern = "invslot_.*")
     public void onMouseMoveOverInventory(final String topic, final NiftyMouseMovedEvent event) {
         final int slotId = getSlotNumber(topic);
@@ -296,11 +294,13 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
             return;
         }
 
-        if (lastLookedAtSlot == slotId) {
-            return;
+        final illarion.client.world.items.InventorySlot slot = World.getPlayer().getInventory().getItem(slotId);
+
+        if (!LookAtTracker.isLookAtObject(slot)) {
+            LookAtTracker.setLookAtObject(slot);
+            fetchLookAt(slot);
         }
 
-        fetchLookAt(slotId);
     }
 
     /**
@@ -309,15 +309,8 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
      *
      * @param slot the slot to fetch
      */
-    private void fetchLookAt(final int slot) {
-        lastLookedAtSlot = slot;
-
-        World.getPlayer().getInventory().getItem(slot).getInteractive().lookAt();
-    }
-
-    @EventSubscriber
-    public void onTooltipsRemovedEventsReceived(final TooltipsRemovedEvent event) {
-        lastLookedAtSlot = -1;
+    private void fetchLookAt(final illarion.client.world.items.InventorySlot slot) {
+        slot.getInteractive().lookAt();
     }
 
     @NiftyEventSubscriber(pattern = "invslot_.*")
@@ -448,7 +441,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
             rect.set(slot.getX(), slot.getY(), slot.getWidth(), slot.getHeight());
 
             if (rect.isInside(input.getMouseX(), input.getMouseY())) {
-                fetchLookAt(slotId);
+                fetchLookAt(World.getPlayer().getInventory().getItem(slotId));
             }
         } else {
             slotLabelVisibility[slotId] = false;

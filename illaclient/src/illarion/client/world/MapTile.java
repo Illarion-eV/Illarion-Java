@@ -103,7 +103,7 @@ public final class MapTile
     /**
      * Location of the tile.
      */
-    private transient Location loc;
+    private final Location loc;
 
     /**
      * Flag if there is still work to do for the LOS calculation on this tile.
@@ -142,6 +142,7 @@ public final class MapTile
      */
     @SuppressWarnings("nls")
     public MapTile() {
+        loc = new Location();
         tileId = ID_NONE;
         tile = null;
         lightSrc = null;
@@ -156,7 +157,6 @@ public final class MapTile
      */
     @Override
     public void activate(final int id) {
-        loc = new Location();
     }
 
     /**
@@ -602,7 +602,7 @@ public final class MapTile
     }
 
     /**
-     * Requesting the lookat informations for a tile from the server.
+     * Requesting the lookat information for a tile from the server.
      */
     public void lookAt() {
         final LookatTileCmd cmd = (LookatTileCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_LOOKAT_TILE);
@@ -616,7 +616,6 @@ public final class MapTile
      */
     @Override
     public void recycle() {
-        loc = null;
         GameFactory.getInstance().recycle(this);
     }
 
@@ -806,12 +805,17 @@ public final class MapTile
         // add a new item
         if (item == null) {
             // create new item
-            item = Item.create(itemId, loc);
+            item = Item.create(itemId, loc, this);
             item.setLight(light);
 
             updateItem(item, itemCount, index);
             // display on screen
-            item.show();
+
+            if (isHidden()) {
+                item.hide();
+            } else {
+                item.show();
+            }
 
             // add it to list
             if (index < items.size()) {
@@ -972,6 +976,15 @@ public final class MapTile
                 items.get(pos).enableNumbers(true);
             }
         }
+    }
+
+    /**
+     * Check if this tile is at the same level as the player.
+     *
+     * @return {@code true} in case the tile is on the same level as the player
+     */
+    public boolean isAtPlayerLevel() {
+        return World.getPlayer().isBaseLevel(getLocation());
     }
 
     /**

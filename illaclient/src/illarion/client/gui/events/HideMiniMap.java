@@ -16,35 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.net.server.events;
+package illarion.client.gui.events;
 
 /**
- * This event is send once the server sends a completed event for a crafting dialog
+ * This event is fired in order to hide the mini map from the GUI for what ever reason.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class DialogCraftingUpdateCompletedReceivedEvent {
-    /**
-     * The ID of the dialog.
-     */
-    private final int requestId;
-
-    /**
-     * Create a new instance of this event.
-     *
-     * @param requestId the ID of the dialog that is updated
-     * @throws IllegalArgumentException in case
-     */
-    public DialogCraftingUpdateCompletedReceivedEvent(final int requestId) {
-        this.requestId = requestId;
-    }
-
-    /**
-     * Get the ID of this dialog.
-     *
-     * @return the ID of the dialog
-     */
-    public int getDialogId() {
-        return requestId;
-    }
+@SuppressWarnings({"ClassMayBeInterface", "EmptyClass"})
+public final class HideMiniMap {
 }

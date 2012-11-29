@@ -165,6 +165,8 @@ public final class PlayerMovement
 
     private boolean walkTowards = false;
 
+    private boolean mouseMovementActive = false;
+
     private int walkTowardsDir = Location.DIR_ZERO;
 
     private int walkTowardsMode = -1;
@@ -322,6 +324,15 @@ public final class PlayerMovement
      */
     public boolean isMoving() {
         return moving;
+    }
+
+    /**
+     * Check if the character is currently moved and turned by mouse control.
+     *
+     * @return {@code true} in case the character is currently moving by the mouse
+     */
+    public boolean isMouseMovementActive() {
+        return mouseMovementActive;
     }
 
     /**
@@ -488,13 +499,17 @@ public final class PlayerMovement
         moveAnimation.removeTarget(this);
         stopWalkTowards();
         cancelAutoWalk();
-        animationFinished(false);
     }
 
+    /**
+     * Stop walking towards the mouse cursor. This stops all movement towards a direction and is releases the mouse
+     * movement. Once this is called {@link #isMouseMovementActive()} will return {@code false}.
+     */
     public void stopWalkTowards() {
         // GUI.getInstance().getMouseCursor()
         // .setCursor(MarkerFactory.CRSR_NORMAL);
         walkTowards = false;
+        mouseMovementActive = false;
     }
 
     /**
@@ -572,6 +587,8 @@ public final class PlayerMovement
             // .setCursor(MarkerFactory.CRSR_WALK_N);
             walkTowardsDir = Location.DIR_NORTH;
         }
+
+        mouseMovementActive = true;
 
         if (walkTowardsMode == MOVE_MODE_NONE) {
             walkTowards = false;
