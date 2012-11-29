@@ -16,7 +16,7 @@ function MoveItemBeforeMove(PLAYER, item, itemAfter)
   if PLAYER:isInRangeToPosition(POSITION,RADIUS)
       and ADDITIONALCONDITIONS(PLAYER)
       and questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then
-    -- informNLS(PLAYER, TEXT_DE, TEXT_EN)
+    PLAYER:inform( TEXT_DE, TEXT_EN)
     
     HANDLER(PLAYER)
     
@@ -27,13 +27,6 @@ function MoveItemBeforeMove(PLAYER, item, itemAfter)
   return false
 end
 
-function informNLS(player, textDe, textEn)
-  if player:getPlayerLanguage() == Player.german then
-    player:inform(player, item, textDe)
-  else
-    player:inform(player, item, textEn)
-  end
-end
 
 -- local TEXT_DE = TEXT -- German Text before movement -- Deutscher Text vor Bewegung
 -- local TEXT_EN = TEXT -- English Text before movement -- Englischer Text vor Bewegung

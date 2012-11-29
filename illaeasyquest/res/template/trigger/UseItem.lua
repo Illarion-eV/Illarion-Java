@@ -15,7 +15,7 @@ function UseItem( PLAYER, item, TargetItem, counter, Param, ltstate )
   if PLAYER:isInRangeToPosition(POSITION,RADIUS)
       and ADDITIONALCONDITIONS(PLAYER)
       and questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then
-    --informNLS(PLAYER, TEXT_DE, TEXT_EN)
+    PLAYER:inform(TEXT_DE, TEXT_EN)
     
     HANDLER(PLAYER)
     
@@ -26,13 +26,6 @@ function UseItem( PLAYER, item, TargetItem, counter, Param, ltstate )
   return false
 end
 
-function informNLS(player, textDe, textEn)
-  if player:getPlayerLanguage() == Player.german then
-    player:inform(player, item, textDe)
-  else
-    player:inform(player, item, textEn)
-  end
-end
 
 -- local TEXT_DE = TEXT -- German Use Text -- Deutscher Text beim Benutzen
 -- local TEXT_EN = TEXT -- English Use Text -- Englischer Text beim Benutzen

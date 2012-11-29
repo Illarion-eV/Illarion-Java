@@ -15,7 +15,7 @@ function CharacterOnField( PLAYER )
   if PLAYER:isInRangeToPosition(POSITION,RADIUS)
       and ADDITIONALCONDITIONS(PLAYER)
       and questsystem.base.fulfilsPrecondition(PLAYER, QUEST_NUMBER, PRECONDITION_QUESTSTATE) then
-    -- informNLS(PLAYER, TEXT_DE, TEXT_EN)
+    PLAYER:inform(TEXT_DE, TEXT_EN)
     
     HANDLER(PLAYER)
     
@@ -24,14 +24,6 @@ function CharacterOnField( PLAYER )
   end
 
   return false
-end
-
-function informNLS(player, textDe, textEn)
-  if player:getPlayerLanguage() == Player.german then
-    player:inform(player, item, textDe)
-  else
-    player:inform(player, item, textEn)
-  end
 end
 
 
