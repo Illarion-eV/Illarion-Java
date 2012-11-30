@@ -18,6 +18,7 @@
  */
 package org.illarion.nifty.controls.tooltip;
 
+import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.AbstractController;
 import de.lessvoid.nifty.controls.Label;
@@ -27,6 +28,7 @@ import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.tools.Color;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
 import illarion.common.types.Money;
@@ -47,16 +49,14 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
                      final Properties parameter, final Attributes controlDefinitionAttributes) {
         bind(element);
 
-        final Label title = element.findNiftyControl("#title", Label.class);
-        title.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
-        title.setText(controlDefinitionAttributes.get("title"));
-        title.setColor(controlDefinitionAttributes.getAsColor("titleColor"));
+        boolean largeToolTip = false;
 
         final String description = controlDefinitionAttributes.get("description");
         if (!isNullOrEmpty(description)) {
             final Label descriptionLabel = element.findNiftyControl("#description", Label.class);
             descriptionLabel.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
             descriptionLabel.setText(description);
+            largeToolTip = true;
         } else {
             removeElement(element.findElementByName("#description"));
         }
@@ -65,6 +65,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         if (!isNullOrEmpty(producer)) {
             final Label producedBy = element.findNiftyControl("#createdByLabel", Label.class);
             applyTextToLabel(producedBy, controlDefinitionAttributes.get("producer"));
+            largeToolTip = true;
         } else {
             removeElement(element.findElementByName("#createByLine"));
         }
@@ -78,12 +79,14 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             applyMoney(element, moneyValue.getGold(), "#worthGoldCount", "#worthGoldImage");
             applyMoney(element, moneyValue.getSilver(), "#worthSilverCount", "#worthSilverImage");
             applyMoney(element, moneyValue.getCopper(), "#worthCopperCount", "#worthCopperImage");
+            largeToolTip = true;
         }
 
         final String weight = controlDefinitionAttributes.get("weight");
         if (!isNullOrEmpty(weight)) {
             final Label qualityText = element.findNiftyControl("#weightLabel", Label.class);
             applyTextToLabel(qualityText, weight);
+            largeToolTip = true;
         } else {
             removeElement(element.findElementByName("#weightLine"));
         }
@@ -92,6 +95,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         if (!isNullOrEmpty(quality)) {
             final Label qualityText = element.findNiftyControl("#qualityText", Label.class);
             applyTextToLabel(qualityText, quality);
+            largeToolTip = true;
         } else {
             removeElement(element.findElementByName("#qualityLine"));
         }
@@ -100,6 +104,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         if (!isNullOrEmpty(durability)) {
             final Label qualityText = element.findNiftyControl("#durabilityText", Label.class);
             applyTextToLabel(qualityText, durability);
+            largeToolTip = true;
         } else {
             removeElement(element.findElementByName("#durabilityLine"));
         }
@@ -122,15 +127,40 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             applyGem(nifty, element, obsidian, "#obsidianImage", "obsidian");
             applyGem(nifty, element, amethyst, "#amethystImage", "amethyst");
             applyGem(nifty, element, topaz, "#topazImage", "topaz");
+            largeToolTip = true;
         }
 
         final String gemBonus = controlDefinitionAttributes.get("gemBonus");
         if (!isNullOrEmpty(gemBonus)) {
             final Label qualityText = element.findNiftyControl("#gemBonusText", Label.class);
             applyTextToLabel(qualityText, gemBonus);
+            largeToolTip = true;
         } else {
             removeElement(element.findElementByName("#gemBonusLine"));
         }
+
+        final Label title = element.findNiftyControl("#title", Label.class);
+        final String titleText = controlDefinitionAttributes.get("title");
+        final Color titleColor = controlDefinitionAttributes.getAsColor("titleColor");
+        if (largeToolTip) {
+            title.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
+            System.out.println("Large tooltip!");
+        } else {
+            final TextRenderer textRenderer = title.getElement().getRenderer(TextRenderer.class);
+            textRenderer.setFont(nifty.createFont("textFont"));
+            final int width = textRenderer.getFont().getWidth(titleText);
+            if (width >= 250) {
+                textRenderer.setLineWrapping(true);
+            } else {
+                title.getElement().setMarginBottom(SizeValue.px(0));
+                title.getElement().setConstraintWidth(SizeValue.px(width));
+                title.getElement().setConstraintHeight(SizeValue.px(textRenderer.getFont().getHeight()));
+            }
+
+            System.out.println("Small tooltip!");
+        }
+        title.setText(titleText);
+        title.setColor(titleColor);
 
         element.layoutElements();
     }
@@ -141,7 +171,12 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param element the element to remove
      */
     private static void removeElement(final Element element) {
-        element.markForRemoval();
+        element.markForRemoval(new EndNotify() {
+            @Override
+            public void perform() {
+                element.getParent().layoutElements();
+            }
+        });
     }
 
     /**
