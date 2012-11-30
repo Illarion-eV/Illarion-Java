@@ -39,7 +39,7 @@ public final class Town extends ConsequenceParser {
      * This pattern is used to find the strings in the condition and to remove them properly.
      */
     @SuppressWarnings("nls")
-    private static final Pattern STRING_FIND = Pattern.compile("\\s*town\\s*=\\s*([a-z]+)\\s*",
+    private static final Pattern STRING_FIND = Pattern.compile("\\s*town\\s*=\\s*([a-z]+)\\s*,*\\s*",
             Pattern.CASE_INSENSITIVE);
 
     /**
