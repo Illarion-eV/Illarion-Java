@@ -37,10 +37,6 @@
         <icon href="jnlp_ico/illarion_easyquest.ico" height="64" width="64" depth="32" kind="default" size="165056"/>
         <icon href="jnlp_ico/illarion_easyquest.ico" height="32" width="32" depth="32" kind="default" size="165056"/>
         <icon href="jnlp_ico/illarion_easyquest.ico" height="16" width="16" depth="32" kind="default" size="165056"/>
-        <icon href="jnlp_ico/illarion_easyquest.icns" height="128" width="128" depth="32" kind="default" size="123725"/>
-        <icon href="jnlp_ico/illarion_easyquest.icns" height="64" width="64" depth="32" kind="default" size="123725"/>
-        <icon href="jnlp_ico/illarion_easyquest.icns" height="32" width="32" depth="32" kind="default" size="123725"/>
-        <icon href="jnlp_ico/illarion_easyquest.icns" height="16" width="16" depth="32" kind="default" size="123725 "/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>

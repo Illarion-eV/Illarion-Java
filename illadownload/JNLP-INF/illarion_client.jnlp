@@ -38,10 +38,6 @@
         <icon href="jnlp_ico/illarion_client.ico" height="64" width="64" depth="32" kind="default" size="232755"/>
         <icon href="jnlp_ico/illarion_client.ico" height="32" width="32" depth="32" kind="default" size="232755"/>
         <icon href="jnlp_ico/illarion_client.ico" height="16" width="16" depth="32" kind="default" size="232755"/>
-        <icon href="jnlp_ico/illarion_client.icns" height="128" width="128" depth="32" kind="default" size="154868"/>
-        <icon href="jnlp_ico/illarion_client.icns" height="64" width="64" depth="32" kind="default" size="154868"/>
-        <icon href="jnlp_ico/illarion_client.icns" height="32" width="32" depth="32" kind="default" size="154868"/>
-        <icon href="jnlp_ico/illarion_client.icns" height="16" width="16" depth="32" kind="default" size="154868"/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>
