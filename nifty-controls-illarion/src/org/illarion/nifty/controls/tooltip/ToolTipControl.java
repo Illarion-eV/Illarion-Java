@@ -156,8 +156,6 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
                 title.getElement().setConstraintWidth(SizeValue.px(width));
                 title.getElement().setConstraintHeight(SizeValue.px(textRenderer.getFont().getHeight()));
             }
-
-            System.out.println("Small tooltip!");
         }
         title.setText(titleText);
         title.setColor(titleColor);
