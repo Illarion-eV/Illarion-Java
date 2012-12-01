@@ -22,26 +22,23 @@ import illarion.common.graphics.MapConstants;
 import illarion.common.util.FastMath;
 
 /**
- * This class is used to store and calculate the dimensions of the map. It
- * requires the size of the screen as information to offer the proper values.
- * This class requires updates upon changes of the screen size.
+ * This class is used to store and calculate the dimensions of the map. It requires the size of the screen as
+ * information to offer the proper values. This class requires updates upon changes of the screen size.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class MapDimensions {
     /**
-     * This is the amount of rows and columns that are requested from the server
-     * in addition to the tiles needed to fill the screen size. If this value is
-     * chosen too high the result is that large items and light sources are
+     * This is the amount of rows and columns that are requested from the server in addition to the tiles needed to
+     * fill the screen size. If this value is chosen too high the result is that large items and light sources are
      * known to the client too late and just "pop" in.
      */
-    private static final int ADD_MAP_RANGE = 5;
+    private static final int ADD_MAP_RANGE = 4;
 
     /**
-     * This is the additional map range that is attached to the bottom of the
-     * clipping ranges.
+     * This is the additional map range that is attached to the bottom of the clipping ranges.
      */
-    private static final int ADD_MAP_RANGE_BOTTOM = 9;
+    private static final int ADD_MAP_RANGE_BOTTOM = ADD_MAP_RANGE + 6;
 
     /**
      * The singleton instance of this class.
@@ -77,18 +74,18 @@ public final class MapDimensions {
     }
 
     /**
-     * The offset from the center of the screen towards the bottom in tile
-     * stripes. Any tile beyond this offset is allowed to be clipped away.
+     * The offset from the center of the screen towards the bottom in tile stripes. Any tile beyond this offset is
+     * allowed to be clipped away.
      *
-     * @return the clipping distance from the center towards the bottm
+     * @return the clipping distance from the center towards the bottom
      */
     public int getClippingOffsetBottom() {
         return clippingOffsetBottom;
     }
 
     /**
-     * The offset from the center of the screen towards the left in tile
-     * stripes. Any tile beyond this offset is allowed to be clipped away.
+     * The offset from the center of the screen towards the left in tile stripes. Any tile beyond this offset is
+     * allowed to be clipped away.
      *
      * @return the clipping distance from the center towards the left
      */
@@ -97,8 +94,8 @@ public final class MapDimensions {
     }
 
     /**
-     * The offset from the center of the screen towards the right in tile
-     * stripes. Any tile beyond this offset is allowed to be clipped away.
+     * The offset from the center of the screen towards the right in tile stripes. Any tile beyond this offset is
+     * allowed to be clipped away.
      *
      * @return the clipping distance from the center towards the right
      */
@@ -107,8 +104,8 @@ public final class MapDimensions {
     }
 
     /**
-     * The offset from the center of the screen towards the top in tile stripes.
-     * Any tile beyond this offset is allowed to be clipped away.
+     * The offset from the center of the screen towards the top in tile stripes. Any tile beyond this offset is
+     * allowed to be clipped away.
      *
      * @return the clipping distance from the center towards the top
      */
@@ -117,9 +114,8 @@ public final class MapDimensions {
     }
 
     /**
-     * The height in pixels of the screen that needs to be rendered. This is
-     * usually slightly larger then the visible screen. It represents the size
-     * of the map in pixels that is requested from the server.
+     * The height in pixels of the screen that needs to be rendered. This is usually slightly larger then the visible
+     * screen. It represents the size of the map in pixels that is requested from the server.
      *
      * @return the height of the off screen
      */
@@ -128,9 +124,8 @@ public final class MapDimensions {
     }
 
     /**
-     * The width in pixels of the screen that needs to be rendered. This is
-     * usually slightly larger then the visible screen. It represents the size
-     * of the map in pixels that is requested from the server.
+     * The width in pixels of the screen that needs to be rendered. This is usually slightly larger then the visible
+     * screen. It represents the size of the map in pixels that is requested from the server.
      *
      * @return the width of the off screen
      */
@@ -175,9 +170,8 @@ public final class MapDimensions {
     }
 
     /**
-     * Report a new screen size to the application. This needs to be done upon
-     * every update of the screen size. This function will cause all internal
-     * values to be recalculated in case new values are reported.
+     * Report a new screen size to the application. This needs to be done upon every update of the screen size. This
+     * function will cause all internal values to be recalculated in case new values are reported.
      *
      * @param width  the width of the screen in pixels
      * @param height the height of the screen in pixels

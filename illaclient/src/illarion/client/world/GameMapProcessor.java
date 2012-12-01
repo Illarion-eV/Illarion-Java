@@ -62,16 +62,6 @@ public class GameMapProcessor extends Thread implements
     private final boolean insideStates[] = new boolean[2];
 
     /**
-     * The last height that was reported to this processor.
-     */
-    public int lastReportedHeight = -1;
-
-    /**
-     * The last width that was reported to this processor.
-     */
-    public int lastReportedWidth = -1;
-
-    /**
      * The map that is handled by this processor instance.
      */
     private final GameMap parent;
@@ -214,15 +204,18 @@ public class GameMapProcessor extends Thread implements
          */
         if ((playerLoc.getScZ() + 2) < tileLoc.getScZ()) {
             parent.removeTile(key);
-            LOGGER.debug("Removed tile at location " + tileLoc.toString()
-                    + " (tile.x > player.z + 2)");
+
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (tile.x > player.z + 2)");
+            }
             return true;
         }
 
         if ((playerLoc.getScZ() - 2) > tileLoc.getScZ()) {
             parent.removeTile(key);
-            LOGGER.debug("Removed tile at location " + tileLoc.toString()
-                    + " (tile.x < player.z - 2)");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (tile.x < player.z - 2)");
+            }
             return true;
         }
 
@@ -231,22 +224,24 @@ public class GameMapProcessor extends Thread implements
         if ((playerLoc.getCol() + mapDim.getClippingOffsetLeft()) > tileLoc
                 .getCol()) {
             parent.removeTile(key);
-            LOGGER.debug("Removed tile at location " + tileLoc.toString()
-                    + " (outside of left clipping)");
-            LOGGER.debug("Ply Col: " + Integer.toString(playerLoc.getCol())
-                    + " Clipping Left: "
-                    + Integer.toString(mapDim.getClippingOffsetLeft())
-                    + " Tile Col: " + Integer.toString(tileLoc.getCol()));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (outside of left clipping)");
+                LOGGER.debug("Ply Col: " + Integer.toString(playerLoc.getCol()) + " Clipping Left: "
+                        + Integer.toString(mapDim.getClippingOffsetLeft())
+                        + " Tile Col: " + Integer.toString(tileLoc.getCol()));
+            }
             return true;
         }
 
         if ((playerLoc.getCol() + mapDim.getClippingOffsetRight()) < tileLoc
                 .getCol()) {
             parent.removeTile(key);
-            LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (outside of right clipping)");
-            LOGGER.debug("Ply Col: " + Integer.toString(playerLoc.getCol()) + " Clipping Right: "
-                    + Integer.toString(mapDim.getClippingOffsetRight())
-                    + " Tile Col: " + Integer.toString(tileLoc.getCol()));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (outside of right clipping)");
+                LOGGER.debug("Ply Col: " + Integer.toString(playerLoc.getCol()) + " Clipping Right: "
+                        + Integer.toString(mapDim.getClippingOffsetRight())
+                        + " Tile Col: " + Integer.toString(tileLoc.getCol()));
+            }
             return true;
         }
 
@@ -255,20 +250,24 @@ public class GameMapProcessor extends Thread implements
         if ((playerLoc.getRow() + mapDim.getClippingOffsetTop()) < (tileLoc
                 .getRow() - level)) {
             parent.removeTile(key);
-            LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (outside of top clipping)");
-            LOGGER.debug("Ply Row: " + Integer.toString(playerLoc.getRow())
-                    + " Clipping Top: " + Integer.toString(mapDim.getClippingOffsetTop())
-                    + " Tile Row: " + Integer.toString(tileLoc.getRow()));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (outside of top clipping)");
+                LOGGER.debug("Ply Row: " + Integer.toString(playerLoc.getRow())
+                        + " Clipping Top: " + Integer.toString(mapDim.getClippingOffsetTop())
+                        + " Tile Row: " + Integer.toString(tileLoc.getRow()));
+            }
             return true;
         }
 
         if ((playerLoc.getRow() + mapDim.getClippingOffsetBottom()) > (tileLoc
                 .getRow() + level)) {
             parent.removeTile(key);
-            LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (outside of bottom clipping)");
-            LOGGER.debug("Ply Row: " + Integer.toString(playerLoc.getRow())
-                    + " Clipping Bottom: " + Integer.toString(mapDim.getClippingOffsetBottom())
-                    + " Tile Row: " + Integer.toString(tileLoc.getRow()));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (outside of bottom clipping)");
+                LOGGER.debug("Ply Row: " + Integer.toString(playerLoc.getRow())
+                        + " Clipping Bottom: " + Integer.toString(mapDim.getClippingOffsetBottom())
+                        + " Tile Row: " + Integer.toString(tileLoc.getRow()));
+            }
             return true;
         }
 
