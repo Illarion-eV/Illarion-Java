@@ -27,17 +27,12 @@
         </description>
         <description kind="one-line">The client of the online roleplaying game Illarion</description>
         <description kind="tooltip">Illarion Game Client</description>
-        <icon href="illarion_client16.png" height="16" width="16" depth="32" kind="default" size="792"/>
-        <icon href="illarion_client32.png" height="32" width="32" depth="32" kind="default" size="2728"/>
-        <icon href="illarion_client48.png" height="48" width="48" depth="32" kind="default" size="5376"/>
-        <icon href="illarion_client64.png" height="64" width="64" depth="32" kind="default" size="8805"/>
-        <icon href="illarion_client128.png" height="128" width="128" depth="32" kind="default" size="28784"/>
-        <icon href="illarion_client256.png" height="256" width="256" depth="32" kind="default" size="95062"/>
-        <icon href="illarion_client.ico" height="256" width="256" depth="32" kind="shortcut" size="232755"/>
-        <icon href="illarion_client.ico" height="128" width="128" depth="32" kind="shortcut" size="232755"/>
-        <icon href="illarion_client.ico" height="64" width="64" depth="32" kind="shortcut" size="232755"/>
-        <icon href="illarion_client.ico" height="32" width="32" depth="32" kind="shortcut" size="232755"/>
-        <icon href="illarion_client.ico" height="16" width="16" depth="32" kind="shortcut" size="232755"/>
+        <icon href="illarion_client16.png" height="16" width="16" depth="32" size="792"/>
+        <icon href="illarion_client32.png" height="32" width="32" depth="32" size="2728"/>
+        <icon href="illarion_client48.png" height="48" width="48" depth="32" size="5376"/>
+        <icon href="illarion_client64.png" height="64" width="64" depth="32" size="8805"/>
+        <icon href="illarion_client128.png" height="128" width="128" depth="32" size="28784"/>
+        <icon href="illarion_client256.png" height="256" width="256" depth="32" size="95062"/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>
