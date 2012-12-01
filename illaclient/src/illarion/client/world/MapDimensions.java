@@ -184,20 +184,13 @@ public final class MapDimensions {
         onScreenWidth = width;
         onScreenHeight = height;
 
-        final int heightInTiles =
-                FastMath
-                        .ceil(((float) height / (float) MapConstants.TILE_H) * 2.f);
-        final int widthInTiles =
-                FastMath.ceil(((float) width / (float) MapConstants.TILE_W) * 2.f);
+        final int heightInTiles = FastMath.ceil(((float) height / (float) MapConstants.TILE_H) * 2.f);
+        final int widthInTiles = FastMath.ceil(((float) width / (float) MapConstants.TILE_W) * 2.f);
 
-        clippingOffsetTop =
-                FastMath.ceil(heightInTiles / 2.f) + ADD_MAP_RANGE + 2;
-        clippingOffsetBottom =
-                -FastMath.ceil(heightInTiles / 2.f) - ADD_MAP_RANGE_BOTTOM - 2;
-        clippingOffsetLeft =
-                -FastMath.ceil(widthInTiles / 2.f) - ADD_MAP_RANGE - 2;
-        clippingOffsetRight =
-                FastMath.ceil(widthInTiles / 2.f) + ADD_MAP_RANGE + 2;
+        clippingOffsetTop = FastMath.ceil(heightInTiles / 2.f) + ADD_MAP_RANGE + 2;
+        clippingOffsetBottom = -FastMath.ceil(heightInTiles / 2.f) - ADD_MAP_RANGE_BOTTOM - 2;
+        clippingOffsetLeft = -FastMath.ceil(widthInTiles / 2.f) - ADD_MAP_RANGE - 2;
+        clippingOffsetRight = FastMath.ceil(widthInTiles / 2.f) + ADD_MAP_RANGE + 2;
 
         stripesWidth = widthInTiles + ADD_MAP_RANGE + ADD_MAP_RANGE;
         stripesHeight = heightInTiles + ADD_MAP_RANGE + ADD_MAP_RANGE;
