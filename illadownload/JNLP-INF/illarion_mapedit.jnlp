@@ -30,9 +30,9 @@
         <icon href="jnlp_ico/illarion_mapedit32.png" height="32" width="32" kind="default" size="1326"/>
         <icon href="jnlp_ico/illarion_mapedit48.png" height="32" width="32" kind="default" size="2928"/>
         <icon href="jnlp_ico/illarion_mapedit64.png" height="32" width="32" kind="default" size="4343"/>
-        <icon href="jnlp_ico/illarion_easyquest.ico" height="64" width="64" depth="32" kind="default" size="32038"/>
-        <icon href="jnlp_ico/illarion_mapedit.ico" height="32" width="32" depth="32" kind="default" size="32038"/>
-        <icon href="jnlp_ico/illarion_mapedit.ico" height="16" width="16" depth="32" kind="default" size="32038"/>
+        <icon href="jnlp_ico/illarion_mapedit.ico" height="64" width="64" depth="32" kind="shortcut" size="32038"/>
+        <icon href="jnlp_ico/illarion_mapedit.ico" height="32" width="32" depth="32" kind="shortcut" size="32038"/>
+        <icon href="jnlp_ico/illarion_mapedit.ico" height="16" width="16" depth="32" kind="shortcut" size="32038"/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>

@@ -37,11 +37,11 @@
         <icon href="jnlp_ico/illarion_download128.png" height="128" width="128" depth="32" kind="default" size="30789"/>
         <icon href="jnlp_ico/illarion_download256.png" height="256" width="256" depth="32" kind="default"
               size="101436"/>
-        <icon href="jnlp_ico/illarion_download.ico" height="256" width="256" depth="32" kind="default" size="214499"/>
-        <icon href="jnlp_ico/illarion_download.ico" height="128" width="128" depth="32" kind="default" size="214499"/>
-        <icon href="jnlp_ico/illarion_download.ico" height="64" width="64" depth="32" kind="default" size="214499"/>
-        <icon href="jnlp_ico/illarion_download.ico" height="32" width="32" depth="32" kind="default" size="214499"/>
-        <icon href="jnlp_ico/illarion_download.ico" height="16" width="16" depth="32" kind="default" size="214499"/>
+        <icon href="jnlp_ico/illarion_download.ico" height="256" width="256" depth="32" kind="shortcut" size="214499"/>
+        <icon href="jnlp_ico/illarion_download.ico" height="128" width="128" depth="32" kind="shortcut" size="214499"/>
+        <icon href="jnlp_ico/illarion_download.ico" height="64" width="64" depth="32" kind="shortcut" size="214499"/>
+        <icon href="jnlp_ico/illarion_download.ico" height="32" width="32" depth="32" kind="shortcut" size="214499"/>
+        <icon href="jnlp_ico/illarion_download.ico" height="16" width="16" depth="32" kind="shortcut" size="214499"/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>
