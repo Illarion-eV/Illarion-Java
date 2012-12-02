@@ -18,6 +18,7 @@
  */
 package illarion.client.loading;
 
+import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.resources.*;
 import illarion.client.resources.loaders.*;
 import illarion.client.world.World;
@@ -39,8 +40,7 @@ public final class ResourceTableLoading implements DeferredResource {
      */
     @Override
     public void load() throws IOException {
-        final List<AbstractResourceLoader<? extends Resource>> taskList = new
-                ArrayList<AbstractResourceLoader<? extends Resource>>();
+        final List<AbstractResourceLoader<? extends Resource>> taskList = new ArrayList<AbstractResourceLoader<? extends Resource>>();
 
         taskList.add(new TileLoader().setTarget(TileFactory.getInstance()));
         taskList.add(new OverlayLoader().setTarget(OverlayFactory.getInstance()));
@@ -56,6 +56,8 @@ public final class ResourceTableLoading implements DeferredResource {
         } catch (final InterruptedException e) {
             throw new IOException(e);
         }
+
+        ShaderManager.getInstance().load();
     }
 
     /**

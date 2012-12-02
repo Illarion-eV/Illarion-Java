@@ -21,6 +21,9 @@ package illarion.client.world;
 import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
 import de.lessvoid.nifty.slick2d.render.image.SlickRenderImage;
 import illarion.client.graphics.Tile;
+import illarion.client.graphics.shader.MiniMapShader;
+import illarion.client.graphics.shader.Shader;
+import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.gui.events.HideMiniMap;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.resources.TileFactory;
@@ -33,7 +36,6 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.opengl.shader.ShaderProgram;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -67,7 +69,7 @@ public final class GameMiniMap {
         /**
          * The shader required to render the map.
          */
-        private ShaderProgram miniMapShader;
+        private MiniMapShader miniMapShader;
 
         @Override
         public void renderImage(final Graphics g, final int x, final int y, final int width, final int height,
@@ -86,15 +88,7 @@ public final class GameMiniMap {
             }
 
             if (miniMapShader == null) {
-                try {
-                    miniMapShader = ShaderProgram.loadProgram(
-                            "illarion/client/graphics/shader/minimap.vert",
-                            "illarion/client/graphics/shader/minimap.frag");
-                } catch (SlickException e) {
-                    disableMiniMap();
-                    LOGGER.error("Error loading shader!", e);
-                    return;
-                }
+                miniMapShader = ShaderManager.getShader(Shader.MiniMap, MiniMapShader.class);
             }
 
             g.pushTransform();
@@ -104,12 +98,12 @@ public final class GameMiniMap {
             g.translate(-centerX, -centerY);
 
             miniMapShader.bind();
-            miniMapShader.setUniform1i("tex0", 0);
+            miniMapShader.setTexture(0);
 
             final float miniMapCenterX = (minimapOriginX + (MINI_MAP_WIDTH / 2.f)) / WORLDMAP_WIDTH;
             final float miniMapCenterY = (minimapOriginY + (MINI_MAP_HEIGHT / 2.f)) / WORLDMAP_HEIGHT;
-            miniMapShader.setUniform2f("center", miniMapCenterX, miniMapCenterY);
-            miniMapShader.setUniform1f("radius", (float) MINI_MAP_HEIGHT / 2.f / (float) WORLDMAP_HEIGHT);
+            miniMapShader.setCenter(miniMapCenterX, miniMapCenterY);
+            miniMapShader.setRadius((float) MINI_MAP_HEIGHT / 2.f / (float) WORLDMAP_HEIGHT);
 
             g.drawImage(worldmapTexture, x, y, x + w, y + h, srcX + minimapOriginX, srcY + minimapOriginY,
                     srcX + minimapOriginX + srcW, srcY + minimapOriginY + srcH,

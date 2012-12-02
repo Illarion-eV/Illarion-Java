@@ -19,6 +19,9 @@
 package illarion.client.graphics;
 
 import illarion.client.IllaClient;
+import illarion.client.graphics.shader.FogShader;
+import illarion.client.graphics.shader.Shader;
+import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.world.GameMap;
 import illarion.client.world.World;
 import illarion.common.graphics.Layers;
@@ -30,7 +33,6 @@ import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.*;
 import org.newdawn.slick.opengl.renderer.SGL;
-import org.newdawn.slick.opengl.shader.ShaderProgram;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -454,23 +456,17 @@ public final class MapDisplayManager
 
             if (gameScreenImage != null) {
                 if (fogShader == null) {
-                    try {
-                        fogShader = ShaderProgram.loadProgram("illarion/client/graphics/shader/fog.vert",
-                                "illarion/client/graphics/shader/fog.frag");
-                    } catch (SlickException e) {
-                        LOGGER.error("Error loading shader!", e);
-                    }
+                    fogShader = ShaderManager.getShader(Shader.Fog, FogShader.class);
                 }
 
                 if (fogShader != null) {
                     fogShader.bind();
-                    fogShader.setUniform1i("tex0", 0);
+                    fogShader.setTexture(0);
 
                     final float x = 0.5f * gameScreenImage.getTextureWidth();
                     final float y = 0.5f * gameScreenImage.getTextureHeight();
-                    fogShader.setUniform2f("center", x, y);
-                    fogShader.setUniform1f("density", World.getWeather().getFog() *
-                            ((float) gameScreenImage.getHeight() / 200.f));
+                    fogShader.setCenter(x, y);
+                    fogShader.setDensity(World.getWeather().getFog() * ((float) gameScreenImage.getHeight() / 200.f));
 
                     g.drawImage(gameScreenImage, 0, 0);
 
@@ -489,7 +485,7 @@ public final class MapDisplayManager
         }
     }
 
-    private ShaderProgram fogShader = null;
+    private FogShader fogShader;
 
     /**
      * Implementation of the core rendering function that just renders the map to the assigned graphic context.
