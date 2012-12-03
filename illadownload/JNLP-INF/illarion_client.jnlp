@@ -18,7 +18,7 @@
   ~ along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
-<jnlp codebase="http://illarion.org/~nitram/downloads" href="illarion_client.jnlp" version="1.22" spec="6.0+">
+<jnlp codebase="https://illarion.org/~nitram/downloads" href="illarion_client.jnlp" version="1.22" spec="6.0+">
     <information>
         <title>Illarion Client</title>
         <vendor>Illarion e.V.</vendor>
