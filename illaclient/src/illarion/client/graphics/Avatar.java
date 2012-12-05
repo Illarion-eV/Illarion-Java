@@ -591,17 +591,17 @@ public final class Avatar extends AbstractEntity implements Resource {
     private static final Color COLOR_NEAR_DEATH = new Color(255, 0, 0);
     private static final Color COLOR_DEAD = new Color(173, 173, 173);
 
-    public void setHealthPoints(final int value) {
+    public void setHealthPoints(int value) {
         if (value == 10000) {
             tag.setHealthState(Lang.getMsg("char.health.unharmed"));
             tag.setHealthStateColor(COLOR_UNHARMED);
-        } else if (value > 80000) {
+        } else if (value > 8000) {
             tag.setHealthState(Lang.getMsg("char.health.slightlyHarmed"));
             tag.setHealthStateColor(COLOR_SLIGHTLY_HARMED);
-        } else if (value > 50000) {
+        } else if (value > 5000) {
             tag.setHealthState(Lang.getMsg("char.health.harmed"));
             tag.setHealthStateColor(COLOR_HARMED);
-        } else if (value > 20000) {
+        } else if (value > 2000) {
             tag.setHealthState(Lang.getMsg("char.health.badlyHarmed"));
             tag.setHealthStateColor(COLOR_BADLY_HARMED);
         } else if (value > 0) {
