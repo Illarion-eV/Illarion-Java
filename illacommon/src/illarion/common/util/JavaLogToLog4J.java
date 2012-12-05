@@ -30,7 +30,7 @@ import java.util.logging.LogRecord;
 public class JavaLogToLog4J extends Handler {
 
     public static void setup() {
-        applyLoggingHandlers(java.util.logging.Logger.getGlobal());
+        applyLoggingHandlers(java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME));
         applyLoggingHandlers(java.util.logging.Logger.getAnonymousLogger());
         applyLoggingHandlers(java.util.logging.Logger.getLogger(JavaLogToLog4J.class.getName()));
     }
