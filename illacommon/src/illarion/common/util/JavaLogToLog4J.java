@@ -30,14 +30,32 @@ import java.util.logging.LogRecord;
 public class JavaLogToLog4J extends Handler {
 
     public static void setup() {
-        final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(java.util.logging.Logger
-                .GLOBAL_LOGGER_NAME);
-        //Remove Console handler
+        applyLoggingHandlers(java.util.logging.Logger.getGlobal());
+        applyLoggingHandlers(java.util.logging.Logger.getAnonymousLogger());
+        applyLoggingHandlers(java.util.logging.Logger.getLogger(JavaLogToLog4J.class.getName()));
+    }
+
+    private static void applyLoggingHandlers(final java.util.logging.Logger logger) {
         final Handler[] handlers = logger.getHandlers();
-        for (final Handler handler : handlers) {
+        if (handlers.length > 0) {
+            final Handler handler = handlers[0];
+            if (handler instanceof JavaLogToLog4J) {
+                return;
+            }
             logger.removeHandler(handler);
+
+            if (handlers.length == 1) {
+                logger.addHandler(new JavaLogToLog4J());
+            } else {
+                applyLoggingHandlers(logger);
+            }
         }
-        logger.addHandler(new JavaLogToLog4J());
+
+        final java.util.logging.Logger parent = logger.getParent();
+        if ((parent == null) || parent.equals(logger)) {
+            return;
+        }
+        applyLoggingHandlers(parent);
     }
 
     @Override

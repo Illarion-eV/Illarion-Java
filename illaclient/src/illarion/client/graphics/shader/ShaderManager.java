@@ -87,6 +87,8 @@ public final class ShaderManager {
                 LOGGER.error("Failed to create shader instance!", e);
             } catch (final IllegalAccessException e) {
                 LOGGER.error("Failed to create shader instance!", e);
+            } catch (final Exception e) {
+                LOGGER.error("Failed to create shader instance!", e);
             }
         }
     }
