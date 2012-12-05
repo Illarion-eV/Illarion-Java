@@ -51,7 +51,6 @@ public final class OptionScreenController implements ScreenController {
     private DropDown<String> sendCrashReports;
     private DropDown<String> resolutions;
     private CheckBox fullscreen;
-    private CheckBox legacy;
 
     private CheckBox soundOn;
     private Slider soundVolume;
@@ -78,7 +77,6 @@ public final class OptionScreenController implements ScreenController {
         resolutions.addAllItems(getResolutionList());
 
         fullscreen = screen.findNiftyControl("fullscreen", CheckBox.class);
-        legacy = screen.findNiftyControl("legacyRender", CheckBox.class);
 
         soundOn = screen.findNiftyControl("soundOn", CheckBox.class);
         soundVolume = screen.findNiftyControl("soundVolume", Slider.class);
@@ -93,7 +91,6 @@ public final class OptionScreenController implements ScreenController {
         sendCrashReports.selectItemByIndex(IllaClient.getCfg().getInteger(CrashReporter.CFG_KEY));
         resolutions.selectItem(IllaClient.getCfg().getString(IllaClient.CFG_RESOLUTION));
         fullscreen.setChecked(IllaClient.getCfg().getBoolean(IllaClient.CFG_FULLSCREEN));
-        legacy.setChecked(IllaClient.getCfg().getBoolean("legacyRender"));
 
         soundOn.setChecked(IllaClient.getCfg().getBoolean("soundOn"));
         soundVolume.setValue(IllaClient.getCfg().getFloat("soundVolume"));
@@ -111,7 +108,6 @@ public final class OptionScreenController implements ScreenController {
         configSystem.set(CrashReporter.CFG_KEY, sendCrashReports.getSelectedIndex());
         configSystem.set(IllaClient.CFG_RESOLUTION, resolutions.getSelection());
         configSystem.set(IllaClient.CFG_FULLSCREEN, fullscreen.isChecked());
-        configSystem.set("legacyRender", legacy.isChecked());
 
         configSystem.set("soundOn", soundOn.isChecked());
         configSystem.set("soundVolume", soundVolume.getValue());

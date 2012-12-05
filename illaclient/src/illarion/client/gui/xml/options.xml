@@ -63,11 +63,6 @@
                             <panel width="*"/>
                             <control name="checkbox" id="fullscreen"/>
                         </panel>
-                        <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="${options-bundle.legacy}"/>
-                            <panel width="*"/>
-                            <control name="checkbox" id="legacyRender"/>
-                        </panel>
                     </control>
                     <control id="#soundTab" caption="Sound" name="tab" childLayout="vertical">
                         <panel width="100%" childLayout="horizontal">
