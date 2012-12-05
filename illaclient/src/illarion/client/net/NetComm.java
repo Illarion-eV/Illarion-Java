@@ -267,12 +267,12 @@ public final class NetComm {
             }
             // stop threads
             if (sender != null) {
-                sender.setRunning(false);
+                sender.saveShutdown();
                 sender = null;
             }
 
             if (inputThread != null) {
-                inputThread.setRunning(false);
+                inputThread.saveShutdown();
                 inputThread = null;
             }
 

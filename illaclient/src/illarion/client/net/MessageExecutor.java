@@ -148,6 +148,7 @@ final class MessageExecutor
      */
     @Override
     public void saveShutdown() {
+        LOGGER.info(getName() + ": Shutdown requested!");
         running = false;
         interrupt();
     }

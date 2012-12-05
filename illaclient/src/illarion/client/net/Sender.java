@@ -171,13 +171,11 @@ final class Sender extends Thread implements NetCommWriter {
     }
 
     /**
-     * Set of the sender is running or not. If this is set to false the sender
-     * waits ready but does nothing.
-     *
-     * @param newRunning the new state of the running flag
+     * Shutdown the sender.
      */
-    public void setRunning(final boolean newRunning) {
-        running = newRunning;
+    public void saveShutdown() {
+        LOGGER.info(getName() + ": Shutdown requested!");
+        running = false;
         interrupt();
     }
 
