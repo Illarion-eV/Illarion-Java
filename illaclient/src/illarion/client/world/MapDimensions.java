@@ -33,7 +33,7 @@ public final class MapDimensions {
      * fill the screen size. If this value is chosen too high the result is that large items and light sources are
      * known to the client too late and just "pop" in.
      */
-    private static final int ADD_MAP_RANGE = 4;
+    private static final int ADD_MAP_RANGE = 6;
 
     /**
      * This is the additional map range that is attached to the bottom of the clipping ranges.
