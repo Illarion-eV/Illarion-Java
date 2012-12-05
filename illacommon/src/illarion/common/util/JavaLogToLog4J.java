@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.util;
+package illarion.common.util;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;

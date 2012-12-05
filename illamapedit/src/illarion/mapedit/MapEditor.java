@@ -28,7 +28,6 @@ import illarion.mapedit.gui.MainFrame;
 import illarion.mapedit.gui.SplashScreen;
 import illarion.mapedit.resource.ResourceManager;
 import illarion.mapedit.resource.loaders.*;
-import illarion.mapedit.util.JavaLogToLog4J;
 import org.apache.log4j.*;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
