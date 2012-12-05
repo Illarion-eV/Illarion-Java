@@ -40,10 +40,7 @@ import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.config.ConfigSystem;
 import illarion.common.graphics.GraphicResolution;
-import illarion.common.util.Crypto;
-import illarion.common.util.DirectoryManager;
-import illarion.common.util.JavaLogToLog4J;
-import illarion.common.util.TableLoader;
+import illarion.common.util.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -61,6 +58,7 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
+import java.util.Timer;
 
 /**
  * Main Class of the Illarion Client, this loads up the whole game and runs the main loop of the Illarion Client.
@@ -524,6 +522,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     @SuppressWarnings("nls")
     private void initLogfiles() {
         JavaLogToLog4J.setup();
+        StdOutToLog4J.setup();
         tempProps.put("log4j.appender.IllaLogfileAppender.file", getFile("error.log"));
         tempProps.put("log4j.appender.ChatAppender.file", getFile("illarion.log"));
         tempProps.put("log4j.reset", "true");
