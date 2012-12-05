@@ -31,6 +31,7 @@ import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.util.Lang;
 
@@ -141,6 +142,17 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     @NiftyEventSubscriber(id = "loginBtn")
     public void onLoginButtonClicked(final String topic, final ButtonClickedEvent event) {
         login();
+    }
+
+    /**
+     * This function is called in case the exit button is clicked.
+     *
+     * @param topic the topic of the event
+     * @param event the data of the event
+     */
+    @NiftyEventSubscriber(id = "exitBtn")
+    public void onExitButtonClicked(final String topic, final ButtonClickedEvent event) {
+        IllaClient.ensureExit();
     }
 
     /**

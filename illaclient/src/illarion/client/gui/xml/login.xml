@@ -52,11 +52,13 @@
                     </panel>
 
                     <panel width="100%" childLayout="center">
-                        <panel childLayout="horizontal" visibleToMouse="true">
-                            <control id="loginBtn" name="button" label="${login-bundle.login}" width="100px"
-                                     height="35px"/>
+                        <panel childLayout="horizontal">
                             <control id="optionBtn" name="button" label="${login-bundle.options}" width="100px"
-                                     height="35px" marginLeft="20px"/>
+                                     height="35px" marginRight="25px"/>
+                            <control id="loginBtn" name="button" label="${login-bundle.login}" width="225px"
+                                     height="45px"/>
+                            <control id="exitBtn" name="button" label="${login-bundle.exit}" width="100px"
+                                     height="35px" marginLeft="25px"/>
                         </panel>
                     </panel>
                 </panel>
