@@ -32,7 +32,12 @@ public enum Shader {
     /**
      * The mini map shader.
      */
-    MiniMap(MiniMapShader.class);
+    MiniMap(MiniMapShader.class),
+
+    /**
+     * The shader that renders the rain on the screen.
+     */
+    Rain(RainShader.class);
 
     /**
      * The class of the shader.

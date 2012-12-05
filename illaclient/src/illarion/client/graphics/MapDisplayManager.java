@@ -19,9 +19,6 @@
 package illarion.client.graphics;
 
 import illarion.client.IllaClient;
-import illarion.client.graphics.shader.FogShader;
-import illarion.client.graphics.shader.Shader;
-import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.world.GameMap;
 import illarion.client.world.World;
 import illarion.common.graphics.Layers;
@@ -111,6 +108,7 @@ public final class MapDisplayManager
     private final FadingCorridor corridor;
     private final FastTable<DisplayItem> display;
     private final DisplayListComparator displayListComperator;
+    private final WeatherRenderer weatherRenderer;
 
     private int dL;
     private int dX;
@@ -136,7 +134,7 @@ public final class MapDisplayManager
         corridor = FadingCorridor.getInstance();
         origin = new Location();
 
-        legacyRendering = IllaClient.getCfg().getBoolean("legacyRender");
+        weatherRenderer = new WeatherRenderer();
 
         dX = 0;
         dY = 0;
@@ -372,10 +370,6 @@ public final class MapDisplayManager
         Camera.getInstance().setViewport(-offX, -offY, c.getWidth(), c.getHeight());
         Camera.getInstance().clearDirtyAreas();
 
-        if (legacyRendering) {
-            Camera.getInstance().markEverythingDirty();
-        }
-
         synchronized (display) {
             for (final Rectangle rect : removedAreaList) {
                 Camera.getInstance().markAreaDirty(rect);
@@ -401,6 +395,8 @@ public final class MapDisplayManager
             }
         }
 
+        weatherRenderer.update(c, delta);
+
         if (fadeOutColor.getAlpha() > 0) {
             fadeOutColor.a = AnimationUtility.approach(fadeOutColor.getAlpha(), 0, 0, 255, delta) / 255.f;
         }
@@ -413,11 +409,6 @@ public final class MapDisplayManager
     private Image gameScreenImage;
 
     /**
-     * This variable is set true in case the legacy rendering is active.
-     */
-    private boolean legacyRendering;
-
-    /**
      * Render all visible map items
      *
      * @param g the graphics component that is used to render the screen
@@ -428,55 +419,35 @@ public final class MapDisplayManager
             return;
         }
 
-        if (legacyRendering) {
-            renderImpl(g);
-        } else {
-            Graphics usedGraphics = g;
-            if (gameScreenImage == null) {
-                try {
-                    gameScreenImage = new Image(c.getWidth(), c.getHeight(), SGL.GL_LINEAR);
-                } catch (SlickException e) {
-                    legacyRendering = true;
-                    LOGGER.warn("Rendering to texture fails. Using legacy direct rendering.");
-                    render(g, c);
-                    return;
-                }
-            }
-
+        Graphics usedGraphics = g;
+        if (gameScreenImage == null) {
             try {
-                usedGraphics = gameScreenImage.getGraphics();
+                gameScreenImage = new Image(c.getWidth(), c.getHeight(), SGL.GL_LINEAR);
             } catch (SlickException e) {
-                legacyRendering = true;
-                LOGGER.warn("Fetching render to texture context failed. Switching to legacy rendering.");
-                render(g, c);
+                LOGGER.error("Rendering to texture fails.", e);
                 return;
             }
-
-            renderImpl(usedGraphics);
-
-            if (gameScreenImage != null) {
-                if (fogShader == null) {
-                    fogShader = ShaderManager.getShader(Shader.Fog, FogShader.class);
-                }
-
-                if (fogShader != null) {
-                    fogShader.bind();
-                    fogShader.setTexture(0);
-
-                    final float x = 0.5f * gameScreenImage.getTextureWidth();
-                    final float y = 0.5f * gameScreenImage.getTextureHeight();
-                    fogShader.setCenter(x, y);
-                    fogShader.setDensity(World.getWeather().getFog() * ((float) gameScreenImage.getHeight() / 200.f));
-
-                    g.drawImage(gameScreenImage, 0, 0);
-
-                    fogShader.unbind();
-                } else {
-                    g.drawImage(gameScreenImage, 0, 0);
-                }
-                Camera.getInstance().renderDebug(g);
-            }
         }
+
+        try {
+            usedGraphics = gameScreenImage.getGraphics();
+        } catch (SlickException e) {
+            LOGGER.warn("Fetching render to texture context failed.", e);
+            return;
+        }
+
+        renderImpl(usedGraphics);
+
+        Image resultImage;
+        try {
+            resultImage = weatherRenderer.postProcess(gameScreenImage);
+        } catch (SlickException e) {
+            LOGGER.error("Postprocessing the output image failed!", e);
+            resultImage = gameScreenImage;
+        }
+        g.drawImage(resultImage, 0, 0);
+
+        Camera.getInstance().renderDebug(g);
 
         if (fadeOutColor.getAlpha() > 0) {
             g.setColor(fadeOutColor);
@@ -484,8 +455,6 @@ public final class MapDisplayManager
             g.fillRect(0, 0, c.getWidth(), c.getHeight());
         }
     }
-
-    private FogShader fogShader;
 
     /**
      * Implementation of the core rendering function that just renders the map to the assigned graphic context.
@@ -495,6 +464,7 @@ public final class MapDisplayManager
     private void renderImpl(final Graphics g) {
         final Camera camera = Camera.getInstance();
 
+        Graphics.setCurrent(g);
         g.pushTransform();
 
         g.translate(-camera.getViewportOffsetX(), -camera.getViewportOffsetY());
