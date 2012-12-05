@@ -32,7 +32,7 @@ uniform float windDir;
 uniform float gustStrength;
 
 // its PI!
-const float pi = 2.0 * asin(1.0);
+const float pi = 3.14159265;
 
 float getIntensity() {
 	float gustEffect = (sin(mod(gl_TexCoord[0].s + gustAnimation * sign(-windDir) + gl_TexCoord[0].t *
