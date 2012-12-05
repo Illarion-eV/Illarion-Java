@@ -79,6 +79,7 @@ public final class TalkingLine {
         condPar.add(new illarion.easynpc.parser.talk.conditions.MagicType());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Money());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Race());
+        condPar.add(new illarion.easynpc.parser.talk.conditions.Rank());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Queststatus());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Item());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Language());
