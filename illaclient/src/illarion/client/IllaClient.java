@@ -42,6 +42,7 @@ import illarion.common.config.ConfigSystem;
 import illarion.common.graphics.GraphicResolution;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.JavaLogToLog4J;
 import illarion.common.util.TableLoader;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -522,6 +523,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     @SuppressWarnings("nls")
     private void initLogfiles() {
+        JavaLogToLog4J.setup();
         tempProps.put("log4j.appender.IllaLogfileAppender.file", getFile("error.log"));
         tempProps.put("log4j.appender.ChatAppender.file", getFile("illarion.log"));
         tempProps.put("log4j.reset", "true");
