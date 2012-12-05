@@ -236,6 +236,13 @@ public final class Rectangle
         y1 += y;
     }
 
+    public void expand(final int left, final int top, final int right, final int bottom) {
+        x0 -= left;
+        x1 += right;
+        y0 -= bottom;
+        y1 += top;
+    }
+
     /**
      * Ensure that the current rectangle describes only a area that is also described by another rectangle. So if a
      * area if this rectangle is outside the other rectangle it will be cut off.

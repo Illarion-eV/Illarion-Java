@@ -346,7 +346,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @return {@code true} in case the event was handled
      */
     private boolean processEvent(final GameContainer c, final int delta, final ClickOnMapEvent event) {
-        if (!isMouseInDisplayRect(event.getX(), event.getY())) {
+        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
             return false;
         }
 
@@ -667,7 +667,7 @@ public final class Avatar extends AbstractEntity implements Resource {
 
         final Input input = c.getInput();
 
-        renderName = isMouseInDisplayRect(input) || (input.isKeyDown(Input.KEY_LSHIFT) && (getAlpha() >
+        renderName = isMouseInInteractionRect(input) || (input.isKeyDown(Input.KEY_LSHIFT) && (getAlpha() >
                 HIDE_NAME_ALPHA));
 
         if ((tag != null) && renderName) {

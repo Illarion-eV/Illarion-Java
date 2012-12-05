@@ -754,15 +754,15 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         return false;
     }
 
-    protected boolean isMouseInDisplayRect(final int mouseX, final int mouseY) {
+    protected boolean isMouseInInteractionRect(final int mouseX, final int mouseY) {
         final int mouseXonDisplay = mouseX + Camera.getInstance().getViewportOffsetX();
         final int mouseYonDisplay = mouseY + Camera.getInstance().getViewportOffsetY();
 
-        return getDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay);
+        return getInteractionRect().isInside(mouseXonDisplay, mouseYonDisplay);
     }
 
-    protected boolean isMouseInDisplayRect(final Input input) {
-        return isMouseInDisplayRect(input.getMouseX(), input.getMouseY());
+    protected boolean isMouseInInteractionRect(final Input input) {
+        return isMouseInInteractionRect(input.getMouseX(), input.getMouseY());
     }
 
     /**
@@ -853,8 +853,19 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     }
 
     private final Rectangle displayRect = new Rectangle();
+    private final Rectangle interactionRect = new Rectangle();
     private final Rectangle lastDisplayRect = new Rectangle();
     private boolean wentDirty = false;
+
+    public final Rectangle getInteractionRect() {
+        if (offS == 0) {
+            return displayRect;
+        }
+
+        interactionRect.set(displayRect);
+        interactionRect.expand(0, 0, -offS, 0);
+        return interactionRect;
+    }
 
     public final Rectangle getDisplayRect() {
         return displayRect;

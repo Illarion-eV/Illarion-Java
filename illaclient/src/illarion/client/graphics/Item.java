@@ -330,7 +330,7 @@ public final class Item extends AbstractEntity implements Resource {
 
         if (event instanceof PointOnMapEvent) {
             final PointOnMapEvent moveEvent = (PointOnMapEvent) event;
-            if (!isMouseInDisplayRect(moveEvent.getX(), moveEvent.getY())) {
+            if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }
 
@@ -343,7 +343,7 @@ public final class Item extends AbstractEntity implements Resource {
 
         if (event instanceof DoubleClickOnMapEvent) {
             final DoubleClickOnMapEvent moveEvent = (DoubleClickOnMapEvent) event;
-            if (!isMouseInDisplayRect(moveEvent.getX(), moveEvent.getY())) {
+            if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }
 
