@@ -215,14 +215,16 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png",
                     "illarion_client64.png", "illarion_client256.png"});
             gameContainer.start();
-            World.cleanEnvironment();
+            LOGGER.info("Client shutdown initiated.");
         } catch (final Exception e) {
             LOGGER.fatal("Exception while launching game.", e);
             Sys.alert("Error", "The client caused a error while starting up: " + e.getMessage());
+        } finally {
+            World.cleanEnvironment();
+            cfg.save();
         }
 
-        cfg.save();
-
+        LOGGER.info("Cleanup done.");
         startFinalKiller();
     }
 

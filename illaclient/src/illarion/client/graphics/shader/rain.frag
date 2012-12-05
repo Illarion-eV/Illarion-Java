@@ -49,7 +49,7 @@ vec2 getRainCoord(float offset) {
 }
 
 vec3 getRainColor(vec3 color, float value, int level) {
-	float rainColor = min(texture2D(texRain, getRainCoord(value)).r + max(min(getIntensity() * 3 - (sqrt(level)), 1), 0), 1.f);
+	float rainColor = min(texture2D(texRain, getRainCoord(value)).r + max(min(getIntensity() * 3 - (sqrt(float(level))), 1), 0), 1.f);
 	vec3 resultColor = vec3(color.rgb * rainColor + rainDropColor.rgb * (1.f - rainColor));
 	
 	return resultColor;

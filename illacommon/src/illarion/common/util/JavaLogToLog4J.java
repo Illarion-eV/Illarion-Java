@@ -29,6 +29,17 @@ import java.util.logging.LogRecord;
 
 public class JavaLogToLog4J extends Handler {
 
+    public static void setup() {
+        final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(java.util.logging.Logger
+                .GLOBAL_LOGGER_NAME);
+        //Remove Console handler
+        final Handler[] handlers = logger.getHandlers();
+        for (final Handler handler : handlers) {
+            logger.removeHandler(handler);
+        }
+        logger.addHandler(new JavaLogToLog4J());
+    }
+
     @Override
     public void publish(final LogRecord record) {
         final Logger log4j = getLogger(record.getLoggerName());

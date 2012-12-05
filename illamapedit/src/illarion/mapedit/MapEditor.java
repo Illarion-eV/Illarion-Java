@@ -34,7 +34,6 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Handler;
 
 /**
  * Main MapEditor class. This class starts the map editor and handles all
@@ -238,14 +237,7 @@ public final class MapEditor {
      */
     @SuppressWarnings("nls")
     private static void initLogging() {
-        final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(java.util.logging.Logger
-                .GLOBAL_LOGGER_NAME);
-        //Remove Console handler
-        final Handler[] handlers = logger.getHandlers();
-        for (final Handler handler : handlers) {
-            logger.removeHandler(handler);
-        }
-        logger.addHandler(new JavaLogToLog4J());
+        JavaLogToLog4J.setup();
         LOGGER.setLevel(Level.ALL);
         final Layout consoleLayout = new PatternLayout("%-5p - (%c) - [%t]: %m%n");
         LOGGER.addAppender(new ConsoleAppender(consoleLayout));
