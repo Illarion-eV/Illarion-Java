@@ -212,7 +212,7 @@ public final class Avatar extends AbstractEntity implements Resource {
     private Avatar(final Avatar org) {
         super(org);
         info = org.info;
-        attackMark = org.attackMark;
+        attackMark = new AvatarMarker(org.attackMark);
         clothes = org.clothes;
         clothRender = new AvatarClothRenderer(org.clothRender);
         clothRender.setLight(getLight());
