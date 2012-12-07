@@ -92,9 +92,9 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                     }
 
                     final Object[] options = {
-                                    Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
-                                    Lang.getMsg(MainFrame.class, "UnsavedChanges.discardButton"),
-                                    Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
+                            Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
+                            Lang.getMsg(MainFrame.class, "UnsavedChanges.discardButton"),
+                            Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
                     final int result =
                             JOptionPane
                                     .showOptionDialog(MainFrame.getInstance(),
@@ -359,6 +359,8 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
 
                 instance = new MainFrame();
                 getInstance().setVisible(true);
+
+                System.out.println("Startup done.");
             }
         });
     }
