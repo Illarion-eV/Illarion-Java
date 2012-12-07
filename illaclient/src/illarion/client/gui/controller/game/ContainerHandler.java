@@ -24,6 +24,7 @@ import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
 import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.events.NiftyMouseMovedEvent;
 import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
@@ -38,6 +39,7 @@ import illarion.client.net.server.events.ContainerItemLookAtEvent;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.resources.ItemFactory;
+import illarion.client.util.LookAtTracker;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.interactive.InteractionManager;
@@ -432,6 +434,24 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
         }
     }
 
+    @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
+    public void onMouseMoveOverSlot(final String topic, final NiftyMouseMovedEvent event) {
+        final int slotId = getSlotId(topic);
+        final int containerId = getContainerId(topic);
+
+        if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) || input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)) {
+            return;
+        }
+
+        final ContainerSlot slot = World.getPlayer().getContainer(containerId).getSlot(slotId);
+
+        if (!LookAtTracker.isLookAtObject(slot)) {
+            LookAtTracker.setLookAtObject(slot);
+            slot.getInteractive().lookAt();
+        }
+
+    }
+
     /**
      * Check if the shift key is pressed on the keyboard.
      *
@@ -478,13 +498,11 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
      * @param event the event that contains the data for the new container
      */
     private void createNewContainer(final OpenContainerEvent event) {
-        final ItemContainerBuilder builder = new ItemContainerBuilder("#container" + event.getContainerId(),
-                "Tasche");
+        final ItemContainerBuilder builder = new ItemContainerBuilder("container" + event.getContainerId(),
+                "${gamescreen-bundle.bag}");
         builder.slots(event.getSlotCount());
         builder.slotDim(35, 35);
-        builder.width(builder.pixels(320));
-        final Element container = builder.build(activeNifty, activeScreen,
-                activeScreen.findElementByName("windows"));
+        final Element container = builder.build(activeNifty, activeScreen, activeScreen.findElementByName("windows"));
         final org.illarion.nifty.controls.ItemContainer conControl = container.getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
 
         itemContainerMap.put(event.getContainerId(), conControl);

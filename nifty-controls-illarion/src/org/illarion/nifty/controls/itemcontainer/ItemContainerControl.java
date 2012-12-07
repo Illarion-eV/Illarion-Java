@@ -25,6 +25,7 @@ import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
 import org.illarion.nifty.controls.InventorySlot;
 import org.illarion.nifty.controls.ItemContainer;
@@ -79,29 +80,34 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
         final int slotWidth = controlDefinitionAttributes.getAsInteger("slotWidth", SLOT_DEFAULT_SIZE);
         final String slotBackground = "data/gui/containerslot.png";
 
-        final Element contentPanel = getElement().findElementByName("#contentPanel");
+        final Element contentPanel = getContent().findElementByName("#contentPanel");
         PanelBuilder currentPanelBuilder = null;
 
         for (int i = 0; i < slotCount; i++) {
+            if ((i % columns) == 0) {
+                if (currentPanelBuilder != null) {
+                    currentPanelBuilder.build(nifty, screen, contentPanel);
+                }
+                currentPanelBuilder = null;
+            }
             if (currentPanelBuilder == null) {
                 currentPanelBuilder = new PanelBuilder();
                 currentPanelBuilder.childLayoutHorizontal();
-                currentPanelBuilder.width(currentPanelBuilder.pixels(slotWidth * columns));
-                currentPanelBuilder.height(currentPanelBuilder.pixels(slotHeight));
-                currentPanelBuilder.marginBottom("1px");
+                currentPanelBuilder.width(currentPanelBuilder.pixels((slotWidth + 2) * columns));
+                currentPanelBuilder.height(currentPanelBuilder.pixels(slotHeight + 2));
             }
 
-            currentPanelBuilder.control(buildSlot(i, slotHeight, slotWidth, slotBackground));
+            currentPanelBuilder.control(buildSlot(contentPanel.getId(), i, slotHeight, slotWidth, slotBackground));
 
-            if (((i + 1) % columns) == 0) {
-                currentPanelBuilder.build(nifty, screen, contentPanel);
-                currentPanelBuilder = null;
-            }
+
         }
 
         if (currentPanelBuilder != null) {
             currentPanelBuilder.build(nifty, screen, contentPanel);
         }
+
+        contentPanel.setConstraintWidth(SizeValue.px((slotWidth + 2) * columns));
+        getElement().setConstraintWidth(SizeValue.px(((slotWidth + 2) * columns) + 26 + 16));
 
         slots = new InventorySlot[slotCount];
         for (int i = 0; i < slotCount; i++) {
@@ -114,16 +120,19 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
     /**
      * Build a inventory slot.
      *
+     * @param prefix         the string that is prepend to the ID of the slot
      * @param index          the index of the slot
      * @param height         the height of the slot
      * @param width          the width of the slot
      * @param slotBackground the background image of the slot
      * @return the builder of the inventory slot
      */
-    private static ControlBuilder buildSlot(final int index, final int height, final int width, final String slotBackground) {
-        final InventorySlotBuilder builder = new InventorySlotBuilder("#slot" + index);
+    private static ControlBuilder buildSlot(final String prefix, final int index, final int height, final int width,
+                                            final String slotBackground) {
+        final InventorySlotBuilder builder = new InventorySlotBuilder(prefix + "#slot" + index);
         builder.height(builder.pixels(height));
         builder.width(builder.pixels(width));
+        builder.margin("1px");
 
         if (slotBackground != null) {
             builder.background(slotBackground);

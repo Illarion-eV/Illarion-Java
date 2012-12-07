@@ -25,8 +25,8 @@ public class ItemContainerBuilder extends ControlBuilder {
         super(id, "itemcontainer");
 
         set("title", title);
-        set("closeable", "false");
-        set("hideOnClose", "false");
+        set("closeable", Boolean.TRUE.toString());
+        set("hideOnClose", Boolean.FALSE.toString());
     }
 
     public void slotBackground(final String image) {

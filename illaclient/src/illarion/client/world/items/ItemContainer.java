@@ -66,8 +66,6 @@ public final class ItemContainer {
      */
     public void setItem(final int slot, final ItemId id, final ItemCount count) {
         if (ItemId.isValidItem(id)) {
-            removeItem(slot);
-        } else {
             final ContainerSlot containerSlot;
             if (slots.containsKey(slot)) {
                 containerSlot = slots.get(slot);
@@ -76,6 +74,8 @@ public final class ItemContainer {
                 slots.put(slot, containerSlot);
             }
             containerSlot.setData(id, count);
+        } else {
+            removeItem(slot);
         }
     }
 

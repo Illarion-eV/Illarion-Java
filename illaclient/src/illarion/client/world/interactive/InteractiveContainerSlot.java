@@ -66,8 +66,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
             return;
         }
 
-        final DragScInvCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_INV,
-                DragScInvCmd.class);
+        final DragScInvCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_INV, DragScInvCmd.class);
         cmd.setSource(getContainerId(), parentSlot.getLocation());
         cmd.setTarget(targetSlot.getSlotId());
         cmd.setCount(count);
@@ -81,9 +80,8 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
     }
 
     public void lookAt() {
-        final LookatShowcaseCmd cmd =
-                CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_LOOKAT_SHOWCASE, LookatShowcaseCmd.class);
+        final LookatShowcaseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_LOOKAT_SHOWCASE,
+                LookatShowcaseCmd.class);
         cmd.setSlot(getContainerId(), parentSlot.getLocation());
         cmd.send();
     }
