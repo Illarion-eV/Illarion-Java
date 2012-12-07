@@ -18,14 +18,7 @@
  */
 package illarion.easyquest.gui;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
-
+import illarion.easyquest.Lang;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
@@ -33,7 +26,13 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
 
-import illarion.easyquest.Lang;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
 
 @SuppressWarnings("serial")
 public class MainFrame
@@ -66,15 +65,15 @@ public class MainFrame
                 return false;
             }
 
-            final Object[] options = new Object[] {Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
+            final Object[] options = new Object[]{Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
                     Lang.getMsg(MainFrame.class, "UnsavedChanges.discardButton"),
                     Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
             final int result = JOptionPane.showOptionDialog(MainFrame.getInstance(), Lang.getMsg(MainFrame.class,
-                                                                                                 "UnsavedChanges" +
-                                                                                                         ".message"),
-                                                            Lang.getMsg(MainFrame.class, "UnsavedChanges.title"),
-                                                            JOptionPane.YES_NO_CANCEL_OPTION,
-                                                            JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                    "UnsavedChanges" +
+                            ".message"),
+                    Lang.getMsg(MainFrame.class, "UnsavedChanges.title"),
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
             if (result == JOptionPane.YES_OPTION) {
                 Utils.saveEasyQuest(editor);
@@ -96,14 +95,14 @@ public class MainFrame
         setApplicationIcon(Utils.getResizableIconFromResource("easyquest.png"));
 
         final RibbonTask graphTask = new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskQuest"), new ClipboardBand(),
-                                                    new GraphBand(), new ServerBand());
+                new GraphBand(), new ServerBand());
         getRibbon().addTask(graphTask);
 
         getRibbon().setApplicationMenu(new MainMenu());
 
         final JCommandButton saveButton = new JCommandButton(Utils.getResizableIconFromResource("filesave.png"));
         saveButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "saveButtonTooltipTitle"),
-                                                        Lang.getMsg(getClass(), "saveButtonTooltip")));
+                Lang.getMsg(getClass(), "saveButtonTooltip")));
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -114,7 +113,7 @@ public class MainFrame
 
         final JCommandButton undoButton = new JCommandButton(Utils.getResizableIconFromResource("undo.png"));
         undoButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "undoButtonTooltipTitle"),
-                                                        Lang.getMsg(getClass(), "undoButtonTooltip")));
+                Lang.getMsg(getClass(), "undoButtonTooltip")));
         undoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -125,7 +124,7 @@ public class MainFrame
 
         final JCommandButton redoButton = new JCommandButton(Utils.getResizableIconFromResource("redo.png"));
         redoButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "redoButtonTooltipTitle"),
-                                                        Lang.getMsg(getClass(), "redoButtonTooltip")));
+                Lang.getMsg(getClass(), "redoButtonTooltip")));
         redoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -206,6 +205,8 @@ public class MainFrame
                 getInstance().setSize(1204, 768);
                 getInstance().setLocationRelativeTo(null);
                 getInstance().setVisible(true);
+
+                System.out.println("Startup done.");
             }
         });
     }
@@ -245,7 +246,7 @@ public class MainFrame
         final Editor editor = Editor.loadQuest(quest);
         editor.putClientProperty(SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY, Boolean.TRUE);
         tabbedEditorArea.insertTab(Lang.getMsg(getClass(), "newQuestTab"), null, editor, null,
-                                   tabbedEditorArea.getTabCount());
+                tabbedEditorArea.getTabCount());
         tabbedEditorArea.setSelectedIndex(tabbedEditorArea.getTabCount() - 1);
         return editor;
     }
