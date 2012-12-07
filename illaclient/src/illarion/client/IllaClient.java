@@ -53,7 +53,9 @@ import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.state.GameState;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -371,14 +373,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         INSTANCE.init();
-
-        // update read-me file if required
-        installFile("readme.txt");
-
-        // update manual files if required
-        installFile("manual_de.pdf");
-        installFile("manual_en.pdf");
-
     }
 
     /**
@@ -435,58 +429,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     }
 
     /**
-     * Install a file from the jar files to the client directory.
-     *
-     * @param fileName the name of the file that shall be stored
-     * @return true in case the file was stored, false if not.
-     */
-    private static boolean installFile(final String fileName) {
-        return installFile(fileName, new File(getFile(fileName)));
-    }
-
-    /**
-     * Install a file from a jar in the client directory. Existing files are only updates if needed.
-     *
-     * @param fileName   the filename of the source file
-     * @param outputFile the full path to the target file
-     * @return true in case the file got stored or if there was no update needed
-     */
-    @SuppressWarnings("nls")
-    private static boolean installFile(final String fileName, final File outputFile) {
-        final InputStream input = getResource(fileName);
-        if (input == null) {
-            return false;
-        }
-        FileOutputStream out = null;
-        try {
-            if (input.available() != outputFile.length()) {
-                out = new FileOutputStream(outputFile);
-
-                final byte[] buffer = new byte[FILE_BUFFER];
-                int read;
-                while ((read = input.read(buffer)) >= 0) {
-                    out.write(buffer, 0, read);
-                }
-            }
-            input.close();
-        } catch (final FileNotFoundException e) {
-            LOGGER.error(fileName + " not found", e);
-        } catch (final IOException e) {
-            LOGGER.error(fileName + " not accessible", e);
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-                out = null;
-            } catch (final IOException e) {
-                LOGGER.error(fileName + " not accessible", e);
-            }
-        }
-        return true;
-    }
-
-    /**
      * Get the server that was selected as connection target.
      *
      * @return the selected server
@@ -521,8 +463,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     @SuppressWarnings("nls")
     private void initLogfiles() {
-        JavaLogToLog4J.setup();
-        StdOutToLog4J.setup();
         tempProps.put("log4j.appender.IllaLogfileAppender.file", getFile("error.log"));
         tempProps.put("log4j.appender.ChatAppender.file", getFile("illarion.log"));
         tempProps.put("log4j.reset", "true");
@@ -530,6 +470,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
 
+        System.out.println("Startup done.");
         LOGGER.info(getVersionText() + " started.");
         LOGGER.info("VM: " + System.getProperty("java.version"));
         LOGGER.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System
@@ -538,6 +479,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(Level.SEVERE);
         java.util.logging.Logger.getLogger("de.lessvoid.nifty").setLevel(Level.SEVERE);
         java.util.logging.Logger.getLogger("javolution").setLevel(Level.SEVERE);
+        JavaLogToLog4J.setup();
+        StdOutToLog4J.setup();
     }
 
     public static final String CFG_FULLSCREEN = "fullscreen";
@@ -585,18 +528,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         Lang.getInstance().setConfig(cfg);
     }
 
-    /**
-     * Handle an event published on a topic.
-     * <p/>
-     * The EventService calls this method on each publication on a matching topic name passed to one of the
-     * EventService's topic-based subscribe methods, specifically, {@link org.bushe.swing.event.EventService#subscribe(String,
-     * org.bushe.swing.event.EventTopicSubscriber)} {@link org.bushe.swing.event.EventService#subscribe(java.util.regex.Pattern, org.bushe.swing.event.EventTopicSubscriber)} {@link
-     * org.bushe.swing.event.EventService#subscribeStrongly(String, org.bushe.swing.event.EventTopicSubscriber)} and {@link org.bushe.swing.event.EventService#subscribeStrongly(java.util.regex.Pattern,
-     * org.bushe.swing.event.EventTopicSubscriber)}.
-     *
-     * @param topic the name of the topic published on
-     * @param data  the data object published on the topic
-     */
     @Override
     public void onEvent(final String topic, final ConfigChangedEvent data) {
         if (CFG_FULLSCREEN.equals(topic)) {
