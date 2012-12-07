@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * This file is a single resource of that is stored in the database. It contains the references files that are part of
- * this resource and the informations that were acquired from the server for this resource.
+ * this resource and the information that were acquired from the server for this resource.
  *
  * @author Martin Karing
  * @version 1.01

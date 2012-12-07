@@ -98,4 +98,11 @@ public final class ResourceDatabase
     public DBResource getResource(final URL url) {
         return resources.get(url.toString());
     }
+
+    /**
+     * This function clears the database. Use with care.
+     */
+    public void clear() {
+        resources.clear();
+    }
 }

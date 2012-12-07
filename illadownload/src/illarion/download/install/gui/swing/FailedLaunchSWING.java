@@ -18,11 +18,8 @@
  */
 package illarion.download.install.gui.swing;
 
-import illarion.download.tasks.unpack.FailMonitor;
 import illarion.download.util.Lang;
 import org.jdesktop.swingx.JXLabel;
-import org.jdesktop.swingx.JXLabel.TextAlignment;
-import org.jdesktop.swingx.JXList;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,35 +27,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * This class is used to display some informations about failed downloads in case this happened.
- *
- * @author Martin Karing
- * @version 1.00
- * @since 1.00
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class FailedInformationSWING
-        extends AbstractContentSWING {
+public class FailedLaunchSWING extends AbstractContentSWING {
     /**
      * This is a little helper class to update the result value.
      *
      * @author Martin Karing
-     * @version 1.00
-     * @since 1.00
      */
     private final class UpdateResultClass
             implements ActionListener {
         /**
          * The result value that is set in case this button is clicked.
          */
-        private final int targetResult;
+        private final FailureAction targetResult;
 
         /**
-         * Construct a new instance of this class. This constructor is public to allow the parent class to create a
-         * instance without problems. This will also set the required values for this listener to work.
+         * Construct a new instance of this class. This will also set the required values for this listener to work.
          *
          * @param newResult the result value that is supposed to be set
          */
-        private UpdateResultClass(final int newResult) {
+        private UpdateResultClass(final FailureAction newResult) {
             targetResult = newResult;
         }
 
@@ -72,48 +61,53 @@ public final class FailedInformationSWING
     }
 
     /**
-     * This is the value of the result variable in case the launcher is ordered to launch the target application
-     * anyway.
+     * The possible user actions to react on the problem displayed here.
      */
-    public static final int RESULT_LAUNCH = 2;
+    public enum FailureAction {
+        /**
+         * This action means that the launch is just supposed to be repeated.
+         */
+        Retry,
+
+        /**
+         * This action means that all downloaded files are supposed to be deleted and downloaded again.
+         */
+        DeleteRetry
+    }
+
+    private static final String LANG_ROOT = "illarion.download.install.gui.FailedLaunch.";
 
     /**
-     * This is the value of the result variable in case the application is ordered to retry downloading the
-     * application.
+     * The error information that are supposed to be displayed.
      */
-    public static final int RESULT_RETRY = 1;
+    private final String errorData;
 
     /**
-     * The result value of this dialog.
+     * Create a instance of this content that displays the launch error data.
+     *
+     * @param errors the launch errors
      */
-    private int result = -1;
+    public FailedLaunchSWING(final String errors) {
+        errorData = errors;
+    }
 
-    /**
-     * Create the buttons to be created during the installation.
-     */
-    @SuppressWarnings("nls")
     @Override
     public void fillButtons(final BaseSWING base, final JPanel buttonPanel) {
         final JButton retryButton = BaseSWING.getPanelButton();
-        retryButton.setText(Lang.getMsg("illarion.download.install.gui.FailedInformation.retry.text"));
-        retryButton.setToolTipText(Lang.getMsg("illarion.download.install.gui.FailedInformation.retry.tooltip"));
-        retryButton.addActionListener(new UpdateResultClass(RESULT_RETRY));
+        retryButton.setText(Lang.getMsg(LANG_ROOT + "retry.text"));
+        retryButton.setToolTipText(Lang.getMsg(LANG_ROOT + "retry.tooltip"));
+        retryButton.addActionListener(new UpdateResultClass(FailureAction.Retry));
         buttonPanel.add(retryButton);
 
         final JButton startAnywayButton = BaseSWING.getPanelButton();
-        startAnywayButton.setText(Lang.getMsg("illarion.download.install.gui.FailedInformation.startAnyway.text"));
-        startAnywayButton.setToolTipText(Lang.getMsg("illarion.download.install.gui.FailedInformation.startAnyway" +
-                ".tooltip"));
-        startAnywayButton.addActionListener(new UpdateResultClass(RESULT_LAUNCH));
+        startAnywayButton.setText(Lang.getMsg(LANG_ROOT + "deleteRetry.text"));
+        startAnywayButton.setToolTipText(Lang.getMsg(LANG_ROOT + "deleteRetry.tooltip"));
+        startAnywayButton.addActionListener(new UpdateResultClass(FailureAction.DeleteRetry));
         buttonPanel.add(startAnywayButton);
 
         buttonPanel.add(base.getExitButton());
     }
 
-    /**
-     * Fill the content of this information window.
-     */
-    @SuppressWarnings("nls")
     @Override
     public void fillContent(final BaseSWING base, final JPanel contentPanel) {
         contentPanel.setLayout(new GridBagLayout());
@@ -128,10 +122,10 @@ public final class FailedInformationSWING
         con.gridx = 0;
         con.gridy = line++;
         con.weightx = 1.0;
-        con.weighty = 0.0;
+        con.weighty = 1.0;
         con.insets.set(0, 0, 10, 0);
 
-        final JLabel headLabel = new JLabel(Lang.getMsg("illarion.download.install.gui.FailedInformation.title"));
+        final JLabel headLabel = new JLabel(Lang.getMsg(LANG_ROOT + "title"));
         contentPanel.add(headLabel, con);
         headLabel.setFont(headLabel.getFont().deriveFont(Font.BOLD, 14.f));
 
@@ -142,50 +136,37 @@ public final class FailedInformationSWING
         textField.setFocusable(false);
         textField.setLineWrap(true);
         textField.setMaxLineSpan(BaseSWING.WINDOW_WIDTH - 20);
-        textField.setTextAlignment(TextAlignment.JUSTIFY);
-        textField.setText(Lang.getMsg("illarion.download.install.gui.FailedInformation.content"));
+        textField.setTextAlignment(JXLabel.TextAlignment.JUSTIFY);
+        textField.setText(Lang.getMsg(LANG_ROOT + "content"));
         contentPanel.add(textField, con);
 
         con.gridy = line++;
-        con.gridx = 0;
         con.gridwidth = 2;
         con.weightx = 1.0;
-        final FailMonitor failMon = FailMonitor.getInstance();
-        final int errCnt = failMon.getErrorCount();
-        final String[] failedPackages = new String[errCnt];
-        for (int i = 0; i < errCnt; i++) {
-            failedPackages[i] = failMon.getErrorResult(i).getTaskName();
-        }
-        contentPanel.add(new JXList(failedPackages), con);
-
-        con.gridy = line++;
-        con.gridx = 0;
-        con.gridwidth = 2;
-        con.weightx = 1.0;
-        contentPanel.add(new JLabel(), con);
+        final JTextArea errorArea = new JTextArea(10, 10);
+        errorArea.setText(errorData);
+        errorArea.setLineWrap(false);
+        errorArea.setEditable(false);
+        contentPanel.add(new JScrollPane(errorArea), con);
     }
+
+    @Override
+    public void prepareDisplay(final BaseSWING base) {
+        base.setVisible(true);
+    }
+
+    /**
+     * The user selected result of this dialog.
+     */
+    public FailureAction result = FailureAction.Retry;
 
     /**
      * Get the result of this information display.
      *
      * @return the result value
-     * @see #RESULT_LAUNCH
-     * @see #RESULT_RETRY
      */
-    public int getResult() {
+    public FailureAction getResult() {
         return result;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * illarion.download.install.gui.swing.AbstractContentSWING#prepareDisplay
-     * (illarion.download.install.gui.swing.BaseSWING)
-     */
-    @Override
-    public void prepareDisplay(final BaseSWING base) {
-        base.setVisible(true);
     }
 
     /**
@@ -193,7 +174,7 @@ public final class FailedInformationSWING
      *
      * @param newResult the new value of the result variable.
      */
-    protected void setResult(final int newResult) {
+    protected void setResult(final FailureAction newResult) {
         result = newResult;
         reportContinue();
     }

@@ -29,7 +29,7 @@ import java.util.zip.CheckedInputStream;
 
 /**
  * This class represents a single file that was extracted from the downloaded resource files. It contains the
- * informations and the logic to perform a secure check if the file is valid.
+ * information and the logic to perform a secure check if the file is valid.
  *
  * @author Martin Karing
  * @version 1.01

@@ -190,6 +190,15 @@ public final class ResourceManager {
     }
 
     /**
+     * This function resets all resources. Dependencies need to be discovered again and all resources need to be
+     * downloaded once more.
+     */
+    public void resetResources() {
+        resourceDatabase.clear();
+        dependingResources.clear();
+    }
+
+    /**
      * Set the main resource that is used by the application to start.
      *
      * @param main the main resource
@@ -232,6 +241,10 @@ public final class ResourceManager {
      * This function is used to load the resource database.
      */
     private void loadResourceDatabase() {
+        if (resourceDatabase != null) {
+            return;
+        }
+
         final File dbFile = new File(DirectoryManager.getInstance().getDataDirectory(), RES_DB_FILE);
 
         resourcesDirty = false;

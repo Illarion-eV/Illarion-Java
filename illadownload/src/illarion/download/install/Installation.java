@@ -54,6 +54,11 @@ public final class Installation {
     private static final Logger LOGGER = Logger.getLogger(Installation.class);
 
     /**
+     * If this flag is turned true, the installation is started again.
+     */
+    private boolean restartInstallation;
+
+    /**
      * The main function to start this installation and launching process.
      *
      * @param args the start arguments
@@ -65,10 +70,16 @@ public final class Installation {
         BaseSWING.updateLookAndFeel();
         LOGGER.info("Installation started");
         final Installation install = new Installation();
-        install.checkAndInstallDirectories();
-        install.selectApplication();
-        install.prepareApplication();
-        install.launch();
+
+        install.restartInstallation = true;
+        while (install.restartInstallation) {
+            install.restartInstallation = false;
+
+            install.checkAndInstallDirectories();
+            install.selectApplication();
+            install.prepareApplication();
+            install.launch();
+        }
 
         install.finish();
         System.exit(0);
@@ -124,9 +135,29 @@ public final class Installation {
     /**
      * Launch the selected and prepared application.
      */
-    private static void launch() {
+    private void launch() {
         final Launcher launcher = new Launcher();
-        launcher.launch();
+
+        boolean retry = true;
+        while (retry) {
+            retry = false;
+            if (!launcher.launch()) {
+                final FailedLaunchSWING failedLaunch = new FailedLaunchSWING(launcher.getErrorData());
+                baseGUI.show(failedLaunch);
+
+                failedLaunch.waitForContinue();
+
+                switch (failedLaunch.getResult()) {
+                    case Retry:
+                        retry = true;
+                        break;
+                    case DeleteRetry:
+                        ResourceManager.getInstance().resetResources();
+                        restartInstallation = true;
+                        break;
+                }
+            }
+        }
     }
 
     /**
@@ -164,14 +195,13 @@ public final class Installation {
             ResourceManager.getInstance().saveResourceDatabase();
 
             if (FailMonitor.getInstance().hasErrors()) {
-                final FailedInformationSWING failedInfos =
-                        new FailedInformationSWING();
-                baseGUI.show(failedInfos);
-                failedInfos.waitForContinue();
+                final FailedInformationSWING failedInfo = new FailedInformationSWING();
+                baseGUI.show(failedInfo);
+                failedInfo.waitForContinue();
 
-                if (failedInfos.getResult() == FailedInformationSWING.RESULT_RETRY) {
+                if (failedInfo.getResult() == FailedInformationSWING.RESULT_RETRY) {
                     retry = true;
-                } else if (failedInfos.getResult() == FailedInformationSWING.RESULT_LAUNCH) {
+                } else if (failedInfo.getResult() == FailedInformationSWING.RESULT_LAUNCH) {
                     continue;
                 }
             }
@@ -187,23 +217,19 @@ public final class Installation {
         if ((sysProp != null) && (sysProp.length() > 2)) {
             if (sysProp.equalsIgnoreCase("tsclient")) {
                 ResourceManager.getInstance().setMainResource(
-                        illarion.download.install.resources.dev.Client
-                                .getInstance());
+                        illarion.download.install.resources.dev.Client.getInstance());
                 return;
             } else if (sysProp.equalsIgnoreCase("mapeditor")) {
                 ResourceManager.getInstance().setMainResource(
-                        illarion.download.install.resources.dev.Mapeditor
-                                .getInstance());
+                        illarion.download.install.resources.dev.Mapeditor.getInstance());
                 return;
             } else if (sysProp.equalsIgnoreCase("easynpc")) {
                 ResourceManager.getInstance().setMainResource(
-                        illarion.download.install.resources.dev.EasyNpcEditor
-                                .getInstance());
+                        illarion.download.install.resources.dev.EasyNpcEditor.getInstance());
                 return;
             } else if (sysProp.equalsIgnoreCase("easyquest")) {
                 ResourceManager.getInstance().setMainResource(
-                        illarion.download.install.resources.dev.EasyQuestEditor
-                                .getInstance());
+                        illarion.download.install.resources.dev.EasyQuestEditor.getInstance());
                 return;
             }
         }

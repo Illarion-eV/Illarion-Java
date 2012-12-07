@@ -24,7 +24,7 @@ import illarion.download.install.resources.ResourceManager;
 import illarion.download.util.OSDetection;
 import org.apache.log4j.Logger;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,8 +40,7 @@ import java.util.Set;
  */
 public final class Launcher {
     /**
-     * This set contains all arguments that need to be passed to the program
-     * once it was launched.
+     * This set contains all arguments that need to be passed to the program once it was launched.
      */
     private final Set<String> arguments;
 
@@ -66,16 +65,14 @@ public final class Launcher {
     private static final Logger LOGGER = Logger.getLogger(Launcher.class);
 
     /**
-     * The constructor that launches the resource that is selected in the
-     * resource manager.
+     * The constructor that launches the resource that is selected in the resource manager.
      */
     public Launcher() {
         this(ResourceManager.getInstance().getMainResource());
     }
 
     /**
-     * The constructor and the possibility to select the resource that is
-     * supposed to be launched with this.
+     * The constructor and the possibility to select the resource that is supposed to be launched with this.
      *
      * @param resToLaunch the resource that is expected to be launched
      */
@@ -85,8 +82,7 @@ public final class Launcher {
             throw new IllegalArgumentException("resToLaunch must not be NULL.");
         }
         if (!resToLaunch.isStartable()) {
-            throw new IllegalArgumentException(
-                    "resToLaunch has to be startable.");
+            throw new IllegalArgumentException("resToLaunch has to be startable.");
         }
         resource = resToLaunch;
 
@@ -98,8 +94,7 @@ public final class Launcher {
     /**
      * Calling this function causes the selected application to launch.
      *
-     * @return <code>true</code> in case launching the application was
-     *         successful
+     * @return {@code true} in case launching the application was successful
      */
     @SuppressWarnings("nls")
     public boolean launch() {
@@ -136,22 +131,54 @@ public final class Launcher {
 
         final ProcessBuilder pBuilder = new ProcessBuilder(callList);
         pBuilder.directory(DirectoryManager.getInstance().getUserDirectory());
+        pBuilder.redirectErrorStream(true);
         try {
             final Process proc = pBuilder.start();
-            proc.getInputStream().close();
             proc.getOutputStream().close();
-            proc.getErrorStream().close();
+
+            final StringBuilder outputBuffer = new StringBuilder();
+            final BufferedReader outputReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+            while (true) {
+                final String line = outputReader.readLine();
+                if (line == null) {
+                    errorData = outputBuffer.toString().trim();
+                    return false;
+                }
+                if (line.endsWith("Startup done.")) {
+                    outputReader.close();
+                    return true;
+                }
+                outputBuffer.append(line);
+                outputBuffer.append('\n');
+            }
         } catch (final Exception e) {
             LOGGER.fatal("Error while launching application", e);
+
+            final PrintWriter writer = new PrintWriter(new StringWriter());
+            e.printStackTrace(writer);
+            errorData = writer.toString();
             return false;
         }
-
-        return true;
     }
 
     /**
-     * Build the class path string that contain a list of files pointing to each
-     * file needed to include to this application.
+     * This text contains the error data in case the launch failed.
+     */
+    private String errorData;
+
+    /**
+     * Get the information about the launch error.
+     *
+     * @return the string containing the data about the crash
+     */
+    public String getErrorData() {
+        return errorData;
+    }
+
+    /**
+     * Build the class path string that contain a list of files pointing to each file needed to include to this
+     * application.
      *
      * @return the string that represents the class path
      */
@@ -169,10 +196,8 @@ public final class Launcher {
     }
 
     /**
-     * This function is used to collect the data needed to launch the
-     * application properly. The first call of this function needs to be done
-     * with the main resource as this resource is the root of the dependency
-     * tree.
+     * This function is used to collect the data needed to launch the application properly. The first call of this
+     * function needs to be done with the main resource as this resource is the root of the dependency tree.
      *
      * @param currentRes the currently handled resource
      */
@@ -196,9 +221,8 @@ public final class Launcher {
     }
 
     /**
-     * This small utility function takes care for escaping a path. This
-     * operation is platform dependent so the result will differ on different
-     * platforms.
+     * This small utility function takes care for escaping a path. This operation is platform dependent so the result
+     * will differ on different platforms.
      *
      * @param orgPath the original plain path
      * @return the escaped path
