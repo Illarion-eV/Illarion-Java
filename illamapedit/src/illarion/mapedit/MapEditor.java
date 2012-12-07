@@ -237,7 +237,6 @@ public final class MapEditor {
      */
     @SuppressWarnings("nls")
     private static void initLogging() {
-        JavaLogToLog4J.setup();
         LOGGER.setLevel(Level.ALL);
         final Layout consoleLayout = new PatternLayout("%-5p - (%c) - [%t]: %m%n");
         LOGGER.addAppender(new ConsoleAppender(consoleLayout));
@@ -250,5 +249,9 @@ public final class MapEditor {
         } catch (IOException e) {
             LOGGER.warn("Can't write log to file");
         }
+        System.out.println("Startup done.");
+        LOGGER.info(APPLICATION + " started.");
+        JavaLogToLog4J.setup();
+        StdOutToLog4J.setup();
     }
 }
