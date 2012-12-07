@@ -220,14 +220,14 @@ public final class GameMapHandler
 
         if ((activeScreen != null) && (activeNifty != null)) {
             final Item movedItem = targetTile.getTopImage();
-            final int width = movedItem.getWidth();
-            final int height = movedItem.getHeight();
+            final int width = movedItem.getGuiTexture().getWidth();
+            final int height = movedItem.getGuiTexture().getHeight();
 
             draggedGraphic.resetLayout();
-            draggedGraphic.setConstraintWidth(new SizeValue(Integer.toString(width) + "px"));
-            draggedGraphic.setConstraintHeight(new SizeValue(Integer.toString(height) + "px"));
-            draggedGraphic.setConstraintX(new SizeValue(Integer.toString(oldx - (width / 2)) + "px"));
-            draggedGraphic.setConstraintY(new SizeValue(Integer.toString(oldy - (height / 2)) + "px"));
+            draggedGraphic.setConstraintWidth(SizeValue.px(width));
+            draggedGraphic.setConstraintHeight(SizeValue.px(height));
+            draggedGraphic.setConstraintX(SizeValue.px(oldx - (width / 2)));
+            draggedGraphic.setConstraintY(SizeValue.px(oldy - (height / 2)));
             draggedGraphic.setVisible(true);
             draggedGraphic.reactivate();
 
