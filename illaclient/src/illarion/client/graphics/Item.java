@@ -33,6 +33,7 @@ import illarion.common.types.Location;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 
 /**
  * A item is a object that is on the game map or in the inventory or in any
@@ -114,6 +115,22 @@ public final class Item extends AbstractEntity implements Resource {
     private final boolean variants;
 
     /**
+     * This sprite is used in case the item is used in the GUI.
+     */
+    private final Image guiTexture;
+
+    /**
+     * Get the texture used for the GUI elements.
+     *
+     * @return the texture used in the GUI
+     */
+    public Image getGuiTexture() {
+        return guiTexture;
+    }
+
+    private static final String GUI_ITEM_PATH = "data/gui/items/";
+
+    /**
      * Create a new item based on the parameters. The item allows recoloring by
      * a base color.
      *
@@ -144,6 +161,13 @@ public final class Item extends AbstractEntity implements Resource {
                 itemInfo.hasVariance(), false, baseColor);
 
         info = itemInfo;
+
+        final Image guiTexture = TextureLoader.getInstance().getTexture("data/gui/", "items/" + name, null);
+        if (guiTexture == null) {
+            this.guiTexture = getSprite().getTexture(0);
+        } else {
+            this.guiTexture = guiTexture;
+        }
 
         // an animated item
         if ((speed > 0) && (frames > 1)) {
@@ -183,6 +207,7 @@ public final class Item extends AbstractEntity implements Resource {
         info = org.info;
         variants = org.variants;
         ani = org.ani;
+        guiTexture = org.guiTexture;
         paperdollingID = org.paperdollingID;
         paperdollingColor = org.paperdollingColor;
         reset();
@@ -203,8 +228,7 @@ public final class Item extends AbstractEntity implements Resource {
     public static Item create(final ItemId itemID, final int locColumn,
                               final int locRow, final MapTile parent) {
         final Item item = ItemFactory.getInstance().getCommand(itemID.getValue());
-        // Set variant and scaling, this functions check on their own if this is
-        // allowed
+        // Set variant and scaling, this functions check on their own if this is allowed
         item.setVariant(locColumn, locRow);
         item.setScale(locColumn, locRow);
         item.parentTile = parent;

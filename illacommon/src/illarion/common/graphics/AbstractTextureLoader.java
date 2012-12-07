@@ -264,6 +264,20 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
     /**
      * Get a texture from the resources.
      *
+     * @param resourceDir     the root directory of the resource
+     * @param resource        the name of the resource itself
+     * @param defaultResource the name of the resource used by default
+     * @return the texture or {@code null} in case there was a problem loading it
+     * @throws NullPointerException     in case the at least one of the parameters is {@code null}
+     * @throws IllegalArgumentException in case the directory searched is not listed as root directory
+     */
+    public final I getTexture(final String resourceDir, final String resource, final String defaultResource) {
+        return getTexture(getDirectoryIndex(resourceDir), resource, defaultResource);
+    }
+
+    /**
+     * Get a texture from the resources.
+     *
      * @param resourceDirIndex the index of the root directory
      * @param resource         the name of the resource
      * @return the texture or {@code null} in case there was a problem loading it
@@ -272,6 +286,21 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      *                                   texture root directories set
      */
     public final I getTexture(final int resourceDirIndex, final String resource) {
+        return getTexture(resourceDirIndex, resource, DEFAULT_IMAGE);
+    }
+
+    /**
+     * Get a texture from the resources.
+     *
+     * @param resourceDirIndex the index of the root directory
+     * @param resource         the name of the resource
+     * @param defaultResource  the name of the resource used by default
+     * @return the texture or {@code null} in case there was a problem loading it
+     * @throws NullPointerException      in case the resource parameter is {@code null}
+     * @throws IndexOutOfBoundsException in case the index value is less then 0 or greater or equal to the amount of
+     *                                   texture root directories set
+     */
+    public final I getTexture(final int resourceDirIndex, final String resource, final String defaultResource) {
         if ((resourceDirIndex < 0) || (resourceDirIndex >= loadedSheets.length)) {
             throw new IndexOutOfBoundsException("Directory index is not within valid range");
         }
@@ -299,12 +328,14 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
             }
         }
 
-        LOGGER.error("Unable to load texture: " + getRootDirectory(resourceDirIndex) + cleanResource);
-        if (DEFAULT_IMAGE.contains(resource)) {
+        if (DEFAULT_IMAGE.equals(defaultResource)) {
+            LOGGER.error("Unable to load texture: " + getRootDirectory(resourceDirIndex) + cleanResource);
+        }
+        if ((defaultResource == null) || defaultResource.contains(resource)) {
             return null;
         }
 
-        return getTexture(DEFAULT_IMAGE);
+        return getTexture(defaultResource);
     }
 
     /**
