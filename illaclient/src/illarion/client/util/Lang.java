@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.util;
 
@@ -30,7 +30,7 @@ import java.util.ResourceBundle;
 /**
  * Localized text handler. Loads the localized messages and returns them if
  * requested, regarding the language settings of the client.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
@@ -89,14 +89,12 @@ public final class Lang implements ConfigChangeListener, MessageSource {
     private Lang() {
         locale = Locale.ENGLISH;
 
-        messages =
-            ResourceBundle.getBundle(MESSAGE_BUNDLE, locale,
-                Lang.class.getClassLoader());
+        messages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Thread.currentThread().getContextClassLoader());
     }
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the instance of the class
      */
     public static Lang getInstance() {
@@ -105,7 +103,7 @@ public final class Lang implements ConfigChangeListener, MessageSource {
 
     /**
      * Get a localized message from a key.
-     * 
+     *
      * @param key The key of the localized message
      * @return the localized message or the key with surrounding < > in case the
      *         key was not found in the storage
@@ -127,7 +125,7 @@ public final class Lang implements ConfigChangeListener, MessageSource {
 
     /**
      * Get the current local settings.
-     * 
+     *
      * @return the local object of the chosen local settings
      */
     public Locale getLocale() {
@@ -136,7 +134,7 @@ public final class Lang implements ConfigChangeListener, MessageSource {
 
     /**
      * Get a localized message from a key.
-     * 
+     *
      * @param key The key of the localized message
      * @return the localized message or the key with surrounding &lt; &gt; in
      *         case the key was not found in the storage
@@ -153,7 +151,7 @@ public final class Lang implements ConfigChangeListener, MessageSource {
 
     /**
      * Check if a key contains a message.
-     * 
+     *
      * @param key the key that shall be checked
      * @return true in case a message was found
      */
@@ -168,7 +166,7 @@ public final class Lang implements ConfigChangeListener, MessageSource {
 
     /**
      * Check if the client is currently running with the English language.
-     * 
+     *
      * @return true if the language is set to English
      */
     public boolean isEnglish() {
@@ -177,7 +175,7 @@ public final class Lang implements ConfigChangeListener, MessageSource {
 
     /**
      * Check if the client is currently running with the German language.
-     * 
+     *
      * @return true if the language is set to German
      */
     public boolean isGerman() {
@@ -207,13 +205,13 @@ public final class Lang implements ConfigChangeListener, MessageSource {
         }
 
         messages =
-            ResourceBundle.getBundle(MESSAGE_BUNDLE, locale,
-                Lang.class.getClassLoader());
+                ResourceBundle.getBundle(MESSAGE_BUNDLE, locale,
+                        Lang.class.getClassLoader());
     }
 
     /**
      * Set the configuration that stores the locale settings.
-     * 
+     *
      * @param newConfig the configuration to be used from now on
      */
     public void setConfig(final Config newConfig) {
