@@ -168,6 +168,7 @@ public final class Installation {
 
         while (retry) {
             retry = false;
+            FailMonitor.getInstance().clearErrors();
             ResourceManager.getInstance().discoverDependencies();
 
             final DownloadManager dManager = new DownloadManager();

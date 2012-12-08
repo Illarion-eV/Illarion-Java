@@ -74,7 +74,6 @@ public final class ResourceManager {
      */
     private ResourceManager() {
         dependingResources = new ArrayList<Resource>();
-        resourceDatabase = new ResourceDatabase();
     }
 
     /**
@@ -248,25 +247,26 @@ public final class ResourceManager {
         final File dbFile = new File(DirectoryManager.getInstance().getDataDirectory(), RES_DB_FILE);
 
         resourcesDirty = false;
-        if (!dbFile.exists()) {
-            /* Database yet not created, so there are no files in there. */
-            return;
-        }
-
-        ObjectInputStream in = null;
-        try {
-            in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(dbFile)));
-            resourceDatabase = (ResourceDatabase) in.readObject();
-        } catch (final Exception e) {
-            // file not found, should not happen, but if, it does not matter
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (final IOException e) {
-                    // closing the stream failed, ignore that
+        if (dbFile.exists()) {
+            ObjectInputStream in = null;
+            try {
+                in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(dbFile)));
+                resourceDatabase = (ResourceDatabase) in.readObject();
+            } catch (final Exception e) {
+                // file not found, should not happen, but if, it does not matter
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (final IOException e) {
+                        // closing the stream failed, ignore that
+                    }
                 }
             }
+        }
+
+        if (resourceDatabase == null) {
+            resourceDatabase = new ResourceDatabase();
         }
     }
 
