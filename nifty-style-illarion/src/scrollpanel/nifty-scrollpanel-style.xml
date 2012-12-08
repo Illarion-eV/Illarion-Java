@@ -19,14 +19,10 @@
   -->
 <nifty-styles>
     <style id="nifty-scrollpanel#scrollpanel">
-        <attributes backgroundColor="#9999"/>
-        <effect overlay="true">
-            <onActive name="imageOverlay" filename="data/gui/blackborder.png"
-                      imageMode="resize:1,30,1,1,1,30,1,1,1,30,1,1"
-                      post="true"/>
-        </effect>
+        <attributes backgroundColor="#000000af" padding="2px"
+                    backgroundImage="data/gui/blackborder.png" imageMode="resize:1,30,1,1,1,30,1,1,1,30,1,1"/>
     </style>
     <style id="nifty-scrollpanel#bottom-right">
-        <attributes width="23px" height="23px"/>
+        <attributes width="16px" height="16px"/>
     </style>
 </nifty-styles>
