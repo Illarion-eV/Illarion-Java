@@ -313,6 +313,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
             }
 
             final LabelBuilder label = new LabelBuilder();
+            label.font("chatFont");
             label.text(message.getText());
             label.color(message.getColor());
             label.textHAlign(ElementBuilder.Align.Left);

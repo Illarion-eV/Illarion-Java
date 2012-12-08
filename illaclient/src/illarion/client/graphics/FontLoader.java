@@ -58,6 +58,11 @@ public final class FontLoader implements SlickRenderFontLoader {
         text("textFont", "Ubuntu", 16.f, "normal"),
 
         /**
+         * The font that is used for the chat log.
+         */
+        chat("chatFont", "LiberationSansNarrow-Bold", 16.f, "normal"),
+
+        /**
          * Console font - mono-spaced font suiting console output.
          */
         console("consoleFont", "Inconsolata", 14.f, "normal");
