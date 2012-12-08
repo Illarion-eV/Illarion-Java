@@ -70,7 +70,9 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DialogHandler implements ScreenController, UpdatableHandler {
-
+    /**
+     * The input control that is used in this dialog handler.
+     */
     private Input input;
 
     @Override

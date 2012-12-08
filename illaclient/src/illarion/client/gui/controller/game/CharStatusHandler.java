@@ -34,7 +34,7 @@ import org.newdawn.slick.GameContainer;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class CharStatusHandler implements ScreenController, UpdatableHandler {
+public final class CharStatusHandler implements ScreenController, UpdatableHandler {
     /**
      * The progress bar that shows the hit points.
      */

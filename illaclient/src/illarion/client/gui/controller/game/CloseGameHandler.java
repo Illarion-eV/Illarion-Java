@@ -38,7 +38,7 @@ import org.newdawn.slick.GameContainer;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class CloseGameHandler implements ScreenController, UpdatableHandler, EventTopicSubscriber<ButtonClickedEvent> {
+public final class CloseGameHandler implements ScreenController, UpdatableHandler, EventTopicSubscriber<ButtonClickedEvent> {
     /**
      * The parent instance of Nifty-GUI.
      */

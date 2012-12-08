@@ -32,7 +32,7 @@ import org.bushe.swing.event.EventSubscriber;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class GameMiniMapHandler implements ScreenController, EventSubscriber<HideMiniMap> {
+public final class GameMiniMapHandler implements ScreenController, EventSubscriber<HideMiniMap> {
     /**
      * The instance of Nifty used to control the elements on the screen.
      */

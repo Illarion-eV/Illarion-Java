@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class NumberSelectPopupHandler implements ScreenController, UpdatableHandler {
+public final class NumberSelectPopupHandler implements ScreenController, UpdatableHandler {
 
     /**
      * This is the callback interface for this class. Once the number select popup is closed for confirmed this one

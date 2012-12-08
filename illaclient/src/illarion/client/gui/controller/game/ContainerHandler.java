@@ -70,7 +70,7 @@ import java.util.regex.Pattern;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class ContainerHandler implements ScreenController, UpdatableHandler {
+public final class ContainerHandler implements ScreenController, UpdatableHandler {
     /**
      * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
      * so the server can send the commands to clean everything up.
