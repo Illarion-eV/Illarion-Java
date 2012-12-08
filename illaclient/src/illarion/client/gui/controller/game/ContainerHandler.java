@@ -35,6 +35,7 @@ import gnu.trove.procedure.TIntObjectProcedure;
 import illarion.client.IllaClient;
 import illarion.client.graphics.Item;
 import illarion.client.gui.EntitySlickRenderImage;
+import illarion.client.net.server.events.CloseContainerEvent;
 import illarion.client.net.server.events.ContainerItemLookAtEvent;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
@@ -54,6 +55,7 @@ import illarion.common.types.Rectangle;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
+import org.illarion.nifty.controls.ItemContainerCloseEvent;
 import org.illarion.nifty.controls.itemcontainer.builder.ItemContainerBuilder;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
@@ -246,6 +248,22 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
         tooltipHandler = tooltip;
     }
 
+    @EventSubscriber
+    public void onContainerClosedEvent(final CloseContainerEvent event) {
+        if (isContainerCreated(event.getContainerId())) {
+            removeItemContainer(event.getContainerId());
+        }
+    }
+
+    private void removeItemContainer(final int id) {
+        final org.illarion.nifty.controls.ItemContainer container = itemContainerMap.remove(id);
+        if (container == null) {
+            return;
+        }
+
+        container.closeWindow();
+    }
+
     /**
      * This event is received in case the server sends a tooltip for a container.
      *
@@ -343,6 +361,20 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
 
         clickHelper.setData(slotId, containerId);
         clickHelper.pulse();
+    }
+
+    /**
+     * This event is received in case a container is closed.
+     *
+     * @param topic the topic of the event
+     * @param data  the event data
+     */
+    @NiftyEventSubscriber(pattern = ".*container[0-9]+.*")
+    public void onItemContainerClose(final String topic, final ItemContainerCloseEvent data) {
+        World.getPlayer().removeContainer(data.getContainerId());
+        if (isContainerCreated(data.getContainerId())) {
+            removeItemContainer(data.getContainerId());
+        }
     }
 
     /**
@@ -502,6 +534,8 @@ public class ContainerHandler implements ScreenController, UpdatableHandler {
                 "${gamescreen-bundle.bag}");
         builder.slots(event.getSlotCount());
         builder.slotDim(35, 35);
+        builder.containerId(event.getContainerId());
+
         final Element container = builder.build(activeNifty, activeScreen, activeScreen.findElementByName("windows"));
         final org.illarion.nifty.controls.ItemContainer conControl = container.getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
 

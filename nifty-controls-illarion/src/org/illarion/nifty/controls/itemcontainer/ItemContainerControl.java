@@ -29,6 +29,7 @@ import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
 import org.illarion.nifty.controls.InventorySlot;
 import org.illarion.nifty.controls.ItemContainer;
+import org.illarion.nifty.controls.ItemContainerCloseEvent;
 import org.illarion.nifty.controls.inventoryslot.builder.InventorySlotBuilder;
 
 import java.util.Properties;
@@ -57,6 +58,10 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
      */
     private int columns;
 
+    private int containerId;
+
+    private Nifty niftyInstance;
+
     /**
      * Default constructor.
      */
@@ -67,6 +72,8 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
     public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter, final Attributes controlDefinitionAttributes) {
         super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
 
+        niftyInstance = nifty;
+
         final int slotCount;
         if (controlDefinitionAttributes.isSet("slots")) {
             slotCount = controlDefinitionAttributes.getAsInteger("slots");
@@ -75,6 +82,8 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
         }
 
         columns = (int) Math.ceil(Math.sqrt(slotCount));
+
+        containerId = controlDefinitionAttributes.getAsInteger("containerId");
 
         final int slotHeight = controlDefinitionAttributes.getAsInteger("slotHeight", SLOT_DEFAULT_SIZE);
         final int slotWidth = controlDefinitionAttributes.getAsInteger("slotWidth", SLOT_DEFAULT_SIZE);
@@ -153,5 +162,11 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
     @Override
     public InventorySlot getSlot(final int index) {
         return slots[index];
+    }
+
+    @Override
+    public void closeWindow() {
+        super.closeWindow();
+        niftyInstance.publishEvent(getId(), new ItemContainerCloseEvent(containerId));
     }
 }

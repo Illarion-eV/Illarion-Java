@@ -26,6 +26,7 @@ import illarion.client.graphics.Avatar;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.RequestAppearanceCmd;
+import illarion.client.net.server.events.CloseContainerEvent;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.util.Lang;
@@ -224,6 +225,11 @@ public final class Player {
     }
 
     @EventSubscriber
+    public void onContainerClosedEvent(final CloseContainerEvent event) {
+        removeContainer(event.getContainerId());
+    }
+
+    @EventSubscriber
     public void onDialogClosedEvent(final CloseDialogEvent event) {
         if (merchantDialog == null) {
             return;
@@ -297,6 +303,7 @@ public final class Player {
         synchronized (containers) {
             if (containers.containsKey(id)) {
                 containers.remove(id);
+
             }
         }
     }

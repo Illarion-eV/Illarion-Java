@@ -20,7 +20,9 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.net.server.events.CloseContainerEvent;
 import illarion.common.net.NetCommReader;
+import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
@@ -61,7 +63,7 @@ public final class CloseShowcaseMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        //GUI.getInstance().getContainer(sc).closeContainer();
+        EventBus.publish(new CloseContainerEvent(sc));
         return true;
     }
 

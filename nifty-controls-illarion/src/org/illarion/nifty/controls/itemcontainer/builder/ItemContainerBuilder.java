@@ -33,14 +33,6 @@ public class ItemContainerBuilder extends ControlBuilder {
         set("slotBackground", image);
     }
 
-    public void columns(final int cols) {
-        set("columns", Integer.toString(cols));
-    }
-
-    public void rows(final int rows) {
-        set("rows", Integer.toString(rows));
-    }
-
     public void slots(final int slots) {
         set("slots", Integer.toString(slots));
     }
@@ -56,5 +48,9 @@ public class ItemContainerBuilder extends ControlBuilder {
     public void slotDim(final int height, final int width) {
         slotHeight(height);
         slotWidth(width);
+    }
+
+    public void containerId(final int id) {
+        set("containerId", Integer.toString(id));
     }
 }
