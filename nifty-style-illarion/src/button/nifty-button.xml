@@ -112,6 +112,26 @@
         <attributes width="13px" height="14px"/>
     </style>
 
+    <!-- Style for the inventory button -->
+    <style id="nifty-button-inventory#panel">
+        <attributes backgroundImage="data/gui/button/inventory.png" width="24px" height="24px" childLayout="center"
+                    visibleToMouse="true" align="center" valign="center"/>
+    </style>
+
+    <style id="nifty-button-inventory#text">
+        <attributes visible="false"/>
+    </style>
+
+    <!-- Style for the skills button -->
+    <style id="nifty-button-skills#panel">
+        <attributes backgroundImage="data/gui/button/skills.png" width="24px" height="24px" childLayout="center"
+                    visibleToMouse="true" align="center" valign="center"/>
+    </style>
+
+    <style id="nifty-button-skills#text">
+        <attributes visible="false"/>
+    </style>
+
     <!-- Style for the default button -->
     <style id="nifty-button#panel" base="nifty-button-gray#panel"/>
     <style id="nifty-button#text" base="nifty-button-gray#text"/>
