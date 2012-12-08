@@ -21,6 +21,7 @@ package illarion.client.gui.controller.game;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.graphics.AnimationUtility;
 import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
 import illarion.client.world.World;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -65,9 +66,19 @@ public class CharStatusHandler implements ScreenController, UpdatableHandler {
     private int foodPoints;
 
     /**
-     * This flag is set {@code true} in case any of the displayed value changed in order to trigger a update.
+     * The currently displayed hit points.
      */
-    private boolean dirty;
+    private int currentHitPoints;
+
+    /**
+     * The currently displayed food points.
+     */
+    private int currentFoodPoints;
+
+    /**
+     * The currently displayed mana points.
+     */
+    private int currentManaPoints;
 
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
@@ -94,10 +105,7 @@ public class CharStatusHandler implements ScreenController, UpdatableHandler {
                 case ManaPoints:
                     manaPoints = event.getValue();
                     break;
-                default:
-                    return;
             }
-            dirty = true;
         }
     }
 
@@ -113,11 +121,17 @@ public class CharStatusHandler implements ScreenController, UpdatableHandler {
 
     @Override
     public void update(final GameContainer container, final int delta) {
-        if (dirty) {
-            dirty = false;
-            hitPointBar.setProgress((float) hitPoints / 10000.f);
-            manaPointBar.setProgress((float) manaPoints / 10000.f);
-            foodPointBar.setProgress((float) foodPoints / 60000.f);
+        if (hitPoints != currentHitPoints) {
+            currentHitPoints = AnimationUtility.approach(currentHitPoints, hitPoints, 0, 10000, delta);
+            hitPointBar.setProgress((float) currentHitPoints / 10000.f);
+        }
+        if (manaPoints != currentManaPoints) {
+            currentManaPoints = AnimationUtility.approach(currentManaPoints, manaPoints, 0, 10000, delta);
+            manaPointBar.setProgress((float) currentManaPoints / 10000.f);
+        }
+        if (foodPoints != currentFoodPoints) {
+            currentFoodPoints = AnimationUtility.approach(currentFoodPoints, foodPoints, 0, 60000, delta);
+            foodPointBar.setProgress((float) currentFoodPoints / 10000.f);
         }
     }
 }
