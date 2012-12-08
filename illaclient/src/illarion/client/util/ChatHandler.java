@@ -188,7 +188,7 @@ public final class ChatHandler {
                     textBuilder.append(talkingChar.getName());
                 }
 
-                textBuilder.append(text);
+                textBuilder.append(resultText);
             } else {
                 if (talkingChar == null) {
                     textBuilder.append(Lang.getMsg("chat.distantShout"));
@@ -212,7 +212,13 @@ public final class ChatHandler {
                 }
 
                 textBuilder.append(':').append(' ');
+                if (mode == SpeechMode.ooc) {
+                    textBuilder.append("((");
+                }
                 textBuilder.append(resultText);
+                if (mode == SpeechMode.ooc) {
+                    textBuilder.append("))");
+                }
             }
 
             EventBus.publish(new CharTalkingEvent(mode, talkingChar, location, resultText, textBuilder.toString()));

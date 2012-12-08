@@ -106,22 +106,22 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     /**
      * The default color of text entries.
      */
-    private static final Color COLOR_DEFAULT = Color.WHITE;
+    private static final Color COLOR_DEFAULT = new Color("#FFFFFF");
 
     /**
      * The color of shouted or important messages
      */
-    private static final Color COLOR_SHOUT = new Color(1.f, .3f, .3f, 1.f);
+    private static final Color COLOR_SHOUT = new Color("#f000f0");
 
     /**
      * The color of whispered text.
      */
-    private static final Color COLOR_WHISPER = new Color(.7f, .7f, .7f, 1.f);
+    private static final Color COLOR_WHISPER = new Color("#C0C0C0");
 
     /**
      * The color of emoted.
      */
-    private static final Color COLOR_EMOTE = new Color(.1f, .8f, .1f, 1.f);
+    private static final Color COLOR_EMOTE = new Color("#00C0C0");
 
     /**
      * The log that is used to display the text.
