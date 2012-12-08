@@ -19,7 +19,9 @@
 package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.ElementBuilder;
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.ScrollPanel;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
@@ -30,6 +32,7 @@ import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.Color;
+import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
@@ -139,6 +142,11 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     private Screen screen;
 
     /**
+     * The nifty instance of this chat handler.
+     */
+    private Nifty nifty;
+
+    /**
      * The Queue of strings that yet need to be written to the GUI.
      */
     private final Queue<GUIChatHandler.MessageEntry> messageQueue;
@@ -225,6 +233,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
         this.screen = screen;
+        this.nifty = nifty;
 
         chatMsg = screen.findNiftyControl("chatMsg", TextField.class);
         chatLog = screen.findNiftyControl("chatPanel", ScrollPanel.class);
@@ -232,13 +241,34 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
         chatMsg.getElement().addInputHandler(this);
     }
 
+    @NiftyEventSubscriber(id = "expandTextLogBtn")
+    public void onInventoryButtonClicked(final String topic, final ButtonClickedEvent data) {
+        toggleChatLog();
+    }
+
+    private static final SizeValue CHAT_EXPANDED_HEIGHT = SizeValue.px(500);
+    private static final SizeValue CHAT_COLLAPSED_HEIGHT = SizeValue.px(170);
+
+    private void toggleChatLog() {
+        final Element chatScroll = screen.findElementByName("chatPanel");
+
+        if (chatScroll.getConstraintHeight().equals(CHAT_COLLAPSED_HEIGHT)) {
+            chatScroll.setConstraintHeight(CHAT_EXPANDED_HEIGHT);
+        } else {
+            chatScroll.setConstraintHeight(CHAT_COLLAPSED_HEIGHT);
+        }
+        screen.findElementByName("mainLayer").layoutElements();
+    }
+
     @Override
     public void onStartScreen() {
+        toggleChatLog();
         EventBus.subscribe(CharTalkingEvent.class, this);
         EventBus.subscribe(InputReceiver.EB_TOPIC, this);
         EventBus.subscribe(BroadcastInformReceivedEvent.class, bcInformEventHandler);
         EventBus.subscribe(TextToInformReceivedEvent.class, ttInformEventHandler);
         EventBus.subscribe(ScriptInformReceivedEvent.class, scriptInformEventHandler);
+        nifty.subscribeAnnotations(this);
     }
 
     @Override
@@ -248,6 +278,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
         EventBus.unsubscribe(BroadcastInformReceivedEvent.class, bcInformEventHandler);
         EventBus.unsubscribe(TextToInformReceivedEvent.class, ttInformEventHandler);
         EventBus.unsubscribe(ScriptInformReceivedEvent.class, scriptInformEventHandler);
+        nifty.unsubscribeAnnotations(this);
     }
 
     /**
