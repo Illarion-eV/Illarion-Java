@@ -20,6 +20,7 @@ package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
 import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
@@ -256,6 +257,11 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         if (data.equals("ToggleInventory")) {
             toggleInventory();
         }
+    }
+
+    @NiftyEventSubscriber(id = "openInventoryBtn")
+    public void onInventoryButtonClicked(final String topic, final ButtonClickedEvent data) {
+        toggleInventory();
     }
 
     public void toggleInventory() {
