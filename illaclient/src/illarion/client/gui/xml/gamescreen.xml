@@ -53,7 +53,8 @@
 
                 <panel childLayout="vertical" width="*" valign="bottom" marginLeft="5px">
                     <panel align="right" marginBottom="3px" childLayout="horizontal">
-                        <control name="button" id="openInventoryBtn" style="nifty-button-inventory" valign="bottom"/>
+                        <control name="button" id="openInventoryBtn" style="nifty-button-inventory" valign="bottom"
+                                 focusable="false"/>
                     </panel>
                     <control name="progress" style="illarion-health-bar" width="100%" id="healthBar"/>
                     <panel width="100%" childLayout="horizontal">
