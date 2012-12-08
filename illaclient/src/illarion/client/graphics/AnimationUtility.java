@@ -202,27 +202,22 @@ public final class AnimationUtility {
      */
     public static int approach(final int value, final int target,
                                final int factor, final int min, final int max, final int delta) {
-        int diff = (target - value);
-        if (diff != 0) {
-            final int dir = FastMath.sign(diff);
-            diff = FastMath.abs(diff);
-            if (diff > factor) {
-                diff /= factor;
-            } else {
-                diff = 1;
-            }
-            if (diff > MIN_INT_DIFF) {
-                diff = (diff * delta) / DELTA_DIV;
-                if (diff == 0) {
-                    diff = 1;
-                }
-            }
-            final int newValue = value + (diff * dir);
-
-            // clamp value against limits
-            return FastMath.clamp(newValue, min, max);
+        final int diff = target - value;
+        if (diff == 0) {
+            return value;
         }
-        return value;
+
+        final int dir = FastMath.sign(diff);
+        int absDiff = FastMath.abs(diff) / factor;
+
+        if (absDiff > MIN_INT_DIFF) {
+            absDiff = FastMath.clamp((absDiff * delta) / DELTA_DIV, 1, FastMath.abs(diff));
+        } else {
+            absDiff = FastMath.clamp(absDiff, 1, MIN_INT_DIFF);
+        }
+
+        final int newValue = value + (absDiff * dir);
+        return FastMath.clamp(newValue, min, max);
     }
 
     /**
