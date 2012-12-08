@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.jar.Pack200;
+import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -185,7 +186,7 @@ public final class ResourceCreator extends Task {
                 final BufferedOutputStream bOut = new BufferedOutputStream(xOut);
                 zOut = new ZipOutputStream(bOut);
 
-                zOut.setLevel(0);
+                zOut.setLevel(Deflater.BEST_SPEED);
                 zOut.setMethod(ZipEntry.DEFLATED);
 
                 for (final AbstractFileSet fileset : filesets) {
