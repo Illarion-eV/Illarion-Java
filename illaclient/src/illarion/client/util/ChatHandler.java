@@ -47,7 +47,7 @@ public final class ChatHandler {
          * Speech mode for emotes.
          */
         @SuppressWarnings("nls")
-        emote(Color.yellow, "^\\s*[!#]me(.*)\\s*$", "$1"),
+        emote(Color.yellow, "^\\s*[/#]me(.*)\\s*$", "$1"),
 
         /**
          * Speech mode for normal spoken text.
@@ -58,19 +58,19 @@ public final class ChatHandler {
          * Speech mode for OOC messages.
          */
         @SuppressWarnings("nls")
-        ooc(Color.gray, "^\\s*[!#]o(oc)?\\s*(.*)\\s*$", "$2"),
+        ooc(Color.gray, "^\\s*[/#]o(oc)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for shouted text.
          */
         @SuppressWarnings("nls")
-        shout(Color.red, "^\\s*[!#]s(hout)?\\s*(.*)\\s*$", "$2"),
+        shout(Color.red, "^\\s*[/#]s(hout)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for whispered text.
          */
         @SuppressWarnings("nls")
-        whisper(Color.gray, "^\\s*[!#]w(hisper)?\\s*(.*)\\s*$", "$2");
+        whisper(Color.gray, "^\\s*[/#]w(hisper)?\\s*(.*)\\s*$", "$2");
 
         /**
          * The color of this speech mode.
