@@ -17,6 +17,7 @@
 package illarion.build;
 
 import illarion.build.imagepacker.ImagePacker;
+import illarion.common.data.Book;
 import illarion.common.util.Crypto;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -27,9 +28,7 @@ import org.apache.tools.ant.taskdefs.ManifestException;
 import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.imageio.ImageIO;
@@ -362,7 +361,7 @@ public final class TextureConverterNG
             }
         } else if (cleanFileName.endsWith(".tbl")) { //$NON-NLS-1$
             tableFiles.add(entry);
-        } else if (cleanFileName.endsWith(".xml")) { //$NON-NLS-1$
+        } else if (cleanFileName.endsWith(".book.xml")) { //$NON-NLS-1$
             bookFiles.add(entry);
         } else if (cleanFileName.startsWith("META-INF")) { //$NON-NLS-1$
             return;
@@ -520,7 +519,9 @@ public final class TextureConverterNG
     }
 
     /**
-     * Compress and write the book files to the new archive.
+     * Write the book files to the new archive. This simply checks if the book files can be properly read into the
+     * data structures without errors and considers them valid then. Doing so should prevent the client to run into
+     * any trouble when loading the book files.
      *
      * @param outJar the target archive the compressed book files are written to
      * @throws IOException in case there is anything wrong with the input or the output file stream
@@ -529,98 +530,45 @@ public final class TextureConverterNG
     private void writeBookFiles(final JarOutputStream outJar)
             throws BuildException {
         if (bookFiles.isEmpty()) {
-            System.gc();
             return;
         }
 
-        // final URL schemaFile =
-        // TextureConverterNG.class.getClassLoader().getResource(
-        // "bookschema.xsd");
+        final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 
-        String titleEN = "";
-        String titleDE = "";
-        final List<String> pageTextDE = new ArrayList<String>();
-        final List<String> pageTextEN = new ArrayList<String>();
         for (final FileEntry fileEntry : bookFiles) {
+            FileChannel inChannel = null;
             try {
-                pageTextDE.clear();
-                pageTextEN.clear();
+                final Document document = docBuilderFactory.newDocumentBuilder().parse(fileEntry.getFile());
+                final Book book = new Book(document);
+                System.out.println("Book " + fileEntry.getFileName() + " read with "
+                        + Integer.toString(book.getEnglishBook().getPageCount()) + " pages");
 
-                final DocumentBuilderFactory DBF = DocumentBuilderFactory.newInstance();
-                DBF.setIgnoringElementContentWhitespace(true);
-                final Document D = DBF.newDocumentBuilder().parse(fileEntry.getFile());
-
-                // validator.validate(new DOMSource(D));
-                final Node bookNode = D.getFirstChild();
-                final NodeList langNodes = bookNode.getChildNodes();
-                for (int n = 0; n < langNodes.getLength(); n++) {
-                    if (langNodes.item(n).getNodeType() == Node.ELEMENT_NODE) {
-                        final NamedNodeMap langAttributes = langNodes.item(n).getAttributes();
-                        final Node languageID = langAttributes.getNamedItem("id");
-                        if (languageID.getNodeValue().equalsIgnoreCase("de")) {
-                            final NodeList pages = langNodes.item(n).getChildNodes();
-                            for (int p = 0; p < pages.getLength(); p++) {
-                                if (pages.item(p).getNodeType() == Node.ELEMENT_NODE) {
-                                    if (pages.item(p).getNodeName().equalsIgnoreCase("title")) {
-                                        titleDE = pages.item(p).getTextContent();
-                                    } else {
-                                        pageTextDE.add(pages.item(p).getTextContent());
-                                    }
-                                }
-                            }
-                        } else if (languageID.getNodeValue().equalsIgnoreCase(("us"))) {
-                            final NodeList pages = langNodes.item(n).getChildNodes();
-                            for (int p = 0; p < pages.getLength(); p++) {
-                                if (pages.item(p).getNodeType() == Node.ELEMENT_NODE) {
-                                    if (pages.item(p).getNodeName().equalsIgnoreCase("title")) {
-                                        titleEN = pages.item(p).getTextContent();
-                                    } else {
-                                        pageTextEN.add(pages.item(p).getTextContent());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // store encrypted code in zip
-                // create uncompressed zip entry
-                final JarEntry dstEntry = new JarEntry(fileEntry.getFileName().replaceAll(".xml", ".book"));
+                final JarEntry dstEntry = new JarEntry(fileEntry.getFileName());
                 dstEntry.setMethod(ZipEntry.DEFLATED);
 
                 // write data to zip
                 outJar.putNextEntry(dstEntry);
 
-                outJar.write(intToByteArray(titleEN.getBytes("UTF-8").length));
-                outJar.write(titleEN.getBytes("UTF-8"));
+                inChannel = new FileInputStream(fileEntry.getFile()).getChannel();
+                final WritableByteChannel outChannel = Channels.newChannel(outJar);
 
-                outJar.write(intToByteArray(titleDE.getBytes("UTF-8").length));
-                outJar.write(titleDE.getBytes("UTF-8"));
-
-                outJar.write(intToByteArray(Math.max(pageTextEN.size(), pageTextDE.size())));
-
-                String pageText;
-
-                for (int page = 0; page < Math.max(pageTextEN.size(), pageTextDE.size()); page++) {
-                    if (pageTextEN.size() <= page) {
-                        outJar.write(intToByteArray(pageTextDE.get(page - 1).getBytes("UTF-8").length));
-                    } else {
-                        pageText = pageTextEN.get(page).replace("\\n", "\n");
-                        outJar.write(intToByteArray(pageText.getBytes("UTF-8").length));
-                        outJar.write(pageText.getBytes("UTF-8"));
-                    }
-                    if (pageTextDE.size() <= page) {
-                        outJar.write(intToByteArray(pageTextEN.get(page).getBytes("UTF-8").length));
-                    } else {
-                        pageText = pageTextDE.get(page).replace("\\n", "\n");
-                        outJar.write(intToByteArray(pageText.getBytes("UTF-8").length));
-                        outJar.write(pageText.getBytes("UTF-8"));
-                    }
+                final long size = inChannel.size();
+                final long maxSize = Math.min(size, 67076096);
+                long position = 0;
+                while (position < size) {
+                    position += inChannel.transferTo(position, maxSize, outChannel);
                 }
-
                 outJar.closeEntry();
             } catch (final Exception e) {
                 throw new BuildException(e);
+            } finally {
+                if ((inChannel != null) && inChannel.isOpen()) {
+                    try {
+                        inChannel.close();
+                    } catch (final IOException e) {
+                        // nothing to do
+                    }
+                }
             }
         }
         bookFiles.clear();

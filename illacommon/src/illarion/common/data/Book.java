@@ -49,6 +49,16 @@ public final class Book {
     }
 
     /**
+     * Create a new book and load its data from a XML node.
+     *
+     * @param source the XML node that is the source of the book data
+     */
+    public Book(final Node source) {
+        this();
+        loadData(source);
+    }
+
+    /**
      * Load the data from a node.
      *
      * @param source the source node
