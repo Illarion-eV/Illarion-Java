@@ -39,6 +39,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.client.SayCmd;
 import illarion.client.net.server.events.BroadcastInformReceivedEvent;
 import illarion.client.net.server.events.ScriptInformReceivedEvent;
+import illarion.client.net.server.events.ShowBookEvent;
 import illarion.client.net.server.events.TextToInformReceivedEvent;
 import illarion.client.util.Lang;
 import illarion.client.world.events.CharTalkingEvent;
@@ -309,6 +310,10 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
      * @param text the text to send
      */
     private static void sendText(final String text) {
+        if (text.equals("/showTestBook")) {
+            EventBus.publish(new ShowBookEvent(1));
+            return;
+        }
         final SayCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_SAY, SayCmd.class);
         cmd.setText(text);
         cmd.send();
