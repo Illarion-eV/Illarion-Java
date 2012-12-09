@@ -61,9 +61,9 @@ public final class BookTitlePage {
         for (int i = 0; i < children.getLength(); i++) {
             final Node child = children.item(i);
             if ("title".equals(child.getNodeName())) {
-                title = child.getFirstChild().getNodeValue();
+                title = child.getFirstChild().getNodeValue().trim().replaceAll("\\s+", " ");
             } else if ("author".equals(child.getNodeName())) {
-                author = child.getFirstChild().getNodeValue();
+                author = child.getFirstChild().getNodeValue().trim().replaceAll("\\s+", " ");
             }
         }
 

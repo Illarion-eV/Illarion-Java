@@ -42,7 +42,7 @@ public class BookPageEntry {
      */
     public BookPageEntry(final boolean headline, final String text) {
         this.headline = headline;
-        this.text = text;
+        this.text = text.trim().replaceAll("\\s+", " ");
     }
 
     /**
