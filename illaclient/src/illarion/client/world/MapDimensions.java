@@ -33,12 +33,18 @@ public final class MapDimensions {
      * fill the screen size. If this value is chosen too high the result is that large items and light sources are
      * known to the client too late and just "pop" in.
      */
-    private static final int ADD_MAP_RANGE = 6;
+    private static final int ADD_MAP_RANGE = 3;
 
     /**
      * This is the additional map range that is attached to the bottom of the clipping ranges.
      */
-    private static final int ADD_MAP_RANGE_BOTTOM = ADD_MAP_RANGE + 6;
+    private static final int ADD_CLIPPING_RANGE_BOTTOM = ADD_MAP_RANGE + 10;
+
+    /**
+     * The additional size for the clipping area. This is used to prevent black stripes caused by tiles removed too
+     * early.
+     */
+    private static final int ADD_CLIPPING_RANGE = ADD_MAP_RANGE + 8;
 
     /**
      * The singleton instance of this class.
@@ -187,10 +193,10 @@ public final class MapDimensions {
         final int heightInTiles = FastMath.ceil(((float) height / (float) MapConstants.TILE_H) * 2.f);
         final int widthInTiles = FastMath.ceil(((float) width / (float) MapConstants.TILE_W) * 2.f);
 
-        clippingOffsetTop = FastMath.ceil(heightInTiles / 2.f) + ADD_MAP_RANGE + 2;
-        clippingOffsetBottom = -FastMath.ceil(heightInTiles / 2.f) - ADD_MAP_RANGE_BOTTOM - 2;
-        clippingOffsetLeft = -FastMath.ceil(widthInTiles / 2.f) - ADD_MAP_RANGE - 2;
-        clippingOffsetRight = FastMath.ceil(widthInTiles / 2.f) + ADD_MAP_RANGE + 2;
+        clippingOffsetTop = FastMath.ceil(heightInTiles / 2.f) + ADD_CLIPPING_RANGE;
+        clippingOffsetBottom = -FastMath.ceil(heightInTiles / 2.f) - ADD_CLIPPING_RANGE_BOTTOM;
+        clippingOffsetLeft = -FastMath.ceil(widthInTiles / 2.f) - ADD_CLIPPING_RANGE;
+        clippingOffsetRight = FastMath.ceil(widthInTiles / 2.f) + ADD_CLIPPING_RANGE;
 
         stripesWidth = widthInTiles + ADD_MAP_RANGE + ADD_MAP_RANGE;
         stripesHeight = heightInTiles + ADD_MAP_RANGE + ADD_MAP_RANGE;
