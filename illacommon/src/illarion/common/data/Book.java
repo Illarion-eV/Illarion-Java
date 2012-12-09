@@ -1,0 +1,97 @@
+/*
+ * This file is part of the Illarion Common Library.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package illarion.common.data;
+
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.util.Locale;
+
+/**
+ * The content of this class represent a single book in the game. Along with all its data.
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
+ */
+public final class Book {
+    /**
+     * The german version of this book.
+     */
+    private final BookLanguage germanBook;
+
+    /**
+     * The english version of this book.
+     */
+    private final BookLanguage englishBook;
+
+    /**
+     * Create a new book.
+     */
+    public Book() {
+        germanBook = new BookLanguage(Locale.GERMAN);
+        englishBook = new BookLanguage(Locale.ENGLISH);
+    }
+
+    /**
+     * Load the data from a node.
+     *
+     * @param source the source node
+     */
+    public void loadData(final Node source) {
+        if (!"book".equals(source.getNodeName())) {
+            if (source.hasChildNodes()) {
+                final NodeList children = source.getChildNodes();
+                for (int i = 0; i < children.getLength(); i++) {
+                    loadData(children.item(i));
+                }
+            }
+            return;
+        }
+        final NodeList children = source.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            final Node child = children.item(i);
+            if ("language".equals(child.getNodeName())) {
+                final NamedNodeMap attributes = child.getAttributes();
+                if ("de".equals(attributes.getNamedItem("id").getNodeValue())) {
+                    germanBook.loadData(child);
+                } else if ("en".equals(attributes.getNamedItem("id").getNodeValue())) {
+                    englishBook.loadData(child);
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the german version of the book.
+     *
+     * @return the german version of the book
+     */
+    public BookLanguage getGermanBook() {
+        return germanBook;
+    }
+
+    /**
+     * Get the english version of the book.
+     *
+     * @return the english version of the book
+     */
+    public BookLanguage getEnglishBook() {
+        return englishBook;
+    }
+}
