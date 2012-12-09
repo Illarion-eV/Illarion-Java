@@ -54,9 +54,9 @@ public final class BookPage implements Iterable<BookPageEntry> {
         for (int i = 0; i < children.getLength(); i++) {
             final Node child = children.item(i);
             if ("headline".equals(child.getNodeName())) {
-                entries.add(new BookPageEntry(true, child.getFirstChild().getNodeValue()));
+                entries.add(new BookPageEntry(true, child.getNodeValue()));
             } else if ("paragraph".equals(child.getNodeName())) {
-                entries.add(new BookPageEntry(false, child.getFirstChild().getNodeValue()));
+                entries.add(new BookPageEntry(false, child.getNodeValue()));
             }
         }
     }
