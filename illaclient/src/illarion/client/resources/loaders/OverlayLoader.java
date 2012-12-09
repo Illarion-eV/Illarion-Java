@@ -20,7 +20,7 @@ package illarion.client.resources.loaders;
 
 import illarion.client.graphics.Overlay;
 import illarion.client.resources.ResourceFactory;
-import illarion.common.util.TableLoader;
+import illarion.common.util.TableLoaderOverlay;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
 
@@ -33,17 +33,7 @@ import org.apache.log4j.Logger;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class OverlayLoader extends AbstractResourceLoader<Overlay> implements
-        TableLoaderSink {
-    /**
-     * The column index of the overlay id of that overlay in the resource table.
-     */
-    private static final int TB_ID = 0;
-
-    /**
-     * The column index of the file name of that overlay in the resource table.
-     */
-    private static final int TB_NAME = 1;
-
+        TableLoaderSink<TableLoaderOverlay> {
     /**
      * The logger that is used to report error messages.
      */
@@ -61,7 +51,7 @@ public final class OverlayLoader extends AbstractResourceLoader<Overlay> impleme
         final ResourceFactory<Overlay> factory = getTargetFactory();
 
         factory.init();
-        new TableLoader("Overlays", this);
+        new TableLoaderOverlay(this);
         factory.loadingFinished();
 
         return factory;
@@ -71,9 +61,9 @@ public final class OverlayLoader extends AbstractResourceLoader<Overlay> impleme
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, final TableLoader loader) {
-        final int id = loader.getInt(TB_ID);
-        final String name = loader.getString(TB_NAME);
+    public boolean processRecord(final int line, final TableLoaderOverlay loader) {
+        final int id = loader.getTileId();
+        final String name = loader.getOverlayFile();
         final Overlay overlay = new Overlay(id, name);
 
         try {
