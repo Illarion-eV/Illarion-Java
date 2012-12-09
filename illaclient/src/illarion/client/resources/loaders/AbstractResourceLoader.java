@@ -59,8 +59,7 @@ public abstract class AbstractResourceLoader<T extends Resource> implements Call
      */
     public final AbstractResourceLoader<T> setTarget(final ResourceFactory<T> factory) {
         if (hasTargetFactory()) {
-            throw new IllegalStateException(
-                    "Changing the target factory once set is not allowed");
+            throw new IllegalStateException("Changing the target factory once set is not allowed");
         }
         targetFactory = factory;
         return this;

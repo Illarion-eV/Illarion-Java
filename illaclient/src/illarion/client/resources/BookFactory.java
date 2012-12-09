@@ -153,7 +153,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
             final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             docBuilderFactory.setIgnoringComments(true);
             docBuilderFactory.setIgnoringElementContentWhitespace(true);
-            docBuilderFactory.setNamespaceAware(false);
+            docBuilderFactory.setNamespaceAware(true);
             docBuilderFactory.setValidating(false);
             try {
                 final Document document = docBuilderFactory.newDocumentBuilder().parse(bookUrl.openStream());
