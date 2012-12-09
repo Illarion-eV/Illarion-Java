@@ -20,8 +20,9 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.util.BookFactory;
+import illarion.client.net.server.events.ShowBookEvent;
 import illarion.common.net.NetCommReader;
+import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
@@ -36,7 +37,7 @@ public final class BookMsg extends AbstractReply {
     /**
      * The book id that was sent.
      */
-    private int bookid;
+    private int bookId;
 
     /**
      * Decode the book data the receiver got and prepare it for the execution.
@@ -48,7 +49,7 @@ public final class BookMsg extends AbstractReply {
      */
     @Override
     public void decode(final NetCommReader reader) throws IOException {
-        bookid = reader.readUShort();
+        bookId = reader.readUShort();
     }
 
     /**
@@ -59,9 +60,7 @@ public final class BookMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        if (BookFactory.getInstance().loadBook(bookid)) {
-            //GUI.getInstance().getBookWindow().setVisible(true);
-        }
+        EventBus.publish(new ShowBookEvent(bookId));
         return true;
     }
 
@@ -76,7 +75,7 @@ public final class BookMsg extends AbstractReply {
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("book ");
-        builder.append(bookid);
+        builder.append(bookId);
         return toString(builder.toString());
     }
 }
