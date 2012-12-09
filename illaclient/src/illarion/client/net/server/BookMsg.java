@@ -52,9 +52,6 @@ public final class BookMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("book ");
-        builder.append(bookId);
-        return toString("");
+        return toString("book" + Integer.toString(bookId));
     }
 }
