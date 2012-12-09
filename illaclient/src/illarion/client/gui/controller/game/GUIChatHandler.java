@@ -349,7 +349,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
             label.color(message.getColor());
             label.textHAlign(ElementBuilder.Align.Left);
             label.parameter("wrap", "true");
-            label.width(label.percentage(100));
+            label.width(contentPane.getConstraintWidth().toString());
             label.build(contentPane.getNifty(), screen, contentPane);
         }
 
@@ -358,9 +358,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
             for (int i = 0; i < (entryCount - 200); i++) {
                 contentPane.getElements().get(i).markForRemoval();
             }
-        }
 
-        if (contentPane != null) {
             chatLog.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
             chatLog.setAutoScroll(ScrollPanel.AutoScroll.OFF);
         }

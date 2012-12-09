@@ -44,7 +44,7 @@
                         <control name="scrollPanel" id="chatPanel" vertical="true" horizontal="false" height="180px"
                                  width="600px" autoScroll="off" stepSizeY="20" style="nifty-scrollpanel"
                                  childLayout="vertical">
-                            <panel id="chatLog" childLayout="vertical" width="100%" visibleToMouse="false"/>
+                            <panel id="chatLog" childLayout="vertical" width="576px" visibleToMouse="false"/>
                         </control>
                         <panel childLayout="horizontal">
                             <control name="textfield" id="chatMsg" style="chat-textfield" maxLength="255"
