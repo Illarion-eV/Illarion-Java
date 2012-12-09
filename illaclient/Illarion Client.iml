@@ -73,6 +73,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_books.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="Illarion Nifty-GUI Style" />
     <orderEntry type="module" module-name="Illarion Nifty-GUI Controls" />
     <orderEntry type="library" name="EventBus" level="project" />

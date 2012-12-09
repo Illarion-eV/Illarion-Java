@@ -104,4 +104,18 @@ public final class Book {
     public BookLanguage getEnglishBook() {
         return englishBook;
     }
+
+    /**
+     * Get the localised version of this book.
+     *
+     * @param locale the locale that is requested
+     * @return the localised version of the book
+     */
+    public BookLanguage getLocalisedBook(final Locale locale) {
+        if (Locale.GERMAN.equals(locale)) {
+            return getGermanBook();
+        } else {
+            return getEnglishBook();
+        }
+    }
 }

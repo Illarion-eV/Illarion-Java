@@ -88,4 +88,13 @@ public final class BookTitlePage {
     public String getAuthor() {
         return author;
     }
+
+    /**
+     * Check if this title page has a author set.
+     *
+     * @return {@code true} in case the author is set
+     */
+    public boolean hasAuthor() {
+        return author != null;
+    }
 }

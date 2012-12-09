@@ -127,6 +127,20 @@
                     </panel>
                 </panel>
             </control>
+            <control id="book" name="window" style="nifty-window" title="${gamescreen-bundle.book}"
+                     visible="false" width="410px" height="550px" hideOnClose="true" visibleToMouse="true">
+                <panel childLayout="vertical" paddingBottom="5px">
+                    <control name="scrollPanel" childLayout="vertical" autoScroll="off" stepSizeY="20" height="*"
+                             style="nifty-scrollpanel" width="368px" horizontal="false">
+                        <panel id="#textContent" childLayout="vertical" width="338px"/>
+                    </control>
+                    <control align="center" name="label" id="#pageNumber" marginBottom="10px" style="nifty-label"/>
+                    <panel style="nifty-panel-small" childLayout="horizontal" align="center">
+                        <control name="button" label="${gamescreen-bundle.back}" id="#buttonBack" margin="5px,10px"/>
+                        <control name="button" label="${gamescreen-bundle.next}" id="#buttonNext" margin="5px,10px"/>
+                    </panel>
+                </panel>
+            </control>
         </layer>
         <layer id="tooltipLayer" childLayout="absolute" visibleToMouse="false"/>
     </screen>
