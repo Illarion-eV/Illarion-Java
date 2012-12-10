@@ -243,7 +243,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     }
 
     @NiftyEventSubscriber(id = "expandTextLogBtn")
-    public void onInventoryButtonClicked(final String topic, final ButtonClickedEvent data) {
+    public void onChatButtonClicked(final String topic, final ButtonClickedEvent data) {
         toggleChatLog();
     }
 
@@ -259,6 +259,8 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
             chatScroll.setConstraintHeight(CHAT_COLLAPSED_HEIGHT);
         }
         screen.findElementByName("mainLayer").layoutElements();
+        chatScroll.getNiftyControl(ScrollPanel.class).setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
+        chatScroll.getNiftyControl(ScrollPanel.class).setAutoScroll(ScrollPanel.AutoScroll.OFF);
     }
 
     @Override
@@ -310,7 +312,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
      * @param text the text to send
      */
     private static void sendText(final String text) {
-        if (text.equals("/showTestBook")) {
+        if ("/showTestBook".equals(text)) {
             EventBus.publish(new ShowBookEvent(1));
             return;
         }
@@ -328,7 +330,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     @Override
     public void onEvent(final String topic, final String data) {
         if (topic.equals(InputReceiver.EB_TOPIC)) {
-            if (data.equals("SelectChat")) {
+            if ("SelectChat".equals(data)) {
                 chatMsg.setFocus();
             }
         }
