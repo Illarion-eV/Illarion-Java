@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
  * This is a town condition. Its able to parse a town value out of the NPC condition line.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
+ * @author vilarion &lt;vilarion@illarion.org&gt;
  */
 public final class Town extends ConditionParser {
     /**
@@ -60,8 +61,7 @@ public final class Town extends ConditionParser {
 
             Towns town = null;
             for (final Towns testTown : Towns.values()) {
-                if (testTown.isValidForRankpoints()
-                        && townString.equalsIgnoreCase(testTown.name())) {
+                if (townString.equalsIgnoreCase(testTown.name())) {
                     town = testTown;
                     break;
                 }
