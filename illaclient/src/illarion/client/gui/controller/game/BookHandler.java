@@ -148,6 +148,8 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
                 entryLabel.textHAlignLeft();
                 entryLabel.build(nifty, screen, bookTextContent);
             }
+
+            pageNumberLabel.setText(Integer.toString(realPage + 1));
         }
 
         bookDisplay.getElement().show();

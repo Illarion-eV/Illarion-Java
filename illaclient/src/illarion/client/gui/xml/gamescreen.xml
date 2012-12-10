@@ -134,7 +134,8 @@
                              style="nifty-scrollpanel" width="368px" horizontal="false">
                         <panel id="#textContent" childLayout="vertical" width="338px"/>
                     </control>
-                    <control align="center" name="label" id="#pageNumber" marginBottom="10px" style="nifty-label"/>
+                    <control align="center" name="label" id="#pageNumber" marginBottom="10px" style="nifty-label"
+                             textHAlign="center" width="368px" height="20px" backgroundColor="#000000bf"/>
                     <panel style="nifty-panel-small" childLayout="horizontal" align="center">
                         <control name="button" label="${gamescreen-bundle.back}" id="#buttonBack" margin="5px,10px"/>
                         <control name="button" label="${gamescreen-bundle.next}" id="#buttonNext" margin="5px,10px"/>
