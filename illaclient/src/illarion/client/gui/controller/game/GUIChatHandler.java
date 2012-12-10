@@ -316,6 +316,10 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
             EventBus.publish(new ShowBookEvent(1));
             return;
         }
+        if ("/showTemplateBook".equals(text)) {
+            EventBus.publish(new ShowBookEvent(2));
+            return;
+        }
         final SayCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_SAY, SayCmd.class);
         cmd.setText(text);
         cmd.send();
