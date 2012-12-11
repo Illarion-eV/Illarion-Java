@@ -541,6 +541,9 @@ public final class GameMiniMap {
 
             for (int i = 0; i < updateAreas.size(); i++) {
                 final Rectangle testRect = updateAreas.get(i);
+                if (testRect == null) {
+                    continue;
+                }
                 if (testRect.intersects(miniMapRect)) {
                     final int currentArea = testRect.getArea();
                     drawMapArea(updateAreas.remove(i));
