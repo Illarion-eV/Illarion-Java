@@ -36,6 +36,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
 import de.lessvoid.nifty.tools.Color;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.graphics.Avatar;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.FontLoader;
 import illarion.client.input.InputReceiver;
@@ -415,7 +416,11 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      * @param color     the color to show the text in
      */
     private void addMessageBubble(final Char character, final String message, final Color color) {
-        final Rectangle charDisplayRect = character.getAvatar().getDisplayRect();
+        final Avatar charAvatar = character.getAvatar();
+        if (charAvatar == null) {
+            return;
+        }
+        final Rectangle charDisplayRect = charAvatar.getDisplayRect();
 
         final PanelBuilder panelBuilder = new PanelBuilder();
         panelBuilder.childLayoutHorizontal();
