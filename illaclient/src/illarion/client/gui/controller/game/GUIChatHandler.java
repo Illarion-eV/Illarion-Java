@@ -115,7 +115,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     /**
      * The color of shouted or important messages
      */
-    private static final Color COLOR_SHOUT = new Color("#f000f0");
+    private static final Color COLOR_SHOUT = new Color("#ff0000");
 
     /**
      * The color of whispered text.
@@ -125,7 +125,7 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     /**
      * The color of emoted.
      */
-    private static final Color COLOR_EMOTE = new Color("#00C0C0");
+    private static final Color COLOR_EMOTE = new Color("#ffcc33");
 
     /**
      * The log that is used to display the text.
