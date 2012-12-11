@@ -45,8 +45,9 @@ import illarion.client.util.Lang;
 import illarion.client.world.events.CharTalkingEvent;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
-import org.bushe.swing.event.EventTopicSubscriber;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.newdawn.slick.GameContainer;
 
 import java.util.Queue;
@@ -58,15 +59,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscriber<String>,
-        EventSubscriber<CharTalkingEvent>, ScreenController, UpdatableHandler {
+public final class GUIChatHandler implements KeyInputHandler, ScreenController, UpdatableHandler {
     /**
-     * This utility class is used to store the entries that are not yet displayed in the queue until the GUI is
-     * updated.
+     * This utility class is used to store texts that get shown in the chat log.
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static final class MessageEntry {
+    private final class ChatBoxEntry implements Runnable {
         /**
          * The text of the entry.
          */
@@ -83,34 +82,21 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
          * @param msgText  the text stored in the entry
          * @param msgColor the color of the entry
          */
-        MessageEntry(final String msgText, final Color msgColor) {
+        ChatBoxEntry(final String msgText, final Color msgColor) {
             text = msgText;
             color = msgColor;
         }
 
-        /**
-         * Get the text that is supposed to be displayed.
-         *
-         * @return the text to display
-         */
-        public String getText() {
-            return text;
-        }
-
-        /**
-         * Get the color of the entry to display.
-         *
-         * @return the color of the entry
-         */
-        public Color getColor() {
-            return color;
+        @Override
+        public void run() {
+            addChatLogText(text, color);
         }
     }
 
     /**
      * The default color of text entries.
      */
-    private static final Color COLOR_DEFAULT = new Color("#FFFFFF");
+    private static final Color COLOR_DEFAULT = new Color("#ffffff");
 
     /**
      * The color of shouted or important messages
@@ -120,12 +106,22 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     /**
      * The color of whispered text.
      */
-    private static final Color COLOR_WHISPER = new Color("#C0C0C0");
+    private static final Color COLOR_WHISPER = new Color("#c0c0c0");
 
     /**
      * The color of emoted.
      */
     private static final Color COLOR_EMOTE = new Color("#ffcc33");
+
+    /**
+     * The expanded height of the chat.
+     */
+    private static final SizeValue CHAT_EXPANDED_HEIGHT = SizeValue.px(500);
+
+    /**
+     * The collapsed size of the chat.
+     */
+    private static final SizeValue CHAT_COLLAPSED_HEIGHT = SizeValue.px(170);
 
     /**
      * The log that is used to display the text.
@@ -150,105 +146,106 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     /**
      * The Queue of strings that yet need to be written to the GUI.
      */
-    private final Queue<GUIChatHandler.MessageEntry> messageQueue;
-
-    /**
-     * The inform handler for the broadcast inform messages.
-     */
-    private final EventSubscriber<BroadcastInformReceivedEvent> bcInformEventHandler =
-            new EventSubscriber<BroadcastInformReceivedEvent>() {
-                @Override
-                public void onEvent(final BroadcastInformReceivedEvent event) {
-                    final TextBuilder textBuilder = TextBuilder.newInstance();
-                    try {
-                        textBuilder.append(Lang.getMsg("chat.broadcast"));
-                        textBuilder.append(": ");
-                        textBuilder.append(event.getMessage());
-
-                        messageQueue.offer(new GUIChatHandler.MessageEntry(textBuilder.toString(), COLOR_DEFAULT));
-                    } finally {
-                        TextBuilder.recycle(textBuilder);
-                    }
-                }
-            };
-
-    /**
-     * The inform handler for the text to inform messages.
-     */
-    private final EventSubscriber<TextToInformReceivedEvent> ttInformEventHandler =
-            new EventSubscriber<TextToInformReceivedEvent>() {
-                @Override
-                public void onEvent(final TextToInformReceivedEvent event) {
-                    final TextBuilder textBuilder = TextBuilder.newInstance();
-                    try {
-                        textBuilder.append(Lang.getMsg("chat.textto"));
-                        textBuilder.append(": ");
-                        textBuilder.append(event.getMessage());
-
-                        messageQueue.offer(new GUIChatHandler.MessageEntry(textBuilder.toString(), COLOR_DEFAULT));
-                    } finally {
-                        TextBuilder.recycle(textBuilder);
-                    }
-                }
-            };
-
-    /**
-     * The inform handler for the text to inform messages.
-     */
-    private final EventSubscriber<ScriptInformReceivedEvent> scriptInformEventHandler =
-            new EventSubscriber<ScriptInformReceivedEvent>() {
-                @Override
-                public void onEvent(final ScriptInformReceivedEvent event) {
-                    if (event.getInformPriority() == 0) {
-                        return;
-                    }
-
-                    final TextBuilder textBuilder = TextBuilder.newInstance();
-                    try {
-                        final Color usedColor;
-                        if (event.getInformPriority() == 1) {
-                            usedColor = COLOR_DEFAULT;
-                        } else {
-                            usedColor = COLOR_SHOUT;
-                        }
-
-
-                        textBuilder.append(Lang.getMsg("chat.scriptInform"));
-                        textBuilder.append(": ");
-                        textBuilder.append(event.getMessage());
-
-                        messageQueue.offer(new GUIChatHandler.MessageEntry(textBuilder.toString(), usedColor));
-                    } finally {
-                        TextBuilder.recycle(textBuilder);
-                    }
-                }
-            };
+    private final Queue<Runnable> messageQueue;
 
     /**
      * The default constructor.
      */
     public GUIChatHandler() {
-        messageQueue = new ConcurrentLinkedQueue<GUIChatHandler.MessageEntry>();
+        messageQueue = new ConcurrentLinkedQueue<Runnable>();
     }
 
-    @Override
-    public void bind(final Nifty nifty, final Screen screen) {
-        this.screen = screen;
-        this.nifty = nifty;
+    @EventSubscriber
+    public void onBroadcastInformReceived(final BroadcastInformReceivedEvent data) {
+        final TextBuilder textBuilder = TextBuilder.newInstance();
+        try {
+            textBuilder.append(Lang.getMsg("chat.broadcast"));
+            textBuilder.append(": ");
+            textBuilder.append(data.getMessage());
 
-        chatMsg = screen.findNiftyControl("chatMsg", TextField.class);
-        chatLog = screen.findNiftyControl("chatPanel", ScrollPanel.class);
+            messageQueue.offer(new GUIChatHandler.ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
+        } finally {
+            TextBuilder.recycle(textBuilder);
+        }
+    }
 
-        chatMsg.getElement().addInputHandler(this);
+    @EventSubscriber
+    public void onCharTalkingEvent(final CharTalkingEvent data) {
+        Color usedColor = null;
+        switch (data.getMode()) {
+            case emote:
+                usedColor = COLOR_EMOTE;
+                break;
+            case normal:
+                usedColor = COLOR_DEFAULT;
+                break;
+            case ooc:
+                usedColor = COLOR_WHISPER;
+                break;
+            case shout:
+                usedColor = COLOR_SHOUT;
+                break;
+            case whisper:
+                usedColor = COLOR_WHISPER;
+                break;
+        }
+
+        messageQueue.offer(new ChatBoxEntry(data.getLoggedText(), usedColor));
+    }
+
+    @EventSubscriber
+    public void onScriptInformReceived(final ScriptInformReceivedEvent data) {
+        if (data.getInformPriority() == 0) {
+            return;
+        }
+
+        final TextBuilder textBuilder = TextBuilder.newInstance();
+        try {
+            final Color usedColor;
+            if (data.getInformPriority() == 1) {
+                usedColor = COLOR_DEFAULT;
+            } else {
+                usedColor = COLOR_SHOUT;
+            }
+
+
+            textBuilder.append(Lang.getMsg("chat.scriptInform"));
+            textBuilder.append(": ");
+            textBuilder.append(data.getMessage());
+
+            messageQueue.offer(new GUIChatHandler.ChatBoxEntry(textBuilder.toString(), usedColor));
+        } finally {
+            TextBuilder.recycle(textBuilder);
+        }
+    }
+
+    @EventSubscriber
+    public void onTextToInformReceived(final TextToInformReceivedEvent data) {
+        final TextBuilder textBuilder = TextBuilder.newInstance();
+        try {
+            textBuilder.append(Lang.getMsg("chat.textto"));
+            textBuilder.append(": ");
+            textBuilder.append(data.getMessage());
+
+            messageQueue.offer(new GUIChatHandler.ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
+        } finally {
+            TextBuilder.recycle(textBuilder);
+        }
+    }
+
+    @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
+    public void onInputEventReceived(final String topic, final String event) {
+        if (topic.equals(InputReceiver.EB_TOPIC)) {
+            if ("SelectChat".equals(event)) {
+                chatMsg.setFocus();
+            }
+        }
     }
 
     @NiftyEventSubscriber(id = "expandTextLogBtn")
     public void onChatButtonClicked(final String topic, final ButtonClickedEvent data) {
         toggleChatLog();
     }
-
-    private static final SizeValue CHAT_EXPANDED_HEIGHT = SizeValue.px(500);
-    private static final SizeValue CHAT_COLLAPSED_HEIGHT = SizeValue.px(170);
 
     private void toggleChatLog() {
         final Element chatScroll = screen.findElementByName("chatPanel");
@@ -264,24 +261,14 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
     }
 
     @Override
-    public void onStartScreen() {
-        toggleChatLog();
-        EventBus.subscribe(CharTalkingEvent.class, this);
-        EventBus.subscribe(InputReceiver.EB_TOPIC, this);
-        EventBus.subscribe(BroadcastInformReceivedEvent.class, bcInformEventHandler);
-        EventBus.subscribe(TextToInformReceivedEvent.class, ttInformEventHandler);
-        EventBus.subscribe(ScriptInformReceivedEvent.class, scriptInformEventHandler);
-        nifty.subscribeAnnotations(this);
-    }
+    public void bind(final Nifty nifty, final Screen screen) {
+        this.screen = screen;
+        this.nifty = nifty;
 
-    @Override
-    public void onEndScreen() {
-        EventBus.unsubscribe(CharTalkingEvent.class, this);
-        EventBus.unsubscribe(InputReceiver.EB_TOPIC, this);
-        EventBus.unsubscribe(BroadcastInformReceivedEvent.class, bcInformEventHandler);
-        EventBus.unsubscribe(TextToInformReceivedEvent.class, ttInformEventHandler);
-        EventBus.unsubscribe(ScriptInformReceivedEvent.class, scriptInformEventHandler);
-        nifty.unsubscribeAnnotations(this);
+        chatMsg = screen.findNiftyControl("chatMsg", TextField.class);
+        chatLog = screen.findNiftyControl("chatPanel", ScrollPanel.class);
+
+        chatMsg.getElement().addInputHandler(this);
     }
 
     /**
@@ -325,81 +312,49 @@ public final class GUIChatHandler implements KeyInputHandler, EventTopicSubscrib
         cmd.send();
     }
 
-    /**
-     * Handle the events this handler subscribed to.
-     *
-     * @param topic the event topic
-     * @param data  the data that was delivered along with this event
-     */
     @Override
-    public void onEvent(final String topic, final String data) {
-        if (topic.equals(InputReceiver.EB_TOPIC)) {
-            if ("SelectChat".equals(data)) {
-                chatMsg.setFocus();
-            }
-        }
+    public void onEndScreen() {
+        nifty.unsubscribeAnnotations(this);
+        AnnotationProcessor.unprocess(this);
+    }
+
+    @Override
+    public void onStartScreen() {
+        toggleChatLog();
+        AnnotationProcessor.process(this);
+        nifty.subscribeAnnotations(this);
     }
 
     @Override
     public void update(final GameContainer container, final int delta) {
-        Element contentPane = null;
-
         while (true) {
-            final GUIChatHandler.MessageEntry message = messageQueue.poll();
-            if (message == null) {
+            final Runnable task = messageQueue.poll();
+            if (task == null) {
                 break;
             }
 
-            if (contentPane == null) {
-                contentPane = chatLog.getElement().findElementByName("chatLog");
-            }
-
-            final LabelBuilder label = new LabelBuilder();
-            label.font("chatFont");
-            label.text(message.getText());
-            label.color(message.getColor());
-            label.textHAlign(ElementBuilder.Align.Left);
-            label.parameter("wrap", "true");
-            label.width(contentPane.getConstraintWidth().toString());
-            label.build(contentPane.getNifty(), screen, contentPane);
-        }
-
-        if (contentPane != null) {
-            final int entryCount = contentPane.getElements().size();
-            for (int i = 0; i < (entryCount - 200); i++) {
-                contentPane.getElements().get(i).markForRemoval();
-            }
-
-            chatLog.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
-            chatLog.setAutoScroll(ScrollPanel.AutoScroll.OFF);
+            task.run();
         }
     }
 
-    @Override
-    public void onEvent(final CharTalkingEvent event) {
-        Color usedColor = null;
-        switch (event.getMode()) {
-            case emote:
-                usedColor = COLOR_EMOTE;
-                break;
-            case normal:
-                usedColor = COLOR_DEFAULT;
-                break;
-            case ooc:
-                usedColor = COLOR_WHISPER;
-                break;
-            case shout:
-                usedColor = COLOR_SHOUT;
-                break;
-            case whisper:
-                usedColor = COLOR_WHISPER;
-                break;
+    private void addChatLogText(final String text, final Color color) {
+        final Element contentPane = chatLog.getElement().findElementByName("chatLog");
+
+        final LabelBuilder label = new LabelBuilder();
+        label.font("chatFont");
+        label.text(text);
+        label.color(color);
+        label.textHAlign(ElementBuilder.Align.Left);
+        label.parameter("wrap", "true");
+        label.width(contentPane.getConstraintWidth().toString());
+        label.build(contentPane.getNifty(), screen, contentPane);
+
+        final int entryCount = contentPane.getElements().size();
+        for (int i = 0; i < (entryCount - 200); i++) {
+            contentPane.getElements().get(i).markForRemoval();
         }
 
-        if (usedColor == null) {
-            throw new IllegalStateException("No color was selected. This can't be happening!");
-        }
-
-        messageQueue.offer(new GUIChatHandler.MessageEntry(event.getLoggedText(), usedColor));
+        chatLog.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
+        chatLog.setAutoScroll(ScrollPanel.AutoScroll.OFF);
     }
 }
