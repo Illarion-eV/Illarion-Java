@@ -20,7 +20,9 @@ package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.ElementBuilder;
+import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.ScrollPanel;
 import de.lessvoid.nifty.controls.TextField;
@@ -31,8 +33,11 @@ import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
 import de.lessvoid.nifty.tools.Color;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.graphics.Camera;
+import illarion.client.graphics.FontLoader;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
@@ -42,7 +47,10 @@ import illarion.client.net.server.events.ScriptInformReceivedEvent;
 import illarion.client.net.server.events.ShowBookEvent;
 import illarion.client.net.server.events.TextToInformReceivedEvent;
 import illarion.client.util.Lang;
+import illarion.client.world.Char;
 import illarion.client.world.events.CharTalkingEvent;
+import illarion.common.types.Rectangle;
+import illarion.common.util.FastMath;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -65,7 +73,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private final class ChatBoxEntry implements Runnable {
+    private class ChatBoxEntry implements Runnable {
         /**
          * The text of the entry.
          */
@@ -90,6 +98,31 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         @Override
         public void run() {
             addChatLogText(text, color);
+        }
+
+        protected Color getColor() {
+            return color;
+        }
+    }
+
+    private class CharTalkEntry extends ChatBoxEntry {
+        private final CharTalkingEvent talkingEvent;
+
+        /**
+         * Constructor for the entry.
+         *
+         * @param event    the event data
+         * @param msgColor the color of the entry
+         */
+        CharTalkEntry(final CharTalkingEvent event, final Color msgColor) {
+            super(event.getLoggedText(), msgColor);
+            talkingEvent = event;
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            addMessageBubble(talkingEvent.getCharacter(), talkingEvent.getText(), getColor());
         }
     }
 
@@ -132,6 +165,11 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      * The input field that holds the text that is yet to be send.
      */
     private TextField chatMsg;
+
+    /**
+     * The layer used to show the chat bubbles.
+     */
+    private Element chatLayer;
 
     /**
      * The screen that displays the GUI.
@@ -190,7 +228,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
                 break;
         }
 
-        messageQueue.offer(new ChatBoxEntry(data.getLoggedText(), usedColor));
+        messageQueue.offer(new CharTalkEntry(data, usedColor));
     }
 
     @EventSubscriber
@@ -247,6 +285,9 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         toggleChatLog();
     }
 
+    /**
+     * Change the expanded or collapsed state of the chat.
+     */
     private void toggleChatLog() {
         final Element chatScroll = screen.findElementByName("chatPanel");
 
@@ -269,6 +310,8 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         chatLog = screen.findNiftyControl("chatPanel", ScrollPanel.class);
 
         chatMsg.getElement().addInputHandler(this);
+
+        chatLayer = screen.findElementByName("chatLayer");
     }
 
     /**
@@ -337,6 +380,12 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         }
     }
 
+    /**
+     * Add a entry to the chat log.
+     *
+     * @param text  the text to add
+     * @param color the color of the text to add
+     */
     private void addChatLogText(final String text, final Color color) {
         final Element contentPane = chatLog.getElement().findElementByName("chatLog");
 
@@ -356,5 +405,63 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
 
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.OFF);
+    }
+
+    /**
+     * The the chat bubble of a character talking on the map.
+     *
+     * @param character the character who is talking
+     * @param message   the message to display
+     * @param color     the color to show the text in
+     */
+    private void addMessageBubble(final Char character, final String message, final Color color) {
+        final Rectangle charDisplayRect = character.getAvatar().getDisplayRect();
+
+        final PanelBuilder panelBuilder = new PanelBuilder();
+        panelBuilder.childLayoutHorizontal();
+        panelBuilder.style("nifty-panel-hint");
+
+        final LabelBuilder labelBuilder = new LabelBuilder();
+        labelBuilder.style("nifty-label");
+
+        final SlickRenderFont font = FontLoader.getInstance().getFontSave(FontLoader.Fonts.text);
+        final int textWidth = font.getWidth(message);
+        if (textWidth > 300) {
+            labelBuilder.width("300px");
+            labelBuilder.wrap(true);
+        } else {
+            labelBuilder.width(SizeValue.px(textWidth).toString());
+            labelBuilder.wrap(false);
+        }
+        labelBuilder.font(FontLoader.Fonts.text.getFontName());
+        labelBuilder.color(color);
+        labelBuilder.text(message);
+
+        panelBuilder.control(labelBuilder);
+
+        final EffectBuilder hideEffectBuilder = new EffectBuilder("fade");
+        hideEffectBuilder.startDelay(5000 + (message.length() * 100));
+        hideEffectBuilder.length(200);
+        hideEffectBuilder.effectParameter("start", "FF");
+        hideEffectBuilder.effectParameter("end", "00");
+
+        panelBuilder.onHideEffect(hideEffectBuilder);
+
+        final Element bubble = panelBuilder.build(nifty, screen, chatLayer);
+
+        final int charDisplayCenterX = charDisplayRect.getCenterX() - Camera.getInstance().getViewportOffsetX();
+        final int charDisplayY = charDisplayRect.getBottom() - Camera.getInstance().getViewportOffsetY();
+
+        final int bubblePosX = FastMath.clamp(charDisplayCenterX - (bubble.getWidth() / 2), 0,
+                chatLayer.getWidth() - bubble.getWidth());
+        final int bubblePosY = FastMath.clamp(charDisplayY - bubble.getHeight() - 5, 0,
+                chatLayer.getHeight() - bubble.getHeight());
+
+        bubble.setConstraintX(SizeValue.px(bubblePosX));
+        bubble.setConstraintY(SizeValue.px(bubblePosY));
+
+        chatLayer.layoutElements();
+
+        bubble.hide();
     }
 }
