@@ -73,6 +73,7 @@
                 <image width="189px" height="190px" filename="data/gui/minimap.png"/>
             </panel>
         </layer>
+        <layer id="chatLayer" childLayout="absolute"/>
         <layer id="serverMessageLayer" childLayout="absolute">
             <panel childLayout="vertical" backgroundColor="#000000aa" visible="false" visibleToMouse="false" x="5px"
                    y="30px" id="serverMsgPanel" padding="2px"/>
