@@ -323,6 +323,8 @@ public final class EasyNpcScript {
             return false;
         } catch (final MalformedInputException ex) {
             return false;
+        } catch (final FileNotFoundException ex) {
+            return false;
         } finally {
             if (reader != null) {
                 reader.close();
