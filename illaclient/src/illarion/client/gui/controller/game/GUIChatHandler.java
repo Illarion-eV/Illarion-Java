@@ -47,6 +47,7 @@ import illarion.client.net.server.events.BroadcastInformReceivedEvent;
 import illarion.client.net.server.events.ScriptInformReceivedEvent;
 import illarion.client.net.server.events.ShowBookEvent;
 import illarion.client.net.server.events.TextToInformReceivedEvent;
+import illarion.client.util.ChatHandler;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.events.CharTalkingEvent;
@@ -123,7 +124,13 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         @Override
         public void run() {
             super.run();
-            addMessageBubble(talkingEvent.getCharacter(), talkingEvent.getText(), getColor());
+            final String message;
+            if (talkingEvent.getMode() == ChatHandler.SpeechMode.emote) {
+                message = talkingEvent.getCharacter().getName() + " " + talkingEvent.getText();
+            } else {
+                message = talkingEvent.getText();
+            }
+            addMessageBubble(talkingEvent.getCharacter(), message, getColor());
         }
     }
 

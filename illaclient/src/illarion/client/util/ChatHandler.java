@@ -178,6 +178,8 @@ public final class ChatHandler {
             throw new IllegalStateException("Talking mode is NULL, this can't happen.");
         }
 
+        resultText = resultText.trim();
+
         final TextBuilder textBuilder = TextBuilder.newInstance();
         try {
             if (mode == ChatHandler.SpeechMode.emote) {
@@ -188,7 +190,7 @@ public final class ChatHandler {
                     textBuilder.append(talkingChar.getName());
                 }
 
-                textBuilder.append(resultText);
+                textBuilder.append(' ').append(resultText);
             } else {
                 if (talkingChar == null) {
                     textBuilder.append(Lang.getMsg("chat.distantShout"));
