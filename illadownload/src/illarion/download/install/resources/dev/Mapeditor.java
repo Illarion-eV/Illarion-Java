@@ -113,6 +113,7 @@ public final class Mapeditor implements DevelopmentResource {
             dep.add(SubstanceSwingX.getInstance());
             dep.add(VorbisSPI.getInstance());
 
+            dep.add(Gui.getInstance());
             dep.add(Items.getInstance());
             dep.add(Tables.getInstance());
             dep.add(Tiles.getInstance());
