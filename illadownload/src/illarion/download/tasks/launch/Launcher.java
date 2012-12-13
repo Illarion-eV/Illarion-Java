@@ -24,6 +24,9 @@ import illarion.download.install.resources.ResourceManager;
 import illarion.download.util.OSDetection;
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,7 +41,7 @@ import java.util.Set;
  * @version 1.00
  * @since 1.00
  */
-public final class Launcher {
+public final class Launcher implements ActionListener {
     /**
      * This set contains all arguments that need to be passed to the program once it was launched.
      */
@@ -63,6 +66,10 @@ public final class Launcher {
      * This instance of the logger takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(Launcher.class);
+
+    private final Timer launchTimer;
+
+    private boolean cancelExecution;
 
     /**
      * The constructor that launches the resource that is selected in the resource manager.
@@ -89,6 +96,9 @@ public final class Launcher {
         classPath = new HashSet<File>();
         arguments = new HashSet<String>();
         vmArguments = new HashSet<String>();
+
+        launchTimer = new Timer(10000, this);
+        launchTimer.stop();
     }
 
     /**
@@ -139,7 +149,13 @@ public final class Launcher {
             final StringBuilder outputBuffer = new StringBuilder();
             final BufferedReader outputReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
+            launchTimer.start();
+            cancelExecution = false;
+
             while (true) {
+                if (cancelExecution) {
+                    throw new Exception("Response Timeout.");
+                }
                 final String line = outputReader.readLine();
                 if (line == null) {
                     errorData = outputBuffer.toString().trim();
@@ -232,5 +248,14 @@ public final class Launcher {
             return '"' + orgPath + '"'; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return orgPath.replace(" ", "\\ "); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    /**
+     * Invoked when an action occurs.
+     */
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        cancelExecution = true;
+        launchTimer.stop();
     }
 }
