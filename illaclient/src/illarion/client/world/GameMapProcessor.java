@@ -162,9 +162,8 @@ public class GameMapProcessor extends Thread implements
                 if ((x == 0) && (y == 0)) {
                     continue;
                 }
-                final long foundKey =
-                        Location.getKey(searchLoc.getScX() + x, searchLoc.getScY()
-                                + y, searchLoc.getScZ());
+                final long foundKey = Location.getKey(searchLoc.getScX() + x, searchLoc.getScY() + y,
+                        searchLoc.getScZ());
                 synchronized (unchecked) {
                     if (!unchecked.contains(foundKey)) {
                         unchecked.add(foundKey);
@@ -173,9 +172,7 @@ public class GameMapProcessor extends Thread implements
             }
         }
 
-        final long foundKey =
-                Location.getKey(searchLoc.getScX(), searchLoc.getScY(),
-                        searchLoc.getScZ() + 1);
+        final long foundKey = Location.getKey(searchLoc.getScX(), searchLoc.getScY(), searchLoc.getScZ() + 1);
         synchronized (unchecked) {
             if (!unchecked.contains(foundKey)) {
                 unchecked.add(foundKey);
@@ -199,23 +196,15 @@ public class GameMapProcessor extends Thread implements
         final Location tileLoc = tile.getLocation();
 
         /*
-         * Start checking the clipping of the tiles. In case a tile is found
-         * outside the clipping range, its deleted.
+         * Start checking the clipping of the tiles. In case a tile is found outside the clipping range, its deleted.
          */
         if ((playerLoc.getScZ() + 2) < tileLoc.getScZ()) {
             parent.removeTile(key);
-
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (tile.x > player.z + 2)");
-            }
             return true;
         }
 
         if ((playerLoc.getScZ() - 2) > tileLoc.getScZ()) {
             parent.removeTile(key);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (tile.x < player.z - 2)");
-            }
             return true;
         }
 
@@ -224,24 +213,12 @@ public class GameMapProcessor extends Thread implements
         if ((playerLoc.getCol() + mapDim.getClippingOffsetLeft()) > tileLoc
                 .getCol()) {
             parent.removeTile(key);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (outside of left clipping)");
-                LOGGER.debug("Ply Col: " + Integer.toString(playerLoc.getCol()) + " Clipping Left: "
-                        + Integer.toString(mapDim.getClippingOffsetLeft())
-                        + " Tile Col: " + Integer.toString(tileLoc.getCol()));
-            }
             return true;
         }
 
         if ((playerLoc.getCol() + mapDim.getClippingOffsetRight()) < tileLoc
                 .getCol()) {
             parent.removeTile(key);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (outside of right clipping)");
-                LOGGER.debug("Ply Col: " + Integer.toString(playerLoc.getCol()) + " Clipping Right: "
-                        + Integer.toString(mapDim.getClippingOffsetRight())
-                        + " Tile Col: " + Integer.toString(tileLoc.getCol()));
-            }
             return true;
         }
 
@@ -250,24 +227,12 @@ public class GameMapProcessor extends Thread implements
         if ((playerLoc.getRow() + mapDim.getClippingOffsetTop()) < (tileLoc
                 .getRow() - level)) {
             parent.removeTile(key);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (outside of top clipping)");
-                LOGGER.debug("Ply Row: " + Integer.toString(playerLoc.getRow())
-                        + " Clipping Top: " + Integer.toString(mapDim.getClippingOffsetTop())
-                        + " Tile Row: " + Integer.toString(tileLoc.getRow()));
-            }
             return true;
         }
 
         if ((playerLoc.getRow() + mapDim.getClippingOffsetBottom()) > (tileLoc
                 .getRow() + level)) {
             parent.removeTile(key);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Removed tile at location " + tileLoc.toString() + " (outside of bottom clipping)");
-                LOGGER.debug("Ply Row: " + Integer.toString(playerLoc.getRow())
-                        + " Clipping Bottom: " + Integer.toString(mapDim.getClippingOffsetBottom())
-                        + " Tile Row: " + Integer.toString(tileLoc.getRow()));
-            }
             return true;
         }
 
@@ -288,15 +253,14 @@ public class GameMapProcessor extends Thread implements
         final Location tileLoc = tile.getLocation();
 
         if ((playerLoc == null) || (tileLoc == null)) {
-            // something is very wrong. Put this entry back into the unchecked
-            // list and try it again later.
+            // something is very wrong. Put this entry back into the unchecked list and try it again later.
             reportUnchecked(key);
             return true;
         }
 
         /*
-         * And now we start with the inside check. In case the tile is below the
-         * level of the player its never hidden for sure.
+         * And now we start with the inside check. In case the tile is below the level of the player its never hidden
+          * for sure.
          */
         if (tileLoc.getScZ() <= playerLoc.getScZ()) {
             if (tile.isHidden()) {
@@ -308,9 +272,8 @@ public class GameMapProcessor extends Thread implements
         }
 
         /*
-         * Now generate the index in the list of inside states and check if the
-         * tile is on a level that is hidden or not. If the tile is on such a
-         * level it does not mean for sure that it really needs to be hidden.
+         * Now generate the index in the list of inside states and check if the tile is on a level that is hidden or
+         * not. If the tile is on such a level it does not mean for sure that it really needs to be hidden.
          */
         final int insideIndex = tileLoc.getScZ() - playerLoc.getScZ() - 1;
 
@@ -333,8 +296,7 @@ public class GameMapProcessor extends Thread implements
         }
 
         /*
-         * Now check if the tile is directly above the player. In this case it
-         * needs to be hidden.
+         * Now check if the tile is directly above the player. In this case it needs to be hidden.
          */
         if ((tileLoc.getScX() == playerLoc.getScX())
                 && (tileLoc.getScY() == playerLoc.getScY())
@@ -365,11 +327,10 @@ public class GameMapProcessor extends Thread implements
     }
 
     /**
-     * Do the obstruction check of a tile. So this means that all tiles are
-     * hidden in case there is a tile above them and they are fully invisible
-     * anyway. Tiles below the level of the player are removed, since they won't
-     * be displayed ever anyway. The tiles at or above the players location are
-     * possibly shown in case the char steps into a building or something.
+     * Do the obstruction check of a tile. So this means that all tiles are hidden in case there is a tile above them
+     * and they are fully invisible anyway. Tiles below the level of the player are removed,
+     * since they won't be displayed ever anyway. The tiles at or above the players location are possibly shown in
+     * case the char steps into a building or something.
      *
      * @param tile the tile that is checked
      * @param key  the location key of the checked tile
@@ -411,8 +372,8 @@ public class GameMapProcessor extends Thread implements
     }
 
     /**
-     * Clear the map, that should be done in case all tiles got removed from the
-     * map and the current checks need to stop instantly.
+     * Clear the map, that should be done in case all tiles got removed from the map and the current checks need to
+     * stop instantly.
      */
     public void clear() {
         synchronized (unchecked) {
@@ -434,17 +395,16 @@ public class GameMapProcessor extends Thread implements
     }
 
     /**
-     * This method causes the map processor to hold and stop processing data
-     * until the operations are resumed with {@link #start()}.
+     * This method causes the map processor to hold and stop processing data until the operations are resumed with
+     * {@link #start()}.
      */
     public synchronized void pause() {
         pauseLoop = true;
     }
 
     /**
-     * Perform a check if the player character is inside a building. In case the
-     * inside status differs for any level from the state before the check, all
-     * tiles are added to the list of tiles that need to be checked once more.
+     * Perform a check if the player character is inside a building. In case the inside status differs for any level
+     * from the state before the check, all tiles are added to the list of tiles that need to be checked once more.
      */
     private void performInsideCheck() {
         if (!checkInside) {
@@ -479,8 +439,7 @@ public class GameMapProcessor extends Thread implements
         }
 
         /*
-         * If one of the values turned from inside to outside, all tiles are
-         * added to the list to be checked again.
+         * If one of the values turned from inside to outside, all tiles are added to the list to be checked again.
          */
         if (nowOutside) {
             synchronized (unchecked) {
@@ -596,8 +555,7 @@ public class GameMapProcessor extends Thread implements
     }
 
     /**
-     * Search all surrounding tiles and the tile below and look for a tile that
-     * is currently hidden.
+     * Search all surrounding tiles and the tile below and look for a tile that is currently hidden.
      *
      * @param searchLoc the location where the search starts
      * @return <code>true</code> in case a hidden tile was found
@@ -648,11 +606,9 @@ public class GameMapProcessor extends Thread implements
     }
 
     /**
-     * Check if the map processor can fetch some additional work to do in case
-     * he does not have enough to do.
+     * Check if the map processor can fetch some additional work to do in case he does not have enough to do.
      *
-     * @return <code>true</code> in case there is more work to be done now
-     *         available
+     * @return <code>true</code> in case there is more work to be done now available
      */
     private boolean workloadCheck() {
         if (fullCheckNeeded) {
