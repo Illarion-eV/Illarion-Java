@@ -37,7 +37,7 @@ public final class DownloadResult {
      * @version 1.00
      * @since 1.00
      */
-    public static enum Results {
+    public enum Results {
         /**
          * This constant means that the download of the file was canceled.
          */

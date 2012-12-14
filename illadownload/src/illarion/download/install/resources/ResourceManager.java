@@ -284,7 +284,7 @@ public final class ResourceManager {
         long timeout = 0L;
         if (resourceDatabase.containsResource(url)) {
             final DBResource res = resourceDatabase.getResource(url);
-            if (res.checkFiles(ResourceCheckLevel.simpleCheck)) {
+            if (res.checkFiles(ResourceCheckLevel.detailedCheck)) {
                 timeout = res.getLastModified();
             }
         }

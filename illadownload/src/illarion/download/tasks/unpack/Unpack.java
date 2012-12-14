@@ -152,7 +152,7 @@ public final class Unpack implements Callable<UnpackResult> {
      * @return the result of the unpacking operation
      * @throws IOException in case unpacking the file fails
      */
-    public UnpackResult callImpl() throws IOException {
+    public UnpackResult callImpl() {
         switch (downloadResult.getResult()) {
             case canceled:
                 return new UnpackResult(name, UnpackResult.Results.canceled, "unpack.canceled", file,
@@ -219,16 +219,11 @@ public final class Unpack implements Callable<UnpackResult> {
                 outChannel = null;
 
                 if (pack200) {
-                    final File targetFileP200 =
-                            new File(targetDir, entryName.substring(0,
-                                    entryName.length() - 5));
-                    final Pack200.Unpacker p200unpacker =
-                            Pack200Helper.getUnpacker();
+                    final File targetFileP200 = new File(targetDir, entryName.substring(0, entryName.length() - 5));
+                    final Pack200.Unpacker p200unpacker = Pack200Helper.getUnpacker();
                     installedFiles.add(targetFileP200);
 
-                    jOutStream =
-                            new JarOutputStream(new FileOutputStream(
-                                    targetFileP200));
+                    jOutStream = new JarOutputStream(new FileOutputStream(targetFileP200));
                     p200unpacker.unpack(targetFile, jOutStream);
 
                     jOutStream.finish();
@@ -249,16 +244,32 @@ public final class Unpack implements Callable<UnpackResult> {
             return new UnpackResult(name, UnpackResult.Results.corrupted, "unpack.corrupted", file, e.toString());
         } finally {
             if (inChannel != null) {
-                inChannel.close();
+                try {
+                    inChannel.close();
+                } catch (IOException e) {
+                    // nothing
+                }
             }
             if (jOutStream != null) {
-                jOutStream.close();
+                try {
+                    jOutStream.close();
+                } catch (IOException e) {
+                    // nothing
+                }
             }
             if (outChannel != null) {
-                outChannel.close();
+                try {
+                    outChannel.close();
+                } catch (IOException e) {
+                    // nothing
+                }
             }
             if (zIn != null) {
-                zIn.close();
+                try {
+                    zIn.close();
+                } catch (IOException e) {
+                    // nothing
+                }
             }
         }
 

@@ -269,6 +269,13 @@ public final class Download implements Callable<DownloadResult> {
             connection.connect();
 
             final long length = Math.max(0, connection.getContentLength());
+
+            if (length == 0) {
+                connection.getInputStream().close();
+                connection.getOutputStream().close();
+                return null;
+            }
+
             manager.reportProgress(this, 0L, length);
 
             onlineFileLastMod = connection.getLastModified();
@@ -325,9 +332,8 @@ public final class Download implements Callable<DownloadResult> {
             long oldTransferred;
             while (transferred < length) {
                 oldTransferred = transferred;
-                transferred +=
-                        fileChannel.transferFrom(inChannel, transferred,
-                                Math.min(length - transferred, blockLength));
+                transferred += fileChannel.transferFrom(inChannel, transferred, Math.min(length - transferred,
+                        blockLength));
 
                 if (oldTransferred == transferred) {
                     noTransferCounter++;
