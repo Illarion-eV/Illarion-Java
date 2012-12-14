@@ -131,7 +131,7 @@ public final class CharStatusHandler implements ScreenController, UpdatableHandl
         }
         if (foodPoints != currentFoodPoints) {
             currentFoodPoints = AnimationUtility.approach(currentFoodPoints, foodPoints, 0, 60000, delta);
-            foodPointBar.setProgress((float) currentFoodPoints / 10000.f);
+            foodPointBar.setProgress((float) currentFoodPoints / 60000.f);
         }
     }
 }
