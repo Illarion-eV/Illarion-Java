@@ -568,7 +568,7 @@ public final class GameMap implements LightingMap, Stoppable {
      *
      * @param loc   the location of the map tile on the server map
      * @param color the color that shall be set for this tile
-     * @see illarion.common.graphics.LightingMap#setLight(Location, SpriteColor)
+     * @see illarion.common.graphics.LightingMap#setLight(Location, Color)
      */
     @Override
     public void setLight(final Location loc, final Color color) {
@@ -642,6 +642,10 @@ public final class GameMap implements LightingMap, Stoppable {
 
             // remember real map tile for use with overview map
             updateData.setMapTile(tile);
+
+            if (World.getPlayer().getLocation().equals(tile.getLocation())) {
+                World.getMusicBox().updatePlayerLocation();
+            }
         } else {
             if (tile != null) {
                 mapLock.writeLock().lock();

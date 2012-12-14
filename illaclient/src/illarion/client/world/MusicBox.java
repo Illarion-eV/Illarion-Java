@@ -97,7 +97,6 @@ public final class MusicBox implements Stoppable {
     public void playFightingMusic() {
         if (!fightingMusicPlaying) {
             fightingMusicPlaying = true;
-            updateSoundTrack();
         }
     }
 
@@ -110,7 +109,6 @@ public final class MusicBox implements Stoppable {
     public void playMusicTrack(final int musicId) {
         if (musicId != overrideSoundId) {
             overrideSoundId = musicId;
-            updateSoundTrack();
         }
     }
 
@@ -152,7 +150,6 @@ public final class MusicBox implements Stoppable {
     public void stopFightingMusic() {
         if (fightingMusicPlaying) {
             fightingMusicPlaying = false;
-            updateSoundTrack();
         }
     }
 
@@ -165,21 +162,22 @@ public final class MusicBox implements Stoppable {
 
         final int newId;
         if (tile == null) {
-            newId = 0;
+            newId = NO_TRACK;
         } else {
             newId = tile.getTileMusic();
         }
         if (newId != currentDefaultTrack) {
             currentDefaultTrack = newId;
-            updateSoundTrack();
         }
     }
 
     /**
-     * Calling this function will cause the sound track to restart. It will select the required sound track based
-     * upon the current state of the music.
+     * This handler is called during the update loop and should be used to change the currently played music to make
+     * sure that changing the music is in sync with the rest of the game.
+     *
+     * @param delta the time in milliseconds since the last update
      */
-    private void updateSoundTrack() {
+    public void update(final int delta) {
         if (fightingMusicPlaying) {
             setSoundTrack(COMBAT_TRACK);
         } else if (overrideSoundId > NO_TRACK) {

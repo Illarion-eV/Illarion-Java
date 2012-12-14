@@ -81,6 +81,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
         gameScreenController.onUpdateGame(container, delta);
         World.getMapDisplay().update(container, delta);
         World.getAnimationManager().animate(delta);
+        World.getMusicBox().update(delta);
     }
 
     @Override

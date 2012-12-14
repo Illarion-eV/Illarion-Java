@@ -370,7 +370,6 @@ public final class PlayerMovement
         moveAnimation.start(0, 0, -oldElevation, xOffset, yOffset, -newElevation, speed);
 
         parentPlayer.updateLocation(target);
-        World.getMusicBox().updatePlayerLocation();
     }
 
     /**

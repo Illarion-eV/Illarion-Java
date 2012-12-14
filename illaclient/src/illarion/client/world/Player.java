@@ -536,7 +536,7 @@ public final class Player {
 
         // set logical location
         movementHandler.cancelAutoWalk();
-        loc.set(newLoc);
+        updateLocation(newLoc);
         character.setLocation(newLoc);
 
         // clear away invisible characters
@@ -608,5 +608,6 @@ public final class Player {
         }
 
         loc.set(newLoc);
+        World.getMusicBox().updatePlayerLocation();
     }
 }
