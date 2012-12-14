@@ -77,7 +77,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static class EndOfDragOperation implements Runnable {
+    private class EndOfDragOperation implements Runnable {
         /**
          * The inventory slot that requires the reset.
          */
@@ -89,6 +89,9 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
          * @param slot the inventory slot to reset
          */
         EndOfDragOperation(final InventorySlot slot) {
+            if (slot == null) {
+                throw new NullPointerException("slot");
+            }
             invSlot = slot;
         }
 
@@ -427,8 +430,8 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         final int containerId = getContainerId(topic);
 
         World.getInteractionManager().notifyDraggingContainer(containerId, slotId,
-                new ContainerHandler.EndOfDragOperation(data.getSource().getElement().getNiftyControl(InventorySlot
-                        .class)));
+                new ContainerHandler.EndOfDragOperation(
+                        data.getSource().getElement().getParent().getNiftyControl(InventorySlot.class)));
     }
 
     /**
@@ -441,11 +444,6 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
     public void dropIn(final String topic, final DroppableDroppedEvent data) {
         final int slotId = getSlotId(topic);
         final int containerId = getContainerId(topic);
-
-        System.out.println("Dropped into container(" + Integer.toString(containerId) + ") into slot(" + Integer
-                .toString(slotId) + ") that is currently " + (data.getTarget().getElement().isVisible() ? "" : "not ") +
-                "visible."
-        );
 
         final ItemCount amount = World.getInteractionManager().getMovedAmount();
         final InteractionManager iManager = World.getInteractionManager();
