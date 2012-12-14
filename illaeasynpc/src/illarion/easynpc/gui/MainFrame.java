@@ -351,8 +351,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
             @Override
             public void run() {
                 try {
-                    SubstanceLookAndFeel.setSkin(Config.getInstance()
-                            .getLookAndFeel());
+                    SubstanceLookAndFeel.setSkin(Config.getInstance().getLookAndFeel());
                 } catch (final Exception e) {
                     SubstanceLookAndFeel.setSkin(Config.defaultLookAndFeel);
                 }

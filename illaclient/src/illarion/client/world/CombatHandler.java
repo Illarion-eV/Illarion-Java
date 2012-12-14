@@ -120,14 +120,12 @@ public final class CombatHandler {
 
     /**
      * Stop the current attack any report this to the server in case its needed. This does not directly stop the
-     * attack.
-     * It just requests to stop the attack from the server.
+     * attack. It just requests to stop the attack from the server.
      */
     public void standDown() {
         if (attackedChar != null) {
             World.getNet().sendCommand(CommandFactory.getInstance().getCommand(CommandList.CMD_STAND_DOWN));
-            attackedChar.setAttackMarker(false);
-            attackedChar = null;
+            targetLost();
         }
     }
 

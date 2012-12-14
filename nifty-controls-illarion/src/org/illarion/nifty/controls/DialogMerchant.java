@@ -20,12 +20,18 @@ package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.controls.Window;
 
+import java.util.List;
+
 /**
  * This interface is used to interact with a merchant dialog that is displayed inside the GUI.
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
 public interface DialogMerchant extends Window {
+    void addAllSellingItems(List<MerchantListEntry> entry);
+
+    void addAllBuyingItems(List<MerchantListEntry> entry);
+
     /**
      * This enumerator identifies the buttons displayed on this dialog.
      */

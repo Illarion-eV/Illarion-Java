@@ -41,8 +41,7 @@ public final class RemoveCharMsg extends AbstractReply {
     private CharacterId charId;
 
     /**
-     * Decode the remove character data the receiver got and prepare it for the
-     * execution.
+     * Decode the remove character data the receiver got and prepare it for the execution.
      *
      * @param reader the receiver that got the data from the server that needs
      *               to be decoded

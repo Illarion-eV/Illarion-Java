@@ -23,6 +23,7 @@ import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
 import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
+import de.lessvoid.nifty.controls.WindowClosedEvent;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.NiftyMouseMovedEvent;
 import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
@@ -349,6 +350,13 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
     public void cancelDragging(final String topic, final DraggableDragCanceledEvent data) {
         World.getInteractionManager().cancelDragging();
+    }
+
+    public void onContainerWindowsClosed(final String topic, final WindowClosedEvent event) {
+        final int containerId = getContainerId(topic);
+        if (isContainerCreated(containerId)) {
+            // how?!
+        }
     }
 
     /**

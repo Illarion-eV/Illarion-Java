@@ -163,7 +163,6 @@ public final class MusicBox implements Stoppable {
         }
 
         currentMusic = SongFactory.getInstance().getSong(id);
-        ;
         currentMusic.loop(1.f, musicVolume);
     }
 
