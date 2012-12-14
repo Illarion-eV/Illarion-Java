@@ -18,9 +18,13 @@
  */
 package illarion.client.world;
 
+import illarion.client.IllaClient;
 import illarion.client.resources.SongFactory;
+import illarion.common.config.ConfigChangedEvent;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
 import org.newdawn.slick.Music;
 
 /**
@@ -69,6 +73,9 @@ public final class MusicBox implements Stoppable {
      */
     private int overrideSoundId;
 
+    private boolean musicEnabled;
+    private float musicVolume;
+
     /**
      * This is the constructor that prepares this class for proper operation.
      */
@@ -78,6 +85,20 @@ public final class MusicBox implements Stoppable {
         currentDefaultTrack = NO_TRACK;
 
         StoppableStorage.getInstance().add(this);
+
+        musicEnabled = IllaClient.getCfg().getBoolean("musicOn");
+        musicVolume = IllaClient.getCfg().getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
+
+        AnnotationProcessor.process(this);
+    }
+
+    @EventTopicPatternSubscriber(topicPattern = "music.*")
+    public void onUpdateConfig(final String topic, final ConfigChangedEvent data) {
+        if ("musicOn".equals(topic)) {
+            musicEnabled = IllaClient.getCfg().getBoolean("musicOn");
+        } else if ("musicVolume".equals(topic)) {
+            musicVolume = IllaClient.getCfg().getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
+        }
     }
 
     public boolean isPlaying(final int musicId) {
@@ -127,9 +148,11 @@ public final class MusicBox implements Stoppable {
      * @param id the ID of the sound track to play
      */
     private void setSoundTrack(final int id) {
-        if (currentMusicId == id) {
+        if (!musicEnabled || (currentMusicId == id)) {
             return;
         }
+        System.out.println("Switching music from " + Integer.toString(currentMusicId) + " to " + Integer.toString(id));
+
         currentMusicId = id;
 
         if (id == NO_TRACK) {
@@ -141,7 +164,8 @@ public final class MusicBox implements Stoppable {
         }
 
         currentMusic = SongFactory.getInstance().getSong(id);
-        currentMusic.loop();
+        ;
+        currentMusic.loop(1.f, musicVolume);
     }
 
     /**
