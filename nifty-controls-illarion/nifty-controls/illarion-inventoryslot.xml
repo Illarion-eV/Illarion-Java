@@ -31,7 +31,7 @@
                 <image id="#staticBackgroundImage" visible="false"/>
                 <image id="#backgroundImage" visible="false"/>
                 <control id="#backgroundImageLabel" name="label" text="000" align="right" valign="bottom"
-                         visible="false" color="#ff0f" backgroundColor="#bb15" visibleToMouse="false"/>
+                         visible="false" color="#ff0f" visibleToMouse="false"/>
                 <image id="#merchantOverlay" visible="false" align="right" valign="top" height="16px" width="16px"/>
             </panel>
 
