@@ -709,16 +709,14 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     }
 
     /**
-     * Set the position of the entity on the display. The display origin is at
-     * the origin of the game map.
+     * Set the position of the entity on the display. The display origin is at the origin of the game map.
      *
      * @param dispX     the x coordinate of the location of the display
      * @param dispY     the y coordinate of the location of the display
      * @param zLayer    the z layer of the coordinate
      * @param typeLayer the global layer of this type of entity.
      */
-    public void setScreenPos(final int dispX, final int dispY,
-                             final int zLayer, final int typeLayer) {
+    public void setScreenPos(final int dispX, final int dispY, final int zLayer, final int typeLayer) {
 
         if ((dispX != displayX) || (dispY != displayY)) {
             wentDirty = true;
@@ -730,7 +728,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         if (shown) {
             final int newLayerZ = zLayer - typeLayer;
             if (newLayerZ != layerZ) {
-                show();
+                updateDisplayPosition();
                 layerZ = newLayerZ;
             }
         } else {
@@ -775,10 +773,20 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         if (!shown) {
             World.getMapDisplay().add(this);
             shown = true;
+            wentDirty = true;
         } else {
-            World.getMapDisplay().readd(this);
+            System.err.println("Added entity twice.");
         }
-        wentDirty = true;
+    }
+
+    /**
+     * Update the position of this entity in the display list.
+     */
+    public void updateDisplayPosition() {
+        if (shown) {
+            World.getMapDisplay().readd(this);
+            wentDirty = true;
+        }
     }
 
     /**
