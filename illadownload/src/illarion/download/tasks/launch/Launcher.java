@@ -147,7 +147,7 @@ public final class Launcher implements ActionListener {
             proc.getOutputStream().close();
 
             final StringBuilder outputBuffer = new StringBuilder();
-            final BufferedReader outputReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            outputReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
             launchTimer.start();
             cancelExecution = false;
@@ -175,8 +175,19 @@ public final class Launcher implements ActionListener {
             e.printStackTrace(writer);
             errorData = writer.toString();
             return false;
+        } finally {
+            if (outputReader != null) {
+                try {
+                    outputReader.close();
+                } catch (final IOException e) {
+                    // nothing
+                }
+            }
+            outputReader = null;
         }
     }
+
+    private BufferedReader outputReader;
 
     /**
      * This text contains the error data in case the launch failed.
@@ -257,5 +268,12 @@ public final class Launcher implements ActionListener {
     public void actionPerformed(final ActionEvent e) {
         cancelExecution = true;
         launchTimer.stop();
+        if (outputReader != null) {
+            try {
+                outputReader.close();
+            } catch (IOException e1) {
+                // nothing
+            }
+        }
     }
 }
