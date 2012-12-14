@@ -155,22 +155,19 @@ public final class Unpack implements Callable<UnpackResult> {
     public UnpackResult callImpl() throws IOException {
         switch (downloadResult.getResult()) {
             case canceled:
-                return new UnpackResult(name, UnpackResult.Results.canceled,
-                        "unpack.cancled", file); //$NON-NLS-1$
+                return new UnpackResult(name, UnpackResult.Results.canceled, "unpack.canceled", file,
+                        downloadResult.getErrorMessage());
             case downloadFailed:
-                return new UnpackResult(name, UnpackResult.Results.canceled,
-                        "unpack.downloadfailed", file); //$NON-NLS-1$
+                return new UnpackResult(name, UnpackResult.Results.canceled, "unpack.downloadfailed", file,
+                        downloadResult.getErrorMessage());
             case notModified:
-                return new UnpackResult(name,
-                        UnpackResult.Results.notModified,
-                        "unpack.notmodified", file); //$NON-NLS-1$
+                return new UnpackResult(name, UnpackResult.Results.notModified, "unpack.notmodified", file);
             case downloaded:
                 break;
         }
 
         if (!targetDir.exists() && !targetDir.mkdirs()) {
-            throw new IllegalStateException(
-                    "Can't create required directories."); //$NON-NLS-1$
+            throw new IllegalStateException("Can't create required directories."); //$NON-NLS-1$
         }
 
         ZipInputStream zIn = null;
@@ -188,9 +185,7 @@ public final class Unpack implements Callable<UnpackResult> {
             cIn.addCallback(new Unpack.StreamMonitor(manager, fileSize, this));
             cIn.setCallbackInterval(blockSize);
 
-            zIn =
-                    new ZipInputStream(new BufferedInputStream(
-                            new XZInputStream(cIn)));
+            zIn = new ZipInputStream(new BufferedInputStream(new XZInputStream(cIn)));
             inChannel = Channels.newChannel(zIn);
 
             ZipEntry currEntry = zIn.getNextEntry();
@@ -251,7 +246,7 @@ public final class Unpack implements Callable<UnpackResult> {
                 currEntry = zIn.getNextEntry();
             }
         } catch (Exception e) {
-            return new UnpackResult(name, UnpackResult.Results.corrupted, "unpack.corrupted", file);
+            return new UnpackResult(name, UnpackResult.Results.corrupted, "unpack.corrupted", file, e.toString());
         } finally {
             if (inChannel != null) {
                 inChannel.close();

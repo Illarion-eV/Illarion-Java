@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is the fail monitor. This monitor looks out for fails and epic fails all
- * over the place. So if any download fails, this monitor notices it.
+ * This is the fail monitor. This monitor looks out for fails and epic fails all over the place. So if any download
+ * fails, this monitor notices it.
  *
  * @author Martin Karing
  * @version 1.00

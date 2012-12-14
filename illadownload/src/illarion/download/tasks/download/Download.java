@@ -222,9 +222,8 @@ public final class Download implements Callable<DownloadResult> {
                             // nothing to do
                         }
                         manager.reportDownloadFinished(this,
-                                new DownloadResult(
-                                        DownloadResult.Results.downloadFailed,
-                                        "download.not_found", source, target, 0L));
+                                new DownloadResult(DownloadResult.Results.downloadFailed, "download.not_found",
+                                        source, target, 0L, "Download Error"));
                         return false;
                 }
             }
@@ -236,7 +235,7 @@ public final class Download implements Callable<DownloadResult> {
         } catch (final IOException ex) {
             manager.reportDownloadFinished(this, new DownloadResult(
                     DownloadResult.Results.downloadFailed, "download.not_found",
-                    source, target, 0L));
+                    source, target, 0L, ex.toString()));
             return false;
         }
         return true;
@@ -304,15 +303,14 @@ public final class Download implements Callable<DownloadResult> {
                         }
                         return new DownloadResult(
                                 DownloadResult.Results.downloadFailed,
-                                "download.not_found", source, target, 0L);
+                                "download.not_found", source, target, 0L, "Download failed");
                 }
             }
 
             if (target.exists() && !target.delete()) {
                 connection.getInputStream().close();
-                return new DownloadResult(
-                        DownloadResult.Results.downloadFailed,
-                        "download.invalid_target", source, target, 0L);
+                return new DownloadResult(DownloadResult.Results.downloadFailed, "download.invalid_target", source,
+                        target, 0L, "Target file is locked.");
             }
 
             inChannel = Channels.newChannel(connection.getInputStream());
@@ -360,9 +358,8 @@ public final class Download implements Callable<DownloadResult> {
         }
 
         if (!target.setLastModified(onlineFileLastMod + 1000)) {
-            return new DownloadResult(
-                    DownloadResult.Results.downloadFailed,
-                    "download.file_failed", source, target, 0L);
+            return new DownloadResult(DownloadResult.Results.downloadFailed,
+                    "download.file_failed", source, target, 0L, "Setting last modified failed.");
         }
 
         if (canceled) {

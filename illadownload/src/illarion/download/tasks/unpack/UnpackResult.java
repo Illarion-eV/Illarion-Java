@@ -87,6 +87,11 @@ public final class UnpackResult {
     private final String taskName;
 
     /**
+     * The error data.
+     */
+    private final String error;
+
+    /**
      * Create a new instance of a download result.
      *
      * @param name           the name of the unpack operation that failed
@@ -96,10 +101,25 @@ public final class UnpackResult {
      */
     public UnpackResult(final String name, final Results downloadResult,
                         final String resultMessage, final File targetFile) {
+        this(name, downloadResult, resultMessage, targetFile, null);
+    }
+
+    /**
+     * Create a new instance of a download result.
+     *
+     * @param name           the name of the unpack operation that failed
+     * @param downloadResult the result of the download
+     * @param resultMessage  the message that describes the result
+     * @param targetFile     the file that was the target of the download
+     * @param errorMsg       the error message
+     */
+    public UnpackResult(final String name, final Results downloadResult,
+                        final String resultMessage, final File targetFile, final String errorMsg) {
         taskName = name;
         result = downloadResult;
         message = resultMessage;
         target = targetFile;
+        error = errorMsg;
     }
 
     /**
@@ -136,5 +156,14 @@ public final class UnpackResult {
      */
     public String getTaskName() {
         return taskName;
+    }
+
+    /**
+     * The error message that caused this result.
+     *
+     * @return the error message
+     */
+    public String getErrorMessage() {
+        return error;
     }
 }

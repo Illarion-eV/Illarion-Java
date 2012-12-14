@@ -19,6 +19,7 @@
 package illarion.download.install.gui.swing;
 
 import illarion.download.tasks.unpack.FailMonitor;
+import illarion.download.tasks.unpack.UnpackResult;
 import illarion.download.util.Lang;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXLabel.TextAlignment;
@@ -154,7 +155,8 @@ public final class FailedInformationSWING
         final int errCnt = failMon.getErrorCount();
         final String[] failedPackages = new String[errCnt];
         for (int i = 0; i < errCnt; i++) {
-            failedPackages[i] = failMon.getErrorResult(i).getTaskName();
+            final UnpackResult failedResult = failMon.getErrorResult(i);
+            failedPackages[i] = failedResult.getTaskName() + " - " + failedResult.getErrorMessage();
         }
         contentPanel.add(new JXList(failedPackages), con);
 
