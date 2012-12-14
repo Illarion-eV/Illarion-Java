@@ -214,7 +214,7 @@ public final class Effect extends AbstractEntity implements Resource {
         if (ani != null) {
             ani.restart();
         }
-        super.show();
+        show();
 
         if (light > 0) {
             if (lightSrc != null) {

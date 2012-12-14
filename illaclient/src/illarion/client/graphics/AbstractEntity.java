@@ -127,7 +127,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     /**
      * The default light that is used in the client.
      */
-    protected static final Color DEFAULT_LIGHT = new Color(0);
+    protected static final Color DEFAULT_LIGHT = new Color(255, 255, 255);
 
     /**
      * The speed value for fading the alpha values by default.
