@@ -345,7 +345,7 @@ public final class GameMapHandler
             return;
         }
 
-        final Rectangle originalDisplayRect = targetItem.getDisplayRect();
+        final Rectangle originalDisplayRect = targetItem.getInteractionRect();
         final Rectangle fixedRectangle = new Rectangle(originalDisplayRect);
         fixedRectangle.move(-Camera.getInstance().getViewportOffsetX(), -Camera.getInstance().getViewportOffsetY());
         tooltipHandler.showToolTip(fixedRectangle, event);
