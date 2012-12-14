@@ -561,6 +561,9 @@ public final class GameMiniMap {
 
         if ((processedArea < allowedArea) && !updateAreas.isEmpty()) {
             final Rectangle currentArea = updateAreas.remove(0);
+            if (currentArea == null) {
+                return;
+            }
             processedArea += currentArea.getArea();
             drawMapArea(currentArea);
         }
