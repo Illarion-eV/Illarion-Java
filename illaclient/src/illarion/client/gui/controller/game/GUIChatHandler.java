@@ -423,6 +423,9 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      * @param color     the color to show the text in
      */
     private void addMessageBubble(final Char character, final String message, final Color color) {
+        if (character == null) {
+            return;
+        }
         final Avatar charAvatar = character.getAvatar();
         if (charAvatar == null) {
             return;
