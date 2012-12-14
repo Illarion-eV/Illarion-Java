@@ -62,4 +62,13 @@ public final class MiniMapShader extends AbstractShader {
     public void setTexture(final int textureIndex) {
         getShader().setUniform1i("tex0", textureIndex);
     }
+
+    /**
+     * Set the size of the marker in the center of the mini map.
+     *
+     * @param size the size of the marker
+     */
+    public void setMarkerSize(final float size) {
+        getShader().setUniform1f("markerSize", size);
+    }
 }

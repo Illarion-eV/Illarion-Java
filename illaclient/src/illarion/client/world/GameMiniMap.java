@@ -104,6 +104,7 @@ public final class GameMiniMap {
             final float miniMapCenterY = (minimapOriginY + (MINI_MAP_HEIGHT / 2.f)) / WORLDMAP_HEIGHT;
             miniMapShader.setCenter(miniMapCenterX, miniMapCenterY);
             miniMapShader.setRadius((float) MINI_MAP_HEIGHT / 2.f / (float) WORLDMAP_HEIGHT);
+            miniMapShader.setMarkerSize(2.f / (float) WORLDMAP_HEIGHT);
 
             g.drawImage(worldmapTexture, x, y, x + w, y + h, srcX + minimapOriginX, srcY + minimapOriginY,
                     srcX + minimapOriginX + srcW, srcY + minimapOriginY + srcH,
@@ -681,22 +682,8 @@ public final class GameMiniMap {
             loadMap();
         }
 
-        int minimapOriginX = playerLoc.getScX() - mapOriginX - (MINI_MAP_WIDTH >> 1);
-        int minimapOriginY = playerLoc.getScY() - mapOriginY - (MINI_MAP_HEIGHT >> 1);
-
-        if (minimapOriginX < 0) {
-            minimapOriginX = 0;
-        } else if ((minimapOriginX + MINI_MAP_WIDTH) >= WORLDMAP_WIDTH) {
-            minimapOriginX = WORLDMAP_WIDTH - MINI_MAP_WIDTH - 1;
-        }
-        if (minimapOriginY < 0) {
-            minimapOriginY = 0;
-        } else if ((minimapOriginY + MINI_MAP_HEIGHT) >= WORLDMAP_HEIGHT) {
-            minimapOriginY = WORLDMAP_HEIGHT - MINI_MAP_HEIGHT - 1;
-        }
-
-        this.minimapOriginX = minimapOriginX;
-        this.minimapOriginY = minimapOriginY;
+        minimapOriginX = playerLoc.getScX() - mapOriginX - (MINI_MAP_WIDTH >> 1);
+        minimapOriginY = playerLoc.getScY() - mapOriginY - (MINI_MAP_HEIGHT >> 1);
     }
 
     private int minimapOriginX;
