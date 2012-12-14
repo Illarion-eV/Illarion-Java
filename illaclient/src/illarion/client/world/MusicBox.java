@@ -151,7 +151,6 @@ public final class MusicBox implements Stoppable {
         if (!musicEnabled || (currentMusicId == id)) {
             return;
         }
-        System.out.println("Switching music from " + Integer.toString(currentMusicId) + " to " + Integer.toString(id));
 
         currentMusicId = id;
 
