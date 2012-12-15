@@ -323,7 +323,7 @@ public final class Char
             if (avatar != null) {
                 avatar.setHealthPoints(event.getValue());
             }
-            setAlive(event.getValue() >= 0);
+            setAlive(event.getValue() > 0);
         }
     }
 
@@ -676,23 +676,25 @@ public final class Char
             return;
         }
 
+        alive = newAliveState;
+
         if (avatar == null) {
             return;
         }
 
-        if (!alive) {
-            avatar.changeBaseColor(DEAD_COLOR);
-
-            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                avatar.changeClothColor(i, DEAD_COLOR);
-            }
-        } else {
+        if (alive) {
             avatar.changeBaseColor(skinColor);
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
                 if ((i == AvatarClothManager.GROUP_BEARD) || (i == AvatarClothManager.GROUP_HAIR)) {
                     continue;
                 }
                 avatar.changeClothColor(i, wearItemsColors[i]);
+            }
+        } else {
+            avatar.changeBaseColor(DEAD_COLOR);
+
+            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
+                avatar.changeClothColor(i, DEAD_COLOR);
             }
         }
     }
