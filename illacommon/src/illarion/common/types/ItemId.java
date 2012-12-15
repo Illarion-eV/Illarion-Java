@@ -110,6 +110,9 @@ public final class ItemId implements Comparable<ItemId> {
      * @return {@code true} in case both instances represent the same value
      */
     public boolean equals(final ItemId obj) {
+        if (obj == null) {
+            return false;
+        }
         return value == obj.value;
     }
 

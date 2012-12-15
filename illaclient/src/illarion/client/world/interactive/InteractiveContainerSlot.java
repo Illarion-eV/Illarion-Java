@@ -86,8 +86,8 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
         cmd.send();
     }
 
-    public boolean acceptItem(final ItemCount itemId) {
-        return itemId.equals(getItemId());
+    public boolean acceptItem(final ItemId itemId) {
+        return !isValidItem() || itemId.equals(getItemId());
     }
 
     /**
@@ -165,5 +165,9 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
         cmd.setSellFromContainer(getContainerId(), getSlotId(), parentSlot.getCount());
         cmd.setDialogId(World.getPlayer().getMerchantList().getId());
         cmd.send();
+    }
+
+    public boolean isValidItem() {
+        return (getItemId() != null) && (getItemId().getValue() > 0);
     }
 }
