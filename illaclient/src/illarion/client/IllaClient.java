@@ -199,6 +199,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         try {
             gameContainer = new AppGameContainer(game, res.getWidth(), res.getHeight(),
                     cfg.getBoolean(CFG_FULLSCREEN));
+            gameContainer.setAlwaysRender(true);
             MapDimensions.getInstance().reportScreenSize(gameContainer.getWidth(), gameContainer.getHeight());
         } catch (SlickException e) {
             System.err.println("Fatal error creating game screen!!!");

@@ -411,6 +411,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             contentPane.getElements().get(i).markForRemoval();
         }
 
+        chatLog.getElement().layoutElements();
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.OFF);
     }
