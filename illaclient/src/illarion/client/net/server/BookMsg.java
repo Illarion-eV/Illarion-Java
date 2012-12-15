@@ -52,6 +52,6 @@ public final class BookMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("book" + Integer.toString(bookId));
+        return toString("book " + Integer.toString(bookId));
     }
 }

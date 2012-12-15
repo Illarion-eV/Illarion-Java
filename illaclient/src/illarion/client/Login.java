@@ -269,6 +269,8 @@ public final class Login {
             return false;
         }
 
+        IllaClient.initChatLog();
+
         final LoginCmd loginCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_LOGIN, LoginCmd.class);
         loginCmd.setLogin(loginCharacter, password);
         loginCmd.setVersion(Servers.testserver.getClientVersion());

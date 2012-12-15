@@ -24,9 +24,9 @@ import illarion.client.world.events.CharTalkingEvent;
 import illarion.common.config.ConfigChangedEvent;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
-import org.bushe.swing.event.EventTopicSubscriber;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -38,7 +38,7 @@ import java.util.Properties;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ChatLog implements EventTopicSubscriber<ConfigChangedEvent>, EventSubscriber<CharTalkingEvent> {
+public final class ChatLog {
     /**
      * The key used for the configuration to store if the text log is enabled or not.
      */
@@ -71,7 +71,7 @@ public final class ChatLog implements EventTopicSubscriber<ConfigChangedEvent>, 
      */
     private ChatLog() {
         logActive = IllaClient.getCfg().getBoolean(CFG_TEXTLOG);
-        EventBus.subscribe(CFG_TEXTLOG, this);
+        AnnotationProcessor.process(this);
     }
 
     /**
@@ -104,19 +104,17 @@ public final class ChatLog implements EventTopicSubscriber<ConfigChangedEvent>, 
 
         logger.info("");
         logger.info(Lang.getMsg("log.newSession") + " - " + sdf.format(new Date()));
-
-        EventBus.subscribe(CharTalkingEvent.class, this);
     }
 
-    @Override
-    public void onEvent(final String topic, final ConfigChangedEvent data) {
+    @EventTopicSubscriber(topic = CFG_TEXTLOG)
+    public void onConfigChangedEvent(final String topic, final ConfigChangedEvent data) {
         if (topic.equals(CFG_TEXTLOG)) {
             logActive = data.getConfig().getBoolean(topic);
         }
     }
 
-    @Override
-    public void onEvent(final CharTalkingEvent event) {
+    @EventSubscriber
+    public void onCharTalkingEvent(final CharTalkingEvent event) {
         if (loggerWorking && logActive) {
             logger.info(event.getLoggedText());
         }
