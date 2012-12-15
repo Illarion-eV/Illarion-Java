@@ -120,7 +120,7 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
 
         slots = new InventorySlot[slotCount];
         for (int i = 0; i < slotCount; i++) {
-            slots[i] = getElement().findNiftyControl("#slot" + i, InventorySlot.class);
+            slots[i] = contentPanel.findNiftyControl("#slot" + i, InventorySlot.class);
         }
 
         getElement().getParent().layoutElements();
