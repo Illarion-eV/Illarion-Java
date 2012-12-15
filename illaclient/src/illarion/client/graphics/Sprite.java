@@ -343,7 +343,7 @@ public final class Sprite {
      *
      * @return the default light object
      */
-    public final Color getDefaultLight() {
+    public Color getDefaultLight() {
         return Color.white;
     }
 
@@ -352,7 +352,7 @@ public final class Sprite {
      *
      * @return the amount of textures that are set to this sprite
      */
-    public final int getFrames() {
+    public int getFrames() {
         return textures.length;
     }
 
@@ -362,7 +362,7 @@ public final class Sprite {
      * @return the height of the sprite textures and -1 in case there are no
      *         textures set yet
      */
-    public final int getHeight() {
+    public int getHeight() {
         if (textures.length == 0) {
             return 0;
         }
@@ -378,7 +378,7 @@ public final class Sprite {
      *
      * @return the offset in pixel that is added to the drawing position
      */
-    public final int getOffsetX() {
+    public int getOffsetX() {
         return offsetX;
     }
 
@@ -387,7 +387,7 @@ public final class Sprite {
      *
      * @return the offset in pixel that is added to the drawing position
      */
-    public final int getOffsetY() {
+    public int getOffsetY() {
         return offsetY;
     }
 
@@ -396,7 +396,7 @@ public final class Sprite {
      *
      * @return the rotation applied to this sprite
      */
-    protected final float getRotation() {
+    protected float getRotation() {
         return rotation;
     }
 
@@ -407,7 +407,7 @@ public final class Sprite {
      * @param scale the scaling value that is assumed to be used
      * @return the offset in pixel that is added to the drawing position
      */
-    public final int getScaledOffsetX(final float scale) {
+    public int getScaledOffsetX(final float scale) {
         int retOffset = (int) (offsetX * scale);
 
         if (hAlignUsed == HAlign.center) {
@@ -425,7 +425,7 @@ public final class Sprite {
      * @param scale the scaling value that is assumed to be used
      * @return the offset in pixel that is added to the drawing position
      */
-    public final int getScaledOffsetY(final float scale) {
+    public int getScaledOffsetY(final float scale) {
         int retOffset = (int) (offsetY * scale);
 
         if (vAlignUsed == VAlign.middle) {
@@ -442,7 +442,7 @@ public final class Sprite {
      * @param index the index of the texture
      * @return the texture at the index
      */
-    public final Image getTexture(final int index) {
+    public Image getTexture(final int index) {
         return textures[index];
     }
 
@@ -452,7 +452,7 @@ public final class Sprite {
      * @return the width of the sprite textures and -1 in case there are no
      *         textures set yet
      */
-    public final int getWidth() {
+    public int getWidth() {
         if (textures.length == 0) {
             return 0;
         }
@@ -470,7 +470,7 @@ public final class Sprite {
      * @return <code>true</code> in case the texture needs to be displayed
      *         mirrored
      */
-    public final boolean isMirrored() {
+    public boolean isMirrored() {
         return mirror;
     }
 
@@ -479,7 +479,7 @@ public final class Sprite {
      * removed from the sprite after this call. This should only be called in
      * case the sprite is not used anymore for sure.
      */
-    public final void remove() {
+    public void remove() {
         for (final Image texture : textures) {
             try {
                 texture.destroy();
@@ -498,7 +498,7 @@ public final class Sprite {
      * @param vertAlign the new vertical align that shall be used for rendering
      *                  the sprite
      */
-    public final void setAlign(final HAlign horzAlign, final VAlign vertAlign) {
+    public void setAlign(final HAlign horzAlign, final VAlign vertAlign) {
         hAlignUsed = horzAlign;
         vAlignUsed = vertAlign;
     }
@@ -509,7 +509,7 @@ public final class Sprite {
      *
      * @param newMirror new value for the mirror flag
      */
-    public final void setMirror(final boolean newMirror) {
+    public void setMirror(final boolean newMirror) {
         mirror = newMirror;
     }
 
@@ -521,7 +521,7 @@ public final class Sprite {
      * @param xOffset the new value of the horizontal offset
      * @param yOffset the new value of the vertical offset
      */
-    public final void setOffset(final int xOffset, final int yOffset) {
+    public void setOffset(final int xOffset, final int yOffset) {
         offsetX = xOffset;
         offsetY = yOffset;
     }
@@ -533,7 +533,7 @@ public final class Sprite {
      * @param degree the rotation degree that is supposed to be applied to the
      *               texture
      */
-    public final void setRotation(final float degree) {
+    public void setRotation(final float degree) {
         rotation = degree;
     }
 
@@ -606,6 +606,7 @@ public final class Sprite {
             throw new IllegalArgumentException("Failed to get proper texture.");
         }
 
+        g.pushTransform();
         g.translate(x, y);
         if (isMirrored()) {
             g.scale(-(w / getWidth()), h / getHeight());
@@ -616,13 +617,7 @@ public final class Sprite {
         applyRotation(texture);
         drawImage(g, texture, color);
 
-        if (isMirrored()) {
-            g.scale(-(getWidth() / w), getHeight() / h);
-        } else {
-            g.scale(getWidth() / w, getHeight() / h);
-        }
-
-        g.translate(-x, -y);
+        g.popTransform();
     }
 
     /**
@@ -648,8 +643,8 @@ public final class Sprite {
      * @param color   the color that is applied to the image
      */
     private void drawImage(final Graphics g, final Image texture, final Color color) {
-        int xOff;
-        int yOff = getAlignOffsetY() - getOffsetY();
+        final int xOff;
+        final int yOff = getAlignOffsetY() - getOffsetY();
         if (isMirrored()) {
             xOff = getAlignOffsetX() - getOffsetX();
         } else {
@@ -695,6 +690,7 @@ public final class Sprite {
             throw new IllegalArgumentException("Failed to get proper texture.");
         }
 
+        g.pushTransform();
         g.translate(x, y);
         if (isMirrored()) {
             g.scale(-1.f, 1.f);
@@ -703,10 +699,7 @@ public final class Sprite {
         applyRotation(texture);
         drawImage(g, texture, color);
 
-        if (isMirrored()) {
-            g.scale(-1.f, 1.f);
-        }
-        g.translate(-x, -y);
+        g.popTransform();
     }
 
     /**
