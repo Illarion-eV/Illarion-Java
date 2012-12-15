@@ -230,6 +230,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
 
             final Element msg = task.getBuilder().build(parentNifty, parentScreen, parentPanel);
             msg.showWithoutEffects();
+            parentPanel.layoutElements();
             msg.hide(new InformHandler.RemoveEndNotify(msg));
         }
     }
