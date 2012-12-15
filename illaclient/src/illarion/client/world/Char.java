@@ -672,7 +672,9 @@ public final class Char
      * @param newAliveState set the new alive state. <code>true</code> in case the character is alive.
      */
     public void setAlive(final boolean newAliveState) {
-        alive = newAliveState;
+        if (alive == newAliveState) {
+            return;
+        }
 
         if (avatar == null) {
             return;
