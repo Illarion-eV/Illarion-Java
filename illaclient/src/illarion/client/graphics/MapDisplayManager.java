@@ -362,7 +362,7 @@ public final class MapDisplayManager
         final int centerY = c.getHeight() >> 1;
 
         final int offX = (centerX - origin.getDcX()) + dX;
-        final int offY = (centerY - origin.getDcY()) + dY;
+        final int offY = (centerY - origin.getDcY()) + dY - dL;
 
         final Avatar av = World.getAvatar();
         if (av != null) {
