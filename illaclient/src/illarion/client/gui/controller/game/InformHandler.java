@@ -54,12 +54,17 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
         /**
          * The element builder that is executed to create the inform message.
          */
-        private ElementBuilder builder;
+        private final ElementBuilder builder;
 
         /**
          * The element that will be parent to the elements created by the builder.
          */
-        private Element parent;
+        private final Element parent;
+
+        /**
+         * The element that needs to get a new layout once the inform is displayed.
+         */
+        private final Element layoutParent;
 
         /**
          * Create a new instance of this build task that stores all the information needed to create the inform
@@ -67,10 +72,12 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
          *
          * @param informBuilder the element builder that creates the message
          * @param parentElement the parent element that will store the elements created by the element builder
+         * @param layoutParent  the element that needs to get a new layout once the inform is displayed
          */
-        InformBuildTask(final ElementBuilder informBuilder, final Element parentElement) {
+        InformBuildTask(final ElementBuilder informBuilder, final Element parentElement, final Element layoutParent) {
             builder = informBuilder;
             parent = parentElement;
+            this.layoutParent = layoutParent;
         }
 
         /**
@@ -89,6 +96,15 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
          */
         public Element getParent() {
             return parent;
+        }
+
+        /**
+         * Get the parent element that needs to get a new layout.
+         *
+         * @return the layout parent element
+         */
+        public Element getLayoutParent() {
+            return layoutParent;
         }
     }
 
@@ -230,7 +246,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
 
             final Element msg = task.getBuilder().build(parentNifty, parentScreen, parentPanel);
             msg.showWithoutEffects();
-            parentPanel.layoutElements();
+            task.getLayoutParent().layoutElements();
             msg.hide(new InformHandler.RemoveEndNotify(msg));
         }
     }
@@ -251,7 +267,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
         effectBuilder.startDelay(10000 + (event.getMessage().length() * 50));
         labelBuilder.onHideEffect(effectBuilder);
 
-        showInform(labelBuilder, broadcastParentPanel);
+        showInform(labelBuilder, broadcastParentPanel, broadcastParentPanel.getParent());
     }
 
     @EventSubscriber
@@ -274,7 +290,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
         effectBuilder.startDelay(10000 + (event.getMessage().length() * 50));
         panelBuilder.onHideEffect(effectBuilder);
 
-        showInform(panelBuilder, serverParentPanel);
+        showInform(panelBuilder, serverParentPanel, serverParentPanel.getParent());
     }
 
     @EventSubscriber
@@ -293,7 +309,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
         effectBuilder.startDelay(10000 + (event.getMessage().length() * 50));
         labelBuilder.onHideEffect(effectBuilder);
 
-        showInform(labelBuilder, textToParentPanel);
+        showInform(labelBuilder, textToParentPanel, textToParentPanel.getParent());
     }
 
     @EventSubscriber
@@ -344,7 +360,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
 
         panelBuilder.onHideEffect(new EffectBuilder("hide"));
 
-        showInform(panelBuilder, scriptParentPanel);
+        showInform(panelBuilder, scriptParentPanel, scriptParentPanel.getParent());
     }
 
     private static int getScriptInformDisplayTime(final CharSequence text, final int priority) {
@@ -359,8 +375,9 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
      *
      * @param informBuilder the builder that is meant to create the inform message
      * @param parent        the parent element that stores the inform message
+     * @param layoutParent  the element that needs to get its layout recalculated
      */
-    public void showInform(final ElementBuilder informBuilder, final Element parent) {
-        builderQueue.offer(new InformHandler.InformBuildTask(informBuilder, parent));
+    public void showInform(final ElementBuilder informBuilder, final Element parent, final Element layoutParent) {
+        builderQueue.offer(new InformHandler.InformBuildTask(informBuilder, parent, layoutParent));
     }
 }
