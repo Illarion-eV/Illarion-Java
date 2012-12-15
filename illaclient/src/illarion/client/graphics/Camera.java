@@ -129,7 +129,7 @@ public final class Camera {
             dirtyAreas.clear();
         }
         renderedAreas.clear();
-        fullUpdate = false;
+        fullUpdate = true;
         dirtyAreaCounter = 0;
     }
 
