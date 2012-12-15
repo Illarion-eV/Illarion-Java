@@ -83,7 +83,7 @@ public final class GameMiniMap {
                                 final int srcX, final int srcY, final int srcW, final int srcH,
                                 final de.lessvoid.nifty.tools.Color color, final float scale, final int centerX,
                                 final int centerY) {
-            if (!enabled) {
+            if (!enabled || (worldmapTexture == null)) {
                 return;
             }
 
