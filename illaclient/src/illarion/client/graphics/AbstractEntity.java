@@ -884,7 +884,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     }
 
     public final void setEntityAreaDirty() {
-        if (wentDirty) {
+        if (wentDirty || !lastDisplayRect.equals(displayRect)) {
             wentDirty = false;
             if (!lastDisplayRect.isEmpty()) {
                 Camera.getInstance().markAreaDirty(lastDisplayRect);

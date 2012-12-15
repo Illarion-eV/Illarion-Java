@@ -130,6 +130,7 @@ public final class Camera {
         }
         renderedAreas.clear();
         fullUpdate = false;
+        dirtyAreaCounter = 0;
     }
 
     /**
@@ -140,7 +141,7 @@ public final class Camera {
      */
     public void markAreaDirty(final Rectangle dirtyArea) {
         if (fullUpdate || (dirtyAreaCounter > 200)) {
-            fullUpdate = true;
+            markEverythingDirty();
             return;
         }
 
@@ -217,7 +218,7 @@ public final class Camera {
 
     public void renderDebug(final Graphics g) {
         if (IllaClient.isDebug(Debug.mapRenderer)) {
-            g.translate(getViewportOffsetX(), getViewportOffsetY());
+            g.translate(-getViewportOffsetX(), -getViewportOffsetY());
             debugShowUpdateAreas(g);
             debugShowRenderedAreas(g);
             g.translate(getViewportOffsetX(), getViewportOffsetY());

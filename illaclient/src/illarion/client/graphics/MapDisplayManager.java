@@ -335,7 +335,10 @@ public final class MapDisplayManager
     public void remove(final DisplayItem item) {
         synchronized (display) {
             display.remove(item);
-            removedAreaList.add(new Rectangle(item.getLastDisplayRect()));
+            final Rectangle displayRect = item.getLastDisplayRect();
+            if (!displayRect.isEmpty()) {
+                removedAreaList.add(new Rectangle(displayRect));
+            }
         }
     }
 
@@ -371,9 +374,11 @@ public final class MapDisplayManager
         Camera.getInstance().clearDirtyAreas();
 
         synchronized (display) {
-            for (final Rectangle rect : removedAreaList) {
+            for (int i1 = 0; i1 < removedAreaList.size(); i1++) {
+                final Rectangle rect = removedAreaList.get(i1);
                 Camera.getInstance().markAreaDirty(rect);
             }
+            removedAreaList.clear();
             synchronized (GameMap.LIGHT_LOCK) {
                 while (true) {
                     final MapInteractionEvent event = eventQueue.poll();

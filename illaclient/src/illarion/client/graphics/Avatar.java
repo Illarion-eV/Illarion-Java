@@ -659,8 +659,7 @@ public final class Avatar extends AbstractEntity implements Resource {
         clothRender.update(c, delta);
 
         final Color locLight = getLight();
-        if (animateLight && (locLight != null)
-                && AnimationUtility.approach(locLight, targetLight, delta)) {
+        if (animateLight && (locLight != null) && AnimationUtility.approach(locLight, targetLight, delta)) {
             targetLight = locLight;
             animateLight = false;
         }
