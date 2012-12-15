@@ -319,8 +319,11 @@ public final class Char
 
         attributes.put(event.getAttribute(), event.getValue());
 
-        if ((event.getAttribute() == CharacterAttribute.HitPoints) && (avatar != null)) {
-            avatar.setHealthPoints(event.getValue());
+        if (event.getAttribute() == CharacterAttribute.HitPoints) {
+            if (avatar != null) {
+                avatar.setHealthPoints(event.getValue());
+            }
+            setAlive(event.getValue() >= 0);
         }
     }
 
