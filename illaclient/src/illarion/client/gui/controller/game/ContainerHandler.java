@@ -23,7 +23,6 @@ import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
 import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
-import de.lessvoid.nifty.controls.WindowClosedEvent;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.NiftyMouseMovedEvent;
 import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
@@ -36,6 +35,9 @@ import gnu.trove.procedure.TIntObjectProcedure;
 import illarion.client.IllaClient;
 import illarion.client.graphics.Item;
 import illarion.client.gui.EntitySlickRenderImage;
+import illarion.client.net.CommandFactory;
+import illarion.client.net.CommandList;
+import illarion.client.net.client.OpenBagCmd;
 import illarion.client.net.server.events.CloseContainerEvent;
 import illarion.client.net.server.events.ContainerItemLookAtEvent;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
@@ -352,13 +354,6 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         World.getInteractionManager().cancelDragging();
     }
 
-    public void onContainerWindowsClosed(final String topic, final WindowClosedEvent event) {
-        final int containerId = getContainerId(topic);
-        if (isContainerCreated(containerId)) {
-            // how?!
-        }
-    }
-
     /**
      * This event is received in case the user clicks into the container.
      *
@@ -385,6 +380,11 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         World.getPlayer().removeContainer(data.getContainerId());
         if (isContainerCreated(data.getContainerId())) {
             removeItemContainer(data.getContainerId());
+
+            final OpenBagCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_CLOSE_SHOWCASE,
+                    OpenBagCmd.class);
+            cmd.setShowcase(data.getContainerId());
+            cmd.send();
         }
     }
 
