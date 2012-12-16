@@ -78,6 +78,7 @@ public final class Credits {
         final CreditsList chiefMusic = new CreditsList("Original-Soundtrack", "Original Soundtrack");
         final CreditsList chiefMap = new CreditsList("Leitender Gestalter für die Karte", "Chief Map Designer");
         final CreditsList chiefServer = new CreditsList("Leitender Entwickler für den Server", "Chief Server Developer");
+        final CreditsList presentedBy = new CreditsList("Präsentiert vom", "Presented by the");
 
         final CreditsList gameplay = new CreditsList("Spielmechanik", "Gameplay");
         final CreditsList content = new CreditsList("Spielinhalte", "Game Content");
@@ -149,6 +150,7 @@ public final class Credits {
         CreditsPerson.create("Jan", "Alatar", "Falke", specialThanks);
         CreditsPerson.create("Aragon", specialThanks);
         CreditsPerson.create("void256", specialThanks);
+        CreditsPerson.create("Illarion", "e.V.", presentedBy);
 
         singlePosList.add(projectManager);
         singlePosList.add(chiefContent);
@@ -157,6 +159,7 @@ public final class Credits {
         singlePosList.add(chiefMusic);
         singlePosList.add(chiefMap);
         singlePosList.add(chiefServer);
+        singlePosList.add(presentedBy);
 
         multiPosList.add(gameplay);
         multiPosList.add(content);

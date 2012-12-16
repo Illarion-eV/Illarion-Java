@@ -160,7 +160,7 @@ public final class MusicBox implements Stoppable {
 
         if (id == NO_TRACK) {
             if (currentMusic != null) {
-                currentMusic.stop();
+                currentMusic.fade(500, 0.f, true);
                 currentMusic = null;
             }
             return;
