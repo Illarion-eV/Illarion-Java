@@ -20,10 +20,7 @@ package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.controls.ButtonClickedEvent;
-import de.lessvoid.nifty.controls.Label;
-import de.lessvoid.nifty.controls.Window;
-import de.lessvoid.nifty.controls.WindowClosedEvent;
+import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
@@ -49,6 +46,7 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
 
     private Window bookDisplay;
     private Element bookTextContent;
+    private ScrollPanel bookScrollArea;
     private Label pageNumberLabel;
 
     private Nifty nifty;
@@ -61,6 +59,7 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
 
         bookDisplay = screen.findNiftyControl("book", Window.class);
         bookTextContent = bookDisplay.getElement().findElementByName("#textContent");
+        bookScrollArea = bookDisplay.getElement().findNiftyControl("#scrollArea", ScrollPanel.class);
         pageNumberLabel = bookDisplay.getElement().findNiftyControl("#pageNumber", Label.class);
     }
 
@@ -169,6 +168,9 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
         }
 
         bookDisplay.getElement().getParent().layoutElements();
+
+        bookScrollArea.setAutoScroll(ScrollPanel.AutoScroll.TOP);
+        bookScrollArea.setAutoScroll(ScrollPanel.AutoScroll.OFF);
     }
 
     @EventSubscriber

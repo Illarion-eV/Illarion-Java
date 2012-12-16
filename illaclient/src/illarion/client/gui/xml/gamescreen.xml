@@ -131,8 +131,8 @@
             <control id="book" name="window" style="nifty-window" title="${gamescreen-bundle.book}"
                      visible="false" width="410px" height="550px" hideOnClose="true" visibleToMouse="true">
                 <panel childLayout="vertical" paddingBottom="5px">
-                    <control name="scrollPanel" childLayout="vertical" autoScroll="off" stepSizeY="20" height="*"
-                             style="nifty-scrollpanel" width="368px" horizontal="false">
+                    <control name="scrollPanel" id="#scrollArea" childLayout="vertical" autoScroll="off" stepSizeY="20"
+                             height="*" style="nifty-scrollpanel" width="368px" horizontal="false">
                         <panel id="#textContent" childLayout="vertical" width="338px"/>
                     </control>
                     <control align="center" name="label" id="#pageNumber" marginBottom="10px" style="nifty-label"
