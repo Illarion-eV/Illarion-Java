@@ -66,10 +66,15 @@ public class MapFileBand extends JRibbonBand {
         final File dir = config.getFile("mapLastOpenDir");
 
         final String[] maps = dir.list(FILTER_TILES);
-        for (int i = 0; i < maps.length; ++i) {
-            maps[i] = maps[i].substring(0, maps[i].length() - MapIO.EXT_TILE.length());
+        final JList list;
+        if (maps != null) {
+            for (int i = 0; i < maps.length; ++i) {
+                maps[i] = maps[i].substring(0, maps[i].length() - MapIO.EXT_TILE.length());
+            }
+            list = new JList(maps);
+        } else {
+            list = new JList();
         }
-        final JList list = new JList(maps);
         list.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(final ListSelectionEvent e) {
