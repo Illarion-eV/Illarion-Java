@@ -116,4 +116,13 @@ public final class CreditsList implements Iterable<CreditsPerson> {
         sortList();
         return members.iterator();
     }
+
+    /**
+     * Get the first member of this list.
+     *
+     * @return the first list member
+     */
+    public CreditsPerson getFirst() {
+        return members.get(0);
+    }
 }

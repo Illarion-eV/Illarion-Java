@@ -34,6 +34,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.util.Lang;
+import illarion.client.world.World;
 
 /**
  * This is the screen controller that takes care of displaying the login screen.
@@ -127,6 +128,8 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     @Override
     public void onStartScreen() {
+        World.getMusicBox().playMusicTrack(0);
+        World.getMusicBox().update(0);
     }
 
     @Override
@@ -153,6 +156,17 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     @NiftyEventSubscriber(id = "exitBtn")
     public void onExitButtonClicked(final String topic, final ButtonClickedEvent event) {
         IllaClient.ensureExit();
+    }
+
+    /**
+     * This function is called in case the credits button is clicked.
+     *
+     * @param topic the topic of the event
+     * @param event the data of the event
+     */
+    @NiftyEventSubscriber(id = "creditsBtn")
+    public void onCreditsButtonClicked(final String topic, final ButtonClickedEvent event) {
+        nifty.gotoScreen("creditsStart");
     }
 
     /**

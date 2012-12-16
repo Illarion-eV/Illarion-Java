@@ -68,6 +68,7 @@ public class LoginState
         loadXML(nifty, "illarion/client/gui/xml/login.xml");
         loadXML(nifty, "illarion/client/gui/xml/charselect.xml");
         loadXML(nifty, "illarion/client/gui/xml/options.xml");
+        loadXML(nifty, "illarion/client/gui/xml/credits.xml");
     }
 
     /**

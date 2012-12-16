@@ -39,12 +39,35 @@ public final class Credits {
     private final List<CreditsList> multiPosList;
 
     /**
+     * The singleton instance of this credits class.
+     */
+    private static Credits instance;
+
+    /**
+     * Get the singleton instance of the credits class.
+     * <p/>
+     * The class instance is created upon the first call of this function.
+     *
+     * @return the credits instance
+     */
+    public static Credits getInstance() {
+        if (instance == null) {
+            synchronized (Credits.class) {
+                if (instance == null) {
+                    instance = new Credits();
+                }
+            }
+        }
+        return instance;
+    }
+
+    /**
      * The constructor of the credits.
      * <p/>
      * Be aware, this class will load all the text and objects required to display the credits. Only do so in case
      * you really want to display this stuff.
      */
-    public Credits() {
+    private Credits() {
         singlePosList = new ArrayList<CreditsList>();
         multiPosList = new ArrayList<CreditsList>();
 
@@ -116,7 +139,7 @@ public final class Credits {
         CreditsPerson.create("Larissa", "Soraja", "Falkenbach", qualityAssurance);
         CreditsPerson.create("Alrik", qualityAssurance);
         CreditsPerson.create("Katharina", qualityAssurance);
-        CreditsPerson.create("Salathe", qualityAssurance);
+        CreditsPerson.create("Mike", "Salathe", "Hudak", qualityAssurance);
         CreditsPerson.create("Slightly", qualityAssurance);
         CreditsPerson.create("PurpleMonkeys", qualityAssurance);
         CreditsPerson.create("GolfLima", qualityAssurance);
