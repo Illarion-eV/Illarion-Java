@@ -97,9 +97,14 @@ public class DialogCraftingControl
                 return;
             }
 
-            final CraftingTreeItem selectedEntry = selection.get(0).getValue().entry;
+            final TreeItem<ListEntry> selectedTreeEntry = selection.get(0);
+            final CraftingTreeItem selectedEntry = selectedTreeEntry.getValue().entry;
 
             if (selectedEntry instanceof CraftingCategoryEntry) {
+                if (!selectedTreeEntry.isExpanded()) {
+                    selectedTreeEntry.setExpanded(true);
+                    updateTree(selectedTreeEntry);
+                }
                 setSelectedItem(null);
             } else {
                 setSelectedItem((CraftingItemEntry) selectedEntry);
@@ -341,10 +346,16 @@ public class DialogCraftingControl
 
         selectedEntry.getParentItem().setExpanded(true);
 
+        updateTree(selectedEntry);
+        setSelectedItem((CraftingItemEntry) selectedEntry.getValue().entry);
+    }
+
+    private void updateTree(final TreeItem<ListEntry> selectedItem) {
         final TreeBox<ListEntry> tree = getItemList();
         tree.setTree(treeRootNode);
-        tree.selectItem(selectedEntry);
-        setSelectedItem((CraftingItemEntry) selectedEntry.getValue().entry);
+        if (selectedItem != null) {
+            tree.selectItem(selectedItem);
+        }
     }
 
     @Override
