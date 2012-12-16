@@ -306,7 +306,7 @@ public final class AppearanceMsg extends AbstractReply {
             case 14:
                 return 14;
             case 15:
-                return 3;
+                return 73;
             case 17:
                 return 4;
             case 18:
@@ -316,11 +316,11 @@ public final class AppearanceMsg extends AbstractReply {
             case 20:
                 return 11;
             case 21:
-                return 14;
+                return 110;
             case 22:
-                return 15;
+                return 110;
             case 23:
-                return 22;
+                return 110;
             case 24:
                 return 23;
             case 25:
@@ -356,7 +356,7 @@ public final class AppearanceMsg extends AbstractReply {
             case 43:
                 return 43;
             case 48:
-                return 46;
+                return 48;
             case 49:
                 return 44;
             case 50:
