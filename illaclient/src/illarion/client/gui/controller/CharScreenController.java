@@ -67,7 +67,9 @@ public class CharScreenController implements ScreenController {
 
     private void fillMyListBox() {
         for (final Login.CharEntry entry : Login.getInstance().getCharacterList()) {
-            listBox.addItem(entry.getName());
+            if (entry.getStatus() == 0) {
+                listBox.addItem(entry.getName());
+            }
         }
     }
 

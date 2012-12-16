@@ -181,8 +181,7 @@ public final class Login {
             output.flush();
             output.close();
 
-            final DocumentBuilderFactory dbf =
-                    DocumentBuilderFactory.newInstance();
+            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             final DocumentBuilder db = dbf.newDocumentBuilder();
             final Document doc = db.parse(conn.getInputStream());
 
