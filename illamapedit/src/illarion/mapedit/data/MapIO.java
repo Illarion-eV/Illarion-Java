@@ -155,8 +155,8 @@ public class MapIO {
         tileOutput.write(String.format("%s %d%s", HEADER_Y, map.getY(), NEWLINE));
         tileOutput.write(String.format("%s %d%s", HEADER_W, map.getWidth(), NEWLINE));
         tileOutput.write(String.format("%s %d%s", HEADER_H, map.getHeight(), NEWLINE));
-        for (int y = 0; y < map.getWidth(); ++y) {
-            for (int x = 0; x < map.getHeight(); ++x) {
+        for (int x = 0; x < map.getWidth(); ++x) {
+            for (int y = 0; y < map.getHeight(); ++y) {
                 final MapTile tile = map.getTileAt(x, y);
 
                 //        <dx>;<dy>;<tileID>;<musicID>
