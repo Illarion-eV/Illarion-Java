@@ -168,6 +168,7 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
             backButton.hide();
         }
 
+        bookDisplay.getElement().getParent().layoutElements();
     }
 
     @EventSubscriber
