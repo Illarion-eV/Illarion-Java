@@ -254,7 +254,7 @@ public final class Player {
     /**
      * The monitor function that is notified in case the configuration changes and triggers the required updates.
      */
-    @EventTopicPatternSubscriber(topicPattern = "((music)|(sound))((On)|(Volume))")
+    @EventTopicPatternSubscriber(topicPattern = "sound((On)|(Volume))")
     public void onConfigChangedEvent(final String topic, final ConfigChangedEvent event) {
         updateListener();
     }
@@ -585,14 +585,6 @@ public final class Player {
             SoundStore.get().setSoundVolume(effVol);
         } else {
             SoundStore.get().setSoundsOn(false);
-        }
-
-        if (IllaClient.getCfg().getBoolean(CFG_MUSIC_ON)) {
-            final float musVol = IllaClient.getCfg().getFloat(CFG_MUSIC_VOL) / MAX_CLIENT_VOL;
-            SoundStore.get().setMusicOn(true);
-            SoundStore.get().setMusicVolume(musVol);
-        } else {
-            SoundStore.get().setMusicOn(false);
         }
     }
 

@@ -26,6 +26,7 @@ import illarion.common.util.StoppableStorage;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
 import org.newdawn.slick.Music;
+import org.newdawn.slick.openal.SoundStore;
 
 /**
  * This is the music box. What is does is playing music. This class handles the playback of the background music
@@ -96,8 +97,11 @@ public final class MusicBox implements Stoppable {
     public void onUpdateConfig(final String topic, final ConfigChangedEvent data) {
         if ("musicOn".equals(topic)) {
             musicEnabled = IllaClient.getCfg().getBoolean("musicOn");
+            SoundStore.get().setMusicOn(musicEnabled);
         } else if ("musicVolume".equals(topic)) {
             musicVolume = IllaClient.getCfg().getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
+            SoundStore.get().setMusicVolume(musicVolume);
+            SoundStore.get().setCurrentMusicVolume(musicVolume);
         }
     }
 
