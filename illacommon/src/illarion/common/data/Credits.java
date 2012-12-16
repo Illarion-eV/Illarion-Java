@@ -167,4 +167,32 @@ public final class Credits {
     public Iterator<CreditsList> getMultiLists() {
         return multiPosList.iterator();
     }
+
+    public static void main(final String[] args) {
+        System.out.println("CREDITS");
+        System.out.println();
+
+        final Credits credits = new Credits();
+        final Iterator<CreditsList> singleCredits = credits.getSingleLists();
+        while (singleCredits.hasNext()) {
+            final CreditsList list = singleCredits.next();
+            System.out.println(list.getNameEnglish());
+            for (final CreditsPerson person : list) {
+                System.out.print("\t");
+                System.out.println(person.getName());
+            }
+            System.out.println();
+        }
+
+        final Iterator<CreditsList> multiCredits = credits.getMultiLists();
+        while (multiCredits.hasNext()) {
+            final CreditsList list = multiCredits.next();
+            System.out.println(list.getNameEnglish());
+            for (final CreditsPerson person : list) {
+                System.out.print("\t");
+                System.out.println(person.getName());
+            }
+            System.out.println();
+        }
+    }
 }
