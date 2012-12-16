@@ -63,7 +63,7 @@ public final class TextureLoaderAwt extends AbstractTextureLoader<TextureAtlasAw
      * The private constructor to prevent the creation of additional instances of this class.
      */
     private TextureLoaderAwt() {
-        super(ITEMS_DIR, TILES_DIR);
+        super(GUI_DIR, ITEMS_DIR, TILES_DIR);
     }
 
     @Override

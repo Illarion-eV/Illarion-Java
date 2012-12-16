@@ -47,6 +47,15 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="Javolution" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../illacommon/rsc/rsc_gui.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="log4j" level="project" />
     <orderEntry type="library" name="Flamingo" level="project" />
     <orderEntry type="library" name="Substance Look&amp;Feel" level="project" />
