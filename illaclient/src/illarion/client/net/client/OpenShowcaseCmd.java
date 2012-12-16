@@ -23,7 +23,7 @@ import illarion.common.net.NetCommWriter;
 
 /**
  * Client Command: Open a container within another container shown in a showcase
- * ({@link illarion.client.net.CommandList#CMD_OPEN_MAP}).
+ * ({@link illarion.client.net.CommandList#CMD_OPEN_SHOWCASE}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;

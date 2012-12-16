@@ -73,21 +73,17 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
         cmd.send();
     }
 
-    public void use() {
-        final UseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_USE, UseCmd.class);
-        cmd.addUse(this);
-        cmd.send();
+    /**
+     * The ID of the item in this slot.
+     *
+     * @return the ID of the item in this slot
+     */
+    public ItemId getItemId() {
+        return parentSlot.getItemID();
     }
 
-    public void lookAt() {
-        final LookatShowcaseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_LOOKAT_SHOWCASE,
-                LookatShowcaseCmd.class);
-        cmd.setSlot(getContainerId(), parentSlot.getLocation());
-        cmd.send();
-    }
-
-    public boolean acceptItem(final ItemId itemId) {
-        return !isValidItem() || itemId.equals(getItemId());
+    public int getContainerId() {
+        return parentSlot.getContainerId();
     }
 
     /**
@@ -135,21 +131,36 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
         return parentSlot.getLocation();
     }
 
-    public int getContainerId() {
-        return parentSlot.getContainerId();
+    public boolean acceptItem(final ItemId itemId) {
+        return !isValidItem() || itemId.equals(getItemId());
+    }
+
+    public boolean isValidItem() {
+        return (getItemId() != null) && (getItemId().getValue() > 0);
     }
 
     public ContainerSlot getSlot() {
         return parentSlot;
     }
 
+    public void lookAt() {
+        final LookatShowcaseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_LOOKAT_SHOWCASE,
+                LookatShowcaseCmd.class);
+        cmd.setSlot(getContainerId(), parentSlot.getLocation());
+        cmd.send();
+    }
+
     /**
-     * The ID of the item in this slot.
-     *
-     * @return the ID of the item in this slot
+     * Open the item as a container
      */
-    public ItemId getItemId() {
-        return parentSlot.getItemID();
+    public void openContainer() {
+        if (!isValidItem()) {
+            return;
+        }
+
+        final OpenShowcaseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_OPEN_SHOWCASE, OpenShowcaseCmd.class);
+        cmd.setShowcase(getContainerId(), getSlotId());
+        cmd.send();
     }
 
     /**
@@ -167,7 +178,9 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
         cmd.send();
     }
 
-    public boolean isValidItem() {
-        return (getItemId() != null) && (getItemId().getValue() > 0);
+    public void use() {
+        final UseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_USE, UseCmd.class);
+        cmd.addUse(this);
+        cmd.send();
     }
 }

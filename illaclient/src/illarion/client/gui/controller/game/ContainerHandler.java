@@ -148,6 +148,8 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
 
                     if (World.getPlayer().hasMerchantList()) {
                         slot.getInteractive().sell();
+                    } else if (slot.getItemPrototype().isContainer()) {
+                        slot.getInteractive().openContainer();
                     } else {
                         slot.getInteractive().use();
                     }
