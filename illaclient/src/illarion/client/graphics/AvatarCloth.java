@@ -80,7 +80,6 @@ public final class AvatarCloth extends AbstractEntity implements Resource {
         avatar = avatarId;
         locationId = location;
         reset();
-        setFadingCorridorEffectEnabled(false);
     }
 
     private static int getAvatarOffsetX(final int avatarId) {

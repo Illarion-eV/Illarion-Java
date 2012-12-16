@@ -898,7 +898,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         }
     }
 
-    private boolean fadingCorridorEffect = true;
+    private boolean fadingCorridorEffect = false;
 
     public void setFadingCorridorEffectEnabled(final boolean value) {
         fadingCorridorEffect = value;

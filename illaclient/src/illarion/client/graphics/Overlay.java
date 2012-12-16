@@ -83,7 +83,6 @@ public class Overlay extends AbstractEntity implements RecycleObject, Resource {
 
     @Override
     public void activate(final int id) {
-        setFadingCorridorEffectEnabled(false);
     }
 
     @Override
