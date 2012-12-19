@@ -155,7 +155,6 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
         if ((topItem != null) && topItem.isContainer()) {
             final OpenMapCmd containerCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_OPEN_MAP, OpenMapCmd.class);
             containerCmd.setPosition(getLocation());
-            containerCmd.setShowcase(1);
             containerCmd.send();
             return;
         }

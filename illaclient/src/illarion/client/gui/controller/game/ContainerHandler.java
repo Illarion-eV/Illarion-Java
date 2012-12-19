@@ -385,7 +385,6 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
 
             final OpenBagCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_CLOSE_SHOWCASE,
                     OpenBagCmd.class);
-            cmd.setShowcase(data.getContainerId());
             cmd.send();
         }
     }

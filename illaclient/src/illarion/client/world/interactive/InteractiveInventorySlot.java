@@ -99,9 +99,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
             return;
         }
 
-        final OpenBagCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_OPEN_BAG, OpenBagCmd.class);
-        cmd.setShowcase(0);
-        cmd.send();
+        CommandFactory.getInstance().getCommand(CommandList.CMD_OPEN_BAG).send();
     }
 
     public void lookAt() {
