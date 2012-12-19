@@ -123,7 +123,7 @@ public final class TradeItemCmd extends AbstractCommand {
      */
     public void setSellFromContainer(final int containerId, final int invSlot, final ItemCount itemCount) {
         selectedAction = TradeItemCmd.Action.sell;
-        location = (short) containerId;
+        location = (short) (containerId + 1);
         slot = invSlot;
         amount = itemCount;
     }
