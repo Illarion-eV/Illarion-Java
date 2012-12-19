@@ -126,7 +126,12 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             super.run();
             final String message;
             if (talkingEvent.getMode() == ChatHandler.SpeechMode.emote) {
-                message = talkingEvent.getCharacter().getName() + " " + talkingEvent.getText();
+                final Char talkingChar = talkingEvent.getCharacter();
+                if (talkingChar == null) {
+                    message = Lang.getMsg("chat.someone") + " " + talkingEvent.getText();
+                } else {
+                    message = talkingChar.getName() + " " + talkingEvent.getText();
+                }
             } else {
                 message = talkingEvent.getText();
             }
