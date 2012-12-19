@@ -77,11 +77,6 @@ public final class Player {
     private static final String CFG_SOUND_VOL = "soundVolume"; //$NON-NLS-1$
 
     /**
-     * Maximal distance to visible objects.
-     */
-    private static final int CLIP_DISTANCE = 14;
-
-    /**
      * Maximal value for the volume of the sound.
      */
     public static final float MAX_CLIENT_VOL = 100.f;
@@ -506,7 +501,9 @@ public final class Player {
      * @return true if the position is within the clipping distance and the tolerance
      */
     public boolean isOnScreen(final Location testLoc, final int tolerance) {
-        final int limit = CLIP_DISTANCE + tolerance;
+        final int width = MapDimensions.getInstance().getStripesWidth() >> 2;
+        final int height = MapDimensions.getInstance().getStripesHeight() >> 2;
+        final int limit = Math.max(width, height) + tolerance;
         return loc.getDistance(testLoc) < limit;
     }
 
