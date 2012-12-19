@@ -445,7 +445,7 @@ public final class Player {
                         return 0;
                     }
                 }
-                // include distance in calulation 1% per tile
+                // include distance in calculation 1% per tile
                 coverage++;
             }
             final int quality = limit - coverage;
@@ -469,28 +469,6 @@ public final class Player {
      */
     boolean isBaseLevel(final Location checkLoc) {
         return getLocation().getScZ() == checkLoc.getScZ();
-    }
-
-    /**
-     * Check if the player character is currently looking at a specified character.
-     *
-     * @param chara The character the player character could look at
-     * @return true if the player character is looking at the character
-     */
-    public boolean isLookingAt(final Char chara) {
-        final int dist = Math.abs(character.getDirection() - getLocation().getDirection(chara.getLocation()));
-        return (dist < MINIMUM_LOOKING_AT_RANGE) || (dist > MAXIMUM_LOOKING_AT_RANGE);
-    }
-
-    /**
-     * Determines whether the character is currently moving.
-     *
-     * @return <code>true</code> if the character is moving
-     * @deprecated directly get the information from the movement handler
-     */
-    @Deprecated
-    public boolean isMoving() {
-        return movementHandler.isMoving();
     }
 
     /**
