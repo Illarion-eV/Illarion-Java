@@ -58,8 +58,7 @@
                     <onShow name="fade" startDelay="0" length="500" start="#0" end="#F"/>
                     <onHide name="fade" startDelay="3500" length="500" start="#F" end="#0"/>
                 </effect>
-                <control name="label" style="nifty-label" id="title" font="menuFont" width="400px"
-                         height="50px"/>
+                <control name="label" style="nifty-label" id="title" font="menuFont" width="400px" height="50px"/>
                 <panel childLayout="vertical" id="names" width="400px"/>
             </panel>
         </layer>
