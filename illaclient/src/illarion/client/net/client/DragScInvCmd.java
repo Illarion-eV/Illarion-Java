@@ -113,7 +113,7 @@ public final class DragScInvCmd extends AbstractDragCommand {
         sb.append(targetSlot);
         sb.append(" Count: ");
         sb.append(targetSlot);
-        return sb.toString();
+        return toString(sb.toString());
     }
 
 }

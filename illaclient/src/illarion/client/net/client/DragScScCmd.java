@@ -123,7 +123,7 @@ public final class DragScScCmd extends AbstractDragCommand {
         sb.append(targetContainerItem);
         sb.append(" Count: ");
         sb.append(getCount());
-        return sb.toString();
+        return toString(sb.toString());
     }
 
 }

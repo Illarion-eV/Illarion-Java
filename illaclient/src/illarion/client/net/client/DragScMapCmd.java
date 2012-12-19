@@ -116,7 +116,7 @@ public final class DragScMapCmd extends AbstractDragCommand {
             builder.append(targetLocation.toString());
             builder.append(" Count: ");
             builder.append(getCount());
-            return builder.toString();
+            return toString(builder.toString());
         } finally {
             TextBuilder.recycle(builder);
         }

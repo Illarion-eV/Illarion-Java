@@ -109,6 +109,6 @@ public final class DragInvScCmd extends AbstractDragCommand {
         sb.append(targetContainer);
         sb.append(" TargetPosition: ");
         sb.append(targetContainerSlot);
-        return sb.toString();
+        return toString(sb.toString());
     }
 }
