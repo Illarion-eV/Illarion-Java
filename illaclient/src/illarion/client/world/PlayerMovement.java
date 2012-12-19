@@ -281,7 +281,6 @@ public final class PlayerMovement
 
         // execute walking step
         final int direction = loc.getDirection(stepDest);
-        requestTurn(direction, false);
         requestMove(direction, PlayerMovement.MOVE_MODE_WALK, false);
     }
 
@@ -403,6 +402,7 @@ public final class PlayerMovement
         if (stopAutoMove) {
             cancelAutoWalk();
         }
+        requestTurn(direction, false);
         if ((lastMoveRequest == Location.DIR_ZERO) && (lastAllowedMove == Location.DIR_ZERO)) {
             if (!moving) {
                 lastMoveRequest = direction;
@@ -600,10 +600,8 @@ public final class PlayerMovement
         }
 
         walkTowards = true;
-        cancelAutoWalk();
 
-        requestTurn(walkTowardsDir, false);
-        requestMove(walkTowardsDir, walkTowardsMode);
+        requestMove(walkTowardsDir, walkTowardsMode, true);
     }
 
     @Override
