@@ -110,7 +110,7 @@ public final class Credits {
         CreditsPerson.create("Esther", "Kadiya", "Sense", gameplay, graphics, website);
         CreditsPerson.create("Jan", "Mattner", gameplay, qualityAssurance);
         CreditsPerson.create("Wolfgang", "Müller", content);
-        CreditsPerson.create("Rincewind", content);
+        CreditsPerson.create("Thomas", "Messerschmidt", content);
         CreditsPerson.create("Faladron", content);
         CreditsPerson.create("Henry", "Mill", content, maps);
         CreditsPerson.create("Lisa", "Maletzki", gameplay, content, qualityAssurance);
