@@ -24,8 +24,7 @@ import illarion.common.net.NetCommWriter;
 import illarion.common.types.Location;
 
 /**
- * Client Command: Open a container on the map (
- * {@link illarion.client.net.CommandList#CMD_OPEN_MAP}).
+ * Client Command: Open a container on the map ({@link CommandList#CMD_OPEN_MAP}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -35,11 +34,6 @@ public final class OpenMapCmd extends AbstractCommand {
      * The direction relative to the player character the bag is located at.
      */
     private byte dir;
-
-    /**
-     * The showcase that shall show the the container that is going to be opend.
-     */
-    private byte sc;
 
     /**
      * Default constructor for the open container on the map command.
@@ -59,16 +53,13 @@ public final class OpenMapCmd extends AbstractCommand {
     }
 
     /**
-     * Encode the data of this open container on map command and put the values
-     * into the buffer.
+     * Encode the data of this open container on map command and put the values into the buffer.
      *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
+     * @param writer the interface that allows writing data to the network communication system
      */
     @Override
     public void encode(final NetCommWriter writer) {
         writer.writeByte(dir);
-        writer.writeByte(sc);
     }
 
     /**
@@ -81,15 +72,6 @@ public final class OpenMapCmd extends AbstractCommand {
     }
 
     /**
-     * Set the showcase that shall show the container once its opend.
-     *
-     * @param targetSc the showcase that shall show the container contents.
-     */
-    public void setShowcase(final int targetSc) {
-        sc = (byte) targetSc;
-    }
-
-    /**
      * Get the data of this open container on map command as string.
      *
      * @return the data of this command as string
@@ -97,6 +79,6 @@ public final class OpenMapCmd extends AbstractCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("from direction:" + dir + " in Showcase: " + sc);
+        return toString("from direction:" + Byte.toString(dir));
     }
 }

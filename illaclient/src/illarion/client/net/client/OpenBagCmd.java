@@ -22,18 +22,12 @@ import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 
 /**
- * Client Command: Open the bag the character carries in the bag slot (
- * {@link illarion.client.net.CommandList#CMD_OPEN_BAG}).
+ * Client Command: Open the bag the character carries in the bag slot ({@link CommandList#CMD_OPEN_BAG}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class OpenBagCmd extends AbstractCommand {
-    /**
-     * The showcase the container shall be opened in.
-     */
-    private byte sc;
-
     /**
      * Default constructor for the open bag command.
      */
@@ -52,24 +46,13 @@ public final class OpenBagCmd extends AbstractCommand {
     }
 
     /**
-     * Encode the data of this open bag command and put the values into the
-     * buffer.
+     * Encode the data of this open bag command and put the values into the buffer.
      *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
+     * @param writer the interface that allows writing data to the network communication system
      */
     @Override
     public void encode(final NetCommWriter writer) {
-        writer.writeByte(sc);
-    }
-
-    /**
-     * Set the showcase the bag shall be opend in.
-     *
-     * @param targetSc the showcase that shall show the bag contents.
-     */
-    public void setShowcase(final int targetSc) {
-        sc = (byte) targetSc;
+        // nothing
     }
 
     /**
@@ -80,6 +63,6 @@ public final class OpenBagCmd extends AbstractCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("in Showcase: " + sc);
+        return toString("");
     }
 }
