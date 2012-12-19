@@ -104,6 +104,10 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
 
     @Override
     public void dragTo(final InteractiveContainerSlot targetSlot, final ItemCount count) {
+        if (!isValidItem() || !targetSlot.acceptItem(getItemId())) {
+            return;
+        }
+
         final DragScScCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_SC, DragScScCmd.class);
         cmd.setSource(getContainerId(), parentSlot.getLocation());
         cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
@@ -144,6 +148,10 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
     }
 
     public void lookAt() {
+        if (!isValidItem()) {
+            return;
+        }
+
         final LookatShowcaseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_LOOKAT_SHOWCASE,
                 LookatShowcaseCmd.class);
         cmd.setSlot(getContainerId(), parentSlot.getLocation());
