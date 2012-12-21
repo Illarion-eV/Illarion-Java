@@ -206,6 +206,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         gameContainer.setAlwaysRender(true);
+        gameContainer.setUpdateOnlyWhenVisible(false);
         gameContainer.setTargetFrameRate(res.getRefreshRate());
         gameContainer.setForceExit(false);
 
