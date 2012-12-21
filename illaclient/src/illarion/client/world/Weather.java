@@ -466,10 +466,9 @@ public final class Weather {
             return;
         }
 
-        final int hour = 12;// Gui.getInstance().getClock().getHour();
+        final int hour = World.getClock().getHour();
         final int nextHour = (hour + 1) % HOUR_PER_DAY;
-        final float timeAlpha = 0.5f;
-        // Gui.getInstance().getClock().getMinute() / MIN_PER_HOUR;
+        final float timeAlpha = World.getClock().getMinute() / 60;
 
         // heavily overcast - all grey
         if (cloud > CLOUD_LIMIT) {
