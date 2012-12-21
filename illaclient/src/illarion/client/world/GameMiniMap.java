@@ -262,7 +262,7 @@ public final class GameMiniMap {
         int y = 0;
         while (x < WORLDMAP_WIDTH) {
             while (y < WORLDMAP_HEIGHT) {
-                addUpdateArea(new Rectangle(x, y, MAX_UPDATE_AREA_SIZE, MAX_UPDATE_AREA_SIZE));
+                addUpdateArea(new Rectangle(x + mapOriginX, y + mapOriginY, MAX_UPDATE_AREA_SIZE, MAX_UPDATE_AREA_SIZE));
                 y += MAX_UPDATE_AREA_SIZE;
             }
             y = 0;
@@ -323,6 +323,12 @@ public final class GameMiniMap {
      * @return the index of the location in the map data buffer
      */
     private int encodeLocation(final int x, final int y) {
+        if ((y < mapOriginY) || (y >= (mapOriginY + WORLDMAP_HEIGHT))) {
+            throw new IllegalArgumentException("y out of range");
+        }
+        if ((x < mapOriginX) || (x >= (mapOriginX + WORLDMAP_WIDTH))) {
+            throw new IllegalArgumentException("x out of range");
+        }
         return ((y - mapOriginY) * WORLDMAP_WIDTH * BYTES_PER_TILE) + ((x - mapOriginX) * BYTES_PER_TILE);
     }
 
@@ -515,9 +521,10 @@ public final class GameMiniMap {
                     continue;
                 }
 
-                graphics.translate(x, y);
+                graphics.pushTransform();
+                graphics.translate(x - mapOriginX, y - mapOriginY);
                 drawTile(tileData, graphics);
-                graphics.translate(-x, -y);
+                graphics.popTransform();
             }
         }
     }
@@ -538,7 +545,8 @@ public final class GameMiniMap {
         int processedArea = 0;
 
         if (!miniMapUpdated) {
-            final Rectangle miniMapRect = new Rectangle(minimapOriginX, minimapOriginY, MINI_MAP_WIDTH, MINI_MAP_HEIGHT);
+            final Rectangle miniMapRect = new Rectangle(minimapOriginX + mapOriginX, minimapOriginY + mapOriginY,
+                    MINI_MAP_WIDTH, MINI_MAP_HEIGHT);
 
             for (int i = 0; i < updateAreas.size(); i++) {
                 final Rectangle testRect = updateAreas.get(i);
@@ -676,6 +684,8 @@ public final class GameMiniMap {
         if (!loadedMap || (newMapLevel != mapLevel) || (newMapOriginX != mapOriginX) || (newMapOriginY != mapOriginY)
                 ) {
             saveMap();
+
+            updateAreas.clear();
             mapLevel = newMapLevel;
             mapOriginX = newMapOriginX;
             mapOriginY = newMapOriginY;
@@ -704,7 +714,7 @@ public final class GameMiniMap {
         }
 
         if (saveTile(tileLoc, updateData.getTileId(), updateData.isBlocked())) {
-            addUpdateArea(new Rectangle(tileLoc.getScX() - mapOriginX, tileLoc.getScY() - mapOriginY, 1, 1));
+            addUpdateArea(new Rectangle(tileLoc.getScX(), tileLoc.getScY(), 1, 1));
         }
     }
 }
