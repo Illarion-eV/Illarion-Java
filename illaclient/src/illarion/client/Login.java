@@ -156,7 +156,7 @@ public final class Login {
     }
 
     private void requestCharacterListInternal(final Login.RequestCharListCallback resultCallback) {
-        final String serverURI = Servers.testserver.getServerHost();
+        final String serverURI = IllaClient.DEFAULT_SERVER.getServerHost();
         try {
 
             final URL requestURL = new URL("http://" + serverURI + "/community/account/xml_charlist.php");
@@ -242,8 +242,17 @@ public final class Login {
 
             final Login.CharEntry addChar = new Login.CharEntry(charName, status);
 
-            if ("testserver".equals(charServer)) {
-                charList.add(addChar);
+            switch (IllaClient.DEFAULT_SERVER) {
+                case testserver:
+                    if ("testserver".equals(charServer)) {
+                        charList.add(addChar);
+                    }
+                    break;
+                case realserver:
+                    if ("realserver".equals(charServer)) {
+                        charList.add(addChar);
+                    }
+                    break;
             }
         }
 
@@ -272,7 +281,7 @@ public final class Login {
 
         final LoginCmd loginCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_LOGIN, LoginCmd.class);
         loginCmd.setLogin(loginCharacter, password);
-        loginCmd.setVersion(Servers.testserver.getClientVersion());
+        loginCmd.setVersion(IllaClient.DEFAULT_SERVER.getClientVersion());
         loginCmd.send();
 
         final MapDimensionCmd mapDimCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_MAPDIMENSION, MapDimensionCmd.class);
