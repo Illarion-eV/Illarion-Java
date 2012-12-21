@@ -940,7 +940,7 @@ public final class Char
 
     /**
      * Add a item the avatar wears to its current list. The changes do not become visible until
-     * {@link #updatePaperdoll()} is called.
+     * {@link #updatePaperdoll(Avatar)} is called.
      *
      * @param slot the slot the item is carried at
      * @param id   the ID of the item the character wears
@@ -994,11 +994,11 @@ public final class Char
         }
 
         // calculate avatar id
-        final int newAvatar = (((appearance * Location.DIR_MOVE8) + direction) * CharAnimations.TOTAL_ANIMATIONS) +
+        final int newAvatarId = (((appearance * Location.DIR_MOVE8) + direction) * CharAnimations.TOTAL_ANIMATIONS) +
                 animation;
 
         // no change, return
-        if ((avatarId == newAvatar) && (avatar != null)) {
+        if ((avatarId == newAvatarId) && (avatar != null)) {
             return;
         }
 
@@ -1008,47 +1008,50 @@ public final class Char
             oldAlpha = avatar.getAlpha();
         }
 
-        // get rid of old one
-        releaseAvatar();
+        final Avatar newAvatar = Avatar.create(newAvatarId, this);
 
-        // initialize new avatar
-        avatarId = newAvatar;
-        avatar = Avatar.create(avatarId, this);
-
-        if (avatar == null) {
-            throw new NullPointerException("Avatar for ID " + Integer.toString(avatarId) + " is NULL.");
+        if (newAvatar == null) {
+            throw new NullPointerException("Avatar for ID " + Integer.toString(newAvatarId) + " is NULL.");
         }
 
-        updatePaperdoll();
+        updatePaperdoll(newAvatar);
 
         if (alive) {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                avatar.changeClothColor(i, wearItemsColors[i]);
+                newAvatar.changeClothColor(i, wearItemsColors[i]);
             }
-            avatar.changeBaseColor(skinColor);
+            newAvatar.changeBaseColor(skinColor);
         } else {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                avatar.changeClothColor(i, DEAD_COLOR);
+                newAvatar.changeClothColor(i, DEAD_COLOR);
             }
-            avatar.changeBaseColor(DEAD_COLOR);
+            newAvatar.changeBaseColor(DEAD_COLOR);
         }
 
-        setName(name);
-        setNameColor(nameColor);
+        updatePosition(newAvatar, 0);
+        updateLight(newAvatar, LIGHT_SET);
 
         final Integer healthPoints = attributes.get(CharacterAttribute.HitPoints);
         if (healthPoints == null) {
-            avatar.setHealthPoints(10000);
+            newAvatar.setHealthPoints(10000);
         } else {
-            avatar.setHealthPoints(healthPoints);
+            newAvatar.setHealthPoints(healthPoints);
         }
 
-        updatePosition(0);
-        updateLight(LIGHT_SET);
-        avatar.setScale(scale);
-        avatar.setAlpha(oldAlpha);
-        avatar.setAttackMarkerVisible(CombatHandler.getInstance().isAttacking(this));
-        avatar.show();
+        newAvatar.setScale(scale);
+        newAvatar.setAlpha(oldAlpha);
+        newAvatar.setAttackMarkerVisible(CombatHandler.getInstance().isAttacking(this));
+
+        newAvatar.show();
+        if (avatar != null) {
+            avatar.recycle();
+        }
+
+        avatarId = newAvatarId;
+        avatar = newAvatar;
+
+        setName(name);
+        setNameColor(nameColor);
     }
 
     /**
@@ -1067,10 +1070,11 @@ public final class Char
     /**
      * Update the light source of the character.
      *
-     * @param mode the mode of the update
+     * @param avatar the avatar that is updated
+     * @param mode   the mode of the update
      */
-    protected void updateLight(final int mode) {
-        Location lightLoc;
+    private void updateLight(final Avatar avatar, final int mode) {
+        final Location lightLoc;
         // different handling for own char
         final Player player = World.getPlayer();
         if ((player != null) && (player.getPlayerId() == charId)) {
@@ -1081,21 +1085,19 @@ public final class Char
 
         final MapTile tile = World.getMap().getMapAt(lightLoc);
 
-        final Avatar localAvatar = avatar;
-        final MapTile localTile = tile;
-        if ((localAvatar != null) && (localTile != null)) {
+        if ((avatar != null) && (tile != null)) {
             switch (mode) {
                 case LIGHT_SET:
-                    localAvatar.setLight(localTile.getLight());
+                    avatar.setLight(tile.getLight());
                     break;
                 case LIGHT_SOFT:
-                    localAvatar.setLightTarget(localTile.getLight());
+                    avatar.setLightTarget(tile.getLight());
                     break;
                 case LIGHT_UPDATE:
-                    if (localAvatar.hasAnimatedLight()) {
-                        localAvatar.setLightTarget(localTile.getLight());
+                    if (avatar.hasAnimatedLight()) {
+                        avatar.setLightTarget(tile.getLight());
                     } else {
-                        localAvatar.setLight(localTile.getLight());
+                        avatar.setLight(tile.getLight());
                     }
                     break;
                 default:
@@ -1103,6 +1105,15 @@ public final class Char
                     break;
             }
         }
+    }
+
+    /**
+     * Update the light source of the character.
+     *
+     * @param mode the mode of the update
+     */
+    void updateLight(final int mode) {
+        updateLight(avatar, mode);
     }
 
     /**
@@ -1148,15 +1159,25 @@ public final class Char
      * changed or in case the avatar instance changed.
      */
     public void updatePaperdoll() {
+        updatePaperdoll(avatar);
+    }
+
+    /**
+     * Update the paper doll, so set all items the characters wears to the avatar. Do this in case many cloth parts
+     * changed or in case the avatar instance changed.
+     *
+     * @param avatar the avatar that is supposed to be updated
+     */
+    private void updatePaperdoll(final Avatar avatar) {
         lightValue = 0;
         if (hasWearingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]) ||
                 hasWearingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND])
                 ) {
-            applyPaperdollingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
-            applyPaperdollingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
         } else {
-            applyPaperdollingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
-            applyPaperdollingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
         }
         for (int i = 0; i < wearItems.length; ++i) {
             if ((i != AvatarClothManager.GROUP_HAIR) && (i != AvatarClothManager.GROUP_BEARD)) {
@@ -1165,11 +1186,11 @@ public final class Char
             if ((i == AvatarClothManager.GROUP_FIRST_HAND) || (i == AvatarClothManager.GROUP_SECOND_HAND)) {
                 continue;
             }
-            applyPaperdollingItem(i, wearItems[i]);
+            applyPaperdollingItem(avatar, i, wearItems[i]);
         }
     }
 
-    private void applyPaperdollingItem(final int slot, final int itemId) {
+    private static void applyPaperdollingItem(final Avatar avatar, final int slot, final int itemId) {
         if (avatar != null) {
             if (itemId == 0) {
                 avatar.removeClothItem(slot);
@@ -1182,11 +1203,21 @@ public final class Char
     /**
      * Update the avatar display position.
      *
-     * @param fix additional position offset for the character, used for the elevation.
+     * @param avatar the avatar that is altered
+     * @param fix    additional position offset for the character, used for the elevation.
      */
-    protected void updatePosition(final int fix) {
+    private void updatePosition(final Avatar avatar, final int fix) {
         if (avatar != null) {
             avatar.setScreenPos(loc.getDcX() + dX, (loc.getDcY() + dY) - fix, loc.getDcZ() + dZ, Layers.CHARS);
         }
+    }
+
+    /**
+     * Update the avatar display position.
+     *
+     * @param fix additional position offset for the character, used for the elevation.
+     */
+    void updatePosition(final int fix) {
+        updatePosition(avatar, fix);
     }
 }
