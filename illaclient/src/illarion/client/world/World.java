@@ -73,6 +73,7 @@ public final class World {
             INSTANCE.people = null;
             INSTANCE.net = null;
             INSTANCE.weather = null;
+            INSTANCE.clock = null;
 
             if (INSTANCE.executorService != null) {
                 INSTANCE.executorService.shutdownNow();
@@ -89,6 +90,11 @@ public final class World {
 
     public static Avatar getAvatar() {
         return getPlayer().getCharacter().getAvatar();
+    }
+
+    public static Clock getClock() {
+        INSTANCE.checkClock();
+        return INSTANCE.clock;
     }
 
     public static ChatHandler getChatHandler() {
@@ -160,6 +166,7 @@ public final class World {
         getPlayer();
         getPeople();
         getNet();
+        getClock();
         getWeather();
         getInteractionManager();
         getExecutorService();
@@ -180,6 +187,11 @@ public final class World {
      * The class that handles the chat in and output.
      */
     private ChatHandler chatHandler;
+
+    /**
+     * The instance of the clock used to keep track of the time in Illarion.
+     */
+    private Clock clock;
 
     /**
      * The instance of the light tracer of the game.
@@ -252,6 +264,14 @@ public final class World {
         if (chatHandler == null) {
             synchronized (this) {
                 chatHandler = new ChatHandler();
+            }
+        }
+    }
+
+    private void checkClock() {
+        if (clock == null) {
+            synchronized (this) {
+                clock = new Clock();
             }
         }
     }
