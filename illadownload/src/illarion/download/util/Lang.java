@@ -18,12 +18,12 @@
  */
 package illarion.download.util;
 
+import illarion.common.util.MessageSource;
+
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
-
-import illarion.common.util.MessageSource;
 
 /**
  * This class is used to manage the language settings of this application.
@@ -70,7 +70,7 @@ public final class Lang
             locale = Locale.ENGLISH;
         }
 
-        messages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Lang.class.getClassLoader());
+        messages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Thread.currentThread().getContextClassLoader());
     }
 
     /**
