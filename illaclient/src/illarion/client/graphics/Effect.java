@@ -221,9 +221,9 @@ public final class Effect extends AbstractEntity implements Resource {
                 World.getLights().remove(lightSrc);
                 LightSource.releaseLight(lightSrc);
             }
+            setLight(DEFAULT_LIGHT);
             lightSrc = LightSource.createLight(loc, light);
             World.getLights().add(lightSrc);
-            setLight(DEFAULT_LIGHT);
         }
     }
 }

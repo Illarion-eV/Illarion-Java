@@ -728,7 +728,7 @@ public final class Weather {
 
     private void animateWeather(final int delta) {
         deltaSlowDownCounter += delta;
-        if (deltaSlowDownCounter > 2000) {
+        if (deltaSlowDownCounter > 50) {
             wind = AnimationUtility.approach(wind, windTarget, WIND_STEP, WIND_INTERAL_MIN, WIND_INTERAL_MAX, delta);
             gusts = AnimationUtility.approach(gusts, gustsTarget, WIND_STEP, 0, WIND_INTERAL_MAX, delta);
             cloud = AnimationUtility.approach(cloud, cloudTarget, CLOUDS_STEP, CLOUDS_MIN, CLOUDS_MAX, delta);
@@ -736,7 +736,7 @@ public final class Weather {
             rain = AnimationUtility.approach(rain, rainTarget, PREC_STEP, 0, 500, delta);
             snow = AnimationUtility.approach(snow, snowTarget, PREC_STEP, 0, 500, delta);
 
-            deltaSlowDownCounter -= 2000;
+            deltaSlowDownCounter -= 50;
         }
 
         if (AnimationUtility.approach(ambientLight, ambientTargetColor, delta)) {
