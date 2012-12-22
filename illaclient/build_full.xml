@@ -64,9 +64,7 @@
         <ant antfile="${download}/build.xml" target="build_download"/>
     </target>
 
-    <target name="build_libraries" description="Build only the libraries" depends="fetch_libs">
-        <ant antfile="${common}/build_libs.xml" target="prepare_all"/>
-    </target>
+    <target name="build_libraries" description="Build only the libraries" depends="fetch_libs"/>
 
     <target name="build_resources" description="Fetch all the resources">
         <ant antfile="${common}/build_libs.xml" target="rsc_download"/>
