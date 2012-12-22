@@ -19,11 +19,8 @@
 package illarion.client.world;
 
 import illarion.client.graphics.AnimationUtility;
-import illarion.client.net.server.events.DateTimeUpdateEvent;
 import illarion.client.resources.SoundFactory;
 import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -32,17 +29,15 @@ import org.newdawn.slick.Sound;
 import java.util.Random;
 
 /**
- * Weather control class. Generated and stores all effects caused by the weather
- * and the ingame time.
+ * Weather control class. Generated and stores all effects caused by the weather.
  */
 public final class Weather {
     /**
-     * Ambient light colors for every hour and every overcast type. The list
-     * builds up with the daytime in the first level, the clear and overcast
-     * colors in the second level and the red, green and blue color value in the
-     * third level.
+     * Ambient light colors for every hour and every overcast type. The list builds up with the daytime in the first
+     * level, the clear and overcast colors in the second level and the red, green and blue color value in the third
+     * level.
      */
-    private static final float[][][] AMBIENTLIGHT_COLORS = new float[][][]{
+    private static final float[][][] AMBIENT_LIGHT_COLORS = {
             {{0.2f, 0.2f, 0.4f}, {0.15f, 0.15f, 0.2f}},
             {{0.15f, 0.15f, 0.3f}, {0.1f, 0.1f, 0.15f}},
             {{0.15f, 0.15f, 0.3f}, {0.1f, 0.1f, 0.15f}},
@@ -135,7 +130,7 @@ public final class Weather {
      * The step value the fog changes per cycle. The higher the value the faster
      * the fog approaches the target value.
      */
-    private static final float FOG_STEP = 0.01f;
+    private static final int FOG_STEP = 4;
 
     /**
      * Hours one day in Illarion has.
@@ -230,21 +225,10 @@ public final class Weather {
     private static final float UNDERGROUND_BRIGHT = 0.1f;
 
     /**
-     * Interval for updates of the weather.
-     */
-    private static final int UPDATE_INTERVAL = 1000;
-
-    /**
      * Conversation value for the calculation from the server value for the wind
      * to the internal value for the wind.
      */
     private static final int WIND_CONVERSATION_VALUE;
-
-    /**
-     * Share how much a wind gust effects a actual wind. Higher value cause a
-     * bigger effect.
-     */
-    private static final int WIND_GUST_EFFECT = 4;
 
     /**
      * Maximal value for the wind gusts.
@@ -287,97 +271,95 @@ public final class Weather {
     }
 
     /**
-     * Color of the ambient light. This value is used by various graphics
-     * elements.
+     * Color of the ambient light.
      */
-    private Color ambientLight;
+    private final Color ambientLight;
+
+    /**
+     * The color the ambient light is approaching.
+     */
+    private final Color ambientTargetColor;
 
     /**
      * The current state of the clouds at the sky. Values between 0 for no
      * clouds and 100 for fully clouded are possible.
      */
-    private int cloud = 0;
+    private int cloud;
 
     /**
      * The target state of the clouds at the sky. This is used together with
      * {@link #cloud} for the smooth interpolation of the clouds.
      */
-    private int cloudTarget = 0;
+    private int cloudTarget;
 
     /**
-     * The current value of the fog. 0.f for no fog, 1.f for maximum fog.
+     * The current value of the fog. 0 for no fog, 100 for maximum fog.
      */
-    private float fog = -1.f;
+    private int fog;
 
     /**
      * The target fog value. Has the same range as {@link #fog} and works as the
      * smooth fading target for the intensity of the fog.
      */
-    private float fogTarget = 0.f;
+    private int fogTarget;
 
     /**
-     * The general value for the wind. Possible values are between
-     * {@link #WIND_INTERAL_MIN} and {@link #WIND_INTERAL_MAX}.
+     * The strength of the wind gusts.
      */
-    private int generalWind = 0;
+    private int gusts;
 
     /**
-     * Amount and strength of wind gusts. {@link #WIND_GUST_MIN} stands for no
-     * gusts, {@link #WIND_GUST_MAX} for the shortest interval between the gusts
-     * and the strongest gusts.
+     * The target strength of the wind gusts.
      */
-    private int gusts = 0;
+    private int gustsTarget;
 
     /**
      * Current lighting state. A greater number causes lightings in shorter
      * intervals. 0 for no lightnings and 100 for the shortest intervals of
      * lightnings.
      */
-    private int lightning = 0;
-
-    /**
-     * Time in milliseconds until the next update of the weather.
-     */
-    private long nextChange = 0;
+    private int lightning;
 
     /**
      * Time to the next flashes.
      */
-    private int nextFlash = 0;
+    private int nextFlash;
 
     /**
      * Time until the next gust.
      */
-    private int nextGust = 0;
+    private int nextGust;
 
     /**
      * Time to the next thunder sound effect.
      */
-    private int nextThunder = 0;
+    private int nextThunder;
 
     /**
      * Flag if the player character is currently inside a house or a cave or
      * outside. True means outside.
      */
-    private boolean outside = false;
+    private boolean outside;
 
     /**
-     * Current strength of precipitation. 0 for no precipitation, 500 for
-     * maximum precipitation.
+     * The target strength of the rain. Values between {@code 0} and {@code 500}.
      */
-    private int prec = -1;
+    private int rainTarget;
 
     /**
-     * Target strength of precipitation. Used as interpolation target for
-     * {@link #prec}
+     * The target strength of the snow fall. Values between {@code 0} and {@code 500}.
      */
-    private int precTarget = 0;
+    private int snowTarget;
 
     /**
-     * Current precipitation type. Possible values are {@link #RAIN} and
-     * {@link #SNOW} and {@link #NONE}
+     * The strength of the rain. Values between {@code 0} and {@code 500}.
      */
-    private int precType = NONE;
+    private int rain;
+
+    /**
+     * The strength of the snow fall. Values between {@code 0} and {@code 500}.
+     */
+    private int snow;
 
     /**
      * The random value generator used by this class.
@@ -388,34 +370,18 @@ public final class Weather {
      * Amount of flashes shown in a short time interval. A real shown amount is
      * the amount stored here / {@link #FLASH_WAIT}.
      */
-    private int showFlash = 0;
+    private int showFlash;
 
     /**
-     * Current effective wind value. Results from the {@link #generalWind} and
-     * the wind gusts.
+     * Current effective wind value.
      */
-    private int wind = 0;
+    private int wind;
 
     /**
      * The real target of the current wind. Used as smooth interpolation target
      * for the effective {@link #wind} value.
      */
-    private int windTarget = 0;
-
-    /**
-     * The current hour value the weather is generating the light with.
-     */
-    private int hour;
-
-    /**
-     * The alpha influence by the minutes.
-     */
-    private float timeAlpha;
-
-    public void setTime(final int hours, final int minutes) {
-        hour = hours;
-        timeAlpha = minutes / 60;
-    }
+    private int windTarget;
 
     /**
      * Default constructor. Prepare and active everything needed to show the
@@ -424,82 +390,56 @@ public final class Weather {
     @SuppressWarnings("nls")
     public Weather() {
         ambientLight = new Color(0.f, 0.f, 0.f, 1.f);
-        cloud = 0;
-        cloudTarget = 0;
-
-        fog = -1.f;
-        fogTarget = 0.f;
-        generalWind = 0;
-        gusts = 0;
-        lightning = 0;
-        nextChange = 0;
-        nextFlash = 0;
-        nextGust = 0;
-        nextThunder = 0;
-        outside = false;
-        prec = -1;
-        precTarget = 0;
-        precType = NONE;
-        showFlash = 0;
-        wind = 0;
-        windTarget = 0;
-        EventBus.subscribe(DateTimeUpdateEvent.class, new EventSubscriber<DateTimeUpdateEvent>() {
-            @Override
-            public void onEvent(final DateTimeUpdateEvent event) {
-                setTime(event.getHour(), event.getMinute());
-            }
-        });
+        ambientTargetColor = new Color(ambientLight);
     }
 
 
     /**
      * Calculate the current ambient light, depending on the time of day, the
-     * enviroment (inside, outside) and the current weather.
+     * environment (inside, outside) and the current weather.
      */
     public void calculateLight() {
         // if we are underground it is simply very dark
         if (World.getPlayer().getBaseLevel() < 0) {
             // average brightness underground
-            ambientLight.r = UNDERGROUND_BRIGHT;
-            ambientLight.g = UNDERGROUND_BRIGHT;
-            ambientLight.b = UNDERGROUND_BRIGHT;
+            ambientTargetColor.r = UNDERGROUND_BRIGHT;
+            ambientTargetColor.g = UNDERGROUND_BRIGHT;
+            ambientTargetColor.b = UNDERGROUND_BRIGHT;
             return;
         }
 
         final int hour = World.getClock().getHour();
         final int nextHour = (hour + 1) % HOUR_PER_DAY;
-        final float timeAlpha = World.getClock().getMinute() / 60;
+        final float timeAlpha = World.getClock().getMinute() / 60.f;
 
         // heavily overcast - all grey
         if (cloud > CLOUD_LIMIT) {
-            ambientLight.r =
-                    (AMBIENTLIGHT_COLORS[nextHour][1][0] * timeAlpha)
-                            + (AMBIENTLIGHT_COLORS[hour][1][0] * (1f - timeAlpha));
-            ambientLight.g =
-                    (AMBIENTLIGHT_COLORS[nextHour][1][1] * timeAlpha)
-                            + (AMBIENTLIGHT_COLORS[hour][1][1] * (1f - timeAlpha));
-            ambientLight.b =
-                    (AMBIENTLIGHT_COLORS[nextHour][1][2] * timeAlpha)
-                            + (AMBIENTLIGHT_COLORS[hour][1][2] * (1f - timeAlpha));
+            ambientTargetColor.r =
+                    (AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha)
+                            + (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha));
+            ambientTargetColor.g =
+                    (AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha)
+                            + (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha));
+            ambientTargetColor.b =
+                    (AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha)
+                            + (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha));
         } else { // partially cloudy, interpolate color
             final float cloudAlpha = (float) cloud / CLOUD_LIMIT;
-            ambientLight.r =
-                    (((AMBIENTLIGHT_COLORS[nextHour][0][0] * timeAlpha) + (AMBIENTLIGHT_COLORS[hour][0][0] * (1f - timeAlpha))) * (1f - cloudAlpha))
-                            + (((AMBIENTLIGHT_COLORS[nextHour][1][0] * timeAlpha) + (AMBIENTLIGHT_COLORS[hour][1][0] * (1f - timeAlpha))) * cloudAlpha);
-            ambientLight.g =
-                    (((AMBIENTLIGHT_COLORS[nextHour][0][1] * timeAlpha) + (AMBIENTLIGHT_COLORS[hour][0][1] * (1f - timeAlpha))) * (1f - cloudAlpha))
-                            + (((AMBIENTLIGHT_COLORS[nextHour][1][1] * timeAlpha) + (AMBIENTLIGHT_COLORS[hour][1][1] * (1f - timeAlpha))) * cloudAlpha);
-            ambientLight.b =
-                    (((AMBIENTLIGHT_COLORS[nextHour][0][2] * timeAlpha) + (AMBIENTLIGHT_COLORS[hour][0][2] * (1f - timeAlpha))) * (1f - cloudAlpha))
-                            + (((AMBIENTLIGHT_COLORS[nextHour][1][2] * timeAlpha) + (AMBIENTLIGHT_COLORS[hour][1][2] * (1f - timeAlpha))) * cloudAlpha);
+            ambientTargetColor.r =
+                    (((AMBIENT_LIGHT_COLORS[nextHour][0][0] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][0][0] * (1f - timeAlpha))) * (1f - cloudAlpha))
+                            + (((AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha))) * cloudAlpha);
+            ambientTargetColor.g =
+                    (((AMBIENT_LIGHT_COLORS[nextHour][0][1] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][0][1] * (1f - timeAlpha))) * (1f - cloudAlpha))
+                            + (((AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha))) * cloudAlpha);
+            ambientTargetColor.b =
+                    (((AMBIENT_LIGHT_COLORS[nextHour][0][2] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][0][2] * (1f - timeAlpha))) * (1f - cloudAlpha))
+                            + (((AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha))) * cloudAlpha);
         }
 
         // it is somewhat darker in buildings
         if (!outside) {
-            ambientLight.scale(INSIDE_BRIGHTNESS);
+            ambientTargetColor.scale(INSIDE_BRIGHTNESS);
         }
-
-        World.getLights().refresh();
     }
 
     /**
@@ -509,35 +449,7 @@ public final class Weather {
      * @param delta the time since the last call of this function
      */
     private void changeWeather(final int delta) {
-        // fog
-        fog = AnimationUtility.translate(fog, fogTarget, FOG_STEP, delta);
-
-        if (cloud != cloudTarget) {
-            cloud =
-                    AnimationUtility.translate(cloud, cloudTarget, CLOUDS_STEP,
-                            CLOUDS_MIN, CLOUDS_MAX, delta);
-            calculateLight();
-        }
-
-        // soft change between rain and snow
-        prec =
-                AnimationUtility.translate(prec, precTarget, PREC_STEP, 0, 500,
-                        delta);
-
-        // changing winds
-        if (--nextGust <= 0) {
-            windTarget = generalWind;
-            // vary wind by gust strength
-            if (gusts > 0) {
-                windTarget +=
-                        rnd.nextInt(WIND_GUST_EFFECT * gusts)
-                                - ((WIND_GUST_EFFECT / 2) * gusts);
-            }
-            // time to next wind change
-            nextGust =
-                    rnd.nextInt(((WIND_GUST_MAX / 2) + 1) - (gusts / 2)) + 1;
-        }
-
+        calculateLight();
         // scheduling lightning
         if (lightning > 0) {
             if (nextThunder >= 0) {
@@ -566,9 +478,9 @@ public final class Weather {
     }
 
     /**
-     * Get the current ambientlight.
+     * Get the current ambient light.
      *
-     * @return the current ambientlight
+     * @return the current ambient light
      */
     public Color getAmbientLight() {
         return ambientLight;
@@ -589,7 +501,7 @@ public final class Weather {
      * @return the current fog value
      */
     public float getFog() {
-        return fog;
+        return (float) fog / (float) FOG_MAXIMAL_VALUE;
     }
 
     /**
@@ -598,7 +510,7 @@ public final class Weather {
      * @return {@code true} in case its even slightly foggy
      */
     public boolean isFog() {
-        return fog >= (1.f / FOG_MAXIMAL_VALUE);
+        return fog > 0;
     }
 
     /**
@@ -611,31 +523,16 @@ public final class Weather {
     }
 
     /**
-     * Get the current precipitation strength.
-     *
-     * @return the current precipitation strength
-     */
-    public int getPrecStrength() {
-        return prec / PREC_CONVERSATION_VALUE;
-    }
-
-    /**
-     * Get the current type of the precipation.
-     *
-     * @return type of the precipation, possible values are {@link #RAIN} and
-     *         {@link #SNOW}.
-     */
-    public int getPrecType() {
-        return precType;
-    }
-
-    /**
      * Check if it is currently raining.
      *
      * @return {@code true} in case its raining
      */
     public boolean isRain() {
-        return (prec > 0) && (precType == RAIN);
+        return getRain() > 0;
+    }
+
+    public int getRain() {
+        return rain / 5;
     }
 
     /**
@@ -649,15 +546,16 @@ public final class Weather {
             if ((showFlash > 0) && ((showFlash % FLASH_WAIT) != 0)) {
                 coverage -= FLASH_COVERAGE;
             } else {
-                final float lum =
-                        (ambientLight.r + ambientLight.g + ambientLight.b) / 3.f;
+                final float lum = (ambientLight.r + ambientLight.g + ambientLight.b) / 3.f;
                 coverage += (int) ((1 - lum) * LIGHT_COLOR_COVERAGE);
             }
 
-            if (precType == RAIN) {
-                coverage += prec / RAIN_COVERAGE;
-            } else if (precType == SNOW) {
-                coverage += prec / SNOW_COVERAGE;
+            if (rain > 0) {
+                coverage += rain / RAIN_COVERAGE;
+            }
+
+            if (snow > 0) {
+                coverage += snow / SNOW_COVERAGE;
             }
 
             coverage += (int) (fog * FOG_COVERAGE);
@@ -672,6 +570,15 @@ public final class Weather {
      */
     public int getWind() {
         return wind / WIND_CONVERSATION_VALUE;
+    }
+
+    /**
+     * Get the current strength of the wind gusts.
+     *
+     * @return the current strength of the gusts
+     */
+    public int getGusts() {
+        return gusts / WIND_CONVERSATION_VALUE;
     }
 
     /**
@@ -716,16 +623,6 @@ public final class Weather {
             g.setColor(FLASH_COLOR);
             g.fillRect(0, 0, c.getWidth(), c.getHeight());
         }
-
-    }
-
-    /**
-     * Change the current ambient light.
-     *
-     * @param newAmbientLight The new ambient light color
-     */
-    public void setAmbientLight(final Color newAmbientLight) {
-        ambientLight = newAmbientLight;
     }
 
     /**
@@ -741,10 +638,6 @@ public final class Weather {
             return;
         }
         cloudTarget = newCloud;
-        if (!outside) {
-            cloud = newCloud;
-            calculateLight();
-        }
     }
 
     /**
@@ -759,10 +652,7 @@ public final class Weather {
             return;
         }
 
-        fogTarget = (float) newFog / FOG_MAXIMAL_VALUE;
-        if (!outside) {
-            fog = fogTarget;
-        }
+        fogTarget = newFog;
     }
 
     /**
@@ -788,7 +678,6 @@ public final class Weather {
      */
     public void setOutside(final boolean newOutside) {
         outside = newOutside;
-        calculateLight();
     }
 
     /**
@@ -807,15 +696,12 @@ public final class Weather {
             return;
         }
 
-        if (type != precType) {
-            if (outside) {
-                precTarget = 0;
-            } else {
-                precType = type;
-                precTarget = strength * PREC_CONVERSATION_VALUE;
-            }
-        } else {
-            precTarget = strength * PREC_CONVERSATION_VALUE;
+        if (type == RAIN) {
+            rainTarget = strength * PREC_CONVERSATION_VALUE;
+            snowTarget = 0;
+        } else if (type == SNOW) {
+            snowTarget = strength * PREC_CONVERSATION_VALUE;
+            rainTarget = 0;
         }
     }
 
@@ -830,26 +716,36 @@ public final class Weather {
     public void setWind(final int newWind, final int newGusts) {
         if ((newWind < WIND_SERVER_MIN) || (newWind > WIND_SERVER_MAX)
                 || (newGusts < WIND_GUST_MIN) || (newGusts > WIND_GUST_MAX)) {
-            LOGGER.warn("Illegal wind value: " + newWind + " gusts: "
-                    + newGusts);
+            LOGGER.warn("Illegal wind value: " + newWind + " gusts: " + newGusts);
             return;
         }
 
-        generalWind = newWind * WIND_CONVERSATION_VALUE;
-        gusts = newGusts;
+        windTarget = newWind * WIND_CONVERSATION_VALUE;
+        gustsTarget = newGusts * WIND_CONVERSATION_VALUE;
+    }
 
-        nextGust = 0;
+    private int deltaSlowDownCounter;
+
+    private void animateWeather(final int delta) {
+        deltaSlowDownCounter += delta;
+        if (deltaSlowDownCounter > 2000) {
+            wind = AnimationUtility.approach(wind, windTarget, WIND_STEP, WIND_INTERAL_MIN, WIND_INTERAL_MAX, delta);
+            gusts = AnimationUtility.approach(gusts, gustsTarget, WIND_STEP, 0, WIND_INTERAL_MAX, delta);
+            cloud = AnimationUtility.approach(cloud, cloudTarget, CLOUDS_STEP, CLOUDS_MIN, CLOUDS_MAX, delta);
+            fog = AnimationUtility.approach(fog, fogTarget, FOG_STEP, 0, 100, delta);
+            rain = AnimationUtility.approach(rain, rainTarget, PREC_STEP, 0, 500, delta);
+            snow = AnimationUtility.approach(snow, snowTarget, PREC_STEP, 0, 500, delta);
+
+            deltaSlowDownCounter -= 2000;
+        }
+
+        if (AnimationUtility.approach(ambientLight, ambientTargetColor, delta)) {
+            World.getLights().refresh();
+        }
     }
 
     public void update(final int delta) {
-        nextChange -= delta;
-        if (nextChange <= 0) {
-            changeWeather(UPDATE_INTERVAL - (int) nextChange);
-            nextChange += UPDATE_INTERVAL;
-        }
-
-        wind =
-                AnimationUtility.translate(wind, windTarget, WIND_STEP,
-                        WIND_INTERAL_MIN, WIND_INTERAL_MAX, delta);
+        changeWeather(delta);
+        animateWeather(delta);
     }
 }

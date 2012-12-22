@@ -51,6 +51,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.state.GameState;
+import org.newdawn.slick.util.Log;
+import org.newdawn.slick.util.LogSystem;
 
 import javax.swing.*;
 import java.io.File;
@@ -482,6 +484,44 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         java.util.logging.Logger.getLogger("javolution").setLevel(Level.SEVERE);
         JavaLogToLog4J.setup();
         StdOutToLog4J.setup();
+        Log.setLogSystem(new LogSystem() {
+            private final Logger LOGGER = Logger.getLogger(IllaClient.class);
+
+            @Override
+            public void error(final String s, final Throwable throwable) {
+                LOGGER.error(s, throwable);
+            }
+
+            @Override
+            public void error(final Throwable throwable) {
+                LOGGER.error("", throwable);
+            }
+
+            @Override
+            public void error(final String s) {
+                LOGGER.error(s);
+            }
+
+            @Override
+            public void warn(final String s) {
+                LOGGER.warn(s);
+            }
+
+            @Override
+            public void warn(final String s, final Throwable throwable) {
+                LOGGER.warn(s, throwable);
+            }
+
+            @Override
+            public void info(final String s) {
+                LOGGER.info(s);
+            }
+
+            @Override
+            public void debug(final String s) {
+                LOGGER.debug(s);
+            }
+        });
     }
 
     public static final String CFG_FULLSCREEN = "fullscreen";

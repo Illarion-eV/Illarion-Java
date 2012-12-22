@@ -74,85 +74,31 @@ public final class AnimationUtility {
     }
 
     /**
-     * Let a value quickly approach a target value. This function ensures that
-     * the value stays within the limits.
+     * Approach two color values smoothly.
      *
-     * @param value  the current value that shall approach the target value
-     * @param target the target of the approaching operation
-     * @param factor the factor the difference between the target and the
-     *               current value is divided by. To slow down the approaching
-     *               speed, make this value larger. This value must not be 0 or
-     *               smaller
-     * @param min    the lower border of the approaching operation, the returned
-     *               value won't be smaller then this value
-     * @param max    the upper border of the approaching operation, the returned
-     *               value won't be larger then this value
-     * @param delta  the delta time in milliseconds since the last update of the
-     *               value. This value is used to compensate the approaching speed
-     *               regarding different update speeds. In case this value is 0 the
-     *               value will change by the smallest value possible
-     * @return the new value and so the next step of the approaching operation.
-     *         Call the function again and again with the new value until is
-     *         reaches the target value to get the full approach calculation
+     * @param workingColor the color that is changed
+     * @param targetColor  the target color value
+     * @param delta        the time since the last update
+     * @return {@code true} in case the colors got changed
      */
-    public static float approach(final float value, final float target,
-                                 final float factor, final float min, final float max, final int delta) {
-        float diff = (target - value);
-        if (diff != 0) {
-            final float dir = FastMath.sign(diff);
-            diff = FastMath.abs(diff);
-            if (diff > factor) {
-                diff /= factor;
-            } else {
-                diff = 1;
-            }
-            if (diff > MIN_INT_DIFF) {
-                diff = (diff * delta) / DELTA_DIV;
-                if (diff == 0) {
-                    diff = 1;
-                }
-            }
-            final float newValue = value + (diff * dir);
-
-            // clamp value against limits
-            return FastMath.clamp(newValue, min, max);
-        }
-        return value;
-    }
-
     public static boolean approach(final Color workingColor, final Color targetColor, final int delta) {
+        if (FastMath.equals(workingColor.r, targetColor.r, 1.f / 254.f)
+                && FastMath.equals(workingColor.g, targetColor.g, 1.f / 254.f)
+                && FastMath.equals(workingColor.b, targetColor.b, 1.f / 254.f)
+                && FastMath.equals(workingColor.a, targetColor.a, 1.f / 254.f)) {
+
+            workingColor.r = targetColor.r;
+            workingColor.g = targetColor.g;
+            workingColor.b = targetColor.b;
+            workingColor.a = targetColor.a;
+            return false;
+        }
         workingColor.r = approach(workingColor.getRed(), targetColor.getRed(), 0, 255, delta) / 255.f;
         workingColor.g = approach(workingColor.getGreen(), targetColor.getGreen(), 0, 255, delta) / 255.f;
         workingColor.b = approach(workingColor.getBlue(), targetColor.getBlue(), 0, 255, delta) / 255.f;
         workingColor.a = approach(workingColor.getAlpha(), targetColor.getAlpha(), 0, 255, delta) / 255.f;
 
-        return !(FastMath.equals(workingColor.r, targetColor.r, 1.f / 254.f)
-                && FastMath.equals(workingColor.g, targetColor.g, 1.f / 254.f)
-                && FastMath.equals(workingColor.b, targetColor.b, 1.f / 254.f)
-                && FastMath.equals(workingColor.a, targetColor.a, 1.f / 254.f));
-    }
-
-    /**
-     * Let a value quickly approach a target value. This function ensures that
-     * the value stays within the limits.
-     *
-     * @param value  the current value that shall approach the target value
-     * @param target the target of the approaching operation
-     * @param min    the lower border of the approaching operation, the returned
-     *               value won't be smaller then this value
-     * @param max    the upper border of the approaching operation, the returned
-     *               value won't be larger then this value
-     * @param delta  the delta time in milliseconds since the last update of the
-     *               value. This value is used to compensate the approaching speed
-     *               regarding different update speeds. In case this value is 0 the
-     *               value will change by the smallest value possible
-     * @return the new value and so the next step of the approaching operation.
-     *         Call the function again and again with the new value until is
-     *         reaches the target value to get the full approach calculation
-     */
-    public static float approach(final float value, final float target,
-                                 final float min, final float max, final int delta) {
-        return approach(value, target, DEFAULT_APPROACH, min, max, delta);
+        return true;
     }
 
     /**

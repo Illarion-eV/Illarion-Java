@@ -168,11 +168,6 @@ public final class MapDisplayManager
 
         synchronized (display) {
             insertSorted(item);
-            // if (!display.add(item)) {
-            // LOGGER.warn("duplicate display entry " + item);
-            // } else {
-            // displayListDirty = true;
-            // }
         }
     }
 
@@ -322,6 +317,10 @@ public final class MapDisplayManager
         synchronized (display) {
             display.remove(item);
             insertSorted(item);
+            final Rectangle displayRect = item.getLastDisplayRect();
+            if (!displayRect.isEmpty()) {
+                removedAreaList.add(new Rectangle(displayRect));
+            }
         }
     }
 

@@ -154,8 +154,8 @@ public final class WeatherRenderer {
             rainShader.setRainTextureScale(
                     (float) renderImage.getTexture().getTextureWidth() / (float) rainTexture.getTexture().getTextureWidth(),
                     (float) renderImage.getTexture().getTextureHeight() / (float) rainTexture.getTexture().getTextureHeight());
-            rainShader.setIntensity(World.getWeather().getPrecStrength() / 100.f);
-            rainShader.setGustStrength(Math.abs(World.getWeather().getWind()) / 1000.f);
+            rainShader.setIntensity(World.getWeather().getRain() / 100.f);
+            rainShader.setGustStrength(Math.abs(World.getWeather().getGusts()) / 100.f);
             rainShader.setWindDirection(World.getWeather().getWind() / 100.f);
             rainShader.setAnimation(rainDropping);
             rainShader.setGustAnimation(gustAnimation);

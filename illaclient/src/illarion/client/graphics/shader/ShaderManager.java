@@ -83,6 +83,7 @@ public final class ShaderManager {
         for (final Shader shader : Shader.values()) {
             try {
                 shaderMap.put(shader, shader.getShaderClass().newInstance());
+                System.out.println("Prepared shader: " + shader.name());
             } catch (final InstantiationException e) {
                 LOGGER.error("Failed to create shader instance!", e);
             } catch (final IllegalAccessException e) {

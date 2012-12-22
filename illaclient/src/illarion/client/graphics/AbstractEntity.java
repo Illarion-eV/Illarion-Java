@@ -764,9 +764,8 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     }
 
     /**
-     * Show the entity by adding it to the display list. Remember that its
-     * needed to reorder the list after this was done. The reordering is
-     * <b>not</b> performed automatically.
+     * Show the entity by adding it to the display list. Remember that its needed to reorder the list after this was
+     * done. The reordering is <b>not</b> performed automatically.
      */
     @Override
     public void show() {
