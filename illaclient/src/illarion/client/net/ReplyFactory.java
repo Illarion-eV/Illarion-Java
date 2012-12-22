@@ -90,6 +90,8 @@ public final class ReplyFactory {
         register(RemoveCharMsg.class);
         register(RemoveItemMsg.class);
         register(SayMsg.class);
+        register(ShoutMsg.class);
+        register(WhisperMsg.class);
         register(ShowcaseMsg.class);
         register(SkillMsg.class);
         register(SoundEffectMsg.class);
@@ -131,7 +133,7 @@ public final class ReplyFactory {
         final Class<? extends AbstractReply> replyClass = replyMap.get(id);
 
         if (replyClass == null) {
-            LOGGER.error("Illegal reply requested. ID: " + Integer.toString(id));
+            LOGGER.error("Illegal reply requested. ID: 0x" + Integer.toHexString(id));
             return null;
         }
 

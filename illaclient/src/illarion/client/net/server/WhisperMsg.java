@@ -28,13 +28,13 @@ import illarion.common.types.Location;
 import java.io.IOException;
 
 /**
- * Servermessage: Talking ({@link CommandList#MSG_SAY}).
+ * Servermessage: Whispering ({@link illarion.client.net.CommandList#MSG_WHISPER}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-@ReplyMessage(replyId = CommandList.MSG_SAY)
-public final class SayMsg extends AbstractReply {
+@ReplyMessage(replyId = CommandList.MSG_WHISPER)
+public final class WhisperMsg extends AbstractReply {
 
     /**
      * The location the text was spoken at.
@@ -50,7 +50,7 @@ public final class SayMsg extends AbstractReply {
      * Decode the talking data the receiver got and prepare it for the execution.
      *
      * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
+     * @throws java.io.IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
     public void decode(final NetCommReader reader)
@@ -66,7 +66,7 @@ public final class SayMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.normal);
+        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.whisper);
         return true;
     }
 

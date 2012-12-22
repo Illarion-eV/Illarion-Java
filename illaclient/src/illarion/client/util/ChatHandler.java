@@ -23,6 +23,7 @@ import illarion.client.world.World;
 import illarion.client.world.events.CharTalkingEvent;
 import illarion.common.types.Location;
 import javolution.text.TextBuilder;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Color;
 
@@ -39,10 +40,8 @@ import java.util.regex.Pattern;
 public final class ChatHandler {
     /**
      * The possible speech modes that are displays on the screen.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    public static enum SpeechMode {
+    public enum SpeechMode {
         /**
          * Speech mode for emotes.
          */
@@ -139,11 +138,9 @@ public final class ChatHandler {
     }
 
     /**
-     * Private constructor that prepares that class to work properly and ensures
-     * that only the singleton instance is active and running.
+     * The logger that takes care of the logging output of the chat handler.
      */
-    public ChatHandler() {
-    }
+    private static final Logger LOGGER = Logger.getLogger(ChatHandler.class);
 
     /**
      * Handle a message by this processor. This method stores a message in the
@@ -152,7 +149,7 @@ public final class ChatHandler {
      * @param text     the text that was spoken
      * @param location the location where the text was spoken
      */
-    public void handleMessage(final String text, final Location location) {
+    public void handleMessage(final String text, final Location location, final SpeechMode receivedMode) {
         final Char talkingChar = World.getPeople().getCharacterAt(location);
 
         ChatHandler.SpeechMode mode = null;
@@ -176,6 +173,10 @@ public final class ChatHandler {
 
         if (mode == null) {
             throw new IllegalStateException("Talking mode is NULL, this can't happen.");
+        }
+
+        if (((receivedMode == SpeechMode.whisper) || (receivedMode == SpeechMode.shout)) && (receivedMode != mode)) {
+            LOGGER.warn("Received mode and detected mode do not fit.");
         }
 
         resultText = resultText.trim();
