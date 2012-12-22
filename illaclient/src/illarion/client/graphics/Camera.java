@@ -290,7 +290,7 @@ public final class Camera {
      *         clipping area, if its fully outside <code>false</code> is returned
      */
     public boolean requiresUpdate(final Rectangle rect) {
-        if (!viewport.intersects(rect)) {
+        if (!viewport.intersects(rect) || rect.isEmpty()) {
             return false;
         }
 
@@ -307,5 +307,9 @@ public final class Camera {
      */
     public void setViewport(final int x, final int y, final int width, final int height) {
         viewport.set(x, y, width, height);
+    }
+
+    public Rectangle getViewport() {
+        return viewport;
     }
 }

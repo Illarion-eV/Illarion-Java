@@ -460,8 +460,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         }
 
         final Rectangle parentDirtyArea = Camera.getInstance().getDirtyArea(displayRect);
-        if (parentDirtyArea != null) {
-            g.setWorldClip(parentDirtyArea.getX(), parentDirtyArea.getY(),
+        if ((parentDirtyArea != null) && !parentDirtyArea.equals(Camera.getInstance().getViewport())) {
+            g.setClip(parentDirtyArea.getX() - Camera.getInstance().getViewportOffsetX(),
+                    (parentDirtyArea.getY() - Camera.getInstance().getViewportOffsetY()) +
+                            World.getMapDisplay().getHeightOffset(),
                     parentDirtyArea.getWidth(), parentDirtyArea.getHeight());
         }
 
@@ -471,8 +473,8 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
             sprite.draw(g, renderLocX, renderLocY, renderLight, currentFrame);
         }
 
-        if (parentDirtyArea != null) {
-            g.clearWorldClip();
+        if ((parentDirtyArea != null) && !parentDirtyArea.equals(Camera.getInstance().getViewport())) {
+            g.clearClip();
         }
 
         Camera.getInstance().markAreaRendered(displayRect);

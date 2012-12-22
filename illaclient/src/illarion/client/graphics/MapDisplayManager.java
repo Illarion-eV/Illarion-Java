@@ -460,6 +460,13 @@ public final class MapDisplayManager
         }
     }
 
+    public int getHeightOffset() {
+        if (gameScreenImage == null) {
+            return 0;
+        }
+        return gameScreenImage.getTexture().getTextureHeight() - gameScreenImage.getHeight();
+    }
+
     /**
      * Implementation of the core rendering function that just renders the map to the assigned graphic context.
      *
