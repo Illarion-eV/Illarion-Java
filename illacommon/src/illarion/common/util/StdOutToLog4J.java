@@ -44,8 +44,8 @@ public final class StdOutToLog4J extends PrintStream {
      * Prepare the output.
      */
     public static void setup() {
-        System.setOut(new StdOutToLog4J(System.out, Priority.INFO));
-        System.setErr(new StdOutToLog4J(System.err, Priority.ERROR));
+        //System.setOut(new StdOutToLog4J(System.out, Priority.INFO));
+        //System.setErr(new StdOutToLog4J(System.err, Priority.ERROR));
     }
 
     /**
