@@ -20,6 +20,7 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.util.ChatHandler;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
@@ -70,7 +71,7 @@ public final class LookAtTileMsg
         //            .showText(text, null, loc, ChatHandler.SpeechMode.normal);
 
         // for testing lookat only
-        World.getChatHandler().handleMessage(text, loc);
+        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.normal);
 
         return true;
     }
