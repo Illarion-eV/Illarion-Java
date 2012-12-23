@@ -1,27 +1,27 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2012 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client;
 
 /**
  * The definitions of the existing servers. All data needed to connect and
  * identify a server is stored here.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @SuppressWarnings("nls")
@@ -39,7 +39,7 @@ public enum Servers {
      * default server the client will show up as game client and not as
      * Testclient.
      */
-    realserver("Game server", "illarion.org", 3008, 121),
+    realserver("Game server", "illarion.org", 3008, 122),
 
     /**
      * The Testserver of Illarion. Testers and developers need a client that is
@@ -71,15 +71,15 @@ public enum Servers {
     /**
      * Default ENUM constructor for the enumeration entries. It creates a
      * definition of a server and stores it to the enumeration constants.
-     * 
-     * @param name the name of the server
-     * @param addr the host address of the server
-     * @param port the port the server is listening for connections
+     *
+     * @param name    the name of the server
+     * @param addr    the host address of the server
+     * @param port    the port the server is listening for connections
      * @param version the version that shall be transfered to the server to
-     *            validate the correct client version
+     *                validate the correct client version
      */
     private Servers(final String name, final String addr, final int port,
-        final int version) {
+                    final int version) {
         serverName = name;
         serverAddr = addr;
         serverPort = port;
@@ -89,7 +89,7 @@ public enum Servers {
     /**
      * Get the version of the client that need to be transfered to connect to
      * this server.
-     * 
+     *
      * @return the client version that need to be transfered
      */
     public int getClientVersion() {
@@ -98,7 +98,7 @@ public enum Servers {
 
     /**
      * The the server host address of the server entry.
-     * 
+     *
      * @return the host address of the server
      */
     public String getServerHost() {
@@ -107,7 +107,7 @@ public enum Servers {
 
     /**
      * Get the name of the server that is defined with this server entry.
-     * 
+     *
      * @return the name of the server
      */
     public String getServerName() {
@@ -116,7 +116,7 @@ public enum Servers {
 
     /**
      * Get the port the server listens of the server entry.
-     * 
+     *
      * @return the port that is listened by the server
      */
     public int getServerPort() {

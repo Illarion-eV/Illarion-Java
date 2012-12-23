@@ -429,7 +429,6 @@ public final class Player {
             line.calculate(loc, targetLoc);
             // examine line without start and end point
             final int length = line.getLength() - 1;
-            MapTile tile = null;
             final GameMap map = World.getMap();
             final Point point = new Point();
             int coverage = World.getWeather().getVisiblity() - ((getCharacter().getAttribute(CharacterAttribute.Perception) - PERCEPTION_AVERAGE) *
@@ -437,7 +436,7 @@ public final class Player {
             // skip tile the character is standing on
             for (int i = 1; i < length; i++) {
                 line.getPoint(i, point);
-                tile = map.getMapAt(point.x, point.y, loc.getScZ());
+                final MapTile tile = map.getMapAt(point.x, point.y, loc.getScZ());
                 if (tile != null) {
                     coverage += tile.getCoverage();
 
