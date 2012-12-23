@@ -117,7 +117,7 @@ public final class WeatherRenderer {
 
         Image currentImage = renderImage;
 
-        if (World.getWeather().isFog()) {
+        if (World.getWeather().isFog() && World.getWeather().isOutside()) {
             final Image tempImage = getNextProcessImage(renderImage.getWidth(), renderImage.getHeight());
             final Graphics g = tempImage.getGraphics();
             Graphics.setCurrent(g);
@@ -136,7 +136,7 @@ public final class WeatherRenderer {
             currentImage = tempImage;
         }
 
-        if (World.getWeather().isRain()) {
+        if (World.getWeather().isRain() && World.getWeather().isOutside()) {
             final Image tempImage = getNextProcessImage(renderImage.getWidth(), renderImage.getHeight());
             final Graphics g = tempImage.getGraphics();
             Graphics.setCurrent(g);
