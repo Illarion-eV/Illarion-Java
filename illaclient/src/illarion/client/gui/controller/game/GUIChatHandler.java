@@ -18,6 +18,7 @@
  */
 package illarion.client.gui.controller.game;
 
+import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.EffectBuilder;
@@ -413,7 +414,17 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
 
         final int entryCount = contentPane.getElements().size();
         for (int i = 0; i < (entryCount - 200); i++) {
-            contentPane.getElements().get(i).markForRemoval();
+            final Element elementToRemove = contentPane.getElements().get(i);
+            if (i == (entryCount - 201)) {
+                elementToRemove.markForRemoval(new EndNotify() {
+                    @Override
+                    public void perform() {
+                        chatLog.getElement().layoutElements();
+                    }
+                });
+            } else {
+                elementToRemove.markForRemoval();
+            }
         }
 
         chatLog.getElement().layoutElements();
