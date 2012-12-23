@@ -114,7 +114,7 @@ public final class Weather {
     /**
      * Additional visibility coverage caused by fog.
      */
-    private static final int FOG_COVERAGE = 40;
+    private static final float FOG_COVERAGE = 2.5f;
 
     /**
      * Biggest allowed value for the fog.
@@ -558,7 +558,7 @@ public final class Weather {
                 coverage += snow / SNOW_COVERAGE;
             }
 
-            coverage += (int) (fog * FOG_COVERAGE);
+            coverage += (int) (fog / FOG_COVERAGE);
         }
         return coverage;
     }
