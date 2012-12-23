@@ -448,7 +448,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         label.text(text);
         label.color(color);
         label.textHAlign(ElementBuilder.Align.Left);
-        label.parameter("wrap", "true");
+        label.wrap(true);
         label.width(contentPane.getConstraintWidth().toString());
         label.build(contentPane.getNifty(), screen, contentPane);
 
