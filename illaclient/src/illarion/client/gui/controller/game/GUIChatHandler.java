@@ -201,6 +201,11 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     private final Queue<Runnable> messageQueue;
 
     /**
+     * This flag shows of the chat log is dirty and needs to be cleaned up.
+     */
+    private boolean dirty;
+
+    /**
      * The default constructor.
      */
     public GUIChatHandler() {
@@ -397,31 +402,9 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     }
 
     /**
-     * This flag shows of the chat log is dirty and needs to be cleaned up.
+     * Remove all entries that do not belong in the list anymore from it. Also update the layout and the scrolling
+     * position.
      */
-    private boolean dirty = false;
-
-    /**
-     * Add a entry to the chat log.
-     *
-     * @param text  the text to add
-     * @param color the color of the text to add
-     */
-    private void addChatLogText(final String text, final Color color) {
-        final Element contentPane = chatLog.getElement().findElementByName("chatLog");
-
-        final LabelBuilder label = new LabelBuilder();
-        label.font("chatFont");
-        label.text(text);
-        label.color(color);
-        label.textHAlign(ElementBuilder.Align.Left);
-        label.parameter("wrap", "true");
-        label.width(contentPane.getConstraintWidth().toString());
-        label.build(contentPane.getNifty(), screen, contentPane);
-
-        dirty = true;
-    }
-
     private void cleanupChatLog() {
         if (!dirty) {
             return;
@@ -449,6 +432,27 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         chatLog.getElement().layoutElements();
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.OFF);
+    }
+
+    /**
+     * Add a entry to the chat log.
+     *
+     * @param text  the text to add
+     * @param color the color of the text to add
+     */
+    private void addChatLogText(final String text, final Color color) {
+        final Element contentPane = chatLog.getElement().findElementByName("chatLog");
+
+        final LabelBuilder label = new LabelBuilder();
+        label.font("chatFont");
+        label.text(text);
+        label.color(color);
+        label.textHAlign(ElementBuilder.Align.Left);
+        label.parameter("wrap", "true");
+        label.width(contentPane.getConstraintWidth().toString());
+        label.build(contentPane.getNifty(), screen, contentPane);
+
+        dirty = true;
     }
 
     /**
