@@ -18,13 +18,13 @@
  */
 package illarion.download.install.resources.libs;
 
+import illarion.download.install.resources.Resource;
+import illarion.download.util.Lang;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import illarion.download.install.resources.Resource;
-import illarion.download.util.Lang;
 
 /**
  * This resource contains the Substance Look&Feel for Swing.
@@ -128,7 +128,7 @@ public final class Substance
      * Generates and returns the list of files that need to be downloaded to get this resource working.
      */
     @Override
-    public Collection<URL> getRequiredRessources() {
+    public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {

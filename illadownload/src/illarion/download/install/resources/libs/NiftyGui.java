@@ -140,7 +140,7 @@ public final class NiftyGui
      * this resource working.
      */
     @Override
-    public Collection<URL> getRequiredRessources() {
+    public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {

@@ -120,7 +120,7 @@ public final class SwingX
      * Generates and returns the list of files that need to be downloaded to get this resource working.
      */
     @Override
-    public Collection<URL> getRequiredRessources() {
+    public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {

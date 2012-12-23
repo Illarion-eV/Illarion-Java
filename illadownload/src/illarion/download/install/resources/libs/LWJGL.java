@@ -129,7 +129,7 @@ public final class LWJGL implements LibraryResource {
      * this resource working.
      */
     @Override
-    public Collection<URL> getRequiredRessources() {
+    public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
 

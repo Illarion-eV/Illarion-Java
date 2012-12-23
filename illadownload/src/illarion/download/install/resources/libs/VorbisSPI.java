@@ -1,38 +1,38 @@
 /*
- * This file is part of the Illarion Download Manager.
- * 
- * Copyright © 2011 - Illarion e.V.
- * 
- * The Illarion Download Manager is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Download Manager is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Download Manager. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Illarion Download Utility.
+ *
+ * Copyright © 2012 - Illarion e.V.
+ *
+ * The Illarion Download Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Download Utility is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.download.install.resources.libs;
+
+import illarion.download.install.resources.Resource;
+import illarion.download.util.Lang;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import illarion.download.install.resources.Resource;
-import illarion.download.util.Lang;
-
 /**
  * This resource contains the vorbisSPI framework that is needed for the OGG
  * playback.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
 public final class VorbisSPI implements LibraryResource {
     /**
@@ -66,7 +66,7 @@ public final class VorbisSPI implements LibraryResource {
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance
      */
     public static Resource getInstance() {
@@ -82,7 +82,7 @@ public final class VorbisSPI implements LibraryResource {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             final String dataDir =
-                LibraryDirectory.getInstance().getDirectory();
+                    LibraryDirectory.getInstance().getDirectory();
             cp.add(new File(dataDir, "jorbis.jar")); //$NON-NLS-1$
             cp.add(new File(dataDir, "jogg.jar")); //$NON-NLS-1$
             cp.add(new File(dataDir, "tritonus_share.jar")); //$NON-NLS-1$
@@ -130,7 +130,7 @@ public final class VorbisSPI implements LibraryResource {
      * this resource working.
      */
     @Override
-    public Collection<URL> getRequiredRessources() {
+    public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {

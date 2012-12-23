@@ -18,20 +18,20 @@
  */
 package illarion.download.install.resources.libs;
 
+import illarion.download.install.resources.Resource;
+import illarion.download.util.Lang;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import illarion.download.install.resources.Resource;
-import illarion.download.util.Lang;
-
 /**
  * This resource contains the XML pull parser version 3.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
 public final class Xpp
         implements LibraryResource {
@@ -66,7 +66,7 @@ public final class Xpp
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance
      */
     public static Resource getInstance() {
@@ -127,7 +127,7 @@ public final class Xpp
      * this resource working.
      */
     @Override
-    public Collection<URL> getRequiredRessources() {
+    public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {

@@ -18,20 +18,20 @@
  */
 package illarion.download.install.resources.dev;
 
+import illarion.download.install.resources.Resource;
+import illarion.download.util.Lang;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import illarion.download.install.resources.Resource;
-import illarion.download.util.Lang;
-
 /**
  * This resource contains the additions to the Nifty-GUI made for Illarion.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
 public final class NiftyIllarion
         implements DevelopmentResource {
@@ -60,7 +60,7 @@ public final class NiftyIllarion
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance
      */
     public static Resource getInstance() {
@@ -68,8 +68,7 @@ public final class NiftyIllarion
     }
 
     /**
-     * Generate and return the files needed to be added to the class path for
-     * this resource.
+     * Generate and return the files needed to be added to the class path for this resource.
      */
     @Override
     public Collection<File> getClassPath() {
@@ -94,8 +93,7 @@ public final class NiftyIllarion
     }
 
     /**
-     * As this resource is not start able this function will throw a exception
-     * upon a call.
+     * As this resource is not start able this function will throw a exception upon a call.
      */
     @Override
     public String getLaunchClass() {
@@ -108,8 +106,7 @@ public final class NiftyIllarion
     }
 
     /**
-     * This resource does not require and program arguments. So this function
-     * will return <code>null</code> in any case.
+     * This resource does not require and program arguments. So this function will return {@code null} in any case.
      */
     @Override
     public Collection<String> getProgramArgument() {
@@ -117,16 +114,14 @@ public final class NiftyIllarion
     }
 
     /**
-     * Generates and returns the list of files that need to be downloaded to get
-     * this resource working.
+     * Generates and returns the list of files that need to be downloaded to get this resource working.
      */
     @Override
-    public Collection<URL> getRequiredRessources() {
+    public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {
-                res.add(new URL(ONLINE_PATH
-                    + "nifty-illarion" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                res.add(new URL(ONLINE_PATH + "nifty-illarion" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (final Exception e) {
                 // Catch everything and do nothing!
             }

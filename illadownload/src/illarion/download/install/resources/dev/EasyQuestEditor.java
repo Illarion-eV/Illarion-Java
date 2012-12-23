@@ -18,14 +18,14 @@
  */
 package illarion.download.install.resources.dev;
 
+import illarion.download.install.resources.Resource;
+import illarion.download.install.resources.libs.*;
+import illarion.download.util.Lang;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.libs.*;
-import illarion.download.util.Lang;
 
 /**
  * This resource contains the Illarion easyNPC Editor.
@@ -80,7 +80,7 @@ public final class EasyQuestEditor
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                            "illarion_easyquest.jar")); //$NON-NLS-1$
+                    "illarion_easyquest.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -136,7 +136,7 @@ public final class EasyQuestEditor
      * Generates and returns the list of files that need to be downloaded to get this resource working.
      */
     @Override
-    public Collection<URL> getRequiredRessources() {
+    public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {

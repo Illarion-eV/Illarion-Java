@@ -175,14 +175,14 @@ public final class ResourceManager {
      */
     public void scheduleDownloads(final DownloadManager manager) {
         loadResourceDatabase();
-        for (final URL url : mainResource.getRequiredRessources()) {
+        for (final URL url : mainResource.getRequiredResources()) {
             scheduleDownloadImpl(mainResource.getName(), mainResource.getSubDirectory(), url, manager);
         }
         for (final Resource res : dependingResources) {
-            if (res.getRequiredRessources() == null) {
+            if (res.getRequiredResources() == null) {
                 return;
             }
-            for (final URL url : res.getRequiredRessources()) {
+            for (final URL url : res.getRequiredResources()) {
                 scheduleDownloadImpl(res.getName(), res.getSubDirectory(), url, manager);
             }
         }

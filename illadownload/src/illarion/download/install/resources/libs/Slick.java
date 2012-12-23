@@ -18,20 +18,20 @@
  */
 package illarion.download.install.resources.libs;
 
+import illarion.download.install.resources.Resource;
+import illarion.download.util.Lang;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import illarion.download.install.resources.Resource;
-import illarion.download.util.Lang;
-
 /**
  * This resource contains the Slick 2D graphic engine.
- * 
+ *
  * @author Martin Karing
- * @since 1.00
  * @version 1.00
+ * @since 1.00
  */
 public final class Slick
         implements LibraryResource {
@@ -71,7 +71,7 @@ public final class Slick
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance
      */
     public static Resource getInstance() {
@@ -103,7 +103,7 @@ public final class Slick
             final Collection<Resource> dep = new ArrayList<Resource>(2);
             dep.add(LWJGL.getInstance());
             dep.add(VorbisSPI.getInstance());
-            
+
             dependencies = dep;
         }
         return dependencies;
@@ -137,12 +137,12 @@ public final class Slick
      * this resource working.
      */
     @Override
-    public Collection<URL> getRequiredRessources() {
+    public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {
                 res.add(new URL(ONLINE_PATH
-                    + "slick" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                        + "slick" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (final Exception e) {
                 // Catch everything and do nothing!
             }

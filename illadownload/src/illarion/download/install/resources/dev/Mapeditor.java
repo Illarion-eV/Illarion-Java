@@ -79,8 +79,7 @@ public final class Mapeditor implements DevelopmentResource {
     }
 
     /**
-     * Generate and return the files needed to be added to the class path for
-     * this resource.
+     * Generate and return the files needed to be added to the class path for this resource.
      */
     @Override
     public Collection<File> getClassPath() {
@@ -153,7 +152,7 @@ public final class Mapeditor implements DevelopmentResource {
      * this resource working.
      */
     @Override
-    public Collection<URL> getRequiredRessources() {
+    public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {
@@ -184,8 +183,6 @@ public final class Mapeditor implements DevelopmentResource {
     public Collection<String> getVMArguments() {
         if (vmArguments == null) {
             final Collection<String> vmArgs = new ArrayList<String>();
-            //vmArgs.add("-Xmx1024m"); //$NON-NLS-1$
-            //vmArgs.add("-Xms800m"); //$NON-NLS-1$
 
             vmArguments = vmArgs;
         }
