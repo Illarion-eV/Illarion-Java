@@ -29,12 +29,22 @@
     <property name="src" location="${download}/src"/>
     <property name="classes" location="${download}/antclasses"/>
     <property name="jar" location="${download}/${download.jar}"/>
+    <property name="client_jar" location="${download}/client_${download.jar}"/>
+    <property name="download_jar" location="${download}/download_${download.jar}"/>
+    <property name="easynpc_jar" location="${download}/easynpc_${download.jar}"/>
+    <property name="easyquest_jar" location="${download}/easyquest_${download.jar}"/>
+    <property name="mapedit_jar" location="${download}/mapedit_${download.jar}"/>
     <property name="org.jar" location="${download}/org_${download.jar}"/>
 
     <target name="build_download" description="Build the download jar"
             depends="check_optional_dirs, init, buildTasks, compile_download, build_jar"
             if="keys.exist">
         <move file="${jar}" tofile="${download.bin}"/>
+        <move file="${client_jar}" tofile="${compiled}/client_${download.jar}"/>
+        <move file="${download_jar}" tofile="${compiled}/download_${download.jar}"/>
+        <move file="${easynpc_jar}" tofile="${compiled}/easynpc_${download.jar}"/>
+        <move file="${easyquest_jar}" tofile="${compiled}/easyquest_${download.jar}"/>
+        <move file="${mapedit_jar}" tofile="${compiled}/mapedit_${download.jar}"/>
 
         <resourceprepare targetdir="${signedcompiled}" usepack200="true">
             <filelist dir="${compiled}">
@@ -42,25 +52,39 @@
             </filelist>
         </resourceprepare>
 
+        <copy todir="${signedcompiled}">
+            <fileset dir="${compiled}">
+                <include name="*_${download.jar}"/>
+            </fileset>
+        </copy>
+
         <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}"
                  storetype="${storetype}">
             <path>
-                <filelist dir="${signedcompiled}">
-                    <file name="${download.jar}"/>
-                </filelist>
+                <fileset dir="${signedcompiled}">
+                    <include name="${download.jar}"/>
+                    <include name="*_${download.jar}"/>
+                </fileset>
             </path>
         </signjar>
 
         <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
                    storetype="${storetype}">
             <path>
-                <filelist dir="${signedcompiled}">
-                    <file name="${download.jar}"/>
-                </filelist>
+                <fileset dir="${signedcompiled}">
+                    <include name="${download.jar}"/>
+                    <include name="*_${download.jar}"/>
+                </fileset>
             </path>
         </verifyjar>
 
-        <copy file="${signedcompiled}/${download.jar}" tofile="${download.deploy}"/>
+        <copy todir="${setup}">
+            <fileset dir="${signedcompiled}">
+                <include name="${download.jar}"/>
+                <include name="*_${download.jar}"/>
+            </fileset>
+        </copy>
+
         <pack200 srcfile="${download.deploy}" destdir="${setup}"/>
     </target>
 
@@ -106,9 +130,7 @@
 
         <jar jarfile="${jar}" basedir="${src}" includes="*.png" update="true"/>
         <jar jarfile="${jar}" basedir="${src}" includes="logging.properties" update="true"/>
-        <jar jarfile="${jar}" basedir="${download}" includes="JNLP-INF/*.jnlp" update="true" compress="false"/>
-        <jar jarfile="${jar}" basedir="${src}" includes="messages_de.properties messages_en.properties" update="true"
-             index="false"/>
+        <jar jarfile="${jar}" basedir="${src}" includes="messages_de.properties messages_en.properties" update="true"/>
 
         <mkdir dir="${download}/tmp"/>
         <proguard preverify="true" skipnonpubliclibraryclasses="false"
@@ -166,5 +188,26 @@
         <move file="${jar}" tofile="${org.jar}"/>
         <move file="${download}/tmp/${download.jar}" tofile="${jar}"/>
         <delete dir="${download}/tmp"/>
+
+        <delete file="JNLP-INF/APPLICATION.JNLP" failonerror="false"/>
+        <copy file="JNLP-INF/illarion_client.jnlp" tofile="JNLP-INF/APPLICATION.JNLP"/>
+        <jar jarfile="${client_jar}" basedir="${download}" includes="JNLP-INF/APPLICATION.JNLP" compress="false"/>
+        <delete file="JNLP-INF/APPLICATION.JNLP" failonerror="false"/>
+
+        <copy file="JNLP-INF/illarion_download.jnlp" tofile="JNLP-INF/APPLICATION.JNLP"/>
+        <jar jarfile="${download_jar}" basedir="${download}" includes="JNLP-INF/APPLICATION.JNLP" compress="false"/>
+        <delete file="JNLP-INF/APPLICATION.JNLP" failonerror="false"/>
+
+        <copy file="JNLP-INF/illarion_easynpc.jnlp" tofile="JNLP-INF/APPLICATION.JNLP"/>
+        <jar jarfile="${easynpc_jar}" basedir="${download}" includes="JNLP-INF/APPLICATION.JNLP" compress="false"/>
+        <delete file="JNLP-INF/APPLICATION.JNLP" failonerror="false"/>
+
+        <copy file="JNLP-INF/illarion_easyquest.jnlp" tofile="JNLP-INF/APPLICATION.JNLP"/>
+        <jar jarfile="${easyquest_jar}" basedir="${download}" includes="JNLP-INF/APPLICATION.JNLP" compress="false"/>
+        <delete file="JNLP-INF/APPLICATION.JNLP" failonerror="false"/>
+
+        <copy file="JNLP-INF/illarion_mapedit.jnlp" tofile="JNLP-INF/APPLICATION.JNLP"/>
+        <jar jarfile="${mapedit_jar}" basedir="${download}" includes="JNLP-INF/APPLICATION.JNLP" compress="false"/>
+        <delete file="JNLP-INF/APPLICATION.JNLP" failonerror="false"/>
     </target>
 </project>

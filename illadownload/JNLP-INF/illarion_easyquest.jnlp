@@ -50,11 +50,16 @@
     <update check="always" policy="always"/>
     <resources>
         <!--Java Requirements-->
-        <java version="1.6+" href="http://java.sun.com/products/autodl/j2se"
+        <java version="1.7+" href="http://java.sun.com/products/autodl/j2se"
               java-vm-args="-Djava.net.preferIPv4Stack=true"/>
+        <java version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
 
-        <jar href="illarion_download.jar" download="eager" main="true"/>
+        <jar href="illarion_download.jar" download="eager" main="true" part="illadownload"/>
+        <jar href="easyquest_illarion_download.jar" download="eager" main="false" part="illadownload"/>
+
         <property name="illarion.download.launch" value="easyquest"/>
+
+        <package name="illarion.download.*" part="illadownload" recursive="true"/>
     </resources>
-    <application-desc main-class="illarion.download.install.Installation"></application-desc>
+    <application-desc main-class="illarion.download.install.Installation"/>
 </jnlp>
