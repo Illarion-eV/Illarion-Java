@@ -30,13 +30,13 @@
             created for Illarion.
         </description>
         <description kind="tooltip">The updater, installer and launcher of Illarion</description>
-        <icon href="illarion_download.ico" kind="shortcut" size="214499"/>
-        <icon href="illarion_download16.png" height="16" width="16" depth="32" size="971"/>
-        <icon href="illarion_download32.png" height="32" width="32" depth="32" size="2933"/>
-        <icon href="illarion_download48.png" height="48" width="48" depth="32" size="5762"/>
-        <icon href="illarion_download64.png" height="64" width="64" depth="32" size="9478"/>
-        <icon href="illarion_download128.png" height="128" width="128" depth="32" size="30789"/>
-        <icon href="illarion_download256.png" height="256" width="256" depth="32" size="101436"/>
+        <icon href="illarion_download16.png" height="16" width="16" depth="32"/>
+        <icon href="illarion_download32.png" height="32" width="32" depth="32"/>
+        <icon href="illarion_download48.png" height="48" width="48" depth="32"/>
+        <icon href="illarion_download64.png" height="64" width="64" depth="32"/>
+        <icon href="illarion_download128.png" height="128" width="128" depth="32"/>
+        <icon href="illarion_download256.png" height="256" width="256" depth="32"/>
+        <icon href="illarion_download.ico" kind="shortcut" height="64" width="64"/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>
