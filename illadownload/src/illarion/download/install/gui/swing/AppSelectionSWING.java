@@ -123,41 +123,34 @@ public final class AppSelectionSWING
         contentPanel.add(headLabel, con);
         headLabel.setFont(headLabel.getFont().deriveFont(Font.BOLD, 14.f));
 
-        final JButton rsClient = createLaunchButton();
-        rsClient.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.rsClient"));
-        rsClient.setEnabled(false);
+        final JButton client = createLaunchButton();
+        client.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.client"));
+        client.addActionListener(new ApplicationButtonListener(this,
+                illarion.download.install.resources.dev.Client.getInstance()));
 
         con.gridy = line++;
-        contentPanel.add(rsClient, con);
-
-        final JButton tsClient = createLaunchButton();
-        tsClient.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.tsClient"));
-        tsClient.addActionListener(new ApplicationButtonListener(this, illarion.download.install.resources.dev.Client
-                .getInstance()));
-
-        con.gridy = line++;
-        contentPanel.add(tsClient, con);
+        contentPanel.add(client, con);
 
         final JButton easyEditor = createLaunchButton();
         easyEditor.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.easyEditor"));
-        easyEditor.addActionListener(new ApplicationButtonListener(this, illarion.download.install.resources.dev
-                .EasyNpcEditor.getInstance()));
+        easyEditor.addActionListener(new ApplicationButtonListener(this,
+                illarion.download.install.resources.dev.EasyNpcEditor.getInstance()));
 
         con.gridy = line++;
         contentPanel.add(easyEditor, con);
 
         final JButton easyQuest = createLaunchButton();
         easyQuest.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.easyQuest"));
-        easyQuest.addActionListener(new ApplicationButtonListener(this, illarion.download.install.resources.dev
-                .EasyQuestEditor.getInstance()));
+        easyQuest.addActionListener(new ApplicationButtonListener(this,
+                illarion.download.install.resources.dev.EasyQuestEditor.getInstance()));
 
         con.gridy = line++;
         contentPanel.add(easyQuest, con);
 
         final JButton mapEditor = createLaunchButton();
         mapEditor.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.mapEditor"));
-        mapEditor.addActionListener(new ApplicationButtonListener(this, illarion.download.install.resources.dev
-                .Mapeditor.getInstance()));
+        mapEditor.addActionListener(new ApplicationButtonListener(this,
+                illarion.download.install.resources.dev.Mapeditor.getInstance()));
 
         con.gridy = line++;
         contentPanel.add(mapEditor, con);
@@ -170,8 +163,7 @@ public final class AppSelectionSWING
         contentPanel.add(new JLabel(), con);
 
         if (base.waitForImage(clientIconID)) {
-            rsClient.setIcon(new ImageIcon(base.getImage("client.png")));
-            tsClient.setIcon(new ImageIcon(base.getImage("client.png")));
+            client.setIcon(new ImageIcon(base.getImage("client.png")));
         }
 
         if (base.waitForImage(mapeditIconID)) {
