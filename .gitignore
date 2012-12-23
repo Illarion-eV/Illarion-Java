@@ -15,6 +15,7 @@
 /bin
 /setup/*
 !/setup/publish.sh
+!/setup/publish_release.sh
 !/setup/prepare.sh
 /out
 /.idea/workspace.xml

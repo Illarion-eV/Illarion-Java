@@ -18,6 +18,7 @@
  */
 package illarion.download.install.gui.swing;
 
+import illarion.download.install.Installation;
 import illarion.download.install.resources.ResourceManager;
 import illarion.download.util.Lang;
 
@@ -242,6 +243,15 @@ public final class BaseSWING extends JFrame {
 
         title = new JLabel();
         title.setHorizontalAlignment(SwingConstants.CENTER);
+
+        if (!Installation.isProduction()) {
+            title.setText("BETA");
+            title.setVerticalTextPosition(JLabel.BOTTOM);
+            title.setHorizontalTextPosition(JLabel.CENTER);
+            title.setIconTextGap(-32);
+            title.setFont(title.getFont().deriveFont(Font.BOLD, 20.f));
+            title.setForeground(Color.RED.darker());
+        }
         content.add(title, BorderLayout.NORTH);
 
         buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
@@ -444,8 +454,7 @@ public final class BaseSWING extends JFrame {
         invalidate();
 
         if (!isVisible()) {
-            final Dimension prefDim =
-                    new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
+            final Dimension prefDim = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
             setPreferredSize(prefDim);
             setSize(prefDim);
             pack();
