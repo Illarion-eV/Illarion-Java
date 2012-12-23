@@ -230,13 +230,14 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
 
         if (toolTip.getHeight() == 0) {
             parentNifty.update();
+            toolTip.getParent().layoutElements();
         }
 
         final int toolTipWidth = toolTip.getWidth();
         final int toolTipHeight = toolTip.getHeight();
 
         final boolean topSide = (location.getBottom() - toolTipHeight) > 0;
-        final boolean leftSide = (location.getRight() - toolTipWidth) < 0;
+        final boolean rightSide = (location.getRight() - toolTipWidth) < 0;
 
         if (topSide) {
             toolTip.setConstraintY(SizeValue.px(location.getBottom() - toolTip.getHeight()));
@@ -244,7 +245,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
             toolTip.setConstraintY(SizeValue.px(location.getTop()));
         }
 
-        if (leftSide) {
+        if (rightSide) {
             toolTip.setConstraintX(SizeValue.px(location.getLeft()));
         } else {
             toolTip.setConstraintX(SizeValue.px(location.getRight() - toolTip.getWidth()));
