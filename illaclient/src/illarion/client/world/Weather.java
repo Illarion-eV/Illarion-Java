@@ -587,7 +587,7 @@ public final class Weather {
      * @return true if the character is outside
      */
     public boolean isOutside() {
-        return outside;
+        return outside && (World.getPlayer().getBaseLevel() >= 0);
     }
 
     /**
