@@ -19,6 +19,10 @@
 package illarion.download.install.gui.swing;
 
 import illarion.download.install.resources.Resource;
+import illarion.download.install.resources.dev.Client;
+import illarion.download.install.resources.dev.EasyNpcEditor;
+import illarion.download.install.resources.dev.EasyQuestEditor;
+import illarion.download.install.resources.dev.Mapeditor;
 import illarion.download.util.Lang;
 
 import javax.swing.*;
@@ -125,32 +129,28 @@ public final class AppSelectionSWING
 
         final JButton client = createLaunchButton();
         client.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.client"));
-        client.addActionListener(new ApplicationButtonListener(this,
-                illarion.download.install.resources.dev.Client.getInstance()));
+        client.addActionListener(new ApplicationButtonListener(this, Client.getInstance()));
 
         con.gridy = line++;
         contentPanel.add(client, con);
 
         final JButton easyEditor = createLaunchButton();
         easyEditor.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.easyEditor"));
-        easyEditor.addActionListener(new ApplicationButtonListener(this,
-                illarion.download.install.resources.dev.EasyNpcEditor.getInstance()));
+        easyEditor.addActionListener(new ApplicationButtonListener(this, EasyNpcEditor.getInstance()));
 
         con.gridy = line++;
         contentPanel.add(easyEditor, con);
 
         final JButton easyQuest = createLaunchButton();
         easyQuest.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.easyQuest"));
-        easyQuest.addActionListener(new ApplicationButtonListener(this,
-                illarion.download.install.resources.dev.EasyQuestEditor.getInstance()));
+        easyQuest.addActionListener(new ApplicationButtonListener(this, EasyQuestEditor.getInstance()));
 
         con.gridy = line++;
         contentPanel.add(easyQuest, con);
 
         final JButton mapEditor = createLaunchButton();
         mapEditor.setText(Lang.getMsg("illarion.download.install.gui.AppSelection.mapEditor"));
-        mapEditor.addActionListener(new ApplicationButtonListener(this,
-                illarion.download.install.resources.dev.Mapeditor.getInstance()));
+        mapEditor.addActionListener(new ApplicationButtonListener(this, Mapeditor.getInstance()));
 
         con.gridy = line++;
         contentPanel.add(mapEditor, con);

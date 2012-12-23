@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of the Illarion Download Utility.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Download Utility is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Download Utility is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
+<jnlp codebase="https://illarion.org/~nitram/downloads/" href="illarion_download.jnlp" version="1.00" spec="6.0+">
+    <information>
+        <title>Illarion Launcher</title>
+        <vendor>Illarion e.V.</vendor>
+        <homepage href="http://illarion.org"/>
+        <description>This Application is a updating and installing utility for the application developed for the online
+            game &quot;Illarion&quot;. It allows installing the basic environment for all applications and ensures that
+            all application data is consistent and up to date with the data on the Illarion server.
+        </description>
+        <description kind="one-line">The application that allows installing, updating and launching the application
+            created for Illarion.
+        </description>
+        <description kind="tooltip">The updater, installer and launcher of Illarion</description>
+        <icon href="illarion_download16.png" height="16" width="16" kind="default"/>
+        <icon href="illarion_download32.png" height="32" width="32" kind="default"/>
+        <offline-allowed/>
+        <shortcut online="true">
+            <desktop/>
+            <menu submenu="Illarion"/>
+        </shortcut>
+        <related-content href="http://illarion.org/illarion/manual_us.pdf"/>
+    </information>
+    <information locale="de">
+        <title>Illarion Starter</title>
+        <vendor>Illarion e.V.</vendor>
+        <description>Diese Anwendung übernimmt das aktuallisieren und installieren der Anwendungen die für das
+            Onlinerollenspiel &quot;Illarion&quot; entwickelt wurden. Sie installiert eine grundlegende Arbeitsumgebung
+            die von allen Anwendungen benötigt wird und sorgt dafür das die Anwendungsdaten konsistent und auf dem
+            neusten Stand sind.
+        </description>
+        <description kind="one-line">Diese Anwendung kümmert sich um die Installation, Aktualisierung und den Start der
+            Anwendungen die für Illarion erstellt wurden.
+        </description>
+        <description kind="tooltip">Das Startprogramm für Illarion-Anwendungen</description>
+        <related-content href="http://illarion.org/illarion/manual_de.pdf"/>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <update check="always" policy="always"/>
+    <resources>
+        <!--Java Requirements-->
+        <java version="1.7+" href="http://java.sun.com/products/autodl/j2se"
+              java-vm-args="-Djava.net.preferIPv4Stack=true"/>
+        <java version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+
+        <jar href="illarion_download.jar" download="eager" main="true" part="illadownload"/>
+        <jar href="download_illarion_download.jar" download="eager" main="false" part="illadownload"/>
+
+        <property name="illarion.target" value="test"/>
+
+        <package name="illarion.download.*" part="illadownload" recursive="true"/>
+    </resources>
+    <application-desc main-class="illarion.download.install.Installation"/>
+</jnlp>

@@ -21,6 +21,10 @@ package illarion.download.install;
 import illarion.common.util.DirectoryManager;
 import illarion.download.install.gui.swing.*;
 import illarion.download.install.resources.ResourceManager;
+import illarion.download.install.resources.dev.Client;
+import illarion.download.install.resources.dev.EasyNpcEditor;
+import illarion.download.install.resources.dev.EasyQuestEditor;
+import illarion.download.install.resources.dev.Mapeditor;
 import illarion.download.tasks.clean.Cleaner;
 import illarion.download.tasks.download.DownloadManager;
 import illarion.download.tasks.launch.Launcher;
@@ -57,6 +61,15 @@ public final class Installation {
      * If this flag is turned true, the installation is started again.
      */
     private boolean restartInstallation;
+
+    /**
+     * Check if this downloader targets the production system.
+     *
+     * @return {@code true} in case the applications published are <b>NOT</b> the development versions
+     */
+    public static boolean isProduction() {
+        return !"test".equals(System.getProperty("illarion.target"));
+    }
 
     /**
      * The main function to start this installation and launching process.
@@ -216,21 +229,17 @@ public final class Installation {
     private void selectApplication() {
         final String sysProp = System.getProperty("illarion.download.launch");
         if ((sysProp != null) && (sysProp.length() > 2)) {
-            if (sysProp.equalsIgnoreCase("tsclient")) {
-                ResourceManager.getInstance().setMainResource(
-                        illarion.download.install.resources.dev.Client.getInstance());
+            if (sysProp.equalsIgnoreCase("client")) {
+                ResourceManager.getInstance().setMainResource(Client.getInstance());
                 return;
             } else if (sysProp.equalsIgnoreCase("mapeditor")) {
-                ResourceManager.getInstance().setMainResource(
-                        illarion.download.install.resources.dev.Mapeditor.getInstance());
+                ResourceManager.getInstance().setMainResource(Mapeditor.getInstance());
                 return;
             } else if (sysProp.equalsIgnoreCase("easynpc")) {
-                ResourceManager.getInstance().setMainResource(
-                        illarion.download.install.resources.dev.EasyNpcEditor.getInstance());
+                ResourceManager.getInstance().setMainResource(EasyNpcEditor.getInstance());
                 return;
             } else if (sysProp.equalsIgnoreCase("easyquest")) {
-                ResourceManager.getInstance().setMainResource(
-                        illarion.download.install.resources.dev.EasyQuestEditor.getInstance());
+                ResourceManager.getInstance().setMainResource(EasyQuestEditor.getInstance());
                 return;
             }
         }

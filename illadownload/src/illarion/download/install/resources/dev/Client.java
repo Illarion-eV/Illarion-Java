@@ -18,6 +18,7 @@
  */
 package illarion.download.install.resources.dev;
 
+import illarion.download.install.Installation;
 import illarion.download.install.resources.Resource;
 import illarion.download.install.resources.libs.*;
 import illarion.download.util.Lang;
@@ -178,6 +179,10 @@ public final class Client implements DevelopmentResource {
      */
     @Override
     public Collection<String> getVMArguments() {
+        if (Installation.isProduction()) {
+            return null;
+        }
+
         if (vmArgs == null) {
             vmArgs = new ArrayList<String>();
             vmArgs.add("-Dillarion.server=testserver");

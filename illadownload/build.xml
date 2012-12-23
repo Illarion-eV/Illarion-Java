@@ -189,28 +189,61 @@
         <move file="${download}/tmp/${download.jar}" tofile="${jar}"/>
         <delete dir="${download}/tmp"/>
 
+        <antcall target="createSignJarsRelease" inheritall="true"/>
+        <antcall target="createSignJarsDevelopment" inheritall="true"/>
+    </target>
+
+    <target name="createSignJarsRelease" if="release.build">
+        <property name="jnlp.directory" location="${download}/release"/>
         <property name="jnlp.default" value="JNLP-INF/APPLICATION.JNLP"/>
-        <property name="jnlp.default.file" value="${download}/${jnlp.default}"/>
+        <property name="jnlp.default.file" location="${jnlp.directory}/${jnlp.default}"/>
 
         <delete file="${jnlp.default.file}" failonerror="false"/>
-        <copy file="${download}/JNLP-INF/illarion_client.jnlp" tofile="${jnlp.default.file}"/>
-        <jar jarfile="${client_jar}" basedir="${download}" includes="${jnlp.default}" compress="false"/>
+        <copy file="${jnlp.directory}/JNLP-INF/illarion_client.jnlp" tofile="${jnlp.default.file}"/>
+        <jar jarfile="${client_jar}" basedir="${jnlp.directory}" includes="${jnlp.default}" compress="false"/>
         <delete file="${jnlp.default.file}" failonerror="false"/>
 
-        <copy file="${download}/JNLP-INF/illarion_download.jnlp" tofile="${jnlp.default.file}"/>
-        <jar jarfile="${download_jar}" basedir="${download}" includes="${jnlp.default}" compress="false"/>
+        <copy file="${jnlp.directory}/JNLP-INF/illarion_download.jnlp" tofile="${jnlp.default.file}"/>
+        <jar jarfile="${download_jar}" basedir="${jnlp.directory}" includes="${jnlp.default}" compress="false"/>
         <delete file="${jnlp.default.file}" failonerror="false"/>
 
-        <copy file="${download}/JNLP-INF/illarion_easynpc.jnlp" tofile="${jnlp.default.file}"/>
-        <jar jarfile="${easynpc_jar}" basedir="${download}" includes="${jnlp.default}" compress="false"/>
+        <copy file="${jnlp.directory}/JNLP-INF/illarion_easynpc.jnlp" tofile="${jnlp.default.file}"/>
+        <jar jarfile="${easynpc_jar}" basedir="${jnlp.directory}" includes="${jnlp.default}" compress="false"/>
         <delete file="${jnlp.default.file}" failonerror="false"/>
 
-        <copy file="${download}/JNLP-INF/illarion_easyquest.jnlp" tofile="${jnlp.default.file}"/>
-        <jar jarfile="${easyquest_jar}" basedir="${download}" includes="${jnlp.default}" compress="false"/>
+        <copy file="${jnlp.directory}/JNLP-INF/illarion_easyquest.jnlp" tofile="${jnlp.default.file}"/>
+        <jar jarfile="${easyquest_jar}" basedir="${jnlp.directory}" includes="${jnlp.default}" compress="false"/>
         <delete file="${jnlp.default.file}" failonerror="false"/>
 
-        <copy file="${download}/JNLP-INF/illarion_mapedit.jnlp" tofile="${jnlp.default.file}"/>
-        <jar jarfile="${mapedit_jar}" basedir="${download}" includes="${jnlp.default}" compress="false"/>
+        <copy file="${jnlp.directory}/JNLP-INF/illarion_mapedit.jnlp" tofile="${jnlp.default.file}"/>
+        <jar jarfile="${mapedit_jar}" basedir="${jnlp.directory}" includes="${jnlp.default}" compress="false"/>
+        <delete file="${jnlp.default.file}" failonerror="false"/>
+    </target>
+
+    <target name="createSignJarsDevelopment" unless="release.build">
+        <property name="jnlp.directory" location="${download}/dev"/>
+        <property name="jnlp.default" value="JNLP-INF/APPLICATION.JNLP"/>
+        <property name="jnlp.default.file" location="${jnlp.directory}/${jnlp.default}"/>
+
+        <delete file="${jnlp.default.file}" failonerror="false"/>
+        <copy file="${jnlp.directory}/JNLP-INF/illarion_client.jnlp" tofile="${jnlp.default.file}"/>
+        <jar jarfile="${client_jar}" basedir="${jnlp.directory}" includes="${jnlp.default}" compress="false"/>
+        <delete file="${jnlp.default.file}" failonerror="false"/>
+
+        <copy file="${jnlp.directory}/JNLP-INF/illarion_download.jnlp" tofile="${jnlp.default.file}"/>
+        <jar jarfile="${download_jar}" basedir="${jnlp.directory}" includes="${jnlp.default}" compress="false"/>
+        <delete file="${jnlp.default.file}" failonerror="false"/>
+
+        <copy file="${jnlp.directory}/JNLP-INF/illarion_easynpc.jnlp" tofile="${jnlp.default.file}"/>
+        <jar jarfile="${easynpc_jar}" basedir="${jnlp.directory}" includes="${jnlp.default}" compress="false"/>
+        <delete file="${jnlp.default.file}" failonerror="false"/>
+
+        <copy file="${jnlp.directory}/JNLP-INF/illarion_easyquest.jnlp" tofile="${jnlp.default.file}"/>
+        <jar jarfile="${easyquest_jar}" basedir="${jnlp.directory}" includes="${jnlp.default}" compress="false"/>
+        <delete file="${jnlp.default.file}" failonerror="false"/>
+
+        <copy file="${jnlp.directory}/JNLP-INF/illarion_mapedit.jnlp" tofile="${jnlp.default.file}"/>
+        <jar jarfile="${mapedit_jar}" basedir="${jnlp.directory}" includes="${jnlp.default}" compress="false"/>
         <delete file="${jnlp.default.file}" failonerror="false"/>
     </target>
 </project>
