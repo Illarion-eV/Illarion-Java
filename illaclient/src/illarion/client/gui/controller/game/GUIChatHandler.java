@@ -392,7 +392,14 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
 
             task.run();
         }
+
+        cleanupChatLog();
     }
+
+    /**
+     * This flag shows of the chat log is dirty and needs to be cleaned up.
+     */
+    private boolean dirty = false;
 
     /**
      * Add a entry to the chat log.
@@ -411,6 +418,18 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         label.parameter("wrap", "true");
         label.width(contentPane.getConstraintWidth().toString());
         label.build(contentPane.getNifty(), screen, contentPane);
+
+        dirty = true;
+    }
+
+    private void cleanupChatLog() {
+        if (!dirty) {
+            return;
+        }
+
+        dirty = false;
+
+        final Element contentPane = chatLog.getElement().findElementByName("chatLog");
 
         final int entryCount = contentPane.getElements().size();
         for (int i = 0; i < (entryCount - 200); i++) {
