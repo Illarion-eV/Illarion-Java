@@ -177,7 +177,7 @@ public final class Download implements Callable<DownloadResult> {
      */
     @SuppressWarnings("nls")
     public boolean prepare() {
-        if (DO_NOT_DOWNLOAD) {
+        if (DO_NOT_DOWNLOAD || !manager.isConnected()) {
             manager.reportDownloadFinished(this, new DownloadResult(
                     DownloadResult.Results.notModified, "download.not_modified",
                     source, target, lastModified));
