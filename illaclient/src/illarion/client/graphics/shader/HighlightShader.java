@@ -18,52 +18,38 @@
  */
 package illarion.client.graphics.shader;
 
+import org.newdawn.slick.SlickException;
+
 /**
- * This enumerator contains the list of shader available.
+ * This shader takes care for rendering the highlight effect on the map.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public enum Shader {
+public final class HighlightShader extends AbstractShader {
     /**
-     * The fog shader.
-     */
-    Fog(FogShader.class),
-
-    /**
-     * The mini map shader.
-     */
-    MiniMap(MiniMapShader.class),
-
-    /**
-     * The shader that renders the rain on the screen.
-     */
-    Rain(RainShader.class),
-
-    /**
-     * The shader that renders the highlights of items.
-     */
-    Highlight(HighlightShader.class);
-
-    /**
-     * The class of the shader.
-     */
-    Class<? extends AbstractShader> shaderClass;
-
-    /**
-     * Default constructor that allows setting the class that is assigned to the shader.
+     * Default constructor.
      *
-     * @param shaderClass the class of the shader
+     * @throws SlickException in case loading the shader fails
      */
-    Shader(final Class<? extends AbstractShader> shaderClass) {
-        this.shaderClass = shaderClass;
+    public HighlightShader() throws SlickException {
+        super("highlight.vert", "highlight.frag");
     }
 
     /**
-     * Get the class of the shader.
+     * Set the texture reference.
      *
-     * @return the class of the shader
+     * @param textureIndex the index of the bound texture
      */
-    public Class<? extends AbstractShader> getShaderClass() {
-        return shaderClass;
+    public void setTexture(final int textureIndex) {
+        getShader().setUniform1i("tex0", textureIndex);
+    }
+
+    /**
+     * Set the value how much of the regular color is replaced with the highlight color.
+     *
+     * @param highlight the highlight share
+     */
+    public void setHighlightShare(final float highlight) {
+        getShader().setUniform1f("highlightShare", highlight);
     }
 }

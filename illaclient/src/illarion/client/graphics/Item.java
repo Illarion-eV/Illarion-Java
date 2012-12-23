@@ -18,6 +18,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.input.PointOnMapEvent;
 import illarion.client.resources.ItemFactory;
@@ -274,6 +275,11 @@ public final class Item extends AbstractEntity implements Resource {
         return new Item(this);
     }
 
+    @Override
+    public int getHighlight() {
+        return showHighlight;
+    }
+
     /**
      * Draw the item on the screen on a specified location. In case the item has
      * to fade out in order to free the view on the player character this is
@@ -290,6 +296,8 @@ public final class Item extends AbstractEntity implements Resource {
         if (showNumber && (number != null)) {
             number.draw(g);
         }
+
+        showHighlight = 0;
 
         return true;
     }
@@ -346,10 +354,25 @@ public final class Item extends AbstractEntity implements Resource {
         return new ItemId(getId());
     }
 
+    private int showHighlight;
+
     @Override
     public boolean processEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
         if (!parentTile.isAtPlayerLevel()) {
             return false;
+        }
+
+        if (event instanceof CurrentMouseLocationEvent) {
+            final CurrentMouseLocationEvent moveEvent = (CurrentMouseLocationEvent) event;
+            if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
+                return false;
+            }
+
+            showHighlight = 1;
+            if (parentTile.getInteractive().isInUseRange()) {
+                showHighlight = 2;
+            }
+            return true;
         }
 
         if (event instanceof PointOnMapEvent) {

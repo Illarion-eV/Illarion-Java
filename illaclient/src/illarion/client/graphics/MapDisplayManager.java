@@ -19,6 +19,7 @@
 package illarion.client.graphics;
 
 import illarion.client.IllaClient;
+import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.world.GameMap;
 import illarion.client.world.World;
 import illarion.common.graphics.Layers;
@@ -385,12 +386,9 @@ public final class MapDisplayManager
                         break;
                     }
 
-                    for (int i = display.size() - 1; i >= 0; i--) {
-                        if (display.get(i).processEvent(c, delta, event)) {
-                            break;
-                        }
-                    }
+                    publishEvent(c, delta, event);
                 }
+                publishEvent(c, delta, new CurrentMouseLocationEvent(c.getInput()));
 
                 // update the items
                 for (int i = 0, displaySize = display.size(); i < displaySize; i++) {
@@ -403,6 +401,14 @@ public final class MapDisplayManager
 
         if (fadeOutColor.getAlpha() > 0) {
             fadeOutColor.a = AnimationUtility.approach(fadeOutColor.getAlpha(), 0, 0, 255, delta) / 255.f;
+        }
+    }
+
+    private void publishEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
+        for (int i = display.size() - 1; i >= 0; i--) {
+            if (display.get(i).processEvent(c, delta, event)) {
+                break;
+            }
         }
     }
 

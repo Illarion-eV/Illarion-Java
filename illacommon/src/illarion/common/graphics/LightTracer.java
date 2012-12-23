@@ -153,7 +153,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * The list of light sources handled by this light tracer. This list
      * contains all lights that currently do not require any calculations.
      */
-    private final FastList<LightSource> tinyLights;
+    private final FastList<LightSource> tidyLights;
 
     /**
      * Default constructor of the light tracer. This tracer handles all light
@@ -167,7 +167,7 @@ public final class LightTracer extends Thread implements Stoppable {
 
         mapSource = tracerMapSource;
         dirtyLights = new FastList<LightSource>();
-        tinyLights = new FastList<LightSource>();
+        tidyLights = new FastList<LightSource>();
         pause = false;
         running = false;
     }
@@ -202,7 +202,7 @@ public final class LightTracer extends Thread implements Stoppable {
 
         synchronized (lightsListsLock) {
             final Iterator<LightSource> dirtyItr = dirtyLights.iterator();
-            final Iterator<LightSource> tinyItr = tinyLights.iterator();
+            final Iterator<LightSource> tinyItr = tidyLights.iterator();
 
             mapSource.resetLights();
 
@@ -216,7 +216,7 @@ public final class LightTracer extends Thread implements Stoppable {
                 dirtyItr.remove();
                 light.calculateShadows();
                 light.apply();
-                tinyLights.add(light);
+                tidyLights.add(light);
             }
         }
     }
@@ -237,7 +237,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * @return true in case this tracer does not handle any lights currently
      */
     public boolean isEmpty() {
-        return tinyLights.isEmpty() && dirtyLights.isEmpty();
+        return tidyLights.isEmpty() && dirtyLights.isEmpty();
     }
 
     /**
@@ -269,7 +269,7 @@ public final class LightTracer extends Thread implements Stoppable {
         boolean changedSomething = false;
 
         synchronized (lightsListsLock) {
-            final Iterator<LightSource> itr = tinyLights.iterator();
+            final Iterator<LightSource> itr = tidyLights.iterator();
             LightSource current;
             while (itr.hasNext()) {
                 current = itr.next();
@@ -300,8 +300,8 @@ public final class LightTracer extends Thread implements Stoppable {
      */
     public void refresh() {
         synchronized (lightsListsLock) {
-            while (!tinyLights.isEmpty()) {
-                dirtyLights.add(tinyLights.removeLast());
+            while (!tidyLights.isEmpty()) {
+                dirtyLights.add(tidyLights.removeLast());
             }
         }
         restart();
@@ -314,10 +314,10 @@ public final class LightTracer extends Thread implements Stoppable {
      */
     public void refreshLight(final LightSource light) {
         synchronized (lightsListsLock) {
-            if (!tinyLights.contains(light)) {
+            if (!tidyLights.contains(light)) {
                 return;
             }
-            tinyLights.remove(light);
+            tidyLights.remove(light);
 
             dirtyLights.add(light);
         }
@@ -341,8 +341,8 @@ public final class LightTracer extends Thread implements Stoppable {
                 return true;
             }
 
-            if (tinyLights.contains(light)) {
-                tinyLights.remove(light);
+            if (tidyLights.contains(light)) {
+                tidyLights.remove(light);
                 restart();
                 return true;
             }
@@ -391,15 +391,15 @@ public final class LightTracer extends Thread implements Stoppable {
             final boolean tidyLight = false;
             synchronized (lightsListsLock) {
                 if (dirty && !pause) {
-                    if (!tinyLights.isEmpty()
-                            && ((tinyLights.size() - 1) > lastTinyIndex)) {
+                    if (!tidyLights.isEmpty()
+                            && ((tidyLights.size() - 1) > lastTinyIndex)) {
                         lastTinyIndex++;
-                        light = tinyLights.get(lastTinyIndex);
+                        light = tidyLights.get(lastTinyIndex);
                     } else if (!dirtyLights.isEmpty()) {
                         light = dirtyLights.removeLast();
 
                         if (light != null) {
-                            tinyLights.add(light);
+                            tidyLights.add(light);
                             lastTinyIndex++;
                         }
                     } else {
@@ -409,8 +409,7 @@ public final class LightTracer extends Thread implements Stoppable {
                     try {
                         lightsListsLock.wait();
                     } catch (final InterruptedException e) {
-                        LOGGER.debug(
-                                "Light tracer woken up for unknown reasons", e);
+                        LOGGER.debug("Light tracer woken up for unknown reasons", e);
                     }
 
                 }

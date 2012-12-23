@@ -749,7 +749,7 @@ public final class MapTile
 
                 final List<Item> localItems = items;
                 if (localItems != null) {
-                    for (Item localItem : localItems) {
+                    for (final Item localItem : localItems) {
                         localItem.show();
                     }
                 }
@@ -760,7 +760,7 @@ public final class MapTile
 
                 final List<Item> localItems = items;
                 if (localItems != null) {
-                    for (Item localItem : localItems) {
+                    for (final Item localItem : localItems) {
                         localItem.hide();
                     }
                 }
@@ -811,7 +811,7 @@ public final class MapTile
             updateItem(item, itemCount, index);
             // display on screen
 
-            if (isHidden()) {
+            if (isHidden() || isObstructed()) {
                 item.hide();
             } else {
                 item.show();

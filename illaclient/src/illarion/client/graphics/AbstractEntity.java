@@ -19,6 +19,9 @@
 package illarion.client.graphics;
 
 import illarion.client.IllaClient;
+import illarion.client.graphics.shader.HighlightShader;
+import illarion.client.graphics.shader.Shader;
+import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.world.World;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
@@ -330,9 +333,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
                              final Sprite.VAlign vert, final boolean smooth, final boolean mirror,
                              final Color baseCol) {
 
-        sprite =
-                SpriteBuffer.getInstance().getSprite(path, name, frames, offX,
-                        offY, horz, vert, smooth, mirror);
+        sprite = SpriteBuffer.getInstance().getSprite(path, name, frames, offX, offY, horz, vert, smooth, mirror);
         stillFrame = still;
         currentFrame = still;
         if ((baseCol == null) || baseCol.equals(DEFAULT_LIGHT)) {
@@ -443,6 +444,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         return currentFrame;
     }
 
+    public int getHighlight() {
+        return 0;
+    }
+
     /**
      * Draw this entity to the screen. This also performs a few basic animations
      * such as fading in and out, based on the delta time that is supplied to
@@ -467,10 +472,28 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
                     parentDirtyArea.getWidth(), parentDirtyArea.getHeight());
         }
 
+
+        HighlightShader shader = null;
+        final int highlight = getHighlight();
+        if (highlight > 0) {
+            shader = ShaderManager.getShader(Shader.Highlight, HighlightShader.class);
+            shader.bind();
+            shader.setTexture(0);
+            if (highlight == 1) {
+                shader.setHighlightShare(0.05f);
+            } else {
+                shader.setHighlightShare(0.25f);
+            }
+        }
+
         if (useScale) {
             sprite.draw(g, renderLocX, renderLocY, renderLight, currentFrame, scale);
         } else {
             sprite.draw(g, renderLocX, renderLocY, renderLight, currentFrame);
+        }
+
+        if (shader != null) {
+            shader.unbind();
         }
 
         if ((parentDirtyArea != null) && !parentDirtyArea.equals(Camera.getInstance().getViewport())) {
