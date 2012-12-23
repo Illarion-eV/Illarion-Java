@@ -19,7 +19,7 @@
 <!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
 <jnlp codebase="https://illarion.org/~nitram/downloads/" href="illarion_download.jnlp" version="1.00" spec="6.0+">
     <information>
-        <title>Illarion Launcher</title>
+        <title>Illarion Launcher (BETA)</title>
         <vendor>Illarion e.V.</vendor>
         <homepage href="http://illarion.org"/>
         <description>This Application is a updating and installing utility for the application developed for the online
@@ -40,7 +40,7 @@
         <related-content href="http://illarion.org/illarion/manual_us.pdf"/>
     </information>
     <information locale="de">
-        <title>Illarion Starter</title>
+        <title>Illarion Starter (BETA)</title>
         <vendor>Illarion e.V.</vendor>
         <description>Diese Anwendung übernimmt das aktuallisieren und installieren der Anwendungen die für das
             Onlinerollenspiel &quot;Illarion&quot; entwickelt wurden. Sie installiert eine grundlegende Arbeitsumgebung

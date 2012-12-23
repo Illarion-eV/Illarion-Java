@@ -20,7 +20,7 @@
 <!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
 <jnlp codebase="https://illarion.org/~nitram/downloads" href="illarion_mapedit.jnlp" version="0.99" spec="6.0+">
     <information>
-        <title>Illarion Mapeditor</title>
+        <title>Illarion Mapeditor (BETA)</title>
         <vendor>Illarion e.V.</vendor>
         <homepage href="http://illarion.org"/>
         <description>Map Editor for the roleplaying game Illarion</description>
@@ -38,7 +38,7 @@
         </shortcut>
     </information>
     <information locale="de">
-        <title>Illarion Mapeditor</title>
+        <title>Illarion Mapeditor (BETA)</title>
         <vendor>Illarion e.V.</vendor>
         <description>Der Karteneditor für das Rollenspiel Illarion</description>
         <description kind="one-line">Karteneditor von Illarion</description>

@@ -20,7 +20,7 @@
 <!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
 <jnlp codebase="https://illarion.org/~nitram/downloads" href="illarion_client.jnlp" version="1.22" spec="6.0+">
     <information>
-        <title>Illarion Client</title>
+        <title>Illarion Client (BETA)</title>
         <vendor>Illarion e.V.</vendor>
         <homepage href="http://illarion.org"/>
         <description>This is the client that is used to access the online roleplaying game &quot;Illarion&quot;.
@@ -42,7 +42,7 @@
         <related-content href="http://illarion.org/illarion/manual_us.pdf"/>
     </information>
     <information locale="de">
-        <title>Illarion Client</title>
+        <title>Illarion Client (BETA)</title>
         <vendor>Illarion e.V.</vendor>
         <description>Diese Anwendung ist der Spielclient des Online-Rollenspiels &quot;Illarion&quot;. Mit diesem
             Programm kann man sich in das Spiel einloggen und spielen.

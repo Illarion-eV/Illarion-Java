@@ -20,7 +20,7 @@
 <!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
 <jnlp codebase="https://illarion.org/~nitram/downloads" href="illarion_easyquest.jnlp" version="1.00" spec="6.0+">
     <information>
-        <title>Illarion EasyQuest Editor</title>
+        <title>Illarion EasyQuest Editor (BETA)</title>
         <vendor>Illarion e.V.</vendor>
         <homepage href="http://illarion.org"/>
         <description>EasyQuest Editor for the roleplaying game Illarion</description>
@@ -40,7 +40,7 @@
         </shortcut>
     </information>
     <information locale="de">
-        <title>Illarion EasyQuest Editor</title>
+        <title>Illarion EasyQuest Editor (BETA)</title>
         <vendor>Illarion e.V.</vendor>
         <description>Der EasyQuest Editor für das Rollenspiel Illarion</description>
         <description kind="one-line">EasyQuest Editor von Illarion</description>
