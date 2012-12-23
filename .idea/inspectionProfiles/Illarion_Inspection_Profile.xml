@@ -1,7 +1,7 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0" is_locked="false">
     <option name="myName" value="Illarion Inspection Profile" />
-    <option name="myLocal" value="true" />
+    <option name="myLocal" value="false" />
     <inspection_tool class="AndroidDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="AndroidNonConstantResIdsInSwitch" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="AnnotationNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
@@ -105,7 +105,6 @@
     </inspection_tool>
     <inspection_tool class="DefaultNotLastCaseInSwitch" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DollarSignInName" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="DoubleNegation" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DuplicateBooleanBranch" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DuplicateCondition" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreMethodCalls" value="false" />
@@ -211,10 +210,7 @@
       <option name="ignoreIterators" value="true" />
     </inspection_tool>
     <inspection_tool class="LoopWithImplicitTerminationCondition" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="MagicNumber" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <option name="ignoreInHashCode" value="true" />
-      <option name="ignoreInTestCode" value="false" />
-    </inspection_tool>
+    <inspection_tool class="MagicNumber" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="MapReplaceableByEnumMap" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MethodCount" enabled="true" level="INFO" enabled_by_default="true">
       <option name="m_limit" value="20" />
@@ -249,6 +245,7 @@
     </inspection_tool>
     <inspection_tool class="NegatedIfElse" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_ignoreNegatedNullComparison" value="true" />
+      <option name="m_ignoreNegatedZeroComparison" value="false" />
     </inspection_tool>
     <inspection_tool class="NestedAssignment" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NestedConditionalExpression" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -382,6 +379,7 @@
     <inspection_tool class="UnnecessaryParentheses" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreClarifyingParentheses" value="true" />
       <option name="ignoreParenthesesOnConditionals" value="true" />
+      <option name="ignoreParenthesesOnLambdaParameter" value="false" />
     </inspection_tool>
     <inspection_tool class="UnnecessaryQualifierForThis" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryReturn" enabled="true" level="WARNING" enabled_by_default="true">
@@ -399,6 +397,9 @@
     <inspection_tool class="UtilityClassWithPublicConstructor" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UtilityClassWithoutPrivateConstructor" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreClassesWithOnlyMain" value="false" />
+      <option name="ignorableAnnotations">
+        <value />
+      </option>
     </inspection_tool>
   </profile>
 </component>

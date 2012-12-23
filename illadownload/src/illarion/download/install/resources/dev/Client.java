@@ -57,6 +57,11 @@ public final class Client implements DevelopmentResource {
     private Collection<URL> resources;
 
     /**
+     * VM arguments.
+     */
+    private Collection<String> vmArgs;
+
+    /**
      * Private constructor to avoid instances but the singleton instance.
      */
     private Client() {
@@ -134,8 +139,8 @@ public final class Client implements DevelopmentResource {
     }
 
     /**
-     * This resource does not require and program arguments. So this function
-     * will return <code>null</code> in any case.
+     * This resource does not require and program arguments. So this function will return <code>null</code> in any
+     * case.
      */
     @Override
     public Collection<String> getProgramArgument() {
@@ -143,16 +148,14 @@ public final class Client implements DevelopmentResource {
     }
 
     /**
-     * Generates and returns the list of files that need to be downloaded to get
-     * this resource working.
+     * Generates and returns the list of files that need to be downloaded to get this resource working.
      */
     @Override
     public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {
-                res.add(new URL(ONLINE_PATH
-                        + "illarion_client" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                res.add(new URL(ONLINE_PATH + "illarion_client" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (final Exception e) {
                 // Catch everything and do nothing!
             }
@@ -171,12 +174,15 @@ public final class Client implements DevelopmentResource {
     }
 
     /**
-     * Generate and return the list of virtual machine arguments that are passed
-     * to java when the function is called.
+     * Generate and return the list of virtual machine arguments that are passed to java when the function is called.
      */
     @Override
     public Collection<String> getVMArguments() {
-        return null;
+        if (vmArgs == null) {
+            vmArgs = new ArrayList<String>();
+            vmArgs.add("-Dillarion.server=testserver");
+        }
+        return vmArgs;
     }
 
     /**

@@ -82,10 +82,17 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     public static final String VERSION = "1.22 δ"; //$NON-NLS-1$
 
     /**
-     * The default server the client connects too. The client will always connect to this server if {@link
-     * #MULTI_CLIENT} is set to false.
+     * The default server the client connects too. The client will always connect to this server.
      */
-    static final Servers DEFAULT_SERVER = Servers.testserver;
+    public static final Servers DEFAULT_SERVER;
+
+    static {
+        if ("testserver".equals(System.getProperty("illarion.server"))) {
+            DEFAULT_SERVER = Servers.testserver;
+        } else {
+            DEFAULT_SERVER = Servers.realserver;
+        }
+    }
 
     /**
      * The error and debug logger of the client.
@@ -93,32 +100,14 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     static final Logger LOGGER = Logger.getLogger(IllaClient.class);
 
     /**
-     * Allow to connect to multiple servers. In case this is set to true, the server is able to connect to all servers
-     * listed. In case its false the client connects only to the default server.
-     */
-    static final boolean MULTI_CLIENT = true;
-
-    /**
      * Stores if there currently is a exit requested to avoid that the question area is opened multiple times.
      */
-    private static boolean exitRequested = false;
-
-    /**
-     * The buffer size in byte that is available to install files to the client directory. This buffer is used to store
-     * and save the files that need to be copied.
-     */
-    private static final int FILE_BUFFER = 1000;
+    private static boolean exitRequested;
 
     /**
      * The singleton instance of this class.
      */
     private static final IllaClient INSTANCE = new IllaClient();
-
-    /**
-     * The sleep time of the main thread in ms after the logout command was send to give the other threads some time to
-     * handle their things and shut down as well.
-     */
-    private static final int SLEEPTIME_LOGOUT = 200;
 
     /**
      * Storage of the properties that are used by the logger settings. This is needed to set up the correct paths to
