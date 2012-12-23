@@ -36,6 +36,7 @@
         <icon href="illarion_download64.png" height="64" width="64" depth="32" size="9478"/>
         <icon href="illarion_download128.png" height="128" width="128" depth="32" size="30789"/>
         <icon href="illarion_download256.png" height="256" width="256" depth="32" size="101436"/>
+        <icon href="illarion_download.ico" kind="shortcut" size="214499"/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>

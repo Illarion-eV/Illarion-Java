@@ -33,6 +33,7 @@
         <icon href="illarion_client64.png" height="64" width="64" depth="32" size="8805"/>
         <icon href="illarion_client128.png" height="128" width="128" depth="32" size="28784"/>
         <icon href="illarion_client256.png" height="256" width="256" depth="32" size="95062"/>
+        <icon href="illarion_client.ico" kind="shortcut" size="232755"/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>

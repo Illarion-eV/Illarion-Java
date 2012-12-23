@@ -32,6 +32,7 @@
         <icon href="illarion_easyquest64.png" height="64" width="64" depth="32" size="5944"/>
         <icon href="illarion_easyquest128.png" height="128" width="128" depth="32" size="16396"/>
         <icon href="illarion_easyquest256.png" height="256" width="256" depth="32" size="44379"/>
+        <icon href="illarion_easyquest.ico" kind="shortcut" size="165056"/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>

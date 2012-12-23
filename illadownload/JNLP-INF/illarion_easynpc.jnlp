@@ -32,6 +32,7 @@
         <icon href="illarion_easynpc64.png" height="64" width="64" depth="32" size="5423"/>
         <icon href="illarion_easynpc128.png" height="128" width="128" depth="32" size="14455"/>
         <icon href="illarion_easynpc256.png" height="256" width="256" depth="32" size="36711"/>
+        <icon href="illarion_easynpc.ico" kind="shortcut" size="69189"/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>
