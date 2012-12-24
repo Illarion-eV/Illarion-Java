@@ -577,6 +577,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             try {
                 gameContainer.setDisplayMode(res.getWidth(), res.getHeight(), fullScreen);
                 gameContainer.setTargetFrameRate(res.getRefreshRate());
+                MapDimensions.getInstance().reportScreenSize(gameContainer.getWidth(), gameContainer.getHeight());
             } catch (SlickException e) {
                 LOGGER.error("Failed to apply graphic mode. New requested mode: " + res.toString());
             }

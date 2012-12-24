@@ -126,7 +126,7 @@ public final class OptionScreenController implements ScreenController {
     public void onEndScreen() {
     }
 
-    private List<String> getResolutionList() {
+    public static List<String> getResolutionList() {
         final GameContainer container = IllaClient.getInstance().getContainer();
 
         DisplayMode[] displayModes;
