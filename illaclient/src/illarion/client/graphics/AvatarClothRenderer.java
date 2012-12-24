@@ -49,8 +49,8 @@ final class AvatarClothRenderer {
         int group = Location.DIR_NORTH;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_TROUSERS;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SHOES;
+        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_COAT;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAIR;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_BEARD;
@@ -73,8 +73,8 @@ final class AvatarClothRenderer {
         group = Location.DIR_EAST;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_TROUSERS;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SHOES;
+        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_COAT;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAIR;
         RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_BEARD;
