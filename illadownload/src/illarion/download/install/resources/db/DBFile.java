@@ -20,10 +20,7 @@ package illarion.download.install.resources.db;
 
 import illarion.common.util.DirectoryManager;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
 
@@ -35,8 +32,7 @@ import java.util.zip.CheckedInputStream;
  * @version 1.01
  * @since 1.01
  */
-public final class DBFile
-        implements Serializable {
+public final class DBFile implements Externalizable {
     /**
      * The current version for the serialization.
      */
@@ -56,6 +52,13 @@ public final class DBFile
      * The date when this file was last changed.
      */
     private long lastChangeDate;
+
+    /**
+     * Constructor for deserialization.
+     */
+    public DBFile() {
+        // nothing
+    }
 
     /**
      * Create a database entry for a new file.
@@ -162,5 +165,32 @@ public final class DBFile
      */
     public boolean hasValidChecksum() {
         return checksum == generateChecksum(file);
+    }
+
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
+        out.writeLong(serialVersionUID);
+        out.writeLong(lastChangeDate);
+        out.writeLong(checksum);
+
+        final String localFileName = file.getAbsolutePath();
+        final String dataDirectory = DirectoryManager.getInstance().getDataDirectory().getAbsolutePath();
+
+        out.writeObject(localFileName.replace(dataDirectory, ""));
+    }
+
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final long version = in.readLong();
+        if (version == 1L) {
+            lastChangeDate = in.readLong();
+            checksum = in.readLong();
+
+            final String path = (String) in.readObject();
+            final String dataDirectory = DirectoryManager.getInstance().getDataDirectory().getAbsolutePath();
+            file = new File(dataDirectory + path);
+        } else {
+            throw new ClassNotFoundException("Invalid file version.");
+        }
     }
 }

@@ -36,18 +36,13 @@ import java.net.URL;
  * This is the basic frame of the GUI that holds all other content.
  *
  * @author Martin Karing
- * @version 1.00
- * @since 1.00
  */
 public final class BaseSWING extends JFrame {
     /**
-     * This is the action listener in general used for cancel buttons. It will
-     * display a confirm message and shutdown the application in case this
-     * message is confirmed.
+     * This is the action listener in general used for cancel buttons. It will display a confirm message and shutdown
+     * the application in case this message is confirmed.
      *
      * @author Martin Karing
-     * @version 1.00
-     * @since 1.00
      */
     private static final class CancelActionListener implements ActionListener {
         /**

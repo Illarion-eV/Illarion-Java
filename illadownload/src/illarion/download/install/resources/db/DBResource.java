@@ -20,8 +20,7 @@ package illarion.download.install.resources.db;
 
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.Serializable;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +33,7 @@ import java.util.List;
  * @version 1.01
  * @since 1.01
  */
-public final class DBResource
-        implements Serializable {
+public final class DBResource implements Externalizable {
     /**
      * The current version for the serialization.
      */
@@ -44,7 +42,7 @@ public final class DBResource
     /**
      * The list of files that were extracted from this database resource.
      */
-    private List<DBFile> files;
+    private final List<DBFile> files;
 
     /**
      * The time when the resource was last modified. This contains the value that is reported by the server upon
@@ -66,7 +64,7 @@ public final class DBResource
      * This constructor is needed for the de-serialization and for nothing else.
      */
     public DBResource() {
-        // nothing to do here
+        files = new ArrayList<DBFile>();
     }
 
     /**
@@ -76,9 +74,9 @@ public final class DBResource
      * @param lastMod the time when the resource was last change, this date has to be reported by the server
      */
     public DBResource(final URL url, final long lastMod) {
+        this();
         sourceURL = url;
         lastModified = lastMod;
-        files = new ArrayList<DBFile>();
     }
 
     /**
@@ -88,9 +86,10 @@ public final class DBResource
      */
     public void addFile(final File file) {
         final DBFile fileEntry = new DBFile(file);
-        if (!files.contains(fileEntry)) {
-            files.add(fileEntry);
+        if (files.contains(fileEntry)) {
+            files.remove(fileEntry);
         }
+        files.add(fileEntry);
     }
 
     /**
@@ -156,5 +155,31 @@ public final class DBResource
      */
     public URL getSource() {
         return sourceURL;
+    }
+
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
+        out.writeLong(serialVersionUID);
+        out.writeLong(lastModified);
+        out.writeObject(sourceURL.toString());
+        out.writeInt(files.size());
+        for (final DBFile file : files) {
+            out.writeObject(file);
+        }
+    }
+
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final long version = in.readLong();
+        if (version == 2L) {
+            lastModified = in.readLong();
+            sourceURL = new URL((String) in.readObject());
+            final int count = in.readInt();
+            for (int i = 0; i < count; i++) {
+                files.add((DBFile) in.readObject());
+            }
+        } else {
+            throw new ClassNotFoundException("Invalid resource version.");
+        }
     }
 }

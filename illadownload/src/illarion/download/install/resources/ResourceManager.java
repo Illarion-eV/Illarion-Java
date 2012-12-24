@@ -253,6 +253,7 @@ public final class ResourceManager {
                 in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(dbFile)));
                 resourceDatabase = (ResourceDatabase) in.readObject();
             } catch (final Exception e) {
+                e.printStackTrace();
                 // file not found, should not happen, but if, it does not matter
             } finally {
                 if (in != null) {

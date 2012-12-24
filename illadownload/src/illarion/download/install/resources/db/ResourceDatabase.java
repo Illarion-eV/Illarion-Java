@@ -18,8 +18,7 @@
  */
 package illarion.download.install.resources.db;
 
-import java.io.File;
-import java.io.Serializable;
+import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +31,7 @@ import java.util.Map;
  * @version 1.01
  * @since 1.01
  */
-public final class ResourceDatabase
-        implements Serializable {
+public final class ResourceDatabase implements Externalizable {
     /**
      * The current version for the serialization.
      */
@@ -104,5 +102,30 @@ public final class ResourceDatabase
      */
     public void clear() {
         resources.clear();
+    }
+
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
+        out.writeLong(serialVersionUID);
+        out.writeInt(resources.size());
+        for (final Map.Entry<String, DBResource> entry : resources.entrySet()) {
+            out.writeObject(entry.getKey());
+            out.writeObject(entry.getValue());
+        }
+    }
+
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final long version = in.readLong();
+        if (version == 2L) {
+            final int count = in.readInt();
+            for (int i = 0; i < count; i++) {
+                final String url = (String) in.readObject();
+                final DBResource resource = (DBResource) in.readObject();
+                resources.put(url, resource);
+            }
+        } else {
+            throw new ClassNotFoundException("Invalid database version.");
+        }
     }
 }
