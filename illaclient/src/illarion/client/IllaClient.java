@@ -201,6 +201,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         gameContainer.setResizable(false);
         gameContainer.setTargetFrameRate(res.getRefreshRate());
         gameContainer.setForceExit(false);
+        if (DEFAULT_SERVER == Servers.realserver) {
+            gameContainer.setShowFPS(false);
+        }
 
         EventBus.subscribe(CFG_FULLSCREEN, this);
         EventBus.subscribe(CFG_RESOLUTION, this);
