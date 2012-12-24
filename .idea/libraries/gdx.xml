@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="gdx">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/gdx" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/gdx" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/gdx" />
+      <root url="file://$PROJECT_DIR$/illacommon/lib/gdx" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/gdx" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/gdx" recursive="false" type="SOURCES" />
+  </library>
+</component>

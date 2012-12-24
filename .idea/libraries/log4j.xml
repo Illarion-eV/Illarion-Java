@@ -5,7 +5,9 @@
       <root url="file://$PROJECT_DIR$/illacommon/lib/log4j" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="intellijad://intellijad" />
+    </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/log4j" recursive="false" />
   </library>
 </component>

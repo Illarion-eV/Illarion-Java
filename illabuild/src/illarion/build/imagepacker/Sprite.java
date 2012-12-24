@@ -198,14 +198,10 @@ public final class Sprite implements TextureElement {
             }
             imageData.flip();
         } else {
-            Format format = decoder.decideTextureFormat(Format.LUMINANCE);
-            imageData =
-                    ByteBuffer.allocateDirect(
-                            format.getNumComponents() * getWidth()
-                                    * getHeight());
+            final Format format = decoder.decideTextureFormat(Format.LUMINANCE);
+            imageData = ByteBuffer.allocateDirect(format.getNumComponents() * getWidth() * getHeight());
             try {
-                decoder.decode(imageData, getWidth() *
-                        format.getNumComponents(), format);
+                decoder.decode(imageData, getWidth() * format.getNumComponents(), format);
             } catch (IOException e) {
                 System.err.println("Failed reading the image data.");
             }
@@ -268,7 +264,7 @@ public final class Sprite implements TextureElement {
         if (decoder == null) {
             return ImagePacker.TYPE_GREY_ALPHA;
         }
-        Format format = decoder.decideTextureFormat(Format.LUMINANCE);
+        final Format format = decoder.decideTextureFormat(Format.LUMINANCE);
         switch (format) {
             case RGBA:
                 return ImagePacker.TYPE_RGBA;
