@@ -20,7 +20,12 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.net.server.events.SkillReceivedEvent;
+import illarion.common.data.Skill;
+import illarion.common.data.Skills;
 import illarion.common.net.NetCommReader;
+import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
@@ -32,6 +37,10 @@ import java.io.IOException;
  */
 @ReplyMessage(replyId = CommandList.MSG_SKILL)
 public final class SkillMsg extends AbstractReply {
+    /**
+     * The logger instance of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(SkillMsg.class);
     /**
      * The current minor skill points of that skill.
      */
@@ -70,7 +79,13 @@ public final class SkillMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        // Gui.getInstance().getSkills().update(group, skill, value, minor);
+        final Skill skill = Skills.getInstance().getSkill(this.skill);
+        if (skill == null) {
+            LOGGER.warn("Unknown skill received! ID: " + Integer.toString(this.skill));
+            return true;
+        }
+
+        EventBus.publish(new SkillReceivedEvent(skill, value, minor));
 
         return true;
     }
