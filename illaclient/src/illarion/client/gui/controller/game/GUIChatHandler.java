@@ -46,7 +46,6 @@ import illarion.client.net.CommandList;
 import illarion.client.net.client.SayCmd;
 import illarion.client.net.server.events.BroadcastInformReceivedEvent;
 import illarion.client.net.server.events.ScriptInformReceivedEvent;
-import illarion.client.net.server.events.ShowBookEvent;
 import illarion.client.net.server.events.TextToInformReceivedEvent;
 import illarion.client.util.ChatHandler;
 import illarion.client.util.Lang;
@@ -55,7 +54,6 @@ import illarion.client.world.events.CharTalkingEvent;
 import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;
 import javolution.text.TextBuilder;
-import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -63,6 +61,7 @@ import org.newdawn.slick.GameContainer;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.regex.Pattern;
 
 /**
  * This class takes care to receive chat input from the GUI and sends it to the server. Also it receives chat from the
@@ -204,6 +203,11 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      * This flag shows of the chat log is dirty and needs to be cleaned up.
      */
     private boolean dirty;
+
+    /**
+     * The pattern used to detect the introduce command.
+     */
+    private final Pattern introducePattern = Pattern.compile("[/#]i", Pattern.CASE_INSENSITIVE);
 
     /**
      * The default constructor.
@@ -360,13 +364,9 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      *
      * @param text the text to send
      */
-    private static void sendText(final String text) {
-        if ("/showTestBook".equals(text)) {
-            EventBus.publish(new ShowBookEvent(1));
-            return;
-        }
-        if ("/showTemplateBook".equals(text)) {
-            EventBus.publish(new ShowBookEvent(2));
+    private void sendText(final String text) {
+        if (introducePattern.matcher(text).find()) {
+            CommandFactory.getInstance().getCommand(CommandList.CMD_INTRODUCE).send();
             return;
         }
         final SayCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_SAY, SayCmd.class);
