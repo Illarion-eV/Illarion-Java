@@ -461,12 +461,13 @@ public final class Char
     /**
      * Check if a cloth item is defined in a specified group.
      *
-     * @param slot the slot where the item shall be checked
-     * @param id   the id of the item that shall be checked
+     * @param avatar the avatar to update
+     * @param slot   the slot where the item shall be checked
+     * @param id     the id of the item that shall be checked
      * @return <code>true</code> in case a item is defined and displayable
      */
     @SuppressWarnings("nls")
-    public boolean hasWearingItem(final int slot, final int id) {
+    public boolean hasWearingItem(final Avatar avatar, final int slot, final int id) {
         if ((slot < 0) || (slot >= AvatarClothManager.GROUP_COUNT)) {
             LOGGER.warn("Wearing item check on invalid slot: " + slot);
             return false;
@@ -1169,9 +1170,13 @@ public final class Char
      * @param avatar the avatar that is supposed to be updated
      */
     private void updatePaperdoll(final Avatar avatar) {
+        if (avatar == null) {
+            return;
+        }
         lightValue = 0;
-        if (hasWearingItem(AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]) ||
-                hasWearingItem(AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND])
+        if (hasWearingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND])
+                || hasWearingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND,
+                wearItems[AvatarClothManager.GROUP_SECOND_HAND])
                 ) {
             applyPaperdollingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
             applyPaperdollingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
