@@ -147,7 +147,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
                 final String skillId = groupId + "#skill" + Integer.toString(skill.getId());
                 final PanelBuilder skillPanel = new PanelBuilder(skillId);
                 skillPanel.childLayoutCenter();
-                skillPanel.width("338px");
+                skillPanel.width(content.getConstraintWidth().toString());
 
                 final LabelBuilder skillName = new LabelBuilder(skillId + "#name");
                 if (Lang.getInstance().isGerman()) {
@@ -156,7 +156,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
                     skillName.label(skill.getNameEnglish());
                 }
                 skillName.font("textFont");
-                skillName.width("*");
+                skillName.width(content.getConstraintWidth().toString());
                 skillName.height("0px");
                 skillName.alignLeft();
                 skillName.textHAlignLeft();
@@ -164,10 +164,11 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
 
                 final LabelBuilder skillValue = new LabelBuilder(skillId + "#value");
                 skillValue.label("0");
-                skillValue.width("0px");
+                skillValue.width(content.getConstraintWidth().toString());
                 skillValue.font("textFont");
                 skillValue.height("0px");
                 skillValue.alignRight();
+                skillValue.textHAlignRight();
                 skillPanel.control(skillValue);
 
                 groupPanel.panel(skillPanel);
@@ -195,18 +196,18 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
             skillPanel.setConstraintHeight(SizeValue.px(0));
         } else {
             skillPanel.getParent().setConstraintHeight(SizeValue.wildcard());
+            skillPanel.getParent().setMarginBottom(SizeValue.px(5));
             skillPanel.getParent().findElementByName("#headline").setConstraintHeight(SizeValue.px(24));
             skillPanel.setConstraintHeight(SizeValue.px(18));
 
             final Element valueLabel = skillPanel.findElementByName("#value");
             final TextRenderer valueTextRenderer = valueLabel.getRenderer(TextRenderer.class);
             valueTextRenderer.setText(Integer.toString(updateData.getValue()));
-            valueLabel.setConstraintWidth(SizeValue.px(valueTextRenderer.getTextWidth()));
             valueLabel.setConstraintHeight(SizeValue.px(18));
 
             final Element nameLabel = skillPanel.findElementByName("#name");
             nameLabel.setConstraintHeight(SizeValue.px(18));
-            nameLabel.setConstraintWidth(SizeValue.px(250));
+            nameLabel.setMarginLeft(SizeValue.px(5));
         }
 
         layoutDirty = true;
