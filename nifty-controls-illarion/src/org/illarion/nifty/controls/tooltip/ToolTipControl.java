@@ -144,7 +144,6 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         final Color titleColor = controlDefinitionAttributes.getAsColor("titleColor");
         if (largeToolTip) {
             title.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
-            System.out.println("Large tooltip!");
         } else {
             final TextRenderer textRenderer = title.getElement().getRenderer(TextRenderer.class);
             textRenderer.setFont(nifty.createFont("textFont"));
