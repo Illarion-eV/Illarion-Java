@@ -158,7 +158,7 @@ public final class AvatarClothManager {
             final Item refItem = ItemFactory.getInstance().getPrototype(itemID);
             refID = refItem.getPaperdollingId();
         }
-        return existingClothes[group].prototypeExists(refID);
+        return (refID != 0) && existingClothes[group].prototypeExists(refID);
     }
 
     /**
