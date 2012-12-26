@@ -414,6 +414,7 @@ public class DialogCraftingControl
         element.setConstraintWidth(widthSize);
     }
 
+    @Override
     public void startProgress(final double seconds) {
         final Element progressBar = getContent().findElementByName("#progress");
         progressBar.getNiftyControl(Progress.class).setProgress(0.f);

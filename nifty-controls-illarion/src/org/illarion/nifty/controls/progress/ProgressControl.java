@@ -68,6 +68,11 @@ public final class ProgressControl extends AbstractController implements Progres
     }
 
     @Override
+    public void layoutCallback() {
+        maxWidth = getElement().findElementByName("#fillArea").getWidth();
+    }
+
+    @Override
     public boolean inputEvent(final NiftyInputEvent inputEvent) {
         return false;
     }
