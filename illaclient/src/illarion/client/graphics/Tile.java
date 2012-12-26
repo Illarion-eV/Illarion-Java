@@ -18,8 +18,11 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.input.ClickOnMapEvent;
 import illarion.client.resources.Resource;
 import illarion.client.resources.TileFactory;
+import illarion.client.world.MapTile;
+import illarion.client.world.World;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
@@ -45,6 +48,7 @@ public class Tile extends AbstractEntity implements Resource {
     private Overlay overlay;
 
     private final boolean variants;
+    private MapTile parentTile;
 
     /**
      * Create tile with animation or variants
@@ -110,8 +114,8 @@ public class Tile extends AbstractEntity implements Resource {
         return id;
     }
 
-    public static Tile create(final int id, final Location loc) {
-        return create(id, loc.getScX(), loc.getScY());
+    public static Tile create(final int id, final Location loc, final MapTile parentTile) {
+        return create(id, loc.getScX(), loc.getScY(), parentTile);
     }
 
     public static int overlayID(final int id) {
@@ -130,7 +134,7 @@ public class Tile extends AbstractEntity implements Resource {
      * @return
      */
     @SuppressWarnings("nls")
-    private static Tile create(int id, final int x, final int y) {
+    private static Tile create(int id, final int x, final int y, final MapTile parentTile) {
         Tile tile;
 
         // split id into overlay and tile
@@ -151,6 +155,8 @@ public class Tile extends AbstractEntity implements Resource {
         if (overlayId > 0) {
             tile.setOverlay(Overlay.create(overlayId, overlayShape));
         }
+
+        tile.parentTile = parentTile;
 
         return tile;
     }
@@ -210,6 +216,7 @@ public class Tile extends AbstractEntity implements Resource {
             overlay.recycle();
             overlay = null;
         }
+        parentTile = null;
         TileFactory.getInstance().recycle(this);
     }
 
@@ -265,6 +272,24 @@ public class Tile extends AbstractEntity implements Resource {
         if (overlay != null) {
             overlay.update(c, delta);
         }
+    }
+
+    @Override
+    public boolean processEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
+        if (!parentTile.isAtPlayerLevel()) {
+            return false;
+        }
+
+        if (event instanceof ClickOnMapEvent) {
+            final ClickOnMapEvent clickEvent = (ClickOnMapEvent) event;
+            if (!isMouseInInteractionRect(clickEvent.getX(), clickEvent.getY())) {
+                return false;
+            }
+
+            World.getPlayer().getMovementHandler().walkTo(parentTile.getLocation());
+            return true;
+        }
+        return false;
     }
 
     /**

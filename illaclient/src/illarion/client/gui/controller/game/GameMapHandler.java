@@ -253,11 +253,16 @@ public final class GameMapHandler
         return true;
     }
 
-    private boolean moveToMouse(final int targetX, final int targetY, final ForwardingInputSystem forwardingControl) {
+    /**
+     * Calling this function causes the character to walk towards the mouse.
+     *
+     * @param targetX    the x coordinate of the mouse
+     * @param targetY    the y coordinate of the mouse
+     * @param fwdControl the input forwarding control
+     */
+    private void moveTowardsMouse(final int targetX, final int targetY, final ForwardingInputSystem fwdControl) {
         World.getPlayer().getMovementHandler().walkTowards(targetX, targetY);
-        forwardingControl.requestExclusiveMouse();
-
-        return true;
+        fwdControl.requestExclusiveMouse();
     }
 
     /**
@@ -288,7 +293,7 @@ public final class GameMapHandler
             return;
         }
 
-        moveToMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
+        moveTowardsMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
     }
 
     /**

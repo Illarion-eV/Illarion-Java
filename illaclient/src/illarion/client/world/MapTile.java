@@ -880,7 +880,7 @@ public final class MapTile
         // get a new tile to display
         if (id >= 0) {
             // create a tile, possibly with variants
-            tile = Tile.create(id, loc);
+            tile = Tile.create(id, loc, this);
 
             tile.addAlphaChangeListener(this);
             tile.setScreenPos(loc, Layers.TILE);
