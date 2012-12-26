@@ -66,7 +66,7 @@
         <jar href="illarion_download.jar" download="eager" main="true" part="illadownload"/>
         <jar href="download_illarion_download.jar" download="eager" main="false" part="illadownload"/>
 
-        <property name="illarion.target" value="test"/>
+        <property name="jnlp.illarion.target" value="test"/>
 
         <package name="illarion.download.*" part="illadownload" recursive="true"/>
     </resources>

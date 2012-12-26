@@ -68,7 +68,7 @@ public final class Installation {
      * @return {@code true} in case the applications published are <b>NOT</b> the development versions
      */
     public static boolean isProduction() {
-        return !"test".equals(System.getProperty("illarion.target"));
+        return !"test".equals(System.getProperty("jnlp.illarion.target"));
     }
 
     /**
@@ -227,7 +227,7 @@ public final class Installation {
      */
     @SuppressWarnings("nls")
     private void selectApplication() {
-        final String sysProp = System.getProperty("illarion.download.launch");
+        final String sysProp = System.getProperty("jnlp.illarion.download.launch");
         if ((sysProp != null) && (sysProp.length() > 2)) {
             if (sysProp.equalsIgnoreCase("client")) {
                 ResourceManager.getInstance().setMainResource(Client.getInstance());

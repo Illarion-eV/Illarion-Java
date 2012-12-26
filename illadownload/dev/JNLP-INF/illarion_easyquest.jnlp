@@ -58,8 +58,8 @@
         <jar href="illarion_download.jar" download="eager" main="true" part="illadownload"/>
         <jar href="easyquest_illarion_download.jar" download="eager" main="false" part="illadownload"/>
 
-        <property name="illarion.target" value="test"/>
-        <property name="illarion.download.launch" value="easyquest"/>
+        <property name="jnlp.illarion.target" value="test"/>
+        <property name="jnlp.illarion.download.launch" value="easyquest"/>
 
         <package name="illarion.download.*" part="illadownload" recursive="true"/>
     </resources>
