@@ -339,7 +339,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
         labelBuilder.invisibleToMouse();
         labelBuilder.valignCenter();
         labelBuilder.alignCenter();
-        labelBuilder.width(labelBuilder.percentage(100));
+        labelBuilder.width(labelBuilder.percentage(75));
         labelBuilder.textHAlign(ElementBuilder.Align.Center);
         labelBuilder.parameter("wrap", "true");
 
