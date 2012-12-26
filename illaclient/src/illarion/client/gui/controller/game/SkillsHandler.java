@@ -30,6 +30,7 @@ import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.SkillReceivedEvent;
 import illarion.client.util.Lang;
 import illarion.common.data.Skill;
@@ -37,6 +38,7 @@ import illarion.common.data.SkillGroup;
 import illarion.common.data.SkillGroups;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.newdawn.slick.GameContainer;
 
 import java.util.Queue;
@@ -242,6 +244,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
         if (layoutDirty) {
             layoutDirty = false;
 
+            updateVisibility();
             skillWindow.getElement().layoutElements();
         }
     }
@@ -270,6 +273,18 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
     @NiftyEventSubscriber(id = "openSkillsBtn")
     public void onSkillWindowButtonClickedEvent(final String topic, final ButtonClickedEvent event) {
         toggleSkillWindow();
+    }
+
+    @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
+    public void onInputEvent(final String topic, final String data) {
+        if ("ToggleCharacterWindow".equals(data)) {
+            updateQueue.add(new Runnable() {
+                @Override
+                public void run() {
+                    toggleSkillWindow();
+                }
+            });
+        }
     }
 
     @NiftyEventSubscriber(id = "characterInformation")

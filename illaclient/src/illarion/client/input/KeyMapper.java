@@ -36,6 +36,7 @@ public final class KeyMapper {
         inputMap.put(Input.KEY_ESCAPE, "CloseGame");
 
         inputMap.put(Input.KEY_I, "ToggleInventory");
+        inputMap.put(Input.KEY_C, "ToggleCharacterWindow");
         inputMap.put(Input.KEY_ENTER, "SelectChat");
 
         // walking commands
