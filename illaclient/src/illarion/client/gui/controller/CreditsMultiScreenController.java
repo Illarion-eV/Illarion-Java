@@ -106,7 +106,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
     }
 
     private void gotoNextScreen() {
-        nifty.gotoScreen("login");
+        nifty.gotoScreen("creditsEnd");
     }
 
     @Override

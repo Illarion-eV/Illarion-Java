@@ -63,4 +63,53 @@
             </panel>
         </layer>
     </screen>
+
+    <screen id="creditsEnd" controller="illarion.client.gui.controller.CreditsEndScreenController"
+            inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
+        <layer childLayout="center">
+            <panel childLayout="center" height="100%" width="100%">
+                <effect>
+                    <onStartScreen name="fade" startDelay="0" length="500" start="#0" end="#F"/>
+                    <onEndScreen name="fade" startDelay="2000" length="500" start="#F" end="#0"/>
+                </effect>
+                <image filename="data/gui/illarion_title.png" imageMode="normal" align="center" valign="center"/>
+                <panel align="center" valign="bottom" childLayout="vertical" height="230px">
+                    <panel childLayout="horizontal">
+                        <panel childLayout="center" height="100px" width="20%">
+                            <image filename="data/gui/logos/lwjgl.png" imageMode="normal" align="center"/>
+                        </panel>
+                        <panel childLayout="center" height="100px" width="20%">
+                            <image filename="data/gui/logos/slick.png" imageMode="normal" align="center"/>
+                        </panel>
+                        <panel childLayout="center" height="100px" width="20%">
+                            <image filename="data/gui/logos/niftygui.png" imageMode="normal" align="center"/>
+                        </panel>
+                        <panel childLayout="center" height="100px" width="20%">
+                            <image filename="data/gui/logos/apache.png" imageMode="normal" align="center"/>
+                        </panel>
+                        <panel childLayout="center" height="100px" width="20%">
+                            <image filename="data/gui/logos/cacert.png" imageMode="normal" align="center"/>
+                        </panel>
+                    </panel>
+                    <panel childLayout="horizontal">
+                        <panel childLayout="center" height="100px" width="20%">
+                            <image filename="data/gui/logos/boost.png" imageMode="normal" align="center"/>
+                        </panel>
+                        <panel childLayout="center" height="100px" width="20%">
+                            <image filename="data/gui/logos/lua.png" imageMode="normal" align="center"/>
+                        </panel>
+                        <panel childLayout="center" height="100px" width="20%">
+                            <image filename="data/gui/logos/luabind.png" imageMode="normal" align="center"/>
+                        </panel>
+                        <panel childLayout="center" height="100px" width="20%">
+                            <image filename="data/gui/logos/pgsql.png" imageMode="normal" align="center"/>
+                        </panel>
+                        <panel childLayout="center" height="100px" width="20%">
+                            <image filename="data/gui/logos/libpqxx.png" imageMode="normal" align="center"/>
+                        </panel>
+                    </panel>
+                </panel>
+            </panel>
+        </layer>
+    </screen>
 </nifty>
