@@ -142,7 +142,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      * @return {@code true} in case both instances represent the same value
      */
     public boolean equals(final CharacterId obj) {
-        return value == obj.value;
+        return (obj != null) && (value == obj.value);
     }
 
     /**

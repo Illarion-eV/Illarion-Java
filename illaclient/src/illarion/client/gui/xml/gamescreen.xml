@@ -56,6 +56,8 @@
 
                 <panel childLayout="vertical" width="*" valign="bottom" marginLeft="5px">
                     <panel align="right" marginBottom="3px" childLayout="horizontal">
+                        <control name="button" id="openSkillsBtn" style="nifty-button-skills" valign="bottom"
+                                 focusable="false" marginRight="10px"/>
                         <control name="button" id="openInventoryBtn" style="nifty-button-inventory" valign="bottom"
                                  focusable="false"/>
                     </panel>
@@ -141,6 +143,13 @@
                         <control name="button" label="${gamescreen-bundle.next}" id="#buttonNext" margin="5px,10px"/>
                     </panel>
                 </panel>
+            </control>
+            <control id="characterInformation" name="window" style="nifty-window" visible="false" hideOnClose="true"
+                     title="${gamescreen-bundle.character}" width="410px" height="550px">
+                <control name="scrollPanel" id="#scrollArea" childLayout="vertical" autoScroll="off" stepSizeY="20"
+                         height="*" style="nifty-scrollpanel" width="368px" horizontal="false">
+                    <panel id="#textContent" childLayout="vertical" width="338px"/>
+                </control>
             </control>
         </layer>
         <layer id="tooltipLayer" childLayout="absolute" visibleToMouse="false"/>
