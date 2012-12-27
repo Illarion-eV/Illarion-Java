@@ -147,6 +147,7 @@ public final class Credits {
         CreditsPerson.create("Leomar", qualityAssurance);
         CreditsPerson.create("Victor", "Vigalf", "Becker", qualityAssurance);
         CreditsPerson.create("Cindy", "Elynah", "Ludwig", qualityAssurance);
+        CreditsPerson.create("", "Mesha", "", maps);
         CreditsPerson.create("Jan", "Alatar", "Falke", specialThanks);
         CreditsPerson.create("Aragon ben Galwan", specialThanks);
         CreditsPerson.create("void256", specialThanks);
