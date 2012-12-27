@@ -282,6 +282,9 @@ public class Tile extends AbstractEntity implements Resource {
 
         if (event instanceof ClickOnMapEvent) {
             final ClickOnMapEvent clickEvent = (ClickOnMapEvent) event;
+            if (clickEvent.getKey() != 0) {
+                return false;
+            }
             if (!isMouseInInteractionRect(clickEvent.getX(), clickEvent.getY())) {
                 return false;
             }
