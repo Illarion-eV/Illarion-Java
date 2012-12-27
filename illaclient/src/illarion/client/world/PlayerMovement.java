@@ -32,6 +32,7 @@ import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
+import org.lwjgl.input.Keyboard;
 
 /**
  * The player movement class takes and handles all move requests and orders that are needed to move the player
@@ -545,7 +546,9 @@ public final class PlayerMovement
         final float relXOffset = (float) xOffset / (float) distance;
         final float relYOffset = (float) yOffset / (float) distance;
 
-        if (distance > 200) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+            walkTowardsMode = MOVE_MODE_NONE;
+        } else if (distance > 200) {
             walkTowardsMode = MOVE_MODE_RUN;
         } else if (distance < 30) {
             walkTowardsMode = MOVE_MODE_NONE;
