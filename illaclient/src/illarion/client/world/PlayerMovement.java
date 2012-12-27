@@ -609,23 +609,29 @@ public final class PlayerMovement
 
     @Override
     public void onEvent(final String topic, final String data) {
+        final int moveMode;
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            moveMode = MOVE_MODE_RUN;
+        } else {
+            moveMode = MOVE_MODE_WALK;
+        }
         if (InputReceiver.EB_TOPIC.equals(topic)) {
             if ("WalkNorth".equals(data)) {
-                requestMove(Location.DIR_NORTH, MOVE_MODE_WALK);
+                requestMove(Location.DIR_NORTH, moveMode);
             } else if ("WalkNorthEast".equals(data)) {
-                requestMove(Location.DIR_NORTHEAST, MOVE_MODE_WALK);
+                requestMove(Location.DIR_NORTHEAST, moveMode);
             } else if ("WalkEast".equals(data)) {
-                requestMove(Location.DIR_EAST, MOVE_MODE_WALK);
+                requestMove(Location.DIR_EAST, moveMode);
             } else if ("WalkSouthEast".equals(data)) {
-                requestMove(Location.DIR_SOUTHEAST, MOVE_MODE_WALK);
+                requestMove(Location.DIR_SOUTHEAST, moveMode);
             } else if ("WalkSouth".equals(data)) {
-                requestMove(Location.DIR_SOUTH, MOVE_MODE_WALK);
+                requestMove(Location.DIR_SOUTH, moveMode);
             } else if ("WalkSouthWest".equals(data)) {
-                requestMove(Location.DIR_SOUTHWEST, MOVE_MODE_WALK);
+                requestMove(Location.DIR_SOUTHWEST, moveMode);
             } else if ("WalkWest".equals(data)) {
-                requestMove(Location.DIR_WEST, MOVE_MODE_WALK);
+                requestMove(Location.DIR_WEST, moveMode);
             } else if ("WalkNorthWest".equals(data)) {
-                requestMove(Location.DIR_NORTHWEST, MOVE_MODE_WALK);
+                requestMove(Location.DIR_NORTHWEST, moveMode);
             }
         }
     }
