@@ -72,8 +72,6 @@ import java.util.regex.Pattern;
 public final class GUIChatHandler implements KeyInputHandler, ScreenController, UpdatableHandler {
     /**
      * This utility class is used to store texts that get shown in the chat log.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private class ChatBoxEntry implements Runnable {
         /**
@@ -128,9 +126,9 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             if (talkingEvent.getMode() == ChatHandler.SpeechMode.emote) {
                 final Char talkingChar = talkingEvent.getCharacter();
                 if (talkingChar == null) {
-                    message = Lang.getMsg("chat.someone") + " " + talkingEvent.getText();
+                    message = Lang.getMsg("chat.someone") + ' ' + talkingEvent.getText();
                 } else {
-                    message = talkingChar.getName() + " " + talkingEvent.getText();
+                    message = talkingChar.getName() + ' ' + talkingEvent.getText();
                 }
             } else {
                 message = talkingEvent.getText();
@@ -138,6 +136,11 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             addMessageBubble(talkingEvent.getCharacter(), message, getColor());
         }
     }
+
+    /**
+     * This pattern is used to clean the text before its send to the server.
+     */
+    private static final Pattern REPEATED_SPACE_PATTERN = Pattern.compile("\\s+");
 
     /**
      * The default color of text entries.
@@ -224,7 +227,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             textBuilder.append(": ");
             textBuilder.append(data.getMessage());
 
-            messageQueue.offer(new GUIChatHandler.ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
+            messageQueue.offer(new ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
         } finally {
             TextBuilder.recycle(textBuilder);
         }
@@ -274,7 +277,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             textBuilder.append(": ");
             textBuilder.append(data.getMessage());
 
-            messageQueue.offer(new GUIChatHandler.ChatBoxEntry(textBuilder.toString(), usedColor));
+            messageQueue.offer(new ChatBoxEntry(textBuilder.toString(), usedColor));
         } finally {
             TextBuilder.recycle(textBuilder);
         }
@@ -288,7 +291,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             textBuilder.append(": ");
             textBuilder.append(data.getMessage());
 
-            messageQueue.offer(new GUIChatHandler.ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
+            messageQueue.offer(new ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
         } finally {
             TextBuilder.recycle(textBuilder);
         }
@@ -369,8 +372,14 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             CommandFactory.getInstance().getCommand(CommandList.CMD_INTRODUCE).send();
             return;
         }
+
+        final String cleanText = REPEATED_SPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
+        if (cleanText.isEmpty()) {
+            return;
+        }
+
         final SayCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_SAY, SayCmd.class);
-        cmd.setText(text);
+        cmd.setText(cleanText);
         cmd.send();
     }
 
