@@ -322,6 +322,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
         final PanelBuilder panelBuilder = new PanelBuilder();
         panelBuilder.childLayoutHorizontal();
         panelBuilder.width(panelBuilder.percentage(75));
+        panelBuilder.alignCenter();
 
         final LabelBuilder labelBuilder = new LabelBuilder();
         panelBuilder.control(labelBuilder);
@@ -341,7 +342,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
         labelBuilder.valignCenter();
         labelBuilder.alignCenter();
         labelBuilder.width(labelBuilder.percentage(100));
-        labelBuilder.textHAlign(ElementBuilder.Align.Center);
+        labelBuilder.textHAlignCenter();
         labelBuilder.parameter("wrap", "true");
 
         final EffectBuilder moveEffectBuilder = new EffectBuilder("move");
