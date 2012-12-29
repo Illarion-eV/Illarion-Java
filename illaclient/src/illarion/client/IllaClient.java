@@ -124,7 +124,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * Stores the debug level of the client.
      */
-    private int debugLevel = (1 << Debug.protocol.ordinal());
+    private int debugLevel = 0;
 
     /**
      * The class loader of the this class. It is used to get the resource streams that contain the resource data of the
