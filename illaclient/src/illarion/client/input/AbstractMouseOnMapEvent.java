@@ -52,6 +52,17 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
     }
 
     /**
+     * The copy constructor.
+     *
+     * @param org the original object to copy
+     */
+    protected AbstractMouseOnMapEvent(final AbstractMouseOnMapEvent org) {
+        super(org);
+        key = org.key;
+        forwardingControl = org.forwardingControl;
+    }
+
+    /**
      * Get the key that was clicked on the mouse.
      *
      * @return the key that was clicked

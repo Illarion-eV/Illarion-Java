@@ -407,9 +407,10 @@ public final class MapDisplayManager
     private void publishEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
         for (int i = display.size() - 1; i >= 0; i--) {
             if (display.get(i).processEvent(c, delta, event)) {
-                break;
+                return;
             }
         }
+        event.eventNotHandled();
     }
 
     /**

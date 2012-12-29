@@ -27,7 +27,6 @@ import de.lessvoid.nifty.input.NiftyMouseInputEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.Item;
@@ -202,9 +201,7 @@ public final class GameMapHandler
         }
     }
 
-    public boolean handleDragOnMap(final int oldx, final int oldy, final int newx, final int newy,
-                                   final ForwardingInputSystem forwardingControl) {
-        final MapTile mapTile = World.getMap().getInteractive().getTileOnScreenLoc(oldx, oldy);
+    public boolean handleDragOnMap(final PrimaryKeyMapDrag event, final MapTile mapTile) {
         if (mapTile == null) {
             return false;
         }
@@ -226,8 +223,8 @@ public final class GameMapHandler
             draggedGraphic.resetLayout();
             draggedGraphic.setConstraintWidth(SizeValue.px(width));
             draggedGraphic.setConstraintHeight(SizeValue.px(height));
-            draggedGraphic.setConstraintX(SizeValue.px(oldx - (width / 2)));
-            draggedGraphic.setConstraintY(SizeValue.px(oldy - (height / 2)));
+            draggedGraphic.setConstraintX(SizeValue.px(event.getOldX() - (width / 2)));
+            draggedGraphic.setConstraintY(SizeValue.px(event.getOldY() - (height / 2)));
             draggedGraphic.setVisible(true);
             draggedGraphic.reactivate();
 
@@ -238,13 +235,13 @@ public final class GameMapHandler
             imgRender.setImage(new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem)));
 
             gamePanel.layoutElements();
-            forwardingControl.releaseExclusiveMouse();
+            event.getForwardingControl().releaseExclusiveMouse();
 
-            mouseEvent.initialize(oldx, oldy, 0, true, false, false);
+            mouseEvent.initialize(event.getOldX(), event.getOldY(), 0, true, false, false);
             mouseEvent.setButton0InitialDown(true);
             activeScreen.mouseEvent(mouseEvent);
 
-            mouseEvent.initialize(newx, newy, 0, true, false, false);
+            mouseEvent.initialize(event.getNewX(), event.getNewY(), 0, true, false, false);
             activeScreen.mouseEvent(mouseEvent);
         }
 
@@ -256,13 +253,11 @@ public final class GameMapHandler
     /**
      * Calling this function causes the character to walk towards the mouse.
      *
-     * @param targetX    the x coordinate of the mouse
-     * @param targetY    the y coordinate of the mouse
-     * @param fwdControl the input forwarding control
+     * @param event the event that contains the data for the move
      */
-    private void moveTowardsMouse(final int targetX, final int targetY, final ForwardingInputSystem fwdControl) {
-        World.getPlayer().getMovementHandler().walkTowards(targetX, targetY);
-        fwdControl.requestExclusiveMouse();
+    private void moveTowardsMouse(final DragOnMapEvent event) {
+        World.getPlayer().getMovementHandler().walkTowards(event.getNewX(), event.getNewY());
+        event.getForwardingControl().requestExclusiveMouse();
     }
 
     /**
@@ -287,13 +282,24 @@ public final class GameMapHandler
      * @param data the event data
      */
     public void handlePrimaryKeyDrag(final DragOnMapEvent data) {
-        if (!World.getPlayer().getMovementHandler().isMouseMovementActive() &&
-                handleDragOnMap(data.getOldX(), data.getOldY(), data.getNewX(), data.getNewY(),
-                        data.getForwardingControl())) {
+        if (!World.getPlayer().getMovementHandler().isMouseMovementActive()) {
+            final PrimaryKeyMapDrag newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
+                @Override
+                public void startDraggingItemFromTile(final PrimaryKeyMapDrag event, final MapTile tile) {
+                    handleDragOnMap(event, tile);
+                }
+
+                @Override
+                public void notHandled(final PrimaryKeyMapDrag event) {
+                    moveTowardsMouse(event);
+                }
+            });
+            World.getMapDisplay().publishInteractionEvent(newEvent);
             return;
         }
 
-        moveTowardsMouse(data.getNewX(), data.getNewY(), data.getForwardingControl());
+
+        moveTowardsMouse(data);
     }
 
     /**

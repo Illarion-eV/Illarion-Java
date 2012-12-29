@@ -21,6 +21,7 @@ package illarion.client.graphics;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.input.PointOnMapEvent;
+import illarion.client.input.PrimaryKeyMapDrag;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.Resource;
 import illarion.client.util.LookAtTracker;
@@ -397,6 +398,17 @@ public final class Item extends AbstractEntity implements Resource {
             parentTile.getInteractive().use();
             return true;
         }
+
+        if (event instanceof PrimaryKeyMapDrag) {
+            final PrimaryKeyMapDrag primKeyDragEvent = (PrimaryKeyMapDrag) event;
+            if (!isMouseInInteractionRect(primKeyDragEvent.getOldX(), primKeyDragEvent.getOldY())) {
+                return false;
+            }
+
+            primKeyDragEvent.startDraggingItemFromTile(parentTile);
+            return true;
+        }
+
         return false;
     }
 

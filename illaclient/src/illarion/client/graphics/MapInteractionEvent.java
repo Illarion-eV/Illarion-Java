@@ -24,4 +24,8 @@ package illarion.client.graphics;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface MapInteractionEvent {
+    /**
+     * This function is called in case the event was not handled by any object in the display list.
+     */
+    void eventNotHandled();
 }

@@ -42,9 +42,19 @@ public abstract class AbstractMouseLocationEvent implements MapInteractionEvent 
      * @param x the x coordinate of the click
      * @param y the y coordinate of the click
      */
-    public AbstractMouseLocationEvent(final int x, final int y) {
+    protected AbstractMouseLocationEvent(final int x, final int y) {
         this.x = x;
         this.y = y;
+    }
+
+    /**
+     * The copy constructor.
+     *
+     * @param org the original object that is copied
+     */
+    protected AbstractMouseLocationEvent(final AbstractMouseLocationEvent org) {
+        x = org.x;
+        y = org.y;
     }
 
     /**
@@ -63,5 +73,10 @@ public abstract class AbstractMouseLocationEvent implements MapInteractionEvent 
      */
     public int getY() {
         return y;
+    }
+
+    @Override
+    public void eventNotHandled() {
+        // do nothing by default
     }
 }

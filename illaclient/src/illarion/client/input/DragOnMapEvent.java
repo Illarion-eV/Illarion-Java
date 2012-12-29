@@ -25,7 +25,7 @@ import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DragOnMapEvent extends AbstractMouseOnMapEvent {
+public class DragOnMapEvent extends AbstractMouseOnMapEvent {
     /**
      * The X coordinate on the screen where the dragging operation started.
      */
@@ -51,6 +51,12 @@ public final class DragOnMapEvent extends AbstractMouseOnMapEvent {
         super(pressedKey, stopX, stopY, inputForwardingControl);
         oldX = startX;
         oldY = startY;
+    }
+
+    public DragOnMapEvent(final DragOnMapEvent org) {
+        super(org);
+        oldX = org.oldX;
+        oldY = org.oldY;
     }
 
     /**
