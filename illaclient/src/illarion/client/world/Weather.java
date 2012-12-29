@@ -395,10 +395,10 @@ public final class Weather {
 
 
     /**
-     * Calculate the current ambient light, depending on the time of day, the
-     * environment (inside, outside) and the current weather.
+     * Calculate the current ambient light, depending on the time of day, the environment (inside,
+     * outside) and the current weather.
      */
-    public void calculateLight() {
+    private void calculateLight() {
         // if we are underground it is simply very dark
         if (World.getPlayer().getBaseLevel() < 0) {
             // average brightness underground
@@ -449,7 +449,11 @@ public final class Weather {
      * @param delta the time since the last call of this function
      */
     private void changeWeather(final int delta) {
+        final Color oldColor = new Color(ambientTargetColor);
         calculateLight();
+        if (!oldColor.equals(ambientTargetColor)) {
+            System.out.println("Ambient color changed to: " + ambientTargetColor.toString());
+        }
         // scheduling lightning
         if (lightning > 0) {
             if (nextThunder >= 0) {

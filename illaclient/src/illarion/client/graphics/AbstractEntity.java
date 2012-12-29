@@ -648,7 +648,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         alpha = 255;
         alphaTarget = 255;
         currentFrame = stillFrame;
-        localLight = sprite.getDefaultLight();
+        setLight(sprite.getDefaultLight());
         overWriteBaseColor = null;
         alphaListener = null;
     }
@@ -710,13 +710,15 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     }
 
     /**
-     * Set the current light of this entity. This sets the instance that is set
-     * as parameter directly as local light color. So any changes applied to the
-     * instance that was transferred will effect the light of this entity.
+     * Set the current light of this entity. This sets the instance that is set as parameter directly as local light
+     * color. So any changes applied to the instance that was transferred will effect the light of this entity.
      *
      * @param light the new light that shall be used by this entity
      */
     public void setLight(final Color light) {
+        if (light == null) {
+            throw new IllegalArgumentException("light must not be null");
+        }
         localLight = light;
     }
 

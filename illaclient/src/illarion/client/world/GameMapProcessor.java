@@ -422,7 +422,7 @@ public class GameMapProcessor extends Thread implements
 
         for (int i = 0; i < 2; ++i) {
             currZ++;
-            if (isInside || (parent.isMapAt(currX, currY, currZ))) {
+            if (isInside || parent.isMapAt(currX, currY, currZ)) {
                 if (!insideStates[i]) {
                     insideStates[i] = true;
                     synchronized (unchecked) {

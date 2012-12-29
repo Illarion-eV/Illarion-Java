@@ -88,7 +88,7 @@ public final class MapTile
     /**
      * rendered light value on this tile.
      */
-    private transient final Color light = new Color(0);
+    private final Color light = new Color(0);
 
     /**
      * Light Source that is on the tile.
