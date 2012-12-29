@@ -20,8 +20,10 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import org.bushe.swing.event.EventBus;
 
 import java.io.IOException;
 
@@ -60,6 +62,8 @@ public final class MapCompleteMsg extends AbstractReply {
         World.getLights().refresh();
         World.getMap().checkInside();
         World.getMap().getMinimap().performFullUpdate();
+
+        EventBus.publish(new LoginFinishedEvent());
         return true;
     }
 

@@ -57,7 +57,12 @@
                 <panel childLayout="vertical" width="*" valign="bottom" marginLeft="5px">
                     <panel align="right" marginBottom="3px" childLayout="horizontal">
                         <control name="button" id="openSkillsBtn" style="nifty-button-skills" valign="bottom"
-                                 focusable="false" marginRight="10px"/>
+                                 focusable="false" marginRight="10px">
+                            <effect>
+                                <onCustom name="imageOverlayPulsate" customKey="pulse" startDelay="0" length="10000"
+                                          filename="data/gui/button/skills_highlight.png" post="true"/>
+                            </effect>
+                        </control>
                         <control name="button" id="openInventoryBtn" style="nifty-button-inventory" valign="bottom"
                                  focusable="false"/>
                     </panel>

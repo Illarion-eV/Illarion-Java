@@ -24,6 +24,7 @@ import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.Window;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
+import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.ElementShowEvent;
 import de.lessvoid.nifty.elements.render.TextRenderer;
@@ -31,11 +32,14 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.input.InputReceiver;
+import illarion.client.net.server.events.LoginFinishedEvent;
+import illarion.client.net.server.events.ScriptInformReceivedEvent;
 import illarion.client.net.server.events.SkillReceivedEvent;
 import illarion.client.util.Lang;
 import illarion.common.data.Skill;
 import illarion.common.data.SkillGroup;
 import illarion.common.data.SkillGroups;
+import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -69,6 +73,11 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
      * The Queue of updates that need to be executed for the GUI..
      */
     private final Queue<Runnable> updateQueue;
+
+    /**
+     * This flag is set {@code true} once the login to the server is done.
+     */
+    private boolean loginDone;
 
     /**
      * The default constructor.
@@ -212,6 +221,15 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
             nameLabel.setMarginLeft(SizeValue.px(5));
         }
 
+        if (loginDone) {
+            screen.findElementByName("openSkillsBtn").startEffect(EffectEventId.onCustom, null, "pulse");
+            if (Lang.getInstance().isGerman()) {
+                EventBus.publish(new ScriptInformReceivedEvent(101, updateData.getSkill().getNameGerman() + " + 1"));
+            } else {
+                EventBus.publish(new ScriptInformReceivedEvent(101, updateData.getSkill().getNameEnglish() + " + 1"));
+            }
+        }
+
         layoutDirty = true;
     }
 
@@ -262,6 +280,16 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
                 updateSkill(data);
             }
         });
+    }
+
+    /**
+     * This event handler waits for the login done event.
+     *
+     * @param data the event data
+     */
+    @EventSubscriber
+    public void onLoginDoneReceived(final LoginFinishedEvent data) {
+        loginDone = true;
     }
 
     /**
