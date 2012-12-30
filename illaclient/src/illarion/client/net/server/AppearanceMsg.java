@@ -86,6 +86,11 @@ public final class AppearanceMsg extends AbstractReply {
     private int appearance;
 
     /**
+     * The name of the character.
+     */
+    private String name;
+
+    /**
      * The current attack state of the character. Possible values are
      * {@link #STATE_PEACEFUL}, {@link #STATE_MELEE}, {@link #STATE_DISTANCE},
      * and {@link #STATE_MAGIC}.
@@ -176,6 +181,7 @@ public final class AppearanceMsg extends AbstractReply {
     @Override
     public void decode(final NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
+        name = reader.readString();
 
         final int race = reader.readUShort();
         final boolean male = reader.readUByte() == 0;
