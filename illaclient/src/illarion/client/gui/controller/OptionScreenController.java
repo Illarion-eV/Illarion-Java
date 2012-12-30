@@ -28,8 +28,6 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 import illarion.client.graphics.DisplayModeSorter;
-import illarion.client.world.People;
-import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.graphics.GraphicResolution;
 import org.lwjgl.LWJGLException;
@@ -46,9 +44,9 @@ public final class OptionScreenController implements ScreenController {
     private Nifty nifty;
     private Screen screen;
 
-    private DropDown<String> charNameLength;
-    private CheckBox showCharId;
-    private DropDown<String> sendCrashReports;
+    //private DropDown<String> charNameLength;
+    //private CheckBox showCharId;
+    //private DropDown<String> sendCrashReports;
     private DropDown<String> resolutions;
     private CheckBox fullscreen;
 
@@ -62,16 +60,16 @@ public final class OptionScreenController implements ScreenController {
         this.nifty = nifty;
         this.screen = screen;
 
-        charNameLength = screen.findNiftyControl("charNameLength", DropDown.class);
-        charNameLength.addItem("${options-bundle.charNameDisplay.short}");
-        charNameLength.addItem("${options-bundle.charNameDisplay.long}");
+        //charNameLength = screen.findNiftyControl("charNameLength", DropDown.class);
+        //charNameLength.addItem("${options-bundle.charNameDisplay.short}");
+        //charNameLength.addItem("${options-bundle.charNameDisplay.long}");
 
-        showCharId = screen.findNiftyControl("showCharId", CheckBox.class);
+        //showCharId = screen.findNiftyControl("showCharId", CheckBox.class);
 
-        sendCrashReports = screen.findNiftyControl("sendCrashReports", DropDown.class);
-        sendCrashReports.addItem("${options-bundle.report.ask}");
-        sendCrashReports.addItem("${options-bundle.report.always}");
-        sendCrashReports.addItem("${options-bundle.report.never}");
+        //sendCrashReports = screen.findNiftyControl("sendCrashReports", DropDown.class);
+        //sendCrashReports.addItem("${options-bundle.report.ask}");
+        //sendCrashReports.addItem("${options-bundle.report.always}");
+        //sendCrashReports.addItem("${options-bundle.report.never}");
 
         resolutions = screen.findNiftyControl("resolutions", DropDown.class);
         resolutions.addAllItems(getResolutionList());
@@ -86,9 +84,9 @@ public final class OptionScreenController implements ScreenController {
 
     @Override
     public void onStartScreen() {
-        charNameLength.selectItemByIndex(IllaClient.getCfg().getInteger(People.CFG_NAMEMODE_KEY) - 1);
-        showCharId.setChecked(IllaClient.getCfg().getBoolean(People.CFG_SHOWID_KEY));
-        sendCrashReports.selectItemByIndex(IllaClient.getCfg().getInteger(CrashReporter.CFG_KEY));
+        //charNameLength.selectItemByIndex(IllaClient.getCfg().getInteger(People.CFG_NAMEMODE_KEY) - 1);
+        //showCharId.setChecked(IllaClient.getCfg().getBoolean(People.CFG_SHOWID_KEY));
+        //sendCrashReports.selectItemByIndex(IllaClient.getCfg().getInteger(CrashReporter.CFG_KEY));
         resolutions.selectItem(IllaClient.getCfg().getString(IllaClient.CFG_RESOLUTION));
         fullscreen.setChecked(IllaClient.getCfg().getBoolean(IllaClient.CFG_FULLSCREEN));
 
@@ -103,9 +101,9 @@ public final class OptionScreenController implements ScreenController {
         nifty.gotoScreen("login");
         final Config configSystem = IllaClient.getCfg();
 
-        configSystem.set(People.CFG_NAMEMODE_KEY, charNameLength.getSelectedIndex() + 1);
-        configSystem.set(People.CFG_SHOWID_KEY, showCharId.isChecked());
-        configSystem.set(CrashReporter.CFG_KEY, sendCrashReports.getSelectedIndex());
+        //configSystem.set(People.CFG_NAMEMODE_KEY, charNameLength.getSelectedIndex() + 1);
+        //configSystem.set(People.CFG_SHOWID_KEY, showCharId.isChecked());
+        //configSystem.set(CrashReporter.CFG_KEY, sendCrashReports.getSelectedIndex());
         configSystem.set(IllaClient.CFG_RESOLUTION, resolutions.getSelection());
         configSystem.set(IllaClient.CFG_FULLSCREEN, fullscreen.isChecked());
 

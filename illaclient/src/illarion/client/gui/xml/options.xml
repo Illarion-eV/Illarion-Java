@@ -35,6 +35,7 @@
             <panel height="300px" width="500px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" visibleToMouse="true">
                 <control id="tabRoot" name="tabGroup" width="100%" height="100%">
+                    <!--
                     <control id="#generalTab" caption="General" name="tab" childLayout="vertical">
                         <panel width="100%" childLayout="horizontal">
                             <control name="label" text="${options-bundle.charNameDisplay}"/>
@@ -52,6 +53,7 @@
                             <control name="dropDown" id="sendCrashReports" width="220px"/>
                         </panel>
                     </control>
+                    -->
                     <control id="#graphicsTab" caption="Graphics" name="tab" childLayout="vertical">
                         <panel width="100%" childLayout="horizontal">
                             <control name="label" text="${options-bundle.resolution}"/>
