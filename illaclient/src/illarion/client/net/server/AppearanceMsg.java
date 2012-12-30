@@ -240,6 +240,7 @@ public final class AppearanceMsg extends AbstractReply {
         }
 
         ch.setScale(size / SCALE_MOD);
+        ch.setName(name);
         ch.setAppearance(appearance);
         ch.resetLight();
         ch.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);

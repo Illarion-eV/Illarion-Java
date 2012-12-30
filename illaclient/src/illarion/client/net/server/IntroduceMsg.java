@@ -20,6 +20,7 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
@@ -68,7 +69,10 @@ public final class IntroduceMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        World.getPeople().introduce(charId, text);
+        final Char chara = World.getPeople().getCharacter(charId);
+        if (chara != null) {
+            chara.setName(text);
+        }
         return true;
     }
 

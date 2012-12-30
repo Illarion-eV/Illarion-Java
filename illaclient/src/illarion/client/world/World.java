@@ -54,9 +54,6 @@ public final class World {
             if (INSTANCE.player != null) {
                 INSTANCE.player.shutdown();
             }
-            if (INSTANCE.people != null) {
-                INSTANCE.people.saveNames();
-            }
             if (INSTANCE.map != null) {
                 INSTANCE.map.getMinimap().saveMap();
             }

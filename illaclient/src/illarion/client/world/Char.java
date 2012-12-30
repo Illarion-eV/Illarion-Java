@@ -30,7 +30,6 @@ import illarion.client.resources.ItemFactory;
 import illarion.client.util.Lang;
 import illarion.client.world.characters.CharacterAttribute;
 import illarion.client.world.events.CharMoveEvent;
-import illarion.client.world.events.CharNameEvent;
 import illarion.client.world.events.CharVisibilityEvent;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
@@ -708,7 +707,6 @@ public final class Char
     public void setAppearance(final int newAppearance) {
         appearance = newAppearance;
         resetAnimation();
-        World.getPeople().updateName(this);
     }
 
     /**
@@ -784,59 +782,11 @@ public final class Char
      */
     @SuppressWarnings("nls")
     public void setName(final String newName) {
-        // substitute missing name with description
-        if (newName == null) {
-            if ((scale > SCALE_MIN) && (avatar != null)) {
-                final StringBuilder result = new StringBuilder();
-                boolean standard = false;
-
-                // build scale qualifier
-                if (scale > SCALE_TALL) {
-                    result.append(Lang.getMsg("char.size.tall"));
-                } else if (scale < SCALE_TINY) {
-                    result.append(Lang.getMsg("char.size.tiny"));
-                } else if (scale < SCALE_SMALL) {
-                    result.append(Lang.getMsg("char.size.short"));
-                } else {
-                    standard = true;
-                }
-
-                // paste description
-                final String text = avatar.getDescription();
-                // no qualifier, remove ending if present
-                if (text.isEmpty()) {
-                    result.setLength(0);
-                } else if (standard) {
-                    final int pos = text.indexOf(' ');
-                    if ((pos == 1) || (pos == 2)) {
-                        result.append(text.substring(pos + 1));
-                    } else {
-                        result.append(text);
-                    }
-                } else {
-                    // insert space before description without an ending
-                    if (Character.isUpperCase(text.charAt(0))) {
-                        result.append(" ");
-                    }
-
-                    result.append(text);
-                }
-                name = result.toString();
-            } else {
-                name = Lang.getMsg("chat.someone");
-            }
-        } else {
-            name = newName;
-        }
-
-        // clean up the name
-        name = name.trim();
+        name = newName;
 
         if ((avatar != null) && (charId != null)) {
             avatar.setName(name);
         }
-
-        EventBus.publish(new CharNameEvent(getCharId(), getName()));
     }
 
     /**
@@ -883,7 +833,6 @@ public final class Char
         scale = newScale;
         if (avatar != null) {
             avatar.setScale(newScale);
-            World.getPeople().updateName(this);
         }
     }
 

@@ -535,9 +535,6 @@ public final class Player {
                 RequestAppearanceCmd.class);
         cmd.request(newPlayerId);
         cmd.send();
-
-        World.getPeople().introduce(playerId, name);
-
     }
 
     /**
