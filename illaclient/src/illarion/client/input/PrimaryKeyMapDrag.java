@@ -29,7 +29,7 @@ import illarion.client.world.MapTile;
  */
 public final class PrimaryKeyMapDrag extends DragOnMapEvent {
     public interface PrimaryKeyMapDragCallback {
-        void startDraggingItemFromTile(PrimaryKeyMapDrag event, MapTile tile);
+        boolean startDraggingItemFromTile(PrimaryKeyMapDrag event, MapTile tile);
 
         void notHandled(PrimaryKeyMapDrag event);
     }
@@ -60,8 +60,8 @@ public final class PrimaryKeyMapDrag extends DragOnMapEvent {
         this.callback = callback;
     }
 
-    public void startDraggingItemFromTile(final MapTile tile) {
-        callback.startDraggingItemFromTile(this, tile);
+    public boolean startDraggingItemFromTile(final MapTile tile) {
+        return callback.startDraggingItemFromTile(this, tile);
     }
 
     @Override

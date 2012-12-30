@@ -285,8 +285,8 @@ public final class GameMapHandler
         if (!World.getPlayer().getMovementHandler().isMouseMovementActive()) {
             final PrimaryKeyMapDrag newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
                 @Override
-                public void startDraggingItemFromTile(final PrimaryKeyMapDrag event, final MapTile tile) {
-                    handleDragOnMap(event, tile);
+                public boolean startDraggingItemFromTile(final PrimaryKeyMapDrag event, final MapTile tile) {
+                    return handleDragOnMap(event, tile);
                 }
 
                 @Override

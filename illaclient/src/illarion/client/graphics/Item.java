@@ -405,8 +405,7 @@ public final class Item extends AbstractEntity implements Resource {
                 return false;
             }
 
-            primKeyDragEvent.startDraggingItemFromTile(parentTile);
-            return true;
+            return primKeyDragEvent.startDraggingItemFromTile(parentTile);
         }
 
         return false;
