@@ -106,7 +106,7 @@ public final class WeatherMsg extends AbstractReply {
     public boolean executeUpdate() {
         final Weather weather = World.getWeather();
         weather.setFog(fog);
-        weather.setLightning(lightning);
+        weather.setLightning(0); //TODO: lightning);
         weather.setPrecipitation(precType, precipitation);
         weather.setWind(wind, gusts);
         weather.setCloud(clouds);

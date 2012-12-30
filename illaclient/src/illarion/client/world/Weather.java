@@ -104,12 +104,12 @@ public final class Weather {
     /**
      * Time between a fast row of flashes.
      */
-    private static final int FLASH_WAIT = 4;
+    private static final int FLASH_WAIT = 4 * 1000;
 
     /**
      * Time between two sets of flashes.
      */
-    private static final int FLASH_WAIT_LONG = 6;
+    private static final int FLASH_WAIT_LONG = 6 * 1000;
 
     /**
      * Additional visibility coverage caused by fog.
@@ -217,7 +217,7 @@ public final class Weather {
      * Time until the next thunder, in relation to the {@link #lightning} value.
      * A larger value results in a shorter time.
      */
-    private static final int THUNDER_WAIT_TIME = 20;
+    private static final int THUNDER_WAIT_TIME = 20 * 1000;
 
     /**
      * Brightness at underground areas.
@@ -459,24 +459,18 @@ public final class Weather {
             if (nextThunder >= 0) {
                 if (nextThunder-- <= 0) {
                     // play thunder sound effect
-                    final Sound sound =
-                            SoundFactory.getInstance().getSound(THUNDER_SOUND_ID);
+                    final Sound sound = SoundFactory.getInstance().getSound(THUNDER_SOUND_ID);
                     sound.play();
                     nextThunder = -1;
                 }
             }
 
             if (nextFlash-- <= 0) {
-                showFlash =
-                        FLASH_WAIT_LONG
-                                + rnd.nextInt((lightning / (FLASH_WAIT_LONG - 1)) + 1);
-                nextThunder =
-                        FLASH_WAIT_LONG - (lightning / THUNDER_WAIT_TIME);
+                showFlash = (FLASH_WAIT_LONG / 1000) + rnd.nextInt((lightning / ((FLASH_WAIT_LONG / 1000) - 1)) + 1);
+                nextThunder = FLASH_WAIT_LONG - (lightning / THUNDER_WAIT_TIME);
 
-                nextFlash =
-                        (FLASH_CENTER_VALUE - (lightning / FLASH_WAIT_LONG))
-                                + rnd.nextInt(FLASH_CENTER_VALUE
-                                - (lightning / FLASH_WAIT_LONG));
+                nextFlash = (FLASH_CENTER_VALUE - (lightning / FLASH_WAIT_LONG))
+                        + rnd.nextInt(FLASH_CENTER_VALUE - (lightning / FLASH_WAIT_LONG));
             }
         }
     }
