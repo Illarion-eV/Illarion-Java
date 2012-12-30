@@ -61,14 +61,31 @@ public final class BookTitlePage {
         for (int i = 0; i < children.getLength(); i++) {
             final Node child = children.item(i);
             if ("title".equals(child.getNodeName())) {
-                title = child.getFirstChild().getNodeValue().trim().replaceAll("\\s+", " ");
+                title = getNodeValue(child.getFirstChild()).trim().replaceAll("\\s+", " ");
             } else if ("author".equals(child.getNodeName())) {
-                author = child.getFirstChild().getNodeValue().trim().replaceAll("\\s+", " ");
+                author = getNodeValue(child.getFirstChild()).trim().replaceAll("\\s+", " ");
             }
         }
 
         this.title = title;
         this.author = author;
+    }
+
+    /**
+     * Get the value of the node.
+     *
+     * @param node the node
+     * @return the value of the node or a empty string
+     */
+    private static String getNodeValue(final Node node) {
+        if (node == null) {
+            return "";
+        }
+        final String nodeValue = node.getNodeValue();
+        if (nodeValue == null) {
+            return "";
+        }
+        return nodeValue;
     }
 
     /**

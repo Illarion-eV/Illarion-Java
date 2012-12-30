@@ -54,25 +54,33 @@ public final class BookPage implements Iterable<BookPageEntry> {
         for (int i = 0; i < children.getLength(); i++) {
             final Node child = children.item(i);
             if ("headline".equals(child.getNodeName())) {
-                entries.add(new BookPageEntry(true, child.getFirstChild().getNodeValue()));
+                entries.add(new BookPageEntry(true, getNodeValue(child.getFirstChild())));
             } else if ("paragraph".equals(child.getNodeName())) {
-                entries.add(new BookPageEntry(false, child.getFirstChild().getNodeValue()));
+                entries.add(new BookPageEntry(false, getNodeValue(child.getFirstChild())));
             }
         }
+    }
+
+    /**
+     * Get the value of the node.
+     *
+     * @param node the node
+     * @return the value of the node or a empty string
+     */
+    private static String getNodeValue(final Node node) {
+        if (node == null) {
+            return "";
+        }
+        final String nodeValue = node.getNodeValue();
+        if (nodeValue == null) {
+            return "";
+        }
+        return nodeValue;
     }
 
     @Override
     public Iterator<BookPageEntry> iterator() {
         return entries.iterator();
-    }
-
-    /**
-     * Get the amount of book page entries on this book page.
-     *
-     * @return the amount of book page entries
-     */
-    public int getEntryCount() {
-        return entries.size();
     }
 
     /**
@@ -84,5 +92,14 @@ public final class BookPage implements Iterable<BookPageEntry> {
      */
     public BookPageEntry getEntry(final int index) {
         return entries.get(index);
+    }
+
+    /**
+     * Get the amount of book page entries on this book page.
+     *
+     * @return the amount of book page entries
+     */
+    public int getEntryCount() {
+        return entries.size();
     }
 }
