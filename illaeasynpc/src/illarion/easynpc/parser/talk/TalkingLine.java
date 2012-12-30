@@ -92,7 +92,6 @@ public final class TalkingLine {
         condPar.add(new illarion.easynpc.parser.talk.conditions.Trigger());
 
         consPar.add(new illarion.easynpc.parser.talk.consequences.Inform());
-        consPar.add(new illarion.easynpc.parser.talk.consequences.Answer());
         consPar.add(new illarion.easynpc.parser.talk.consequences.State());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Skill());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Attribute());
@@ -109,6 +108,7 @@ public final class TalkingLine {
         consPar.add(new illarion.easynpc.parser.talk.consequences.Introduce());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Warp());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Gemcraft());
+        consPar.add(new illarion.easynpc.parser.talk.consequences.Answer());
 
         final List<ConditionParser> conditionsList = condPar;
         final List<ConsequenceParser> consequenceList = consPar;
