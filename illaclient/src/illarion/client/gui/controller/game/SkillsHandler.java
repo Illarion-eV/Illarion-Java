@@ -33,13 +33,12 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.LoginFinishedEvent;
-import illarion.client.net.server.events.ScriptInformReceivedEvent;
 import illarion.client.net.server.events.SkillReceivedEvent;
 import illarion.client.util.Lang;
+import illarion.client.world.World;
 import illarion.common.data.Skill;
 import illarion.common.data.SkillGroup;
 import illarion.common.data.SkillGroups;
-import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -203,6 +202,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
         final Element skillPanel = skillWindow.getElement().findElementByName("#skill" +
                 Integer.toString(updateData.getSkill().getId()));
 
+        boolean skillChanged = false;
         if (updateData.getValue() == 0) {
             skillPanel.setConstraintHeight(SizeValue.px(0));
         } else {
@@ -213,7 +213,10 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
 
             final Element valueLabel = skillPanel.findElementByName("#value");
             final TextRenderer valueTextRenderer = valueLabel.getRenderer(TextRenderer.class);
-            valueTextRenderer.setText(Integer.toString(updateData.getValue()));
+
+            final String newValue = Integer.toString(updateData.getValue());
+            skillChanged = !valueTextRenderer.getOriginalText().equals(newValue);
+            valueTextRenderer.setText(newValue);
             valueLabel.setConstraintHeight(SizeValue.px(18));
 
             final Element nameLabel = skillPanel.findElementByName("#name");
@@ -221,13 +224,9 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
             nameLabel.setMarginLeft(SizeValue.px(5));
         }
 
-        if (loginDone) {
+        if (loginDone && skillChanged) {
             screen.findElementByName("openSkillsBtn").startEffect(EffectEventId.onCustom, null, "pulse");
-            if (Lang.getInstance().isGerman()) {
-                EventBus.publish(new ScriptInformReceivedEvent(101, updateData.getSkill().getNameGerman() + " + 1"));
-            } else {
-                EventBus.publish(new ScriptInformReceivedEvent(101, updateData.getSkill().getNameEnglish() + " + 1"));
-            }
+            World.getMap().getMapAt(World.getPlayer().getLocation()).showEffect(41);
         }
 
         layoutDirty = true;
