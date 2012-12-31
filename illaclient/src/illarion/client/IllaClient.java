@@ -277,8 +277,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @param message the message that shall be displayed in the login screen
      */
     public static void fallbackToLogin(final String message) {
-        INSTANCE.game.enterState(Game.STATE_LOGIN);
-        World.cleanEnvironment();
+        ensureExit();
+        //INSTANCE.game.enterState(Game.STATE_LOGIN);
+        //World.cleanEnvironment();
     }
 
     /**

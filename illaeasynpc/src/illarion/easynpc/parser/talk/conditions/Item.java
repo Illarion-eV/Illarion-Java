@@ -46,7 +46,7 @@ public final class Item extends ConditionParser {
      */
     @SuppressWarnings("nls")
     private static final Pattern ITEM_FIND = Pattern.compile("\\s*item\\s*\\(\\s*([\\d]{1,4})\\s*," +
-            "\\s*([a-z]+)\\s*([,]\\s*" + ItemData.REGEXP + "\\s*)?(\\\\s*[,]\\\\s*0\\\\s)?\\)\\s*([=~!<>]{1,2})\\s*" + AdvNumber.ADV_NUMBER_REGEXP +
+            "\\s*([a-z]+)\\s*([,]\\s*" + ItemData.REGEXP + "\\s*)?(\\s*[,]\\s*0\\s)?\\)\\s*([=~!<>]{1,2})\\s*" + AdvNumber.ADV_NUMBER_REGEXP +
             "\\s*,\\s*", Pattern.CASE_INSENSITIVE);
 
     /**
