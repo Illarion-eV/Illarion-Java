@@ -439,6 +439,7 @@ public final class Weather {
         // it is somewhat darker in buildings
         if (!outside) {
             ambientTargetColor.scale(INSIDE_BRIGHTNESS);
+            ambientTargetColor.a = 1.f;
         }
     }
 
@@ -449,11 +450,7 @@ public final class Weather {
      * @param delta the time since the last call of this function
      */
     private void changeWeather(final int delta) {
-        final Color oldColor = new Color(ambientTargetColor);
         calculateLight();
-        if (!oldColor.equals(ambientTargetColor)) {
-            System.out.println("Ambient color changed to: " + ambientTargetColor.toString());
-        }
         // scheduling lightning
         if (lightning > 0) {
             if (nextThunder >= 0) {
