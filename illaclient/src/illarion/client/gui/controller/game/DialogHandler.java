@@ -51,7 +51,6 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.nifty.controls.*;
 import org.illarion.nifty.controls.dialog.crafting.builder.DialogCraftingBuilder;
 import org.illarion.nifty.controls.dialog.input.builder.DialogInputBuilder;
-import org.illarion.nifty.controls.dialog.merchant.builder.DialogMerchantBuilder;
 import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
 import org.illarion.nifty.controls.dialog.select.builder.DialogSelectBuilder;
 import org.lwjgl.input.Keyboard;
@@ -76,6 +75,8 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
      * The input control that is used in this dialog handler.
      */
     private Input input;
+
+    private DialogMerchant merchantDialog;
 
     @Override
     public void update(final GameContainer container, final int delta) {
@@ -114,6 +115,15 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
             closeDialog(closeEvent);
         }
+
+        while (true) {
+            final Runnable task = updater.poll();
+            if (task == null) {
+                break;
+            }
+
+            task.run();
+        }
     }
 
     private class BuildWrapper {
@@ -150,6 +160,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     private final Queue<DialogHandler.BuildWrapper> builders;
     private final Queue<CloseDialogEvent> closers;
+    private final Queue<Runnable> updater;
     private Nifty nifty;
     private Screen screen;
     private final NumberSelectPopupHandler numberSelect;
@@ -159,6 +170,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         this.tooltipHandler = tooltipHandler;
         builders = new ConcurrentLinkedQueue<DialogHandler.BuildWrapper>();
         closers = new ConcurrentLinkedQueue<CloseDialogEvent>();
+        updater = new ConcurrentLinkedQueue<Runnable>();
         numberSelect = numberSelectPopupHandler;
     }
 
@@ -167,6 +179,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         nifty = parentNifty;
         screen = parentScreen;
 
+        merchantDialog = screen.findNiftyControl("merchantDialog", DialogMerchant.class);
     }
 
     @EventSubscriber
@@ -367,7 +380,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     @SuppressWarnings("MethodMayBeStatic")
-    @NiftyEventSubscriber(pattern = "merchantDialog[0-9]+")
+    @NiftyEventSubscriber(pattern = "merchantDialog")
     public void handleMerchantBuyEvent(final String topic, final DialogMerchantBuyEvent event) {
         final MerchantList list = World.getPlayer().getMerchantList();
         final int index = event.getItem().getIndex();
@@ -394,7 +407,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     @SuppressWarnings("MethodMayBeStatic")
-    @NiftyEventSubscriber(pattern = "merchantDialog[0-9]+")
+    @NiftyEventSubscriber(pattern = "merchantDialog")
     public void handleMerchantCloseEvent(final String topic, final DialogMerchantCloseEvent event) {
         World.getPlayer().getMerchantList().closeDialog();
     }
@@ -463,19 +476,16 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     private void showMerchantDialog(final DialogMerchantReceivedEvent event) {
-        final Element parentArea = screen.findElementByName("windows");
-        final DialogMerchantBuilder builder = new DialogMerchantBuilder(
-                "merchantDialog" + Integer.toString(event.getId()), event.getTitle());
-        builder.dialogId(event.getId());
-        builder.width(builder.pixels(500));
-        builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
+        updater.add(new Runnable() {
             @Override
-            public void run(final Element createdElement) {
-                final DialogMerchant dialog = createdElement.getNiftyControl(DialogMerchant.class);
-
-                addMerchantItemsToDialog(event, dialog);
+            public void run() {
+                merchantDialog.clearItems();
+                merchantDialog.setDialogId(event.getId());
+                merchantDialog.setTitle(event.getTitle());
+                addMerchantItemsToDialog(event, merchantDialog);
+                merchantDialog.getElement().setVisible(true);
             }
-        }));
+        });
     }
 
     private void showSelectDialog(final DialogSelectionReceivedEvent event) {
@@ -577,6 +587,13 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     private void closeDialog(final CloseDialogEvent event) {
         final Element parentArea = screen.findElementByName("windows");
+
+        if (event.getDialogType() == CloseDialogEvent.DialogType.Merchant) {
+            if (event.getDialogId() == merchantDialog.getDialogId()) {
+                merchantDialog.closeWindow();
+            }
+            return;
+        }
 
         for (final Element child : parentArea.getElements()) {
             final Matcher matcher = dialogNamePattern.matcher(child.getId());

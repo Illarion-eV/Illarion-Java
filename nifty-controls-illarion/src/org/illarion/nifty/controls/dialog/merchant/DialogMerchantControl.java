@@ -59,11 +59,6 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     private int dialogId;
 
     /**
-     * Helper variable to prevent double firing close events.
-     */
-    private boolean alreadyClosed;
-
-    /**
      * The event handler that handles the events on the close button.
      */
     private final EventTopicSubscriber<ButtonClickedEvent> closeButtonEventHandler;
@@ -72,9 +67,6 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
         closeButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
             @Override
             public void onEvent(final String topic, final ButtonClickedEvent data) {
-                if (alreadyClosed) {
-                    return;
-                }
                 closeWindow();
             }
         };
@@ -87,7 +79,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
         niftyInstance = nifty;
         currentScreen = screen;
 
-        dialogId = Integer.parseInt(controlDefinitionAttributes.get("dialogId"));
+        dialogId = Integer.parseInt(controlDefinitionAttributes.getWithDefault("dialogId", "0"));
     }
 
     @Override
@@ -145,8 +137,27 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     }
 
     @Override
+    public void setDialogId(final int id) {
+        dialogId = id;
+    }
+
+    @Override
+    public int getDialogId() {
+        return dialogId;
+    }
+
+    @Override
     public void addBuyingItem(final MerchantListEntry entry) {
         getBuyList().addItem(entry);
+    }
+
+    /**
+     * Remove all items from both the buying and the selling list.
+     */
+    @Override
+    public void clearItems() {
+        getSellList().clear();
+        getBuyList().clear();
     }
 
     @SuppressWarnings("unchecked")

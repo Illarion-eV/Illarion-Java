@@ -48,6 +48,20 @@ public interface DialogMerchant extends Window {
     }
 
     /**
+     * Set the ID of the dialog.
+     *
+     * @param id the dialog Id
+     */
+    void setDialogId(int id);
+
+    /**
+     * Get the dialog ID of this merchant dialog.
+     *
+     * @return the dialog ID
+     */
+    int getDialogId();
+
+    /**
      * Get the amount of entries on the buying list of the merchant.
      *
      * @return the entry index
@@ -88,4 +102,9 @@ public interface DialogMerchant extends Window {
      * @param entry the item to add
      */
     void addBuyingItem(MerchantListEntry entry);
+
+    /**
+     * Remove all items from both the buying and the selling list.
+     */
+    void clearItems();
 }

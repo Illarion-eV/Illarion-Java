@@ -156,6 +156,7 @@
                     <panel id="#textContent" childLayout="vertical" width="338px"/>
                 </control>
             </control>
+            <control id="merchantDialog" name="dialog-merchant" width="500px" visible="false" hideOnClose="true"/>
         </layer>
         <layer id="tooltipLayer" childLayout="absolute" visibleToMouse="false"/>
     </screen>
