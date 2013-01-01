@@ -19,10 +19,7 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.data.Map;
-import illarion.mapedit.events.map.MapClickedEvent;
-import illarion.mapedit.events.map.MapDragFinishedEvent;
-import illarion.mapedit.events.map.MapDraggedEvent;
-import illarion.mapedit.events.map.RepaintRequestEvent;
+import illarion.mapedit.events.map.*;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.util.MouseButton;
@@ -96,6 +93,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
 
     @Override
     public void mouseDragged(final MouseEvent e) {
+        publishMapPosition(e);
         final Map selected = controller.getSelected();
         if (!canDrag || !controller.isMapLoaded() || (selected == null)) {
             return;
@@ -123,8 +121,24 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         clickY = e.getY();
     }
 
+    private void publishMapPosition(final MouseEvent e) {
+        final Map selectedMap = controller.getSelected();
+        if (selectedMap == null) {
+            return;
+        }
+        final int mapX = SwingLocation.mapCoordinateX(e.getX(), e.getY(), rendererManager.getTranslationX(),
+                rendererManager.getTranslationY(), rendererManager.getZoom());
+        final int mapY = SwingLocation.mapCoordinateY(e.getX(), e.getY(), rendererManager.getTranslationX(),
+                rendererManager.getTranslationY(), rendererManager.getZoom());
+        final int worldX = selectedMap.getX() + mapX;
+        final int worldY = selectedMap.getY() + mapY;
+        final int worldZ = selectedMap.getZ();
+        EventBus.publish(new MapPositionEvent(mapX, mapY, worldX, worldY, worldZ));
+    }
+
     @Override
     public void mouseMoved(final MouseEvent e) {
+        publishMapPosition(e);
     }
 
     @Override

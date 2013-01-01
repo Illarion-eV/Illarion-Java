@@ -22,11 +22,16 @@ import illarion.common.config.Config;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.events.HistoryEvent;
+import illarion.mapedit.events.map.MapPositionEvent;
 import illarion.mapedit.events.menu.MapSaveEvent;
 import illarion.mapedit.events.menu.ShowHelpDialogEvent;
 import illarion.mapedit.events.util.ActionEventPublisher;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.loaders.ImageLoader;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
+import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXStatusBar;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
@@ -81,6 +86,22 @@ public class MainFrame extends JRibbonFrame {
                 /*new ClipboardBand(),*/  new ViewBand(getRendererManager()), new ZoomBand(), new MapFileBand(config),
                 new ToolBand());
 
+        final JXStatusBar status = new JXStatusBar();
+        status.setResizeHandleEnabled(true);
+        final JXLabel mapCoordinates = new JXLabel();
+        final JXLabel worldCoordinates = new JXLabel();
+        EventBus.subscribeStrongly(MapPositionEvent.class, new EventSubscriber<MapPositionEvent>() {
+            @Override
+            public void onEvent(final MapPositionEvent event) {
+                mapCoordinates.setText(Lang.getMsg("gui.mainframe.status.mapCoord") + ": " + event.getMapX() +
+                        ',' + event.getMapY());
+                worldCoordinates.setText(Lang.getMsg("gui.mainframe.status.worldCoord") + ": " + event.getWorldX() +
+                        ',' + event.getWorldY() + ',' + event.getWorldZ());
+            }
+        });
+        status.add(mapCoordinates, new JXStatusBar.Constraint());
+        status.add(worldCoordinates, new JXStatusBar.Constraint());
+        add(status, BorderLayout.SOUTH);
 
         getRibbon().addTask(task);
         setApplicationIcon(ImageLoader.getResizableIcon("mapedit64"));
