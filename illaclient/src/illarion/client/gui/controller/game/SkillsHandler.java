@@ -31,6 +31,7 @@ import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.IllaClient;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.net.server.events.SkillReceivedEvent;
@@ -92,6 +93,9 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
 
         skillWindow = screen.findNiftyControl("characterInformation", Window.class);
 
+        skillWindow.getElement().setConstraintX(new SizeValue(IllaClient.getCfg().getString("skillWindowPosX")));
+        skillWindow.getElement().setConstraintY(new SizeValue(IllaClient.getCfg().getString("skillWindowPosY")));
+
         createSkillEntries();
     }
 
@@ -105,6 +109,9 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
     public void onEndScreen() {
         nifty.unsubscribeAnnotations(this);
         AnnotationProcessor.unprocess(this);
+
+        IllaClient.getCfg().set("skillWindowPosX", Integer.toString(skillWindow.getElement().getX()) + "px");
+        IllaClient.getCfg().set("skillWindowPosY", Integer.toString(skillWindow.getElement().getY()) + "px");
     }
 
     public void showSkillWindow() {

@@ -17,6 +17,7 @@
 package illarion.client;
 
 import de.lessvoid.nifty.slick2d.NiftyStateBasedGame;
+import illarion.client.states.EndState;
 import illarion.client.states.LoadingState;
 import illarion.client.states.LoginState;
 import illarion.client.states.PlayingState;
@@ -49,6 +50,11 @@ public final class Game
     public static final int STATE_PLAYING = 2;
 
     /**
+     * The ID of the ending state. This displays the last screen before the shutdown.
+     */
+    public static final int STATE_ENDING = 3;
+
+    /**
      * Create the game with the fitting title, showing the name of the application and its version.
      */
     public Game() {
@@ -64,6 +70,7 @@ public final class Game
         addState(new LoginState());
         addState(new LoadingState());
         addState(new PlayingState());
+        addState(new EndState());
     }
 
     /**

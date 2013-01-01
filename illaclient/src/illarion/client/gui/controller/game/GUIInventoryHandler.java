@@ -31,6 +31,7 @@ import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.graphics.Item;
 import illarion.client.gui.EntitySlickRenderImage;
@@ -389,11 +390,18 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
             invSlots[i] = inventoryWindow.findElementByName(slots[i]);
         }
+
+        inventoryWindow.setConstraintX(new SizeValue(IllaClient.getCfg().getString("inventoryPosX")));
+        inventoryWindow.setConstraintY(new SizeValue(IllaClient.getCfg().getString("inventoryPosY")));
+        inventoryWindow.getParent().layoutElements();
     }
 
     @Override
     public void onEndScreen() {
-
+        activeNifty.unsubscribeAnnotations(this);
+        AnnotationProcessor.unprocess(this);
+        IllaClient.getCfg().set("inventoryPosX", Integer.toString(inventoryWindow.getX()) + "px");
+        IllaClient.getCfg().set("inventoryPosY", Integer.toString(inventoryWindow.getY()) + "px");
     }
 
     @Override

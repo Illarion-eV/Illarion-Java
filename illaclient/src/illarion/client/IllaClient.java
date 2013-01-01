@@ -247,6 +247,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             return;
         }
         exitRequested = true;
+
+        INSTANCE.game.enterState(Game.STATE_ENDING);
+    }
+
+    public static void exitGameContainer() {
         INSTANCE.gameContainer.exit();
     }
 
@@ -282,6 +287,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @param message the message that shall be displayed in the login screen
      */
     public static void fallbackToLogin(final String message) {
+        LOGGER.warn(message);
         ensureExit();
         //INSTANCE.game.enterState(Game.STATE_LOGIN);
         //World.cleanEnvironment();
@@ -542,6 +548,12 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("savePassword", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
         cfg.setDefault("engine", 1);
+        cfg.setDefault("inventoryPosX", "100px");
+        cfg.setDefault("inventoryPosY", "10px");
+        cfg.setDefault("bookDisplayPosX", "150px");
+        cfg.setDefault("bookDisplayPosY", "15px");
+        cfg.setDefault("skillWindowPosX", "200px");
+        cfg.setDefault("skillWindowPosY", "20px");
 
         final String locale = cfg.getString(Lang.LOCALE_CFG);
         if (locale == null) {

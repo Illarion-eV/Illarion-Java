@@ -25,6 +25,8 @@ import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.IllaClient;
 import illarion.client.net.server.events.ShowBookEvent;
 import illarion.client.resources.BookFactory;
 import illarion.client.util.Lang;
@@ -61,6 +63,9 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
         bookTextContent = bookDisplay.getElement().findElementByName("#textContent");
         bookScrollArea = bookDisplay.getElement().findNiftyControl("#scrollArea", ScrollPanel.class);
         pageNumberLabel = bookDisplay.getElement().findNiftyControl("#pageNumber", Label.class);
+
+        bookDisplay.getElement().setConstraintX(new SizeValue(IllaClient.getCfg().getString("bookDisplayPosX")));
+        bookDisplay.getElement().setConstraintY(new SizeValue(IllaClient.getCfg().getString("bookDisplayPosY")));
     }
 
     @Override
@@ -73,6 +78,9 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
     public void onEndScreen() {
         AnnotationProcessor.unprocess(this);
         nifty.unsubscribeAnnotations(this);
+
+        IllaClient.getCfg().set("bookDisplayPosX", Integer.toString(bookDisplay.getElement().getX()) + "px");
+        IllaClient.getCfg().set("bookDisplayPosY", Integer.toString(bookDisplay.getElement().getY()) + "px");
     }
 
     @Override

@@ -98,7 +98,7 @@
         </layer>
         <layer id="windows" childLayout="absolute">
             <control id="inventory" name="window" style="nifty-window" title="${gamescreen-bundle.inventory}"
-                     visible="false" width="270px" height="500px" x="400px" hideOnClose="true" visibleToMouse="true">
+                     visible="false" width="270px" height="500px" hideOnClose="true" visibleToMouse="true">
                 <panel childLayout="center">
                     <panel height="448px" width="227px" childLayout="absolute"
                            backgroundImage="data/gui/inventory.png" visibleToMouse="true" halign="center"
