@@ -160,7 +160,12 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     private void init() {
         prepareConfig();
-        initLogfiles();
+        try {
+            initLogfiles();
+        } catch (IOException e) {
+            System.err.println("Failed to setup logging system!");
+            e.printStackTrace(System.err);
+        }
 
         CrashReporter.getInstance().setConfig(getCfg());
 
@@ -357,12 +362,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
         CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_SWING);
 
-        try {
-            tempProps.load(getResource("logging.properties"));
-        } catch (final IOException e1) {
-            LOGGER.error("Error settings up logging system.", e1);
-        }
-
         // in case the server is now known, update the files if needed and
         // launch the client.
         if (folder == null) {
@@ -459,7 +458,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * Basic initialization of the log files and the debug settings.
      */
     @SuppressWarnings("nls")
-    private void initLogfiles() {
+    private void initLogfiles() throws IOException {
+        tempProps.load(getResource("logging.properties"));
         tempProps.put("log4j.appender.IllaLogfileAppender.file", getFile("error.log"));
         tempProps.put("log4j.appender.ChatAppender.file", getFile("illarion.log"));
         tempProps.put("log4j.reset", "true");
