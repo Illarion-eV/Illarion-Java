@@ -66,6 +66,7 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
 
         bookDisplay.getElement().setConstraintX(new SizeValue(IllaClient.getCfg().getString("bookDisplayPosX")));
         bookDisplay.getElement().setConstraintY(new SizeValue(IllaClient.getCfg().getString("bookDisplayPosY")));
+        bookDisplay.getElement().getParent().layoutElements();
     }
 
     @Override

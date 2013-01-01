@@ -95,6 +95,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
 
         skillWindow.getElement().setConstraintX(new SizeValue(IllaClient.getCfg().getString("skillWindowPosX")));
         skillWindow.getElement().setConstraintY(new SizeValue(IllaClient.getCfg().getString("skillWindowPosY")));
+        skillWindow.getElement().getParent().layoutElements();
 
         createSkillEntries();
     }
