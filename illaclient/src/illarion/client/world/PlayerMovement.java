@@ -546,7 +546,7 @@ public final class PlayerMovement
         final float relXOffset = (float) xOffset / (float) distance;
         final float relYOffset = (float) yOffset / (float) distance;
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             walkTowardsMode = MOVE_MODE_NONE;
         } else if (distance > 200) {
             walkTowardsMode = MOVE_MODE_RUN;
