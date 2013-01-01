@@ -58,6 +58,11 @@ public final class KeyMapper {
         inputMap.put(Input.KEY_NUMPAD7, "WalkNorth");
         inputMap.put(Input.KEY_NUMPAD8, "WalkNorthEast");
         inputMap.put(Input.KEY_NUMPAD9, "WalkEast");
+
+        inputMap.put(Input.KEY_PRIOR, "WalkEast");
+        inputMap.put(Input.KEY_NEXT, "WalkSouth");
+        inputMap.put(Input.KEY_END, "WalkWest");
+        inputMap.put(Input.KEY_HOME, "WalkNorth");
     }
 
     public void handleKeyInput(final int key) {

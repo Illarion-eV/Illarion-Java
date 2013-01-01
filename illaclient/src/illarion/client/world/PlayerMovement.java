@@ -404,18 +404,18 @@ public final class PlayerMovement
             cancelAutoWalk();
         }
         requestTurn(direction, false);
-        if ((lastMoveRequest == Location.DIR_ZERO) && (lastAllowedMove == Location.DIR_ZERO)) {
-            if (!moving) {
-                lastMoveRequest = direction;
-                timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
-                sendMoveToServer(direction, mode);
-            } else if (moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME) {
-                lastMoveRequest = direction;
-                timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
-                sendMoveToServer(direction, mode);
-            }
-        } else {
+        if (mode == MOVE_MODE_NONE) {
             discardCheck();
+        } else {
+            if ((lastMoveRequest == Location.DIR_ZERO) && (lastAllowedMove == Location.DIR_ZERO)) {
+                if (!moving || (moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME)) {
+                    lastMoveRequest = direction;
+                    timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
+                    sendMoveToServer(direction, mode);
+                }
+            } else {
+                discardCheck();
+            }
         }
     }
 
