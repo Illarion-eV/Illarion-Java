@@ -3,7 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="illarion.client.IllaClient" />
     <option name="VM_PARAMETERS" value="-Djava.library.path=$ILLARION_NATIVES$ -Djava.net.preferIPv4Stack=true" />
     <option name="PROGRAM_PARAMETERS" value="" />
-    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/illaclient" />
+    <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
     <option name="ENABLE_SWING_INSPECTOR" value="false" />

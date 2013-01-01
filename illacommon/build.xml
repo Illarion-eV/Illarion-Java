@@ -68,7 +68,8 @@
         </resourcebuild>
     </target>
 
-    <target name="download_skills" depends="download_skills_dev,download_skills_release"/>
+    <target name="download_skills" depends="download_skills_dev,download_skills_release"
+            description="Download the skills file"/>
 
     <target name="download_skills_dev" unless="release.build">
         <get src="http://illarion.org/data/xml_skills.php?server=1" dest="${src}/skills.xml"/>
