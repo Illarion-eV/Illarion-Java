@@ -666,7 +666,7 @@ public final class Avatar extends AbstractEntity implements Resource {
 
         final Input input = c.getInput();
 
-        renderName = isMouseInInteractionRect(input) || (input.isKeyDown(Input.KEY_LSHIFT) && (getAlpha() >
+        renderName = isMouseInInteractionRect(input) || (input.isKeyDown(Input.KEY_LCONTROL) && (getAlpha() >
                 HIDE_NAME_ALPHA));
 
         if ((tag != null) && renderName) {
