@@ -22,6 +22,9 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.input.NiftyStandardInputEvent;
+import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
@@ -31,7 +34,7 @@ import illarion.client.util.Lang;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
-public class CharScreenController implements ScreenController {
+public class CharScreenController implements ScreenController, KeyInputHandler {
 
     private Nifty nifty;
 
@@ -87,5 +90,14 @@ public class CharScreenController implements ScreenController {
     public void logout() {
         statusLabel.setText("");
         nifty.gotoScreen("login");
+    }
+
+    @Override
+    public boolean keyEvent(final NiftyInputEvent inputEvent) {
+        if (inputEvent == NiftyStandardInputEvent.SubmitText) {
+            play();
+            return true;
+        }
+        return false;
     }
 }
