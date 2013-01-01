@@ -18,7 +18,6 @@
  */
 package org.illarion.nifty.controls.dialog.crafting;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.ImageBuilder;
 import de.lessvoid.nifty.builder.PanelBuilder;
@@ -179,11 +178,6 @@ public class DialogCraftingControl
     private int dialogId;
 
     /**
-     * Helper variable to prevent double firing close events.
-     */
-    private boolean alreadyClosed;
-
-    /**
      * The root node of the tree that displays all the crafting items.
      */
     private TreeItem<ListEntry> treeRootNode;
@@ -217,9 +211,7 @@ public class DialogCraftingControl
         niftyInstance = nifty;
         currentScreen = screen;
 
-        dialogId = Integer.parseInt(controlDefinitionAttributes.get("dialogId"));
-
-        alreadyClosed = false;
+        dialogId = Integer.parseInt(controlDefinitionAttributes.getWithDefault("dialogId", "-1"));
 
         getAmountTextField().enableInputFilter(new TextFieldInputCharFilter() {
             @Override
@@ -279,22 +271,8 @@ public class DialogCraftingControl
 
     @Override
     public void onEvent(final String topic, final ButtonClickedEvent data) {
-        if (alreadyClosed) {
-            return;
-        }
         niftyInstance.publishEvent(getId(), new DialogMessageConfirmedEvent(dialogId));
         closeWindow();
-    }
-
-    @Override
-    public void closeWindow() {
-        getElement().hide(new EndNotify() {
-            @Override
-            public void perform() {
-                getElement().markForRemoval();
-            }
-        });
-        alreadyClosed = true;
     }
 
     @Override
@@ -429,6 +407,16 @@ public class DialogCraftingControl
         effect.updateParameters();
 
         progressBar.startEffect(EffectEventId.onCustom, null, "automaticProgress");
+    }
+
+    @Override
+    public void setDialogId(final int id) {
+        dialogId = id;
+    }
+
+    @Override
+    public int getDialogId() {
+        return dialogId;
     }
 
     /**

@@ -97,4 +97,8 @@ public interface DialogCrafting extends Window {
      * @param seconds the time in seconds to fill the progress bar
      */
     void startProgress(double seconds);
+
+    void setDialogId(int id);
+
+    int getDialogId();
 }

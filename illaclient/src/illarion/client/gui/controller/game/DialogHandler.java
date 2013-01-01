@@ -49,7 +49,6 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.nifty.controls.*;
-import org.illarion.nifty.controls.dialog.crafting.builder.DialogCraftingBuilder;
 import org.illarion.nifty.controls.dialog.input.builder.DialogInputBuilder;
 import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
 import org.illarion.nifty.controls.dialog.select.builder.DialogSelectBuilder;
@@ -77,6 +76,8 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     private Input input;
 
     private DialogMerchant merchantDialog;
+    private DialogCrafting craftingDialog;
+    private boolean openCraftDialog;
 
     @Override
     public void update(final GameContainer container, final int delta) {
@@ -170,6 +171,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         screen = parentScreen;
 
         merchantDialog = screen.findNiftyControl("merchantDialog", DialogMerchant.class);
+        craftingDialog = screen.findNiftyControl("craftingDialog", DialogCrafting.class);
     }
 
     @EventSubscriber
@@ -214,23 +216,14 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         }
     }
 
-    private DialogCrafting getCraftingDialog(final int id) {
-        final Element dialogElement = screen.findElementByName("craftingDialog" + Integer.toString(id));
-        if (dialogElement == null) {
-            return null;
-        }
-        return dialogElement.getNiftyControl(DialogCrafting.class);
-    }
-
     @EventSubscriber
     public void handleDialogItemLookAtEvent(final DialogItemLookAtEvent event) {
-        final DialogCrafting craftDialog = getCraftingDialog(event.getDialogId());
-        if (craftDialog == null) {
+        if (craftingDialog == null) {
             return;
         }
 
-        if (craftDialog.getSelectedCraftingItem().getItemIndex() == event.getSlot()) {
-            final Element targetElement = craftDialog.getCraftingItemDisplay();
+        if (craftingDialog.getSelectedCraftingItem().getItemIndex() == event.getSlot()) {
+            final Element targetElement = craftingDialog.getCraftingItemDisplay();
             final Rectangle elementRectangle = new Rectangle();
             elementRectangle.set(targetElement.getX(), targetElement.getY(), targetElement.getWidth(),
                     targetElement.getHeight());
@@ -240,13 +233,12 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     @EventSubscriber
     public void handleDialogSecondaryItemLookAtEvent(final DialogSecondaryItemLookAtEvent event) {
-        final DialogCrafting craftDialog = getCraftingDialog(event.getDialogId());
-        if (craftDialog == null) {
+        if (craftingDialog == null) {
             return;
         }
 
-        if (craftDialog.getSelectedCraftingItem().getItemIndex() == event.getSlot()) {
-            final Element targetElement = craftDialog.getIngredientItemDisplay(event.getSecondarySlot());
+        if (craftingDialog.getSelectedCraftingItem().getItemIndex() == event.getSlot()) {
+            final Element targetElement = craftingDialog.getIngredientItemDisplay(event.getSecondarySlot());
             final Rectangle elementRectangle = new Rectangle();
             elementRectangle.set(targetElement.getX(), targetElement.getY(), targetElement.getWidth(),
                     targetElement.getHeight());
@@ -256,35 +248,32 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     @EventSubscriber
     public void handleDialogCraftingUpdateStartEvent(final DialogCraftingUpdateStartReceivedEvent event) {
-        final DialogCrafting craftDialog = getCraftingDialog(event.getDialogId());
-        if (craftDialog == null) {
+        if (craftingDialog == null) {
             return;
         }
 
-        craftDialog.startProgress((double) event.getRequiredTime() / 10.0);
+        craftingDialog.startProgress((double) event.getRequiredTime() / 10.0);
     }
 
     @EventSubscriber
     public void handleDialogCraftingUpdateAbortedEvent(final DialogCraftingUpdateAbortedReceivedEvent event) {
-        final DialogCrafting craftDialog = getCraftingDialog(event.getDialogId());
-        if (craftDialog == null) {
+        if (craftingDialog == null) {
             return;
         }
 
-        craftDialog.setProgress(0.f);
+        craftingDialog.setProgress(0.f);
     }
 
     @EventSubscriber
     public void handleDialogCraftingUpdateCompletedEvent(final DialogCraftingUpdateCompletedReceivedEvent event) {
-        final DialogCrafting craftDialog = getCraftingDialog(event.getDialogId());
-        if (craftDialog == null) {
+        if (craftingDialog == null) {
             return;
         }
 
-        craftDialog.setProgress(0.f);
+        craftingDialog.setProgress(0.f);
     }
 
-    @NiftyEventSubscriber(pattern = "craftingDialog[0-9]+")
+    @NiftyEventSubscriber(id = "craftingDialog")
     public void handleCraftingItemLookAtEvent(final String topic, final DialogCraftingLookAtItemEvent event) {
         if (lastCraftingTooltip == -1) {
             return;
@@ -303,7 +292,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         lastCraftingTooltip = -1;
     }
 
-    @NiftyEventSubscriber(pattern = "craftingDialog[0-9]+")
+    @NiftyEventSubscriber(id = "craftingDialog")
     public void handleCraftingIngredientLookAtEvent(final String topic,
                                                     final DialogCraftingLookAtIngredientItemEvent event) {
         if (lastCraftingTooltip == event.getIngredientIndex()) {
@@ -323,7 +312,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         lastCraftingTooltip = event.getIngredientIndex();
     }
 
-    @NiftyEventSubscriber(pattern = "craftingDialog[0-9]+")
+    @NiftyEventSubscriber(id = "craftingDialog")
     public void handleCraftingCraftItemEvent(final String topic, final DialogCraftingCraftEvent event) {
         final CommandFactory factory = CommandFactory.getInstance();
         final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
@@ -332,14 +321,22 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         cmd.send();
     }
 
-    @NiftyEventSubscriber(pattern = "craftingDialog[0-9]+")
+    @NiftyEventSubscriber(id = "craftingDialog")
     public void handleCraftingCloseDialogEvent(final String topic, final DialogCraftingCloseEvent event) {
+        closeCraftingDialog(event.getDialogId());
+    }
+
+    private void closeCraftingDialog(final int id) {
+        if (!openCraftDialog) {
+            return;
+        }
         final CommandFactory factory = CommandFactory.getInstance();
         final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
         cmd.setCloseDialog();
-        cmd.setDialogId(event.getDialogId());
+        cmd.setDialogId(id);
         cmd.send();
-        EventBus.publish(new CloseDialogEvent(event.getDialogId(), CloseDialogEvent.DialogType.Crafting));
+        EventBus.publish(new CloseDialogEvent(id, CloseDialogEvent.DialogType.Crafting));
+        openCraftDialog = false;
     }
 
     @SuppressWarnings("MethodMayBeStatic")
@@ -370,7 +367,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     @SuppressWarnings("MethodMayBeStatic")
-    @NiftyEventSubscriber(pattern = "merchantDialog")
+    @NiftyEventSubscriber(id = "merchantDialog")
     public void handleMerchantBuyEvent(final String topic, final DialogMerchantBuyEvent event) {
         final MerchantList list = World.getPlayer().getMerchantList();
         final int index = event.getItem().getIndex();
@@ -397,7 +394,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     @SuppressWarnings("MethodMayBeStatic")
-    @NiftyEventSubscriber(pattern = "merchantDialog")
+    @NiftyEventSubscriber(id = "merchantDialog")
     public void handleMerchantCloseEvent(final String topic, final DialogMerchantCloseEvent event) {
         World.getPlayer().getMerchantList().closeDialog();
     }
@@ -497,27 +494,31 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     private void showCraftingDialog(final DialogCraftingReceivedEvent event) {
-        final DialogCrafting existingDialog = getCraftingDialog(event.getRequestId());
-
-        if (existingDialog == null) {
-            final Element parentArea = screen.findElementByName("windows");
-            final DialogCraftingBuilder builder = new DialogCraftingBuilder("craftingDialog" +
-                    Integer.toString(event.getRequestId()), event.getTitle());
-            builder.dialogId(event.getRequestId());
-            builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
+        if ((event.getRequestId() == craftingDialog.getDialogId()) && openCraftDialog) {
+            updater.add(new Runnable() {
                 @Override
-                public void run(final Element createdElement) {
-                    final DialogCrafting dialog = createdElement.getNiftyControl(DialogCrafting.class);
-                    addCraftingItemsToDialog(event, dialog);
+                public void run() {
+                    final int selectedIndex = craftingDialog.getSelectedCraftingItem().getItemIndex();
+
+                    craftingDialog.clearItemList();
+                    addCraftingItemsToDialog(event, craftingDialog);
+
+                    craftingDialog.selectItemByItemIndex(selectedIndex);
                 }
-            }));
+            });
         } else {
-            final int selectedIndex = existingDialog.getSelectedCraftingItem().getItemIndex();
-
-            existingDialog.clearItemList();
-            addCraftingItemsToDialog(event, existingDialog);
-
-            existingDialog.selectItemByItemIndex(selectedIndex);
+            closeCraftingDialog(craftingDialog.getDialogId());
+            updater.add(new Runnable() {
+                @Override
+                public void run() {
+                    craftingDialog.setDialogId(event.getRequestId());
+                    craftingDialog.clearItemList();
+                    addCraftingItemsToDialog(event, craftingDialog);
+                    craftingDialog.getElement().setVisible(true);
+                    craftingDialog.getElement().layoutElements();
+                    openCraftDialog = true;
+                }
+            });
         }
     }
 
@@ -582,6 +583,12 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         if (event.getDialogType() == CloseDialogEvent.DialogType.Merchant) {
             if (event.getDialogId() == merchantDialog.getDialogId()) {
                 merchantDialog.closeWindow();
+            }
+            return;
+        }
+        if (event.getDialogType() == CloseDialogEvent.DialogType.Crafting) {
+            if (event.getDialogId() == craftingDialog.getDialogId()) {
+                craftingDialog.closeWindow();
             }
             return;
         }

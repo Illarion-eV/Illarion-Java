@@ -79,7 +79,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
         niftyInstance = nifty;
         currentScreen = screen;
 
-        dialogId = Integer.parseInt(controlDefinitionAttributes.getWithDefault("dialogId", "0"));
+        dialogId = Integer.parseInt(controlDefinitionAttributes.getWithDefault("dialogId", "-1"));
     }
 
     @Override
