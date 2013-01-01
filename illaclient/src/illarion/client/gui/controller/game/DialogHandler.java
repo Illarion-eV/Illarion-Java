@@ -87,24 +87,14 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
                 break;
             }
 
-            long start = System.currentTimeMillis();
             final Element element = wrapper.getBuilder().build(nifty, screen, wrapper.getParent());
-            System.out.println("It took " + Long.toString(System.currentTimeMillis() - start) +
-                    "ms to build the dialog");
 
-            start = System.currentTimeMillis();
             wrapper.executeTask(element);
-            System.out.println("It took " + Long.toString(System.currentTimeMillis() - start) +
-                    "ms to execute the post build task");
 
-
-            start = System.currentTimeMillis();
             element.layoutElements();
             element.setConstraintX(SizeValue.px((wrapper.getParent().getWidth() - element.getWidth()) / 2));
             element.setConstraintY(SizeValue.px((wrapper.getParent().getHeight() - element.getHeight()) / 2));
             wrapper.getParent().layoutElements();
-            System.out.println("It took " + Long.toString(System.currentTimeMillis() - start) +
-                    "ms to place it on the screen");
         }
 
         while (true) {
@@ -484,6 +474,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
                 merchantDialog.setTitle(event.getTitle());
                 addMerchantItemsToDialog(event, merchantDialog);
                 merchantDialog.getElement().setVisible(true);
+                merchantDialog.getElement().getParent().layoutElements();
             }
         });
     }
