@@ -610,8 +610,10 @@ public final class PlayerMovement
     @Override
     public void onEvent(final String topic, final String data) {
         final int moveMode;
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
             moveMode = MOVE_MODE_RUN;
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_LMENU)) {
+            moveMode = MOVE_MODE_NONE;
         } else {
             moveMode = MOVE_MODE_WALK;
         }
