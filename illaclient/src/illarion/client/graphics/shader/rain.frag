@@ -62,7 +62,7 @@ void main() {
 
     vec3 resultColor = backColor.rgb;
 	bool skipNext = true;
-	for (int level = 0; level < 4; level += 1) {
+	for (int level = 0; level < 3; level += 1) {
 		float stepSize = 1.f / pow(level + 1.f, 2.f);
 		skipNext = true;
 		float levelIntensity = clamp(0.3f + intensity * 3.f - sqrt(float(level)), 0.f, 1.f);
