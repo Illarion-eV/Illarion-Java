@@ -63,12 +63,9 @@ public final class GameScreenController implements ScreenController {
         }
     }
 
-    private Screen screen;
-
     @SuppressWarnings("unchecked")
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
-        this.screen = screen;
         for (final ScreenController childController : childControllers) {
             childController.bind(nifty, screen);
         }
@@ -76,7 +73,6 @@ public final class GameScreenController implements ScreenController {
 
     @Override
     public void onStartScreen() {
-        screen.getFocusHandler().setKeyFocus(null);
         for (final ScreenController childController : childControllers) {
             childController.onStartScreen();
         }

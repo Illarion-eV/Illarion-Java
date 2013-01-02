@@ -392,6 +392,13 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     @Override
     public void onStartScreen() {
         toggleChatLog();
+        messageQueue.add(new Runnable() {
+            @Override
+            public void run() {
+                keyEvent(NiftyStandardInputEvent.SubmitText);
+                keyEvent(NiftyStandardInputEvent.SubmitText);
+            }
+        });
         AnnotationProcessor.process(this);
         nifty.subscribeAnnotations(this);
     }
