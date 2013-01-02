@@ -38,6 +38,7 @@ import illarion.common.graphics.LightSource;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
+import illarion.common.util.FastMath;
 import illarion.common.util.RecycleObject;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
@@ -97,7 +98,7 @@ public final class Char
     /**
      * Minimal scale value for the character.
      */
-    private static final float MINIMAL_SCALE = 0.5f;
+    private static final float MINIMAL_SCALE = 0.8f;
 
     /**
      * Move mode constant for a pushed move.
@@ -830,7 +831,7 @@ public final class Char
             return;
         }
 
-        scale = newScale;
+        scale = FastMath.clamp(newScale, MINIMAL_SCALE, MAXIMAL_SCALE);
         if (avatar != null) {
             avatar.setScale(newScale);
         }
