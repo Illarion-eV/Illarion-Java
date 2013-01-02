@@ -57,6 +57,8 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
         statusLabel = screen.findNiftyControl("statusText", Label.class);
         statusLabel.setHeight(new SizeValue("20" + SizeValue.PIXEL));
         statusLabel.setWidth(new SizeValue("180" + SizeValue.PIXEL));
+
+        listBox.getElement().addInputHandler(this);
     }
 
     @Override
@@ -94,7 +96,7 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
 
     @Override
     public boolean keyEvent(final NiftyInputEvent inputEvent) {
-        if (inputEvent == NiftyStandardInputEvent.SubmitText) {
+        if (inputEvent == NiftyStandardInputEvent.Activate) {
             play();
             return true;
         }
