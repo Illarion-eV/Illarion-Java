@@ -115,7 +115,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
          * The constructor for this class. The timeout time is set to the system default double click interval.
          */
         InventoryClickActionHelper() {
-            super(IllaClient.getCfg().getInteger("doubleClickInterval"));
+            super(IllaClient.getCfg().getInteger("doubleClickInterval") + 150);
         }
 
         @Override
@@ -307,7 +307,6 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
             LookAtTracker.setLookAtObject(slot);
             fetchLookAt(slot);
         }
-
     }
 
     /**
