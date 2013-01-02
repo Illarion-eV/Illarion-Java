@@ -171,9 +171,11 @@ public final class Launcher implements ActionListener {
         } catch (final Exception e) {
             LOGGER.fatal("Error while launching application", e);
 
-            final PrintWriter writer = new PrintWriter(new StringWriter());
+            final StringWriter sWriter = new StringWriter();
+            final PrintWriter writer = new PrintWriter(sWriter);
             e.printStackTrace(writer);
-            errorData = writer.toString();
+            writer.flush();
+            errorData = sWriter.toString();
             return false;
         } finally {
             if (outputReader != null) {
