@@ -504,9 +504,7 @@ public final class GameMap implements LightingMap, Stoppable {
      */
     @Override
     public void renderLights() {
-        final float factor =
-                1.f - ColorHelper.getLuminationf(World.getWeather()
-                        .getAmbientLight());
+        final float factor = 1.f - ColorHelper.getLuminationf(World.getWeather().getAmbientLight());
 
         renderLightsHelper.setup(factor, World.getWeather().getAmbientLight());
 
@@ -517,7 +515,6 @@ public final class GameMap implements LightingMap, Stoppable {
             } finally {
                 mapLock.readLock().unlock();
             }
-
         }
 
         World.getPeople().updateLight();

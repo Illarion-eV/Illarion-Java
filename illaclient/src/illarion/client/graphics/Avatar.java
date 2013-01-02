@@ -532,9 +532,10 @@ public final class Avatar extends AbstractEntity implements Resource {
      */
     @Override
     public void setLight(final Color light) {
-        super.setLight(light);
-        clothRender.setLight(light);
-        attackMark.setLight(light);
+        final Color localLight = new Color(light);
+        super.setLight(localLight);
+        clothRender.setLight(localLight);
+        attackMark.setLight(localLight);
         animateLight = false;
     }
 
@@ -548,11 +549,8 @@ public final class Avatar extends AbstractEntity implements Resource {
      */
     public void setLightTarget(final Color light) {
         targetLight = light;
-        final Color currLight = getLight();
-        final Color tempLight = new Color(currLight);
-        setLight(tempLight);
-        clothRender.setLight(tempLight);
-        attackMark.setLight(tempLight);
+        clothRender.setLight(light);
+        attackMark.setLight(light);
         animateLight = true;
     }
 
