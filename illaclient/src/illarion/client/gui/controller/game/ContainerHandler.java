@@ -37,7 +37,7 @@ import illarion.client.graphics.Item;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
-import illarion.client.net.client.OpenBagCmd;
+import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.net.server.events.CloseContainerEvent;
 import illarion.client.net.server.events.ContainerItemLookAtEvent;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
@@ -383,8 +383,9 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         if (isContainerCreated(data.getContainerId())) {
             removeItemContainer(data.getContainerId());
 
-            final OpenBagCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_CLOSE_SHOWCASE,
-                    OpenBagCmd.class);
+            final CloseShowcaseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_CLOSE_SHOWCASE,
+                    CloseShowcaseCmd.class);
+            cmd.setShowcaseId(data.getContainerId());
             cmd.send();
         }
     }

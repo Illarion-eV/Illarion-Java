@@ -95,7 +95,7 @@ public final class CommandFactory
         register(new OpenBagCmd());
         register(new OpenMapCmd());
         register(new OpenShowcaseCmd());
-        map(CommandList.CMD_CLOSE_SHOWCASE, CommandList.CMD_OPEN_BAG);
+        register(new CloseShowcaseCmd());
 
         // drag items around
         register(new DragInvScCmd());
