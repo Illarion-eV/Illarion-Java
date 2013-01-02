@@ -478,10 +478,11 @@ public final class Player {
      * @return true if the position is within the clipping distance and the tolerance
      */
     public boolean isOnScreen(final Location testLoc, final int tolerance) {
-        final int width = MapDimensions.getInstance().getStripesWidth() >> 2;
-        final int height = MapDimensions.getInstance().getStripesHeight() >> 2;
+        final int width = MapDimensions.getInstance().getStripesWidth() >> 1;
+        final int height = MapDimensions.getInstance().getStripesHeight() >> 1;
         final int limit = Math.max(width, height) + tolerance;
-        return loc.getDistance(testLoc) < limit;
+
+        return (Math.abs(loc.getScX() - testLoc.getScX()) + Math.abs(loc.getScY() - testLoc.getScY())) < limit;
     }
 
     /**
