@@ -61,6 +61,7 @@ import org.newdawn.slick.GameContainer;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -210,7 +211,27 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     /**
      * The pattern used to detect the introduce command.
      */
-    private final Pattern introducePattern = Pattern.compile("^\\s*[/#]i\\s*$", Pattern.CASE_INSENSITIVE);
+    private final Pattern introducePattern = Pattern.compile("^\\s*[/#]i(ntroduce)?\\s*$", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * The pattern to detect a whispered message.
+     */
+    private final Pattern whisperPattern = Pattern.compile("^\\s*[/#]w(hisper)?\\s*(.*)\\s*$", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * The pattern to detect a shouted message.
+     */
+    private final Pattern shoutPattern = Pattern.compile("^\\s*[/#]s(hout)?\\s*(.*)\\s*$", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * The pattern to detect a emote.
+     */
+    private final Pattern emotePattern = Pattern.compile("^\\s*[/#](me\\s*)(.*)\\s*$", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * The pattern to detect a ooc.
+     */
+    private final Pattern oocPattern = Pattern.compile("^\\s*[/#]o(oc)?\\s*(.*)\\s*$", Pattern.CASE_INSENSITIVE);
 
     /**
      * The default constructor.
@@ -368,18 +389,54 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      * @param text the text to send
      */
     private void sendText(final String text) {
-        if (introducePattern.matcher(text).find()) {
+        if (introducePattern.matcher(text).matches()) {
             CommandFactory.getInstance().getCommand(CommandList.CMD_INTRODUCE).send();
             return;
         }
 
+        final Matcher shoutMatcher = shoutPattern.matcher(text);
+        if (shoutMatcher.find()) {
+            cleanAndSendText("", shoutMatcher.group(2), CommandList.CMD_SHOUT);
+            return;
+        }
+
+        final Matcher whisperMatcher = whisperPattern.matcher(text);
+        if (whisperMatcher.find()) {
+            cleanAndSendText("", whisperMatcher.group(2), CommandList.CMD_WHISPER);
+            return;
+        }
+
+        final Matcher emoteMatcher = emotePattern.matcher(text);
+        if (emoteMatcher.find()) {
+            final String cleanMe = REPEATED_SPACE_PATTERN.matcher(emoteMatcher.group(1)).replaceAll(" ");
+            cleanAndSendText("#" + cleanMe, emoteMatcher.group(2), CommandList.CMD_SAY);
+            return;
+        }
+
+        final Matcher oocMatcher = oocPattern.matcher(text);
+        if (oocMatcher.find()) {
+            cleanAndSendText("#o ", emoteMatcher.group(2), CommandList.CMD_WHISPER);
+            return;
+        }
+
+        cleanAndSendText("", text, CommandList.CMD_SAY);
+    }
+
+    /**
+     * Cleanup the text and send it in case anything remains to send.
+     *
+     * @param prefix the prefix that is prepend to the text
+     * @param text   the text to send
+     * @param cmdId  the command id
+     */
+    private static void cleanAndSendText(final String prefix, final String text, final int cmdId) {
         final String cleanText = REPEATED_SPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
         if (cleanText.isEmpty()) {
             return;
         }
 
-        final SayCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_SAY, SayCmd.class);
-        cmd.setText(cleanText);
+        final SayCmd cmd = CommandFactory.getInstance().getCommand(cmdId, SayCmd.class);
+        cmd.setText(prefix + cleanText);
         cmd.send();
     }
 

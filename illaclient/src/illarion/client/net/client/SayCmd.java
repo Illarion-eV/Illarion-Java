@@ -81,7 +81,7 @@ public final class SayCmd extends AbstractCommand {
     public void setText(final String sayText) {
         text = sayText;
         if (text.startsWith("/")) {
-            text = '/' + text.substring(1);
+            text = '#' + text.substring(1);
         }
     }
 
