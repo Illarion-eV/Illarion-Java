@@ -1,0 +1,23 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Illarion Client (Gameserver)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="illarion.client.IllaClient" />
+    <option name="VM_PARAMETERS" value="-Djava.library.path=$ILLARION_NATIVES$ -Djava.net.preferIPv4Stack=true" />
+    <option name="PROGRAM_PARAMETERS" value="" />
+    <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+    <option name="ALTERNATIVE_JRE_PATH" value="" />
+    <option name="ENABLE_SWING_INSPECTOR" value="false" />
+    <option name="ENV_VARIABLES" />
+    <option name="PASS_PARENT_ENVS" value="true" />
+    <module name="Illarion Client" />
+    <envs />
+    <RunnerSettings RunnerId="Profile ">
+      <option name="myExternalizedOptions" value="&#13;&#10;additional-options2=onexit\=snapshot&#13;&#10;" />
+    </RunnerSettings>
+    <method>
+      <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/illacommon/build_libs.xml" target="download_everything" />
+      <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/illacommon/build.xml" target="download_skills" />
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
