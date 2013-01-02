@@ -828,7 +828,6 @@ public final class Char
     public void setScale(final float newScale) {
         if ((newScale < MINIMAL_SCALE) || (newScale > MAXIMAL_SCALE)) {
             LOGGER.warn("invalid character scale " + newScale + " ignored for " + charId);
-            return;
         }
 
         scale = FastMath.clamp(newScale, MINIMAL_SCALE, MAXIMAL_SCALE);
