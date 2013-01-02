@@ -210,7 +210,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     /**
      * The pattern used to detect the introduce command.
      */
-    private final Pattern introducePattern = Pattern.compile("[/#]i", Pattern.CASE_INSENSITIVE);
+    private final Pattern introducePattern = Pattern.compile("^\\s*[/#]i\\s*$", Pattern.CASE_INSENSITIVE);
 
     /**
      * The default constructor.
