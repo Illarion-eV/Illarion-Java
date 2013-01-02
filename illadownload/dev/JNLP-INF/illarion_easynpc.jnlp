@@ -26,13 +26,8 @@
         <description>EasyNPC Editor for the roleplaying game Illarion</description>
         <description kind="one-line">EasyNPC Editor for Illarion</description>
         <description kind="tooltip">Illarion EasyNPC Editor</description>
-        <icon href="illarion_easynpc.ico" kind="shortcut" size="69189"/>
-        <icon href="illarion_easynpc16.png" height="16" width="16" depth="32" size="749"/>
-        <icon href="illarion_easynpc32.png" height="32" width="32" depth="32" size="2049"/>
-        <icon href="illarion_easynpc48.png" height="48" width="48" depth="32" size="3862"/>
-        <icon href="illarion_easynpc64.png" height="64" width="64" depth="32" size="5423"/>
-        <icon href="illarion_easynpc128.png" height="128" width="128" depth="32" size="14455"/>
-        <icon href="illarion_easynpc256.png" height="256" width="256" depth="32" size="36711"/>
+        <icon href="illarion_easynpc16.png" height="16" width="16" kind="default"/>
+        <icon href="illarion_easynpc32.png" height="32" width="32" kind="default"/>
         <offline-allowed/>
         <shortcut online="true">
             <desktop/>
