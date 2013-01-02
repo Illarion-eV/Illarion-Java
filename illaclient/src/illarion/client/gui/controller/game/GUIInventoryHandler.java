@@ -51,7 +51,6 @@ import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Rectangle;
-import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -107,7 +106,6 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class InventoryClickActionHelper extends AbstractMultiActionHelper {
-        private static final Logger LOGGER = Logger.getLogger(InventoryClickActionHelper.class);
         /**
          * The ID of the slot that was clicked at.
          */
@@ -122,7 +120,6 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
 
         @Override
         public void executeAction(final int count) {
-            LOGGER.debug("Executing inventory click action with " + Integer.toString(count) + " clicks.");
             final illarion.client.world.items.InventorySlot slot = World.getPlayer().getInventory().getItem(slotId);
 
             if (!slot.containsItem()) {
