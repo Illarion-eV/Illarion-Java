@@ -131,6 +131,8 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
                 } else {
                     message = talkingChar.getName() + ' ' + talkingEvent.getText();
                 }
+            } else if (talkingEvent.getMode() == ChatHandler.SpeechMode.ooc) {
+                message = "((" + talkingEvent.getText() + "))";
             } else {
                 message = talkingEvent.getText();
             }
@@ -415,7 +417,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
 
         final Matcher oocMatcher = oocPattern.matcher(text);
         if (oocMatcher.find()) {
-            cleanAndSendText("#o ", emoteMatcher.group(2), CommandList.CMD_WHISPER);
+            cleanAndSendText("#o ", oocMatcher.group(2), CommandList.CMD_WHISPER);
             return;
         }
 

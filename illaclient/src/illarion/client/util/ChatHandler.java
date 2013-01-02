@@ -154,32 +154,32 @@ public final class ChatHandler {
 
         ChatHandler.SpeechMode mode = null;
         String resultText = null;
-        for (final ChatHandler.SpeechMode testMode : ChatHandler.SpeechMode.values()) {
-            if (testMode.getRegexp() == null) {
-                if (mode == null) {
-                    mode = testMode;
-                    resultText = text;
+
+        switch (receivedMode) {
+            case whisper:
+                final Matcher oocMatcher = SpeechMode.ooc.getRegexp().matcher(text);
+                if (oocMatcher.find()) {
+                    mode = SpeechMode.ooc;
+                    resultText = oocMatcher.replaceAll(SpeechMode.ooc.getReplacement()).trim();
+                } else {
+                    mode = SpeechMode.whisper;
+                    resultText = text.trim();
                 }
-                continue;
-            }
-
-            final Matcher testMatcher = testMode.getRegexp().matcher(text);
-            if (testMatcher.find()) {
-                mode = testMode;
-                resultText = testMatcher.replaceAll(testMode.getReplacement());
                 break;
-            }
+            case shout:
+                mode = SpeechMode.shout;
+                resultText = text.trim();
+                break;
+            default:
+                final Matcher emoteMatcher = SpeechMode.emote.getRegexp().matcher(text);
+                if (emoteMatcher.find()) {
+                    mode = SpeechMode.emote;
+                    resultText = emoteMatcher.replaceAll(SpeechMode.emote.getReplacement());
+                } else {
+                    mode = SpeechMode.normal;
+                    resultText = text.trim();
+                }
         }
-
-        if (mode == null) {
-            throw new IllegalStateException("Talking mode is NULL, this can't happen.");
-        }
-
-        if (((receivedMode == SpeechMode.whisper) || (receivedMode == SpeechMode.shout)) && (receivedMode != mode)) {
-            LOGGER.warn("Received mode and detected mode do not fit.");
-        }
-
-        resultText = resultText.trim();
 
         final TextBuilder textBuilder = TextBuilder.newInstance();
         try {
@@ -191,7 +191,7 @@ public final class ChatHandler {
                     textBuilder.append(talkingChar.getName());
                 }
 
-                textBuilder.append(' ').append(resultText);
+                textBuilder.append(resultText);
             } else {
                 if (talkingChar == null) {
                     textBuilder.append(Lang.getMsg("chat.distantShout"));
