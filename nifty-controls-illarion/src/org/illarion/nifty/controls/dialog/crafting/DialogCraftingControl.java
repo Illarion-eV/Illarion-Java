@@ -319,6 +319,7 @@ public class DialogCraftingControl
         }
 
         if (selectedEntry == null) {
+            setSelectedItem(null);
             return;
         }
 
@@ -426,6 +427,18 @@ public class DialogCraftingControl
      */
     private void setSelectedItem(final CraftingItemEntry selectedEntry) {
         if (selectedEntry == null) {
+            final Element image = getContent().findElementByName("#selectedItemImage");
+            image.getRenderer(ImageRenderer.class).setImage(null);
+
+            final Label imageAmount = getContent().findNiftyControl("#selectedItemAmount", Label.class);
+            imageAmount.getElement().hide();
+
+            final Element ingredientsPanel = getContent().findElementByName("#ingredients");
+
+            int index = 0;
+            while (deleteIngredientImage(ingredientsPanel, index++)) {
+                // nothing
+            }
             return;
         }
         final Element image = getContent().findElementByName("#selectedItemImage");
