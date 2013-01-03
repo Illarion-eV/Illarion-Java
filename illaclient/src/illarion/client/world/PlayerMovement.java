@@ -429,7 +429,7 @@ public final class PlayerMovement
         }
 
         // in case it took too long to fix the path, reset everything
-        if (stepsWithPathModification >= MAX_MODIFIED_STEPS) {
+        if (stepsWithPathModification > MAX_MODIFIED_STEPS) {
             runningPathModification = 0;
             stepsWithPathModification = 0;
         }
