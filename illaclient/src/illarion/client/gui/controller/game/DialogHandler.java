@@ -470,8 +470,12 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
                 merchantDialog.setDialogId(event.getId());
                 merchantDialog.setTitle(event.getTitle());
                 addMerchantItemsToDialog(event, merchantDialog);
-                merchantDialog.getElement().setVisible(true);
-                merchantDialog.getElement().getParent().layoutElements();
+                merchantDialog.getElement().show(new EndNotify() {
+                    @Override
+                    public void perform() {
+                        merchantDialog.getElement().markForMove(merchantDialog.getElement().getParent());
+                    }
+                });
             }
         });
     }
@@ -514,10 +518,15 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
                     craftingDialog.setDialogId(event.getRequestId());
                     craftingDialog.clearItemList();
                     addCraftingItemsToDialog(event, craftingDialog);
-                    craftingDialog.getElement().setVisible(true);
                     craftingDialog.setProgress(0.f);
                     craftingDialog.selectItemByItemIndex(0);
-                    craftingDialog.getElement().layoutElements();
+                    craftingDialog.getElement().show(new EndNotify() {
+                        @Override
+                        public void perform() {
+                            craftingDialog.getElement().markForMove(craftingDialog.getElement().getParent());
+                            craftingDialog.selectItemByItemIndex(0);
+                        }
+                    });
                     openCraftDialog = true;
                 }
             });
