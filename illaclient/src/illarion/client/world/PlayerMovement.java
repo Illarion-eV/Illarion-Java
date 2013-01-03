@@ -421,26 +421,22 @@ public final class PlayerMovement
      * @param direction the direction the character is running towards
      */
     private void performNextRunningStep(final int direction) {
-        LOGGER.info("Perform Running Step: START.");
         // in case the direction changed, reset the path modification data
         if (runningPathLastDirection != direction) {
             runningPathModification = 0;
             stepsWithPathModification = 0;
             runningPathLastDirection = direction;
-            LOGGER.info("Perform Running Step: Direction changed. RESET!");
         }
 
         // in case it took too long to fix the path, reset everything
         if (stepsWithPathModification >= MAX_MODIFIED_STEPS) {
             runningPathModification = 0;
             stepsWithPathModification = 0;
-            LOGGER.info("Perform Running Step: Walked too long beside the road. RESET!");
         }
 
         // try to move in the requested direction
         final boolean straightMovePossible = isStepPossible(direction, MovementMode.Run);
         if (straightMovePossible && (runningPathModification == 0)) {
-            LOGGER.info("Perform Running Step: Straight running possible and allowed. FINISHED.");
             sendTurnAndMoveToServer(direction, MovementMode.Run);
             return;
         }
@@ -467,7 +463,6 @@ public final class PlayerMovement
         if (Math.abs(runningPathModification) == 1) {
             // path is altered by one walking step. Undo it if possible
             if (isStepPossible(preferredDir, MovementMode.Walk)) {
-                LOGGER.info("Perform Running Step: Fix modification with walking step. FINISHED.");
                 runningPathModification = 0;
                 stepsWithPathModification = 0;
                 sendTurnAndMoveToServer(preferredDir, MovementMode.Walk);
@@ -476,7 +471,6 @@ public final class PlayerMovement
         } else if (Math.abs(runningPathModification) >= 2) {
             // path is altered by one or more running steps. Undo them if possible.
             if (isStepPossible(preferredDir, MovementMode.Run)) {
-                LOGGER.info("Perform Running Step: Decrease modification with running step. FINISHED.");
                 runningPathModification += preferredMod * 2;
                 stepsWithPathModification = 0;
                 sendTurnAndMoveToServer(preferredDir, MovementMode.Run);
@@ -486,7 +480,6 @@ public final class PlayerMovement
 
         // undoing old changed to the path failed. Try to move along the current modification running.
         if (straightMovePossible && ((stepsWithPathModification + 2) <= MAX_MODIFIED_STEPS)) {
-            LOGGER.info("Perform Running Step: Keep modification with running step. FINISHED.");
             stepsWithPathModification += 2;
             sendTurnAndMoveToServer(direction, MovementMode.Run);
             return;
@@ -495,7 +488,6 @@ public final class PlayerMovement
         // Increase the modification with a running step if allowed
         if ((runningPathModification - (preferredDir * 2)) <= MAX_PATH_MODIFICATION) {
             if (isStepPossible(secondDir, MovementMode.Run)) {
-                LOGGER.info("Perform Running Step: Increase modification with running step. FINISHED.");
                 runningPathModification -= preferredMod * 2;
                 stepsWithPathModification = 0;
                 sendTurnAndMoveToServer(secondDir, MovementMode.Run);
@@ -505,7 +497,6 @@ public final class PlayerMovement
 
         // Running does not seem to be possible. Try to reduce the path modification with a walking step.
         if (isStepPossible(preferredDir, MovementMode.Walk)) {
-            LOGGER.info("Perform Running Step: Decrease modification with walking step. FINISHED.");
             runningPathModification += preferredMod;
             stepsWithPathModification = 0;
             sendTurnAndMoveToServer(preferredDir, MovementMode.Walk);
@@ -514,7 +505,6 @@ public final class PlayerMovement
 
         // Try walking without increasing the modification.
         if (isStepPossible(direction, MovementMode.Walk)) {
-            LOGGER.info("Perform Running Step: Keep modification with walking step. FINISHED.");
             stepsWithPathModification += 1;
             sendTurnAndMoveToServer(direction, MovementMode.Walk);
             return;
@@ -522,7 +512,6 @@ public final class PlayerMovement
 
         // Increase the modification with a walking step.
         if ((runningPathModification - preferredDir) <= MAX_PATH_MODIFICATION) {
-            LOGGER.info("Perform Running Step: Increase modification with walking step. FINISHED.");
             if (isStepPossible(secondDir, MovementMode.Walk)) {
                 runningPathModification -= preferredMod;
                 stepsWithPathModification = 0;
@@ -534,7 +523,6 @@ public final class PlayerMovement
         // all out of options, just run straight ahead and hope for the best. GERONIMO!
         resetRunPathModification();
         sendTurnAndMoveToServer(direction, MovementMode.Run);
-        LOGGER.info("Perform Running Step: Everything failed. FINISHED.");
     }
 
     /**
