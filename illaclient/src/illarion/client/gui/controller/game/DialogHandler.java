@@ -515,6 +515,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
                     craftingDialog.clearItemList();
                     addCraftingItemsToDialog(event, craftingDialog);
                     craftingDialog.getElement().setVisible(true);
+                    craftingDialog.setProgress(0.f);
                     craftingDialog.selectItemByItemIndex(0);
                     craftingDialog.getElement().layoutElements();
                     openCraftDialog = true;
