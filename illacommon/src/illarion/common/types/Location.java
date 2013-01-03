@@ -217,6 +217,19 @@ public class Location
     }
 
     /**
+     * Copy constructor. This constructor creates a copy of the location instance set here and moves the new instance
+     * to a specified direction.
+     *
+     * @param org       the original Location instance
+     * @param direction the direction to move the location to
+     */
+    public Location(final Location org, final int direction) {
+        this();
+        set(org);
+        moveSC(direction);
+    }
+
+    /**
      * Calculate the display coordinates from floating server coordinates. This function returns the X part of the
      * display coordinates where a object with this coordinates needs to be displayed.
      *
@@ -642,27 +655,6 @@ public class Location
      * @param dir The direction the Server coordinates are moved by
      */
     public void moveSC(final int dir) {
-        if (dir == DIR_ZERO) {
-            return;
-        }
-        if (dirtySC) {
-            toServerCoordinates();
-        }
-
-        scX += MOVE8[0][dir];
-        scY += MOVE8[1][dir];
-
-        dirtySC = false;
-        dirtyMC = true;
-        dirtyDC = true;
-    }
-
-    /**
-     * Move location one step into a direction using the 8 direction system.
-     *
-     * @param dir The direction the Server coordinates are moved by
-     */
-    public void moveSC8(final int dir) {
         if (dir == DIR_ZERO) {
             return;
         }

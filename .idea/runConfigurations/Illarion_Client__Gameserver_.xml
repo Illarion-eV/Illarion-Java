@@ -15,6 +15,7 @@
       <option name="myExternalizedOptions" value="&#13;&#10;additional-options2=onexit\=snapshot&#13;&#10;" />
     </RunnerSettings>
     <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Profile " />
     <ConfigurationWrapper RunnerId="Run" />
     <method>
       <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/illacommon/build_libs.xml" target="download_everything" />

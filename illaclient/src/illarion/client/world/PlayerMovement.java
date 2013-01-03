@@ -30,8 +30,9 @@ import illarion.client.util.PathReceiver;
 import illarion.client.util.Pathfinder;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventTopicSubscriber;
+import org.apache.log4j.Logger;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -42,7 +43,32 @@ import org.lwjgl.input.Keyboard;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class PlayerMovement
-        implements AnimatedMove, PathReceiver, EventTopicSubscriber<String> {
+        implements AnimatedMove, PathReceiver {
+    /**
+     * This Enumerator contains the possible value for the movement methods of a character.
+     */
+    public enum MovementMode {
+        /**
+         * This constant means that no movement is done. The character is only turning around or warping.
+         */
+        None,
+
+        /**
+         * This movement mode means that the character is walking.
+         */
+        Walk,
+
+        /**
+         * This constant means that the character is running.
+         */
+        Run,
+
+        /**
+         * This constant means that the character is being pushed.
+         */
+        Push;
+    }
+
     /**
      * This value is the relation of the distance from the character location to the location of the cursor to the
      * plain
@@ -50,26 +76,6 @@ public final class PlayerMovement
      * vertical on the screen. Else it will move diagonal.
      */
     private static final double MOUSE_ANGLE = Math.cos(Math.PI / Location.DIR_MOVE8);
-
-    /**
-     * The constant for no move.
-     */
-    public static final int MOVE_MODE_NONE = -1;
-
-    /**
-     * The constant for a pushed move.
-     */
-    public static final int MOVE_MODE_PUSH = 2;
-
-    /**
-     * The constant for a running move.
-     */
-    public static final int MOVE_MODE_RUN = 1;
-
-    /**
-     * The constant for a normal walking move.
-     */
-    public static final int MOVE_MODE_WALK = 0;
 
     /**
      * The overlap time of a movement in milliseconds. If this time is left of the last move animation the next step is
@@ -89,6 +95,23 @@ public final class PlayerMovement
     private static final int TIME_UNTIL_DISCARD = 5000;
 
     /**
+     * The maximal amount of tiles a path can be modified by.
+     */
+    private static final int MAX_PATH_MODIFICATION = 2;
+
+    /**
+     * The amount of modified steps that are allowed to be undone. In case more steps are done without the possibility
+     * to fix the location the current location will be assumed to be the correct one.
+     */
+    private static final int MAX_MODIFIED_STEPS = 4;
+
+    /**
+     * The logger instance that takes care of the logging output of this class.
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    private static final Logger LOGGER = Logger.getLogger(PlayerMovement.class);
+
+    /**
      * The destination location of the automated walking.
      */
     private Location autoDest;
@@ -106,7 +129,7 @@ public final class PlayerMovement
     /**
      * The mode of the last move that was allowed by the server.
      */
-    private int lastAllowedMoveMode = MOVE_MODE_NONE;
+    private MovementMode lastAllowedMoveMode = MovementMode.None;
 
     /**
      * The last move that was requested from the server.
@@ -170,7 +193,22 @@ public final class PlayerMovement
 
     private int walkTowardsDir = Location.DIR_ZERO;
 
-    private int walkTowardsMode = -1;
+    private MovementMode walkTowardsMode = MovementMode.None;
+
+    /**
+     * The amount of tiles the path was modified by.
+     */
+    private int runningPathModification;
+
+    /**
+     * The last direction the player was running towards.
+     */
+    private int runningPathLastDirection = -1;
+
+    /**
+     * This variable counts the step that were done while the path has a constant modified value.
+     */
+    private int stepsWithPathModification;
 
     /**
      * Default constructor.
@@ -181,76 +219,68 @@ public final class PlayerMovement
         moveAnimation.addTarget(this, false);
         parentPlayer = parent;
         playerCharacter = parent.getCharacter();
-        EventBus.subscribe(InputReceiver.EB_TOPIC, this);
+        AnnotationProcessor.process(this);
     }
 
     /**
-     * Perform the move of a player character after the move was confirmed by the player.
+     * This is the event handler that takes care of processing input event.
      *
-     * @param mode   the moving method that was send by the server
-     * @param target the target location of the character after the move
-     * @param speed  the speed of the move
+     * @param topic the event topic, should be {@link InputReceiver#EB_TOPIC}
+     * @param data  the event data
      */
-    public void acknowledgeMove(final int mode, final Location target, final int speed) {
-        lastMoveRequest = Location.DIR_ZERO;
-
-        if (!moving) {
-            moving = true;
-            performMove(mode, target, speed);
-            return;
+    @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
+    public void onInputEventReceived(final String topic, final String data) {
+        final MovementMode moveMode;
+        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+            moveMode = MovementMode.Run;
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_LMENU)) {
+            moveMode = MovementMode.None;
+        } else {
+            moveMode = MovementMode.Walk;
         }
-
-        lastAllowedMove = playerCharacter.getLocation().getDirection(target);
-        lastAllowedMoveMode = mode;
-        lastMoveTarget.set(target);
-        lastMoveSpeed = speed;
-    }
-
-    /**
-     * Get the acknowledge of a turn of the player character.
-     *
-     * @param direction the new direction of the player character after the turn
-     */
-    public void acknowledgeTurn(final int direction) {
-        requestedTurns[direction] = false;
-        playerCharacter.setDirection(direction);
-    }
-
-    /**
-     * This is called in case the animation got finished. This is needed so the next animation can be started correctly
-     * in case it was requested.
-     *
-     * @param finished <code>true</code> in case the animation is really done, false in case it got canceled
-     */
-    @Override
-    public void animationFinished(final boolean finished) {
-        positionUpdated = false;
-        playerCharacter.getLocation().set(parentPlayer.getLocation());
-        playerCharacter.updatePosition(0);
-        World.getPeople().checkVisibility();
-        World.getMap().checkInside();
-
-        if (lastAllowedMove == Location.DIR_ZERO) {
-            moving = false;
-            return;
-        }
-
-        lastAllowedMove = Location.DIR_ZERO;
-        performMove(lastAllowedMoveMode, lastMoveTarget, lastMoveSpeed);
-    }
-
-    /**
-     * Check if any turn is requested but yet not confirmed by the server.
-     *
-     * @return <code>true</code> in case there is a turn that is requested from the server
-     */
-    private boolean anyTurnRequested() {
-        for (final boolean turn : requestedTurns) {
-            if (turn) {
-                return true;
+        if (InputReceiver.EB_TOPIC.equals(topic)) {
+            if ("WalkNorth".equals(data)) {
+                requestMove(Location.DIR_NORTH, moveMode);
+            } else if ("WalkNorthEast".equals(data)) {
+                requestMove(Location.DIR_NORTHEAST, moveMode);
+            } else if ("WalkEast".equals(data)) {
+                requestMove(Location.DIR_EAST, moveMode);
+            } else if ("WalkSouthEast".equals(data)) {
+                requestMove(Location.DIR_SOUTHEAST, moveMode);
+            } else if ("WalkSouth".equals(data)) {
+                requestMove(Location.DIR_SOUTH, moveMode);
+            } else if ("WalkSouthWest".equals(data)) {
+                requestMove(Location.DIR_SOUTHWEST, moveMode);
+            } else if ("WalkWest".equals(data)) {
+                requestMove(Location.DIR_WEST, moveMode);
+            } else if ("WalkNorthWest".equals(data)) {
+                requestMove(Location.DIR_NORTHWEST, moveMode);
             }
         }
-        return false;
+    }
+
+    /**
+     * Request a move of the player character. This function will check if there is already a move or not. In case
+     * there
+     * is one and depending on how far the old move is processed already, its possible that a new move is requested
+     * already earlier so the movement looks all in all smooth.
+     *
+     * @param direction the direction the move shall be performed in
+     * @param mode      the mode of the move that shall be performed
+     */
+    public void requestMove(final int direction, final MovementMode mode) {
+        requestMove(direction, mode, true, false);
+    }
+
+    @Override
+    public void handlePath(final Path path) {
+        cancelAutoWalk();
+        autoPath = path;
+        if (autoPath != null) {
+            autoDest = autoPath.getDestination();
+            autoPath.nextStep();
+            autoStep();
+        }
     }
 
     /**
@@ -282,7 +312,7 @@ public final class PlayerMovement
 
         // execute walking step
         final int direction = loc.getDirection(stepDest);
-        requestMove(direction, PlayerMovement.MOVE_MODE_WALK, false);
+        requestMove(direction, MovementMode.Walk, false, false);
     }
 
     /**
@@ -294,82 +324,18 @@ public final class PlayerMovement
     }
 
     /**
-     * Check if pending requests need to be discarded in order to keep the stuff working correctly.
+     * Make the character automatically walking to a target location.
+     *
+     * @param dest the location the character shall walk to
      */
-    private void discardCheck() {
-        if ((timeOfDiscard > 0L) && (timeOfDiscard < System.currentTimeMillis())) {
-            for (int dir = 0; dir < Location.DIR_MOVE8; ++dir) {
-                requestedTurns[dir] = false;
-            }
-            lastMoveRequest = Location.DIR_ZERO;
-            timeOfDiscard = 0L;
-        }
-    }
-
-    @Override
-    public void handlePath(final Path path) {
+    public void walkTo(final Location dest) {
         cancelAutoWalk();
-        autoPath = path;
-        if (autoPath != null) {
-            autoDest = autoPath.getDestination();
-            autoPath.nextStep();
-            autoStep();
+
+        final Location loc = parentPlayer.getLocation();
+        final MapTile walkTarget = World.getMap().getMapAt(dest);
+        if ((walkTarget != null) && (dest.getScZ() == loc.getScZ()) && !walkTarget.isObstacle()) {
+            Pathfinder.getInstance().findPath(loc, dest, this);
         }
-    }
-
-    /**
-     * Get if the player character is currently moving.
-     *
-     * @return <code>true</code> in case the character is currently moving
-     */
-    public boolean isMoving() {
-        return moving;
-    }
-
-    /**
-     * Check if the character is currently moved and turned by mouse control.
-     *
-     * @return {@code true} in case the character is currently moving by the mouse
-     */
-    public boolean isMouseMovementActive() {
-        return mouseMovementActive;
-    }
-
-    /**
-     * Perform a move of the player character. This function does not perform any checks. It just does the move no
-     * matter what the status of everything is.
-     *
-     * @param mode   the movement mode, allowed values are {@link #MOVE_MODE_WALK} and {@link #MOVE_MODE_RUN}
-     * @param target the target location where the character shall be located at at the end of the move
-     * @param speed  the speed of the walk that determines how long the animation takes
-     */
-    private void performMove(final int mode, final Location target, final int speed) {
-        // final illarion.client.guiNG.ChatEditor editor =
-        // illarion.client.guiNG.GUI.getInstance().getChatEditor();
-        // if (editor.isVisible() && (editor.getTextLength() == 0)) {
-        // editor.setVisible(false);
-        // }
-        if ((mode == MOVE_MODE_NONE) || playerCharacter.getLocation().equals(target)) {
-            parentPlayer.updateLocation(target);
-            playerCharacter.setLocation(target);
-            animationFinished(true);
-            World.getMapDisplay().animationFinished(true);
-            walkTowards = false;
-            return;
-        }
-
-        int moveMode = Char.MOVE_WALK;
-        if (mode == MOVE_MODE_RUN) {
-            moveMode = Char.MOVE_RUN;
-        }
-        playerCharacter.moveTo(target, moveMode, speed);
-        final int oldElevation = World.getMapDisplay().getElevation();
-        final int newElevation = World.getMap().getElevationAt(target);
-        final int xOffset = parentPlayer.getLocation().getDcX() - target.getDcX();
-        final int yOffset = parentPlayer.getLocation().getDcY() - target.getDcY();
-        moveAnimation.start(0, 0, -oldElevation, xOffset, yOffset, -newElevation, speed);
-
-        parentPlayer.updateLocation(target);
     }
 
     /**
@@ -378,40 +344,35 @@ public final class PlayerMovement
      * is one and depending on how far the old move is processed already, its possible that a new move is requested
      * already earlier so the movement looks all in all smooth.
      *
-     * @param direction the direction the move shall be performed in
-     * @param mode      the mode of the move that shall be performed
-     */
-    public void requestMove(final int direction, final int mode) {
-        requestMove(direction, mode, true);
-    }
-
-    /**
-     * Request a move of the player character. This function will check if there is already a move or not. In case
-     * there
-     * is one and depending on how far the old move is processed already, its possible that a new move is requested
-     * already earlier so the movement looks all in all smooth.
-     *
-     * @param direction    the direction the move shall be performed in
-     * @param mode         the mode of the move that shall be performed
-     * @param stopAutoMove <code>true</code> in case this request shall remove the currently running automated movement
+     * @param direction           the direction the move shall be performed in
+     * @param mode                the mode of the move that shall be performed
+     * @param stopAutoMove        {@code true} in case this request shall remove the currently running automated movement
+     * @param runPathModification {@code true} in case the function is supposed to try to change the running path in
+     *                            order to avoid obstacles
      */
     @SuppressWarnings("nls")
-    private void requestMove(final int direction, final int mode, final boolean stopAutoMove) {
-        if (mode == MOVE_MODE_PUSH) {
-            throw new IllegalArgumentException("Pushed moves are not" + " supported by the player movement handler.");
+    private void requestMove(final int direction, final MovementMode mode, final boolean stopAutoMove,
+                             final boolean runPathModification) {
+        if (mode == MovementMode.Push) {
+            throw new IllegalArgumentException("Pushed moves are not supported by the player movement handler.");
         }
         if (stopAutoMove) {
             cancelAutoWalk();
         }
-        requestTurn(direction, false);
-        if (mode == MOVE_MODE_NONE) {
+        if (mode == MovementMode.None) {
+            requestTurn(direction, false);
             discardCheck();
         } else {
             if ((lastMoveRequest == Location.DIR_ZERO) && (lastAllowedMove == Location.DIR_ZERO)) {
                 if (!moving || (moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME)) {
                     lastMoveRequest = direction;
                     timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
-                    sendMoveToServer(direction, mode);
+                    if ((mode == MovementMode.Run) && runPathModification) {
+                        performNextRunningStep(direction);
+                    } else {
+                        resetRunPathModification();
+                        sendTurnAndMoveToServer(direction, mode);
+                    }
                 }
             } else {
                 discardCheck();
@@ -422,17 +383,8 @@ public final class PlayerMovement
     /**
      * This function needs to be triggered in case a turn needs to be done.
      *
-     * @param direction the direction the player wants his character to look at
-     */
-    public void requestTurn(final int direction) {
-        requestTurn(direction, true);
-    }
-
-    /**
-     * This function needs to be triggered in case a turn needs to be done.
-     *
      * @param direction    the direction the player wants his character to look at
-     * @param stopAutoMove <code>true</code> in case this request shall remove the currently running automated movement
+     * @param stopAutoMove {@code true} in case this request shall remove the currently running automated movement
      */
     private void requestTurn(final int direction, final boolean stopAutoMove) {
         if (stopAutoMove) {
@@ -448,20 +400,230 @@ public final class PlayerMovement
     }
 
     /**
+     * Check if any turn is requested but yet not confirmed by the server.
+     *
+     * @return <code>true</code> in case there is a turn that is requested from the server
+     */
+    private boolean anyTurnRequested() {
+        for (final boolean turn : requestedTurns) {
+            if (turn) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This method plots the next running movement step. It takes obstacles along the way into account and tries to
+     * avoid them by slightly changing the direction of the character. Once it altered the path it will try to return
+     * to the original path to avoid drifts along the route.
+     *
+     * @param direction the direction the character is running towards
+     */
+    private void performNextRunningStep(final int direction) {
+        LOGGER.info("Perform Running Step: START.");
+        // in case the direction changed, reset the path modification data
+        if (runningPathLastDirection != direction) {
+            runningPathModification = 0;
+            stepsWithPathModification = 0;
+            runningPathLastDirection = direction;
+            LOGGER.info("Perform Running Step: Direction changed. RESET!");
+        }
+
+        // in case it took too long to fix the path, reset everything
+        if (stepsWithPathModification >= MAX_MODIFIED_STEPS) {
+            runningPathModification = 0;
+            stepsWithPathModification = 0;
+            LOGGER.info("Perform Running Step: Walked too long beside the road. RESET!");
+        }
+
+        // try to move in the requested direction
+        final boolean straightMovePossible = isStepPossible(direction, MovementMode.Run);
+        if (straightMovePossible && (runningPathModification == 0)) {
+            LOGGER.info("Perform Running Step: Straight running possible and allowed. FINISHED.");
+            sendTurnAndMoveToServer(direction, MovementMode.Run);
+            return;
+        }
+
+        // calculate the two directions that are possible
+        final int possibleDir1 = (direction + 1) % Location.DIR_MOVE8;
+        final int possibleDir2 = (direction == 0) ? 7 : (direction - 1);
+
+        // assign the direction that should be used at preference to undo old path modifications
+        final int preferredDir;
+        final int secondDir;
+        final int preferredMod;
+        if (runningPathModification > 0) {
+            preferredDir = possibleDir2;
+            secondDir = possibleDir1;
+            preferredMod = -1;
+        } else {
+            preferredDir = possibleDir1;
+            secondDir = possibleDir2;
+            preferredMod = 1;
+        }
+
+        // check to undo old path modifications
+        if (Math.abs(runningPathModification) == 1) {
+            // path is altered by one walking step. Undo it if possible
+            if (isStepPossible(preferredDir, MovementMode.Walk)) {
+                LOGGER.info("Perform Running Step: Fix modification with walking step. FINISHED.");
+                runningPathModification = 0;
+                stepsWithPathModification = 0;
+                sendTurnAndMoveToServer(preferredDir, MovementMode.Walk);
+                return;
+            }
+        } else if (Math.abs(runningPathModification) >= 2) {
+            // path is altered by one or more running steps. Undo them if possible.
+            if (isStepPossible(preferredDir, MovementMode.Run)) {
+                LOGGER.info("Perform Running Step: Decrease modification with running step. FINISHED.");
+                runningPathModification += preferredMod * 2;
+                stepsWithPathModification = 0;
+                sendTurnAndMoveToServer(preferredDir, MovementMode.Run);
+                return;
+            }
+        }
+
+        // undoing old changed to the path failed. Try to move along the current modification running.
+        if (straightMovePossible && ((stepsWithPathModification + 2) <= MAX_MODIFIED_STEPS)) {
+            LOGGER.info("Perform Running Step: Keep modification with running step. FINISHED.");
+            stepsWithPathModification += 2;
+            sendTurnAndMoveToServer(direction, MovementMode.Run);
+            return;
+        }
+
+        // Increase the modification with a running step if allowed
+        if ((runningPathModification - (preferredDir * 2)) <= MAX_PATH_MODIFICATION) {
+            if (isStepPossible(secondDir, MovementMode.Run)) {
+                LOGGER.info("Perform Running Step: Increase modification with running step. FINISHED.");
+                runningPathModification -= preferredMod * 2;
+                stepsWithPathModification = 0;
+                sendTurnAndMoveToServer(secondDir, MovementMode.Run);
+                return;
+            }
+        }
+
+        // Running does not seem to be possible. Try to reduce the path modification with a walking step.
+        if (isStepPossible(preferredDir, MovementMode.Walk)) {
+            LOGGER.info("Perform Running Step: Decrease modification with walking step. FINISHED.");
+            runningPathModification += preferredMod;
+            stepsWithPathModification = 0;
+            sendTurnAndMoveToServer(preferredDir, MovementMode.Walk);
+            return;
+        }
+
+        // Try walking without increasing the modification.
+        if (isStepPossible(direction, MovementMode.Walk)) {
+            LOGGER.info("Perform Running Step: Keep modification with walking step. FINISHED.");
+            stepsWithPathModification += 1;
+            sendTurnAndMoveToServer(direction, MovementMode.Walk);
+            return;
+        }
+
+        // Increase the modification with a walking step.
+        if ((runningPathModification - preferredDir) <= MAX_PATH_MODIFICATION) {
+            LOGGER.info("Perform Running Step: Increase modification with walking step. FINISHED.");
+            if (isStepPossible(secondDir, MovementMode.Walk)) {
+                runningPathModification -= preferredMod;
+                stepsWithPathModification = 0;
+                sendTurnAndMoveToServer(secondDir, MovementMode.Walk);
+                return;
+            }
+        }
+
+        // all out of options, just run straight ahead and hope for the best. GERONIMO!
+        resetRunPathModification();
+        sendTurnAndMoveToServer(direction, MovementMode.Run);
+        LOGGER.info("Perform Running Step: Everything failed. FINISHED.");
+    }
+
+    /**
+     * Check if a move is possible.
+     *
+     * @param direction the direction of the move
+     * @param mode      the mode method, only {@link MovementMode#Run} and {@link MovementMode#Walk} are allowed
+     * @return {@code true} in case the step is possible
+     * @throws IllegalArgumentException in case the mode has a illegal value
+     * @throws NullPointerException     in case {@code mode} is {@code null}
+     * @throws IllegalStateException    in case something else goes wrong
+     */
+    public static boolean isStepPossible(final int direction, final MovementMode mode) {
+        if (mode == null) {
+            throw new NullPointerException("mode");
+        }
+        switch (mode) {
+            case None:
+            case Push:
+                throw new IllegalArgumentException("mode");
+            case Walk:
+                final Location locAfterStep = new Location(World.getPlayer().getLocation(), direction);
+                return isLocationFree(locAfterStep);
+            case Run:
+                final Location newLoc = new Location(World.getPlayer().getLocation(), direction);
+                if (!isLocationFree(newLoc)) {
+                    return false;
+                }
+                newLoc.moveSC(direction);
+                return isLocationFree(newLoc);
+        }
+        throw new IllegalStateException("isStepPossible reached invalid state.");
+    }
+
+    /**
+     * Check if its possible to step on a specified location.
+     *
+     * @param loc the location to test
+     * @return {@code true} in case the character is able to step onto the location
+     */
+    private static boolean isLocationFree(final Location loc) {
+        final MapTile tile = World.getMap().getMapAt(loc);
+        if (tile == null) {
+            return false;
+        }
+        return !tile.isBlocked();
+    }
+
+    /**
+     * Reset all running path modifications. This should be done in case moves are made without using the {@link
+     * #performNextRunningStep(int)} function.
+     */
+    public void resetRunPathModification() {
+        runningPathLastDirection = -1;
+    }
+
+    private void sendTurnAndMoveToServer(final int direction, final MovementMode mode) {
+        requestTurn(direction, false);
+        sendMoveToServer(direction, mode);
+    }
+
+    /**
      * Send the movement command to the server.
      *
      * @param direction the direction of the requested move
      * @param mode      the mode of the requested move
      */
-    private void sendMoveToServer(final int direction, final int mode) {
+    private void sendMoveToServer(final int direction, final MovementMode mode) {
         final MoveCmd cmd = (MoveCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_MOVE);
         cmd.setDirection(parentPlayer.getPlayerId(), direction);
-        if (mode == MOVE_MODE_RUN) {
+        if (mode == MovementMode.Run) {
             cmd.setRunning();
         } else {
             cmd.setMoving();
         }
         cmd.send();
+    }
+
+    /**
+     * Check if pending requests need to be discarded in order to keep the stuff working correctly.
+     */
+    private void discardCheck() {
+        if ((timeOfDiscard > 0L) && (timeOfDiscard < System.currentTimeMillis())) {
+            for (int dir = 0; dir < Location.DIR_MOVE8; ++dir) {
+                requestedTurns[dir] = false;
+            }
+            lastMoveRequest = Location.DIR_ZERO;
+            timeOfDiscard = 0L;
+        }
     }
 
     /**
@@ -485,11 +647,116 @@ public final class PlayerMovement
         } else if ((moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME) && (lastAllowedMove == Location.DIR_ZERO)
                 && (lastMoveRequest == Location.DIR_ZERO)) {
             if (walkTowards) {
-                requestMove(walkTowardsDir, walkTowardsMode);
+                requestMove(walkTowardsDir, walkTowardsMode, true, true);
             } else {
                 autoStep();
             }
         }
+    }
+
+    /**
+     * Perform the move of a player character after the move was confirmed by the player.
+     *
+     * @param mode   the moving method that was send by the server
+     * @param target the target location of the character after the move
+     * @param speed  the speed of the move
+     */
+    public void acknowledgeMove(final MovementMode mode, final Location target, final int speed) {
+        lastMoveRequest = Location.DIR_ZERO;
+
+        if (!moving) {
+            moving = true;
+            performMove(mode, target, speed);
+            return;
+        }
+
+        lastAllowedMove = playerCharacter.getLocation().getDirection(target);
+        lastAllowedMoveMode = mode;
+        lastMoveTarget.set(target);
+        lastMoveSpeed = speed;
+    }
+
+    /**
+     * Perform a move of the player character. This function does not perform any checks. It just does the move no
+     * matter what the status of everything is.
+     *
+     * @param mode   the movement mode
+     * @param target the target location where the character shall be located at at the end of the move
+     * @param speed  the speed of the walk that determines how long the animation takes
+     */
+    private void performMove(final MovementMode mode, final Location target, final int speed) {
+        if ((mode == MovementMode.None) || playerCharacter.getLocation().equals(target)) {
+            parentPlayer.updateLocation(target);
+            playerCharacter.setLocation(target);
+            animationFinished(true);
+            World.getMapDisplay().animationFinished(true);
+            walkTowards = false;
+            return;
+        }
+
+        int moveMode = Char.MOVE_WALK;
+        if (mode == MovementMode.Run) {
+            moveMode = Char.MOVE_RUN;
+        }
+        playerCharacter.moveTo(target, moveMode, speed);
+        final int oldElevation = World.getMapDisplay().getElevation();
+        final int newElevation = World.getMap().getElevationAt(target);
+        final int xOffset = parentPlayer.getLocation().getDcX() - target.getDcX();
+        final int yOffset = parentPlayer.getLocation().getDcY() - target.getDcY();
+        moveAnimation.start(0, 0, -oldElevation, xOffset, yOffset, -newElevation, speed);
+
+        parentPlayer.updateLocation(target);
+    }
+
+    /**
+     * This is called in case the animation got finished. This is needed so the next animation can be started correctly
+     * in case it was requested.
+     *
+     * @param finished <code>true</code> in case the animation is really done, false in case it got canceled
+     */
+    @Override
+    public void animationFinished(final boolean finished) {
+        positionUpdated = false;
+        playerCharacter.getLocation().set(parentPlayer.getLocation());
+        playerCharacter.updatePosition(0);
+        World.getPeople().checkVisibility();
+        World.getMap().checkInside();
+
+        if (lastAllowedMove == Location.DIR_ZERO) {
+            moving = false;
+            return;
+        }
+
+        lastAllowedMove = Location.DIR_ZERO;
+        performMove(lastAllowedMoveMode, lastMoveTarget, lastMoveSpeed);
+    }
+
+    /**
+     * Get the acknowledge of a turn of the player character.
+     *
+     * @param direction the new direction of the player character after the turn
+     */
+    public void acknowledgeTurn(final int direction) {
+        requestedTurns[direction] = false;
+        playerCharacter.setDirection(direction);
+    }
+
+    /**
+     * Check if the character is currently moved and turned by mouse control.
+     *
+     * @return {@code true} in case the character is currently moving by the mouse
+     */
+    public boolean isMouseMovementActive() {
+        return mouseMovementActive;
+    }
+
+    /**
+     * Get if the player character is currently moving.
+     *
+     * @return <code>true</code> in case the character is currently moving
+     */
+    public boolean isMoving() {
+        return moving;
     }
 
     /**
@@ -513,21 +780,6 @@ public final class PlayerMovement
     }
 
     /**
-     * Make the character automatically walking to a target location.
-     *
-     * @param dest the location the character shall walk to
-     */
-    public void walkTo(final Location dest) {
-        cancelAutoWalk();
-
-        final Location loc = parentPlayer.getLocation();
-        final MapTile walkTarget = World.getMap().getMapAt(dest);
-        if ((walkTarget != null) && (dest.getScZ() == loc.getScZ()) && !walkTarget.isObstacle()) {
-            Pathfinder.getInstance().findPath(loc, dest, this);
-        }
-    }
-
-    /**
      * Walk towards a direction.
      *
      * @param screenPosX the x location on the screen to walk to
@@ -547,52 +799,36 @@ public final class PlayerMovement
         final float relYOffset = (float) yOffset / (float) distance;
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            walkTowardsMode = MOVE_MODE_NONE;
+            walkTowardsMode = MovementMode.None;
         } else if (distance > 200) {
-            walkTowardsMode = MOVE_MODE_RUN;
+            walkTowardsMode = MovementMode.Run;
         } else if (distance < 30) {
-            walkTowardsMode = MOVE_MODE_NONE;
+            walkTowardsMode = MovementMode.None;
         } else {
-            walkTowardsMode = MOVE_MODE_WALK;
+            walkTowardsMode = MovementMode.Walk;
         }
 
         if (relXOffset > MOUSE_ANGLE) {
-            // GUI.getInstance().getMouseCursor()
-            // .setCursor(MarkerFactory.CRSR_WALK_SE);
             walkTowardsDir = Location.DIR_SOUTHEAST;
         } else if (relXOffset < -MOUSE_ANGLE) {
-            // GUI.getInstance().getMouseCursor()
-            // .setCursor(MarkerFactory.CRSR_WALK_NW);
             walkTowardsDir = Location.DIR_NORTHWEST;
         } else if (relYOffset > MOUSE_ANGLE) {
-            // GUI.getInstance().getMouseCursor()
-            // .setCursor(MarkerFactory.CRSR_WALK_NE);
             walkTowardsDir = Location.DIR_NORTHEAST;
         } else if (relYOffset < -MOUSE_ANGLE) {
-            // GUI.getInstance().getMouseCursor()
-            // .setCursor(MarkerFactory.CRSR_WALK_SW);
             walkTowardsDir = Location.DIR_SOUTHWEST;
         } else if ((xOffset > 0) && (yOffset > 0)) {
-            // GUI.getInstance().getMouseCursor()
-            // .setCursor(MarkerFactory.CRSR_WALK_E);
             walkTowardsDir = Location.DIR_EAST;
         } else if ((xOffset > 0) && (yOffset < 0)) {
-            // GUI.getInstance().getMouseCursor()
-            // .setCursor(MarkerFactory.CRSR_WALK_S);
             walkTowardsDir = Location.DIR_SOUTH;
         } else if ((xOffset < 0) && (yOffset < 0)) {
-            // GUI.getInstance().getMouseCursor()
-            // .setCursor(MarkerFactory.CRSR_WALK_W);
             walkTowardsDir = Location.DIR_WEST;
         } else if ((xOffset < 0) && (yOffset > 0)) {
-            // GUI.getInstance().getMouseCursor()
-            // .setCursor(MarkerFactory.CRSR_WALK_N);
             walkTowardsDir = Location.DIR_NORTH;
         }
 
         mouseMovementActive = true;
 
-        if (walkTowardsMode == MOVE_MODE_NONE) {
+        if (walkTowardsMode == MovementMode.None) {
             walkTowards = false;
             requestTurn(walkTowardsDir, true);
             return;
@@ -604,37 +840,6 @@ public final class PlayerMovement
 
         walkTowards = true;
 
-        requestMove(walkTowardsDir, walkTowardsMode, true);
-    }
-
-    @Override
-    public void onEvent(final String topic, final String data) {
-        final int moveMode;
-        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
-            moveMode = MOVE_MODE_RUN;
-        } else if (Keyboard.isKeyDown(Keyboard.KEY_LMENU)) {
-            moveMode = MOVE_MODE_NONE;
-        } else {
-            moveMode = MOVE_MODE_WALK;
-        }
-        if (InputReceiver.EB_TOPIC.equals(topic)) {
-            if ("WalkNorth".equals(data)) {
-                requestMove(Location.DIR_NORTH, moveMode);
-            } else if ("WalkNorthEast".equals(data)) {
-                requestMove(Location.DIR_NORTHEAST, moveMode);
-            } else if ("WalkEast".equals(data)) {
-                requestMove(Location.DIR_EAST, moveMode);
-            } else if ("WalkSouthEast".equals(data)) {
-                requestMove(Location.DIR_SOUTHEAST, moveMode);
-            } else if ("WalkSouth".equals(data)) {
-                requestMove(Location.DIR_SOUTH, moveMode);
-            } else if ("WalkSouthWest".equals(data)) {
-                requestMove(Location.DIR_SOUTHWEST, moveMode);
-            } else if ("WalkWest".equals(data)) {
-                requestMove(Location.DIR_WEST, moveMode);
-            } else if ("WalkNorthWest".equals(data)) {
-                requestMove(Location.DIR_NORTHWEST, moveMode);
-            }
-        }
+        requestMove(walkTowardsDir, walkTowardsMode, true, true);
     }
 }

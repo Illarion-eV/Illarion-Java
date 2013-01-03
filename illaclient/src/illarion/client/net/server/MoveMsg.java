@@ -115,13 +115,15 @@ public final class MoveMsg
         }
 
         if (World.getPlayer().isPlayer(charId)) {
-            int moveMode = PlayerMovement.MOVE_MODE_NONE;
+            final PlayerMovement.MovementMode moveMode;
             if (mode == MODE_MOVE) {
-                moveMode = PlayerMovement.MOVE_MODE_WALK;
+                moveMode = PlayerMovement.MovementMode.Walk;
             } else if (mode == MODE_PUSH) {
-                moveMode = PlayerMovement.MOVE_MODE_PUSH;
+                moveMode = PlayerMovement.MovementMode.Push;
             } else if (mode == MODE_RUN) {
-                moveMode = PlayerMovement.MOVE_MODE_RUN;
+                moveMode = PlayerMovement.MovementMode.Run;
+            } else {
+                moveMode = PlayerMovement.MovementMode.None;
             }
             World.getPlayer().getMovementHandler().acknowledgeMove(moveMode, loc, speed);
             return true;

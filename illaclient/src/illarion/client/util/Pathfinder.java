@@ -247,7 +247,7 @@ public final class Pathfinder
             final Location searchLoc = new Location();
             for (int dir = 0; dir < Location.DIR_MOVE8; ++dir) {
                 searchLoc.set(currentLoc);
-                searchLoc.moveSC8(dir);
+                searchLoc.moveSC(dir);
                 final PathNode searchNode = PathNode.getNode(searchLoc);
 
                 if (!searchNode.isBlocked()) {
