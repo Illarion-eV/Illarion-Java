@@ -469,7 +469,7 @@ public final class LuaWriter {
     @SuppressWarnings("nls")
     private void writeMainScript(final Writer target) throws IOException {
         target.write("function receiveText(npcChar, texttype, message, speaker) ");
-        target.write("mainNPC:receiveText(npcChar, speaker, message); ");
+        target.write("mainNPC:receiveText(npcChar, texttype, speaker, message); ");
         target.write("end;");
         target.write(NL);
         target.write("function nextCycle(npcChar) ");

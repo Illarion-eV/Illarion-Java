@@ -47,6 +47,7 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
         CharacterSex.enlistHighlightedWords(tokenMap);
         EquipmentSlots.enlistHighlightedWords(tokenMap);
         ItemPositions.enlistHighlightedWords(tokenMap);
+        TalkingMode.enlistHighlightedWords(tokenMap);
         Towns.enlistHighlightedWords(tokenMap);
 
         return tokenMap;

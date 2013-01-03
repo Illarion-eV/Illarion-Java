@@ -86,6 +86,7 @@ public final class TalkingLine {
         condPar.add(new illarion.easynpc.parser.talk.conditions.Chance());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Town());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Number());
+        condPar.add(new illarion.easynpc.parser.talk.conditions.TalkMode());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Talkstate());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Sex());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Admin());
