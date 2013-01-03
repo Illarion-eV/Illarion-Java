@@ -54,26 +54,6 @@ public final class AppearanceMsg extends AbstractReply {
     private static final float SCALE_MOD = 100.f;
 
     /**
-     * Attack mode constant for character wearing a distance weapon.
-     */
-    private static final int STATE_DISTANCE = 2;
-
-    /**
-     * Attack mode constant for character wearing a magical wand.
-     */
-    private static final int STATE_MAGIC = 3;
-
-    /**
-     * Attack mode constant for character wearing a melee weapon.
-     */
-    private static final int STATE_MELEE = 1;
-
-    /**
-     * Attack mode constant for character wearing no weapon.
-     */
-    private static final int STATE_PEACEFUL = 0;
-
-    /**
      * The sprite color instance that is used to send the color values to the
      * other parts of the client.
      */
@@ -89,13 +69,6 @@ public final class AppearanceMsg extends AbstractReply {
      * The name of the character.
      */
     private String name;
-
-    /**
-     * The current attack state of the character. Possible values are
-     * {@link #STATE_PEACEFUL}, {@link #STATE_MELEE}, {@link #STATE_DISTANCE},
-     * and {@link #STATE_MAGIC}.
-     */
-    private short attackMode;
 
     /**
      * The ID of the beard of the character.
@@ -201,7 +174,6 @@ public final class AppearanceMsg extends AbstractReply {
             itemSlots[i] = new ItemId(reader);
         }
 
-        attackMode = reader.readUByte();
         deadFlag = reader.readUByte() == 1;
     }
 
@@ -219,24 +191,6 @@ public final class AppearanceMsg extends AbstractReply {
         // Character not found.
         if (ch == null) {
             return true;
-        }
-
-        // set name color from attack mode
-        switch (attackMode) {
-            case STATE_PEACEFUL:
-                ch.setNameColor(Color.yellow);
-                break;
-            case STATE_MELEE:
-                ch.setNameColor(Color.red);
-                break;
-            case STATE_DISTANCE:
-                ch.setNameColor(Color.green);
-                break;
-            case STATE_MAGIC:
-                ch.setNameColor(Color.blue);
-                break;
-            default:
-                LOGGER.warn("invalid attack mode received " + attackMode);
         }
 
         ch.setScale(size / SCALE_MOD);
@@ -504,8 +458,6 @@ public final class AppearanceMsg extends AbstractReply {
         builder.append(appearance);
         builder.append(" size=");
         builder.append(size);
-        builder.append(" weapon=");
-        builder.append(attackMode);
         return toString(builder.toString());
     }
 }

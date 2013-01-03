@@ -731,6 +731,16 @@ public final class Char
     @SuppressWarnings("nls")
     public void setCharId(final CharacterId newCharId) {
         charId = newCharId;
+        if (charId.isHuman()) {
+            setNameColor(Color.yellow);
+        } else if (charId.isNPC()) {
+            setNameColor(Color.blue);
+        } else if (charId.isMonster()) {
+            setNameColor(Color.red);
+        } else {
+            LOGGER.warn("Failed to detect character type for " + charId.toString());
+            setNameColor(Color.white);
+        }
     }
 
     /**
@@ -795,7 +805,7 @@ public final class Char
      *
      * @param color the new color value
      */
-    public void setNameColor(final Color color) {
+    private void setNameColor(final Color color) {
         nameColor = color;
 
         if (avatar != null) {
