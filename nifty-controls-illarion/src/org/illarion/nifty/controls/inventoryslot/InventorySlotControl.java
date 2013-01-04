@@ -218,7 +218,6 @@ public class InventorySlotControl extends AbstractController implements Inventor
     public void showLabel() {
         if (!backgroundImageLabel.isVisible()) {
             backgroundImageLabel.show();
-            backgroundImageLabel.getParent().layoutElements();
         }
         labelVisible = true;
     }
@@ -230,7 +229,6 @@ public class InventorySlotControl extends AbstractController implements Inventor
     public void hideLabel() {
         if (backgroundImageLabel.isVisible()) {
             backgroundImageLabel.hide();
-            backgroundImageLabel.getParent().layoutElements();
         }
         labelVisible = false;
     }
@@ -251,10 +249,15 @@ public class InventorySlotControl extends AbstractController implements Inventor
      */
     @Override
     public void retrieveDraggable() {
+        if (draggable.getParent() == droppable) {
+            draggable.hide();
+            return;
+        }
+
         draggable.markForMove(droppable, new EndNotify() {
             @Override
             public void perform() {
-                draggedImage.setVisible(false);
+                draggedImage.hide();
             }
         });
     }
