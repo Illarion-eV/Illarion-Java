@@ -480,7 +480,7 @@ public final class Player {
     public boolean isOnScreen(final Location testLoc, final int tolerance) {
         final int width = MapDimensions.getInstance().getStripesWidth() >> 1;
         final int height = MapDimensions.getInstance().getStripesHeight() >> 1;
-        final int limit = Math.max(width, height) + tolerance;
+        final int limit = Math.max(width, height) + tolerance - 2;
 
         return (Math.abs(loc.getScX() - testLoc.getScX()) + Math.abs(loc.getScY() - testLoc.getScY())) < limit;
     }
