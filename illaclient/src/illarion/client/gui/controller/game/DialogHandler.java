@@ -473,7 +473,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
                 merchantDialog.getElement().show(new EndNotify() {
                     @Override
                     public void perform() {
-                        merchantDialog.getElement().markForMove(merchantDialog.getElement().getParent());
+                        craftingDialog.moveToFront();
                     }
                 });
             }
@@ -523,7 +523,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
                     craftingDialog.getElement().show(new EndNotify() {
                         @Override
                         public void perform() {
-                            craftingDialog.getElement().markForMove(craftingDialog.getElement().getParent());
+                            craftingDialog.moveToFront();
                             craftingDialog.selectItemByItemIndex(0);
                         }
                     });

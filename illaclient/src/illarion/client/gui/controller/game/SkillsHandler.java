@@ -18,6 +18,7 @@
  */
 package illarion.client.gui.controller.game;
 
+import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.PanelBuilder;
@@ -117,7 +118,13 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
 
     public void showSkillWindow() {
         if (skillWindow != null) {
-            skillWindow.getElement().show();
+            skillWindow.getElement().show(new EndNotify() {
+                @Override
+                public void perform() {
+                    skillWindow.moveToFront();
+                }
+            });
+
         }
     }
 

@@ -18,12 +18,10 @@
  */
 package illarion.client.gui.controller.game;
 
+import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.controls.ButtonClickedEvent;
-import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
-import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
-import de.lessvoid.nifty.controls.DroppableDroppedEvent;
+import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.ElementShowEvent;
 import de.lessvoid.nifty.elements.events.NiftyMouseMovedEvent;
@@ -267,7 +265,11 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
 
     public void toggleInventory() {
         if (inventoryWindow != null) {
-            inventoryWindow.setVisible(!inventoryWindow.isVisible());
+            if (inventoryWindow.isVisible()) {
+                hideInventory();
+            } else {
+                showInventory();
+            }
         }
     }
 
@@ -516,7 +518,12 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
 
     public void showInventory() {
         if (inventoryWindow != null) {
-            inventoryWindow.show();
+            inventoryWindow.show(new EndNotify() {
+                @Override
+                public void perform() {
+                    inventoryWindow.getNiftyControl(Window.class).moveToFront();
+                }
+            });
         }
     }
 }
