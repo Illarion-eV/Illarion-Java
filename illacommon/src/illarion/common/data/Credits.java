@@ -132,6 +132,7 @@ public final class Credits {
         CreditsPerson.create("Raelith", website);
         CreditsPerson.create("Zak", gameMaster);
         CreditsPerson.create("Face", gameMaster);
+        CreditsPerson.create("Arien Edhel", gameMaster);
         CreditsPerson.create("Djironnyma", communityManager);
         CreditsPerson.create("Athian", communityManager);
         CreditsPerson.create("Jaime", "Quinasa", "Hughes", qualityAssurance);
