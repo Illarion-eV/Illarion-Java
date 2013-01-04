@@ -19,6 +19,8 @@
 package illarion.client.gui.controller;
 
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
@@ -28,7 +30,7 @@ import illarion.client.IllaClient;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ClientEndScreenController implements ScreenController {
+public final class ClientEndScreenController implements ScreenController, KeyInputHandler {
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
     }
@@ -42,5 +44,10 @@ public final class ClientEndScreenController implements ScreenController {
     @Override
     public void onEndScreen() {
         // nothing
+    }
+
+    @Override
+    public boolean keyEvent(final NiftyInputEvent inputEvent) {
+        return false;
     }
 }
