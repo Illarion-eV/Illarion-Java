@@ -479,8 +479,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         LOGGER.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System
                 .getProperty("os.arch"));
 
-        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(Level.SEVERE);
-        java.util.logging.Logger.getLogger("de.lessvoid.nifty").setLevel(Level.SEVERE);
+        //java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(Level.SEVERE);
+        //java.util.logging.Logger.getLogger("de.lessvoid.nifty").setLevel(Level.SEVERE);
         java.util.logging.Logger.getLogger("javolution").setLevel(Level.SEVERE);
         JavaLogToLog4J.setup();
         StdOutToLog4J.setup();
