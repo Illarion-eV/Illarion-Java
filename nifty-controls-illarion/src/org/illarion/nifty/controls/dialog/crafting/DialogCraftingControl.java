@@ -323,7 +323,9 @@ public class DialogCraftingControl
             return;
         }
 
-        selectedEntry.getParentItem().setExpanded(true);
+        if (selectedEntry.getParentItem() != null) {
+            selectedEntry.getParentItem().setExpanded(true);
+        }
 
         updateTree(selectedEntry);
         setSelectedItem((CraftingItemEntry) selectedEntry.getValue().entry);
