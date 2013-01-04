@@ -127,7 +127,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
          * The constructor for this class. The timeout time is set to the system default double click interval.
          */
         ContainerClickActionHelper() {
-            super(IllaClient.getCfg().getInteger("doubleClickInterval") + 150);
+            super(IllaClient.getCfg().getInteger("doubleClickInterval"));
         }
 
         @Override
