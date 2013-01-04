@@ -488,8 +488,7 @@ public class DialogCraftingControl
             panelIndex++;
         }
 
-        getElement().getNifty().getCurrentScreen().resetLayout();
-        getElement().getNifty().getCurrentScreen().layoutLayers();
+        getElement().getParent().layoutElements();
     }
 
     private boolean deleteIngredientPanel(final Element ingredientsPanel, final int index) {
