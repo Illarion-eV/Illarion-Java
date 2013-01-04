@@ -43,6 +43,10 @@ import java.util.Set;
  */
 public final class Launcher implements ActionListener {
     /**
+     * This instance of the logger takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Launcher.class);
+    /**
      * This set contains all arguments that need to be passed to the program once it was launched.
      */
     private final Set<String> arguments;
@@ -62,14 +66,19 @@ public final class Launcher implements ActionListener {
      */
     private final Set<String> vmArguments;
 
-    /**
-     * This instance of the logger takes care for the logging output of this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(Launcher.class);
-
     private final Timer launchTimer;
 
     private boolean cancelExecution;
+
+    /**
+     * The reader that receives the console output of the launched application.
+     */
+    private BufferedReader outputReader;
+
+    /**
+     * This text contains the error data in case the launch failed.
+     */
+    private String errorData;
 
     /**
      * The constructor that launches the resource that is selected in the resource manager.
@@ -102,6 +111,22 @@ public final class Launcher implements ActionListener {
     }
 
     /**
+     * Invoked when an action occurs.
+     */
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        cancelExecution = true;
+        launchTimer.stop();
+        if (outputReader != null) {
+            try {
+                outputReader.close();
+            } catch (IOException e1) {
+                // nothing
+            }
+        }
+    }
+
+    /**
      * Calling this function causes the selected application to launch.
      *
      * @return {@code true} in case launching the application was successful
@@ -119,7 +144,6 @@ public final class Launcher implements ActionListener {
         builder.append(File.separatorChar).append("bin");
         builder.append(File.separatorChar).append("java");
         callList.add(escapePath(builder.toString()));
-        builder.setLength(0);
 
         callList.add("-cp");
         callList.add(classPathString);
@@ -128,100 +152,19 @@ public final class Launcher implements ActionListener {
         callList.add(resource.getLaunchClass());
         callList.addAll(arguments);
 
-        if (LOGGER.isDebugEnabled()) {
-            final StringBuilder debugBuilder = new StringBuilder();
-            debugBuilder.append("Calling: ");
-            debugBuilder.append(System.getProperty("line.separator"));
+        printCallList(callList);
 
-            for (final String aCallList : callList) {
-                debugBuilder.append(aCallList).append(' ');
+        if (!launchCallList(callList)) {
+            callList.set(0, "java");
+            final String firstError = errorData;
+
+            printCallList(callList);
+            if (!launchCallList(callList)) {
+                LOGGER.fatal("Error while launching application\n" + firstError);
+                LOGGER.fatal("Error while launching application\n" + errorData);
             }
-            LOGGER.debug(debugBuilder);
         }
-
-        final ProcessBuilder pBuilder = new ProcessBuilder(callList);
-        pBuilder.directory(DirectoryManager.getInstance().getUserDirectory());
-        pBuilder.redirectErrorStream(true);
-        try {
-            final Process proc = pBuilder.start();
-            proc.getOutputStream().close();
-
-            final StringBuilder outputBuffer = new StringBuilder();
-            outputReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-
-            launchTimer.start();
-            cancelExecution = false;
-
-            while (true) {
-                if (cancelExecution) {
-                    throw new Exception("Response Timeout.");
-                }
-                final String line = outputReader.readLine();
-                if (line == null) {
-                    errorData = outputBuffer.toString().trim();
-                    return false;
-                }
-                if (line.endsWith("Startup done.")) {
-                    outputReader.close();
-                    return true;
-                }
-                outputBuffer.append(line);
-                outputBuffer.append('\n');
-            }
-        } catch (final Exception e) {
-            LOGGER.fatal("Error while launching application", e);
-
-            final StringWriter sWriter = new StringWriter();
-            final PrintWriter writer = new PrintWriter(sWriter);
-            e.printStackTrace(writer);
-            writer.flush();
-            errorData = sWriter.toString();
-            return false;
-        } finally {
-            if (outputReader != null) {
-                try {
-                    outputReader.close();
-                } catch (final IOException e) {
-                    // nothing
-                }
-            }
-            outputReader = null;
-        }
-    }
-
-    private BufferedReader outputReader;
-
-    /**
-     * This text contains the error data in case the launch failed.
-     */
-    private String errorData;
-
-    /**
-     * Get the information about the launch error.
-     *
-     * @return the string containing the data about the crash
-     */
-    public String getErrorData() {
-        return errorData;
-    }
-
-    /**
-     * Build the class path string that contain a list of files pointing to each file needed to include to this
-     * application.
-     *
-     * @return the string that represents the class path
-     */
-    private String buildClassPathString() {
-        if (classPath.isEmpty()) {
-            return ""; //$NON-NLS-1$
-        }
-        final StringBuilder builder = new StringBuilder();
-        for (final File classPathFile : classPath) {
-            builder.append(escapePath(classPathFile.getAbsolutePath()));
-            builder.append(File.pathSeparatorChar);
-        }
-        builder.setLength(builder.length() - 1);
-        return builder.toString();
+        return true;
     }
 
     /**
@@ -250,6 +193,25 @@ public final class Launcher implements ActionListener {
     }
 
     /**
+     * Build the class path string that contain a list of files pointing to each file needed to include to this
+     * application.
+     *
+     * @return the string that represents the class path
+     */
+    private String buildClassPathString() {
+        if (classPath.isEmpty()) {
+            return ""; //$NON-NLS-1$
+        }
+        final StringBuilder builder = new StringBuilder();
+        for (final File classPathFile : classPath) {
+            builder.append(escapePath(classPathFile.getAbsolutePath()));
+            builder.append(File.pathSeparatorChar);
+        }
+        builder.setLength(builder.length() - 1);
+        return builder.toString();
+    }
+
+    /**
      * This small utility function takes care for escaping a path. This operation is platform dependent so the result
      * will differ on different platforms.
      *
@@ -264,18 +226,84 @@ public final class Launcher implements ActionListener {
     }
 
     /**
-     * Invoked when an action occurs.
+     * Print the call list to the logger.
+     *
+     * @param callList the call list to print
      */
-    @Override
-    public void actionPerformed(final ActionEvent e) {
-        cancelExecution = true;
-        launchTimer.stop();
-        if (outputReader != null) {
-            try {
-                outputReader.close();
-            } catch (IOException e1) {
-                // nothing
+    private static void printCallList(final List<String> callList) {
+        if (LOGGER.isDebugEnabled()) {
+            final StringBuilder debugBuilder = new StringBuilder();
+            debugBuilder.append("Calling: ");
+            debugBuilder.append(System.getProperty("line.separator"));
+
+            for (final String aCallList : callList) {
+                debugBuilder.append(aCallList).append(' ');
             }
+            LOGGER.debug(debugBuilder);
         }
+    }
+
+    /**
+     * Launch the specified call list.
+     *
+     * @param callList launch the call list
+     * @return {@code true} in case the launch was successful
+     */
+    private boolean launchCallList(final List<String> callList) {
+        try {
+            final ProcessBuilder pBuilder = new ProcessBuilder(callList);
+            pBuilder.directory(DirectoryManager.getInstance().getUserDirectory());
+            pBuilder.redirectErrorStream(true);
+            final Process proc = pBuilder.start();
+            proc.getOutputStream().close();
+
+            final StringBuilder outputBuffer = new StringBuilder();
+            outputReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+            launchTimer.start();
+            cancelExecution = false;
+
+            while (true) {
+                if (cancelExecution) {
+                    throw new IOException("Response Timeout.");
+                }
+                final String line = outputReader.readLine();
+                if (line == null) {
+                    errorData = outputBuffer.toString().trim();
+                    return false;
+                }
+                if (line.endsWith("Startup done.")) {
+                    outputReader.close();
+                    return true;
+                }
+                outputBuffer.append(line);
+                outputBuffer.append('\n');
+            }
+        } catch (final Exception e) {
+            final StringWriter sWriter = new StringWriter();
+            final PrintWriter writer = new PrintWriter(sWriter);
+            e.printStackTrace(writer);
+            writer.flush();
+            errorData = sWriter.toString();
+            return false;
+        } finally {
+            if (outputReader != null) {
+                try {
+                    outputReader.close();
+                } catch (final IOException e) {
+                    // nothing
+                }
+            }
+            outputReader = null;
+        }
+    }
+
+    /**
+     * Get the information about the launch error.
+     *
+     * @return the string containing the data about the crash
+     */
+    public String getErrorData() {
+        return errorData;
     }
 }
