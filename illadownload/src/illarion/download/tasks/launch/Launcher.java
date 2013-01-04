@@ -163,6 +163,7 @@ public final class Launcher implements ActionListener {
                 LOGGER.fatal("Error while launching application\n" + firstError);
                 LOGGER.fatal("Error while launching application\n" + errorData);
                 errorData = firstError + '\n' + errorData;
+                return false;
             }
         }
         return true;
