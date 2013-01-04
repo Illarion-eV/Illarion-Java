@@ -162,6 +162,7 @@ public final class Launcher implements ActionListener {
             if (!launchCallList(callList)) {
                 LOGGER.fatal("Error while launching application\n" + firstError);
                 LOGGER.fatal("Error while launching application\n" + errorData);
+                errorData = firstError + '\n' + errorData;
             }
         }
         return true;
