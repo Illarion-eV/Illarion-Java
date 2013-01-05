@@ -111,7 +111,7 @@ public final class TradeItemCmd extends AbstractCommand {
      * @param itemCount the amount of items to sell from this slot
      */
     public void setSellFromInventory(final int invSlot, final ItemCount itemCount) {
-        setSellFromContainer(0, invSlot, itemCount);
+        setSellFromContainer(-1, invSlot, itemCount);
     }
 
     /**
