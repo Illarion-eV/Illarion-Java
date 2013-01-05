@@ -471,7 +471,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     private void updateMerchantOverlay(final int slot, final ItemId itemId) {
         final InventorySlot control = invSlots[slot].getNiftyControl(InventorySlot.class);
 
-        if (ItemId.isValidItem(itemId)) {
+        if (!ItemId.isValidItem(itemId)) {
             control.hideMerchantOverlay();
             return;
         }
