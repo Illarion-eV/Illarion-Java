@@ -282,16 +282,16 @@ public final class ResourceManager {
      */
     private void scheduleDownloadImpl(final String name, final String dir, final URL url,
                                       final DownloadManager manager) {
-        long timeout = 0L;
+        long lastModified = 0L;
         if (resourceDatabase.containsResource(url)) {
             final DBResource res = resourceDatabase.getResource(url);
             if (res.checkFiles(ResourceCheckLevel.detailedCheck)) {
-                timeout = res.getLastModified();
+                lastModified = res.getLastModified();
             }
         }
 
         final String fileName = url.getFile();
         manager.scheduleDownload(name, dir, url, new File(DirectoryManager.getInstance().getDataDirectory(),
-                fileName.substring(fileName.lastIndexOf('/'))), timeout);
+                fileName.substring(fileName.lastIndexOf('/'))), lastModified);
     }
 }
