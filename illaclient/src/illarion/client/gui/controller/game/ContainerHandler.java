@@ -132,20 +132,18 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
 
         @Override
         public void executeAction(final int count) {
-            final ItemContainer container;
-            final ContainerSlot slot;
+            final ItemContainer container = World.getPlayer().getContainer(containerId);
+            final ContainerSlot slot = container.getSlot(slotId);
+
+            if (!slot.containsItem()) {
+                return;
+            }
 
             switch (count) {
                 case 1:
-                    container = World.getPlayer().getContainer(containerId);
-                    slot = container.getSlot(slotId);
-
                     slot.getInteractive().lookAt();
                     break;
                 case 2:
-                    container = World.getPlayer().getContainer(containerId);
-                    slot = container.getSlot(slotId);
-
                     if (World.getPlayer().hasMerchantList()) {
                         slot.getInteractive().sell();
                     } else if (slot.getItemPrototype().isContainer()) {
