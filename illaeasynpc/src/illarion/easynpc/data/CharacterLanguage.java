@@ -27,7 +27,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum CharacterLanguage {
-    ancient(10), common(0), dwarf(2), elf(3), halfling(5), human(1),
+    ancient(10), common(0), dwarf(2), elf(3), halfling(6), human(1),
     lizard(4), orc(5);
 
     /**
