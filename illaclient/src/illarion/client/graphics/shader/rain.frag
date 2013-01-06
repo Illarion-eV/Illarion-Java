@@ -33,6 +33,8 @@ uniform float windDir;
 
 uniform float gustStrength;
 
+uniform vec2 mapOffset;
+
 // its PI!
 const float pi = 3.14159265;
 
@@ -44,10 +46,10 @@ float getIntensity() {
 
 vec2 getRainCoord(in float offset, in int level) {
     vec2 scaledTexCoord = (gl_TexCoord[0].st) * texRainScale.xy;
-    float levelEffect = float(level) * 0.5;
+    const float levelEffect = 1.0;
     vec2 aniCoord = vec2(offset + (gl_TexCoord[0].t * windDir * levelEffect * -2.0), (-animation + offset) / levelEffect *
     texRainScale.y);
-    vec2 result =  texRainOffset + mod(scaledTexCoord + aniCoord, texRainSize.xy);
+    vec2 result =  texRainOffset + mod(scaledTexCoord + aniCoord + mapOffset, texRainSize.xy);
 
     return result;
 }
@@ -55,7 +57,7 @@ vec2 getRainCoord(in float offset, in int level) {
 vec3 getRainColor(in vec3 color, in float value, in float levelIntensity, in int level) {
     float rainTexColor = 1.0 - texture2D(texRain, getRainCoord(value, level)).r;
 	float rainColor = clamp(rainTexColor * levelIntensity, 0.0, 1.0);
-	rainColor -= gl_TexCoord[0].t * 0.08;
+	rainColor -= gl_TexCoord[0].t * 0.2;
 	rainColor = clamp(rainColor, 0.0, 1.0);
 	
 	return vec3(color.rgb * (1.0 - rainColor) + rainDropColor.rgb * rainColor);

@@ -37,6 +37,70 @@ public final class RainShader extends AbstractShader {
     }
 
     /**
+     * Set the animation state.
+     *
+     * @param offset the dropping offset between {@code 0.f} and {@code 1.f}
+     */
+    public void setAnimation(final float offset) {
+        getShader().setUniform1f("animation", offset);
+    }
+
+    /**
+     * Set the texture reference for the background texture.
+     *
+     * @param textureIndex the index of the bound texture
+     */
+    public void setBackgroundTexture(final int textureIndex) {
+        getShader().setUniform1i("texBack", textureIndex);
+    }
+
+    /**
+     * Set the animation of the wind gusts.
+     *
+     * @param offset the dropping offset between {@code 0.f} and {@code 1.f}
+     */
+    public void setGustAnimation(final float offset) {
+        getShader().setUniform1f("gustAnimation", offset);
+    }
+
+    /**
+     * Set the strength of wind gusts.
+     *
+     * @param gust the strength of wind gusts
+     */
+    public void setGustStrength(final float gust) {
+        getShader().setUniform1f("gustStrength", gust);
+    }
+
+    /**
+     * Set the intensity of the rain.
+     *
+     * @param intensity the rain intensity
+     */
+    public void setIntensity(final float intensity) {
+        getShader().setUniform1f("intensity", intensity);
+    }
+
+    /**
+     * Set the offset of the map.
+     *
+     * @param x component of the display offset
+     * @param y component of the display offset
+     */
+    public void setMapOffset(final float x, final float y) {
+        getShader().setUniform2f("mapOffset", x, y);
+    }
+
+    /**
+     * Set the texture reference for the rain texture.
+     *
+     * @param textureIndex the index of the bound texture
+     */
+    public void setRainTexture(final int textureIndex) {
+        getShader().setUniform1i("texRain", textureIndex);
+    }
+
+    /**
      * The offset of the rain texture.
      *
      * @param x the x coordinate
@@ -44,16 +108,6 @@ public final class RainShader extends AbstractShader {
      */
     public void setRainTextureOffset(final float x, final float y) {
         getShader().setUniform2f("texRainOffset", x, y);
-    }
-
-    /**
-     * The size of the rain texture.
-     *
-     * @param x the x coordinate
-     * @param y the y coordinate
-     */
-    public void setRainTextureSize(final float x, final float y) {
-        getShader().setUniform2f("texRainSize", x, y);
     }
 
     /**
@@ -67,48 +121,13 @@ public final class RainShader extends AbstractShader {
     }
 
     /**
-     * Set the texture reference for the background texture.
+     * The size of the rain texture.
      *
-     * @param textureIndex the index of the bound texture
+     * @param x the x coordinate
+     * @param y the y coordinate
      */
-    public void setBackgroundTexture(final int textureIndex) {
-        getShader().setUniform1i("texBack", textureIndex);
-    }
-
-    /**
-     * Set the texture reference for the rain texture.
-     *
-     * @param textureIndex the index of the bound texture
-     */
-    public void setRainTexture(final int textureIndex) {
-        getShader().setUniform1i("texRain", textureIndex);
-    }
-
-    /**
-     * Set the animation state.
-     *
-     * @param offset the dropping offset between {@code 0.f} and {@code 1.f}
-     */
-    public void setAnimation(final float offset) {
-        getShader().setUniform1f("animation", offset);
-    }
-
-    /**
-     * Set the animation of the wind gusts.
-     *
-     * @param offset the dropping offset between {@code 0.f} and {@code 1.f}
-     */
-    public void setGustAnimation(final float offset) {
-        getShader().setUniform1f("gustAnimation", offset);
-    }
-
-    /**
-     * Set the intensity of the rain.
-     *
-     * @param intensity the rain intensity
-     */
-    public void setIntensity(final float intensity) {
-        getShader().setUniform1f("intensity", intensity);
+    public void setRainTextureSize(final float x, final float y) {
+        getShader().setUniform2f("texRainSize", x, y);
     }
 
     /**
@@ -118,14 +137,5 @@ public final class RainShader extends AbstractShader {
      */
     public void setWindDirection(final float dir) {
         getShader().setUniform1f("windDir", dir);
-    }
-
-    /**
-     * Set the strength of wind gusts.
-     *
-     * @param gust the strength of wind gusts
-     */
-    public void setGustStrength(final float gust) {
-        getShader().setUniform1f("gustStrength", gust);
     }
 }

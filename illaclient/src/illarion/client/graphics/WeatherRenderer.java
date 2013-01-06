@@ -158,6 +158,7 @@ public final class WeatherRenderer {
             rainShader.setWindDirection(World.getWeather().getWind() / 100.f);
             rainShader.setAnimation(rainDropping);
             rainShader.setGustAnimation(gustAnimation);
+            rainShader.setMapOffset(Camera.getInstance().getViewportOffsetX(), Camera.getInstance().getViewportOffsetY());
 
             g.drawImage(currentImage, 0, 0);
 
