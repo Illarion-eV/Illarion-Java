@@ -77,11 +77,10 @@ public final class WeatherRenderer {
      * @param delta the time since the last render loop in milliseconds
      */
     public void update(final GameContainer c, final int delta) {
-        rainDropping += (1.f * delta) / 1000.f;
+        rainDropping += (1.f * delta) / 2000.f;
         rainDropping %= 1.f;
 
         gustAnimation += (1.f * delta) / 5000.f;
-        rainDropping %= 1.f;
     }
 
     private Image processImage0;

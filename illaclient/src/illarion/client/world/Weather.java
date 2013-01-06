@@ -527,7 +527,7 @@ public final class Weather {
     }
 
     public int getRain() {
-        return rain / 5;
+        return 100;//rain / 5;
     }
 
     /**

@@ -42,17 +42,21 @@ float getIntensity() {
 	return clamp(intensity + (intensity * gustEffect), 0.0, 1.0);
 }
 
-vec2 getRainCoord(in float offset) {
+vec2 getRainCoord(in float offset, in int level) {
     vec2 scaledTexCoord = (gl_TexCoord[0].st) * texRainScale.xy;
-    vec2 aniCoord = vec2(offset + (gl_TexCoord[0].t * windDir * -2.0), (-animation + offset) * texRainScale.y);
+    float levelEffect = float(level) * 0.5;
+    vec2 aniCoord = vec2(offset + (gl_TexCoord[0].t * windDir * levelEffect * -2.0), (-animation + offset) / levelEffect *
+    texRainScale.y);
     vec2 result =  texRainOffset + mod(scaledTexCoord + aniCoord, texRainSize.xy);
 
     return result;
 }
 
-vec3 getRainColor(in vec3 color, in float value, in float levelIntensity) {
-    float rainTexColor = 1.0 - texture2D(texRain, getRainCoord(value)).r;
+vec3 getRainColor(in vec3 color, in float value, in float levelIntensity, in int level) {
+    float rainTexColor = 1.0 - texture2D(texRain, getRainCoord(value, level)).r;
 	float rainColor = clamp(rainTexColor * levelIntensity, 0.0, 1.0);
+	rainColor -= gl_TexCoord[0].t * 0.08;
+	rainColor = clamp(rainColor, 0.0, 1.0);
 	
 	return vec3(color.rgb * (1.0 - rainColor) + rainDropColor.rgb * rainColor);
 }
@@ -67,12 +71,12 @@ void main() {
 	for (int level = 0; level < 3; level += 1) {
 		float stepSize = 1.0 / pow(float(level) + 1.0, 2.0);
 		skipNext = true;
-		float levelIntensity = clamp(0.3f + intensity * 3.0 - sqrt(float(level)), 0.0, 1.0);
+		float levelIntensity = clamp(0.3 + intensity * 2.0 - sqrt(float(level)), 0.0, 1.0);
 		for (float value = 0.0; value < 1.0; value += stepSize) {
 			if (skipNext) {
 				skipNext = false;
 			} else {
-				resultColor = getRainColor(resultColor, value, levelIntensity);
+				resultColor = getRainColor(resultColor, value, levelIntensity, level);
 				skipNext = true;
 			}
 		}
