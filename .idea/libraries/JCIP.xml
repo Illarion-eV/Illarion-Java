@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="JCIP">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/jcip" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/jcip" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/jcip" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/jcip" recursive="false" type="SOURCES" />
+  </library>
+</component>
