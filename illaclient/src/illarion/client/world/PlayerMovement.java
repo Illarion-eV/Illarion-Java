@@ -658,11 +658,7 @@ public final class PlayerMovement
             return;
         }
 
-        int moveMode = Char.MOVE_WALK;
-        if (mode == CharMovementMode.Run) {
-            moveMode = Char.MOVE_RUN;
-        }
-        playerCharacter.moveTo(target, moveMode, speed);
+        playerCharacter.moveTo(target, mode, speed);
         final int oldElevation = World.getMapDisplay().getElevation();
         final int newElevation = World.getMap().getElevationAt(target);
         final int xOffset = parentPlayer.getLocation().getDcX() - target.getDcX();

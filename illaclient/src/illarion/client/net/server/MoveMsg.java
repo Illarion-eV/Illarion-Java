@@ -141,13 +141,13 @@ public final class MoveMsg
                 chara.setLocation(loc);
                 break;
             case MODE_MOVE:
-                chara.moveTo(loc, Char.MOVE_WALK, speed);
+                chara.moveTo(loc, CharMovementMode.Walk, speed);
                 break;
             case MODE_RUN:
-                chara.moveTo(loc, Char.MOVE_RUN, speed);
+                chara.moveTo(loc, CharMovementMode.Run, speed);
                 break;
             default:
-                chara.moveTo(loc, Char.MOVE_PUSH, 0);
+                chara.moveTo(loc, CharMovementMode.Push, 0);
         }
 
         return true;

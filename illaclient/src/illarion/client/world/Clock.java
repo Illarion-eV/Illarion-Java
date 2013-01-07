@@ -19,6 +19,7 @@
 package illarion.client.world;
 
 import illarion.client.net.server.events.DateTimeUpdateEvent;
+import illarion.common.annotation.NonNull;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
@@ -27,7 +28,8 @@ import org.bushe.swing.event.annotation.EventSubscriber;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class Clock {
+@SuppressWarnings("ClassNamingConvention")
+public final class Clock {
     /**
      * The day that was set during the last synchronization.
      */
@@ -71,7 +73,7 @@ public class Clock {
      * @param event the event data
      */
     @EventSubscriber
-    public void onDateTimeEventReceived(final DateTimeUpdateEvent event) {
+    public void onDateTimeEventReceived(@NonNull final DateTimeUpdateEvent event) {
         lastSync = System.currentTimeMillis();
         day = event.getDay();
         month = event.getMonth();
