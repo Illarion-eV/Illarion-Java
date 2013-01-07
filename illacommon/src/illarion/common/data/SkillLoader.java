@@ -18,6 +18,7 @@
  */
 package illarion.common.data;
 
+import net.jcip.annotations.NotThreadSafe;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -35,6 +36,7 @@ import java.io.InputStream;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@NotThreadSafe
 class SkillLoader {
     /**
      * This value is turned true once the loading is started.

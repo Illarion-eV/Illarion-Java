@@ -18,6 +18,9 @@
  */
 package illarion.common.data;
 
+import illarion.common.annotation.NonNull;
+import net.jcip.annotations.ThreadSafe;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,20 +30,24 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ThreadSafe
 public final class SkillGroup {
     /**
      * The english name of the skill.
      */
+    @NonNull
     private final String nameEnglish;
 
     /**
      * The german name of the skill.
      */
+    @NonNull
     private final String nameGerman;
 
     /**
      * The list of skills that belong to this group.
      */
+    @NonNull
     private final List<Skill> skills;
 
     /**
@@ -49,7 +56,7 @@ public final class SkillGroup {
      * @param german  the german name of the group
      * @param english the english name of the group
      */
-    public SkillGroup(final String german, final String english) {
+    public SkillGroup(@NonNull final String german, @NonNull final String english) {
         nameEnglish = english;
         nameGerman = german;
 
@@ -61,7 +68,7 @@ public final class SkillGroup {
      *
      * @param skill the skill that is supposed to be added to the group
      */
-    void addSkill(final Skill skill) {
+    void addSkill(@NonNull final Skill skill) {
         skills.add(skill);
     }
 
@@ -70,6 +77,7 @@ public final class SkillGroup {
      *
      * @return the english name
      */
+    @NonNull
     public String getNameEnglish() {
         return nameEnglish;
     }
@@ -79,6 +87,7 @@ public final class SkillGroup {
      *
      * @return the german name
      */
+    @NonNull
     public String getNameGerman() {
         return nameGerman;
     }
@@ -88,10 +97,12 @@ public final class SkillGroup {
      *
      * @return the list of skills that is part of this group
      */
+    @NonNull
     public List<Skill> getSkills() {
         return Collections.unmodifiableList(skills);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Skill Group: " + nameEnglish;
