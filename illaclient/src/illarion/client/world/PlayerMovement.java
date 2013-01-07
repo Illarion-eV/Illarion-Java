@@ -44,30 +44,6 @@ import org.lwjgl.input.Keyboard;
  */
 public final class PlayerMovement
         implements AnimatedMove, PathReceiver {
-    /**
-     * This Enumerator contains the possible value for the movement methods of a character.
-     */
-    public enum MovementMode {
-        /**
-         * This constant means that no movement is done. The character is only turning around or warping.
-         */
-        None,
-
-        /**
-         * This movement mode means that the character is walking.
-         */
-        Walk,
-
-        /**
-         * This constant means that the character is running.
-         */
-        Run,
-
-        /**
-         * This constant means that the character is being pushed.
-         */
-        Push;
-    }
 
     /**
      * This value is the relation of the distance from the character location to the location of the cursor to the
@@ -129,7 +105,7 @@ public final class PlayerMovement
     /**
      * The mode of the last move that was allowed by the server.
      */
-    private MovementMode lastAllowedMoveMode = MovementMode.None;
+    private CharMovementMode lastAllowedMoveMode = CharMovementMode.None;
 
     /**
      * The last move that was requested from the server.
@@ -193,7 +169,7 @@ public final class PlayerMovement
 
     private int walkTowardsDir = Location.DIR_ZERO;
 
-    private MovementMode walkTowardsMode = MovementMode.None;
+    private CharMovementMode walkTowardsMode = CharMovementMode.None;
 
     /**
      * The amount of tiles the path was modified by.
@@ -230,13 +206,13 @@ public final class PlayerMovement
      */
     @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
     public void onInputEventReceived(final String topic, final String data) {
-        final MovementMode moveMode;
+        final CharMovementMode moveMode;
         if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
-            moveMode = MovementMode.Run;
+            moveMode = CharMovementMode.Run;
         } else if (Keyboard.isKeyDown(Keyboard.KEY_LMENU)) {
-            moveMode = MovementMode.None;
+            moveMode = CharMovementMode.None;
         } else {
-            moveMode = MovementMode.Walk;
+            moveMode = CharMovementMode.Walk;
         }
         if (InputReceiver.EB_TOPIC.equals(topic)) {
             if ("WalkNorth".equals(data)) {
@@ -268,7 +244,7 @@ public final class PlayerMovement
      * @param direction the direction the move shall be performed in
      * @param mode      the mode of the move that shall be performed
      */
-    public void requestMove(final int direction, final MovementMode mode) {
+    public void requestMove(final int direction, final CharMovementMode mode) {
         requestMove(direction, mode, true, false);
     }
 
@@ -312,7 +288,7 @@ public final class PlayerMovement
 
         // execute walking step
         final int direction = loc.getDirection(stepDest);
-        requestMove(direction, MovementMode.Walk, false, false);
+        requestMove(direction, CharMovementMode.Walk, false, false);
     }
 
     /**
@@ -351,15 +327,15 @@ public final class PlayerMovement
      *                            order to avoid obstacles
      */
     @SuppressWarnings("nls")
-    private void requestMove(final int direction, final MovementMode mode, final boolean stopAutoMove,
+    private void requestMove(final int direction, final CharMovementMode mode, final boolean stopAutoMove,
                              final boolean runPathModification) {
-        if (mode == MovementMode.Push) {
+        if (mode == CharMovementMode.Push) {
             throw new IllegalArgumentException("Pushed moves are not supported by the player movement handler.");
         }
         if (stopAutoMove) {
             cancelAutoWalk();
         }
-        if (mode == MovementMode.None) {
+        if (mode == CharMovementMode.None) {
             requestTurn(direction, false);
             discardCheck();
         } else {
@@ -367,7 +343,7 @@ public final class PlayerMovement
                 if (!moving || (moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME)) {
                     lastMoveRequest = direction;
                     timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
-                    if ((mode == MovementMode.Run) && runPathModification) {
+                    if ((mode == CharMovementMode.Run) && runPathModification) {
                         performNextRunningStep(direction);
                     } else {
                         resetRunPathModification();
@@ -435,9 +411,9 @@ public final class PlayerMovement
         }
 
         // try to move in the requested direction
-        final boolean straightMovePossible = isStepPossible(direction, MovementMode.Run);
+        final boolean straightMovePossible = isStepPossible(direction, CharMovementMode.Run);
         if (straightMovePossible && (runningPathModification == 0)) {
-            sendTurnAndMoveToServer(direction, MovementMode.Run);
+            sendTurnAndMoveToServer(direction, CharMovementMode.Run);
             return;
         }
 
@@ -462,18 +438,18 @@ public final class PlayerMovement
         // check to undo old path modifications
         if (Math.abs(runningPathModification) == 1) {
             // path is altered by one walking step. Undo it if possible
-            if (isStepPossible(preferredDir, MovementMode.Walk)) {
+            if (isStepPossible(preferredDir, CharMovementMode.Walk)) {
                 runningPathModification = 0;
                 stepsWithPathModification = 0;
-                sendTurnAndMoveToServer(preferredDir, MovementMode.Walk);
+                sendTurnAndMoveToServer(preferredDir, CharMovementMode.Walk);
                 return;
             }
         } else if (Math.abs(runningPathModification) >= 2) {
             // path is altered by one or more running steps. Undo them if possible.
-            if (isStepPossible(preferredDir, MovementMode.Run)) {
+            if (isStepPossible(preferredDir, CharMovementMode.Run)) {
                 runningPathModification += preferredMod * 2;
                 stepsWithPathModification = 0;
-                sendTurnAndMoveToServer(preferredDir, MovementMode.Run);
+                sendTurnAndMoveToServer(preferredDir, CharMovementMode.Run);
                 return;
             }
         }
@@ -481,61 +457,61 @@ public final class PlayerMovement
         // undoing old changed to the path failed. Try to move along the current modification running.
         if (straightMovePossible && ((stepsWithPathModification + 2) <= MAX_MODIFIED_STEPS)) {
             stepsWithPathModification += 2;
-            sendTurnAndMoveToServer(direction, MovementMode.Run);
+            sendTurnAndMoveToServer(direction, CharMovementMode.Run);
             return;
         }
 
         // Increase the modification with a running step if allowed
         if ((runningPathModification - (preferredDir * 2)) <= MAX_PATH_MODIFICATION) {
-            if (isStepPossible(secondDir, MovementMode.Run)) {
+            if (isStepPossible(secondDir, CharMovementMode.Run)) {
                 runningPathModification -= preferredMod * 2;
                 stepsWithPathModification = 0;
-                sendTurnAndMoveToServer(secondDir, MovementMode.Run);
+                sendTurnAndMoveToServer(secondDir, CharMovementMode.Run);
                 return;
             }
         }
 
         // Running does not seem to be possible. Try to reduce the path modification with a walking step.
-        if (isStepPossible(preferredDir, MovementMode.Walk)) {
+        if (isStepPossible(preferredDir, CharMovementMode.Walk)) {
             runningPathModification += preferredMod;
             stepsWithPathModification = 0;
-            sendTurnAndMoveToServer(preferredDir, MovementMode.Walk);
+            sendTurnAndMoveToServer(preferredDir, CharMovementMode.Walk);
             return;
         }
 
         // Try walking without increasing the modification.
-        if (isStepPossible(direction, MovementMode.Walk)) {
+        if (isStepPossible(direction, CharMovementMode.Walk)) {
             stepsWithPathModification += 1;
-            sendTurnAndMoveToServer(direction, MovementMode.Walk);
+            sendTurnAndMoveToServer(direction, CharMovementMode.Walk);
             return;
         }
 
         // Increase the modification with a walking step.
         if ((runningPathModification - preferredDir) <= MAX_PATH_MODIFICATION) {
-            if (isStepPossible(secondDir, MovementMode.Walk)) {
+            if (isStepPossible(secondDir, CharMovementMode.Walk)) {
                 runningPathModification -= preferredMod;
                 stepsWithPathModification = 0;
-                sendTurnAndMoveToServer(secondDir, MovementMode.Walk);
+                sendTurnAndMoveToServer(secondDir, CharMovementMode.Walk);
                 return;
             }
         }
 
         // all out of options, just run straight ahead and hope for the best. GERONIMO!
         resetRunPathModification();
-        sendTurnAndMoveToServer(direction, MovementMode.Run);
+        sendTurnAndMoveToServer(direction, CharMovementMode.Run);
     }
 
     /**
      * Check if a move is possible.
      *
      * @param direction the direction of the move
-     * @param mode      the mode method, only {@link MovementMode#Run} and {@link MovementMode#Walk} are allowed
+     * @param mode      the mode method, only {@link CharMovementMode#Run} and {@link CharMovementMode#Walk} are allowed
      * @return {@code true} in case the step is possible
      * @throws IllegalArgumentException in case the mode has a illegal value
      * @throws NullPointerException     in case {@code mode} is {@code null}
      * @throws IllegalStateException    in case something else goes wrong
      */
-    public static boolean isStepPossible(final int direction, final MovementMode mode) {
+    public static boolean isStepPossible(final int direction, final CharMovementMode mode) {
         if (mode == null) {
             throw new NullPointerException("mode");
         }
@@ -579,7 +555,7 @@ public final class PlayerMovement
         runningPathLastDirection = -1;
     }
 
-    private void sendTurnAndMoveToServer(final int direction, final MovementMode mode) {
+    private void sendTurnAndMoveToServer(final int direction, final CharMovementMode mode) {
         requestTurn(direction, false);
         sendMoveToServer(direction, mode);
     }
@@ -590,10 +566,10 @@ public final class PlayerMovement
      * @param direction the direction of the requested move
      * @param mode      the mode of the requested move
      */
-    private void sendMoveToServer(final int direction, final MovementMode mode) {
+    private void sendMoveToServer(final int direction, final CharMovementMode mode) {
         final MoveCmd cmd = (MoveCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_MOVE);
         cmd.setDirection(parentPlayer.getPlayerId(), direction);
-        if (mode == MovementMode.Run) {
+        if (mode == CharMovementMode.Run) {
             cmd.setRunning();
         } else {
             cmd.setMoving();
@@ -649,7 +625,7 @@ public final class PlayerMovement
      * @param target the target location of the character after the move
      * @param speed  the speed of the move
      */
-    public void acknowledgeMove(final MovementMode mode, final Location target, final int speed) {
+    public void acknowledgeMove(final CharMovementMode mode, final Location target, final int speed) {
         lastMoveRequest = Location.DIR_ZERO;
 
         if (!moving) {
@@ -672,8 +648,8 @@ public final class PlayerMovement
      * @param target the target location where the character shall be located at at the end of the move
      * @param speed  the speed of the walk that determines how long the animation takes
      */
-    private void performMove(final MovementMode mode, final Location target, final int speed) {
-        if ((mode == MovementMode.None) || playerCharacter.getLocation().equals(target)) {
+    private void performMove(final CharMovementMode mode, final Location target, final int speed) {
+        if ((mode == CharMovementMode.None) || playerCharacter.getLocation().equals(target)) {
             parentPlayer.updateLocation(target);
             playerCharacter.setLocation(target);
             animationFinished(true);
@@ -683,7 +659,7 @@ public final class PlayerMovement
         }
 
         int moveMode = Char.MOVE_WALK;
-        if (mode == MovementMode.Run) {
+        if (mode == CharMovementMode.Run) {
             moveMode = Char.MOVE_RUN;
         }
         playerCharacter.moveTo(target, moveMode, speed);
@@ -787,13 +763,13 @@ public final class PlayerMovement
         final float relYOffset = (float) yOffset / (float) distance;
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            walkTowardsMode = MovementMode.None;
+            walkTowardsMode = CharMovementMode.None;
         } else if (distance > 200) {
-            walkTowardsMode = MovementMode.Run;
+            walkTowardsMode = CharMovementMode.Run;
         } else if (distance < 30) {
-            walkTowardsMode = MovementMode.None;
+            walkTowardsMode = CharMovementMode.None;
         } else {
-            walkTowardsMode = MovementMode.Walk;
+            walkTowardsMode = CharMovementMode.Walk;
         }
 
         if (relXOffset > MOUSE_ANGLE) {
@@ -816,7 +792,7 @@ public final class PlayerMovement
 
         mouseMovementActive = true;
 
-        if (walkTowardsMode == MovementMode.None) {
+        if (walkTowardsMode == CharMovementMode.None) {
             walkTowards = false;
             requestTurn(walkTowardsDir, true);
             return;

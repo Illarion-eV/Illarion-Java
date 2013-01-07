@@ -51,9 +51,10 @@ import java.util.Map;
 
 /**
  * Represents a character: player, monster or npc.
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class Char
-        implements RecycleObject, AnimatedMove {
+public final class Char implements RecycleObject, AnimatedMove {
     /**
      * The speed a animation runs with on default.
      */
@@ -73,11 +74,6 @@ public final class Char
      * Move mode constant for a walking move.
      */
     public static final int MOVE_WALK = 1;
-
-    /**
-     * The color that is used to show combat characters.
-     */
-    private static final Color COMBAT_COLOR;
 
     /**
      * The color that is used to show dead characters.
@@ -309,7 +305,6 @@ public final class Char
 
     static {
         DEAD_COLOR = new Color(1.f, 1.f, 1.f, 0.45f);
-        COMBAT_COLOR = new Color(1.f, 0.6f, 0.6f, 1.f);
     }
 
     @Deprecated

@@ -21,7 +21,7 @@ package illarion.client.net.server;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.Char;
-import illarion.client.world.PlayerMovement;
+import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
@@ -115,15 +115,15 @@ public final class MoveMsg
         }
 
         if (World.getPlayer().isPlayer(charId)) {
-            final PlayerMovement.MovementMode moveMode;
+            final CharMovementMode moveMode;
             if (mode == MODE_MOVE) {
-                moveMode = PlayerMovement.MovementMode.Walk;
+                moveMode = CharMovementMode.Walk;
             } else if (mode == MODE_PUSH) {
-                moveMode = PlayerMovement.MovementMode.Push;
+                moveMode = CharMovementMode.Push;
             } else if (mode == MODE_RUN) {
-                moveMode = PlayerMovement.MovementMode.Run;
+                moveMode = CharMovementMode.Run;
             } else {
-                moveMode = PlayerMovement.MovementMode.None;
+                moveMode = CharMovementMode.None;
             }
             World.getPlayer().getMovementHandler().acknowledgeMove(moveMode, loc, speed);
             return true;
