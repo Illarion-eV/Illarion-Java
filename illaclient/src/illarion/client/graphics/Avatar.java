@@ -25,6 +25,7 @@ import illarion.client.resources.Resource;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.CombatHandler;
+import illarion.common.annotation.Nullable;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -239,6 +240,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      *                 sex and the direction of the avatar that is needed
      * @return a instance of the needed avatar type
      */
+    @Nullable
     public static Avatar create(final int avatarID, final Char parent) {
         try {
             final Avatar avatar = CharacterFactory.getInstance().getCommand(avatarID);
