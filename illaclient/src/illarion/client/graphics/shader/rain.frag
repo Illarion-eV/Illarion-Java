@@ -46,9 +46,7 @@ float getIntensity() {
 
 vec2 getRainCoord(in float offset, in int level) {
     vec2 scaledTexCoord = (gl_TexCoord[0].st) * texRainScale.xy;
-    const float levelEffect = 1.0;
-    vec2 aniCoord = vec2(offset + (gl_TexCoord[0].t * windDir * levelEffect * -2.0), (-animation + offset) / levelEffect *
-    texRainScale.y);
+    vec2 aniCoord = vec2(offset + (gl_TexCoord[0].t * windDir * -2.0), (-animation + offset) * texRainScale.y);
     vec2 result =  texRainOffset + mod(scaledTexCoord + aniCoord + mapOffset, texRainSize.xy);
 
     return result;
@@ -72,7 +70,7 @@ void main() {
 	bool skipNext = true;
 	for (int level = 0; level < 3; level += 1) {
 		float stepSize = 1.0 / pow(float(level) + 1.0, 2.0);
-		skipNext = true;
+		skipNext = false;
 		float levelIntensity = clamp(0.3 + intensity * 2.0 - sqrt(float(level)), 0.0, 1.0);
 		for (float value = 0.0; value < 1.0; value += stepSize) {
 			if (skipNext) {

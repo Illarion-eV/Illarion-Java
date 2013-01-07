@@ -24,26 +24,32 @@ import illarion.client.graphics.MapDisplayManager;
 import illarion.client.net.NetComm;
 import illarion.client.util.ChatHandler;
 import illarion.client.world.interactive.InteractionManager;
+import illarion.common.annotation.NonNull;
 import illarion.common.graphics.LightTracer;
 import illarion.common.util.StoppableStorage;
-import org.apache.log4j.Logger;
+import net.jcip.annotations.ThreadSafe;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * This class is used to unify the access to the different components of the
- * game and to ensure a proper initialization and cleaning of those components
- * if needed.
+ * This class is used to unify the access to the different components of the game and to ensure a proper
+ * initialization and cleaning of those components if needed.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ThreadSafe
 public final class World {
     /**
      * The singleton instance of this class.
      */
+    @NonNull
     private static final World INSTANCE = new World();
 
+    /**
+     * Shutdown every class that is currently maintained by the world.
+     */
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     public static void cleanEnvironment() {
         synchronized (INSTANCE) {
             StoppableStorage.getInstance().shutdown();
@@ -80,25 +86,30 @@ public final class World {
         }
     }
 
+    @NonNull
     public static AnimationManager getAnimationManager() {
         INSTANCE.checkAniManager();
         return INSTANCE.aniManager;
     }
 
+    @NonNull
     public static Avatar getAvatar() {
         return getPlayer().getCharacter().getAvatar();
     }
 
+    @NonNull
     public static Clock getClock() {
         INSTANCE.checkClock();
         return INSTANCE.clock;
     }
 
+    @NonNull
     public static ChatHandler getChatHandler() {
         INSTANCE.checkChatHandler();
         return INSTANCE.chatHandler;
     }
 
+    @NonNull
     public static LightTracer getLights() {
         INSTANCE.checkLights();
         return INSTANCE.lights;
@@ -109,51 +120,64 @@ public final class World {
      *
      * @return the map of the game
      */
+    @NonNull
     public static GameMap getMap() {
         INSTANCE.checkGameMap();
         return INSTANCE.map;
     }
 
+    @NonNull
     public static MapDisplayManager getMapDisplay() {
         INSTANCE.checkMapDisplay();
         return INSTANCE.mapDisplay;
     }
 
+    @NonNull
     public static MusicBox getMusicBox() {
         INSTANCE.checkMusicBox();
         return INSTANCE.musicBox;
     }
 
+    @NonNull
     public static NetComm getNet() {
         INSTANCE.checkNet();
         return INSTANCE.net;
     }
 
+    @NonNull
     public static People getPeople() {
         INSTANCE.checkPeople();
         return INSTANCE.people;
     }
 
+    @NonNull
     public static Player getPlayer() {
         INSTANCE.checkPlayer();
         return INSTANCE.player;
     }
 
+    @NonNull
     public static Weather getWeather() {
         INSTANCE.checkWeather();
         return INSTANCE.weather;
     }
 
+    @NonNull
     public static InteractionManager getInteractionManager() {
         INSTANCE.checkInteractionManager();
         return INSTANCE.interactionManager;
     }
 
+    @NonNull
     public static ExecutorService getExecutorService() {
         INSTANCE.checkExecutorService();
         return INSTANCE.executorService;
     }
 
+    /**
+     * Initialize all components of the world.
+     */
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     public static void initMissing() {
         getAnimationManager();
         getChatHandler();
@@ -170,8 +194,7 @@ public final class World {
     }
 
     /**
-     * The animation manager that takes care for updating and synchronizing the
-     * animations in the game.
+     * The animation manager that takes care for updating and synchronizing the animations in the game.
      */
     private AnimationManager aniManager;
 
@@ -194,11 +217,6 @@ public final class World {
      * The instance of the light tracer of the game.
      */
     private LightTracer lights;
-
-    /**
-     * The logger of this class.
-     */
-    private final Logger log;
 
     /**
      * The instance of the map of the game.
@@ -246,7 +264,6 @@ public final class World {
      * instance.
      */
     private World() {
-        log = Logger.getLogger(World.class);
     }
 
     private void checkAniManager() {

@@ -93,6 +93,7 @@
     <orderEntry type="library" name="XPP3" level="project" />
     <orderEntry type="library" name="JOrbis" level="project" />
     <orderEntry type="library" name="Slick" level="project" />
+    <orderEntry type="library" name="JCIP" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
