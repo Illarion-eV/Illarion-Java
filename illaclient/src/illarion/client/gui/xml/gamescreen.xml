@@ -96,7 +96,7 @@
             <panel childLayout="vertical" visible="false" visibleToMouse="false" id="scriptMessagePanel"
                    marginBottom="80px" valign="center" align="center"/>
         </layer>
-        <layer id="windows" childLayout="absolute">
+        <layer id="windows" childLayout="absolute-inside">
             <control id="inventory" name="window" style="nifty-window" title="${gamescreen-bundle.inventory}"
                      visible="false" width="270px" height="500px" hideOnClose="true" visibleToMouse="true">
                 <panel childLayout="center">
