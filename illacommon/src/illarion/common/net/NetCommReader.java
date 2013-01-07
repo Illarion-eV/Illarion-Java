@@ -18,6 +18,8 @@
  */
 package illarion.common.net;
 
+import illarion.common.annotation.NonNull;
+
 import java.io.IOException;
 
 /**
@@ -57,6 +59,7 @@ public interface NetCommReader {
      * @return the decoded string
      * @throws IOException If there are more byte read then there are written in the buffer
      */
+    @NonNull
     String readString() throws IOException;
 
     /**

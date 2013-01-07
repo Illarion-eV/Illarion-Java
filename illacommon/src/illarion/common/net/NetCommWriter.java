@@ -18,6 +18,7 @@
  */
 package illarion.common.net;
 
+import illarion.common.annotation.NonNull;
 import illarion.common.types.Location;
 
 /**
@@ -46,7 +47,7 @@ public interface NetCommWriter {
      *
      * @param loc the location that shall be send to the server
      */
-    void writeLocation(Location loc);
+    void writeLocation(@NonNull Location loc);
 
     /**
      * Write 2 byte as signed value to the network.
@@ -60,7 +61,7 @@ public interface NetCommWriter {
      *
      * @param value the string that shall be send to the server
      */
-    void writeString(String value);
+    void writeString(@NonNull String value);
 
     /**
      * Write 1 byte as unsigned value to the network.
