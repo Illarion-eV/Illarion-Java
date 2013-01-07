@@ -20,6 +20,7 @@ package illarion.client.world;
 
 import illarion.client.net.server.events.DateTimeUpdateEvent;
 import illarion.common.annotation.NonNull;
+import net.jcip.annotations.ThreadSafe;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
@@ -29,6 +30,7 @@ import org.bushe.swing.event.annotation.EventSubscriber;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @SuppressWarnings("ClassNamingConvention")
+@ThreadSafe
 public final class Clock {
     /**
      * The day that was set during the last synchronization.

@@ -21,7 +21,10 @@ package illarion.client.world;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.AttackCmd;
+import illarion.common.annotation.NonNull;
 import illarion.common.types.CharacterId;
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
 
 /**
  * This class is used to store and set the current combat mode. It will forward all changes to the combat mode to the
@@ -29,11 +32,25 @@ import illarion.common.types.CharacterId;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ThreadSafe
 public final class CombatHandler {
     /**
      * The singleton instance of this class.
      */
     private static final CombatHandler INSTANCE = new CombatHandler();
+
+    /**
+     * The character that is currently under attack.
+     */
+    @GuardedBy("this")
+    private Char attackedChar;
+
+    /**
+     * Private constructor to ensure that only the singleton instance is created.
+     */
+    private CombatHandler() {
+        // nothing to do
+    }
 
     /**
      * Get the singleton instance of this class.
@@ -45,48 +62,22 @@ public final class CombatHandler {
     }
 
     /**
-     * The character that is currently under attack.
-     */
-    private Char attackedChar;
-
-    /**
-     * Private constructor to ensure that only the singleton instance is created.
-     */
-    private CombatHandler() {
-        // nothing to do
-    }
-
-    /**
      * Test if the player is currently attacking anyone.
      *
      * @return <code>true</code> in case anyone is attacked
      */
     public boolean isAttacking() {
-        return (attackedChar != null);
+        synchronized (this) {
+            return attackedChar != null;
+        }
     }
 
     /**
-     * Test if a character is currently attacked.
+     * In case this character is attacked, stand down. In case its not attacked, attack it.
      *
-     * @param testChar the char to check if he is the current target
-     * @return <code>true</code> in case the character is the current target
+     * @param character the character to start or stop attacking
      */
-    public boolean isAttacking(final Char testChar) {
-        return (testChar != null) && isAttacking() && testChar.equals(attackedChar);
-    }
-
-    /**
-     * Send a attack command to the server that initiates a fight with the character that ID is set in the parameter.
-     *
-     * @param id the ID of the character to fight
-     */
-    private void sendAttackToServer(final CharacterId id) {
-        final AttackCmd cmd = (AttackCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_ATTACK);
-        cmd.setTarget(id);
-        World.getNet().sendCommand(cmd);
-    }
-
-    public void toggleAttackOnCharacter(final Char character) {
+    public void toggleAttackOnCharacter(@NonNull final Char character) {
         if (isAttacking(character)) {
             standDown();
         } else {
@@ -95,27 +86,15 @@ public final class CombatHandler {
     }
 
     /**
-     * Set the character that is attacked from now in.
+     * Test if a character is currently attacked.
      *
-     * @param character the character that is now attacked
+     * @param testChar the char to check if he is the current target
+     * @return <code>true</code> in case the character is the current target
      */
-    public void setAttackTarget(final Char character) {
-        if (character == attackedChar) {
-            return;
+    public boolean isAttacking(@NonNull final Char testChar) {
+        synchronized (this) {
+            return isAttacking() && testChar.equals(attackedChar);
         }
-
-        standDown();
-
-        if ((character != null) && canBeAttacked(character)) {
-            attackedChar = character;
-            sendAttackToServer(character.getCharId());
-            character.setAttackMarker(true);
-            World.getMusicBox().playFightingMusic();
-        }
-    }
-
-    public boolean canBeAttacked(final Char character) {
-        return !World.getPlayer().isPlayer(character.getCharId()) && !character.isNPC();
     }
 
     /**
@@ -123,9 +102,11 @@ public final class CombatHandler {
      * attack. It just requests to stop the attack from the server.
      */
     public void standDown() {
-        if (attackedChar != null) {
-            World.getNet().sendCommand(CommandFactory.getInstance().getCommand(CommandList.CMD_STAND_DOWN));
-            targetLost();
+        synchronized (this) {
+            if (attackedChar != null) {
+                CommandFactory.getInstance().getCommand(CommandList.CMD_STAND_DOWN).send();
+                targetLost();
+            }
         }
     }
 
@@ -134,10 +115,55 @@ public final class CombatHandler {
      * command to the server.
      */
     public void targetLost() {
-        if (attackedChar != null) {
-            attackedChar.setAttackMarker(false);
-            attackedChar = null;
+        synchronized (this) {
+            if (attackedChar != null) {
+                attackedChar.setAttackMarker(false);
+                attackedChar = null;
+            }
         }
         World.getMusicBox().stopFightingMusic();
+    }
+
+    /**
+     * Set the character that is attacked from now in.
+     *
+     * @param character the character that is now attacked
+     */
+    public void setAttackTarget(@NonNull final Char character) {
+        synchronized (this) {
+            if (character == attackedChar) {
+                return;
+            }
+
+            standDown();
+
+            if (canBeAttacked(character)) {
+                attackedChar = character;
+                sendAttackToServer(character.getCharId());
+                character.setAttackMarker(true);
+                World.getMusicBox().playFightingMusic();
+            }
+        }
+    }
+
+    /**
+     * Check if the character can be attacked.
+     *
+     * @param character the character to check
+     * @return {@code true} in case the character is not the player and not a NPC.
+     */
+    public boolean canBeAttacked(final Char character) {
+        return !World.getPlayer().isPlayer(character.getCharId()) && !character.isNPC();
+    }
+
+    /**
+     * Send a attack command to the server that initiates a fight with the character that ID is set in the parameter.
+     *
+     * @param id the ID of the character to fight
+     */
+    private static void sendAttackToServer(@NonNull final CharacterId id) {
+        final AttackCmd cmd = (AttackCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_ATTACK);
+        cmd.setTarget(id);
+        cmd.send();
     }
 }
