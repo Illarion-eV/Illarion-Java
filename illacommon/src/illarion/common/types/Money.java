@@ -18,11 +18,17 @@
  */
 package illarion.common.types;
 
+import illarion.common.annotation.NonNull;
+import net.jcip.annotations.Immutable;
+import net.jcip.annotations.ThreadSafe;
+
 /**
  * This class contains the game money. It can be used to split the components of the money (copper, silver, gold).
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
+@ThreadSafe
+@Immutable
 public final class Money implements Comparable<Money> {
     /**
      * The conversation factor from copper to silver coins.
@@ -115,15 +121,8 @@ public final class Money implements Comparable<Money> {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
+        return super.equals(o) || ((o instanceof Money) && (copperCoins == ((Money) o).copperCoins));
 
-        if (!(o instanceof Money)) {
-            return false;
-        }
-
-        return copperCoins == ((Money) o).copperCoins;
     }
 
     @Override
@@ -139,6 +138,7 @@ public final class Money implements Comparable<Money> {
         return (copperCoins < o.copperCoins) ? -1 : 1;
     }
 
+    @NonNull
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();

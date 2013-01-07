@@ -18,66 +18,19 @@
  */
 package illarion.common.types;
 
-import javolution.lang.Immutable;
-
-import java.util.Random;
+import illarion.common.annotation.NonNull;
+import illarion.common.annotation.Nullable;
+import net.jcip.annotations.Immutable;
+import net.jcip.annotations.ThreadSafe;
 
 /**
  * Class to handle a range between two values.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class Range {
-    /**
-     * This class implements a immutable representation of the parent Range class. This class acts in the same way as
-     * the parent class with the only difference that it does not allow any changes to the internal values.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class RangeImmutable
-            extends Range
-            implements Immutable {
-        /**
-         * The error message displayed in case a set function is called to change this object.
-         */
-        @SuppressWarnings("nls")
-        private static final String IMMUTABLE_ERROR_MSG = "Object is immutable. Changes are not allowed";
-
-        /**
-         * The constructor used to create the original instance of this object.
-         *
-         * @param org the original range object that is copied with this immutable representation.
-         */
-        public RangeImmutable(final Range org) {
-            super(org);
-        }
-
-        /**
-         * Overwritten set function that rejects this operation.
-         */
-        @Override
-        public void set(final Range org) {
-            throw new IllegalStateException(IMMUTABLE_ERROR_MSG);
-        }
-
-        /**
-         * Overwritten set function that rejects this operation.
-         */
-        @Override
-        public void setBorders(final int min, final int max) {
-            throw new IllegalStateException(IMMUTABLE_ERROR_MSG);
-        }
-
-        /**
-         * The human readable string that represents this object.
-         */
-        @Override
-        @SuppressWarnings("nls")
-        public String toString() {
-            return super.toString() + "i";
-        }
-    }
-
+@ThreadSafe
+@Immutable
+public final class Range {
     /**
      * The value for the interpolation function that will cause the top border value to be the result of the function.
      */
@@ -89,25 +42,21 @@ public class Range {
     private static final float INTERPOLATE_MAX_F = INTERPOLATE_MAX;
 
     /**
-     * The random value generator used by this class.
-     */
-    private static final Random RND = new Random();
-
-    /**
      * The format of the string that is returned with the {@link #toString()} function.
      */
+    @NonNull
     @SuppressWarnings("nls")
     private static final String TO_STRING_FORMAT = "r(%s$1; %s$2)";
 
     /**
      * The top border of the range.
      */
-    private int maxValue;
+    private final int maxValue;
 
     /**
      * The bottom border of the range.
      */
-    private int minValue;
+    private final int minValue;
 
     /**
      * Default constructor, create a range object with 0 and bottom and top border.
@@ -133,7 +82,7 @@ public class Range {
      *
      * @param org the range object that shall be copied
      */
-    public Range(final Range org) {
+    public Range(@NonNull final Range org) {
         minValue = org.minValue;
         maxValue = org.maxValue;
     }
@@ -144,10 +93,14 @@ public class Range {
      *
      * @param o the object this instance of Range shall be compared with
      * @return the result of the comparing
-     * @see java.lang.Object#equals(Object)
+     * @see Object#equals(Object)
      */
     @Override
-    public final boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
+        if (super.equals(o)) {
+            return true;
+        }
+
         if (!(o instanceof Range)) {
             return false;
         }
@@ -161,7 +114,7 @@ public class Range {
      *
      * @return the difference between both values
      */
-    public final int getDifference() {
+    public int getDifference() {
         return maxValue - minValue;
     }
 
@@ -173,7 +126,7 @@ public class Range {
      * @param location the interpolation value
      * @return the interpolated value from the range
      */
-    public final int getInterpolated(final int location) {
+    public int getInterpolated(final int location) {
         return (int) (((maxValue - minValue) * location) / INTERPOLATE_MAX_F) + minValue;
     }
 
@@ -182,7 +135,7 @@ public class Range {
      *
      * @return the top border value
      */
-    public final int getMax() {
+    public int getMax() {
         return maxValue;
     }
 
@@ -191,17 +144,8 @@ public class Range {
      *
      * @return the bottom border value
      */
-    public final int getMin() {
+    public int getMin() {
         return minValue;
-    }
-
-    /**
-     * Get a random value that is between the top and and bottom border.
-     *
-     * @return a generated random value between the top and the bottom border
-     */
-    public final int getRandomValue() {
-        return (RND.nextInt((maxValue - minValue) + 1) + minValue) - 1;
     }
 
     /**
@@ -210,42 +154,11 @@ public class Range {
      * the borders are the same.
      *
      * @return the generated hashcode
-     * @see java.lang.Object#hashCode()
+     * @see Object#hashCode()
      */
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return (minValue * maxValue) % Integer.MAX_VALUE;
-    }
-
-    /**
-     * Get a immutable representation of the current state of this range instance. This instance will never change its
-     * values and will not allow any changes performed to its values.
-     *
-     * @return the immutable instance of this class
-     */
-    public final Range immutable() {
-        return new RangeImmutable(this);
-    }
-
-    /**
-     * Copy the data of another Range object instance into this instance.
-     *
-     * @param org the range object that shall be copied
-     */
-    public void set(final Range org) {
-        minValue = org.minValue;
-        maxValue = org.maxValue;
-    }
-
-    /**
-     * Set the border values of this range object.
-     *
-     * @param min the bottom border of the range
-     * @param max the top border of the range
-     */
-    public void setBorders(final int min, final int max) {
-        minValue = min;
-        maxValue = max;
     }
 
     /**
@@ -254,6 +167,7 @@ public class Range {
      * @return the generated string
      * @see Object#toString()
      */
+    @NonNull
     @Override
     public String toString() {
         return String.format(TO_STRING_FORMAT, Integer.toString(minValue), Integer.toString(maxValue));

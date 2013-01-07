@@ -18,8 +18,12 @@
  */
 package illarion.common.types;
 
+import illarion.common.annotation.NonNull;
+import illarion.common.annotation.Nullable;
 import illarion.common.net.NetCommReader;
 import illarion.common.net.NetCommWriter;
+import net.jcip.annotations.Immutable;
+import net.jcip.annotations.ThreadSafe;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -29,6 +33,8 @@ import java.io.Serializable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
+@ThreadSafe
 public final class CharacterId implements Serializable, Comparable<CharacterId> {
     /**
      * The maximal value that is valid for the character ID
@@ -80,7 +86,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      * @param reader the reader
      * @throws IOException in case the reading operation fails for some reason
      */
-    public CharacterId(final NetCommReader reader) throws IOException {
+    public CharacterId(@NonNull final NetCommReader reader) throws IOException {
         value = reader.readInt();
     }
 
@@ -112,7 +118,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         return super.equals(obj) || ((obj instanceof CharacterId) && equals((CharacterId) obj));
     }
 
@@ -121,6 +127,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
         return value;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "character ID: " + Long.toString(getValue());
@@ -131,7 +138,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      *
      * @param writer the writer that receives the value
      */
-    public void encode(final NetCommWriter writer) {
+    public void encode(@NonNull final NetCommWriter writer) {
         writer.writeInt(value);
     }
 
@@ -141,7 +148,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      * @param obj the second instance to check
      * @return {@code true} in case both instances represent the same value
      */
-    public boolean equals(final CharacterId obj) {
+    public boolean equals(@Nullable final CharacterId obj) {
         return (obj != null) && (value == obj.value);
     }
 
@@ -158,7 +165,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
     }
 
     @Override
-    public int compareTo(final CharacterId o) {
+    public int compareTo(@NonNull final CharacterId o) {
         if (value == o.value) {
             return 0;
         }

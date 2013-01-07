@@ -18,8 +18,12 @@
  */
 package illarion.common.types;
 
+import illarion.common.annotation.NonNull;
+import illarion.common.annotation.Nullable;
 import illarion.common.net.NetCommReader;
 import illarion.common.net.NetCommWriter;
+import net.jcip.annotations.Immutable;
+import net.jcip.annotations.ThreadSafe;
 
 import java.io.IOException;
 
@@ -28,6 +32,8 @@ import java.io.IOException;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ThreadSafe
+@Immutable
 public final class ItemId implements Comparable<ItemId> {
     /**
      * The maximal value that is valid for the item ID.
@@ -64,7 +70,7 @@ public final class ItemId implements Comparable<ItemId> {
      * @param reader the reader
      * @throws IOException in case the reading operation fails for some reason
      */
-    public ItemId(final NetCommReader reader) throws IOException {
+    public ItemId(@NonNull final NetCommReader reader) throws IOException {
         value = reader.readUShort();
     }
 
@@ -75,12 +81,12 @@ public final class ItemId implements Comparable<ItemId> {
      * @param id the ID to test
      * @return {@code true} in case the id is valid
      */
-    public static boolean isValidItem(final ItemId id) {
+    public static boolean isValidItem(@Nullable final ItemId id) {
         return (id != null) && (id.getValue() > 0);
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         return super.equals(obj) || ((obj instanceof ItemId) && equals((ItemId) obj));
     }
 
@@ -89,6 +95,7 @@ public final class ItemId implements Comparable<ItemId> {
         return value;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Item ID: " + Integer.toString(value);
@@ -99,7 +106,7 @@ public final class ItemId implements Comparable<ItemId> {
      *
      * @param writer the writer that receives the value
      */
-    public void encode(final NetCommWriter writer) {
+    public void encode(@NonNull final NetCommWriter writer) {
         writer.writeUShort(value);
     }
 
@@ -109,11 +116,8 @@ public final class ItemId implements Comparable<ItemId> {
      * @param obj the second instance to check
      * @return {@code true} in case both instances represent the same value
      */
-    public boolean equals(final ItemId obj) {
-        if (obj == null) {
-            return false;
-        }
-        return value == obj.value;
+    public boolean equals(@Nullable final ItemId obj) {
+        return (obj != null) && (value == obj.value);
     }
 
     /**
@@ -126,7 +130,7 @@ public final class ItemId implements Comparable<ItemId> {
     }
 
     @Override
-    public int compareTo(final ItemId o) {
+    public int compareTo(@NonNull final ItemId o) {
         if (value == o.value) {
             return 0;
         }
