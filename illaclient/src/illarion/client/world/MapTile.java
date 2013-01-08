@@ -22,19 +22,18 @@ import illarion.client.graphics.AlphaChangeListener;
 import illarion.client.graphics.Effect;
 import illarion.client.graphics.Item;
 import illarion.client.graphics.Tile;
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
-import illarion.client.net.client.LookatTileCmd;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMapTile;
+import illarion.common.annotation.NonNull;
+import illarion.common.annotation.Nullable;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
-import illarion.common.graphics.MapConstants;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 import illarion.common.util.RecycleObject;
 import javolution.util.FastTable;
+import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 
@@ -42,31 +41,24 @@ import java.util.List;
 
 /**
  * A tile on the map. Contains the tile graphics and items.
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class MapTile
-        implements AlphaChangeListener, RecycleObject {
-
+@NotThreadSafe
+public final class MapTile implements AlphaChangeListener, RecycleObject {
     /**
      * Default Tile ID for no tile at this position.
      */
-    protected static final int ID_NONE = -1;
+    public static final int ID_NONE = -1;
 
     /**
      * The instance of the logger that is used to write out the data.
      */
+    @NonNull
     private static final Logger LOGGER = Logger.getLogger(MapTile.class);
 
     /**
-     * Create a new instance of a map tile using the GameFactory.
-     *
-     * @return the new instance of the map tile
-     */
-    protected static MapTile create() {
-        return (MapTile) GameFactory.getInstance().getCommand(GameFactory.OBJ_MAPTILE);
-    }
-
-    /**
-     * Higest elevation caused by an item on this tile.
+     * Highest elevation caused by an item on this tile.
      */
     private int elevation;
 
@@ -83,16 +75,19 @@ public final class MapTile
     /**
      * List of items on the tile.
      */
+    @Nullable
     private FastTable<Item> items;
 
     /**
      * rendered light value on this tile.
      */
+    @NonNull
     private final Color light = new Color(0);
 
     /**
      * Light Source that is on the tile.
      */
+    @Nullable
     private LightSource lightSrc;
 
     /**
@@ -103,7 +98,8 @@ public final class MapTile
     /**
      * Location of the tile.
      */
-    private final Location loc;
+    @NonNull
+    private final Location tileLocation;
 
     /**
      * Flag if there is still work to do for the LOS calculation on this tile.
@@ -128,6 +124,7 @@ public final class MapTile
     /**
      * Graphical representation of the tile.
      */
+    @Nullable
     private Tile tile;
 
     /**
@@ -135,6 +132,9 @@ public final class MapTile
      */
     private int tileId;
 
+    /**
+     * The temporary light instance that is used for the calculations before its applied to the actual light.
+     */
     private final Color tmpLight = new Color(0);
 
     /**
@@ -142,11 +142,44 @@ public final class MapTile
      */
     @SuppressWarnings("nls")
     public MapTile() {
-        loc = new Location();
+        tileLocation = new Location();
         tileId = ID_NONE;
         tile = null;
         lightSrc = null;
         losDirty = true;
+    }
+
+    /**
+     * Create a new instance of a map tile using the GameFactory.
+     *
+     * @return the new instance of the map tile
+     */
+    public static MapTile create() {
+        return (MapTile) GameFactory.getInstance().getCommand(GameFactory.OBJ_MAPTILE);
+    }
+
+    /**
+     * Get the current rendered light.
+     *
+     * @return the light color on this tile
+     */
+    @NonNull
+    public Color getLight() {
+        return light;
+    }
+
+    /**
+     * Get the item on the top of this tile.
+     *
+     * @return the top tile or {@code null} in case there is none
+     */
+    @Nullable
+    public Item getTopItem() {
+        final List<Item> localItems = items;
+        if ((localItems == null) || localItems.isEmpty()) {
+            return null;
+        }
+        return localItems.get(0);
     }
 
     /**
@@ -157,36 +190,6 @@ public final class MapTile
      */
     @Override
     public void activate(final int id) {
-    }
-
-    /**
-     * Add a single item to the item stack. The new item is placed at the last position and is shown on top this way.
-     *
-     * @param itemId the ID of the item that is created
-     * @param count  the count value of the item that is created
-     */
-    public void addItem(final ItemId itemId, final ItemCount count) {
-        int pos = 0;
-        if (items != null) {
-            pos = items.size();
-            // disable numbers for old top item
-            if (pos > 0) {
-                items.get(pos - 1).enableNumbers(false);
-            }
-        }
-        setItem(pos, itemId, count);
-        // enable numbers for new top item
-        items.get(pos).enableNumbers(true);
-        itemChanged();
-    }
-
-    /**
-     * Add some light influence to this tile. This is added to the already existing light on this tile
-     *
-     * @param color the light that shall be added
-     */
-    protected void addLight(final Color color) {
-        tmpLight.add(color);
     }
 
     /**
@@ -202,46 +205,72 @@ public final class MapTile
     }
 
     /**
-     * Check if the player can move the top item on this tile.
+     * Get the ID of this object type in the game factory.
      *
-     * @return true if the player can move the item around
+     * @return The ID of the object type for the game factory
      */
-    public boolean canMoveItem() {
-        // only if items are present
-        if (items != null) {
-            final int top = items.size() - 1;
-            if (top >= 0) {
-                // only movable items
-                if (items.get(top).isMovable()) {
-                    // can only manipulate items around the character
-                    if (World.getPlayer().getLocation().isNeighbour(loc)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+    @Override
+    public int getId() {
+        return GameFactory.OBJ_MAPTILE;
     }
 
     /**
-     * Check if it is possible to open a container on the tile.
-     *
-     * @return true if there is a container that can be opend, else false
+     * Recycle the map tile and prepare it for reuse.
      */
-    public boolean canOpenContainer() {
-        if (items != null) {
-            final int top = items.size() - 1;
-            if (top >= 0) {
-                // check distance from player, only neighbouring fields
-                if (World.getPlayer().getLocation().isNeighbour(loc)) {
-                    // it really is a container
-                    if (items.get(top).isContainer()) {
-                        return true;
-                    }
-                }
-            }
+    @Override
+    public void recycle() {
+        GameFactory.getInstance().recycle(this);
+    }
+
+    /**
+     * Clear the tile and recycle it. This also recycles all item and light sources on this tile.
+     */
+    @Override
+    public void reset() {
+        // recycle tile data
+        if (tile != null) {
+            tile.recycle();
         }
-        return false;
+        tile = null;
+        tileId = 0;
+
+        // recycle item data
+        if (items != null) {
+            for (final Item item : items) {
+                item.recycle();
+            }
+            items.clear();
+            FastTable.recycle(items);
+            items = null;
+        }
+
+        elevation = 0;
+        elevationIndex = 0;
+        hidden = false;
+        obstructed = false;
+
+        lightValue = 0;
+
+        if (lightSrc != null) {
+            World.getLights().remove(lightSrc);
+            LightSource.releaseLight(lightSrc);
+            lightSrc = null;
+        }
+
+        light.scale(0.f);
+        tmpLight.scale(0.f);
+    }
+
+    /**
+     * Create a string that identifies the tile and its current state.
+     *
+     * @return the generated string
+     */
+    @SuppressWarnings("nls")
+    @Override
+    @NonNull
+    public String toString() {
+        return "MapTile " + tileLocation.toString() + " tile=" + tileId + " items=" + ((items != null) ? items.size() : 0);
     }
 
     /**
@@ -252,7 +281,8 @@ public final class MapTile
      * @param count     the new count value of the item in top position
      */
     @SuppressWarnings("nls")
-    public void changeTopItem(final ItemId oldItemId, final ItemId itemId, final ItemCount count) {
+    public void changeTopItem(@NonNull final ItemId oldItemId, @NonNull final ItemId itemId,
+                              @NonNull final ItemCount count) {
         if (items == null) {
             LOGGER.warn("There are no items on this field. Change top impossible.");
             return;
@@ -269,354 +299,6 @@ public final class MapTile
             LOGGER.warn("change top item mismatch. Expected " + oldItemId + " found " + items.get(pos).getId());
         }
         itemChanged();
-    }
-
-    /**
-     * Determine whether the top item is a light source and needs to be registered. Also removes previous or changed
-     * light sources.
-     */
-    private void checkLight() {
-        // light sources are only on player level
-        if (!World.getPlayer().isBaseLevel(loc)) {
-            return;
-        }
-
-        int newLightValue = 0;
-
-        final List<Item> localItems = items;
-        if (localItems != null) {
-            for (Item item : localItems) {
-                if (item.isLight()) {
-                    newLightValue = item.getItemLight();
-                    break;
-                }
-            }
-        }
-
-        if (lightValue == newLightValue) {
-            return;
-        }
-
-        if (lightSrc != null) {
-            World.getLights().remove(lightSrc);
-            LightSource.releaseLight(lightSrc);
-            lightSrc = null;
-        }
-
-        if (newLightValue > 0) {
-            lightSrc = LightSource.createLight(loc, newLightValue);
-            World.getLights().add(lightSrc);
-        }
-
-        lightValue = newLightValue;
-    }
-
-    /**
-     * Delete any surplus items in an update.
-     *
-     * @param itemNumber the maximum amount of items that shall remain
-     */
-    private void clampItems(final int itemNumber) {
-        // reset elevation data when items are updated
-        elevation = 0;
-        elevationIndex = -1;
-
-        if (items == null) {
-            return;
-        }
-
-        Item item;
-        final List<Item> localItems = items;
-        final int amount = localItems.size() - itemNumber;
-        for (int i = 0; i < amount; i++) {
-            // recylce the removed items
-            item = localItems.get(itemNumber);
-            item.recycle();
-
-            // keep deleting in the same place as the list becomes shorter
-            localItems.remove(itemNumber);
-        }
-
-        if (localItems.isEmpty()) {
-            FastTable.recycle(items);
-            items = null;
-        }
-    }
-
-    /**
-     * Create a clone of the tile.
-     *
-     * @return the clone of this tile
-     */
-    @Override
-    public MapTile clone() {
-        return new MapTile();
-    }
-
-    /**
-     * Get the map tile in case the user is currently pointing at. If the user is pointing somewhere else, return null.
-     *
-     * @param x X-Coordinate on the screen the user is pointing at
-     * @param y Y-Coordinate on the screen the user is pointing at
-     * @return the map tile in case the user is pointing at, or null
-     */
-    public MapTile getComponentAt(final int x, final int y) {
-        if (!hidden && !obstructed) {
-            // calculate distance from tile center to mouse
-            final int distance = Math.abs(x - loc.getDcX()) + (Math.abs(y - loc.getDcY()) * 2);
-            if (distance < (MapConstants.TILE_W / 2)) {
-                return this;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Determine how much of the tile is hidden due items on it. Needed for LOS calculation.
-     *
-     * @return identifier how much of the tile is hidden
-     */
-    public int getCoverage() {
-        if (losDirty) {
-            obstruction = 0;
-            if (items != null) {
-                final int count = items.size();
-                for (Item item : items) {
-                    obstruction += item.getCoverage();
-                }
-            }
-            losDirty = false;
-        }
-
-        return obstruction;
-    }
-
-    /**
-     * Get the elevation of the item with the highest elevation value.
-     *
-     * @return the elevation value
-     */
-    public int getElevation() {
-        return elevation;
-    }
-
-    /**
-     * Check from what sides the tile acceps light.
-     *
-     * @return the identifier for the side the tile accepts light from
-     */
-    public int getFace() {
-        // empty tile accept all light
-        if ((items == null) || items.isEmpty()) {
-            return 0;
-        }
-
-        // non-movable items are only lit from the front
-        return items.get(0).getFace();
-    }
-
-    /**
-     * Get the ID of this object type in the game factory.
-     *
-     * @return The ID of the object type for the game factroy
-     */
-    @Override
-    public int getId() {
-        return GameFactory.OBJ_MAPTILE;
-    }
-
-    /**
-     * Get the the interactive instance used for interaction with this tile.
-     *
-     * @return the interactive tile referring to this map tile
-     */
-    public InteractiveMapTile getInteractive() {
-        return new InteractiveMapTile(this);
-    }
-
-    /**
-     * Get the current rendered light.
-     *
-     * @return the light color on this tile
-     */
-    public Color getLight() {
-        return light;
-    }
-
-    /**
-     * Get the location of the tile.
-     *
-     * @return the location of the tile
-     */
-    public Location getLocation() {
-        return loc;
-    }
-
-    /**
-     * Get the color for the minimap of this tile.
-     *
-     * @return the identifier of the color value for this tile
-     */
-    public int getMapColor() {
-        final Tile localTile = tile;
-        if (localTile == null) {
-            return 0;
-        }
-        return localTile.getMapColor();
-    }
-
-    /**
-     * Get the cost of moving over this item. Needed was walking patch calculations.
-     *
-     * @return the costs for moving over this tile
-     */
-    public int getMovementCost() {
-        final Tile localTile = tile;
-        if (localTile == null) {
-            return Integer.MAX_VALUE;
-        }
-        return localTile.getMovementCost();
-    }
-
-    /**
-     * Get the ID of the tile.
-     *
-     * @return the ID of the tile
-     */
-    public int getTileId() {
-        return tileId;
-    }
-
-    /**
-     * Get the ID of the background music track that is supposed to be played on this tile.
-     *
-     * @return the background music track for this tile
-     */
-    public int getTileMusic() {
-        return musicId;
-    }
-
-    /**
-     * Get the item on the top of this tile.
-     *
-     * @return the top tile or <code>null</code> in case there is none
-     */
-    public Item getTopItem() {
-        final List<Item> localItems = items;
-        if (localItems != null) {
-            final int top = localItems.size() - 1;
-            if (top >= 0) {
-                return localItems.get(top);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Check if there is anything on the tile that blocks moving over the tile.
-     *
-     * @return true in case it is not possible to walk over this tile
-     */
-    public boolean isBlocked() {
-        if (isObstacle()) {
-            return true;
-        }
-
-        // check for chars
-        if (World.getPeople().getCharacterAt(loc) != null) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Get the hidden flag of the tile.
-     *
-     * @return true if the tile is hidden
-     */
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    /**
-     * Check if the tile is obstacle or if there is a item that blocks the movement over this tile.
-     *
-     * @return true if the tile is obstacle
-     */
-    public boolean isObstacle() {
-        final Tile localTile = tile;
-        if (localTile == null) {
-            return true;
-        }
-
-        boolean obstacle = localTile.isObstacle();
-
-        // check items
-        final List<Item> localItems = items;
-        if (localItems != null) {
-            final int count = localItems.size();
-            for (Item item : localItems) {
-                if (item.isObstacle()) {
-                    return true;
-                } else if (item.isJesus()) {
-                    obstacle = false;
-                }
-            }
-        }
-
-        return obstacle;
-    }
-
-    /**
-     * Get the obstructed flag of the tile.
-     *
-     * @return true if the tile is obstructed
-     */
-    public boolean isObstructed() {
-        return obstructed;
-    }
-
-    /**
-     * Check if the tile is fully opaque and everything below can be hidden.
-     *
-     * @return <code>true</code> in case the tile is opaque and everything below is hidden entirely.
-     */
-    public boolean isOpaque() {
-        final Tile localTile = tile;
-        return localTile != null && localTile.isOpapue();
-    }
-
-    /**
-     * Notify the tile that the items got changed. That makes a recalculation of the lights and the line of sight
-     * needed.
-     */
-    private void itemChanged() {
-        // invalidate LOS data
-        losDirty = true;
-        // report a change of shadow
-        World.getLights().notifyChange(loc);
-        // check for a light source
-        checkLight();
-    }
-
-    /**
-     * Requesting the lookat information for a tile from the server.
-     */
-    public void lookAt() {
-        final LookatTileCmd cmd = (LookatTileCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_LOOKAT_TILE);
-        cmd.setPosition(loc);
-        cmd.send();
-
-    }
-
-    /**
-     * Recycle the map tile and prepare it for reuse.
-     */
-    @Override
-    public void recycle() {
-        GameFactory.getInstance().recycle(this);
     }
 
     /**
@@ -654,50 +336,185 @@ public final class MapTile
     }
 
     /**
-     * Render the light on this tile, using the ambient light of the weather and a factor how much the tile light
-     * modifies the ambient light.
+     * Create a clone of the tile.
      *
-     * @param factor       the factor how much the ambient light is modified by the tile light
-     * @param ambientLight the ambient light from the weather
+     * @return the clone of this tile
      */
-    protected void renderLight(final float factor, final Color ambientLight) {
-        tmpLight.scale(factor);
-        tmpLight.add(ambientLight);
-        light.a = tmpLight.a;
-        light.r = tmpLight.r;
-        light.g = tmpLight.g;
-        light.b = tmpLight.b;
+    @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneCallsConstructors"})
+    @Override
+    @NonNull
+    public MapTile clone() {
+        return new MapTile();
     }
 
     /**
-     * Clear the tile and recycle it. This also recycles all item and light sources on this tile.
+     * Add a single item to the item stack. The new item is placed at the last position and is shown on top this way.
+     *
+     * @param itemId the ID of the item that is created
+     * @param count  the count value of the item that is created
      */
-    @Override
-    public void reset() {
-        // recycle tile data
-        if (tile != null) {
-            tile.recycle();
-        }
-        tile = null;
-        tileId = 0;
-
-        // recycle item data
+    public void addItem(@NonNull final ItemId itemId, @NonNull final ItemCount count) {
+        int pos = 0;
         if (items != null) {
-            final int count = items.size();
-            for (Item item : items) {
-                item.recycle();
+            pos = items.size();
+            // disable numbers for old top item
+            if (pos > 0) {
+                items.get(pos - 1).enableNumbers(false);
             }
-            items.clear();
-            FastTable.recycle(items);
-            items = null;
+        }
+        setItem(pos, itemId, count);
+        // enable numbers for new top item
+        items.get(pos).enableNumbers(true);
+        itemChanged();
+    }
+
+    /**
+     * Set a item at a special position of the item stack on this tile.
+     *
+     * @param index     The index within the item list of this tile
+     * @param itemId    The new item ID of the item
+     * @param itemCount The new count value of this item
+     */
+    @SuppressWarnings("nls")
+    private void setItem(final int index, @NonNull final ItemId itemId, @NonNull final ItemCount itemCount) {
+        Item item = null;
+        // look for present item in map tile
+        List<Item> localItems = items;
+        if (localItems != null) {
+            if (index < localItems.size()) {
+                item = localItems.get(index);
+                // just an update of present item
+                if (item.getItemId() == itemId) {
+                    updateItem(item, itemCount, index);
+                } else {
+                    // different item: clear old item
+                    item.recycle();
+                    item = null;
+
+                    // carrying item was removed
+                    if (index == elevationIndex) {
+                        elevation = 0;
+                        elevationIndex = 0;
+                    }
+                }
+            }
+        } else {
+            localItems = FastTable.newInstance();
+            items = (FastTable<Item>) localItems;
+        }
+        // add a new item
+        if (item == null) {
+            // create new item
+            item = Item.create(itemId, tileLocation, this);
+            item.setLight(light);
+
+            updateItem(item, itemCount, index);
+            // display on screen
+
+            if (isHidden() || isObstructed()) {
+                item.hide();
+            } else {
+                item.show();
+            }
+
+            // add it to list
+            if (index < items.size()) {
+                localItems.set(index, item);
+            } else if (index == items.size()) { // extend list by 1 row
+                localItems.add(item);
+            } else { // index mismatch
+                throw new IllegalArgumentException("update behind end of items list");
+            }
+        }
+        // termporarily disable all numbers
+        item.enableNumbers(false);
+    }
+
+    /**
+     * Update a single item with new data.
+     *
+     * @param item      the item that shall be updated
+     * @param itemCount the count value of the new item
+     * @param index     the index of the item within the stack of items on this tile
+     */
+    private void updateItem(@NonNull final Item item, @NonNull final ItemCount itemCount, final int index) {
+        // set number
+        item.setCount(itemCount);
+        // calculate offset from items carrying other items
+        int objectOffset = 0;
+        if ((elevation > 0) && (index > elevationIndex)) {
+            objectOffset = elevation;
+        }
+        // position on tile with increasing z-order
+        item.setScreenPos(tileLocation.getDcX(), tileLocation.getDcY() - objectOffset, tileLocation.getDcZ() - index, Layers.ITEM);
+
+        // set the elevation for items that can carry
+        final int level = item.getLevel();
+        if (level > 0) {
+            // Set elevation only for first suitable item
+            if ((elevation == 0) || (elevationIndex == index)) {
+                elevation = level;
+                elevationIndex = index;
+            }
+        }
+    }
+
+    /**
+     * Get the hidden flag of the tile.
+     *
+     * @return true if the tile is hidden
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /**
+     * Get the obstructed flag of the tile.
+     *
+     * @return true if the tile is obstructed
+     */
+    public boolean isObstructed() {
+        return obstructed;
+    }
+
+    /**
+     * Notify the tile that the items got changed. That makes a recalculation of the lights and the line of sight
+     * needed.
+     */
+    private void itemChanged() {
+        // invalidate LOS data
+        losDirty = true;
+        // report a change of shadow
+        World.getLights().notifyChange(tileLocation);
+        // check for a light source
+        checkLight();
+    }
+
+    /**
+     * Determine whether the top item is a light source and needs to be registered. Also removes previous or changed
+     * light sources.
+     */
+    private void checkLight() {
+        // light sources are only on player level
+        if (!World.getPlayer().isBaseLevel(tileLocation)) {
+            return;
         }
 
-        elevation = 0;
-        elevationIndex = 0;
-        hidden = false;
-        obstructed = false;
+        int newLightValue = 0;
 
-        lightValue = 0;
+        final List<Item> localItems = items;
+        if (localItems != null) {
+            for (final Item item : localItems) {
+                if (item.isLight()) {
+                    newLightValue = item.getItemLight();
+                    break;
+                }
+            }
+        }
+
+        if (lightValue == newLightValue) {
+            return;
+        }
 
         if (lightSrc != null) {
             World.getLights().remove(lightSrc);
@@ -705,15 +522,205 @@ public final class MapTile
             lightSrc = null;
         }
 
-        light.a = light.r = light.g = light.b = 0.f;
-        tmpLight.a = tmpLight.r = tmpLight.g = tmpLight.b = 0.f;
+        if (newLightValue > 0) {
+            lightSrc = LightSource.createLight(tileLocation, newLightValue);
+            World.getLights().add(lightSrc);
+        }
+
+        lightValue = newLightValue;
     }
 
     /**
-     * Reset the light value back to 0.
+     * Add some light influence to this tile. This is added to the already existing light on this tile
+     *
+     * @param color the light that shall be added
      */
-    protected void resetLight() {
-        tmpLight.a = tmpLight.r = tmpLight.g = tmpLight.b = 0.f;
+    public void addLight(@NonNull final Color color) {
+        tmpLight.add(color);
+    }
+
+    /**
+     * Check if the player can move the top item on this tile.
+     *
+     * @return true if the player can move the item around
+     */
+    public boolean canMoveItem() {
+        // only if items are present
+        if (items != null) {
+            final int top = items.size() - 1;
+            if (top >= 0) {
+                // only movable items
+                if (items.get(top).isMovable()) {
+                    // can only manipulate items around the character
+                    if (World.getPlayer().getLocation().isNeighbour(tileLocation)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Determine how much of the tile is hidden due items on it. Needed for LOS calculation.
+     *
+     * @return identifier how much of the tile is hidden
+     */
+    public int getCoverage() {
+        if (losDirty) {
+            obstruction = 0;
+            if (items != null) {
+                for (final Item item : items) {
+                    obstruction += item.getCoverage();
+                }
+            }
+            losDirty = false;
+        }
+
+        return obstruction;
+    }
+
+    /**
+     * Get the elevation of the item with the highest elevation value.
+     *
+     * @return the elevation value
+     */
+    public int getElevation() {
+        return elevation;
+    }
+
+    /**
+     * Check from what sides the tile acceps light.
+     *
+     * @return the identifier for the side the tile accepts light from
+     */
+    public int getFace() {
+        // empty tile accept all light
+        if ((items == null) || items.isEmpty()) {
+            return 0;
+        }
+
+        // non-movable items are only lit from the front
+        return items.get(0).getFace();
+    }
+
+    /**
+     * Get the the interactive instance used for interaction with this tile.
+     *
+     * @return the interactive tile referring to this map tile
+     */
+    public InteractiveMapTile getInteractive() {
+        return new InteractiveMapTile(this);
+    }
+
+    /**
+     * Get the cost of moving over this item. Needed was walking patch calculations.
+     *
+     * @return the costs for moving over this tile
+     */
+    public int getMovementCost() {
+        final Tile localTile = tile;
+        if (localTile == null) {
+            return Integer.MAX_VALUE;
+        }
+        return localTile.getMovementCost();
+    }
+
+    /**
+     * Get the ID of the background music track that is supposed to be played on this tile.
+     *
+     * @return the background music track for this tile
+     */
+    public int getTileMusic() {
+        return musicId;
+    }
+
+    /**
+     * Check if this tile is at the same level as the player.
+     *
+     * @return {@code true} in case the tile is on the same level as the player
+     */
+    public boolean isAtPlayerLevel() {
+        return World.getPlayer().isBaseLevel(getLocation());
+    }
+
+    /**
+     * Get the location of the tile.
+     *
+     * @return the location of the tile
+     */
+    @NonNull
+    public Location getLocation() {
+        return tileLocation;
+    }
+
+    /**
+     * Check if there is anything on the tile that blocks moving over the tile.
+     *
+     * @return true in case it is not possible to walk over this tile
+     */
+    public boolean isBlocked() {
+        if (isObstacle()) {
+            return true;
+        }
+
+        // check for chars
+        return World.getPeople().getCharacterAt(tileLocation) != null;
+    }
+
+    /**
+     * Check if the tile is obstacle or if there is a item that blocks the movement over this tile.
+     *
+     * @return true if the tile is obstacle
+     */
+    public boolean isObstacle() {
+        final Tile localTile = tile;
+        if (localTile == null) {
+            return true;
+        }
+
+        boolean obstacle = localTile.isObstacle();
+
+        // check items
+        final List<Item> localItems = items;
+        if (localItems != null) {
+            for (final Item item : localItems) {
+                if (item.isObstacle()) {
+                    return true;
+                }
+                if (item.isJesus()) {
+                    obstacle = false;
+                }
+            }
+        }
+
+        return obstacle;
+    }
+
+    /**
+     * Check if the tile is fully opaque and everything below can be hidden.
+     *
+     * @return <code>true</code> in case the tile is opaque and everything below is hidden entirely.
+     */
+    public boolean isOpaque() {
+        final Tile localTile = tile;
+        return (localTile != null) && localTile.isOpapue();
+    }
+
+    /**
+     * Render the light on this tile, using the ambient light of the weather and a factor how much the tile light
+     * modifies the ambient light.
+     *
+     * @param factor       the factor how much the ambient light is modified by the tile light
+     * @param ambientLight the ambient light from the weather
+     */
+    public void renderLight(final float factor, @NonNull final Color ambientLight) {
+        tmpLight.scale(factor);
+        tmpLight.add(ambientLight);
+        light.a = tmpLight.a;
+        light.r = tmpLight.r;
+        light.g = tmpLight.g;
+        light.b = tmpLight.b;
     }
 
     /**
@@ -734,8 +741,8 @@ public final class MapTile
      *
      * @param hide     the target hide flag
      * @param obstruct the target obstruct flag
-     * @see illarion.client.world.MapTile#setHidden(boolean)
-     * @see illarion.client.world.MapTile#setObstructed(boolean)
+     * @see MapTile#setHidden(boolean)
+     * @see MapTile#setObstructed(boolean)
      */
     private void setInvisible(final boolean hide, final boolean obstruct) {
         final boolean showOld = !hidden && !obstructed;
@@ -769,68 +776,6 @@ public final class MapTile
     }
 
     /**
-     * Set a item at a special position of the item stack on this tile.
-     *
-     * @param index     The index within the item list of this tile
-     * @param itemId    The new item ID of the item
-     * @param itemCount The new count value of this item
-     */
-    @SuppressWarnings("nls")
-    private void setItem(final int index, final ItemId itemId, final ItemCount itemCount) {
-        Item item = null;
-        // look for present item in map tile
-        List<Item> localItems = items;
-        if (localItems != null) {
-            if (index < localItems.size()) {
-                item = localItems.get(index);
-                // just an update of present item
-                if (item.getItemId() == itemId) {
-                    updateItem(item, itemCount, index);
-                } else {
-                    // different item: clear old item
-                    item.recycle();
-                    item = null;
-
-                    // carrying item was removed
-                    if (index == elevationIndex) {
-                        elevation = 0;
-                        elevationIndex = 0;
-                    }
-                }
-            }
-        } else {
-            localItems = FastTable.newInstance();
-            items = (FastTable<Item>) localItems;
-        }
-        // add a new item
-        if (item == null) {
-            // create new item
-            item = Item.create(itemId, loc, this);
-            item.setLight(light);
-
-            updateItem(item, itemCount, index);
-            // display on screen
-
-            if (isHidden() || isObstructed()) {
-                item.hide();
-            } else {
-                item.show();
-            }
-
-            // add it to list
-            if (index < items.size()) {
-                localItems.set(index, item);
-            } else if (index == items.size()) { // extend list by 1 row
-                localItems.add(item);
-            } else { // index mismatch
-                throw new IllegalArgumentException("update behind end of items list");
-            }
-        }
-        // termporarily disable all numbers
-        item.enableNumbers(false);
-    }
-
-    /**
      * Set the obstructed flag for tiles that are obstructed by upper levels.
      *
      * @param obstruct true if the tile shall be marked as obstructed
@@ -844,12 +789,30 @@ public final class MapTile
     }
 
     /**
-     * Get the graphical representation of the tile.
+     * Show a graphical effect on the tile.
      *
-     * @return the graphical tile
+     * @param effectId the ID of the effect
      */
-    public Tile getTile() {
-        return tile;
+    public void showEffect(final int effectId) {
+        final Effect effect = Effect.create(effectId);
+        effect.show(tileLocation);
+    }
+
+    /**
+     * Update a map tile using the update data the server send.
+     *
+     * @param update the update data the server send
+     */
+    public void update(@NonNull final TileUpdate update) {
+        // update tile
+        setTileId(update.getTileId());
+
+        musicId = update.getTileMusic();
+
+        // update items
+        updateItemList(update.getItemNumber(), update.getItemId(), update.getItemCount());
+
+        itemChanged();
     }
 
     /**
@@ -865,7 +828,7 @@ public final class MapTile
 
         // no replacement necessary
         if ((tileId == id) && (tile != null)) {
-            tile.setScreenPos(loc, Layers.TILE);
+            tile.setScreenPos(tileLocation, Layers.TILE);
             return;
         }
 
@@ -880,80 +843,20 @@ public final class MapTile
         // get a new tile to display
         if (id >= 0) {
             // create a tile, possibly with variants
-            tile = Tile.create(id, loc, this);
+            tile = Tile.create(id, tileLocation, this);
 
             tile.addAlphaChangeListener(this);
-            tile.setScreenPos(loc, Layers.TILE);
+            tile.setScreenPos(tileLocation, Layers.TILE);
             tile.setLight(light);
             tile.show();
         }
     }
 
     /**
-     * Show a graphical effect on the tile.
-     *
-     * @param effectId the ID of the effect
+     * Reset the light value back to 0.
      */
-    public void showEffect(final int effectId) {
-        final Effect effect = Effect.create(effectId);
-        effect.show(loc);
-    }
-
-    /**
-     * Create a string that identifies the tile and its current state.
-     *
-     * @return the generated string
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public String toString() {
-        return "MapTile " + loc.toString() + " tile=" + tileId + " items=" + (items != null ? items.size() : 0);
-    }
-
-    /**
-     * Update a map tile using the update data the server send.
-     *
-     * @param update the update data the server send
-     */
-    protected void update(final TileUpdate update) {
-        // update tile
-        setTileId(update.getTileId());
-
-        musicId = update.getTileMusic();
-
-        // update items
-        updateItemList(update.getItemNumber(), update.getItemId(), update.getItemCount());
-
-        itemChanged();
-    }
-
-    /**
-     * Update a single item with new data.
-     *
-     * @param item      the item that shall be updated
-     * @param itemCount the count value of the new item
-     * @param index     the index of the item within the stack of items on this tile
-     */
-    private void updateItem(final Item item, final ItemCount itemCount, final int index) {
-        // set number
-        item.setCount(itemCount);
-        // calculate offset from items carrying other items
-        int objectOffset = 0;
-        if ((elevation > 0) && (index > elevationIndex)) {
-            objectOffset = elevation;
-        }
-        // position on tile with increasing z-order
-        item.setScreenPos(loc.getDcX(), loc.getDcY() - objectOffset, loc.getDcZ() - index, Layers.ITEM);
-
-        // set the elevation for items that can carry
-        final int level = item.getLevel();
-        if (level > 0) {
-            // Set elevation only for first suitable item
-            if ((elevation == 0) || (elevationIndex == index)) {
-                elevation = level;
-                elevationIndex = index;
-            }
-        }
+    public void resetLight() {
+        tmpLight.scale(0.f);
     }
 
     /**
@@ -963,7 +866,8 @@ public final class MapTile
      * @param itemId    the list of item ids for the items on this tile
      * @param itemCount the list of count values for the items on this tile
      */
-    private void updateItemList(final int number, final List<ItemId> itemId, final List<ItemCount> itemCount) {
+    private void updateItemList(final int number, @NonNull final List<ItemId> itemId,
+                                @NonNull final List<ItemCount> itemCount) {
         clampItems(number);
         for (int i = 0; i < number; i++) {
             setItem(i, itemId.get(i), itemCount.get(i));
@@ -979,12 +883,34 @@ public final class MapTile
     }
 
     /**
-     * Check if this tile is at the same level as the player.
+     * Delete any surplus items in an update.
      *
-     * @return {@code true} in case the tile is on the same level as the player
+     * @param itemNumber the maximum amount of items that shall remain
      */
-    public boolean isAtPlayerLevel() {
-        return World.getPlayer().isBaseLevel(getLocation());
+    private void clampItems(final int itemNumber) {
+        // reset elevation data when items are updated
+        elevation = 0;
+        elevationIndex = -1;
+
+        if (items == null) {
+            return;
+        }
+
+        final List<Item> localItems = items;
+        final int amount = localItems.size() - itemNumber;
+        for (int i = 0; i < amount; i++) {
+            // recylce the removed items
+            final Item item = localItems.get(itemNumber);
+            item.recycle();
+
+            // keep deleting in the same place as the list becomes shorter
+            localItems.remove(itemNumber);
+        }
+
+        if (localItems.isEmpty()) {
+            FastTable.recycle(items);
+            items = null;
+        }
     }
 
     /**
@@ -995,7 +921,8 @@ public final class MapTile
      * @param itemId     List of the item IDs for all items that shall be created
      * @param itemCount  List of count values for all items
      */
-    public void updateItems(final int itemNumber, final List<ItemId> itemId, final List<ItemCount> itemCount) {
+    public void updateItems(final int itemNumber, @NonNull final List<ItemId> itemId,
+                            @NonNull final List<ItemCount> itemCount) {
         updateItemList(itemNumber, itemId, itemCount);
         itemChanged();
     }
