@@ -287,14 +287,16 @@ public final class Editor extends RTextScrollPane {
      * @param script the script to display in this editor
      */
     public void loadScript(final EasyNpcScript script) {
-        final StringBuffer buffer = new StringBuffer();
+        final StringBuilder buffer = new StringBuilder();
 
         final int count = script.getEntryCount();
-        for (int i = 0; i < count; i++) {
-            buffer.append(script.getEntry(i).getLine());
-            buffer.append(NL);
+        if (count > 0) {
+            for (int i = 0; i < count; i++) {
+                buffer.append(script.getEntry(i).getLine());
+                buffer.append(NL);
+            }
+            buffer.setLength(buffer.length() - 1);
         }
-        buffer.setLength(buffer.length() - 1);
         editor.setText(buffer.toString());
         editor.setCaretPosition(0);
         setLoadScriptFile(script.getSourceScriptFile());
