@@ -195,6 +195,11 @@ public final class GameMiniMap {
     private static final int MINI_MAP_WIDTH = 162;
 
     /**
+     * The maximal size of a area that is updated at once.
+     */
+    private static final int MAX_UPDATE_AREA_SIZE = 64;
+
+    /**
      * This flag is {@code true} while not map is loaded.
      */
     private boolean noMapLoaded;
@@ -230,11 +235,6 @@ public final class GameMiniMap {
      */
     @NonNull
     private final List<Rectangle> updateAreas;
-
-    /**
-     * The maximal size of a area that is updated at once.
-     */
-    private static final int MAX_UPDATE_AREA_SIZE = 64;
 
     /**
      * The texture that is used to draw the world map sprite.
@@ -601,6 +601,26 @@ public final class GameMiniMap {
     }
 
     /**
+     * Get the full path string to the file for the currently selected map. This file needs to be used to store and
+     * load
+     * the map data.
+     *
+     * @return the path and the filename of the map file
+     */
+    @SuppressWarnings("nls")
+    @NonNull
+    private File getCurrentMapFilename() {
+        final StringBuilder builder = new StringBuilder();
+        builder.setLength(0);
+        builder.append("map");
+        builder.append(mapOriginX / WORLDMAP_WIDTH);
+        builder.append(mapOriginY / WORLDMAP_HEIGHT);
+        builder.append(mapLevel);
+        builder.append(".dat");
+        return new File(World.getPlayer().getPath(), builder.toString());
+    }
+
+    /**
      * Load a map from its file. Any other formerly loaded map is discarded when this happens.
      */
     @SuppressWarnings("nls")
@@ -643,26 +663,6 @@ public final class GameMiniMap {
         }
         noMapLoaded = false;
         loadingMap = false;
-    }
-
-    /**
-     * Get the full path string to the file for the currently selected map. This file needs to be used to store and
-     * load
-     * the map data.
-     *
-     * @return the path and the filename of the map file
-     */
-    @SuppressWarnings("nls")
-    @NonNull
-    private File getCurrentMapFilename() {
-        final StringBuilder builder = new StringBuilder();
-        builder.setLength(0);
-        builder.append("map");
-        builder.append(mapOriginX / WORLDMAP_WIDTH);
-        builder.append(mapOriginY / WORLDMAP_HEIGHT);
-        builder.append(mapLevel);
-        builder.append(".dat");
-        return new File(World.getPlayer().getPath(), builder.toString());
     }
 
     /**
