@@ -18,8 +18,10 @@
  */
 package illarion.client.world;
 
+import illarion.common.annotation.NonNull;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.FastMath;
+import net.jcip.annotations.NotThreadSafe;
 
 /**
  * This class is used to store and calculate the dimensions of the map. It requires the size of the screen as
@@ -27,6 +29,7 @@ import illarion.common.util.FastMath;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@NotThreadSafe
 public final class MapDimensions {
     /**
      * This is the amount of rows and columns that are requested from the server in addition to the tiles needed to
@@ -49,27 +52,61 @@ public final class MapDimensions {
     /**
      * The singleton instance of this class.
      */
+    @NonNull
     private static final MapDimensions INSTANCE = new MapDimensions();
 
     /**
-     * Get the singleton instance of this class.
-     *
-     * @return the singleton instance of this class.
+     * The amount of rows from the center to the bottom that are within the visible range. Tiles further away are
+     * removed.
      */
-    public static MapDimensions getInstance() {
-        return INSTANCE;
-    }
-
     private int clippingOffsetBottom;
 
+    /**
+     * The amount of rows from the center to the left that are within the visible range. Tiles further away are
+     * removed.
+     */
     private int clippingOffsetLeft;
+
+    /**
+     * The amount of rows from the center to the right that are within the visible range. Tiles further away are
+     * removed.
+     */
     private int clippingOffsetRight;
+
+    /**
+     * The amount of rows from the center to the top that are within the visible range. Tiles further away are
+     * removed.
+     */
     private int clippingOffsetTop;
+
+    /**
+     * The height of the area that is within the clipping range. Measured in pixels.
+     */
     private int offScreenHeight;
+
+    /**
+     * The width of the area that is within the clipping range. Measured in pixels.
+     */
     private int offScreenWidth;
+
+    /**
+     * The height of the last reported screen size.
+     */
     private int onScreenHeight;
+
+    /**
+     * The width of the last reported screen size.
+     */
     private int onScreenWidth;
+
+    /**
+     * The amount of tile rows kept on the screen.
+     */
     private int stripesHeight;
+
+    /**
+     * The amount of tile columns kept on the screen.
+     */
     private int stripesWidth;
 
     /**
@@ -77,6 +114,16 @@ public final class MapDimensions {
      */
     private MapDimensions() {
         // nothing
+    }
+
+    /**
+     * Get the singleton instance of this class.
+     *
+     * @return the singleton instance of this class.
+     */
+    @NonNull
+    public static MapDimensions getInstance() {
+        return INSTANCE;
     }
 
     /**
