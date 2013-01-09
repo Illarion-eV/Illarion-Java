@@ -20,6 +20,7 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.world.MusicBox;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 
@@ -61,7 +62,11 @@ public final class MusicMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        World.getMusicBox().playMusicTrack(song);
+        if (song == MusicBox.NO_TRACK) {
+            World.getMusicBox().playDefaultMusic();
+        } else {
+            World.getMusicBox().playMusicTrack(song);
+        }
         return true;
     }
 

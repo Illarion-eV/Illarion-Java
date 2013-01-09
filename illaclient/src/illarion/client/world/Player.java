@@ -35,6 +35,7 @@ import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantList;
+import illarion.common.annotation.Nullable;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
@@ -183,7 +184,6 @@ public final class Player {
 
         character.setName(name);
         // character.setVisible(Char.VISIBILITY_MAX);
-        World.getPeople().setPlayerCharacter(character);
 
         // followed = null;
         movementHandler = new PlayerMovement(this);
@@ -491,7 +491,7 @@ public final class Player {
      * @param checkId the ID to be checked
      * @return true if it is the player, false if not
      */
-    public boolean isPlayer(final CharacterId checkId) {
+    public boolean isPlayer(@Nullable final CharacterId checkId) {
         return playerId.equals(checkId);
     }
 
@@ -542,7 +542,6 @@ public final class Player {
      * Then this instance of player is removed its content needs to removed correctly as well.
      */
     public void shutdown() {
-        World.getPeople().setPlayerCharacter(null);
         character.recycle();
         movementHandler.shutdown();
     }

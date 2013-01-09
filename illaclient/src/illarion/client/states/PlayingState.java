@@ -83,7 +83,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
         World.getWeather().update(delta);
         World.getMapDisplay().update(container, delta);
         World.getAnimationManager().animate(delta);
-        World.getMusicBox().update(delta);
+        World.getMusicBox().update();
     }
 
     @Override

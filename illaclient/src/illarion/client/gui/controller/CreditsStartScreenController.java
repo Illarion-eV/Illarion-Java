@@ -40,7 +40,7 @@ public final class CreditsStartScreenController implements ScreenController, Key
     @Override
     public void onStartScreen() {
         World.getMusicBox().playMusicTrack(2);
-        World.getMusicBox().update(0);
+        World.getMusicBox().update();
         nifty.gotoScreen("creditsSingles");
     }
 

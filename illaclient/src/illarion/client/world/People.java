@@ -21,11 +21,14 @@ package illarion.client.world;
 import illarion.client.net.CommandFactory;
 import illarion.client.net.CommandList;
 import illarion.client.net.client.RequestAppearanceCmd;
-import illarion.client.util.Lang;
 import illarion.client.world.events.CharRemovedEvent;
+import illarion.common.annotation.NonNull;
+import illarion.common.annotation.Nullable;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import javolution.util.FastTable;
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 
@@ -40,74 +43,33 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@SuppressWarnings("ClassNamingConvention")
+@ThreadSafe
 public final class People {
-    /**
-     * The key for the configuration where the name mode is stored.
-     */
-    @SuppressWarnings("nls")
-    public static final String CFG_NAMEMODE_KEY = "showNameMode";
-
-    /**
-     * The key for the configuration where the current show ID flag is stored.
-     */
-    @SuppressWarnings("nls")
-    public static final String CFG_SHOWID_KEY = "showIDs";
-
-    /**
-     * Default Name of a enemy.
-     */
-    @SuppressWarnings("nls")
-    private static final String ENEMY = "'" + Lang.getMsg("chat.enemy") + "'";
-
     /**
      * The logger instance that takes care for the logging output of this class.
      */
+    @NonNull
+    @SuppressWarnings("UnusedDeclaration")
     private static final Logger LOGGER = Logger.getLogger(People.class);
-
-    /**
-     * Settings value for showing full names.
-     */
-    public static final int NAME_LONG = 2;
-
-    /**
-     * Settings value for showing shorten names.
-     */
-    public static final int NAME_SHORT = 1;
 
     /**
      * This is the format string that is displayed in the {@link #toString()} function.
      */
     @SuppressWarnings("nls")
+    @NonNull
     private static final String TO_STRING_TEXT = "People Manager - %d$1 characters in storage";
-
-    /**
-     * This function checks a argument against <code>null</code> and throws a exception in case the argument is
-     * <code>null</code>
-     *
-     * @param arg the argument to test
-     * @throws NullPointerException in case the argument is <code>null</code>.
-     */
-    @SuppressWarnings("nls")
-    private static void throwNullException(final Object arg) {
-        if (arg == null) {
-            throw new NullPointerException("Argument must not be null.");
-        }
-    }
 
     /**
      * The list of visible characters.
      */
+    @GuardedBy("charsLock")
     private final Map<CharacterId, Char> chars;
 
     /**
      * The lock that is used to secure the chars table properly.
      */
     private final ReentrantReadWriteLock charsLock;
-
-    /**
-     * The character of the player. This one is handled seperated of the rest of the characters.
-     */
-    private Char playerChar;
 
     /**
      * A list of characters that are going to be removed.
@@ -130,7 +92,12 @@ public final class People {
      * @param id the ID of the character
      * @return the character that was requested
      */
-    public Char accessCharacter(final CharacterId id) {
+    @NonNull
+    public Char accessCharacter(@NonNull final CharacterId id) {
+        if (World.getPlayer().isPlayer(id)) {
+            return World.getPlayer().getCharacter();
+        }
+
         final Char chara = getCharacter(id);
         if (chara == null) {
             return createNewCharacter(id);
@@ -143,8 +110,13 @@ public final class People {
      *
      * @param chara the character that shall be added
      */
-    void addCharacter(final Char chara) {
-        throwPlayerCharacter(chara);
+    private void addCharacter(@NonNull final Char chara) {
+        if (chara.getCharId() == null) {
+            throw new IllegalArgumentException("Adding character without ID is illegal.");
+        }
+        if (World.getPlayer().isPlayer(chara.getCharId())) {
+            throw new IllegalArgumentException("Adding player character to the chars list is not allowed.");
+        }
 
         charsLock.writeLock().lock();
         try {
@@ -160,16 +132,20 @@ public final class People {
      *
      * @param removeChar the character that is going to be removed
      */
-    public void addCharacterToRemoveList(final Char removeChar) {
-        throwNullException(removeChar);
-        throwPlayerCharacter(removeChar);
+    public void addCharacterToRemoveList(@NonNull final Char removeChar) {
+        if (removeChar.getCharId() == null) {
+            throw new IllegalArgumentException("Removing character without ID is illegal.");
+        }
+        if (World.getPlayer().isPlayer(removeChar.getCharId())) {
+            throw new IllegalArgumentException("Removing player character from the chars list is not allowed.");
+        }
         removalList.add(removeChar);
     }
 
     /**
      * Check the visibility for all characters currently on the screen.
      */
-    void checkVisibility() {
+    public void checkVisibility() {
         charsLock.readLock().lock();
         try {
             for (final Char character : chars.values()) {
@@ -189,7 +165,12 @@ public final class People {
         try {
             if (!removalList.isEmpty()) {
                 for (final Char removeChar : removalList) {
-                    removeCharacter(removeChar.getCharId());
+                    final CharacterId removeId = removeChar.getCharId();
+                    if (removeId == null) {
+                        LOGGER.error("Character without ID located in remove list.");
+                        continue;
+                    }
+                    removeCharacter(removeId);
                 }
                 removalList.clear();
             }
@@ -201,7 +182,7 @@ public final class People {
     /**
      * Clear the list of characters and recycle all of them.
      */
-    void clear() {
+    public void clear() {
         if (CombatHandler.getInstance().isAttacking()) {
             CombatHandler.getInstance().standDown();
         }
@@ -221,7 +202,7 @@ public final class People {
      * Check all known characters if they are outside of the screen and hide them from the screen. Save them still to
      * the characters that are known to left the screen.
      */
-    void clipCharacters() {
+    public void clipCharacters() {
         charsLock.writeLock().lock();
         try {
 
@@ -242,7 +223,8 @@ public final class People {
      * @param id the ID of the character to be created
      * @return the created character
      */
-    private Char createNewCharacter(final CharacterId id) {
+    @NonNull
+    private Char createNewCharacter(@NonNull final CharacterId id) {
         final Char chara = Char.create();
         chara.setCharId(id);
 
@@ -260,11 +242,12 @@ public final class People {
      * Get a character out of the list of the known characters.
      *
      * @param id ID of the requested character
-     * @return the character or null if it does not exist
+     * @return the character or {@code null} if it does not exist
      */
+    @Nullable
     public Char getCharacter(final CharacterId id) {
-        if (isPlayerCharacter(id)) {
-            return playerChar;
+        if (World.getPlayer().isPlayer(id)) {
+            return World.getPlayer().getCharacter();
         }
 
         charsLock.readLock().lock();
@@ -279,12 +262,12 @@ public final class People {
      * Get the character on a special location on the map.
      *
      * @param loc the location the character is searched at
-     * @return the character or null if not found
+     * @return the character or {@code null} if not found
      */
-    public Char getCharacterAt(final Location loc) {
-        throwNullException(loc);
-
-        if (isPlayerCharacter(loc)) {
+    @Nullable
+    public Char getCharacterAt(@NonNull final Location loc) {
+        final Char playerChar = World.getPlayer().getCharacter();
+        if (playerChar.getLocation().equals(loc)) {
             return playerChar;
         }
 
@@ -304,34 +287,15 @@ public final class People {
     }
 
     /**
-     * Check if the location is the location of the player character.
-     *
-     * @param loc the location to check
-     * @return <code>true</code> in case the player character is set and its location equals the location supplied by
-     *         the argument
-     */
-    private boolean isPlayerCharacter(final Location loc) {
-        return (playerChar != null) && playerChar.getLocation().equals(loc);
-    }
-
-    /**
-     * Check if the ID is the ID of the player character.
-     *
-     * @param id the id to check
-     * @return <code>true</code> in case the player character is set and its ID equals the ID supplied by the argument
-     */
-    private boolean isPlayerCharacter(final CharacterId id) {
-        return (playerChar != null) && playerChar.getCharId().equals(id);
-    }
-
-    /**
      * Remove a character from the game list and recycle the character reference for later usage. Also clean up
      * everything related to this character such as the attacking marker.
      *
      * @param id the ID of the character that shall be removed
      */
-    public void removeCharacter(final CharacterId id) {
-        throwPlayerCharacter(id);
+    public void removeCharacter(@NonNull final CharacterId id) {
+        if (World.getPlayer().isPlayer(id)) {
+            throw new IllegalArgumentException("Removing the player character from the people list is not legal.");
+        }
 
         charsLock.writeLock().lock();
         try {
@@ -351,100 +315,24 @@ public final class People {
     }
 
     /**
-     * Show a dialog that offers the possibility to send a GM report about a special character to the gms.
-     *
-     * @param chara The character that shall be reported
-     */
-    public void reportCharacter(final Char chara) {
-        chara.getCharId();
-
-        // Gui.getInstance().getReportRequest().request("", new TextResponse() {
-        // private static final int MINIMAL_TEXT_LENGTH = 20;
-
-        // @Override
-        // public boolean checkText(final String text) {
-        // return text.length() > MINIMAL_TEXT_LENGTH;
-        // }
-
-        // @Override
-        // public void textCancelled() {
-        // // nothing to do
-        // }
-
-        // @Override
-        // public void textConfirmed(final String text) {
-        // final StringBuffer msg = new StringBuffer("!gm report ");
-        // msg.append(Long.toString(charID));
-        // msg.append(" ");
-
-        // final String name = names.getName(charID);
-        // if (name != null) {
-        // msg.append(name);
-        // msg.append(" ");
-        // }
-        // msg.append(text);
-
-        // // send say command to server
-        // final SayCmd cmd =
-        // (SayCmd) CommandFactory.getInstance().getCommand(
-        // CommandList.CMD_SAY);
-        // cmd.setCharacterName(msg.toString());
-        // Game.getNet().sendCommand(cmd);
-
-        // }
-        // });
-
-    }
-
-    /**
-     * Set the character of the player.
-     *
-     * @param character the character of the player
-     */
-    public void setPlayerCharacter(final Char character) {
-        playerChar = character;
-    }
-
-    /**
-     * This function throws a {@link IllegalArgumentException} in case the character supplied with the
-     * argument is the player character.
-     *
-     * @param chara the character to check
-     * @throws IllegalArgumentException in case the character in the argument is the player character
-     */
-    private void throwPlayerCharacter(final Char chara) {
-        throwPlayerCharacter(chara.getCharId());
-    }
-
-    /**
-     * This function throws a {@link IllegalArgumentException} in case the ID suppled by the argument is the
-     * ID of the player character
-     *
-     * @param id the ID to test
-     * @throws IllegalArgumentException in case the argument contains the ID of the player character
-     */
-    @SuppressWarnings("nls")
-    private void throwPlayerCharacter(final CharacterId id) {
-        if (isPlayerCharacter(id)) {
-            throw new IllegalArgumentException("The player character can't be used here.");
-        }
-    }
-
-    /**
      * Get the string representation of this instance.
      */
     @Override
+    @NonNull
     public String toString() {
-        return String.format(TO_STRING_TEXT, chars.size());
+        charsLock.writeLock().lock();
+        try {
+            return String.format(TO_STRING_TEXT, chars.size());
+        } finally {
+            charsLock.writeLock().unlock();
+        }
     }
 
     /**
      * Force update of light values.
      */
     void updateLight() {
-        if (playerChar != null) {
-            playerChar.updateLight(Char.LIGHT_UPDATE);
-        }
+        World.getPlayer().getCharacter().updateLight(Char.LIGHT_UPDATE);
 
         charsLock.readLock().lock();
         try {

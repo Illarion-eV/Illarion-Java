@@ -534,7 +534,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     private void prepareConfig() {
         cfg = new ConfigSystem(getFile("Illarion.xcfgz"));
         cfg.setDefault("debugLevel", 1);
-        cfg.setDefault("showNameMode", illarion.client.world.People.NAME_SHORT);
         cfg.setDefault("showIDs", false);
         cfg.setDefault("soundOn", true);
         cfg.setDefault("soundVolume", illarion.client.world.Player.MAX_CLIENT_VOL);

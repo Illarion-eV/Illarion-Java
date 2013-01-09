@@ -129,7 +129,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     @Override
     public void onStartScreen() {
         World.getMusicBox().playMusicTrack(0);
-        World.getMusicBox().update(0);
+        World.getMusicBox().update();
     }
 
     @Override
