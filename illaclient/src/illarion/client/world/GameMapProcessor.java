@@ -360,7 +360,7 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
         final Location playerLoc = World.getPlayer().getLocation();
         final Location tileLoc = tile.getLocation();
 
-        if ((playerLoc == null) || (tileLoc == null)) {
+        if (playerLoc == null) {
             // something is very wrong. Put this entry back into the unchecked list and try it again later.
             reportUnchecked(key);
             return true;

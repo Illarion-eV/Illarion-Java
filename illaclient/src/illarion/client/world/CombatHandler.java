@@ -25,6 +25,7 @@ import illarion.common.annotation.NonNull;
 import illarion.common.types.CharacterId;
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.log4j.Logger;
 
 /**
  * This class is used to store and set the current combat mode. It will forward all changes to the combat mode to the
@@ -125,6 +126,11 @@ public final class CombatHandler {
     }
 
     /**
+     * The logging instance of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(CombatHandler.class);
+
+    /**
      * Set the character that is attacked from now in.
      *
      * @param character the character that is now attacked
@@ -137,9 +143,15 @@ public final class CombatHandler {
 
             standDown();
 
+            final CharacterId characterId = character.getCharId();
+            if (characterId == null) {
+                LOGGER.error("Trying to attack a character without character ID.");
+                return;
+            }
+
             if (canBeAttacked(character)) {
                 attackedChar = character;
-                sendAttackToServer(character.getCharId());
+                sendAttackToServer(characterId);
                 character.setAttackMarker(true);
                 World.getMusicBox().playFightingMusic();
             }
