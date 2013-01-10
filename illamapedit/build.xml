@@ -87,6 +87,7 @@
                 <fileset refid="jorbis"/>
                 <fileset refid="vorbisspi"/>
                 <fileset refid="tritonus"/>
+                <fileset refid="jcip"/>
                 <pathelement location="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>

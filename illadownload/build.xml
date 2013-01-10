@@ -99,6 +99,7 @@
                 <fileset refid="xz"/>
                 <fileset refid="swingx"/>
                 <fileset refid="log4j"/>
+                <fileset refid="jcip"/>
                 <pathelement path="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>
@@ -114,6 +115,7 @@
             <zipgroupfileset refid="xz"/>
             <zipgroupfileset refid="log4j"/>
             <zipgroupfileset refid="eventbus"/>
+            <zipgroupfileset refid="jcip"/>
             <zipfileset src="${common.bin}"/>
             <metainf dir="${download}">
                 <include name="*.txt"/>

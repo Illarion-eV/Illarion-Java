@@ -73,6 +73,7 @@
                 <fileset refid="nifty"/>
                 <fileset refid="eventbus"/>
                 <fileset refid="log4j"/>
+                <fileset refid="jcip"/>
                 <pathelement path="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>

@@ -46,6 +46,7 @@
             <classpath>
                 <fileset refid="twl"/>
                 <fileset refid="xz"/>
+                <fileset refid="jcip"/>
                 <pathelement location="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>
@@ -62,6 +63,7 @@
             </fileset>
             <zipfileset src="${common.bin}"/>
             <zipgroupfileset refid="twl"/>
+            <zipgroupfileset refid="jcip"/>
             <zipgroupfileset refid="xz"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
