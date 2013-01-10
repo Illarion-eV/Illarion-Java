@@ -464,7 +464,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * Basic initialization of the log files and the debug settings.
      */
     @SuppressWarnings("nls")
-    private void initLogfiles() throws IOException {
+    private static void initLogfiles() throws IOException {
         tempProps.load(getResource("logging.properties"));
         tempProps.put("log4j.appender.IllaLogfileAppender.file", getFile("error.log"));
         tempProps.put("log4j.appender.ChatAppender.file", getFile("illarion.log"));

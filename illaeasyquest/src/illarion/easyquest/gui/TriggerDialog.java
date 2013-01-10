@@ -174,7 +174,7 @@ public class TriggerDialog extends JDialog {
                 conditions.add(c);
             }
         }
-        return conditions.toArray(new Condition[0]);
+        return conditions.toArray(new Condition[conditions.size()]);
     }
 
     public void setConditions(Condition[] conditions) {

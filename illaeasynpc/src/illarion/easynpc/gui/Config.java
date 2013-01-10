@@ -712,7 +712,7 @@ public final class Config {
      * @param folder the folder the log file is written to
      */
     @SuppressWarnings("nls")
-    private void initLogging(final String folder) {
+    private static void initLogging(final String folder) {
         final Properties tempProps = new Properties();
         try {
             tempProps.load(Config.class.getClassLoader().getResourceAsStream(

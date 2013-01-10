@@ -270,7 +270,7 @@ public final class FontLoader implements SlickRenderFontLoader {
      * @throws SlickLoadFontException in case loading the font fails
      */
     @SuppressWarnings("nls")
-    private SlickRenderFont loadFont(final FontLoader.Fonts font)
+    private static SlickRenderFont loadFont(final FontLoader.Fonts font)
             throws SlickLoadFontException {
         try {
             Font javaFont =

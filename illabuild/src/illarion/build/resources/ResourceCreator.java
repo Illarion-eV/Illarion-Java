@@ -401,7 +401,7 @@ public final class ResourceCreator extends Task {
      * @param name the name to check
      * @return <code>true</code> if the name is valid
      */
-    private boolean isNativeFilename(final String name) {
+    private static boolean isNativeFilename(final String name) {
         if (name.endsWith(".dll")) { //$NON-NLS-1$
             return true;
         }
@@ -427,7 +427,7 @@ public final class ResourceCreator extends Task {
      * @return the pointer to the temporary file
      * @throws IOException in case anything goes wrong
      */
-    private File streamToTempFile(final InputStream in) throws IOException {
+    private static File streamToTempFile(final InputStream in) throws IOException {
         final File tempFile = File.createTempFile("packing", ".tmp"); //$NON-NLS-1$ //$NON-NLS-2$
         tempFile.deleteOnExit();
 

@@ -111,7 +111,7 @@ public final class TextureLoaderAwt extends AbstractTextureLoader<TextureAtlasAw
      * @return the image loaded from the URL and if needed altered to meat the requirements for hardware acceleration
      * @throws IOException in case loading the image fails
      */
-    private BufferedImage readImage(final URL imageURL) throws IOException {
+    private static BufferedImage readImage(final URL imageURL) throws IOException {
         final BufferedImage orgImage = ImageIO.read(imageURL);
 
         final GraphicsConfiguration gfxConfig = GraphicsEnvironment.getLocalGraphicsEnvironment()

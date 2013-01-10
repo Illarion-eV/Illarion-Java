@@ -252,7 +252,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
         updateVisibilityOfElement(content);
     }
 
-    private void updateVisibilityOfElement(final Element target) {
+    private static void updateVisibilityOfElement(final Element target) {
         if ("0px".equals(target.getConstraintHeight().toString())) {
             target.setVisible(false);
         } else {

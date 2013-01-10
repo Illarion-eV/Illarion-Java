@@ -1,35 +1,32 @@
 /*
  * This file is part of the Illarion easyQuest Editor.
  *
- * Copyright 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion easyQuest Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyQuest Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyQuest Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyQuest Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyQuest Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easyquest.gui;
 
+import javax.swing.*;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 import java.text.NumberFormat;
 
-import javax.swing.text.NumberFormatter;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.JFormattedTextField;
-
 @SuppressWarnings("serial")
-public class IntegerParameter extends JFormattedTextField implements Parameter
-{
-    
-    public IntegerParameter()
-    {
+public class IntegerParameter extends JFormattedTextField implements Parameter {
+
+    public IntegerParameter() {
         super();
         NumberFormat format = NumberFormat.getIntegerInstance();
         format.setGroupingUsed(false);
@@ -39,28 +36,20 @@ public class IntegerParameter extends JFormattedTextField implements Parameter
         setHorizontalAlignment(JFormattedTextField.RIGHT);
         setParameter(new Long(0));
     }
-    
-    public void setParameter(Object parameter)
-    {
-        if (parameter != null)
-        {
-            if (parameter instanceof Long)
-            {
-                setValue((Long)parameter);
+
+    public void setParameter(Object parameter) {
+        if (parameter != null) {
+            if (parameter instanceof Long) {
+                setValue(parameter);
+            } else {
+                setValue(new Long((String) parameter));
             }
-            else
-            {
-                setValue(new Long((String)parameter));
-            }
-        }
-        else
-        {
+        } else {
             setValue(new Long(0));
         }
     }
-    
-    public Object getParameter()
-    {
-        return new Long((Long)getValue());
+
+    public Object getParameter() {
+        return (Long) getValue();
     }
 }

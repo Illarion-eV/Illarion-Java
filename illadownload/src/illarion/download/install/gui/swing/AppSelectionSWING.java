@@ -179,7 +179,7 @@ public final class AppSelectionSWING
         }
     }
 
-    private JButton createLaunchButton() {
+    private static JButton createLaunchButton() {
         final Dimension launchButtonDim = new Dimension(120, 58);
         final JButton button = new JButton();
         button.setHorizontalTextPosition(SwingConstants.RIGHT);

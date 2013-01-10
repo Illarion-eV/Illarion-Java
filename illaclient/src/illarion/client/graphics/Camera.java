@@ -248,11 +248,11 @@ public final class Camera {
         }
     }
 
-    private void debugRenderRect(final Graphics g, final Rectangle rectangle) {
+    private static void debugRenderRect(final Graphics g, final Rectangle rectangle) {
         g.drawRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
     }
 
-    private void fillRenderRect(final Graphics g, final Rectangle rectangle) {
+    private static void fillRenderRect(final Graphics g, final Rectangle rectangle) {
         g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
     }
 

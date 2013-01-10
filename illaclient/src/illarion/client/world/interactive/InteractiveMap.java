@@ -46,7 +46,7 @@ public final class InteractiveMap {
         parentMap = map;
     }
 
-    private InteractiveMapTile getInteractiveTile(final MapTile tile) {
+    private static InteractiveMapTile getInteractiveTile(final MapTile tile) {
         if (tile != null) {
             return tile.getInteractive();
         }

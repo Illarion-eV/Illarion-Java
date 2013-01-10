@@ -23,6 +23,7 @@ import illarion.client.graphics.shader.HighlightShader;
 import illarion.client.graphics.shader.Shader;
 import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.world.World;
+import illarion.common.annotation.Nullable;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangeListener;
 import illarion.common.types.Location;
@@ -413,10 +414,9 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
     /**
      * Set a new base color of the entity.
      *
-     * @param newBaseColor the new base color of the entity, <code>null</code>
-     *                     to get the default color
+     * @param newBaseColor the new base color of the entity, {@code null} to get the default color
      */
-    public void changeBaseColor(final Color newBaseColor) {
+    public void changeBaseColor(@Nullable final Color newBaseColor) {
         if (newBaseColor == null) {
             overWriteBaseColor = null;
             return;
@@ -879,7 +879,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem,
         setEntityAreaDirty();
     }
 
-    private void copyLightValues(final Color source, final Color target) {
+    private static void copyLightValues(final Color source, final Color target) {
         target.r = source.r;
         target.g = source.g;
         target.b = source.b;

@@ -63,7 +63,7 @@ public class TileImgCellRenderer extends JPanel implements ListCellRenderer {
     }
 
 
-    private void adjustColors(final Color bg, final Component... components) {
+    private static void adjustColors(final Color bg, final Component... components) {
         for (final Component c : components) {
             if (bg != null) {
                 c.setBackground(bg);

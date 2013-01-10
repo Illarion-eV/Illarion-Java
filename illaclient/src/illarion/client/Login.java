@@ -330,7 +330,7 @@ public final class Login {
      * @return the encoded or the decoded password
      */
     @SuppressWarnings("nls")
-    private String shufflePassword(final String pw, final boolean decode) {
+    private static String shufflePassword(final String pw, final boolean decode) {
 
         try {
             final Charset usedCharset = Charset.forName("UTF-8");

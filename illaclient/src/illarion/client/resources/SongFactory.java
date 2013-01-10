@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources;
 
@@ -23,8 +23,6 @@ import illarion.client.util.IdWrapper;
 import illarion.common.util.FastMath;
 import javolution.util.FastTable;
 import org.newdawn.slick.Music;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 
 import java.util.List;
 
@@ -34,7 +32,7 @@ import java.util.List;
  * independent from the RecycleFactory, because there is only one song at time
  * played anyway.
  */
-public final class SongFactory implements ResourceFactory<IdWrapper<Music> > {
+public final class SongFactory implements ResourceFactory<IdWrapper<Music>> {
     /**
      * The singleton instance of the SongFactory.
      */
@@ -42,7 +40,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<Music> > {
 
     /**
      * Get the singleton instance of the sound factory.
-     * 
+     *
      * @return the singleton instance
      */
     public static SongFactory getInstance() {
@@ -65,7 +63,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<Music> > {
     /**
      * Get a song from a id. This function also selects what variation of a song
      * shall be used.
-     * 
+     *
      * @param id id of the song that is needed
      * @return null if the song was not found, if there is just one song with
      *         this id, the song is returned, in case there are multiple
@@ -105,10 +103,6 @@ public final class SongFactory implements ResourceFactory<IdWrapper<Music> > {
     public void storeResource(final IdWrapper<Music> resource) {
         final int clipID = resource.getId();
         final Music music = resource.getObject();
-        
-        if (music instanceof DeferredResource) {
-            LoadingList.get().add((DeferredResource) music);
-        }
 
         List<Music> clipList;
         if (!songs.contains(clipID)) {

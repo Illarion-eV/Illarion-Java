@@ -180,7 +180,7 @@ public class CellEditor implements mxICellEditor {
         // return editingCell;
     }
 
-    private boolean isVertex(Object cell) {
+    private static boolean isVertex(Object cell) {
         if (cell != null && cell instanceof mxCell) {
             final mxCell c = (mxCell) cell;
             return c.isVertex();

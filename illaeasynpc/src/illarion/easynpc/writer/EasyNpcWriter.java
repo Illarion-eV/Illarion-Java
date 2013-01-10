@@ -167,8 +167,8 @@ public final class EasyNpcWriter {
      * @param stage  the stage to check
      * @return <code>true</code> in case the NPC contains entries in this stage.
      */
-    private boolean checkStageExists(final ParsedNpc source,
-                                     final WritingStage stage) {
+    private static boolean checkStageExists(final ParsedNpc source,
+                                            final WritingStage stage) {
         final int count = source.getDataCount();
 
         EasyNpcWritable writeable = null;
@@ -193,7 +193,7 @@ public final class EasyNpcWriter {
      * @throws IOException thrown in case a writing operation failed
      */
     @SuppressWarnings("nls")
-    private void writeHeader(final ParsedNpc source, final Writer target)
+    private static void writeHeader(final ParsedNpc source, final Writer target)
             throws IOException {
         target.write("name = \"");
         target.write(source.getNpcName());
@@ -299,8 +299,8 @@ public final class EasyNpcWriter {
      * @throws IOException thrown in case the writing operations fail
      */
     @SuppressWarnings("nls")
-    private void writeIntro(final ParsedNpc source, final Writer target,
-                            final WritingStage stage) throws IOException {
+    private static void writeIntro(final ParsedNpc source, final Writer target,
+                                   final WritingStage stage) throws IOException {
 
         switch (stage) {
             case header:
@@ -393,8 +393,8 @@ public final class EasyNpcWriter {
      * @param stage  the current stage that is supposed to be processed
      * @throws IOException thrown in case the writing operations fail
      */
-    private void writeStage(final ParsedNpc source, final Writer target,
-                            final WritingStage stage) throws IOException {
+    private static void writeStage(final ParsedNpc source, final Writer target,
+                                   final WritingStage stage) throws IOException {
         final int count = source.getDataCount();
 
         for (int i = 0; i < count; ++i) {

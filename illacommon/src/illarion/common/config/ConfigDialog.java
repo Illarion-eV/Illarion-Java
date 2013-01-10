@@ -1,40 +1,39 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.config;
 
-import java.util.List;
-
+import illarion.common.config.entries.ConfigEntry;
+import illarion.common.util.MessageSource;
 import javolution.lang.Reflection;
 import javolution.lang.Reflection.Constructor;
 import javolution.text.TextBuilder;
 import javolution.util.FastTable;
-
 import org.apache.log4j.Logger;
 
-import illarion.common.config.entries.ConfigEntry;
-import illarion.common.util.MessageSource;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class allows the construction of a abstract configuration dialog that is
  * turned upon request into a configuration dialog fitting into one of the GUI
  * systems.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ConfigDialog {
@@ -42,7 +41,7 @@ public final class ConfigDialog {
      * This class describes a entry in the configuration dialog. Each line on a
      * page of the configuration dialog is a entry. Entries contain in general a
      * title and a control element.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     public static final class Entry {
@@ -68,11 +67,11 @@ public final class ConfigDialog {
 
         /**
          * Create a new entry with preset values.
-         * 
-         * @param entryTitle the title of that entry that is displayed as name
-         *            of this entry
+         *
+         * @param entryTitle  the title of that entry that is displayed as name
+         *                    of this entry
          * @param configEntry the configuration entry that defines what value is
-         *            controlled how
+         *                    controlled how
          */
         public Entry(final String entryTitle, final ConfigEntry configEntry) {
             title = entryTitle;
@@ -82,7 +81,7 @@ public final class ConfigDialog {
         /**
          * Get the configuration entry that is set to this entry and that
          * defines what configuration element is controlled and how.
-         * 
+         *
          * @return the configuration entry of this entry
          */
         public ConfigEntry getConfigEntry() {
@@ -91,7 +90,7 @@ public final class ConfigDialog {
 
         /**
          * Get the title of this entry.
-         * 
+         *
          * @return The title of this entry
          */
         public String getTitle() {
@@ -100,7 +99,7 @@ public final class ConfigDialog {
 
         /**
          * Set the entry that is displayed next to the title.
-         * 
+         *
          * @param configEntry the entry that is displayed
          */
         public void setEntry(final ConfigEntry configEntry) {
@@ -109,7 +108,7 @@ public final class ConfigDialog {
 
         /**
          * Set the title of this entry.
-         * 
+         *
          * @param entryTitle the title of the entry
          */
         public void setTitle(final String entryTitle) {
@@ -121,7 +120,7 @@ public final class ConfigDialog {
      * This class describes a page of the configuration dialog. Each page is
      * displayed as a tab in the dialog. Each page contains a title that is
      * displayed in the tab and a list of entries.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     public static final class Page {
@@ -145,7 +144,7 @@ public final class ConfigDialog {
 
         /**
          * Initialize the page with a title but without any entries.
-         * 
+         *
          * @param pageTitle the title of the page that is displayed in the tab
          */
         public Page(final String pageTitle) {
@@ -155,20 +154,18 @@ public final class ConfigDialog {
 
         /**
          * Initialize the page with a title and a set of entries.
-         * 
+         *
          * @param pageTitle the title of the page that is displayed in the tab
-         * @param entries the entries that are added to the page
+         * @param entries   the entries that are added to the page
          */
         public Page(final String pageTitle, final Entry... entries) {
             this(pageTitle);
-            for (final Entry entrie : entries) {
-                lines.add(entrie);
-            }
+            Collections.addAll(lines, entries);
         }
 
         /**
          * Add a entry to this page.
-         * 
+         *
          * @param entry the entry that is supposed to be added to this page
          */
         public void addEntry(final Entry entry) {
@@ -177,11 +174,11 @@ public final class ConfigDialog {
 
         /**
          * Get a entry with a specified index.
-         * 
+         *
          * @param index the index of the entry requested
          * @return the entry at the specified index
          * @throws IndexOutOfBoundsException if the index is lesser then zero or
-         *             larger or equal to {@link #getEntryCount()}
+         *                                   larger or equal to {@link #getEntryCount()}
          */
         public Entry getEntry(final int index) {
             return lines.get(index);
@@ -189,7 +186,7 @@ public final class ConfigDialog {
 
         /**
          * Get the amount of entries stored on this page.
-         * 
+         *
          * @return the amount of entries on this page
          */
         public int getEntryCount() {
@@ -199,7 +196,7 @@ public final class ConfigDialog {
         /**
          * Get the title of this page. The title is displayed as name of the tab
          * for this page.
-         * 
+         *
          * @return the title of this page
          */
         public String getTitle() {
@@ -208,7 +205,7 @@ public final class ConfigDialog {
 
         /**
          * Set the title of this page. The title is displayed in the tab.
-         * 
+         *
          * @param pageTitle the title of this page
          */
         public void setTitle(final String pageTitle) {
@@ -272,7 +269,7 @@ public final class ConfigDialog {
     /**
      * Add a page to this configuration dialog. Each page is displayed as
      * separated tab.
-     * 
+     *
      * @param page the page to add to this dialog
      */
     public void addPage(final Page page) {
@@ -281,11 +278,11 @@ public final class ConfigDialog {
 
     /**
      * Get a page of this dialog at a specified index.
-     * 
+     *
      * @param index the index of the page requested
      * @return the page at the specified index
      * @throws IndexOutOfBoundsException in case the index is lesser then 0 or
-     *             greater or equal then {@link #getPageCount()}
+     *                                   greater or equal then {@link #getPageCount()}
      */
     public Page getPage(final int index) {
         return pages.get(index);
@@ -293,7 +290,7 @@ public final class ConfigDialog {
 
     /**
      * The amount of pages added to this dialog.
-     * 
+     *
      * @return the pages added to this dialog
      */
     public int getPageCount() {
@@ -304,7 +301,7 @@ public final class ConfigDialog {
      * Set the configuration used in this dialog. Its used as data source for
      * the entries. Also this configuration is used to save the values set in
      * the dialog.
-     * 
+     *
      * @param config the configuration
      */
     public void setConfig(final Config config) {
@@ -313,7 +310,7 @@ public final class ConfigDialog {
 
     /**
      * Set the display system used to display the configuration dialog.
-     * 
+     *
      * @param newDisplay the constant of the display system
      * @see #DISPLAY_AWT
      * @see #DISPLAY_SWING
@@ -325,7 +322,7 @@ public final class ConfigDialog {
 
     /**
      * Set the message source of this configuration dialog.
-     * 
+     *
      * @param msgs the message source of this configuration dialog
      */
     public void setMessageSource(final MessageSource msgs) {
@@ -368,7 +365,7 @@ public final class ConfigDialog {
         builder.append(MessageSource.class.getName());
         builder.append(')');
         constructor =
-            Reflection.getInstance().getConstructor(builder.toString());
+                Reflection.getInstance().getConstructor(builder.toString());
 
         TextBuilder.recycle(builder);
 

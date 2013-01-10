@@ -261,12 +261,12 @@ public final class MapDisplayManager
         return ((y - getMapCenterY()) + origin.getDcY()) - dY;
     }
 
-    private int getMapCenterX() {
+    private static int getMapCenterX() {
         final GameContainer window = IllaClient.getInstance().getContainer();
         return window.getWidth() >> 1;
     }
 
-    private int getMapCenterY() {
+    private static int getMapCenterY() {
         final GameContainer window = IllaClient.getInstance().getContainer();
         return window.getHeight() >> 1;
     }

@@ -80,7 +80,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private class EndOfDragOperation implements Runnable {
+    private static class EndOfDragOperation implements Runnable {
         /**
          * The inventory slot that requires the reset.
          */

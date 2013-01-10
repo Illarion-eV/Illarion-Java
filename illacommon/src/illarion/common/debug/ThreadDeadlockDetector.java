@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.debug;
 
@@ -28,7 +28,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * This class is able to run a thread that detects deadlocked threads.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ThreadDeadlockDetector {
@@ -39,7 +39,7 @@ public final class ThreadDeadlockDetector {
         /**
          * This function is called in case a deadlock is detected in case with a
          * list of threads that are locked.
-         * 
+         *
          * @param deadlockedThreads the locked threads
          */
         void deadlockDetected(Thread[] deadlockedThreads);
@@ -56,7 +56,7 @@ public final class ThreadDeadlockDetector {
      * The listeners that are notified in case a deadlocked thread is detected.
      */
     private final Collection<Listener> listeners =
-        new CopyOnWriteArraySet<Listener>();
+            new CopyOnWriteArraySet<Listener>();
 
     /**
      * The thread management bean.
@@ -68,7 +68,7 @@ public final class ThreadDeadlockDetector {
      */
     @SuppressWarnings("nls")
     private final Timer threadCheck =
-        new Timer("ThreadDeadlockDetector", true);
+            new Timer("ThreadDeadlockDetector", true);
 
     /**
      * Create a new dead lock detector that checks for deadlocks using the
@@ -80,7 +80,7 @@ public final class ThreadDeadlockDetector {
 
     /**
      * Create a new dead lock detector that checks for deadlocks.
-     * 
+     *
      * @param deadlockCheckPeriod the time in milliseconds between two checks
      */
     public ThreadDeadlockDetector(final int deadlockCheckPeriod) {
@@ -96,7 +96,7 @@ public final class ThreadDeadlockDetector {
     /**
      * Add a listener to the deadlock detector that is notified in case a
      * deadlock is found.
-     * 
+     *
      * @param l the listener that shall be added
      * @return <code>true</code> in case the listener got added
      */
@@ -107,7 +107,7 @@ public final class ThreadDeadlockDetector {
     /**
      * Remove a listener from the deadlock detector. This listener won't be
      * informed about deadlocks anymore.
-     * 
+     *
      * @param l the listener that is supposed to be removed
      * @return <code>true</code> in case the listener got removed
      */
@@ -131,7 +131,7 @@ public final class ThreadDeadlockDetector {
 
     /**
      * Find and return dead locked threads.
-     * 
+     *
      * @return a list of IDs of the threads that got deadlocked
      */
     private long[] findDeadlockedThreads() {
@@ -143,12 +143,12 @@ public final class ThreadDeadlockDetector {
 
     /**
      * Find the thread fitting to some thread informations.
-     * 
+     *
      * @param inf the thread informations that are used as search condition
      * @return the thread matching the thread informations
      */
     @SuppressWarnings("nls")
-    private Thread findMatchingThread(final ThreadInfo inf) {
+    private static Thread findMatchingThread(final ThreadInfo inf) {
         for (final Thread thread : Thread.getAllStackTraces().keySet()) {
             if (thread.getId() == inf.getThreadId()) {
                 return thread;
@@ -159,7 +159,7 @@ public final class ThreadDeadlockDetector {
 
     /**
      * Notify all listeners about a found deadlock.
-     * 
+     *
      * @param threads the list of threads that got deadlocked
      */
     private void fireDeadlockDetected(final Thread[] threads) {

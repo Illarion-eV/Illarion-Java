@@ -117,7 +117,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         }
     }
 
-    private class BuildWrapper {
+    private static class BuildWrapper {
         private final ControlBuilder builder;
         private final Element parent;
         private final DialogHandler.PostBuildTask task;

@@ -141,7 +141,7 @@ public class DocuLoader implements Resource, TreeModel {
     @Override
     public int getIndexOfChild(final Object parent, final Object child) {
         final Folder f = (Folder) parent;
-        return ((Folder) f).getFiles().indexOf(child);
+        return f.getFiles().indexOf(child);
     }
 
     @Override

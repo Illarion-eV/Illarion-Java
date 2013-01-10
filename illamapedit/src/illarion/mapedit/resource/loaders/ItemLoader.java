@@ -87,7 +87,7 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
         return true;
     }
 
-    private Image[] getTextures(final String resourceName, final int frameCount) {
+    private static Image[] getTextures(final String resourceName, final int frameCount) {
         final Image[] imgs = new Image[frameCount];
         if (frameCount == 1) {
             imgs[0] = TextureLoaderAwt.getInstance().getTexture(DIR_IMG_ITEMS + resourceName);

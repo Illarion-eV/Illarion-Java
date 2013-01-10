@@ -53,7 +53,7 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
         return tokenMap;
     }
 
-    protected final String operators = "!~=-+/*<>";
+    protected static final String operators = "!~=-+/*<>";
     private int currentTokenStart;
     private int currentTokenType;
 

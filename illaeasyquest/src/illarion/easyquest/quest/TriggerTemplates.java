@@ -1,36 +1,34 @@
 /*
  * This file is part of the Illarion easyQuest Editor.
  *
- * Copyright 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion easyQuest Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyQuest Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyQuest Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyQuest Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyQuest Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easyquest.quest;
 
-import java.util.List;
-import java.util.Map;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
-
+import illarion.easyquest.Lang;
 import javolution.util.FastComparator;
 import javolution.util.FastMap;
 import javolution.util.FastTable;
 
-import illarion.easyquest.Lang;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.Map;
 
 public class TriggerTemplates {
     private TriggerTemplate[] templates;
@@ -44,7 +42,7 @@ public class TriggerTemplates {
 
     public TriggerTemplates() {
         final FastMap<String, TriggerTemplate> localTypeMap =
-            new FastMap<String, TriggerTemplate>();
+                new FastMap<String, TriggerTemplate>();
         localTypeMap.setKeyComparator(FastComparator.STRING);
         typeMap = localTypeMap;
 
@@ -56,13 +54,13 @@ public class TriggerTemplates {
         return loader.getResourceAsStream(name);
     }
 
-    private List<String> loadFileList() {
+    private static List<String> loadFileList() {
         List<String> result = new FastTable<String>();
         BufferedReader bRead = null;
         try {
             bRead =
-                new BufferedReader(new InputStreamReader(
-                    getResource("template/trigger/filelist")));
+                    new BufferedReader(new InputStreamReader(
+                            getResource("template/trigger/filelist")));
 
             String line = null;
             while ((line = bRead.readLine()) != null) {
@@ -88,7 +86,7 @@ public class TriggerTemplates {
     private void load() {
         List<String> templateFiles = loadFileList();
         FastTable<TriggerTemplate> templateList = FastTable.newInstance();
-        
+
         if (templateFiles.isEmpty()) {
             System.out.println("Trigger directory does not exist!");
         } else {
@@ -100,14 +98,14 @@ public class TriggerTemplates {
                 StringBuffer header = new StringBuffer();
                 StringBuffer body = new StringBuffer();
                 String uniqueName =
-                    fileName.substring(fileName.lastIndexOf('/') + 1,
-                        fileName.lastIndexOf('.'));
+                        fileName.substring(fileName.lastIndexOf('/') + 1,
+                                fileName.lastIndexOf('.'));
                 TriggerTemplate triggerTemplate =
-                    new TriggerTemplate(uniqueName);
+                        new TriggerTemplate(uniqueName);
                 try {
                     BufferedReader reader =
-                        new BufferedReader(new InputStreamReader(
-                            getResource(fileName), "ISO-8859-1"));
+                            new BufferedReader(new InputStreamReader(
+                                    getResource(fileName), "ISO-8859-1"));
 
                     while ((line = reader.readLine()) != null) {
                         if (isHeader && line.matches("function .*")) {
@@ -135,32 +133,32 @@ public class TriggerTemplates {
                                 }
                                 continue;
                             } else if (line
-                                .matches("local\\s+QUEST_NUMBER\\s*=\\s*0\\s*")) {
+                                    .matches("local\\s+QUEST_NUMBER\\s*=\\s*0\\s*")) {
                                 triggerTemplate.foundQuestNumber();
                                 continue;
                             } else if (line
-                                .matches("local\\s+PRECONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
+                                    .matches("local\\s+PRECONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
                                 triggerTemplate.foundPrior();
                                 continue;
                             } else if (line
-                                .matches("local\\s+POSTCONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
+                                    .matches("local\\s+POSTCONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
                                 triggerTemplate.foundPosterior();
                                 continue;
                             } else if (line
-                                .matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*")) {
+                                    .matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*")) {
                                 String[] param =
-                                    line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
-                                
+                                        line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
+
                                 String description;
                                 if (isGerman) {
                                     description = param[4];
                                 } else {
                                     description = param[3];
                                 }
-                                
+
                                 TemplateParameter parameter = new TemplateParameter(
-                            	    param[1], param[2], description);
-                                
+                                        param[1], param[2], description);
+
                                 triggerTemplate.addParameter(parameter);
 
                                 continue;
@@ -168,7 +166,7 @@ public class TriggerTemplates {
 
                             header.append(line + "\n");
                         } else {
-                        	body.append(line + "\n");
+                            body.append(line + "\n");
                         }
                     }
 
@@ -180,14 +178,14 @@ public class TriggerTemplates {
                         typeMap.put(uniqueName, triggerTemplate);
                     } else {
                         System.out.println("Syntax error in template "
-                            + fileName);
+                                + fileName);
                     }
                 } catch (final Exception e1) {
                     System.out.println("Error loading template " + fileName);
                 }
             }
         }
-        
+
         templates = templateList.toArray(new TriggerTemplate[templateList.size()]);
         FastTable.recycle(templateList);
     }

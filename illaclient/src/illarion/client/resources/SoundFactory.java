@@ -1,35 +1,33 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.util.IdWrapper;
 import org.newdawn.slick.Sound;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 
 import java.util.logging.Logger;
 
 /**
  * This factory provides access to all known sound files.
  */
-public final class SoundFactory implements ResourceFactory<IdWrapper<Sound> > {
+public final class SoundFactory implements ResourceFactory<IdWrapper<Sound>> {
 
     /**
      * This is the ID of the sound that is played in case the requested sound
@@ -46,11 +44,11 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<Sound> > {
      * The instance of the logger that is used to write out the data.
      */
     private static final Logger LOGGER = Logger.getLogger(SoundFactory.class
-        .getCanonicalName());
+            .getCanonicalName());
 
     /**
      * Get the singleton instance of the sound factory.
-     * 
+     *
      * @return the singleton instance of the sound factory
      */
     public static SoundFactory getInstance() {
@@ -72,7 +70,7 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<Sound> > {
 
     /**
      * Get the a sound from the factory by the id.
-     * 
+     *
      * @param id the id of the requested sound effect
      * @return the sound effect or null in case it was not found or if the sound
      *         playback is disabled
@@ -110,10 +108,6 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<Sound> > {
     @Override
     public void storeResource(final IdWrapper<Sound> resource) {
         final Sound sound = resource.getObject();
-        
-        if (sound instanceof DeferredResource) {
-            LoadingList.get().add((DeferredResource) sound);
-        }
         sounds.put(resource.getId(), sound);
     }
 

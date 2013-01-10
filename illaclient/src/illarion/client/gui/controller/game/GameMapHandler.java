@@ -255,7 +255,7 @@ public final class GameMapHandler
      *
      * @param event the event that contains the data for the move
      */
-    private void moveTowardsMouse(final DragOnMapEvent event) {
+    private static void moveTowardsMouse(final DragOnMapEvent event) {
         World.getPlayer().getMovementHandler().walkTowards(event.getNewX(), event.getNewY());
         event.getForwardingControl().requestExclusiveMouse();
     }

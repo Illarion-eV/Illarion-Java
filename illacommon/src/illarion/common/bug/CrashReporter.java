@@ -356,7 +356,7 @@ public final class CrashReporter {
      * @param data the data that was collected about the crash
      */
     @SuppressWarnings("nls")
-    private void sendCrashData(final CrashData data) {
+    private static void sendCrashData(final CrashData data) {
         if (CRASH_SERVER == null) {
             return;
         }

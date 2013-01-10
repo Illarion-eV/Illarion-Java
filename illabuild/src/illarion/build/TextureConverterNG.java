@@ -683,8 +683,8 @@ public final class TextureConverterNG
         tableFiles.clear();
     }
 
-    private int packTextures(final JarOutputStream outJar, final String folder, final ImagePacker packer,
-                             final String filename) {
+    private static int packTextures(final JarOutputStream outJar, final String folder, final ImagePacker packer,
+                                    final String filename) {
         int atlasFiles = 0;
         String usedFileName;
         while (!packer.isEverythingDone()) {

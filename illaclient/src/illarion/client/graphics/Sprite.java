@@ -710,7 +710,7 @@ public final class Sprite {
      * @return the parameter color or in case the parameter is null the white
      *         color is returned
      */
-    private Color getColor(final Color color) {
+    private static Color getColor(final Color color) {
         if (color == null) {
             return Color.white;
         }

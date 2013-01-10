@@ -317,7 +317,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
      *
      * @param slot the slot to fetch
      */
-    private void fetchLookAt(final illarion.client.world.items.InventorySlot slot) {
+    private static void fetchLookAt(final illarion.client.world.items.InventorySlot slot) {
         slot.getInteractive().lookAt();
     }
 
