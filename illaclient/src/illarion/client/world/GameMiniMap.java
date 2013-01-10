@@ -32,6 +32,7 @@ import illarion.common.annotation.Nullable;
 import illarion.common.graphics.MapColor;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
+import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
@@ -213,6 +214,7 @@ public final class GameMiniMap {
      * The data storage for the map data that was loaded in this mini map.
      */
     @NonNull
+    @GuardedBy("mapData")
     private final ByteBuffer mapData;
 
     /**
@@ -445,20 +447,22 @@ public final class GameMiniMap {
         graphics.setColor(Color.black);
         graphics.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
 
-        for (int x = rectangle.getLeft(); x < rectangle.getRight(); x++) {
-            for (int y = rectangle.getBottom(); y < rectangle.getTop(); y++) {
-                final int location = encodeLocation(x, y);
+        synchronized (mapData) {
+            for (int x = rectangle.getLeft(); x < rectangle.getRight(); x++) {
+                for (int y = rectangle.getBottom(); y < rectangle.getTop(); y++) {
+                    final int location = encodeLocation(x, y);
 
-                final short tileData = mapData.getShort(location);
+                    final short tileData = mapData.getShort(location);
 
-                if (tileData == 0) {
-                    continue;
+                    if (tileData == 0) {
+                        continue;
+                    }
+
+                    graphics.pushTransform();
+                    graphics.translate(x - mapOriginX, y - mapOriginY);
+                    drawTile(tileData, graphics);
+                    graphics.popTransform();
                 }
-
-                graphics.pushTransform();
-                graphics.translate(x - mapOriginX, y - mapOriginY);
-                drawTile(tileData, graphics);
-                graphics.popTransform();
             }
         }
     }
@@ -700,9 +704,11 @@ public final class GameMiniMap {
      */
     private void loadEmptyMap() {
         loadingMap = true;
-        mapData.rewind();
-        while (mapData.remaining() > 0) {
-            mapData.put((byte) 0);
+        synchronized (mapData) {
+            mapData.rewind();
+            while (mapData.remaining() > 0) {
+                mapData.put((byte) 0);
+            }
         }
         noMapLoaded = false;
         loadingMap = false;
@@ -741,10 +747,12 @@ public final class GameMiniMap {
         final int index = encodeLocation(loc);
 
         if (tileID == MapTile.ID_NONE) {
-            if (mapData.getShort(index) == 0) {
-                return false;
+            synchronized (mapData) {
+                if (mapData.getShort(index) == 0) {
+                    return false;
+                }
+                mapData.putShort(index, (short) 0);
             }
-            mapData.putShort(index, (short) 0);
             return true;
         }
 
@@ -754,10 +762,13 @@ public final class GameMiniMap {
             encodedTileValue += 1 << SHIFT_BLOCKED;
         }
 
-        if (mapData.getShort(index) == encodedTileValue) {
-            return false;
+
+        synchronized (mapData) {
+            if (mapData.getShort(index) == encodedTileValue) {
+                return false;
+            }
+            mapData.putShort(index, encodedTileValue);
         }
-        mapData.putShort(index, encodedTileValue);
         return true;
     }
 
