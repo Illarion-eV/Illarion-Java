@@ -19,10 +19,7 @@
 package illarion.download.install.resources.dev;
 
 import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.libs.EventBus;
-import illarion.download.install.resources.libs.Javolution;
-import illarion.download.install.resources.libs.Log4j;
-import illarion.download.install.resources.libs.Trove;
+import illarion.download.install.resources.libs.*;
 import illarion.download.util.Lang;
 
 import java.io.File;
@@ -102,6 +99,7 @@ public final class Common implements DevelopmentResource {
             dep.add(Log4j.getInstance());
             dep.add(Trove.getInstance());
             dep.add(EventBus.getInstance());
+            dep.add(JCIP.getInstance());
 
             dependencies = dep;
         }

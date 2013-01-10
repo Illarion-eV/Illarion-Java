@@ -103,6 +103,7 @@ public final class EasyNpcEditor
             dep.add(Flamingo.getInstance());
             dep.add(SwingX.getInstance());
             dep.add(Common.getInstance());
+            dep.add(JCIP.getInstance());
 
             dep.add(Tables.getInstance());
 
