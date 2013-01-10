@@ -540,13 +540,10 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("musicOn", true);
         cfg.setDefault("musicVolume", illarion.client.world.Player.MAX_CLIENT_VOL * 0.75f);
         cfg.setDefault(illarion.client.util.ChatLog.CFG_TEXTLOG, true);
-        cfg.setDefault("fadingTime", 600);
         cfg.setDefault(CFG_FULLSCREEN, false);
         cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800, 600, 32, 60).toString());
-        cfg.setDefault("legacyRender", false);
         cfg.setDefault("savePassword", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
-        cfg.setDefault("engine", 1);
         cfg.setDefault("inventoryPosX", "100px");
         cfg.setDefault("inventoryPosY", "10px");
         cfg.setDefault("bookDisplayPosX", "150px");

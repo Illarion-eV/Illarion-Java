@@ -18,6 +18,7 @@
  */
 package illarion.client.graphics;
 
+import com.sun.istack.internal.NotNull;
 import illarion.common.types.Rectangle;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -29,25 +30,27 @@ import org.newdawn.slick.Graphics;
  */
 public interface Drawable {
     /**
-     * Draw the object on the screen.
-     *
-     * @return true in case the render operation was performed correctly
-     */
-    boolean draw(Graphics g);
-
-    /**
-     * Update the alpha value of this component. This is done by considering the
-     * size and the location of the component and regarding the alpha target.
-     *
-     * @param c
-     * @param delta the time in milliseconds since the last update
-     */
-    void update(final GameContainer c, int delta);
-
-    /**
      * Get the area covered by this item the last time is was rendered.
      *
      * @return the last area that was covered by this item
      */
+    @NotNull
     Rectangle getLastDisplayRect();
+
+    /**
+     * Draw the object on the screen.
+     *
+     * @return true in case the render operation was performed correctly
+     */
+    @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
+    boolean draw(@NotNull Graphics g);
+
+    /**
+     * Update the alpha value of this component. This is done by considering the size and the location of the
+     * component and regarding the alpha target.
+     *
+     * @param container the container that stores the graphic
+     * @param delta     the time in milliseconds since the last update
+     */
+    void update(@NotNull GameContainer container, int delta);
 }

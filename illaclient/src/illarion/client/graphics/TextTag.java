@@ -271,7 +271,7 @@ public class TextTag implements Drawable, RecycleObject {
     }
 
     @Override
-    public void update(final GameContainer c, final int delta) {
+    public void update(final GameContainer container, final int delta) {
         if (dirty) {
             dirty = false;
             oldDisplayRect.set(displayRect);

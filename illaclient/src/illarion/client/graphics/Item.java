@@ -26,6 +26,7 @@ import illarion.client.resources.ItemFactory;
 import illarion.client.resources.Resource;
 import illarion.client.util.LookAtTracker;
 import illarion.client.world.MapTile;
+import illarion.common.annotation.NonNull;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
@@ -291,7 +292,7 @@ public final class Item extends AbstractEntity implements Resource {
      *         successfully
      */
     @Override
-    public boolean draw(final Graphics g) {
+    public boolean draw(@NonNull final Graphics g) {
         super.draw(g);
 
         if (showNumber && (number != null)) {
@@ -358,7 +359,7 @@ public final class Item extends AbstractEntity implements Resource {
     private int showHighlight;
 
     @Override
-    public boolean processEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
+    public boolean processEvent(@NonNull final GameContainer container, final int delta, @NonNull final MapInteractionEvent event) {
         if (!parentTile.isAtPlayerLevel()) {
             return false;
         }
@@ -631,16 +632,16 @@ public final class Item extends AbstractEntity implements Resource {
      * Update the displayed item. This takes care for fading effects in case
      * needed and for handling the display of the number at the item.
      *
-     * @param c
-     * @param delta the time in milliseconds since the last update
+     * @param container
+     * @param delta     the time in milliseconds since the last update
      */
     @Override
-    public void update(final GameContainer c, final int delta) {
-        super.update(c, delta);
+    public void update(final GameContainer container, final int delta) {
+        super.update(container, delta);
 
         if (showNumber && (number != null)) {
             number.addToCamera(getDisplayX(), getDisplayY());
-            number.update(c, delta);
+            number.update(container, delta);
         }
     }
 

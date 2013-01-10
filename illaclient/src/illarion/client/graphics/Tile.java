@@ -23,6 +23,7 @@ import illarion.client.resources.Resource;
 import illarion.client.resources.TileFactory;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.common.annotation.NonNull;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
@@ -179,7 +180,7 @@ public class Tile extends AbstractEntity implements Resource {
      * @return
      */
     @Override
-    public boolean draw(final Graphics g) {
+    public boolean draw(@NonNull final Graphics g) {
         if (!super.draw(g)) {
             return false;
         }
@@ -221,7 +222,7 @@ public class Tile extends AbstractEntity implements Resource {
     }
 
     @Override
-    public void setLight(final Color light) {
+    public void setLight(@NonNull final Color light) {
         super.setLight(light);
         if (overlay != null) {
             overlay.setLight(light);
@@ -267,15 +268,15 @@ public class Tile extends AbstractEntity implements Resource {
     }
 
     @Override
-    public void update(final GameContainer c, final int delta) {
-        super.update(c, delta);
+    public void update(final GameContainer container, final int delta) {
+        super.update(container, delta);
         if (overlay != null) {
-            overlay.update(c, delta);
+            overlay.update(container, delta);
         }
     }
 
     @Override
-    public boolean processEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
+    public boolean processEvent(@NonNull final GameContainer container, final int delta, @NonNull final MapInteractionEvent event) {
         if (!parentTile.isAtPlayerLevel()) {
             return false;
         }

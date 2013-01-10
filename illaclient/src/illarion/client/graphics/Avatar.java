@@ -25,6 +25,7 @@ import illarion.client.resources.Resource;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.CombatHandler;
+import illarion.common.annotation.NonNull;
 import illarion.common.annotation.Nullable;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
@@ -332,11 +333,11 @@ public final class Avatar extends AbstractEntity implements Resource {
     }
 
     @Override
-    public boolean processEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
+    public boolean processEvent(@NonNull final GameContainer container, final int delta, @NonNull final MapInteractionEvent event) {
         if (event instanceof ClickOnMapEvent) {
-            return processEvent(c, delta, (ClickOnMapEvent) event);
+            return processEvent(container, delta, (ClickOnMapEvent) event);
         }
-        return super.processEvent(c, delta, event);
+        return super.processEvent(container, delta, event);
     }
 
     /**
@@ -370,7 +371,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @return true at all times
      */
     @Override
-    public boolean draw(final Graphics g) {
+    public boolean draw(@NonNull final Graphics g) {
         if (isAttackMarkerVisible()) {
             attackMark.draw(g);
         }
@@ -533,7 +534,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @param light the light the avatar is enlighten with
      */
     @Override
-    public void setLight(final Color light) {
+    public void setLight(@NonNull final Color light) {
         final Color localLight = new Color(light);
         super.setLight(localLight);
         clothRender.setLight(localLight);
@@ -648,15 +649,15 @@ public final class Avatar extends AbstractEntity implements Resource {
      * Update the values of this avatar entity. The light values, the alpha
      * values as well as the name display is checked using this function.
      *
-     * @param c
-     * @param delta the time since the last update in milliseconds
+     * @param container
+     * @param delta     the time since the last update in milliseconds
      */
     @Override
-    public void update(final GameContainer c, final int delta) {
-        super.update(c, delta);
+    public void update(final GameContainer container, final int delta) {
+        super.update(container, delta);
 
         clothRender.setAlpha(getAlpha());
-        clothRender.update(c, delta);
+        clothRender.update(container, delta);
 
         final Color locLight = getLight();
         if (animateLight && (locLight != null) && !AnimationUtility.approach(locLight, targetLight, delta)) {
@@ -664,14 +665,14 @@ public final class Avatar extends AbstractEntity implements Resource {
             animateLight = false;
         }
 
-        final Input input = c.getInput();
+        final Input input = container.getInput();
 
         renderName = isMouseInInteractionRect(input) || (input.isKeyDown(Input.KEY_RALT) && (getAlpha() >
                 HIDE_NAME_ALPHA));
 
         if ((tag != null) && renderName) {
             tag.setDisplayLocation(getDisplayX(), getDisplayY());
-            tag.update(c, delta);
+            tag.update(container, delta);
         }
 
         if ((renderName != oldRenderName) && (tag != null)) {
@@ -681,7 +682,7 @@ public final class Avatar extends AbstractEntity implements Resource {
 
         if (isAttackMarkerVisible()) {
             attackMark.setAlpha(getAlpha());
-            attackMark.update(c, delta);
+            attackMark.update(container, delta);
         } else if (oldAttackMarkVisible) {
             Camera.getInstance().markAreaDirty(attackMark.getLastDisplayRect());
         }

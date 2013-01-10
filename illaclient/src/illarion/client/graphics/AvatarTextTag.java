@@ -327,7 +327,7 @@ public final class AvatarTextTag implements Drawable {
     }
 
     @Override
-    public void update(final GameContainer c, final int delta) {
+    public void update(final GameContainer container, final int delta) {
         calculateTextLocations();
         if (dirty) {
             dirty = false;
