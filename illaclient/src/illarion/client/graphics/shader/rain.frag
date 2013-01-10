@@ -1,3 +1,5 @@
+#version 110
+
 #ifdef GL_ES
 precision mediump float;
 #endif
@@ -45,7 +47,7 @@ float getIntensity() {
 }
 
 vec2 getRainCoord(in float offset, in int level) {
-    vec2 scaledTexCoord = (gl_TexCoord[0].st) * texRainScale.xy;
+    vec2 scaledTexCoord = gl_TexCoord[0].st * texRainScale.xy;
     vec2 aniCoord = vec2(offset + (gl_TexCoord[0].t * windDir * -2.0), (-animation + offset) * texRainScale.y);
     vec2 result =  texRainOffset + mod(scaledTexCoord + aniCoord + mapOffset, texRainSize.xy);
 
