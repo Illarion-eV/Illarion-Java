@@ -35,12 +35,15 @@ import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantList;
+import illarion.common.annotation.NonNull;
 import illarion.common.annotation.Nullable;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -56,41 +59,25 @@ import java.io.File;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@SuppressWarnings("ClassNamingConvention")
+@ThreadSafe
 public final class Player {
-    /**
-     * The key in the configuration for the music on/off flag.
-     */
-    private static final String CFG_MUSIC_ON = "musicOn"; //$NON-NLS-1$
-
-    /**
-     * The key in the configuration for the music volume value.
-     */
-    private static final String CFG_MUSIC_VOL = "musicVolume"; //$NON-NLS-1$
-
     /**
      * The key in the configuration for the sound on/off flag.
      */
+    @NonNull
     private static final String CFG_SOUND_ON = "soundOn"; //$NON-NLS-1$
 
     /**
      * The key in the configuration for the sound volume value.
      */
+    @NonNull
     private static final String CFG_SOUND_VOL = "soundVolume"; //$NON-NLS-1$
 
     /**
      * Maximal value for the volume of the sound.
      */
     public static final float MAX_CLIENT_VOL = 100.f;
-
-    /**
-     * The maximum range between 2 characters, that can look at each other.
-     */
-    private static final int MAXIMUM_LOOKING_AT_RANGE = 6;
-
-    /**
-     * The minimum range between 2 characters, that can look at each other.
-     */
-    private static final int MINIMUM_LOOKING_AT_RANGE = 2;
 
     /**
      * Average value for the perception attribute.
@@ -105,36 +92,37 @@ public final class Player {
     /**
      * The graphical representation of the character.
      */
+    @NonNull
     private final Char character;
 
     /**
      * The inventory of the player.
      */
+    @NonNull
     private final Inventory inventory;
 
     /**
      * The current location of the server map for the player.
      */
-    private final Location loc = new Location();
+    @NonNull
+    private final Location playerLocation = new Location();
 
     /**
      * The player movement handler that takes care that the player character is walking around.
      */
+    @NonNull
     private final PlayerMovement movementHandler;
-
-    /**
-     * The name of the players character.
-     */
-    private final String name;
 
     /**
      * The path to the folder of character specific stuff, like the map or the names table.
      */
+    @NonNull
     private final File path;
 
     /**
      * The character ID of the player.
      */
+    @Nullable
     private CharacterId playerId;
 
     /**
@@ -145,11 +133,14 @@ public final class Player {
     /**
      * This map contains the containers that are known for the player.
      */
+    @NonNull
+    @GuardedBy("containers")
     private final TIntObjectHashMap<ItemContainer> containers;
 
     /**
      * The merchant dialog that is currently open.
      */
+    @Nullable
     private MerchantList merchantDialog;
 
     /**
@@ -162,28 +153,22 @@ public final class Player {
     /**
      * Default constructor for the player.
      *
-     * @param newName the character name of the player playing this game
+     * @param charName the character name of the player playing this game
      */
     @SuppressWarnings("nls")
-    public Player(final String newName) {
-        name = newName;
+    public Player(@NonNull final String charName) {
 
-        path = new File(DirectoryManager.getInstance().getUserDirectory(), name);
+        path = new File(DirectoryManager.getInstance().getUserDirectory(), charName);
 
         character = Char.create();
         validLocation = false;
 
         if (!path.isDirectory() && !path.mkdir()) {
             IllaClient.fallbackToLogin(Lang.getMsg("error.character_settings"));
-            movementHandler = null;
-            inventory = null;
-
-            containers = null;
-            return;
+            throw new IllegalStateException("Failed to init player.");
         }
 
-        character.setName(name);
-        // character.setVisible(Char.VISIBILITY_MAX);
+        character.setName(charName);
 
         // followed = null;
         movementHandler = new PlayerMovement(this);
@@ -195,7 +180,7 @@ public final class Player {
     }
 
     @EventSubscriber
-    public void onOpenContainerEvent(final OpenContainerEvent event) {
+    public void onOpenContainerEvent(@NonNull final OpenContainerEvent event) {
         final ItemContainer container = getContainer(event.getContainerId());
         final TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
         while (itr.hasNext()) {
@@ -205,7 +190,7 @@ public final class Player {
     }
 
     @EventSubscriber
-    public void onMerchantDialogOpenedEvent(final DialogMerchantReceivedEvent event) {
+    public void onMerchantDialogOpenedEvent(@NonNull final DialogMerchantReceivedEvent event) {
         final MerchantList list = new MerchantList(event.getId(), event.getItemCount());
         for (int i = 0; i < event.getItemCount(); i++) {
             list.setItem(i, event.getItem(i));
@@ -220,29 +205,22 @@ public final class Player {
     }
 
     @EventSubscriber
-    public void onContainerClosedEvent(final CloseContainerEvent event) {
+    public void onContainerClosedEvent(@NonNull final CloseContainerEvent event) {
         removeContainer(event.getContainerId());
     }
 
     @EventSubscriber
-    public void onDialogClosedEvent(final CloseDialogEvent event) {
+    public void onDialogClosedEvent(@NonNull final CloseDialogEvent event) {
         if (merchantDialog == null) {
             return;
         }
 
-        switch (event.getDialogType()) {
-            case Any:
-            case Merchant:
-                if (event.getDialogId() == merchantDialog.getId()) {
-                    final MerchantList oldList = merchantDialog;
-                    merchantDialog = null;
-                    oldList.closeDialog();
-                }
-
-            case Message:
-                break;
-            case Input:
-                break;
+        if (event.getDialogType() == CloseDialogEvent.DialogType.Merchant) {
+            if (event.getDialogId() == merchantDialog.getId()) {
+                final MerchantList oldList = merchantDialog;
+                merchantDialog = null;
+                oldList.closeDialog();
+            }
         }
     }
 
@@ -250,7 +228,7 @@ public final class Player {
      * The monitor function that is notified in case the configuration changes and triggers the required updates.
      */
     @EventTopicPatternSubscriber(topicPattern = "sound((On)|(Volume))")
-    public void onConfigChangedEvent(final String topic, final ConfigChangedEvent event) {
+    public void onConfigChangedEvent(@NonNull final String topic, @NonNull final ConfigChangedEvent event) {
         updateListener();
     }
 
@@ -260,6 +238,7 @@ public final class Player {
      * @param id the ID of the container
      * @return the container assigned to this ID or a newly created container
      */
+    @NonNull
     public ItemContainer getContainer(final int id) {
         synchronized (containers) {
             if (containers.containsKey(id)) {
@@ -276,6 +255,7 @@ public final class Player {
      *
      * @return the merchant list
      */
+    @Nullable
     public MerchantList getMerchantList() {
         return merchantDialog;
     }
@@ -298,7 +278,6 @@ public final class Player {
         synchronized (containers) {
             if (containers.containsKey(id)) {
                 containers.remove(id);
-
             }
         }
     }
@@ -330,7 +309,7 @@ public final class Player {
      * @return The level the player character is currently standing on
      */
     public int getBaseLevel() {
-        return loc.getScZ();
+        return playerLocation.getScZ();
     }
 
     /**
@@ -338,32 +317,9 @@ public final class Player {
      *
      * @return The character of the player
      */
+    @NonNull
     public Char getCharacter() {
         return character;
-    }
-
-    /**
-     * Get the location in the front of the character.
-     *
-     * @return The location right in the front of the character
-     * @deprecated Better use {@link #getFrontLocation(Location)} to avoid the creation of too many new objects
-     */
-    @Deprecated
-    public Location getFrontLocation() {
-        final Location front = new Location();
-        getFrontLocation(front);
-
-        return front;
-    }
-
-    /**
-     * Get the location in the front of the character.
-     *
-     * @param targetLoc the front location of the character is stored in this location object
-     */
-    public void getFrontLocation(final Location targetLoc) {
-        targetLoc.set(loc);
-        targetLoc.moveSC(character.getDirection());
     }
 
     /**
@@ -371,6 +327,7 @@ public final class Player {
      *
      * @return the player inventory
      */
+    @NonNull
     public Inventory getInventory() {
         return inventory;
     }
@@ -381,7 +338,7 @@ public final class Player {
      * @return The current location of the character
      */
     public Location getLocation() {
-        return loc;
+        return playerLocation;
     }
 
     /**
@@ -389,6 +346,7 @@ public final class Player {
      *
      * @return the movement handler
      */
+    @NonNull
     public PlayerMovement getMovementHandler() {
         return movementHandler;
     }
@@ -398,6 +356,7 @@ public final class Player {
      *
      * @return The path to the player directory
      */
+    @NonNull
     public File getPath() {
         return path;
     }
@@ -407,6 +366,7 @@ public final class Player {
      *
      * @return The ID of the player character
      */
+    @Nullable
     public CharacterId getPlayerId() {
         return playerId;
     }
@@ -426,7 +386,7 @@ public final class Player {
             // calculate intervening fields.
             // note that the order of fields may be inverted
             final Bresenham line = Bresenham.getInstance();
-            line.calculate(loc, targetLoc);
+            line.calculate(playerLocation, targetLoc);
             // examine line without start and end point
             final int length = line.getLength() - 1;
             final GameMap map = World.getMap();
@@ -436,7 +396,7 @@ public final class Player {
             // skip tile the character is standing on
             for (int i = 1; i < length; i++) {
                 line.getPoint(i, point);
-                final MapTile tile = map.getMapAt(point.x, point.y, loc.getScZ());
+                final MapTile tile = map.getMapAt(point.x, point.y, playerLocation.getScZ());
                 if (tile != null) {
                     coverage += tile.getCoverage();
 
@@ -466,7 +426,7 @@ public final class Player {
      * @param checkLoc The location that shall be checked
      * @return true if the location is at the same level as the player
      */
-    boolean isBaseLevel(final Location checkLoc) {
+    boolean isBaseLevel(@NonNull final Location checkLoc) {
         return getLocation().getScZ() == checkLoc.getScZ();
     }
 
@@ -480,9 +440,9 @@ public final class Player {
     public boolean isOnScreen(final Location testLoc, final int tolerance) {
         final int width = MapDimensions.getInstance().getStripesWidth() >> 1;
         final int height = MapDimensions.getInstance().getStripesHeight() >> 1;
-        final int limit = Math.max(width, height) + tolerance - 2;
+        final int limit = (Math.max(width, height) + tolerance) - 2;
 
-        return (Math.abs(loc.getScX() - testLoc.getScX()) + Math.abs(loc.getScY() - testLoc.getScY())) < limit;
+        return (Math.abs(playerLocation.getScX() - testLoc.getScX()) + Math.abs(playerLocation.getScY() - testLoc.getScY())) < limit;
     }
 
     /**
@@ -492,7 +452,7 @@ public final class Player {
      * @return true if it is the player, false if not
      */
     public boolean isPlayer(@Nullable final CharacterId checkId) {
-        return playerId.equals(checkId);
+        return (playerId != null) && playerId.equals(checkId);
     }
 
     /**
@@ -501,13 +461,13 @@ public final class Player {
      *
      * @param newLoc new location of the character on the map
      */
-    public void setLocation(final Location newLoc) {
+    public void setLocation(@NonNull final Location newLoc) {
         validLocation = true;
-        if (loc.equals(newLoc)) {
+        if (playerLocation.equals(newLoc)) {
             return;
         }
 
-        final boolean levelChange = newLoc.getScZ() != loc.getScZ();
+        final boolean levelChange = newLoc.getScZ() != playerLocation.getScZ();
 
         // set logical location
         movementHandler.cancelAutoWalk();
@@ -528,7 +488,7 @@ public final class Player {
      *
      * @param newPlayerId the new ID of the player
      */
-    public void setPlayerId(final CharacterId newPlayerId) {
+    public void setPlayerId(@NonNull final CharacterId newPlayerId) {
         playerId = newPlayerId;
         character.setCharId(playerId);
 
@@ -565,12 +525,12 @@ public final class Player {
      *
      * @param newLoc the new location of the player
      */
-    public void updateLocation(final Location newLoc) {
-        if (loc.equals(newLoc)) {
+    public void updateLocation(@NonNull final Location newLoc) {
+        if (playerLocation.equals(newLoc)) {
             return;
         }
 
-        loc.set(newLoc);
+        playerLocation.set(newLoc);
         World.getMusicBox().updatePlayerLocation();
     }
 }
