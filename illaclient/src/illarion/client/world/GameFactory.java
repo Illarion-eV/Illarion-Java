@@ -35,7 +35,7 @@ public final class GameFactory extends RecycleFactory<RecycleObject> {
     /**
      * ID for the get function to get the character object.
      */
-    protected static final int OBJ_CHARACTER = 0;
+    public static final int OBJ_CHARACTER = 0;
 
     /**
      * ID for the get function to get the maptext object.
@@ -45,7 +45,7 @@ public final class GameFactory extends RecycleFactory<RecycleObject> {
     /**
      * ID for the get function to get the maptile object.
      */
-    protected static final int OBJ_MAPTILE = 1;
+    public static final int OBJ_MAPTILE = 1;
 
     /**
      * ID for the get function to get the message object.

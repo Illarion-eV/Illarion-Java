@@ -54,6 +54,7 @@ import java.util.Map;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("ClassNamingConvention")
 @NotThreadSafe
 public final class Char implements RecycleObject, AnimatedMove {
     /**
@@ -456,8 +457,13 @@ public final class Char implements RecycleObject, AnimatedMove {
         newAvatar.setScale(scale);
         newAvatar.setAlpha(oldAlpha);
         newAvatar.setAttackMarkerVisible(CombatHandler.getInstance().isAttacking(this));
-        newAvatar.setName(name);
-        newAvatar.setNameColor(nameColor);
+        if (name != null) {
+            newAvatar.setName(name);
+        }
+
+        if (nameColor != null) {
+            newAvatar.setNameColor(nameColor);
+        }
 
         newAvatar.show();
         if (avatar != null) {
@@ -559,7 +565,7 @@ public final class Char implements RecycleObject, AnimatedMove {
         final Location lightLoc;
         // different handling for own char
         @NonNull final Player player = World.getPlayer();
-        if (player.getPlayerId().equals(charId)) {
+        if (player.isPlayer(charId)) {
             lightLoc = player.getLocation();
         } else {
             lightLoc = charLocation;
@@ -722,7 +728,7 @@ public final class Char implements RecycleObject, AnimatedMove {
     public void setName(@NonNull final String newName) {
         name = newName;
 
-        if ((avatar != null) && (charId != null)) {
+        if (avatar != null) {
             avatar.setName(name);
         }
     }
@@ -849,6 +855,11 @@ public final class Char implements RecycleObject, AnimatedMove {
      * @param speed  moving speed
      */
     public void moveTo(@NonNull final Location newPos, @NonNull final CharMovementMode mode, final int speed) {
+        final CharacterId characterId = getCharId();
+        if (characterId == null) {
+            LOGGER.error("Can't move a character without ID around.");
+            return;
+        }
         // get old position
         final Location tempLoc = new Location();
         tempLoc.set(charLocation);
@@ -901,7 +912,7 @@ public final class Char implements RecycleObject, AnimatedMove {
         }
         updateLight(LIGHT_SOFT);
 
-        EventBus.publish(new CharMoveEvent(getCharId(), charLocation));
+        EventBus.publish(new CharMoveEvent(characterId, charLocation));
     }
 
     /**
@@ -922,6 +933,12 @@ public final class Char implements RecycleObject, AnimatedMove {
      * @param visibility the new visibility of the character
      */
     public void setVisible(final int visibility) {
+        final CharacterId characterId = getCharId();
+        if (characterId == null) {
+            LOGGER.error("Can't set visibility of a character without ID.");
+            return;
+        }
+
         final boolean newVisible = visibility > 0;
         // react only to change
         if ((lastVisibility != visibility) || (newVisible != visible)) {
@@ -939,7 +956,7 @@ public final class Char implements RecycleObject, AnimatedMove {
                 avatar.setAlphaTarget(0);
             }
 
-            EventBus.publish(new CharVisibilityEvent(getCharId(), visibility));
+            EventBus.publish(new CharVisibilityEvent(characterId, visibility));
         }
     }
 
@@ -1096,6 +1113,11 @@ public final class Char implements RecycleObject, AnimatedMove {
      * @param newLoc new location of the character
      */
     public void setLocation(@NonNull final Location newLoc) {
+        final CharacterId characterId = getCharId();
+        if (characterId == null) {
+            LOGGER.error("Trying to change the location of a character without a ID.");
+            return;
+        }
         // set logical location
         if (charLocation.equals(newLoc)) {
             return;
@@ -1103,7 +1125,7 @@ public final class Char implements RecycleObject, AnimatedMove {
         charLocation.set(newLoc);
         elevation = World.getMap().getElevationAt(charLocation);
         updatePosition(-elevation);
-        EventBus.publish(new CharMoveEvent(getCharId(), charLocation));
+        EventBus.publish(new CharMoveEvent(characterId, charLocation));
     }
 
     /**
