@@ -40,6 +40,7 @@
         <antcall target="prepare_jgraph"/>
         <antcall target="prepare_log4j"/>
         <antcall target="prepare_lwjgl"/>
+        <antcall target="prepare_jcip"/>
         <antcall target="prepare_nifty"/>
         <antcall target="prepare_slick"/>
         <antcall target="prepare_substance"/>
@@ -117,6 +118,37 @@
         <resourcebuild target="${setuplib}/javolution.illares" usepack200="true">
             <fileset dir="${signedlibs}">
                 <patternset refid="javolution.pattern"/>
+            </fileset>
+        </resourcebuild>
+    </target>
+
+    <target name="prepare_jcip" description="prepare the JCIP bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="jcip"/>
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}"
+                 storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="jcip.pattern"/>
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="jcip.pattern"/>
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/jcip.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="jcip.pattern"/>
             </fileset>
         </resourcebuild>
     </target>
