@@ -769,7 +769,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     }
 
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(@NonNull final GameContainer container, final int delta) {
         int xOffset = sprite.getOffsetX() + sprite.getAlignOffsetX();
         int yOffset = sprite.getOffsetY() - sprite.getAlignOffsetY();
 

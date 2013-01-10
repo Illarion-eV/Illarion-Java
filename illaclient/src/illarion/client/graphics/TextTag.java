@@ -21,6 +21,7 @@ package illarion.client.graphics;
 import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
 import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
 import illarion.client.world.GameFactory;
+import illarion.common.annotation.NonNull;
 import illarion.common.types.Rectangle;
 import illarion.common.util.RecycleObject;
 import org.newdawn.slick.Color;
@@ -232,7 +233,7 @@ public class TextTag implements Drawable, RecycleObject {
     }
 
     @Override
-    public boolean draw(final Graphics g) {
+    public boolean draw(@NonNull final Graphics g) {
         if (text == null) {
             return true;
         }
@@ -265,13 +266,14 @@ public class TextTag implements Drawable, RecycleObject {
     private final Rectangle displayRect = new Rectangle();
     private final Rectangle oldDisplayRect = new Rectangle();
 
+    @NonNull
     @Override
     public Rectangle getLastDisplayRect() {
         return oldDisplayRect;
     }
 
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(@NonNull final GameContainer container, final int delta) {
         if (dirty) {
             dirty = false;
             oldDisplayRect.set(displayRect);

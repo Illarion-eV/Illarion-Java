@@ -653,7 +653,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @param delta     the time since the last update in milliseconds
      */
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(@NonNull final GameContainer container, final int delta) {
         super.update(container, delta);
 
         clothRender.setAlpha(getAlpha());

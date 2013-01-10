@@ -636,7 +636,7 @@ public final class Item extends AbstractEntity implements Resource {
      * @param delta     the time in milliseconds since the last update
      */
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(@NonNull final GameContainer container, final int delta) {
         super.update(container, delta);
 
         if (showNumber && (number != null)) {

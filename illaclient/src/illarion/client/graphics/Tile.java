@@ -268,7 +268,7 @@ public class Tile extends AbstractEntity implements Resource {
     }
 
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(@NonNull final GameContainer container, final int delta) {
         super.update(container, delta);
         if (overlay != null) {
             overlay.update(container, delta);
