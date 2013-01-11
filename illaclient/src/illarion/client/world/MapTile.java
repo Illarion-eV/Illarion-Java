@@ -179,7 +179,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
         if ((localItems == null) || localItems.isEmpty()) {
             return null;
         }
-        return localItems.get(0);
+        return localItems.get(localItems.size() - 1);
     }
 
     /**
