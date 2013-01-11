@@ -389,7 +389,7 @@ public final class Weather {
      */
     @SuppressWarnings("nls")
     public Weather() {
-        ambientLight = new Color(0.f, 0.f, 0.f, 1.f);
+        ambientLight = new Color(Color.black);
         ambientTargetColor = new Color(ambientLight);
     }
 

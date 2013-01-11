@@ -165,14 +165,14 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * The light value that is used to render this entity during the next render loop.
      */
     @NonNull
-    private Color renderLight = new Color(0);
+    private Color renderLight = new Color(Color.white);
 
     /**
      * This color is the color that was used last time to render the entity. Its used to check if the color changed
      * and the entity needs to be rendered again.
      */
     @NonNull
-    private final Color lastRenderLight = new Color(0);
+    private final Color lastRenderLight = new Color(Color.white);
 
     /**
      * The shadow offset of the entity. This offset marks the area that does not apply to the fading corridor. This
@@ -617,7 +617,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @param newAlpha the new alpha value of this entity
      */
     @Override
-    public final void setAlpha(final int newAlpha) {
+    public void setAlpha(final int newAlpha) {
         if (alpha != newAlpha) {
             final int oldAlpha = alpha;
             alpha = newAlpha;

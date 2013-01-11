@@ -49,4 +49,10 @@ public class AvatarMarker extends AbstractEntity {
     public void recycle() {
         // nothing
     }
+
+    @Override
+    public void setAlpha(final int alpha) {
+        super.setAlpha(alpha);
+        setAlphaTarget(alpha);
+    }
 }
