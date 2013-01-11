@@ -36,6 +36,7 @@ import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 import org.newdawn.slick.Color;
 
+import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -433,15 +434,25 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     /**
-     * Process all tiles in the storage. The procedure in the parameter is
-     * called for every tile that is currently known.
+     * Fetch all tiles on specified levels of the map.
      *
-     * @param procedure the procedure that is called for every tile
+     * @param storage      the list that receives the references to the tiles on the specified levels
+     * @param lowestLevel  the lowest level of tiles to add to the storage
+     * @param highestLevel the highest level of tiles to add to the storage
      */
-    public void processTiles(@NonNull final TLongObjectProcedure<MapTile> procedure) {
+    public void getTiles(@NonNull final List<MapTile> storage, final int lowestLevel, final int highestLevel) {
         mapLock.readLock().lock();
         try {
-            tiles.forEachEntry(procedure);
+            tiles.forEachEntry(new TLongObjectProcedure<MapTile>() {
+                @Override
+                public boolean execute(final long l, final MapTile mapTile) {
+                    final int tileLevel = mapTile.getLocation().getScZ();
+                    if ((tileLevel >= lowestLevel) && (tileLevel <= highestLevel)) {
+                        storage.add(mapTile);
+                    }
+                    return true;
+                }
+            });
         } finally {
             mapLock.readLock().unlock();
         }

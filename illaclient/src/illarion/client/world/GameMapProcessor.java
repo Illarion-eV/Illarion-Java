@@ -18,14 +18,17 @@
  */
 package illarion.client.world;
 
-import gnu.trove.list.array.TLongArrayList;
-import gnu.trove.procedure.TLongObjectProcedure;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.common.annotation.NonNull;
 import illarion.common.types.Location;
-import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.log4j.Logger;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class checks the consistency of the map, the map, handles the fading out of map layers if needed and
@@ -37,7 +40,7 @@ import org.apache.log4j.Logger;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ThreadSafe
-public final class GameMapProcessor extends Thread implements TLongObjectProcedure<MapTile> {
+public final class GameMapProcessor extends Thread {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
@@ -77,9 +80,8 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
     /**
      * The list of location keys that were yet not checked by the processor.
      */
-    @GuardedBy("unchecked")
     @NonNull
-    private final TLongArrayList unchecked;
+    private final BlockingDeque<Long> unchecked;
 
     /**
      * Constructor for a new instance of the game map processor. This processor will be bound to one map.
@@ -90,7 +92,7 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
     public GameMapProcessor(@NonNull final GameMap parentMap) {
         super("Map Processor");
         parent = parentMap;
-        unchecked = new TLongArrayList();
+        unchecked = new LinkedBlockingDeque<Long>();
         running = false;
     }
 
@@ -111,48 +113,18 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
     }
 
     /**
-     * Procedure function that is used to collect data from the map of the game.
-     * <p>
-     * Do not call this function from any other class.
-     * </p>
-     */
-    @Override
-    public boolean execute(final long key, @NonNull final MapTile tile) {
-        synchronized (unchecked) {
-            unchecked.add(key);
-        }
-
-        return true;
-    }
-
-    /**
      * The main method of the game map processor.
      */
     @SuppressWarnings("nls")
     @Override
     public void run() {
         while (running) {
-            while (pauseLoop) {
-                try {
-                    synchronized (unchecked) {
-                        unchecked.wait();
-                    }
-                } catch (final InterruptedException e) {
-                    LOGGER.debug("Unexpected wakeup during pause.", e);
-                }
-            }
             performInsideCheck();
 
-            if (hasAndProcessUnchecked()) {
-                continue;
-            }
-
             try {
-                synchronized (unchecked) {
-                    unchecked.wait();
-                }
+                hasAndProcessUnchecked();
             } catch (final InterruptedException e) {
-                LOGGER.debug("Unexpected wake up of the map processor", e);
+                LOGGER.info("Map processor got interrupted!");
             }
         }
     }
@@ -175,6 +147,9 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
         boolean nowOutside = false;
         boolean isInside = false;
 
+        int lowestNowOutside = Integer.MAX_VALUE;
+        int highestNowOutside = Integer.MIN_VALUE;
+
         for (int i = 0; i < 2; ++i) {
             currZ++;
             if (isInside || parent.isMapAt(currX, currY, currZ)) {
@@ -189,6 +164,8 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
                 if (insideStates[i]) {
                     insideStates[i] = false;
                     nowOutside = true;
+                    lowestNowOutside = Math.min(currZ, lowestNowOutside);
+                    highestNowOutside = Math.max(currZ, highestNowOutside);
                 }
             }
         }
@@ -197,9 +174,11 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
          * If one of the values turned from inside to outside, all tiles are added to the list to be checked again.
          */
         if (nowOutside) {
-            synchronized (unchecked) {
-                unchecked.clear();
-                parent.processTiles(this);
+            unchecked.clear();
+            final List<MapTile> tileStorage = new LinkedList<MapTile>();
+            parent.getTiles(tileStorage, lowestNowOutside, highestNowOutside);
+            for (final MapTile tile : tileStorage) {
+                addLocationToUnchecked(tile.getLocation().getKey());
             }
         }
 
@@ -208,40 +187,35 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
 
     /**
      * Process the unchecked tiles that are still needed to be done.
-     *
-     * @return {@code true} in case a tile was handled.
      */
-    private boolean hasAndProcessUnchecked() {
-        final long key;
-        synchronized (unchecked) {
-            final int size = unchecked.size();
-            if (size == 0) {
-                return false;
+    private void hasAndProcessUnchecked() throws InterruptedException {
+        final long key = unchecked.takeFirst();
+
+        while (pauseLoop) {
+            synchronized (unchecked) {
+                unchecked.wait();
             }
-            key = unchecked.removeAt(size - 1);
         }
 
         final MapTile tile = parent.getMapAt(key);
 
         // no tile found, lets quit here
         if (tile == null) {
-            return true;
+            return;
         }
 
         // clipping check
         if (checkClipping(tile, key)) {
-            return true;
+            return;
         }
 
         // obstruction check
         if (checkObstruction(tile, key)) {
-            return true;
+            return;
         }
 
         // hidden check
         checkHidden(tile, key);
-
-        return true;
     }
 
     /**
@@ -411,8 +385,7 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
         /*
          * Now check if the tile is directly above the player. In this case it needs to be hidden.
          */
-        if ((tileLoc.getScX() == playerLoc.getScX())
-                && (tileLoc.getScY() == playerLoc.getScY())
+        if ((tileLoc.getScX() == playerLoc.getScX()) && (tileLoc.getScY() == playerLoc.getScY())
                 && (tileLoc.getScZ() > playerLoc.getScZ()) && !tile.isHidden()) {
             tile.setHidden(true);
             synchronized (unchecked) {
@@ -442,12 +415,7 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
      * @param key the key of the location that needs to be checked
      */
     public void reportUnchecked(final long key) {
-        synchronized (unchecked) {
-            if (unchecked.contains(key)) {
-                unchecked.add(key);
-            }
-            unchecked.notify();
-        }
+        addLocationToUnchecked(key);
     }
 
     /**
@@ -462,26 +430,21 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
                 if ((x == 0) && (y == 0)) {
                     continue;
                 }
-                final MapTile foundTile =
-                        parent.getMapAt(searchLoc.getScX() + x, searchLoc.getScY()
-                                + y, searchLoc.getScZ());
+                final MapTile foundTile = parent.getMapAt(searchLoc.getScX() + x, searchLoc.getScY() + y,
+                        searchLoc.getScZ());
                 if ((foundTile != null) && foundTile.isHidden()) {
                     return true;
                 }
             }
         }
 
-        MapTile foundTile =
-                parent.getMapAt(searchLoc.getScX(), searchLoc.getScY(),
-                        searchLoc.getScZ() + 1);
+        MapTile foundTile = parent.getMapAt(searchLoc.getScX(), searchLoc.getScY(), searchLoc.getScZ() + 1);
         if ((foundTile != null) && foundTile.isHidden()) {
             return true;
         }
 
         //noinspection ReuseOfLocalVariable
-        foundTile =
-                parent.getMapAt(searchLoc.getScX(), searchLoc.getScY(),
-                        searchLoc.getScZ() - 1);
+        foundTile = parent.getMapAt(searchLoc.getScX(), searchLoc.getScY(), searchLoc.getScZ() - 1);
 
         return (foundTile != null) && foundTile.isHidden();
     }
@@ -502,11 +465,7 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
             currY -= MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
             currZ--;
             final long foundKey = Location.getKey(currX, currY, currZ);
-            synchronized (unchecked) {
-                if (!unchecked.contains(foundKey)) {
-                    unchecked.add(foundKey);
-                }
-            }
+            addLocationToUnchecked(foundKey);
         }
     }
 
@@ -526,10 +485,18 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
             currY += MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
             currZ++;
             final long foundKey = Location.getKey(currX, currY, currZ);
-            synchronized (unchecked) {
-                if (!unchecked.contains(foundKey)) {
-                    unchecked.add(foundKey);
+            addLocationToUnchecked(foundKey);
+        }
+    }
+
+    private void addLocationToUnchecked(final long locationKey) {
+        if (!unchecked.contains(locationKey)) {
+            try {
+                if (!unchecked.offerLast(locationKey, 20, TimeUnit.MILLISECONDS)) {
+                    LOGGER.error("Failed to add element to unchecked map queue.");
                 }
+            } catch (final InterruptedException e) {
+                LOGGER.error("Error while trying add dirty tile.", e);
             }
         }
     }
@@ -547,20 +514,12 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
                 }
                 final long foundKey = Location.getKey(searchLoc.getScX() + x, searchLoc.getScY() + y,
                         searchLoc.getScZ());
-                synchronized (unchecked) {
-                    if (!unchecked.contains(foundKey)) {
-                        unchecked.add(foundKey);
-                    }
-                }
+                addLocationToUnchecked(foundKey);
             }
         }
 
         final long foundKey = Location.getKey(searchLoc.getScX(), searchLoc.getScY(), searchLoc.getScZ() + 1);
-        synchronized (unchecked) {
-            if (!unchecked.contains(foundKey)) {
-                unchecked.add(foundKey);
-            }
-        }
+        addLocationToUnchecked(foundKey);
     }
 
     /**
@@ -583,9 +542,7 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
      * stop instantly.
      */
     public void clear() {
-        synchronized (unchecked) {
-            unchecked.clear();
-        }
+        unchecked.clear();
     }
 
     /**
@@ -593,8 +550,6 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
      */
     public void saveShutdown() {
         running = false;
-        synchronized (unchecked) {
-            unchecked.notify();
-        }
+        interrupt();
     }
 }
