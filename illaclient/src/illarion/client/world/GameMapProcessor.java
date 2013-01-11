@@ -368,13 +368,16 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
 
         /*
          * And now we start with the inside check. In case the tile is below the level of the player its never hidden
-          * for sure.
+         * for sure.
          */
         if (tileLoc.getScZ() <= playerLoc.getScZ()) {
             if (tile.isHidden()) {
                 tile.setHidden(false);
-                addAllBelow(tileLoc, playerLoc.getScZ() - 2);
-                addAllNeighbours(tileLoc);
+
+                synchronized (unchecked) {
+                    addAllBelow(tileLoc, playerLoc.getScZ() - 2);
+                    addAllNeighbours(tileLoc);
+                }
             }
             return true;
         }
@@ -396,9 +399,11 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
         if (!insideStates[insideIndex]) {
             if (tile.isHidden()) {
                 tile.setHidden(false);
-                addAllBelow(tileLoc, playerLoc.getScZ() - 2);
-                addAllAbove(tileLoc, playerLoc.getScZ() + 2);
-                addAllNeighbours(tileLoc);
+                synchronized (unchecked) {
+                    addAllBelow(tileLoc, playerLoc.getScZ() - 2);
+                    addAllAbove(tileLoc, playerLoc.getScZ() + 2);
+                    addAllNeighbours(tileLoc);
+                }
             }
             return true;
         }
@@ -410,17 +415,21 @@ public final class GameMapProcessor extends Thread implements TLongObjectProcedu
                 && (tileLoc.getScY() == playerLoc.getScY())
                 && (tileLoc.getScZ() > playerLoc.getScZ()) && !tile.isHidden()) {
             tile.setHidden(true);
-            addAllBelow(tileLoc, playerLoc.getScZ() - 2);
-            addAllAbove(tileLoc, playerLoc.getScZ() + 2);
-            addAllNeighbours(tileLoc);
+            synchronized (unchecked) {
+                addAllBelow(tileLoc, playerLoc.getScZ() - 2);
+                addAllAbove(tileLoc, playerLoc.getScZ() + 2);
+                addAllNeighbours(tileLoc);
+            }
             return true;
         }
 
         if (!tile.isHidden() && hasHiddenNeighbour(tileLoc)) {
             tile.setHidden(true);
-            addAllBelow(tileLoc, playerLoc.getScZ() - 2);
-            addAllAbove(tileLoc, playerLoc.getScZ() + 2);
-            addAllNeighbours(tileLoc);
+            synchronized (unchecked) {
+                addAllBelow(tileLoc, playerLoc.getScZ() - 2);
+                addAllAbove(tileLoc, playerLoc.getScZ() + 2);
+                addAllNeighbours(tileLoc);
+            }
             return true;
         }
 
