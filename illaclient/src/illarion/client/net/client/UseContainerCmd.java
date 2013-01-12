@@ -55,11 +55,9 @@ public final class UseContainerCmd extends AbstractCommand {
 
     @Override
     public void encode(@NonNull final NetCommWriter writer) {
-        writer.writeUByte((short) 1); // USE COMPONENTS
         writer.writeUByte((short) 2); // CONTAINER REFERENCE
         writer.writeUByte(containerId);
         writer.writeUByte(slot);
-        writer.writeUByte((short) 0); // COUNTER
     }
 
     @NonNull

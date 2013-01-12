@@ -50,10 +50,8 @@ public final class UseMapCmd extends AbstractCommand {
 
     @Override
     public void encode(@NonNull final NetCommWriter writer) {
-        writer.writeUByte((short) 1); // USE COMPONENTS
         writer.writeUByte((short) 1); // MAP REFERENCE
         writer.writeLocation(usedLocation);
-        writer.writeUByte((short) 0); // COUNTER
     }
 
     @NonNull
