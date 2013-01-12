@@ -46,21 +46,12 @@ float getIntensity() {
 	return clamp(intensity + (intensity * gustEffect), 0.0, 1.0);
 }
 
-vec2 getRainCoord(in float offset) {
+vec2 getRainCoord() {
     vec2 scaledTexCoord = gl_TexCoord[0].st * texRainScale.xy;
-    vec2 aniCoord = vec2(offset + (gl_TexCoord[0].t * windDir * -2.0), (-animation + offset) * texRainScale.y);
-    vec2 result =  texRainOffset + mod(scaledTexCoord + aniCoord + mapOffset, texRainSize.xy);
+    vec2 aniCoord = vec2(gl_TexCoord[0].t * windDir * -2.0, -animation * texRainScale.y);
+    vec2 result = texRainOffset + mod(scaledTexCoord + aniCoord + mapOffset, texRainSize.xy);
 
     return result;
-}
-
-void getRainColor(inout vec3 color, in float value, in float levelIntensity) {
-    float rainTexColor = 1.0 - texture2D(texRain, getRainCoord(value)).r;
-	float rainColor = clamp(rainTexColor * levelIntensity, 0.0, 1.0);
-	rainColor = clamp(rainColor - gl_TexCoord[0].t * 0.2, 0.0, 1.0);
-
-	color.rgb *= (1.0 - rainColor);
-	color.rgb += rainDropColor.rgb * rainColor;
 }
 
 void main() {
@@ -70,18 +61,15 @@ void main() {
 
     vec3 resultColor = backColor.rgb;
 
-    float levelIntensity = clamp(0.3 + intensity * 2.0 - sqrt(0.0), 0.0, 1.0);
-    getRainColor(resultColor, 0.0, levelIntensity);
+    float levelIntensityR = clamp(0.3 + intensity * 2.0, 0.0, 1.0);
+    float levelIntensityG = clamp(0.3 + intensity * 2.0 - 1.0, 0.0, 1.0);
+    float levelIntensityB = clamp(0.3 + intensity * 2.0 - 1.4, 0.0, 1.0);
 
-    levelIntensity = clamp(0.3 + intensity * 2.0 - sqrt(1.0), 0.0, 1.0);
-    getRainColor(resultColor, 0.3, levelIntensity);
-    getRainColor(resultColor, 0.6, levelIntensity);
+    vec3 levelIntensity = vec3(levelIntensityR, levelIntensityG, levelIntensityB);
+    float rainTexColor = dot(texture2D(texRain, getRainCoord()).rgb, levelIntensity);
+	rainTexColor = clamp(rainTexColor - gl_TexCoord[0].t * 0.2, 0.0, 1.0);
 
-    levelIntensity = clamp(0.3 + intensity * 2.0 - sqrt(2.0), 0.0, 1.0);
-    getRainColor(resultColor, 0.15, levelIntensity);
-    getRainColor(resultColor, 0.45, levelIntensity);
-    getRainColor(resultColor, 0.65, levelIntensity);
-    getRainColor(resultColor, 0.85, levelIntensity);
+    resultColor.rgb = resultColor.rgb * (1.0 - rainTexColor) + rainDropColor.rgb * rainTexColor;
 
     gl_FragColor = vec4(resultColor, 1.0);
 }
