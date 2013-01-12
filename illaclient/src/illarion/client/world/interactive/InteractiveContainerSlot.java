@@ -18,11 +18,10 @@
  */
 package illarion.client.world.interactive;
 
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
 import illarion.client.net.client.*;
 import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
+import illarion.client.world.items.MerchantList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
@@ -66,11 +65,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
             return;
         }
 
-        final DragScInvCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_INV, DragScInvCmd.class);
-        cmd.setSource(getContainerId(), parentSlot.getLocation());
-        cmd.setTarget(targetSlot.getSlotId());
-        cmd.setCount(count);
-        cmd.send();
+        World.getNet().sendCommand(new DragScInvCmd(getContainerId(), getSlotId(), targetSlot.getSlotId(), count));
     }
 
     /**
@@ -93,13 +88,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      */
     @Override
     public void dragTo(final InteractiveMapTile targetTile, final ItemCount count) {
-        final DragScMapCmd cmd =
-                CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_DRAG_SC_MAP, DragScMapCmd.class);
-        cmd.setSource(getContainerId(), parentSlot.getLocation());
-        cmd.setTarget(targetTile.getLocation());
-        cmd.setCount(count);
-        cmd.send();
+        World.getNet().sendCommand(new DragScMapCmd(getContainerId(), getSlotId(), targetTile.getLocation(), count));
     }
 
     @Override
@@ -108,11 +97,8 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
             return;
         }
 
-        final DragScScCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_SC_SC, DragScScCmd.class);
-        cmd.setSource(getContainerId(), parentSlot.getLocation());
-        cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
-        cmd.setCount(count);
-        cmd.send();
+        World.getNet().sendCommand(new DragScScCmd(getContainerId(), getSlotId(), targetSlot.getContainerId(),
+                targetSlot.getSlotId(), count));
     }
 
     /**
@@ -152,10 +138,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
             return;
         }
 
-        final LookatShowcaseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_LOOKAT_SHOWCASE,
-                LookatShowcaseCmd.class);
-        cmd.setSlot(getContainerId(), parentSlot.getLocation());
-        cmd.send();
+        World.getNet().sendCommand(new LookAtContainerCmd(getContainerId(), getSlotId()));
     }
 
     /**
@@ -166,9 +149,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
             return;
         }
 
-        final OpenShowcaseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_OPEN_SHOWCASE, OpenShowcaseCmd.class);
-        cmd.setShowcase(getContainerId(), getSlotId());
-        cmd.send();
+        World.getNet().sendCommand(new OpenInContainerCmd(getContainerId(), getSlotId()));
     }
 
     /**
@@ -179,16 +160,16 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
             return;
         }
 
-        final TradeItemCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_TRADE_ITEM,
-                TradeItemCmd.class);
-        cmd.setSellFromContainer(getContainerId(), getSlotId(), parentSlot.getCount());
-        cmd.setDialogId(World.getPlayer().getMerchantList().getId());
-        cmd.send();
+        final MerchantList merchantList = World.getPlayer().getMerchantList();
+        if (merchantList == null) {
+            return;
+        }
+
+        World.getNet().sendCommand(new SellContainerItemCmd(merchantList.getId(), getContainerId(), getSlotId(),
+                parentSlot.getCount()));
     }
 
     public void use() {
-        final UseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_USE, UseCmd.class);
-        cmd.addUse(this);
-        cmd.send();
+        World.getNet().sendCommand(new UseContainerCmd(getContainerId(), getSlotId()));
     }
 }

@@ -19,11 +19,10 @@
 package illarion.client.world.interactive;
 
 import illarion.client.graphics.Item;
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
 import illarion.client.net.client.*;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.client.world.items.ContainerSlot;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
@@ -100,12 +99,7 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
             return;
         }
 
-        final DragMapInvCmd cmd = CommandFactory.getInstance().getCommand(
-                CommandList.CMD_DRAG_MAP_INV, DragMapInvCmd.class);
-        cmd.setDragFrom(getLocation());
-        cmd.setDragTo(targetSlot.getSlotId());
-        cmd.setCount(count);
-        cmd.send();
+        World.getNet().sendCommand(new DragMapInvCmd(getLocation(), targetSlot.getSlotId(), count));
     }
 
     /**
@@ -119,12 +113,7 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
             return;
         }
 
-        final DragMapMapCmd cmd = CommandFactory.getInstance().getCommand(
-                CommandList.CMD_DRAG_MAP_MAP_N + getDirection(),
-                DragMapMapCmd.class);
-        cmd.setDragTo(targetTile.getLocation());
-        cmd.setCount(count);
-        cmd.send();
+        World.getNet().sendCommand(new DragMapMapCmd(getLocation(), targetTile.getLocation(), count));
     }
 
     @Override
@@ -137,13 +126,8 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
             return;
         }
 
-        final DragMapScCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_MAP_SC,
-                DragMapScCmd.class);
-        cmd.setSource(getLocation());
-        cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
-        cmd.setCount(count);
-        cmd.send();
-
+        final ContainerSlot slot = targetSlot.getSlot();
+        World.getNet().sendCommand(new DragMapScCmd(getLocation(), slot.getContainerId(), slot.getLocation(), count));
     }
 
     public void use() {
@@ -153,24 +137,15 @@ public class InteractiveMapTile extends AbstractDraggable implements DropTarget,
 
         final Item topItem = getTopImage();
         if ((topItem != null) && topItem.isContainer()) {
-            final OpenMapCmd containerCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_OPEN_MAP, OpenMapCmd.class);
-            containerCmd.setPosition(getLocation());
-            containerCmd.send();
+            World.getNet().sendCommand(new OpenOnMapCmd(getLocation()));
             return;
         }
 
-        final UseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_USE, UseCmd.class);
-        cmd.addUse(this);
-        cmd.send();
+        World.getNet().sendCommand(new UseMapCmd(getLocation()));
     }
 
     public void lookAt() {
-        final LookatTileCmd cmd =
-                CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_LOOKAT_TILE,
-                        LookatTileCmd.class);
-        cmd.setPosition(getLocation());
-        cmd.send();
+        World.getNet().sendCommand(new LookatTileCmd(getLocation()));
     }
 
     /**

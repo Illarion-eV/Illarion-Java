@@ -19,102 +19,59 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Send login informations to the server (
- * {@link illarion.client.net.CommandList#CMD_LOGIN}).
+ * Client Command: Send login information to the server ({@link CommandList#CMD_LOGIN}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class LoginCmd extends AbstractCommand {
     /**
      * The name of the character that shall log in.
      */
-    private String charname;
+    private final String charName;
 
     /**
      * The account password that is used. This contains the plain text password.
      */
-    private String password;
+    private final String password;
 
     /**
      * The current client version that is used to validate the login and ensure
      * that the needed client is used.
      */
-    private byte version;
+    private final short version;
 
     /**
      * Default constructor for the login command.
+     *
+     * @param charName the name of the character to login with
+     * @param password the password used to login
+     * @param version  the version of the client to report to the server
      */
-    public LoginCmd() {
+    public LoginCmd(final String charName, final String password, final int version) {
         super(CommandList.CMD_LOGIN);
+        this.charName = charName;
+        this.password = password;
+        this.version = (short) version;
     }
 
-    /**
-     * Create a duplicate of this login command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public LoginCmd clone() {
-        return new LoginCmd();
-    }
-
-    /**
-     * Encode the data of this login command and put the values into the buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
-        writer.writeByte(version);
-        writer.writeString(charname);
+    public void encode(@NonNull final NetCommWriter writer) {
+        writer.writeUByte(version);
+        writer.writeString(charName);
         writer.writeString(password);
     }
 
-    /**
-     * Clean up the command before put it back into the recycler for later
-     * reuse.
-     */
-    @Override
-    public void reset() {
-        charname = null;
-        password = null;
-    }
-
-    /**
-     * Set the login informations that are used.
-     *
-     * @param loginname the character name that is used at the login
-     * @param loginpw   the plain text password that is used
-     */
-    public void setLogin(final String loginname, final String loginpw) {
-        charname = loginname;
-        password = loginpw;
-    }
-
-    /**
-     * Set the version of the client that is transfered to the server. This is
-     * needed to ensure that the user has the newest version of the client that
-     * is needed to work correctly with the server.
-     *
-     * @param clientVersion the client version that is transmitted to the server
-     */
-    public void setVersion(final int clientVersion) {
-        version = (byte) clientVersion;
-    }
-
-    /**
-     * Get the data of this login command as string.
-     *
-     * @return the data of this command as string
-     */
+    @NonNull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Char: " + charname + " Client: " + version);
+        return toString("Char: " + charName + " Client: " + version);
     }
 }

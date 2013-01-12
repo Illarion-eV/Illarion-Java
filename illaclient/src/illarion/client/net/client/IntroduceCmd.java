@@ -18,42 +18,35 @@
  */
 package illarion.client.net.client;
 
+import illarion.client.net.CommandList;
 import illarion.common.annotation.NonNull;
-import illarion.common.types.ItemCount;
+import illarion.common.net.NetCommWriter;
 import net.jcip.annotations.Immutable;
+import net.jcip.annotations.ThreadSafe;
 
 /**
- * This abstract command contains the shared code of all dragging operations.
+ * This command is send to tell the server that the character is not introducing itself. All characters in range get
+ * its name.
  *
- * @author Martin Karing &lt;nitram@illlarion.org&gt;
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Immutable
-public abstract class AbstractDragCommand extends AbstractCommand {
+@ThreadSafe
+public final class IntroduceCmd extends AbstractCommand {
     /**
-     * The amount of items that are supposed to be moved.
+     * Default constructor for the introduce message.
      */
-    @NonNull
-    private final ItemCount count;
-
-    /**
-     * The constructor of a command. This is used to set the ID of the command.
-     *
-     * @param commId the ID of the command
-     * @param count  the amount of items to drag at once
-     */
-    protected AbstractDragCommand(final int commId, @NonNull final ItemCount count) {
-        super(commId);
-
-        this.count = count;
+    public IntroduceCmd() {
+        super(CommandList.CMD_INTRODUCE);
     }
 
-    /**
-     * Get the amount of items that are supposed to be moved.
-     *
-     * @return the items to be moved
-     */
+    @Override
+    public void encode(@NonNull final NetCommWriter writer) {
+    }
+
     @NonNull
-    protected final ItemCount getCount() {
-        return count;
+    @Override
+    public String toString() {
+        return toString(null);
     }
 }

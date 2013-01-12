@@ -21,55 +21,53 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.ItemCount;
 import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Dragging an item from the inventory to a container ({@link CommandList#CMD_DRAG_INV_SC}).
+ * Client Command: Looking at a container slot ({@link CommandList#CMD_LOOKAT_CONTAINER}).
  *
+ * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Immutable
-public final class DragInvScCmd extends AbstractDragCommand {
+public final class LookAtContainerCmd extends AbstractCommand {
     /**
-     * The source inventory slot of the dragging event.
+     * The container we are going to look at.
      */
-    private final short sourceSlot;
+    private final short containerId;
 
     /**
-     * The target container of the dragging event.
+     * The slot within the container we are going to look at.
      */
-    private final short targetContainer;
+    private final short slot;
 
     /**
-     * The target slot of the container.
+     * Default constructor for the look at container command.
+     *
+     * @param containerId the ID of the container
+     * @param slot        the ID of the slot in the container
      */
-    private final short targetContainerSlot;
-
-    /**
-     * The default constructor of this DragInvScCmd.
-     */
-    public DragInvScCmd(final int source, final int targetContainer, final int targetSlot,
-                        @NonNull final ItemCount count) {
-        super(CommandList.CMD_DRAG_INV_SC, count);
-
-        sourceSlot = (short) source;
-        this.targetContainer = (short) targetContainer;
-        targetContainerSlot = (short) targetSlot;
+    public LookAtContainerCmd(final int containerId, final int slot) {
+        super(CommandList.CMD_LOOKAT_CONTAINER);
+        this.containerId = (short) containerId;
+        this.slot = (short) slot;
     }
 
     @Override
     public void encode(@NonNull final NetCommWriter writer) {
-        writer.writeUByte(sourceSlot);
-        writer.writeUByte(targetContainer);
-        writer.writeUByte(targetContainerSlot);
-        getCount().encode(writer);
+        writer.writeUByte(containerId);
+        writer.writeUByte(slot);
     }
 
+    /**
+     * Get the data of this look at showcase command as string.
+     *
+     * @return the data of this command as string
+     */
     @NonNull
+    @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Source: " + sourceSlot + " Destination: " + targetContainer + '/' + targetContainerSlot +
-                ' ' + getCount());
+        return toString("Container: " + containerId + " Slot: " + slot);
     }
 }

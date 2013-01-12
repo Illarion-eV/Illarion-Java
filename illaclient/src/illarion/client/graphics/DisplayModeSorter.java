@@ -18,11 +18,11 @@
  */
 package illarion.client.graphics;
 
-import java.util.Comparator;
 import org.lwjgl.opengl.DisplayMode;
 
+import java.util.Comparator;
+
 /**
- *
  * @author Stefano Bonicatti &lt;smjert@gmail.com&gt;
  */
 public class DisplayModeSorter implements Comparator<DisplayMode> {
@@ -31,16 +31,16 @@ public class DisplayModeSorter implements Comparator<DisplayMode> {
     public int compare(DisplayMode a, DisplayMode b) {
         //Width
         if (a.getWidth() != b.getWidth())
-            return (a.getWidth() > b.getWidth()) ?  1 : -1;
+            return (a.getWidth() > b.getWidth()) ? 1 : -1;
         //Height
         if (a.getHeight() != b.getHeight())
-            return (a.getHeight() > b.getHeight()) ?  1 : -1;
+            return (a.getHeight() > b.getHeight()) ? 1 : -1;
         //Bit depth
-        if (a.getBitsPerPixel()!= b.getBitsPerPixel())
-            return (a.getBitsPerPixel() > b.getBitsPerPixel()) ?  1 : -1;
+        if (a.getBitsPerPixel() != b.getBitsPerPixel())
+            return (a.getBitsPerPixel() > b.getBitsPerPixel()) ? 1 : -1;
         //Refresh rate
-        if (a.getFrequency()!= b.getFrequency())
-            return (a.getFrequency()> b.getFrequency()) ?  1 : -1;
+        if (a.getFrequency() != b.getFrequency())
+            return (a.getFrequency() > b.getFrequency()) ? 1 : -1;
         //All fields are equal
         return 0;
     }

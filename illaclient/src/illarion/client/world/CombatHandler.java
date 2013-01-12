@@ -18,9 +18,8 @@
  */
 package illarion.client.world;
 
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
 import illarion.client.net.client.AttackCmd;
+import illarion.client.net.client.StandDownCmd;
 import illarion.common.annotation.NonNull;
 import illarion.common.types.CharacterId;
 import net.jcip.annotations.GuardedBy;
@@ -105,7 +104,7 @@ public final class CombatHandler {
     public void standDown() {
         synchronized (this) {
             if (attackedChar != null) {
-                CommandFactory.getInstance().getCommand(CommandList.CMD_STAND_DOWN).send();
+                World.getNet().sendCommand(new StandDownCmd());
                 targetLost();
             }
         }
@@ -174,8 +173,6 @@ public final class CombatHandler {
      * @param id the ID of the character to fight
      */
     private static void sendAttackToServer(@NonNull final CharacterId id) {
-        final AttackCmd cmd = (AttackCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_ATTACK);
-        cmd.setTarget(id);
-        cmd.send();
+        World.getNet().sendCommand(new AttackCmd(id));
     }
 }

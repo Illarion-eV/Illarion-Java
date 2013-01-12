@@ -25,51 +25,54 @@ import illarion.common.types.ItemCount;
 import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Dragging an item from the inventory to a container ({@link CommandList#CMD_DRAG_INV_SC}).
+ * This command is used to buy a item from a trader.
  *
- * @author Martin Karing &lt;nitram@illarion.org&gt;
+ * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
 @Immutable
-public final class DragInvScCmd extends AbstractDragCommand {
+public final class BuyTradingItem extends AbstractCommand {
     /**
-     * The source inventory slot of the dragging event.
+     * The ID of the dialog to buy the item from.
      */
-    private final short sourceSlot;
+    private final int dialogId;
 
     /**
-     * The target container of the dragging event.
+     * The index of the item that is supposed to be bought.
      */
-    private final short targetContainer;
+    private final short index;
 
     /**
-     * The target slot of the container.
+     * The amount of items to buy.
      */
-    private final short targetContainerSlot;
+    @NonNull
+    private final ItemCount amount;
 
     /**
-     * The default constructor of this DragInvScCmd.
+     * Default constructor for the trade item command.
+     *
+     * @param dialogId the ID of the dialog to buy the item from
+     * @param index    the index of the item to buy
+     * @param count    the amount of items to buy
      */
-    public DragInvScCmd(final int source, final int targetContainer, final int targetSlot,
-                        @NonNull final ItemCount count) {
-        super(CommandList.CMD_DRAG_INV_SC, count);
+    public BuyTradingItem(final int dialogId, final int index, @NonNull final ItemCount count) {
+        super(CommandList.CMD_TRADE_ITEM);
 
-        sourceSlot = (short) source;
-        this.targetContainer = (short) targetContainer;
-        targetContainerSlot = (short) targetSlot;
+        this.dialogId = dialogId;
+        this.index = (short) index;
+        amount = count;
     }
 
     @Override
     public void encode(@NonNull final NetCommWriter writer) {
-        writer.writeUByte(sourceSlot);
-        writer.writeUByte(targetContainer);
-        writer.writeUByte(targetContainerSlot);
-        getCount().encode(writer);
+        writer.writeInt(dialogId);
+        writer.writeByte((byte) 2);
+        writer.writeUByte(index);
+        amount.encode(writer);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return toString("Source: " + sourceSlot + " Destination: " + targetContainer + '/' + targetContainerSlot +
-                ' ' + getCount());
+        return toString("dialog ID: " + dialogId + " Index: " + index + ' ' + amount);
     }
 }

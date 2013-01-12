@@ -22,8 +22,10 @@ import illarion.client.Debug;
 import illarion.client.IllaClient;
 import illarion.client.net.client.AbstractCommand;
 import illarion.client.util.Lang;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.Location;
+import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
 
 import java.nio.ByteBuffer;
@@ -39,6 +41,8 @@ import java.util.concurrent.BlockingQueue;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@NotThreadSafe
+@SuppressWarnings("ClassNamingConvention")
 final class Sender extends Thread implements NetCommWriter {
     /**
      * The XOR mask the command ID is masked with to decode the checking ID and
@@ -99,8 +103,8 @@ final class Sender extends Thread implements NetCommWriter {
      *                    data to the server
      */
     @SuppressWarnings("nls")
-    protected Sender(final BlockingQueue<AbstractCommand> outputQueue,
-                     final WritableByteChannel out) {
+    Sender(final BlockingQueue<AbstractCommand> outputQueue,
+           final WritableByteChannel out) {
         super("Illarion output thread");
 
         queue = outputQueue;
@@ -146,7 +150,6 @@ final class Sender extends Thread implements NetCommWriter {
                 final int startOfCmd = buffer.position();
                 // encode command into net protocol
                 cmd.encode(this);
-                cmd.recycle();
 
                 final int length = buffer.position() - startOfCmd;
                 buffer.flip();
@@ -205,7 +208,7 @@ final class Sender extends Thread implements NetCommWriter {
      * @param loc the location that shall be send to the server
      */
     @Override
-    public void writeLocation(final Location loc) {
+    public void writeLocation(@NonNull final Location loc) {
         buffer.putShort((short) loc.getScX());
         buffer.putShort((short) loc.getScY());
         buffer.putShort((short) loc.getScZ());
@@ -228,7 +231,7 @@ final class Sender extends Thread implements NetCommWriter {
      * @param value the string that shall be send to the server
      */
     @Override
-    public void writeString(final String value) {
+    public void writeString(@NonNull final String value) {
         final int startIndex = buffer.position();
         buffer.putShort((short) 0);
 

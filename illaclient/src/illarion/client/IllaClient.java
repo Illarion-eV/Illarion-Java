@@ -24,9 +24,7 @@ import de.lessvoid.nifty.slick2d.loaders.SlickRenderImageLoaders;
 import illarion.client.crash.DefaultCrashHandler;
 import illarion.client.graphics.FontLoader;
 import illarion.client.graphics.TextureLoader;
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
-import illarion.client.net.client.SimpleCmd;
+import illarion.client.net.client.LogoutCmd;
 import illarion.client.resources.SongFactory;
 import illarion.client.resources.SoundFactory;
 import illarion.client.resources.loaders.SongLoader;
@@ -222,6 +220,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             LOGGER.fatal("Exception while launching game.", e);
             Sys.alert("Error", "The client caused a error while starting up: " + e.getMessage());
         } finally {
+            quitGame();
             World.cleanEnvironment();
             cfg.save();
         }
@@ -443,12 +442,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * End the game by user request and send the logout command to the server.
      */
     public void quitGame() {
-        // send logoff command
-        if (World.getNet() == null) {
-            return;
-        }
-        final SimpleCmd cmd = (SimpleCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_LOGOFF);
-        World.getNet().sendCommand(cmd);
+        World.getNet().sendCommand(new LogoutCmd());
     }
 
     /**

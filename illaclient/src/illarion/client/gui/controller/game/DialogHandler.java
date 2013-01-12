@@ -31,12 +31,7 @@ import illarion.client.gui.util.NiftyCraftingCategory;
 import illarion.client.gui.util.NiftyCraftingItem;
 import illarion.client.gui.util.NiftyMerchantItem;
 import illarion.client.gui.util.NiftySelectItem;
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
-import illarion.client.net.client.CloseDialogInputCmd;
-import illarion.client.net.client.CloseDialogMessageCmd;
-import illarion.client.net.client.CloseDialogSelectionCmd;
-import illarion.client.net.client.CraftItemCmd;
+import illarion.client.net.client.*;
 import illarion.client.net.server.events.*;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
@@ -283,12 +278,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
             return;
         }
 
-        final CommandFactory factory = CommandFactory.getInstance();
-        final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
-        cmd.setLookAtItem(event.getItem().getItemIndex());
-        cmd.setDialogId(event.getDialogId());
-        cmd.send();
-
+        World.getNet().sendCommand(new LookAtCraftItemCmd(event.getDialogId(), event.getItem().getItemIndex()));
         lastCraftingTooltip = -1;
     }
 
@@ -303,22 +293,15 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
             return;
         }
 
-        final CommandFactory factory = CommandFactory.getInstance();
-        final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
-        cmd.setLookAtIngredient(event.getItem().getItemIndex(), event.getIngredientIndex());
-        cmd.setDialogId(event.getDialogId());
-        cmd.send();
-
+        World.getNet().sendCommand(new LookAtCraftIngredientCmd(event.getDialogId(), event.getItem().getItemIndex(),
+                event.getIngredientIndex()));
         lastCraftingTooltip = event.getIngredientIndex();
     }
 
     @NiftyEventSubscriber(id = "craftingDialog")
     public void handleCraftingCraftItemEvent(final String topic, final DialogCraftingCraftEvent event) {
-        final CommandFactory factory = CommandFactory.getInstance();
-        final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
-        cmd.setCraftItem(event.getItem().getItemIndex(), event.getCount());
-        cmd.setDialogId(event.getDialogId());
-        cmd.send();
+        World.getNet().sendCommand(new CraftItemCmd(event.getDialogId(), event.getItem().getItemIndex(),
+                event.getCount()));
     }
 
     @NiftyEventSubscriber(id = "craftingDialog")
@@ -330,11 +313,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         if (!openCraftDialog) {
             return;
         }
-        final CommandFactory factory = CommandFactory.getInstance();
-        final CraftItemCmd cmd = factory.getCommand(CommandList.CMD_CRAFT_ITEM, CraftItemCmd.class);
-        cmd.setCloseDialog();
-        cmd.setDialogId(id);
-        cmd.send();
+        World.getNet().sendCommand(new CloseDialogCraftingCmd(id));
         EventBus.publish(new CloseDialogEvent(id, CloseDialogEvent.DialogType.Crafting));
         openCraftDialog = false;
     }
@@ -342,28 +321,17 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "msgDialog[0-9]+")
     public void handleMessageConfirmedEvent(final String topic, final DialogMessageConfirmedEvent event) {
-        final CommandFactory factory = CommandFactory.getInstance();
-        final CloseDialogMessageCmd cmd = factory.getCommand(CommandList.CMD_CLOSE_DIALOG_MSG,
-                CloseDialogMessageCmd.class);
-        cmd.setDialogId(event.getDialogId());
-        cmd.send();
+        World.getNet().sendCommand(new CloseDialogMessageCmd(event.getDialogId()));
     }
 
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "inputDialog[0-9]+")
     public void handleInputConfirmedEvent(final String topic, final DialogInputConfirmedEvent event) {
-        final CommandFactory factory = CommandFactory.getInstance();
-        final CloseDialogInputCmd cmd = factory.getCommand(CommandList.CMD_CLOSE_DIALOG_INPUT,
-                CloseDialogInputCmd.class);
-        cmd.setDialogId(event.getDialogId());
         if (event.getPressedButton() == DialogInput.DialogButton.left) {
-            cmd.setSuccess(true);
-            cmd.setText(event.getText());
+            World.getNet().sendCommand(new CloseDialogInputCmd(event.getDialogId(), event.getText(), true));
         } else {
-            cmd.setSuccess(false);
-            cmd.setText("");
+            World.getNet().sendCommand(new CloseDialogInputCmd(event.getDialogId(), "", false));
         }
-        cmd.send();
     }
 
     @SuppressWarnings("MethodMayBeStatic")
@@ -402,25 +370,14 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "selectDialog[0-9]+")
     public void handleSelectionSelectEvent(final String topic, final DialogSelectSelectEvent event) {
-        final CloseDialogSelectionCmd cmd = CommandFactory.getInstance().getCommand(
-                CommandList.CMD_CLOSE_DIALOG_SELECTION, CloseDialogSelectionCmd.class);
-        cmd.setDialogId(event.getDialogId());
-        cmd.setSelectedIndex(event.getItemIndex());
-        cmd.setSuccess(true);
-        cmd.send();
-
+        World.getNet().sendCommand(new CloseDialogSelectionCmd(event.getDialogId(), event.getItemIndex(), true));
         EventBus.publish(new CloseDialogEvent(event.getDialogId(), CloseDialogEvent.DialogType.Selection));
     }
 
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "selectDialog[0-9]+")
     public void handleSelectionCancelEvent(final String topic, final DialogSelectCancelEvent event) {
-        final CloseDialogSelectionCmd cmd = CommandFactory.getInstance().getCommand(
-                CommandList.CMD_CLOSE_DIALOG_SELECTION, CloseDialogSelectionCmd.class);
-        cmd.setDialogId(event.getDialogId());
-        cmd.setSuccess(false);
-        cmd.send();
-
+        World.getNet().sendCommand(new CloseDialogSelectionCmd(event.getDialogId(), 0, false));
         EventBus.publish(new CloseDialogEvent(event.getDialogId(), CloseDialogEvent.DialogType.Selection));
     }
 

@@ -19,111 +19,69 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import illarion.common.types.ItemCount;
 
 /**
- * Client Command: Dragging an item from one container to another (
- * {@link illarion.client.net.CommandList#CMD_DRAG_SC_SC}).
+ * Client Command: Dragging an item from one container to another ({@link CommandList#CMD_DRAG_SC_SC}).
  *
- * @author Blay09
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DragScScCmd extends AbstractDragCommand {
-
     /**
      * The source container of the dragging event.
      */
-    private byte sourceContainer;
+    private final short sourceContainer;
 
     /**
      * The source container item of the dragging event.
      */
-    private byte sourceContainerItem;
+    private final short sourceContainerItem;
 
     /**
      * The target container of the dragging event.
      */
-    private byte targetContainer;
+    private final short targetContainer;
 
     /**
      * The target container item of the dragging event.
      */
-    private byte targetContainerItem;
+    private final short targetContainerItem;
 
     /**
      * The default constructor of this DragScScCmd.
+     *
+     * @param sourceContainer      the container that is the source
+     * @param sourceSlot           the slot in the container that is the source
+     * @param destinationContainer the container that is the destination
+     * @param destinationSlot      the slot in the container that is the destination
+     * @param count                the amount of items to move
      */
-    public DragScScCmd() {
-        super(CommandList.CMD_DRAG_SC_SC);
+    public DragScScCmd(final int sourceContainer, final int sourceSlot, final int destinationContainer,
+                       final int destinationSlot, @NonNull final ItemCount count) {
+        super(CommandList.CMD_DRAG_SC_SC, count);
+
+        this.sourceContainer = (short) sourceContainer;
+        sourceContainerItem = (short) sourceSlot;
+        targetContainer = (short) destinationContainer;
+        targetContainerItem = (short) destinationSlot;
     }
 
-    /**
-     * Create a duplicate of this dragging from container to container command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public DragScScCmd clone() {
-        return new DragScScCmd();
-    }
-
-    /**
-     * Encode the data of this dragging from container to container command and
-     * put the values into the buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
-        writer.writeByte(sourceContainer);
-        writer.writeByte(sourceContainerItem);
-        writer.writeByte(targetContainer);
-        writer.writeByte(targetContainerItem);
+    public void encode(@NonNull final NetCommWriter writer) {
+        writer.writeUByte(sourceContainer);
+        writer.writeUByte(sourceContainerItem);
+        writer.writeUByte(targetContainer);
+        writer.writeUByte(targetContainerItem);
         getCount().encode(writer);
     }
 
-    /**
-     * Sets the dragging source.
-     *
-     * @param Container     the container from which the item was dragged
-     * @param ContainerItem the container item id which was dragged
-     */
-    public void setSource(final int Container, final int ContainerItem) {
-        sourceContainer = (byte) Container;
-        sourceContainerItem = (byte) ContainerItem;
-    }
-
-    /**
-     * Sets the dragging target.
-     *
-     * @param Container     the container to which the item was dragged
-     * @param ContainerItem the slot that is the target of the container
-     */
-    public void setTarget(final int Container, final int ContainerItem) {
-        targetContainer = (byte) Container;
-        targetContainerItem = (byte) ContainerItem;
-    }
-
-    /**
-     * Get the data of this dragging from container to container command as
-     * string.
-     *
-     * @return the data of this command as string
-     */
+    @NonNull
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("SourceContainer: ");
-        sb.append(sourceContainer);
-        sb.append(" SourceConItemID: ");
-        sb.append(sourceContainerItem);
-        sb.append(" TargetContainer: ");
-        sb.append(targetContainer);
-        sb.append(" SourceConItemID: ");
-        sb.append(targetContainerItem);
-        sb.append(" Count: ");
-        sb.append(getCount());
-        return toString(sb.toString());
+        return toString("Source: " + sourceContainer + '/' + sourceContainerItem + " Destination: " + targetContainer
+                + '/' + targetContainerItem + ' ' + getCount());
     }
 
 }

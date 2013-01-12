@@ -21,55 +21,43 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.ItemCount;
 import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Dragging an item from the inventory to a container ({@link CommandList#CMD_DRAG_INV_SC}).
+ * This command is used to tell the server that the player is using a item in the inventory.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Immutable
-public final class DragInvScCmd extends AbstractDragCommand {
+public final class UseInventoryCmd extends AbstractCommand {
     /**
-     * The source inventory slot of the dragging event.
+     * The inventory slot that is used.
      */
-    private final short sourceSlot;
+    private final short slot;
 
     /**
-     * The target container of the dragging event.
+     * Default constructor for the use command.
+     *
+     * @param inventorySlot the inventory slot that is used
      */
-    private final short targetContainer;
+    public UseInventoryCmd(final int inventorySlot) {
+        super(CommandList.CMD_USE);
 
-    /**
-     * The target slot of the container.
-     */
-    private final short targetContainerSlot;
-
-    /**
-     * The default constructor of this DragInvScCmd.
-     */
-    public DragInvScCmd(final int source, final int targetContainer, final int targetSlot,
-                        @NonNull final ItemCount count) {
-        super(CommandList.CMD_DRAG_INV_SC, count);
-
-        sourceSlot = (short) source;
-        this.targetContainer = (short) targetContainer;
-        targetContainerSlot = (short) targetSlot;
+        slot = (short) inventorySlot;
     }
 
     @Override
     public void encode(@NonNull final NetCommWriter writer) {
-        writer.writeUByte(sourceSlot);
-        writer.writeUByte(targetContainer);
-        writer.writeUByte(targetContainerSlot);
-        getCount().encode(writer);
+        writer.writeUByte((short) 1); // USE COMPONENTS
+        writer.writeUByte((short) 3); // INVENTORY REFERENCE
+        writer.writeUByte(slot);
+        writer.writeUByte((short) 0); // COUNTER
     }
 
     @NonNull
+    @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Source: " + sourceSlot + " Destination: " + targetContainer + '/' + targetContainerSlot +
-                ' ' + getCount());
+        return toString("Slot: " + slot);
     }
 }

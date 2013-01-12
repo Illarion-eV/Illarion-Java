@@ -18,8 +18,6 @@
  */
 package illarion.client;
 
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
 import illarion.client.net.NetComm;
 import illarion.client.net.client.LoginCmd;
 import illarion.client.net.client.MapDimensionCmd;
@@ -282,15 +280,10 @@ public final class Login {
 
         IllaClient.initChatLog();
 
-        final LoginCmd loginCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_LOGIN, LoginCmd.class);
-        loginCmd.setLogin(loginCharacter, password);
-        loginCmd.setVersion(IllaClient.DEFAULT_SERVER.getClientVersion());
-        loginCmd.send();
-
-        final MapDimensionCmd mapDimCmd = CommandFactory.getInstance().getCommand(CommandList.CMD_MAPDIMENSION, MapDimensionCmd.class);
-        mapDimCmd.setMapDimensions(MapDimensions.getInstance().getStripesWidth() >> 2, MapDimensions.getInstance().getStripesHeight() >> 2);
-        mapDimCmd.send();
-
+        World.getNet().sendCommand(new LoginCmd(loginCharacter, password,
+                IllaClient.DEFAULT_SERVER.getClientVersion()));
+        World.getNet().sendCommand(new MapDimensionCmd(MapDimensions.getInstance().getStripesWidth() >> 2,
+                MapDimensions.getInstance().getStripesHeight() >> 2));
         return true;
     }
 

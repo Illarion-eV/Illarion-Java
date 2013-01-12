@@ -19,7 +19,9 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import net.jcip.annotations.Immutable;
 
 /**
  * Client Command: Close a opened container
@@ -27,53 +29,30 @@ import illarion.common.net.NetCommWriter;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class CloseShowcaseCmd extends AbstractCommand {
     /**
      * The ID of the container.
      */
-    private int showcaseId;
+    private final int showcaseId;
 
     /**
      * Default constructor for the open bag command.
+     *
+     * @param showcaseId the ID of the showcase to close
      */
-    public CloseShowcaseCmd() {
+    public CloseShowcaseCmd(final int showcaseId) {
         super(CommandList.CMD_CLOSE_SHOWCASE);
+
+        this.showcaseId = showcaseId;
     }
 
-    /**
-     * Create a duplicate of this open bag command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public CloseShowcaseCmd clone() {
-        return new CloseShowcaseCmd();
-    }
-
-    /**
-     * Set the ID of the showcase.
-     *
-     * @param id the showcase id
-     */
-    public void setShowcaseId(final int id) {
-        showcaseId = id;
-    }
-
-    /**
-     * Encode the data of this open bag command and put the values into the buffer.
-     *
-     * @param writer the interface that allows writing data to the network communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
+    public void encode(@NonNull final NetCommWriter writer) {
         writer.writeByte((byte) showcaseId);
     }
 
-    /**
-     * Get the data of this open bag command as string.
-     *
-     * @return the data of this command as string
-     */
+    @NonNull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

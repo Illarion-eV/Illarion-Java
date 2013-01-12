@@ -41,8 +41,7 @@ import illarion.client.graphics.Avatar;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.FontLoader;
 import illarion.client.input.InputReceiver;
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
+import illarion.client.net.client.IntroduceCmd;
 import illarion.client.net.client.SayCmd;
 import illarion.client.net.server.events.BroadcastInformReceivedEvent;
 import illarion.client.net.server.events.ScriptInformReceivedEvent;
@@ -50,6 +49,7 @@ import illarion.client.net.server.events.TextToInformReceivedEvent;
 import illarion.client.util.ChatHandler;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
+import illarion.client.world.World;
 import illarion.client.world.events.CharTalkingEvent;
 import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;
@@ -392,36 +392,36 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      */
     private void sendText(final String text) {
         if (introducePattern.matcher(text).matches()) {
-            CommandFactory.getInstance().getCommand(CommandList.CMD_INTRODUCE).send();
+            World.getNet().sendCommand(new IntroduceCmd());
             return;
         }
 
         final Matcher shoutMatcher = shoutPattern.matcher(text);
         if (shoutMatcher.find()) {
-            cleanAndSendText("", shoutMatcher.group(2), CommandList.CMD_SHOUT);
+            cleanAndSendText("", shoutMatcher.group(2), ChatHandler.SpeechMode.shout);
             return;
         }
 
         final Matcher whisperMatcher = whisperPattern.matcher(text);
         if (whisperMatcher.find()) {
-            cleanAndSendText("", whisperMatcher.group(2), CommandList.CMD_WHISPER);
+            cleanAndSendText("", whisperMatcher.group(2), ChatHandler.SpeechMode.whisper);
             return;
         }
 
         final Matcher emoteMatcher = emotePattern.matcher(text);
         if (emoteMatcher.find()) {
             final String cleanMe = REPEATED_SPACE_PATTERN.matcher(emoteMatcher.group(1)).replaceAll(" ");
-            cleanAndSendText("#" + cleanMe, emoteMatcher.group(2), CommandList.CMD_SAY);
+            cleanAndSendText("#" + cleanMe, emoteMatcher.group(2), ChatHandler.SpeechMode.normal);
             return;
         }
 
         final Matcher oocMatcher = oocPattern.matcher(text);
         if (oocMatcher.find()) {
-            cleanAndSendText("#o ", oocMatcher.group(2), CommandList.CMD_WHISPER);
+            cleanAndSendText("#o ", oocMatcher.group(2), ChatHandler.SpeechMode.whisper);
             return;
         }
 
-        cleanAndSendText("", text, CommandList.CMD_SAY);
+        cleanAndSendText("", text, ChatHandler.SpeechMode.normal);
     }
 
     /**
@@ -429,17 +429,15 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      *
      * @param prefix the prefix that is prepend to the text
      * @param text   the text to send
-     * @param cmdId  the command id
+     * @param mode   the speech mode used to send the command
      */
-    private static void cleanAndSendText(final String prefix, final String text, final int cmdId) {
+    private static void cleanAndSendText(final String prefix, final String text, final ChatHandler.SpeechMode mode) {
         final String cleanText = REPEATED_SPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
         if (cleanText.isEmpty()) {
             return;
         }
 
-        final SayCmd cmd = CommandFactory.getInstance().getCommand(cmdId, SayCmd.class);
-        cmd.setText(prefix + cleanText);
-        cmd.send();
+        World.getNet().sendCommand(new SayCmd(mode, text));
     }
 
     @Override

@@ -19,8 +19,11 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.CharacterId;
+import net.jcip.annotations.Immutable;
+import net.jcip.annotations.NotThreadSafe;
 
 /**
  * Client Command: Attacking a character ({@link CommandList#CMD_ATTACK}).
@@ -28,56 +31,32 @@ import illarion.common.types.CharacterId;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
+@NotThreadSafe
 public final class AttackCmd extends AbstractCommand {
     /**
      * The ID of the character that shall be attacked.
      */
-    private CharacterId charId;
+    @NonNull
+    private final CharacterId charId;
 
     /**
-     * Default constructor for the attacking character command.
+     * The constructor of this command.
+     *
+     * @param targetCharId the ID of the character that is attacked
      */
-    public AttackCmd() {
+    public AttackCmd(@NonNull final CharacterId targetCharId) {
         super(CommandList.CMD_ATTACK);
+
+        charId = targetCharId;
     }
 
-    /**
-     * Create a duplicate of this attacking character command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public AttackCmd clone() {
-        return new AttackCmd();
-    }
-
-    /**
-     * Encode the data of this attacking character command and put the values
-     * into the buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
+    public void encode(@NonNull final NetCommWriter writer) {
         charId.encode(writer);
     }
 
-    /**
-     * Set the target for this attacking command.
-     *
-     * @param attCharId the ID of the character that shall be attacked
-     */
-    public void setTarget(final CharacterId attCharId) {
-        charId = attCharId;
-    }
-
-    /**
-     * Get the data of this attacking command as string.
-     *
-     * @return the data of this command as string
-     */
-    @SuppressWarnings("nls")
+    @NonNull
     @Override
     public String toString() {
         return toString(charId.toString());

@@ -35,8 +35,6 @@ import gnu.trove.procedure.TIntObjectProcedure;
 import illarion.client.IllaClient;
 import illarion.client.graphics.Item;
 import illarion.client.gui.EntitySlickRenderImage;
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
 import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.net.server.events.CloseContainerEvent;
 import illarion.client.net.server.events.ContainerItemLookAtEvent;
@@ -380,11 +378,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         World.getPlayer().removeContainer(data.getContainerId());
         if (isContainerCreated(data.getContainerId())) {
             removeItemContainer(data.getContainerId());
-
-            final CloseShowcaseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_CLOSE_SHOWCASE,
-                    CloseShowcaseCmd.class);
-            cmd.setShowcaseId(data.getContainerId());
-            cmd.send();
+            World.getNet().sendCommand(new CloseShowcaseCmd(data.getContainerId()));
         }
     }
 

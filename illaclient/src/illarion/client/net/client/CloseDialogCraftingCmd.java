@@ -18,42 +18,43 @@
  */
 package illarion.client.net.client;
 
+import illarion.client.net.CommandList;
 import illarion.common.annotation.NonNull;
-import illarion.common.types.ItemCount;
+import illarion.common.net.NetCommWriter;
 import net.jcip.annotations.Immutable;
 
 /**
- * This abstract command contains the shared code of all dragging operations.
+ * This command is used to inform the server that a crafting dialog was closed.
  *
- * @author Martin Karing &lt;nitram@illlarion.org&gt;
+ * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
 @Immutable
-public abstract class AbstractDragCommand extends AbstractCommand {
+public final class CloseDialogCraftingCmd extends AbstractCommand {
     /**
-     * The amount of items that are supposed to be moved.
+     * The ID of the dialog to close. This ID is send by the server once the dialog is opened.
      */
-    @NonNull
-    private final ItemCount count;
+    private final int dialogId;
 
     /**
-     * The constructor of a command. This is used to set the ID of the command.
+     * Default constructor for the close crafting dialog command.
      *
-     * @param commId the ID of the command
-     * @param count  the amount of items to drag at once
+     * @param dialogId the ID of the dialog to close
      */
-    protected AbstractDragCommand(final int commId, @NonNull final ItemCount count) {
-        super(commId);
+    public CloseDialogCraftingCmd(final int dialogId) {
+        super(CommandList.CMD_CRAFT_ITEM);
 
-        this.count = count;
+        this.dialogId = dialogId;
     }
 
-    /**
-     * Get the amount of items that are supposed to be moved.
-     *
-     * @return the items to be moved
-     */
+    @Override
+    public void encode(@NonNull final NetCommWriter writer) {
+        writer.writeInt(dialogId);
+        writer.writeByte((byte) 0);
+    }
+
     @NonNull
-    protected final ItemCount getCount() {
-        return count;
+    @Override
+    public String toString() {
+        return toString("Dialog ID: " + dialogId);
     }
 }

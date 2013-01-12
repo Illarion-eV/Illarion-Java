@@ -18,8 +18,6 @@
  */
 package illarion.client.world;
 
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
 import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.world.events.CharRemovedEvent;
 import illarion.common.annotation.NonNull;
@@ -230,11 +228,7 @@ public final class People {
 
         addCharacter(chara);
 
-        // request appearance from server if char is not known
-        final RequestAppearanceCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_REQUEST_APPEARANCE,
-                RequestAppearanceCmd.class);
-        cmd.request(id);
-        World.getNet().sendCommand(cmd);
+        World.getNet().sendCommand(new RequestAppearanceCmd(id));
         return chara;
     }
 

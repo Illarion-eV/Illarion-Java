@@ -19,68 +19,45 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.CharacterId;
+import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Request the appearance data of a unknown character (
- * {@link illarion.client.net.CommandList#CMD_REQUEST_APPEARANCE}).
+ * Client Command: Request the appearance data of a unknown character ({@link CommandList#CMD_REQUEST_APPEARANCE}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class RequestAppearanceCmd extends AbstractCommand {
     /**
      * The ID of the characters who's appearance is needed.
      */
-    private CharacterId charId;
+    @NonNull
+    private final CharacterId charId;
 
     /**
      * Default constructor for the request appearance command.
+     *
+     * @param characterId the ID of the character to request the appearance from
      */
-    public RequestAppearanceCmd() {
+    public RequestAppearanceCmd(@NonNull final CharacterId characterId) {
         super(CommandList.CMD_REQUEST_APPEARANCE);
+
+        charId = characterId;
     }
 
-    /**
-     * Create a duplicate of this request appearance command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public RequestAppearanceCmd clone() {
-        return new RequestAppearanceCmd();
-    }
-
-    /**
-     * Encode the data of this request appearance command and put the values
-     * into the buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
+    public void encode(@NonNull final NetCommWriter writer) {
         charId.encode(writer);
     }
 
-    /**
-     * Set the ID of the characters who's appearance data is needed.
-     *
-     * @param requestCharId the ID of the character who's appearance is needed
-     */
-    public void request(final CharacterId requestCharId) {
-        charId = requestCharId;
-    }
-
-    /**
-     * Get the data of this request appearance command as string.
-     *
-     * @return the data of this command as string
-     */
+    @NonNull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("ID: " + charId);
+        return toString(charId.toString());
     }
 }

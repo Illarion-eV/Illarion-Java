@@ -21,49 +21,46 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.ItemCount;
-import illarion.common.types.Location;
-import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Dragging a item from a inventory slot to the game map ({@link CommandList#CMD_DRAG_INV_MAP}).
+ * This command is used to request a look at on a item inside the crafting menu.
  *
- * @author Nop
- * @author Martin Karing &lt;nitram@illarion.org&gt;
+ * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-@Immutable
-public final class DragInvMapCmd extends AbstractDragCommand {
+public final class LookAtCraftItemCmd extends AbstractCommand {
     /**
-     * The location on the map that is the target of the move operation.
+     * The ID of the crafting dialog.
      */
-    @NonNull
-    private final Location dstLoc;
+    private final int dialogId;
 
     /**
-     * Inventory position the drag starts at.
+     * The index of the item to look at.
      */
-    private final short srcPos;
+    private final short itemIndex;
 
     /**
-     * Default constructor for the dragging from inventory to map command.
+     * Default constructor for the looking at a crafting item.
+     *
+     * @param dialogId  the ID of the dialog to close
+     * @param itemIndex the index of the item to look at
      */
-    public DragInvMapCmd(final int source, @NonNull final Location destination, @NonNull final ItemCount count) {
-        super(CommandList.CMD_DRAG_INV_MAP, count);
-        srcPos = (short) source;
-        dstLoc = new Location(destination);
+    public LookAtCraftItemCmd(final int dialogId, final int itemIndex) {
+        super(CommandList.CMD_CRAFT_ITEM);
+
+        this.dialogId = dialogId;
+        this.itemIndex = (short) itemIndex;
     }
 
     @Override
     public void encode(@NonNull final NetCommWriter writer) {
-        writer.writeUByte(srcPos);
-        writer.writeLocation(dstLoc);
-        getCount().encode(writer);
+        writer.writeInt(dialogId);
+        writer.writeByte((byte) 2);
+        writer.writeUByte(itemIndex);
     }
 
     @NonNull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Source: " + srcPos + " Destination: " + dstLoc + ' ' + getCount());
+        return toString("Dialog ID: " + dialogId + " Look at index: " + itemIndex);
     }
 }

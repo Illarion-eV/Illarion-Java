@@ -23,8 +23,6 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.graphics.Avatar;
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
 import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.net.server.events.CloseContainerEvent;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
@@ -492,10 +490,7 @@ public final class Player {
         playerId = newPlayerId;
         character.setCharId(playerId);
 
-        final RequestAppearanceCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_REQUEST_APPEARANCE,
-                RequestAppearanceCmd.class);
-        cmd.request(newPlayerId);
-        cmd.send();
+        World.getNet().sendCommand(new RequestAppearanceCmd(newPlayerId));
     }
 
     /**

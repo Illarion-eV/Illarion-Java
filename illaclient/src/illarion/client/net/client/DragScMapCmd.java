@@ -19,107 +19,64 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
-import javolution.text.TextBuilder;
+import net.jcip.annotations.Immutable;
 
 /**
  * Client Command: Dragging an item from a container to the map (CommandList#CMD_DRAG_SC_MAP}).
  *
- * @author Blay09
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class DragScMapCmd extends AbstractDragCommand {
-
     /**
      * The source container of the dragging event.
      */
-    private byte sourceContainer;
+    private final short sourceContainer;
 
     /**
      * The source container item of the dragging event.
      */
-    private byte sourceContainerItem;
+    private final short sourceContainerItem;
 
     /**
      * The target location of the dragging event.
      */
+    @NonNull
     private final Location targetLocation;
 
     /**
      * The default constructor of this DragScMapCmd.
+     *
+     * @param sourceContainer the container that is the source
+     * @param sourceSlot      the slot in the container that is the source
+     * @param destination     the location on the map that is the destination of the drag
+     * @param count           the amount of items to move
      */
-    public DragScMapCmd() {
-        super(CommandList.CMD_DRAG_SC_MAP);
-        targetLocation = new Location();
+    public DragScMapCmd(final int sourceContainer, final int sourceSlot, final Location destination,
+                        @NonNull final ItemCount count) {
+        super(CommandList.CMD_DRAG_SC_MAP, count);
+
+        this.sourceContainer = (short) sourceContainer;
+        sourceContainerItem = (short) sourceSlot;
+        targetLocation = new Location(destination);
     }
 
-    /**
-     * Create a duplicate of this dragging from container to map command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public DragScMapCmd clone() {
-        return new DragScMapCmd();
-    }
-
-    /**
-     * Encode the data of this dragging from container to map command and put
-     * the values into the buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
-        writer.writeByte(sourceContainer);
-        writer.writeByte(sourceContainerItem);
+    public void encode(@NonNull final NetCommWriter writer) {
+        writer.writeUByte(sourceContainer);
+        writer.writeUByte(sourceContainerItem);
         writer.writeLocation(targetLocation);
         getCount().encode(writer);
     }
 
-    /**
-     * Sets the dragging source.
-     *
-     * @param Container     the container from which the item was dragged
-     * @param ContainerItem the container item id which was dragged
-     */
-    public void setSource(final int Container, final int ContainerItem) {
-        sourceContainer = (byte) Container;
-        sourceContainerItem = (byte) ContainerItem;
-    }
-
-    /**
-     * Sets the dragging target.
-     *
-     * @param location the location on the map where the item was dragged
-     */
-    public void setTarget(final Location location) {
-        targetLocation.set(location);
-    }
-
-    /**
-     * Get the data of this dragging from container to map command as string.
-     *
-     * @return the data of this command as string
-     */
-    @SuppressWarnings("nls")
+    @NonNull
     @Override
     public String toString() {
-        final TextBuilder builder = TextBuilder.newInstance();
-        try {
-            builder.append("SourceContainer: ");
-            builder.append(sourceContainer);
-            builder.append(" SourceConItemID: ");
-            builder.append(sourceContainerItem);
-            builder.append(" TargetLocation: ");
-            builder.append(targetLocation.toString());
-            builder.append(" Count: ");
-            builder.append(getCount());
-            return toString(builder.toString());
-        } finally {
-            TextBuilder.recycle(builder);
-        }
+        return toString("Source: " + sourceContainer + '/' + sourceContainerItem + " Destination: " + targetLocation +
+                ' ' + getCount());
     }
-
 }

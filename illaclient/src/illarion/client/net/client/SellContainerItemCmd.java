@@ -21,56 +21,67 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import illarion.common.types.ItemCount;
 import net.jcip.annotations.Immutable;
 
 /**
- * This command is used to craft a item from a crafting dialog.
+ * This command is used to sell a item from a container to a trader.
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
 @Immutable
-public final class CraftItemCmd extends AbstractCommand {
+public final class SellContainerItemCmd extends AbstractCommand {
     /**
-     * The ID of the dialog to interact with.
+     * The ID of the trading dialog to sell to.
      */
     private final int dialogId;
 
     /**
-     * The index of the item in the crafting list that is referred to.
+     * The ID of the container to sell the item from.
      */
-    private final int craftingIndex;
+    private final short container;
 
     /**
-     * The amount of items to be crafted.
+     * The slot in the inventory to sell the item from.
      */
-    private final int amount;
+    private final int slot;
+
+    /**
+     * The amount of items to be sold.
+     */
+    @NonNull
+    private final ItemCount amount;
 
     /**
      * Default constructor for the trade item command.
      *
-     * @param dialogId      the dialog ID of the dialog to craft a item from
-     * @param craftingIndex the index of the item to craft
-     * @param amount        the amount of items to create as a batch
+     * @param dialogId  the ID of the trading dialog to sell the item to
+     * @param container the ID of the container to sell the item from
+     * @param slot      the slot in the container to sell the item from
+     * @param count     the amount of items to be sold
      */
-    public CraftItemCmd(final int dialogId, final int craftingIndex, final int amount) {
-        super(CommandList.CMD_CRAFT_ITEM);
+    public SellContainerItemCmd(final int dialogId, final int container, final int slot,
+                                @NonNull final ItemCount count) {
+        super(CommandList.CMD_TRADE_ITEM);
 
         this.dialogId = dialogId;
-        this.craftingIndex = craftingIndex;
-        this.amount = amount;
+        this.container = (short) (container + 1);
+        this.slot = slot;
+        amount = count;
     }
 
     @Override
     public void encode(@NonNull final NetCommWriter writer) {
         writer.writeInt(dialogId);
         writer.writeByte((byte) 1);
-        writer.writeUByte((short) craftingIndex);
-        writer.writeUByte((short) amount);
+        writer.writeUByte(container);
+        writer.writeUShort(slot);
+        amount.encode(writer);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return toString("dialog ID: " + dialogId);
+        return toString("dialog ID: " + dialogId + " Item: " + container + '/' + slot + ' ' + amount);
     }
 }

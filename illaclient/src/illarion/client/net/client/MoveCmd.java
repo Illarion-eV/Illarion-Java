@@ -19,16 +19,20 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.client.world.CharMovementMode;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.CharacterId;
+import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Request a move or a push (
- * {@link illarion.client.net.CommandList#CMD_MOVE}).
+ * Client Command: Request a move or a push ({@link CommandList#CMD_MOVE}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("ClassNamingConvention")
+@Immutable
 public final class MoveCmd extends AbstractCommand {
     /**
      * Byte flag for a simple move.
@@ -48,34 +52,41 @@ public final class MoveCmd extends AbstractCommand {
     /**
      * The character ID of the char that shall move.
      */
-    private CharacterId charId;
+    @NonNull
+    private final CharacterId charId;
 
     /**
      * The direction the character moves to.
      */
-    private byte dir;
+    private final short direction;
 
     /**
      * Set the movement type. Possible values are {@link #MODE_MOVE} and
      * {@link #MODE_PUSH}.
      */
-    private byte mode;
+    private final byte mode;
 
     /**
      * Default constructor for the move command.
      */
-    public MoveCmd() {
+    public MoveCmd(@NonNull final CharacterId charId, @NonNull final CharMovementMode mode, final int direction) {
         super(CommandList.CMD_MOVE);
-    }
 
-    /**
-     * Create a duplicate of this move command.
-     *
-     * @return new instance of this command
-     */
-    @Override
-    public MoveCmd clone() {
-        return new MoveCmd();
+        this.charId = charId;
+        this.direction = (short) direction;
+        switch (mode) {
+            case Walk:
+                this.mode = MODE_MOVE;
+                break;
+            case Run:
+                this.mode = MODE_RUN;
+                break;
+            case Push:
+                this.mode = MODE_PUSH;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid move mode!");
+        }
     }
 
     /**
@@ -85,54 +96,10 @@ public final class MoveCmd extends AbstractCommand {
      *               communication system
      */
     @Override
-    public void encode(final NetCommWriter writer) {
+    public void encode(@NonNull final NetCommWriter writer) {
         charId.encode(writer);
-        writer.writeByte(dir);
+        writer.writeUByte(direction);
         writer.writeByte(mode);
-    }
-
-    /**
-     * Set the ID of the character that shall move. The client is able to use
-     * {@link #setDirection(CharacterId, int)}. This function is only needed for the
-     * load test client.
-     *
-     * @param moveCharId the ID of the character that shall move
-     */
-    public void setCharID(final CharacterId moveCharId) {
-        charId = moveCharId;
-    }
-
-    /**
-     * Set the direction of the move and the ID of the character that shall
-     * move.
-     *
-     * @param moveCharId the ID of the character that shall move
-     * @param moveDir    the direction the character shall move to
-     */
-    public void setDirection(final CharacterId moveCharId, final int moveDir) {
-        dir = (byte) moveDir;
-        charId = moveCharId;
-    }
-
-    /**
-     * Set the type of this move to moving.
-     */
-    public void setMoving() {
-        mode = MODE_MOVE;
-    }
-
-    /**
-     * Set the type of this move to pushing.
-     */
-    public void setPushing() {
-        mode = MODE_PUSH;
-    }
-
-    /**
-     * Set the type of this move to running.
-     */
-    public void setRunning() {
-        mode = MODE_RUN;
     }
 
     /**
@@ -140,16 +107,10 @@ public final class MoveCmd extends AbstractCommand {
      *
      * @return the data of this command as string
      */
+    @NonNull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("ID: ");
-        builder.append(charId);
-        builder.append(" dir=");
-        builder.append(dir);
-        builder.append(" mode=");
-        builder.append(mode);
-        return toString(builder.toString());
+        return toString(charId + " Direction: " + direction + " Mode: " + mode);
     }
 }

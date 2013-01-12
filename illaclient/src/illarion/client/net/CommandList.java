@@ -178,7 +178,7 @@ public final class CommandList {
     /**
      * Client command to look at a item in a showcase.
      */
-    public static final int CMD_LOOKAT_SHOWCASE = 0xE0;
+    public static final int CMD_LOOKAT_CONTAINER = 0xE0;
 
     /**
      * Client command to look at a item on a tile.

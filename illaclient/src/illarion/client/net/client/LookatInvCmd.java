@@ -19,57 +19,37 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Looking at a inventory slot (
- * {@link illarion.client.net.CommandList#CMD_LOOKAT_INV}).
+ * Client Command: Looking at a inventory slot ({@link CommandList#CMD_LOOKAT_INV}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class LookatInvCmd extends AbstractCommand {
     /**
      * The inventory slot we are looking at.
      */
-    private byte slot;
+    private final short slot;
 
     /**
      * Default constructor for the look at inventory command.
+     *
+     * @param slot the inventory slot to look at
      */
-    public LookatInvCmd() {
+    public LookatInvCmd(final int slot) {
         super(CommandList.CMD_LOOKAT_INV);
+
+        this.slot = (short) slot;
     }
 
-    /**
-     * Create a duplicate of this look at inventory command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public LookatInvCmd clone() {
-        return new LookatInvCmd();
-    }
-
-    /**
-     * Encode the data of this look at inventory command and put the values into
-     * the buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
-        writer.writeByte(slot);
-    }
-
-    /**
-     * Set the target inventory slot we want to look at.
-     *
-     * @param lookAtSlot the slot we want to look at
-     */
-    public void setSlot(final int lookAtSlot) {
-        slot = (byte) lookAtSlot;
+    public void encode(@NonNull final NetCommWriter writer) {
+        writer.writeUByte(slot);
     }
 
     /**
@@ -77,6 +57,7 @@ public final class LookatInvCmd extends AbstractCommand {
      *
      * @return the data of this command as string
      */
+    @NonNull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

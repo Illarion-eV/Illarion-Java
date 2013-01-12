@@ -20,98 +20,63 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.client.world.World;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
+import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Dragging an item from the map to a container (
- * {@link illarion.client.net.CommandList#CMD_DRAG_MAP_SC}).
+ * Client Command: Dragging an item from the map to a container ({@link CommandList#CMD_DRAG_MAP_SC}).
  *
- * @author Blay09
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class DragMapScCmd extends AbstractDragCommand {
-
     /**
      * The source location of the dragging event.
      */
-    private byte dir;
+    private final short direction;
 
     /**
      * The target container of the dragging event.
      */
-    private byte targetContainer;
+    private final short targetContainer;
 
     /**
      * The target slot of the container.
      */
-    private byte targetContainerSlot;
+    private final short targetContainerSlot;
 
     /**
      * The default constructor of this DragMapScCmd.
+     *
+     * @param source               the location from where the item is taken
+     * @param destinationContainer the container that is the destination
+     * @param destinationSlot      the slot in the container that is the destination
+     * @param count                the amount of items to move
      */
-    public DragMapScCmd() {
-        super(CommandList.CMD_DRAG_MAP_SC);
+    public DragMapScCmd(final Location source, final int destinationContainer, final int destinationSlot,
+                        @NonNull final ItemCount count) {
+        super(CommandList.CMD_DRAG_MAP_SC, count);
+
+        direction = (short) World.getPlayer().getLocation().getDirection(source);
+        targetContainer = (short) destinationContainer;
+        targetContainerSlot = (short) destinationSlot;
     }
 
-    /**
-     * Create a duplicate of this dragging from map to container command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public DragMapScCmd clone() {
-        return new DragMapScCmd();
-    }
-
-    /**
-     * Encode the data of this dragging from map to container command and put
-     * the values into the buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
-        writer.writeByte(dir);
-        writer.writeByte(targetContainer);
-        writer.writeByte(targetContainerSlot);
+    public void encode(@NonNull final NetCommWriter writer) {
+        writer.writeUByte(direction);
+        writer.writeUByte(targetContainer);
+        writer.writeUByte(targetContainerSlot);
         getCount().encode(writer);
     }
 
-    /**
-     * Sets the dragging source.
-     *
-     * @param location the location on the map from which the item was dragged
-     */
-    public void setSource(final Location location) {
-        dir = (byte) World.getPlayer().getLocation().getDirection(location);
-    }
-
-    /**
-     * Sets the dragging target.
-     *
-     * @param container the container to which the item was dragged
-     * @param slot      the slot of the target container
-     */
-    public void setTarget(final int container, final int slot) {
-        targetContainer = (byte) container;
-        targetContainerSlot = (byte) slot;
-    }
-
-    /**
-     * Get the data of this dragging from map to container command as string.
-     *
-     * @return the data of this command as string
-     */
+    @NonNull
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("SourceDirection: ");
-        sb.append(dir);
-        sb.append(" TargetContainer: ");
-        sb.append(targetContainer);
-        sb.append(" TargetPosition: ");
-        sb.append(targetContainerSlot);
-        return toString(sb.toString());
+        return toString("SourceDirection: " + direction + " Destination: " + targetContainer + '/' +
+                targetContainerSlot + ' ' + getCount());
     }
 }

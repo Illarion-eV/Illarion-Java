@@ -18,33 +18,25 @@
  */
 package illarion.client.net.client;
 
-import illarion.client.net.CommandFactory;
-import illarion.client.world.World;
+import illarion.common.annotation.NonNull;
+import illarion.common.annotation.Nullable;
 import illarion.common.net.NetCommWriter;
-import illarion.common.util.RecycleObject;
-import javolution.context.PoolContext;
-import javolution.text.TextBuilder;
-import org.apache.log4j.Logger;
-
-import java.io.UnsupportedEncodingException;
+import net.jcip.annotations.Immutable;
+import net.jcip.annotations.NotThreadSafe;
 
 /**
- * Default super class for all commands that get send to a server. This command
- * objects are created by the recycle factory for commands.
+ * Default super class for all commands that get send to a server.
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractCommand implements RecycleObject {
-    /**
-     * The instance of the logger that is used to write out the data.
-     */
-    private static final Logger LOGGER = Logger.getLogger(AbstractCommand.class);
-
+@NotThreadSafe
+@Immutable
+public abstract class AbstractCommand {
     /**
      * The ID of the command.
      */
-    private int id;
+    private final int id;
 
     /**
      * The constructor of a command. This is used to set the ID of the command.
@@ -56,121 +48,39 @@ public abstract class AbstractCommand implements RecycleObject {
     }
 
     /**
-     * Encode a string and put it into the buffer.
+     * Get the simple name of this class along with the parameters of the command.
      *
-     * @param buffer the buffer that contains the the already encoded data
-     * @param pos    the first free position in the buffer
-     * @param txt    the string that shall be encoded
-     * @return the new first free position in the buffer
+     * @param param the parameters of the command that shall be displayed along with the class name of the command,
+     *              in case this is {@code null} the command is assumed to be encoded without parameters
+     * @return the string that contains the simple class name and the parameters
      */
-    @SuppressWarnings("nls")
-    protected static int encodeString(final byte[] buffer, final int pos,
-                                      final String txt) {
-        int newPos = pos;
-        final int len = txt.length();
-        buffer[newPos++] = (byte) len;
-        byte[] convString;
-        try {
-            convString = txt.getBytes("ISO-8859-1");
-        } catch (final UnsupportedEncodingException e) {
-            LOGGER.error("Encoding problem ISO-8859-1 not found");
-            convString = txt.getBytes();
-        }
-        for (final byte value : convString) {
-            buffer[newPos++] = value;
-        }
-        return newPos;
+    @NonNull
+    protected final String toString(@Nullable final String param) {
+        return getClass().getSimpleName() + '(' + ((param == null) ? "" : param) + ')';
     }
 
     /**
-     * Activate the client command after taking it out of the recycle factory.
-     * The ID is set again with this command.
+     * Get the information about this object as a string.
      *
-     * @param commId the ID of this command
+     * @return the data of the command as string
      */
     @Override
-    public final void activate(final int commId) {
-        id = commId;
-    }
-
-    /**
-     * Create a clone of the command.
-     */
-    @Override
-    public abstract AbstractCommand clone();
+    @NonNull
+    public abstract String toString();
 
     /**
      * Encode data for transfer to server. Only for send commands.
      *
      * @param writer the byte buffer the values are added to from index 0 on
      */
-    public abstract void encode(NetCommWriter writer);
+    public abstract void encode(@NonNull NetCommWriter writer);
 
     /**
      * Get the ID of this client command.
      *
      * @return the ID of the client command that is currently set.
      */
-    @Override
     public final int getId() {
         return id;
-    }
-
-    /**
-     * Recycle the object and put is back into the command factory.
-     */
-    @Override
-    public final void recycle() {
-        PoolContext.enter();
-        try {
-            CommandFactory.getInstance().recycle(this);
-        } finally {
-            PoolContext.exit();
-        }
-    }
-
-    /**
-     * Clearing the command up before storing it in the recycle factory. Mainly
-     * used to clean up references to objects that are not longer in use so the
-     * garbage collection can clean them up.
-     */
-    @Override
-    public void reset() {
-        // nothing to clear by default
-    }
-
-    /**
-     * Send this command to the using the net interface.
-     */
-    public final void send() {
-        World.getNet().sendCommand(this);
-    }
-
-    /**
-     * Get the informations about this object as a string.
-     *
-     * @return the data of the command as string
-     */
-    @Override
-    public abstract String toString();
-
-    /**
-     * Get the simple name of this class along with the parameters of the
-     * command.
-     *
-     * @param param the parameters of the command that shall be displayed along
-     *              with the class name of the command
-     * @return the string that contains the simple class name and the parameters
-     */
-    protected final String toString(final String param) {
-        final TextBuilder builder = TextBuilder.newInstance();
-        builder.append(getClass().getSimpleName());
-        builder.append('(');
-        builder.append(param);
-        builder.append(')');
-
-        final String retString = builder.toString();
-        TextBuilder.recycle(builder);
-        return retString;
     }
 }

@@ -21,9 +21,8 @@ package illarion.client.world;
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.input.InputReceiver;
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
 import illarion.client.net.client.MoveCmd;
+import illarion.client.net.client.TurnCmd;
 import illarion.client.util.Path;
 import illarion.client.util.PathNode;
 import illarion.client.util.PathReceiver;
@@ -373,7 +372,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         if ((isAnyTrunRequested() || (parentPlayer.getCharacter().getDirection() != direction))
                 && !requestedTurns[direction]) {
             requestedTurns[direction] = true;
-            CommandFactory.getInstance().getCommand(CommandList.CMD_TURN_N + direction).send();
+            World.getNet().sendCommand(new TurnCmd(direction));
             timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
         } else {
             discardCheck();
@@ -576,14 +575,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             LOGGER.error("Send move to server while ID is not known.");
             return;
         }
-        final MoveCmd cmd = (MoveCmd) CommandFactory.getInstance().getCommand(CommandList.CMD_MOVE);
-        cmd.setDirection(playerId, direction);
-        if (mode == CharMovementMode.Run) {
-            cmd.setRunning();
-        } else {
-            cmd.setMoving();
-        }
-        cmd.send();
+        World.getNet().sendCommand(new MoveCmd(playerId, mode, direction));
     }
 
     /**

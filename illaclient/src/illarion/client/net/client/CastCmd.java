@@ -19,6 +19,7 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import javolution.text.TextBuilder;
 
@@ -64,7 +65,7 @@ public final class CastCmd extends AbstractCommand {
      *               communication system
      */
     @Override
-    public void encode(final NetCommWriter writer) {
+    public void encode(@NonNull final NetCommWriter writer) {
         writer.writeUInt(spell);
 
         // add use info
@@ -74,15 +75,6 @@ public final class CastCmd extends AbstractCommand {
         // } else {
         // writer.writeByte(TARGET_NULL_CONST);
         // }
-    }
-
-    /**
-     * Clean up the stored references in this cast spell command before put it
-     * back into the recycler.
-     */
-    @Override
-    public void reset() {
-        // target = null;
     }
 
     /**
@@ -110,6 +102,7 @@ public final class CastCmd extends AbstractCommand {
      *
      * @return the data of this command as string
      */
+    @NonNull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

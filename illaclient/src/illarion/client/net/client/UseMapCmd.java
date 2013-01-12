@@ -21,55 +21,45 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.ItemCount;
+import illarion.common.types.Location;
 import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Dragging an item from the inventory to a container ({@link CommandList#CMD_DRAG_INV_SC}).
+ * This command is used to tell the server that the player is using a object on the map.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Immutable
-public final class DragInvScCmd extends AbstractDragCommand {
+public final class UseMapCmd extends AbstractCommand {
     /**
-     * The source inventory slot of the dragging event.
+     * The map location that is used.
      */
-    private final short sourceSlot;
+    @NonNull
+    private final Location usedLocation;
 
     /**
-     * The target container of the dragging event.
+     * Default constructor for the use command.
+     *
+     * @param location the location that is used
      */
-    private final short targetContainer;
+    public UseMapCmd(@NonNull final Location location) {
+        super(CommandList.CMD_USE);
 
-    /**
-     * The target slot of the container.
-     */
-    private final short targetContainerSlot;
-
-    /**
-     * The default constructor of this DragInvScCmd.
-     */
-    public DragInvScCmd(final int source, final int targetContainer, final int targetSlot,
-                        @NonNull final ItemCount count) {
-        super(CommandList.CMD_DRAG_INV_SC, count);
-
-        sourceSlot = (short) source;
-        this.targetContainer = (short) targetContainer;
-        targetContainerSlot = (short) targetSlot;
+        usedLocation = new Location(location);
     }
 
     @Override
     public void encode(@NonNull final NetCommWriter writer) {
-        writer.writeUByte(sourceSlot);
-        writer.writeUByte(targetContainer);
-        writer.writeUByte(targetContainerSlot);
-        getCount().encode(writer);
+        writer.writeUByte((short) 1); // USE COMPONENTS
+        writer.writeUByte((short) 1); // MAP REFERENCE
+        writer.writeLocation(usedLocation);
+        writer.writeUByte((short) 0); // COUNTER
     }
 
     @NonNull
+    @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Source: " + sourceSlot + " Destination: " + targetContainer + '/' + targetContainerSlot +
-                ' ' + getCount());
+        return toString("Location: " + usedLocation);
     }
 }

@@ -23,7 +23,9 @@ import illarion.client.IllaClient;
 import illarion.client.Servers;
 import illarion.client.crash.NetCommCrashHandler;
 import illarion.client.net.client.AbstractCommand;
+import illarion.client.net.client.KeepAliveCmd;
 import illarion.client.net.server.AbstractReply;
+import illarion.client.world.World;
 import illarion.common.util.Timer;
 import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
@@ -127,7 +129,6 @@ public final class NetComm {
      * Default constructor that prepares all values of the NetComm.
      */
     public NetComm() {
-        CommandFactory.getInstance();
         ReplyFactory.getInstance();
 
         inputQueue = new LinkedBlockingQueue<AbstractReply>();
@@ -240,7 +241,7 @@ public final class NetComm {
                     new Timer(INITIAL_DELAY, KEEP_ALIVE_DELAY, new Runnable() {
                         @Override
                         public void run() {
-                            CommandFactory.getInstance().getCommand(CommandList.CMD_KEEPALIVE).send();
+                            World.getNet().sendCommand(keepAliveCmd);
                         }
                     });
             keepAliveTimer.setRepeats(true);
@@ -252,6 +253,7 @@ public final class NetComm {
         return true;
     }
 
+    private final KeepAliveCmd keepAliveCmd = new KeepAliveCmd();
     private Timer keepAliveTimer;
 
     /**

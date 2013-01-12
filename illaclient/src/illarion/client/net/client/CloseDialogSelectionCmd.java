@@ -19,54 +19,50 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: This command returns the selection made in a selection dialog to the server ( {@link
- * illarion.client.net.CommandList#CMD_CLOSE_DIALOG_SELECTION}).
+ * Client Command: This command returns the selection made in a selection dialog to the server
+ * ({@link CommandList#CMD_CLOSE_DIALOG_SELECTION}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class CloseDialogSelectionCmd extends AbstractCommand {
     /**
      * The ID that was send by the server to initiate text input.
      */
-    private int dialogID;
+    private final int dialogID;
 
     /**
      * The index that was selected.
      */
-    private short selectedIndex;
+    private final short selectedIndex;
 
     /**
      * The flag that stores if the input was confirmed or canceled.
      */
-    private boolean success;
+    private final boolean success;
 
     /**
      * Default constructor for the text response command.
+     *
+     * @param dialogID      the ID of the dialog
+     * @param selectedIndex the index that was selected
+     * @param success       {@code true} in case the dialog got confirmed
      */
-    public CloseDialogSelectionCmd() {
+    public CloseDialogSelectionCmd(final int dialogID, final int selectedIndex, final boolean success) {
         super(CommandList.CMD_CLOSE_DIALOG_SELECTION);
+
+        this.dialogID = dialogID;
+        this.selectedIndex = (short) selectedIndex;
+        this.success = success;
     }
 
-    /**
-     * Create a duplicate of this text response command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public CloseDialogSelectionCmd clone() {
-        return new CloseDialogSelectionCmd();
-    }
-
-    /**
-     * Encode the data of this text response command and put the values into the buffer.
-     *
-     * @param writer the interface that allows writing data to the network communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
+    public void encode(@NonNull final NetCommWriter writer) {
         writer.writeInt(dialogID);
         if (success) {
             writer.writeUByte((byte) 0xFF);
@@ -76,48 +72,10 @@ public final class CloseDialogSelectionCmd extends AbstractCommand {
         writer.writeUByte(selectedIndex);
     }
 
-    /**
-     * Clean up the command before put it back into the recycler for later reuse.
-     */
-    @Override
-    public void reset() {
-    }
-
-    /**
-     * Set the ID of the dialog that supplied the text.
-     *
-     * @param id the id of the dialog
-     */
-    public void setDialogId(final int id) {
-        dialogID = id;
-    }
-
-    /**
-     * Set the index that was selected.
-     *
-     * @param index the index that was selected
-     */
-    public void setSelectedIndex(final int index) {
-        selectedIndex = (short) index;
-    }
-
-    /**
-     * Set if the input dialog was confirmed or canceled.
-     *
-     * @param value {@code true} in case the dialog was confirmed
-     */
-    public void setSuccess(final boolean value) {
-        success = value;
-    }
-
-    /**
-     * Get the data of this text response command as string.
-     *
-     * @return the data of this command as string
-     */
+    @NonNull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Selected index: " + selectedIndex);
+        return toString("Dialog ID: " + dialogID + " - Index: " + selectedIndex + " successful: " + success);
     }
 }

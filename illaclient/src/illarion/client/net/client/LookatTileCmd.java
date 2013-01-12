@@ -19,70 +19,44 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.Location;
+import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Looking at a tile on the map (
- * {@link illarion.client.net.CommandList#CMD_LOOKAT_TILE}).
+ * Client Command: Looking at a tile on the map ({@link CommandList#CMD_LOOKAT_TILE}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class LookatTileCmd extends AbstractCommand {
     /**
      * The position on the map we are going to look at.
      */
-    private final transient Location loc;
+    @NonNull
+    private final Location location;
 
     /**
      * Default constructor for the look at tile command.
+     *
+     * @param tileLocation the location of the tile to look at
      */
-    public LookatTileCmd() {
+    public LookatTileCmd(@NonNull final Location tileLocation) {
         super(CommandList.CMD_LOOKAT_TILE);
-        loc = new Location();
+        location = new Location(tileLocation);
     }
 
-    /**
-     * Create a duplicate of this look at tile command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public LookatTileCmd clone() {
-        return new LookatTileCmd();
+    public void encode(@NonNull final NetCommWriter writer) {
+        writer.writeLocation(location);
     }
 
-    /**
-     * Encode the data of this look at map command and put the values into the
-     * buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
-        writer.writeLocation(loc);
-    }
-
-    /**
-     * Set the location we are looking at.
-     *
-     * @param lookAtLoc the location we are looking at.
-     */
-    public void setPosition(final Location lookAtLoc) {
-        loc.set(lookAtLoc);
-    }
-
-    /**
-     * Get the data of this look at map command as string.
-     *
-     * @return the data of this command as string
-     * @see illarion.client.net.client.AbstractCommand#toString()
-     */
+    @NonNull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("position: " + loc.toString());
+        return toString("position: " + location.toString());
     }
 }

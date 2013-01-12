@@ -18,14 +18,13 @@
  */
 package illarion.client.gui.util;
 
-import de.lessvoid.nifty.controls.NiftyControl;
-
 /**
- *
  * @author Stefano Bonicatti &lt;smjert@gmail.com&gt;
  */
-public interface Option<V,C> {
+public interface Option<V, C> {
     V getValue();
+
     String getKey();
+
     C getControl();
 }

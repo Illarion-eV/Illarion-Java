@@ -18,11 +18,11 @@
  */
 package illarion.client.world.interactive;
 
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
 import illarion.client.net.client.*;
 import illarion.client.world.World;
+import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.InventorySlot;
+import illarion.client.world.items.MerchantList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
@@ -76,12 +76,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
             return;
         }
 
-        final DragInvInvCmd cmd =
-                CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_DRAG_INV_INV, DragInvInvCmd.class);
-        cmd.setDrag(getSlotId(), targetSlot.getSlotId());
-        cmd.setCount(count);
-        cmd.send();
+        World.getNet().sendCommand(new DragInvInvCmd(getSlotId(), targetSlot.getSlotId(), count));
     }
 
     public void use() {
@@ -89,9 +84,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
             return;
         }
 
-        final UseCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_USE, UseCmd.class);
-        cmd.addUse(this);
-        cmd.send();
+        World.getNet().sendCommand(new UseInventoryCmd(getSlotId()));
     }
 
     public void openContainer() {
@@ -99,7 +92,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
             return;
         }
 
-        CommandFactory.getInstance().getCommand(CommandList.CMD_OPEN_BAG).send();
+        World.getNet().sendCommand(new OpenBagCmd());
     }
 
     public void lookAt() {
@@ -107,11 +100,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
             return;
         }
 
-        final LookatInvCmd cmd =
-                CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_LOOKAT_INV, LookatInvCmd.class);
-        cmd.setSlot(this.getSlotId());
-        cmd.send();
+        World.getNet().sendCommand(new LookatInvCmd(getSlotId()));
     }
 
     public boolean acceptItem(final ItemId itemId) {
@@ -126,11 +115,12 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
             return;
         }
 
-        final TradeItemCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_TRADE_ITEM,
-                TradeItemCmd.class);
-        cmd.setSellFromInventory(getSlotId(), parentItem.getCount());
-        cmd.setDialogId(World.getPlayer().getMerchantList().getId());
-        cmd.send();
+        final MerchantList merchantList = World.getPlayer().getMerchantList();
+        if (merchantList == null) {
+            return;
+        }
+
+        World.getNet().sendCommand(new SellInventoryItemCmd(merchantList.getId(), getSlotId(), parentItem.getCount()));
     }
 
     /**
@@ -145,13 +135,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
             return;
         }
 
-        final DragInvMapCmd cmd =
-                CommandFactory.getInstance().getCommand(
-                        CommandList.CMD_DRAG_INV_MAP, DragInvMapCmd.class);
-        cmd.setDragFrom(getSlotId());
-        cmd.setDragTo(targetTile.getLocation());
-        cmd.setCount(count);
-        cmd.send();
+        World.getNet().sendCommand(new DragInvMapCmd(getSlotId(), targetTile.getLocation(), count));
     }
 
     @Override
@@ -160,12 +144,8 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
             return;
         }
 
-        final DragInvScCmd cmd = CommandFactory.getInstance().getCommand(CommandList.CMD_DRAG_INV_SC,
-                DragInvScCmd.class);
-        cmd.setSource(getSlotId());
-        cmd.setTarget(targetSlot.getSlot().getContainerId(), targetSlot.getSlot().getLocation());
-        cmd.setCount(count);
-        cmd.send();
+        final ContainerSlot slot = targetSlot.getSlot();
+        World.getNet().sendCommand(new DragInvScCmd(getSlotId(), slot.getContainerId(), slot.getLocation(), count));
     }
 
     /**

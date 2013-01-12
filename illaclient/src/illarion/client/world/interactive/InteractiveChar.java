@@ -18,9 +18,6 @@
  */
 package illarion.client.world.interactive;
 
-import illarion.client.net.CommandFactory;
-import illarion.client.net.CommandList;
-import illarion.client.net.client.MoveCmd;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.types.ItemCount;
@@ -68,23 +65,7 @@ public class InteractiveChar extends AbstractDraggable implements DropTarget {
      */
     @Override
     public void dragTo(final InteractiveMapTile targetTile, final ItemCount count) {
-        if (!isInInteractionRange()) {
-            return;
-        }
-
-        final int pushingDir =
-                getLocation().getDirection(targetTile.getLocation());
-
-        if (pushingDir == Location.DIR_ZERO) {
-            return;
-        }
-
-        final MoveCmd cmd =
-                CommandFactory.getInstance().getCommand(CommandList.CMD_MOVE,
-                        MoveCmd.class);
-        cmd.setDirection(parentChar.getCharId(), pushingDir);
-        cmd.setPushing();
-        cmd.send();
+        // nothing
     }
 
     @Override

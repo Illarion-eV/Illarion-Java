@@ -19,70 +19,47 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Request the size of the transfered map.
+ * Client Command: Request the size of the transferred map.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
- * @see illarion.client.net.CommandList#CMD_MAPDIMENSION
+ * @see CommandList#CMD_MAPDIMENSION
  */
-public class MapDimensionCmd extends AbstractCommand {
+@Immutable
+public final class MapDimensionCmd extends AbstractCommand {
     /**
      * The map height that is requested from the server.
      */
-    private short mapHeight;
+    private final short mapHeight;
 
     /**
      * The map width that is requested from the server.
      */
-    private short mapWidth;
+    private final short mapWidth;
 
     /**
      * Default constructor for the map dimension command.
-     */
-    public MapDimensionCmd() {
-        super(CommandList.CMD_MAPDIMENSION);
-    }
-
-    /**
-     * Create a duplicate of this Map Dimension command.
-     *
-     * @return new instance of this command
-     */
-    @Override
-    public MapDimensionCmd clone() {
-        return new MapDimensionCmd();
-    }
-
-    /**
-     * Encode the data of this login command and put the values into the buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
-        writer.writeUByte(mapWidth);
-        writer.writeUByte(mapHeight);
-    }
-
-    /**
-     * Set the dimension of the map that is requested from the server.
      *
      * @param width  the half of the needed width in stripes - 1
      * @param height the half of the needed height in stripes - 1
      */
-    public void setMapDimensions(final int width, final int height) {
+    public MapDimensionCmd(final int width, final int height) {
+        super(CommandList.CMD_MAPDIMENSION);
         mapWidth = (short) width;
         mapHeight = (short) height;
     }
 
-    /**
-     * Get the data of this map dimension command as string.
-     *
-     * @return the data of this command as string
-     */
+    @Override
+    public void encode(@NonNull final NetCommWriter writer) {
+        writer.writeUByte(mapWidth);
+        writer.writeUByte(mapHeight);
+    }
+
+    @NonNull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

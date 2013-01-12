@@ -21,56 +21,55 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import net.jcip.annotations.Immutable;
 
 /**
- * This command is used to craft a item from a crafting dialog.
+ * This command is used to request a look at on a ingredient inside the crafting menu.
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-@Immutable
-public final class CraftItemCmd extends AbstractCommand {
+public final class LookAtCraftIngredientCmd extends AbstractCommand {
     /**
-     * The ID of the dialog to interact with.
+     * The ID of the crafting dialog.
      */
     private final int dialogId;
 
     /**
-     * The index of the item in the crafting list that is referred to.
+     * The index of the item that is supposed to be crafted
      */
-    private final int craftingIndex;
+    private final short itemIndex;
 
     /**
-     * The amount of items to be crafted.
+     * The index of the ingredient to look at.
      */
-    private final int amount;
+    private final short ingredientIndex;
 
     /**
-     * Default constructor for the trade item command.
+     * Default constructor for the looking at a crafting item.
      *
-     * @param dialogId      the dialog ID of the dialog to craft a item from
-     * @param craftingIndex the index of the item to craft
-     * @param amount        the amount of items to create as a batch
+     * @param dialogId        the ID of the dialog to close
+     * @param itemIndex       the index of the item that is crafted
+     * @param ingredientIndex the index of the ingredient to look at
      */
-    public CraftItemCmd(final int dialogId, final int craftingIndex, final int amount) {
+    public LookAtCraftIngredientCmd(final int dialogId, final int itemIndex, final int ingredientIndex) {
         super(CommandList.CMD_CRAFT_ITEM);
 
         this.dialogId = dialogId;
-        this.craftingIndex = craftingIndex;
-        this.amount = amount;
+        this.itemIndex = (short) itemIndex;
+        this.ingredientIndex = (short) ingredientIndex;
     }
 
     @Override
     public void encode(@NonNull final NetCommWriter writer) {
         writer.writeInt(dialogId);
-        writer.writeByte((byte) 1);
-        writer.writeUByte((short) craftingIndex);
-        writer.writeUByte((short) amount);
+        writer.writeByte((byte) 3);
+        writer.writeUByte(itemIndex);
+        writer.writeUByte(ingredientIndex);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return toString("dialog ID: " + dialogId);
+        return toString("Dialog ID: " + dialogId + " Look at index: " + itemIndex + " Ingredient index:" +
+                ingredientIndex);
     }
 }

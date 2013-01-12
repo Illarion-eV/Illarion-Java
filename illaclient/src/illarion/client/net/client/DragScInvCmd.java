@@ -19,101 +19,63 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import illarion.common.types.ItemCount;
+import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Dragging an item from a container to the inventory (
- * {@link illarion.client.net.CommandList#CMD_DRAG_SC_INV}).
+ * Client Command: Dragging an item from a container to the inventory ({@link CommandList#CMD_DRAG_SC_INV}).
  *
- * @author Blay09
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class DragScInvCmd extends AbstractDragCommand {
-
     /**
      * The source container of the dragging event.
      */
-    private byte sourceContainer;
+    private final short sourceContainer;
 
     /**
      * The source container item of the dragging event.
      */
-    private byte sourceContainerItem;
+    private final short sourceContainerItem;
 
     /**
      * The target inventory slot of the dragging event.
      */
-    private byte targetSlot;
+    private final short targetSlot;
 
     /**
      * The default constructor of this DragScInvCmd.
+     *
+     * @param sourceContainer the container that is the source
+     * @param sourceSlot      the slot in the container that is the source
+     * @param destination     the inventory slot that is the destination of the drag
+     * @param count           the amount of items to move
      */
-    public DragScInvCmd() {
-        super(CommandList.CMD_DRAG_SC_INV);
+    public DragScInvCmd(final int sourceContainer, final int sourceSlot, final int destination,
+                        @NonNull final ItemCount count) {
+        super(CommandList.CMD_DRAG_SC_INV, count);
+
+        this.sourceContainer = (short) sourceContainer;
+        sourceContainerItem = (short) sourceSlot;
+        targetSlot = (short) destination;
     }
 
-    /**
-     * Create a duplicate of this dragging from container to inventory command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public DragScInvCmd clone() {
-        return new DragScInvCmd();
-    }
-
-    /**
-     * Encode the data of this dragging from container to inventory command and
-     * put the values into the buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
-        writer.writeByte(sourceContainer);
-        writer.writeByte(sourceContainerItem);
-        writer.writeByte(targetSlot);
+    public void encode(@NonNull final NetCommWriter writer) {
+        writer.writeUByte(sourceContainer);
+        writer.writeUByte(sourceContainerItem);
+        writer.writeUByte(targetSlot);
         getCount().encode(writer);
     }
 
-    /**
-     * Sets the dragging source.
-     *
-     * @param container     the container from which the item was dragged
-     * @param containerItem the container item id which was dragged
-     */
-    public void setSource(final int container, final int containerItem) {
-        sourceContainer = (byte) container;
-        sourceContainerItem = (byte) containerItem;
-    }
-
-    /**
-     * Sets the dragging target.
-     *
-     * @param slot the inventory slot to which the item was dragged.
-     */
-    public void setTarget(final int slot) {
-        targetSlot = (byte) slot;
-    }
-
-    /**
-     * Get the data of this dragging from container to inventory command as
-     * string.
-     *
-     * @return the data of this command as string
-     */
+    @NonNull
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("SourceContainer: ");
-        sb.append(sourceContainer);
-        sb.append(" SourceConItemID: ");
-        sb.append(sourceContainerItem);
-        sb.append(" TargetSlot: ");
-        sb.append(targetSlot);
-        sb.append(" Count: ");
-        sb.append(targetSlot);
-        return toString(sb.toString());
+        return toString("Source: " + sourceContainer + '/' + sourceContainerItem + " Destination: " + targetSlot +
+                ' ' + getCount());
     }
 
 }

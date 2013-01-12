@@ -20,93 +20,55 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.client.world.World;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
+import net.jcip.annotations.Immutable;
 
 /**
- * Client Command: Dragging a item from a map position to a inventory slot (
- * {@link illarion.client.net.CommandList#CMD_DRAG_INV_SC}).
+ * Client Command: Dragging a item from a map position to a inventory slot ({@link CommandList#CMD_DRAG_MAP_INV}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class DragMapInvCmd extends AbstractDragCommand {
-
     /**
      * The direction the source location is at, relative to the character.
      */
-    private byte dir;
+    private final short direction;
 
     /**
      * The inventory slot that is the target of this drag operation.
      */
-    private byte dstPos;
+    private final short dstPos;
 
     /**
      * Default constructor for the dragging from map to inventory command.
+     *
+     * @param source      the location from where the item is taken
+     * @param destination the destination slot in the inventory
+     * @param count       the amount of items to move
      */
-    public DragMapInvCmd() {
-        super(CommandList.CMD_DRAG_MAP_INV);
+    public DragMapInvCmd(@NonNull final Location source, final int destination, @NonNull final ItemCount count) {
+        super(CommandList.CMD_DRAG_MAP_INV, count);
+
+        direction = (short) World.getPlayer().getLocation().getDirection(source);
+        dstPos = (short) destination;
     }
 
-    /**
-     * Create a duplicate of this dragging from map to inventory command.
-     *
-     * @return new instance of this command
-     */
     @Override
-    public DragMapInvCmd clone() {
-        return new DragMapInvCmd();
-    }
-
-    /**
-     * Encode the data of this dragging from map to inventory command and put
-     * the values into the buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     *               communication system
-     */
-    @Override
-    public void encode(final NetCommWriter writer) {
-        writer.writeByte(dir);
-        writer.writeByte(dstPos);
+    public void encode(@NonNull final NetCommWriter writer) {
+        writer.writeUByte(direction);
+        writer.writeUByte(dstPos);
         getCount().encode(writer);
     }
 
-    /**
-     * Set the source location on the map for this dragging command.
-     *
-     * @param loc the location on the map the drag starts at
-     */
-    public void setDragFrom(final Location loc) {
-        dir = (byte) World.getPlayer().getLocation().getDirection(loc);
-    }
-
-    /**
-     * Set the destination of the dragging event.
-     *
-     * @param dragDstPos the inventory slot that is the destination of the drag
-     *                   event
-     */
-    public void setDragTo(final int dragDstPos) {
-        dstPos = (byte) dragDstPos;
-    }
-
-    /**
-     * Get the data of this dragging from map to inventory command as string.
-     *
-     * @return the data of this command as string
-     */
+    @NonNull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Source Dir: ");
-        builder.append(dir);
-        builder.append(" Destination: ");
-        builder.append(dstPos);
-        builder.append(" Counter: ");
-        builder.append(getCount());
-        return toString(builder.toString());
+        return toString("Source Dir: " + direction + " Destination: " + dstPos + ' ' + getCount());
     }
 }

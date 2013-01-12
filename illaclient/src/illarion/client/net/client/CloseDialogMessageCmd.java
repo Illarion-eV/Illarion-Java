@@ -19,48 +19,41 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
+import net.jcip.annotations.Immutable;
 
 /**
  * This command is used to inform the server that a message dialog was closed.
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class CloseDialogMessageCmd
-        extends AbstractCommand {
+@Immutable
+public final class CloseDialogMessageCmd extends AbstractCommand {
     /**
      * The ID of the dialog to close. This ID is send by the server once the dialog is opened.
      */
-    private int dialogId;
+    private final int dialogId;
 
     /**
      * Default constructor for the close message dialog command.
-     */
-    public CloseDialogMessageCmd() {
-        super(CommandList.CMD_CLOSE_DIALOG_MSG);
-    }
-
-    /**
-     * Set the ID of the dialog that was closed.
      *
-     * @param newId the ID of the dialog
+     * @param dialogId the ID of the dialog to close
      */
-    public void setDialogId(final int newId) {
-        dialogId = newId;
+    public CloseDialogMessageCmd(final int dialogId) {
+        super(CommandList.CMD_CLOSE_DIALOG_MSG);
+
+        this.dialogId = dialogId;
     }
 
     @Override
-    public CloseDialogMessageCmd clone() {
-        return new CloseDialogMessageCmd();
-    }
-
-    @Override
-    public void encode(NetCommWriter writer) {
+    public void encode(@NonNull final NetCommWriter writer) {
         writer.writeInt(dialogId);
     }
 
+    @NonNull
     @Override
     public String toString() {
-        return toString("dialog ID: " + dialogId);
+        return toString("Dialog ID: " + dialogId);
     }
 }

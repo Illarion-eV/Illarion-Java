@@ -21,53 +21,40 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.ItemCount;
+import illarion.common.types.Location;
 import net.jcip.annotations.Immutable;
+import net.jcip.annotations.ThreadSafe;
 
 /**
- * Client Command: Dragging a item from one inventory slot to another ({@link CommandList#CMD_DRAG_INV_INV}).
+ * This command is used to inform the server that the character turns towards a specified direction.
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Immutable
-public final class DragInvInvCmd extends AbstractDragCommand {
+@ThreadSafe
+public final class TurnCmd extends AbstractCommand {
     /**
-     * The inventory position the drag ends at.
-     */
-    private final short dstPos;
-
-    /**
-     * The inventory position the drag starts at.
-     */
-    private final short srcPos;
-
-    /**
-     * Default constructor for the dragging from inventory to inventory command.
+     * Default constructor for the turn message.
      *
-     * @param source      the inventory position where the drag starts
-     * @param destination the inventory position where the drag ends
-     * @param count       the amount of items to drag
+     * @param direction the direction to turn to
      */
-    public DragInvInvCmd(final int source, final int destination, final ItemCount count) {
-        super(CommandList.CMD_DRAG_INV_INV, count);
+    public TurnCmd(final int direction) {
+        super(CommandList.CMD_TURN_N + direction);
 
-        srcPos = (short) source;
-        dstPos = (short) destination;
+        if ((direction < 0) || (direction >= Location.DIR_MOVE8)) {
+            throw new IllegalArgumentException("Direction out of range: " + direction);
+        }
     }
 
     @Override
     public void encode(@NonNull final NetCommWriter writer) {
-        writer.writeUByte(srcPos);
-        writer.writeUByte(dstPos);
-        getCount().encode(writer);
     }
-
 
     @NonNull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Source: " + srcPos + " Destination: " + dstPos + ' ' + getCount());
+        return toString("Direction: " + (getId() - CommandList.CMD_TURN_N));
     }
 }
