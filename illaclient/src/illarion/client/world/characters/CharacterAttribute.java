@@ -18,6 +18,8 @@
  */
 package illarion.client.world.characters;
 
+import illarion.common.annotation.NonNull;
+
 /**
  * This enumerator contains the attributes of a character the client is able to monitor.
  *
@@ -31,14 +33,15 @@ public enum CharacterAttribute {
     /**
      * The name for the attribute that is used by the server.
      */
-    private String serverName;
+    @NonNull
+    private final String serverName;
 
     /**
      * Default constructor.
      *
      * @param serverName the name used by the server to refer to this attribute
      */
-    CharacterAttribute(final String serverName) {
+    CharacterAttribute(@NonNull final String serverName) {
         this.serverName = serverName;
     }
 
@@ -47,6 +50,7 @@ public enum CharacterAttribute {
      *
      * @return the name used by the server to refer to this attribute
      */
+    @NonNull
     public String getServerName() {
         return serverName;
     }
