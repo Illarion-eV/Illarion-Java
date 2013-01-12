@@ -216,7 +216,7 @@ public final class GameMapHandler
         }
 
         if ((activeScreen != null) && (activeNifty != null)) {
-            final Item movedItem = targetTile.getTopImage();
+            final Item movedItem = targetTile.getTopItem();
             final int width = movedItem.getGuiTexture().getWidth();
             final int height = movedItem.getGuiTexture().getHeight();
 

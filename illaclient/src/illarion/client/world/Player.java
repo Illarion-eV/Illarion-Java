@@ -50,6 +50,8 @@ import org.newdawn.slick.openal.SoundStore;
 
 import java.awt.*;
 import java.io.File;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Main Class for the player controlled character.
@@ -132,8 +134,14 @@ public final class Player {
      * This map contains the containers that are known for the player.
      */
     @NonNull
-    @GuardedBy("containers")
+    @GuardedBy("containerLock")
     private final TIntObjectHashMap<ItemContainer> containers;
+
+    /**
+     * This lock is used to synchronize the access on the containers.
+     */
+    @NonNull
+    private final ReadWriteLock containerLock;
 
     /**
      * The merchant dialog that is currently open.
@@ -172,6 +180,7 @@ public final class Player {
         movementHandler = new PlayerMovement(this);
         inventory = new Inventory();
         containers = new TIntObjectHashMap<ItemContainer>();
+        containerLock = new ReentrantReadWriteLock();
 
         updateListener();
         AnnotationProcessor.process(this);
@@ -179,7 +188,17 @@ public final class Player {
 
     @EventSubscriber
     public void onOpenContainerEvent(@NonNull final OpenContainerEvent event) {
-        final ItemContainer container = getContainer(event.getContainerId());
+        final ItemContainer container;
+        if (hasContainer(event.getContainerId())) {
+            container = getContainer(event.getContainerId());
+            if (container == null) {
+                throw new IllegalStateException("Has container with ID but can't receive it. "
+                        + "Internal state corrupted.");
+            }
+        } else {
+            container = createNewContainer(event.getContainerId());
+        }
+
         final TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
         while (itr.hasNext()) {
             itr.advance();
@@ -236,15 +255,50 @@ public final class Player {
      * @param id the ID of the container
      * @return the container assigned to this ID or a newly created container
      */
-    @NonNull
+    @Nullable
     public ItemContainer getContainer(final int id) {
-        synchronized (containers) {
+        containerLock.readLock().lock();
+        try {
+            return containers.get(id);
+        } finally {
+            containerLock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Create a new item container instance.
+     *
+     * @param id the ID of the container
+     * @return the new item container
+     * @throws IllegalArgumentException in case there is already a container with the same ID
+     */
+    @NonNull
+    public ItemContainer createNewContainer(final int id) {
+        containerLock.writeLock().lock();
+        try {
             if (containers.containsKey(id)) {
-                return containers.get(id);
+                throw new IllegalArgumentException("Can't create item container that already exists.");
             }
             final ItemContainer newContainer = new ItemContainer(id);
             containers.put(id, newContainer);
             return newContainer;
+        } finally {
+            containerLock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Check if there is currently a container with the specified ID open.
+     *
+     * @param id the ID of the container
+     * @return {@code true} in case this container exists
+     */
+    public boolean hasContainer(final int id) {
+        containerLock.readLock().lock();
+        try {
+            return containers.containsKey(id);
+        } finally {
+            containerLock.readLock().unlock();
         }
     }
 

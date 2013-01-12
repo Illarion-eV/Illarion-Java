@@ -18,6 +18,7 @@
  */
 package illarion.client.world.interactive;
 
+import illarion.common.annotation.NonNull;
 import illarion.common.types.ItemCount;
 
 /**
@@ -26,6 +27,7 @@ import illarion.common.types.ItemCount;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("ClassReferencesSubclass")
 public interface Draggable {
     /**
      * Drag the object onto a character.
@@ -33,7 +35,8 @@ public interface Draggable {
      * @param targetChar the character to drag the object to
      * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveChar targetChar, ItemCount count);
+    @SuppressWarnings("UnusedDeclaration")
+    void dragTo(@NonNull InteractiveChar targetChar, @NonNull ItemCount count);
 
     /**
      * Drag the object on a inventory slot.
@@ -41,7 +44,7 @@ public interface Draggable {
      * @param targetSlot the slot in the inventory that is the target
      * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveInventorySlot targetSlot, ItemCount count);
+    void dragTo(@NonNull InteractiveInventorySlot targetSlot, @NonNull ItemCount count);
 
     /**
      * Drag the object to a map tile.
@@ -49,7 +52,7 @@ public interface Draggable {
      * @param targetTile the tile the object shall be dragged on
      * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveMapTile targetTile, ItemCount count);
+    void dragTo(@NonNull InteractiveMapTile targetTile, @NonNull ItemCount count);
 
     /**
      * Drag the object to a container slot.
@@ -57,13 +60,5 @@ public interface Draggable {
      * @param targetSlot the target container slot
      * @param count      the amount of objects to be transferred
      */
-    void dragTo(InteractiveContainerSlot targetSlot, ItemCount count);
-
-    /**
-     * Drag this object to a general drop target.
-     *
-     * @param dropTarget the target of the dropping operation
-     * @param count      the amount of objects to be transferred
-     */
-    void dragTo(DropTarget dropTarget, ItemCount count);
+    void dragTo(@NonNull InteractiveContainerSlot targetSlot, @NonNull ItemCount count);
 }

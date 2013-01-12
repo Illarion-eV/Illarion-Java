@@ -23,7 +23,7 @@ import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.InventorySlot;
 import illarion.client.world.items.MerchantList;
-import illarion.common.net.NetCommWriter;
+import illarion.common.annotation.NonNull;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
@@ -32,7 +32,7 @@ import illarion.common.types.ItemId;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class InteractiveInventorySlot extends AbstractDraggable implements DropTarget, UseTarget {
+public final class InteractiveInventorySlot implements Draggable, DropTarget {
     /**
      * The ID that is needed to tell the server that the operations refer to a slot in the inventory.
      */
@@ -57,7 +57,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      * Drag a inventory item to a character. Does nothing currently.
      */
     @Override
-    public void dragTo(final InteractiveChar targetChar, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveChar targetChar, @NonNull final ItemCount count) {
         // nothing
     }
 
@@ -67,7 +67,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      * @param targetSlot the slot to drag the item to
      */
     @Override
-    public void dragTo(final InteractiveInventorySlot targetSlot, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveInventorySlot targetSlot, @NonNull final ItemCount count) {
         if (!isValidItem()) {
             return;
         }
@@ -130,7 +130,7 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
      * @param count
      */
     @Override
-    public void dragTo(final InteractiveMapTile targetTile, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveMapTile targetTile, @NonNull final ItemCount count) {
         if (!isValidItem()) {
             return;
         }
@@ -139,24 +139,13 @@ public final class InteractiveInventorySlot extends AbstractDraggable implements
     }
 
     @Override
-    public void dragTo(final InteractiveContainerSlot targetSlot, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveContainerSlot targetSlot, @NonNull final ItemCount count) {
         if (!isValidItem()) {
             return;
         }
 
         final ContainerSlot slot = targetSlot.getSlot();
         World.getNet().sendCommand(new DragInvScCmd(getSlotId(), slot.getContainerId(), slot.getLocation(), count));
-    }
-
-    /**
-     * Encode a use operation with this slot in the inventory.
-     *
-     * @param writer the writer to receive the encoded data
-     */
-    @Override
-    public void encodeUse(final NetCommWriter writer) {
-        writer.writeByte(REFERENCE_ID);
-        writer.writeByte((byte) getSlotId());
     }
 
     /**

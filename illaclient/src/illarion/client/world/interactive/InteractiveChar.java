@@ -20,6 +20,7 @@ package illarion.client.world.interactive;
 
 import illarion.client.world.Char;
 import illarion.client.world.World;
+import illarion.common.annotation.NonNull;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
 
@@ -28,7 +29,7 @@ import illarion.common.types.Location;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class InteractiveChar extends AbstractDraggable implements DropTarget {
+public class InteractiveChar implements Draggable, DropTarget {
     /**
      * The character this interactive reference points to.
      */
@@ -47,7 +48,7 @@ public class InteractiveChar extends AbstractDraggable implements DropTarget {
      * Drag one character to another character. Does nothing currently.
      */
     @Override
-    public void dragTo(final InteractiveChar targetChar, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveChar targetChar, @NonNull final ItemCount count) {
         // nothing
     }
 
@@ -55,7 +56,7 @@ public class InteractiveChar extends AbstractDraggable implements DropTarget {
      * Dragging the character into the inventory does nothing at all.
      */
     @Override
-    public void dragTo(final InteractiveInventorySlot targetSlot, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveInventorySlot targetSlot, @NonNull final ItemCount count) {
         // nothing
     }
 
@@ -64,12 +65,12 @@ public class InteractiveChar extends AbstractDraggable implements DropTarget {
      * character.
      */
     @Override
-    public void dragTo(final InteractiveMapTile targetTile, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveMapTile targetTile, @NonNull final ItemCount count) {
         // nothing
     }
 
     @Override
-    public void dragTo(final InteractiveContainerSlot targetSlot, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveContainerSlot targetSlot, @NonNull final ItemCount count) {
         // nothing
     }
 

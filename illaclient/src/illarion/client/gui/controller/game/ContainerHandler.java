@@ -53,6 +53,7 @@ import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Rectangle;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
@@ -131,6 +132,10 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         @Override
         public void executeAction(final int count) {
             final ItemContainer container = World.getPlayer().getContainer(containerId);
+            if (container == null) {
+                LOGGER.error("Used container does not exist.");
+                return;
+            }
             final ContainerSlot slot = container.getSlot(slotId);
 
             if (!slot.containsItem()) {
@@ -466,6 +471,8 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         }
     }
 
+    private static final Logger LOGGER = Logger.getLogger(ContainerHandler.class);
+
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
     public void onMouseMoveOverSlot(final String topic, final NiftyMouseMovedEvent event) {
         final int slotId = getSlotId(topic);
@@ -475,7 +482,13 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
             return;
         }
 
-        final ContainerSlot slot = World.getPlayer().getContainer(containerId).getSlot(slotId);
+        final ItemContainer container = World.getPlayer().getContainer(containerId);
+        if (container == null) {
+            LOGGER.error("MouseOver action on non-existent container!");
+            return;
+        }
+
+        final ContainerSlot slot = container.getSlot(slotId);
 
         if (!LookAtTracker.isLookAtObject(slot)) {
             LookAtTracker.setLookAtObject(slot);
@@ -552,7 +565,12 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
                 final int slotCount = itemContainer.getSlotCount();
                 for (int i = 0; i < slotCount; i++) {
                     final InventorySlot conSlot = itemContainer.getSlot(i);
-                    updateMerchantOverlay(conSlot, World.getPlayer().getContainer(id).getSlot(i).getItemID());
+                    final ItemContainer container = World.getPlayer().getContainer(id);
+                    if (container == null) {
+                        LOGGER.error("Container in handler was not created for player!");
+                        return true;
+                    }
+                    updateMerchantOverlay(conSlot, container.getSlot(i).getItemID());
                 }
                 return true;
             }

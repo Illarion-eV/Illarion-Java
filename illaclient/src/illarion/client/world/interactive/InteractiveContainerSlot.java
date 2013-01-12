@@ -22,7 +22,7 @@ import illarion.client.net.client.*;
 import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.MerchantList;
-import illarion.common.net.NetCommWriter;
+import illarion.common.annotation.NonNull;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
@@ -31,7 +31,7 @@ import illarion.common.types.ItemId;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class InteractiveContainerSlot extends AbstractDraggable implements DropTarget, UseTarget {
+public final class InteractiveContainerSlot implements Draggable, DropTarget {
     /**
      * The container slot this interactive reference points to.
      */
@@ -50,7 +50,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      * Drag a inventory item to a character. Does nothing currently.
      */
     @Override
-    public void dragTo(final InteractiveChar targetChar, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveChar targetChar, @NonNull final ItemCount count) {
         // nothing
     }
 
@@ -60,7 +60,7 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      * @param targetSlot the slot to drag the item to
      */
     @Override
-    public void dragTo(final InteractiveInventorySlot targetSlot, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveInventorySlot targetSlot, @NonNull final ItemCount count) {
         if (!targetSlot.acceptItem(getItemId())) {
             return;
         }
@@ -87,29 +87,18 @@ public final class InteractiveContainerSlot extends AbstractDraggable implements
      * @param targetTile the target location on the map
      */
     @Override
-    public void dragTo(final InteractiveMapTile targetTile, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveMapTile targetTile, @NonNull final ItemCount count) {
         World.getNet().sendCommand(new DragScMapCmd(getContainerId(), getSlotId(), targetTile.getLocation(), count));
     }
 
     @Override
-    public void dragTo(final InteractiveContainerSlot targetSlot, final ItemCount count) {
+    public void dragTo(@NonNull final InteractiveContainerSlot targetSlot, @NonNull final ItemCount count) {
         if (!isValidItem() || !targetSlot.acceptItem(getItemId())) {
             return;
         }
 
         World.getNet().sendCommand(new DragScScCmd(getContainerId(), getSlotId(), targetSlot.getContainerId(),
                 targetSlot.getSlotId(), count));
-    }
-
-    /**
-     * Encode a use operation with this slot in the inventory.
-     *
-     * @param writer the writer to receive the encoded data
-     */
-    @Override
-    public void encodeUse(final NetCommWriter writer) {
-        writer.writeByte((byte) parentSlot.getContainerId());
-        writer.writeByte((byte) getSlotId());
     }
 
     /**

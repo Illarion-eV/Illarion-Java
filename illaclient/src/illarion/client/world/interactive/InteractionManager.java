@@ -22,7 +22,12 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.InventorySlot;
+import illarion.client.world.items.ItemContainer;
+import illarion.common.annotation.NonNull;
+import illarion.common.annotation.Nullable;
 import illarion.common.types.ItemCount;
+import net.jcip.annotations.NotThreadSafe;
+import org.apache.log4j.Logger;
 
 /**
  * Main purpose of this class is to interconnect the GUI environment and the map environment to exchange information
@@ -30,14 +35,46 @@ import illarion.common.types.ItemCount;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@NotThreadSafe
 public final class InteractionManager {
+    /**
+     * The object that is currently dragged around.
+     */
+    @Nullable
     private Draggable draggedObject;
+
+    /**
+     * This value is set {@code true} in case there is currently a dragging operation in progress.
+     */
     private boolean dragging;
+
+    /**
+     * This is the task that has to be executed once the dragging operation is done.
+     */
+    @Nullable
     private Runnable endOfDragAction;
+
+    /**
+     * The maximal amount of movable objects in the current move operation.
+     */
+    @Nullable
     private ItemCount amount;
 
-    public void dropAtMap(final int x, final int y, final ItemCount count) {
+    /**
+     * The logger instance of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(InteractionManager.class);
+
+    /**
+     * Drop the currently dragged object on the map.
+     *
+     * @param x     the x coordinate on the screen to drop the object to
+     * @param y     the y coordinate on the screen to drop the object to
+     * @param count the amount of objects to be dropped at the map
+     */
+    public void dropAtMap(final int x, final int y, @NonNull final ItemCount count) {
         if (draggedObject == null) {
+            LOGGER.warn("Dropping to map called without a active dragging operation.");
             return;
         }
         final InteractiveMapTile targetTile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(x, y);
@@ -50,13 +87,25 @@ public final class InteractionManager {
         cancelDragging();
     }
 
+    /**
+     * Drop a object to a inventory slot.
+     *
+     * @param container the ID of the container the object is dropped in
+     * @param slot      the slot inside the container the object is dropped in
+     * @param count     the amount of objects to be dropped at the container
+     */
     public void dropAtContainer(final int container, final int slot, final ItemCount count) {
         if (draggedObject == null) {
             return;
         }
 
-        final InteractiveContainerSlot targetSlot = World.getPlayer().getContainer(container).getSlot(slot)
-                .getInteractive();
+        final ItemContainer itemContainer = World.getPlayer().getContainer(container);
+        if (itemContainer == null) {
+            LOGGER.error("Container a item was dropped at was not found.");
+            return;
+        }
+
+        final InteractiveContainerSlot targetSlot = itemContainer.getSlot(slot).getInteractive();
 
         draggedObject.dragTo(targetSlot, count);
         cancelDragging();
@@ -93,7 +142,12 @@ public final class InteractionManager {
 
     public void notifyDraggingContainer(final int container, final int slot, final Runnable endOfDragOp) {
         if (!dragging) {
-            final ContainerSlot conSlot = World.getPlayer().getContainer(container).getSlot(slot);
+            final ItemContainer itemContainer = World.getPlayer().getContainer(container);
+            if (itemContainer == null) {
+                LOGGER.error("Start dragging notification about a container that does not exist?!");
+                return;
+            }
+            final ContainerSlot conSlot = itemContainer.getSlot(slot);
             final InteractiveContainerSlot sourceSlot = conSlot.getInteractive();
 
             startDragging(sourceSlot);
