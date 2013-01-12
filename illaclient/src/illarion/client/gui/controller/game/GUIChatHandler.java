@@ -127,9 +127,9 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             if (talkingEvent.getMode() == ChatHandler.SpeechMode.emote) {
                 final Char talkingChar = talkingEvent.getCharacter();
                 if (talkingChar == null) {
-                    message = Lang.getMsg("chat.someone") + ' ' + talkingEvent.getText();
+                    message = Lang.getMsg("chat.someone") + talkingEvent.getText();
                 } else {
-                    message = talkingChar.getName() + ' ' + talkingEvent.getText();
+                    message = talkingChar.getName() + talkingEvent.getText();
                 }
             } else if (talkingEvent.getMode() == ChatHandler.SpeechMode.ooc) {
                 message = "((" + talkingEvent.getText() + "))";
@@ -410,7 +410,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
 
         final Matcher emoteMatcher = emotePattern.matcher(text);
         if (emoteMatcher.find()) {
-            final String cleanMe = REPEATED_SPACE_PATTERN.matcher(emoteMatcher.group(1)).replaceAll(" ");
+            final String cleanMe = REPEATED_SPACE_PATTERN.matcher(emoteMatcher.group(1)).replaceAll(" ").toLowerCase();
             cleanAndSendText("#" + cleanMe, emoteMatcher.group(2), ChatHandler.SpeechMode.normal);
             return;
         }
@@ -437,7 +437,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             return;
         }
 
-        World.getNet().sendCommand(new SayCmd(mode, text));
+        World.getNet().sendCommand(new SayCmd(mode, prefix + text));
     }
 
     @Override
