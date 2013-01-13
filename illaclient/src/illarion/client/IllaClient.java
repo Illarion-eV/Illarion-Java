@@ -157,6 +157,12 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     }
 
     private void init() {
+        try {
+            EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, new ThreadSafeEventService());
+        } catch (EventServiceExistsException e1) {
+            LOGGER.error("Failed preparing the EventBus. Settings the Service handler happened too late");
+        }
+
         prepareConfig();
         try {
             initLogfiles();
@@ -166,12 +172,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         CrashReporter.getInstance().setConfig(getCfg());
-
-        try {
-            EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, new ThreadSafeEventService());
-        } catch (EventServiceExistsException e1) {
-            LOGGER.error("Failed preparing the EventBus. Settings the Service handler happened too late");
-        }
 
         Renderer.setRenderer(Renderer.IMMEDIATE_RENDERER);
 
@@ -538,22 +538,13 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800, 600, 32, 60).toString());
         cfg.setDefault("savePassword", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
+        cfg.setDefault(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
         cfg.setDefault("inventoryPosX", "100px");
         cfg.setDefault("inventoryPosY", "10px");
         cfg.setDefault("bookDisplayPosX", "150px");
         cfg.setDefault("bookDisplayPosY", "15px");
         cfg.setDefault("skillWindowPosX", "200px");
         cfg.setDefault("skillWindowPosY", "20px");
-
-        final String locale = cfg.getString(Lang.LOCALE_CFG);
-        if (locale == null) {
-            final String jnlpLocale = System.getProperty("illarion.client.locale");
-            if (Lang.LOCALE_CFG_ENGLISH.equals(jnlpLocale)) {
-                cfg.set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
-            } else {
-                cfg.set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_GERMAN);
-            }
-        }
 
         final java.awt.Toolkit awtDefaultToolkit = java.awt.Toolkit.getDefaultToolkit();
         cfg.setDefault("doubleClickInterval", (Integer) awtDefaultToolkit.getDesktopProperty("awt" +
@@ -562,7 +553,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         final Crypto crypt = new Crypto();
         crypt.loadPublicKey();
         TableLoader.setCrypto(crypt);
-        Lang.getInstance().setConfig(cfg);
     }
 
     @Override

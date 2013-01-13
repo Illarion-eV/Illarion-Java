@@ -223,12 +223,10 @@ public final class Login {
         final int count = children.getLength();
 
         final String accLang = root.getAttributes().getNamedItem("lang").getNodeValue();
-        if ("de".equals(accLang) && Lang.getInstance().isEnglish()) {
+        if ("de".equals(accLang)) {
             IllaClient.getCfg().set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_GERMAN);
-            Lang.getInstance().recheckLocale();
-        } else if ("us".equals(accLang) && Lang.getInstance().isGerman()) {
+        } else if ("us".equals(accLang)) {
             IllaClient.getCfg().set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
-            Lang.getInstance().recheckLocale();
         }
 
         charList.clear();
