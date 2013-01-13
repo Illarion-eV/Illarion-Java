@@ -217,7 +217,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * synchronized to the Nifty-GUI update loop.
      */
     public void update() {
-        if (!receivedLoginResponse) {
+        if (!receivedLoginResponse || (nifty.getCurrentScreen() != screen)) {
             return;
         }
 

@@ -60,4 +60,15 @@
             </panel>
         </layer>
     </screen>
+    <popup id="languageChanged" childLayout="center">
+        <effect>
+            <onEndScreen name="fade" startDelay="3000" length="500" start="#F" end="#0"/>
+        </effect>
+        <panel style="nifty-panel-small" childLayout="center">
+            <control name="label" style="nifty-label" wrap="true" width="450px" id="#german"
+                     text="Die Sprache wurde geändert. Starten sie bitte den Client neu."/>
+            <control name="label" style="nifty-label" wrap="true" width="450px" id="#english"
+                     text="The language got changed. Please restart the client."/>
+        </panel>
+    </popup>
 </nifty>

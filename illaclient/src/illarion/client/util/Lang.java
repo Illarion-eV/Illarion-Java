@@ -176,7 +176,7 @@ public final class Lang implements MessageSource {
     /**
      * Check if the language settings are still correct and reload the messages if needed.
      */
-    private void recheckLocale(final String key) {
+    public void recheckLocale(final String key) {
         if (key.equals(LOCALE_CFG_GERMAN)) {
             if (locale == Locale.GERMAN) {
                 return;

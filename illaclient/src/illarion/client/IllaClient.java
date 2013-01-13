@@ -171,6 +171,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             e.printStackTrace(System.err);
         }
 
+        Lang.getInstance().recheckLocale(cfg.getString(Lang.LOCALE_CFG));
         CrashReporter.getInstance().setConfig(getCfg());
 
         Renderer.setRenderer(Renderer.IMMEDIATE_RENDERER);
