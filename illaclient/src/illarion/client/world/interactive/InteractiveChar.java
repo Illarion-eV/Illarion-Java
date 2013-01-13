@@ -19,20 +19,22 @@
 package illarion.client.world.interactive;
 
 import illarion.client.world.Char;
-import illarion.client.world.World;
 import illarion.common.annotation.NonNull;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
+import net.jcip.annotations.Immutable;
 
 /**
  * This class represents the interactive variant of a character.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class InteractiveChar implements Draggable, DropTarget {
+@Immutable
+public final class InteractiveChar implements Draggable, DropTarget {
     /**
      * The character this interactive reference points to.
      */
+    @NonNull
     private final Char parentChar;
 
     /**
@@ -40,7 +42,7 @@ public class InteractiveChar implements Draggable, DropTarget {
      *
      * @param parent the character this interactive reference points to
      */
-    public InteractiveChar(final Char parent) {
+    public InteractiveChar(@NonNull final Char parent) {
         parentChar = parent;
     }
 
@@ -79,18 +81,8 @@ public class InteractiveChar implements Draggable, DropTarget {
      *
      * @return the location of the character on the map
      */
+    @NonNull
     public Location getLocation() {
         return parentChar.getLocation();
-    }
-
-    /**
-     * Check if this character is inside the range, where the player is able to
-     * interact with this character.
-     *
-     * @return <code>true</code> if this character is within reach of the player
-     *         character
-     */
-    public boolean isInInteractionRange() {
-        return World.getPlayer().getLocation().getDistance(getLocation()) < 2;
     }
 }

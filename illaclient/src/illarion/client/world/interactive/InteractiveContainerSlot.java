@@ -61,7 +61,7 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
      */
     @Override
     public void dragTo(@NonNull final InteractiveInventorySlot targetSlot, @NonNull final ItemCount count) {
-        if (!targetSlot.acceptItem(getItemId())) {
+        if (!targetSlot.isAcceptingItem(getItemId())) {
             return;
         }
 

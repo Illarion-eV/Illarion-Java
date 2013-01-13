@@ -96,7 +96,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
             return;
         }
 
-        if (!targetSlot.acceptItem(getTopItemId())) {
+        if (!targetSlot.isAcceptingItem(getTopItemId())) {
             return;
         }
 

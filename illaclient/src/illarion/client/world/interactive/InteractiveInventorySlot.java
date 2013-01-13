@@ -26,30 +26,27 @@ import illarion.client.world.items.MerchantList;
 import illarion.common.annotation.NonNull;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
+import net.jcip.annotations.Immutable;
 
 /**
  * This class holds the interactive representation of a inventory slot.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class InteractiveInventorySlot implements Draggable, DropTarget {
-    /**
-     * The ID that is needed to tell the server that the operations refer to a slot in the inventory.
-     */
-    private static final byte REFERENCE_ID = 3;
-
     /**
      * The inventory item this interactive class refers to.
      */
+    @NonNull
     private final InventorySlot parentItem;
 
     /**
      * Create a new instance of this interactive slot and set the inventory slot it refers to.
      *
-     * @param item the inventory item that is the parent of this interactive
-     *             item
+     * @param item the inventory item that is the parent of this interactive item
      */
-    public InteractiveInventorySlot(final InventorySlot item) {
+    public InteractiveInventorySlot(@NonNull final InventorySlot item) {
         parentItem = item;
     }
 
@@ -63,8 +60,6 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
 
     /**
      * Drag the item in this inventory slot to another inventory slot.
-     *
-     * @param targetSlot the slot to drag the item to
      */
     @Override
     public void dragTo(@NonNull final InteractiveInventorySlot targetSlot, @NonNull final ItemCount count) {
@@ -72,13 +67,16 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
             return;
         }
 
-        if (!targetSlot.acceptItem(getItemId())) {
+        if (!targetSlot.isAcceptingItem(getItemId())) {
             return;
         }
 
         World.getNet().sendCommand(new DragInvInvCmd(getSlotId(), targetSlot.getSlotId(), count));
     }
 
+    /**
+     * Use the item in this inventory slot.
+     */
     public void use() {
         if (!isValidItem()) {
             return;
@@ -87,6 +85,9 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
         World.getNet().sendCommand(new UseInventoryCmd(getSlotId()));
     }
 
+    /**
+     * Open the container in the inventory.
+     */
     public void openContainer() {
         if (!isValidItem()) {
             return;
@@ -95,6 +96,9 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
         World.getNet().sendCommand(new OpenBagCmd());
     }
 
+    /**
+     * Request a look at at this inventory slot.
+     */
     public void lookAt() {
         if (!isValidItem()) {
             return;
@@ -103,7 +107,14 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
         World.getNet().sendCommand(new LookatInvCmd(getSlotId()));
     }
 
-    public boolean acceptItem(final ItemId itemId) {
+
+    /**
+     * Check if it is valid to drop a item on this inventory slot.
+     *
+     * @param itemId the ID of the item that should be dropped on this slot
+     * @return {@code true} in case its legal to drop a item with the specified ID on the inventory slot
+     */
+    public boolean isAcceptingItem(@NonNull final ItemId itemId) {
         return !isValidItem() || itemId.equals(getItemId());
     }
 
@@ -111,10 +122,6 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * Send the command to the server to sell this item.
      */
     public void sell() {
-        if (!World.getPlayer().hasMerchantList()) {
-            return;
-        }
-
         final MerchantList merchantList = World.getPlayer().getMerchantList();
         if (merchantList == null) {
             return;
@@ -127,7 +134,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * Drag the item in the inventory to a location on the map.
      *
      * @param targetTile the target location on the map
-     * @param count
+     * @param count      the amount of items to drag to the new location
      */
     @Override
     public void dragTo(@NonNull final InteractiveMapTile targetTile, @NonNull final ItemCount count) {
