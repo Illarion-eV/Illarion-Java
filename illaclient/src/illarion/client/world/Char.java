@@ -983,6 +983,17 @@ public final class Char implements RecycleObject, AnimatedMove {
             return; // avatar not ready, discard animation
         }
         if (!avatar.getAnimationAvaiable(newAnimation)) {
+            final MapTile tile = World.getMap().getMapAt(getLocation());
+            if (tile == null) {
+                return;
+            }
+            if ((newAnimation == CharAnimations.ATTACK_1HAND) || (newAnimation == CharAnimations.ATTACK_2HAND)) {
+                tile.showEffect(21);
+            } else if (newAnimation == CharAnimations.ATTACK_BOW) {
+                tile.showEffect(15);
+            } else if (newAnimation == CharAnimations.ATTACK_BLOCK) {
+                tile.showEffect(18);
+            }
             return;
         }
         animation = newAnimation;
