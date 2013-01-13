@@ -182,7 +182,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
             if (!isContainerCreated(event.getContainerId())) {
                 createNewContainer(event);
             }
-            updateContainer(event.getContainerId(), event.getItemIterator());
+            updateContainer(event);
         }
     }
 
@@ -613,19 +613,24 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
     /**
      * Update the items inside the container.
      *
-     * @param containerId the container ID
-     * @param itr         the item iterator that updates the container
+     * @param event the container event used to update the container
      */
-    private void updateContainer(final int containerId, final TIntObjectIterator<OpenContainerEvent.Item> itr) {
-        final org.illarion.nifty.controls.ItemContainer conControl = itemContainerMap.get(containerId);
+    private void updateContainer(final OpenContainerEvent event) {
+        final org.illarion.nifty.controls.ItemContainer conControl = itemContainerMap.get(event.getContainerId());
 
         final int slotCount = conControl.getSlotCount();
+        if (event.getSlotCount() != slotCount) {
+            // something is badly wrong. The player class will handle this issue.
+            return;
+        }
+
         for (int i = 0; i < slotCount; i++) {
             final InventorySlot conSlot = conControl.getSlot(i);
             conSlot.setImage(null);
             conSlot.hideLabel();
         }
 
+        final TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
         while (itr.hasNext()) {
             itr.advance();
             final InventorySlot conSlot = conControl.getSlot(itr.key());

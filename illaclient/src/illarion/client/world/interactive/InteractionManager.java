@@ -88,13 +88,13 @@ public final class InteractionManager {
     }
 
     /**
-     * Drop a object to a inventory slot.
+     * Drop a object to a container slot.
      *
      * @param container the ID of the container the object is dropped in
      * @param slot      the slot inside the container the object is dropped in
      * @param count     the amount of objects to be dropped at the container
      */
-    public void dropAtContainer(final int container, final int slot, final ItemCount count) {
+    public void dropAtContainer(final int container, final int slot, @NonNull final ItemCount count) {
         if (draggedObject == null) {
             return;
         }
@@ -105,12 +105,22 @@ public final class InteractionManager {
             return;
         }
 
-        final InteractiveContainerSlot targetSlot = itemContainer.getSlot(slot).getInteractive();
-
-        draggedObject.dragTo(targetSlot, count);
-        cancelDragging();
+        try {
+            final InteractiveContainerSlot targetSlot = itemContainer.getSlot(slot).getInteractive();
+            draggedObject.dragTo(targetSlot, count);
+        } catch (final IndexOutOfBoundsException ex) {
+            LOGGER.error("Tried to drop a item at a container slot that does not exist.", ex);
+        } finally {
+            cancelDragging();
+        }
     }
 
+    /**
+     * Drop a object at a slot in the inventory.
+     *
+     * @param slot  the inventory slot
+     * @param count the amount of items to be dropped in the inventory
+     */
     public void dropAtInventory(final int slot, final ItemCount count) {
         if (draggedObject == null) {
             return;

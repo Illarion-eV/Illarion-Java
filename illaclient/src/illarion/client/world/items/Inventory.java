@@ -57,6 +57,7 @@ public final class Inventory implements EventSubscriber<InventoryUpdateEvent> {
      *
      * @param slot the slot
      * @return the item in the slot
+     * @throws IndexOutOfBoundsException in case {@code slot} is outside of the valid range
      */
     public InventorySlot getItem(final int slot) {
         return slots[slot];

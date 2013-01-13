@@ -42,6 +42,7 @@ import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -186,6 +187,11 @@ public final class Player {
         AnnotationProcessor.process(this);
     }
 
+    /**
+     * The instance of the logger used by this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Player.class);
+
     @EventSubscriber
     public void onOpenContainerEvent(@NonNull final OpenContainerEvent event) {
         final ItemContainer container;
@@ -195,8 +201,14 @@ public final class Player {
                 throw new IllegalStateException("Has container with ID but can't receive it. "
                         + "Internal state corrupted.");
             }
+            if (container.getSlotCount() != event.getSlotCount()) {
+                LOGGER.error("Received container event for existing container but without fitting slot count!");
+                EventBus.publish(new CloseContainerEvent(event.getContainerId()));
+                EventBus.publish(event);
+                return;
+            }
         } else {
-            container = createNewContainer(event.getContainerId());
+            container = createNewContainer(event.getContainerId(), event.getSlotCount());
         }
 
         final TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
@@ -268,18 +280,19 @@ public final class Player {
     /**
      * Create a new item container instance.
      *
-     * @param id the ID of the container
+     * @param id        the ID of the container
+     * @param slotCount the amount of slots the new container is supposed to have
      * @return the new item container
      * @throws IllegalArgumentException in case there is already a container with the same ID
      */
     @NonNull
-    public ItemContainer createNewContainer(final int id) {
+    public ItemContainer createNewContainer(final int id, final int slotCount) {
         containerLock.writeLock().lock();
         try {
             if (containers.containsKey(id)) {
                 throw new IllegalArgumentException("Can't create item container that already exists.");
             }
-            final ItemContainer newContainer = new ItemContainer(id);
+            final ItemContainer newContainer = new ItemContainer(id, slotCount);
             containers.put(id, newContainer);
             return newContainer;
         } finally {
