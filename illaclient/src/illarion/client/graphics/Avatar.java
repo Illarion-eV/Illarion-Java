@@ -368,7 +368,9 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @return {@code true} in case the mouse is on the interactive area of the avatar or on its tag
      */
     private boolean isMouseInInteractiveOrOnTag(final AbstractMouseLocationEvent event) {
-        if (renderName && (tag != null) && tag.getLastDisplayRect().isInside(event.getX(), event.getY())) {
+        final int mouseXonDisplay = event.getX() + Camera.getInstance().getViewportOffsetX();
+        final int mouseYonDisplay = event.getY() + Camera.getInstance().getViewportOffsetY();
+        if (renderName && (tag != null) && tag.getLastDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay)) {
             return true;
         }
 
