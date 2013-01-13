@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.graphics;
 
@@ -22,7 +22,7 @@ package illarion.common.graphics;
  * This class contains the constants for all character animations that are
  * defined. Also it builds the texts for the configuration tool to refer to the
  * animations properly.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @SuppressWarnings("nls")
@@ -35,78 +35,80 @@ public final class CharAnimations {
     /**
      * Constant for the one handed attack animation.
      */
-    public static final int ATTACK_1HAND;
+    public static final int ATTACK_1HAND = 5;
 
     /**
      * Constant for the two handed attack animation.
      */
-    public static final int ATTACK_2HAND;
+    public static final int ATTACK_2HAND = 6;
 
     /**
      * Constant for the blocking an attack animation.
      */
-    public static final int ATTACK_BLOCK;
+    public static final int ATTACK_BLOCK = 9;
 
     /**
      * Constant for the attack with a bow animation.
      */
-    public static final int ATTACK_BOW;
+    public static final int ATTACK_BOW = 7;
 
     /**
      * Constant for the attacking with a crossbow animation.
      */
-    public static final int ATTACK_CROSSBOW;
+    public static final int ATTACK_CROSSBOW = 8;
 
     /**
      * Constant for the getting hit by a attack animation.
      */
-    public static final int ATTACK_GET_HIT;
+    public static final int ATTACK_GET_HIT = 10;
 
     /**
      * Constant for the casting a spell animation.
      */
-    public static final int CAST_SPELL;
+    public static final int CAST_SPELL = 11;
 
     /**
      * The amount of animations that were defined to be used. All others are
      * named as undefined.
      */
-    public static final int DEFINED_ANIMATIONS;
+    public static final int DEFINED_ANIMATIONS = 20;
 
     /**
      * Constant for the drinking something animation.
      */
-    public static final int DRINK;
+    public static final int DRINK = 12;
 
     /**
      * Constant for the lie one the ground animation.
      */
-    public static final int LIE_DOWN;
+    public static final int LIE_DOWN = 2;
 
     /**
      * Constant for the picking something up animation.
      */
-    public static final int PICK_UP;
+    public static final int PICK_UP = 13;
 
     /**
      * Constant for the running animation.
      */
-    public static final int RUN;
+    @SuppressWarnings("ConstantNamingConvention")
+    public static final int RUN = 19;
 
     /**
      * Constant for the sitting animation.
      */
-    public static final int SIT;
+    @SuppressWarnings("ConstantNamingConvention")
+    public static final int SIT = 1;
 
     /**
      * Constant for the standing animation.
      */
-    public static final int STAND;
+    public static final int STAND = 0;
 
     /**
      * Constant for the standing around idle animation.
      */
-    public static final int STAND_IDLE;
+    public static final int STAND_IDLE = 4;
 
     /**
      * The total count of animations that are allowed to be defined. Changing
@@ -118,58 +120,35 @@ public final class CharAnimations {
     /**
      * Constant for the walking animation.
      */
-    public static final int WALK;
+    @SuppressWarnings("ConstantNamingConvention")
+    public static final int WALK = 3;
 
     /**
      * Constant for the chopping animation.
      */
-    public static final int WORK_CHOPPING;
+    public static final int WORK_CHOPPING = 17;
 
     /**
      * Constant for the fishing animation.
      */
-    public static final int WORK_FISH;
+    public static final int WORK_FISH = 18;
 
     /**
      * Constant for the mining animation.
      */
-    public static final int WORK_MINING;
+    public static final int WORK_MINING = 15;
 
     /**
      * Constant for the sawing animation.
      */
-    public static final int WORK_SAW;
+    public static final int WORK_SAW = 16;
 
     /**
      * Constant for the forging animation.
      */
-    public static final int WORK_SMITH;
+    public static final int WORK_SMITH = 14;
 
     static {
-        int i = 0;
-        STAND = i++;
-        SIT = i++;
-        LIE_DOWN = i++;
-        WALK = i++;
-        STAND_IDLE = i++;
-        ATTACK_1HAND = i++;
-        ATTACK_2HAND = i++;
-        ATTACK_BOW = i++;
-        ATTACK_CROSSBOW = i++;
-        ATTACK_BLOCK = i++;
-        ATTACK_GET_HIT = i++;
-        CAST_SPELL = i++;
-        DRINK = i++;
-        PICK_UP = i++;
-        WORK_SMITH = i++;
-        WORK_MINING = i++;
-        WORK_SAW = i++;
-        WORK_CHOPPING = i++;
-        WORK_FISH = i++;
-        RUN = i++;
-
-        DEFINED_ANIMATIONS = i;
-
         ANIMATION_NAMES = new String[TOTAL_ANIMATIONS];
 
         ANIMATION_NAMES[STAND] = "Stand";
@@ -193,7 +172,7 @@ public final class CharAnimations {
         ANIMATION_NAMES[WORK_FISH] = "fishing";
         ANIMATION_NAMES[RUN] = "run";
 
-        for (int pos = i; pos < TOTAL_ANIMATIONS; ++pos) {
+        for (int pos = DEFINED_ANIMATIONS; pos < TOTAL_ANIMATIONS; ++pos) {
             ANIMATION_NAMES[pos] = "undefined " + pos;
         }
     }

@@ -987,12 +987,19 @@ public final class Char implements RecycleObject, AnimatedMove {
             if (tile == null) {
                 return;
             }
-            if ((newAnimation == CharAnimations.ATTACK_1HAND) || (newAnimation == CharAnimations.ATTACK_2HAND)) {
-                tile.showEffect(21);
-            } else if (newAnimation == CharAnimations.ATTACK_BOW) {
-                tile.showEffect(15);
-            } else if (newAnimation == CharAnimations.ATTACK_BLOCK) {
-                tile.showEffect(18);
+
+            //noinspection SwitchStatementWithoutDefaultBranch
+            switch (newAnimation) {
+                case CharAnimations.ATTACK_1HAND:
+                case CharAnimations.ATTACK_2HAND:
+                    tile.showEffect(21);
+                    break;
+                case CharAnimations.ATTACK_BOW:
+                    tile.showEffect(15);
+                    break;
+                case CharAnimations.ATTACK_BLOCK:
+                    tile.showEffect(18);
+                    break;
             }
             return;
         }
