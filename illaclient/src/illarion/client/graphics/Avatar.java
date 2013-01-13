@@ -18,6 +18,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.GuiImageFactory;
@@ -349,7 +350,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @return {@code true} in case the event was handled
      */
     private boolean processEvent(final GameContainer c, final int delta, final ClickOnMapEvent event) {
-        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
+        if (!isMouseInInteractiveOrOnTag(event)) {
             return false;
         }
 
@@ -358,6 +359,20 @@ public final class Avatar extends AbstractEntity implements Resource {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Check if a mouse event points at the interactive area of a avatar or on its tag.
+     *
+     * @param event the mouse event
+     * @return {@code true} in case the mouse is on the interactive area of the avatar or on its tag
+     */
+    private boolean isMouseInInteractiveOrOnTag(final AbstractMouseLocationEvent event) {
+        if (renderName && (tag != null) && tag.getLastDisplayRect().isInside(event.getX(), event.getY())) {
+            return true;
+        }
+
+        return isMouseInInteractionRect(event.getX(), event.getY());
     }
 
     private static final Logger LOGGER = Logger.getLogger(Avatar.class);
