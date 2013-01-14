@@ -20,6 +20,9 @@ package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.controls.Window;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.List;
 
 /**
@@ -27,25 +30,21 @@ import java.util.List;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
+@NotThreadSafe
 public interface DialogMerchant extends Window {
-    void addAllSellingItems(List<MerchantListEntry> entry);
-
-    void addAllBuyingItems(List<MerchantListEntry> entry);
+    /**
+     * Add all items in the supplied list to the list of items sold by the NPC.
+     *
+     * @param entries the list of entries to add to the list of sold items
+     */
+    void addAllSellingItems(@Nonnull List<MerchantListEntry> entries);
 
     /**
-     * This enumerator identifies the buttons displayed on this dialog.
+     * Add all items in the supplied list to the list of items bought by the NPC.
+     *
+     * @param entries the list of entries to add to the list of bought items
      */
-    enum DialogButtons {
-        /**
-         * The button that reads buy.
-         */
-        buy,
-
-        /**
-         * The button that reads close.
-         */
-        close;
-    }
+    void addAllBuyingItems(@Nonnull List<MerchantListEntry> entries);
 
     /**
      * Set the ID of the dialog.
@@ -78,14 +77,15 @@ public interface DialogMerchant extends Window {
     /**
      * Get the item that was selected.
      *
-     * @return the selected item
+     * @return the selected item or {@code null} in case no entry is selected
      */
+    @Nullable
     MerchantListEntry getSelectedItem();
 
     /**
      * Get the selected index.
      *
-     * @return the index that was selected
+     * @return the index that was selected or {@code -1} in case no item is selected
      */
     int getSelectedIndex();
 
@@ -94,14 +94,14 @@ public interface DialogMerchant extends Window {
      *
      * @param entry the item to add
      */
-    void addSellingItem(MerchantListEntry entry);
+    void addSellingItem(@Nonnull MerchantListEntry entry);
 
     /**
      * Add a item to the list of items the trader is buying.
      *
      * @param entry the item to add
      */
-    void addBuyingItem(MerchantListEntry entry);
+    void addBuyingItem(@Nonnull MerchantListEntry entry);
 
     /**
      * Remove all items from both the buying and the selling list.

@@ -29,8 +29,6 @@ import illarion.client.world.characters.CharacterAttribute;
 import illarion.client.world.events.CharMoveEvent;
 import illarion.client.world.events.CharVisibilityEvent;
 import illarion.client.world.interactive.InteractiveChar;
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.graphics.CharAnimations;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
@@ -39,13 +37,15 @@ import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import illarion.common.util.RecycleObject;
-import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.newdawn.slick.Color;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -65,7 +65,7 @@ public final class Char implements RecycleObject, AnimatedMove {
     /**
      * The color that is used to show dead characters.
      */
-    @NonNull
+    @Nonnull
     private static final Color DEAD_COLOR;
 
     /**
@@ -86,7 +86,7 @@ public final class Char implements RecycleObject, AnimatedMove {
     /**
      * The instance of the logger that is used to write out the data.
      */
-    @NonNull
+    @Nonnull
     private static final Logger LOGGER = Logger.getLogger(Char.class);
 
     /**
@@ -112,19 +112,19 @@ public final class Char implements RecycleObject, AnimatedMove {
     /**
      * This color is used to display the name in case the character is a player character.
      */
-    @NonNull
+    @Nonnull
     private static final Color NAME_COLOR_HUMAN = Color.yellow;
 
     /**
      * This color is used to display the name in case the character is a monster.
      */
-    @NonNull
+    @Nonnull
     private static final Color NAME_COLOR_MONSTER = Color.red;
 
     /**
      * This color is used to display the name in case the character is a NPC.
      */
-    @NonNull
+    @Nonnull
     private static final Color NAME_COLOR_NPC = new Color(0, 128, 128);
 
     /**
@@ -206,13 +206,13 @@ public final class Char implements RecycleObject, AnimatedMove {
     /**
      * Current Location of the character on the map.
      */
-    @NonNull
+    @Nonnull
     private final Location charLocation;
 
     /**
      * Move animation handler for this character.
      */
-    @NonNull
+    @Nonnull
     private final MoveAnimation move;
 
     /**
@@ -249,19 +249,19 @@ public final class Char implements RecycleObject, AnimatedMove {
     /**
      * A list of items this avatar wears. This list is send to the avatar at a update.
      */
-    @NonNull
+    @Nonnull
     private final int[] wearItems = new int[AvatarClothManager.GROUP_COUNT];
 
     /**
      * A list of modified colors of the stuff a avatar wears.
      */
-    @NonNull
+    @Nonnull
     private final Color[] wearItemsColors = new Color[AvatarClothManager.GROUP_COUNT];
 
     /**
      * This map stores the attribute values of this character.
      */
-    @NonNull
+    @Nonnull
     private final Map<CharacterAttribute, Integer> attributes;
 
     /**
@@ -283,7 +283,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      *
      * @return the new character
      */
-    @NonNull
+    @Nonnull
     public static Char create() {
         @Nullable final Char newChar = (Char) GameFactory.getInstance().getCommand(GameFactory.OBJ_CHARACTER);
         if (newChar == null) {
@@ -302,7 +302,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      * @param attribute the attribute to fetch
      * @return the value of the attribute
      */
-    public int getAttribute(@NonNull final CharacterAttribute attribute) {
+    public int getAttribute(@Nonnull final CharacterAttribute attribute) {
         if (attributes.containsKey(attribute)) {
             return attributes.get(attribute);
         }
@@ -310,7 +310,7 @@ public final class Char implements RecycleObject, AnimatedMove {
     }
 
     @EventSubscriber
-    public void onAttributeUpdateReceived(@NonNull final AttributeUpdateReceivedEvent event) {
+    public void onAttributeUpdateReceived(@Nonnull final AttributeUpdateReceivedEvent event) {
         if (!event.getTargetCharId().equals(getCharId())) {
             return;
         }
@@ -564,7 +564,7 @@ public final class Char implements RecycleObject, AnimatedMove {
     private void updateLight(@Nullable final Avatar avatar, final int mode) {
         final Location lightLoc;
         // different handling for own char
-        @NonNull final Player player = World.getPlayer();
+        @Nonnull final Player player = World.getPlayer();
         if (player.isPlayer(charId)) {
             lightLoc = player.getLocation();
         } else {
@@ -602,7 +602,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      */
     @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneCallsConstructors"})
     @Override
-    @NonNull
+    @Nonnull
     public Char clone() {
         return new Char();
     }
@@ -693,7 +693,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      * @param newCharId new ID of the character
      */
     @SuppressWarnings({"nls", "IfStatementWithTooManyBranches"})
-    public void setCharId(@NonNull final CharacterId newCharId) {
+    public void setCharId(@Nonnull final CharacterId newCharId) {
         charId = newCharId;
         if (charId.isHuman()) {
             setNameColor(NAME_COLOR_HUMAN);
@@ -711,7 +711,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      *
      * @param color the new color value
      */
-    private void setNameColor(@NonNull final Color color) {
+    private void setNameColor(@Nonnull final Color color) {
         nameColor = color;
 
         if (avatar != null) {
@@ -725,7 +725,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      * @param newName the name of the character or null
      */
     @SuppressWarnings("nls")
-    public void setName(@NonNull final String newName) {
+    public void setName(@Nonnull final String newName) {
         name = newName;
 
         if (avatar != null) {
@@ -784,7 +784,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      *
      * @return the location of the character
      */
-    @NonNull
+    @Nonnull
     public Location getLocation() {
         return charLocation;
     }
@@ -794,7 +794,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      *
      * @return the name of the character
      */
-    @NonNull
+    @Nonnull
     public String getName() {
         if (name == null) {
             return Lang.getMsg("chat.someone"); //$NON-NLS-1$
@@ -854,7 +854,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      * @param mode   the mode of the move
      * @param speed  moving speed
      */
-    public void moveTo(@NonNull final Location newPos, @NonNull final CharMovementMode mode, final int speed) {
+    public void moveTo(@Nonnull final Location newPos, @Nonnull final CharMovementMode mode, final int speed) {
         final CharacterId characterId = getCharId();
         if (characterId == null) {
             LOGGER.error("Can't move a character without ID around.");
@@ -1080,7 +1080,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      * @param slot   the slot of the inventory
      * @param itemId the item id of the item at this slot
      */
-    public void setInventoryItem(final int slot, @NonNull final ItemId itemId) {
+    public void setInventoryItem(final int slot, @Nonnull final ItemId itemId) {
         switch (slot) {
             case 1:
                 setWearingItem(AvatarClothManager.GROUP_HAT, itemId.getValue());
@@ -1130,7 +1130,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      *
      * @param newLoc new location of the character
      */
-    public void setLocation(@NonNull final Location newLoc) {
+    public void setLocation(@Nonnull final Location newLoc) {
         final CharacterId characterId = getCharId();
         if (characterId == null) {
             LOGGER.error("Trying to change the location of a character without a ID.");

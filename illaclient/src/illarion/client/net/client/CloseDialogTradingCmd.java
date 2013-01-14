@@ -19,9 +19,10 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * This command is used to inform the server that a trading dialog was closed.
@@ -47,12 +48,12 @@ public final class CloseDialogTradingCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeInt(dialogId);
         writer.writeByte((byte) 0);
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public String toString() {
         return toString("Dialog ID: " + dialogId);

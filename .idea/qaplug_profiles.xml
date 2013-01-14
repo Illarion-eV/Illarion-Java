@@ -12,7 +12,7 @@
         <option name="myLocal" value="false" />
         <coding_rule class="AM_CREATES_EMPTY_JAR_FILE_ENTRY" level="WARNING" enabled="true" />
         <coding_rule class="AM_CREATES_EMPTY_ZIP_FILE_ENTRY" level="WARNING" enabled="true" />
-        <coding_rule class="AbstractClassNameCheck" level="WARNING" enabled="false">
+        <coding_rule class="AbstractClassNameCheck" level="WARNING" enabled="true">
           <param name="ignoreModifier" value="false" />
           <param name="ignoreName" value="false" />
         </coding_rule>
@@ -33,7 +33,7 @@
         <coding_rule class="AssignmentInsideConditionalInspector" level="WARNING" enabled="true" />
         <coding_rule class="AvoidInlineConditionalsCheck" level="INFO" enabled="true" />
         <coding_rule class="AvoidNestedBlocksCheck" level="WARNING" enabled="true" />
-        <coding_rule class="AvoidStarImportCheck" level="INFO" enabled="true">
+        <coding_rule class="AvoidStarImportCheck" level="INFO" enabled="false">
           <param name="allowClassImports" value="false" />
           <param name="allowStaticMemberImports" value="false" />
         </coding_rule>
@@ -96,7 +96,7 @@
         <coding_rule class="BasicRulesUselessOperationOnImmutable" level="ERROR" enabled="true" />
         <coding_rule class="BasicRulesUselessOverridingMethod" level="WARNING" enabled="true" />
         <coding_rule class="BooleanEqualityInspector" level="WARNING" enabled="true" />
-        <coding_rule class="BooleanExpressionComplexityCheck" level="WARNING" enabled="false" />
+        <coding_rule class="BooleanExpressionComplexityCheck" level="WARNING" enabled="true" />
         <coding_rule class="BraceInspector" level="WARNING" enabled="true" />
         <coding_rule class="BracesRulesForLoopsMustUseBraces" level="WARNING" enabled="true" />
         <coding_rule class="BracesRulesIfElseStmtsMustUseBraces" level="WARNING" enabled="true" />
@@ -113,8 +113,8 @@
           <param name="tooGeneralExceptions" value="java.lang.Exception,java.lang.RuntimeException,java.lang.Throwable,java.lang.Error" />
         </coding_rule>
         <coding_rule class="ChainExceptionsInspector" level="WARNING" enabled="true" />
-        <coding_rule class="ClassDataAbstractionCouplingCheck" level="WARNING" enabled="false" />
-        <coding_rule class="ClassFanOutComplexityCheck" level="WARNING" enabled="false" />
+        <coding_rule class="ClassDataAbstractionCouplingCheck" level="WARNING" enabled="true" />
+        <coding_rule class="ClassFanOutComplexityCheck" level="WARNING" enabled="true" />
         <coding_rule class="ClassTypeParameterNameCheck" level="WARNING" enabled="true" />
         <coding_rule class="CloneImplementationRulesCloneMethodMustImplementCloneable" level="WARNING" enabled="true" />
         <coding_rule class="CloneImplementationRulesCloneThrowsCloneNotSupportedException" level="WARNING" enabled="true" />
@@ -129,29 +129,29 @@
         <coding_rule class="CodeSizeRulesNcssMethodCount" level="WARNING" enabled="true" />
         <coding_rule class="CodeSizeRulesNcssTypeCount" level="WARNING" enabled="true" />
         <coding_rule class="CodeSizeRulesTooManyFields" level="WARNING" enabled="true" />
-        <coding_rule class="CodeSizeRulesTooManyMethods" level="WARNING" enabled="true" />
+        <coding_rule class="CodeSizeRulesTooManyMethods" level="WARNING" enabled="false" />
         <coding_rule class="CodeTooLongInspector" level="WARNING" enabled="true">
           <param name="maxLength" value="200" />
         </coding_rule>
         <coding_rule class="ConditionalExpressionInspector" level="WARNING" enabled="true" />
         <coding_rule class="ConstantNameCheck" level="INFO" enabled="true" />
-        <coding_rule class="ConstructorWithoutSuperInspector" level="WARNING" enabled="false" />
+        <coding_rule class="ConstructorWithoutSuperInspector" level="WARNING" enabled="true" />
         <coding_rule class="ContinueInspector" level="WARNING" enabled="true" />
         <coding_rule class="ControversialRulesAssignmentInOperand" level="WARNING" enabled="true" />
         <coding_rule class="ControversialRulesAtLeastOneConstructor" level="WARNING" enabled="true" />
         <coding_rule class="ControversialRulesAvoidAccessibilityAlteration" level="WARNING" enabled="true" />
         <coding_rule class="ControversialRulesAvoidFinalLocalVariable" level="WARNING" enabled="true" />
         <coding_rule class="ControversialRulesAvoidUsingNativeCode" level="WARNING" enabled="true" />
-        <coding_rule class="ControversialRulesAvoidUsingShortType" level="WARNING" enabled="false" />
+        <coding_rule class="ControversialRulesAvoidUsingShortType" level="WARNING" enabled="true" />
         <coding_rule class="ControversialRulesAvoidUsingVolatile" level="WARNING" enabled="true" />
         <coding_rule class="ControversialRulesBooleanInversion" level="WARNING" enabled="true" />
-        <coding_rule class="ControversialRulesCallSuperInConstructor" level="INFO" enabled="true" />
+        <coding_rule class="ControversialRulesCallSuperInConstructor" level="INFO" enabled="false" />
         <coding_rule class="ControversialRulesDataflowAnomalyAnalysis" level="WARNING" enabled="true" />
         <coding_rule class="ControversialRulesDefaultPackage" level="INFO" enabled="true" />
         <coding_rule class="ControversialRulesDoNotCallGarbageCollectionExplicitly" level="ERROR" enabled="true" />
         <coding_rule class="ControversialRulesDontImportSun" level="INFO" enabled="true" />
         <coding_rule class="ControversialRulesNullAssignment" level="WARNING" enabled="true" />
-        <coding_rule class="ControversialRulesOnlyOneReturn" level="INFO" enabled="true" />
+        <coding_rule class="ControversialRulesOnlyOneReturn" level="INFO" enabled="false" />
         <coding_rule class="ControversialRulesSuspiciousOctalEscape" level="WARNING" enabled="true" />
         <coding_rule class="ControversialRulesUnnecessaryConstructor" level="WARNING" enabled="true" />
         <coding_rule class="ControversialRulesUnnecessaryParentheses" level="INFO" enabled="true" />
@@ -225,7 +225,7 @@
         </coding_rule>
         <coding_rule class="DefaultComesLastCheck" level="WARNING" enabled="true" />
         <coding_rule class="DescendantTokenCheck" level="WARNING" enabled="true" />
-        <coding_rule class="DesignForExtensionCheck" level="INFO" enabled="true" />
+        <coding_rule class="DesignForExtensionCheck" level="INFO" enabled="false" />
         <coding_rule class="DesignRulesAbstractClassWithoutAbstractMethod" level="WARNING" enabled="true" />
         <coding_rule class="DesignRulesAbstractClassWithoutAnyMethod" level="WARNING" enabled="true" />
         <coding_rule class="DesignRulesAccessorClassGeneration" level="WARNING" enabled="true" />
@@ -317,8 +317,8 @@
         <coding_rule class="ES_COMPARING_STRINGS_WITH_EQ" level="WARNING" enabled="true" />
         <coding_rule class="ESync_EMPTY_SYNC" level="WARNING" enabled="true" />
         <coding_rule class="EmptyBlockCheck" level="WARNING" enabled="true" />
-        <coding_rule class="EmptyBodiesInspector" level="WARNING" enabled="false" />
-        <coding_rule class="EmptyCatchBlockInspector" level="WARNING" enabled="false">
+        <coding_rule class="EmptyBodiesInspector" level="WARNING" enabled="true" />
+        <coding_rule class="EmptyCatchBlockInspector" level="WARNING" enabled="true">
           <param name="exempts" value="java.lang.NumberFormatException" />
         </coding_rule>
         <coding_rule class="EmptyForInitializerPadCheck" level="INFO" enabled="true" />
@@ -345,7 +345,9 @@
         <coding_rule class="FI_USELESS" level="INFO" enabled="true" />
         <coding_rule class="FL_MATH_USING_FLOAT_PRECISION" level="ERROR" enabled="true" />
         <coding_rule class="FallThroughCheck" level="WARNING" enabled="true" />
-        <coding_rule class="FileHeaderInspector" level="WARNING" enabled="true" />
+        <coding_rule class="FileHeaderInspector" level="WARNING" enabled="false">
+          <param name="copyrights" value="GPLv3" />
+        </coding_rule>
         <coding_rule class="FileLengthCheck" level="WARNING" enabled="true" />
         <coding_rule class="FileTabCharacterCheck" level="WARNING" enabled="true" />
         <coding_rule class="FinalClassCheck" level="WARNING" enabled="true" />
@@ -375,11 +377,14 @@
         <coding_rule class="HRS_REQUEST_PARAMETER_TO_COOKIE" level="WARNING" enabled="true" />
         <coding_rule class="HRS_REQUEST_PARAMETER_TO_HTTP_HEADER" level="WARNING" enabled="true" />
         <coding_rule class="HSC_HUGE_SHARED_STRING_CONSTANT" level="ERROR" enabled="true" />
-        <coding_rule class="HardcodedCharacterLiteralsInspector" level="WARNING" enabled="false" />
+        <coding_rule class="HardcodedCharacterLiteralsInspector" level="WARNING" enabled="true" />
         <coding_rule class="HardcodedNumericLiteralsInspector" level="WARNING" enabled="false" />
         <coding_rule class="HardcodedStringLiteralsInspector" level="WARNING" enabled="false" />
-        <coding_rule class="HeaderCheck" level="WARNING" enabled="true" />
-        <coding_rule class="HiddenFieldCheck" level="WARNING" enabled="true" />
+        <coding_rule class="HeaderCheck" level="WARNING" enabled="false" />
+        <coding_rule class="HiddenFieldCheck" level="WARNING" enabled="true">
+          <param name="ignoreConstructorParameter" value="true" />
+          <param name="ignoreSetter" value="true" />
+        </coding_rule>
         <coding_rule class="HideUtilityClassConstructorCheck" level="WARNING" enabled="true" />
         <coding_rule class="HidingInheritedFieldsInspector" level="WARNING" enabled="true" />
         <coding_rule class="IA_AMBIGUOUS_INVOCATION_OF_INHERITED_OR_OUTER_METHOD" level="WARNING" enabled="true" />
@@ -421,23 +426,23 @@
         <coding_rule class="IllegalImportCheck" level="WARNING" enabled="true" />
         <coding_rule class="IllegalInstantiationCheck" level="WARNING" enabled="true" />
         <coding_rule class="IllegalThrowsCheck" level="WARNING" enabled="true" />
-        <coding_rule class="IllegalTokenCheck" level="WARNING" enabled="true" />
+        <coding_rule class="IllegalTokenCheck" level="WARNING" enabled="false" />
         <coding_rule class="IllegalTokenTextCheck" level="WARNING" enabled="true" />
         <coding_rule class="IllegalTypeCheck" level="WARNING" enabled="true" />
-        <coding_rule class="ImportControlCheck" level="WARNING" enabled="true" />
-        <coding_rule class="ImportOrderCheck" level="INFO" enabled="true" />
+        <coding_rule class="ImportControlCheck" level="WARNING" enabled="false" />
+        <coding_rule class="ImportOrderCheck" level="INFO" enabled="false" />
         <coding_rule class="ImportStatementRulesDontImportJavaLang" level="INFO" enabled="true" />
         <coding_rule class="ImportStatementRulesDuplicateImports" level="INFO" enabled="true" />
         <coding_rule class="ImportStatementRulesImportFromSamePackage" level="INFO" enabled="true" />
-        <coding_rule class="ImportStatementRulesTooManyStaticImports" level="WARNING" enabled="true" />
-        <coding_rule class="ImportStatementRulesUnusedImports" level="INFO" enabled="true" />
+        <coding_rule class="ImportStatementRulesTooManyStaticImports" level="WARNING" enabled="false" />
+        <coding_rule class="ImportStatementRulesUnusedImports" level="INFO" enabled="false" />
         <coding_rule class="IndentationCheck" level="INFO" enabled="true" />
         <coding_rule class="InnerAssignmentCheck" level="WARNING" enabled="true" />
         <coding_rule class="InnerClassNestingInspector" level="WARNING" enabled="true">
           <param name="maxNesting" value="2" />
         </coding_rule>
         <coding_rule class="InnerClassVisibilityInspector" level="WARNING" enabled="true" />
-        <coding_rule class="InnerTypeLastCheck" level="WARNING" enabled="true" />
+        <coding_rule class="InnerTypeLastCheck" level="WARNING" enabled="false" />
         <coding_rule class="InterfaceIsTypeCheck" level="WARNING" enabled="true" />
         <coding_rule class="InterfaceMethodModifiersInspector" level="WARNING" enabled="true" />
         <coding_rule class="InvokeFinalizeInspector" level="WARNING" enabled="true" />
@@ -466,7 +471,7 @@
         <coding_rule class="JUnitTestCaseCheck" level="WARNING" enabled="true" />
         <coding_rule class="JakartaCommonsLoggingRulesProperLogger" level="WARNING" enabled="true" />
         <coding_rule class="JakartaCommonsLoggingRulesUseCorrectExceptionLogging" level="WARNING" enabled="true" />
-        <coding_rule class="JavaBeanRulesBeanMembersShouldSerialize" level="WARNING" enabled="true" />
+        <coding_rule class="JavaBeanRulesBeanMembersShouldSerialize" level="WARNING" enabled="false" />
         <coding_rule class="JavaBeanRulesMissingSerialVersionUID" level="WARNING" enabled="true" />
         <coding_rule class="JavaDocInspector" level="WARNING" enabled="true" />
         <coding_rule class="JavaLangImportInspector" level="WARNING" enabled="true" />
@@ -484,9 +489,12 @@
         <coding_rule class="LI_LAZY_INIT_STATIC" level="ERROR" enabled="true" />
         <coding_rule class="LI_LAZY_INIT_UPDATE_STATIC" level="ERROR" enabled="true" />
         <coding_rule class="LeftCurlyCheck" level="INFO" enabled="true" />
-        <coding_rule class="LineLengthCheck" level="WARNING" enabled="false" />
-        <coding_rule class="LineLengthInspector" level="WARNING" enabled="false">
-          <param name="maxLineLength" value="80" />
+        <coding_rule class="LineLengthCheck" level="WARNING" enabled="true">
+          <param name="max" value="120" />
+          <param name="tabWidth" value="4" />
+        </coding_rule>
+        <coding_rule class="LineLengthInspector" level="WARNING" enabled="true">
+          <param name="maxLineLength" value="120" />
         </coding_rule>
         <coding_rule class="LocalFinalVariableNameCheck" level="WARNING" enabled="true" />
         <coding_rule class="LocalVariableNameCheck" level="WARNING" enabled="true" />
@@ -510,7 +518,7 @@
         <coding_rule class="MTIA_SUSPECT_STRUTS_INSTANCE_FIELD" level="ERROR" enabled="true" />
         <coding_rule class="MWN_MISMATCHED_NOTIFY" level="ERROR" enabled="true" />
         <coding_rule class="MWN_MISMATCHED_WAIT" level="ERROR" enabled="true" />
-        <coding_rule class="MagicNumberCheck" level="INFO" enabled="true">
+        <coding_rule class="MagicNumberCheck" level="INFO" enabled="false">
           <param name="ignoreHashCodeMethod" value="false" />
           <param name="ignoreAnnotation" value="false" />
         </coding_rule>
@@ -547,7 +555,7 @@
         <coding_rule class="MinimalInstanceVariableLengthInspector" level="WARNING" enabled="true">
           <param name="minLength" value="3" />
         </coding_rule>
-        <coding_rule class="MissingCtorCheck" level="WARNING" enabled="true" />
+        <coding_rule class="MissingCtorCheck" level="WARNING" enabled="false" />
         <coding_rule class="MissingDeprecatedCheck" level="WARNING" enabled="true" />
         <coding_rule class="MissingOverrideCheck" level="WARNING" enabled="true" />
         <coding_rule class="MissingPackageDeclarationInspector" level="WARNING" enabled="true" />
@@ -555,7 +563,7 @@
         <coding_rule class="ModifiedControlVariableCheck" level="WARNING" enabled="true" />
         <coding_rule class="ModifierOrderCheck" level="INFO" enabled="true" />
         <coding_rule class="ModifiersOrderInspector" level="WARNING" enabled="true" />
-        <coding_rule class="MultipleStringLiteralsCheck" level="WARNING" enabled="true" />
+        <coding_rule class="MultipleStringLiteralsCheck" level="WARNING" enabled="false" />
         <coding_rule class="MultipleVariableDeclarationsCheck" level="WARNING" enabled="true" />
         <coding_rule class="MutableExceptionCheck" level="WARNING" enabled="true" />
         <coding_rule class="NM_BAD_EQUAL" level="WARNING" enabled="true" />
@@ -618,14 +626,14 @@
         <coding_rule class="NamingRulesAvoidFieldNameMatchingTypeName" level="WARNING" enabled="true" />
         <coding_rule class="NamingRulesBooleanGetMethodName" level="WARNING" enabled="true" />
         <coding_rule class="NamingRulesClassNamingConventions" level="WARNING" enabled="true" />
-        <coding_rule class="NamingRulesLongVariable" level="WARNING" enabled="true" />
+        <coding_rule class="NamingRulesLongVariable" level="WARNING" enabled="false" />
         <coding_rule class="NamingRulesMethodNamingConventions" level="WARNING" enabled="true" />
         <coding_rule class="NamingRulesMethodWithSameNameAsEnclosingClass" level="WARNING" enabled="true" />
         <coding_rule class="NamingRulesMisleadingVariableName" level="WARNING" enabled="true" />
         <coding_rule class="NamingRulesNoPackage" level="WARNING" enabled="true" />
         <coding_rule class="NamingRulesPackageCase" level="WARNING" enabled="true" />
         <coding_rule class="NamingRulesShortMethodName" level="WARNING" enabled="true" />
-        <coding_rule class="NamingRulesShortVariable" level="WARNING" enabled="true" />
+        <coding_rule class="NamingRulesShortVariable" level="WARNING" enabled="false" />
         <coding_rule class="NamingRulesSuspiciousConstantFieldName" level="WARNING" enabled="true" />
         <coding_rule class="NamingRulesSuspiciousEqualsMethodName" level="ERROR" enabled="true" />
         <coding_rule class="NamingRulesSuspiciousHashcodeMethodName" level="WARNING" enabled="true" />
@@ -721,25 +729,25 @@
         <coding_rule class="RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED" level="WARNING" enabled="true" />
         <coding_rule class="RedundantImportCheck" level="INFO" enabled="true" />
         <coding_rule class="RedundantModifierCheck" level="INFO" enabled="true" />
-        <coding_rule class="RedundantParenthesisInspector" level="WARNING" enabled="true" />
+        <coding_rule class="RedundantParenthesisInspector" level="WARNING" enabled="false" />
         <coding_rule class="RedundantThrowsCheck" level="INFO" enabled="true" />
         <coding_rule class="RegexpCheck" level="WARNING" enabled="true" />
-        <coding_rule class="RegexpHeaderCheck" level="WARNING" enabled="true" />
-        <coding_rule class="RegexpMultilineCheck" level="WARNING" enabled="false">
+        <coding_rule class="RegexpHeaderCheck" level="WARNING" enabled="false" />
+        <coding_rule class="RegexpMultilineCheck" level="WARNING" enabled="true">
           <param name="message" value="TODO item found" />
           <param name="minimum" value="0" />
           <param name="maximum" value="0" />
           <param name="format" value="TODO" />
           <param name="ignoreCase" value="true" />
         </coding_rule>
-        <coding_rule class="RegexpSinglelineCheck" level="WARNING" enabled="false">
+        <coding_rule class="RegexpSinglelineCheck" level="WARNING" enabled="true">
           <param name="message" value="TODO item found" />
           <param name="minimum" value="0" />
           <param name="maximum" value="0" />
           <param name="format" value="TODO" />
           <param name="ignoreCase" value="true" />
         </coding_rule>
-        <coding_rule class="RegexpSinglelineJavaCheck" level="WARNING" enabled="false">
+        <coding_rule class="RegexpSinglelineJavaCheck" level="WARNING" enabled="true">
           <param name="message" value="TODO item found" />
           <param name="minimum" value="0" />
           <param name="maximum" value="0" />
@@ -747,8 +755,8 @@
           <param name="format" value="TODO" />
           <param name="ignoreCase" value="true" />
         </coding_rule>
-        <coding_rule class="RequireThisCheck" level="WARNING" enabled="true" />
-        <coding_rule class="ReturnCountCheck" level="WARNING" enabled="true" />
+        <coding_rule class="RequireThisCheck" level="WARNING" enabled="false" />
+        <coding_rule class="ReturnCountCheck" level="WARNING" enabled="false" />
         <coding_rule class="ReturnFromFinallyInspector" level="WARNING" enabled="true" />
         <coding_rule class="RightCurlyCheck" level="INFO" enabled="true" />
         <coding_rule class="RootPackageInspector" level="WARNING" enabled="true" />
@@ -826,7 +834,7 @@
         <coding_rule class="StringLiteralEqualityCheck" level="WARNING" enabled="true" />
         <coding_rule class="StringLiteralEqualsInspector" level="WARNING" enabled="true" />
         <coding_rule class="StringandStringBufferRulesAppendCharacterWithChar" level="INFO" enabled="true" />
-        <coding_rule class="StringandStringBufferRulesAvoidDuplicateLiterals" level="WARNING" enabled="false">
+        <coding_rule class="StringandStringBufferRulesAvoidDuplicateLiterals" level="WARNING" enabled="true">
           <param name="skipAnnotations" value="true" />
         </coding_rule>
         <coding_rule class="StringandStringBufferRulesAvoidStringBufferField" level="WARNING" enabled="true" />
@@ -866,10 +874,10 @@
         <coding_rule class="ThrowsClauseInspector" level="WARNING" enabled="true" />
         <coding_rule class="ThrowsCountCheck" level="WARNING" enabled="true" />
         <coding_rule class="TodoCommentCheck" level="INFO" enabled="true" />
-        <coding_rule class="TooManyParametersInspector" level="WARNING" enabled="true">
+        <coding_rule class="TooManyParametersInspector" level="WARNING" enabled="false">
           <param name="maxParameters" value="7" />
         </coding_rule>
-        <coding_rule class="TooManyThrowsInspector" level="WARNING" enabled="true">
+        <coding_rule class="TooManyThrowsInspector" level="WARNING" enabled="false">
           <param name="maxThrows" value="3" />
         </coding_rule>
         <coding_rule class="TrailingCommentCheck" level="INFO" enabled="true" />
@@ -878,7 +886,7 @@
         <coding_rule class="TypeResolutionRulesCloneMethodMustImplementCloneable" level="WARNING" enabled="true" />
         <coding_rule class="TypeResolutionRulesLooseCoupling" level="WARNING" enabled="true" />
         <coding_rule class="TypeResolutionRulesSignatureDeclareThrowsException" level="WARNING" enabled="true" />
-        <coding_rule class="TypeResolutionRulesUnusedImports" level="INFO" enabled="true" />
+        <coding_rule class="TypeResolutionRulesUnusedImports" level="INFO" enabled="false" />
         <coding_rule class="TypecastParenPadCheck" level="WARNING" enabled="true" />
         <coding_rule class="UCF_USELESS_CONTROL_FLOW" level="ERROR" enabled="true" />
         <coding_rule class="UCF_USELESS_CONTROL_FLOW_NEXT_LINE" level="ERROR" enabled="true" />

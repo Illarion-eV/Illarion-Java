@@ -32,6 +32,7 @@ import org.illarion.nifty.controls.DialogMerchantBuyEvent;
 import org.illarion.nifty.controls.DialogMerchantCloseEvent;
 import org.illarion.nifty.controls.MerchantListEntry;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Properties;
 
@@ -122,17 +123,17 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     }
 
     @Override
-    public void addAllSellingItems(final List<MerchantListEntry> entry) {
+    public void addAllSellingItems(@Nonnull final List<MerchantListEntry> entry) {
         getSellList().addAllItems(entry);
     }
 
     @Override
-    public void addSellingItem(final MerchantListEntry entry) {
+    public void addSellingItem(@Nonnull final MerchantListEntry entry) {
         getSellList().addItem(entry);
     }
 
     @Override
-    public void addAllBuyingItems(final List<MerchantListEntry> entry) {
+    public void addAllBuyingItems(@Nonnull final List<MerchantListEntry> entry) {
         getBuyList().addAllItems(entry);
     }
 
@@ -147,7 +148,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     }
 
     @Override
-    public void addBuyingItem(final MerchantListEntry entry) {
+    public void addBuyingItem(@Nonnull final MerchantListEntry entry) {
         getBuyList().addItem(entry);
     }
 

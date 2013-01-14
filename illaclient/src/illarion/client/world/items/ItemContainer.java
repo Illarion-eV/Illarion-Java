@@ -18,9 +18,10 @@
  */
 package illarion.client.world.items;
 
-import illarion.common.annotation.NonNull;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
+
+import javax.annotation.Nonnull;
 
 /**
  * This class represents a item container that is displayed currently by the character.
@@ -31,7 +32,7 @@ public final class ItemContainer {
     /**
      * This array stores the container slots and their items
      */
-    @NonNull
+    @Nonnull
     private final ContainerSlot[] slots;
 
     /**
@@ -60,7 +61,7 @@ public final class ItemContainer {
      * @return the slot that is assigned to the requested id or {@code null} in case no item is applied to this slot
      * @throws IndexOutOfBoundsException in case the {@code slotId} parameter is too small or too large
      */
-    @NonNull
+    @Nonnull
     public ContainerSlot getSlot(final int slotId) {
         return slots[slotId];
     }
@@ -91,14 +92,14 @@ public final class ItemContainer {
      * @param count the new item count
      * @throws IndexOutOfBoundsException in case the {@code slot} parameter is too small or too large
      */
-    public void setItem(final int slot, @NonNull final ItemId id, @NonNull final ItemCount count) {
+    public void setItem(final int slot, @Nonnull final ItemId id, @Nonnull final ItemCount count) {
         if ((slot < 0) || (slot >= slots.length)) {
             throw new IndexOutOfBoundsException("Requested slot outside of allowed range: " + slot);
         }
         if (ItemId.isValidItem(id)) {
             slots[slot].setData(id, count);
         } else {
-            slots[slot].setData(new ItemId(0), ItemCount.getInstance(0));
+            slots[slot].clearSlot();
         }
     }
 }

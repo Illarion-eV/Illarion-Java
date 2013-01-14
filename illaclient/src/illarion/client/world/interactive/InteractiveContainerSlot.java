@@ -22,9 +22,10 @@ import illarion.client.net.client.*;
 import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.MerchantList;
-import illarion.common.annotation.NonNull;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
+
+import javax.annotation.Nonnull;
 
 /**
  * This class holds the interactive representation of a inventory slot.
@@ -50,7 +51,7 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
      * Drag a inventory item to a character. Does nothing currently.
      */
     @Override
-    public void dragTo(@NonNull final InteractiveChar targetChar, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveChar targetChar, @Nonnull final ItemCount count) {
         // nothing
     }
 
@@ -60,7 +61,7 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
      * @param targetSlot the slot to drag the item to
      */
     @Override
-    public void dragTo(@NonNull final InteractiveInventorySlot targetSlot, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
         if (!targetSlot.isAcceptingItem(getItemId())) {
             return;
         }
@@ -87,12 +88,12 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
      * @param targetTile the target location on the map
      */
     @Override
-    public void dragTo(@NonNull final InteractiveMapTile targetTile, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveMapTile targetTile, @Nonnull final ItemCount count) {
         World.getNet().sendCommand(new DragScMapCmd(getContainerId(), getSlotId(), targetTile.getLocation(), count));
     }
 
     @Override
-    public void dragTo(@NonNull final InteractiveContainerSlot targetSlot, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveContainerSlot targetSlot, @Nonnull final ItemCount count) {
         if (!isValidItem() || !targetSlot.acceptItem(getItemId())) {
             return;
         }

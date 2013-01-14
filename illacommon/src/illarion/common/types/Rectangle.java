@@ -18,10 +18,9 @@
  */
 package illarion.common.types;
 
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
-import net.jcip.annotations.NotThreadSafe;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.io.Serializable;
 
 /**
@@ -253,7 +252,7 @@ public final class Rectangle implements Serializable {
      *
      * @param other the other rectangle
      */
-    public void intersect(@NonNull final Rectangle other) {
+    public void intersect(@Nonnull final Rectangle other) {
         x0 = Math.max(x0, other.x0);
         y0 = Math.max(y0, other.y0);
         x1 = Math.min(x1, other.x1);
@@ -270,7 +269,7 @@ public final class Rectangle implements Serializable {
      * @param other the second rectangle
      * @return <code>true</code> in case there is an intersection
      */
-    public boolean intersects(@NonNull final Rectangle other) {
+    public boolean intersects(@Nonnull final Rectangle other) {
         if ((x0 > other.x1) || (x1 < other.x0)) {
             return false;
         }
@@ -337,7 +336,7 @@ public final class Rectangle implements Serializable {
      *
      * @param org the rectangle that shall be copied
      */
-    public void set(@NonNull final Rectangle org) {
+    public void set(@Nonnull final Rectangle org) {
         x0 = org.x0;
         x1 = org.x1;
         y0 = org.y0;
@@ -349,7 +348,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the java.awt.Rectangle that represents the same rectangle as this one
      */
-    @NonNull
+    @Nonnull
     public java.awt.Rectangle toNative() {
         return new java.awt.Rectangle(x0, y0, x1 - x0, y1 - y0);
     }

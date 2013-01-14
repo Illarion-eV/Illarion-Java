@@ -20,11 +20,16 @@ package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.controls.Window;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
+
 /**
  * This interface is used to interact with a select dialog that is displayed inside the GUI.
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
+@NotThreadSafe
 public interface DialogSelect extends Window {
     /**
      * Get the amount of entries on the list.
@@ -36,14 +41,15 @@ public interface DialogSelect extends Window {
     /**
      * Get the item that was selected.
      *
-     * @return the selected item
+     * @return the selected item or {@code null} in case no item is selected
      */
+    @Nullable
     SelectListEntry getSelectedItem();
 
     /**
      * Get the selected index.
      *
-     * @return the index that was selected
+     * @return the index that was selected or {@code -1} in case no item is selected
      */
     int getSelectedIndex();
 
@@ -52,5 +58,5 @@ public interface DialogSelect extends Window {
      *
      * @param entry the item to add
      */
-    void addItem(SelectListEntry entry);
+    void addItem(@Nonnull SelectListEntry entry);
 }

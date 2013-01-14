@@ -27,15 +27,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * This resource contains the JCIP library.
+ * This resource contains the JSR library.
  *
  * @author Martin Karing
  */
-public final class JCIP implements LibraryResource {
+public final class JSR implements LibraryResource {
     /**
      * The singleton instance of this class.
      */
-    private static final JCIP INSTANCE = new JCIP();
+    private static final JSR INSTANCE = new JSR();
 
     /**
      * The files that are needed to be added to the class path for this
@@ -57,7 +57,7 @@ public final class JCIP implements LibraryResource {
     /**
      * Private constructor to avoid instances but the singleton instance.
      */
-    private JCIP() {
+    private JSR() {
         // nothing to do
     }
 
@@ -79,7 +79,7 @@ public final class JCIP implements LibraryResource {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             cp.add(new File(LibraryDirectory.getInstance().getDirectory(),
-                    "jcip-annotations.jar")); //$NON-NLS-1$
+                    "jsr-305.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -106,7 +106,7 @@ public final class JCIP implements LibraryResource {
 
     @Override
     public String getName() {
-        return Lang.getMsg(JCIP.class.getName());
+        return Lang.getMsg(JSR.class.getName());
     }
 
     /**
@@ -127,7 +127,7 @@ public final class JCIP implements LibraryResource {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {
-                res.add(new URL(ONLINE_PATH + "jcip" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                res.add(new URL(ONLINE_PATH + "jsr" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (final Exception e) {
                 // Catch everything and do nothing!
             }
@@ -153,7 +153,7 @@ public final class JCIP implements LibraryResource {
     public Collection<String> getVMArguments() {
         if (vmArguments == null) {
             final Collection<String> vmArgs = new ArrayList<String>();
-            vmArgs.add("-Dillarion.components.avaiable.jcip=true"); //$NON-NLS-1$
+            vmArgs.add("-Dillarion.components.avaiable.jsr=true"); //$NON-NLS-1$
 
             vmArguments = vmArgs;
         }

@@ -19,10 +19,11 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * This command is used to sell a item from the inventory to a trader.
@@ -44,7 +45,7 @@ public final class SellInventoryItemCmd extends AbstractCommand {
     /**
      * The amount of items to sell.
      */
-    @NonNull
+    @Nonnull
     private final ItemCount amount;
 
     /**
@@ -54,7 +55,7 @@ public final class SellInventoryItemCmd extends AbstractCommand {
      * @param inventorySlot the inventory slot to tell the item from
      * @param count         the amount of items to be sold
      */
-    public SellInventoryItemCmd(final int dialogId, final int inventorySlot, @NonNull final ItemCount count) {
+    public SellInventoryItemCmd(final int dialogId, final int inventorySlot, @Nonnull final ItemCount count) {
         super(CommandList.CMD_TRADE_ITEM);
 
         this.dialogId = dialogId;
@@ -63,7 +64,7 @@ public final class SellInventoryItemCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeInt(dialogId);
         writer.writeByte((byte) 1);
         writer.writeUByte((short) 0);
@@ -71,7 +72,7 @@ public final class SellInventoryItemCmd extends AbstractCommand {
         amount.encode(writer);
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public String toString() {
         return toString("dialog ID: " + dialogId + " Slot: " + slot + ' ' + amount);

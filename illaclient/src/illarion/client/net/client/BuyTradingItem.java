@@ -19,10 +19,11 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * This command is used to buy a item from a trader.
@@ -44,7 +45,7 @@ public final class BuyTradingItem extends AbstractCommand {
     /**
      * The amount of items to buy.
      */
-    @NonNull
+    @Nonnull
     private final ItemCount amount;
 
     /**
@@ -54,7 +55,7 @@ public final class BuyTradingItem extends AbstractCommand {
      * @param index    the index of the item to buy
      * @param count    the amount of items to buy
      */
-    public BuyTradingItem(final int dialogId, final int index, @NonNull final ItemCount count) {
+    public BuyTradingItem(final int dialogId, final int index, @Nonnull final ItemCount count) {
         super(CommandList.CMD_TRADE_ITEM);
 
         this.dialogId = dialogId;
@@ -63,14 +64,14 @@ public final class BuyTradingItem extends AbstractCommand {
     }
 
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeInt(dialogId);
         writer.writeByte((byte) 2);
         writer.writeUByte(index);
         amount.encode(writer);
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public String toString() {
         return toString("dialog ID: " + dialogId + " Index: " + index + ' ' + amount);

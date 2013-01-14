@@ -8,7 +8,6 @@
     <SOURCES>
       <root url="file://$PROJECT_DIR$/illacommon/lib/slick" />
       <root url="file://$PROJECT_DIR$/illacommon/lib/slick" />
-      <root url="intellijad://intellijad" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/slick" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/slick" recursive="false" type="SOURCES" />

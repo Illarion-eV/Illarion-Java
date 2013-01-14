@@ -18,11 +18,16 @@
  */
 package org.illarion.nifty.controls;
 
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * This event is fired in case a message dialog is confirmed.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ThreadSafe
+@Immutable
 public final class DialogMessageConfirmedEvent extends DialogEvent {
     /**
      * Create a new instance of this event and set the ID of the dialog that was closed when this event was fired.

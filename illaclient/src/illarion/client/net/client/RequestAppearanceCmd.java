@@ -19,10 +19,11 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.CharacterId;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Client Command: Request the appearance data of a unknown character ({@link CommandList#CMD_REQUEST_APPEARANCE}).
@@ -35,7 +36,7 @@ public final class RequestAppearanceCmd extends AbstractCommand {
     /**
      * The ID of the characters who's appearance is needed.
      */
-    @NonNull
+    @Nonnull
     private final CharacterId charId;
 
     /**
@@ -43,18 +44,18 @@ public final class RequestAppearanceCmd extends AbstractCommand {
      *
      * @param characterId the ID of the character to request the appearance from
      */
-    public RequestAppearanceCmd(@NonNull final CharacterId characterId) {
+    public RequestAppearanceCmd(@Nonnull final CharacterId characterId) {
         super(CommandList.CMD_REQUEST_APPEARANCE);
 
         charId = characterId;
     }
 
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         charId.encode(writer);
     }
 
-    @NonNull
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

@@ -33,6 +33,7 @@ import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.DialogInput;
 import org.illarion.nifty.controls.DialogInputConfirmedEvent;
 
+import javax.annotation.Nonnull;
 import java.util.Properties;
 
 /**
@@ -104,8 +105,8 @@ public class DialogInputControl
 
     @Override
     public void onStartScreen() {
-        setButtonLabel(DialogInput.DialogButton.left, buttonLabelLeft);
-        setButtonLabel(DialogInput.DialogButton.right, buttonLabelRight);
+        setButtonLabel(DialogInput.DialogButton.LeftButton, buttonLabelLeft);
+        setButtonLabel(DialogInput.DialogButton.RightButton, buttonLabelRight);
         setDescription(description);
         setMaximalLength(maxLength);
 
@@ -124,13 +125,13 @@ public class DialogInputControl
     }
 
     @Override
-    public void setButtonLabel(final DialogInput.DialogButton button, final String label) {
+    public void setButtonLabel(@Nonnull final DialogButton button, @Nonnull final String label) {
         Button buttonControl = null;
         switch (button) {
-            case left:
+            case LeftButton:
                 buttonControl = getContent().findNiftyControl("#buttonLeft", Button.class);
                 break;
-            case right:
+            case RightButton:
                 buttonControl = getContent().findNiftyControl("#buttonRight", Button.class);
         }
 
@@ -152,7 +153,7 @@ public class DialogInputControl
     }
 
     @Override
-    public void setDescription(final String text) {
+    public void setDescription(@Nonnull final String text) {
         final Label label = getContent().findNiftyControl("#description", Label.class);
         if (label == null) {
             throw new IllegalArgumentException("Failed to fetch description label.");
@@ -168,10 +169,10 @@ public class DialogInputControl
 
         if (topic.contains("#buttonLeft")) {
             niftyInstance.publishEvent(getId(),
-                    new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.left, getInputText()));
+                    new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.LeftButton, getInputText()));
         } else {
             niftyInstance.publishEvent(getId(),
-                    new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.right, getInputText()));
+                    new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.RightButton, getInputText()));
         }
         closeWindow();
     }

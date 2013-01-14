@@ -20,11 +20,12 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.client.world.World;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Client Command: Dragging a item from a map position to a inventory slot ({@link CommandList#CMD_DRAG_MAP_INV}).
@@ -51,7 +52,7 @@ public final class DragMapInvCmd extends AbstractDragCommand {
      * @param destination the destination slot in the inventory
      * @param count       the amount of items to move
      */
-    public DragMapInvCmd(@NonNull final Location source, final int destination, @NonNull final ItemCount count) {
+    public DragMapInvCmd(@Nonnull final Location source, final int destination, @Nonnull final ItemCount count) {
         super(CommandList.CMD_DRAG_MAP_INV, count);
 
         direction = (short) World.getPlayer().getLocation().getDirection(source);
@@ -59,13 +60,13 @@ public final class DragMapInvCmd extends AbstractDragCommand {
     }
 
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeUByte(direction);
         writer.writeUByte(dstPos);
         getCount().encode(writer);
     }
 
-    @NonNull
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

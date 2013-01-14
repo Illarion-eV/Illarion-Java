@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 
+import javax.annotation.Nonnull;
 import java.util.Properties;
 
 /**
@@ -150,7 +151,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
      * {@inheritDoc}
      */
     @Override
-    public void setImage(final NiftyImage image) {
+    public void setImage(@Nonnull final NiftyImage image) {
         draggedImage.getRenderer(ImageRenderer.class).setImage(image);
         backgroundImage.getRenderer(ImageRenderer.class).setImage(image);
 
@@ -189,7 +190,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
     }
 
     @Override
-    public void setBackgroundImage(final NiftyImage image) {
+    public void setBackgroundImage(@Nonnull final NiftyImage image) {
         if (image == null) {
             staticBackgroundImage.getRenderer(ImageRenderer.class).setImage(null);
             staticBackgroundImage.setVisible(false);
@@ -237,7 +238,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
      * {@inheritDoc}
      */
     @Override
-    public void setLabelText(final String text) {
+    public void setLabelText(@Nonnull final String text) {
         backgroundImageLabel.getNiftyControl(Label.class).setText(text);
         if (backgroundImageLabel.isVisible()) {
             backgroundImageLabel.getParent().layoutElements();
@@ -277,7 +278,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
     }
 
     @Override
-    public void showMerchantOverlay(final InventorySlot.MerchantBuyLevel level) {
+    public void showMerchantOverlay(@Nonnull final InventorySlot.MerchantBuyLevel level) {
         switch (level) {
             case Copper:
                 merchantOverlay.getRenderer(ImageRenderer.class).setImage(

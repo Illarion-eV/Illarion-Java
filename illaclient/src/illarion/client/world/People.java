@@ -20,16 +20,16 @@ package illarion.client.world;
 
 import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.world.events.CharRemovedEvent;
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import javolution.util.FastTable;
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,7 @@ public final class People {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    @NonNull
+    @Nonnull
     @SuppressWarnings("UnusedDeclaration")
     private static final Logger LOGGER = Logger.getLogger(People.class);
 
@@ -55,7 +55,7 @@ public final class People {
      * This is the format string that is displayed in the {@link #toString()} function.
      */
     @SuppressWarnings("nls")
-    @NonNull
+    @Nonnull
     private static final String TO_STRING_TEXT = "People Manager - %d$1 characters in storage";
 
     /**
@@ -90,8 +90,8 @@ public final class People {
      * @param id the ID of the character
      * @return the character that was requested
      */
-    @NonNull
-    public Char accessCharacter(@NonNull final CharacterId id) {
+    @Nonnull
+    public Char accessCharacter(@Nonnull final CharacterId id) {
         if (World.getPlayer().isPlayer(id)) {
             return World.getPlayer().getCharacter();
         }
@@ -108,7 +108,7 @@ public final class People {
      *
      * @param chara the character that shall be added
      */
-    private void addCharacter(@NonNull final Char chara) {
+    private void addCharacter(@Nonnull final Char chara) {
         if (chara.getCharId() == null) {
             throw new IllegalArgumentException("Adding character without ID is illegal.");
         }
@@ -130,7 +130,7 @@ public final class People {
      *
      * @param removeChar the character that is going to be removed
      */
-    public void addCharacterToRemoveList(@NonNull final Char removeChar) {
+    public void addCharacterToRemoveList(@Nonnull final Char removeChar) {
         if (removeChar.getCharId() == null) {
             throw new IllegalArgumentException("Removing character without ID is illegal.");
         }
@@ -221,8 +221,8 @@ public final class People {
      * @param id the ID of the character to be created
      * @return the created character
      */
-    @NonNull
-    private Char createNewCharacter(@NonNull final CharacterId id) {
+    @Nonnull
+    private Char createNewCharacter(@Nonnull final CharacterId id) {
         final Char chara = Char.create();
         chara.setCharId(id);
 
@@ -259,7 +259,7 @@ public final class People {
      * @return the character or {@code null} if not found
      */
     @Nullable
-    public Char getCharacterAt(@NonNull final Location loc) {
+    public Char getCharacterAt(@Nonnull final Location loc) {
         final Char playerChar = World.getPlayer().getCharacter();
         if (playerChar.getLocation().equals(loc)) {
             return playerChar;
@@ -286,7 +286,7 @@ public final class People {
      *
      * @param id the ID of the character that shall be removed
      */
-    public void removeCharacter(@NonNull final CharacterId id) {
+    public void removeCharacter(@Nonnull final CharacterId id) {
         if (World.getPlayer().isPlayer(id)) {
             throw new IllegalArgumentException("Removing the player character from the people list is not legal.");
         }
@@ -312,7 +312,7 @@ public final class People {
      * Get the string representation of this instance.
      */
     @Override
-    @NonNull
+    @Nonnull
     public String toString() {
         charsLock.writeLock().lock();
         try {

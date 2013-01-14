@@ -18,15 +18,22 @@
  */
 package org.illarion.nifty.controls;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * This event is fired in case the player wants to craft something from the crafting dialog.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ThreadSafe
+@Immutable
 public final class DialogCraftingCraftEvent extends DialogEvent {
     /**
      * The item that was bought.
      */
+    @Nonnull
     private final CraftingItemEntry item;
 
     /**
@@ -41,7 +48,7 @@ public final class DialogCraftingCraftEvent extends DialogEvent {
      * @param craftItem  the item to craft
      * @param craftCount the amount of items to craft
      */
-    public DialogCraftingCraftEvent(final int id, final CraftingItemEntry craftItem, final int craftCount) {
+    public DialogCraftingCraftEvent(final int id, @Nonnull final CraftingItemEntry craftItem, final int craftCount) {
         super(id);
         item = craftItem;
         count = craftCount;
@@ -52,6 +59,7 @@ public final class DialogCraftingCraftEvent extends DialogEvent {
      *
      * @return the item that is created
      */
+    @Nonnull
     public CraftingItemEntry getItem() {
         return item;
     }

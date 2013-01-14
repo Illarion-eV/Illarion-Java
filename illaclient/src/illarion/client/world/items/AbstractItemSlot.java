@@ -23,6 +23,9 @@ import illarion.client.resources.ItemFactory;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This is the abstract item slot that contains all functions shared by the different item slots, like the inventory
  * slots or the container slots.
@@ -33,27 +36,30 @@ public abstract class AbstractItemSlot {
     /**
      * The count of items on this slot.
      */
+    @Nullable
     private ItemCount count;
 
     /**
      * The ID of the item on this slot.
      */
+    @Nullable
     private ItemId itemId;
 
     /**
      * Check if this slot stores a item.
      *
-     * @return <code>true</code> in case this slot stores a item
+     * @return {@code true} in case this slot stores a item
      */
     public boolean containsItem() {
-        return (itemId != null) && (itemId.getValue() != 0);
+        return ItemId.isValidItem(itemId);
     }
 
     /**
      * Get the amount of items.
      *
-     * @return the item count
+     * @return the item count or {@code null} in case there is not item in this slot
      */
+    @Nullable
     public ItemCount getCount() {
         return count;
     }
@@ -61,8 +67,9 @@ public abstract class AbstractItemSlot {
     /**
      * Get the ID of the item.
      *
-     * @return the ID
+     * @return the ID or {@code null} in case there is not item in this slot
      */
+    @Nullable
     public ItemId getItemID() {
         return itemId;
     }
@@ -70,9 +77,13 @@ public abstract class AbstractItemSlot {
     /**
      * Get the prototype of the item that is located in this slot.
      *
-     * @return the item
+     * @return the item or {@code null} in case there is not item in this slot
      */
+    @Nullable
     public Item getItemPrototype() {
+        if ((itemId == null) || (itemId.getValue() == 0)) {
+            return null;
+        }
         return ItemFactory.getInstance().getPrototype(itemId.getValue());
     }
 
@@ -82,8 +93,16 @@ public abstract class AbstractItemSlot {
      * @param newId    the ID of the item
      * @param newCount the amount of items
      */
-    public void setData(final ItemId newId, final ItemCount newCount) {
+    public void setData(@Nonnull final ItemId newId, @Nonnull final ItemCount newCount) {
         itemId = newId;
         count = newCount;
+    }
+
+    /**
+     * Empty this slot.
+     */
+    public void clearSlot() {
+        itemId = null;
+        count = null;
     }
 }

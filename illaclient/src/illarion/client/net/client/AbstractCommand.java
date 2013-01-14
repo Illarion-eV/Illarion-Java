@@ -18,11 +18,12 @@
  */
 package illarion.client.net.client;
 
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.net.NetCommWriter;
-import net.jcip.annotations.Immutable;
-import net.jcip.annotations.NotThreadSafe;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * Default super class for all commands that get send to a server.
@@ -54,7 +55,7 @@ public abstract class AbstractCommand {
      *              in case this is {@code null} the command is assumed to be encoded without parameters
      * @return the string that contains the simple class name and the parameters
      */
-    @NonNull
+    @Nonnull
     protected final String toString(@Nullable final String param) {
         return getClass().getSimpleName() + '(' + ((param == null) ? "" : param) + ')';
     }
@@ -65,7 +66,7 @@ public abstract class AbstractCommand {
      * @return the data of the command as string
      */
     @Override
-    @NonNull
+    @Nonnull
     public abstract String toString();
 
     /**
@@ -73,7 +74,7 @@ public abstract class AbstractCommand {
      *
      * @param writer the byte buffer the values are added to from index 0 on
      */
-    public abstract void encode(@NonNull NetCommWriter writer);
+    public abstract void encode(@Nonnull NetCommWriter writer);
 
     /**
      * Get the ID of this client command.

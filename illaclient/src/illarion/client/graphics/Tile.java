@@ -23,13 +23,14 @@ import illarion.client.resources.Resource;
 import illarion.client.resources.TileFactory;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
-import illarion.common.annotation.NonNull;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created: 20.08.2005 17:39:11
@@ -180,7 +181,7 @@ public class Tile extends AbstractEntity implements Resource {
      * @return
      */
     @Override
-    public boolean draw(@NonNull final Graphics g) {
+    public boolean draw(@Nonnull final Graphics g) {
         if (!super.draw(g)) {
             return false;
         }
@@ -222,7 +223,7 @@ public class Tile extends AbstractEntity implements Resource {
     }
 
     @Override
-    public void setLight(@NonNull final Color light) {
+    public void setLight(@Nonnull final Color light) {
         super.setLight(light);
         if (overlay != null) {
             overlay.setLight(light);
@@ -268,7 +269,7 @@ public class Tile extends AbstractEntity implements Resource {
     }
 
     @Override
-    public void update(@NonNull final GameContainer container, final int delta) {
+    public void update(@Nonnull final GameContainer container, final int delta) {
         super.update(container, delta);
         if (overlay != null) {
             overlay.update(container, delta);
@@ -276,7 +277,7 @@ public class Tile extends AbstractEntity implements Resource {
     }
 
     @Override
-    public boolean processEvent(@NonNull final GameContainer container, final int delta, @NonNull final MapInteractionEvent event) {
+    public boolean processEvent(@Nonnull final GameContainer container, final int delta, @Nonnull final MapInteractionEvent event) {
         if (!parentTile.isAtPlayerLevel()) {
             return false;
         }

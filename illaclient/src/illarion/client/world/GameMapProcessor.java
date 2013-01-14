@@ -19,11 +19,11 @@
 package illarion.client.world;
 
 import illarion.client.graphics.MapDisplayManager;
-import illarion.common.annotation.NonNull;
 import illarion.common.types.Location;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingDeque;
@@ -44,7 +44,7 @@ public final class GameMapProcessor extends Thread {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    @NonNull
+    @Nonnull
     private static final Logger LOGGER = Logger.getLogger(GameMapProcessor.class);
 
     /**
@@ -57,13 +57,13 @@ public final class GameMapProcessor extends Thread {
      * The array of values if the character is inside or not. It stores the values for every level. So if the
      * character is inside a 2 level high cave the second value will be true, but the first one false.
      */
-    @NonNull
+    @Nonnull
     private final boolean[] insideStates = new boolean[2];
 
     /**
      * The map that is handled by this processor instance.
      */
-    @NonNull
+    @Nonnull
     private final GameMap parent;
 
     /**
@@ -80,7 +80,7 @@ public final class GameMapProcessor extends Thread {
     /**
      * The list of location keys that were yet not checked by the processor.
      */
-    @NonNull
+    @Nonnull
     private final BlockingDeque<Long> unchecked;
 
     /**
@@ -89,7 +89,7 @@ public final class GameMapProcessor extends Thread {
      * @param parentMap the game map that is processed by this processor
      */
     @SuppressWarnings("nls")
-    public GameMapProcessor(@NonNull final GameMap parentMap) {
+    public GameMapProcessor(@Nonnull final GameMap parentMap) {
         super("Map Processor");
         parent = parentMap;
         unchecked = new LinkedBlockingDeque<Long>();
@@ -225,7 +225,7 @@ public final class GameMapProcessor extends Thread {
      * @param key  the location key of the checked tile
      * @return {@code true} in case the tile was clipped away
      */
-    private boolean checkClipping(@NonNull final MapTile tile, final long key) {
+    private boolean checkClipping(@Nonnull final MapTile tile, final long key) {
         if (!World.getPlayer().hasValidLocation()) {
             return false;
         }
@@ -330,7 +330,7 @@ public final class GameMapProcessor extends Thread {
      * @return {@code true} in case the tile was handled
      */
     @SuppressWarnings("nls")
-    private boolean checkHidden(@NonNull final MapTile tile, final long key) {
+    private boolean checkHidden(@Nonnull final MapTile tile, final long key) {
         final Location playerLoc = World.getPlayer().getLocation();
         final Location tileLoc = tile.getLocation();
 
@@ -424,7 +424,7 @@ public final class GameMapProcessor extends Thread {
      * @param searchLoc the location where the search starts
      * @return {@code true} in case a hidden tile was found
      */
-    private boolean hasHiddenNeighbour(@NonNull final Location searchLoc) {
+    private boolean hasHiddenNeighbour(@Nonnull final Location searchLoc) {
         for (int x = -1; x < 2; x++) {
             for (int y = -1; y < 2; y++) {
                 if ((x == 0) && (y == 0)) {
@@ -455,7 +455,7 @@ public final class GameMapProcessor extends Thread {
      * @param searchLoc the location the search starts add. This location is not added to the list of unchecked tiles
      * @param limit     the limit the Z coordinate is not going below
      */
-    private void addAllBelow(@NonNull final Location searchLoc, final int limit) {
+    private void addAllBelow(@Nonnull final Location searchLoc, final int limit) {
         int currX = searchLoc.getScX();
         int currY = searchLoc.getScY();
         int currZ = searchLoc.getScZ();
@@ -475,7 +475,7 @@ public final class GameMapProcessor extends Thread {
      * @param searchLoc the location the search starts add. This location is not added to the list of unchecked tiles
      * @param limit     the limit the Z coordinate is not going below
      */
-    private void addAllAbove(@NonNull final Location searchLoc, final int limit) {
+    private void addAllAbove(@Nonnull final Location searchLoc, final int limit) {
         int currX = searchLoc.getScX();
         int currY = searchLoc.getScY();
         int currZ = searchLoc.getScZ();
@@ -506,7 +506,7 @@ public final class GameMapProcessor extends Thread {
      *
      * @param searchLoc the location of the start of the search.
      */
-    private void addAllNeighbours(@NonNull final Location searchLoc) {
+    private void addAllNeighbours(@Nonnull final Location searchLoc) {
         for (int x = -1; x < 2; x++) {
             for (int y = -1; y < 2; y++) {
                 if ((x == 0) && (y == 0)) {

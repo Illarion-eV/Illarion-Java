@@ -18,10 +18,10 @@
  */
 package illarion.common.types;
 
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
-import net.jcip.annotations.Immutable;
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * Class to handle a range between two values.
@@ -44,7 +44,7 @@ public final class Range {
     /**
      * The format of the string that is returned with the {@link #toString()} function.
      */
-    @NonNull
+    @Nonnull
     @SuppressWarnings("nls")
     private static final String TO_STRING_FORMAT = "r(%s$1; %s$2)";
 
@@ -82,7 +82,7 @@ public final class Range {
      *
      * @param org the range object that shall be copied
      */
-    public Range(@NonNull final Range org) {
+    public Range(@Nonnull final Range org) {
         minValue = org.minValue;
         maxValue = org.maxValue;
     }
@@ -167,7 +167,7 @@ public final class Range {
      * @return the generated string
      * @see Object#toString()
      */
-    @NonNull
+    @Nonnull
     @Override
     public String toString() {
         return String.format(TO_STRING_FORMAT, Integer.toString(minValue), Integer.toString(maxValue));

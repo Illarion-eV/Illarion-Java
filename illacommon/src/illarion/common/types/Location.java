@@ -18,14 +18,14 @@
  */
 package illarion.common.types;
 
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.FastMath;
 import javolution.text.TextBuilder;
-import net.jcip.annotations.NotThreadSafe;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.io.Serializable;
 
 /**
@@ -213,7 +213,7 @@ public class Location implements Serializable {
      *
      * @param org the original Location instance
      */
-    public Location(@NonNull final Location org) {
+    public Location(@Nonnull final Location org) {
         this();
         set(org);
     }
@@ -225,7 +225,7 @@ public class Location implements Serializable {
      * @param org       the original Location instance
      * @param direction the direction to move the location to
      */
-    public Location(@NonNull final Location org, final int direction) {
+    public Location(@Nonnull final Location org, final int direction) {
         this();
         set(org);
         moveSC(direction);
@@ -299,7 +299,7 @@ public class Location implements Serializable {
      * @return the unused location instance
      */
     @Deprecated
-    @NonNull
+    @Nonnull
     public static Location getInstance() {
         return new Location();
     }
@@ -506,7 +506,7 @@ public class Location implements Serializable {
      * @param loc The target location
      * @return the direction needed to get from the current location to the target location
      */
-    public int getDirection(@NonNull final Location loc) {
+    public int getDirection(@Nonnull final Location loc) {
         if (loc.dirtySC) {
             loc.toServerCoordinates();
         }
@@ -520,7 +520,7 @@ public class Location implements Serializable {
      * @return the amount of steps needed to get from the current position to the target position in case there are not
      *         blocked tiles on the way
      */
-    public int getDistance(@NonNull final Location loc) {
+    public int getDistance(@Nonnull final Location loc) {
         if (dirtySC) {
             toServerCoordinates();
         }
@@ -601,7 +601,7 @@ public class Location implements Serializable {
      * @return the square root distance between the two locations. So the length of a straight line between this
      *         location and the target location.
      */
-    public float getSqrtDistance(@NonNull final Location loc) {
+    public float getSqrtDistance(@Nonnull final Location loc) {
         if (dirtySC) {
             toServerCoordinates();
         }
@@ -642,7 +642,7 @@ public class Location implements Serializable {
      * @param loc the second location
      * @return true in case this location and the second one are touching each other
      */
-    public boolean isNeighbour(@NonNull final Location loc) {
+    public boolean isNeighbour(@Nonnull final Location loc) {
         if (dirtySC) {
             toServerCoordinates();
         }
@@ -689,7 +689,7 @@ public class Location implements Serializable {
      *
      * @param loc The source location that is copied to this location
      */
-    public void set(@NonNull final Location loc) {
+    public void set(@Nonnull final Location loc) {
         scX = loc.scX;
         scY = loc.scY;
         scZ = loc.scZ;

@@ -22,12 +22,12 @@ import illarion.client.Debug;
 import illarion.client.IllaClient;
 import illarion.client.net.client.AbstractCommand;
 import illarion.client.util.Lang;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.Location;
-import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.WritableByteChannel;
@@ -208,7 +208,7 @@ final class Sender extends Thread implements NetCommWriter {
      * @param loc the location that shall be send to the server
      */
     @Override
-    public void writeLocation(@NonNull final Location loc) {
+    public void writeLocation(@Nonnull final Location loc) {
         buffer.putShort((short) loc.getScX());
         buffer.putShort((short) loc.getScY());
         buffer.putShort((short) loc.getScZ());
@@ -231,7 +231,7 @@ final class Sender extends Thread implements NetCommWriter {
      * @param value the string that shall be send to the server
      */
     @Override
-    public void writeString(@NonNull final String value) {
+    public void writeString(@Nonnull final String value) {
         final int startIndex = buffer.position();
         buffer.putShort((short) 0);
 

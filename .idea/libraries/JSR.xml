@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="JSR">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/jsr" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/jsr" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/jsr" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/jsr" recursive="false" type="SOURCES" />
+  </library>
+</component>

@@ -153,12 +153,12 @@
         <patternset refid="jorbis.pattern"/>
     </fileset>
 
-    <property name="jcip.dir" location="${common}/lib/jcip"/>
-    <patternset id="jcip.pattern">
-        <include name="jcip-annotations.jar"/>
+    <property name="jsr.dir" location="${common}/lib/jsr"/>
+    <patternset id="jsr.pattern">
+        <include name="jsr-305.jar"/>
     </patternset>
-    <fileset id="jcip" dir="${jcip.dir}">
-        <patternset refid="jcip.pattern"/>
+    <fileset id="jsr" dir="${jsr.dir}">
+        <patternset refid="jsr.pattern"/>
     </fileset>
 
     <property name="tritonus.dir" location="${common}/lib/tritonus"/>

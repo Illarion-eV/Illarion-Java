@@ -18,13 +18,13 @@
  */
 package illarion.common.types;
 
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.net.NetCommReader;
 import illarion.common.net.NetCommWriter;
-import net.jcip.annotations.Immutable;
-import net.jcip.annotations.ThreadSafe;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 
 /**
@@ -48,13 +48,13 @@ public final class ItemCount implements Comparable<ItemCount> {
     /**
      * Stack instance for the count value 0.
      */
-    @NonNull
+    @Nonnull
     public static final ItemCount ZERO = new ItemCount(0);
 
     /**
      * Static instance for the count value 1.
      */
-    @NonNull
+    @Nonnull
     public static final ItemCount ONE = new ItemCount(1);
 
     /**
@@ -70,7 +70,7 @@ public final class ItemCount implements Comparable<ItemCount> {
      * @throws IllegalArgumentException in case the value is less then {@link #MIN_VALUE} or larger then
      *                                  {@link #MAX_VALUE}.
      */
-    @NonNull
+    @Nonnull
     public static ItemCount getInstance(final int value) {
         switch (value) {
             case 0:
@@ -91,8 +91,8 @@ public final class ItemCount implements Comparable<ItemCount> {
      *                                  {@link #MAX_VALUE}.
      * @throws IOException              in case the reading operation fails
      */
-    @NonNull
-    public static ItemCount getInstance(@NonNull final NetCommReader reader) throws IOException {
+    @Nonnull
+    public static ItemCount getInstance(@Nonnull final NetCommReader reader) throws IOException {
         return getInstance(reader.readUShort());
     }
 
@@ -128,7 +128,7 @@ public final class ItemCount implements Comparable<ItemCount> {
         return value;
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public String toString() {
         return "Item count: " + Integer.toString(value);
@@ -139,7 +139,7 @@ public final class ItemCount implements Comparable<ItemCount> {
      *
      * @param writer the writer that receives the value
      */
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeUShort(value);
     }
 
@@ -163,7 +163,7 @@ public final class ItemCount implements Comparable<ItemCount> {
     }
 
     @Override
-    public int compareTo(@NonNull final ItemCount o) {
+    public int compareTo(@Nonnull final ItemCount o) {
         if (value == o.value) {
             return 0;
         }

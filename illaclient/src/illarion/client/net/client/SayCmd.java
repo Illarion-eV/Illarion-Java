@@ -20,9 +20,10 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.client.util.ChatHandler;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Client Command: Send a spoken text or a emote or a text command (
@@ -36,13 +37,13 @@ public final class SayCmd extends AbstractCommand {
     /**
      * The text that is send to the server.
      */
-    @NonNull
+    @Nonnull
     private final String text;
 
     /**
      * Default constructor for the say text command.
      */
-    public SayCmd(@NonNull final ChatHandler.SpeechMode mode, @NonNull final String text) {
+    public SayCmd(@Nonnull final ChatHandler.SpeechMode mode, @Nonnull final String text) {
         super(getCommandId(mode));
 
         this.text = text;
@@ -56,7 +57,7 @@ public final class SayCmd extends AbstractCommand {
      * @throws IllegalArgumentException in case {@code mode} is not {@link ChatHandler.SpeechMode#normal} or
      *                                  {@link ChatHandler.SpeechMode#shout} or {@link ChatHandler.SpeechMode#whisper}
      */
-    private static int getCommandId(@NonNull final ChatHandler.SpeechMode mode) {
+    private static int getCommandId(@Nonnull final ChatHandler.SpeechMode mode) {
         switch (mode) {
             case normal:
                 return CommandList.CMD_SAY;
@@ -70,11 +71,11 @@ public final class SayCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeString(text);
     }
 
-    @NonNull
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

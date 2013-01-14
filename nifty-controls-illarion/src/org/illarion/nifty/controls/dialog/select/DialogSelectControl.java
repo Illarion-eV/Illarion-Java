@@ -33,6 +33,7 @@ import org.illarion.nifty.controls.DialogSelectCancelEvent;
 import org.illarion.nifty.controls.DialogSelectSelectEvent;
 import org.illarion.nifty.controls.SelectListEntry;
 
+import javax.annotation.Nonnull;
 import java.util.Properties;
 
 /**
@@ -127,7 +128,7 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
     }
 
     @Override
-    public void addItem(final SelectListEntry entry) {
+    public void addItem(@Nonnull final SelectListEntry entry) {
         getList().addItem(entry);
     }
 

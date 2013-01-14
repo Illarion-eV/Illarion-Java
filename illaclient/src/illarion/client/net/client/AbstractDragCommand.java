@@ -18,9 +18,10 @@
  */
 package illarion.client.net.client;
 
-import illarion.common.annotation.NonNull;
 import illarion.common.types.ItemCount;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * This abstract command contains the shared code of all dragging operations.
@@ -32,7 +33,7 @@ public abstract class AbstractDragCommand extends AbstractCommand {
     /**
      * The amount of items that are supposed to be moved.
      */
-    @NonNull
+    @Nonnull
     private final ItemCount count;
 
     /**
@@ -41,7 +42,7 @@ public abstract class AbstractDragCommand extends AbstractCommand {
      * @param commId the ID of the command
      * @param count  the amount of items to drag at once
      */
-    protected AbstractDragCommand(final int commId, @NonNull final ItemCount count) {
+    protected AbstractDragCommand(final int commId, @Nonnull final ItemCount count) {
         super(commId);
 
         this.count = count;
@@ -52,7 +53,7 @@ public abstract class AbstractDragCommand extends AbstractCommand {
      *
      * @return the items to be moved
      */
-    @NonNull
+    @Nonnull
     protected final ItemCount getCount() {
         return count;
     }

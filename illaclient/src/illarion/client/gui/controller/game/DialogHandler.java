@@ -327,7 +327,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "inputDialog[0-9]+")
     public void handleInputConfirmedEvent(final String topic, final DialogInputConfirmedEvent event) {
-        if (event.getPressedButton() == DialogInput.DialogButton.left) {
+        if (event.getPressedButton() == DialogInput.DialogButton.LeftButton) {
             World.getNet().sendCommand(new CloseDialogInputCmd(event.getDialogId(), event.getText(), true));
         } else {
             World.getNet().sendCommand(new CloseDialogInputCmd(event.getDialogId(), "", false));

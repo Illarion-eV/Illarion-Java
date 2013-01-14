@@ -20,17 +20,23 @@ package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.render.NiftyImage;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
+
 /**
  * This interfaces defines a entry in the select dialog that contains the selectable entry.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@NotThreadSafe
 public interface SelectListEntry {
     /**
      * Get the image that is supposed to be displayed in the entry.
      *
-     * @return the nifty image to display
+     * @return the nifty image to display or {@code null} in case no image is supposed to be displayed
      */
+    @Nullable
     NiftyImage getItemImage();
 
     /**
@@ -38,6 +44,7 @@ public interface SelectListEntry {
      *
      * @return the name of the item
      */
+    @Nonnull
     String getName();
 
     /**

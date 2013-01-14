@@ -99,7 +99,7 @@ public final class Common implements DevelopmentResource {
             dep.add(Log4j.getInstance());
             dep.add(Trove.getInstance());
             dep.add(EventBus.getInstance());
-            dep.add(JCIP.getInstance());
+            dep.add(JSR.getInstance());
 
             dependencies = dep;
         }

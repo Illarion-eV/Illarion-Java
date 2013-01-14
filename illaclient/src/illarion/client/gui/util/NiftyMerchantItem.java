@@ -25,6 +25,8 @@ import illarion.client.resources.ItemFactory;
 import illarion.client.world.items.MerchantItem;
 import org.illarion.nifty.controls.MerchantListEntry;
 
+import javax.annotation.Nonnull;
+
 /**
  * This implementation of the merchant item is very similar to the original merchant item. It just adds a few entries
  * of data that are needed so the item can be displayed properly in the GUI.
@@ -57,6 +59,7 @@ public final class NiftyMerchantItem extends MerchantItem implements MerchantLis
      *
      * @return the Nifty image
      */
+    @Nonnull
     @Override
     public NiftyImage getItemImage() {
         return itemImage;

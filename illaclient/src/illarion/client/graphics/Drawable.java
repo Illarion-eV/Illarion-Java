@@ -18,10 +18,11 @@
  */
 package illarion.client.graphics;
 
-import illarion.common.annotation.NonNull;
 import illarion.common.types.Rectangle;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+
+import javax.annotation.Nonnull;
 
 /**
  * This interface defines a simple object that can be drawn to the screen.
@@ -34,7 +35,7 @@ public interface Drawable {
      *
      * @return the last area that was covered by this item
      */
-    @NonNull
+    @Nonnull
     Rectangle getLastDisplayRect();
 
     /**
@@ -43,7 +44,7 @@ public interface Drawable {
      * @return true in case the render operation was performed correctly
      */
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
-    boolean draw(@NonNull Graphics g);
+    boolean draw(@Nonnull Graphics g);
 
     /**
      * Update the alpha value of this component. This is done by considering the size and the location of the
@@ -52,5 +53,5 @@ public interface Drawable {
      * @param container the container that stores the graphic
      * @param delta     the time in milliseconds since the last update
      */
-    void update(@NonNull GameContainer container, int delta);
+    void update(@Nonnull GameContainer container, int delta);
 }

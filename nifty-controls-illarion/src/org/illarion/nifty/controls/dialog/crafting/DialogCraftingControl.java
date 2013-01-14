@@ -38,10 +38,13 @@ import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
+import illarion.common.types.ItemCount;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.*;
 import org.illarion.nifty.effects.DoubleEffect;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.security.InvalidParameterException;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -53,10 +56,10 @@ import java.util.regex.Pattern;
  * This is the main control class for message dialogs.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
+ * @deprecated Use {@link DialogCrafting} to access the dialog
  */
 @Deprecated
-public class DialogCraftingControl
-        extends WindowControl
+public class DialogCraftingControl extends WindowControl
         implements DialogCrafting, EventTopicSubscriber<ButtonClickedEvent> {
 
     private static final int INGREDIENT_IMAGE_SIZE = 32;
@@ -192,6 +195,7 @@ public class DialogCraftingControl
     private final DecimalFormat timeFormat;
 
     public DialogCraftingControl() {
+        super();
         craftButtonEventHandler = new CraftButtonClickedEventSubscriber();
         closeButtonEventHandler = new CloseButtonClickedEventSubscriber();
         listSelectionChangedEventHandler = new SelectCraftItemEventSubscriber();
@@ -275,6 +279,7 @@ public class DialogCraftingControl
         closeWindow();
     }
 
+    @Nullable
     @Override
     public CraftingItemEntry getSelectedCraftingItem() {
         final List<TreeItem<ListEntry>> selection = getItemList().getSelection();
@@ -339,11 +344,13 @@ public class DialogCraftingControl
         }
     }
 
+    @Nonnull
     @Override
     public Element getCraftingItemDisplay() {
         return getElement().findElementByName("#selectedItemInfos");
     }
 
+    @Nonnull
     @Override
     public Element getIngredientItemDisplay(final int index) {
         final Element ingredientsPanel = getElement().findElementByName("#ingredients");
@@ -366,7 +373,7 @@ public class DialogCraftingControl
     private static final class ListEntry {
         private final CraftingTreeItem entry;
 
-        private ListEntry(final CraftingTreeItem entry) {
+        ListEntry(final CraftingTreeItem entry) {
             this.entry = entry;
         }
 
@@ -438,8 +445,8 @@ public class DialogCraftingControl
             final Element ingredientsPanel = getContent().findElementByName("#ingredients");
 
             int index = 0;
-            while (deleteIngredientImage(ingredientsPanel, index++)) {
-                // nothing
+            while (deleteIngredientImage(ingredientsPanel, index)) {
+                index++;
             }
             return;
         }
@@ -447,12 +454,12 @@ public class DialogCraftingControl
         applyImage(image, selectedEntry.getImage(), 56);
 
         final Label imageAmount = getContent().findNiftyControl("#selectedItemAmount", Label.class);
-        if (selectedEntry.getBuildStackSize() == 1) {
+        if (ItemCount.isGreaterOne(selectedEntry.getBuildStackSize())) {
             imageAmount.getElement().hide();
         } else {
             final Element imageAmountElement = imageAmount.getElement();
             final TextRenderer textRenderer = imageAmountElement.getRenderer(TextRenderer.class);
-            textRenderer.setText(Integer.toString(selectedEntry.getBuildStackSize()));
+            textRenderer.setText(Integer.toString(selectedEntry.getBuildStackSize().getValue()));
             imageAmountElement.setConstraintWidth(SizeValue.px(textRenderer.getTextWidth()));
             imageAmountElement.setConstraintHorizontalAlign(HorizontalAlign.right);
             imageAmountElement.show();
@@ -462,8 +469,8 @@ public class DialogCraftingControl
         title.getRenderer(TextRenderer.class).setText(selectedEntry.getName());
 
         final Element productionTime = getContent().findElementByName("#productionTime");
-        productionTime.getRenderer(TextRenderer.class).setText("${illarion-dialog-crafting-bundle.craftTime}: " +
-                timeFormat.format(selectedEntry.getCraftTime()) + "s");
+        productionTime.getRenderer(TextRenderer.class).setText("${illarion-dialog-crafting-bundle.craftTime}: "
+                + timeFormat.format(selectedEntry.getCraftTime()) + "s");
 
         final Element ingredientsPanel = getContent().findElementByName("#ingredients");
 
@@ -556,19 +563,19 @@ public class DialogCraftingControl
         return true;
     }
 
-    private void showIngredientAmount(final Element ingredientElement, final int count) {
+    private void showIngredientAmount(final Element ingredientElement, final ItemCount count) {
         final List<Element> elements = ingredientElement.getElements();
         if ((elements.size() > 2) || (elements.size() < 1)) {
             throw new InvalidParameterException("Something is wrong, parent element appears to be wrong.");
         }
 
-        if (count > 1) {
+        if (ItemCount.isGreaterOne(count)) {
             if (elements.size() == 2) {
                 final Label countLabel = elements.get(1).getNiftyControl(Label.class);
-                countLabel.setText(Integer.toString(count));
+                countLabel.setText(Integer.toString(count.getValue()));
             } else {
                 final LabelBuilder labelBuilder = new LabelBuilder();
-                labelBuilder.text(Integer.toString(count));
+                labelBuilder.text(Integer.toString(count.getValue()));
                 labelBuilder.alignRight();
                 labelBuilder.valignBottom();
                 labelBuilder.marginBottom("4px");
@@ -592,7 +599,7 @@ public class DialogCraftingControl
     }
 
     @Override
-    public void addCraftingItems(final CraftingCategoryEntry... entries) {
+    public void addCraftingItems(@Nonnull final CraftingCategoryEntry... entries) {
         final TreeBox<DialogCraftingControl.ListEntry> list = getItemList();
 
         for (final CraftingCategoryEntry entry : entries) {

@@ -103,7 +103,7 @@ public final class EasyQuestEditor
             dep.add(SwingX.getInstance());
             dep.add(JGraph.getInstance());
             dep.add(Common.getInstance());
-            dep.add(JCIP.getInstance());
+            dep.add(JSR.getInstance());
 
             dependencies = dep;
         }

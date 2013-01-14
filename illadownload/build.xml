@@ -99,7 +99,7 @@
                 <fileset refid="xz"/>
                 <fileset refid="swingx"/>
                 <fileset refid="log4j"/>
-                <fileset refid="jcip"/>
+                <fileset refid="jsr"/>
                 <pathelement path="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>

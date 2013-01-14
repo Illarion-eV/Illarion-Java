@@ -27,16 +27,17 @@ import illarion.client.util.Path;
 import illarion.client.util.PathNode;
 import illarion.client.util.PathReceiver;
 import illarion.client.util.Pathfinder;
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
-import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.lwjgl.input.Keyboard;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * The player movement class takes and handles all move requests and orders that are needed to move the player
@@ -86,7 +87,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * The logger instance that takes care of the logging output of this class.
      */
     @SuppressWarnings("UnusedDeclaration")
-    @NonNull
+    @Nonnull
     private static final Logger LOGGER = Logger.getLogger(PlayerMovement.class);
 
     /**
@@ -109,7 +110,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     /**
      * The mode of the last move that was allowed by the server.
      */
-    @NonNull
+    @Nonnull
     private CharMovementMode lastAllowedMoveMode = CharMovementMode.None;
 
     /**
@@ -125,14 +126,14 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     /**
      * The target location of the last move.
      */
-    @NonNull
+    @Nonnull
     private final Location lastMoveTarget = new Location();
 
     /**
      * The move animation that moves the map around. This animation is also used to fetch the information about the
      * process of the animation so a overlapped move can be requested in case its needed.
      */
-    @NonNull
+    @Nonnull
     private final MoveAnimation moveAnimation = new MoveAnimation(World.getMapDisplay());
 
     /**
@@ -143,7 +144,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     /**
      * The player handler that is controlled by this movement handler.
      */
-    @NonNull
+    @Nonnull
     private final Player parentPlayer;
 
     /**
@@ -155,7 +156,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * The list of direction to store to what directions the player wants to turn to. This is needed to avoid that the
      * client spams the server with turn requests.
      */
-    @NonNull
+    @Nonnull
     private final boolean[] requestedTurns = new boolean[Location.DIR_MOVE8];
 
     /**
@@ -171,7 +172,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
     private int walkTowardsDir = Location.DIR_ZERO;
 
-    @NonNull
+    @Nonnull
     private CharMovementMode walkTowardsMode = CharMovementMode.None;
 
     /**
@@ -194,7 +195,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      *
      * @param parent the player handler that is controlled by this movement handler
      */
-    public PlayerMovement(@NonNull final Player parent) {
+    public PlayerMovement(@Nonnull final Player parent) {
         moveAnimation.addTarget(this, false);
         parentPlayer = parent;
         AnnotationProcessor.process(this);
@@ -207,7 +208,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * @param data  the event data
      */
     @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
-    public void onInputEventReceived(@NonNull final String topic, @NonNull final String data) {
+    public void onInputEventReceived(@Nonnull final String topic, @Nonnull final String data) {
         final CharMovementMode moveMode;
         if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
             moveMode = CharMovementMode.Run;
@@ -247,12 +248,12 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * @param direction the direction the move shall be performed in
      * @param mode      the mode of the move that shall be performed
      */
-    public void requestMove(final int direction, @NonNull final CharMovementMode mode) {
+    public void requestMove(final int direction, @Nonnull final CharMovementMode mode) {
         requestMove(direction, mode, true, false);
     }
 
     @Override
-    public void handlePath(@NonNull final Path path) {
+    public void handlePath(@Nonnull final Path path) {
         cancelAutoWalk();
         autoPath = path;
         autoDestination = autoPath.getDestination();
@@ -307,7 +308,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      *
      * @param destination the location the character shall walk to
      */
-    public void walkTo(@NonNull final Location destination) {
+    public void walkTo(@Nonnull final Location destination) {
         cancelAutoWalk();
 
         final Location loc = parentPlayer.getLocation();
@@ -330,7 +331,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      *                            order to avoid obstacles
      */
     @SuppressWarnings("nls")
-    private void requestMove(final int direction, @NonNull final CharMovementMode mode, final boolean stopAutoMove,
+    private void requestMove(final int direction, @Nonnull final CharMovementMode mode, final boolean stopAutoMove,
                              final boolean runPathModification) {
         if (mode == CharMovementMode.Push) {
             throw new IllegalArgumentException("Pushed moves are not supported by the player movement handler.");
@@ -514,7 +515,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * @throws IllegalArgumentException in case the mode has a illegal value
      * @throws IllegalStateException    in case something else goes wrong
      */
-    public static boolean isStepPossible(final int direction, @NonNull final CharMovementMode mode) {
+    public static boolean isStepPossible(final int direction, @Nonnull final CharMovementMode mode) {
         switch (mode) {
             case None:
             case Push:
@@ -539,7 +540,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * @param loc the location to test
      * @return {@code true} in case the character is able to step onto the location
      */
-    private static boolean isLocationFree(@NonNull final Location loc) {
+    private static boolean isLocationFree(@Nonnull final Location loc) {
         final MapTile tile = World.getMap().getMapAt(loc);
         return (tile != null) && !tile.isBlocked();
     }
@@ -558,7 +559,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * @param direction the direction the character is supposed to move towards
      * @param mode      the movement method of the character
      */
-    private void sendTurnAndMoveToServer(final int direction, @NonNull final CharMovementMode mode) {
+    private void sendTurnAndMoveToServer(final int direction, @Nonnull final CharMovementMode mode) {
         requestTurn(direction, false);
         sendMoveToServer(direction, mode);
     }
@@ -569,7 +570,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * @param direction the direction of the requested move
      * @param mode      the mode of the requested move
      */
-    private void sendMoveToServer(final int direction, @NonNull final CharMovementMode mode) {
+    private void sendMoveToServer(final int direction, @Nonnull final CharMovementMode mode) {
         final CharacterId playerId = parentPlayer.getPlayerId();
         if (playerId == null) {
             LOGGER.error("Send move to server while ID is not known.");
@@ -626,7 +627,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * @param target the target location of the character after the move
      * @param speed  the speed of the move
      */
-    public void acknowledgeMove(@NonNull final CharMovementMode mode, @NonNull final Location target,
+    public void acknowledgeMove(@Nonnull final CharMovementMode mode, @Nonnull final Location target,
                                 final int speed) {
         lastMoveRequest = Location.DIR_ZERO;
 
@@ -650,7 +651,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * @param target the target location where the character shall be located at at the end of the move
      * @param speed  the speed of the walk that determines how long the animation takes
      */
-    private void performMove(@NonNull final CharMovementMode mode, @NonNull final Location target, final int speed) {
+    private void performMove(@Nonnull final CharMovementMode mode, @Nonnull final Location target, final int speed) {
         final Char playerCharacter = parentPlayer.getCharacter();
         if ((mode == CharMovementMode.None) || playerCharacter.getLocation().equals(target)) {
             parentPlayer.updateLocation(target);

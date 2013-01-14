@@ -20,11 +20,15 @@ package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.controls.Window;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
+
 /**
  * This interface offers access to a container that stores items.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@NotThreadSafe
 public interface ItemContainer extends Window {
     /**
      * Get the amount of item slots in this container.
@@ -38,7 +42,8 @@ public interface ItemContainer extends Window {
      *
      * @param index the index of the requested slot
      * @return the slot control assigned to this index
-     * @throws IndexOutOfBoundsException in case index is &lt; 0 or &gt;= {@link #getTabCount()}
+     * @throws IndexOutOfBoundsException in case index is &lt; 0 or &gt;= {@link #getSlotCount()}
      */
+    @Nonnull
     InventorySlot getSlot(int index);
 }

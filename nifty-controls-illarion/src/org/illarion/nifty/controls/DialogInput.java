@@ -20,11 +20,15 @@ package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.controls.Window;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
+
 /**
  * This is the common interface for a input dialog that provides all required functions for the control of a dialog.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@NotThreadSafe
 public interface DialogInput extends Window {
     /**
      * This enumerator contains the possible values for the buttons displayed in this dialog.
@@ -33,12 +37,12 @@ public interface DialogInput extends Window {
         /**
          * The constant for the left button.
          */
-        left,
+        LeftButton,
 
         /**
          * The constant for the right button.
          */
-        right
+        RightButton
     }
 
     /**
@@ -47,7 +51,7 @@ public interface DialogInput extends Window {
      * @param button the button to change
      * @param label  the new label of this button
      */
-    void setButtonLabel(DialogButton button, String label);
+    void setButtonLabel(@Nonnull DialogButton button, @Nonnull String label);
 
     /**
      * Set the maximal amount of characters allowed to be typed into this dialog.
@@ -61,5 +65,5 @@ public interface DialogInput extends Window {
      *
      * @param text the text shown as description
      */
-    void setDescription(String text);
+    void setDescription(@Nonnull String text);
 }

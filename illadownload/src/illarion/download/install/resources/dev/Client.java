@@ -109,7 +109,7 @@ public final class Client implements DevelopmentResource {
             dep.add(EventBus.getInstance());
             dep.add(Common.getInstance());
             dep.add(NiftyIllarion.getInstance());
-            dep.add(JCIP.getInstance());
+            dep.add(JSR.getInstance());
 
             dep.add(Books.getInstance());
             dep.add(Characters.getInstance());

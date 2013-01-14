@@ -18,10 +18,11 @@
  */
 package illarion.client.world;
 
-import illarion.common.annotation.NonNull;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.FastMath;
-import net.jcip.annotations.NotThreadSafe;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * This class is used to store and calculate the dimensions of the map. It requires the size of the screen as
@@ -52,7 +53,7 @@ public final class MapDimensions {
     /**
      * The singleton instance of this class.
      */
-    @NonNull
+    @Nonnull
     private static final MapDimensions INSTANCE = new MapDimensions();
 
     /**
@@ -121,7 +122,7 @@ public final class MapDimensions {
      *
      * @return the singleton instance of this class.
      */
-    @NonNull
+    @Nonnull
     public static MapDimensions getInstance() {
         return INSTANCE;
     }

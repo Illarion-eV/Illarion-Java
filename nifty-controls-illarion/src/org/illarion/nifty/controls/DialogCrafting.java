@@ -21,39 +21,30 @@ package org.illarion.nifty.controls;
 import de.lessvoid.nifty.controls.Window;
 import de.lessvoid.nifty.elements.Element;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
+
 /**
  * This interface is used to interact with a merchant dialog that is displayed inside the GUI.
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
+@NotThreadSafe
 public interface DialogCrafting extends Window {
-    /**
-     * This enumerator identifies the buttons displayed on this dialog.
-     */
-    enum DialogButtons {
-        /**
-         * The button that reads craft.
-         */
-        craft,
-
-        /**
-         * The button that reads close.
-         */
-        close;
-    }
-
     /**
      * Add a category along with its items to the list.
      *
      * @param entries the categories to add
      */
-    void addCraftingItems(CraftingCategoryEntry... entries);
+    void addCraftingItems(@Nonnull CraftingCategoryEntry... entries);
 
     /**
      * Get the Nifty element that displays the crafting item.
      *
      * @return the Nifty element that is displaying the selected item
      */
+    @Nonnull
     Element getCraftingItemDisplay();
 
     /**
@@ -64,6 +55,7 @@ public interface DialogCrafting extends Window {
      * @throws IndexOutOfBoundsException in case {@code index} is less then 0 or larger or equal to the amount of
      *                                   ingredients of the selected item
      */
+    @Nonnull
     Element getIngredientItemDisplay(int index);
 
     /**
@@ -71,6 +63,7 @@ public interface DialogCrafting extends Window {
      *
      * @return the item that is selected
      */
+    @Nullable
     CraftingItemEntry getSelectedCraftingItem();
 
     /**
@@ -86,7 +79,7 @@ public interface DialogCrafting extends Window {
     /**
      * Set the displayed state of the progress.
      *
-     * @param progress the new value for the progress
+     * @param progress the new value for the progress, will be clamped to {@code 0.f} to {@code 1.f}
      */
     void setProgress(float progress);
 
@@ -95,10 +88,21 @@ public interface DialogCrafting extends Window {
      * time specified.
      *
      * @param seconds the time in seconds to fill the progress bar
+     * @throws IllegalArgumentException in case {@code seconds} is less then 0.0
      */
     void startProgress(double seconds);
 
+    /**
+     * Set the ID of this crafting dialog.
+     *
+     * @param id the id of the dialog
+     */
     void setDialogId(int id);
 
+    /**
+     * Get the ID of the dialog.
+     *
+     * @return the ID of the dialog
+     */
     int getDialogId();
 }

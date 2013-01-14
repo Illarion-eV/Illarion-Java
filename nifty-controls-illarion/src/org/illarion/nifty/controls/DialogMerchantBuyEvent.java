@@ -18,15 +18,22 @@
  */
 package org.illarion.nifty.controls;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * This event is fired in case the player wants to buy something from the merchant dialog.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ThreadSafe
+@Immutable
 public final class DialogMerchantBuyEvent extends DialogEvent {
     /**
      * The item that was bought.
      */
+    @Nonnull
     private final MerchantListEntry item;
 
     /**
@@ -41,7 +48,7 @@ public final class DialogMerchantBuyEvent extends DialogEvent {
      * @param buyItem  the item to buy
      * @param buyIndex the index of the item to buy
      */
-    public DialogMerchantBuyEvent(final int id, final MerchantListEntry buyItem, final int buyIndex) {
+    public DialogMerchantBuyEvent(final int id, @Nonnull final MerchantListEntry buyItem, final int buyIndex) {
         super(id);
         item = buyItem;
         itemIndex = buyIndex;
@@ -52,6 +59,7 @@ public final class DialogMerchantBuyEvent extends DialogEvent {
      *
      * @return the item that is bought
      */
+    @Nonnull
     public MerchantListEntry getItem() {
         return item;
     }

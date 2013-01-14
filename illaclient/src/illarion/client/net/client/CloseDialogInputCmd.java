@@ -19,10 +19,11 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import net.jcip.annotations.Immutable;
-import net.jcip.annotations.NotThreadSafe;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * Client Command: Send a text that was requested by the server and typed in by the player
@@ -41,7 +42,7 @@ public final class CloseDialogInputCmd extends AbstractCommand {
     /**
      * The text that is send to the server.
      */
-    @NonNull
+    @Nonnull
     private final String text;
 
     /**
@@ -56,7 +57,7 @@ public final class CloseDialogInputCmd extends AbstractCommand {
      * @param text     the text that contains the response
      * @param success  {@code true} in case the dialog was confirmed
      */
-    public CloseDialogInputCmd(final int dialogID, @NonNull final String text, final boolean success) {
+    public CloseDialogInputCmd(final int dialogID, @Nonnull final String text, final boolean success) {
         super(CommandList.CMD_CLOSE_DIALOG_INPUT);
         this.dialogID = dialogID;
         this.text = text;
@@ -64,7 +65,7 @@ public final class CloseDialogInputCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeInt(dialogID);
         if (success) {
             writer.writeUByte((byte) 0xFF);
@@ -74,7 +75,7 @@ public final class CloseDialogInputCmd extends AbstractCommand {
         writer.writeString(text);
     }
 
-    @NonNull
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

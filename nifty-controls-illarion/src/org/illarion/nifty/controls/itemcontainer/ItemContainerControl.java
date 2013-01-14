@@ -32,6 +32,7 @@ import org.illarion.nifty.controls.ItemContainer;
 import org.illarion.nifty.controls.ItemContainerCloseEvent;
 import org.illarion.nifty.controls.inventoryslot.builder.InventorySlotBuilder;
 
+import javax.annotation.Nonnull;
 import java.util.Properties;
 
 /**
@@ -159,6 +160,7 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
         return slots.length;
     }
 
+    @Nonnull
     @Override
     public InventorySlot getSlot(final int index) {
         return slots[index];

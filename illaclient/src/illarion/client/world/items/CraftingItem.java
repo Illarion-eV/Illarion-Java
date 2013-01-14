@@ -18,8 +18,11 @@
  */
 package illarion.client.world.items;
 
+import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 import java.util.Arrays;
 
 /**
@@ -27,6 +30,7 @@ import java.util.Arrays;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public class CraftingItem {
     /**
      * The index of this item in the list.
@@ -41,11 +45,13 @@ public class CraftingItem {
     /**
      * The ID of the item that is to be crafted.
      */
+    @Nonnull
     private final ItemId itemId;
 
     /**
      * The name of the item.
      */
+    @Nonnull
     private final String name;
 
     /**
@@ -56,12 +62,29 @@ public class CraftingItem {
     /**
      * The amount of items created in one crafting step.
      */
-    private final int buildStackSize;
+    @Nonnull
+    private final ItemCount buildStackSize;
 
     /**
      * The ingredients required for this item.
      */
+    @Nonnull
     private final CraftingIngredientItem[] ingredients;
+
+    /**
+     * Copy constructor.
+     *
+     * @param org the crafting item to copy
+     */
+    public CraftingItem(final CraftingItem org) {
+        itemIndex = org.itemIndex;
+        group = org.group;
+        itemId = org.itemId;
+        name = org.name;
+        buildTime = org.buildTime;
+        buildStackSize = org.buildStackSize;
+        ingredients = org.ingredients;
+    }
 
     /**
      * Constructor that applies all required values.
@@ -74,8 +97,9 @@ public class CraftingItem {
      * @param buildStackSize the amount of items crafted at once
      * @param ingredients    the ingredients required to build this
      */
-    public CraftingItem(final int itemIndex, final int group, final ItemId itemId, final String name,
-                        final int buildTime, final int buildStackSize, final CraftingIngredientItem[] ingredients) {
+    public CraftingItem(final int itemIndex, final int group, @Nonnull final ItemId itemId, @Nonnull final String name,
+                        final int buildTime, @Nonnull final ItemCount buildStackSize,
+                        @Nonnull final CraftingIngredientItem[] ingredients) {
         this.itemIndex = itemIndex;
         this.group = group;
         this.itemId = itemId;
@@ -83,29 +107,34 @@ public class CraftingItem {
         this.buildTime = buildTime;
         this.buildStackSize = buildStackSize;
         this.ingredients = Arrays.copyOf(ingredients, ingredients.length);
-    }
-
-    public CraftingItem(final CraftingItem org) {
-        this(org.getItemIndex(), org.getGroup(), org.getItemId(), org.getName(), org.getBuildTime(),
-                org.getBuildStackSize(), org.ingredients);
-    }
-
-    /**
-     * Get the index of this item.
-     *
-     * @return the index of the item
-     */
-    public int getItemIndex() {
-        return itemIndex;
+        for (final CraftingIngredientItem ingredient : ingredients) {
+            if (ingredient == null) {
+                throw new IllegalArgumentException("One of the ingredient was set to NULL!");
+            }
+        }
     }
 
     /**
-     * The group index this item is assigned to.
+     * Get size of the stack that is created at once.
      *
-     * @return the crafting item
+     * @return the size of the stack that is build
      */
-    public int getGroup() {
-        return group;
+    @Nonnull
+    public ItemCount getBuildStackSize() {
+        return buildStackSize;
+    }
+
+    /**
+     * Get a specified ingredient.
+     *
+     * @param index the index of the ingredient
+     * @return the ingredient item assigned to this index
+     * @throws IndexOutOfBoundsException in case {@code index} is less then 0 or larger or equal to {@link
+     *                                   #getIngredientCount()}
+     */
+    @Nonnull
+    public CraftingIngredientItem getIngredient(final int index) {
+        return ingredients[index];
     }
 
     /**
@@ -113,6 +142,7 @@ public class CraftingItem {
      *
      * @return the ID of the item
      */
+    @Nonnull
     public ItemId getItemId() {
         return itemId;
     }
@@ -122,6 +152,7 @@ public class CraftingItem {
      *
      * @return the crafted item
      */
+    @Nonnull
     public String getName() {
         return name;
     }
@@ -136,12 +167,12 @@ public class CraftingItem {
     }
 
     /**
-     * Get size of the stack that is created at once.
+     * The group index this item is assigned to.
      *
-     * @return the size of the stack that is build
+     * @return the crafting item
      */
-    public int getBuildStackSize() {
-        return buildStackSize;
+    public int getGroup() {
+        return group;
     }
 
     /**
@@ -154,12 +185,11 @@ public class CraftingItem {
     }
 
     /**
-     * Get a specified ingredient.
+     * Get the index of this item.
      *
-     * @param index the index of the ingredient
-     * @return the ingredient item assigned to this index
+     * @return the index of the item
      */
-    public CraftingIngredientItem getIngredient(final int index) {
-        return ingredients[index];
+    public int getItemIndex() {
+        return itemIndex;
     }
 }

@@ -19,10 +19,11 @@
 package illarion.client.world.interactive;
 
 import illarion.client.world.Char;
-import illarion.common.annotation.NonNull;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * This class represents the interactive variant of a character.
@@ -34,7 +35,7 @@ public final class InteractiveChar implements Draggable, DropTarget {
     /**
      * The character this interactive reference points to.
      */
-    @NonNull
+    @Nonnull
     private final Char parentChar;
 
     /**
@@ -42,7 +43,7 @@ public final class InteractiveChar implements Draggable, DropTarget {
      *
      * @param parent the character this interactive reference points to
      */
-    public InteractiveChar(@NonNull final Char parent) {
+    public InteractiveChar(@Nonnull final Char parent) {
         parentChar = parent;
     }
 
@@ -50,7 +51,7 @@ public final class InteractiveChar implements Draggable, DropTarget {
      * Drag one character to another character. Does nothing currently.
      */
     @Override
-    public void dragTo(@NonNull final InteractiveChar targetChar, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveChar targetChar, @Nonnull final ItemCount count) {
         // nothing
     }
 
@@ -58,7 +59,7 @@ public final class InteractiveChar implements Draggable, DropTarget {
      * Dragging the character into the inventory does nothing at all.
      */
     @Override
-    public void dragTo(@NonNull final InteractiveInventorySlot targetSlot, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
         // nothing
     }
 
@@ -67,12 +68,12 @@ public final class InteractiveChar implements Draggable, DropTarget {
      * character.
      */
     @Override
-    public void dragTo(@NonNull final InteractiveMapTile targetTile, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveMapTile targetTile, @Nonnull final ItemCount count) {
         // nothing
     }
 
     @Override
-    public void dragTo(@NonNull final InteractiveContainerSlot targetSlot, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveContainerSlot targetSlot, @Nonnull final ItemCount count) {
         // nothing
     }
 
@@ -81,7 +82,7 @@ public final class InteractiveChar implements Draggable, DropTarget {
      *
      * @return the location of the character on the map
      */
-    @NonNull
+    @Nonnull
     public Location getLocation() {
         return parentChar.getLocation();
     }

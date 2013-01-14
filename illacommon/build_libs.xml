@@ -40,7 +40,7 @@
         <antcall target="prepare_jgraph"/>
         <antcall target="prepare_log4j"/>
         <antcall target="prepare_lwjgl"/>
-        <antcall target="prepare_jcip"/>
+        <antcall target="prepare_jsr"/>
         <antcall target="prepare_nifty"/>
         <antcall target="prepare_slick"/>
         <antcall target="prepare_substance"/>
@@ -122,17 +122,17 @@
         </resourcebuild>
     </target>
 
-    <target name="prepare_jcip" description="prepare the JCIP bundle"
+    <target name="prepare_jsr" description="prepare the JSR bundle"
             depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
         <resourceprepare targetdir="${signedlibs}" usepack200="true">
-            <fileset refid="jcip"/>
+            <fileset refid="jsr"/>
         </resourceprepare>
 
         <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}"
                  storetype="${storetype}">
             <path>
                 <fileset dir="${signedlibs}">
-                    <patternset refid="jcip.pattern"/>
+                    <patternset refid="jsr.pattern"/>
                 </fileset>
             </path>
         </signjar>
@@ -141,14 +141,14 @@
                    storetype="${storetype}">
             <path>
                 <fileset dir="${signedlibs}">
-                    <patternset refid="jcip.pattern"/>
+                    <patternset refid="jsr.pattern"/>
                 </fileset>
             </path>
         </verifyjar>
 
-        <resourcebuild target="${setuplib}/jcip.illares" usepack200="true">
+        <resourcebuild target="${setuplib}/jsr.illares" usepack200="true">
             <fileset dir="${signedlibs}">
-                <patternset refid="jcip.pattern"/>
+                <patternset refid="jsr.pattern"/>
             </fileset>
         </resourcebuild>
     </target>

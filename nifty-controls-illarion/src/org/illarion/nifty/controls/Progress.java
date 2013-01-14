@@ -20,9 +20,12 @@ package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.controls.NiftyControl;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
 /**
  * This interface defines the possibilities to control a progress bar.
  */
+@NotThreadSafe
 public interface Progress extends NiftyControl {
     /**
      * Set the value of the progress. All values will be clamped to {@code 0.f} and {@code 1.f}.

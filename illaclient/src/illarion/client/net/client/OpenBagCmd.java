@@ -19,9 +19,10 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Client Command: Open the bag the character carries in the bag slot ({@link CommandList#CMD_OPEN_BAG}).
@@ -44,7 +45,7 @@ public final class OpenBagCmd extends AbstractCommand {
      * @param writer the interface that allows writing data to the network communication system
      */
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         // nothing
     }
 
@@ -53,7 +54,7 @@ public final class OpenBagCmd extends AbstractCommand {
      *
      * @return the data of this command as string
      */
-    @NonNull
+    @Nonnull
     @Override
     public String toString() {
         return toString(null);

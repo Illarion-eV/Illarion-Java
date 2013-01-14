@@ -63,7 +63,7 @@
             </fileset>
             <zipfileset src="${common.bin}"/>
             <zipgroupfileset refid="twl"/>
-            <zipgroupfileset refid="jcip"/>
+            <zipgroupfileset refid="jsr"/>
             <zipgroupfileset refid="xz"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>

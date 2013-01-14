@@ -26,13 +26,14 @@ import illarion.client.resources.Resource;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.CombatHandler;
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 
 /**
@@ -334,7 +335,7 @@ public final class Avatar extends AbstractEntity implements Resource {
     }
 
     @Override
-    public boolean processEvent(@NonNull final GameContainer container, final int delta, @NonNull final MapInteractionEvent event) {
+    public boolean processEvent(@Nonnull final GameContainer container, final int delta, @Nonnull final MapInteractionEvent event) {
         if (event instanceof ClickOnMapEvent) {
             return processEvent(container, delta, (ClickOnMapEvent) event);
         }
@@ -388,7 +389,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @return true at all times
      */
     @Override
-    public boolean draw(@NonNull final Graphics g) {
+    public boolean draw(@Nonnull final Graphics g) {
         if (isAttackMarkerVisible()) {
             attackMark.draw(g);
         }
@@ -551,7 +552,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @param light the light the avatar is enlighten with
      */
     @Override
-    public void setLight(@NonNull final Color light) {
+    public void setLight(@Nonnull final Color light) {
         final Color localLight = new Color(light);
         super.setLight(localLight);
         clothRender.setLight(localLight);
@@ -670,7 +671,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @param delta     the time since the last update in milliseconds
      */
     @Override
-    public void update(@NonNull final GameContainer container, final int delta) {
+    public void update(@Nonnull final GameContainer container, final int delta) {
         super.update(container, delta);
 
         clothRender.setAlpha(getAlpha());

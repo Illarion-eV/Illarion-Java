@@ -83,7 +83,7 @@
                 <fileset refid="eventbus"/>
                 <fileset refid="lwjgl"/>
                 <fileset refid="nifty"/>
-                <fileset refid="jcip"/>
+                <fileset refid="jsr"/>
                 <pathelement location="${niftycontrols.bin}"/>
                 <pathelement location="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>

@@ -20,11 +20,12 @@ package illarion.client.world;
 
 import illarion.client.net.client.AttackCmd;
 import illarion.client.net.client.StandDownCmd;
-import illarion.common.annotation.NonNull;
 import illarion.common.types.CharacterId;
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.log4j.Logger;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * This class is used to store and set the current combat mode. It will forward all changes to the combat mode to the
@@ -77,7 +78,7 @@ public final class CombatHandler {
      *
      * @param character the character to start or stop attacking
      */
-    public void toggleAttackOnCharacter(@NonNull final Char character) {
+    public void toggleAttackOnCharacter(@Nonnull final Char character) {
         if (isAttacking(character)) {
             standDown();
         } else {
@@ -91,7 +92,7 @@ public final class CombatHandler {
      * @param testChar the char to check if he is the current target
      * @return <code>true</code> in case the character is the current target
      */
-    public boolean isAttacking(@NonNull final Char testChar) {
+    public boolean isAttacking(@Nonnull final Char testChar) {
         synchronized (this) {
             return isAttacking() && testChar.equals(attackedChar);
         }
@@ -134,7 +135,7 @@ public final class CombatHandler {
      *
      * @param character the character that is now attacked
      */
-    public void setAttackTarget(@NonNull final Char character) {
+    public void setAttackTarget(@Nonnull final Char character) {
         synchronized (this) {
             if (character == attackedChar) {
                 return;
@@ -172,7 +173,7 @@ public final class CombatHandler {
      *
      * @param id the ID of the character to fight
      */
-    private static void sendAttackToServer(@NonNull final CharacterId id) {
+    private static void sendAttackToServer(@Nonnull final CharacterId id) {
         World.getNet().sendCommand(new AttackCmd(id));
     }
 }

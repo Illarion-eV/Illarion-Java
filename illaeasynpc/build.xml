@@ -84,7 +84,7 @@
                 <fileset refid="trove"/>
                 <fileset refid="log4j"/>
                 <fileset refid="eventbus"/>
-                <fileset refid="jcip"/>
+                <fileset refid="jsr"/>
                 <pathelement location="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>

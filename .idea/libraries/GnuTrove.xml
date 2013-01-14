@@ -8,6 +8,7 @@
     <SOURCES>
       <root url="file://$PROJECT_DIR$/illacommon/lib/trove" />
       <root url="file://$PROJECT_DIR$/illacommon/lib/trove" />
+      <root url="intellijad://intellijad" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/trove" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/trove" recursive="false" type="SOURCES" />

@@ -24,18 +24,18 @@ import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.crash.MapProcessorCrashHandler;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMap;
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.graphics.ColorHelper;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.LightingMap;
 import illarion.common.types.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.ThreadSafe;
 import org.newdawn.slick.Color;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -112,7 +112,7 @@ public final class GameMap implements LightingMap, Stoppable {
          * @param newAmbientFactor the factor of influence of the ambient light color
          * @param ambientLight     the ambient light color itself
          */
-        void setup(final float newAmbientFactor, @NonNull final Color ambientLight) {
+        void setup(final float newAmbientFactor, @Nonnull final Color ambientLight) {
             factor = newAmbientFactor;
             light = ambientLight;
         }
@@ -167,7 +167,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * The lock that is hold in case the light is currently rendered. If that is done right now the map must not be
      * rendered.
      */
-    @NonNull
+    @Nonnull
     public static final Object LIGHT_LOCK = new Object();
 
     /**
@@ -178,25 +178,25 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * This is a helper object that triggers recycle for all tiles its called upon.
      */
-    @NonNull
+    @Nonnull
     private final TObjectProcedure<MapTile> clearHelper = new ClearHelper();
 
     /**
      * The interactive map that is used to handle the player interaction with the map.
      */
-    @NonNull
+    @Nonnull
     private final InteractiveMap interactive;
 
     /**
      * The lock that secures the map tiles.
      */
-    @NonNull
+    @Nonnull
     private final ReadWriteLock mapLock;
 
     /**
      * The handler for the overview map.
      */
-    @NonNull
+    @Nonnull
     private final GameMiniMap minimap;
 
     /**
@@ -209,19 +209,19 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * A helper class for rendering the light values on all map tiles.
      */
-    @NonNull
+    @Nonnull
     private final RenderLightsHelper renderLightsHelper = new RenderLightsHelper();
 
     /**
      * This is a helper procedure that will trigger a reset on all tiles its called upon.
      */
-    @NonNull
+    @Nonnull
     private final TObjectProcedure<MapTile> resetLightsHelper = new ResetLightsHelper();
 
     /**
      * The tiles of the map. The key of the hash map is the location key of the tiles location.
      */
-    @NonNull
+    @Nonnull
     @GuardedBy("mapLock")
     private final TLongObjectHashMap<MapTile> tiles;
 
@@ -250,7 +250,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @return {@code true} if the position accepts the light, false if not
      */
     @Override
-    public boolean acceptsLight(@NonNull final Location loc, final int deltaX, final int deltaY) {
+    public boolean acceptsLight(@Nonnull final Location loc, final int deltaX, final int deltaY) {
         final MapTile tile = getMapAt(loc);
         if (tile != null) {
             switch (tile.getFace()) {
@@ -281,7 +281,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @return obscurity of the tile, 0 for clear view {@link LightingMap#BLOCKED_VIEW} for fully blocked
      */
     @Override
-    public int blocksView(@NonNull final Location loc) {
+    public int blocksView(@Nonnull final Location loc) {
         final MapTile tile = getMapAt(loc);
         if (tile == null) {
             return 0;
@@ -328,7 +328,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @param loc the location that shall be checked
      * @return the elevation value
      */
-    public int getElevationAt(@NonNull final Location loc) {
+    public int getElevationAt(@Nonnull final Location loc) {
         final MapTile ground = getMapAt(loc);
         if (ground != null) {
             return ground.getElevation();
@@ -341,7 +341,7 @@ public final class GameMap implements LightingMap, Stoppable {
      *
      * @return the map used to interact with this map
      */
-    @NonNull
+    @Nonnull
     public InteractiveMap getInteractive() {
         return interactive;
     }
@@ -391,7 +391,7 @@ public final class GameMap implements LightingMap, Stoppable {
      *
      * @return the object that handles the overview map
      */
-    @NonNull
+    @Nonnull
     public GameMiniMap getMinimap() {
         return minimap;
     }
@@ -414,7 +414,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @param loc the location on the map
      * @return <code>true</code> in case there is a tile at this position
      */
-    public boolean isMapAt(@NonNull final Location loc) {
+    public boolean isMapAt(@Nonnull final Location loc) {
         return isMapAt(loc.getKey());
     }
 
@@ -440,7 +440,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @param lowestLevel  the lowest level of tiles to add to the storage
      * @param highestLevel the highest level of tiles to add to the storage
      */
-    public void getTiles(@NonNull final List<MapTile> storage, final int lowestLevel, final int highestLevel) {
+    public void getTiles(@Nonnull final List<MapTile> storage, final int lowestLevel, final int highestLevel) {
         mapLock.readLock().lock();
         try {
             tiles.forEachEntry(new TLongObjectProcedure<MapTile>() {
@@ -482,7 +482,7 @@ public final class GameMap implements LightingMap, Stoppable {
      *
      * @param tile the tile that is to be removed
      */
-    public void removeTile(@NonNull final MapTile tile) {
+    public void removeTile(@Nonnull final MapTile tile) {
         removeTile(tile.getLocation().getKey());
     }
 
@@ -560,7 +560,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @see LightingMap#setLight(Location, Color)
      */
     @Override
-    public void setLight(@NonNull final Location loc, @NonNull final Color color) {
+    public void setLight(@Nonnull final Location loc, @Nonnull final Color color) {
         final MapTile tile = getMapAt(loc);
         if (tile != null) {
             tile.addLight(color);

@@ -24,11 +24,11 @@ import illarion.client.graphics.MapDisplayManager;
 import illarion.client.net.NetComm;
 import illarion.client.util.ChatHandler;
 import illarion.client.world.interactive.InteractionManager;
-import illarion.common.annotation.NonNull;
 import illarion.common.graphics.LightTracer;
 import illarion.common.util.StoppableStorage;
-import net.jcip.annotations.ThreadSafe;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -43,7 +43,7 @@ public final class World {
     /**
      * The singleton instance of this class.
      */
-    @NonNull
+    @Nonnull
     private static final World INSTANCE = new World();
 
     /**
@@ -86,30 +86,30 @@ public final class World {
         }
     }
 
-    @NonNull
+    @Nonnull
     public static AnimationManager getAnimationManager() {
         INSTANCE.checkAniManager();
         return INSTANCE.aniManager;
     }
 
-    @NonNull
+    @Nonnull
     public static Avatar getAvatar() {
         return getPlayer().getCharacter().getAvatar();
     }
 
-    @NonNull
+    @Nonnull
     public static Clock getClock() {
         INSTANCE.checkClock();
         return INSTANCE.clock;
     }
 
-    @NonNull
+    @Nonnull
     public static ChatHandler getChatHandler() {
         INSTANCE.checkChatHandler();
         return INSTANCE.chatHandler;
     }
 
-    @NonNull
+    @Nonnull
     public static LightTracer getLights() {
         INSTANCE.checkLights();
         return INSTANCE.lights;
@@ -120,55 +120,55 @@ public final class World {
      *
      * @return the map of the game
      */
-    @NonNull
+    @Nonnull
     public static GameMap getMap() {
         INSTANCE.checkGameMap();
         return INSTANCE.map;
     }
 
-    @NonNull
+    @Nonnull
     public static MapDisplayManager getMapDisplay() {
         INSTANCE.checkMapDisplay();
         return INSTANCE.mapDisplay;
     }
 
-    @NonNull
+    @Nonnull
     public static MusicBox getMusicBox() {
         INSTANCE.checkMusicBox();
         return INSTANCE.musicBox;
     }
 
-    @NonNull
+    @Nonnull
     public static NetComm getNet() {
         INSTANCE.checkNet();
         return INSTANCE.net;
     }
 
-    @NonNull
+    @Nonnull
     public static People getPeople() {
         INSTANCE.checkPeople();
         return INSTANCE.people;
     }
 
-    @NonNull
+    @Nonnull
     public static Player getPlayer() {
         INSTANCE.checkPlayer();
         return INSTANCE.player;
     }
 
-    @NonNull
+    @Nonnull
     public static Weather getWeather() {
         INSTANCE.checkWeather();
         return INSTANCE.weather;
     }
 
-    @NonNull
+    @Nonnull
     public static InteractionManager getInteractionManager() {
         INSTANCE.checkInteractionManager();
         return INSTANCE.interactionManager;
     }
 
-    @NonNull
+    @Nonnull
     public static ExecutorService getExecutorService() {
         INSTANCE.checkExecutorService();
         return INSTANCE.executorService;

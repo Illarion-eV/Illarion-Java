@@ -22,6 +22,8 @@ import de.lessvoid.nifty.render.NiftyImage;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Money;
 
+import javax.annotation.Nonnull;
+
 /**
  * This interfaces defines a entry in the merchant dialog that contains one item to buy.
  *
@@ -33,6 +35,7 @@ public interface MerchantListEntry {
      *
      * @return the nifty image to display
      */
+    @Nonnull
     NiftyImage getItemImage();
 
     /**
@@ -40,6 +43,7 @@ public interface MerchantListEntry {
      *
      * @return the name of the item
      */
+    @Nonnull
     String getName();
 
     /**
@@ -47,6 +51,7 @@ public interface MerchantListEntry {
      *
      * @return the price of the item
      */
+    @Nonnull
     Money getPrice();
 
     /**
@@ -54,6 +59,7 @@ public interface MerchantListEntry {
      *
      * @return the amount of items bought at once
      */
+    @Nonnull
     ItemCount getBundleSize();
 
     /**

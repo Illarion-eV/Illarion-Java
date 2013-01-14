@@ -19,9 +19,10 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * This command is used to craft a item from a crafting dialog.
@@ -61,14 +62,14 @@ public final class CraftItemCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeInt(dialogId);
         writer.writeByte((byte) 1);
         writer.writeUByte((short) craftingIndex);
         writer.writeUByte((short) amount);
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public String toString() {
         return toString("dialog ID: " + dialogId);

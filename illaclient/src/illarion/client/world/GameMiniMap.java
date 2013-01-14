@@ -27,13 +27,9 @@ import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.gui.events.HideMiniMap;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.resources.TileFactory;
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.graphics.MapColor;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Color;
@@ -41,6 +37,10 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -70,7 +70,7 @@ public final class GameMiniMap {
          * This instance of a slick color is used to avoid the need to create a new color instance every time this
          * image is rendered.
          */
-        @NonNull
+        @Nonnull
         private final Color slickColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
 
         /**
@@ -95,16 +95,16 @@ public final class GameMiniMap {
         }
 
         @Override
-        public void renderImage(@NonNull final Graphics g, final int x, final int y, final int width, final int height,
-                                @NonNull final de.lessvoid.nifty.tools.Color color, final float scale) {
+        public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int width, final int height,
+                                @Nonnull final de.lessvoid.nifty.tools.Color color, final float scale) {
             renderImage(g, x, y, width, height, 0, 0, MINI_MAP_WIDTH, MINI_MAP_HEIGHT, color, scale, MINI_MAP_WIDTH / 2,
                     MINI_MAP_HEIGHT / 2);
         }
 
         @Override
-        public void renderImage(@NonNull final Graphics g, final int x, final int y, final int w, final int h,
+        public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int w, final int h,
                                 final int srcX, final int srcY, final int srcW, final int srcH,
-                                @NonNull final de.lessvoid.nifty.tools.Color color, final float scale,
+                                @Nonnull final de.lessvoid.nifty.tools.Color color, final float scale,
                                 final int centerX, final int centerY) {
             if (disabled || (worldMapTexture == null)) {
                 return;
@@ -162,7 +162,7 @@ public final class GameMiniMap {
     /**
      * The log file handler that takes care for the logging output of this class.
      */
-    @NonNull
+    @Nonnull
     private static final Logger LOGGER = Logger.getLogger(GameMiniMap.class);
 
     /**
@@ -213,7 +213,7 @@ public final class GameMiniMap {
     /**
      * The data storage for the map data that was loaded in this mini map.
      */
-    @NonNull
+    @Nonnull
     @GuardedBy("mapData")
     private final ByteBuffer mapData;
 
@@ -235,7 +235,7 @@ public final class GameMiniMap {
     /**
      * The areas that require a update.
      */
-    @NonNull
+    @Nonnull
     private final List<Rectangle> updateAreas;
 
     /**
@@ -288,7 +288,7 @@ public final class GameMiniMap {
      * @see #getMapOriginX()
      * @see #getMapOriginY()
      */
-    @NonNull
+    @Nonnull
     public Location getMapOrigin() {
         return getMapOrigin(new Location());
     }
@@ -302,8 +302,8 @@ public final class GameMiniMap {
      * @throws NullPointerException in case the parameter <code>loc</code> is set to <code>null</code>
      * @see #getMapOrigin()
      */
-    @NonNull
-    public Location getMapOrigin(@NonNull final Location loc) {
+    @Nonnull
+    public Location getMapOrigin(@Nonnull final Location loc) {
         loc.setSC(mapOriginX, mapOriginY, mapLevel);
         return loc;
     }
@@ -313,7 +313,7 @@ public final class GameMiniMap {
      *
      * @return the render image used to display the mini map on the GUI
      */
-    @NonNull
+    @Nonnull
     public SlickRenderImage getMiniMap() {
         return new GameMiniMapRenderImage();
     }
@@ -438,7 +438,7 @@ public final class GameMiniMap {
         }
     }
 
-    private void drawMapArea(@NonNull final Rectangle rectangle) throws SlickException {
+    private void drawMapArea(@Nonnull final Rectangle rectangle) throws SlickException {
         if (worldMapTexture == null) {
             return;
         }
@@ -490,7 +490,7 @@ public final class GameMiniMap {
      * @param tileData the data of the tile
      * @param graphics the graphics instance used to draw
      */
-    private static void drawTile(final short tileData, @NonNull final Graphics graphics) {
+    private static void drawTile(final short tileData, @Nonnull final Graphics graphics) {
         final byte tileID = (byte) (tileData & TILE_ID_MASK);
         final Color drawColor;
         if (tileID == 0) {
@@ -525,7 +525,7 @@ public final class GameMiniMap {
      *
      * @param playerLoc the location of the player
      */
-    public void setPlayerLocation(@NonNull final Location playerLoc) {
+    public void setPlayerLocation(@Nonnull final Location playerLoc) {
         final int newMapLevel = playerLoc.getScZ();
 
         final int newMapOriginX;
@@ -612,7 +612,7 @@ public final class GameMiniMap {
      * @return the path and the filename of the map file
      */
     @SuppressWarnings("nls")
-    @NonNull
+    @Nonnull
     private File getCurrentMapFilename() {
         final StringBuilder builder = new StringBuilder();
         builder.setLength(0);
@@ -692,7 +692,7 @@ public final class GameMiniMap {
      *
      * @param rect the area to update
      */
-    private void addUpdateArea(@NonNull final Rectangle rect) {
+    private void addUpdateArea(@Nonnull final Rectangle rect) {
         updateAreas.add(rect);
         miniMapDirty = true;
     }
@@ -719,7 +719,7 @@ public final class GameMiniMap {
      *
      * @param updateData the data that is needed for the update
      */
-    public void update(@NonNull final TileUpdate updateData) {
+    public void update(@Nonnull final TileUpdate updateData) {
         final Location tileLoc = updateData.getLocation();
 
         if ((tileLoc.getScX() < mapOriginX) || (tileLoc.getScX() >= (mapOriginX + WORLDMAP_WIDTH)) || (tileLoc.getScY
@@ -743,7 +743,7 @@ public final class GameMiniMap {
      *         this way
      */
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
-    private boolean saveTile(@NonNull final Location loc, final int tileID, final boolean blocked) {
+    private boolean saveTile(@Nonnull final Location loc, final int tileID, final boolean blocked) {
         final int index = encodeLocation(loc);
 
         if (tileID == MapTile.ID_NONE) {
@@ -778,7 +778,7 @@ public final class GameMiniMap {
      * @param loc the server location that shall be encoded
      * @return the index of the location in the map data buffer
      */
-    private int encodeLocation(@NonNull final Location loc) {
+    private int encodeLocation(@Nonnull final Location loc) {
         return encodeLocation(loc.getScX(), loc.getScY());
     }
 }

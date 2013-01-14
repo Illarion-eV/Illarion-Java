@@ -26,7 +26,6 @@ import illarion.client.resources.ItemFactory;
 import illarion.client.resources.Resource;
 import illarion.client.util.LookAtTracker;
 import illarion.client.world.MapTile;
-import illarion.common.annotation.NonNull;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
@@ -37,6 +36,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+
+import javax.annotation.Nonnull;
 
 /**
  * A item is a object that is on the game map or in the inventory or in any
@@ -292,7 +293,7 @@ public final class Item extends AbstractEntity implements Resource {
      *         successfully
      */
     @Override
-    public boolean draw(@NonNull final Graphics g) {
+    public boolean draw(@Nonnull final Graphics g) {
         super.draw(g);
 
         if (showNumber && (number != null)) {
@@ -359,7 +360,7 @@ public final class Item extends AbstractEntity implements Resource {
     private int showHighlight;
 
     @Override
-    public boolean processEvent(@NonNull final GameContainer container, final int delta, @NonNull final MapInteractionEvent event) {
+    public boolean processEvent(@Nonnull final GameContainer container, final int delta, @Nonnull final MapInteractionEvent event) {
         if (!parentTile.isAtPlayerLevel()) {
             return false;
         }
@@ -636,7 +637,7 @@ public final class Item extends AbstractEntity implements Resource {
      * @param delta     the time in milliseconds since the last update
      */
     @Override
-    public void update(@NonNull final GameContainer container, final int delta) {
+    public void update(@Nonnull final GameContainer container, final int delta) {
         super.update(container, delta);
 
         if (showNumber && (number != null)) {

@@ -33,15 +33,11 @@ import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantList;
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -49,6 +45,10 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
 import org.newdawn.slick.openal.SoundStore;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 import java.awt.*;
 import java.io.File;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -66,13 +66,13 @@ public final class Player {
     /**
      * The key in the configuration for the sound on/off flag.
      */
-    @NonNull
+    @Nonnull
     private static final String CFG_SOUND_ON = "soundOn"; //$NON-NLS-1$
 
     /**
      * The key in the configuration for the sound volume value.
      */
-    @NonNull
+    @Nonnull
     private static final String CFG_SOUND_VOL = "soundVolume"; //$NON-NLS-1$
 
     /**
@@ -93,31 +93,31 @@ public final class Player {
     /**
      * The graphical representation of the character.
      */
-    @NonNull
+    @Nonnull
     private final Char character;
 
     /**
      * The inventory of the player.
      */
-    @NonNull
+    @Nonnull
     private final Inventory inventory;
 
     /**
      * The current location of the server map for the player.
      */
-    @NonNull
+    @Nonnull
     private final Location playerLocation = new Location();
 
     /**
      * The player movement handler that takes care that the player character is walking around.
      */
-    @NonNull
+    @Nonnull
     private final PlayerMovement movementHandler;
 
     /**
      * The path to the folder of character specific stuff, like the map or the names table.
      */
-    @NonNull
+    @Nonnull
     private final File path;
 
     /**
@@ -134,14 +134,14 @@ public final class Player {
     /**
      * This map contains the containers that are known for the player.
      */
-    @NonNull
+    @Nonnull
     @GuardedBy("containerLock")
     private final TIntObjectHashMap<ItemContainer> containers;
 
     /**
      * This lock is used to synchronize the access on the containers.
      */
-    @NonNull
+    @Nonnull
     private final ReadWriteLock containerLock;
 
     /**
@@ -163,7 +163,7 @@ public final class Player {
      * @param charName the character name of the player playing this game
      */
     @SuppressWarnings("nls")
-    public Player(@NonNull final String charName) {
+    public Player(@Nonnull final String charName) {
 
         path = new File(DirectoryManager.getInstance().getUserDirectory(), charName);
 
@@ -193,7 +193,7 @@ public final class Player {
     private static final Logger LOGGER = Logger.getLogger(Player.class);
 
     @EventSubscriber
-    public void onOpenContainerEvent(@NonNull final OpenContainerEvent event) {
+    public void onOpenContainerEvent(@Nonnull final OpenContainerEvent event) {
         final ItemContainer container;
         if (hasContainer(event.getContainerId())) {
             container = getContainer(event.getContainerId());
@@ -219,7 +219,7 @@ public final class Player {
     }
 
     @EventSubscriber
-    public void onMerchantDialogOpenedEvent(@NonNull final DialogMerchantReceivedEvent event) {
+    public void onMerchantDialogOpenedEvent(@Nonnull final DialogMerchantReceivedEvent event) {
         final MerchantList list = new MerchantList(event.getId(), event.getItemCount());
         for (int i = 0; i < event.getItemCount(); i++) {
             list.setItem(i, event.getItem(i));
@@ -234,12 +234,12 @@ public final class Player {
     }
 
     @EventSubscriber
-    public void onContainerClosedEvent(@NonNull final CloseContainerEvent event) {
+    public void onContainerClosedEvent(@Nonnull final CloseContainerEvent event) {
         removeContainer(event.getContainerId());
     }
 
     @EventSubscriber
-    public void onDialogClosedEvent(@NonNull final CloseDialogEvent event) {
+    public void onDialogClosedEvent(@Nonnull final CloseDialogEvent event) {
         if (merchantDialog == null) {
             return;
         }
@@ -257,7 +257,7 @@ public final class Player {
      * The monitor function that is notified in case the configuration changes and triggers the required updates.
      */
     @EventTopicPatternSubscriber(topicPattern = "sound((On)|(Volume))")
-    public void onConfigChangedEvent(@NonNull final String topic, @NonNull final ConfigChangedEvent event) {
+    public void onConfigChangedEvent(@Nonnull final String topic, @Nonnull final ConfigChangedEvent event) {
         updateListener();
     }
 
@@ -285,7 +285,7 @@ public final class Player {
      * @return the new item container
      * @throws IllegalArgumentException in case there is already a container with the same ID
      */
-    @NonNull
+    @Nonnull
     public ItemContainer createNewContainer(final int id, final int slotCount) {
         containerLock.writeLock().lock();
         try {
@@ -382,7 +382,7 @@ public final class Player {
      *
      * @return The character of the player
      */
-    @NonNull
+    @Nonnull
     public Char getCharacter() {
         return character;
     }
@@ -392,7 +392,7 @@ public final class Player {
      *
      * @return the player inventory
      */
-    @NonNull
+    @Nonnull
     public Inventory getInventory() {
         return inventory;
     }
@@ -411,7 +411,7 @@ public final class Player {
      *
      * @return the movement handler
      */
-    @NonNull
+    @Nonnull
     public PlayerMovement getMovementHandler() {
         return movementHandler;
     }
@@ -421,7 +421,7 @@ public final class Player {
      *
      * @return The path to the player directory
      */
-    @NonNull
+    @Nonnull
     public File getPath() {
         return path;
     }
@@ -491,7 +491,7 @@ public final class Player {
      * @param checkLoc The location that shall be checked
      * @return true if the location is at the same level as the player
      */
-    boolean isBaseLevel(@NonNull final Location checkLoc) {
+    boolean isBaseLevel(@Nonnull final Location checkLoc) {
         return getLocation().getScZ() == checkLoc.getScZ();
     }
 
@@ -526,7 +526,7 @@ public final class Player {
      *
      * @param newLoc new location of the character on the map
      */
-    public void setLocation(@NonNull final Location newLoc) {
+    public void setLocation(@Nonnull final Location newLoc) {
         validLocation = true;
         if (playerLocation.equals(newLoc)) {
             return;
@@ -553,7 +553,7 @@ public final class Player {
      *
      * @param newPlayerId the new ID of the player
      */
-    public void setPlayerId(@NonNull final CharacterId newPlayerId) {
+    public void setPlayerId(@Nonnull final CharacterId newPlayerId) {
         playerId = newPlayerId;
         character.setCharId(playerId);
 
@@ -587,7 +587,7 @@ public final class Player {
      *
      * @param newLoc the new location of the player
      */
-    public void updateLocation(@NonNull final Location newLoc) {
+    public void updateLocation(@Nonnull final Location newLoc) {
         if (playerLocation.equals(newLoc)) {
             return;
         }

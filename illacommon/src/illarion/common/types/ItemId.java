@@ -18,13 +18,13 @@
  */
 package illarion.common.types;
 
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.net.NetCommReader;
 import illarion.common.net.NetCommWriter;
-import net.jcip.annotations.Immutable;
-import net.jcip.annotations.ThreadSafe;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 
 /**
@@ -70,7 +70,7 @@ public final class ItemId implements Comparable<ItemId> {
      * @param reader the reader
      * @throws IOException in case the reading operation fails for some reason
      */
-    public ItemId(@NonNull final NetCommReader reader) throws IOException {
+    public ItemId(@Nonnull final NetCommReader reader) throws IOException {
         value = reader.readUShort();
     }
 
@@ -95,7 +95,7 @@ public final class ItemId implements Comparable<ItemId> {
         return value;
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public String toString() {
         return "Item ID: " + Integer.toString(value);
@@ -106,7 +106,7 @@ public final class ItemId implements Comparable<ItemId> {
      *
      * @param writer the writer that receives the value
      */
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeUShort(value);
     }
 
@@ -130,7 +130,7 @@ public final class ItemId implements Comparable<ItemId> {
     }
 
     @Override
-    public int compareTo(@NonNull final ItemId o) {
+    public int compareTo(@Nonnull final ItemId o) {
         if (value == o.value) {
             return 0;
         }

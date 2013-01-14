@@ -18,9 +18,9 @@
  */
 package illarion.common.types;
 
-import illarion.common.annotation.NonNull;
-import net.jcip.annotations.Immutable;
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * This class contains the game money. It can be used to split the components of the money (copper, silver, gold).
@@ -138,7 +138,7 @@ public final class Money implements Comparable<Money> {
         return (copperCoins < o.copperCoins) ? -1 : 1;
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();

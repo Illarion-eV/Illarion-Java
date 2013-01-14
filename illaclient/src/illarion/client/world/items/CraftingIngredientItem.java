@@ -18,23 +18,30 @@
  */
 package illarion.client.world.items;
 
+import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * This item is a ingredient to a craft.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public final class CraftingIngredientItem {
     /**
      * The ID of the ingredient.
      */
+    @Nonnull
     private final ItemId itemId;
 
     /**
      * The amount of items required.
      */
-    private final int count;
+    @Nonnull
+    private final ItemCount count;
 
     /**
      * Constructor used to set the item.
@@ -42,7 +49,7 @@ public final class CraftingIngredientItem {
      * @param itemId the ID of the item
      * @param count  the amount of items required
      */
-    public CraftingIngredientItem(final ItemId itemId, final int count) {
+    public CraftingIngredientItem(@Nonnull final ItemId itemId, @Nonnull final ItemCount count) {
         this.itemId = itemId;
         this.count = count;
     }
@@ -52,6 +59,7 @@ public final class CraftingIngredientItem {
      *
      * @return the item id
      */
+    @Nonnull
     public ItemId getItemId() {
         return itemId;
     }
@@ -61,7 +69,8 @@ public final class CraftingIngredientItem {
      *
      * @return the amount of items
      */
-    public int getCount() {
+    @Nonnull
+    public ItemCount getCount() {
         return count;
     }
 }

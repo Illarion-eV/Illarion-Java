@@ -20,10 +20,11 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.client.world.World;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.Location;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Client Command: Open a container on the map ({@link CommandList#CMD_OPEN_MAP}).
@@ -43,7 +44,7 @@ public final class OpenOnMapCmd extends AbstractCommand {
      *
      * @param mapLocation the location on the map where the container is supposed to be opened
      */
-    public OpenOnMapCmd(@NonNull final Location mapLocation) {
+    public OpenOnMapCmd(@Nonnull final Location mapLocation) {
         super(CommandList.CMD_OPEN_MAP);
         direction = (short) World.getPlayer().getLocation().getDirection(mapLocation);
     }
@@ -54,7 +55,7 @@ public final class OpenOnMapCmd extends AbstractCommand {
      * @param writer the interface that allows writing data to the network communication system
      */
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeUByte(direction);
     }
 
@@ -63,7 +64,7 @@ public final class OpenOnMapCmd extends AbstractCommand {
      *
      * @return the data of this command as string
      */
-    @NonNull
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

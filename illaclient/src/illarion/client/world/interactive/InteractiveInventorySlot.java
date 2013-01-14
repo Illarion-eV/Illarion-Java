@@ -23,10 +23,11 @@ import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.InventorySlot;
 import illarion.client.world.items.MerchantList;
-import illarion.common.annotation.NonNull;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * This class holds the interactive representation of a inventory slot.
@@ -38,7 +39,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
     /**
      * The inventory item this interactive class refers to.
      */
-    @NonNull
+    @Nonnull
     private final InventorySlot parentItem;
 
     /**
@@ -46,7 +47,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      *
      * @param item the inventory item that is the parent of this interactive item
      */
-    public InteractiveInventorySlot(@NonNull final InventorySlot item) {
+    public InteractiveInventorySlot(@Nonnull final InventorySlot item) {
         parentItem = item;
     }
 
@@ -54,7 +55,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * Drag a inventory item to a character. Does nothing currently.
      */
     @Override
-    public void dragTo(@NonNull final InteractiveChar targetChar, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveChar targetChar, @Nonnull final ItemCount count) {
         // nothing
     }
 
@@ -62,7 +63,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * Drag the item in this inventory slot to another inventory slot.
      */
     @Override
-    public void dragTo(@NonNull final InteractiveInventorySlot targetSlot, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
         if (!isValidItem()) {
             return;
         }
@@ -114,7 +115,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * @param itemId the ID of the item that should be dropped on this slot
      * @return {@code true} in case its legal to drop a item with the specified ID on the inventory slot
      */
-    public boolean isAcceptingItem(@NonNull final ItemId itemId) {
+    public boolean isAcceptingItem(@Nonnull final ItemId itemId) {
         return !isValidItem() || itemId.equals(getItemId());
     }
 
@@ -137,7 +138,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * @param count      the amount of items to drag to the new location
      */
     @Override
-    public void dragTo(@NonNull final InteractiveMapTile targetTile, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveMapTile targetTile, @Nonnull final ItemCount count) {
         if (!isValidItem()) {
             return;
         }
@@ -146,7 +147,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
     }
 
     @Override
-    public void dragTo(@NonNull final InteractiveContainerSlot targetSlot, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveContainerSlot targetSlot, @Nonnull final ItemCount count) {
         if (!isValidItem()) {
             return;
         }

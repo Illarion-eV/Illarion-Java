@@ -25,14 +25,33 @@ package org.illarion.nifty.controls;
 import de.lessvoid.nifty.controls.NiftyControl;
 import de.lessvoid.nifty.render.NiftyImage;
 
+import javax.annotation.Nonnull;
+
 /**
  * The interface to control a single slot of the inventory.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface InventorySlot extends NiftyControl {
+    /**
+     * The different stages for the merchant overlay.
+     */
     enum MerchantBuyLevel {
-        Copper, Silver, Gold
+        /**
+         * The lowest level. Displayed with a copper coin.
+         */
+        Copper,
+
+        /**
+         * Medium level. Displayed with a silver coin.
+         */
+        Silver,
+
+        /**
+         * Highest level. Displayed with a gold coin.
+         */
+        @SuppressWarnings("EnumeratedConstantNamingConvention")
+        Gold
     }
 
     /**
@@ -40,14 +59,14 @@ public interface InventorySlot extends NiftyControl {
      *
      * @param image the displayed image
      */
-    void setImage(NiftyImage image);
+    void setImage(@Nonnull NiftyImage image);
 
     /**
      * Set the image that is displayed as background of this slot.
      *
      * @param image the image in the background of this slot
      */
-    void setBackgroundImage(NiftyImage image);
+    void setBackgroundImage(@Nonnull NiftyImage image);
 
     /**
      * Show the label in this inventory slot.
@@ -64,7 +83,7 @@ public interface InventorySlot extends NiftyControl {
      *
      * @param text the label text
      */
-    void setLabelText(String text);
+    void setLabelText(@Nonnull String text);
 
     /**
      * Send the draggable object back to this slot.
@@ -77,7 +96,15 @@ public interface InventorySlot extends NiftyControl {
      */
     void restoreVisibility();
 
+    /**
+     * Hide the merchant overlay in case its currently displayed.
+     */
     void hideMerchantOverlay();
 
-    void showMerchantOverlay(InventorySlot.MerchantBuyLevel level);
+    /**
+     * Show the specified merchant overlay.
+     *
+     * @param level the overlay level to show
+     */
+    void showMerchantOverlay(@Nonnull InventorySlot.MerchantBuyLevel level);
 }

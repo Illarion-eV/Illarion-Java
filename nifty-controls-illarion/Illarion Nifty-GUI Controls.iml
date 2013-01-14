@@ -27,6 +27,7 @@
     <orderEntry type="library" name="GnuTrove" level="project" />
     <orderEntry type="library" name="XPP3" level="project" />
     <orderEntry type="module" module-name="Illarion Common Library" />
+    <orderEntry type="library" name="JSR" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

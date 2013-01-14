@@ -18,9 +18,8 @@
  */
 package illarion.common.data;
 
-import illarion.common.annotation.NonNull;
-import net.jcip.annotations.ThreadSafe;
-
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,19 +34,19 @@ public final class SkillGroup {
     /**
      * The english name of the skill.
      */
-    @NonNull
+    @Nonnull
     private final String nameEnglish;
 
     /**
      * The german name of the skill.
      */
-    @NonNull
+    @Nonnull
     private final String nameGerman;
 
     /**
      * The list of skills that belong to this group.
      */
-    @NonNull
+    @Nonnull
     private final List<Skill> skills;
 
     /**
@@ -56,7 +55,7 @@ public final class SkillGroup {
      * @param german  the german name of the group
      * @param english the english name of the group
      */
-    public SkillGroup(@NonNull final String german, @NonNull final String english) {
+    public SkillGroup(@Nonnull final String german, @Nonnull final String english) {
         nameEnglish = english;
         nameGerman = german;
 
@@ -68,7 +67,7 @@ public final class SkillGroup {
      *
      * @param skill the skill that is supposed to be added to the group
      */
-    void addSkill(@NonNull final Skill skill) {
+    void addSkill(@Nonnull final Skill skill) {
         skills.add(skill);
     }
 
@@ -77,7 +76,7 @@ public final class SkillGroup {
      *
      * @return the english name
      */
-    @NonNull
+    @Nonnull
     public String getNameEnglish() {
         return nameEnglish;
     }
@@ -87,7 +86,7 @@ public final class SkillGroup {
      *
      * @return the german name
      */
-    @NonNull
+    @Nonnull
     public String getNameGerman() {
         return nameGerman;
     }
@@ -97,12 +96,12 @@ public final class SkillGroup {
      *
      * @return the list of skills that is part of this group
      */
-    @NonNull
+    @Nonnull
     public List<Skill> getSkills() {
         return Collections.unmodifiableList(skills);
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public String toString() {
         return "Skill Group: " + nameEnglish;

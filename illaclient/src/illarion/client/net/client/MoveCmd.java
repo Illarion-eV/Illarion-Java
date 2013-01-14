@@ -20,10 +20,11 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.client.world.CharMovementMode;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.CharacterId;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Client Command: Request a move or a push ({@link CommandList#CMD_MOVE}).
@@ -52,7 +53,7 @@ public final class MoveCmd extends AbstractCommand {
     /**
      * The character ID of the char that shall move.
      */
-    @NonNull
+    @Nonnull
     private final CharacterId charId;
 
     /**
@@ -69,7 +70,7 @@ public final class MoveCmd extends AbstractCommand {
     /**
      * Default constructor for the move command.
      */
-    public MoveCmd(@NonNull final CharacterId charId, @NonNull final CharMovementMode mode, final int direction) {
+    public MoveCmd(@Nonnull final CharacterId charId, @Nonnull final CharMovementMode mode, final int direction) {
         super(CommandList.CMD_MOVE);
 
         this.charId = charId;
@@ -96,7 +97,7 @@ public final class MoveCmd extends AbstractCommand {
      *               communication system
      */
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         charId.encode(writer);
         writer.writeUByte(direction);
         writer.writeByte(mode);
@@ -107,7 +108,7 @@ public final class MoveCmd extends AbstractCommand {
      *
      * @return the data of this command as string
      */
-    @NonNull
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

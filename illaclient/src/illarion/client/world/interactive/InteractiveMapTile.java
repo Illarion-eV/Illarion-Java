@@ -23,11 +23,12 @@ import illarion.client.net.client.*;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is the interactive representation of a tile on the map.
@@ -80,7 +81,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
      * Drag something from a map tile to
      */
     @Override
-    public void dragTo(@NonNull final InteractiveChar targetChar, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveChar targetChar, @Nonnull final ItemCount count) {
         if (!canDrag()) {
             return;
         }
@@ -91,7 +92,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
     }
 
     @Override
-    public void dragTo(@NonNull final InteractiveInventorySlot targetSlot, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
         if (!canDrag()) {
             return;
         }
@@ -109,7 +110,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
      * @param targetTile the tile to drag this tile to
      */
     @Override
-    public void dragTo(@NonNull final InteractiveMapTile targetTile, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveMapTile targetTile, @Nonnull final ItemCount count) {
         if (!canDrag()) {
             return;
         }
@@ -118,7 +119,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
     }
 
     @Override
-    public void dragTo(@NonNull final InteractiveContainerSlot targetSlot, @NonNull final ItemCount count) {
+    public void dragTo(@Nonnull final InteractiveContainerSlot targetSlot, @Nonnull final ItemCount count) {
         if (!canDrag()) {
             return;
         }
@@ -160,7 +161,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
      *
      * @return the location of this tile
      */
-    @NonNull
+    @Nonnull
     public Location getLocation() {
         return parentTile.getLocation();
     }

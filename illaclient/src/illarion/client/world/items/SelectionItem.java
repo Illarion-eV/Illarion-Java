@@ -18,6 +18,8 @@
  */
 package illarion.client.world.items;
 
+import javax.annotation.Nonnull;
+
 /**
  * This item is the entry of a selection dialog that contains a item reference along with a name.
  *
@@ -77,6 +79,7 @@ public class SelectionItem {
      *
      * @return the name of the item
      */
+    @Nonnull
     public String getName() {
         return name;
     }

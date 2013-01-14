@@ -24,6 +24,7 @@ import illarion.client.net.server.events.DialogCraftingReceivedEvent;
 import illarion.client.world.items.CraftingIngredientItem;
 import illarion.client.world.items.CraftingItem;
 import illarion.common.net.NetCommReader;
+import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
@@ -79,18 +80,18 @@ public final class DialogCraftingMsg extends AbstractReply {
             final int group = reader.readUByte();
             final ItemId itemId = new ItemId(reader);
             final String name = reader.readString();
-            final int buildItem = reader.readUShort();
-            final int craftStackSize = reader.readUByte();
+            final int buildTime = reader.readUShort();
+            final ItemCount craftStackSize = ItemCount.getInstance(reader.readUByte());
 
             final CraftingIngredientItem[] ingredients = new CraftingIngredientItem[reader.readUByte()];
             for (int k = 0; k < ingredients.length; k++) {
                 final ItemId ingredientId = new ItemId(reader);
-                final int ingredientCount = reader.readUByte();
+                final ItemCount ingredientCount = ItemCount.getInstance(reader.readUByte());
 
                 ingredients[k] = new CraftingIngredientItem(ingredientId, ingredientCount);
             }
 
-            craftItems[i] = new CraftingItem(itemIndex, group, itemId, name, buildItem, craftStackSize, ingredients);
+            craftItems[i] = new CraftingItem(itemIndex, group, itemId, name, buildTime, craftStackSize, ingredients);
         }
 
         requestId = reader.readInt();

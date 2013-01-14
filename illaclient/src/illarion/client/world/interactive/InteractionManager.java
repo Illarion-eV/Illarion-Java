@@ -24,11 +24,12 @@ import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.InventorySlot;
 import illarion.client.world.items.ItemContainer;
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.types.ItemCount;
-import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * Main purpose of this class is to interconnect the GUI environment and the map environment to exchange information
@@ -82,7 +83,7 @@ public final class InteractionManager {
      * @param slot      the slot inside the container the object is dropped in
      * @param count     the amount of objects to be dropped at the container
      */
-    public void dropAtContainer(final int container, final int slot, @NonNull final ItemCount count) {
+    public void dropAtContainer(final int container, final int slot, @Nonnull final ItemCount count) {
         if (draggedObject == null) {
             LOGGER.warn("Dropping to container called without a active dragging operation.");
             cancelDragging();
@@ -136,7 +137,7 @@ public final class InteractionManager {
      * @param y     the y coordinate on the screen to drop the object to
      * @param count the amount of objects to be dropped at the map
      */
-    public void dropAtMap(final int x, final int y, @NonNull final ItemCount count) {
+    public void dropAtMap(final int x, final int y, @Nonnull final ItemCount count) {
         if (draggedObject == null) {
             LOGGER.warn("Dropping to map called without a active dragging operation.");
             cancelDragging();
@@ -250,7 +251,7 @@ public final class InteractionManager {
      * @param targetTile  the tile on the map that is dragged around
      * @param endOfDragOp the operation to be performed at the end of the dragging operation
      */
-    public void notifyDraggingMap(@NonNull final MapTile targetTile, @Nullable final Runnable endOfDragOp) {
+    public void notifyDraggingMap(@Nonnull final MapTile targetTile, @Nullable final Runnable endOfDragOp) {
         if (!dragging) {
             final InteractiveMapTile interactiveMapTile = targetTile.getInteractive();
 

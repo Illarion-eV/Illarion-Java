@@ -132,7 +132,7 @@
                 <fileset refid="flamingo"/>
                 <fileset refid="substance-flamingo"/>
                 <fileset refid="jgraph"/>
-                <fileset refid="jcip"/>
+                <fileset refid="jsr"/>
                 <pathelement location="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>

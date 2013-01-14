@@ -20,15 +20,16 @@ package illarion.client.world;
 
 import illarion.client.IllaClient;
 import illarion.client.resources.SongFactory;
-import illarion.common.annotation.NonNull;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
-import net.jcip.annotations.NotThreadSafe;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.openal.SoundStore;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * This is the music box. What is does is playing music. This class handles the playback of the background music
@@ -104,7 +105,7 @@ public final class MusicBox implements Stoppable {
     }
 
     @EventTopicPatternSubscriber(topicPattern = "music.*")
-    public void onUpdateConfig(@NonNull final String topic, @NonNull final ConfigChangedEvent data) {
+    public void onUpdateConfig(@Nonnull final String topic, @Nonnull final ConfigChangedEvent data) {
         if ("musicOn".equals(topic)) {
             musicEnabled = IllaClient.getCfg().getBoolean("musicOn");
             SoundStore.get().setMusicOn(musicEnabled);

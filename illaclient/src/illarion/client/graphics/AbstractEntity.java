@@ -22,18 +22,19 @@ import illarion.client.graphics.shader.HighlightShader;
 import illarion.client.graphics.shader.Shader;
 import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.world.World;
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;
 import illarion.common.util.RecycleObject;
-import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * The entity is a object that is shown in the game. It contains a sprite and possibly a frame animation. Also it
@@ -90,7 +91,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     /**
      * The default light that is used in the client.
      */
-    @NonNull
+    @Nonnull
     protected static final Color DEFAULT_LIGHT = new Color(1.f, 1.f, 1.f, 1.f);
 
     /**
@@ -158,20 +159,20 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * object is displayed with its real colors or the ambient light of the weather that ensures that the object is
      * colored for the display on the map.
      */
-    @NonNull
+    @Nonnull
     private Color localLight;
 
     /**
      * The light value that is used to render this entity during the next render loop.
      */
-    @NonNull
+    @Nonnull
     private Color renderLight = new Color(Color.white);
 
     /**
      * This color is the color that was used last time to render the entity. Its used to check if the color changed
      * and the entity needs to be rendered again.
      */
-    @NonNull
+    @Nonnull
     private final Color lastRenderLight = new Color(Color.white);
 
     /**
@@ -199,7 +200,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     /**
      * The sprite that is the actual graphical representation of the entity.
      */
-    @NonNull
+    @Nonnull
     private final Sprite sprite;
 
     /**
@@ -219,7 +220,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      *
      * @param org the original entity that shall be copied
      */
-    protected AbstractEntity(@NonNull final AbstractEntity org) {
+    protected AbstractEntity(@Nonnull final AbstractEntity org) {
         // use same sprite as other entity
         sprite = org.sprite;
 
@@ -252,10 +253,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @deprecated Better use the function that offers the possibility to mirror the image and setting a base color
      */
     @Deprecated
-    protected AbstractEntity(final int entityId, @NonNull final String path, @NonNull final String name,
+    protected AbstractEntity(final int entityId, @Nonnull final String path, @Nonnull final String name,
                              final int frames, final int still, final int offX, final int offY,
-                             final int shadowOffset, @NonNull final Sprite.HAlign horz,
-                             @NonNull final Sprite.VAlign vert, final boolean smooth) {
+                             final int shadowOffset, @Nonnull final Sprite.HAlign horz,
+                             @Nonnull final Sprite.VAlign vert, final boolean smooth) {
         this(entityId, path, name, frames, still, offX, offY, shadowOffset,
                 horz, vert, smooth, false, null);
     }
@@ -282,10 +283,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @param baseCol      the base color of the image, the image will be always colored with this color,
      *                     set it to {@code null} in case there is not recoloring needed
      */
-    protected AbstractEntity(final int entityId, @NonNull final String path, @NonNull final String name,
+    protected AbstractEntity(final int entityId, @Nonnull final String path, @Nonnull final String name,
                              final int frames, final int still, final int offX, final int offY,
-                             final int shadowOffset, @NonNull final Sprite.HAlign horz,
-                             @NonNull final Sprite.VAlign vert, final boolean smooth, final boolean mirror,
+                             final int shadowOffset, @Nonnull final Sprite.HAlign horz,
+                             @Nonnull final Sprite.VAlign vert, final boolean smooth, final boolean mirror,
                              @Nullable final Color baseCol) {
 
         sprite = SpriteBuffer.getInstance().getSprite(path, name, frames, offX, offY, horz, vert, smooth, mirror);
@@ -312,7 +313,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @param baseCol         the base color of the image, the image will be always colored with this color,
      *                        set it to {@code null} in case there is not recoloring needed
      */
-    protected AbstractEntity(final int entityId, @NonNull final Sprite displayedSprite, final int still,
+    protected AbstractEntity(final int entityId, @Nonnull final Sprite displayedSprite, final int still,
                              final int shadowOffset, @Nullable final Color baseCol) {
 
         sprite = displayedSprite;
@@ -342,7 +343,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     }
 
     @Override
-    public void addAlphaChangeListener(@NonNull final AlphaChangeListener listener) {
+    public void addAlphaChangeListener(@Nonnull final AlphaChangeListener listener) {
         if (alphaListener == null) {
             alphaListener = listener;
             return;
@@ -411,7 +412,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @return true in case the rendering operation was done successfully
      */
     @Override
-    public boolean draw(@NonNull final Graphics g) {
+    public boolean draw(@Nonnull final Graphics g) {
         final int renderLocX = displayX;
         final int renderLocY = displayY;
 
@@ -542,7 +543,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      *
      * @return the sprite of the entity
      */
-    @NonNull
+    @Nonnull
     public final Sprite getSprite() {
         return sprite;
     }
@@ -668,7 +669,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      *
      * @param light the new light that shall be used by this entity
      */
-    public void setLight(@NonNull final Color light) {
+    public void setLight(@Nonnull final Color light) {
         localLight = light;
     }
 
@@ -724,8 +725,8 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     }
 
     @Override
-    public boolean processEvent(@NonNull final GameContainer container, final int delta,
-                                @NonNull final MapInteractionEvent event) {
+    public boolean processEvent(@Nonnull final GameContainer container, final int delta,
+                                @Nonnull final MapInteractionEvent event) {
         return false;
     }
 
@@ -736,7 +737,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
         return getInteractionRect().isInside(mouseXonDisplay, mouseYonDisplay);
     }
 
-    protected boolean isMouseInInteractionRect(@NonNull final Input input) {
+    protected boolean isMouseInInteractionRect(@Nonnull final Input input) {
         return isMouseInInteractionRect(input.getMouseX(), input.getMouseY());
     }
 
@@ -769,7 +770,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     }
 
     @Override
-    public void update(@NonNull final GameContainer container, final int delta) {
+    public void update(@Nonnull final GameContainer container, final int delta) {
         int xOffset = sprite.getOffsetX() + sprite.getAlignOffsetX();
         int yOffset = sprite.getOffsetY() - sprite.getAlignOffsetY();
 
@@ -824,18 +825,18 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
         setEntityAreaDirty();
     }
 
-    private static void copyLightValues(@NonNull final Color source, @NonNull final Color target) {
+    private static void copyLightValues(@Nonnull final Color source, @Nonnull final Color target) {
         target.r = source.r;
         target.g = source.g;
         target.b = source.b;
         target.a = source.a;
     }
 
-    @NonNull
+    @Nonnull
     private final Rectangle displayRect = new Rectangle();
-    @NonNull
+    @Nonnull
     private final Rectangle interactionRect = new Rectangle();
-    @NonNull
+    @Nonnull
     private final Rectangle lastDisplayRect = new Rectangle();
     private boolean wentDirty;
 
@@ -844,7 +845,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      *
      * @return the interactive area of the object
      */
-    @NonNull
+    @Nonnull
     public final Rectangle getInteractionRect() {
         if (offS == 0) {
             return displayRect;
@@ -860,7 +861,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      *
      * @return the current display rectangle
      */
-    @NonNull
+    @Nonnull
     public final Rectangle getDisplayRect() {
         return displayRect;
     }
@@ -871,7 +872,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @return the last display rectangle
      */
     @Override
-    @NonNull
+    @Nonnull
     public Rectangle getLastDisplayRect() {
         return lastDisplayRect;
     }

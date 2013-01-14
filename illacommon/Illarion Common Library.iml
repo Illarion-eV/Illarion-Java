@@ -17,7 +17,7 @@
     <orderEntry type="library" name="EventBus" level="project" />
     <orderEntry type="library" name="Nifty-GUI" level="project" />
     <orderEntry type="library" name="Slick" level="project" />
-    <orderEntry type="library" name="JCIP" level="project" />
+    <orderEntry type="library" name="JSR" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

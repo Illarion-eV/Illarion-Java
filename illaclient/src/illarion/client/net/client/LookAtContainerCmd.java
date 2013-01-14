@@ -19,9 +19,10 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Client Command: Looking at a container slot ({@link CommandList#CMD_LOOKAT_CONTAINER}).
@@ -54,7 +55,7 @@ public final class LookAtContainerCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeUByte(containerId);
         writer.writeUByte(slot);
     }
@@ -64,7 +65,7 @@ public final class LookAtContainerCmd extends AbstractCommand {
      *
      * @return the data of this command as string
      */
-    @NonNull
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

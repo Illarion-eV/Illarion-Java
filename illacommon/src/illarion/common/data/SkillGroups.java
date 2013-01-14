@@ -18,10 +18,9 @@
  */
 package illarion.common.data;
 
-import illarion.common.annotation.NonNull;
-import net.jcip.annotations.Immutable;
-import net.jcip.annotations.ThreadSafe;
-
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +36,7 @@ public final class SkillGroups {
     /**
      * The singleton instance of this class.
      */
-    @NonNull
+    @Nonnull
     private static final SkillGroups INSTANCE;
 
     static {
@@ -50,7 +49,7 @@ public final class SkillGroups {
      *
      * @return the singleton instance of this class
      */
-    @NonNull
+    @Nonnull
     public static SkillGroups getInstance() {
         return INSTANCE;
     }
@@ -58,7 +57,7 @@ public final class SkillGroups {
     /**
      * The list of skill groups that are known to this class.
      */
-    @NonNull
+    @Nonnull
     private final List<SkillGroup> skillGroupList;
 
     /**
@@ -74,7 +73,7 @@ public final class SkillGroups {
      *
      * @param group the skill group to add
      */
-    void addSkillGroup(@NonNull final SkillGroup group) {
+    void addSkillGroup(@Nonnull final SkillGroup group) {
         skillGroupList.add(group);
     }
 
@@ -83,7 +82,7 @@ public final class SkillGroups {
      *
      * @return a list of skill groups
      */
-    @NonNull
+    @Nonnull
     public List<SkillGroup> getSkillGroups() {
         return Collections.unmodifiableList(skillGroupList);
     }

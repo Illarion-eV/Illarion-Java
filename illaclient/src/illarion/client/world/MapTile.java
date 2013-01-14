@@ -24,8 +24,6 @@ import illarion.client.graphics.Item;
 import illarion.client.graphics.Tile;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMapTile;
-import illarion.common.annotation.NonNull;
-import illarion.common.annotation.Nullable;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
 import illarion.common.types.ItemCount;
@@ -33,10 +31,12 @@ import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 import illarion.common.util.RecycleObject;
 import javolution.util.FastTable;
-import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.List;
 
 /**
@@ -54,7 +54,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     /**
      * The instance of the logger that is used to write out the data.
      */
-    @NonNull
+    @Nonnull
     private static final Logger LOGGER = Logger.getLogger(MapTile.class);
 
     /**
@@ -81,7 +81,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     /**
      * rendered light value on this tile.
      */
-    @NonNull
+    @Nonnull
     private final Color light = new Color(0);
 
     /**
@@ -98,7 +98,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     /**
      * Location of the tile.
      */
-    @NonNull
+    @Nonnull
     private final Location tileLocation;
 
     /**
@@ -163,7 +163,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      *
      * @return the light color on this tile
      */
-    @NonNull
+    @Nonnull
     public Color getLight() {
         return light;
     }
@@ -268,7 +268,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      */
     @SuppressWarnings("nls")
     @Override
-    @NonNull
+    @Nonnull
     public String toString() {
         return "MapTile " + tileLocation.toString() + " tile=" + tileId + " items=" + ((items != null) ? items.size() : 0);
     }
@@ -281,8 +281,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      * @param count     the new count value of the item in top position
      */
     @SuppressWarnings("nls")
-    public void changeTopItem(@NonNull final ItemId oldItemId, @NonNull final ItemId itemId,
-                              @NonNull final ItemCount count) {
+    public void changeTopItem(@Nonnull final ItemId oldItemId, @Nonnull final ItemId itemId,
+                              @Nonnull final ItemCount count) {
         if (items == null) {
             LOGGER.warn("There are no items on this field. Change top impossible.");
             return;
@@ -342,7 +342,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      */
     @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneCallsConstructors"})
     @Override
-    @NonNull
+    @Nonnull
     public MapTile clone() {
         return new MapTile();
     }
@@ -353,7 +353,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      * @param itemId the ID of the item that is created
      * @param count  the count value of the item that is created
      */
-    public void addItem(@NonNull final ItemId itemId, @NonNull final ItemCount count) {
+    public void addItem(@Nonnull final ItemId itemId, @Nonnull final ItemCount count) {
         int pos = 0;
         if (items != null) {
             pos = items.size();
@@ -376,7 +376,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      * @param itemCount The new count value of this item
      */
     @SuppressWarnings("nls")
-    private void setItem(final int index, @NonNull final ItemId itemId, @NonNull final ItemCount itemCount) {
+    private void setItem(final int index, @Nonnull final ItemId itemId, @Nonnull final ItemCount itemCount) {
         Item item = null;
         // look for present item in map tile
         List<Item> localItems = items;
@@ -437,7 +437,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      * @param itemCount the count value of the new item
      * @param index     the index of the item within the stack of items on this tile
      */
-    private void updateItem(@NonNull final Item item, @NonNull final ItemCount itemCount, final int index) {
+    private void updateItem(@Nonnull final Item item, @Nonnull final ItemCount itemCount, final int index) {
         // set number
         item.setCount(itemCount);
         // calculate offset from items carrying other items
@@ -535,7 +535,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      *
      * @param color the light that shall be added
      */
-    public void addLight(@NonNull final Color color) {
+    public void addLight(@Nonnull final Color color) {
         tmpLight.add(color);
     }
 
@@ -649,7 +649,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      *
      * @return the location of the tile
      */
-    @NonNull
+    @Nonnull
     public Location getLocation() {
         return tileLocation;
     }
@@ -714,7 +714,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      * @param factor       the factor how much the ambient light is modified by the tile light
      * @param ambientLight the ambient light from the weather
      */
-    public void renderLight(final float factor, @NonNull final Color ambientLight) {
+    public void renderLight(final float factor, @Nonnull final Color ambientLight) {
         tmpLight.scale(factor);
         tmpLight.add(ambientLight);
         light.a = tmpLight.a;
@@ -803,7 +803,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      *
      * @param update the update data the server send
      */
-    public void update(@NonNull final TileUpdate update) {
+    public void update(@Nonnull final TileUpdate update) {
         // update tile
         setTileId(update.getTileId());
 
@@ -866,8 +866,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      * @param itemId    the list of item ids for the items on this tile
      * @param itemCount the list of count values for the items on this tile
      */
-    private void updateItemList(final int number, @NonNull final List<ItemId> itemId,
-                                @NonNull final List<ItemCount> itemCount) {
+    private void updateItemList(final int number, @Nonnull final List<ItemId> itemId,
+                                @Nonnull final List<ItemCount> itemCount) {
         clampItems(number);
         for (int i = 0; i < number; i++) {
             setItem(i, itemId.get(i), itemCount.get(i));
@@ -921,8 +921,8 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      * @param itemId     List of the item IDs for all items that shall be created
      * @param itemCount  List of count values for all items
      */
-    public void updateItems(final int itemNumber, @NonNull final List<ItemId> itemId,
-                            @NonNull final List<ItemCount> itemCount) {
+    public void updateItems(final int itemNumber, @Nonnull final List<ItemId> itemId,
+                            @Nonnull final List<ItemCount> itemCount) {
         updateItemList(itemNumber, itemId, itemCount);
         itemChanged();
     }

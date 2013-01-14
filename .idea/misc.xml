@@ -49,8 +49,8 @@
     <option name="OPEN_IN_BROWSER" value="true" />
   </component>
   <component name="NullableNotNullManager">
-    <option name="myDefaultNullable" value="illarion.common.annotation.Nullable" />
-    <option name="myDefaultNotNull" value="illarion.common.annotation.NonNull" />
+    <option name="myDefaultNullable" value="javax.annotation.Nullable" />
+    <option name="myDefaultNotNull" value="javax.annotation.Nonnull" />
     <option name="myNullables">
       <value>
         <list size="4">

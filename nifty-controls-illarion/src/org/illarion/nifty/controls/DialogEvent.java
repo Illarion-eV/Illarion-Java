@@ -20,12 +20,17 @@ package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.NiftyEvent;
 
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * This event is the parent of other events that refer to a specified dialog. This class provides a unified way to
  * refer to the dialog ID.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ThreadSafe
+@Immutable
 public class DialogEvent implements NiftyEvent {
     /**
      * The ID of the dialog.

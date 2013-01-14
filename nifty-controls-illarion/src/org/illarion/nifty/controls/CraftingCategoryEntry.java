@@ -18,6 +18,8 @@
  */
 package org.illarion.nifty.controls;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.List;
 
 /**
@@ -25,12 +27,14 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@NotThreadSafe
 public interface CraftingCategoryEntry extends CraftingTreeItem {
     /**
      * Get the name of this category.
      *
      * @return the name of the category
      */
+    @Nonnull
     String getCategoryName();
 
     /**
@@ -38,5 +42,6 @@ public interface CraftingCategoryEntry extends CraftingTreeItem {
      *
      * @return the items that are listed as part of this category
      */
+    @Nonnull
     List<CraftingItemEntry> getChildren();
 }

@@ -19,10 +19,11 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.common.annotation.NonNull;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.Location;
-import net.jcip.annotations.Immutable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Client Command: Looking at a tile on the map ({@link CommandList#CMD_LOOKAT_TILE}).
@@ -35,7 +36,7 @@ public final class LookatTileCmd extends AbstractCommand {
     /**
      * The position on the map we are going to look at.
      */
-    @NonNull
+    @Nonnull
     private final Location location;
 
     /**
@@ -43,17 +44,17 @@ public final class LookatTileCmd extends AbstractCommand {
      *
      * @param tileLocation the location of the tile to look at
      */
-    public LookatTileCmd(@NonNull final Location tileLocation) {
+    public LookatTileCmd(@Nonnull final Location tileLocation) {
         super(CommandList.CMD_LOOKAT_TILE);
         location = new Location(tileLocation);
     }
 
     @Override
-    public void encode(@NonNull final NetCommWriter writer) {
+    public void encode(@Nonnull final NetCommWriter writer) {
         writer.writeLocation(location);
     }
 
-    @NonNull
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

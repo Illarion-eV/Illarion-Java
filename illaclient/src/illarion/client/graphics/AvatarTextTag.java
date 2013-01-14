@@ -21,11 +21,12 @@ package illarion.client.graphics;
 import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
 import de.lessvoid.nifty.slick2d.render.font.SlickLoadFontException;
 import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
-import illarion.common.annotation.NonNull;
 import illarion.common.types.Rectangle;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+
+import javax.annotation.Nonnull;
 
 /**
  * This is the characterName tag that is in special displayed above avatars.
@@ -264,7 +265,7 @@ public final class AvatarTextTag implements Drawable {
     private int healthStateOffsetY;
 
     @Override
-    public boolean draw(@NonNull final Graphics g) {
+    public boolean draw(@Nonnull final Graphics g) {
         if ((charName == null) && (healthState == null)) {
             return true;
         }
@@ -322,14 +323,14 @@ public final class AvatarTextTag implements Drawable {
     private final Rectangle displayRect = new Rectangle();
     private final Rectangle oldDisplayRect = new Rectangle();
 
-    @NonNull
+    @Nonnull
     @Override
     public Rectangle getLastDisplayRect() {
         return oldDisplayRect;
     }
 
     @Override
-    public void update(@NonNull final GameContainer container, final int delta) {
+    public void update(@Nonnull final GameContainer container, final int delta) {
         calculateTextLocations();
         if (dirty) {
             dirty = false;

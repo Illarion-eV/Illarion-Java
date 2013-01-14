@@ -20,10 +20,13 @@ package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.controls.NiftyControl;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
 /**
  * The item tool tip.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@NotThreadSafe
 public interface ToolTip extends NiftyControl {
 }

@@ -21,12 +21,13 @@ package illarion.client.graphics;
 import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
 import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
 import illarion.client.world.GameFactory;
-import illarion.common.annotation.NonNull;
 import illarion.common.types.Rectangle;
 import illarion.common.util.RecycleObject;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+
+import javax.annotation.Nonnull;
 
 /**
  * The text tags are the small texts over the heads of characters that display
@@ -233,7 +234,7 @@ public class TextTag implements Drawable, RecycleObject {
     }
 
     @Override
-    public boolean draw(@NonNull final Graphics g) {
+    public boolean draw(@Nonnull final Graphics g) {
         if (text == null) {
             return true;
         }
@@ -266,14 +267,14 @@ public class TextTag implements Drawable, RecycleObject {
     private final Rectangle displayRect = new Rectangle();
     private final Rectangle oldDisplayRect = new Rectangle();
 
-    @NonNull
+    @Nonnull
     @Override
     public Rectangle getLastDisplayRect() {
         return oldDisplayRect;
     }
 
     @Override
-    public void update(@NonNull final GameContainer container, final int delta) {
+    public void update(@Nonnull final GameContainer container, final int delta) {
         if (dirty) {
             dirty = false;
             oldDisplayRect.set(displayRect);

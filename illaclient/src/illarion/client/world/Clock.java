@@ -19,10 +19,11 @@
 package illarion.client.world;
 
 import illarion.client.net.server.events.DateTimeUpdateEvent;
-import illarion.common.annotation.NonNull;
-import net.jcip.annotations.ThreadSafe;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * This class is the implementation of the time in Illarion.
@@ -75,7 +76,7 @@ public final class Clock {
      * @param event the event data
      */
     @EventSubscriber
-    public void onDateTimeEventReceived(@NonNull final DateTimeUpdateEvent event) {
+    public void onDateTimeEventReceived(@Nonnull final DateTimeUpdateEvent event) {
         lastSync = System.currentTimeMillis();
         day = event.getDay();
         month = event.getMonth();
