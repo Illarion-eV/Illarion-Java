@@ -23,6 +23,7 @@ import illarion.client.world.GameFactory;
 import illarion.client.world.World;
 import org.newdawn.slick.loading.DeferredResource;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -45,6 +46,7 @@ public final class GameEnvironmentLoading implements DeferredResource {
     /**
      * The human readable description of this loading task.
      */
+    @Nullable
     @Override
     public String getDescription() {
         return null;

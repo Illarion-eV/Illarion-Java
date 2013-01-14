@@ -26,6 +26,8 @@ import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -37,6 +39,7 @@ import java.io.IOException;
  */
 @ReplyMessage(replyId = CommandList.MSG_SHOWCASE)
 public final class ShowcaseMsg extends AbstractReply {
+    @Nullable
     private OpenContainerEvent event;
 
     /**
@@ -46,7 +49,7 @@ public final class ShowcaseMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         final int containerId = reader.readByte();
         final int containerSize = reader.readUShort();
         final int itemAmount = reader.readUShort();
@@ -79,6 +82,7 @@ public final class ShowcaseMsg extends AbstractReply {
      *
      * @return the string that contains the values that were decoded for this message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

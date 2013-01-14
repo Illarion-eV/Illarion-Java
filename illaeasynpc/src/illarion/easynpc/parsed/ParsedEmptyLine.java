@@ -23,6 +23,7 @@ import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 import javolution.lang.Immutable;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -64,6 +65,7 @@ public final class ParsedEmptyLine implements ParsedData, Immutable {
      *
      * @return <code>null</code> always
      */
+    @Nullable
     @Override
     public String[] getRequiredModules() {
         return null;

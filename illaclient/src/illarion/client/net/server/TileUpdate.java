@@ -24,6 +24,8 @@ import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,11 +61,13 @@ public final class TileUpdate {
     /**
      * Location of the tile.
      */
+    @Nonnull
     private final transient Location loc;
 
     /**
      * Reference to the map tile that is used here.
      */
+    @Nullable
     private transient MapTile mapTile;
 
     /**
@@ -102,6 +106,7 @@ public final class TileUpdate {
      *
      * @return the list of item counts
      */
+    @Nonnull
     public List<ItemCount> getItemCount() {
         return itemCount;
     }
@@ -111,6 +116,7 @@ public final class TileUpdate {
      *
      * @return the list of item ids
      */
+    @Nonnull
     public List<ItemId> getItemId() {
         return itemId;
     }
@@ -129,6 +135,7 @@ public final class TileUpdate {
      *
      * @return the location of the tile.
      */
+    @Nonnull
     public Location getLocation() {
         return loc;
     }
@@ -165,7 +172,7 @@ public final class TileUpdate {
      *
      * @param newLoc the new location.
      */
-    public void setLocation(final Location newLoc) {
+    public void setLocation(@Nonnull final Location newLoc) {
         loc.set(newLoc);
         mapTile = null;
     }
@@ -189,7 +196,7 @@ public final class TileUpdate {
      * @throws IOException thrown in case there was not enough data received to
      *                     decode the full message
      */
-    protected void decode(final NetCommReader reader) throws IOException {
+    protected void decode(@Nonnull final NetCommReader reader) throws IOException {
         // read tile attributes
         tileId = reader.readShort();
 

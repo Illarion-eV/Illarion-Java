@@ -30,6 +30,7 @@ import illarion.mapedit.util.SwingLocation;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
@@ -60,7 +61,7 @@ public class TileRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(final Map map, final Rectangle viewport, final int level, final Graphics2D g) {
+    public void renderMap(@Nonnull final Map map, @Nonnull final Rectangle viewport, final int level, @Nonnull final Graphics2D g) {
         final int width = map.getWidth();
         final int height = map.getHeight();
         final int z = map.getZ() - level;
@@ -131,6 +132,7 @@ public class TileRenderer extends AbstractMapRenderer {
         return true;
     }
 
+    @Nonnull
     @Override
     public RibbonElementPriority getPriority() {
         return RibbonElementPriority.TOP;

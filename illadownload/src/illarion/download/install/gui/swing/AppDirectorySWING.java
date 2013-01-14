@@ -18,17 +18,17 @@
  */
 package illarion.download.install.gui.swing;
 
+import illarion.common.util.DirectoryManager;
+import illarion.download.util.Lang;
+import org.jdesktop.swingx.JXLabel;
+
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
-import org.jdesktop.swingx.JXLabel;
-
-import illarion.common.util.DirectoryManager;
-import illarion.download.util.Lang;
 
 /**
  * This is the display for the application directory. This displayed form allows to set this directory.
@@ -68,9 +68,9 @@ public final class AppDirectorySWING
          * Constructor of the button listener. It will store the references to the components required for this to work
          * properly.
          *
-         * @param base the base component that is used to align a error window in case one is needed
+         * @param base         the base component that is used to align a error window in case one is needed
          * @param parentObject this is the parent of the object this listener is assigned to
-         * @param source the source of the text to the path
+         * @param source       the source of the text to the path
          */
         public ContinueButtonListener(final BaseSWING base, final AppDirectorySWING parentObject,
                                       final JTextComponent source) {
@@ -88,7 +88,7 @@ public final class AppDirectorySWING
                 if ((path == null) || (path.length() < 2)) {
                     path = null;
                 }
-            } catch (final NullPointerException ex) {
+            } catch (@Nonnull final NullPointerException ex) {
                 path = null;
             }
 
@@ -101,9 +101,9 @@ public final class AppDirectorySWING
             }
 
             JOptionPane.showMessageDialog(baseComponent, Lang.getMsg("illarion.download.install.gui.Directory" +
-                                                                             ".DirError.message"),
-                                          Lang.getMsg("illarion.download.install.gui.Directory.DirError.title"),
-                                          JOptionPane.ERROR_MESSAGE);
+                    ".DirError.message"),
+                    Lang.getMsg("illarion.download.install.gui.Directory.DirError.title"),
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -130,7 +130,7 @@ public final class AppDirectorySWING
         /**
          * The search button listener. This listener enables the button its applied on to search for a path.
          *
-         * @param base the base component that is used to align the opened dialog
+         * @param base     the base component that is used to align the opened dialog
          * @param receiver the text component that will receive the text
          */
         public SearchButtonListener(final BaseSWING base, final JTextComponent receiver) {
@@ -146,7 +146,7 @@ public final class AppDirectorySWING
                 if ((path == null) || (path.length() < 2)) {
                     path = null;
                 }
-            } catch (final NullPointerException ex) {
+            } catch (@Nonnull final NullPointerException ex) {
                 path = null;
             }
             final JFileChooser chooser = new JFileChooser(path);
@@ -179,7 +179,7 @@ public final class AppDirectorySWING
     private JButton searchPathButton;
 
     @Override
-    public void fillButtons(final BaseSWING base, final JPanel buttonPanel) {
+    public void fillButtons(@Nonnull final BaseSWING base, @Nonnull final JPanel buttonPanel) {
         createComponents(base);
         buttonPanel.add(base.getCancelButton());
         buttonPanel.add(continueButton);
@@ -187,7 +187,7 @@ public final class AppDirectorySWING
 
     @SuppressWarnings("nls")
     @Override
-    public void fillContent(final BaseSWING base, final JPanel contentPanel) {
+    public void fillContent(@Nonnull final BaseSWING base, @Nonnull final JPanel contentPanel) {
         contentPanel.setLayout(new GridBagLayout());
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
 
@@ -247,7 +247,7 @@ public final class AppDirectorySWING
     }
 
     @Override
-    public void prepareDisplay(final BaseSWING base) {
+    public void prepareDisplay(@Nonnull final BaseSWING base) {
         base.setVisible(true);
     }
 
@@ -257,7 +257,7 @@ public final class AppDirectorySWING
      * @param base the base element the components are created for
      */
     @SuppressWarnings("nls")
-    private void createComponents(final BaseSWING base) {
+    private void createComponents(@Nonnull final BaseSWING base) {
         if (componentsCreated) {
             return;
         }

@@ -1,30 +1,30 @@
 /*
  * This file is part of the Illarion easyQuest Editor.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion easyQuest Editor is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyQuest Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyQuest Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyQuest Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyQuest Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easyquest;
 
+import illarion.common.util.MessageSource;
+import javolution.text.TextBuilder;
+
+import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import javolution.text.TextBuilder;
-
-import illarion.common.util.MessageSource;
 
 @SuppressWarnings("nls")
 public final class Lang implements MessageSource {
@@ -71,28 +71,29 @@ public final class Lang implements MessageSource {
         }
 
         messages =
-            ResourceBundle.getBundle(MESSAGE_BUNDLE, locale,
-                Lang.class.getClassLoader());
+                ResourceBundle.getBundle(MESSAGE_BUNDLE, locale,
+                        Lang.class.getClassLoader());
     }
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the instance of the class
      */
+    @Nonnull
     public static Lang getInstance() {
         return INSTANCE;
     }
 
     /**
      * Get a localized message from a key.
-     * 
+     *
      * @param clazz The class that is accessing this text
-     * @param key The key of the localized message
+     * @param key   The key of the localized message
      * @return the localized message or the key with surrounding < > in case the
      *         key was not found in the storage
      */
-    public static String getMsg(final Class<?> clazz, final String key) {
+    public static String getMsg(@Nonnull final Class<?> clazz, final String key) {
         final TextBuilder builder = TextBuilder.newInstance();
         builder.append(clazz.getName());
         builder.append('.');
@@ -104,7 +105,7 @@ public final class Lang implements MessageSource {
 
     /**
      * Get the localized message from a key.
-     * 
+     *
      * @param key The key of the localized message
      * @return the localized message or the key with surrounding &lt; &gt; in
      *         case the key was not found in the storage
@@ -115,7 +116,7 @@ public final class Lang implements MessageSource {
 
     /**
      * Get the current local settings.
-     * 
+     *
      * @return the local object of the chosen local settings
      */
     public Locale getLocale() {
@@ -124,7 +125,7 @@ public final class Lang implements MessageSource {
 
     /**
      * Get a localized message from a key.
-     * 
+     *
      * @param key The key of the localized message
      * @return the localized message or the key with surrounding &lt; &gt; in
      *         case the key was not found in the storage
@@ -133,7 +134,7 @@ public final class Lang implements MessageSource {
     public String getMessage(final String key) {
         try {
             return messages.getString(key);
-        } catch (final MissingResourceException e) {
+        } catch (@Nonnull final MissingResourceException e) {
             System.out.println("Failed searching translated version of: " + key);
             return "<" + key + ">";
         }
@@ -141,14 +142,14 @@ public final class Lang implements MessageSource {
 
     /**
      * Check if a key contains a message.
-     * 
+     *
      * @param key the key that shall be checked
      * @return true in case a message was found
      */
     public boolean hasMsg(final String key) {
         try {
             messages.getString(key);
-        } catch (final MissingResourceException e) {
+        } catch (@Nonnull final MissingResourceException e) {
             return false;
         }
         return true;
@@ -156,7 +157,7 @@ public final class Lang implements MessageSource {
 
     /**
      * Check if the client is currently running with the English language.
-     * 
+     *
      * @return true if the language is set to English
      */
     public boolean isEnglish() {
@@ -165,7 +166,7 @@ public final class Lang implements MessageSource {
 
     /**
      * Check if the client is currently running with the German language.
-     * 
+     *
      * @return true if the language is set to German
      */
     public boolean isGerman() {

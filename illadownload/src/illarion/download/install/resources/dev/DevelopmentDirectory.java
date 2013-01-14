@@ -21,6 +21,7 @@ package illarion.download.install.resources.dev;
 import illarion.common.util.DirectoryManager;
 import illarion.download.install.resources.ResourceDirectory;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 
 /**
@@ -61,6 +62,7 @@ final class DevelopmentDirectory implements ResourceDirectory {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static DevelopmentDirectory getInstance() {
         return INSTANCE;
     }

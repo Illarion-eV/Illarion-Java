@@ -24,12 +24,15 @@ import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.gui.controller.game.*;
 import org.newdawn.slick.GameContainer;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public final class GameScreenController implements ScreenController {
 
+    @Nonnull
     private final Collection<ScreenController> childControllers;
+    @Nonnull
     private final Collection<UpdatableHandler> childUpdateControllers;
 
     public GameScreenController() {

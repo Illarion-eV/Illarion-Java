@@ -23,6 +23,9 @@ import illarion.client.resources.Resource;
 import illarion.common.util.RecycleObject;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Created: 20.08.2005 17:39:11
  */
@@ -37,7 +40,7 @@ public class Overlay extends AbstractEntity implements RecycleObject, Resource {
     /**
      * Create tile with animation or variants
      */
-    public Overlay(final int id, final String name) {
+    public Overlay(final int id, @Nonnull final String name) {
         super(id, TILE_PATH, name, 28, 0, 0, 0, 0, Sprite.HAlign.center,
                 Sprite.VAlign.middle, false, false, null);
         reset();
@@ -48,7 +51,7 @@ public class Overlay extends AbstractEntity implements RecycleObject, Resource {
      *
      * @param org
      */
-    public Overlay(final Overlay org) {
+    public Overlay(@Nonnull final Overlay org) {
         super(org);
         reset();
     }
@@ -60,13 +63,14 @@ public class Overlay extends AbstractEntity implements RecycleObject, Resource {
      * @param shape
      * @return
      */
+    @Nullable
     public static Overlay create(final int id, final int shape) {
         try {
             final Overlay overlay =
                     OverlayFactory.getInstance().getCommand(id);
             overlay.setFrame(shape - 1);
             return overlay;
-        } catch (final IndexOutOfBoundsException ex) {
+        } catch (@Nonnull final IndexOutOfBoundsException ex) {
             LOGGER.error("Failed to create overlay with ID "
                     + Integer.toString(id));
             return null;
@@ -85,6 +89,7 @@ public class Overlay extends AbstractEntity implements RecycleObject, Resource {
     public void activate(final int id) {
     }
 
+    @Nonnull
     @Override
     public Overlay clone() {
         return new Overlay(this);

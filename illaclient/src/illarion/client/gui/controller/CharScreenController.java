@@ -38,6 +38,8 @@ import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
+import javax.annotation.Nonnull;
+
 public class CharScreenController implements ScreenController, KeyInputHandler {
 
     private Nifty nifty;
@@ -61,7 +63,7 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void bind(Nifty nifty, Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 

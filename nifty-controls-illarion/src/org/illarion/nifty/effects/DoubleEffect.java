@@ -27,6 +27,8 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.render.NiftyRenderEngine;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -46,11 +48,13 @@ public final class DoubleEffect implements EffectImpl {
      * The target class that contains the method that will be called. This class is requested as Nifty-Control from
      * the target element.
      */
+    @Nullable
     private Class<? extends NiftyControl> targetControlClass;
 
     /**
      * The method that is called in the target class.
      */
+    @Nullable
     private Method targetMethod;
 
     /**
@@ -62,7 +66,7 @@ public final class DoubleEffect implements EffectImpl {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public void activate(final Nifty nifty, final Element element, final EffectProperties parameter) {
+    public void activate(final Nifty nifty, final Element element, @Nonnull final EffectProperties parameter) {
         try {
             targetControlClass = (Class<? extends NiftyControl>) Class.forName(
                     String.valueOf(parameter.get("targetClass")));
@@ -87,7 +91,7 @@ public final class DoubleEffect implements EffectImpl {
      * @param r          RenderDevice to use
      */
     @Override
-    public void execute(final Element element, final float effectTime, final Falloff falloff, final NiftyRenderEngine r) {
+    public void execute(@Nonnull final Element element, final float effectTime, final Falloff falloff, final NiftyRenderEngine r) {
         final NiftyControl targetControl = element.getNiftyControl(targetControlClass);
         if (targetControl == null) {
             return;

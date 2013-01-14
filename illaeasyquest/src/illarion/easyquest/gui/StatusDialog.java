@@ -21,6 +21,8 @@ package illarion.easyquest.gui;
 import illarion.easyquest.Lang;
 import illarion.easyquest.quest.Handler;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -30,10 +32,14 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class StatusDialog extends JDialog {
 
+    @Nonnull
     private final JTextField name;
+    @Nonnull
     private final JCheckBox start;
     private final Box handlerPanels;
+    @Nonnull
     private final JButton okay;
+    @Nonnull
     private final JButton cancel;
 
     public StatusDialog(Frame owner) {
@@ -89,6 +95,7 @@ public class StatusDialog extends JDialog {
         start.setSelected(value);
     }
 
+    @Nonnull
     public Handler[] getHandlers() {
         int count = (handlerPanels.getComponentCount() + 1) / 2;
         List<Handler> handlers = new ArrayList<Handler>();
@@ -102,7 +109,7 @@ public class StatusDialog extends JDialog {
         return handlers.toArray(new Handler[handlers.size()]);
     }
 
-    public void setHandlers(Handler[] handlers) {
+    public void setHandlers(@Nullable Handler[] handlers) {
         handlerPanels.removeAll();
 
         if (handlers != null && handlers.length > 0) {

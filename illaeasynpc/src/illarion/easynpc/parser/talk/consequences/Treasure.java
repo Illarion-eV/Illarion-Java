@@ -27,6 +27,8 @@ import illarion.easynpc.parser.talk.ConsequenceParser;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +48,7 @@ public final class Treasure extends ConsequenceParser {
     /**
      * Extract a condition from the working string.
      */
+    @Nullable
     @Override
     @SuppressWarnings("nls")
     public TalkConsequence extract() {
@@ -92,7 +95,7 @@ public final class Treasure extends ConsequenceParser {
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put("treasure", Token.RESERVED_WORD);
     }
 }

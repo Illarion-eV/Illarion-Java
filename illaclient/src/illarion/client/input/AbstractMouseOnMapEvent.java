@@ -20,6 +20,8 @@ package illarion.client.input;
 
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 
+import javax.annotation.Nonnull;
+
 /**
  * This event is in general triggered in case the user performs any action with the mouse on the map.
  *
@@ -56,7 +58,7 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
      *
      * @param org the original object to copy
      */
-    protected AbstractMouseOnMapEvent(final AbstractMouseOnMapEvent org) {
+    protected AbstractMouseOnMapEvent(@Nonnull final AbstractMouseOnMapEvent org) {
         super(org);
         key = org.key;
         forwardingControl = org.forwardingControl;

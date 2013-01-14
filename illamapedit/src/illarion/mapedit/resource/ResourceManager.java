@@ -20,6 +20,7 @@ package illarion.mapedit.resource;
 
 import javolution.util.FastList;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -36,6 +37,7 @@ public class ResourceManager {
     /**
      * The list of resources.
      */
+    @Nonnull
     private final FastList<Resource> res;
     /**
      * The actual loading index.
@@ -64,6 +66,7 @@ public class ResourceManager {
      *
      * @return
      */
+    @Nonnull
     public static ResourceManager getInstance() {
         return INSTANCE;
     }
@@ -102,6 +105,7 @@ public class ResourceManager {
      *
      * @return
      */
+    @Nonnull
     public String getNextDescription() {
         return res.get(index).getDescription();
     }
@@ -111,6 +115,7 @@ public class ResourceManager {
      *
      * @return
      */
+    @Nonnull
     public String getPrevDescription() {
         if (index <= 0) {
             return "";

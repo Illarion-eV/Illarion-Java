@@ -20,6 +20,7 @@ package illarion.common.util;
 
 import illarion.common.types.Range;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 /**
@@ -788,7 +789,7 @@ public final class FastMath {
      * @return the input value clamped between the minimal and the maximal
      *         allowed value
      */
-    public static int clamp(final int value, final Range range) {
+    public static int clamp(final int value, @Nonnull final Range range) {
         return clamp(value, range.getMin(), range.getMax());
     }
 

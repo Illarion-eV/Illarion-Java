@@ -25,6 +25,7 @@ import illarion.easynpc.Parser;
 import illarion.easynpc.gui.MainFrame;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 /**
@@ -68,7 +69,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      */
     @Override
     @SuppressWarnings("nls")
-    public final void uncaughtException(final Thread t, final Throwable e) {
+    public final void uncaughtException(@Nonnull final Thread t, @Nonnull final Throwable e) {
         LOGGER.error("Fetched uncaught exception: " + getCrashMessage(), e);
         if (currentlyCrashing) {
             return;
@@ -120,7 +121,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * @param t the thread that crashed
      * @param e the reason of the crash
      */
-    private void reportError(final Thread t, final Throwable e) {
+    private void reportError(@Nonnull final Thread t, @Nonnull final Throwable e) {
         CrashReporter.getInstance().reportCrash(
                 new CrashData(Parser.APPLICATION, Parser.VERSION,
                         getCrashMessage(), t, e));

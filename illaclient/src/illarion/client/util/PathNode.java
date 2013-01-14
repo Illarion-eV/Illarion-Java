@@ -26,6 +26,9 @@ import illarion.common.types.Location;
 import illarion.common.util.Reusable;
 import javolution.context.ObjectFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * A single path node that is used during the path finding and represents a single step on the path that is searched or
  * was found.
@@ -50,7 +53,7 @@ public final class PathNode
         }
 
         @Override
-        public boolean execute(final PathNode node) {
+        public boolean execute(@Nonnull final PathNode node) {
             node.reset();
             node.recycle();
             return true;
@@ -77,6 +80,7 @@ public final class PathNode
          *
          * @return the new path node instance
          */
+        @Nonnull
         @Override
         protected PathNode create() {
             return new PathNode();
@@ -87,6 +91,7 @@ public final class PathNode
      * The cache for the path nodes that were loaded already. It needed to store them so the pathfinder can access
      * values calculated before.
      */
+    @Nonnull
     private static TLongObjectHashMap<PathNode> cache = new TLongObjectHashMap<PathNode>();
 
     /**
@@ -128,6 +133,7 @@ public final class PathNode
     /**
      * The location this path node represents.
      */
+    @Nullable
     private Location loc;
 
     /**
@@ -138,11 +144,13 @@ public final class PathNode
     /**
      * The parent node, so the node the character steps on before it reaches this path node.
      */
+    @Nullable
     private PathNode parent;
 
     /**
      * The map tile of this path node, needed to access some tile related informations.
      */
+    @Nullable
     private MapTile tile;
 
     /**
@@ -167,7 +175,7 @@ public final class PathNode
      * @param loc the location the path node shall represent
      * @return the path node, fresh created or from the cache
      */
-    public static PathNode getNode(final Location loc) {
+    public static PathNode getNode(@Nonnull final Location loc) {
         final long key = loc.getKey();
         PathNode node = cache.get(key);
         if (node == null) {
@@ -256,7 +264,7 @@ public final class PathNode
      * @param dest the destination position
      * @return the distance to the destination position
      */
-    public int getDistanceTo(final Location dest) {
+    public int getDistanceTo(@Nonnull final Location dest) {
         return loc.getDistance(dest);
     }
 
@@ -265,6 +273,7 @@ public final class PathNode
      *
      * @return the location of this path node
      */
+    @Nullable
     public Location getLocation() {
         return loc;
     }
@@ -283,6 +292,7 @@ public final class PathNode
      *
      * @return the parent path node
      */
+    @Nullable
     public PathNode getParent() {
         return parent;
     }
@@ -381,7 +391,7 @@ public final class PathNode
      *
      * @param newParent the new parent node
      */
-    public void setParent(final PathNode newParent) {
+    public void setParent(@Nonnull final PathNode newParent) {
         parent = newParent;
         depth = newParent.getDepth() + 1;
     }
@@ -391,7 +401,7 @@ public final class PathNode
      *
      * @param location the location of this node
      */
-    public void setPosition(final Location location) {
+    public void setPosition(@Nonnull final Location location) {
         loc = new Location(location);
         tile = World.getMap().getMapAt(loc);
         blocked = (tile == null) || tile.isBlocked();
@@ -403,6 +413,7 @@ public final class PathNode
      * @return a string that contains the position of this path node
      * @see java.lang.Object#toString()
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

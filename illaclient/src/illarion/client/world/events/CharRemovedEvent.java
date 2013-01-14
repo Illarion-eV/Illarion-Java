@@ -20,6 +20,8 @@ package illarion.client.world.events;
 
 import illarion.common.types.CharacterId;
 
+import javax.annotation.Nonnull;
+
 /**
  * This event is published in case a character is removed from the map.
  *
@@ -41,6 +43,7 @@ public final class CharRemovedEvent
         super(id);
     }
 
+    @Nonnull
     @Override
     public String getEvent() {
         return EVENT;

@@ -21,6 +21,7 @@ package illarion.easynpc.data;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
 import java.util.regex.Pattern;
 
 /**
@@ -102,7 +103,7 @@ public enum BooleanFlagValues {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put(off.easyString, Token.VARIABLE);
         map.put(on.easyString, Token.VARIABLE);
     }

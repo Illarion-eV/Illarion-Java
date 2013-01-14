@@ -26,6 +26,7 @@ import illarion.mapedit.data.MapWarpPoint;
 import illarion.mapedit.resource.Overlay;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,6 +49,7 @@ public class Version2Decoder implements Decoder {
     private int w = -1;
     private int h = -1;
 
+    @Nullable
     private Map map;
 
     private String name;
@@ -125,6 +127,7 @@ public class Version2Decoder implements Decoder {
         map.setWarpAt(sx, sy, warp);
     }
 
+    @Nullable
     @Override
     public Map getDecodedMap() {
         return map;

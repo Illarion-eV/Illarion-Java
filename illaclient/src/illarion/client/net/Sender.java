@@ -133,7 +133,7 @@ final class Sender extends Thread implements NetCommWriter {
                 final AbstractCommand cmd;
                 try {
                     cmd = queue.take();
-                } catch (final InterruptedException e) {
+                } catch (@Nonnull final InterruptedException e) {
                     LOGGER.info("Thread \"" + getName() + "\" got interrupted.");
                     continue;
                 }
@@ -167,7 +167,7 @@ final class Sender extends Thread implements NetCommWriter {
 
                 outChannel.write(buffer);
             }
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             LOGGER.fatal("General error within the sender", e);
             IllaClient.fallbackToLogin(Lang.getMsg("error.sender"));
         }

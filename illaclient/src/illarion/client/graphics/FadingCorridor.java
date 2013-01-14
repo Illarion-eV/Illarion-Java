@@ -1,31 +1,32 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
 import illarion.common.graphics.Layers;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 /**
  * This fading corridor is used to fade out the objects that would block the
  * view on the player character.
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -68,33 +69,34 @@ public final class FadingCorridor {
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static FadingCorridor getInstance() {
         return INSTANCE;
     }
 
     /**
      * Test given screen coordinates for intersection with transparent corridor.
-     * 
-     * @param testLocX the x location of the area that needs to be checked for
-     *            intersection
-     * @param testLocY the y location of the area that needs to be checked for
-     *            intersection
+     *
+     * @param testLocX  the x location of the area that needs to be checked for
+     *                  intersection
+     * @param testLocY  the y location of the area that needs to be checked for
+     *                  intersection
      * @param testLayer the layer of the area that needs to be checked, that
-     *            generally is the Z order and it ensures that objects that are
-     *            "below" the avatar are not faded out
-     * @param width the width of the area that needs to be checked for
-     *            intersection
-     * @param height the height of the area that needs to be checked for
-     *            intersection
+     *                  generally is the Z order and it ensures that objects that are
+     *                  "below" the avatar are not faded out
+     * @param width     the width of the area that needs to be checked for
+     *                  intersection
+     * @param height    the height of the area that needs to be checked for
+     *                  intersection
      * @return <code>true</code> in case the area intersects and is "above" the
      *         avatar image (spoken in z order), so returning <code>true</code>
      *         means that the tested object needs to be faded out
      */
     protected boolean isInCorridor(final int testLocX, final int testLocY,
-        final int testLayer, final int width, final int height) {
+                                   final int testLayer, final int width, final int height) {
         TEMP_RECT.setBounds(testLocX, testLocY, width, height);
 
         return (testLayer < back) && fading.intersects(TEMP_RECT);
@@ -108,14 +110,14 @@ public final class FadingCorridor {
      * Do not forget updating this function if the avatar or the player location
      * changes.
      * </p>
-     * 
+     *
      * @param character the avatar that delivers the size for the fading
-     *            corridor
+     *                  corridor
      */
-    protected void setCorridor(final AbstractEntity character) {
+    protected void setCorridor(@Nonnull final AbstractEntity character) {
         fading.setBounds(character.getDisplayX() + TOLERANCE,
-            character.getDisplayY() + TOLERANCE - character.getHeight(), character.getWidth(),
-            character.getHeight());
+                character.getDisplayY() + TOLERANCE - character.getHeight(), character.getWidth(),
+                character.getHeight());
         back = character.getZOrder() - (Layers.DISTANCE / 2);
     }
 }

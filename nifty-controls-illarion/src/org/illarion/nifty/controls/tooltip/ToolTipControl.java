@@ -34,6 +34,8 @@ import de.lessvoid.xml.xpp3.Attributes;
 import illarion.common.types.Money;
 import org.illarion.nifty.controls.ToolTip;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Properties;
 
 /**
@@ -45,8 +47,8 @@ import java.util.Properties;
 @Deprecated
 public final class ToolTipControl extends AbstractController implements ToolTip {
     @Override
-    public void bind(final Nifty nifty, final Screen screen, final Element element,
-                     final Properties parameter, final Attributes controlDefinitionAttributes) {
+    public void bind(@Nonnull final Nifty nifty, final Screen screen, @Nonnull final Element element,
+                     final Properties parameter, @Nonnull final Attributes controlDefinitionAttributes) {
         bind(element);
 
         boolean largeToolTip = false;
@@ -167,7 +169,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      *
      * @param element the element to remove
      */
-    private static void removeElement(final Element element) {
+    private static void removeElement(@Nonnull final Element element) {
         element.markForRemoval(new EndNotify() {
             @Override
             public void perform() {
@@ -182,7 +184,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param value the string to test
      * @return {@code true} in case the value is {@code null} or in case its a empty string
      */
-    private static boolean isNullOrEmpty(final String value) {
+    private static boolean isNullOrEmpty(@Nullable final String value) {
         return (value == null) || value.isEmpty();
     }
 
@@ -192,7 +194,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param strings the stings to test
      * @return {@code true} in case all strings are {@code null} or equal to {@code Integer.toString(0)}
      */
-    private static boolean isAllNull(final String... strings) {
+    private static boolean isAllNull(@Nonnull final String... strings) {
         for (final String value : strings) {
             if ((value != null) && (Integer.parseInt(value) > 0)) {
                 return false;
@@ -210,7 +212,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param elementImage the name of the image element
      * @param images       the name of the gems
      */
-    private static void applyGem(final Nifty nifty, final Element element, final String gemText,
+    private static void applyGem(@Nonnull final Nifty nifty, @Nonnull final Element element, @Nullable final String gemText,
                                  final String elementImage, final String images) {
         final Element image = element.findElementByName(elementImage);
         if (gemText == null) {
@@ -238,7 +240,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param elementCount the element that contains the count of the money component
      * @param elementImage the element that contains the image of the money component
      */
-    private static void applyMoney(final Element element, final int money, final String elementCount,
+    private static void applyMoney(@Nonnull final Element element, final int money, final String elementCount,
                                    final String elementImage) {
         if (money > 0) {
             applyTextToLabel(element.findNiftyControl(elementCount, Label.class), Integer.toString(money));
@@ -254,7 +256,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param label the label
      * @param text  the text to be stored in the label
      */
-    private static void applyTextToLabel(final Label label, final String text) {
+    private static void applyTextToLabel(@Nonnull final Label label, final String text) {
         final Element labelElement = label.getElement();
         final TextRenderer renderer = labelElement.getRenderer(TextRenderer.class);
         renderer.setText(text);

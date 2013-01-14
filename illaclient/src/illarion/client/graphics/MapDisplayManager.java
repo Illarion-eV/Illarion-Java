@@ -32,6 +32,8 @@ import org.apache.log4j.Logger;
 import org.newdawn.slick.*;
 import org.newdawn.slick.opengl.renderer.SGL;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -78,7 +80,7 @@ public final class MapDisplayManager
          * Compare two instances of the object and there relative offset that is needed for ordering this objects.
          */
         @Override
-        public int compare(final DisplayItem o1, final DisplayItem o2) {
+        public int compare(@Nonnull final DisplayItem o1, @Nonnull final DisplayItem o2) {
             return o2.getZOrder() - o1.getZOrder();
         }
 
@@ -86,7 +88,7 @@ public final class MapDisplayManager
          * Get the hash code of a object.
          */
         @Override
-        public int hashCodeOf(final DisplayItem obj) {
+        public int hashCodeOf(@Nullable final DisplayItem obj) {
             if (obj == null) {
                 return 0;
             }
@@ -104,11 +106,16 @@ public final class MapDisplayManager
     private boolean active;
 
     // scrolling offset
+    @Nonnull
     private final MoveAnimation ani;
 
+    @Nonnull
     private final FadingCorridor corridor;
+    @Nonnull
     private final FastTable<DisplayItem> display;
+    @Nonnull
     private final DisplayListComparator displayListComperator;
+    @Nonnull
     private final WeatherRenderer weatherRenderer;
 
     private int dL;
@@ -119,8 +126,10 @@ public final class MapDisplayManager
 
     private final Color fadeOutColor = new Color(0);
 
+    @Nonnull
     private final MoveAnimation levelAni;
 
+    @Nonnull
     private final Location origin;
 
     private static final Logger LOGGER = Logger.getLogger(MapDisplayManager.class);
@@ -161,7 +170,7 @@ public final class MapDisplayManager
      * @param item
      */
     @SuppressWarnings("nls")
-    public void add(final DisplayItem item) {
+    public void add(@Nullable final DisplayItem item) {
         if (item == null) {
             assert false : "Trying to add NULL displayItem";
             return;
@@ -276,7 +285,7 @@ public final class MapDisplayManager
      *
      * @param av
      */
-    public void glueAvatarToOrigin(final Avatar av) {
+    public void glueAvatarToOrigin(@Nonnull final Avatar av) {
         av.setScreenPos(origin.getDcX() - dX, (origin.getDcY() - dY) + dL, origin.getDcZ(), Layers.CHARS);
     }
 
@@ -309,7 +318,7 @@ public final class MapDisplayManager
      *
      * @param item the display item to remove and add again
      */
-    public void readd(final DisplayItem item) {
+    public void readd(@Nullable final DisplayItem item) {
         if (item == null) {
             assert false : "Trying to add NULL displayItem";
             return;
@@ -332,7 +341,7 @@ public final class MapDisplayManager
      *
      * @param item
      */
-    public void remove(final DisplayItem item) {
+    public void remove(@Nonnull final DisplayItem item) {
         synchronized (display) {
             display.remove(item);
             final Rectangle displayRect = item.getLastDisplayRect();
@@ -342,6 +351,7 @@ public final class MapDisplayManager
         }
     }
 
+    @Nonnull
     private Queue<MapInteractionEvent> eventQueue = new ConcurrentLinkedQueue<MapInteractionEvent>();
 
     /**
@@ -353,7 +363,7 @@ public final class MapDisplayManager
         eventQueue.offer(event);
     }
 
-    public void update(final GameContainer c, final int delta) {
+    public void update(@Nonnull final GameContainer c, final int delta) {
         if (!active) {
             return;
         }
@@ -404,7 +414,7 @@ public final class MapDisplayManager
         }
     }
 
-    private void publishEvent(final GameContainer c, final int delta, final MapInteractionEvent event) {
+    private void publishEvent(final GameContainer c, final int delta, @Nonnull final MapInteractionEvent event) {
         for (int i = display.size() - 1; i >= 0; i--) {
             if (display.get(i).processEvent(c, delta, event)) {
                 return;
@@ -425,7 +435,7 @@ public final class MapDisplayManager
      * @param g the graphics component that is used to render the screen
      * @param c the game container the map is rendered in
      */
-    public void render(final Graphics g, final GameContainer c) {
+    public void render(@Nonnull final Graphics g, @Nonnull final GameContainer c) {
         if (!active) {
             return;
         }
@@ -479,7 +489,7 @@ public final class MapDisplayManager
      *
      * @param g the graphics context used for the render operation
      */
-    private void renderImpl(final Graphics g) {
+    private void renderImpl(@Nonnull final Graphics g) {
         final Camera camera = Camera.getInstance();
 
         Graphics.setCurrent(g);
@@ -543,7 +553,7 @@ public final class MapDisplayManager
      *
      * @param location
      */
-    public void setLocation(final Location location) {
+    public void setLocation(@Nonnull final Location location) {
         // origin.setSC(location.scX, location.scY, 0);
         origin.set(location);
         ani.stop();
@@ -593,7 +603,7 @@ public final class MapDisplayManager
         sayText(tempLoc.getDcX(), tempLoc.getDcY(), text, mode);
     }
 
-    private void insertSorted(final DisplayItem item) {
+    private void insertSorted(@Nonnull final DisplayItem item) {
         int currentStart = 0;
         int currentEnd = display.size() - 1;
         int middle;

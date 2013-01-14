@@ -20,6 +20,8 @@ package illarion.client.util;
 
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 
 /**
@@ -45,6 +47,7 @@ public final class Path {
      *
      * @return the destination of the path
      */
+    @Nullable
     public Location getDestination() {
         if (!path.isEmpty()) {
             return path.getLast().getLocation();
@@ -59,6 +62,7 @@ public final class Path {
      *
      * @return the next path node of this path
      */
+    @Nullable
     public PathNode nextStep() {
         PathNode node = null;
         if (!path.isEmpty()) {
@@ -83,6 +87,7 @@ public final class Path {
      *
      * @return the string that defines the path
      */
+    @Nonnull
     @Override
     @SuppressWarnings("nls")
     public String toString() {

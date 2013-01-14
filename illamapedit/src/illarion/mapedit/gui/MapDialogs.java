@@ -24,6 +24,8 @@ import illarion.mapedit.MapEditor;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapIO;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -40,10 +42,11 @@ public class MapDialogs {
     private static final int SIGNED_MAX = 10000;
     private static final FilenameFilter FILTER_TILES = new FilenameFilter() {
         @Override
-        public boolean accept(final File dir, final String name) {
+        public boolean accept(final File dir, @Nonnull final String name) {
             return name.endsWith(MapIO.EXT_TILE);
         }
     };
+    @Nullable
     private static File saveDir;
     private static final Config config = MapEditor.getConfig();
 
@@ -51,6 +54,7 @@ public class MapDialogs {
 
     }
 
+    @Nullable
     public static Map showNewMapDialog(final JFrame owner) {
         final JDialog dialog = new JDialog(owner, Lang.getMsg("gui.newmap"));
         dialog.getContentPane().setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.PAGE_AXIS));
@@ -106,6 +110,7 @@ public class MapDialogs {
         return null;
     }
 
+    @Nullable
     public static Map[] showOpenMapDialog(final JFrame owner) throws IOException {
         final JFileChooser ch = new JFileChooser();
         if (config.getFile("mapLastOpenDir") != null) {

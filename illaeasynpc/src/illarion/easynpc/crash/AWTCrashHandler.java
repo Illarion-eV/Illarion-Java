@@ -22,6 +22,8 @@ import illarion.common.bug.CrashData;
 import illarion.common.bug.CrashReporter;
 import illarion.easynpc.Parser;
 
+import javax.annotation.Nonnull;
+
 /**
  * This crash handler differs from the rest of the crash handlers. It will bind
  * to the AWT system and get notified in case the AWT event queue fetches a
@@ -49,7 +51,7 @@ public final class AWTCrashHandler {
      * @param e the crash informations
      */
     @SuppressWarnings("nls")
-    public void handle(final Throwable e) {
+    public void handle(@Nonnull final Throwable e) {
         final CrashData data =
                 new CrashData(Parser.APPLICATION, Parser.VERSION, "crash.awt",
                         Thread.currentThread(), e);

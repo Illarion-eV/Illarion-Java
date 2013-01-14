@@ -18,6 +18,9 @@
  */
 package illarion.common.data;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This class contains a single person that is listed in the credits.
  *
@@ -27,6 +30,7 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
     /**
      * The name of the person.
      */
+    @Nonnull
     private final String name;
 
     /**
@@ -41,7 +45,7 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param lastName  the last name of the person
      * @param lists     the lists this member is supposed to be added to
      */
-    public static void create(final String firstName, final String lastName, final CreditsList... lists) {
+    public static void create(@Nonnull final String firstName, @Nonnull final String lastName, final CreditsList... lists) {
         create(firstName, null, lastName, lists);
     }
 
@@ -51,7 +55,7 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param nickName the nick name of the person
      * @param lists    the lists this member is supposed to be added to
      */
-    public static void create(final String nickName, final CreditsList... lists) {
+    public static void create(@Nonnull final String nickName, final CreditsList... lists) {
         create(null, nickName, null, lists);
     }
 
@@ -63,8 +67,8 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param lastName  the last name of the person
      * @param lists     the lists this member is supposed to be added to
      */
-    public static void create(final String firstName, final String nickName, final String lastName,
-                              final CreditsList... lists) {
+    public static void create(@Nonnull final String firstName, @Nonnull final String nickName, @Nonnull final String lastName,
+                              @Nonnull final CreditsList... lists) {
         final CreditsPerson person = new CreditsPerson(firstName, nickName, lastName);
         for (final CreditsList list : lists) {
             list.addMember(person);
@@ -78,7 +82,7 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param nickName  the nick name of the person
      * @param lastName  the last name of the person
      */
-    private CreditsPerson(final String firstName, final String nickName, final String lastName) {
+    private CreditsPerson(@Nonnull final String firstName, @Nonnull final String nickName, @Nonnull final String lastName) {
         if ((isNullOrWhitespace(firstName) || isNullOrWhitespace(lastName)) && isNullOrWhitespace(nickName)) {
             throw new IllegalArgumentException();
         }
@@ -102,10 +106,12 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      *
      * @return the name of the person
      */
+    @Nonnull
     public String getName() {
         return name;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return name;
@@ -117,12 +123,12 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param input the string to test
      * @return {@code true} in case the input is {@code null} or contains only whitespaces
      */
-    private static boolean isNullOrWhitespace(final String input) {
+    private static boolean isNullOrWhitespace(@Nullable final String input) {
         return (input == null) || input.trim().isEmpty();
     }
 
     @Override
-    public int compareTo(final CreditsPerson o) {
+    public int compareTo(@Nonnull final CreditsPerson o) {
         return compareName.compareTo(o.compareName);
     }
 }

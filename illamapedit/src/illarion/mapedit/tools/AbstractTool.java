@@ -23,6 +23,7 @@ import illarion.mapedit.history.HistoryManager;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 
 /**
@@ -53,7 +54,7 @@ public abstract class AbstractTool {
 
     public abstract JPanel getSettingsPanel();
 
-    public final void registerManager(final ToolManager toolManager) {
+    public final void registerManager(@Nonnull final ToolManager toolManager) {
         manager = toolManager;
         history = toolManager.getHistory();
     }

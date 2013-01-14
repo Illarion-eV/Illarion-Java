@@ -26,6 +26,8 @@ import illarion.easynpc.parsed.ParsedHair;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +57,7 @@ public final class NpcHair implements NpcType {
      * The documentation entry for the beard ID.
      */
     private final DocuEntry beardEntry = new DocuEntry() {
+        @Nonnull
         @Override
         @SuppressWarnings("nls")
         public DocuEntry getChild(final int index) {
@@ -95,6 +98,7 @@ public final class NpcHair implements NpcType {
      * The documentation entry for the hair ID.
      */
     private final DocuEntry hairEntry = new DocuEntry() {
+        @Nonnull
         @Override
         @SuppressWarnings("nls")
         public DocuEntry getChild(final int index) {
@@ -135,7 +139,7 @@ public final class NpcHair implements NpcType {
      * Check if the line contains the definition of a hair ID or a beard ID.
      */
     @Override
-    public boolean canParseLine(final Line lineStruct) {
+    public boolean canParseLine(@Nonnull final Line lineStruct) {
         final String line = lineStruct.getLine();
 
         if (HAIR_ID.matcher(line).find()) {
@@ -151,6 +155,7 @@ public final class NpcHair implements NpcType {
     /**
      * Get the documentation child.
      */
+    @Nonnull
     @Override
     @SuppressWarnings("nls")
     public DocuEntry getChild(final int index) {
@@ -185,6 +190,7 @@ public final class NpcHair implements NpcType {
     /**
      * This parser contains no example. The examples are stored in the children.
      */
+    @Nullable
     @Override
     public String getExample() {
         return null;
@@ -194,6 +200,7 @@ public final class NpcHair implements NpcType {
      * This parser contains no syntax. The syntax is stored in the documentation
      * children of this parser.
      */
+    @Nullable
     @Override
     public String getSyntax() {
         return null;
@@ -212,7 +219,7 @@ public final class NpcHair implements NpcType {
      * Parse a line of the script and filter the required data out.
      */
     @Override
-    public void parseLine(final Line line, final ParsedNpc npc) {
+    public void parseLine(@Nonnull final Line line, @Nonnull final ParsedNpc npc) {
         Matcher matcher;
 
         matcher = HAIR_ID.matcher(line.getLine());
@@ -233,7 +240,7 @@ public final class NpcHair implements NpcType {
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put("beardID", Token.RESERVED_WORD);
         map.put("hairID", Token.RESERVED_WORD);
     }

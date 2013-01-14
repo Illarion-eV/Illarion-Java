@@ -18,6 +18,8 @@
  */
 package illarion.mapedit.crash;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is the default crash handler that is called in case anything crashes
  * that did not got a special crash handler. Since a call of this crash handler
@@ -49,6 +51,7 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static DefaultCrashHandler getInstance() {
         return INSTANCE;
     }
@@ -58,6 +61,7 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
      *
      * @return the error message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     protected String getCrashMessage() {

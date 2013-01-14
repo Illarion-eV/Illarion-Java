@@ -20,6 +20,8 @@ package illarion.mapedit.gui;
 
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -35,6 +37,7 @@ public class SplashScreen extends JWindow {
     public static final int HEIGHT_ADJUSTMENT = 30;
     private static final int FONT_SIZE = 20;
     public static final Font FONT = new Font("Arial", Font.BOLD, FONT_SIZE);
+    @Nullable
     private final Image background;
     private Image img;
     private String message;
@@ -54,6 +57,7 @@ public class SplashScreen extends JWindow {
         message = "Starting..";
     }
 
+    @Nullable
     private Image makeScreenShot() {
         try {
             Robot r = new Robot();
@@ -64,12 +68,13 @@ public class SplashScreen extends JWindow {
 
     }
 
+    @Nonnull
     public static SplashScreen getInstance() {
         return INSTANCE;
     }
 
     @Override
-    public void paint(final Graphics g) {
+    public void paint(@Nonnull final Graphics g) {
         if (background != null) {
             g.drawImage(background, 0, 0, null);
         }

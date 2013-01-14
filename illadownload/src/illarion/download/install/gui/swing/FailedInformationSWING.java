@@ -25,6 +25,7 @@ import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXLabel.TextAlignment;
 import org.jdesktop.swingx.JXList;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -94,7 +95,7 @@ public final class FailedInformationSWING
      */
     @SuppressWarnings("nls")
     @Override
-    public void fillButtons(final BaseSWING base, final JPanel buttonPanel) {
+    public void fillButtons(@Nonnull final BaseSWING base, @Nonnull final JPanel buttonPanel) {
         final JButton retryButton = BaseSWING.getPanelButton();
         retryButton.setText(Lang.getMsg("illarion.download.install.gui.FailedInformation.retry.text"));
         retryButton.setToolTipText(Lang.getMsg("illarion.download.install.gui.FailedInformation.retry.tooltip"));
@@ -116,7 +117,7 @@ public final class FailedInformationSWING
      */
     @SuppressWarnings("nls")
     @Override
-    public void fillContent(final BaseSWING base, final JPanel contentPanel) {
+    public void fillContent(final BaseSWING base, @Nonnull final JPanel contentPanel) {
         contentPanel.setLayout(new GridBagLayout());
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
 
@@ -186,7 +187,7 @@ public final class FailedInformationSWING
      * (illarion.download.install.gui.swing.BaseSWING)
      */
     @Override
-    public void prepareDisplay(final BaseSWING base) {
+    public void prepareDisplay(@Nonnull final BaseSWING base) {
         base.setVisible(true);
     }
 

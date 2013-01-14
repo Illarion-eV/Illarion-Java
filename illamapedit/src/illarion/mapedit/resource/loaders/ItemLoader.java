@@ -26,6 +26,8 @@ import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.Resource;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.IOException;
 
@@ -51,13 +53,14 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
         new TableLoaderItems(this);
     }
 
+    @Nonnull
     @Override
     public String getDescription() {
         return "Items";
     }
 
     @Override
-    public boolean processRecord(final int line, final TableLoaderItems loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoaderItems loader) {
         final int mode = loader.getItemMode();
         final int itemID = loader.getItemId();
         final int face = loader.getFace();
@@ -87,6 +90,7 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
         return true;
     }
 
+    @Nonnull
     private static Image[] getTextures(final String resourceName, final int frameCount) {
         final Image[] imgs = new Image[frameCount];
         if (frameCount == 1) {
@@ -100,10 +104,12 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
         return imgs;
     }
 
+    @Nonnull
     public static ItemLoader getInstance() {
         return INSTANCE;
     }
 
+    @Nullable
     public ItemImg getTileFromId(final int id) {
         if (items.contains(id)) {
             return items.get(id);

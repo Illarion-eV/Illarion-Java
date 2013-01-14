@@ -24,6 +24,8 @@ import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to load the effect definitions from the resource table
  * that was created using the configuration tool. The class will create the
@@ -102,7 +104,7 @@ public final class EffectLoader extends AbstractResourceLoader<Effect> implement
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, final TableLoader loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
         final int effectID = loader.getInt(TB_ID);
         final String fileName = loader.getString(TB_NAME);
         final int frameCount = loader.getInt(TB_FRAME);
@@ -117,7 +119,7 @@ public final class EffectLoader extends AbstractResourceLoader<Effect> implement
         try {
             getTargetFactory().storeResource(effect);
             effect.activate(effectID);
-        } catch (final IllegalStateException ex) {
+        } catch (@Nonnull final IllegalStateException ex) {
             logger.error("Failed adding effect to internal factory. ID: "
                     + Integer.toString(effectID) + " - Filename: " + fileName);
         }

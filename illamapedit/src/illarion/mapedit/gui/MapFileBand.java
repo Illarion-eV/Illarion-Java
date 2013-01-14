@@ -37,6 +37,7 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbonComponent;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -52,13 +53,14 @@ import java.util.List;
 public class MapFileBand extends JRibbonBand {
     private static final FilenameFilter FILTER_TILES = new FilenameFilter() {
         @Override
-        public boolean accept(final File dir, final String name) {
+        public boolean accept(final File dir, @Nonnull final String name) {
             return name.endsWith(MapIO.EXT_TILE);
         }
     };
+    @Nonnull
     private final MapComboBoxModel model;
 
-    public MapFileBand(final Config config) {
+    public MapFileBand(@Nonnull final Config config) {
         super(Lang.getMsg("gui.maps"), null);
 
         AnnotationProcessor.process(this);
@@ -77,7 +79,7 @@ public class MapFileBand extends JRibbonBand {
         }
         list.addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void valueChanged(final ListSelectionEvent e) {
+            public void valueChanged(@Nonnull final ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() && (list.getSelectedValue() != null)) {
                     EventBus.publish(new MapOpenEvent(dir.getPath(), (String) list.getSelectedValue()));
                     list.clearSelection();
@@ -94,7 +96,7 @@ public class MapFileBand extends JRibbonBand {
 
         mapSelector.addItemListener(new ItemListener() {
             @Override
-            public void itemStateChanged(final ItemEvent e) {
+            public void itemStateChanged(@Nonnull final ItemEvent e) {
                 if (e.getStateChange() != ItemEvent.SELECTED) {
                     return;
                 }
@@ -116,7 +118,7 @@ public class MapFileBand extends JRibbonBand {
     }
 
     @EventSubscriber
-    public void onUpdateMapList(final UpdateMapListEvent e) {
+    public void onUpdateMapList(@Nonnull final UpdateMapListEvent e) {
         model.updateList(e.getMaps());
 
         model.setSelectedItem(model.getElementAt(e.getSelectedIndex()));

@@ -25,6 +25,9 @@ import illarion.common.util.StoppableStorage;
 import javolution.util.FastComparator;
 import javolution.util.FastTable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Pathfinder to search the best way between two locations. Using the A*-algorithm.
  *
@@ -51,21 +54,25 @@ public final class Pathfinder
     /**
      * List of path nodes we tried already.
      */
+    @Nullable
     private FastTable<PathNode> closed;
 
     /**
      * The end location of the current path finding action.
      */
+    @Nonnull
     private final Location endLoc;
 
     /**
      * List of path nodes that were not considered fully for searching yet.
      */
+    @Nullable
     private FastTable<PathNode> open;
 
     /**
      * The class that is supposed to receive the generated path.
      */
+    @Nullable
     private PathReceiver receiver = null;
 
     /**
@@ -81,6 +88,7 @@ public final class Pathfinder
     /**
      * The start location of the current path finding action.
      */
+    @Nonnull
     private final Location startLoc;
 
     /**
@@ -130,7 +138,7 @@ public final class Pathfinder
      * @param pathDest  the location where the path ends
      * @param pathRec   the class that receives the resulting path
      */
-    public void findPath(final Location pathStart, final Location pathDest, final PathReceiver pathRec) {
+    public void findPath(@Nonnull final Location pathStart, @Nonnull final Location pathDest, final PathReceiver pathRec) {
         startLoc.set(pathStart);
         endLoc.set(pathDest);
         receiver = pathRec;
@@ -158,7 +166,7 @@ public final class Pathfinder
                 synchronized (this) {
                     try {
                         this.wait();
-                    } catch (final InterruptedException e) {
+                    } catch (@Nonnull final InterruptedException e) {
                         // nothing
                     }
                 }
@@ -308,7 +316,7 @@ public final class Pathfinder
      *
      * @param node the path node that shall be added
      */
-    private void addToClosed(final PathNode node) {
+    private void addToClosed(@Nonnull final PathNode node) {
         node.setClosed(true);
         closed.add(node);
     }
@@ -318,7 +326,7 @@ public final class Pathfinder
      *
      * @param node the path node that shall be added
      */
-    private void addToOpen(final PathNode node) {
+    private void addToOpen(@Nonnull final PathNode node) {
         open.add(node);
         node.setOpen(true);
     }
@@ -328,7 +336,7 @@ public final class Pathfinder
      *
      * @param node the node that shall be removed from the list
      */
-    private void removeFromClosed(final PathNode node) {
+    private void removeFromClosed(@Nonnull final PathNode node) {
         node.setClosed(false);
         closed.remove(node);
     }
@@ -338,7 +346,7 @@ public final class Pathfinder
      *
      * @param node the node that shall be removed from the list
      */
-    private void removeFromOpen(final PathNode node) {
+    private void removeFromOpen(@Nonnull final PathNode node) {
         node.setOpen(false);
         open.remove(node);
     }

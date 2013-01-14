@@ -25,6 +25,8 @@ import illarion.easynpc.writer.EasyNpcWritable;
 import illarion.easynpc.writer.LuaWritable;
 import javolution.util.FastTable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 
 /**
@@ -65,7 +67,7 @@ public final class ParsedNpc {
          * Compare method used to sort the errors.
          */
         @Override
-        public int compareTo(final ParsedNpc.Error o) {
+        public int compareTo(@Nonnull final ParsedNpc.Error o) {
             return line.getLineNumber() - o.line.getLineNumber();
         }
 
@@ -106,6 +108,7 @@ public final class ParsedNpc {
     /**
      * The language the NPC is talking by default.
      */
+    @Nullable
     private CharacterLanguage defaultLanguage;
 
     /**
@@ -270,6 +273,7 @@ public final class ParsedNpc {
      *
      * @return a array of the author names
      */
+    @Nonnull
     public String[] getAuthors() {
         if (authors == null) {
             return new String[0];
@@ -306,6 +310,7 @@ public final class ParsedNpc {
      *
      * @return the language this character is speaking by default
      */
+    @Nullable
     public CharacterLanguage getDefaultLanguage() {
         if (defaultLanguage == null) {
             return CharacterLanguage.common;
@@ -457,6 +462,7 @@ public final class ParsedNpc {
      *
      * @return the array of languages this NPC is able to speak
      */
+    @Nonnull
     public CharacterLanguage[] getLanguages() {
         if (languages == null) {
             languages = FastTable.newInstance();
@@ -509,6 +515,7 @@ public final class ParsedNpc {
      *
      * @return the correct lua script file
      */
+    @Nonnull
     @SuppressWarnings("nls")
     public String getLuaFilename() {
         return getNpcName().replace(' ', '_').toLowerCase() + ".lua";

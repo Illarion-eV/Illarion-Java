@@ -51,6 +51,7 @@ import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -75,7 +76,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     private boolean openCraftDialog;
 
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(@Nonnull final GameContainer container, final int delta) {
         input = container.getInput();
         while (true) {
             final DialogHandler.BuildWrapper wrapper = builders.poll();
@@ -144,8 +145,11 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     private static final Logger LOGGER = Logger.getLogger(DialogHandler.class);
 
+    @Nonnull
     private final Queue<DialogHandler.BuildWrapper> builders;
+    @Nonnull
     private final Queue<CloseDialogEvent> closers;
+    @Nonnull
     private final Queue<Runnable> updater;
     private Nifty nifty;
     private Screen screen;
@@ -170,28 +174,28 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     @EventSubscriber
-    public void handleMessageDialogEvent(final DialogMessageReceivedEvent event) {
+    public void handleMessageDialogEvent(@Nonnull final DialogMessageReceivedEvent event) {
         showDialogMessage(event.getId(), event.getTitle(), event.getMessage());
     }
 
     @EventSubscriber
-    public void handleInputDialogEvent(final DialogInputReceivedEvent event) {
+    public void handleInputDialogEvent(@Nonnull final DialogInputReceivedEvent event) {
         showDialogInput(event.getId(), event.getTitle(), event.getDescription(), event.getMaxLength(),
                 event.hasMultipleLines());
     }
 
     @EventSubscriber
-    public void handleCraftingDialogEvent(final DialogCraftingReceivedEvent event) {
+    public void handleCraftingDialogEvent(@Nonnull final DialogCraftingReceivedEvent event) {
         showCraftingDialog(event);
     }
 
     @EventSubscriber
-    public void handleMerchantDialogEvent(final DialogMerchantReceivedEvent event) {
+    public void handleMerchantDialogEvent(@Nonnull final DialogMerchantReceivedEvent event) {
         showMerchantDialog(event);
     }
 
     @EventSubscriber
-    public void handleSelectDialogEvent(final DialogSelectionReceivedEvent event) {
+    public void handleSelectDialogEvent(@Nonnull final DialogSelectionReceivedEvent event) {
         showSelectDialog(event);
     }
 
@@ -212,7 +216,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     @EventSubscriber
-    public void handleDialogItemLookAtEvent(final DialogItemLookAtEvent event) {
+    public void handleDialogItemLookAtEvent(@Nonnull final DialogItemLookAtEvent event) {
         if (craftingDialog == null) {
             return;
         }
@@ -227,7 +231,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     @EventSubscriber
-    public void handleDialogSecondaryItemLookAtEvent(final DialogSecondaryItemLookAtEvent event) {
+    public void handleDialogSecondaryItemLookAtEvent(@Nonnull final DialogSecondaryItemLookAtEvent event) {
         if (craftingDialog == null) {
             return;
         }
@@ -242,7 +246,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     @EventSubscriber
-    public void handleDialogCraftingUpdateStartEvent(final DialogCraftingUpdateStartReceivedEvent event) {
+    public void handleDialogCraftingUpdateStartEvent(@Nonnull final DialogCraftingUpdateStartReceivedEvent event) {
         if (craftingDialog == null) {
             return;
         }
@@ -269,7 +273,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     @NiftyEventSubscriber(id = "craftingDialog")
-    public void handleCraftingItemLookAtEvent(final String topic, final DialogCraftingLookAtItemEvent event) {
+    public void handleCraftingItemLookAtEvent(final String topic, @Nonnull final DialogCraftingLookAtItemEvent event) {
         if (lastCraftingTooltip == -1) {
             return;
         }
@@ -284,7 +288,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     @NiftyEventSubscriber(id = "craftingDialog")
     public void handleCraftingIngredientLookAtEvent(final String topic,
-                                                    final DialogCraftingLookAtIngredientItemEvent event) {
+                                                    @Nonnull final DialogCraftingLookAtIngredientItemEvent event) {
         if (lastCraftingTooltip == event.getIngredientIndex()) {
             return;
         }
@@ -299,13 +303,13 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     }
 
     @NiftyEventSubscriber(id = "craftingDialog")
-    public void handleCraftingCraftItemEvent(final String topic, final DialogCraftingCraftEvent event) {
+    public void handleCraftingCraftItemEvent(final String topic, @Nonnull final DialogCraftingCraftEvent event) {
         World.getNet().sendCommand(new CraftItemCmd(event.getDialogId(), event.getItem().getItemIndex(),
                 event.getCount()));
     }
 
     @NiftyEventSubscriber(id = "craftingDialog")
-    public void handleCraftingCloseDialogEvent(final String topic, final DialogCraftingCloseEvent event) {
+    public void handleCraftingCloseDialogEvent(final String topic, @Nonnull final DialogCraftingCloseEvent event) {
         closeCraftingDialog(event.getDialogId());
     }
 
@@ -320,13 +324,13 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "msgDialog[0-9]+")
-    public void handleMessageConfirmedEvent(final String topic, final DialogMessageConfirmedEvent event) {
+    public void handleMessageConfirmedEvent(final String topic, @Nonnull final DialogMessageConfirmedEvent event) {
         World.getNet().sendCommand(new CloseDialogMessageCmd(event.getDialogId()));
     }
 
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "inputDialog[0-9]+")
-    public void handleInputConfirmedEvent(final String topic, final DialogInputConfirmedEvent event) {
+    public void handleInputConfirmedEvent(final String topic, @Nonnull final DialogInputConfirmedEvent event) {
         if (event.getPressedButton() == DialogInput.DialogButton.LeftButton) {
             World.getNet().sendCommand(new CloseDialogInputCmd(event.getDialogId(), event.getText(), true));
         } else {
@@ -336,7 +340,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(id = "merchantDialog")
-    public void handleMerchantBuyEvent(final String topic, final DialogMerchantBuyEvent event) {
+    public void handleMerchantBuyEvent(final String topic, @Nonnull final DialogMerchantBuyEvent event) {
         final MerchantList list = World.getPlayer().getMerchantList();
         final int index = event.getItem().getIndex();
 
@@ -369,14 +373,14 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "selectDialog[0-9]+")
-    public void handleSelectionSelectEvent(final String topic, final DialogSelectSelectEvent event) {
+    public void handleSelectionSelectEvent(final String topic, @Nonnull final DialogSelectSelectEvent event) {
         World.getNet().sendCommand(new CloseDialogSelectionCmd(event.getDialogId(), event.getItemIndex(), true));
         EventBus.publish(new CloseDialogEvent(event.getDialogId(), CloseDialogEvent.DialogType.Selection));
     }
 
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "selectDialog[0-9]+")
-    public void handleSelectionCancelEvent(final String topic, final DialogSelectCancelEvent event) {
+    public void handleSelectionCancelEvent(final String topic, @Nonnull final DialogSelectCancelEvent event) {
         World.getNet().sendCommand(new CloseDialogSelectionCmd(event.getDialogId(), 0, false));
         EventBus.publish(new CloseDialogEvent(event.getDialogId(), CloseDialogEvent.DialogType.Selection));
     }
@@ -419,7 +423,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, null));
     }
 
-    private void showMerchantDialog(final DialogMerchantReceivedEvent event) {
+    private void showMerchantDialog(@Nonnull final DialogMerchantReceivedEvent event) {
         updater.add(new Runnable() {
             @Override
             public void run() {
@@ -437,7 +441,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         });
     }
 
-    private void showSelectDialog(final DialogSelectionReceivedEvent event) {
+    private void showSelectDialog(@Nonnull final DialogSelectionReceivedEvent event) {
         final Element parentArea = screen.findElementByName("windows");
         final DialogSelectBuilder builder = new DialogSelectBuilder(
                 "selectDialog" + Integer.toString(event.getId()), event.getTitle());
@@ -446,7 +450,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         builder.width(builder.pixels(500));
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
             @Override
-            public void run(final Element createdElement) {
+            public void run(@Nonnull final Element createdElement) {
                 final DialogSelect dialog = createdElement.getNiftyControl(DialogSelect.class);
 
                 addSelectItemsToDialog(event, dialog);
@@ -454,7 +458,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         }));
     }
 
-    private void showCraftingDialog(final DialogCraftingReceivedEvent event) {
+    private void showCraftingDialog(@Nonnull final DialogCraftingReceivedEvent event) {
         if ((event.getRequestId() == craftingDialog.getDialogId()) && openCraftDialog) {
             updater.add(new Runnable() {
                 @Override
@@ -490,7 +494,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         }
     }
 
-    private void addMerchantItemsToDialog(final DialogMerchantReceivedEvent event, final DialogMerchant dialog) {
+    private void addMerchantItemsToDialog(@Nonnull final DialogMerchantReceivedEvent event, @Nonnull final DialogMerchant dialog) {
         final List<MerchantListEntry> sellingList = new ArrayList<MerchantListEntry>();
         final List<MerchantListEntry> buyingList = new ArrayList<MerchantListEntry>();
         for (int i = 0; i < event.getItemCount(); i++) {
@@ -510,13 +514,13 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         dialog.addAllBuyingItems(buyingList);
     }
 
-    private void addSelectItemsToDialog(final DialogSelectionReceivedEvent event, final DialogSelect dialog) {
+    private void addSelectItemsToDialog(@Nonnull final DialogSelectionReceivedEvent event, @Nonnull final DialogSelect dialog) {
         for (int i = 0; i < event.getOptionCount(); i++) {
             dialog.addItem(new NiftySelectItem(nifty, event.getOption(i)));
         }
     }
 
-    private void addCraftingItemsToDialog(final DialogCraftingReceivedEvent event, final DialogCrafting dialog) {
+    private void addCraftingItemsToDialog(@Nonnull final DialogCraftingReceivedEvent event, @Nonnull final DialogCrafting dialog) {
         final NiftyCraftingCategory[] categories = new NiftyCraftingCategory[event.getGroupCount()];
         for (int i = 0; i < event.getGroupCount(); i++) {
             categories[i] = new NiftyCraftingCategory(event.getGroupTitle(i));
@@ -545,7 +549,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
     private static final Pattern dialogNamePattern = Pattern.compile("([a-z]+)Dialog([0-9]+)");
 
-    private void closeDialog(final CloseDialogEvent event) {
+    private void closeDialog(@Nonnull final CloseDialogEvent event) {
         final Element parentArea = screen.findElementByName("windows");
 
         if (event.getDialogType() == CloseDialogEvent.DialogType.Merchant) {
@@ -615,7 +619,7 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
                     });
                 }
 
-            } catch (final NumberFormatException ignored) {
+            } catch (@Nonnull final NumberFormatException ignored) {
                 // nothing
             }
         }

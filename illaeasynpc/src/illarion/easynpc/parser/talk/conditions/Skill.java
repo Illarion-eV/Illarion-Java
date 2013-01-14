@@ -29,6 +29,8 @@ import illarion.easynpc.parser.talk.ConditionParser;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +51,7 @@ public final class Skill extends ConditionParser {
     /**
      * Extract a condition from the working string.
      */
+    @Nullable
     @Override
     @SuppressWarnings("nls")
     public TalkCondition extract() {
@@ -121,7 +124,7 @@ public final class Skill extends ConditionParser {
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put("skill", Token.RESERVED_WORD);
     }
 }

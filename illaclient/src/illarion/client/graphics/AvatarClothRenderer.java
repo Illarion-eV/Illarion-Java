@@ -23,6 +23,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -39,6 +41,7 @@ final class AvatarClothRenderer {
      * character wears. Each direction has a separated order that is stored in
      * this list.
      */
+    @Nonnull
     private static final int[][] RENDER_DIR;
 
     static {
@@ -161,6 +164,7 @@ final class AvatarClothRenderer {
      * The list of clothes the avatar currently wears. This clothes are rendered
      * one by one when its requested.
      */
+    @Nonnull
     private final AvatarCloth[] currentClothes;
 
     /**
@@ -202,6 +206,7 @@ final class AvatarClothRenderer {
     /**
      * This is the lock used to ensure the proper access on the cloth objects.
      */
+    @Nonnull
     private final ReadWriteLock clothLock;
 
     /**
@@ -211,7 +216,7 @@ final class AvatarClothRenderer {
      * @param org the instance of AvatarClothRenderer that shall be copied into
      *            a new instance
      */
-    protected AvatarClothRenderer(final AvatarClothRenderer org) {
+    protected AvatarClothRenderer(@Nonnull final AvatarClothRenderer org) {
         this(org.direction, org.parentFrames);
     }
 
@@ -289,7 +294,7 @@ final class AvatarClothRenderer {
      *
      * @param light the light object that is send to all currently set clothes
      */
-    public void setLight(final Color light) {
+    public void setLight(@Nonnull final Color light) {
         currentLight = light;
         clothLock.readLock().lock();
         try {
@@ -362,7 +367,7 @@ final class AvatarClothRenderer {
     /**
      * Render all clothes in the correct order.
      */
-    protected void draw(final Graphics g) {
+    protected void draw(@Nonnull final Graphics g) {
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
@@ -379,7 +384,7 @@ final class AvatarClothRenderer {
     /**
      * Update all clothes
      */
-    protected void update(final GameContainer c, final int delta) {
+    protected void update(@Nonnull final GameContainer c, final int delta) {
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
@@ -402,7 +407,7 @@ final class AvatarClothRenderer {
      * @param item  the item that shall be shown itself or <code>null</code> to
      *              remove the item
      */
-    protected void setCloth(final int group, final AvatarCloth item) {
+    protected void setCloth(final int group, @Nullable final AvatarCloth item) {
         clothLock.writeLock().lock();
         try {
             if (currentClothes[group] != null) {

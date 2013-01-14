@@ -28,6 +28,7 @@ import illarion.common.graphics.LightTracer;
 import illarion.common.util.StoppableStorage;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -196,31 +197,37 @@ public final class World {
     /**
      * The animation manager that takes care for updating and synchronizing the animations in the game.
      */
+    @Nullable
     private AnimationManager aniManager;
 
     /**
      * The manager that takes care for the interaction between map and GUI.
      */
+    @Nullable
     private InteractionManager interactionManager;
 
     /**
      * The class that handles the chat in and output.
      */
+    @Nullable
     private ChatHandler chatHandler;
 
     /**
      * The instance of the clock used to keep track of the time in Illarion.
      */
+    @Nullable
     private Clock clock;
 
     /**
      * The instance of the light tracer of the game.
      */
+    @Nullable
     private LightTracer lights;
 
     /**
      * The instance of the map of the game.
      */
+    @Nullable
     private GameMap map;
 
     /**
@@ -231,32 +238,38 @@ public final class World {
     /**
      * The music box that takes care for playing the proper music.
      */
+    @Nullable
     private MusicBox musicBox;
 
     /**
      * The network communication interface that is used in this game session.
      */
+    @Nullable
     private NetComm net;
 
     /**
      * The instance of the people storage that is used in this session.
      */
+    @Nullable
     private People people;
 
     /**
      * The instance of the player who plays currently.
      */
+    @Nullable
     private Player player;
 
     /**
      * The weather class that is used to maintain the current weather and
      * display it.
      */
+    @Nullable
     private Weather weather;
 
     /**
      * The executor service that is used for the execution of all concurrent tasks.
      */
+    @Nullable
     private ExecutorService executorService;
 
     /**

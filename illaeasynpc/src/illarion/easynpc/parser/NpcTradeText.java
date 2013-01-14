@@ -26,6 +26,8 @@ import illarion.easynpc.parsed.ParsedTradeText;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +47,7 @@ public final class NpcTradeText implements NpcType {
             "^\\s*(tradeFinishedWithoutTradingMsg)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$");
 
     @Override
-    public boolean canParseLine(final EasyNpcScript.Line line) {
+    public boolean canParseLine(@Nonnull final EasyNpcScript.Line line) {
         return WRONG_ITEM_PATTERN.matcher(line.getLine()).matches() ||
                 NOT_ENOUGH_MONEY_PATTERN.matcher(line.getLine()).matches() ||
                 TRADE_ENDED_PATTERN.matcher(line.getLine()).matches() ||
@@ -53,7 +55,7 @@ public final class NpcTradeText implements NpcType {
     }
 
     @Override
-    public void parseLine(final EasyNpcScript.Line line, final ParsedNpc npc) {
+    public void parseLine(@Nonnull final EasyNpcScript.Line line, @Nonnull final ParsedNpc npc) {
         ParsedTradeText entry = parseHelper(NOT_ENOUGH_MONEY_PATTERN.matcher(line.getLine()),
                 ParsedTradeText.TradeTextType.NoMoney);
         if (entry == null) {
@@ -82,7 +84,8 @@ public final class NpcTradeText implements NpcType {
      * @param type    the type of the text tested
      * @return the parsed object in case the matcher matched, else {@code null}
      */
-    private static ParsedTradeText parseHelper(final Matcher matcher, final ParsedTradeText.TradeTextType type) {
+    @Nullable
+    private static ParsedTradeText parseHelper(@Nonnull final Matcher matcher, final ParsedTradeText.TradeTextType type) {
         if (matcher.find()) {
             final String germanText = matcher.group(2);
             final String englishText = matcher.group(3);
@@ -92,13 +95,14 @@ public final class NpcTradeText implements NpcType {
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put("tradeNotEnoughMoneyMsg", Token.RESERVED_WORD);
         map.put("tradeFinishedMsg", Token.RESERVED_WORD);
         map.put("tradeFinishedWithoutTradingMsg", Token.RESERVED_WORD);
         map.put("tradeWrongItemMsg", Token.RESERVED_WORD);
     }
 
+    @Nonnull
     @Override
     public DocuEntry getChild(final int index) {
         throw new IllegalArgumentException("There are no children to request.");

@@ -30,6 +30,8 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -68,8 +70,8 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
     private final VetoableTabCloseListener editorTabListener =
             new VetoableTabCloseListener() {
                 @Override
-                public void tabClosed(final JTabbedPane pane,
-                                      final Component component) {
+                public void tabClosed(@Nonnull final JTabbedPane pane,
+                                      @Nonnull final Component component) {
                     ((Editor) component).cleanup();
                     if (pane.getTabCount() == 0) {
                         addNewScript();
@@ -116,17 +118,20 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
     /**
      * The area where the error messages are displayed.
      */
+    @Nonnull
     private final ErrorPane errorArea;
 
     /**
      * The main splitted panel. In the upper part the editor is displayed, the
      * lower part shows the error list.
      */
+    @Nonnull
     private final JSplitPane mainPanel;
 
     /**
      * The Tab Pane the editors are displayed in.
      */
+    @Nonnull
     private final JTabbedPane tabbedEditorArea;
 
     /**
@@ -245,6 +250,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                 // nothing
             }
 
+            @Nonnull
             @Override
             public Object getValue(final String key) {
                 return "displayHelpWindow";
@@ -297,7 +303,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                     addNewScript().loadScript(easyScript);
                     setCurrentTabTitle(easyScript.getSourceScriptFile()
                             .getName());
-                } catch (final IOException e1) {
+                } catch (@Nonnull final IOException e1) {
                     e1.printStackTrace();
                 }
             }
@@ -315,7 +321,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      * @param message the error message that is displayed.
      */
     @SuppressWarnings("nls")
-    public static void crashEditor(final String message) {
+    public static void crashEditor(@Nullable final String message) {
         if (message != null) {
             JOptionPane.showMessageDialog(getInstance(), message,
                     Lang.getMsg(MainFrame.class, "crashEditor.Title"),
@@ -352,7 +358,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
             public void run() {
                 try {
                     SubstanceLookAndFeel.setSkin(Config.getInstance().getLookAndFeel());
-                } catch (final Exception e) {
+                } catch (@Nonnull final Exception e) {
                     SubstanceLookAndFeel.setSkin(Config.defaultLookAndFeel);
                 }
 
@@ -378,6 +384,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      *
      * @return the currently activated script editor
      */
+    @Nonnull
     public Editor getCurrentScriptEditor() {
         return getScriptEditor(tabbedEditorArea.getSelectedIndex());
     }
@@ -396,6 +403,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      *
      * @return the area the errors are displayed in
      */
+    @Nonnull
     public ErrorPane getErrorArea() {
         return errorArea;
     }
@@ -423,6 +431,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      *
      * @return the editor that was now just created
      */
+    @Nonnull
     @SuppressWarnings("nls")
     protected Editor addNewScript() {
         final Editor editor = new Editor();
@@ -520,6 +529,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      * @param index the tab index
      * @return the editor attached to this tab index
      */
+    @Nonnull
     protected Editor getScriptEditor(final int index) {
         return (Editor) tabbedEditorArea.getComponentAt(index);
     }

@@ -36,6 +36,8 @@ import illarion.client.Login;
 import illarion.client.util.Lang;
 import illarion.client.world.World;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is the screen controller that takes care of displaying the login screen.
  *
@@ -105,7 +107,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 

@@ -63,7 +63,7 @@ public final class GameMap implements LightingMap, Stoppable {
          * @return {@code true} in any case
          */
         @Override
-        public boolean execute(final MapTile tile) {
+        public boolean execute(@Nonnull final MapTile tile) {
             tile.recycle();
             return true;
         }
@@ -366,7 +366,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @return the map tile at the location or {@code null}
      */
     @Nullable
-    public MapTile getMapAt(final Location loc) {
+    public MapTile getMapAt(@Nonnull final Location loc) {
         return getMapAt(loc.getKey());
     }
 
@@ -445,7 +445,7 @@ public final class GameMap implements LightingMap, Stoppable {
         try {
             tiles.forEachEntry(new TLongObjectProcedure<MapTile>() {
                 @Override
-                public boolean execute(final long l, final MapTile mapTile) {
+                public boolean execute(final long l, @Nonnull final MapTile mapTile) {
                     final int tileLevel = mapTile.getLocation().getScZ();
                     if ((tileLevel >= lowestLevel) && (tileLevel <= highestLevel)) {
                         storage.add(mapTile);
@@ -582,7 +582,7 @@ public final class GameMap implements LightingMap, Stoppable {
      *
      * @param tile the tile to check again
      */
-    public void updateTile(final MapTile tile) {
+    public void updateTile(@Nonnull final MapTile tile) {
         if (processor != null) {
             processor.reportUnchecked(tile.getLocation().getKey());
         }
@@ -595,7 +595,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @param updateData the data of the update
      */
     @SuppressWarnings("nls")
-    public void updateTile(final TileUpdate updateData) {
+    public void updateTile(@Nonnull final TileUpdate updateData) {
         final long locKey = updateData.getLocation().getKey();
         MapTile tile = getMapAt(locKey);
 

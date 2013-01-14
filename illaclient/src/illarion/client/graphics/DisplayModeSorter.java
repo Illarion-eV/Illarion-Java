@@ -20,6 +20,7 @@ package illarion.client.graphics;
 
 import org.lwjgl.opengl.DisplayMode;
 
+import javax.annotation.Nonnull;
 import java.util.Comparator;
 
 /**
@@ -28,7 +29,7 @@ import java.util.Comparator;
 public class DisplayModeSorter implements Comparator<DisplayMode> {
 
     @Override
-    public int compare(DisplayMode a, DisplayMode b) {
+    public int compare(@Nonnull DisplayMode a, @Nonnull DisplayMode b) {
         //Width
         if (a.getWidth() != b.getWidth())
             return (a.getWidth() > b.getWidth()) ? 1 : -1;

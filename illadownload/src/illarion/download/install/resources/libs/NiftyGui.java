@@ -21,6 +21,8 @@ package illarion.download.install.resources.libs;
 import illarion.download.install.resources.Resource;
 import illarion.download.util.Lang;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -74,6 +76,7 @@ public final class NiftyGui
      *
      * @return the singleton instance
      */
+    @Nonnull
     public static Resource getInstance() {
         return INSTANCE;
     }
@@ -116,6 +119,7 @@ public final class NiftyGui
      * As this resource is not start able this function will throw a exception
      * upon a call.
      */
+    @Nonnull
     @Override
     public String getLaunchClass() {
         throw new IllegalStateException();
@@ -130,6 +134,7 @@ public final class NiftyGui
      * This resource does not require and program arguments. So this function
      * will return <code>null</code> in any case.
      */
+    @Nullable
     @Override
     public Collection<String> getProgramArgument() {
         return null;
@@ -146,7 +151,7 @@ public final class NiftyGui
             try {
                 res.add(new URL(ONLINE_PATH
                         + "nifty" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
-            } catch (final Exception e) {
+            } catch (@Nonnull final Exception e) {
                 // Catch everything and do nothing!
             }
             resources = res;
@@ -158,6 +163,7 @@ public final class NiftyGui
      * The name of the directory the downloaded files are supposed to be
      * extracted to.
      */
+    @Nonnull
     @Override
     public String getSubDirectory() {
         return LOCAL_LIB_PATH;

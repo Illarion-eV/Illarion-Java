@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.parsed.talk;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -38,6 +39,7 @@ public interface TalkCondition {
      *
      * @return the LUA module needed for this condition
      */
+    @Nullable
     String getLuaModule();
 
     /**

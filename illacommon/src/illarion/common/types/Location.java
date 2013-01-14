@@ -806,6 +806,7 @@ public class Location implements Serializable {
      *
      * @return the string of the server coordinates
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

@@ -20,6 +20,7 @@ package illarion.common.util;
 
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -58,6 +59,7 @@ public class TableLoader {
     /**
      * The tokes of the last line that was read encoded as strings.
      */
+    @Nonnull
     private final ArrayList<String> tokens;
 
     /**
@@ -73,7 +75,7 @@ public class TableLoader {
      *                 this table loader reads
      */
     @SuppressWarnings("nls")
-    public <T extends TableLoader> TableLoader(final File table, final TableLoaderSink<T> callback) {
+    public <T extends TableLoader> TableLoader(@Nonnull final File table, @Nonnull final TableLoaderSink<T> callback) {
         this(table, callback, ",");
     }
 
@@ -91,7 +93,7 @@ public class TableLoader {
      *                   seperated by this string
      */
     @SuppressWarnings("nls")
-    public <T extends TableLoader> TableLoader(final File table, final TableLoaderSink<T> callback,
+    public <T extends TableLoader> TableLoader(@Nonnull final File table, @Nonnull final TableLoaderSink<T> callback,
                                                final String tableDelim) {
         this(tableDelim);
 
@@ -104,16 +106,16 @@ public class TableLoader {
         try {
             is = new FileInputStream(table);
             loadTable(is, false, callback);
-        } catch (final FileNotFoundException e) {
+        } catch (@Nonnull final FileNotFoundException e) {
             // it's ok, just ignore it
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             LOGGER.error("Unable to read data file " + table.getPath(), e);
         } finally {
             try {
                 if (is != null) {
                     is.close();
                 }
-            } catch (final IOException e) {
+            } catch (@Nonnull final IOException e) {
                 LOGGER.error("Unable to close data file " + table.getPath(), e);
             }
         }
@@ -138,11 +140,11 @@ public class TableLoader {
      */
     @SuppressWarnings("nls")
     public <T extends TableLoader> TableLoader(final InputStream resource, final boolean ndsc,
-                                               final TableLoaderSink<T> callback, final String tableDelim) {
+                                               @Nonnull final TableLoaderSink<T> callback, final String tableDelim) {
         this(tableDelim);
         try {
             loadTable(resource, ndsc, callback);
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             LOGGER.error("Error reading the resource stream.", e);
             throw new NoResourceException("Error reading resource stream.");
         }
@@ -168,7 +170,7 @@ public class TableLoader {
      */
     @SuppressWarnings("nls")
     public <T extends TableLoader> TableLoader(final String table, final boolean ndsc,
-                                               final TableLoaderSink<T> callback, final String tableDelim) {
+                                               @Nonnull final TableLoaderSink<T> callback, final String tableDelim) {
         this(tableDelim);
 
         // read table via class loader
@@ -188,7 +190,7 @@ public class TableLoader {
             final InputStream decryptedStream =
                     new ByteArrayInputStream(dst.toByteArray());
             loadTable(decryptedStream, ndsc, callback);
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             LOGGER.error("Error reading table " + table, e);
             throw new NoResourceException("Error reading table " + table);
         }
@@ -210,7 +212,7 @@ public class TableLoader {
      *                 this table loader reads
      */
     @SuppressWarnings("nls")
-    public <T extends TableLoader> TableLoader(final String table, final TableLoaderSink<T> callback) {
+    public <T extends TableLoader> TableLoader(final String table, @Nonnull final TableLoaderSink<T> callback) {
         this(table, true, callback, ",");
     }
 
@@ -322,7 +324,7 @@ public class TableLoader {
      */
     @SuppressWarnings({"nls", "unchecked"})
     private <T extends TableLoader> void loadTable(final InputStream rsc, final boolean ndsc,
-                                                   final TableLoaderSink<T> callback) throws IOException {
+                                                   @Nonnull final TableLoaderSink<T> callback) throws IOException {
 
         final InputStreamReader inRead = new InputStreamReader(rsc);
         final BufferedReader in = new BufferedReader(inRead);
@@ -363,7 +365,7 @@ public class TableLoader {
      * @param ndsc true for ndsc tables. For ndsc tables the first two tokens
      *             are ignored
      */
-    private void parseTokens(final String line, final boolean ndsc) {
+    private void parseTokens(@Nonnull final String line, final boolean ndsc) {
         int pos = 0;
         int endPos;
         // skip table id and color

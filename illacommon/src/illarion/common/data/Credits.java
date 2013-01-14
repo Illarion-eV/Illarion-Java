@@ -18,6 +18,7 @@
  */
 package illarion.common.data;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,11 +32,13 @@ public final class Credits {
     /**
      * The list of entries that are assigned to a single person always.
      */
+    @Nonnull
     private final List<CreditsList> singlePosList;
 
     /**
      * The list of entries that are assigned to multiple persons.
      */
+    @Nonnull
     private final List<CreditsList> multiPosList;
 
     /**
@@ -183,6 +186,7 @@ public final class Credits {
      *
      * @return the single person entries
      */
+    @Nonnull
     public Iterator<CreditsList> getSingleLists() {
         return singlePosList.iterator();
     }
@@ -192,6 +196,7 @@ public final class Credits {
      *
      * @return the multi person entries
      */
+    @Nonnull
     public Iterator<CreditsList> getMultiLists() {
         return multiPosList.iterator();
     }

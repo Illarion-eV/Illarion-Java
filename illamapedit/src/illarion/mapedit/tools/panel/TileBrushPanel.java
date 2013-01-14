@@ -21,6 +21,7 @@ package illarion.mapedit.tools.panel;
 import illarion.mapedit.Lang;
 import illarion.mapedit.tools.panel.components.TileList;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 
@@ -28,6 +29,7 @@ import java.awt.*;
  * @author Tim
  */
 public class TileBrushPanel extends JPanel {
+    @Nonnull
     private final JSpinner radiusSpinner;
 
 

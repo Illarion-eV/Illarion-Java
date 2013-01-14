@@ -67,6 +67,7 @@ public final class Avatar extends AbstractEntity implements Resource {
     /**
      * The frame animation that handles the animation of this avatar.
      */
+    @Nullable
     private final transient FrameAnimation ani;
 
     /**
@@ -84,11 +85,13 @@ public final class Avatar extends AbstractEntity implements Resource {
     /**
      * The render system for the clothes of this avatar.
      */
+    @Nonnull
     private final transient AvatarClothRenderer clothRender;
 
     /**
      * The mark that is displayed in case the character is the target of a attack.
      */
+    @Nonnull
     private final AvatarMarker attackMark;
 
     /**
@@ -96,12 +99,14 @@ public final class Avatar extends AbstractEntity implements Resource {
      * set of information about the description of the characters avatar in
      * both languages and the visibility modifier information to other classes.
      */
+    @Nullable
     private final transient AvatarInfo info;
 
     /**
      * The text tag is the small text box shown above the avatar that contains
      * the name of the avatar.
      */
+    @Nonnull
     private final AvatarTextTag tag;
 
     /**
@@ -119,6 +124,7 @@ public final class Avatar extends AbstractEntity implements Resource {
     /**
      * The character that created this avatar.
      */
+    @Nullable
     private Char parentChar;
 
     public boolean isAttackMarkerVisible() {
@@ -144,6 +150,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * The target light of this avatar. In case the light is set to be animated
      * the color this avatar is rendered with will approach this target light.
      */
+    @Nullable
     private transient Color targetLight;
 
     /**
@@ -172,9 +179,9 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @param dir          the direction the avatar is looking at
      */
     @SuppressWarnings("nls")
-    public Avatar(final int avatarID, final String resName,
+    public Avatar(final int avatarID, @Nonnull final String resName,
                   final int frames, final int still, final int offX, final int offY,
-                  final int shadowOffset, final AvatarInfo avatarInfo,
+                  final int shadowOffset, @Nullable final AvatarInfo avatarInfo,
                   final boolean mirror, final Color color, final int dir) {
         super(avatarID, CHAR_PATH, resName, frames, still, offX, offY, shadowOffset, Sprite.HAlign.center,
                 Sprite.VAlign.bottom, true, mirror, color);
@@ -213,7 +220,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      *
      * @param org the avatar object that shall be copied
      */
-    private Avatar(final Avatar org) {
+    private Avatar(@Nonnull final Avatar org) {
         super(org);
         info = org.info;
         attackMark = new AvatarMarker(org.attackMark);
@@ -249,7 +256,7 @@ public final class Avatar extends AbstractEntity implements Resource {
             final Avatar avatar = CharacterFactory.getInstance().getCommand(avatarID);
             avatar.parentChar = parent;
             return avatar;
-        } catch (final IndexOutOfBoundsException ex) {
+        } catch (@Nonnull final IndexOutOfBoundsException ex) {
             // ignored
         }
         return null;
@@ -318,6 +325,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      *
      * @return the copy of the current avatar instance
      */
+    @Nonnull
     @Override
     public Avatar clone() {
         return new Avatar(this);
@@ -350,7 +358,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @param event the event that actually happened
      * @return {@code true} in case the event was handled
      */
-    private boolean processEvent(final GameContainer c, final int delta, final ClickOnMapEvent event) {
+    private boolean processEvent(final GameContainer c, final int delta, @Nonnull final ClickOnMapEvent event) {
         if (!isMouseInInteractiveOrOnTag(event)) {
             return false;
         }
@@ -368,7 +376,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @param event the mouse event
      * @return {@code true} in case the mouse is on the interactive area of the avatar or on its tag
      */
-    private boolean isMouseInInteractiveOrOnTag(final AbstractMouseLocationEvent event) {
+    private boolean isMouseInInteractiveOrOnTag(@Nonnull final AbstractMouseLocationEvent event) {
         final int mouseXonDisplay = event.getX() + Camera.getInstance().getViewportOffsetX();
         final int mouseYonDisplay = event.getY() + Camera.getInstance().getViewportOffsetY();
         if (renderName && (tag != null) && tag.getLastDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay)) {
@@ -568,7 +576,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      *
      * @param light the target light color for this avatar
      */
-    public void setLightTarget(final Color light) {
+    public void setLightTarget(@Nonnull final Color light) {
         targetLight = light;
         clothRender.setLight(light);
         attackMark.setLight(light);
@@ -580,7 +588,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      *
      * @param charName the name that is displayed above the character graphic
      */
-    public void setName(final String charName) {
+    public void setName(@Nonnull final String charName) {
         if (charName.isEmpty()) {
             tag.setCharacterName("unknown");
         } else {

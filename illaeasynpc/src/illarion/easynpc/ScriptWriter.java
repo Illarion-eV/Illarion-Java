@@ -21,6 +21,7 @@ package illarion.easynpc;
 import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -48,16 +49,19 @@ public final class ScriptWriter {
     /**
      * This writer will receive the written script.
      */
+    @Nullable
     private Writer scriptTarget;
 
     /**
      * This is the NPC that is the source for the writer. It has to deliver all data required in the scripts.
      */
+    @Nullable
     private ParsedNpc sourceNPC;
 
     /**
      * The language that is the target of the writer. Either LUA or easyNPC.
      */
+    @Nullable
     private ScriptWriter.ScriptWriterTarget targetLang;
 
     /**

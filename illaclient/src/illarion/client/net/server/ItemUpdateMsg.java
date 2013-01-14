@@ -27,6 +27,7 @@ import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +73,7 @@ public final class ItemUpdateMsg
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader)
+    public void decode(@Nonnull final NetCommReader reader)
             throws IOException {
         loc = decodeLocation(reader);
 
@@ -104,6 +105,7 @@ public final class ItemUpdateMsg
      *
      * @return the string that contains the values that were decoded for this message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

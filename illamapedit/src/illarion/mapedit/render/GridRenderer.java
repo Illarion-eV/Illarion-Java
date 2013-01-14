@@ -24,6 +24,7 @@ import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
@@ -43,7 +44,7 @@ public class GridRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(final Map map, final Rectangle viewport, final int level, final Graphics2D g) {
+    public void renderMap(@Nonnull final Map map, final Rectangle viewport, final int level, @Nonnull final Graphics2D g) {
         final int width = map.getWidth();
         final int height = map.getHeight();
         final int z = map.getZ() - level;

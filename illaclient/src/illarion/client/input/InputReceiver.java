@@ -28,6 +28,7 @@ import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.util.InputAdapter;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -169,6 +170,7 @@ public final class InputReceiver
      * This arrays stores the last received changes of the mouse buttons. This is done to avoid handling drags that
      * did not start on the map.
      */
+    @Nonnull
     private final boolean[] buttonDownReceived;
 
     /**

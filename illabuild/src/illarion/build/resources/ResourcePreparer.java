@@ -27,6 +27,7 @@ import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.ZipFileSet;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -49,11 +50,13 @@ public final class ResourcePreparer extends Task {
     /**
      * The file lists that are supposed to be included into the resource.
      */
+    @Nonnull
     private final List<FileList> filelists;
 
     /**
      * The file sets that are supposed to be included into the resource.
      */
+    @Nonnull
     private final List<AbstractFileSet> filesets;
 
     /**
@@ -115,7 +118,7 @@ public final class ResourcePreparer extends Task {
      *
      * @param set the set of zip files
      */
-    public void addZipGroupFileset(final FileSet set) {
+    public void addZipGroupFileset(@Nonnull final FileSet set) {
         final DirectoryScanner ds = set.getDirectoryScanner(getProject());
 
         final File dir = set.getDir(getProject());
@@ -146,7 +149,7 @@ public final class ResourcePreparer extends Task {
                     try {
                         processFile(new File(dir, fileName));
                         counter++;
-                    } catch (final IOException e) {
+                    } catch (@Nonnull final IOException e) {
                         LOGGER.severe("Problem with File: " + fileName);
                     }
                 }
@@ -158,12 +161,12 @@ public final class ResourcePreparer extends Task {
                     try {
                         processFile(new File(dir, fileName));
                         counter++;
-                    } catch (final IOException e) {
+                    } catch (@Nonnull final IOException e) {
                         LOGGER.severe("Problem with File: " + fileName);
                     }
                 }
             }
-        } catch (final RuntimeException e) {
+        } catch (@Nonnull final RuntimeException e) {
             e.printStackTrace();
             throw e;
         }
@@ -196,7 +199,7 @@ public final class ResourcePreparer extends Task {
      * @param file the file to process
      * @throws IOException in case anything goes wrong
      */
-    private void processFile(final File file) throws IOException {
+    private void processFile(@Nonnull final File file) throws IOException {
         if (useP200) {
             final int count = processFileP200(file, 0L);
             if (count > 1) {
@@ -214,7 +217,7 @@ public final class ResourcePreparer extends Task {
      * @param file the file to process
      * @throws IOException in case anything goes wrong
      */
-    private void processFileNormal(final File file) throws IOException {
+    private void processFileNormal(@Nonnull final File file) throws IOException {
         final File destFile = new File(targetDir, file.getName());
 
         if (file.equals(destFile)) {
@@ -267,7 +270,7 @@ public final class ResourcePreparer extends Task {
      *                 function
      * @throws IOException in case anything goes wrong
      */
-    private int processFileP200(final File file, final long lastSize)
+    private int processFileP200(@Nonnull final File file, final long lastSize)
             throws IOException {
         final File tempFile = File.createTempFile("p200temp", ".pack.tmp");
         tempFile.deleteOnExit();

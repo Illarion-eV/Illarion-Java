@@ -27,6 +27,7 @@ import illarion.common.types.Money;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -50,7 +51,7 @@ public final class LookAtDialogItemMsg extends AbstractItemLookAtMsg {
      * @throws java.io.IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader)
+    public void decode(@Nonnull final NetCommReader reader)
             throws IOException {
         dialogId = reader.readInt();
         type = reader.readUByte();
@@ -101,6 +102,7 @@ public final class LookAtDialogItemMsg extends AbstractItemLookAtMsg {
      *
      * @return the string that contains the values that were decoded for this message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

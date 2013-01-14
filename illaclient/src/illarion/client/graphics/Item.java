@@ -38,6 +38,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A item is a object that is on the game map or in the inventory or in any
@@ -65,6 +66,7 @@ public final class Item extends AbstractEntity implements Resource {
      * The frame animation object that is used in case the item contains a
      * animation that needs to be played.
      */
+    @Nullable
     private transient final FrameAnimation ani;
 
     /**
@@ -84,12 +86,14 @@ public final class Item extends AbstractEntity implements Resource {
      * The text tag is the renderable text that shows the count of the item next
      * to it.
      */
+    @Nullable
     private TextTag number;
 
     /**
      * The color that is used as base color in case paperdolling in done with
      * this item.
      */
+    @Nullable
     private Color paperdollingColor = null;
 
     /**
@@ -100,6 +104,7 @@ public final class Item extends AbstractEntity implements Resource {
     /**
      * The tile this item is located on.
      */
+    @Nullable
     private MapTile parentTile;
 
     /**
@@ -156,9 +161,9 @@ public final class Item extends AbstractEntity implements Resource {
      *                    original color
      * @param referenceID the reference ID to refer to the paperdolling graphic
      */
-    public Item(final int itemID, final String name, final int offX,
+    public Item(final int itemID, @Nonnull final String name, final int offX,
                 final int offY, final int offS, final int frames, final int speed,
-                final ItemInfo itemInfo, final Color baseColor,
+                @Nonnull final ItemInfo itemInfo, final Color baseColor,
                 final int referenceID) {
         super(itemID, ITEM_PATH, name, frames, 0, offX, offY, offS,
                 Sprite.HAlign.center, Sprite.VAlign.bottom,
@@ -206,7 +211,7 @@ public final class Item extends AbstractEntity implements Resource {
      *
      * @param org the item instance that shall be copied
      */
-    private Item(final Item org) {
+    private Item(@Nonnull final Item org) {
         super(org);
         info = org.info;
         variants = org.variants;
@@ -229,7 +234,7 @@ public final class Item extends AbstractEntity implements Resource {
      * @return the item object that shall be used, either a newly created one or
      *         a unused from the recycler
      */
-    public static Item create(final ItemId itemID, final int locColumn,
+    public static Item create(@Nonnull final ItemId itemID, final int locColumn,
                               final int locRow, final MapTile parent) {
         final Item item = ItemFactory.getInstance().getCommand(itemID.getValue());
         // Set variant and scaling, this functions check on their own if this is allowed
@@ -250,7 +255,7 @@ public final class Item extends AbstractEntity implements Resource {
      * @return the item object that shall be used, either a newly created one or
      *         a unused from the recycler
      */
-    public static Item create(final ItemId itemID, final Location loc, final MapTile parent) {
+    public static Item create(@Nonnull final ItemId itemID, @Nonnull final Location loc, final MapTile parent) {
         return create(itemID, loc.getCol(), loc.getRow(), parent);
     }
 
@@ -273,6 +278,7 @@ public final class Item extends AbstractEntity implements Resource {
      *
      * @return the newly created item instance
      */
+    @Nonnull
     @Override
     public Item clone() {
         return new Item(this);
@@ -353,6 +359,7 @@ public final class Item extends AbstractEntity implements Resource {
      *
      * @return the ID of this item
      */
+    @Nonnull
     public ItemId getItemId() {
         return new ItemId(getId());
     }
@@ -442,6 +449,7 @@ public final class Item extends AbstractEntity implements Resource {
      * @return the color that is used as base color for paperdolling or
      *         <code>null</code>
      */
+    @Nullable
     public Color getPaperdollingColor() {
         return paperdollingColor;
     }

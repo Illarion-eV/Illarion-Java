@@ -1,22 +1,24 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.crash;
+
+import javax.annotation.Nonnull;
 
 /**
  * This is the default crash handler that is called in case anything crashes
@@ -24,7 +26,7 @@ package illarion.client.crash;
  * means that its unknown what exactly crashed there is no way in restarting the
  * crashed part. So in this case the client will be shut down and a error
  * message displayed.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DefaultCrashHandler extends AbstractCrashHandler {
@@ -33,7 +35,7 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
      * of this one.
      */
     private static final DefaultCrashHandler INSTANCE =
-        new DefaultCrashHandler();
+            new DefaultCrashHandler();
 
     /**
      * The private constructor that is used to avoid the creation of any other
@@ -45,18 +47,20 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static DefaultCrashHandler getInstance() {
         return INSTANCE;
     }
 
     /**
      * Get the message that describes the problem human readable.
-     * 
+     *
      * @return the error message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     protected String getCrashMessage() {
@@ -65,7 +69,7 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
 
     /**
      * Crash the client right away, since there is no specific thing to do here.
-     * 
+     *
      * @return <code>true</code> in case a restart of the connection is needed
      */
     @Override

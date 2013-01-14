@@ -27,6 +27,8 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Color;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,11 +81,13 @@ public final class ChatHandler {
         /**
          * The regular expression used to find out the type of the text.
          */
+        @Nullable
         private final Pattern regexp;
 
         /**
          * The replacement to extract the actual text
          */
+        @Nullable
         private final String replacement;
 
         /**
@@ -95,7 +99,7 @@ public final class ChatHandler {
          * @param replace    the regular expression needed to isolate the actual
          *                   text
          */
-        private SpeechMode(final Color modeColor, final String findRegexp,
+        private SpeechMode(final Color modeColor, @Nullable final String findRegexp,
                            final String replace) {
             color = modeColor;
             if (findRegexp == null) {
@@ -123,6 +127,7 @@ public final class ChatHandler {
          * @return the pattern with the regular expression or <code>null</code>
          *         in case none applies
          */
+        @Nullable
         public Pattern getRegexp() {
             return regexp;
         }
@@ -132,6 +137,7 @@ public final class ChatHandler {
          *
          * @return the replacement
          */
+        @Nullable
         public String getReplacement() {
             return replacement;
         }
@@ -149,7 +155,7 @@ public final class ChatHandler {
      * @param text     the text that was spoken
      * @param location the location where the text was spoken
      */
-    public void handleMessage(final String text, final Location location, final SpeechMode receivedMode) {
+    public void handleMessage(@Nonnull final String text, @Nonnull final Location location, @Nonnull final SpeechMode receivedMode) {
         final Char talkingChar = World.getPeople().getCharacterAt(location);
 
         ChatHandler.SpeechMode mode = null;

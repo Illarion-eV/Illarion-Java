@@ -18,6 +18,7 @@
  */
 package illarion.common.debug;
 
+import javax.annotation.Nonnull;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -147,8 +148,9 @@ public final class ThreadDeadlockDetector {
      * @param inf the thread informations that are used as search condition
      * @return the thread matching the thread informations
      */
+    @Nonnull
     @SuppressWarnings("nls")
-    private static Thread findMatchingThread(final ThreadInfo inf) {
+    private static Thread findMatchingThread(@Nonnull final ThreadInfo inf) {
         for (final Thread thread : Thread.getAllStackTraces().keySet()) {
             if (thread.getId() == inf.getThreadId()) {
                 return thread;

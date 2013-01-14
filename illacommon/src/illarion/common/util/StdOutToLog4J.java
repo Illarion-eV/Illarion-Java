@@ -21,6 +21,7 @@ package illarion.common.util;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 
+import javax.annotation.Nonnull;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -61,7 +62,7 @@ public final class StdOutToLog4J extends PrintStream {
     }
 
     @Override
-    public void print(final String message) {
+    public void print(@Nonnull final String message) {
         logger.log(usedPriority, message.trim());
         super.print(message);
     }

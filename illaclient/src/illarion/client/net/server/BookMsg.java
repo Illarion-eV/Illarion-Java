@@ -24,6 +24,7 @@ import illarion.client.net.server.events.ShowBookEvent;
 import illarion.common.net.NetCommReader;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -39,7 +40,7 @@ public final class BookMsg extends AbstractReply {
     private int bookId;
 
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         bookId = reader.readUShort();
     }
 
@@ -49,6 +50,7 @@ public final class BookMsg extends AbstractReply {
         return true;
     }
 
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

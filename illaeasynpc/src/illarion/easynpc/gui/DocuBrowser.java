@@ -23,6 +23,8 @@ import illarion.easynpc.Lang;
 import illarion.easynpc.Parser;
 import illarion.easynpc.docu.DocuEntry;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -40,16 +42,18 @@ import java.util.Enumeration;
  */
 public final class DocuBrowser extends JDialog {
     private final class DocuTreeNode implements TreeNode {
+        @Nullable
         private final DocuTreeNode[] children;
+        @Nonnull
         private final DocuEntry nodeEntry;
         private final DocuTreeNode parentNode;
         private final String title;
 
-        public DocuTreeNode(final DocuEntry entry) {
+        public DocuTreeNode(@Nonnull final DocuEntry entry) {
             this(entry, null);
         }
 
-        public DocuTreeNode(final DocuEntry entry, final DocuTreeNode parent) {
+        public DocuTreeNode(@Nonnull final DocuEntry entry, final DocuTreeNode parent) {
             nodeEntry = entry;
             parentNode = parent;
             title = entry.getTitle();
@@ -65,6 +69,7 @@ public final class DocuBrowser extends JDialog {
             }
         }
 
+        @Nullable
         @Override
         public Enumeration<DocuTreeNode> children() {
             return new ArrayEnumeration<DocuTreeNode>(children);
@@ -82,6 +87,7 @@ public final class DocuBrowser extends JDialog {
             return true;
         }
 
+        @Nullable
         @Override
         public TreeNode getChildAt(final int childIndex) {
             if (children == null) {
@@ -140,15 +146,22 @@ public final class DocuBrowser extends JDialog {
      */
     private static final long serialVersionUID = 1L;
 
+    @Nonnull
     private final JTextArea descriptionContent;
 
+    @Nonnull
     private final JLabel descriptionTitle;
+    @Nonnull
     private final JTextArea exampleContent;
+    @Nonnull
     private final JLabel exampleTitle;
 
+    @Nonnull
     private final JTextArea syntaxContent;
+    @Nonnull
     private final JLabel syntaxTitle;
 
+    @Nonnull
     private final JLabel titleLabel;
 
     /**
@@ -165,7 +178,7 @@ public final class DocuBrowser extends JDialog {
         try {
             setIconImage(ImageIO.read(getClass().getClassLoader()
                     .getResourceAsStream("easynpc16.png")));
-        } catch (final IOException e1) {
+        } catch (@Nonnull final IOException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
@@ -188,7 +201,7 @@ public final class DocuBrowser extends JDialog {
 
         contentTree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
-            public void valueChanged(final TreeSelectionEvent e) {
+            public void valueChanged(@Nonnull final TreeSelectionEvent e) {
                 ((DocuTreeNode) e.getPath().getLastPathComponent())
                         .displayNode();
             }
@@ -301,7 +314,7 @@ public final class DocuBrowser extends JDialog {
      * @param entry the entry the details shall be displayed from
      */
     @SuppressWarnings("nls")
-    void updateDetails(final DocuEntry entry) {
+    void updateDetails(@Nullable final DocuEntry entry) {
         if (entry == null) {
             throw new IllegalArgumentException("Entry must not be NULL");
         }

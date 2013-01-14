@@ -18,6 +18,7 @@
  */
 package illarion.build.imagepacker;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +90,7 @@ final class Space implements TextureElement {
      * @param s the sprite to test
      * @return <code>true</code> in case the sprite fits into the space
      */
-    public boolean isFittingInside(final TextureElement s) {
+    public boolean isFittingInside(@Nonnull final TextureElement s) {
         return (s.getHeight() <= height) && (s.getWidth() <= width);
     }
 

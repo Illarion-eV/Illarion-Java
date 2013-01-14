@@ -29,6 +29,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class takes care for applying the weather effects to the screen.
  *
@@ -111,7 +113,7 @@ public final class WeatherRenderer {
      * @param renderImage the image that is rendered to the screen, this image remains unchanged
      * @return the new image with the post processed graphics
      */
-    public Image postProcess(final Image renderImage) throws SlickException {
+    public Image postProcess(@Nonnull final Image renderImage) throws SlickException {
         load();
 
         Image currentImage = renderImage;

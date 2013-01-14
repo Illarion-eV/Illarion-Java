@@ -21,6 +21,8 @@ package illarion.client.graphics;
 import illarion.common.util.FastMath;
 import org.newdawn.slick.Color;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is a utility class that provides a few static functions that are handy
  * when handling animations.
@@ -81,7 +83,7 @@ public final class AnimationUtility {
      * @param delta        the time since the last update
      * @return {@code true} in case the colors got changed
      */
-    public static boolean approach(final Color workingColor, final Color targetColor, final int delta) {
+    public static boolean approach(@Nonnull final Color workingColor, @Nonnull final Color targetColor, final int delta) {
         if (FastMath.equals(workingColor.r, targetColor.r, 1.f / 254.f)
                 && FastMath.equals(workingColor.g, targetColor.g, 1.f / 254.f)
                 && FastMath.equals(workingColor.b, targetColor.b, 1.f / 254.f)

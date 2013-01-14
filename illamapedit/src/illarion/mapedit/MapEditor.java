@@ -31,6 +31,7 @@ import illarion.mapedit.resource.loaders.*;
 import org.apache.log4j.*;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -69,6 +70,7 @@ public final class MapEditor {
      * The configuration of the map editor that is used to get the proper
      * locations of the maps.
      */
+    @Nonnull
     private final ConfigSystem config;
 
     /**
@@ -108,6 +110,7 @@ public final class MapEditor {
         saveConfiguration();
     }
 
+    @Nonnull
     public static String getVersion() {
         return VERSION;
     }
@@ -117,6 +120,7 @@ public final class MapEditor {
      *
      * @return the configuration of the map editor
      */
+    @Nonnull
     public static ConfigSystem getConfig() {
         if (instance == null) {
             instance = new MapEditor();

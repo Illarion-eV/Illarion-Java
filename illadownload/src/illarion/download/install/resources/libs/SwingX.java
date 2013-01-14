@@ -21,6 +21,8 @@ package illarion.download.install.resources.libs;
 import illarion.download.install.resources.Resource;
 import illarion.download.util.Lang;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -67,6 +69,7 @@ public final class SwingX
      *
      * @return the singleton instance
      */
+    @Nonnull
     public static Resource getInstance() {
         return INSTANCE;
     }
@@ -89,6 +92,7 @@ public final class SwingX
     /**
      * This resource does not depend on anything else. So this function returns <code>null</code> at all times
      */
+    @Nullable
     @Override
     public Collection<Resource> getDependencies() {
         return null;
@@ -97,6 +101,7 @@ public final class SwingX
     /**
      * As this resource is not start able this function will throw a exception upon a call.
      */
+    @Nonnull
     @Override
     public String getLaunchClass() {
         throw new IllegalStateException();
@@ -111,6 +116,7 @@ public final class SwingX
      * This resource does not require and program arguments. So this function will return <code>null</code> in any
      * case.
      */
+    @Nullable
     @Override
     public Collection<String> getProgramArgument() {
         return null;
@@ -125,7 +131,7 @@ public final class SwingX
             final Collection<URL> res = new ArrayList<URL>();
             try {
                 res.add(new URL(ONLINE_PATH + "swingx" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
-            } catch (final Exception e) {
+            } catch (@Nonnull final Exception e) {
                 // Catch everything and do nothing!
             }
             resources = res;
@@ -136,6 +142,7 @@ public final class SwingX
     /**
      * The name of the directory the downloaded files are supposed to be extracted to.
      */
+    @Nonnull
     @Override
     public String getSubDirectory() {
         return LOCAL_LIB_PATH;

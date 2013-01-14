@@ -22,6 +22,8 @@ import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.regex.Pattern;
@@ -86,6 +88,7 @@ public final class ParsedComment implements ParsedData {
      *
      * @return <code>null</code> in all cases
      */
+    @Nullable
     @Override
     public String[] getRequiredModules() {
         return null;
@@ -96,7 +99,7 @@ public final class ParsedComment implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(final Writer target,
+    public void writeEasyNpc(@Nonnull final Writer target,
                              final EasyNpcWriter.WritingStage stage) throws IOException {
         if (stage == EasyNpcWriter.WritingStage.talking) {
             final String formattedComment = replacePattern.matcher(comment).replaceAll("-- $1");

@@ -28,6 +28,8 @@ import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.util.ResourceLoader;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.EnumMap;
 import java.util.Map;
@@ -125,6 +127,7 @@ public final class FontLoader implements SlickRenderFontLoader {
          *
          * @return the name of the TTF-font file
          */
+        @Nonnull
         public String getFontTTFName() {
             return getFontName() + ".ttf";
         }
@@ -169,6 +172,7 @@ public final class FontLoader implements SlickRenderFontLoader {
      *
      * @return the instance of the singleton
      */
+    @Nonnull
     public static FontLoader getInstance() {
         return INSTANCE;
     }
@@ -176,6 +180,7 @@ public final class FontLoader implements SlickRenderFontLoader {
     /**
      * Storage of the loaded GL Fonts.
      */
+    @Nonnull
     private final Map<FontLoader.Fonts, SlickRenderFont> fonts;
 
     /**
@@ -209,7 +214,7 @@ public final class FontLoader implements SlickRenderFontLoader {
      * @return the font itself
      * @throws SlickLoadFontException in case loading the font fails
      */
-    public SlickRenderFont getFont(FontLoader.Fonts font) throws SlickLoadFontException {
+    public SlickRenderFont getFont(@Nullable FontLoader.Fonts font) throws SlickLoadFontException {
         if (font == null) {
             font = FontLoader.Fonts.text;
         }
@@ -238,10 +243,11 @@ public final class FontLoader implements SlickRenderFontLoader {
      * @param font the requested font
      * @return the loaded font
      */
+    @Nullable
     public SlickRenderFont getFontSave(final FontLoader.Fonts font) {
         try {
             return getFont(font);
-        } catch (final SlickLoadFontException e) {
+        } catch (@Nonnull final SlickLoadFontException e) {
             return null;
         }
     }
@@ -253,6 +259,7 @@ public final class FontLoader implements SlickRenderFontLoader {
      * @return the fitting enumerator entry or <code>null</code> in case no
      *         fitting entry was found
      */
+    @Nullable
     private static FontLoader.Fonts toFontEnum(final String name) {
         for (FontLoader.Fonts font : FontLoader.Fonts.values()) {
             if (font.getName().equals(name)) {
@@ -269,8 +276,9 @@ public final class FontLoader implements SlickRenderFontLoader {
      * @return the font itself
      * @throws SlickLoadFontException in case loading the font fails
      */
+    @Nonnull
     @SuppressWarnings("nls")
-    private static SlickRenderFont loadFont(final FontLoader.Fonts font)
+    private static SlickRenderFont loadFont(@Nonnull final FontLoader.Fonts font)
             throws SlickLoadFontException {
         try {
             Font javaFont =

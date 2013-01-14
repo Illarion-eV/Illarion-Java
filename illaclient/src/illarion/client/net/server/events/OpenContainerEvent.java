@@ -23,6 +23,8 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
+import javax.annotation.Nonnull;
+
 /**
  * This event is raised in case the server caused the client to open a new item container.
  *
@@ -94,6 +96,7 @@ public final class OpenContainerEvent implements ServerEvent {
     /**
      * The items that are stored in the container.
      */
+    @Nonnull
     private final TIntObjectHashMap<OpenContainerEvent.Item> itemMap;
 
     /**

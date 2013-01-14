@@ -26,6 +26,7 @@ import illarion.common.net.NetCommReader;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -57,7 +58,7 @@ public final class DialogSelectionMsg
     private SelectionItem[] items;
 
     @Override
-    public void decode(final NetCommReader reader)
+    public void decode(@Nonnull final NetCommReader reader)
             throws IOException {
         title = reader.readString();
         message = reader.readString();
@@ -78,6 +79,7 @@ public final class DialogSelectionMsg
         return true;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         final TextBuilder builder = TextBuilder.newInstance();

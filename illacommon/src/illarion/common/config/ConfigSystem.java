@@ -28,6 +28,8 @@ import javolution.xml.stream.XMLStreamException;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -69,6 +71,7 @@ public class ConfigSystem implements Config {
     /**
      * The XML binding used to save and load the xml configuration files.
      */
+    @Nonnull
     private final XMLBinding binding;
 
     /**
@@ -81,6 +84,7 @@ public class ConfigSystem implements Config {
     /**
      * The load entries of the configuration file.
      */
+    @Nonnull
     private final Map<String, Object> configEntries;
 
     /**
@@ -92,12 +96,14 @@ public class ConfigSystem implements Config {
      * In this table the listeners are stored that monitor all keys of this
      * configuration.
      */
+    @Nullable
     private FastTable<ConfigChangeListener> configListeners;
 
     /**
      * In this map the listeners that monitor a single key of the configuration
      * system.
      */
+    @Nullable
     private FastMap<String, FastTable<ConfigChangeListener>> keyConfigListeners;
 
     /**
@@ -105,6 +111,7 @@ public class ConfigSystem implements Config {
      * properly. A read write lock is used here because most of the time the
      * configuration will be accessed reading.
      */
+    @Nonnull
     private final ReadWriteLock lock;
 
     /**
@@ -154,7 +161,7 @@ public class ConfigSystem implements Config {
      *                 changes
      */
     @Override
-    public void addListener(final ConfigChangeListener listener) {
+    public void addListener(@Nonnull final ConfigChangeListener listener) {
         lock.writeLock().lock();
         try {
             if (configListeners == null) {
@@ -182,7 +189,7 @@ public class ConfigSystem implements Config {
      */
     @Override
     public void addListener(final String key,
-                            final ConfigChangeListener listener) {
+                            @Nonnull final ConfigChangeListener listener) {
         lock.writeLock().lock();
         try {
             if (keyConfigListeners == null) {
@@ -285,6 +292,7 @@ public class ConfigSystem implements Config {
      * @return the value that was read from the configuration file or
      *         <code>null</code> in case there is no value set for this key
      */
+    @Nullable
     @Override
     public File getFile(final String key) {
         final Object value = getObject(key);
@@ -381,6 +389,7 @@ public class ConfigSystem implements Config {
      * @return the value that was read from the configuration or
      *         <code>null</code> in case no value is set
      */
+    @Nullable
     public Object getObject(final String key) {
         lock.readLock().lock();
         Object value;
@@ -430,6 +439,7 @@ public class ConfigSystem implements Config {
      * @return the value that was read from the configuration file or
      *         <code>null</code> in case there is no value set for this key
      */
+    @Nullable
     @Override
     public String getString(final String key) {
         final Object value = getObject(key);
@@ -466,7 +476,7 @@ public class ConfigSystem implements Config {
      * @param listener the listener to remove
      */
     @Override
-    public void removeListener(final ConfigChangeListener listener) {
+    public void removeListener(@Nonnull final ConfigChangeListener listener) {
         lock.writeLock().lock();
         try {
             if (configListeners == null) {
@@ -496,7 +506,7 @@ public class ConfigSystem implements Config {
      */
     @Override
     public void removeListener(final String key,
-                               final ConfigChangeListener listener) {
+                               @Nonnull final ConfigChangeListener listener) {
         lock.writeLock().lock();
         try {
             if (keyConfigListeners == null) {
@@ -568,15 +578,15 @@ public class ConfigSystem implements Config {
 
             xmlWriter.write(configEntries, ROOT_NAME);
             xmlWriter.flush();
-        } catch (final XMLStreamException e) {
+        } catch (@Nonnull final XMLStreamException e) {
             LOGGER.error("Configuration not saved: config data invalid.");
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             LOGGER.error("Configuration not saved: error accessing config file.");
         } finally {
             if (xmlWriter != null) {
                 try {
                     xmlWriter.close();
-                } catch (final XMLStreamException e) {
+                } catch (@Nonnull final XMLStreamException e) {
                     LOGGER.error("Error while closing the config file writer",
                             e);
                 }
@@ -629,7 +639,7 @@ public class ConfigSystem implements Config {
      * @param value the value that is stored along with the key
      */
     @Override
-    public void set(final String key, final File value) {
+    public void set(final String key, @Nonnull final File value) {
         set(key, value.getPath());
     }
 
@@ -676,7 +686,7 @@ public class ConfigSystem implements Config {
      * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void set(final String key, final Object value) {
+    public void set(final String key, @Nonnull final Object value) {
         lock.writeLock().lock();
         try {
             if (value.equals(configEntries.get(key))) {
@@ -776,7 +786,7 @@ public class ConfigSystem implements Config {
      * @param key   the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void setDefault(final String key, final File value) {
+    public void setDefault(final String key, @Nonnull final File value) {
         if (!configEntries.containsKey(key)) {
             set(key, value);
         }
@@ -902,23 +912,23 @@ public class ConfigSystem implements Config {
             if (loadedMap instanceof FastMap) {
                 FastMap.recycle((FastMap<String, Object>) loadedMap);
             }
-        } catch (final FileNotFoundException e) {
+        } catch (@Nonnull final FileNotFoundException e) {
             LOGGER.warn("Configuration not loaded: config file disappeared.");
             return;
-        } catch (final ClassCastException e) {
+        } catch (@Nonnull final ClassCastException e) {
             LOGGER.error("Configuration not loaded: illegal config data.");
             return;
-        } catch (final XMLStreamException e) {
+        } catch (@Nonnull final XMLStreamException e) {
             LOGGER.error("Configuration not loaded: config file invalid.");
             return;
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             LOGGER.error("Configuration not loaded: error accessing the file system.");
             return;
         } finally {
             if (xmlReader != null) {
                 try {
                     xmlReader.close();
-                } catch (final XMLStreamException e) {
+                } catch (@Nonnull final XMLStreamException e) {
                     LOGGER.error("Error while closing the config file reader",
                             e);
                 }

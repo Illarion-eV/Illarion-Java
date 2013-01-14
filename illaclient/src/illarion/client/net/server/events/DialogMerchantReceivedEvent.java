@@ -20,6 +20,7 @@ package illarion.client.net.server.events;
 
 import illarion.client.world.items.MerchantItem;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -31,6 +32,7 @@ public final class DialogMerchantReceivedEvent extends AbstractDialogReceivedEve
     /**
      * The list of items sold by this NPC.
      */
+    @Nonnull
     private final MerchantItem[] items;
 
     /**
@@ -40,7 +42,7 @@ public final class DialogMerchantReceivedEvent extends AbstractDialogReceivedEve
      * @param dialogTitle the title of the dialog
      * @param tradeItems  a array of items that can be bought from the NPC
      */
-    public DialogMerchantReceivedEvent(final int dialogId, final String dialogTitle, final MerchantItem[] tradeItems) {
+    public DialogMerchantReceivedEvent(final int dialogId, final String dialogTitle, @Nonnull final MerchantItem[] tradeItems) {
         super(dialogId, dialogTitle);
         items = Arrays.copyOf(tradeItems, tradeItems.length);
     }

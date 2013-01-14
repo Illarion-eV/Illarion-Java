@@ -20,6 +20,8 @@ package illarion.client.input;
 
 import org.newdawn.slick.Input;
 
+import javax.annotation.Nonnull;
+
 /**
  * Create a mouse event that is marking the current mouse location.
  *
@@ -41,7 +43,7 @@ public final class CurrentMouseLocationEvent extends AbstractMouseLocationEvent 
      *
      * @param input the input handler supplying the data
      */
-    public CurrentMouseLocationEvent(final Input input) {
+    public CurrentMouseLocationEvent(@Nonnull final Input input) {
         super(input.getMouseX(), input.getMouseY());
     }
 }

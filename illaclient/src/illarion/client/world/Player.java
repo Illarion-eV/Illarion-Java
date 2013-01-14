@@ -353,7 +353,7 @@ public final class Player {
      * @param chara The character that is checked
      * @return the visibility of the character in percent
      */
-    public int canSee(final Char chara) {
+    public int canSee(@Nonnull final Char chara) {
         if (isPlayer(chara.getCharId())) {
             return Char.VISIBILITY_MAX;
         }
@@ -402,6 +402,7 @@ public final class Player {
      *
      * @return The current location of the character
      */
+    @Nonnull
     public Location getLocation() {
         return playerLocation;
     }
@@ -443,7 +444,7 @@ public final class Player {
      * @param limit     The maximum value for the visibility
      * @return The visibility of the target location
      */
-    private int getVisibility(final Location targetLoc, final int limit) {
+    private int getVisibility(@Nonnull final Location targetLoc, final int limit) {
         // target is at same level or above char
         final boolean visible = targetLoc.getScZ() <= character.getLocation().getScZ();
         // calculate line-of-sight
@@ -502,7 +503,7 @@ public final class Player {
      * @param tolerance an additional tolerance added to the default clipping distance
      * @return true if the position is within the clipping distance and the tolerance
      */
-    public boolean isOnScreen(final Location testLoc, final int tolerance) {
+    public boolean isOnScreen(@Nonnull final Location testLoc, final int tolerance) {
         final int width = MapDimensions.getInstance().getStripesWidth() >> 1;
         final int height = MapDimensions.getInstance().getStripesHeight() >> 1;
         final int limit = (Math.max(width, height) + tolerance) - 2;

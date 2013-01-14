@@ -22,6 +22,8 @@ import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -71,7 +73,7 @@ public final class ParsedHair implements ParsedData {
      * Add the information about the hair and the beard to the SQL query.
      */
     @Override
-    public void buildSQL(final SQLBuilder builder) {
+    public void buildSQL(@Nonnull final SQLBuilder builder) {
         switch (hairType) {
             case Beard:
                 builder.setNpcBeard(hairId);
@@ -102,6 +104,7 @@ public final class ParsedHair implements ParsedData {
     /**
      * No additional modules needed for this.
      */
+    @Nullable
     @Override
     public String[] getRequiredModules() {
         return null;
@@ -112,7 +115,7 @@ public final class ParsedHair implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(final Writer target,
+    public void writeEasyNpc(@Nonnull final Writer target,
                              final EasyNpcWriter.WritingStage stage) throws IOException {
         if (!effectsEasyNpcStage(stage)) {
             return;

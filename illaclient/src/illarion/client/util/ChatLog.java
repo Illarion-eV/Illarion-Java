@@ -28,6 +28,7 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -79,6 +80,7 @@ public final class ChatLog {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static ChatLog getInstance() {
         return INSTANCE;
     }
@@ -91,7 +93,7 @@ public final class ChatLog {
      *                     set the correct paths to the log files
      */
     @SuppressWarnings("nls")
-    public void init(final Properties loggingProps) {
+    public void init(@Nonnull final Properties loggingProps) {
         loggingProps.put("log4j.appender.ChatAppender.file", new File(World.getPlayer().getPath(),
                 "illarion.log").getAbsolutePath());
         new PropertyConfigurator().doConfigure(loggingProps,
@@ -107,14 +109,14 @@ public final class ChatLog {
     }
 
     @EventTopicSubscriber(topic = CFG_TEXTLOG)
-    public void onConfigChangedEvent(final String topic, final ConfigChangedEvent data) {
+    public void onConfigChangedEvent(@Nonnull final String topic, @Nonnull final ConfigChangedEvent data) {
         if (topic.equals(CFG_TEXTLOG)) {
             logActive = data.getConfig().getBoolean(topic);
         }
     }
 
     @EventSubscriber
-    public void onCharTalkingEvent(final CharTalkingEvent event) {
+    public void onCharTalkingEvent(@Nonnull final CharTalkingEvent event) {
         if (loggerWorking && logActive) {
             logger.info(event.getLoggedText());
         }

@@ -32,6 +32,8 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.newdawn.slick.GameContainer;
 
+import javax.annotation.Nonnull;
+
 /**
  * This handler takes action in case the user requests the application to quit. It will display a dialog and once it is
  * confirmed the application will shut down.
@@ -66,7 +68,7 @@ public final class CloseGameHandler implements ScreenController, UpdatableHandle
     private boolean dialogActive;
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, final Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
 
@@ -111,7 +113,7 @@ public final class CloseGameHandler implements ScreenController, UpdatableHandle
     }
 
     @Override
-    public void onEvent(final String topic, final ButtonClickedEvent data) {
+    public void onEvent(@Nonnull final String topic, final ButtonClickedEvent data) {
         if (topic.endsWith("#closeYesButton")) {
             IllaClient.ensureExit();
         } else {

@@ -1,30 +1,31 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.util;
 
+import javax.annotation.Nonnull;
 import java.util.Timer;
 import java.util.TimerTask;
 
 /**
  * The scheduler is a wrapper for a java.util.Timer so the whole client handles
  * just a single timer thread.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Scheduler implements Stoppable {
@@ -49,9 +50,10 @@ public final class Scheduler implements Stoppable {
     /**
      * Get the singleton instance of the scheduler class. All actions are
      * handled by this class.
-     * 
+     *
      * @return the singleton instance
      */
+    @Nonnull
     public static Scheduler getInstance() {
         return INSTANCE;
     }
@@ -68,14 +70,14 @@ public final class Scheduler implements Stoppable {
     /**
      * Add a timer task to the scheduler that repeats until the scheduler is
      * stopped.
-     * 
-     * @param task the timer task that shall be added
+     *
+     * @param task         the timer task that shall be added
      * @param initialDelay the time in milliseconds before the first start of
-     *            the task
-     * @param periodTime the time the task is run again after a run
+     *                     the task
+     * @param periodTime   the time the task is run again after a run
      */
     public void schedule(final TimerTask task, final long initialDelay,
-        final long periodTime) {
+                         final long periodTime) {
         timer.schedule(task, initialDelay, periodTime);
     }
 

@@ -35,6 +35,9 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.newdawn.slick.GameContainer;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This class is used to manage the displaying of the books.
  *
@@ -44,6 +47,7 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
 
     private boolean dirty;
     private int showPage;
+    @Nullable
     private BookLanguage showBook;
 
     private Window bookDisplay;
@@ -55,7 +59,7 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
     private Screen screen;
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -183,7 +187,7 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
     }
 
     @EventSubscriber
-    public void onBookReceivedEvent(final ShowBookEvent data) {
+    public void onBookReceivedEvent(@Nonnull final ShowBookEvent data) {
         final Book book = BookFactory.getInstance().getBook(data.getBookId());
         if (book != null) {
             showBook = book.getLocalisedBook(Lang.getInstance().getLocale());

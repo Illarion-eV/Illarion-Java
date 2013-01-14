@@ -21,6 +21,8 @@ package illarion.easynpc.data;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+
 /**
  * This enumerator contains the possible values for the language the character is speaking.
  *
@@ -59,7 +61,7 @@ public enum CharacterLanguage {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
         for (CharacterLanguage language : CharacterLanguage.values()) {
             map.put(language.name(), Token.VARIABLE);
         }

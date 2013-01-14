@@ -27,6 +27,8 @@ import illarion.mapedit.data.MapTile;
 import illarion.mapedit.resource.Overlay;
 import illarion.mapedit.resource.loaders.OverlayLoader;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to calculate the proper overlays to be placed.
  *
@@ -235,6 +237,7 @@ public final class MapTransitions {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static MapTransitions getInstance() {
         return INSTANCE;
     }
@@ -244,7 +247,7 @@ public final class MapTransitions {
      *
      * @param loc the location of the tile to check
      */
-    public void checkTile(final Map map, final Location loc/*, final GroupAction history*/) {
+    public void checkTile(@Nonnull final Map map, @Nonnull final Location loc/*, final GroupAction history*/) {
         placeTransition(map, loc/*, history*/);
     }
 
@@ -253,7 +256,7 @@ public final class MapTransitions {
      *
      * @param loc the location to check
      */
-    public void checkTileAndSurround(final Map map, final Location loc/*, final GroupAction history*/) {
+    public void checkTileAndSurround(@Nonnull final Map map, @Nonnull final Location loc/*, final GroupAction history*/) {
         checkTile(map, loc);
         final Location tempLoc = new Location();
 
@@ -288,7 +291,7 @@ public final class MapTransitions {
      *
      * @param map
      */
-    public void checkMap(final Map map) {
+    public void checkMap(@Nonnull final Map map) {
         Location loc = new Location();
         for (int x = 0; x < map.getWidth(); x++) {
             for (int y = 0; y < map.getHeight(); y++) {
@@ -431,7 +434,7 @@ public final class MapTransitions {
      *
      * @param loc the location where a transition could be placed
      */
-    private void placeTransition(final Map map, final Location loc/*, final GroupAction history*/) {
+    private void placeTransition(@Nonnull final Map map, @Nonnull final Location loc/*, final GroupAction history*/) {
         final MapTile centerTile = map.getTileAt(loc);
         if (centerTile == null) {
             return;
@@ -470,7 +473,7 @@ public final class MapTransitions {
      *
      * @param centerLoc the center location
      */
-    private void populateTiles(final Map map, final Location centerLoc) {
+    private void populateTiles(@Nonnull final Map map, @Nonnull final Location centerLoc) {
 
         final Location searchLoc = new Location();
 

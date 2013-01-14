@@ -25,6 +25,8 @@ import com.mxgraph.view.mxCellState;
 import illarion.easyquest.quest.Status;
 import illarion.easyquest.quest.Trigger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.EventObject;
@@ -36,7 +38,9 @@ import java.util.EventObject;
 public class CellEditor implements mxICellEditor {
     protected mxGraphComponent graphComponent;
 
+    @Nullable
     protected transient Object editingCell;
+    @Nullable
     protected transient EventObject triggerEvent;
 
     protected StatusDialog nodeDialog;
@@ -78,7 +82,7 @@ public class CellEditor implements mxICellEditor {
       * (non-Javadoc)
       * @see com.mxgraph.swing.view.mxICellEditor#startEditing(java.lang.Object, java.util.EventObject)
       */
-    public void startEditing(Object cell, EventObject evt) {
+    public void startEditing(@Nonnull Object cell, EventObject evt) {
         if (editingCell != null) {
             stopEditing(true);
         }
@@ -148,6 +152,7 @@ public class CellEditor implements mxICellEditor {
         }
     }
 
+    @Nonnull
     public Status getCurrentNodeValue() {
         Status result = new Status();
 
@@ -158,6 +163,7 @@ public class CellEditor implements mxICellEditor {
         return result;
     }
 
+    @Nonnull
     public Trigger getCurrentEdgeValue() {
         Trigger result = new Trigger();
 
@@ -174,13 +180,14 @@ public class CellEditor implements mxICellEditor {
       * (non-Javadoc)
       * @see com.mxgraph.swing.view.mxICellEditor#getEditingCell()
       */
+    @Nullable
     public Object getEditingCell() {
         // Countering a jgraphx bug: http://forum.jgraph.com/questions/1991/how-to-prevent-custom-cell-editor-from-hiding-edited-cells-label/2016
         return null;
         // return editingCell;
     }
 
-    private static boolean isVertex(Object cell) {
+    private static boolean isVertex(@Nullable Object cell) {
         if (cell != null && cell instanceof mxCell) {
             final mxCell c = (mxCell) cell;
             return c.isVertex();

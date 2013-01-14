@@ -18,6 +18,7 @@
  */
 package illarion.download.tasks.download;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -40,6 +41,7 @@ public final class DownloadManager {
      * The list of objects that are informed in case the state of a download
      * changed.
      */
+    @Nonnull
     private final List<DownloadCallback> callbacks;
 
     /**
@@ -148,6 +150,7 @@ public final class DownloadManager {
     /**
      * This flag is set {@code true} once a active connection is confirmed.
      */
+    @Nonnull
     private ConnectionState connected = ConnectionState.NotTested;
 
     /**
@@ -197,7 +200,7 @@ public final class DownloadManager {
         service.shutdown();
         try {
             service.awaitTermination(24, TimeUnit.DAYS);
-        } catch (final InterruptedException e) {
+        } catch (@Nonnull final InterruptedException e) {
             // nothing to do
         }
     }

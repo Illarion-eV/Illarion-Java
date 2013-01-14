@@ -20,6 +20,8 @@ package illarion.client.graphics;
 
 import javolution.text.TextBuilder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,6 +44,7 @@ public final class SpriteBuffer {
      *
      * @return the singleton instance object
      */
+    @Nonnull
     public static SpriteBuffer getInstance() {
         return INSTANCE;
     }
@@ -49,6 +52,7 @@ public final class SpriteBuffer {
     /**
      * The storage tables that store the sprites that were generated already.
      */
+    @Nullable
     private Map<String, Sprite> storage;
 
     /**
@@ -79,7 +83,7 @@ public final class SpriteBuffer {
      *
      * @param droppingSprite the sprite that shall be dropped
      */
-    public void dropSprite(final Sprite droppingSprite) {
+    public void dropSprite(@Nonnull final Sprite droppingSprite) {
         if (storage == null) {
             droppingSprite.remove();
             return;
@@ -131,9 +135,9 @@ public final class SpriteBuffer {
      * @return the sprite that was created or loaded from the cache
      */
     @SuppressWarnings("nls")
-    public Sprite getSprite(final String path, final String name,
+    public Sprite getSprite(final String path, @Nullable final String name,
                             final int frames, final int offX, final int offY,
-                            final Sprite.HAlign horz, final Sprite.VAlign vert,
+                            @Nonnull final Sprite.HAlign horz, @Nonnull final Sprite.VAlign vert,
                             final boolean smooth, final boolean mirror) {
 
         if ((frames <= 0) && (name != null)) {

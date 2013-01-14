@@ -21,6 +21,7 @@ package illarion.easynpc.data;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -40,6 +41,7 @@ public final class Items implements Comparable<Items> {
     /**
      * The list of items that were load.
      */
+    @Nonnull
     private static final Items[] itemsList;
 
     static {
@@ -48,7 +50,7 @@ public final class Items implements Comparable<Items> {
         new TableLoader("Items", new TableLoaderSink() {
             @Override
             public boolean processRecord(final int line,
-                                         final TableLoader loader) {
+                                         @Nonnull final TableLoader loader) {
                 final int itemId = loader.getInt(TB_ID);
                 itemList.add(new Items(itemId));
                 return true;
@@ -79,6 +81,7 @@ public final class Items implements Comparable<Items> {
      *
      * @return the array of references to the item objects
      */
+    @Nonnull
     public static Items[] values() {
         final Items[] tempList = new Items[itemsList.length];
         System.arraycopy(itemsList, 0, tempList, 0, itemsList.length);
@@ -105,7 +108,7 @@ public final class Items implements Comparable<Items> {
     }
 
     @Override
-    public int compareTo(final Items o) {
+    public int compareTo(@Nonnull final Items o) {
         return Integer.valueOf(itemId).compareTo(o.itemId);
     }
 }

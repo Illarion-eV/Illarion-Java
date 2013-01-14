@@ -23,6 +23,7 @@ import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.writer.LuaWriter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -81,6 +82,7 @@ public final class ConditionQueststatus implements TalkCondition {
     /**
      * Get the LUA module needed for this condition.
      */
+    @Nonnull
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
@@ -90,7 +92,7 @@ public final class ConditionQueststatus implements TalkCondition {
      * Write this quest status condition into its easyNPC state.
      */
     @Override
-    public void writeEasyNpc(final Writer target) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         target.write(String.format(EASY_CODE, Integer.toString(id), operator.getLuaComp(), value.getEasyNPC()));
     }
 
@@ -98,7 +100,7 @@ public final class ConditionQueststatus implements TalkCondition {
      * Write the LUA code needed for this quest status condition.
      */
     @Override
-    public void writeLua(final Writer target) throws IOException {
+    public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(id), operator.getLuaComp(), value.getLua()));
     }
 }

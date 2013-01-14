@@ -1,20 +1,20 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources;
 
@@ -23,12 +23,14 @@ import illarion.client.graphics.AvatarCloth;
 import illarion.client.graphics.AvatarClothManager;
 import javolution.util.FastTable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
  * This class is not real resource factory. Its a relay that forwards the cloth
  * objects to the different factories that are assigned to the avatars.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ClothFactoryRelay implements ResourceFactory<AvatarCloth> {
@@ -36,6 +38,7 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarCloth> {
      * This list stores the avatars that received clothes. This is needed to
      * trigger the cleanup properly.
      */
+    @Nullable
     private List<Avatar> usedAvatars;
 
     /**
@@ -64,10 +67,10 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarCloth> {
      * to the factory that is actually in charge of maintaining this resource.
      */
     @Override
-    public void storeResource(final AvatarCloth resource) {
+    public void storeResource(@Nonnull final AvatarCloth resource) {
         final Avatar parentAva =
-            CharacterFactory.getInstance()
-                .getPrototype(resource.getAvatarId());
+                CharacterFactory.getInstance()
+                        .getPrototype(resource.getAvatarId());
         final AvatarClothManager manager = parentAva.getClothes();
         manager.addCloth(resource.getLocationId(), resource);
 

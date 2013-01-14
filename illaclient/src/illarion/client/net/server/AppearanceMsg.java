@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Color;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -133,6 +134,7 @@ public final class AppearanceMsg extends AbstractReply {
     /**
      * The slots of the inventory that is required to display the paperdolling of this character.
      */
+    @Nonnull
     private final ItemId[] itemSlots;
 
     /**
@@ -152,7 +154,7 @@ public final class AppearanceMsg extends AbstractReply {
      *                     decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
         name = reader.readString();
 
@@ -449,6 +451,7 @@ public final class AppearanceMsg extends AbstractReply {
      * @return the string that contains the values that were decoded for this
      *         message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

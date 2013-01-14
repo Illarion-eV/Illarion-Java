@@ -1,33 +1,34 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.config.entries;
 
-import java.io.File;
-
 import illarion.common.config.Config;
+
+import javax.annotation.Nullable;
+import java.io.File;
 
 /**
  * This is a configuration entry that is used to set a directory select entry in
  * the configuration. It will display a short text field along with a button to
  * search for the directory. The default search directory will be the home
  * directory of the user.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DirectoryEntry implements ConfigEntry {
@@ -44,17 +45,18 @@ public final class DirectoryEntry implements ConfigEntry {
     /**
      * The directory that is displayed by default.
      */
+    @Nullable
     private final String dir;
 
     /**
      * Create a new configuration entry that is handled by this entry.
-     * 
-     * @param entry the configuration key that is handled by this file entry
+     *
+     * @param entry      the configuration key that is handled by this file entry
      * @param defaultDir the default directory that is opened in case no file is
-     *            selected
+     *                   selected
      */
     @SuppressWarnings("nls")
-    public DirectoryEntry(final String entry, final String defaultDir) {
+    public DirectoryEntry(final String entry, @Nullable final String defaultDir) {
         configEntry = entry;
         if (defaultDir == null) {
             dir = System.getProperty("user.home");
@@ -65,16 +67,17 @@ public final class DirectoryEntry implements ConfigEntry {
 
     /**
      * Get the directory that is displayed by default.
-     * 
+     *
      * @return the directory displayed by default
      */
+    @Nullable
     public String getDefaultDir() {
         return dir;
     }
 
     /**
      * Get the value set in the configuration for this text entry.
-     * 
+     *
      * @return the configuration stored for this text entry
      */
     public File getValue() {
@@ -83,9 +86,9 @@ public final class DirectoryEntry implements ConfigEntry {
 
     /**
      * Set the configuration handled by this configuration entry.
-     * 
+     *
      * @param config the configuration that is supposed to be handled by this
-     *            configuration entry
+     *               configuration entry
      */
     @Override
     public void setConfig(final Config config) {
@@ -94,7 +97,7 @@ public final class DirectoryEntry implements ConfigEntry {
 
     /**
      * Set the new value of the configuration entry that is controlled by this.
-     * 
+     *
      * @param newValue the new configuration value
      */
     public void setValue(final File newValue) {

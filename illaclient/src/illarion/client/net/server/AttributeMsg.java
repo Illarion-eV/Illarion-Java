@@ -26,6 +26,7 @@ import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -67,7 +68,7 @@ public final class AttributeMsg extends AbstractReply {
      *                     decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         targetCharacter = new CharacterId(reader);
         attribute = reader.readString();
         value = reader.readUShort();
@@ -95,6 +96,7 @@ public final class AttributeMsg extends AbstractReply {
      * @return the string that contains the values that were decoded for this
      *         message
      */
+    @Nonnull
     @Override
     public String toString() {
         return toString(String.format(TO_STRING_FORMAT, attribute, value, targetCharacter));

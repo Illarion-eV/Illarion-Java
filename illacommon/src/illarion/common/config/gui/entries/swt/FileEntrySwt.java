@@ -1,53 +1,47 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.config.gui.entries.swt;
-
-import java.io.File;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.config.entries.FileEntry;
 import illarion.common.util.MessageSource;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+
+import javax.annotation.Nonnull;
+import java.io.File;
 
 /**
  * This is a special implementation for the panel that is initialized with a
  * configuration entry. Its sole purpose is the use along with the configuration
  * system. In this case the panel is filled with all components needed to set a
  * file in the configuration properly.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class FileEntrySwt implements SaveableEntrySwt {
     /**
      * The listener that is added to the button. It opens the file dialog in
      * case its requested.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class ButtonListener implements Listener {
@@ -71,14 +65,14 @@ public final class FileEntrySwt implements SaveableEntrySwt {
          * instance of this class properly. It also allows the parent file entry
          * and the configuration entry to be set that are used to create this
          * handler properly.
-         * 
+         *
          * @param fileEntry the file entry that is the parent of this instance
-         * @param cfg the configuration entry that is the data source
+         * @param cfg       the configuration entry that is the data source
          * @param msgSource the message source used as source for all texts
-         *            displayed in this dialog
+         *                  displayed in this dialog
          */
         public ButtonListener(final FileEntrySwt fileEntry,
-            final FileEntry cfg, final MessageSource msgSource) {
+                              final FileEntry cfg, final MessageSource msgSource) {
             cfgEntry = cfg;
             parentEntry = fileEntry;
             messageSource = msgSource;
@@ -88,15 +82,15 @@ public final class FileEntrySwt implements SaveableEntrySwt {
         @Override
         public void handleEvent(final Event event) {
             final FileDialog fileDiag =
-                new FileDialog(parentEntry.getShell(), SWT.SAVE);
-            fileDiag.setFilterExtensions(new String[] { cfgEntry
-                .getFileEndings() });
-            fileDiag.setFilterNames(new String[] { cfgEntry.getFileDesc() });
+                    new FileDialog(parentEntry.getShell(), SWT.SAVE);
+            fileDiag.setFilterExtensions(new String[]{cfgEntry
+                    .getFileEndings()});
+            fileDiag.setFilterNames(new String[]{cfgEntry.getFileDesc()});
             fileDiag.setOverwrite(true);
             fileDiag.setFileName(cfgEntry.getValue().getName());
             fileDiag.setFilterPath(cfgEntry.getDefaultDir());
             fileDiag.setText(messageSource
-                .getMessage("illarion.common.config.gui.file.Title"));
+                    .getMessage("illarion.common.config.gui.file.Title"));
 
             final String file = fileDiag.open();
             if (file != null) {
@@ -114,43 +108,47 @@ public final class FileEntrySwt implements SaveableEntrySwt {
     /**
      * The text entry used to initialize this instance.
      */
+    @Nonnull
     private final FileEntry entry;
 
     /**
      * The area that displays the selected folder.
      */
+    @Nonnull
     private final Text input;
 
     /**
      * The panel this entry is displayed on.
      */
+    @Nonnull
     private final Composite panel;
 
     /**
      * The button that opens the search dialog.
      */
+    @Nonnull
     private final Button searchBtn;
 
     /**
      * Create a instance of this check entry and set the configuration entry
      * that is used to setup this class.
-     * 
-     * @param usedEntry the entry used to setup this class, the entry needs to
-     *            pass the check with the static method
+     *
+     * @param usedEntry    the entry used to setup this class, the entry needs to
+     *                     pass the check with the static method
      * @param parentWidget the widget this widget is added to
-     * @param msgs the message source that is used to fetch the texts displayed
-     *            in this entry
+     * @param msgs         the message source that is used to fetch the texts displayed
+     *                     in this entry
      */
     @SuppressWarnings("nls")
     public FileEntrySwt(final ConfigEntry usedEntry,
-        final Composite parentWidget, final MessageSource msgs) {
+                        final Composite parentWidget, @Nonnull final MessageSource msgs) {
         if (!isUsableEntry(usedEntry)) {
             throw new IllegalArgumentException("ConfigEntry type illegal.");
         }
 
         panel =
-            new Composite(parentWidget, SWT.NO_FOCUS | SWT.NO_BACKGROUND
-                | SWT.NO_MERGE_PAINTS | SWT.NO_RADIO_GROUP);
+                new Composite(parentWidget, SWT.NO_FOCUS | SWT.NO_BACKGROUND
+                        | SWT.NO_MERGE_PAINTS | SWT.NO_RADIO_GROUP);
         final GridLayout layout = new GridLayout(2, false);
         layout.horizontalSpacing = 0;
         layout.verticalSpacing = 0;
@@ -164,22 +162,22 @@ public final class FileEntrySwt implements SaveableEntrySwt {
         input = new Text(panel, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
         input.setText(currentValue.toString());
         input.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false,
-            1, 1));
+                1, 1));
 
         searchBtn = new Button(panel, SWT.PUSH | SWT.CENTER);
         searchBtn.setText(msgs
-            .getMessage("illarion.common.config.gui.file.Browse"));
+                .getMessage("illarion.common.config.gui.file.Browse"));
         searchBtn.addListener(SWT.Selection, new ButtonListener(this, entry,
-            msgs));
+                msgs));
         final GridData displayData =
-            new GridData(SWT.FILL, SWT.BEGINNING, false, false, 1, 1);
+                new GridData(SWT.FILL, SWT.BEGINNING, false, false, 1, 1);
         displayData.horizontalIndent = 10;
         searchBtn.setLayoutData(displayData);
     }
 
     /**
      * Test a entry if it is usable with this class or not.
-     * 
+     *
      * @param entry the entry to test
      * @return <code>true</code> in case this entry is usable with this class
      */
@@ -205,7 +203,7 @@ public final class FileEntrySwt implements SaveableEntrySwt {
 
     /**
      * Get the shell that is the parent of this entry.
-     * 
+     *
      * @return the first shell that is a parent of this entry
      */
     Shell getShell() {
@@ -214,10 +212,10 @@ public final class FileEntrySwt implements SaveableEntrySwt {
 
     /**
      * Set the value currently set in this configuration entry.
-     * 
+     *
      * @param newValue the new value that is set from now on
      */
-    void setCurrentValue(final File newValue) {
+    void setCurrentValue(@Nonnull final File newValue) {
         if (newValue.isFile()) {
             currentValue = newValue;
             input.setText(newValue.getAbsolutePath());

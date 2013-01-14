@@ -720,7 +720,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @param loc       the location of the entity on the map
      * @param typeLayer the global layer of this type of entity.
      */
-    public final void setScreenPos(final Location loc, final int typeLayer) {
+    public final void setScreenPos(@Nonnull final Location loc, final int typeLayer) {
         setScreenPos(loc.getDcX(), loc.getDcY(), loc.getDcZ(), typeLayer);
     }
 

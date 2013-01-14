@@ -25,6 +25,7 @@ import illarion.client.util.Lang;
 import illarion.common.net.NetCommReader;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -172,6 +173,7 @@ final class Receiver extends Thread implements NetCommReader {
      * @throws IOException If there are more byte read then there are written in
      *                     the buffer
      */
+    @Nonnull
     @Override
     @SuppressWarnings("nls")
     public String readString() throws IOException {
@@ -326,7 +328,7 @@ final class Receiver extends Thread implements NetCommReader {
                                 // put decoded command in input queue
                                 queue.put(rpl);
                             }
-                        } catch (final IllegalArgumentException ex) {
+                        } catch (@Nonnull final IllegalArgumentException ex) {
                             LOGGER.error("Invalid command id received "
                                     + Integer.toHexString(id));
                         }
@@ -335,14 +337,14 @@ final class Receiver extends Thread implements NetCommReader {
                         buffer.flip();
                     }
                 }
-            } catch (final IOException e) {
+            } catch (@Nonnull final IOException e) {
                 if (running) {
                     LOGGER.fatal("The connection to the server is not working anymore.", e);
                     IllaClient.fallbackToLogin(Lang.getMsg("error.receiver"));
                     running = false;
                     return;
                 }
-            } catch (final Exception e) {
+            } catch (@Nonnull final Exception e) {
                 if (running) {
                     LOGGER.fatal("General error in the receiver", e);
                     IllaClient.fallbackToLogin(Lang.getMsg("error.receiver"));
@@ -425,7 +427,7 @@ final class Receiver extends Thread implements NetCommReader {
             }
             try {
                 Thread.sleep(2);
-            } catch (final InterruptedException e) {
+            } catch (@Nonnull final InterruptedException e) {
                 LOGGER.warn("Interrupted wait time for new data");
             }
         }

@@ -29,6 +29,7 @@ import illarion.common.types.ItemId;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -65,7 +66,7 @@ public final class DialogCraftingMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader)
+    public void decode(@Nonnull final NetCommReader reader)
             throws IOException {
         title = reader.readString();
 
@@ -114,6 +115,7 @@ public final class DialogCraftingMsg extends AbstractReply {
      *
      * @return the string that contains the values that were decoded for this message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

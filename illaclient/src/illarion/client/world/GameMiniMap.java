@@ -365,7 +365,7 @@ public final class GameMiniMap {
                 final Graphics g = worldMapTexture.getGraphics();
                 g.setColor(Color.black);
                 g.fillRect(0, 0, WORLDMAP_WIDTH, WORLDMAP_HEIGHT);
-            } catch (final SlickException e) {
+            } catch (@Nonnull final SlickException e) {
                 LOGGER.error("Failed to create minimap texture.", e);
                 disableMiniMap();
                 return;
@@ -565,7 +565,7 @@ public final class GameMiniMap {
         while (loadingMap) {
             try {
                 Thread.sleep(1);
-            } catch (final InterruptedException e) {
+            } catch (@Nonnull final InterruptedException e) {
                 // nothing
             }
         }
@@ -589,15 +589,15 @@ public final class GameMiniMap {
                     toWrite -= outChannel.write(mapData);
                 }
             }
-        } catch (final FileNotFoundException e) {
+        } catch (@Nonnull final FileNotFoundException e) {
             LOGGER.error("Target file not found", e);
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             LOGGER.error("Error while writing minimap file", e);
         } finally {
             if (outChannel != null) {
                 try {
                     outChannel.close();
-                } catch (final IOException e) {
+                } catch (@Nonnull final IOException e) {
                     LOGGER.error("Failed closing the file stream.");
                 }
             }
@@ -653,14 +653,14 @@ public final class GameMiniMap {
             }
 
             performFullUpdate();
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             LOGGER.error("Failed loading the map data from its file.", e);
             loadEmptyMap();
         } finally {
             if (inStream != null) {
                 try {
                     inStream.close();
-                } catch (final IOException e) {
+                } catch (@Nonnull final IOException e) {
                     LOGGER.error("Failed closing the file stream.");
                 }
             }

@@ -21,6 +21,9 @@ package illarion.client.graphics;
 import illarion.client.resources.ClothFactory;
 import illarion.client.resources.ItemFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * The Cloth manager stores all known clothes and their locations for each known
  * avatar. And allows accessing the cloth definitions.
@@ -102,6 +105,7 @@ public final class AvatarClothManager {
     /**
      * The storage for the known clothes of each group.
      */
+    @Nonnull
     private final ClothFactory[] existingClothes;
 
     /**
@@ -182,6 +186,7 @@ public final class AvatarClothManager {
      *         <code>null</code> in case the requested item was not defined in
      *         this storage
      */
+    @Nullable
     @SuppressWarnings("nls")
     public AvatarCloth getCloth(final int group, final int itemID) {
         if ((group < 0) || (group >= GROUP_COUNT)) {

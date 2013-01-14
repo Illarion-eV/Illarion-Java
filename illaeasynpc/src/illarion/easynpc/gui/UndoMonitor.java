@@ -23,6 +23,8 @@ import org.bushe.swing.event.EventBusAction;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -44,11 +46,13 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
     /**
      * The button used for the redo operation.
      */
+    @Nonnull
     private final JCommandButton redoButton;
 
     /**
      * The button used for the undo operation.
      */
+    @Nonnull
     private final JCommandButton undoButton;
 
     /**
@@ -79,6 +83,7 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static UndoMonitor getInstance() {
         return INSTANCE;
     }
@@ -88,6 +93,7 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      *
      * @return The redo button
      */
+    @Nonnull
     public JCommandButton getRedoButton() {
         return redoButton;
     }
@@ -97,6 +103,7 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      *
      * @return The undo button
      */
+    @Nonnull
     public JCommandButton getUndoButton() {
         return undoButton;
     }
@@ -106,7 +113,7 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      * case its needed to update the state to the new undo manager.
      */
     @Override
-    public void stateChanged(final ChangeEvent e) {
+    public void stateChanged(@Nonnull final ChangeEvent e) {
         final JTabbedPane pane = (JTabbedPane) e.getSource();
         final Editor editor = (Editor) pane.getSelectedComponent();
         if (editor != null) {
@@ -136,7 +143,7 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      *                undo and the redo button, in case the manager is
      *                <code>null</code> the buttons are disabled
      */
-    public void updateUndoRedo(final Editor manager) {
+    public void updateUndoRedo(@Nullable final Editor manager) {
         if (manager == null) {
             redoButton.setEnabled(false);
             undoButton.setEnabled(false);

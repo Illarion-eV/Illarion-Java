@@ -120,7 +120,7 @@ public final class Money implements Comparable<Money> {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nonnull final Object o) {
         return super.equals(o) || ((o instanceof Money) && (copperCoins == ((Money) o).copperCoins));
 
     }
@@ -131,7 +131,7 @@ public final class Money implements Comparable<Money> {
     }
 
     @Override
-    public int compareTo(final Money o) {
+    public int compareTo(@Nonnull final Money o) {
         if (copperCoins == o.copperCoins) {
             return (copperCoins < o.copperCoins) ? -1 : 0;
         }

@@ -21,6 +21,7 @@ package illarion.easynpc.parsed.talk.conditions;
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.writer.LuaWriter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -66,6 +67,7 @@ public final class ConditionChance implements TalkCondition {
     /**
      * Get the LUA module needed for this condition.
      */
+    @Nonnull
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
@@ -75,7 +77,7 @@ public final class ConditionChance implements TalkCondition {
      * Write this chance condition into its easyNPC version.
      */
     @Override
-    public void writeEasyNpc(final Writer target) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         target.write(String.format(EASY_CODE, Double.toString(value)));
     }
 
@@ -83,7 +85,7 @@ public final class ConditionChance implements TalkCondition {
      * Write the LUA code needed for this chance condition.
      */
     @Override
-    public void writeLua(final Writer target) throws IOException {
+    public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Double.toString(value)));
     }
 }

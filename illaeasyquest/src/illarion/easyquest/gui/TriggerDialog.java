@@ -23,6 +23,8 @@ import illarion.easyquest.quest.Condition;
 import illarion.easyquest.quest.TriggerTemplate;
 import illarion.easyquest.quest.TriggerTemplates;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -35,11 +37,16 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class TriggerDialog extends JDialog {
 
+    @Nonnull
     private final JTextField name;
+    @Nonnull
     private final JComboBox trigger;
     private final Box conditionPanels;
+    @Nonnull
     private final JButton okay;
+    @Nonnull
     private final JButton cancel;
+    @Nonnull
     private final JPanel main;
 
     public TriggerDialog(Frame owner) {
@@ -65,7 +72,7 @@ public class TriggerDialog extends JDialog {
         }
 
         trigger.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
+            public void itemStateChanged(@Nonnull ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     main.removeAll();
                     TriggerTemplate template = (TriggerTemplate) e.getItem();
@@ -138,6 +145,7 @@ public class TriggerDialog extends JDialog {
         trigger.setSelectedItem(TriggerTemplates.getInstance().getTemplate(type));
     }
 
+    @Nonnull
     public Object[] getParameters() {
         int count = main.getComponentCount() - 1;
         Object[] parameters = new Object[count];
@@ -148,7 +156,7 @@ public class TriggerDialog extends JDialog {
         return parameters;
     }
 
-    public void setParameters(Object[] parameters) {
+    public void setParameters(@Nullable Object[] parameters) {
         int count = main.getComponentCount() - 1;
 
         if (parameters != null) {
@@ -164,6 +172,7 @@ public class TriggerDialog extends JDialog {
         }
     }
 
+    @Nonnull
     public Condition[] getConditions() {
         int count = (conditionPanels.getComponentCount() + 1) / 2;
         List<Condition> conditions = new ArrayList<Condition>();
@@ -177,7 +186,7 @@ public class TriggerDialog extends JDialog {
         return conditions.toArray(new Condition[conditions.size()]);
     }
 
-    public void setConditions(Condition[] conditions) {
+    public void setConditions(@Nullable Condition[] conditions) {
         conditionPanels.removeAll();
 
         if (conditions != null && conditions.length > 0) {

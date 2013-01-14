@@ -21,6 +21,9 @@ package illarion.common.data;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This class represents the title page of a book.
  *
@@ -30,11 +33,13 @@ public final class BookTitlePage {
     /**
      * The title that is displayed on this title page.
      */
+    @Nullable
     private final String title;
 
     /**
      * The author of the book displayed on this page.
      */
+    @Nullable
     private final String author;
 
     /**
@@ -53,7 +58,7 @@ public final class BookTitlePage {
      *
      * @param source the node that supplies the data
      */
-    public BookTitlePage(final Node source) {
+    public BookTitlePage(@Nonnull final Node source) {
         String title = null;
         String author = null;
 
@@ -77,7 +82,7 @@ public final class BookTitlePage {
      * @param node the node
      * @return the value of the node or a empty string
      */
-    private static String getNodeValue(final Node node) {
+    private static String getNodeValue(@Nullable final Node node) {
         if (node == null) {
             return "";
         }
@@ -93,6 +98,7 @@ public final class BookTitlePage {
      *
      * @return the book title
      */
+    @Nullable
     public String getTitle() {
         return title;
     }
@@ -102,6 +108,7 @@ public final class BookTitlePage {
      *
      * @return the author
      */
+    @Nullable
     public String getAuthor() {
         return author;
     }

@@ -21,6 +21,8 @@ package illarion.easynpc.gui;
 import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
@@ -91,6 +93,7 @@ final class ErrorPane extends JPanel {
         /**
          * Get the name of the columns.
          */
+        @Nullable
         @Override
         public String getColumnName(final int column) {
             switch (column) {
@@ -121,6 +124,7 @@ final class ErrorPane extends JPanel {
             return errorCount;
         }
 
+        @Nullable
         @Override
         public Object getValueAt(final int rowIndex, final int columnIndex) {
             int editorCount = errorEditors.size();
@@ -170,10 +174,13 @@ final class ErrorPane extends JPanel {
      */
     private static final long serialVersionUID = 1L;
 
+    @Nonnull
     private final JTable errorList;
     private final String errorMessage = Lang.getMsg(ErrorPane.class, "errors");
+    @Nonnull
     private final JLabel summery;
 
+    @Nonnull
     private final ErrorPaneTableModel tableModel;
 
     public ErrorPane() {

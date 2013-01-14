@@ -20,6 +20,8 @@ package illarion.mapedit.tools.panel.cellrenderer;
 
 import illarion.mapedit.resource.TileImg;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
@@ -28,7 +30,9 @@ public class TileImgCellRenderer extends JPanel implements ListCellRenderer {
     private static final Color COLOR_UNSELECTED = new Color(-1246977);
 
 
+    @Nonnull
     private final JLabel img;
+    @Nonnull
     private final JLabel name;
 
 
@@ -42,6 +46,7 @@ public class TileImgCellRenderer extends JPanel implements ListCellRenderer {
         add(name);
     }
 
+    @Nonnull
     @Override
     public Component getListCellRendererComponent(final JList jList, final Object val, final int index,
                                                   final boolean isSelected, final boolean cellHasFocus) {
@@ -63,7 +68,7 @@ public class TileImgCellRenderer extends JPanel implements ListCellRenderer {
     }
 
 
-    private static void adjustColors(final Color bg, final Component... components) {
+    private static void adjustColors(@Nullable final Color bg, @Nonnull final Component... components) {
         for (final Component c : components) {
             if (bg != null) {
                 c.setBackground(bg);

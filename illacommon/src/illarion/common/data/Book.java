@@ -22,6 +22,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -33,11 +34,13 @@ public final class Book {
     /**
      * The german version of this book.
      */
+    @Nonnull
     private final BookLanguage germanBook;
 
     /**
      * The english version of this book.
      */
+    @Nonnull
     private final BookLanguage englishBook;
 
     /**
@@ -53,7 +56,7 @@ public final class Book {
      *
      * @param source the XML node that is the source of the book data
      */
-    public Book(final Node source) {
+    public Book(@Nonnull final Node source) {
         this();
         loadData(source);
     }
@@ -63,7 +66,7 @@ public final class Book {
      *
      * @param source the source node
      */
-    public void loadData(final Node source) {
+    public void loadData(@Nonnull final Node source) {
         if (!"book".equals(source.getNodeName())) {
             if (source.hasChildNodes()) {
                 final NodeList children = source.getChildNodes();
@@ -92,6 +95,7 @@ public final class Book {
      *
      * @return the german version of the book
      */
+    @Nonnull
     public BookLanguage getGermanBook() {
         return germanBook;
     }
@@ -101,6 +105,7 @@ public final class Book {
      *
      * @return the english version of the book
      */
+    @Nonnull
     public BookLanguage getEnglishBook() {
         return englishBook;
     }
@@ -111,6 +116,7 @@ public final class Book {
      * @param locale the locale that is requested
      * @return the localised version of the book
      */
+    @Nonnull
     public BookLanguage getLocalisedBook(final Locale locale) {
         if (Locale.GERMAN.equals(locale)) {
             return getGermanBook();

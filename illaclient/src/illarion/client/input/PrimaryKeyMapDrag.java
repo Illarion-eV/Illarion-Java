@@ -21,6 +21,8 @@ package illarion.client.input;
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import illarion.client.world.MapTile;
 
+import javax.annotation.Nonnull;
+
 /**
  * This even is send to the map display to handle dragging event on items. It uses callback functions to inform the
  * GUI on what is happening.
@@ -54,7 +56,7 @@ public final class PrimaryKeyMapDrag extends DragOnMapEvent {
         this.callback = callback;
     }
 
-    public PrimaryKeyMapDrag(final DragOnMapEvent org,
+    public PrimaryKeyMapDrag(@Nonnull final DragOnMapEvent org,
                              final PrimaryKeyMapDragCallback callback) {
         super(org);
         this.callback = callback;

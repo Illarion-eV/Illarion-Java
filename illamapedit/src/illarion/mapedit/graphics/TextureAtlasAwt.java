@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import javax.annotation.Nonnull;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ public final class TextureAtlasAwt implements TextureAtlas<BufferedImage> {
     /**
      * The map to assign the texture names with the images of this atlas.
      */
+    @Nonnull
     private final Map<String, BufferedImage> textures;
 
     /**
@@ -45,7 +47,7 @@ public final class TextureAtlasAwt implements TextureAtlas<BufferedImage> {
      * @param image      the buffered image that contains the entire texture
      * @param textureDef the XML document that contains the locations of the sub-images on the large image
      */
-    public TextureAtlasAwt(final BufferedImage image, final Document textureDef) {
+    public TextureAtlasAwt(@Nonnull final BufferedImage image, @Nonnull final Document textureDef) {
         final FastMap<String, BufferedImage> textureMap = new FastMap<String, BufferedImage>();
         textureMap.setKeyComparator(FastComparator.STRING);
         textureMap.setValueComparator(FastComparator.DEFAULT);

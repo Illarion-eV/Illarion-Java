@@ -26,6 +26,7 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
+import javax.annotation.Nonnull;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -35,7 +36,7 @@ import java.util.List;
  */
 public class ViewBand extends JRibbonBand {
 
-    public ViewBand(final RendererManager manager) {
+    public ViewBand(@Nonnull final RendererManager manager) {
         super(Lang.getMsg("gui.viewband.Name"), null);
 
         final List<AbstractMapRenderer> r = new FastList<AbstractMapRenderer>();

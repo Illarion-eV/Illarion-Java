@@ -22,6 +22,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.util.IdWrapper;
 import org.newdawn.slick.Sound;
 
+import javax.annotation.Nonnull;
 import java.util.logging.Logger;
 
 /**
@@ -51,6 +52,7 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<Sound>> {
      *
      * @return the singleton instance of the sound factory
      */
+    @Nonnull
     public static SoundFactory getInstance() {
         return INSTANCE;
     }
@@ -106,7 +108,7 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<Sound>> {
      * factory.
      */
     @Override
-    public void storeResource(final IdWrapper<Sound> resource) {
+    public void storeResource(@Nonnull final IdWrapper<Sound> resource) {
         final Sound sound = resource.getObject();
         sounds.put(resource.getId(), sound);
     }

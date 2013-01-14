@@ -25,6 +25,7 @@ import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 import javolution.util.FastList;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -45,11 +46,13 @@ public final class ParsedTalk implements ParsedData {
     /**
      * The list of conditions that are used in this line.
      */
+    @Nonnull
     private final List<TalkCondition> conditions;
 
     /**
      * The list of consequences that are used in this line.
      */
+    @Nonnull
     private final List<TalkConsequence> consequences;
 
     /**
@@ -106,6 +109,7 @@ public final class ParsedTalk implements ParsedData {
     /**
      * Get the list of modules this text line requires.
      */
+    @Nonnull
     @Override
     public String[] getRequiredModules() {
         final FastList<String> moduleList = FastList.newInstance();
@@ -140,7 +144,7 @@ public final class ParsedTalk implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(final Writer target,
+    public void writeEasyNpc(@Nonnull final Writer target,
                              final EasyNpcWriter.WritingStage stage) throws IOException {
 
         if (stage == EasyNpcWriter.WritingStage.talking) {
@@ -170,7 +174,7 @@ public final class ParsedTalk implements ParsedData {
      * Write the LUA code needed for this talking line.
      */
     @Override
-    public void writeLua(final Writer target,
+    public void writeLua(@Nonnull final Writer target,
                          final LuaWriter.WritingStage stage) throws IOException {
 
         if (stage == LuaWriter.WritingStage.Talking) {

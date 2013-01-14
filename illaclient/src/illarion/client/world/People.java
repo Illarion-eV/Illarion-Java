@@ -61,17 +61,20 @@ public final class People {
     /**
      * The list of visible characters.
      */
+    @Nonnull
     @GuardedBy("charsLock")
     private final Map<CharacterId, Char> chars;
 
     /**
      * The lock that is used to secure the chars table properly.
      */
+    @Nonnull
     private final ReentrantReadWriteLock charsLock;
 
     /**
      * A list of characters that are going to be removed.
      */
+    @Nonnull
     private final List<Char> removalList;
 
     /**

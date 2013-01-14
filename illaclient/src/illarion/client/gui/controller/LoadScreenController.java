@@ -26,6 +26,8 @@ import org.illarion.nifty.controls.Progress;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
+import javax.annotation.Nonnull;
+
 public final class LoadScreenController
         implements ScreenController {
 
@@ -38,7 +40,7 @@ public final class LoadScreenController
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         progress = screen.findNiftyControl("loading", Progress.class);
     }
 

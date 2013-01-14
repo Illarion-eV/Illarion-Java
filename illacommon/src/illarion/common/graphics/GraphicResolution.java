@@ -18,6 +18,7 @@
  */
 package illarion.common.graphics;
 
+import javax.annotation.Nonnull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +36,7 @@ public final class GraphicResolution {
     /**
      * The string builder used to construct the strings used to make the resolution human readable.
      */
+    @Nonnull
     private final StringBuilder builder;
 
     /**
@@ -127,7 +129,7 @@ public final class GraphicResolution {
      * @param compRes the object this one is compared to
      * @return <code>true</code> in case all values of the resolutions are equal
      */
-    public boolean equals(final GraphicResolution compRes) {
+    public boolean equals(@Nonnull final GraphicResolution compRes) {
         return ((height == compRes.height) && (width == compRes.width)
                 && (bpp == compRes.bpp) && (refreshRate == compRes.refreshRate));
     }
@@ -230,6 +232,7 @@ public final class GraphicResolution {
      *
      * @return human readable string to describe that resolution
      */
+    @Nonnull
     @Override
     public String toString() {
         builder.setLength(0);

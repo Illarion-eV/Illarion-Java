@@ -25,6 +25,7 @@ import illarion.common.net.NetCommReader;
 import illarion.common.types.Money;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -50,7 +51,7 @@ public final class LookAtInvMsg extends AbstractItemLookAtMsg {
      *                     decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         slot = reader.readUByte();
         decodeLookAt(reader);
     }
@@ -74,6 +75,7 @@ public final class LookAtInvMsg extends AbstractItemLookAtMsg {
      *
      * @return the string that contains the values that were decoded for this  message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

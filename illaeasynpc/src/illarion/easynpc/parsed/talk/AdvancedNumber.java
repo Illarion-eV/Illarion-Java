@@ -18,6 +18,8 @@
  */
 package illarion.easynpc.parsed.talk;
 
+import javax.annotation.Nullable;
+
 /**
  * This class is used to store a advanced number value that is possibly used by
  * the easyNPC language. Such a number can contain a normal number, a reference
@@ -95,6 +97,7 @@ public final class AdvancedNumber {
      *
      * @return the easyNPC representation of the advanced number
      */
+    @Nullable
     @SuppressWarnings("nls")
     public String getEasyNPC() {
         switch (type) {
@@ -113,6 +116,7 @@ public final class AdvancedNumber {
      *
      * @return the LUA representation of the advanced number
      */
+    @Nullable
     @SuppressWarnings("nls")
     public String getLua() {
         switch (type) {

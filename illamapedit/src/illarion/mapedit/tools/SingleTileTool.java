@@ -28,6 +28,8 @@ import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.tools.panel.SingleTilePanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
@@ -35,6 +37,7 @@ import javax.swing.*;
  */
 public class SingleTileTool extends AbstractTool {
 
+    @Nonnull
     private final SingleTilePanel panel;
 
     public SingleTileTool() {
@@ -42,7 +45,7 @@ public class SingleTileTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, final Map map) {
+    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
         if (!map.contains(x, y)) {
             return;
         }
@@ -64,11 +67,13 @@ public class SingleTileTool extends AbstractTool {
         return Lang.getMsg("tools.SingleTileTool");
     }
 
+    @Nullable
     @Override
     public ResizableIcon getToolIcon() {
         return null;
     }
 
+    @Nonnull
     @Override
     public JPanel getSettingsPanel() {
         return panel;

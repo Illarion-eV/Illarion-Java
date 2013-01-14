@@ -21,6 +21,7 @@ package illarion.client.resources.loaders;
 import illarion.client.resources.Resource;
 import illarion.client.resources.ResourceFactory;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.Callable;
 
 /**
@@ -57,6 +58,7 @@ public abstract class AbstractResourceLoader<T extends Resource> implements Call
      *
      * @param factory the factory that will take the data
      */
+    @Nonnull
     public final AbstractResourceLoader<T> setTarget(final ResourceFactory<T> factory) {
         if (hasTargetFactory()) {
             throw new IllegalStateException("Changing the target factory once set is not allowed");

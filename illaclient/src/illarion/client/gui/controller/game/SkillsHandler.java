@@ -46,6 +46,7 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.newdawn.slick.GameContainer;
 
+import javax.annotation.Nonnull;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -73,6 +74,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
     /**
      * The Queue of updates that need to be executed for the GUI..
      */
+    @Nonnull
     private final Queue<Runnable> updateQueue;
 
     /**
@@ -88,7 +90,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -213,7 +215,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
      *
      * @param updateData the information needed to perform the update
      */
-    private void updateSkill(final SkillReceivedEvent updateData) {
+    private void updateSkill(@Nonnull final SkillReceivedEvent updateData) {
         final Element skillPanel = skillWindow.getElement().findElementByName("#skill" +
                 Integer.toString(updateData.getSkill().getId()));
 
@@ -252,7 +254,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
         updateVisibilityOfElement(content);
     }
 
-    private static void updateVisibilityOfElement(final Element target) {
+    private static void updateVisibilityOfElement(@Nonnull final Element target) {
         if ("0px".equals(target.getConstraintHeight().toString())) {
             target.setVisible(false);
         } else {
@@ -287,7 +289,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
      * @param data the skill data
      */
     @EventSubscriber
-    public void onSkillUpdateReceived(final SkillReceivedEvent data) {
+    public void onSkillUpdateReceived(@Nonnull final SkillReceivedEvent data) {
         updateQueue.add(new Runnable() {
             @Override
             public void run() {

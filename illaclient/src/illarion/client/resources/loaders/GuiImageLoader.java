@@ -26,6 +26,8 @@ import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to load the GUI image definitions from the resource table
  * that was created using the configuration tool. The class will create the
@@ -91,7 +93,7 @@ public final class GuiImageLoader extends AbstractResourceLoader<GuiImage> imple
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, final TableLoader loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
         final String name = loader.getString(TB_NAME);
 
         try {
@@ -100,7 +102,7 @@ public final class GuiImageLoader extends AbstractResourceLoader<GuiImage> imple
                             name, loader.getInt(TB_FRAME), loader.getInt(TB_OFFX),
                             loader.getInt(TB_OFFY), Sprite.HAlign.left,
                             Sprite.VAlign.top, true, false)));
-        } catch (final IllegalStateException ex) {
+        } catch (@Nonnull final IllegalStateException ex) {
             logger.error("Failed adding GUI image to internal factory. Filename: " + name);
         }
 

@@ -26,6 +26,7 @@ import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -57,7 +58,7 @@ public final class TurnCharMsg extends AbstractReply {
      *                     decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         dir = reader.readUByte();
         charId = new CharacterId(reader);
     }
@@ -105,6 +106,7 @@ public final class TurnCharMsg extends AbstractReply {
      * @return the string that contains the values that were decoded for this
      *         message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

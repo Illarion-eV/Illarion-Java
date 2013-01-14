@@ -50,7 +50,7 @@ public final class DragInvInvCmd extends AbstractDragCommand {
      * @param destination the inventory position where the drag ends
      * @param count       the amount of items to drag
      */
-    public DragInvInvCmd(final int source, final int destination, final ItemCount count) {
+    public DragInvInvCmd(final int source, final int destination, @Nonnull final ItemCount count) {
         super(CommandList.CMD_DRAG_INV_INV, count);
 
         srcPos = (short) source;

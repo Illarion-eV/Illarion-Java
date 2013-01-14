@@ -21,6 +21,7 @@ package illarion.common.util;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 
+import javax.annotation.Nonnull;
 import java.text.MessageFormat;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -35,7 +36,7 @@ public class JavaLogToLog4J extends Handler {
         applyLoggingHandlers(java.util.logging.Logger.getLogger(JavaLogToLog4J.class.getName()));
     }
 
-    private static void applyLoggingHandlers(final java.util.logging.Logger logger) {
+    private static void applyLoggingHandlers(@Nonnull final java.util.logging.Logger logger) {
         final Handler[] handlers = logger.getHandlers();
         if (handlers.length > 0) {
             final Handler handler = handlers[0];
@@ -59,7 +60,7 @@ public class JavaLogToLog4J extends Handler {
     }
 
     @Override
-    public void publish(final LogRecord record) {
+    public void publish(@Nonnull final LogRecord record) {
         final Logger log4j = getLogger(record.getLoggerName());
         final Priority priority = toLog4j(record.getLevel());
         log4j.log(priority, toLog4jMessage(record), record.getThrown());
@@ -69,7 +70,7 @@ public class JavaLogToLog4J extends Handler {
         return Logger.getLogger(loggerName);
     }
 
-    private static String toLog4jMessage(final LogRecord record) {
+    private static String toLog4jMessage(@Nonnull final LogRecord record) {
         String message = record.getMessage();
         try {
             final Object[] parameters = record.getParameters();

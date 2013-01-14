@@ -21,6 +21,7 @@ package illarion.easynpc.parsed.talk.consequences;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaWriter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -46,6 +47,7 @@ public final class ConsequenceGemcraft implements TalkConsequence {
     /**
      * Get the module that is needed for this consequence to work.
      */
+    @Nonnull
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
@@ -55,7 +57,7 @@ public final class ConsequenceGemcraft implements TalkConsequence {
      * Write this change basic NPC state condition into its easyNPC shape.
      */
     @Override
-    public void writeEasyNpc(final Writer target) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         target.write("gemcraft"); //$NON-NLS-1$
     }
 
@@ -63,7 +65,7 @@ public final class ConsequenceGemcraft implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(final Writer target) throws IOException {
+    public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE));
     }
 }

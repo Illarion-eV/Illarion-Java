@@ -18,6 +18,7 @@
  */
 package illarion.download.install.resources.db;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public final class ResourceDatabase implements Externalizable {
     /**
      * The map of resources stored in this database.
      */
+    @Nonnull
     private final Map<String, DBResource> resources;
 
     /**
@@ -55,7 +57,7 @@ public final class ResourceDatabase implements Externalizable {
      * @param resourceURL the URL of the resource
      * @param file        the file to add to this resource
      */
-    public void addFile(final URL resourceURL, final File file) {
+    public void addFile(@Nonnull final URL resourceURL, @Nonnull final File file) {
         final String stringURL = resourceURL.toString();
         if (resources.containsKey(stringURL)) {
             resources.get(stringURL).addFile(file);
@@ -69,7 +71,7 @@ public final class ResourceDatabase implements Externalizable {
      * @param url        the URL of the resource
      * @param lastChange the timestamp when this resource was last changed
      */
-    public void addResource(final URL url, final long lastChange) {
+    public void addResource(@Nonnull final URL url, final long lastChange) {
         final String stringURL = url.toString();
         if (resources.containsKey(stringURL)) {
             resources.remove(stringURL);
@@ -83,7 +85,7 @@ public final class ResourceDatabase implements Externalizable {
      * @param url the URL to check
      * @return <code>true</code> in case the URL is assigned to a resource in this database
      */
-    public boolean containsResource(final URL url) {
+    public boolean containsResource(@Nonnull final URL url) {
         return resources.containsKey(url.toString());
     }
 
@@ -93,7 +95,7 @@ public final class ResourceDatabase implements Externalizable {
      * @param url the URL
      * @return the resource connected to the URL or {@code null} in case the resource is not set
      */
-    public DBResource getResource(final URL url) {
+    public DBResource getResource(@Nonnull final URL url) {
         return resources.get(url.toString());
     }
 
@@ -105,7 +107,7 @@ public final class ResourceDatabase implements Externalizable {
     }
 
     @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
+    public void writeExternal(@Nonnull final ObjectOutput out) throws IOException {
         out.writeLong(serialVersionUID);
         out.writeInt(resources.size());
         for (final Map.Entry<String, DBResource> entry : resources.entrySet()) {
@@ -115,7 +117,7 @@ public final class ResourceDatabase implements Externalizable {
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(@Nonnull final ObjectInput in) throws IOException, ClassNotFoundException {
         final long version = in.readLong();
         if (version == 2L) {
             final int count = in.readInt();

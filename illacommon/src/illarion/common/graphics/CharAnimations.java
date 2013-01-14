@@ -18,6 +18,8 @@
  */
 package illarion.common.graphics;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class contains the constants for all character animations that are
  * defined. Also it builds the texts for the configuration tool to refer to the
@@ -30,6 +32,7 @@ public final class CharAnimations {
     /**
      * The array of the names of the animations.
      */
+    @Nonnull
     public static final String[] ANIMATION_NAMES;
 
     /**

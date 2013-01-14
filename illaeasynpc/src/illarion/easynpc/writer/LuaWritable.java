@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.writer;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -50,6 +51,7 @@ public interface LuaWritable {
      *
      * @return the list of required LUA modules
      */
+    @Nullable
     String[] getRequiredModules();
 
     /**

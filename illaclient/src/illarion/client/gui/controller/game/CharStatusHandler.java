@@ -29,6 +29,8 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.nifty.controls.Progress;
 import org.newdawn.slick.GameContainer;
 
+import javax.annotation.Nonnull;
+
 /**
  * This handler takes care for showing the hit points, mana points and food points of the character on the screen.
  *
@@ -81,7 +83,7 @@ public final class CharStatusHandler implements ScreenController, UpdatableHandl
     private int currentManaPoints;
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         hitPointBar = screen.findNiftyControl("healthBar", Progress.class);
         manaPointBar = screen.findNiftyControl("manaBar", Progress.class);
         foodPointBar = screen.findNiftyControl("foodBar", Progress.class);
@@ -93,7 +95,7 @@ public final class CharStatusHandler implements ScreenController, UpdatableHandl
      * @param event the received event
      */
     @EventSubscriber
-    public void onAttributeMessageReceived(final AttributeUpdateReceivedEvent event) {
+    public void onAttributeMessageReceived(@Nonnull final AttributeUpdateReceivedEvent event) {
         if (event.getTargetCharId().equals(World.getPlayer().getPlayerId())) {
             switch (event.getAttribute()) {
                 case HitPoints:

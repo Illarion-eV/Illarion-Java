@@ -40,6 +40,7 @@ public class NiftyCraftingCategory implements CraftingCategoryEntry {
     /**
      * The items inside this category.
      */
+    @Nonnull
     private final List<CraftingItemEntry> children;
 
     /**

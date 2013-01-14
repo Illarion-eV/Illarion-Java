@@ -25,6 +25,7 @@ import illarion.download.install.resources.dev.EasyQuestEditor;
 import illarion.download.install.resources.dev.Mapeditor;
 import illarion.download.util.Lang;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -93,7 +94,7 @@ public final class AppSelectionSWING
      * Create the buttons on the root pane of the application.
      */
     @Override
-    public void fillButtons(final BaseSWING base, final JPanel buttonPanel) {
+    public void fillButtons(@Nonnull final BaseSWING base, @Nonnull final JPanel buttonPanel) {
         buttonPanel.add(base.getExitButton());
     }
 
@@ -102,7 +103,7 @@ public final class AppSelectionSWING
      */
     @SuppressWarnings("nls")
     @Override
-    public void fillContent(final BaseSWING base, final JPanel contentPanel) {
+    public void fillContent(@Nonnull final BaseSWING base, @Nonnull final JPanel contentPanel) {
         final int clientIconID = base.trackImage("client.png");
         final int mapeditIconID = base.trackImage("mapedit.png");
         final int easynpcIconID = base.trackImage("easynpc.png");
@@ -179,6 +180,7 @@ public final class AppSelectionSWING
         }
     }
 
+    @Nonnull
     private static JButton createLaunchButton() {
         final Dimension launchButtonDim = new Dimension(120, 58);
         final JButton button = new JButton();
@@ -202,7 +204,7 @@ public final class AppSelectionSWING
     }
 
     @Override
-    public void prepareDisplay(final BaseSWING base) {
+    public void prepareDisplay(@Nonnull final BaseSWING base) {
         base.setVisible(true);
     }
 

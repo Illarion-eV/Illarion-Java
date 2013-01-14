@@ -22,12 +22,15 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Input;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to generate events based on keys that got pressed.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class KeyMapper {
+    @Nonnull
     private final TIntObjectHashMap<String> inputMap;
 
     public KeyMapper() {

@@ -35,6 +35,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.Display;
 import org.newdawn.slick.GameContainer;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +57,7 @@ public final class OptionScreenController implements ScreenController {
     private Slider musicVolume;
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -124,6 +125,7 @@ public final class OptionScreenController implements ScreenController {
     public void onEndScreen() {
     }
 
+    @Nonnull
     public static List<String> getResolutionList() {
         final GameContainer container = IllaClient.getInstance().getContainer();
 

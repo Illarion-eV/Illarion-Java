@@ -22,6 +22,7 @@ import illarion.client.gui.events.TooltipsRemovedEvent;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 
+import javax.annotation.Nullable;
 import java.lang.ref.SoftReference;
 
 /**
@@ -39,6 +40,7 @@ public final class LookAtTracker implements EventSubscriber<TooltipsRemovedEvent
     /**
      * The reference to the object last looked at.
      */
+    @Nullable
     private SoftReference<Object> lookAtObject;
 
     /**

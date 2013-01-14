@@ -23,6 +23,7 @@ import javolution.util.FastComparator;
 import javolution.util.FastMap;
 import javolution.util.FastTable;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,10 +33,12 @@ import java.util.Map;
 
 public class TriggerTemplates {
     private TriggerTemplate[] templates;
+    @Nonnull
     private final Map<String, TriggerTemplate> typeMap;
 
     private static final TriggerTemplates instance = new TriggerTemplates();
 
+    @Nonnull
     public static TriggerTemplates getInstance() {
         return instance;
     }
@@ -54,6 +57,7 @@ public class TriggerTemplates {
         return loader.getResourceAsStream(name);
     }
 
+    @Nonnull
     private static List<String> loadFileList() {
         List<String> result = new FastTable<String>();
         BufferedReader bRead = null;
@@ -180,7 +184,7 @@ public class TriggerTemplates {
                         System.out.println("Syntax error in template "
                                 + fileName);
                     }
-                } catch (final Exception e1) {
+                } catch (@Nonnull final Exception e1) {
                     System.out.println("Error loading template " + fileName);
                 }
             }

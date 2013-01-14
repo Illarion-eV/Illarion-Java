@@ -18,6 +18,7 @@
  */
 package illarion.download.tasks.unpack;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,7 @@ public final class FailMonitor implements UnpackCallback {
     /**
      * This list contains the failed tasks.
      */
+    @Nonnull
     private final List<UnpackResult> failedList;
 
     /**
@@ -54,6 +56,7 @@ public final class FailMonitor implements UnpackCallback {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static FailMonitor getInstance() {
         return INSTANCE;
     }
@@ -94,7 +97,7 @@ public final class FailMonitor implements UnpackCallback {
      */
     @Override
     public void reportUnpackFinished(final Unpack unpack,
-                                     final UnpackResult result) {
+                                     @Nonnull final UnpackResult result) {
         if ((result.getResult() == UnpackResult.Results.canceled)
                 || (result.getResult() == UnpackResult.Results.corrupted)) {
             synchronized (failedList) {

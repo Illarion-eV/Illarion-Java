@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 
@@ -42,7 +43,7 @@ public class ToolSettingsPanel extends JPanel {
 
     @SuppressWarnings("unused")
     @EventSubscriber(eventClass = ToolSelectedEvent.class)
-    public void onToolSelected(final ToolSelectedEvent e) {
+    public void onToolSelected(@Nonnull final ToolSelectedEvent e) {
         LOGGER.debug("Tool Selected " + e.getTool());
         removeAll();
         lastChild = e.getTool().getSettingsPanel();

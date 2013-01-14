@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -55,6 +56,7 @@ public final class TextureLoaderAwt extends AbstractTextureLoader<TextureAtlasAw
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static TextureLoaderAwt getInstance() {
         return INSTANCE;
     }
@@ -66,6 +68,7 @@ public final class TextureLoaderAwt extends AbstractTextureLoader<TextureAtlasAw
         super(GUI_DIR, ITEMS_DIR, TILES_DIR);
     }
 
+    @Nonnull
     @Override
     protected TextureAtlasAwt createTextureAtlas(final String image, final String xmlDefinition) {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -82,9 +85,9 @@ public final class TextureLoaderAwt extends AbstractTextureLoader<TextureAtlasAw
             in = xmlURL.openStream();
             final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
             return new TextureAtlasAwt(bufferedImage, doc);
-        } catch (final SAXException e) {
+        } catch (@Nonnull final SAXException e) {
             LOGGER.error("Failed to parse texture atlas XML file.", e);
-        } catch (final ParserConfigurationException e) {
+        } catch (@Nonnull final ParserConfigurationException e) {
             LOGGER.error("Parser for texture atlas XML file has a invalid configuration.", e);
         } catch (IOException e) {
             LOGGER.error("Failed to read texture atlas data.", e);
@@ -92,7 +95,7 @@ public final class TextureLoaderAwt extends AbstractTextureLoader<TextureAtlasAw
             if (in != null) {
                 try {
                     in.close();
-                } catch (final IOException ignored) {
+                } catch (@Nonnull final IOException ignored) {
                     // ignore
                 }
             }
@@ -144,6 +147,7 @@ public final class TextureLoaderAwt extends AbstractTextureLoader<TextureAtlasAw
         }
     }
 
+    @Nonnull
     @Override
     public String getDescription() {
         return "Textures";

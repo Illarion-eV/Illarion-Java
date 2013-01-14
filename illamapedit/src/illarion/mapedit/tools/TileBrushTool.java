@@ -29,6 +29,8 @@ import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.tools.panel.TileBrushPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
@@ -36,6 +38,7 @@ import javax.swing.*;
  */
 public class TileBrushTool extends AbstractTool {
 
+    @Nonnull
     private final TileBrushPanel panel;
 
 
@@ -44,7 +47,7 @@ public class TileBrushTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, final Map map) {
+    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
         final TileImg tile = getManager().getSelectedTile();
         if (tile == null) {
             return;
@@ -74,11 +77,13 @@ public class TileBrushTool extends AbstractTool {
         return Lang.getMsg("tools.TileBrushTool");
     }
 
+    @Nullable
     @Override
     public ResizableIcon getToolIcon() {
         return null;
     }
 
+    @Nonnull
     @Override
     public JPanel getSettingsPanel() {
         return panel;

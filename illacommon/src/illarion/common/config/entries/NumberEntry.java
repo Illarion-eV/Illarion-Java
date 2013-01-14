@@ -22,6 +22,8 @@ import illarion.common.config.Config;
 import illarion.common.types.Range;
 import illarion.common.util.FastMath;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is a configuration entry that is used to display a number range entry in
  * the configuration dialog. So a simple yes/no option.
@@ -42,6 +44,7 @@ public final class NumberEntry implements ConfigEntry {
     /**
      * The range the value is allowed to work in.
      */
+    @Nonnull
     private final Range range;
 
     /**
@@ -71,6 +74,7 @@ public final class NumberEntry implements ConfigEntry {
      *
      * @return the range of this number entry
      */
+    @Nonnull
     public Range getRange() {
         return range;
     }

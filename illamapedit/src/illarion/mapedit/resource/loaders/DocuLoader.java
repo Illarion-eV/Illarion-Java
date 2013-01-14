@@ -23,6 +23,7 @@ import illarion.mapedit.resource.Resource;
 import javolution.util.FastList;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
@@ -38,6 +39,7 @@ import java.util.List;
 public class DocuLoader implements Resource, TreeModel {
 
 
+    @Nonnull
     public static DocuLoader getInstance() {
         return INSTANCE;
     }
@@ -59,6 +61,7 @@ public class DocuLoader implements Resource, TreeModel {
             return false;
         }
 
+        @Nonnull
         public List<File> getFiles() {
             return files;
         }
@@ -105,6 +108,7 @@ public class DocuLoader implements Resource, TreeModel {
         loadFolder(root);
     }
 
+    @Nonnull
     @Override
     public Object getRoot() {
         return root;
@@ -153,7 +157,7 @@ public class DocuLoader implements Resource, TreeModel {
     }
 
 
-    private static void loadFolder(final Folder parent) throws IOException {
+    private static void loadFolder(@Nonnull final Folder parent) throws IOException {
         final String[] files = loadList(parent);
         for (final String file : files) {
             if (!isFile(file)) {
@@ -167,12 +171,13 @@ public class DocuLoader implements Resource, TreeModel {
         }
     }
 
-    private static String getFileName(final String file) {
+    private static String getFileName(@Nonnull final String file) {
         final int i = file.lastIndexOf('/') + 1;
         return file.substring(i, file.lastIndexOf(".html"));
     }
 
-    private static String[] loadList(final Folder parent) throws IOException {
+    @Nonnull
+    private static String[] loadList(@Nonnull final Folder parent) throws IOException {
         final String path = parent.getPath() + "/list.txt";
         final InputStream is = DocuLoader.class.getResourceAsStream(path);
         if (is == null) {
@@ -188,7 +193,7 @@ public class DocuLoader implements Resource, TreeModel {
         return stringList.toArray(new String[stringList.size()]);
     }
 
-    public static String getFolderName(final String f) {
+    public static String getFolderName(@Nonnull final String f) {
         final String folder;
 
         if (f.endsWith("/")) {
@@ -201,10 +206,11 @@ public class DocuLoader implements Resource, TreeModel {
         return folder.substring(i + 1);
     }
 
-    private static boolean isFile(final String s) {
+    private static boolean isFile(@Nonnull final String s) {
         return s.endsWith(".html");
     }
 
+    @Nonnull
     @Override
     public String getDescription() {
         return "Documentation";

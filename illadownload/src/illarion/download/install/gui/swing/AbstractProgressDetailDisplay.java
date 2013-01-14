@@ -18,6 +18,7 @@
  */
 package illarion.download.install.gui.swing;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
@@ -44,6 +45,7 @@ abstract class AbstractProgressDetailDisplay extends JPanel {
     /**
      * The progress bar that displays the progress.
      */
+    @Nonnull
     private final JProgressBar progress;
 
     /**

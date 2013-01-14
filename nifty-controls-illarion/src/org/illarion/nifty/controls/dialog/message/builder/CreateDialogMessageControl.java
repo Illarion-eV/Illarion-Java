@@ -27,6 +27,8 @@ import de.lessvoid.nifty.loaderv2.types.ElementType;
 import de.lessvoid.nifty.screen.Screen;
 import org.illarion.nifty.controls.DialogMessage;
 
+import javax.annotation.Nonnull;
+
 /**
  * The control creator for the message dialog.
  *
@@ -65,7 +67,7 @@ public class CreateDialogMessageControl
      * @param parent the parent element of this dialog
      * @return the newly created message dialog
      */
-    public DialogMessage create(final Nifty nifty, final Screen screen, final Element parent) {
+    public DialogMessage create(@Nonnull final Nifty nifty, final Screen screen, @Nonnull final Element parent) {
         nifty.addControl(screen, parent, getStandardControl());
         nifty.addControlsWithoutStartScreen();
         return parent.findNiftyControl(attributes.get("id"), DialogMessage.class);
@@ -76,6 +78,7 @@ public class CreateDialogMessageControl
      *
      * @return the element type of the dialog
      */
+    @Nonnull
     @Override
     public ElementType createType() {
         return new ControlType(attributes);

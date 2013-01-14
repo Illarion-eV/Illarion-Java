@@ -25,6 +25,7 @@ import illarion.common.util.Stoppable;
 import javolution.util.FastList;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -43,6 +44,7 @@ final class MessageExecutor
     /**
      * This queue contains all tasks that were executed already once and need to be executed a second time.
      */
+    @Nonnull
     private final FastList<AbstractReply> delayedQueue;
 
     /**
@@ -108,7 +110,7 @@ final class MessageExecutor
             if (repeatReply == null) {
                 try {
                     rpl = input.take();
-                } catch (final InterruptedException e) {
+                } catch (@Nonnull final InterruptedException e) {
                     // Got and interrupt, quit the thread right now.
                     LOGGER.warn("MessageExecutor got interrupted and will exit now!");
                     return;

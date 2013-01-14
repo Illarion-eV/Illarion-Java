@@ -65,6 +65,7 @@
     <orderEntry type="library" name="JOrbis" level="project" />
     <orderEntry type="library" name="vorbisspi" level="project" />
     <orderEntry type="library" name="tritonus" level="project" />
+    <orderEntry type="library" name="JSR" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

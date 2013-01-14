@@ -26,6 +26,8 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
+import javax.annotation.Nonnull;
+
 /**
  * The HistoryManager class stores the chain of all history entries that are connected
  * to this history and allows undoing and redoing this actions.
@@ -39,11 +41,13 @@ public class HistoryManager {
     /**
      * The list of history entries that can be done again.
      */
+    @Nonnull
     private final FastList<HistoryAction> redoList;
 
     /**
      * The list of history entries that can be undone.
      */
+    @Nonnull
     private final FastList<HistoryAction> undoList;
 
     public HistoryManager() {
@@ -109,7 +113,7 @@ public class HistoryManager {
     }
 
     @EventSubscriber
-    public void onHistoryEvent(final HistoryEvent e) {
+    public void onHistoryEvent(@Nonnull final HistoryEvent e) {
         if (e.isUndo()) {
             undo();
         } else {

@@ -98,7 +98,7 @@ public final class InteractionManager {
         try {
             final InteractiveContainerSlot targetSlot = itemContainer.getSlot(slot).getInteractive();
             draggedObject.dragTo(targetSlot, count);
-        } catch (final IndexOutOfBoundsException ex) {
+        } catch (@Nonnull final IndexOutOfBoundsException ex) {
             LOGGER.error("Tried to drop a item at a container slot that does not exist.", ex);
         } finally {
             cancelDragging();
@@ -111,7 +111,7 @@ public final class InteractionManager {
      * @param slot  the inventory slot
      * @param count the amount of items to be dropped in the inventory
      */
-    public void dropAtInventory(final int slot, final ItemCount count) {
+    public void dropAtInventory(final int slot, @Nonnull final ItemCount count) {
         if (draggedObject == null) {
             LOGGER.warn("Dropping to inventory called without a active dragging operation.");
             cancelDragging();
@@ -123,7 +123,7 @@ public final class InteractionManager {
                 return;
             }
             draggedObject.dragTo(targetSlot, count);
-        } catch (final IndexOutOfBoundsException ex) {
+        } catch (@Nonnull final IndexOutOfBoundsException ex) {
             LOGGER.error("Tried to drop a item at a inventory slot that does not exist.", ex);
         } finally {
             cancelDragging();
@@ -199,7 +199,7 @@ public final class InteractionManager {
                 endOfDragAction = endOfDragOp;
                 amount = conSlot.getCount();
                 return;
-            } catch (final IndexOutOfBoundsException ex) {
+            } catch (@Nonnull final IndexOutOfBoundsException ex) {
                 LOGGER.error("Tried to start dragging from a container slot that does not exist?!", ex);
             }
         }
@@ -236,7 +236,7 @@ public final class InteractionManager {
                     amount = invSlot.getCount();
                     return;
                 }
-            } catch (final IndexOutOfBoundsException ex) {
+            } catch (@Nonnull final IndexOutOfBoundsException ex) {
                 LOGGER.error("Tried to start dragging from a inventory slot that does not exist?!", ex);
             }
         }

@@ -33,6 +33,7 @@ import org.illarion.nifty.controls.ItemContainerCloseEvent;
 import org.illarion.nifty.controls.inventoryslot.builder.InventorySlotBuilder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Properties;
 
 /**
@@ -70,7 +71,7 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter, final Attributes controlDefinitionAttributes) {
+    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter, @Nonnull final Attributes controlDefinitionAttributes) {
         super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
 
         niftyInstance = nifty;
@@ -137,8 +138,9 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
      * @param slotBackground the background image of the slot
      * @return the builder of the inventory slot
      */
+    @Nonnull
     private static ControlBuilder buildSlot(final String prefix, final int index, final int height, final int width,
-                                            final String slotBackground) {
+                                            @Nullable final String slotBackground) {
         final InventorySlotBuilder builder = new InventorySlotBuilder(prefix + "#slot" + index);
         builder.height(builder.pixels(height));
         builder.width(builder.pixels(width));

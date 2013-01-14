@@ -119,7 +119,7 @@ public class MerchantItem {
      *
      * @param org the original item to be copied
      */
-    public MerchantItem(final MerchantItem org) {
+    public MerchantItem(@Nonnull final MerchantItem org) {
         index = org.index;
         type = org.type;
         itemId = org.itemId;

@@ -20,6 +20,8 @@ package illarion.client.input;
 
 import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 
+import javax.annotation.Nonnull;
+
 /**
  * This event is published in case a dragging operation on the map was noted.
  *
@@ -53,7 +55,7 @@ public class DragOnMapEvent extends AbstractMouseOnMapEvent {
         oldY = startY;
     }
 
-    public DragOnMapEvent(final DragOnMapEvent org) {
+    public DragOnMapEvent(@Nonnull final DragOnMapEvent org) {
         super(org);
         oldX = org.oldX;
         oldY = org.oldY;

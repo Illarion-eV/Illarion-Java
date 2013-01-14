@@ -21,6 +21,7 @@ package illarion.client.net.server;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -44,7 +45,8 @@ public abstract class AbstractReply {
      * @throws IOException in case there are not enough bytes in the buffer to decode a location, this exception is
      *                     thrown
      */
-    protected static Location decodeLocation(final NetCommReader reader)
+    @Nonnull
+    protected static Location decodeLocation(@Nonnull final NetCommReader reader)
             throws IOException {
         final Location loc = new Location();
         loc.setSC(reader.readShort(), reader.readShort(), reader.readShort());
@@ -91,6 +93,7 @@ public abstract class AbstractReply {
      * @param param the parameters that shall be added to the simple class name that is returned
      * @return the simple class name of this reply class instance along with the content of parameters
      */
+    @Nonnull
     protected final String toString(final CharSequence param) {
         final StringBuilder builder = new StringBuilder();
         builder.append(getClass().getSimpleName());

@@ -20,10 +20,13 @@ package illarion.mapedit.history;
 
 import javolution.util.FastList;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Tim
  */
 public class GroupAction extends HistoryAction {
+    @Nonnull
     private final FastList<HistoryAction> actions;
 
     public GroupAction() {

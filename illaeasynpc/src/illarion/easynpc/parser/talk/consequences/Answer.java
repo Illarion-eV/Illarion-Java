@@ -24,6 +24,7 @@ import illarion.easynpc.parsed.talk.consequences.ConsequenceAnswer;
 import illarion.easynpc.parser.talk.ConsequenceParser;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +43,7 @@ public final class Answer extends ConsequenceParser {
     /**
      * Extract a condition from the working string.
      */
+    @Nullable
     @Override
     @SuppressWarnings("nls")
     public TalkConsequence extract() {

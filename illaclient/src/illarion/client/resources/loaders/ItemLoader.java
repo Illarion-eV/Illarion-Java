@@ -26,6 +26,8 @@ import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to load the item definitions from the resource table that
  * was created using the configuration tool. The class will create the required
@@ -57,7 +59,7 @@ public final class ItemLoader extends AbstractResourceLoader<Item> implements Ta
     }
 
     @Override
-    public boolean processRecord(final int line, final TableLoaderItems loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoaderItems loader) {
         final String name = loader.getResourceName();
 
         final int colorRed = loader.getColorModRed();
@@ -113,7 +115,7 @@ public final class ItemLoader extends AbstractResourceLoader<Item> implements Ta
         // register item with factory
         try {
             getTargetFactory().storeResource(item);
-        } catch (final IllegalStateException e) {
+        } catch (@Nonnull final IllegalStateException e) {
             logger.error("Failed to register item " + name + "in factory due"
                     + " a dublicated ID: " + Integer.toString(itemID));
         }

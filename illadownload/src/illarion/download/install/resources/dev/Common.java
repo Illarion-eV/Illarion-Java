@@ -22,6 +22,8 @@ import illarion.download.install.resources.Resource;
 import illarion.download.install.resources.libs.*;
 import illarion.download.util.Lang;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -68,6 +70,7 @@ public final class Common implements DevelopmentResource {
      *
      * @return the singleton instance
      */
+    @Nonnull
     public static Resource getInstance() {
         return INSTANCE;
     }
@@ -110,6 +113,7 @@ public final class Common implements DevelopmentResource {
      * As this resource is not start able this function will throw a exception
      * upon a call.
      */
+    @Nonnull
     @Override
     public String getLaunchClass() {
         throw new IllegalStateException();
@@ -124,6 +128,7 @@ public final class Common implements DevelopmentResource {
      * This resource does not require and program arguments. So this function
      * will return <code>null</code> in any case.
      */
+    @Nullable
     @Override
     public Collection<String> getProgramArgument() {
         return null;
@@ -140,7 +145,7 @@ public final class Common implements DevelopmentResource {
             try {
                 res.add(new URL(ONLINE_PATH
                         + "illarion_common" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
-            } catch (final Exception e) {
+            } catch (@Nonnull final Exception e) {
                 // Catch everything and do nothing!
             }
             resources = res;
@@ -161,6 +166,7 @@ public final class Common implements DevelopmentResource {
      * Generate and return the list of virtual machine arguments that are passed
      * to java when the function is called.
      */
+    @Nullable
     @Override
     public Collection<String> getVMArguments() {
         return null;

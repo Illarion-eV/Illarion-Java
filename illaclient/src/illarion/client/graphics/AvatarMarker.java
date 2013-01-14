@@ -20,23 +20,26 @@ package illarion.client.graphics;
 
 import org.newdawn.slick.Color;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to store the markers that are displayed below a avatar.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class AvatarMarker extends AbstractEntity {
-    public AvatarMarker(final AvatarMarker org) {
+    public AvatarMarker(@Nonnull final AvatarMarker org) {
         super(org);
     }
 
-    public AvatarMarker(final int entityId, final Sprite displayedSprite, final int still, final Color baseCol) {
+    public AvatarMarker(final int entityId, @Nonnull final Sprite displayedSprite, final int still, final Color baseCol) {
         super(entityId, displayedSprite, still, 0, baseCol);
     }
 
     /**
      * The clone operation creates a copy of the entity in case it is needed.
      */
+    @Nonnull
     @Override
     public AbstractEntity clone() {
         return new AvatarMarker(this);

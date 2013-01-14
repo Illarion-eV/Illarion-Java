@@ -1,25 +1,27 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
 import illarion.common.graphics.CharAnimations;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +29,7 @@ import java.util.Map;
  * Additional Info for an avatar. Every avatar for every avatar gets only one
  * Avatar info object and has to report all animations known for this character
  * to the object.
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -39,8 +41,9 @@ public final class AvatarInfo {
      * each avatar appearance. This object is deleted after the characters are
      * loaded completely.
      */
+    @Nullable
     private static Map<Integer, AvatarInfo> buffer =
-        new HashMap<Integer, AvatarInfo>();
+            new HashMap<Integer, AvatarInfo>();
 
     /**
      * The setup flag. While this flag is set to true, its possible to change
@@ -52,6 +55,7 @@ public final class AvatarInfo {
      * The list of animations known to this avatar. All animation index values
      * marked with true need to be playable.
      */
+    @Nonnull
     private final boolean[] animations;
 
     /**
@@ -73,18 +77,18 @@ public final class AvatarInfo {
 
     /**
      * Default constructor of the avatar informations.
-     * 
+     *
      * @param visibilityMod the visibility modificator for the avatar in
-     *            percent. Values above 100 increase the default visibility.
-     * @param germanDesc the German description of the avatar. This is shown in
-     *            the name tag of the avatar in case the name of the character
-     *            is unknown
-     * @param englishDesc the English description of the avatar. This is shown
-     *            in the name tag of the avatar in case the name of the
-     *            character is unknown
+     *                      percent. Values above 100 increase the default visibility.
+     * @param germanDesc    the German description of the avatar. This is shown in
+     *                      the name tag of the avatar in case the name of the character
+     *                      is unknown
+     * @param englishDesc   the English description of the avatar. This is shown
+     *                      in the name tag of the avatar in case the name of the
+     *                      character is unknown
      */
     private AvatarInfo(final int visibilityMod, final String germanDesc,
-        final String englishDesc) {
+                       final String englishDesc) {
         english = englishDesc;
         german = germanDesc;
         visibility = visibilityMod;
@@ -107,22 +111,22 @@ public final class AvatarInfo {
      * informations about the avatar. This function creates a new instance of
      * the AvatarInfo class with the parameters, or returns a already created
      * one for this appearance.
-     * 
-     * @param appearance the appearance this avatar informations are related to
+     *
+     * @param appearance    the appearance this avatar informations are related to
      * @param visibilityMod the visibility modificator for the avatar in
-     *            percent. Values above 100 increase the default visibility.
-     * @param germanDesc the German description of the avatar. This is shown in
-     *            the name tag of the avatar in case the name of the character
-     *            is unknown
-     * @param englishDesc the English description of the avatar. This is shown
-     *            in the name tag of the avatar in case the name of the
-     *            character is unknown
+     *                      percent. Values above 100 increase the default visibility.
+     * @param germanDesc    the German description of the avatar. This is shown in
+     *                      the name tag of the avatar in case the name of the character
+     *                      is unknown
+     * @param englishDesc   the English description of the avatar. This is shown
+     *                      in the name tag of the avatar in case the name of the
+     *                      character is unknown
      * @return the newly created instance of AvatarInfo or a already created one
      *         from the cache
      */
     public static AvatarInfo get(final int appearance,
-        final int visibilityMod, final String germanDesc,
-        final String englishDesc) {
+                                 final int visibilityMod, final String germanDesc,
+                                 final String englishDesc) {
 
         final Integer key = appearance;
         if (buffer.containsKey(key)) {
@@ -130,7 +134,7 @@ public final class AvatarInfo {
         }
 
         final AvatarInfo newInfo =
-            new AvatarInfo(visibilityMod, germanDesc, englishDesc);
+                new AvatarInfo(visibilityMod, germanDesc, englishDesc);
         buffer.put(key, newInfo);
         return newInfo;
     }
@@ -138,7 +142,7 @@ public final class AvatarInfo {
     /**
      * The English description of the avatar that can be used in case the name
      * of the character is not known.
-     * 
+     *
      * @return the English name of this avatar
      */
     public String getEnglish() {
@@ -148,7 +152,7 @@ public final class AvatarInfo {
     /**
      * The German description of the avatar that can be used in case the name of
      * the character is not known.
-     * 
+     *
      * @return the German name of this avatar
      */
     public String getGerman() {
@@ -159,7 +163,7 @@ public final class AvatarInfo {
      * Get the visibility modificator of the avatar. The modificator is set in
      * percent. Use the return of this function in general in the following way:
      * <code>realVisibility = defaultVisibility * functionReturn / 100</code>
-     * 
+     *
      * @return 100 for the normal visibility, greater values for larger
      *         visibility and lower values for less visibility
      */
@@ -170,9 +174,9 @@ public final class AvatarInfo {
     /**
      * Check if a animation is set for this avatar. In case the animation is
      * available its possible to play that animation.
-     * 
+     *
      * @param animationID the ID of the animation that shall be checked for
-     *            availability
+     *                    availability
      * @return true in case the animation is available
      */
     protected boolean animationAvaiable(final int animationID) {
@@ -183,14 +187,14 @@ public final class AvatarInfo {
      * Report to this Avatar info that a particular animation is available.
      * After reporting this it must be ensured that this animation is available
      * to be shown.
-     * 
+     *
      * @param animationID the ID of the animation that is available.
      */
     @SuppressWarnings("nls")
     public void reportAnimation(final int animationID) {
         if (!setup) {
             throw new IllegalStateException("Changing this construct is not "
-                + "allowed after the creation process.");
+                    + "allowed after the creation process.");
         }
         animations[animationID] = true;
     }

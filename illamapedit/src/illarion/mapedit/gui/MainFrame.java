@@ -36,6 +36,7 @@ import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.awt.event.WindowListener;
 
@@ -48,8 +49,11 @@ public class MainFrame extends JRibbonFrame {
     private static final Dimension WINDOW_SIZE = new Dimension(900, 700);
     private static MainFrame instance;
 
+    @Nonnull
     private final HelpDialog helpDialog;
+    @Nonnull
     private final MapPanel mapPanel;
+    @Nonnull
     private final ToolSettingsPanel settingsPanel;
     private final Config config;
 
@@ -92,7 +96,7 @@ public class MainFrame extends JRibbonFrame {
         final JXLabel worldCoordinates = new JXLabel();
         EventBus.subscribeStrongly(MapPositionEvent.class, new EventSubscriber<MapPositionEvent>() {
             @Override
-            public void onEvent(final MapPositionEvent event) {
+            public void onEvent(@Nonnull final MapPositionEvent event) {
                 mapCoordinates.setText(Lang.getMsg("gui.mainframe.status.mapCoord") + ": " + event.getMapX() +
                         ',' + event.getMapY());
                 worldCoordinates.setText(Lang.getMsg("gui.mainframe.status.worldCoord") + ": " + event.getWorldX() +
@@ -123,6 +127,7 @@ public class MainFrame extends JRibbonFrame {
         return mapPanel.getRenderManager();
     }
 
+    @Nonnull
     private Dimension getSavedDimension() {
         final int w = config.getInteger("windowSizeW");
         final int h = config.getInteger("windowSizeH");

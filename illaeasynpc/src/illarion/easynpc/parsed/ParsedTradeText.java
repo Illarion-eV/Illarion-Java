@@ -22,6 +22,7 @@ import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -92,7 +93,7 @@ public final class ParsedTradeText implements ParsedData {
     }
 
     @Override
-    public void writeEasyNpc(final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
         switch (type) {
             case NoMoney:
                 target.write("tradeNotEnoughMoneyMsg");
@@ -126,13 +127,14 @@ public final class ParsedTradeText implements ParsedData {
         return stage == LuaWriter.WritingStage.Trading;
     }
 
+    @Nonnull
     @Override
     public String[] getRequiredModules() {
         return new String[]{"npc.base.trade"};
     }
 
     @Override
-    public void writeLua(final Writer target, final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull final Writer target, final LuaWriter.WritingStage stage) throws IOException {
         target.write("tradingNPC:");
         switch (type) {
             case NoMoney:

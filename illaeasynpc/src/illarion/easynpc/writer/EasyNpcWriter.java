@@ -21,6 +21,7 @@ package illarion.easynpc.writer;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.data.CharacterLanguage;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -103,6 +104,7 @@ public final class EasyNpcWriter {
      *
      * @return the singleton instance
      */
+    @Nonnull
     public static EasyNpcWriter getInstance() {
         return INSTANCE;
     }
@@ -115,7 +117,7 @@ public final class EasyNpcWriter {
      * @param target the writer that takes the written data
      * @throws IOException thrown in case a writing operation failed
      */
-    public void write(final ParsedNpc source, final Writer target)
+    public void write(@Nonnull final ParsedNpc source, @Nonnull final Writer target)
             throws IOException {
         writeIntro(source, target, WritingStage.header);
         // first the default header
@@ -167,7 +169,7 @@ public final class EasyNpcWriter {
      * @param stage  the stage to check
      * @return <code>true</code> in case the NPC contains entries in this stage.
      */
-    private static boolean checkStageExists(final ParsedNpc source,
+    private static boolean checkStageExists(@Nonnull final ParsedNpc source,
                                             final WritingStage stage) {
         final int count = source.getDataCount();
 
@@ -193,7 +195,7 @@ public final class EasyNpcWriter {
      * @throws IOException thrown in case a writing operation failed
      */
     @SuppressWarnings("nls")
-    private static void writeHeader(final ParsedNpc source, final Writer target)
+    private static void writeHeader(@Nonnull final ParsedNpc source, @Nonnull final Writer target)
             throws IOException {
         target.write("name = \"");
         target.write(source.getNpcName());
@@ -299,8 +301,8 @@ public final class EasyNpcWriter {
      * @throws IOException thrown in case the writing operations fail
      */
     @SuppressWarnings("nls")
-    private static void writeIntro(final ParsedNpc source, final Writer target,
-                                   final WritingStage stage) throws IOException {
+    private static void writeIntro(@Nonnull final ParsedNpc source, @Nonnull final Writer target,
+                                   @Nonnull final WritingStage stage) throws IOException {
 
         switch (stage) {
             case header:
@@ -393,7 +395,7 @@ public final class EasyNpcWriter {
      * @param stage  the current stage that is supposed to be processed
      * @throws IOException thrown in case the writing operations fail
      */
-    private static void writeStage(final ParsedNpc source, final Writer target,
+    private static void writeStage(@Nonnull final ParsedNpc source, final Writer target,
                                    final WritingStage stage) throws IOException {
         final int count = source.getDataCount();
 

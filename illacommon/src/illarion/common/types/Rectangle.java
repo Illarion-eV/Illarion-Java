@@ -65,7 +65,7 @@ public final class Rectangle implements Serializable {
         set(x, y, width, height);
     }
 
-    public Rectangle(final Rectangle other) {
+    public Rectangle(@Nonnull final Rectangle other) {
         x0 = other.x0;
         x1 = other.x1;
         y0 = other.y0;
@@ -77,6 +77,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the rectangle method that is free for use.
      */
+    @Nonnull
     @Deprecated
     public static Rectangle getInstance() {
         return new Rectangle();
@@ -87,7 +88,7 @@ public final class Rectangle implements Serializable {
      *
      * @param other the rectangle that shall be added to the current instance
      */
-    public void add(final Rectangle other) {
+    public void add(@Nonnull final Rectangle other) {
         if (isEmpty()) {
             set(other);
             return;

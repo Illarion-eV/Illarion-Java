@@ -24,6 +24,7 @@ import illarion.client.world.Weather;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -85,7 +86,7 @@ public final class WeatherMsg extends AbstractReply {
      *                     decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         clouds = reader.readUByte();
         fog = reader.readUByte();
         wind = reader.readByte();
@@ -122,6 +123,7 @@ public final class WeatherMsg extends AbstractReply {
      * @return the string that contains the values that were decoded for this
      *         message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

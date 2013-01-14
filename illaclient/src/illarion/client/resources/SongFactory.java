@@ -24,6 +24,8 @@ import illarion.common.util.FastMath;
 import javolution.util.FastTable;
 import org.newdawn.slick.Music;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -43,6 +45,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<Music>> {
      *
      * @return the singleton instance
      */
+    @Nonnull
     public static SongFactory getInstance() {
         return INSTANCE;
     }
@@ -69,6 +72,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<Music>> {
      *         this id, the song is returned, in case there are multiple
      *         variations of this song, one is selected randomly and returned
      */
+    @Nullable
     public Music getSong(final int id) {
         if ((songs != null) && (songs.contains(id))) {
             // select a variant at random
@@ -100,7 +104,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<Music>> {
      * Add a song to this factory.
      */
     @Override
-    public void storeResource(final IdWrapper<Music> resource) {
+    public void storeResource(@Nonnull final IdWrapper<Music> resource) {
         final int clipID = resource.getId();
         final Music music = resource.getObject();
 

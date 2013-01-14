@@ -37,6 +37,7 @@ public final class NiftyMerchantItem extends MerchantItem implements MerchantLis
     /**
      * The image that represents this merchant item.
      */
+    @Nonnull
     private final NiftyImage itemImage;
 
     /**
@@ -47,7 +48,7 @@ public final class NiftyMerchantItem extends MerchantItem implements MerchantLis
      * @param nifty the instance of the Nifty-GUI used to create the objects for the GUI
      * @param org   the original merchant item that contains the actual data
      */
-    public NiftyMerchantItem(final Nifty nifty, final MerchantItem org) {
+    public NiftyMerchantItem(@Nonnull final Nifty nifty, @Nonnull final MerchantItem org) {
         super(org);
 
         itemImage = new NiftyImage(nifty.getRenderEngine(),

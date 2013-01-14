@@ -1,29 +1,31 @@
 /*
- * This file is part of the Illarion Graphics Engine.
+ * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Graphics Engine is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Graphics Engine is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Graphics Interface. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.graphics;
 
 import illarion.common.util.Bresenham;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class stores the root node of a set of light rays for a given size. It
  * precalculates all rays when its created and stores them for later usage.
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -33,6 +35,7 @@ public final class LightRays {
      * size created in this class. From this ray node all other precalculated
      * nodes are accessible.
      */
+    @Nonnull
     private final RayNode root;
 
     /**
@@ -44,7 +47,7 @@ public final class LightRays {
     /**
      * Constructor, triggers the precalculation of all light rays up to the size
      * set as parameter in this constructor call.
-     * 
+     *
      * @param targetSize the length of the light rays
      */
     public LightRays(final int targetSize) {
@@ -66,7 +69,7 @@ public final class LightRays {
      * with the {@link illarion.common.graphics.LightingMap} of the lightray
      * gets over the tiles correctly and with the results the light rays are
      * modified to the shadow by the objects on the map applys correctly.
-     * 
+     *
      * @param light the lightsource that shall be mapped with the pre
      */
     public void apply(final LightSource light) {
@@ -76,7 +79,7 @@ public final class LightRays {
     /**
      * Precalculate a light ray and attach it to the root node. The center of
      * the ray, so the ray node is assumed to be at 0, 0.
-     * 
+     *
      * @param x the x coordinate of the target location of the ray
      * @param y the y coordinate of the target location of the ray
      */

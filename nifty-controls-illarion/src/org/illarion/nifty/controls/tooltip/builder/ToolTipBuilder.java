@@ -21,6 +21,8 @@ package org.illarion.nifty.controls.tooltip.builder;
 import de.lessvoid.nifty.builder.ControlBuilder;
 import de.lessvoid.nifty.tools.Color;
 
+import javax.annotation.Nonnull;
+
 /**
  * Build the tooltip.
  *
@@ -39,7 +41,7 @@ public class ToolTipBuilder extends ControlBuilder {
         set("title", value);
     }
 
-    public void titleColor(final Color value) {
+    public void titleColor(@Nonnull final Color value) {
         titleColor(value.getColorString());
     }
 

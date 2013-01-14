@@ -28,6 +28,8 @@ import illarion.easynpc.parsed.ParsedEquipment;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -47,21 +49,25 @@ public final class NpcEquipment implements NpcType {
         /**
          * The key for the description of this command.
          */
+        @Nonnull
         private final String docuDesc;
 
         /**
          * The key for the examples of this command.
          */
+        @Nonnull
         private final String docuEx;
 
         /**
          * The key for the syntax of this command.
          */
+        @Nonnull
         private final String docuSyntax;
 
         /**
          * The key for the title of this command.
          */
+        @Nonnull
         private final String docuTitle;
 
         /**
@@ -78,6 +84,7 @@ public final class NpcEquipment implements NpcType {
             docuSyntax = "Docu." + name + ".syntax";
         }
 
+        @Nonnull
         @SuppressWarnings("nls")
         @Override
         public DocuEntry getChild(final int index) {
@@ -172,6 +179,7 @@ public final class NpcEquipment implements NpcType {
     /**
      * The documentation entries for the children of this entry.
      */
+    @Nonnull
     private final DocuEntry docuChildren[];
 
     /**
@@ -193,7 +201,7 @@ public final class NpcEquipment implements NpcType {
     }
 
     @Override
-    public boolean canParseLine(final Line lineStruct) {
+    public boolean canParseLine(@Nonnull final Line lineStruct) {
         final String line = lineStruct.getLine();
         if (ITEM_HEAD.matcher(line).find()) {
             return true;
@@ -252,11 +260,13 @@ public final class NpcEquipment implements NpcType {
         return Lang.getMsg(getClass(), "Docu.description");
     }
 
+    @Nullable
     @Override
     public String getExample() {
         return null;
     }
 
+    @Nullable
     @Override
     public String getSyntax() {
         return null;
@@ -272,7 +282,7 @@ public final class NpcEquipment implements NpcType {
      * Parse the line and extract the required data.
      */
     @Override
-    public void parseLine(final Line line, final ParsedNpc npc) {
+    public void parseLine(@Nonnull final Line line, @Nonnull final ParsedNpc npc) {
         Matcher match = ITEM_HEAD.matcher(line.getLine());
         if (match.find()) {
             final Items item = extractItem(match, line, npc);
@@ -349,7 +359,7 @@ public final class NpcEquipment implements NpcType {
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put("itemChest", Token.RESERVED_WORD);
         map.put("itemCoat", Token.RESERVED_WORD);
         map.put("itemHands", Token.RESERVED_WORD);
@@ -370,7 +380,8 @@ public final class NpcEquipment implements NpcType {
      * @param npc     the NPC that is currently processed
      * @return the item that was extracted or <code>null</code>
      */
-    private Items extractItem(final Matcher matcher, final Line line, final ParsedNpc npc) {
+    @Nullable
+    private Items extractItem(@Nonnull final Matcher matcher, final Line line, @Nonnull final ParsedNpc npc) {
         final int itemId = Integer.parseInt(matcher.group(2));
 
         Items item = null;

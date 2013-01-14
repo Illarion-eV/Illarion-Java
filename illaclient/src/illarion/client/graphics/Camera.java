@@ -24,6 +24,8 @@ import illarion.common.types.Rectangle;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -42,16 +44,19 @@ public final class Camera {
     /**
      * This rectangle stores the viewport of the camera. Anything outside of this viewport does not need to be drawn.
      */
+    @Nonnull
     private final Rectangle viewport;
 
     /**
      * This is a list of dirty areas on the screen that require a update.
      */
+    @Nonnull
     private final List<Rectangle> dirtyAreas;
 
     /**
      * A list of areas that were rendered.
      */
+    @Nonnull
     private final List<Rectangle> renderedAreas;
 
     /**
@@ -80,6 +85,7 @@ public final class Camera {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static Camera getInstance() {
         return INSTANCE;
     }
@@ -139,7 +145,7 @@ public final class Camera {
      *
      * @param dirtyArea the area that was marked dirty
      */
-    public void markAreaDirty(final Rectangle dirtyArea) {
+    public void markAreaDirty(@Nonnull final Rectangle dirtyArea) {
         if (fullUpdate || (dirtyAreaCounter > 200)) {
             markEverythingDirty();
             return;
@@ -183,7 +189,8 @@ public final class Camera {
      * @param testArea the tested area
      * @return the dirty area that intersects with the tested one or {@code null} in case no such area is found
      */
-    public Rectangle getDirtyArea(final Rectangle testArea) {
+    @Nullable
+    public Rectangle getDirtyArea(@Nonnull final Rectangle testArea) {
         if (fullUpdate) {
             return viewport;
         }
@@ -200,7 +207,7 @@ public final class Camera {
         return null;
     }
 
-    public void clearDirtyAreas(final Graphics g) {
+    public void clearDirtyAreas(@Nonnull final Graphics g) {
         g.setColor(Color.black);
 
         if (fullUpdate) {
@@ -216,7 +223,7 @@ public final class Camera {
         }
     }
 
-    public void renderDebug(final Graphics g) {
+    public void renderDebug(@Nonnull final Graphics g) {
         if (IllaClient.isDebug(Debug.mapRenderer)) {
             g.translate(-getViewportOffsetX(), -getViewportOffsetY());
             debugShowUpdateAreas(g);
@@ -225,7 +232,7 @@ public final class Camera {
         }
     }
 
-    public void debugShowUpdateAreas(final Graphics g) {
+    public void debugShowUpdateAreas(@Nonnull final Graphics g) {
         g.setColor(Color.pink);
         if (fullUpdate) {
             debugRenderRect(g, viewport);
@@ -240,7 +247,7 @@ public final class Camera {
         }
     }
 
-    public void debugShowRenderedAreas(final Graphics g) {
+    public void debugShowRenderedAreas(@Nonnull final Graphics g) {
         g.setColor(Color.cyan);
 
         for (final Rectangle area : renderedAreas) {
@@ -248,11 +255,11 @@ public final class Camera {
         }
     }
 
-    private static void debugRenderRect(final Graphics g, final Rectangle rectangle) {
+    private static void debugRenderRect(@Nonnull final Graphics g, @Nonnull final Rectangle rectangle) {
         g.drawRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
     }
 
-    private static void fillRenderRect(final Graphics g, final Rectangle rectangle) {
+    private static void fillRenderRect(@Nonnull final Graphics g, @Nonnull final Rectangle rectangle) {
         g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
     }
 
@@ -289,7 +296,7 @@ public final class Camera {
      * @return <code>true</code> in case there is no clipping area set or the tested area is at least partly within the
      *         clipping area, if its fully outside <code>false</code> is returned
      */
-    public boolean requiresUpdate(final Rectangle rect) {
+    public boolean requiresUpdate(@Nonnull final Rectangle rect) {
         if (!viewport.intersects(rect) || rect.isEmpty()) {
             return false;
         }
@@ -309,6 +316,7 @@ public final class Camera {
         viewport.set(x, y, width, height);
     }
 
+    @Nonnull
     public Rectangle getViewport() {
         return viewport;
     }

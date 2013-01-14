@@ -26,6 +26,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Sound;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 /**
@@ -273,11 +274,13 @@ public final class Weather {
     /**
      * Color of the ambient light.
      */
+    @Nonnull
     private final Color ambientLight;
 
     /**
      * The color the ambient light is approaching.
      */
+    @Nonnull
     private final Color ambientTargetColor;
 
     /**
@@ -477,6 +480,7 @@ public final class Weather {
      *
      * @return the current ambient light
      */
+    @Nonnull
     public Color getAmbientLight() {
         return ambientLight;
     }
@@ -593,7 +597,7 @@ public final class Weather {
      * @param width  the width of the render area
      * @param height the height of the render area
      */
-    public void render(final Graphics g, final GameContainer c) {
+    public void render(@Nonnull final Graphics g, @Nonnull final GameContainer c) {
         // no weather if inside or while the display is inactive
         if (!outside || !World.getMapDisplay().isActive()) {
             return;
@@ -605,7 +609,7 @@ public final class Weather {
     /**
      * Render a flash if needed and count the waiting times down.
      */
-    private void renderFlash(final Graphics g, final GameContainer c) {
+    private void renderFlash(@Nonnull final Graphics g, @Nonnull final GameContainer c) {
         if (lightning == 0) {
             return;
         }

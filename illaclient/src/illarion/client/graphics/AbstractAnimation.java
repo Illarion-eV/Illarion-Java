@@ -1,25 +1,27 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
 import illarion.client.world.World;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +33,7 @@ import java.util.List;
  * This class handles all kind of animations. This could be frame based
  * animations as well as movement animations.
  * </p>
- * 
+ *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -69,6 +71,7 @@ abstract class AbstractAnimation {
      * animation. All targets handled by one animation are updated at the same
      * time in a synchronized way.
      */
+    @Nonnull
     private final List<Animated> targets;
 
     /**
@@ -76,11 +79,11 @@ abstract class AbstractAnimation {
      * right away it rather prepares the animation and takes the first animation
      * target. In case there are more animation targets needed use
      * {@link #addTarget(AnimatedFrame, boolean)}.
-     * 
+     *
      * @param firstTarget the first animation target, so the first object that
-     *            is actually animated
+     *                    is actually animated
      */
-    protected AbstractAnimation(final Animated firstTarget) {
+    protected AbstractAnimation(@Nullable final Animated firstTarget) {
         targets = new ArrayList<Animated>();
         if (firstTarget != null) {
             targets.add(firstTarget);
@@ -91,12 +94,12 @@ abstract class AbstractAnimation {
      * Add an animation target to this animation. All animations are handled
      * synchronized. So they start in the same moment and stop in the same
      * moment.
-     * 
-     * @param target the new animation target that shall be added this animation
+     *
+     * @param target    the new animation target that shall be added this animation
      * @param autoStart true in case the animation shall start right away after
-     *            the new animation target is added. The auto start will invoke
-     *            the {@link #restart()} method so this one needs all data to
-     *            start this animation in case its needed to do so
+     *                  the new animation target is added. The auto start will invoke
+     *                  the {@link #restart()} method so this one needs all data to
+     *                  start this animation in case its needed to do so
      */
     public final void addTarget(final Animated target, final boolean autoStart) {
         if (!targets.contains(target)) {
@@ -112,7 +115,7 @@ abstract class AbstractAnimation {
     /**
      * Called by game loop to execute animations. This function executes the
      * animation itself.
-     * 
+     *
      * @param delta the time since the last update of this animation
      * @return <code>true</code> in case the animation is in process,
      *         <code>false</code> if its done
@@ -121,7 +124,7 @@ abstract class AbstractAnimation {
 
     /**
      * Get the progress of the animation.
-     * 
+     *
      * @return a value between 0 and 1. 0 means the animation just started, 1
      *         means the animation ended
      */
@@ -131,7 +134,7 @@ abstract class AbstractAnimation {
 
     /**
      * Checks if the animation is currently running.
-     * 
+     *
      * @return true in case the animation is currently running
      */
     public final boolean isRunning() {
@@ -141,9 +144,9 @@ abstract class AbstractAnimation {
     /**
      * Remove an animation target from the animation. In case the removing of
      * the target empties the target list the animation stops automatically.
-     * 
+     *
      * @param target the animation target that shall be removed from the target
-     *            list
+     *               list
      */
     public final void removeTarget(final Animated target) {
         targets.remove(target);
@@ -162,9 +165,9 @@ abstract class AbstractAnimation {
     /**
      * Set the running state to a new value to either report that the animation
      * Stopped or that it started.
-     * 
+     *
      * @param newState the new value for the running state. True means the
-     *            animation is still running, false means that it stopped
+     *                 animation is still running, false means that it stopped
      */
     public final void setRunning(final boolean newState) {
         running = newState;
@@ -179,7 +182,7 @@ abstract class AbstractAnimation {
 
     /**
      * Get the time remaining until the end of the animation.
-     * 
+     *
      * @return the time in ms that is still left to the end of the animation
      */
     public final int timeRemaining() {
@@ -189,7 +192,7 @@ abstract class AbstractAnimation {
     /**
      * Signals that an animation has ended. This reports that the animation is
      * finished to all animation targets.
-     * 
+     *
      * @param finished true in case the animation finished, false if not
      */
     protected final void animationFinished(final boolean finished) {
@@ -201,11 +204,12 @@ abstract class AbstractAnimation {
     /**
      * Get on of the animation targets of this animation. This is needed for
      * some update functions.
-     * 
+     *
      * @param index the list index of the animation target that is wanted. This
-     *            value needs to be between 0 and {@link #getTargetCount()}
+     *              value needs to be between 0 and {@link #getTargetCount()}
      * @return the requested target
      */
+    @Nullable
     protected final Animated getAnimationTarget(final int index) {
         if (targets.size() <= index) {
             return null;
@@ -215,7 +219,7 @@ abstract class AbstractAnimation {
 
     /**
      * Get the amount of targets that are set to this animation.
-     * 
+     *
      * @return the amount of targets set to this animation
      */
     protected final int getTargetCount() {
@@ -224,7 +228,7 @@ abstract class AbstractAnimation {
 
     /**
      * Set the value of the duration of this animation.
-     * 
+     *
      * @param newDuration the new value for the duration of this animation
      */
     protected final void setDuration(final int newDuration) {
@@ -259,9 +263,9 @@ abstract class AbstractAnimation {
     /**
      * Increase the current time by a set delta time. The time values are
      * handled in milliseconds.
-     * 
+     *
      * @param delta the time in milliseconds that shall be added to the current
-     *            time
+     *              time
      * @return true in case the animation ended by this update, means the
      *         current time reached the total duration of the animation
      */

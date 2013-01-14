@@ -25,6 +25,8 @@ import illarion.common.util.TableLoaderSink;
 import illarion.common.util.TableLoaderTiles;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to load the tile definitions from the resource table that
  * was created using the configuration tool. The class will create the required
@@ -62,7 +64,7 @@ public final class TileLoader extends AbstractResourceLoader<Tile> implements
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, final TableLoaderTiles loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoaderTiles loader) {
         final int id = loader.getTileId();
         final int mode = loader.getTileMode();
         final String name = loader.getResourceName();
@@ -88,7 +90,7 @@ public final class TileLoader extends AbstractResourceLoader<Tile> implements
         try {
             getTargetFactory().storeResource(tile);
             tile.activate(id);
-        } catch (final IllegalStateException ex) {
+        } catch (@Nonnull final IllegalStateException ex) {
             logger.error("Failed adding tile to internal factory. ID: "
                     + Integer.toString(id) + " - Filename: " + name);
         }

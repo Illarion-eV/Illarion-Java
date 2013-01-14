@@ -22,6 +22,9 @@ import illarion.common.types.Location;
 import javolution.util.FastList;
 import org.newdawn.slick.Color;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This class handles a light source and contains its rays, the location and the
  * color of the light.
@@ -46,6 +49,7 @@ public final class LightSource {
      *                 in order to receive the parameters of the light
      * @return the prepared instance of the light source
      */
+    @Nullable
     @SuppressWarnings("nls")
     public static LightSource createLight(final Location loc,
                                           final int encoding) {
@@ -83,7 +87,7 @@ public final class LightSource {
      *
      * @param light the light that shall be put into the cache.
      */
-    public static void releaseLight(final LightSource light) {
+    public static void releaseLight(@Nonnull final LightSource light) {
         final int size = light.size - 1;
 
         if (CACHE[size] == null) {
@@ -106,6 +110,7 @@ public final class LightSource {
     /**
      * The color of the light itself.
      */
+    @Nonnull
     private final transient Color color;
 
     /**
@@ -119,6 +124,7 @@ public final class LightSource {
      * result from the pre-calculated light rays along with the situation on the
      * map such as objects that block out the light.
      */
+    @Nonnull
     private final float[][] intensity;
 
     /**
@@ -135,6 +141,7 @@ public final class LightSource {
     /**
      * The location of the light source on the map.
      */
+    @Nullable
     private transient Location loc;
 
     /**
@@ -245,6 +252,7 @@ public final class LightSource {
      *
      * @return the location of the light source
      */
+    @Nullable
     public Location getLocation() {
         return loc;
     }
@@ -266,7 +274,7 @@ public final class LightSource {
      * @param encoding the encoded data that defines the light source
      */
     @SuppressWarnings("nls")
-    private void init(final Location newLoc, final int encoding) {
+    private void init(@Nullable final Location newLoc, final int encoding) {
         if (newLoc == null) {
             throw new IllegalArgumentException(
                     "The location of this light must not be NULL");
@@ -310,7 +318,7 @@ public final class LightSource {
      * @param changeLoc the location the change occurred on.
      */
     @SuppressWarnings("nls")
-    public void notifyChange(final Location changeLoc) {
+    public void notifyChange(@Nullable final Location changeLoc) {
         if (changeLoc == null) {
             throw new IllegalArgumentException(
                     "The location that changes must not be NULL");

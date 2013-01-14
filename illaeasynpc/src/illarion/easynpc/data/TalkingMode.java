@@ -21,6 +21,8 @@ package illarion.easynpc.data;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+
 /**
  * This enumerator contains the possible values for the talking modes.
  *
@@ -70,7 +72,7 @@ public enum TalkingMode {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put("shout", Token.VARIABLE);
         map.put("yell", Token.VARIABLE);
         map.put("whisper", Token.VARIABLE);

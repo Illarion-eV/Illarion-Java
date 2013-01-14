@@ -30,6 +30,8 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -71,7 +73,7 @@ public final class SearchBand extends JRibbonBand {
 
         textBox.addKeyListener(new KeyListener() {
             @Override
-            public void keyPressed(final KeyEvent e) {
+            public void keyPressed(@Nonnull final KeyEvent e) {
                 if (e.getKeyCode() != KeyEvent.VK_ENTER) {
                     return;
                 }
@@ -109,6 +111,7 @@ public final class SearchBand extends JRibbonBand {
                 getClass(), "findButtonTooltipTitle"), Lang.getMsg(getClass(),
                 "findButtonTooltip")));
         findButton.addActionListener(new ActionListener() {
+            @Nullable
             private SearchDialog dialog = null;
 
             @Override

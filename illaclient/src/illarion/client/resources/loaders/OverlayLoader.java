@@ -24,6 +24,8 @@ import illarion.common.util.TableLoaderOverlay;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to load the overlay definitions from the resource table
  * that was created using the configuration tool. The class will create the
@@ -61,7 +63,7 @@ public final class OverlayLoader extends AbstractResourceLoader<Overlay> impleme
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, final TableLoaderOverlay loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoaderOverlay loader) {
         final int id = loader.getTileId();
         final String name = loader.getOverlayFile();
         final Overlay overlay = new Overlay(id, name);
@@ -69,7 +71,7 @@ public final class OverlayLoader extends AbstractResourceLoader<Overlay> impleme
         try {
             getTargetFactory().storeResource(overlay);
             overlay.activate(id);
-        } catch (final IllegalStateException ex) {
+        } catch (@Nonnull final IllegalStateException ex) {
             logger.error("Failed adding overlay to internal factory. ID: "
                     + Integer.toString(id) + " - Filename: " + name);
         }

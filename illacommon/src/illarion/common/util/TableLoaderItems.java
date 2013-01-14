@@ -20,6 +20,7 @@ package illarion.common.util;
 
 import illarion.common.graphics.ItemInfo;
 
+import javax.annotation.Nonnull;
 import java.io.InputStream;
 
 /**
@@ -162,15 +163,15 @@ public final class TableLoaderItems extends TableLoader {
      */
     private static final int TB_VARIANCE = 13;
 
-    public TableLoaderItems(final TableLoaderSink<TableLoaderItems> callback) {
+    public TableLoaderItems(@Nonnull final TableLoaderSink<TableLoaderItems> callback) {
         this("Items", callback);
     }
 
-    public TableLoaderItems(final String table, final TableLoaderSink<TableLoaderItems> callback) {
+    public TableLoaderItems(final String table, @Nonnull final TableLoaderSink<TableLoaderItems> callback) {
         super(table, true, callback, ",");
     }
 
-    public TableLoaderItems(final InputStream resource, final TableLoaderSink<TableLoaderItems> callback) {
+    public TableLoaderItems(final InputStream resource, @Nonnull final TableLoaderSink<TableLoaderItems> callback) {
         super(resource, true, callback, ",");
     }
 

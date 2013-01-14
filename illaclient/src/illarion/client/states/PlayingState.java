@@ -32,6 +32,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import javax.annotation.Nonnull;
+
 /**
  * This state is active while the player is playing the game.
  *
@@ -55,7 +57,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     }
 
     @Override
-    protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
+    protected void prepareNifty(@Nonnull final Nifty nifty, final StateBasedGame game) {
         nifty.setLocale(Lang.getInstance().getLocale());
         gameScreenController = new GameScreenController();
         nifty.registerScreenController(gameScreenController);
@@ -69,7 +71,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     }
 
     @Override
-    protected void renderGame(final GameContainer container, final StateBasedGame game, final Graphics g)
+    protected void renderGame(@Nonnull final GameContainer container, final StateBasedGame game, @Nonnull final Graphics g)
             throws SlickException {
         World.getMap().getMinimap().render();
         World.getMapDisplay().render(g, container);
@@ -77,7 +79,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     }
 
     @Override
-    protected void updateGame(final GameContainer container, final StateBasedGame game, final int delta)
+    protected void updateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta)
             throws SlickException {
         gameScreenController.onUpdateGame(container, delta);
         World.getWeather().update(delta);

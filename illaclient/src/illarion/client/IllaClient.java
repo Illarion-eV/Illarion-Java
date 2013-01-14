@@ -52,6 +52,7 @@ import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.LogSystem;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -82,6 +83,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * The default server the client connects too. The client will always connect to this server.
      */
+    @Nonnull
     public static final Servers DEFAULT_SERVER;
 
     static {
@@ -112,6 +114,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * the
      * files.
      */
+    @Nonnull
     private static Properties tempProps = new Properties();
 
     /**
@@ -217,7 +220,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                     "illarion_client64.png", "illarion_client256.png"});
             gameContainer.start();
             LOGGER.info("Client shutdown initiated.");
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             LOGGER.fatal("Exception while launching game.", e);
             Sys.alert("Error", "The client caused a error while starting up: " + e.getMessage());
         } finally {
@@ -318,6 +321,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static IllaClient getInstance() {
         return INSTANCE;
     }
@@ -337,6 +341,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @return the version text of this client
      */
+    @Nonnull
     public static String getVersionText() {
         return "Illarion Client " + VERSION; //$NON-NLS-1$
     }
@@ -347,7 +352,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @param flag the debug flag that shall be checked
      * @return true in case the flag is enabled, false if not
      */
-    public static boolean isDebug(final Debug flag) {
+    public static boolean isDebug(@Nonnull final Debug flag) {
         return (INSTANCE.debugLevel & (1 << flag.ordinal())) > 0;
     }
 

@@ -22,6 +22,8 @@ import illarion.mapedit.resource.Overlay;
 import javolution.text.TextBuilder;
 import javolution.util.FastList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,30 +40,36 @@ public class MapTile {
             //NOTHING TO DO
         }
 
-        public static MapTile setMusicId(final int musicID, final MapTile old) {
+        @Nonnull
+        public static MapTile setMusicId(final int musicID, @Nonnull final MapTile old) {
             return new MapTile(old.id, old.overlayID, old.shapeID, musicID, old.mapItems, old.mapWarpPoint);
         }
 
-        public static MapTile setId(final int id, final MapTile old) {
+        @Nonnull
+        public static MapTile setId(final int id, @Nonnull final MapTile old) {
             final int baseId = (Overlay.shapeID(id) == 0) ? id : Overlay.baseID(id);
             final int overlayId = (Overlay.shapeID(id) == 0) ? 0 : Overlay.overlayID(id);
             final int shapeId = Overlay.shapeID(id);
             return new MapTile(baseId, overlayId, shapeId, old.musicID, old.mapItems, old.mapWarpPoint);
         }
 
-        public static MapTile setOverlay(final int overlayID, final int shapeID, final MapTile old) {
+        @Nonnull
+        public static MapTile setOverlay(final int overlayID, final int shapeID, @Nonnull final MapTile old) {
             return new MapTile(old.id, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
         }
 
-        public static MapTile setOverlay(final int baseID, final int overlayID, final int shapeID, MapTile old) {
+        @Nonnull
+        public static MapTile setOverlay(final int baseID, final int overlayID, final int shapeID, @Nonnull MapTile old) {
             return new MapTile(baseID, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
         }
 
+        @Nullable
         public static MapTile createNew(final int id, final int overlayID, final int shapeID, final int musicID) {
             return new MapTile(id, overlayID, shapeID, musicID, null, null);
         }
 
-        public static MapTile copy(final MapTile old) {
+        @Nonnull
+        public static MapTile copy(@Nonnull final MapTile old) {
             return new MapTile(old.id, old.overlayID, old.shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
         }
     }
@@ -86,6 +94,7 @@ public class MapTile {
     /**
      * The items on top of this tile
      */
+    @Nonnull
     private final List<MapItem> mapItems;
     /**
      * The warp point on this tile, may be {@code null}.
@@ -94,7 +103,7 @@ public class MapTile {
 
 
     public MapTile(final int baseId, final int overlayID, final int shapeID, final int musicID,
-                   final Collection<MapItem> mapItems, final MapWarpPoint mapWarpPoint) {
+                   @Nullable final Collection<MapItem> mapItems, final MapWarpPoint mapWarpPoint) {
         id = baseId;
         this.overlayID = overlayID;
         this.shapeID = shapeID;
@@ -161,6 +170,7 @@ public class MapTile {
     /**
      * @return The list of items on this tile.
      */
+    @Nonnull
     public List<MapItem> getMapItems() {
         return mapItems;
     }
@@ -195,6 +205,7 @@ public class MapTile {
      *
      * @return tileID;musicID
      */
+    @Nonnull
     @Override
     public String toString() {
         final TextBuilder builder = TextBuilder.newInstance();

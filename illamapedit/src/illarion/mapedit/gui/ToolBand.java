@@ -31,6 +31,7 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 
@@ -71,6 +72,7 @@ public class ToolBand extends JRibbonBand {
 
         toolButton.setCommandButtonKind(JCommandButton.CommandButtonKind.POPUP_ONLY);
         toolButton.setPopupCallback(new PopupPanelCallback() {
+            @Nonnull
             @Override
             public JPopupPanel getPopupPanel(final JCommandButton commandButton) {
                 return menu;

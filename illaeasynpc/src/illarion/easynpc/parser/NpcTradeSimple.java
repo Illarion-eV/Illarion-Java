@@ -27,6 +27,8 @@ import illarion.easynpc.parsed.ParsedTradeSimple;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +38,7 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcTradeSimple implements NpcType {
+    @Nonnull
     private static String BASE_PATTERN = "^\\s*(%1$s)\\s*=\\s*([0-9\\s,]+)[\\s;]*";
     /**
      * The pattern to fetch the items the NPC sells.
@@ -67,6 +70,7 @@ public final class NpcTradeSimple implements NpcType {
      * The documentation entry for the sell items.
      */
     private final DocuEntry sellEntry = new DocuEntry() {
+        @Nonnull
         @Override
         @SuppressWarnings("nls")
         public DocuEntry getChild(final int index) {
@@ -107,6 +111,7 @@ public final class NpcTradeSimple implements NpcType {
      * The documentation entry for the buy primary items.
      */
     private final DocuEntry buyPrimaryEntry = new DocuEntry() {
+        @Nonnull
         @Override
         @SuppressWarnings("nls")
         public DocuEntry getChild(final int index) {
@@ -147,6 +152,7 @@ public final class NpcTradeSimple implements NpcType {
      * The documentation entry for the buy primary items.
      */
     private final DocuEntry buySecondaryEntry = new DocuEntry() {
+        @Nonnull
         @Override
         @SuppressWarnings("nls")
         public DocuEntry getChild(final int index) {
@@ -187,7 +193,7 @@ public final class NpcTradeSimple implements NpcType {
      * Check if the line contains the definition of a hair ID or a beard ID.
      */
     @Override
-    public boolean canParseLine(final Line lineStruct) {
+    public boolean canParseLine(@Nonnull final Line lineStruct) {
         final String line = lineStruct.getLine();
 
         return SELL_PATTERN.matcher(line).find() || BUY_PRIMARY_PATTERN.matcher(line).find() ||
@@ -198,6 +204,7 @@ public final class NpcTradeSimple implements NpcType {
     /**
      * Get the documentation child.
      */
+    @Nonnull
     @Override
     @SuppressWarnings("nls")
     public DocuEntry getChild(final int index) {
@@ -235,6 +242,7 @@ public final class NpcTradeSimple implements NpcType {
     /**
      * This parser contains no example. The examples are stored in the children.
      */
+    @Nullable
     @Override
     public String getExample() {
         return null;
@@ -244,6 +252,7 @@ public final class NpcTradeSimple implements NpcType {
      * This parser contains no syntax. The syntax is stored in the documentation
      * children of this parser.
      */
+    @Nullable
     @Override
     public String getSyntax() {
         return null;
@@ -262,7 +271,7 @@ public final class NpcTradeSimple implements NpcType {
      * Parse a line of the script and filter the required data out.
      */
     @Override
-    public void parseLine(final Line line, final ParsedNpc npc) {
+    public void parseLine(@Nonnull final Line line, @Nonnull final ParsedNpc npc) {
         Matcher matcher;
 
         matcher = SELL_PATTERN.matcher(line.getLine());
@@ -320,7 +329,7 @@ public final class NpcTradeSimple implements NpcType {
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put("sellItems", Token.RESERVED_WORD);
         map.put("buyPrimaryItems", Token.RESERVED_WORD);
         map.put("buySecondaryItems", Token.RESERVED_WORD);

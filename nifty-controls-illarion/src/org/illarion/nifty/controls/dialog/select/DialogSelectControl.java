@@ -67,6 +67,7 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
     /**
      * The event handler that handles the events on the close button.
      */
+    @Nonnull
     private final EventTopicSubscriber<ButtonClickedEvent> closeButtonEventHandler;
 
     public DialogSelectControl() {
@@ -82,8 +83,8 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
-                     final Attributes controlDefinitionAttributes) {
+    public void bind(final Nifty nifty, final Screen screen, @Nonnull final Element element, final Properties parameter,
+                     @Nonnull final Attributes controlDefinitionAttributes) {
         super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
         niftyInstance = nifty;
         currentScreen = screen;
@@ -137,7 +138,7 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
         niftyInstance.publishEvent(getId(), new DialogSelectSelectEvent(dialogId, list.getItems().get(index), index));
     }
 
-    public void selectItem(final SelectListEntry item) {
+    public void selectItem(@Nonnull final SelectListEntry item) {
         selectItem(item.getIndex());
     }
 

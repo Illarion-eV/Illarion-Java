@@ -20,6 +20,7 @@ package illarion.client.graphics.shader;
 
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -42,6 +43,7 @@ public final class ShaderManager {
     /**
      * The map that contains the load shader.
      */
+    @Nonnull
     private final Map<Shader, AbstractShader> shaderMap;
 
     /**
@@ -56,6 +58,7 @@ public final class ShaderManager {
      *
      * @return the singleton instance
      */
+    @Nonnull
     public static ShaderManager getInstance() {
         return INSTANCE;
     }
@@ -68,7 +71,7 @@ public final class ShaderManager {
      * @param <T>         the type of the shader
      * @return the shader or {@code null} in case the shader is not load yet
      */
-    public static <T extends AbstractShader> T getShader(final Shader shader, final Class<T> shaderClass) {
+    public static <T extends AbstractShader> T getShader(final Shader shader, @Nonnull final Class<T> shaderClass) {
         return shaderClass.cast(INSTANCE.shaderMap.get(shader));
     }
 
@@ -84,11 +87,11 @@ public final class ShaderManager {
             try {
                 shaderMap.put(shader, shader.getShaderClass().newInstance());
                 System.out.println("Prepared shader: " + shader.name());
-            } catch (final InstantiationException e) {
+            } catch (@Nonnull final InstantiationException e) {
                 LOGGER.error("Failed to create shader instance!", e);
-            } catch (final IllegalAccessException e) {
+            } catch (@Nonnull final IllegalAccessException e) {
                 LOGGER.error("Failed to create shader instance!", e);
-            } catch (final Exception e) {
+            } catch (@Nonnull final Exception e) {
                 LOGGER.error("Failed to create shader instance!", e);
             }
         }

@@ -32,6 +32,8 @@ import org.bushe.swing.event.EventTopicSubscriber;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.state.StateBasedGame;
 
+import javax.annotation.Nonnull;
+
 /**
  * This game state is used to display the login and character selection dialog. Also the option dialog is displayed in
  * this state.
@@ -59,7 +61,7 @@ public class LoginState
     }
 
     @Override
-    protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
+    protected void prepareNifty(@Nonnull final Nifty nifty, final StateBasedGame game) {
         nifty.setLocale(Lang.getInstance().getLocale());
 
         loginScreenController = new LoginScreenController();
@@ -77,7 +79,7 @@ public class LoginState
      * @param nifty   the instance of Nifty the files are supposed to be applied to
      * @param xmlFile the XML file that is supposed to be load
      */
-    private static void loadXML(final Nifty nifty, final String xmlFile) {
+    private static void loadXML(@Nonnull final Nifty nifty, final String xmlFile) {
         try {
             nifty.validateXml(xmlFile);
         } catch (Exception e) {

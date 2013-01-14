@@ -20,6 +20,8 @@ package illarion.download.tasks.download;
 
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -115,6 +117,7 @@ public final class Download implements Callable<DownloadResult> {
         directory = dir;
     }
 
+    @Nullable
     @Override
     public DownloadResult call() throws IOException {
         DownloadResult retVal = null;
@@ -205,7 +208,7 @@ public final class Download implements Callable<DownloadResult> {
                     case HttpURLConnection.HTTP_NOT_MODIFIED:
                         try {
                             httpConn.getInputStream().close();
-                        } catch (final IOException ex) {
+                        } catch (@Nonnull final IOException ex) {
                             // nothing to do
                         }
                         if (target.exists()) {
@@ -224,7 +227,7 @@ public final class Download implements Callable<DownloadResult> {
                     default:
                         try {
                             httpConn.getInputStream().close();
-                        } catch (final IOException ex) {
+                        } catch (@Nonnull final IOException ex) {
                             // nothing to do
                         }
                         manager.reportDownloadFinished(this,
@@ -238,7 +241,7 @@ public final class Download implements Callable<DownloadResult> {
             manager.reportProgress(this, 0L, length);
 
             connection.getInputStream().close();
-        } catch (final IOException ex) {
+        } catch (@Nonnull final IOException ex) {
             manager.reportDownloadFinished(this, new DownloadResult(
                     DownloadResult.Results.downloadFailed, "download.not_found",
                     source, target, 0L, ex.toString()));
@@ -254,6 +257,7 @@ public final class Download implements Callable<DownloadResult> {
      * @return the result of the download
      * @throws IOException in case the download or storing the download data fails
      */
+    @Nullable
     @SuppressWarnings("nls")
     private DownloadResult callImpl() throws IOException {
         long transferred = 0;
@@ -298,7 +302,7 @@ public final class Download implements Callable<DownloadResult> {
                     case HttpURLConnection.HTTP_NOT_MODIFIED:
                         try {
                             httpConn.getInputStream().close();
-                        } catch (final IOException ex) {
+                        } catch (@Nonnull final IOException ex) {
                             // nothing to do
                         }
                         return new DownloadResult(
@@ -311,7 +315,7 @@ public final class Download implements Callable<DownloadResult> {
                     default:
                         try {
                             httpConn.getInputStream().close();
-                        } catch (final IOException ex) {
+                        } catch (@Nonnull final IOException ex) {
                             // nothing to do
                         }
                         return new DownloadResult(

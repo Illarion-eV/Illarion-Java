@@ -29,6 +29,7 @@ import org.newdawn.slick.Music;
 import org.newdawn.slick.openal.SoundStore;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 /**
@@ -59,6 +60,7 @@ public final class MusicBox implements Stoppable {
     /**
      * The music that is currently played.
      */
+    @Nullable
     private Music currentMusic;
 
     /**

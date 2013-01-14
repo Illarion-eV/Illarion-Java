@@ -25,6 +25,8 @@ import illarion.mapedit.history.MusicIDChangedAction;
 import illarion.mapedit.tools.panel.MusicPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
@@ -36,6 +38,7 @@ import javax.swing.*;
  */
 public class MusicTool extends AbstractTool {
 
+    @Nonnull
     private final MusicPanel panel;
 
 
@@ -44,7 +47,7 @@ public class MusicTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, final Map map) {
+    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
         final int musicID = panel.getMusicID();
         System.out.println(x + "  " + y);
         if (map.getTileAt(x, y).getMusicID() == musicID) {
@@ -59,11 +62,13 @@ public class MusicTool extends AbstractTool {
         return Lang.getMsg("tools.MusicTool");
     }
 
+    @Nullable
     @Override
     public ResizableIcon getToolIcon() {
         return null;
     }
 
+    @Nonnull
     @Override
     public JPanel getSettingsPanel() {
         return panel;

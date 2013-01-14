@@ -30,6 +30,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -85,6 +87,7 @@ public final class Login {
 
     private static final Login INSTANCE = new Login();
 
+    @Nonnull
     public static Login getInstance() {
         return INSTANCE;
     }
@@ -142,6 +145,7 @@ public final class Login {
          * @return computed result
          * @throws Exception if unable to compute a result
          */
+        @Nullable
         @Override
         public Void call() throws Exception {
             requestCharacterListInternal(callback);
@@ -153,7 +157,7 @@ public final class Login {
         World.getExecutorService().submit(new Login.RequestCharacterListTask(resultCallback));
     }
 
-    private void requestCharacterListInternal(final Login.RequestCharListCallback resultCallback) {
+    private void requestCharacterListInternal(@Nonnull final Login.RequestCharListCallback resultCallback) {
         final String serverURI = IllaClient.DEFAULT_SERVER.getServerHost();
         try {
 
@@ -184,10 +188,10 @@ public final class Login {
             final Document doc = db.parse(conn.getInputStream());
 
             readXML(doc, resultCallback);
-        } catch (final UnknownHostException e) {
+        } catch (@Nonnull final UnknownHostException e) {
             resultCallback.finishedRequest(2);
             LOGGER.error("Failed to resolve hostname, for fetching the charlist");
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             resultCallback.finishedRequest(2);
             LOGGER.error("Loading the charlist from the server failed");
         }
@@ -205,7 +209,7 @@ public final class Login {
      */
     private static final Logger LOGGER = Logger.getLogger(Login.class);
 
-    private void readXML(final Node root, final Login.RequestCharListCallback resultCallback) {
+    private void readXML(@Nonnull final Node root, @Nonnull final Login.RequestCharListCallback resultCallback) {
         if (!"chars".equals(root.getNodeName()) && !NODE_NAME_ERROR.equals(root.getNodeName())) {
             final NodeList children = root.getChildNodes();
             final int count = children.getLength();
@@ -320,8 +324,9 @@ public final class Login {
      * @param decode false for encoding the password, true for decoding.
      * @return the encoded or the decoded password
      */
+    @Nonnull
     @SuppressWarnings("nls")
-    private static String shufflePassword(final String pw, final boolean decode) {
+    private static String shufflePassword(@Nonnull final String pw, final boolean decode) {
 
         try {
             final Charset usedCharset = Charset.forName("UTF-8");
@@ -345,14 +350,14 @@ public final class Login {
             cipher.init(Cipher.ENCRYPT_MODE, key);
             return new String(Base64.encode(cipher.doFinal(cleartext)),
                     usedCharset);
-        } catch (final GeneralSecurityException e) {
+        } catch (@Nonnull final GeneralSecurityException e) {
             if (decode) {
                 LOGGER.warn("Decoding the password failed");
             } else {
                 LOGGER.warn("Encoding the password failed");
             }
             return "";
-        } catch (final IllegalArgumentException e) {
+        } catch (@Nonnull final IllegalArgumentException e) {
             if (decode) {
                 LOGGER.warn("Decoding the password failed");
             } else {
@@ -371,7 +376,7 @@ public final class Login {
      * @param pw    the password that stall be stored to the configuration file
      */
     @SuppressWarnings("nls")
-    private void storePassword(final boolean store, final String pw) {
+    private void storePassword(final boolean store, @Nonnull final String pw) {
         if (store) {
             IllaClient.getCfg().set("savePassword", true);
             IllaClient.getCfg().set("fingerprint", shufflePassword(pw, false));

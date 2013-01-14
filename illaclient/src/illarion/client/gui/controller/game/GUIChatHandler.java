@@ -59,6 +59,8 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.newdawn.slick.GameContainer;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
@@ -107,6 +109,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     }
 
     private class CharTalkEntry extends ChatBoxEntry {
+        @Nonnull
         private final CharTalkingEvent talkingEvent;
 
         /**
@@ -115,7 +118,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
          * @param event    the event data
          * @param msgColor the color of the entry
          */
-        CharTalkEntry(final CharTalkingEvent event, final Color msgColor) {
+        CharTalkEntry(@Nonnull final CharTalkingEvent event, final Color msgColor) {
             super(event.getLoggedText(), msgColor);
             talkingEvent = event;
         }
@@ -203,6 +206,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     /**
      * The Queue of strings that yet need to be written to the GUI.
      */
+    @Nonnull
     private final Queue<Runnable> messageQueue;
 
     /**
@@ -243,7 +247,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     }
 
     @EventSubscriber
-    public void onBroadcastInformReceived(final BroadcastInformReceivedEvent data) {
+    public void onBroadcastInformReceived(@Nonnull final BroadcastInformReceivedEvent data) {
         final TextBuilder textBuilder = TextBuilder.newInstance();
         try {
             textBuilder.append(Lang.getMsg("chat.broadcast"));
@@ -257,7 +261,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     }
 
     @EventSubscriber
-    public void onCharTalkingEvent(final CharTalkingEvent data) {
+    public void onCharTalkingEvent(@Nonnull final CharTalkingEvent data) {
         Color usedColor = null;
         switch (data.getMode()) {
             case emote:
@@ -281,7 +285,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     }
 
     @EventSubscriber
-    public void onScriptInformReceived(final ScriptInformReceivedEvent data) {
+    public void onScriptInformReceived(@Nonnull final ScriptInformReceivedEvent data) {
         if (data.getInformPriority() == 0) {
             return;
         }
@@ -307,7 +311,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     }
 
     @EventSubscriber
-    public void onTextToInformReceived(final TextToInformReceivedEvent data) {
+    public void onTextToInformReceived(@Nonnull final TextToInformReceivedEvent data) {
         final TextBuilder textBuilder = TextBuilder.newInstance();
         try {
             textBuilder.append(Lang.getMsg("chat.textto"));
@@ -321,7 +325,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     }
 
     @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
-    public void onInputEventReceived(final String topic, final String event) {
+    public void onInputEventReceived(@Nonnull final String topic, final String event) {
         if (topic.equals(InputReceiver.EB_TOPIC)) {
             if ("SelectChat".equals(event)) {
                 chatMsg.setFocus();
@@ -351,7 +355,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         this.screen = screen;
         this.nifty = nifty;
 
@@ -390,7 +394,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      *
      * @param text the text to send
      */
-    private void sendText(final String text) {
+    private void sendText(@Nonnull final String text) {
         if (introducePattern.matcher(text).matches()) {
             World.getNet().sendCommand(new IntroduceCmd());
             return;
@@ -431,7 +435,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      * @param text   the text to send
      * @param mode   the speech mode used to send the command
      */
-    private static void cleanAndSendText(final String prefix, final String text, final ChatHandler.SpeechMode mode) {
+    private static void cleanAndSendText(final String prefix, @Nonnull final String text, @Nonnull final ChatHandler.SpeechMode mode) {
         final String cleanText = REPEATED_SPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
         if (cleanText.isEmpty()) {
             return;
@@ -535,7 +539,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      * @param message   the message to display
      * @param color     the color to show the text in
      */
-    private void addMessageBubble(final Char character, final String message, final Color color) {
+    private void addMessageBubble(@Nullable final Char character, @Nonnull final String message, final Color color) {
         if (character == null) {
             return;
         }

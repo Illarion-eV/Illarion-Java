@@ -20,6 +20,7 @@ package illarion.mapedit.tools.panel.cellrenderer;
 
 import illarion.mapedit.resource.ItemImg;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
@@ -51,8 +52,9 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
         return size;
     }
 
+    @Nonnull
     @Override
-    public Component getTreeCellRendererComponent(final JTree tree, final Object val, final boolean isSelected,
+    public Component getTreeCellRendererComponent(final JTree tree, @Nonnull final Object val, final boolean isSelected,
                                                   final boolean expanded, final boolean leaf, final int row,
                                                   final boolean hasFocus) {
         if (!(val instanceof ItemImg)) {
@@ -74,7 +76,7 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
     }
 
     @Override
-    protected void paintComponent(final Graphics g) {
+    protected void paintComponent(@Nonnull final Graphics g) {
         final int w = image.getWidth(null);
         final int h = image.getHeight(null);
         final Dimension size = getPreferredSize();

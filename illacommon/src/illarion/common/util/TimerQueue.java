@@ -18,6 +18,9 @@
  */
 package illarion.common.util;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This class is the timer queue that stores all instances of timers and regularly calls this instances from a single
  * thread.
@@ -39,6 +42,7 @@ public final class TimerQueue
     /**
      * The last timer in the list. This entry is needed to perform a high speed check if a timer is part of this queue.
      */
+    @Nullable
     private Timer lastTimer;
 
     /**
@@ -63,6 +67,7 @@ public final class TimerQueue
      *
      * @return the instance of this timer queue that is supposed to be used for all timers
      */
+    @Nonnull
     static TimerQueue getInstance() {
         return INSTANCE;
     }
@@ -80,12 +85,12 @@ public final class TimerQueue
                 synchronized (this) {
                     try {
                         wait(timeToWait);
-                    } catch (final InterruptedException ie) {
+                    } catch (@Nonnull final InterruptedException ie) {
                         // nothing to do
                     }
                 }
             }
-        } catch (final ThreadDeath td) {
+        } catch (@Nonnull final ThreadDeath td) {
             running = false;
 
             // remove all queued timers.
@@ -99,10 +104,10 @@ public final class TimerQueue
     /**
      * Add a timer to the queue of timers.
      *
-     * @param timer the timer to add
+     * @param timer          the timer to add
      * @param expirationTime the time stamp of the next time this timer is supposed to be called
      */
-    void addTimer(final Timer timer, final long expirationTime) {
+    void addTimer(@Nonnull final Timer timer, final long expirationTime) {
         Timer previousTimer;
         Timer nextTimer;
 
@@ -147,7 +152,7 @@ public final class TimerQueue
      * @param timer the timer to check
      * @return <code>true</code> in case the timer is in this timer queue
      */
-    boolean containsTimer(final Timer timer) {
+    boolean containsTimer(@Nonnull final Timer timer) {
         return timer.equals(firstTimer) || timer.equals(lastTimer) || (timer.getNextTimer() != null);
     }
 
@@ -166,7 +171,7 @@ public final class TimerQueue
                 timer = firstTimer;
                 try {
                     this.wait(1);
-                } catch (final InterruptedException e) {
+                } catch (@Nonnull final InterruptedException e) {
                     // nothing to do
                 }
             }
@@ -201,7 +206,7 @@ public final class TimerQueue
      *
      * @param timer the timer to remove from the list
      */
-    void removeTimer(final Timer timer) {
+    void removeTimer(@Nonnull final Timer timer) {
         Timer previousTimer;
         Timer nextTimer;
         boolean found;

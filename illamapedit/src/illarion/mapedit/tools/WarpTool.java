@@ -25,6 +25,8 @@ import illarion.mapedit.history.WarpPlacedAction;
 import illarion.mapedit.tools.panel.WarpPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
@@ -35,7 +37,7 @@ public class WarpTool extends AbstractTool {
     private final WarpPanel panel = new WarpPanel();
 
     @Override
-    public void clickedAt(final int x, final int y, final Map map) {
+    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
         final MapWarpPoint point;
         if (panel.isDelete()) {
             point = null;
@@ -51,11 +53,13 @@ public class WarpTool extends AbstractTool {
         return Lang.getMsg("tools.WarpTool");
     }
 
+    @Nullable
     @Override
     public ResizableIcon getToolIcon() {
         return null;
     }
 
+    @Nonnull
     @Override
     public JPanel getSettingsPanel() {
         return panel;

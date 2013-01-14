@@ -25,6 +25,8 @@ import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.ItemPlacedAction;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.util.List;
 
@@ -34,7 +36,7 @@ import java.util.List;
 public class ItemEraserTool extends AbstractTool {
 
     @Override
-    public void clickedAt(final int x, final int y, final Map map) {
+    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
         if (!map.contains(x, y)) {
             return;
         }
@@ -54,11 +56,13 @@ public class ItemEraserTool extends AbstractTool {
         return Lang.getMsg("tools.ItemEraserTool");
     }
 
+    @Nullable
     @Override
     public ResizableIcon getToolIcon() {
         return null;
     }
 
+    @Nullable
     @Override
     public JPanel getSettingsPanel() {
         return null;

@@ -25,6 +25,9 @@ import illarion.common.graphics.Layers;
 import illarion.common.graphics.LightSource;
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * A effect is a frame based animation that shows at one tile on the game map.
  *
@@ -41,6 +44,7 @@ public final class Effect extends AbstractEntity implements Resource {
     /**
      * The frame animation that handles the animation of this effect.
      */
+    @Nullable
     private transient final FrameAnimation ani;
 
     /**
@@ -51,6 +55,7 @@ public final class Effect extends AbstractEntity implements Resource {
     /**
      * The light source of that effect that emits the light of this effect.
      */
+    @Nullable
     private LightSource lightSrc;
 
     /**
@@ -74,7 +79,7 @@ public final class Effect extends AbstractEntity implements Resource {
      * @param effectLight the encoded light value of the light that is emitted
      *                    by this effect
      */
-    public Effect(final int effectID, final String name, final int frames,
+    public Effect(final int effectID, @Nonnull final String name, final int frames,
                   final int offX, final int offY, final int animSpeed,
                   final int effectLight) {
         super(effectID, EFFECTS_PATH, name, frames, 0, offX, offY, 0,
@@ -95,7 +100,7 @@ public final class Effect extends AbstractEntity implements Resource {
      *
      * @param org the instance of this class that shall be copied
      */
-    private Effect(final Effect org) {
+    private Effect(@Nonnull final Effect org) {
         super(org);
         speed = org.speed;
         light = org.light;
@@ -153,6 +158,7 @@ public final class Effect extends AbstractEntity implements Resource {
      *
      * @return a new instance that is a exact copy of this instance
      */
+    @Nonnull
     @Override
     public Effect clone() {
         return new Effect(this);
@@ -209,7 +215,7 @@ public final class Effect extends AbstractEntity implements Resource {
      *
      * @param loc the location on the game map the effect shall be shown on
      */
-    public void show(final Location loc) {
+    public void show(@Nonnull final Location loc) {
         setScreenPos(loc, Layers.EFFECTS);
         if (ani != null) {
             ani.restart();

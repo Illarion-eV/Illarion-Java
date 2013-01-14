@@ -22,6 +22,7 @@ import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
@@ -35,15 +36,16 @@ public class ParsedTradeSimple extends AbstractParsedTrade {
     /**
      * The IDs of the items that are supposed to be traded.
      */
+    @Nonnull
     private final int[] itemIds;
 
-    public ParsedTradeSimple(final ParsedTradeSimple.TradeMode tradeMode, final int... tradeItemIds) {
+    public ParsedTradeSimple(final ParsedTradeSimple.TradeMode tradeMode, @Nonnull final int... tradeItemIds) {
         super(tradeMode);
         itemIds = Arrays.copyOf(tradeItemIds, tradeItemIds.length);
     }
 
     @Override
-    public void writeEasyNpc(final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
         if (stage == EasyNpcWriter.WritingStage.trading) {
             switch (getMode()) {
                 case selling:
@@ -74,7 +76,7 @@ public class ParsedTradeSimple extends AbstractParsedTrade {
     }
 
     @Override
-    public void writeLua(final Writer target, final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull final Writer target, final LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Trading) {
             for (final int itemId : itemIds) {
                 target.write("tradingNPC:addItem(npc.base.trade.tradeNPCItem(");

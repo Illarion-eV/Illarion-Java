@@ -24,6 +24,8 @@ import illarion.client.resources.loaders.*;
 import illarion.client.world.World;
 import org.newdawn.slick.loading.DeferredResource;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +56,7 @@ public final class ResourceTableLoading implements DeferredResource {
 
         try {
             World.getExecutorService().invokeAll(taskList);
-        } catch (final InterruptedException e) {
+        } catch (@Nonnull final InterruptedException e) {
             throw new IOException(e);
         }
 
@@ -64,6 +66,7 @@ public final class ResourceTableLoading implements DeferredResource {
     /**
      * Get a human readable description for this task.
      */
+    @Nullable
     @Override
     public String getDescription() {
         return null;

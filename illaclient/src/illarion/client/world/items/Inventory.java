@@ -24,6 +24,8 @@ import illarion.common.types.ItemId;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to store the current inventory of the player character.
  *
@@ -38,6 +40,7 @@ public final class Inventory implements EventSubscriber<InventoryUpdateEvent> {
     /**
      * The items stored in this inventory.
      */
+    @Nonnull
     private final InventorySlot[] slots;
 
     /**
@@ -70,7 +73,7 @@ public final class Inventory implements EventSubscriber<InventoryUpdateEvent> {
      * @param id    the ID of the new item
      * @param count the new item count
      */
-    public void setItem(final int slot, final ItemId id, final ItemCount count) {
+    public void setItem(final int slot, @Nonnull final ItemId id, @Nonnull final ItemCount count) {
         slots[slot].setData(id, count);
     }
 
@@ -79,7 +82,7 @@ public final class Inventory implements EventSubscriber<InventoryUpdateEvent> {
      * bus.
      */
     @Override
-    public void onEvent(final InventoryUpdateEvent event) {
+    public void onEvent(@Nonnull final InventoryUpdateEvent event) {
         setItem(event.getSlotId(), event.getItemId(), event.getCount());
     }
 }

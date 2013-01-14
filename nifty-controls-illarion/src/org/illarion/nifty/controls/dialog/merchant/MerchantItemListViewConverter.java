@@ -28,6 +28,8 @@ import illarion.common.types.ItemCount;
 import illarion.common.types.Money;
 import org.illarion.nifty.controls.MerchantListEntry;
 
+import javax.annotation.Nonnull;
+
 /**
  * This converter is used to display the merchant items in the GUI.
  *
@@ -35,7 +37,7 @@ import org.illarion.nifty.controls.MerchantListEntry;
  */
 public final class MerchantItemListViewConverter implements ListBox.ListBoxViewConverter<MerchantListEntry> {
     @Override
-    public void display(final Element listBoxItem, final MerchantListEntry item) {
+    public void display(@Nonnull final Element listBoxItem, @Nonnull final MerchantListEntry item) {
         final Element itemImage = listBoxItem.findElementByName("#imageDisplay");
         final NiftyImage itemPicture = item.getItemImage();
         itemImage.getRenderer(ImageRenderer.class).setImage(itemPicture);
@@ -91,7 +93,7 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
      * @param textDisplay  the text display for this part of the money
      * @param imageDisplay the image display for this part of money
      */
-    private static void applyMoneyValues(final int money, final Element textDisplay, final Element imageDisplay) {
+    private static void applyMoneyValues(final int money, @Nonnull final Element textDisplay, @Nonnull final Element imageDisplay) {
         if (money > 0) {
             textDisplay.getRenderer(TextRenderer.class).setText(Integer.toString(money));
             textDisplay.showWithoutEffects();
@@ -110,7 +112,7 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
     }
 
     @Override
-    public int getWidth(final Element element, final MerchantListEntry item) {
+    public int getWidth(@Nonnull final Element element, final MerchantListEntry item) {
         return element.getWidth();
     }
 }

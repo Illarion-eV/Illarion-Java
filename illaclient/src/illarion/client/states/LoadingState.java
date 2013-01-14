@@ -32,6 +32,7 @@ import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.opengl.SlickCallable;
 import org.newdawn.slick.state.StateBasedGame;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,7 +51,7 @@ public final class LoadingState
     private final Logger log = Logger.getLogger(LoadingState.class.getName());
 
     @Override
-    protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
+    protected void prepareNifty(@Nonnull final Nifty nifty, final StateBasedGame game) {
         nifty.setLocale(Lang.getInstance().getLocale());
         controller = new LoadScreenController(game);
         nifty.registerScreenController(controller);
@@ -88,7 +89,7 @@ public final class LoadingState
     }
 
     @Override
-    protected void renderGame(final GameContainer container, final StateBasedGame game, final Graphics g)
+    protected void renderGame(final GameContainer container, final StateBasedGame game, @Nonnull final Graphics g)
             throws SlickException {
 
         g.clear();

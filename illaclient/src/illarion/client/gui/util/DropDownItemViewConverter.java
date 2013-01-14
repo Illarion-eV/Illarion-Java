@@ -22,6 +22,9 @@ import de.lessvoid.nifty.controls.DropDown;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * @author Stefano Bonicatti &lt;smjert@gmail.com&gt;
  */
@@ -30,7 +33,7 @@ import de.lessvoid.nifty.elements.render.TextRenderer;
 public class DropDownItemViewConverter<T extends DropDownItem> implements DropDown.DropDownViewConverter<T> {
 
     @Override
-    public void display(Element itemElement, T item) {
+    public void display(@Nonnull Element itemElement, @Nullable T item) {
         TextRenderer renderer = itemElement.getRenderer(TextRenderer.class);
 
         if ((renderer != null) && (item != null)) {
@@ -39,7 +42,7 @@ public class DropDownItemViewConverter<T extends DropDownItem> implements DropDo
     }
 
     @Override
-    public int getWidth(Element itemElement, T item) {
+    public int getWidth(@Nonnull Element itemElement, @Nullable T item) {
         TextRenderer renderer = itemElement.getRenderer(TextRenderer.class);
 
         int width = 0;

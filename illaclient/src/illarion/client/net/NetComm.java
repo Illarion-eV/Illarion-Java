@@ -30,6 +30,8 @@ import illarion.common.util.Timer;
 import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -97,32 +99,38 @@ public final class NetComm {
     /**
      * List of server messages that got received and decoded but were not yet executed.
      */
+    @Nonnull
     private final BlockingQueue<AbstractReply> inputQueue;
 
     /**
      * The receiver that accepts and decodes data that was received from the server.
      */
+    @Nullable
     private Receiver inputThread;
 
     /**
      * The thread that handles the messages that arrive from the server.
      */
+    @Nullable
     private MessageExecutor messageHandler;
 
     /**
      * The queue of commands that were not yet send but are planned to be send.
      */
+    @Nonnull
     private final BlockingQueue<AbstractCommand> outputQueue;
 
     /**
      * The sender instance that accepts all server client commands that shall be send and forwards the data to this
      * class.
      */
+    @Nullable
     private Sender sender;
 
     /**
      * Communication socket to the Illarion server.
      */
+    @Nullable
     private SocketChannel socket;
 
     /**
@@ -144,7 +152,7 @@ public final class NetComm {
      * @param len    the amount of byte that shall be included to the checksum calculation
      * @return the calculated checksum
      */
-    public static int getCRC(final ByteBuffer buffer, final int len) {
+    public static int getCRC(@Nonnull final ByteBuffer buffer, final int len) {
         int crc = 0;
         int remain = len;
         final int pos = buffer.position();
@@ -167,7 +175,7 @@ public final class NetComm {
      * @param prefix The prefix that shall be written first to the log
      * @param buffer The buffer that contains the values that shall be written
      */
-    static void dump(final String prefix, final ByteBuffer buffer) {
+    static void dump(final String prefix, @Nonnull final ByteBuffer buffer) {
         final TextBuilder builder = TextBuilder.newInstance();
         final TextBuilder builderText = TextBuilder.newInstance();
 
@@ -220,7 +228,7 @@ public final class NetComm {
                     socket.finishConnect();
                     try {
                         Thread.sleep(1);
-                    } catch (final InterruptedException e) {
+                    } catch (@Nonnull final InterruptedException e) {
                         LOGGER.warn("Waiting time for connection finished got interrupted");
                     }
                 }
@@ -246,7 +254,7 @@ public final class NetComm {
                     });
             keepAliveTimer.setRepeats(true);
             keepAliveTimer.start();
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             LOGGER.fatal("Connection error");
             return false;
         }
@@ -254,6 +262,7 @@ public final class NetComm {
     }
 
     private final KeepAliveCmd keepAliveCmd = new KeepAliveCmd();
+    @Nullable
     private Timer keepAliveTimer;
 
     /**
@@ -286,7 +295,7 @@ public final class NetComm {
             // wait for threads to react
             try {
                 Thread.sleep(THREAD_WAIT_TIME);
-            } catch (final InterruptedException e) {
+            } catch (@Nonnull final InterruptedException e) {
                 LOGGER.warn("Disconnecting wait got interrupted.");
             }
 
@@ -298,7 +307,7 @@ public final class NetComm {
                 socket.close();
                 socket = null;
             }
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             LOGGER.warn("Disconnecting failed.", e);
         }
     }
@@ -318,7 +327,7 @@ public final class NetComm {
      * @param cmd the command that shall be added to the queue
      */
     @SuppressWarnings("nls")
-    public void sendCommand(final AbstractCommand cmd) {
+    public void sendCommand(@Nonnull final AbstractCommand cmd) {
         if (IllaClient.isDebug(Debug.protocol)) {
             if (cmd.getId() != CommandList.CMD_KEEPALIVE) {
                 LOGGER.debug("SND: " + cmd.toString());
@@ -327,7 +336,7 @@ public final class NetComm {
 
         try {
             outputQueue.put(cmd);
-        } catch (final InterruptedException e) {
+        } catch (@Nonnull final InterruptedException e) {
             LOGGER
                     .error("Got interrupted while trying to add a command to to the queue.");
         }

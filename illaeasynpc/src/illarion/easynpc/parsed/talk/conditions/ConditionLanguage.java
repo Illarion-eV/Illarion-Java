@@ -22,6 +22,7 @@ import illarion.easynpc.data.PlayerLanguage;
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.writer.LuaWriter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -60,6 +61,7 @@ public final class ConditionLanguage implements TalkCondition {
     /**
      * Get the LUA module needed for this condition.
      */
+    @Nonnull
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
@@ -69,7 +71,7 @@ public final class ConditionLanguage implements TalkCondition {
      * Write this language condition into its easyNPC change.
      */
     @Override
-    public void writeEasyNpc(final Writer target) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         target.write(lang.name());
     }
 
@@ -77,7 +79,7 @@ public final class ConditionLanguage implements TalkCondition {
      * Write the LUA code needed for this language condition.
      */
     @Override
-    public void writeLua(final Writer target) throws IOException {
+    public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, lang.name()));
     }
 }

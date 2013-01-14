@@ -21,6 +21,8 @@ package illarion.easynpc.parsed;
 import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class contains the shared code of the data storage for trading data.
  *
@@ -85,6 +87,7 @@ public abstract class AbstractParsedTrade implements ParsedData {
         return stage == LuaWriter.WritingStage.Trading;
     }
 
+    @Nonnull
     @Override
     public String[] getRequiredModules() {
         return MODULES;

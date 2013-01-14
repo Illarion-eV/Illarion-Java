@@ -21,6 +21,8 @@ package illarion.client.graphics;
 import illarion.client.resources.Resource;
 import illarion.client.resources.RuneFactory;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created: 20.08.2005 17:39:11
  */
@@ -34,13 +36,13 @@ public class Rune extends AbstractEntity implements Resource {
      * @param name
      */
     @Deprecated
-    public Rune(final int id, final String name) {
+    public Rune(final int id, @Nonnull final String name) {
         super(id, CHAR_PATH, name, 1, 0, 0, 0, 0, Sprite.HAlign.center,
                 Sprite.VAlign.middle, false);
         reset();
     }
 
-    public Rune(final Rune org) {
+    public Rune(@Nonnull final Rune org) {
         super(org);
         reset();
     }
@@ -49,6 +51,7 @@ public class Rune extends AbstractEntity implements Resource {
         return RuneFactory.getInstance().getCommand(50 + (type * 50) + runeID);
     }
 
+    @Nonnull
     @Override
     public Rune clone() {
         return new Rune(this);

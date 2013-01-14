@@ -38,6 +38,7 @@ public final class Skills {
     /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final Skills INSTANCE;
 
     static {
@@ -96,7 +97,7 @@ public final class Skills {
      * @return the matched skill
      */
     @Nullable
-    public Skill getSkill(final String name) {
+    public Skill getSkill(@Nonnull final String name) {
         final String cleanName = name.trim().toLowerCase();
 
         for (final Skill skill : skillMap.values()) {

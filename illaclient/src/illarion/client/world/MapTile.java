@@ -154,6 +154,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      *
      * @return the new instance of the map tile
      */
+    @Nonnull
     public static MapTile create() {
         return (MapTile) GameFactory.getInstance().getCommand(GameFactory.OBJ_MAPTILE);
     }
@@ -609,6 +610,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      *
      * @return the interactive tile referring to this map tile
      */
+    @Nonnull
     public InteractiveMapTile getInteractive() {
         return new InteractiveMapTile(this);
     }

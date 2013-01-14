@@ -18,6 +18,7 @@
  */
 package illarion.common.data;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -42,6 +43,7 @@ public final class CreditsList implements Iterable<CreditsPerson> {
     /**
      * The persons who belong to this list.
      */
+    @Nonnull
     private final List<CreditsPerson> members;
 
     /**
@@ -111,6 +113,7 @@ public final class CreditsList implements Iterable<CreditsPerson> {
         return nameEnglish;
     }
 
+    @Nonnull
     @Override
     public Iterator<CreditsPerson> iterator() {
         sortList();

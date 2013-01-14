@@ -26,6 +26,8 @@ import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to load the character definitions from the resource table
  * that was created using the configuration tool. The class will create the
@@ -151,7 +153,7 @@ public final class CharacterLoader extends AbstractResourceLoader<Avatar> implem
     }
 
     @Override
-    public boolean processRecord(final int line, final TableLoader loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
         final int avatarId = loader.getInt(TB_ID);
         final String filename = loader.getString(TB_NAME);
         final int frameCount = loader.getInt(TB_FRAME);
@@ -184,7 +186,7 @@ public final class CharacterLoader extends AbstractResourceLoader<Avatar> implem
         try {
             getTargetFactory().storeResource(avatar);
             avatar.activate(avatarId);
-        } catch (final IllegalStateException ex) {
+        } catch (@Nonnull final IllegalStateException ex) {
             logger.error("Failed adding avatar to internal factory. ID: "
                     + Integer.toString(avatarId) + " - Filename: " + filename);
         }

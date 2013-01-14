@@ -24,6 +24,9 @@ import illarion.common.util.ObjectSource;
 import javolution.util.FastComparator;
 import javolution.util.FastMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This class is used to load and store the graphics that are needed for
  * displaying the GUI of the game.
@@ -35,10 +38,12 @@ public final class GuiImageFactory implements ObjectSource<Sprite>,
     /**
      * The map that is used to store the values load into this factory.
      */
+    @Nonnull
     private final FastMap<String, GuiImage> sprites;
 
     private static final GuiImageFactory INSTANCE = new GuiImageFactory();
 
+    @Nonnull
     public static GuiImageFactory getInstance() {
         return INSTANCE;
     }
@@ -74,6 +79,7 @@ public final class GuiImageFactory implements ObjectSource<Sprite>,
     /**
      * Get a object from this factory.
      */
+    @Nullable
     @Override
     public Sprite getObject(final String key) {
         final GuiImage image = sprites.get(key);
@@ -103,7 +109,7 @@ public final class GuiImageFactory implements ObjectSource<Sprite>,
      * Store a resource in this factory.
      */
     @Override
-    public void storeResource(final GuiImage resource) {
+    public void storeResource(@Nonnull final GuiImage resource) {
         sprites.put(resource.getImageName(), resource);
     }
 }

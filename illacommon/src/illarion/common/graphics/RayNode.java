@@ -21,6 +21,8 @@ package illarion.common.graphics;
 import illarion.common.types.Location;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 /**
  * A ray node is one node on the path of a light to a destination. It knows all
  * its child nodes around.
@@ -123,7 +125,7 @@ public final class RayNode {
      * @param size      the length of the rays of the light this node is a part of,
      *                  its used to calculate the intensity of the light
      */
-    public RayNode(final Location loc, final int nodeLevel, final float size) {
+    public RayNode(@Nonnull final Location loc, final int nodeLevel, final float size) {
         this(loc.getScX(), loc.getScY(), nodeLevel, size);
     }
 
@@ -189,7 +191,7 @@ public final class RayNode {
      *                        default intensity of the light by the glowing intensity of the
      *                        light in order to make the light generally weaker
      */
-    public void apply(final LightSource shadowMap, final float globalIntensity) {
+    public void apply(@Nonnull final LightSource shadowMap, final float globalIntensity) {
         int blocked =
                 shadowMap.setIntensity(x, y, globalIntensity * intensity);
         float newIntensity = globalIntensity;
@@ -235,6 +237,7 @@ public final class RayNode {
      * @return the string representation of this ray node
      * @see java.lang.Object#toString()
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

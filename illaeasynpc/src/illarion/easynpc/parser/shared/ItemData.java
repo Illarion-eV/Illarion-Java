@@ -20,6 +20,7 @@ package illarion.easynpc.parser.shared;
 
 import illarion.easynpc.parsed.shared.ParsedItemData;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -47,7 +48,8 @@ public final class ItemData {
      * @param lines the lines to parse
      * @return data parsed data values
      */
-    public static ParsedItemData getData(final String... lines) {
+    @Nonnull
+    public static ParsedItemData getData(@Nonnull final String... lines) {
         final Map<String, String> dataValues = new HashMap<String, String>();
 
         for (final String line : lines) {

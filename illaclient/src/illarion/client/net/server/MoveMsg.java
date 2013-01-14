@@ -28,6 +28,7 @@ import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -93,7 +94,7 @@ public final class MoveMsg
      * @see illarion.client.net.server.AbstractReply#decode(NetCommReader)
      */
     @Override
-    public void decode(final NetCommReader reader)
+    public void decode(@Nonnull final NetCommReader reader)
             throws IOException {
         charId = new CharacterId(reader);
         loc = decodeLocation(reader);
@@ -158,6 +159,7 @@ public final class MoveMsg
      *
      * @return the string that contains the values that were decoded for this message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

@@ -57,7 +57,7 @@ public final class DragMapScCmd extends AbstractDragCommand {
      * @param destinationSlot      the slot in the container that is the destination
      * @param count                the amount of items to move
      */
-    public DragMapScCmd(final Location source, final int destinationContainer, final int destinationSlot,
+    public DragMapScCmd(@Nonnull final Location source, final int destinationContainer, final int destinationSlot,
                         @Nonnull final ItemCount count) {
         super(CommandList.CMD_DRAG_MAP_SC, count);
 

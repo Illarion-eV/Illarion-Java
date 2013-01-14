@@ -20,6 +20,9 @@ package illarion.mapedit.data;
 
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This class represents a whole map, including name, path, dimensions, and data.
  *
@@ -58,6 +61,7 @@ public class Map {
     /**
      * The tiles.
      */
+    @Nonnull
     private final MapTile[] mapTileData;
 
     /**
@@ -93,7 +97,7 @@ public class Map {
         mapTileData[i] = mapTile;
     }
 
-    public void setTileAt(final Location loc, final MapTile mapTile) {
+    public void setTileAt(@Nonnull final Location loc, final MapTile mapTile) {
         setTileAt(loc.getScX(), loc.getScY(), mapTile);
     }
 
@@ -128,6 +132,7 @@ public class Map {
      * @param y the y coordinate
      * @return the tile
      */
+    @Nullable
     public MapTile getTileAt(final int x, final int y) {
         if (!contains(x, y)) {
             return null;
@@ -141,7 +146,8 @@ public class Map {
 
     }
 
-    public MapTile getTileAt(final Location loc) {
+    @Nullable
+    public MapTile getTileAt(@Nonnull final Location loc) {
         return getTileAt(loc.getScX(), loc.getScY());
     }
 
@@ -206,7 +212,7 @@ public class Map {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nonnull final Object obj) {
         if (getClass() != obj.getClass()) {
             return false;
         }

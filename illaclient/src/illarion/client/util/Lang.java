@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -94,6 +95,7 @@ public final class Lang implements MessageSource {
      *
      * @return the instance of the class
      */
+    @Nonnull
     public static Lang getInstance() {
         return INSTANCE;
     }
@@ -110,7 +112,7 @@ public final class Lang implements MessageSource {
     }
 
     @EventTopicSubscriber(topic = LOCALE_CFG)
-    public void onConfigChanged(final String topic, final ConfigChangedEvent event) {
+    public void onConfigChanged(final String topic, @Nonnull final ConfigChangedEvent event) {
         recheckLocale(event.getConfig().getString(LOCALE_CFG));
     }
 
@@ -134,7 +136,7 @@ public final class Lang implements MessageSource {
     public String getMessage(final String key) {
         try {
             return messages.getString(key).replace("\\n", "\n");
-        } catch (final MissingResourceException e) {
+        } catch (@Nonnull final MissingResourceException e) {
             LOGGER.warn("Failed searching translated version of: " + key);
             return "<" + key + ">";
         }
@@ -149,7 +151,7 @@ public final class Lang implements MessageSource {
     public boolean hasMsg(final String key) {
         try {
             messages.getString(key);
-        } catch (final MissingResourceException e) {
+        } catch (@Nonnull final MissingResourceException e) {
             return false;
         }
         return true;
@@ -176,7 +178,7 @@ public final class Lang implements MessageSource {
     /**
      * Check if the language settings are still correct and reload the messages if needed.
      */
-    public void recheckLocale(final String key) {
+    public void recheckLocale(@Nonnull final String key) {
         if (key.equals(LOCALE_CFG_GERMAN)) {
             if (locale == Locale.GERMAN) {
                 return;

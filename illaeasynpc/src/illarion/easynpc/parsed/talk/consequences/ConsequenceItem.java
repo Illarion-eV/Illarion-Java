@@ -24,6 +24,7 @@ import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaWriter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
@@ -114,6 +115,7 @@ public final class ConsequenceItem implements TalkConsequence {
     /**
      * Get the module that is needed for this consequence to work.
      */
+    @Nonnull
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
@@ -123,7 +125,7 @@ public final class ConsequenceItem implements TalkConsequence {
      * Write this create item consequence into its easyNPC shape.
      */
     @Override
-    public void writeEasyNpc(final Writer target) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         if (data.hasValues()) {
             target.write(String.format(EASY_CODE, Integer.toString(item.getItemId()), value.getEasyNPC(),
                     Integer.toString(quality), data.getEasyNPC()));
@@ -137,7 +139,7 @@ public final class ConsequenceItem implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(final Writer target) throws IOException {
+    public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(item.getItemId()), value.getLua(),
                 Integer.toString(quality), data.getLua()));
     }

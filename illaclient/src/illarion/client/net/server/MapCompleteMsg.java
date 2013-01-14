@@ -25,6 +25,7 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -74,6 +75,7 @@ public final class MapCompleteMsg extends AbstractReply {
      *         message
      * @see illarion.client.net.server.AbstractReply#toString()
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

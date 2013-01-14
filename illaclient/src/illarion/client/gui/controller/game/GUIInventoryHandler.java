@@ -56,6 +56,7 @@ import org.illarion.nifty.controls.InventorySlot;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -163,8 +164,11 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         }
     }
 
+    @Nonnull
     private final String[] slots;
+    @Nonnull
     private final Element[] invSlots;
+    @Nonnull
     private final boolean[] slotLabelVisibility;
     private Element inventoryWindow;
     private Nifty activeNifty;
@@ -224,7 +228,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     }
 
     @EventSubscriber
-    public void onDialogClosedEvent(final CloseDialogEvent event) {
+    public void onDialogClosedEvent(@Nonnull final CloseDialogEvent event) {
         switch (event.getDialogType()) {
             case Any:
             case Merchant:
@@ -243,7 +247,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     }
 
     @EventSubscriber
-    public void onInventoryItemLookAtHandler(final InventoryItemLookAtEvent event) {
+    public void onInventoryItemLookAtHandler(@Nonnull final InventoryItemLookAtEvent event) {
         final Element slot = invSlots[event.getSlot()];
         final Rectangle rect = new Rectangle();
         rect.set(slot.getX(), slot.getY(), slot.getWidth(), slot.getHeight());
@@ -252,7 +256,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     }
 
     @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
-    public void onInputEvent(final String topic, final String data) {
+    public void onInputEvent(final String topic, @Nonnull final String data) {
         if (data.equals("ToggleInventory")) {
             toggleInventory();
         }
@@ -296,7 +300,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     }
 
     @NiftyEventSubscriber(pattern = "invslot_.*")
-    public void onMouseMoveOverInventory(final String topic, final NiftyMouseMovedEvent event) {
+    public void onMouseMoveOverInventory(@Nonnull final String topic, final NiftyMouseMovedEvent event) {
         final int slotId = getSlotNumber(topic);
 
         if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) || input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)) {
@@ -317,12 +321,12 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
      *
      * @param slot the slot to fetch
      */
-    private static void fetchLookAt(final illarion.client.world.items.InventorySlot slot) {
+    private static void fetchLookAt(@Nonnull final illarion.client.world.items.InventorySlot slot) {
         slot.getInteractive().lookAt();
     }
 
     @NiftyEventSubscriber(pattern = "invslot_.*")
-    public void clickInventory(final String topic, final NiftyMousePrimaryClickedEvent data) {
+    public void clickInventory(@Nonnull final String topic, final NiftyMousePrimaryClickedEvent data) {
         final int slotId = getSlotNumber(topic);
 
         inventoryClickActionHelper.setSlotId(slotId);
@@ -335,7 +339,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
      * @param name the name of the slot
      * @return the number of the slot fitting the name
      */
-    private int getSlotNumber(final String name) {
+    private int getSlotNumber(@Nonnull final String name) {
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
             if (name.startsWith(slots[i])) {
                 return i;
@@ -345,7 +349,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     }
 
     @NiftyEventSubscriber(pattern = "invslot_.*")
-    public void dragFromInventory(final String topic, final DraggableDragStartedEvent data) {
+    public void dragFromInventory(@Nonnull final String topic, final DraggableDragStartedEvent data) {
         final int slotId = getSlotNumber(topic);
         World.getInteractionManager().notifyDraggingInventory(slotId,
                 new GUIInventoryHandler.EndOfDragOperation(invSlots[slotId].getNiftyControl(InventorySlot.class)));
@@ -357,7 +361,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     }
 
     @NiftyEventSubscriber(pattern = "invslot_.*")
-    public void dropInInventory(final String topic, final DroppableDroppedEvent data) {
+    public void dropInInventory(@Nonnull final String topic, final DroppableDroppedEvent data) {
         final int slotId = getSlotNumber(topic);
 
         final ItemCount amount = World.getInteractionManager().getMovedAmount();
@@ -382,7 +386,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         activeNifty = nifty;
         activeScreen = screen;
 
@@ -427,7 +431,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
      * @param itemId the ID of the item that shall be displayed in the slot
      * @param count  the amount of items displayed in this slot
      */
-    private void setSlotItem(final int slotId, final ItemId itemId, final ItemCount count) {
+    private void setSlotItem(final int slotId, final ItemId itemId, @Nonnull final ItemCount count) {
         if ((slotId < 0) || (slotId >= Inventory.SLOT_COUNT)) {
             throw new IllegalArgumentException("Slot ID out of valid range.");
         }
@@ -498,7 +502,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     }
 
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(@Nonnull final GameContainer container, final int delta) {
         input = container.getInput();
         while (true) {
             final Runnable task = updateQueue.poll();

@@ -21,6 +21,7 @@ package illarion.client.net.server.events;
 import illarion.client.world.items.SelectionItem;
 import illarion.common.util.ArrayEnumeration;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 
 /**
@@ -89,6 +90,7 @@ public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEv
         return options[index];
     }
 
+    @Nonnull
     @Override
     public Iterator<SelectionItem> iterator() {
         return new ArrayEnumeration<SelectionItem>(options);

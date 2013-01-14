@@ -21,6 +21,8 @@ package illarion.common.config.entries;
 import illarion.common.config.Config;
 import illarion.common.util.FastMath;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is a configuration entry that is used to display a combo box in the
  * configuration dialog. So a selection of multiple possible values.
@@ -252,7 +254,7 @@ public final class SelectEntry implements ConfigEntry {
      *
      * @param newValue the new configuration value
      */
-    public void setValue(final Object newValue) {
+    public void setValue(@Nonnull final Object newValue) {
         switch (storeValue) {
             case STORE_INDEX:
                 for (int i = 0; i < options.length; i++) {

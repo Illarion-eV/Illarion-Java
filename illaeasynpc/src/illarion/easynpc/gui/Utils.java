@@ -27,6 +27,8 @@ import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -47,6 +49,7 @@ final class Utils {
      */
     private static final Logger LOGGER = Logger.getLogger(Utils.class);
 
+    @Nullable
     public static ResizableIcon getResizableIconFromResource(
             final String resource) {
         Image image;
@@ -54,7 +57,7 @@ final class Utils {
             image =
                     ImageIO.read(Utils.class.getClassLoader()
                             .getResource(resource));
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             LOGGER.error("Failed to read image: \"" + resource + "\"");
             return null;
         }
@@ -66,6 +69,7 @@ final class Utils {
         return resizeIcon;
     }
 
+    @Nullable
     @SuppressWarnings("nls")
     @Deprecated
     public static ResizableIcon getResizableIconFromResource(
@@ -79,7 +83,7 @@ final class Utils {
      *
      * @param editor the editor that contains the script to parse
      */
-    public static void reparseSilent(final Editor editor) { // NO_UCD
+    public static void reparseSilent(@Nonnull final Editor editor) { // NO_UCD
         editor.getParsedData();
     }
 
@@ -88,7 +92,7 @@ final class Utils {
      *
      * @param file the file that is the source of this script
      */
-    protected static void openScript(final File file) {
+    protected static void openScript(@Nonnull final File file) {
         try {
             final int editorIndex = MainFrame.getInstance().alreadyOpen(file);
             if (editorIndex > -1) {
@@ -99,7 +103,7 @@ final class Utils {
             MainFrame.getInstance().addNewScript().loadScript(easyScript);
             MainFrame.getInstance().setCurrentTabTitle(file.getName());
             Config.getInstance().addLastOpenedFile(file);
-        } catch (final IOException e1) {
+        } catch (@Nonnull final IOException e1) {
             LOGGER.error("Reading the script failed.", e1); //$NON-NLS-1$
         }
     }
@@ -111,7 +115,7 @@ final class Utils {
      * @param editor the editor that contains the script to parse
      */
     @SuppressWarnings("nls")
-    protected static void reparseScript(final Editor editor) {
+    protected static void reparseScript(@Nonnull final Editor editor) {
         final ParsedNpc npc = editor.getParsedData();
         if (npc == null) {
             return;
@@ -125,7 +129,7 @@ final class Utils {
         try {
             scriptWriter.write();
             writer.close();
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             LOGGER.error("Error occured while writing a script.", e);
         }
 
@@ -138,7 +142,7 @@ final class Utils {
      *
      * @param editor the editor that supplies the script text
      */
-    protected static void saveEasyNPC(final Editor editor) {
+    protected static void saveEasyNPC(@Nonnull final Editor editor) {
         final String script = editor.getScriptText();
         final File targetFile = editor.getScriptFile();
         if (targetFile == null) {
@@ -158,7 +162,7 @@ final class Utils {
      * @param editor the editor containing the original script.
      */
     @SuppressWarnings("nls")
-    protected static void saveLuaScript(final Editor editor) {
+    protected static void saveLuaScript(@Nonnull final Editor editor) {
         final ParsedNpc npc = editor.getParsedData();
         if (npc == null) {
             JOptionPane.showMessageDialog(MainFrame.getInstance(),
@@ -171,7 +175,7 @@ final class Utils {
         final JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
             @Override
-            public boolean accept(final File f) {
+            public boolean accept(@Nonnull final File f) {
                 return !f.isFile() || f.getName().endsWith(".lua"); //$NON-NLS-1$
             }
 
@@ -209,7 +213,7 @@ final class Utils {
                 if (backupFile.exists()) {
                     backupFile.delete();
                 }
-            } catch (final IOException ex) {
+            } catch (@Nonnull final IOException ex) {
                 if (backupFile.exists()) {
                     if (targetFile.exists()) {
                         targetFile.delete();
@@ -228,7 +232,7 @@ final class Utils {
         final JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
             @Override
-            public boolean accept(final File f) {
+            public boolean accept(@Nonnull final File f) {
                 return !f.isFile() || f.getName().endsWith(".npc"); //$NON-NLS-1$
             }
 
@@ -255,12 +259,12 @@ final class Utils {
      *
      * @param editor the editor that supplies the script text
      */
-    protected static void selectAndSaveEasyNPC(final Editor editor) {
+    protected static void selectAndSaveEasyNPC(@Nonnull final Editor editor) {
         final String script = editor.getScriptText();
         final JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
             @Override
-            public boolean accept(final File f) {
+            public boolean accept(@Nonnull final File f) {
                 return !f.isFile() || f.getName().endsWith(".npc"); //$NON-NLS-1$
             }
 
@@ -287,7 +291,7 @@ final class Utils {
     }
 
     @SuppressWarnings("nls")
-    protected static void uploadLuaScript(final Editor editor) {
+    protected static void uploadLuaScript(@Nonnull final Editor editor) {
         final ParsedNpc npc = editor.getParsedData();
         if (npc == null) {
             JOptionPane.showMessageDialog(MainFrame.getInstance(),
@@ -338,20 +342,20 @@ final class Utils {
                     Lang.getMsg(Utils.class, "luaUploadInfos"),
                     Lang.getMsg(Utils.class, "luaUploadInfosTitle"),
                     JOptionPane.INFORMATION_MESSAGE);
-        } catch (final IOException ex) {
+        } catch (@Nonnull final IOException ex) {
             LOGGER.error("Connection to host failed", ex);
         } finally {
             if (output != null) {
                 try {
                     output.close();
-                } catch (final IOException e) {
+                } catch (@Nonnull final IOException e) {
                     // nothing
                 }
             }
             if (input != null) {
                 try {
                     input.close();
-                } catch (final IOException e) {
+                } catch (@Nonnull final IOException e) {
                     // nothing
                 }
             }
@@ -365,7 +369,7 @@ final class Utils {
      * @param script     the text of the script
      * @param targetFile the file that is the target of this writing operation
      */
-    private static void saveEasyNPCImpl(final String script, final File targetFile) {
+    private static void saveEasyNPCImpl(@Nonnull final String script, @Nonnull final File targetFile) {
         final File backupFile = new File(targetFile.getAbsolutePath() + ".bak"); //$NON-NLS-1$
         try {
             if (backupFile.exists()) {
@@ -382,7 +386,7 @@ final class Utils {
             if (backupFile.exists()) {
                 backupFile.delete();
             }
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             if (backupFile.exists()) {
                 if (targetFile.exists()) {
                     targetFile.delete();

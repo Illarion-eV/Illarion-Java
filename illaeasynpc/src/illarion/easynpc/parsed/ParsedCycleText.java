@@ -22,6 +22,7 @@ import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -86,6 +87,7 @@ public final class ParsedCycleText implements ParsedData {
     /**
      * Get the modules required for this cycle text to work properly.
      */
+    @Nonnull
     @Override
     public String[] getRequiredModules() {
         return LUA_MODULES;
@@ -96,7 +98,7 @@ public final class ParsedCycleText implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(final Writer target,
+    public void writeEasyNpc(@Nonnull final Writer target,
                              final EasyNpcWriter.WritingStage stage) throws IOException {
         if (stage == EasyNpcWriter.WritingStage.cycleTexts) {
             target.write("cycletext \"");
@@ -112,7 +114,7 @@ public final class ParsedCycleText implements ParsedData {
      * Write the LUA code required to ensure this cycle text is working.
      */
     @Override
-    public void writeLua(final Writer target,
+    public void writeLua(@Nonnull final Writer target,
                          final LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.CycleText) {
             target.write("talkingNPC:addCycleText(\""); //$NON-NLS-1$

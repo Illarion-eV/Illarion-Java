@@ -1,31 +1,32 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.util;
 
-import java.util.List;
-
 import javolution.util.FastTable;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * This is a implementation of a restart able timer that is able to operate very
  * fast. It will call any amount of added listeners after given delay times.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Timer {
@@ -73,7 +74,7 @@ public final class Timer {
      * This creates a new timer with a initial and between delay time. Before
      * this timer can be used properly its needed to add at least one listener
      * in addition to this timer using {@link #addListener(Runnable)}.
-     * 
+     *
      * @param timerDelay the initial and the between delay time in milliseconds
      */
     public Timer(final int timerDelay) {
@@ -84,13 +85,13 @@ public final class Timer {
      * This creates a new timer with a separated set initial and between time
      * delay. Also the first listener is added right away using this
      * constructor.
-     * 
-     * @param initDelay the initial delay of this timer in milliseconds
+     *
+     * @param initDelay    the initial delay of this timer in milliseconds
      * @param betweenDelay the delay between two calls in milliseconds
-     * @param listener the first listener that is called using this timer
+     * @param listener     the first listener that is called using this timer
      */
     public Timer(final int initDelay, final int betweenDelay,
-        final Runnable listener) {
+                 @Nullable final Runnable listener) {
         delay = betweenDelay;
         initialDelay = initDelay;
         listeners = FastTable.newInstance();
@@ -103,9 +104,9 @@ public final class Timer {
     /**
      * This creates a new timer with a initial and a between delay time. Also
      * the first listener is added right away using this constructor.
-     * 
+     *
      * @param timerDelay the initial and the between delay time in milliseconds
-     * @param listener the listener that is added as first listener
+     * @param listener   the listener that is added as first listener
      */
     public Timer(final int timerDelay, final Runnable listener) {
         this(timerDelay, timerDelay, listener);
@@ -114,7 +115,7 @@ public final class Timer {
     /**
      * Add a listener to that class that is called every time that timer
      * triggers.
-     * 
+     *
      * @param listener the listener to add
      */
     public void addListener(final Runnable listener) {
@@ -123,7 +124,7 @@ public final class Timer {
 
     /**
      * Return the time in milliseconds between two calls of the timer listeners.
-     * 
+     *
      * @return the between-event delay time
      */
     public int getDelay() {
@@ -132,7 +133,7 @@ public final class Timer {
 
     /**
      * Get the delay that applies before the first call of the timer.
-     * 
+     *
      * @return the initial delay in milliseconds
      */
     public int getInitialDelay() {
@@ -141,7 +142,7 @@ public final class Timer {
 
     /**
      * Check if the timer is repeating.
-     * 
+     *
      * @return <code>true</code> in case the timer is repeating and will send
      *         keep sending events
      */
@@ -151,7 +152,7 @@ public final class Timer {
 
     /**
      * Check if this timer is currently running.
-     * 
+     *
      * @return <code>true</code> if this timer is currently running and firing
      *         updates
      */
@@ -162,7 +163,7 @@ public final class Timer {
     /**
      * Remove a listener from that timer. After this call the listener is not
      * notified anymore when the timer triggers.
-     * 
+     *
      * @param listener the listener to remove
      */
     public void removeListener(final Runnable listener) {
@@ -181,7 +182,7 @@ public final class Timer {
 
     /**
      * Set the delay time that applies between two calls of this timer.
-     * 
+     *
      * @param timerDelay the time between two calls of the timer in milliseconds
      */
     @SuppressWarnings("nls")
@@ -194,14 +195,14 @@ public final class Timer {
 
     /**
      * Set the delay time that applies before the first call of the timer.
-     * 
+     *
      * @param initDelay the initial delay in milliseconds
      */
     @SuppressWarnings("nls")
     public void setInitialDelay(final int initDelay) {
         if (initDelay < 0) {
             throw new IllegalArgumentException("Invalid initial delay: "
-                + initDelay);
+                    + initDelay);
         }
         initialDelay = initDelay;
     }
@@ -210,9 +211,9 @@ public final class Timer {
      * Set if this timer is supposed to repeat events or not. In case this flag
      * is set to <code>false</code> the timer will stop after the first event is
      * send.
-     * 
+     *
      * @param flag <code>true</code> to have the timer sending more then one
-     *            event
+     *             event
      */
     public void setRepeats(final boolean flag) {
         repeats = flag;
@@ -225,7 +226,7 @@ public final class Timer {
     public void start() {
         if (!running) {
             TimerQueue.getInstance().addTimer(this,
-                System.currentTimeMillis() + getInitialDelay());
+                    System.currentTimeMillis() + getInitialDelay());
             running = true;
         }
     }
@@ -243,7 +244,7 @@ public final class Timer {
 
     /**
      * Get the time when this timer is supposed to be called next time.
-     * 
+     *
      * @return the time when this timer is supposed to be called next time
      */
     long getExpirationTime() {
@@ -252,7 +253,7 @@ public final class Timer {
 
     /**
      * Get the next timer in the list.
-     * 
+     *
      * @return the next timer
      */
     Timer getNextTimer() {
@@ -273,7 +274,7 @@ public final class Timer {
 
     /**
      * Set the time when this timer is supposed to be called next time.
-     * 
+     *
      * @param time the time when this timer is supposed to be called next time
      */
     void setExpirationTime(final long time) {
@@ -282,7 +283,7 @@ public final class Timer {
 
     /**
      * Set the next timer in list of timers.
-     * 
+     *
      * @param next the next timer in the list
      */
     void setNextTimer(final Timer next) {

@@ -25,6 +25,8 @@ import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedEmptyLine;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Pattern;
 
 /**
@@ -47,10 +49,11 @@ public final class NpcEmpty implements NpcType {
      * @return <code>true</code> in case the line can be parsed by this class
      */
     @Override
-    public boolean canParseLine(final EasyNpcScript.Line line) {
+    public boolean canParseLine(@Nonnull final EasyNpcScript.Line line) {
         return EMPTY_LINE.matcher(line.getLine()).matches();
     }
 
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public DocuEntry getChild(final int index) {
@@ -67,11 +70,13 @@ public final class NpcEmpty implements NpcType {
         return Lang.getMsg(getClass(), "Docu.description"); //$NON-NLS-1$
     }
 
+    @Nullable
     @Override
     public String getExample() {
         return null;
     }
 
+    @Nullable
     @Override
     public String getSyntax() {
         return null;
@@ -86,7 +91,7 @@ public final class NpcEmpty implements NpcType {
      * Add the empty line to the parsed NPC.
      */
     @Override
-    public void parseLine(final EasyNpcScript.Line line, final ParsedNpc npc) {
+    public void parseLine(final EasyNpcScript.Line line, @Nonnull final ParsedNpc npc) {
         npc.addNpcData(new ParsedEmptyLine());
     }
 

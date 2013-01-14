@@ -26,6 +26,7 @@ import illarion.easynpc.parsed.ParsedComment;
 import illarion.easynpc.writer.EasyNpcWriter;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,10 +51,11 @@ public final class NpcComment implements NpcType {
      * @return <code>true</code> in case the line can be parsed by this class
      */
     @Override
-    public boolean canParseLine(final EasyNpcScript.Line line) {
+    public boolean canParseLine(@Nonnull final EasyNpcScript.Line line) {
         return COMMENT_BLOCK.matcher(line.getLine()).find();
     }
 
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public DocuEntry getChild(final int index) {
@@ -91,7 +93,7 @@ public final class NpcComment implements NpcType {
      */
     @SuppressWarnings("nls")
     @Override
-    public void parseLine(final EasyNpcScript.Line line, final ParsedNpc npc) {
+    public void parseLine(@Nonnull final EasyNpcScript.Line line, @Nonnull final ParsedNpc npc) {
         if (line.getLine().contains(EasyNpcWriter.AC_HEADER)) {
             return;
         }

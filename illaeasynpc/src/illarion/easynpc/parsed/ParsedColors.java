@@ -22,6 +22,8 @@ import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -86,7 +88,7 @@ public final class ParsedColors implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void buildSQL(final SQLBuilder builder) {
+    public void buildSQL(@Nonnull final SQLBuilder builder) {
         switch (colorTarget) {
             case Skin:
                 builder.setNpcSkinColor(colorRed, colorGreen, colorBlue);
@@ -120,6 +122,7 @@ public final class ParsedColors implements ParsedData {
      *
      * @return {@code null} at all times
      */
+    @Nullable
     @Override
     public String[] getRequiredModules() {
         return null;
@@ -130,7 +133,7 @@ public final class ParsedColors implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
         if (!effectsEasyNpcStage(stage)) {
             return;
         }

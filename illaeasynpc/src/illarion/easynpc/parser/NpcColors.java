@@ -26,6 +26,8 @@ import illarion.easynpc.parsed.ParsedColors;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +57,7 @@ public final class NpcColors implements NpcType {
      * The documentation entry for the hair color.
      */
     private final DocuEntry hairDocu = new DocuEntry() {
+        @Nonnull
         @Override
         @SuppressWarnings("nls")
         public DocuEntry getChild(final int index) {
@@ -95,6 +98,7 @@ public final class NpcColors implements NpcType {
      * The documentation entry for the skin color.
      */
     private final DocuEntry skinDocu = new DocuEntry() {
+        @Nonnull
         @Override
         @SuppressWarnings("nls")
         public DocuEntry getChild(final int index) {
@@ -135,7 +139,7 @@ public final class NpcColors implements NpcType {
      * Check if the line is a color line and this parser is able to handle it.
      */
     @Override
-    public boolean canParseLine(final Line lineStruct) {
+    public boolean canParseLine(@Nonnull final Line lineStruct) {
         final String line = lineStruct.getLine();
         if (COLOR_SKIN.matcher(line).find()) {
             return true;
@@ -148,6 +152,7 @@ public final class NpcColors implements NpcType {
         return false;
     }
 
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public DocuEntry getChild(final int index) {
@@ -182,6 +187,7 @@ public final class NpcColors implements NpcType {
     /**
      * No example for the colors. The children contain the examples.
      */
+    @Nullable
     @Override
     public String getExample() {
         return null;
@@ -191,6 +197,7 @@ public final class NpcColors implements NpcType {
      * The color definition has not syntax. The syntax is written in the
      * children of this.
      */
+    @Nullable
     @Override
     public String getSyntax() {
         return null;
@@ -207,7 +214,7 @@ public final class NpcColors implements NpcType {
 
     @SuppressWarnings("nls")
     @Override
-    public void parseLine(final Line lineStruct, final ParsedNpc npc) {
+    public void parseLine(@Nonnull final Line lineStruct, @Nonnull final ParsedNpc npc) {
         final String line = lineStruct.getLine();
         Matcher matcher;
 
@@ -258,7 +265,7 @@ public final class NpcColors implements NpcType {
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put("colorHair", Token.RESERVED_WORD);
         map.put("colorSkin", Token.RESERVED_WORD);
     }

@@ -24,6 +24,8 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 /**
  * This abstract class takes care for fetching uncaught exceptions and tries to
  * keep the editor alive just in the way it supposed to be.
@@ -67,7 +69,7 @@ abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
      */
     @Override
     @SuppressWarnings("nls")
-    public final void uncaughtException(final Thread t, final Throwable e) {
+    public final void uncaughtException(@Nonnull final Thread t, @Nonnull final Throwable e) {
         LOGGER.error("Fetched uncaught exception: " + getCrashMessage(), e);
         if (currentlyCrashing) {
             return;
@@ -119,7 +121,7 @@ abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
      * @param t the thread that crashed
      * @param e the reason of the crash
      */
-    private void reportError(final Thread t, final Throwable e) {
+    private void reportError(@Nonnull final Thread t, @Nonnull final Throwable e) {
         CrashReporter.getInstance().reportCrash(
                 new CrashData(MapEditor.APPLICATION, MapEditor.VERSION,
                         getCrashMessage(), t, e));

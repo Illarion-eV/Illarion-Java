@@ -26,6 +26,7 @@ import javolution.text.TextBuilder;
 import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,11 +49,13 @@ public final class ConfigDialog {
         /**
          * The configuration entry that is displayed next to the title.
          */
+        @Nullable
         private ConfigEntry entry;
 
         /**
          * The title of the entry.
          */
+        @Nullable
         private String title;
 
         /**
@@ -84,6 +87,7 @@ public final class ConfigDialog {
          *
          * @return the configuration entry of this entry
          */
+        @Nullable
         public ConfigEntry getConfigEntry() {
             return entry;
         }
@@ -93,6 +97,7 @@ public final class ConfigDialog {
          *
          * @return The title of this entry
          */
+        @Nullable
         public String getTitle() {
             return title;
         }

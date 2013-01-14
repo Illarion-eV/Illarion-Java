@@ -22,6 +22,8 @@ import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -64,6 +66,7 @@ public final class ParsedWalkingRadius implements ParsedData {
         return false;
     }
 
+    @Nullable
     @Override
     public String[] getRequiredModules() {
         return null;
@@ -74,7 +77,7 @@ public final class ParsedWalkingRadius implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(final Writer target, final EasyNpcWriter.WritingStage stage)
+    public void writeEasyNpc(@Nonnull final Writer target, final EasyNpcWriter.WritingStage stage)
             throws IOException {
         if (stage == EasyNpcWriter.WritingStage.header) {
             target.write("radius = ");

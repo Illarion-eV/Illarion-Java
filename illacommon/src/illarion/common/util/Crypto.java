@@ -18,6 +18,8 @@
  */
 package illarion.common.util;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.crypto.*;
 import java.io.*;
 import java.security.*;
@@ -66,11 +68,13 @@ public final class Crypto {
     /**
      * The private key instance that was loaded into the this class.
      */
+    @Nullable
     private PrivateKey privateKey;
 
     /**
      * The public key instance that was loaded into the this class.
      */
+    @Nullable
     private PublicKey publicKey;
 
     /**
@@ -82,7 +86,7 @@ public final class Crypto {
      * @return true if all went well, false if something went wrong
      */
     @SuppressWarnings("nls")
-    public boolean decrypt(final InputStream src, final OutputStream dst) {
+    public boolean decrypt(final InputStream src, @Nonnull final OutputStream dst) {
         try {
             final DataInputStream in = new DataInputStream(src);
             final int length = in.readInt();
@@ -102,7 +106,7 @@ public final class Crypto {
             cipher.init(Cipher.DECRYPT_MODE, key);
 
             pumpData(in, dst, cipher);
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             LOGGER.log(Level.SEVERE, "Decryping the resource failed.", e);
             return false;
         }
@@ -115,13 +119,14 @@ public final class Crypto {
      * @param src the input stream
      * @return the input stream that supplies the descripted data
      */
+    @Nonnull
     @SuppressWarnings("nls")
     public InputStream decryptedStream(final InputStream src) {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance(RSA);
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             LOGGER.log(Level.SEVERE, "Creating Cipher failed.", e);
         }
 
@@ -145,7 +150,7 @@ public final class Crypto {
      *                                   data
      */
     @SuppressWarnings("nls")
-    public void encrypt(final InputStream src, final OutputStream dst)
+    public void encrypt(@Nonnull final InputStream src, final OutputStream dst)
             throws GeneralSecurityException, NoSuchPaddingException,
             InvalidKeyException, IllegalBlockSizeException, IOException {
         if (privateKey == null) {
@@ -179,13 +184,14 @@ public final class Crypto {
      * @return the output stream that takes the unencrypted data and forwards it
      *         to the output stream set with the parameter
      */
+    @Nonnull
     @SuppressWarnings("nls")
     public OutputStream encryptedStream(final OutputStream src) {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance(RSA);
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             LOGGER.log(Level.SEVERE, "Creating Cipher failed.", e);
         }
 
@@ -221,7 +227,7 @@ public final class Crypto {
                     && loadPrivateKeyImpl(new FileInputStream(keyFile))) {
                 return;
             }
-        } catch (final FileNotFoundException e) {
+        } catch (@Nonnull final FileNotFoundException e) {
             // the file was not found -> ignore
         }
 
@@ -237,7 +243,7 @@ public final class Crypto {
                     && loadPrivateKeyImpl(new FileInputStream(new File(keyValue)))) {
                 return;
             }
-        } catch (final FileNotFoundException e) {
+        } catch (@Nonnull final FileNotFoundException e) {
             // the file was not found -> ignore
         }
 
@@ -272,7 +278,7 @@ public final class Crypto {
                     && loadPrivateKeyImpl(new FileInputStream(keyFile))) {
                 return;
             }
-        } catch (final FileNotFoundException e) {
+        } catch (@Nonnull final FileNotFoundException e) {
             // the file was not found -> ignore
         }
 
@@ -291,7 +297,7 @@ public final class Crypto {
                     return;
                 }
             }
-        } catch (final FileNotFoundException e) {
+        } catch (@Nonnull final FileNotFoundException e) {
             // the file was not found -> ignore
         }
 
@@ -316,20 +322,21 @@ public final class Crypto {
      * @param in the input stream the load the private key from
      * @return <code>true</code> in case the key was loaded successfully
      */
-    private static Key loadKeyImpl(final InputStream in) {
+    @Nullable
+    private static Key loadKeyImpl(@Nullable final InputStream in) {
         if (in != null) {
             ObjectInputStream keyIn = null;
             try {
                 keyIn = new ObjectInputStream(in);
                 return (Key) keyIn.readObject();
-            } catch (final Exception e) {
+            } catch (@Nonnull final Exception e) {
                 // loading the key failed
             } finally {
                 try {
                     if (keyIn != null) {
                         keyIn.close();
                     }
-                } catch (final IOException e) {
+                } catch (@Nonnull final IOException e) {
                     // loading the key failed
                 }
             }
@@ -350,7 +357,7 @@ public final class Crypto {
         }
         try {
             privateKey = (PrivateKey) loadKey;
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             return false;
         }
         return true;
@@ -369,7 +376,7 @@ public final class Crypto {
         }
         try {
             publicKey = (PublicKey) loadKey;
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             return false;
         }
         return true;
@@ -386,8 +393,8 @@ public final class Crypto {
      * @throws GeneralSecurityException in case something is wrong with the
      *                                  cipher
      */
-    private static void pumpData(final InputStream in, final OutputStream out,
-                                 final Cipher cipher) throws IOException, GeneralSecurityException {
+    private static void pumpData(@Nonnull final InputStream in, @Nonnull final OutputStream out,
+                                 @Nonnull final Cipher cipher) throws IOException, GeneralSecurityException {
         final int blockSize = cipher.getBlockSize();
         final int outputSize = cipher.getOutputSize(blockSize);
         final byte[] inBytes = new byte[blockSize];

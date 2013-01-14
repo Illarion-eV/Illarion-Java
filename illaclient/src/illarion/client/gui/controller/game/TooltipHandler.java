@@ -33,6 +33,8 @@ import org.illarion.nifty.controls.tooltip.builder.ToolTipBuilder;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -45,6 +47,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     /**
      * The queue that contains the tasks for the tooltips that need to be executed upon the next update.
      */
+    @Nonnull
     private final Queue<Runnable> toolTipTasks;
 
     /**
@@ -65,6 +68,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     /**
      * The area the mouse as the remain inside to keep the tooltip active.
      */
+    @Nullable
     private Rectangle activeTooltipArea;
 
     /**
@@ -80,6 +84,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     /**
      * The task that will clean all opened tooltip.
      */
+    @Nonnull
     private Runnable cleanToolTips = new Runnable() {
         @Override
         public void run() {
@@ -103,7 +108,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
 
@@ -121,7 +126,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     }
 
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(@Nonnull final GameContainer container, final int delta) {
         while (true) {
             final Runnable task = toolTipTasks.poll();
             if (task == null) {
@@ -156,7 +161,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      *                 Also the mouse is required to remain inside this area to keep the tooltip active
      * @param event    the event that contains the data of the tooltip
      */
-    public void showToolTip(final Rectangle location, final AbstractItemLookAtEvent event) {
+    public void showToolTip(@Nonnull final Rectangle location, @Nonnull final AbstractItemLookAtEvent event) {
         hideToolTip();
 
         if (!location.isInside(lastMouseX, lastMouseY)) {
@@ -184,7 +189,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * @param location the tooltip should be place around, the area of this rectangle won't be hidden by the tooltip
      * @param event    the event that contains the data of the tooltip
      */
-    private void showToolTipImpl(final Rectangle location, final AbstractItemLookAtEvent event) {
+    private void showToolTipImpl(@Nonnull final Rectangle location, @Nonnull final AbstractItemLookAtEvent event) {
         final ToolTipBuilder builder = new ToolTipBuilder("tooltip-" + Long.toString(count++));
         builder.title(event.getName());
 

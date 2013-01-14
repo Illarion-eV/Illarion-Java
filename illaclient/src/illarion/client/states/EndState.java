@@ -27,6 +27,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import javax.annotation.Nonnull;
 import java.util.logging.Logger;
 
 /**
@@ -42,7 +43,7 @@ public final class EndState extends NiftyBasicGameState {
     private final Logger log = Logger.getLogger(EndState.class.getName());
 
     @Override
-    protected void prepareNifty(final Nifty nifty, final StateBasedGame game) {
+    protected void prepareNifty(@Nonnull final Nifty nifty, final StateBasedGame game) {
         nifty.setLocale(Lang.getInstance().getLocale());
         controller = new LoadScreenController(game);
         nifty.registerScreenController(controller);

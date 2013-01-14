@@ -18,6 +18,7 @@
  */
 package illarion.common.util;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.Pack200;
@@ -40,6 +41,7 @@ public final class Pack200Helper {
      * This is the map of properties that is added to every new created packer
      * and unpacker.
      */
+    @Nonnull
     private static final Map<String, String> PROPS;
 
     static {

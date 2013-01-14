@@ -62,6 +62,8 @@ import org.illarion.nifty.controls.itemcontainer.builder.ItemContainerBuilder;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
@@ -83,6 +85,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         /**
          * The inventory slot that requires the reset.
          */
+        @Nullable
         private final InventorySlot invSlot;
 
         /**
@@ -90,7 +93,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
          *
          * @param slot the inventory slot to reset
          */
-        EndOfDragOperation(final InventorySlot slot) {
+        EndOfDragOperation(@Nullable final InventorySlot slot) {
             if (slot == null) {
                 throw new NullPointerException("slot");
             }
@@ -228,6 +231,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
     /**
      * The list of item containers that are currently displayed.
      */
+    @Nonnull
     private final TIntObjectHashMap<org.illarion.nifty.controls.ItemContainer> itemContainerMap;
 
     /**
@@ -258,7 +262,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
     }
 
     @EventSubscriber
-    public void onContainerClosedEvent(final CloseContainerEvent event) {
+    public void onContainerClosedEvent(@Nonnull final CloseContainerEvent event) {
         if (isContainerCreated(event.getContainerId())) {
             removeItemContainer(event.getContainerId());
         }
@@ -279,7 +283,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      * @param event the container tooltip
      */
     @EventSubscriber
-    public void onContainerItemLookAtHandler(final ContainerItemLookAtEvent event) {
+    public void onContainerItemLookAtHandler(@Nonnull final ContainerItemLookAtEvent event) {
         if (!isContainerCreated(event.getContainerId())) {
             return;
         }
@@ -310,7 +314,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      * @param event the close event that contains the information what dialog is supposed to be closed
      */
     @EventSubscriber
-    public void onDialogClosedEvent(final CloseDialogEvent event) {
+    public void onDialogClosedEvent(@Nonnull final CloseDialogEvent event) {
         switch (event.getDialogType()) {
             case Any:
             case Merchant:
@@ -379,7 +383,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      * @param data  the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*")
-    public void onItemContainerClose(final String topic, final ItemContainerCloseEvent data) {
+    public void onItemContainerClose(final String topic, @Nonnull final ItemContainerCloseEvent data) {
         World.getPlayer().removeContainer(data.getContainerId());
         if (isContainerCreated(data.getContainerId())) {
             removeItemContainer(data.getContainerId());
@@ -432,7 +436,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      * @param data  the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
-    public void dragFrom(final String topic, final DraggableDragStartedEvent data) {
+    public void dragFrom(final String topic, @Nonnull final DraggableDragStartedEvent data) {
         final int slotId = getSlotId(topic);
         final int containerId = getContainerId(topic);
 
@@ -525,7 +529,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
     }
 
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(@Nonnull final GameContainer container, final int delta) {
         input = container.getInput();
         while (true) {
             final Runnable task = updateTasks.poll();
@@ -542,7 +546,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      *
      * @param event the event that contains the data for the new container
      */
-    private void createNewContainer(final OpenContainerEvent event) {
+    private void createNewContainer(@Nonnull final OpenContainerEvent event) {
         final ItemContainerBuilder builder = new ItemContainerBuilder("container" + event.getContainerId(),
                 "${gamescreen-bundle.bag}");
         builder.slots(event.getSlotCount());
@@ -561,7 +565,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
     private void updateAllMerchantOverlays() {
         itemContainerMap.forEachEntry(new TIntObjectProcedure<org.illarion.nifty.controls.ItemContainer>() {
             @Override
-            public boolean execute(final int id, final org.illarion.nifty.controls.ItemContainer itemContainer) {
+            public boolean execute(final int id, @Nonnull final org.illarion.nifty.controls.ItemContainer itemContainer) {
                 final int slotCount = itemContainer.getSlotCount();
                 for (int i = 0; i < slotCount; i++) {
                     final InventorySlot conSlot = itemContainer.getSlot(i);
@@ -583,7 +587,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      * @param slot   the slot to update
      * @param itemId the item ID in this slot
      */
-    private void updateMerchantOverlay(final InventorySlot slot, final ItemId itemId) {
+    private void updateMerchantOverlay(@Nonnull final InventorySlot slot, final ItemId itemId) {
         if (!ItemId.isValidItem(itemId)) {
             slot.hideMerchantOverlay();
             return;
@@ -615,7 +619,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      *
      * @param event the container event used to update the container
      */
-    private void updateContainer(final OpenContainerEvent event) {
+    private void updateContainer(@Nonnull final OpenContainerEvent event) {
         final org.illarion.nifty.controls.ItemContainer conControl = itemContainerMap.get(event.getContainerId());
 
         final int slotCount = conControl.getSlotCount();

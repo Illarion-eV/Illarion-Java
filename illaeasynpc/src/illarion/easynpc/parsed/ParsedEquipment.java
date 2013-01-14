@@ -24,6 +24,8 @@ import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -91,6 +93,7 @@ public final class ParsedEquipment implements ParsedData {
      * The equipment of the character is a part of the base NPC. There are no
      * additional modules needed.
      */
+    @Nullable
     @Override
     public String[] getRequiredModules() {
         return null;
@@ -100,7 +103,7 @@ public final class ParsedEquipment implements ParsedData {
      * Write the values stores in this equipment values to the easyNPC script.
      */
     @Override
-    public void writeEasyNpc(final Writer target,
+    public void writeEasyNpc(@Nonnull final Writer target,
                              final EasyNpcWriter.WritingStage stage) throws IOException {
         if (!effectsEasyNpcStage(stage)) {
             return;
@@ -141,7 +144,7 @@ public final class ParsedEquipment implements ParsedData {
      * Write the LUA representation of this data to the LUA NPC script.
      */
     @Override
-    public void writeLua(final Writer target,
+    public void writeLua(@Nonnull final Writer target,
                          final LuaWriter.WritingStage stage) throws IOException {
         if (!effectsLuaWritingStage(stage)) {
             return;

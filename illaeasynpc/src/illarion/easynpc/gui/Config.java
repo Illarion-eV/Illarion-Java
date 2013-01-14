@@ -36,6 +36,8 @@ import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -173,11 +175,13 @@ public final class Config {
     /**
      * The properties that store the values of this configuration.
      */
+    @Nullable
     private ConfigSystem cfg;
 
     /**
      * The file that holds the configuration.
      */
+    @Nullable
     private File configFile = null;
 
     /**
@@ -185,6 +189,7 @@ public final class Config {
      * <code>null</code> the list is generated fresh once its requested the next
      * time.
      */
+    @Nullable
     private File[] lastOpenedFilesBuffer;
 
     /**
@@ -206,6 +211,7 @@ public final class Config {
      *
      * @return the singleton instance
      */
+    @Nonnull
     public static Config getInstance() {
         return INSTANCE;
     }
@@ -237,14 +243,14 @@ public final class Config {
      *
      * @param file the file to prepend
      */
-    public void addLastOpenedFile(final File file) {
+    public void addLastOpenedFile(@Nonnull final File file) {
         cfg.set(lastFilesKey, file.getAbsolutePath() + File.pathSeparator
                 + cfg.getString(lastFilesKey));
         lastOpenedFilesBuffer = null;
     }
 
     @EventTopicSubscriber(topic = usedLookAndFeel)
-    public void onConfigChanged(final String topic, final ConfigChangedEvent event) {
+    public void onConfigChanged(@Nonnull final String topic, final ConfigChangedEvent event) {
         if (topic.equals(usedLookAndFeel)) {
             SubstanceLookAndFeel.setSkin(getLookAndFeel());
             final int count = MainFrame.getInstance().getOpenTabs();
@@ -256,6 +262,7 @@ public final class Config {
         }
     }
 
+    @Nonnull
     @SuppressWarnings("nls")
     public ConfigDialog createDialog() {
         final ConfigDialog dialog = new ConfigDialog();
@@ -342,6 +349,7 @@ public final class Config {
      *
      * @return the internal used config object
      */
+    @Nullable
     public illarion.common.config.Config getInternalCfg() {
         return cfg;
     }
@@ -351,6 +359,7 @@ public final class Config {
      *
      * @return the list of last opened files
      */
+    @Nullable
     public File[] getLastOpenedFiles() {
         if (lastOpenedFilesBuffer != null) {
             return lastOpenedFilesBuffer;
@@ -408,7 +417,7 @@ public final class Config {
      *
      * @param comp The window that shall receive the stored settings
      */
-    public void getLastWindowValue(final JFrame comp) {
+    public void getLastWindowValue(@Nonnull final JFrame comp) {
         if ((cfg.getInteger(lastWindowX) <= 0)
                 || (cfg.getInteger(lastWindowY) <= 0)
                 || (cfg.getInteger(lastWindowW) <= 0)
@@ -440,7 +449,7 @@ public final class Config {
                 comp.setExtendedState(cfg.getInteger(lastWindowState));
                 return;
             }
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             // nothing to do
         }
 
@@ -455,6 +464,7 @@ public final class Config {
      *
      * @return the class path of the look and feel that shall be used
      */
+    @Nullable
     public String getLookAndFeel() {
         return cfg.getString(usedLookAndFeel);
     }
@@ -586,7 +596,7 @@ public final class Config {
      *
      * @param comp the window that is the source for the stored data
      */
-    public void setLastWindowValues(final JFrame comp) {
+    public void setLastWindowValues(@Nonnull final JFrame comp) {
         cfg.set(lastWindowX, comp.getBounds().x);
         cfg.set(lastWindowY, comp.getBounds().y);
         cfg.set(lastWindowW, comp.getBounds().width);
@@ -623,7 +633,7 @@ public final class Config {
      *
      * @param files the files to open
      */
-    public void setOldFiles(final String[] files) {
+    public void setOldFiles(@Nonnull final String[] files) {
         final StringBuffer buffer = new StringBuffer();
         for (final String file : files) {
             buffer.append(file);
@@ -722,7 +732,7 @@ public final class Config {
             tempProps.put("log4j.reset", "true");
             new PropertyConfigurator().doConfigure(tempProps,
                     LOGGER.getLoggerRepository());
-        } catch (final IOException ex) {
+        } catch (@Nonnull final IOException ex) {
             System.err.println("Error setting up logging environment");
         }
     }

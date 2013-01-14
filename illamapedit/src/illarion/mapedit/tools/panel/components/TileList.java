@@ -24,12 +24,14 @@ import illarion.mapedit.resource.loaders.TileLoader;
 import illarion.mapedit.tools.panel.cellrenderer.TileImgCellRenderer;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class TileList extends JScrollPane {
 
+    @Nonnull
     private final JList tileList;
 
     public TileList() {

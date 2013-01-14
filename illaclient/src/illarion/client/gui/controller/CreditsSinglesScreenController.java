@@ -31,6 +31,7 @@ import illarion.client.util.Lang;
 import illarion.common.data.Credits;
 import illarion.common.data.CreditsList;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 
 /**
@@ -44,7 +45,7 @@ public final class CreditsSinglesScreenController implements ScreenController, K
     private Label nameLabel;
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
 
         displayParent = screen.findElementByName("nameDisplay");
@@ -59,7 +60,7 @@ public final class CreditsSinglesScreenController implements ScreenController, K
         showNextEntry(creditsIterator);
     }
 
-    private void showNextEntry(final Iterator<CreditsList> iterator) {
+    private void showNextEntry(@Nonnull final Iterator<CreditsList> iterator) {
         if (!iterator.hasNext()) {
             gotoNextScreen();
             return;

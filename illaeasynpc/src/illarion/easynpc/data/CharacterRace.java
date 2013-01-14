@@ -21,6 +21,8 @@ package illarion.easynpc.data;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+
 /**
  * This enumerator contains the valid races a player and a NPC can get in the easyNPC language.
  *
@@ -58,7 +60,7 @@ public enum CharacterRace {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
         for (CharacterRace race : CharacterRace.values()) {
             map.put(race.name(), Token.VARIABLE);
         }

@@ -22,6 +22,8 @@ import illarion.download.tasks.unpack.Unpack;
 import illarion.download.tasks.unpack.UnpackResult;
 import illarion.download.util.Lang;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class implements the display components that are used to display the the information on every single
  * unpacking operation that is currently going on.
@@ -54,7 +56,7 @@ final class UnpackDetailDisplay
      * @param unpack        the unpack progress that is handled
      */
     @SuppressWarnings("nls")
-    UnpackDetailDisplay(final ProgressSWING parentDisplay, final Unpack unpack) {
+    UnpackDetailDisplay(final ProgressSWING parentDisplay, @Nonnull final Unpack unpack) {
         super(parentDisplay, unpack.getName());
 
         setProgressMessage(Lang.getMsg("illarion.download.install.gui.Progress.UnpackProgress.installing"));
@@ -71,7 +73,7 @@ final class UnpackDetailDisplay
      * @return the delta to the last reported state
      */
     @SuppressWarnings("nls")
-    public long reportResult(final UnpackResult result) {
+    public long reportResult(@Nonnull final UnpackResult result) {
         setProgressLimits(0, 100);
         setProgressValue(100);
 

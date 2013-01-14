@@ -26,6 +26,8 @@ import javolution.lang.Reflection.Constructor;
 import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -95,6 +97,7 @@ public final class CrashReporter {
      * This URL is the URL of the server that is supposed to receive the crash
      * data using a HTTP POST request.
      */
+    @Nullable
     private static final URL CRASH_SERVER;
 
     /**
@@ -112,7 +115,7 @@ public final class CrashReporter {
         try {
             result =
                     new URL("http://illarion.org/development/java_report.php"); //$NON-NLS-1$
-        } catch (final MalformedURLException e) {
+        } catch (@Nonnull final MalformedURLException e) {
             LOGGER.warn("Preparing the crash report target URL failed. " + //$NON-NLS-1$
                     "Crash reporter not functional."); //$NON-NLS-1$
         }
@@ -122,11 +125,13 @@ public final class CrashReporter {
     /**
      * The configuration handler that is used for the settings of this class.
      */
+    @Nullable
     private Config cfg;
 
     /**
      * The currently displayed report dialog is displayed in this class.
      */
+    @Nullable
     private ReportDialog dialog = null;
 
     /**
@@ -159,11 +164,12 @@ public final class CrashReporter {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static CrashReporter getInstance() {
         return INSTANCE;
     }
 
-    public void dumpCrash(final CrashData crash) {
+    public void dumpCrash(@Nonnull final CrashData crash) {
         LOGGER.fatal("Fatal error occured: " + crash.getDescription());
         LOGGER.fatal("Fatal error exception: " + crash.getExceptionName());
         LOGGER.fatal("Fatal error thread: " + crash.getThreadName());
@@ -179,15 +185,15 @@ public final class CrashReporter {
             oOut = new ObjectOutputStream(new FileOutputStream(target));
             oOut.writeObject(crash);
             oOut.flush();
-        } catch (final FileNotFoundException e) {
+        } catch (@Nonnull final FileNotFoundException e) {
             // ignored
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             // ignored
         } finally {
             if (oOut != null) {
                 try {
                     oOut.close();
-                } catch (final IOException e) {
+                } catch (@Nonnull final IOException e) {
                     // ignored
                 }
             }
@@ -200,7 +206,7 @@ public final class CrashReporter {
      *
      * @param crash the data about the crash
      */
-    public void reportCrash(final CrashData crash) {
+    public void reportCrash(@Nonnull final CrashData crash) {
         reportCrash(crash, false);
     }
 
@@ -213,7 +219,7 @@ public final class CrashReporter {
      *                  to be started in a additional thread
      */
     @SuppressWarnings("nls")
-    public void reportCrash(final CrashData crash, final boolean ownThread) {
+    public void reportCrash(@Nonnull final CrashData crash, final boolean ownThread) {
         if (ownThread) {
             new Thread(new Runnable() {
                 @Override
@@ -295,7 +301,7 @@ public final class CrashReporter {
      *
      * @param config the new configuration
      */
-    public void setConfig(final Config config) {
+    public void setConfig(@Nullable final Config config) {
         cfg = config;
         if (config != null) {
             setMode(config.getInteger(CFG_KEY));
@@ -343,7 +349,7 @@ public final class CrashReporter {
             while (dialog != null) {
                 try {
                     this.wait(100);
-                } catch (final InterruptedException e) {
+                } catch (@Nonnull final InterruptedException e) {
                     LOGGER.debug("Wait for report was interrupted!", e); //$NON-NLS-1$
                 }
             }
@@ -356,7 +362,7 @@ public final class CrashReporter {
      * @param data the data that was collected about the crash
      */
     @SuppressWarnings("nls")
-    private static void sendCrashData(final CrashData data) {
+    private static void sendCrashData(@Nonnull final CrashData data) {
         if (CRASH_SERVER == null) {
             return;
         }
@@ -397,23 +403,23 @@ public final class CrashReporter {
             while ((line = ((BufferedReader) in).readLine()) != null) {
                 LOGGER.info(line);
             }
-        } catch (final MalformedURLException ex) {
+        } catch (@Nonnull final MalformedURLException ex) {
             LOGGER.error("Target URL for the transfer target was malformed",
                     ex);
-        } catch (final IOException ex) {
+        } catch (@Nonnull final IOException ex) {
             LOGGER.error("Sending the crash report failed", ex);
         } finally {
             if (output != null) {
                 try {
                     output.close();
-                } catch (final IOException e1) {
+                } catch (@Nonnull final IOException e1) {
                     LOGGER.error("Failed closing the output stream", e1);
                 }
             }
             if (in != null) {
                 try {
                     in.close();
-                } catch (final IOException e1) {
+                } catch (@Nonnull final IOException e1) {
                     LOGGER.error("Failed closing the input stream", e1);
                 }
             }

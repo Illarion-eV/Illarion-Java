@@ -20,6 +20,7 @@ package illarion.download.util;
 
 import illarion.common.util.MessageSource;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -78,6 +79,7 @@ public final class Lang
      *
      * @return the instance of the class
      */
+    @Nonnull
     public static Lang getInstance() {
         return INSTANCE;
     }
@@ -112,7 +114,7 @@ public final class Lang
     public String getMessage(final String key) {
         try {
             return messages.getString(key).replace("\\n", "\n");
-        } catch (final MissingResourceException e) {
+        } catch (@Nonnull final MissingResourceException e) {
             LOGGER.warning("Failed searching translated version of: " + key);
             return "<" + key + ">";
         }
@@ -127,7 +129,7 @@ public final class Lang
     public boolean hasMsg(final String key) {
         try {
             messages.getString(key);
-        } catch (final MissingResourceException e) {
+        } catch (@Nonnull final MissingResourceException e) {
             return false;
         }
         return true;

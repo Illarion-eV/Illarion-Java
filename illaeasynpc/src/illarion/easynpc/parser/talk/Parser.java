@@ -23,6 +23,9 @@ import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.docu.DocuEntry;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This parser interface is the shared interface to parse conditions and
  * consequences.
@@ -33,11 +36,13 @@ public abstract class Parser implements DocuEntry {
     /**
      * The line that is currently parsed.
      */
+    @Nullable
     private EasyNpcScript.Line currentLine;
 
     /**
      * The parsed NPC that is parsed now using this parser.
      */
+    @Nullable
     private ParsedNpc parentNpc;
 
     /**
@@ -54,6 +59,7 @@ public abstract class Parser implements DocuEntry {
         currentLine = null;
     }
 
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public DocuEntry getChild(final int index) {

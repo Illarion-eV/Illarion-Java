@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.parsed.shared;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ public final class ParsedItemData {
     /**
      * The data values.
      */
+    @Nonnull
     private final Map<String, String> dataValues;
 
     /**
@@ -55,6 +57,7 @@ public final class ParsedItemData {
      *
      * @return the data values for easyNPC
      */
+    @Nonnull
     public String getEasyNPC() {
         if (!hasValues()) {
             return "";
@@ -73,6 +76,7 @@ public final class ParsedItemData {
      *
      * @return the data values for the lua script
      */
+    @Nonnull
     public String getLua() {
         if (!hasValues()) {
             return "nil";

@@ -37,6 +37,7 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.newdawn.slick.GameContainer;
 
+import javax.annotation.Nonnull;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -180,6 +181,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     /**
      * This queue stores the builder of server inform labels until they are executed.
      */
+    @Nonnull
     private final Queue<InformHandler.InformBuildTask> builderQueue;
 
     /**
@@ -210,7 +212,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
 
@@ -252,7 +254,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     }
 
     @EventSubscriber
-    public void onBroadcastInformReceivedEvent(final BroadcastInformReceivedEvent event) {
+    public void onBroadcastInformReceivedEvent(@Nonnull final BroadcastInformReceivedEvent event) {
         if (broadcastParentPanel == null) {
             LOGGER.warn("Received server inform before the GUI became ready.");
             return;
@@ -271,7 +273,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     }
 
     @EventSubscriber
-    public void onServerInformReceivedEvent(final ServerInformReceivedEvent event) {
+    public void onServerInformReceivedEvent(@Nonnull final ServerInformReceivedEvent event) {
         if (serverParentPanel == null) {
             LOGGER.warn("Received server inform before the GUI became ready.");
             return;
@@ -294,7 +296,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     }
 
     @EventSubscriber
-    public void onTextToInformReceivedEvent(final TextToInformReceivedEvent event) {
+    public void onTextToInformReceivedEvent(@Nonnull final TextToInformReceivedEvent event) {
         if (textToParentPanel == null) {
             LOGGER.warn("Received server inform before the GUI became ready.");
             return;
@@ -313,7 +315,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     }
 
     @EventSubscriber
-    public void onScriptInformReceivedEvent(final ScriptInformReceivedEvent event) {
+    public void onScriptInformReceivedEvent(@Nonnull final ScriptInformReceivedEvent event) {
         if (scriptParentPanel == null) {
             LOGGER.warn("Received script inform before the GUI became ready.");
             return;
@@ -365,7 +367,7 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
         showInform(panelBuilder, scriptParentPanel, scriptParentPanel.getParent());
     }
 
-    private static int getScriptInformDisplayTime(final CharSequence text, final int priority) {
+    private static int getScriptInformDisplayTime(@Nonnull final CharSequence text, final int priority) {
         if (priority == 0) {
             return 5000 + (text.length() * 50);
         }

@@ -28,6 +28,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The text tags are the small texts over the heads of characters that display
@@ -45,6 +46,7 @@ public class TextTag implements Drawable, RecycleObject {
     /**
      * The font that is used to render texts of the text tags.
      */
+    @Nullable
     private static final SlickRenderFont TEXT_TAG_FONT = FontLoader
             .getInstance().getFontSave(FontLoader.Fonts.small);
 
@@ -57,6 +59,7 @@ public class TextTag implements Drawable, RecycleObject {
     /**
      * The color implementation that is used to render the text.
      */
+    @Nullable
     private transient Color color;
 
     /**
@@ -82,6 +85,7 @@ public class TextTag implements Drawable, RecycleObject {
     /**
      * The actual text that is displayed by this tag.
      */
+    @Nullable
     private String text;
 
     /**
@@ -96,6 +100,7 @@ public class TextTag implements Drawable, RecycleObject {
      *
      * @return the new text tag instance created by the game factory
      */
+    @Nonnull
     public static TextTag create() {
         return (TextTag) GameFactory.getInstance().getCommand(
                 GameFactory.OBJ_TAG);
@@ -125,6 +130,7 @@ public class TextTag implements Drawable, RecycleObject {
      * Create a duplicate of this text tag. That does not copy the actual
      * content, it just creates a new instance of this class.
      */
+    @Nonnull
     @Override
     public TextTag clone() {
         return new TextTag();
@@ -191,7 +197,7 @@ public class TextTag implements Drawable, RecycleObject {
      *
      * @param newColor the color that is used to render the text tag.
      */
-    public void setColor(final Color newColor) {
+    public void setColor(@Nullable final Color newColor) {
         if ((newColor == null) || newColor.equals(color)) {
             return;
         }
@@ -221,7 +227,7 @@ public class TextTag implements Drawable, RecycleObject {
      *
      * @param newText the new text that is displayed from now on
      */
-    public void setText(final String newText) {
+    public void setText(@Nonnull final String newText) {
         if (newText.equals(text)) {
             return;
         }

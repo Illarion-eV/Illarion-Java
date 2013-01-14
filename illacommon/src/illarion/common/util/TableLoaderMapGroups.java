@@ -18,6 +18,7 @@
  */
 package illarion.common.util;
 
+import javax.annotation.Nonnull;
 import java.io.InputStream;
 
 /**
@@ -46,7 +47,7 @@ public final class TableLoaderMapGroups extends TableLoader {
      *
      * @param callback the callback that will receive the data of this loader
      */
-    public TableLoaderMapGroups(final TableLoaderSink<TableLoaderMapGroups> callback) {
+    public TableLoaderMapGroups(@Nonnull final TableLoaderSink<TableLoaderMapGroups> callback) {
         this("MapGroup", callback);
     }
 
@@ -56,7 +57,7 @@ public final class TableLoaderMapGroups extends TableLoader {
      * @param table    the name of the table that is supposed to be read using this table loader
      * @param callback the callback that will receive the data of this loader
      */
-    public TableLoaderMapGroups(final String table, final TableLoaderSink<TableLoaderMapGroups> callback) {
+    public TableLoaderMapGroups(final String table, @Nonnull final TableLoaderSink<TableLoaderMapGroups> callback) {
         super(table, false, callback, ",");
     }
 
@@ -66,7 +67,7 @@ public final class TableLoaderMapGroups extends TableLoader {
      * @param resource the stream that is read for the data that is used in this table loader
      * @param callback the callback that will receive the data of this loader
      */
-    public TableLoaderMapGroups(final InputStream resource, final TableLoaderSink<TableLoaderMapGroups> callback) {
+    public TableLoaderMapGroups(final InputStream resource, @Nonnull final TableLoaderSink<TableLoaderMapGroups> callback) {
         super(resource, false, callback, ",");
     }
 

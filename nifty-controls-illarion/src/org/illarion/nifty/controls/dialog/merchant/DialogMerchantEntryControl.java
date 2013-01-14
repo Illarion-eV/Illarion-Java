@@ -28,6 +28,7 @@ import de.lessvoid.xml.xpp3.Attributes;
 import illarion.common.gui.AbstractMultiActionHelper;
 import org.illarion.nifty.controls.MerchantListEntry;
 
+import javax.annotation.Nonnull;
 import java.util.Properties;
 
 /**
@@ -37,6 +38,7 @@ import java.util.Properties;
  */
 @Deprecated
 public final class DialogMerchantEntryControl extends AbstractController {
+    @Nonnull
     private AbstractMultiActionHelper doubleClickHelper = new AbstractMultiActionHelper((Integer) java.awt.Toolkit
             .getDefaultToolkit().getDesktopProperty("awt.multiClickInterval")) {
         @Override
@@ -55,7 +57,7 @@ public final class DialogMerchantEntryControl extends AbstractController {
     @SuppressWarnings("unchecked")
     @Override
     public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
-                     final Attributes controlDefinitionAttributes) {
+                     @Nonnull final Attributes controlDefinitionAttributes) {
         selectable = Boolean.parseBoolean(controlDefinitionAttributes.get("selectable"));
 
         if (selectable) {

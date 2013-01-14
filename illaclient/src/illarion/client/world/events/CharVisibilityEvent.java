@@ -20,6 +20,8 @@ package illarion.client.world.events;
 
 import illarion.common.types.CharacterId;
 
+import javax.annotation.Nonnull;
+
 /**
  * This event is fired upon a change of the visibility of a character.
  *
@@ -54,6 +56,7 @@ public final class CharVisibilityEvent
      *
      * @return the string literal that identifies this event
      */
+    @Nonnull
     @Override
     public String getEvent() {
         return EVENT;

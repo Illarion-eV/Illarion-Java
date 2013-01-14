@@ -44,6 +44,9 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This class is used to monitor all dropping operations on the droppable area over the game map and notify the
  * interaction manager about a drop in case one happens.
@@ -56,7 +59,7 @@ public final class GameMapHandler
     private Input input;
 
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(@Nonnull final GameContainer container, final int delta) {
         input = container.getInput();
     }
 
@@ -114,6 +117,7 @@ public final class GameMapHandler
     /**
      * This mouse event instance is used to initiate the dragging event.
      */
+    @Nonnull
     private final NiftyMouseInputEvent mouseEvent;
 
     /**
@@ -148,7 +152,7 @@ public final class GameMapHandler
         tooltipHandler = tooltip;
     }
 
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         activeNifty = nifty;
         activeScreen = screen;
         gamePanel = screen.findElementByName("gamePanel");
@@ -177,7 +181,7 @@ public final class GameMapHandler
      * Called in case something is dropped on the game map.
      */
     @NiftyEventSubscriber(id = "mapDropTarget")
-    public void dropOnMap(final String topic, final DroppableDroppedEvent data) {
+    public void dropOnMap(final String topic, @Nonnull final DroppableDroppedEvent data) {
         final Element droppedElement = data.getDraggable().getElement();
         final int dropSpotX = droppedElement.getX() + (droppedElement.getWidth() / 2);
         final int dropSpotY = droppedElement.getY() + (droppedElement.getHeight() / 2);
@@ -201,7 +205,7 @@ public final class GameMapHandler
         }
     }
 
-    public boolean handleDragOnMap(final PrimaryKeyMapDrag event, final MapTile mapTile) {
+    public boolean handleDragOnMap(@Nonnull final PrimaryKeyMapDrag event, @Nullable final MapTile mapTile) {
         if (mapTile == null) {
             return false;
         }
@@ -255,7 +259,7 @@ public final class GameMapHandler
      *
      * @param event the event that contains the data for the move
      */
-    private static void moveTowardsMouse(final DragOnMapEvent event) {
+    private static void moveTowardsMouse(@Nonnull final DragOnMapEvent event) {
         World.getPlayer().getMovementHandler().walkTowards(event.getNewX(), event.getNewY());
         event.getForwardingControl().requestExclusiveMouse();
     }
@@ -264,7 +268,7 @@ public final class GameMapHandler
      * Handle a input event that was published.
      */
     @EventSubscriber
-    public void handleDragging(final DragOnMapEvent data) {
+    public void handleDragging(@Nonnull final DragOnMapEvent data) {
         if (World.getInteractionManager().isDragging()) {
             return;
         }
@@ -281,16 +285,16 @@ public final class GameMapHandler
      *
      * @param data the event data
      */
-    public void handlePrimaryKeyDrag(final DragOnMapEvent data) {
+    public void handlePrimaryKeyDrag(@Nonnull final DragOnMapEvent data) {
         if (!World.getPlayer().getMovementHandler().isMouseMovementActive()) {
             final PrimaryKeyMapDrag newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
                 @Override
-                public boolean startDraggingItemFromTile(final PrimaryKeyMapDrag event, final MapTile tile) {
+                public boolean startDraggingItemFromTile(@Nonnull final PrimaryKeyMapDrag event, final MapTile tile) {
                     return handleDragOnMap(event, tile);
                 }
 
                 @Override
-                public void notHandled(final PrimaryKeyMapDrag event) {
+                public void notHandled(@Nonnull final PrimaryKeyMapDrag event) {
                     moveTowardsMouse(event);
                 }
             });
@@ -345,7 +349,7 @@ public final class GameMapHandler
     private final TooltipHandler tooltipHandler;
 
     @EventSubscriber
-    public void onMapItemLookAtEvent(final MapItemLookAtEvent event) {
+    public void onMapItemLookAtEvent(@Nonnull final MapItemLookAtEvent event) {
         final MapTile targetTile = World.getMap().getMapAt(event.getLocation());
         if (targetTile == null) {
             return;

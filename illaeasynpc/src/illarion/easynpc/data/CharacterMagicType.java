@@ -21,6 +21,8 @@ package illarion.easynpc.data;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+
 /**
  * This enumerator stores all possible types of magic types along with the
  * needed data about these flags to store them and work with them properly.
@@ -106,7 +108,7 @@ public enum CharacterMagicType {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
         for (final CharacterMagicType magicType : CharacterMagicType.values()) {
             map.put(magicType.getMagicTypeName(), Token.VARIABLE);
         }

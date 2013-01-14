@@ -24,6 +24,8 @@ import illarion.mapedit.data.MapTile;
 import illarion.mapedit.history.TileIDChangedAction;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
@@ -32,7 +34,7 @@ import javax.swing.*;
 public class TileEraserTool extends AbstractTool {
 
     @Override
-    public void clickedAt(final int x, final int y, final Map map) {
+    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
         final MapTile nt = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
         getHistory().addEntry(new TileIDChangedAction(x, y, map.getTileAt(x, y), nt, map));
         map.setTileAt(x, y, nt);
@@ -43,11 +45,13 @@ public class TileEraserTool extends AbstractTool {
         return Lang.getMsg("tools.TileEraser");
     }
 
+    @Nullable
     @Override
     public ResizableIcon getToolIcon() {
         return null;
     }
 
+    @Nullable
     @Override
     public JPanel getSettingsPanel() {
         return null;

@@ -123,7 +123,7 @@ public final class GameMapProcessor extends Thread {
 
             try {
                 hasAndProcessUnchecked();
-            } catch (final InterruptedException e) {
+            } catch (@Nonnull final InterruptedException e) {
                 LOGGER.info("Map processor got interrupted!");
             }
         }
@@ -287,7 +287,7 @@ public final class GameMapProcessor extends Thread {
      * @param key  the location key of the checked tile
      * @return {@code true} in case the tile got removed
      */
-    private boolean checkObstruction(final MapTile tile, final long key) {
+    private boolean checkObstruction(@Nonnull final MapTile tile, final long key) {
         final Location playerLoc = World.getPlayer().getLocation();
         final Location tileLoc = tile.getLocation();
 
@@ -495,7 +495,7 @@ public final class GameMapProcessor extends Thread {
                 if (!unchecked.offerLast(locationKey, 20, TimeUnit.MILLISECONDS)) {
                     LOGGER.error("Failed to add element to unchecked map queue.");
                 }
-            } catch (final InterruptedException e) {
+            } catch (@Nonnull final InterruptedException e) {
                 LOGGER.error("Error while trying add dirty tile.", e);
             }
         }

@@ -18,6 +18,8 @@
  */
 package illarion.common.util;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 
 /**
@@ -47,6 +49,7 @@ public final class DirectoryManager {
     /**
      * The directory that stores the application data (so the *.jar files)
      */
+    @Nullable
     private File dataDirectory;
 
     /**
@@ -58,6 +61,7 @@ public final class DirectoryManager {
     /**
      * The directory that stores the user data.
      */
+    @Nullable
     private File userDirectory;
 
     /**
@@ -101,16 +105,16 @@ public final class DirectoryManager {
                 }
                 line = inFile.readLine();
             }
-        } catch (final FileNotFoundException e) {
+        } catch (@Nonnull final FileNotFoundException e) {
             return;
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             return;
         } finally {
             try {
                 if (inFile != null) {
                     inFile.close();
                 }
-            } catch (final IOException e) {
+            } catch (@Nonnull final IOException e) {
                 return;
             }
         }
@@ -121,6 +125,7 @@ public final class DirectoryManager {
      *
      * @return the singleton instance
      */
+    @Nonnull
     public static DirectoryManager getInstance() {
         return INSTANCE;
     }
@@ -132,6 +137,7 @@ public final class DirectoryManager {
      * @return the directory or <code>null</code> in case there is no directory
      *         set
      */
+    @Nullable
     public File getDataDirectory() {
         return dataDirectory;
     }
@@ -142,6 +148,7 @@ public final class DirectoryManager {
      * @return the directory for the user data or <code>null</code> in case its
      *         not set
      */
+    @Nullable
     public File getUserDirectory() {
         return userDirectory;
     }
@@ -203,14 +210,14 @@ public final class DirectoryManager {
             }
 
             writer.flush();
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             return false;
         } finally {
             try {
                 if (writer != null) {
                     writer.close();
                 }
-            } catch (final IOException e) {
+            } catch (@Nonnull final IOException e) {
                 return false;
             }
         }
@@ -227,7 +234,7 @@ public final class DirectoryManager {
      * @param dir the directory that is supposed to be the new application data
      *            directory
      */
-    public void setDataDirectory(final File dir) {
+    public void setDataDirectory(@Nonnull final File dir) {
         if (testDirectory(dir) && !dir.equals(dataDirectory)) {
             dataDirectory = dir;
             dirty = true;
@@ -240,7 +247,7 @@ public final class DirectoryManager {
      *
      * @param dir the directory that is supposed to be the new user directory
      */
-    public void setUserDirectory(final File dir) {
+    public void setUserDirectory(@Nonnull final File dir) {
         if (testDirectory(dir) && !dir.equals(userDirectory)) {
             userDirectory = dir;
             dirty = true;
@@ -255,7 +262,7 @@ public final class DirectoryManager {
      * @param dir the object to test
      * @return <code>true<code> in case the object points to a existing directory
      */
-    private static boolean testDirectory(final File dir) {
+    private static boolean testDirectory(@Nullable final File dir) {
         if (dir == null) {
             return false;
         }
@@ -282,7 +289,7 @@ public final class DirectoryManager {
             if (!testFile.delete()) {
                 return false;
             }
-        } catch (final Exception ex) {
+        } catch (@Nonnull final Exception ex) {
             return false;
         }
 

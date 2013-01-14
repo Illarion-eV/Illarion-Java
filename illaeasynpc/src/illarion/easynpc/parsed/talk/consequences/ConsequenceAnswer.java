@@ -21,6 +21,8 @@ package illarion.easynpc.parsed.talk.consequences;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaWriter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -49,6 +51,7 @@ public final class ConsequenceAnswer implements TalkConsequence {
      *
      * @return <code>null</code> at all time because there is no additional module needed
      */
+    @Nullable
     @Override
     public String getLuaModule() {
         return null;
@@ -58,7 +61,7 @@ public final class ConsequenceAnswer implements TalkConsequence {
      * Write this consequence to its easyNPC shape.
      */
     @Override
-    public void writeEasyNpc(final Writer target) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         target.write('"');
         target.write(answer);
         target.write('"');
@@ -68,7 +71,7 @@ public final class ConsequenceAnswer implements TalkConsequence {
      * Write the LUA code for this answer consequence to a LUA script.
      */
     @Override
-    public void writeLua(final Writer target) throws IOException {
+    public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write("talkEntry:addResponse(\""); //$NON-NLS-1$
         target.write(answer);
         target.write("\");"); //$NON-NLS-1$

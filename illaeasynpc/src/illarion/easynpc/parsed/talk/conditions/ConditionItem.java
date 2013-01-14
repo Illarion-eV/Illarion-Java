@@ -26,6 +26,7 @@ import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.writer.LuaWriter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -113,6 +114,7 @@ public final class ConditionItem implements TalkCondition {
     /**
      * Get the LUA module needed for this condition.
      */
+    @Nonnull
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
@@ -122,7 +124,7 @@ public final class ConditionItem implements TalkCondition {
      * Write this item condition into its easyNPC shape.
      */
     @Override
-    public void writeEasyNpc(final Writer target) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         if (data.hasValues()) {
             target.write(String.format(EASY_CODE_DATA, Integer.toString(item.getItemId()), itemPos.name(),
                     operator.getLuaComp(), value.getEasyNPC(), data.getEasyNPC()));
@@ -136,7 +138,7 @@ public final class ConditionItem implements TalkCondition {
      * Write the LUA code needed for this item condition.
      */
     @Override
-    public void writeLua(final Writer target) throws IOException {
+    public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(item.getItemId()), itemPos.name(),
                 operator.getLuaComp(), value.getLua(), data.getLua()));
     }

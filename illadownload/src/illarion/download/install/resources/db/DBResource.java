@@ -20,6 +20,7 @@ package illarion.download.install.resources.db;
 
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public final class DBResource implements Externalizable {
     /**
      * The list of files that were extracted from this database resource.
      */
+    @Nonnull
     private final List<DBFile> files;
 
     /**
@@ -84,7 +86,7 @@ public final class DBResource implements Externalizable {
      *
      * @param file the file to check
      */
-    public void addFile(final File file) {
+    public void addFile(@Nonnull final File file) {
         final DBFile fileEntry = new DBFile(file);
         if (files.contains(fileEntry)) {
             files.remove(fileEntry);
@@ -99,7 +101,7 @@ public final class DBResource implements Externalizable {
      * @return {@code true} if and only if all files passed the detail check
      */
     @SuppressWarnings("nls")
-    public boolean checkFiles(final ResourceCheckLevel level) {
+    public boolean checkFiles(@Nonnull final ResourceCheckLevel level) {
         final long time = System.currentTimeMillis();
         boolean result = true;
         int fileCount = 0;
@@ -158,7 +160,7 @@ public final class DBResource implements Externalizable {
     }
 
     @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
+    public void writeExternal(@Nonnull final ObjectOutput out) throws IOException {
         out.writeLong(serialVersionUID);
         out.writeLong(lastModified);
         out.writeObject(sourceURL.toString());
@@ -169,7 +171,7 @@ public final class DBResource implements Externalizable {
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(@Nonnull final ObjectInput in) throws IOException, ClassNotFoundException {
         final long version = in.readLong();
         if (version == 2L) {
             lastModified = in.readLong();

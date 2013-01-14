@@ -26,6 +26,7 @@ import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -62,7 +63,7 @@ public final class InventoryMsg extends AbstractReply {
      *                     decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         location = reader.readUByte();
         itemId = new ItemId(reader);
         count = ItemCount.getInstance(reader);
@@ -86,6 +87,7 @@ public final class InventoryMsg extends AbstractReply {
      * @return the string that contains the values that were decoded for this
      *         message
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

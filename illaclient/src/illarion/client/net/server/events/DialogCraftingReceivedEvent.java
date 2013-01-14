@@ -20,6 +20,7 @@ package illarion.client.net.server.events;
 
 import illarion.client.world.items.CraftingItem;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -41,11 +42,13 @@ public class DialogCraftingReceivedEvent {
     /**
      * The names of the groups the items belong to.
      */
+    @Nonnull
     private final String[] groups;
 
     /**
      * The items that can be crafted.
      */
+    @Nonnull
     private final CraftingItem[] craftItems;
 
     /**
@@ -56,8 +59,8 @@ public class DialogCraftingReceivedEvent {
      * @param groups     the names of the groups
      * @param craftItems the items that can be crafted
      */
-    public DialogCraftingReceivedEvent(final int requestId, final String title, final String[] groups,
-                                       final CraftingItem[] craftItems) {
+    public DialogCraftingReceivedEvent(final int requestId, final String title, @Nonnull final String[] groups,
+                                       @Nonnull final CraftingItem[] craftItems) {
         this.requestId = requestId;
         this.title = title;
         this.groups = Arrays.copyOf(groups, groups.length);

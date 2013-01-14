@@ -18,6 +18,8 @@
  */
 package illarion.easyquest.gui;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
@@ -37,7 +39,7 @@ public class IntegerParameter extends JFormattedTextField implements Parameter {
         setParameter(new Long(0));
     }
 
-    public void setParameter(Object parameter) {
+    public void setParameter(@Nullable Object parameter) {
         if (parameter != null) {
             if (parameter instanceof Long) {
                 setValue(parameter);
@@ -49,6 +51,7 @@ public class IntegerParameter extends JFormattedTextField implements Parameter {
         }
     }
 
+    @Nonnull
     public Object getParameter() {
         return (Long) getValue();
     }

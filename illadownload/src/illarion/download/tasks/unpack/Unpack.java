@@ -25,6 +25,7 @@ import illarion.download.tasks.download.Download;
 import illarion.download.tasks.download.DownloadResult;
 import org.tukaani.xz.XZInputStream;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -117,6 +118,7 @@ public final class Unpack implements Callable<UnpackResult> {
     /**
      * The directory that will store the unpacked files
      */
+    @Nonnull
     private final File targetDir;
 
     /**
@@ -127,7 +129,7 @@ public final class Unpack implements Callable<UnpackResult> {
      * @param result     the result of the download
      * @param unpManager the unpacking manager that handles this task
      */
-    Unpack(final Download download, final DownloadResult result,
+    Unpack(@Nonnull final Download download, final DownloadResult result,
            final UnpackManager unpManager) {
         file = download.getTarget();
         targetDir =
@@ -138,6 +140,7 @@ public final class Unpack implements Callable<UnpackResult> {
         name = download.getName();
     }
 
+    @Nonnull
     @Override
     public UnpackResult call() throws IOException {
         final UnpackResult result = callImpl();
@@ -152,6 +155,7 @@ public final class Unpack implements Callable<UnpackResult> {
      * @return the result of the unpacking operation
      * @throws IOException in case unpacking the file fails
      */
+    @Nonnull
     public UnpackResult callImpl() {
         switch (downloadResult.getResult()) {
             case canceled:

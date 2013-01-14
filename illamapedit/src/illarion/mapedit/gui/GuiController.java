@@ -43,6 +43,8 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -59,14 +61,18 @@ public class GuiController extends WindowAdapter {
 
     private static final Logger LOGGER = Logger.getLogger(GuiController.class);
 
+    @Nonnull
     private final MainFrame mainFrame;
 
     private final SplashScreen splashScreen;
 
+    @Nonnull
     private final List<Map> maps;
 
+    @Nonnull
     private final HistoryManager historyManager;
 
+    @Nullable
     private Map selected;
 
     private boolean started;
@@ -91,6 +97,7 @@ public class GuiController extends WindowAdapter {
     }
 
 
+    @Nonnull
     public List<Map> getMaps() {
         return maps;
     }
@@ -120,11 +127,12 @@ public class GuiController extends WindowAdapter {
 
     }
 
+    @Nullable
     public Map getSelected() {
         return selected;
     }
 
-    public void addMap(final Map map) {
+    public void addMap(@Nullable final Map map) {
         if (!maps.contains(map) && (map != null)) {
             maps.add(map);
             if (maps.size() == 1) {
@@ -135,7 +143,7 @@ public class GuiController extends WindowAdapter {
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    public void removeMap(final Map map) {
+    public void removeMap(@Nullable final Map map) {
         if (maps.contains(map) && (map != null)) {
             maps.remove(map);
             if (selected == map) {
@@ -150,6 +158,7 @@ public class GuiController extends WindowAdapter {
         EventBus.publish(new RepaintRequestEvent());
     }
 
+    @Nonnull
     public HistoryManager getHistoryManager() {
         return historyManager;
     }
@@ -203,7 +212,7 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onMapSelected(final MapSelectedEvent e) {
+    public void onMapSelected(@Nonnull final MapSelectedEvent e) {
         selected = maps.get(e.getIndex());
         final int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
         final int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
@@ -219,7 +228,7 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onMapOpen(final MapOpenEvent e) {
+    public void onMapOpen(@Nonnull final MapOpenEvent e) {
         try {
             final Map[] map;
             if (e.getPath() == null) {

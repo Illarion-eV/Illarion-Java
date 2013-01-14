@@ -21,6 +21,8 @@ package illarion.client.world.events;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is the event that is published in case a character is moved on the map.
  *
@@ -54,6 +56,7 @@ public final class CharMoveEvent
      *
      * @return the name of the event
      */
+    @Nonnull
     @Override
     public String getEvent() {
         return EVENT;

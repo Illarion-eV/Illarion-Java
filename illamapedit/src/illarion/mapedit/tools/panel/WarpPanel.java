@@ -20,6 +20,7 @@ package illarion.mapedit.tools.panel;
 
 import illarion.mapedit.Lang;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -30,9 +31,13 @@ import java.awt.event.ActionListener;
  */
 public class WarpPanel extends JPanel {
 
+    @Nonnull
     public final JSpinner xSpinner;
+    @Nonnull
     public final JSpinner ySpinner;
+    @Nonnull
     public final JSpinner zSpinner;
+    @Nonnull
     public final JCheckBox delCheckBox;
 
     public WarpPanel() {

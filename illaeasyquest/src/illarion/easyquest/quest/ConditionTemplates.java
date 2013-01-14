@@ -23,6 +23,7 @@ import javolution.util.FastComparator;
 import javolution.util.FastMap;
 import javolution.util.FastTable;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,10 +42,12 @@ public class ConditionTemplates {
      */
     private ConditionTemplate[] publicTemplates;
 
+    @Nonnull
     private final Map<String, ConditionTemplate> typeMap;
 
     private static final ConditionTemplates INSTANCE = new ConditionTemplates();
 
+    @Nonnull
     public static ConditionTemplates getInstance() {
         return INSTANCE;
     }
@@ -63,6 +66,7 @@ public class ConditionTemplates {
         return loader.getResourceAsStream(name);
     }
 
+    @Nonnull
     private static List<String> loadFileList() {
         List<String> result = new FastTable<String>();
         BufferedReader bRead = null;
@@ -152,7 +156,7 @@ public class ConditionTemplates {
                         System.out.println("Syntax error in template "
                                 + fileName);
                     }
-                } catch (final IOException e1) {
+                } catch (@Nonnull final IOException e1) {
                     System.out.println("Error loading template " + fileName);
                 }
             }

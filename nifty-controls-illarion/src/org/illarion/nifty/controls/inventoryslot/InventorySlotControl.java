@@ -111,8 +111,8 @@ public class InventorySlotControl extends AbstractController implements Inventor
      * {@inheritDoc}
      */
     @Override
-    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
-                     final Attributes controlDefinitionAttributes) {
+    public void bind(@Nonnull final Nifty nifty, final Screen screen, @Nonnull final Element element, final Properties parameter,
+                     @Nonnull final Attributes controlDefinitionAttributes) {
         bind(element);
 
         this.screen = screen;

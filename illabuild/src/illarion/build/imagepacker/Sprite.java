@@ -22,6 +22,8 @@ import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import illarion.build.TextureConverterNG;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
@@ -39,6 +41,7 @@ public final class Sprite implements TextureElement {
     /**
      * The decoder that is used to read the image data.
      */
+    @Nullable
     private PNGDecoder decoder;
 
     /**
@@ -59,6 +62,7 @@ public final class Sprite implements TextureElement {
     /**
      * The file this sprite was load from.
      */
+    @Nonnull
     private final TextureConverterNG.FileEntry file;
 
     /**
@@ -68,7 +72,7 @@ public final class Sprite implements TextureElement {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public Sprite(final TextureConverterNG.FileEntry fileEntry)
+    public Sprite(@Nonnull final TextureConverterNG.FileEntry fileEntry)
             throws FileNotFoundException, IOException {
         PNGDecoder tempDecoder = null;
         InputStream inputStream = null;
@@ -121,7 +125,7 @@ public final class Sprite implements TextureElement {
      * @param fileName the full file name
      * @return the file name without extension
      */
-    private static String stripFileExtension(final String fileName) {
+    private static String stripFileExtension(@Nonnull final String fileName) {
         return fileName.substring(0, fileName.lastIndexOf('.'));
     }
 
@@ -172,6 +176,7 @@ public final class Sprite implements TextureElement {
     /**
      * This buffer stores the data of this image.
      */
+    @Nullable
     private ByteBuffer imageData;
 
     /**
@@ -179,6 +184,7 @@ public final class Sprite implements TextureElement {
      *
      * @return The image of this sprite
      */
+    @Nullable
     public ByteBuffer getImage() {
         if (imageData != null) {
             return imageData;

@@ -21,6 +21,8 @@ package illarion.client.resources;
 import illarion.client.graphics.Overlay;
 import illarion.common.util.RecycleFactory;
 
+import javax.annotation.Nonnull;
+
 /**
  * The overlay factory loads and stores all graphical representations of the
  * overlays that create the map of Illarion.
@@ -40,6 +42,7 @@ public final class OverlayFactory extends RecycleFactory<Overlay> implements
      *
      * @return the singleton instance of this factory.
      */
+    @Nonnull
     public static OverlayFactory getInstance() {
         return INSTANCE;
     }

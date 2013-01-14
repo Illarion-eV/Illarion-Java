@@ -22,6 +22,8 @@ import illarion.client.graphics.Item;
 import illarion.common.types.ItemId;
 import illarion.common.util.RecycleFactory;
 
+import javax.annotation.Nonnull;
+
 /**
  * The Item factory loads creates and stores all instances of the item class
  * that are around in the client.
@@ -41,6 +43,7 @@ public final class ItemFactory extends RecycleFactory<Item> implements
      *
      * @return the singleton instance of this factory
      */
+    @Nonnull
     public static ItemFactory getInstance() {
         return INSTANCE;
     }
@@ -78,7 +81,7 @@ public final class ItemFactory extends RecycleFactory<Item> implements
         register(resource);
     }
 
-    public Item getPrototype(final ItemId id) {
+    public Item getPrototype(@Nonnull final ItemId id) {
         return getPrototype(id.getValue());
     }
 

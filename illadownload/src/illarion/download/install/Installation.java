@@ -33,6 +33,8 @@ import illarion.download.tasks.unpack.UnpackManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to control the installation chain.
  *
@@ -197,7 +199,7 @@ public final class Installation {
 
             try {
                 baseGUI.waitForFinishShowing();
-            } catch (final InterruptedException e) {
+            } catch (@Nonnull final InterruptedException e) {
                 // interrupted .. just try to go on
             }
             ResourceManager.getInstance().scheduleDownloads(dManager);

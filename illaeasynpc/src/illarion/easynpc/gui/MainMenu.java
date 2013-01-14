@@ -25,6 +25,7 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryFooter;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntrySecondary;
 
+import javax.annotation.Nullable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -77,6 +78,7 @@ final class MainMenu extends RibbonApplicationMenu {
                     new RibbonApplicationMenuEntrySecondary(
                             Utils.getResizableIconFromResource("source.png"),
                             openFile.getName(), new ActionListener() {
+                        @Nullable
                         private final File fileToOpen = openFile;
 
                         @Override

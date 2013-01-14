@@ -36,6 +36,8 @@ import illarion.easyquest.Lang;
 import illarion.easyquest.quest.*;
 import org.w3c.dom.Document;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -45,27 +47,31 @@ import java.util.*;
 @SuppressWarnings("serial")
 public final class Editor extends mxGraphComponent {
 
+    @Nullable
     private File questFile;
 
     private boolean savedSinceLastChange = false;
 
     private int questID = 10000;
 
+    @Nonnull
     @SuppressWarnings("unused")
     private final mxKeyboardHandler keyboardHandler;
+    @Nonnull
     @SuppressWarnings("unused")
     private final mxRubberband rubberband;
 
+    @Nonnull
     private final mxUndoManager undoManager;
 
     private final mxIEventListener undoHandler = new mxIEventListener() {
-        public void invoke(final Object source, final mxEventObject evt) {
+        public void invoke(final Object source, @Nonnull final mxEventObject evt) {
             undoManager.undoableEditHappened((mxUndoableEdit) evt
                     .getProperty("edit"));
         }
     };
 
-    Editor(final Graph graph) {
+    Editor(@Nonnull final Graph graph) {
         super(graph);
 
         final mxICell root = (mxCell) graph.getModel().getRoot();
@@ -101,7 +107,7 @@ public final class Editor extends mxGraphComponent {
         g.getView().addListener(mxEvent.UNDO, undoHandler);
 
         final mxIEventListener undoHandler = new mxIEventListener() {
-            public void invoke(final Object source, final mxEventObject evt) {
+            public void invoke(final Object source, @Nonnull final mxEventObject evt) {
                 final List<mxUndoableChange> changes = ((mxUndoableEdit) evt
                         .getProperty("edit")).getChanges();
                 g.setSelectionCells(g
@@ -115,7 +121,7 @@ public final class Editor extends mxGraphComponent {
         final Editor editor = this;
 
         getGraphControl().addMouseListener(new MouseAdapter() {
-            public void mouseClicked(final MouseEvent e) {
+            public void mouseClicked(@Nonnull final MouseEvent e) {
                 if ((e.getClickCount() == 2) ||
                         ((e.getClickCount() == 1) &&
                                 (MainFrame.getInstance().getCreateType() == MainFrame.CREATE_STATUS))) {
@@ -157,7 +163,7 @@ public final class Editor extends mxGraphComponent {
         });
     }
 
-    private static void setup(final Graph graph) {
+    private static void setup(@Nonnull final Graph graph) {
         final mxStylesheet stylesheet = graph.getStylesheet();
         final Map<String, Object> nodeStyle = stylesheet.getDefaultVertexStyle();
         nodeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
@@ -178,6 +184,7 @@ public final class Editor extends mxGraphComponent {
         stylesheet.putCellStyle("StartStyle", startStyle);
     }
 
+    @Nonnull
     public mxUndoManager getUndoManager() {
         return undoManager;
     }
@@ -212,11 +219,12 @@ public final class Editor extends mxGraphComponent {
         this.questID = questID;
     }
 
+    @Nullable
     public File getQuestFile() {
         return questFile;
     }
 
-    public void setQuestFile(final File file) {
+    public void setQuestFile(@Nullable final File file) {
         if (file != null) {
             questFile = file;
         }
@@ -234,7 +242,8 @@ public final class Editor extends mxGraphComponent {
         savedSinceLastChange = true;
     }
 
-    public static Editor loadQuest(final String quest) {
+    @Nonnull
+    public static Editor loadQuest(@Nonnull final String quest) {
         final Graph graph = new Graph();
         setup(graph);
         if (!quest.isEmpty()) {
@@ -258,6 +267,7 @@ public final class Editor extends mxGraphComponent {
         return mxUtils.getXml(codec.encode(getGraph().getModel()));
     }
 
+    @Nonnull
     public Map<String, String> getQuestLua(final String questName) {
         String questtxt = "";
         final Map<String, String> quest = new HashMap<String, String>();

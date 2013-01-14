@@ -24,6 +24,9 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * LWJGL implementation of the sprite interface that uses LWJGL to render the
  * sprite on the screen.
@@ -281,7 +284,7 @@ public final class Sprite {
      *
      * @param org the original sprite
      */
-    public Sprite(final Sprite org) {
+    public Sprite(@Nonnull final Sprite org) {
         hAlignUsed = org.hAlignUsed;
         vAlignUsed = org.vAlignUsed;
         textures = org.textures.clone();
@@ -299,7 +302,7 @@ public final class Sprite {
      *                   texture storage of this sprite.
      */
     @SuppressWarnings("nls")
-    public void addImage(final Image newTexture) {
+    public void addImage(@Nullable final Image newTexture) {
         if (newTexture == null) {
             throw new IllegalArgumentException("Added NULL Texture");
         }
@@ -544,7 +547,7 @@ public final class Sprite {
      * @param x the x coordinate of the location the texture shall been drawn at
      * @param y the y coordinate of the location the texture shall been drawn at
      */
-    public void draw(final Graphics g, final int x, final int y) {
+    public void draw(@Nonnull final Graphics g, final int x, final int y) {
         draw(g, x, y, null, 0, 1.f);
     }
 
@@ -559,7 +562,7 @@ public final class Sprite {
      * @param w the width the width of the sprite shall be scaled to
      * @param h the height the height of the sprite shall be scaled to
      */
-    public void draw(final Graphics g, final int x, final int y, final int w,
+    public void draw(@Nonnull final Graphics g, final int x, final int y, final int w,
                      final int h) {
         draw(g, x, y, w, h, null, 0);
     }
@@ -576,7 +579,7 @@ public final class Sprite {
      * @param h     the height the height of the sprite shall be scaled to
      * @param color the color that is used to render the sprite
      */
-    public void draw(final Graphics g, final int x, final int y, final int w,
+    public void draw(@Nonnull final Graphics g, final int x, final int y, final int w,
                      final int h, final Color color) {
         draw(g, x, y, w, h, color, 0);
     }
@@ -594,7 +597,7 @@ public final class Sprite {
      * @param frame the frame that shall be rendered
      */
     @SuppressWarnings("nls")
-    public void draw(final Graphics g, final int x, final int y, final int w,
+    public void draw(@Nonnull final Graphics g, final int x, final int y, final int w,
                      final int h, final Color color, final int frame) {
 
         if (getFrames() == 0) {
@@ -625,7 +628,7 @@ public final class Sprite {
      *
      * @param texture the rotation of the texture
      */
-    private void applyRotation(final Image texture) {
+    private void applyRotation(@Nonnull final Image texture) {
         final float deg = getRotation();
         if (FastMath.abs(deg) < FastMath.FLT_EPSILON) {
             texture.setRotation(0.f);
@@ -642,7 +645,7 @@ public final class Sprite {
      * @param texture the image that is drawn
      * @param color   the color that is applied to the image
      */
-    private void drawImage(final Graphics g, final Image texture, final Color color) {
+    private void drawImage(@Nonnull final Graphics g, final Image texture, final Color color) {
         final int xOff;
         final int yOff = getAlignOffsetY() - getOffsetY();
         if (isMirrored()) {
@@ -662,7 +665,7 @@ public final class Sprite {
      * @param y     the y coordinate of the location the texture shall been drawn at
      * @param color the color the texture of the sprite is rendered with
      */
-    public void draw(final Graphics g, final int x, final int y,
+    public void draw(@Nonnull final Graphics g, final int x, final int y,
                      final Color color) {
         draw(g, x, y, color, 0);
     }
@@ -678,7 +681,7 @@ public final class Sprite {
      * @param frame the frame that is rendered
      */
     @SuppressWarnings("nls")
-    public void draw(final Graphics g, final int x, final int y,
+    public void draw(@Nonnull final Graphics g, final int x, final int y,
                      final Color color, final int frame) {
 
         if (getFrames() == 0) {
@@ -710,7 +713,8 @@ public final class Sprite {
      * @return the parameter color or in case the parameter is null the white
      *         color is returned
      */
-    private static Color getColor(final Color color) {
+    @Nullable
+    private static Color getColor(@Nullable final Color color) {
         if (color == null) {
             return Color.white;
         }
@@ -730,7 +734,7 @@ public final class Sprite {
      * @param scale the scaling value the height and the width is reduced with
      */
     @SuppressWarnings("nls")
-    public void draw(final Graphics g, final int x, final int y,
+    public void draw(@Nonnull final Graphics g, final int x, final int y,
                      final Color color, final int frame, final float scale) {
         if (getFrames() == 0) {
             return;

@@ -21,6 +21,8 @@ package illarion.mapedit.data;
 import javolution.lang.Immutable;
 import javolution.text.TextBuilder;
 
+import javax.annotation.Nonnull;
+
 /**
  * Represents a single item, with a position, an id, a quality, and data.
  *
@@ -73,7 +75,7 @@ public class MapItem implements Immutable {
      *
      * @param old the old instance.
      */
-    public MapItem(final MapItem old) {
+    public MapItem(@Nonnull final MapItem old) {
         itemId = old.itemId;
         itemData = old.itemData;
         quality = old.quality;
@@ -108,7 +110,7 @@ public class MapItem implements Immutable {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nonnull final Object obj) {
         if (getClass() != obj.getClass()) {
             return false;
         }
@@ -122,6 +124,7 @@ public class MapItem implements Immutable {
      *
      * @return the serialized String
      */
+    @Nonnull
     @Override
     public String toString() {
         TextBuilder builder = TextBuilder.newInstance();

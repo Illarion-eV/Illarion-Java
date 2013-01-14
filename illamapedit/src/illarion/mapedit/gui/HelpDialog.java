@@ -27,6 +27,7 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.jdesktop.swingx.JXTree;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -43,6 +44,7 @@ import java.net.URL;
  */
 public class HelpDialog extends JDialog implements HyperlinkListener, TreeSelectionListener {
     private static final Logger LOGGER = Logger.getLogger(HelpDialog.class);
+    @Nonnull
     private final JEditorPane html;
 
     public HelpDialog(final JFrame frame) {
@@ -71,7 +73,7 @@ public class HelpDialog extends JDialog implements HyperlinkListener, TreeSelect
     }
 
     @Override
-    public void hyperlinkUpdate(final HyperlinkEvent e) {
+    public void hyperlinkUpdate(@Nonnull final HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
@@ -91,7 +93,7 @@ public class HelpDialog extends JDialog implements HyperlinkListener, TreeSelect
     }
 
     @Override
-    public void valueChanged(final TreeSelectionEvent e) {
+    public void valueChanged(@Nonnull final TreeSelectionEvent e) {
         final Object[] path = e.getPath().getPath();
         if (path[path.length - 1] instanceof DocuLoader.Folder) {
             return;

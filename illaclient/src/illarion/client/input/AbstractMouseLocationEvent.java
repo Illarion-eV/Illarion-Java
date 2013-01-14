@@ -20,6 +20,8 @@ package illarion.client.input;
 
 import illarion.client.graphics.MapInteractionEvent;
 
+import javax.annotation.Nonnull;
+
 /**
  * This event is in general triggered in case the user performs any move or action with the mouse on the map.
  *
@@ -52,7 +54,7 @@ public abstract class AbstractMouseLocationEvent implements MapInteractionEvent 
      *
      * @param org the original object that is copied
      */
-    protected AbstractMouseLocationEvent(final AbstractMouseLocationEvent org) {
+    protected AbstractMouseLocationEvent(@Nonnull final AbstractMouseLocationEvent org) {
         x = org.x;
         y = org.y;
     }

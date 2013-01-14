@@ -24,6 +24,8 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -47,11 +49,13 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
     /**
      * The map that stores the file names in relation to the book IDs.
      */
+    @Nonnull
     private final Map<Integer, String> fileMap;
 
     /**
      * The map that stores the book data in relation to the book IDs.
      */
+    @Nonnull
     private final Map<Integer, Reference<Book>> bookMap;
 
     /**
@@ -64,6 +68,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      *
      * @return the singleton instance of this factory
      */
+    @Nonnull
     public static BookFactory getInstance() {
         return INSTANCE;
     }
@@ -92,7 +97,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @param resource the resource to store
      */
     @Override
-    public void storeResource(final IdWrapper<String> resource) {
+    public void storeResource(@Nonnull final IdWrapper<String> resource) {
         if (getBookUrl(resource.getObject()) == null) {
             LOGGER.error("Book ID: " + Integer.toString(resource.getId()) + " not found. File "
                     + resource.getObject() + ".book.xml is missing in the resources.");
@@ -107,6 +112,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @param id the ID of the book
      * @return the URL to the book resource
      */
+    @Nullable
     private URL getBookUrl(final int id) {
         return getBookUrl(fileMap.get(id));
     }
@@ -117,7 +123,8 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @param baseName the base name of the book
      * @return the URL to the book resource
      */
-    private static URL getBookUrl(final String baseName) {
+    @Nullable
+    private static URL getBookUrl(@Nullable final String baseName) {
         if (baseName == null) {
             return null;
         }
@@ -136,6 +143,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @param id the ID of the book
      * @return the book with all its data
      */
+    @Nullable
     public Book getBook(final int id) {
         final Reference<Book> weakRefBook = bookMap.get(id);
         Book requestedBook = null;
@@ -159,11 +167,11 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
                 final Document document = docBuilderFactory.newDocumentBuilder().parse(bookUrl.openStream());
                 requestedBook = new Book(document);
                 bookMap.put(id, new WeakReference<Book>(requestedBook));
-            } catch (final ParserConfigurationException e) {
+            } catch (@Nonnull final ParserConfigurationException e) {
                 LOGGER.error("Setting up XML parser failed!", e);
-            } catch (final SAXException e) {
+            } catch (@Nonnull final SAXException e) {
                 LOGGER.error("Parsing Book XML file failed!", e);
-            } catch (final IOException e) {
+            } catch (@Nonnull final IOException e) {
                 LOGGER.error("Reading Book XML file failed!", e);
             }
         }

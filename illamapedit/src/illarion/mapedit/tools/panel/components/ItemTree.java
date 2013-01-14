@@ -26,6 +26,7 @@ import illarion.mapedit.tools.panel.cellrenderer.ItemTreeCellRenderer;
 import javolution.util.FastList;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -43,9 +44,10 @@ public class ItemTree extends JScrollPane {
     private static class ItemGroupModel implements TreeModel {
 
         private static final String ROOT = "Items";
+        @Nonnull
         private final List<ItemGroup> groups;
 
-        private ItemGroupModel(final ItemImg[] items) {
+        private ItemGroupModel(@Nonnull final ItemImg[] items) {
             final ItemGroupLoader gl = ItemGroupLoader.getInstance();
             groups = new FastList<ItemGroup>();
 
@@ -68,13 +70,14 @@ public class ItemTree extends JScrollPane {
         }
 
 
+        @Nonnull
         @Override
         public Object getRoot() {
             return ROOT;
         }
 
         @Override
-        public Object getChild(final Object parent, final int index) {
+        public Object getChild(@Nonnull final Object parent, final int index) {
             if (parent == getRoot()) {
                 return groups.get(index);
             }
@@ -85,7 +88,7 @@ public class ItemTree extends JScrollPane {
         }
 
         @Override
-        public int getChildCount(final Object parent) {
+        public int getChildCount(@Nonnull final Object parent) {
             if (parent == getRoot()) {
                 return groups.size();
             }
@@ -109,7 +112,7 @@ public class ItemTree extends JScrollPane {
         }
 
         @Override
-        public int getIndexOfChild(final Object parent, final Object child) {
+        public int getIndexOfChild(@Nonnull final Object parent, final Object child) {
             if (parent == getRoot()) {
                 return groups.indexOf(child);
             }
@@ -131,6 +134,7 @@ public class ItemTree extends JScrollPane {
     }
 
     private static class ItemGroup {
+        @Nonnull
         private final List<ItemImg> items;
         private final String name;
         private final int id;
@@ -141,6 +145,7 @@ public class ItemTree extends JScrollPane {
             this.name = name;
         }
 
+        @Nonnull
         public List<ItemImg> getItems() {
             return items;
         }
@@ -174,7 +179,7 @@ public class ItemTree extends JScrollPane {
         tree.setSelectionModel(new DefaultTreeSelectionModel());
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
-            public void valueChanged(final TreeSelectionEvent e) {
+            public void valueChanged(@Nonnull final TreeSelectionEvent e) {
                 final Object[] o = e.getPath().getPath();
                 if (o[o.length - 1] instanceof ItemImg) {
                     EventBus.publish(new ItemSelectedEvent((ItemImg) o[o.length - 1]));

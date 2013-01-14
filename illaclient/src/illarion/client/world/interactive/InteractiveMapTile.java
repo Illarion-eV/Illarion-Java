@@ -53,7 +53,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
      *
      * @param tile the instance that shall be copied
      */
-    public InteractiveMapTile(final InteractiveMapTile tile) {
+    public InteractiveMapTile(@Nonnull final InteractiveMapTile tile) {
         parentTile = tile.parentTile;
     }
 

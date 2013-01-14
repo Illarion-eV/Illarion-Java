@@ -21,6 +21,7 @@ package illarion.common.data;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +46,7 @@ public final class BookLanguage implements Iterable<BookPage> {
     /**
      * The list of pages of this book.
      */
+    @Nonnull
     private final List<BookPage> pages;
 
     /**
@@ -62,7 +64,7 @@ public final class BookLanguage implements Iterable<BookPage> {
      *
      * @param source the XML node that supplies the data
      */
-    public void loadData(final Node source) {
+    public void loadData(@Nonnull final Node source) {
         if (!"language".equals(source.getNodeName())) {
             return;
         }
@@ -129,6 +131,7 @@ public final class BookLanguage implements Iterable<BookPage> {
         return pages.get(index);
     }
 
+    @Nonnull
     @Override
     public Iterator<BookPage> iterator() {
         return pages.iterator();

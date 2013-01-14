@@ -21,6 +21,7 @@ package illarion.common.bug;
 import javolution.lang.Immutable;
 import javolution.text.TextBuilder;
 
+import javax.annotation.Nonnull;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -98,8 +99,8 @@ public final class CrashData implements Immutable, Externalizable {
      * @param crashException     the exception that caused the crash
      */
     public CrashData(final String appName, final String appVersion,
-                     final String problemDescription, final Thread crashThread,
-                     final Throwable crashException) {
+                     final String problemDescription, @Nonnull final Thread crashThread,
+                     @Nonnull final Throwable crashException) {
         name = appName;
         version = appVersion;
         threadName = crashThread.getName();
@@ -145,6 +146,7 @@ public final class CrashData implements Immutable, Externalizable {
      *
      * @return the string to identify the operation system
      */
+    @Nonnull
     @SuppressWarnings("nls")
     static String getOSName() {
         final TextBuilder builder = TextBuilder.newInstance();
@@ -214,7 +216,7 @@ public final class CrashData implements Immutable, Externalizable {
     }
 
     @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
+    public void writeExternal(@Nonnull final ObjectOutput out) throws IOException {
         out.writeLong(serialVersionUID);
         out.writeObject(name);
         out.writeObject(version);
@@ -225,7 +227,7 @@ public final class CrashData implements Immutable, Externalizable {
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(@Nonnull final ObjectInput in) throws IOException, ClassNotFoundException {
         final long fileVersion = in.readLong();
         if (fileVersion == 1L) {
             name = (String) in.readObject();

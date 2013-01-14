@@ -23,6 +23,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,12 +96,14 @@ public final class Pack200Task extends Task {
     /**
      * The engine that takes care of the packing operations themselves.
      */
+    @Nonnull
     private final PackingEngine engine;
 
     /**
      * This list stores the file sets that are set to this task. This file sets
      * contain the references to all files that are needed to be processed.
      */
+    @Nonnull
     private final List<FileSet> filesets;
 
     /**
@@ -135,7 +138,7 @@ public final class Pack200Task extends Task {
      * @throws BuildException in case the file does not exist or is not readable
      */
     @SuppressWarnings("nls")
-    private static void checkFile(final File file) throws BuildException {
+    private static void checkFile(@Nonnull final File file) throws BuildException {
         if (!file.canRead() || !file.isFile()) {
             throw new BuildException("File does not exist or can't be read: "
                     + file);
@@ -186,7 +189,7 @@ public final class Pack200Task extends Task {
         exe.shutdown();
         try {
             exe.awaitTermination(1, TimeUnit.HOURS);
-        } catch (final InterruptedException ex) {
+        } catch (@Nonnull final InterruptedException ex) {
             ex.printStackTrace();
         }
     }

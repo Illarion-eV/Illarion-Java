@@ -31,6 +31,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created: 20.08.2005 17:39:11
@@ -43,19 +44,22 @@ public class Tile extends AbstractEntity implements Resource {
     @SuppressWarnings("nls")
     private static final String TILE_PATH = "data/tiles/";
 
+    @Nullable
     private transient final FrameAnimation ani;
 
     private transient final TileInfo info;
 
+    @Nullable
     private Overlay overlay;
 
     private final boolean variants;
+    @Nullable
     private MapTile parentTile;
 
     /**
      * Create tile with animation or variants
      */
-    public Tile(final int id, final String name, final int frames,
+    public Tile(final int id, @Nonnull final String name, final int frames,
                 final int speed, final TileInfo info) {
         super(id, TILE_PATH, name, frames, 0, 0, 0, 0, Sprite.HAlign.center,
                 Sprite.VAlign.middle, false, false, null);
@@ -84,7 +88,7 @@ public class Tile extends AbstractEntity implements Resource {
      * @param id
      * @param name
      */
-    public Tile(final int id, final String name, final TileInfo info) {
+    public Tile(final int id, @Nonnull final String name, final TileInfo info) {
         this(id, name, 1, 0, info);
     }
 
@@ -93,7 +97,7 @@ public class Tile extends AbstractEntity implements Resource {
      *
      * @param org
      */
-    private Tile(final Tile org) {
+    private Tile(@Nonnull final Tile org) {
         super(org);
 
         // copy the animation, too, so that all tiles share the same cycle
@@ -116,7 +120,7 @@ public class Tile extends AbstractEntity implements Resource {
         return id;
     }
 
-    public static Tile create(final int id, final Location loc, final MapTile parentTile) {
+    public static Tile create(final int id, @Nonnull final Location loc, final MapTile parentTile) {
         return create(id, loc.getScX(), loc.getScY(), parentTile);
     }
 
@@ -169,6 +173,7 @@ public class Tile extends AbstractEntity implements Resource {
         // this.id = id;
     }
 
+    @Nonnull
     @Override
     public Tile clone() {
         return new Tile(this);
@@ -235,7 +240,7 @@ public class Tile extends AbstractEntity implements Resource {
      *
      * @param overlay
      */
-    public void setOverlay(final Overlay overlay) {
+    public void setOverlay(@Nullable final Overlay overlay) {
         this.overlay = overlay;
         setFadingCorridorEffectEnabled(overlay == null);
     }

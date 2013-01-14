@@ -24,17 +24,17 @@ import de.lessvoid.nifty.controls.dropdown.builder.DropDownBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 
+import javax.annotation.Nullable;
+
 /**
- *
  * @author Stefano Bonicatti &lt;smjert@gmail.com&gt;
  */
-public class DropDownOption<T> implements Option<T, DropDown<DropDownItem<T>>>{
-    
+public class DropDownOption<T> implements Option<T, DropDown<DropDownItem<T>>> {
+
     private DropDown<DropDownItem<T>> control;
     private String key;
-    
-    public DropDownOption(String name, Element parent, Nifty nifty, Screen screen)
-    {
+
+    public DropDownOption(String name, Element parent, Nifty nifty, Screen screen) {
         key = name;
 
         DropDownBuilder dropDownBuilder = new DropDownBuilder(name + "GUI");
@@ -44,10 +44,11 @@ public class DropDownOption<T> implements Option<T, DropDown<DropDownItem<T>>>{
 
         control.setViewConverter(new DropDownItemViewConverter<DropDownItem<T>>());
     }
-    
+
+    @Nullable
     @Override
     public T getValue() {
-        if(control == null)
+        if (control == null)
             return null;
 
         return control.getSelection().getKey();

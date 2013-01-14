@@ -26,6 +26,7 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -45,7 +46,7 @@ public class MainFrame
 
     private final VetoableTabCloseListener editorTabListener = new VetoableTabCloseListener() {
         @Override
-        public void tabClosed(final JTabbedPane pane, final Component component) {
+        public void tabClosed(@Nonnull final JTabbedPane pane, final Component component) {
             //((Editor) component).cleanup();
             if (pane.getTabCount() == 0) {
                 addNewQuest();
@@ -85,6 +86,7 @@ public class MainFrame
 
     private static MainFrame instance;
 
+    @Nonnull
     private final JTabbedPane tabbedEditorArea;
 
     public MainFrame() {
@@ -215,10 +217,12 @@ public class MainFrame
         return instance;
     }
 
+    @Nonnull
     public Editor getCurrentQuestEditor() {
         return getQuestEditor(tabbedEditorArea.getSelectedIndex());
     }
 
+    @Nonnull
     protected Editor getQuestEditor(final int index) {
         return (Editor) tabbedEditorArea.getComponentAt(index);
     }
@@ -242,7 +246,8 @@ public class MainFrame
         setTabTitle(tabbedEditorArea.getSelectedIndex(), title);
     }
 
-    protected Editor addNewQuest(String quest) {
+    @Nonnull
+    protected Editor addNewQuest(@Nonnull String quest) {
         final Editor editor = Editor.loadQuest(quest);
         editor.putClientProperty(SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY, Boolean.TRUE);
         tabbedEditorArea.insertTab(Lang.getMsg(getClass(), "newQuestTab"), null, editor, null,
@@ -251,6 +256,7 @@ public class MainFrame
         return editor;
     }
 
+    @Nonnull
     public Editor addNewQuest() {
         return addNewQuest("");
     }

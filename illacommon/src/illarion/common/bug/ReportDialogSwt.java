@@ -1,50 +1,44 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.bug;
 
+import illarion.common.util.MessageSource;
 import javolution.text.TextBuilder;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
-import illarion.common.util.MessageSource;
+import javax.annotation.Nonnull;
 
 /**
  * This is the dialog implementation for SWT. It will display a dialog that
  * contains the error problem description and the error message and allows the
  * user to choose what to do.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ReportDialogSwt implements ReportDialog {
     /**
      * Button listener helper class. This class is assigned to the buttons of
      * the dialog.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private final class ButtonListener implements Listener {
@@ -63,9 +57,9 @@ public final class ReportDialogSwt implements ReportDialog {
          * Create a new instance of this button listener. It will monitor one
          * button and once clicked close the parent shell and set the assigned
          * result value.
-         * 
+         *
          * @param parentShell the shell that is to be closed
-         * @param setResult the result value that should be set
+         * @param setResult   the result value that should be set
          */
         public ButtonListener(final Shell parentShell, final int setResult) {
             newResult = setResult;
@@ -73,7 +67,7 @@ public final class ReportDialogSwt implements ReportDialog {
         }
 
         @Override
-        public void handleEvent(final Event event) {
+        public void handleEvent(@Nonnull final Event event) {
             switch (event.type) {
                 case SWT.Selection:
                     setResult(newResult);
@@ -139,12 +133,12 @@ public final class ReportDialogSwt implements ReportDialog {
     public void showDialog() {
         if ((messages == null) || (crashData == null)) {
             throw new IllegalStateException(
-                "The message source and the crash data needs to be set.");
+                    "The message source and the crash data needs to be set.");
         }
 
         final Display display = new Display();
         final Shell shell =
-            new Shell(display, SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
+                new Shell(display, SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
         shell.setLayout(new GridLayout(4, true));
 
         shell.setText(messages.getMessage("illarion.common.bug.Title"));
@@ -152,21 +146,21 @@ public final class ReportDialogSwt implements ReportDialog {
         final Label title = new Label(shell, SWT.WRAP);
         title.setText(messages.getMessage(crashData.getDescription()));
         title.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false,
-            false, 4, 1));
+                false, 4, 1));
 
         final TextBuilder builder = TextBuilder.newInstance();
         builder.append(messages
-            .getMessage("illarion.common.bug.details.Intro"));
+                .getMessage("illarion.common.bug.details.Intro"));
         builder.append(NL).append(NL);
 
         builder.append(messages
-            .getMessage("illarion.common.bug.details.Application"));
+                .getMessage("illarion.common.bug.details.Application"));
         builder.append(' ');
         builder.append(crashData.getApplicationName());
         builder.append(NL);
 
         builder.append(messages
-            .getMessage("illarion.common.bug.details.Version"));
+                .getMessage("illarion.common.bug.details.Version"));
         builder.append(' ');
         builder.append(crashData.getApplicationVersion());
         builder.append(NL);
@@ -177,21 +171,21 @@ public final class ReportDialogSwt implements ReportDialog {
         builder.append(NL);
 
         builder.append(messages
-            .getMessage("illarion.common.bug.details.Thread"));
+                .getMessage("illarion.common.bug.details.Thread"));
         builder.append(' ');
         builder.append(crashData.getThreadName());
         builder.append(NL);
 
         builder.append(messages
-            .getMessage("illarion.common.bug.details.Stack"));
+                .getMessage("illarion.common.bug.details.Stack"));
         builder.append(NL);
         builder.append(crashData.getStackBacktrace());
 
         final Text details =
-            new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP
-                | SWT.V_SCROLL);
+                new Text(shell, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP
+                        | SWT.V_SCROLL);
         final GridData layoutGridData =
-            new GridData(SWT.FILL, SWT.BEGINNING, false, false, 4, 1);
+                new GridData(SWT.FILL, SWT.BEGINNING, false, false, 4, 1);
         layoutGridData.heightHint = 320;
         details.setLayoutData(layoutGridData);
         details.setSize(50, 50);
@@ -200,35 +194,35 @@ public final class ReportDialogSwt implements ReportDialog {
         TextBuilder.recycle(builder);
 
         final GridData buttonGridData =
-            new GridData(SWT.FILL, SWT.BEGINNING, false, false);
+                new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         buttonGridData.widthHint = 135;
 
         final Button alwaysButton = new Button(shell, SWT.PUSH);
         alwaysButton.setText(messages
-            .getMessage("illarion.common.bug.buttons.always"));
+                .getMessage("illarion.common.bug.buttons.always"));
         alwaysButton.addListener(SWT.Selection, new ButtonListener(shell,
-            SEND_ALWAYS));
+                SEND_ALWAYS));
         alwaysButton.setLayoutData(buttonGridData);
 
         final Button onceButton = new Button(shell, SWT.PUSH);
         onceButton.setText(messages
-            .getMessage("illarion.common.bug.buttons.once"));
+                .getMessage("illarion.common.bug.buttons.once"));
         onceButton.addListener(SWT.Selection, new ButtonListener(shell,
-            SEND_ONCE));
+                SEND_ONCE));
         onceButton.setLayoutData(buttonGridData);
 
         final Button notButton = new Button(shell, SWT.PUSH);
         notButton.setText(messages
-            .getMessage("illarion.common.bug.buttons.not"));
+                .getMessage("illarion.common.bug.buttons.not"));
         notButton.addListener(SWT.Selection, new ButtonListener(shell,
-            SEND_NOT));
+                SEND_NOT));
         notButton.setLayoutData(buttonGridData);
 
         final Button neverButton = new Button(shell, SWT.PUSH);
         neverButton.setText(messages
-            .getMessage("illarion.common.bug.buttons.never"));
+                .getMessage("illarion.common.bug.buttons.never"));
         neverButton.addListener(SWT.Selection, new ButtonListener(shell,
-            SEND_NEVER));
+                SEND_NEVER));
         neverButton.setLayoutData(buttonGridData);
 
         shell.pack();
@@ -245,7 +239,7 @@ public final class ReportDialogSwt implements ReportDialog {
 
     /**
      * Set the result value.
-     * 
+     *
      * @param newResult the new result value
      */
     void setResult(final int newResult) {

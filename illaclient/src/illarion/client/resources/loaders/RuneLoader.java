@@ -23,6 +23,8 @@ import illarion.client.resources.ResourceFactory;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to load the overlay definitions from the resource table
  * that was created using the configuration tool. The class will create the
@@ -67,7 +69,7 @@ public final class RuneLoader extends AbstractResourceLoader<Rune> implements
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, final TableLoader loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
         final int id = loader.getInt(TB_ID);
         final Rune rune = new Rune(id, loader.getString(TB_NAME));
         getTargetFactory().storeResource(rune);

@@ -24,6 +24,9 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import static illarion.client.graphics.MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
 
 /**
@@ -46,29 +49,35 @@ public final class InteractiveMap {
         parentMap = map;
     }
 
-    private static InteractiveMapTile getInteractiveTile(final MapTile tile) {
+    @Nullable
+    private static InteractiveMapTile getInteractiveTile(@Nullable final MapTile tile) {
         if (tile != null) {
             return tile.getInteractive();
         }
         return null;
     }
 
+    @Nullable
     public InteractiveMapTile getInteractiveTileOnDisplayLoc(final int displayX, final int displayY) {
         return getInteractiveTile(getTileOnDisplayLoc(displayX, displayY));
     }
 
+    @Nullable
     public InteractiveMapTile getInteractiveTileOnMapLoc(final int locX, final int locY, final int locZ) {
         return getInteractiveTile(getTileOnMapLoc(locX, locY, locZ));
     }
 
-    public InteractiveMapTile getInteractiveTileOnMapLoc(final Location loc) {
+    @Nullable
+    public InteractiveMapTile getInteractiveTileOnMapLoc(@Nonnull final Location loc) {
         return getInteractiveTile(getTileOnMapLoc(loc));
     }
 
+    @Nullable
     public InteractiveMapTile getInteractiveTileOnScreenLoc(final int screenX, final int screenY) {
         return getInteractiveTile(getTileOnScreenLoc(screenX, screenY));
     }
 
+    @Nullable
     public MapTile getTileOnDisplayLoc(final int displayX, final int displayY) {
         final Location helpLoc = new Location();
         helpLoc.setDC(displayX, displayY);
@@ -91,14 +100,17 @@ public final class InteractiveMap {
         return null;
     }
 
+    @Nullable
     public MapTile getTileOnMapLoc(final int locX, final int locY, final int locZ) {
         return parentMap.getMapAt(locX, locY, locZ);
     }
 
-    public MapTile getTileOnMapLoc(final Location loc) {
+    @Nullable
+    public MapTile getTileOnMapLoc(@Nonnull final Location loc) {
         return parentMap.getMapAt(loc);
     }
 
+    @Nullable
     public MapTile getTileOnScreenLoc(final int screenX, final int screenY) {
         final MapDisplayManager displayManager = World.getMapDisplay();
 

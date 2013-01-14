@@ -26,6 +26,7 @@ import illarion.easynpc.parsed.ParsedCycleText;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,10 +51,11 @@ public final class NpcCycleText implements NpcType {
      * @return <code>true</code> in case the line can be parsed by this class
      */
     @Override
-    public boolean canParseLine(final EasyNpcScript.Line line) {
+    public boolean canParseLine(@Nonnull final EasyNpcScript.Line line) {
         return CYCLETEXT_LINE.matcher(line.getLine()).find();
     }
 
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public DocuEntry getChild(final int index) {
@@ -89,7 +91,7 @@ public final class NpcCycleText implements NpcType {
      * Add the comment block to the parsed NPC.
      */
     @Override
-    public void parseLine(final EasyNpcScript.Line line, final ParsedNpc npc) {
+    public void parseLine(@Nonnull final EasyNpcScript.Line line, @Nonnull final ParsedNpc npc) {
         final Matcher matcher = CYCLETEXT_LINE.matcher(line.getLine());
 
         if (matcher.find()) {
@@ -100,7 +102,7 @@ public final class NpcCycleText implements NpcType {
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put("cycletext", Token.RESERVED_WORD);
     }
 }

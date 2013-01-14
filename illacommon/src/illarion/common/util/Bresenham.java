@@ -20,6 +20,8 @@ package illarion.common.util;
 
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 
 /**
@@ -68,6 +70,7 @@ public final class Bresenham {
      *
      * @return the singleton instance
      */
+    @Nonnull
     public static Bresenham getInstance() {
         return INSTANCE;
     }
@@ -169,7 +172,7 @@ public final class Bresenham {
      * @see #calculate(int, int, int, int)
      */
     @SuppressWarnings("nls")
-    public void calculate(final Location loc0, final Location loc1) {
+    public void calculate(@Nullable final Location loc0, @Nullable final Location loc1) {
         if (loc0 == null) {
             throw new IllegalArgumentException(
                     "Start location (loc0) must not be null.");
@@ -201,7 +204,7 @@ public final class Bresenham {
      *         the length of the calculated line
      */
     @SuppressWarnings("nls")
-    public boolean getPoint(final int index, final Point point) {
+    public boolean getPoint(final int index, @Nullable final Point point) {
         if (point == null) {
             throw new IllegalArgumentException("Point must not be NULL");
         }
@@ -222,6 +225,7 @@ public final class Bresenham {
      *
      * @return the list of x coordinates
      */
+    @Nonnull
     public int[] getX() {
         return x;
     }
@@ -234,6 +238,7 @@ public final class Bresenham {
      *
      * @return the list of y coordinates
      */
+    @Nonnull
     public int[] getY() {
         return y;
     }
@@ -242,6 +247,7 @@ public final class Bresenham {
      * Get the name of this class. This is used to identify the Bresenham
      * implementation human readable.
      */
+    @Nonnull
     @Override
     @SuppressWarnings("nls")
     public String toString() {

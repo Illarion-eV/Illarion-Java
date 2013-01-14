@@ -46,7 +46,7 @@ public class SelectionItem {
      *
      * @param org the original item
      */
-    protected SelectionItem(final SelectionItem org) {
+    protected SelectionItem(@Nonnull final SelectionItem org) {
         index = org.index;
         id = org.id;
         name = org.name;

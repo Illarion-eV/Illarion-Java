@@ -26,6 +26,8 @@ import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.tools.panel.SingleItemPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.util.List;
 
@@ -34,6 +36,7 @@ import java.util.List;
  */
 public class SingleItemTool extends AbstractTool {
 
+    @Nonnull
     public final SingleItemPanel panel;
 
     public SingleItemTool() {
@@ -41,7 +44,7 @@ public class SingleItemTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, final Map map) {
+    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
         if (!map.contains(x, y)) {
             return;
         }
@@ -61,11 +64,13 @@ public class SingleItemTool extends AbstractTool {
         return Lang.getMsg("tools.SingleItemTool");
     }
 
+    @Nullable
     @Override
     public ResizableIcon getToolIcon() {
         return null;
     }
 
+    @Nonnull
     @Override
     public JPanel getSettingsPanel() {
         return panel;

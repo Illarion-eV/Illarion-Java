@@ -22,6 +22,7 @@ import illarion.easynpc.data.Towns;
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.writer.LuaWriter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -66,6 +67,7 @@ public final class ConditionTown implements TalkCondition {
     /**
      * Get the LUA module needed for this condition.
      */
+    @Nonnull
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
@@ -75,7 +77,7 @@ public final class ConditionTown implements TalkCondition {
      * Write this town condition into its easyNPC shape.
      */
     @Override
-    public void writeEasyNpc(final Writer target) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         target.write(String.format(EASY_CODE, town.name()));
     }
 
@@ -83,7 +85,7 @@ public final class ConditionTown implements TalkCondition {
      * Write the LUA code needed for this town condition.
      */
     @Override
-    public void writeLua(final Writer target) throws IOException {
+    public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(town.getFactionId())));
     }
 }

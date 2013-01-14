@@ -18,6 +18,7 @@
  */
 package illarion.download.tasks.unpack;
 
+import javax.annotation.Nonnull;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -212,7 +213,7 @@ public final class CountBytesInputStream extends FilterInputStream {
             if (callback != null) {
                 try {
                     callback.reportUpdate(position);
-                } catch (final Exception ex) {
+                } catch (@Nonnull final Exception ex) {
                     // nothing crashes me!!
                 }
             }

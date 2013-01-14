@@ -25,6 +25,9 @@ import illarion.client.resources.ItemFactory;
 import illarion.client.world.items.SelectionItem;
 import org.illarion.nifty.controls.SelectListEntry;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This implementation of the select item is very similar to the original select item. It just adds a few entries
  * of data that are needed so the item can be displayed properly in the GUI.
@@ -35,6 +38,7 @@ public final class NiftySelectItem extends SelectionItem implements SelectListEn
     /**
      * The image that represents this merchant item.
      */
+    @Nullable
     private final NiftyImage itemImage;
 
     /**
@@ -45,7 +49,7 @@ public final class NiftySelectItem extends SelectionItem implements SelectListEn
      * @param nifty the instance of the Nifty-GUI used to create the objects for the GUI
      * @param org   the original merchant item that contains the actual data
      */
-    public NiftySelectItem(final Nifty nifty, final SelectionItem org) {
+    public NiftySelectItem(@Nonnull final Nifty nifty, @Nonnull final SelectionItem org) {
         super(org);
 
         final int id = org.getId();

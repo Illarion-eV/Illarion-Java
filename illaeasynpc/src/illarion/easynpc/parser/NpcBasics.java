@@ -27,6 +27,8 @@ import illarion.easynpc.docu.DocuEntry;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -47,21 +49,25 @@ public final class NpcBasics implements NpcType {
         /**
          * The key for the description of this command.
          */
+        @Nonnull
         private final String docuDesc;
 
         /**
          * The key for the examples of this command.
          */
+        @Nonnull
         private final String docuEx;
 
         /**
          * The key for the syntax of this command.
          */
+        @Nonnull
         private final String docuSyntax;
 
         /**
          * The key for the title of this command.
          */
+        @Nonnull
         private final String docuTitle;
 
         /**
@@ -78,6 +84,7 @@ public final class NpcBasics implements NpcType {
             docuSyntax = "Docu." + name + ".syntax";
         }
 
+        @Nonnull
         @SuppressWarnings("nls")
         @Override
         public DocuEntry getChild(final int index) {
@@ -258,6 +265,7 @@ public final class NpcBasics implements NpcType {
      * The list of documentation entries that are insert as children of the NPC
      * Basics parser.
      */
+    @Nonnull
     private final DocuEntry[] childEntries;
 
     /**
@@ -290,7 +298,7 @@ public final class NpcBasics implements NpcType {
      * Check if this line can be parsed by this parser.
      */
     @Override
-    public boolean canParseLine(final EasyNpcScript.Line lineStruct) {
+    public boolean canParseLine(@Nonnull final EasyNpcScript.Line lineStruct) {
         final String line = lineStruct.getLine();
         if (HEADER_NAME.matcher(line).find()) {
             return true;
@@ -366,11 +374,13 @@ public final class NpcBasics implements NpcType {
         return Lang.getMsg(getClass(), "Docu.description"); //$NON-NLS-1$
     }
 
+    @Nullable
     @Override
     public String getExample() {
         return null;
     }
 
+    @Nullable
     @Override
     public String getSyntax() {
         return null;
@@ -387,8 +397,8 @@ public final class NpcBasics implements NpcType {
      */
     @Override
     @SuppressWarnings("nls")
-    public void parseLine(final EasyNpcScript.Line lineStruct,
-                          final ParsedNpc npc) {
+    public void parseLine(@Nonnull final EasyNpcScript.Line lineStruct,
+                          @Nonnull final ParsedNpc npc) {
         Matcher matcher;
 
         final String line = lineStruct.getLine();
@@ -662,7 +672,7 @@ public final class NpcBasics implements NpcType {
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put("affiliation", Token.RESERVED_WORD);
         map.put("author", Token.RESERVED_WORD);
         map.put("autointroduce", Token.RESERVED_WORD);

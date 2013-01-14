@@ -76,7 +76,7 @@ public class CraftingItem {
      *
      * @param org the crafting item to copy
      */
-    public CraftingItem(final CraftingItem org) {
+    public CraftingItem(@Nonnull final CraftingItem org) {
         itemIndex = org.itemIndex;
         group = org.group;
         itemId = org.itemId;

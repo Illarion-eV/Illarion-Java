@@ -23,6 +23,7 @@ import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -59,7 +60,7 @@ public class ParsedTradeComplex extends AbstractParsedTrade {
     }
 
     @Override
-    public void writeEasyNpc(final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
         if (stage == EasyNpcWriter.WritingStage.trading) {
             switch (getMode()) {
                 case selling:
@@ -102,7 +103,7 @@ public class ParsedTradeComplex extends AbstractParsedTrade {
     }
 
     @Override
-    public void writeLua(final Writer target, final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull final Writer target, final LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Trading) {
             target.write("tradingNPC:addItem(npc.base.trade.tradeNPCItem(");
             target.write(Integer.toString(itemId));

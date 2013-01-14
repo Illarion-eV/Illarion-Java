@@ -22,6 +22,8 @@ import illarion.easynpc.parsed.talk.AdvancedNumber;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,7 +65,8 @@ public final class AdvNumber {
      * @return the advanced number that got parsed out or <code>null</code> in
      *         case it does not match any number format
      */
-    public static AdvancedNumber getNumber(final String line) {
+    @Nullable
+    public static AdvancedNumber getNumber(@Nonnull final String line) {
         final String workingLine = line.trim();
 
         Matcher matcher = NUMBER_PATTERN.matcher(workingLine);
@@ -86,7 +89,7 @@ public final class AdvNumber {
         return null;
     }
 
-    public static void enlistHighlightedWords(final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
         map.put("expr", Token.RESERVED_WORD_2);
     }
 }

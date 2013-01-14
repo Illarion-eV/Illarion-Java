@@ -27,6 +27,8 @@ import illarion.easynpc.parser.tasks.ParseScriptTask;
 import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +82,7 @@ public final class Parser implements DocuEntry {
     /**
      * The list of NPC types this parser knows.
      */
+    @Nonnull
     private final NpcType[] types;
 
     /**
@@ -122,6 +125,7 @@ public final class Parser implements DocuEntry {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static Parser getInstance() {
         return INSTANCE;
     }
@@ -134,7 +138,7 @@ public final class Parser implements DocuEntry {
      * @throws IOException in case the script can't be read
      */
     @SuppressWarnings("nls")
-    public static void main(final String[] args) throws IOException {
+    public static void main(@Nonnull final String[] args) throws IOException {
         Config.getInstance().init();
 
         if (args.length == 0) {
@@ -151,7 +155,7 @@ public final class Parser implements DocuEntry {
                             private static final String fileEnding = ".npc";
 
                             @Override
-                            public boolean accept(final File dir, final String name) {
+                            public boolean accept(final File dir, @Nonnull final String name) {
                                 return name.endsWith(fileEnding);
                             }
                         });
@@ -173,7 +177,7 @@ public final class Parser implements DocuEntry {
      * @throws IOException in case reading the script fails
      */
     @SuppressWarnings("nls")
-    public static void parseScript(final File file) throws IOException {
+    public static void parseScript(@Nonnull final File file) throws IOException {
         final EasyNpcScript script = new EasyNpcScript(file);
         final ParsedNpc parsedNPC = getInstance().parse(script);
 
@@ -233,11 +237,13 @@ public final class Parser implements DocuEntry {
         return Lang.getMsg(getClass(), "Docu.description");
     }
 
+    @Nullable
     @Override
     public String getExample() {
         return null;
     }
 
+    @Nullable
     @Override
     public String getSyntax() {
         return null;
@@ -266,8 +272,9 @@ public final class Parser implements DocuEntry {
      * @param source the easyNPC source script that is supposed to be parsed.
      * @return the parsed version of the NPC
      */
+    @Nonnull
     @SuppressWarnings("nls")
-    public ParsedNpc parse(final EasyNpcScript source) {
+    public ParsedNpc parse(@Nonnull final EasyNpcScript source) {
         final long start = System.currentTimeMillis();
         final int count = source.getEntryCount();
         final ParsedNpc resultNpc = new ParsedNpc();

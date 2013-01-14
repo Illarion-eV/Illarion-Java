@@ -20,6 +20,7 @@ package illarion.mapedit.tools.panel;
 
 import illarion.mapedit.Lang;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -30,7 +31,9 @@ import java.awt.event.ActionListener;
  */
 public class MusicPanel extends JPanel {
 
+    @Nonnull
     private final JSpinner spinner;
+    @Nonnull
     private final JCheckBox delCheckBox;
 
     public MusicPanel() {

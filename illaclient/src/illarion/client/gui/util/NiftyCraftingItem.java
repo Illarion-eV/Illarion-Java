@@ -37,10 +37,12 @@ import javax.annotation.Nonnull;
  * To change this template use File | Settings | File Templates.
  */
 public class NiftyCraftingItem extends CraftingItem implements CraftingItemEntry {
+    @Nonnull
     private final NiftyImage craftImage;
+    @Nonnull
     private final NiftyImage[] ingredientImages;
 
-    public NiftyCraftingItem(final Nifty nifty, final int index, final CraftingItem org) {
+    public NiftyCraftingItem(@Nonnull final Nifty nifty, final int index, final CraftingItem org) {
         super(org);
 
         craftImage = new NiftyImage(nifty.getRenderEngine(),

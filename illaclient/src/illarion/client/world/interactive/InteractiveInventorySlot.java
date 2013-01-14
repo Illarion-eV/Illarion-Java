@@ -27,6 +27,7 @@ import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -180,6 +181,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      *
      * @return the ID of the item in this slot
      */
+    @Nullable
     public ItemId getItemId() {
         return parentItem.getItemID();
     }

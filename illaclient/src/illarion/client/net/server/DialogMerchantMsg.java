@@ -28,6 +28,7 @@ import illarion.common.types.ItemId;
 import javolution.text.TextBuilder;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,7 @@ public final class DialogMerchantMsg extends AbstractReply {
     private List<MerchantItem> items;
 
     @Override
-    public void decode(final NetCommReader reader)
+    public void decode(@Nonnull final NetCommReader reader)
             throws IOException {
         title = reader.readString();
         items = new ArrayList<MerchantItem>();
@@ -103,6 +104,7 @@ public final class DialogMerchantMsg extends AbstractReply {
         return true;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         final TextBuilder builder = TextBuilder.newInstance();

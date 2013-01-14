@@ -62,6 +62,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     /**
      * The event handler that handles the events on the close button.
      */
+    @Nonnull
     private final EventTopicSubscriber<ButtonClickedEvent> closeButtonEventHandler;
 
     public DialogMerchantControl() {
@@ -75,7 +76,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
 
     @Override
     public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
-                     final Attributes controlDefinitionAttributes) {
+                     @Nonnull final Attributes controlDefinitionAttributes) {
         super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
         niftyInstance = nifty;
         currentScreen = screen;
@@ -177,7 +178,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
                 new DialogMerchantBuyEvent(dialogId, sellList.getItems().get(index), index));
     }
 
-    public void buyItem(final MerchantListEntry entry) {
+    public void buyItem(@Nonnull final MerchantListEntry entry) {
         buyItem(entry.getIndex());
     }
 

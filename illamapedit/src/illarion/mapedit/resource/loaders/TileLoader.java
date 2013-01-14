@@ -26,6 +26,8 @@ import illarion.mapedit.resource.Resource;
 import illarion.mapedit.resource.TileImg;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Locale;
@@ -51,6 +53,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
         new TableLoaderTiles("Tiles", this);
     }
 
+    @Nonnull
     @Override
     public String getDescription() {
         return "Tiles";
@@ -60,7 +63,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, final TableLoaderTiles loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoaderTiles loader) {
         final int id = loader.getTileId();
         final int mode = loader.getTileMode();
         final String name = loader.getResourceName();
@@ -136,6 +139,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
         return true;
     }
 
+    @Nonnull
     public Image[] getImages(final String name, final int frames) {
 
         final Image[] imgs = new Image[frames];
@@ -150,6 +154,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
         return imgs;
     }
 
+    @Nullable
     public TileImg getTileFromId(final int id) {
         if (tiles.contains(id)) {
             return tiles.get(id);
@@ -157,6 +162,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
         return null;
     }
 
+    @Nonnull
     public static TileLoader getInstance() {
         return INSTANCE;
     }

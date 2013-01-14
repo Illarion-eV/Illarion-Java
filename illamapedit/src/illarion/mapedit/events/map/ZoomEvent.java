@@ -20,6 +20,8 @@ package illarion.mapedit.events.map;
 
 import illarion.mapedit.util.Vector2i;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Tim
  */
@@ -28,6 +30,7 @@ public class ZoomEvent {
     private final boolean original;
 
     private final float value;
+    @Nullable
     private final Vector2i pos;
 
     public ZoomEvent(final float value, final Vector2i pos) {
@@ -54,6 +57,7 @@ public class ZoomEvent {
         return original;
     }
 
+    @Nullable
     public Vector2i getPos() {
         return pos;
     }

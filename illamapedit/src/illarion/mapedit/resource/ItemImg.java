@@ -20,6 +20,7 @@ package illarion.mapedit.resource;
 
 import illarion.common.graphics.ItemInfo;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 /**
@@ -35,6 +36,7 @@ public class ItemImg {
     private final int frameCount;
     private final int animationSpeed;
     private final int itemMode;
+    @Nonnull
     private final Image[] imgs;
     private final int editorGroup;
 
@@ -69,7 +71,7 @@ public class ItemImg {
     public ItemImg(final int itemId, final String resourceName,
                    final int editorGroup, final int offsetX, final int offsetY, final int frameCount,
                    final int animationSpeed, final int itemMode,
-                   final Image[] imgs, final ItemInfo info) {
+                   @Nonnull final Image[] imgs, final ItemInfo info) {
 
         this.itemId = itemId;
         this.resourceName = resourceName;
@@ -87,6 +89,7 @@ public class ItemImg {
     }
 
 
+    @Nonnull
     public Image[] getImgs() {
         return imgs;
     }

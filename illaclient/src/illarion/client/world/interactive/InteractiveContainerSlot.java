@@ -26,6 +26,7 @@ import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class holds the interactive representation of a inventory slot.
@@ -74,6 +75,7 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
      *
      * @return the ID of the item in this slot
      */
+    @Nullable
     public ItemId getItemId() {
         return parentSlot.getItemID();
     }
@@ -111,7 +113,7 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
         return parentSlot.getLocation();
     }
 
-    public boolean acceptItem(final ItemId itemId) {
+    public boolean acceptItem(@Nonnull final ItemId itemId) {
         return !isValidItem() || itemId.equals(getItemId());
     }
 

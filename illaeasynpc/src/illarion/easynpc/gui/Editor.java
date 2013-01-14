@@ -30,6 +30,8 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -66,22 +68,27 @@ public final class Editor extends RTextScrollPane {
     /**
      * The editor pane used to display the current script.
      */
+    @Nonnull
     private final RSyntaxTextArea editor;
 
     /**
      * The instance of a parsed NPC that failed to render properly last time.
      */
+    @Nullable
     private ParsedNpc errorNpc;
 
+    @Nullable
     private File loadScriptFile;
 
     /**
      * The parsed version of this script.
      */
+    @Nullable
     private ParsedNpc parsedVersion;
 
     private boolean savedSinceLastChange = false;
 
+    @Nonnull
     private final Timer timer;
 
     /**
@@ -173,6 +180,7 @@ public final class Editor extends RTextScrollPane {
         editor.discardAllEdits();
     }
 
+    @Nonnull
     public RSyntaxTextArea getEditor() {
         return (RSyntaxTextArea) getTextArea();
     }
@@ -182,6 +190,7 @@ public final class Editor extends RTextScrollPane {
      *
      * @return the last time invalid NPC.
      */
+    @Nullable
     public ParsedNpc getErrorNpc() {
         return errorNpc;
     }
@@ -223,6 +232,7 @@ public final class Editor extends RTextScrollPane {
         }
     }
 
+    @Nonnull
     @Override
     public JTabbedPane getParent() {
         return (JTabbedPane) super.getParent();
@@ -234,6 +244,7 @@ public final class Editor extends RTextScrollPane {
      *
      * @return the parsed NPC data
      */
+    @Nullable
     public ParsedNpc getParsedData() {
         ParsedNpc currentData = parsedVersion;
         if (currentData != null) {
@@ -264,6 +275,7 @@ public final class Editor extends RTextScrollPane {
      *
      * @return the script file that is load in this editor
      */
+    @Nullable
     public File getScriptFile() {
         return loadScriptFile;
     }
@@ -286,7 +298,7 @@ public final class Editor extends RTextScrollPane {
      *
      * @param script the script to display in this editor
      */
-    public void loadScript(final EasyNpcScript script) {
+    public void loadScript(@Nonnull final EasyNpcScript script) {
         final StringBuilder buffer = new StringBuilder();
 
         final int count = script.getEntryCount();
@@ -313,7 +325,7 @@ public final class Editor extends RTextScrollPane {
         savedSinceLastChange = false;
     }
 
-    public void setLoadScriptFile(final File file) {
+    public void setLoadScriptFile(@Nullable final File file) {
         if (file != null) {
             loadScriptFile = file;
         }
@@ -361,7 +373,7 @@ public final class Editor extends RTextScrollPane {
         final String data;
         try {
             data = (String) transfer.getTransferData(DataFlavor.stringFlavor);
-        } catch (final Exception e1) {
+        } catch (@Nonnull final Exception e1) {
             return;
         }
         final StringBuilder buffer = new StringBuilder(editor.getText());
@@ -449,7 +461,7 @@ public final class Editor extends RTextScrollPane {
     }
 
     @EventSubscriber
-    public void onParserFinished(final ParserFinishedEvent event) {
+    public void onParserFinished(@Nonnull final ParserFinishedEvent event) {
         if (event.getScript().getSourceEditor() == this) {
             final ParsedNpc currentData = event.getNpc();
             if (currentData.hasErrors()) {

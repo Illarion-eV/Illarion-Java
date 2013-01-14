@@ -25,6 +25,7 @@ import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parser.talk.TalkingLine;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
 import java.util.regex.Pattern;
 
 /**
@@ -53,7 +54,7 @@ public final class NpcTalk implements NpcType {
      * @return <code>true</code> in case the line can be parsed by this class
      */
     @Override
-    public boolean canParseLine(final EasyNpcScript.Line lineStruct) {
+    public boolean canParseLine(@Nonnull final EasyNpcScript.Line lineStruct) {
         final String line = lineStruct.getLine();
         if (NORMAL_LINE.matcher(line).matches()) {
             return true;
@@ -106,8 +107,8 @@ public final class NpcTalk implements NpcType {
      */
     @Override
     @SuppressWarnings("nls")
-    public void parseLine(final EasyNpcScript.Line lineStruct,
-                          final ParsedNpc npc) {
+    public void parseLine(@Nonnull final EasyNpcScript.Line lineStruct,
+                          @Nonnull final ParsedNpc npc) {
         final String line = lineStruct.getLine();
 
         if (NORMAL_LINE.matcher(line).matches()) {

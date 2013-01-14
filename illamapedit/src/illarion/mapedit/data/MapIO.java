@@ -24,6 +24,7 @@ import illarion.mapedit.data.formats.Version1Decoder;
 import illarion.mapedit.data.formats.Version2Decoder;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
@@ -124,7 +125,7 @@ public class MapIO {
      * @param map the map to save
      * @throws IOException
      */
-    public static void saveMap(final Map map) throws IOException {
+    public static void saveMap(@Nonnull final Map map) throws IOException {
         saveMap(map, map.getName(), map.getPath());
     }
 
@@ -136,7 +137,7 @@ public class MapIO {
      * @param path
      * @throws IOException
      */
-    public static void saveMap(final Map map, final String name, final String path) throws IOException {
+    public static void saveMap(@Nonnull final Map map, final String name, final String path) throws IOException {
         final File tileFile = new File(path, name + EXT_TILE);
         final File itemFile = new File(path, name + EXT_ITEM);
         final File warpFile = new File(path, name + EXT_WARP);
@@ -180,7 +181,7 @@ public class MapIO {
         warpOutput.close();
     }
 
-    private static boolean checkFile(final File file) {
+    private static boolean checkFile(@Nonnull final File file) {
         if (file.isDirectory()) {
             return false;
         }
@@ -195,7 +196,7 @@ public class MapIO {
         return true;
     }
 
-    private static void writeLine(final BufferedWriter writer, Object... args) throws IOException {
+    private static void writeLine(@Nonnull final BufferedWriter writer, @Nonnull Object... args) throws IOException {
         for (int i = 0; i < args.length; ++i) {
             writer.write(args[i].toString());
             if (i < (args.length - 1)) {
@@ -207,7 +208,7 @@ public class MapIO {
         }
     }
 
-    private static void writeLine(final BufferedWriter writer, String str) throws IOException {
+    private static void writeLine(@Nonnull final BufferedWriter writer, String str) throws IOException {
         writer.write(str);
         writer.write(NEWLINE);
     }

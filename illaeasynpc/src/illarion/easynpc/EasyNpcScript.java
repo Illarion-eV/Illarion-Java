@@ -20,6 +20,7 @@ package illarion.easynpc;
 
 import illarion.easynpc.gui.Editor;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.nio.charset.*;
 import java.util.ArrayList;
@@ -83,6 +84,7 @@ public final class EasyNpcScript {
      * The default encodings to be used to decode the script. In case those
      * fail, it will be tried to decode the script with more rare encodings.
      */
+    @Nonnull
     private static final Charset[] ENCODINGS;
 
     /**
@@ -142,6 +144,7 @@ public final class EasyNpcScript {
      * This list contains all entries in this script written in the order as
      * they are written in the script.
      */
+    @Nonnull
     private final List<EasyNpcScript.Line> entries;
 
     /**
@@ -258,7 +261,7 @@ public final class EasyNpcScript {
      *
      * @param source The entire script to read
      */
-    public void readNPCScript(final String source) {
+    public void readNPCScript(@Nonnull final String source) {
         final String[] lines = source.split("\n");
 
         readNPCScript(lines);
@@ -269,7 +272,7 @@ public final class EasyNpcScript {
      *
      * @param editor the editor that supplies the script data
      */
-    public void readFromEditor(final Editor editor) {
+    public void readFromEditor(@Nonnull final Editor editor) {
         sourceEditor = editor;
 
         readNPCScript(editor.getScriptText());
@@ -304,7 +307,7 @@ public final class EasyNpcScript {
      * @throws IOException thrown in case the reading operation failed
      */
     private boolean readNPCScript(final File sourceFile,
-                                  final CharsetDecoder decoder) throws IOException {
+                                  @Nonnull final CharsetDecoder decoder) throws IOException {
         BufferedReader reader = null;
 
         final List<String> lineList = new ArrayList<String>();
@@ -319,11 +322,11 @@ public final class EasyNpcScript {
 
                 lineList.add(line);
             }
-        } catch (final UnmappableCharacterException ex) {
+        } catch (@Nonnull final UnmappableCharacterException ex) {
             return false;
-        } catch (final MalformedInputException ex) {
+        } catch (@Nonnull final MalformedInputException ex) {
             return false;
-        } catch (final FileNotFoundException ex) {
+        } catch (@Nonnull final FileNotFoundException ex) {
             return false;
         } finally {
             if (reader != null) {
@@ -342,7 +345,7 @@ public final class EasyNpcScript {
      *
      * @param lines The array of lines
      */
-    private void readNPCScript(final String[] lines) {
+    private void readNPCScript(@Nonnull final String[] lines) {
         boolean currentlyCommentBlock = false;
         boolean currentlyEmptyBlock = false;
         int lineNumber = 0;

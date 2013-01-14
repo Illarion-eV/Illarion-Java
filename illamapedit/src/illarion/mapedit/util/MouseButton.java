@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.util;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
@@ -31,6 +32,7 @@ public enum MouseButton {
     RightButton,
     OtherButton;
 
+    @Nonnull
     public static MouseButton getButton(final int btn) {
         switch (btn) {
             case 0:
@@ -50,6 +52,7 @@ public enum MouseButton {
         return MouseInfo.getNumberOfButtons();
     }
 
+    @Nonnull
     public static MouseButton fromAwt(final int buttonMask) {
         if ((buttonMask & MouseEvent.BUTTON3_MASK) != 0) {
             return MouseButton.RightButton;

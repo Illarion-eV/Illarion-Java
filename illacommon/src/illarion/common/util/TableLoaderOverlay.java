@@ -18,6 +18,8 @@
  */
 package illarion.common.util;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Tim
  */
@@ -29,7 +31,7 @@ public class TableLoaderOverlay extends TableLoader {
 
     public static final int TB_LAYER = 3;
 
-    public <T extends TableLoader> TableLoaderOverlay(final TableLoaderSink<T> callback) {
+    public <T extends TableLoader> TableLoaderOverlay(@Nonnull final TableLoaderSink<T> callback) {
         super("Overlays", callback);
     }
 

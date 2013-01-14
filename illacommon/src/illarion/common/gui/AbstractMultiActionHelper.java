@@ -20,6 +20,8 @@ package illarion.common.gui;
 
 import illarion.common.util.Timer;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is a helper that enables to GUI to handle things like double clicks.
  *
@@ -29,6 +31,7 @@ public abstract class AbstractMultiActionHelper implements Runnable {
     /**
      * The internal timer that is used to group the events and fire the results.
      */
+    @Nonnull
     private final Timer timer;
 
     /**

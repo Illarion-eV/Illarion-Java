@@ -20,6 +20,7 @@ package illarion.client.net.server;
 
 import illarion.common.net.NetCommReader;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -53,7 +54,7 @@ public abstract class AbstractItemLookAtMsg extends AbstractReply {
      * @param reader the receiver that stores the data that shall be decoded in this function
      * @throws IOException In case the function reads over the buffer of the receiver this exception is thrown
      */
-    protected void decodeLookAt(final NetCommReader reader) throws IOException {
+    protected void decodeLookAt(@Nonnull final NetCommReader reader) throws IOException {
         name = reader.readString();
         rareness = reader.readUByte();
         description = reader.readString();

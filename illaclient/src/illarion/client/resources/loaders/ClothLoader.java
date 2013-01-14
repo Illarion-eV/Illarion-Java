@@ -24,6 +24,8 @@ import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class takes care for loading the avatar clothes, sorts them to the
  * avatars and prepares to render them.
@@ -110,7 +112,7 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarCloth> imple
      */
     @SuppressWarnings("nls")
     @Override
-    public boolean processRecord(final int line, final TableLoader loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
         final int avatarID = loader.getInt(TB_REF_CHAR_ID);
         final int itemID = loader.getInt(TB_REF_ITEM_ID);
         final int location = loader.getInt(TB_LOCATION);
@@ -124,7 +126,7 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarCloth> imple
         try {
             getTargetFactory().storeResource(cloth);
             cloth.activate(itemID);
-        } catch (final IllegalStateException e) {
+        } catch (@Nonnull final IllegalStateException e) {
             LOGGER.error("Error adding paperdolling item to avatar: "
                     + Integer.toString(avatarID) + " in group: "
                     + Integer.toString(location) + " to item: "

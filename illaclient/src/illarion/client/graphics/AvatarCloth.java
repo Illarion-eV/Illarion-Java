@@ -23,6 +23,8 @@ import illarion.client.resources.ClothFactory;
 import illarion.client.resources.Resource;
 import org.newdawn.slick.Color;
 
+import javax.annotation.Nonnull;
+
 /**
  * A avatar cloth definition stores all data about a cloth that are needed to
  * know. It also allows to render a cloth part.
@@ -69,7 +71,7 @@ public final class AvatarCloth extends AbstractEntity implements Resource {
      * @param baseCol  the base coloring graphic
      */
     public AvatarCloth(final int avatarId, final int itemID,
-                       final String name, final int location, final int frames,
+                       @Nonnull final String name, final int location, final int frames,
                        final int still, final int offX, final int offY, final boolean mirror,
                        final Color baseCol) {
         super(itemID, CLOTH_PATH, name, frames, still, offX
@@ -111,6 +113,7 @@ public final class AvatarCloth extends AbstractEntity implements Resource {
      *
      * @return the default cloth
      */
+    @Nonnull
     public static AvatarCloth getDefaultCloth() {
         return new AvatarCloth();
     }
@@ -130,7 +133,7 @@ public final class AvatarCloth extends AbstractEntity implements Resource {
      *
      * @param org the instance of AvatarCloth that shall be copied
      */
-    private AvatarCloth(final AvatarCloth org) {
+    private AvatarCloth(@Nonnull final AvatarCloth org) {
         super(org);
         parent = org.parent;
         avatar = org.avatar;
@@ -160,6 +163,7 @@ public final class AvatarCloth extends AbstractEntity implements Resource {
      * @return the new created instance of AvatarCloth that is a copy of the
      *         current instance
      */
+    @Nonnull
     @Override
     public AvatarCloth clone() {
         return new AvatarCloth(this);

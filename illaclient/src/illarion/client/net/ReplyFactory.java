@@ -22,6 +22,8 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.*;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +47,7 @@ public final class ReplyFactory {
     /**
      * This map stores the message classes along with the IDs of the command encoded in them.
      */
+    @Nonnull
     private final Map<Integer, Class<? extends AbstractReply>> replyMap;
 
     /**
@@ -106,7 +109,7 @@ public final class ReplyFactory {
      *
      * @param clazz the class to register as reply.
      */
-    private void register(final Class<? extends AbstractReply> clazz) {
+    private void register(@Nonnull final Class<? extends AbstractReply> clazz) {
         final ReplyMessage messageData = clazz.getAnnotation(ReplyMessage.class);
 
         if (messageData == null) {
@@ -129,6 +132,7 @@ public final class ReplyFactory {
      * @param id the ID of the reply
      * @return the newly created reply instance
      */
+    @Nullable
     public AbstractReply getReply(final int id) {
         final Class<? extends AbstractReply> replyClass = replyMap.get(id);
 
@@ -152,6 +156,7 @@ public final class ReplyFactory {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static ReplyFactory getInstance() {
         return INSTANCE;
     }

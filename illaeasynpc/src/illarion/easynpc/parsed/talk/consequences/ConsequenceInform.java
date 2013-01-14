@@ -21,6 +21,7 @@ package illarion.easynpc.parsed.talk.consequences;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaWriter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -65,6 +66,7 @@ public final class ConsequenceInform implements TalkConsequence {
     /**
      * Get the module that is needed for this consequence to work.
      */
+    @Nonnull
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
@@ -74,7 +76,7 @@ public final class ConsequenceInform implements TalkConsequence {
      * Write this inform consequence into its easyNPC form.
      */
     @Override
-    public void writeEasyNpc(final Writer target) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         target.write(String.format(EASY_CODE, message));
     }
 
@@ -82,7 +84,7 @@ public final class ConsequenceInform implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(final Writer target) throws IOException {
+    public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, message));
     }
 }

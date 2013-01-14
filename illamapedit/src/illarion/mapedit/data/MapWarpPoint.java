@@ -21,6 +21,8 @@ package illarion.mapedit.data;
 import javolution.lang.Immutable;
 import javolution.text.TextBuilder;
 
+import javax.annotation.Nonnull;
+
 /**
  * Represents a single warp point, with a start point, as map coordinate and a target point as world coordinate.
  *
@@ -59,7 +61,7 @@ public class MapWarpPoint implements Immutable {
      *
      * @param old
      */
-    public MapWarpPoint(final MapWarpPoint old) {
+    public MapWarpPoint(@Nonnull final MapWarpPoint old) {
         xTarget = old.xTarget;
         yTarget = old.yTarget;
         zTarget = old.zTarget;
@@ -100,6 +102,7 @@ public class MapWarpPoint implements Immutable {
      *
      * @return
      */
+    @Nonnull
     @Override
     public String toString() {
         TextBuilder builder = TextBuilder.newInstance();

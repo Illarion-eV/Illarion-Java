@@ -22,6 +22,8 @@ import illarion.download.tasks.download.Download;
 import illarion.download.tasks.download.DownloadResult;
 import illarion.download.util.Lang;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class implements the display components that are used to display the the information on every single
  * download that is currently going on.
@@ -54,7 +56,7 @@ final class DownloadDetailDisplay
      * @param download      the download that is handled
      */
     @SuppressWarnings("nls")
-    DownloadDetailDisplay(final ProgressSWING parentDisplay, final Download download) {
+    DownloadDetailDisplay(final ProgressSWING parentDisplay, @Nonnull final Download download) {
         super(parentDisplay, download.getName());
 
         setProgressMessage(Lang.getMsg("illarion.download.install.gui.Progress.DownloadProgress.download"));
@@ -71,7 +73,7 @@ final class DownloadDetailDisplay
      * @return the delta to the last reported state
      */
     @SuppressWarnings("nls")
-    public long reportResult(final DownloadResult result) {
+    public long reportResult(@Nonnull final DownloadResult result) {
         setProgressLimits(0, 100);
         setProgressValue(100);
 

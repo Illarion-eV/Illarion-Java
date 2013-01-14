@@ -20,6 +20,8 @@ package illarion.download.install.resources.db;
 
 import illarion.common.util.DirectoryManager;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
@@ -66,7 +68,7 @@ public final class DBFile implements Externalizable {
      * @param fileEntry the file this db entry represents
      */
     @SuppressWarnings("nls")
-    public DBFile(final File fileEntry) {
+    public DBFile(@Nonnull final File fileEntry) {
         final String localFileName = fileEntry.getAbsolutePath();
         final String dataDirectory = DirectoryManager.getInstance().getDataDirectory().getAbsolutePath();
         if (!localFileName.startsWith(dataDirectory)) {
@@ -84,7 +86,7 @@ public final class DBFile implements Externalizable {
      * @return the generated checksum
      */
     @SuppressWarnings("nls")
-    private static long generateChecksum(final File file) {
+    private static long generateChecksum(@Nullable final File file) {
         if (file == null) {
             throw new IllegalStateException("Can't generate a checksum without a file");
         }
@@ -98,14 +100,14 @@ public final class DBFile implements Externalizable {
                 // nothing to do, just read the stream and generate the
                 // checksum.
             }
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             // failed to read the stream.
         } finally {
             if (cis != null) {
                 checksum = cis.getChecksum().getValue();
                 try {
                     cis.close();
-                } catch (final IOException e) {
+                } catch (@Nonnull final IOException e) {
                     // failed to close the stream, does not matter.
                 }
             }
@@ -121,7 +123,7 @@ public final class DBFile implements Externalizable {
      *         point to the same file in the file system.
      */
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (o == null) {
             return false;
         }
@@ -168,7 +170,7 @@ public final class DBFile implements Externalizable {
     }
 
     @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
+    public void writeExternal(@Nonnull final ObjectOutput out) throws IOException {
         out.writeLong(serialVersionUID);
         out.writeLong(lastChangeDate);
         out.writeLong(checksum);
@@ -180,7 +182,7 @@ public final class DBFile implements Externalizable {
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    public void readExternal(@Nonnull final ObjectInput in) throws IOException, ClassNotFoundException {
         final long version = in.readLong();
         if (version == 1L) {
             lastChangeDate = in.readLong();

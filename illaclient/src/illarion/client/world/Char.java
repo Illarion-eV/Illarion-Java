@@ -920,7 +920,7 @@ public final class Char implements RecycleObject, AnimatedMove {
      *
      * @param newLoc the new location of the light source
      */
-    public void updateLight(final Location newLoc) {
+    public void updateLight(@Nonnull final Location newLoc) {
         if (lightSrc != null) {
             lightSrc.getLocation().set(newLoc);
             World.getLights().refreshLight(lightSrc);

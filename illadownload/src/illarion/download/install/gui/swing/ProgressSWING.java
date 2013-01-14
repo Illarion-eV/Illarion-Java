@@ -27,6 +27,8 @@ import illarion.download.tasks.unpack.UnpackResult;
 import illarion.download.util.Lang;
 import org.jdesktop.swingx.JXLabel;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
@@ -56,6 +58,7 @@ public final class ProgressSWING
     /**
      * The map that stores all downloads that are currently known.
      */
+    @Nonnull
     private final Map<Download, DownloadDetailDisplay> downloadMap;
 
     /**
@@ -91,6 +94,7 @@ public final class ProgressSWING
     /**
      * The map that stores all unpack operations that are currently known.
      */
+    @Nonnull
     private final Map<Unpack, UnpackDetailDisplay> unpackMap;
 
     /**
@@ -105,7 +109,7 @@ public final class ProgressSWING
      * Add the buttons needed for this display.
      */
     @Override
-    public void fillButtons(final BaseSWING base, final JPanel buttonPanel) {
+    public void fillButtons(@Nonnull final BaseSWING base, @Nonnull final JPanel buttonPanel) {
         baseFrame = base;
         buttonPanel.add(base.getCancelButton());
     }
@@ -115,7 +119,7 @@ public final class ProgressSWING
      */
     @SuppressWarnings("nls")
     @Override
-    public void fillContent(final BaseSWING base, final JPanel contentPanel) {
+    public void fillContent(final BaseSWING base, @Nonnull final JPanel contentPanel) {
         baseFrame = base;
         contentPanel.setLayout(new GridBagLayout());
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
@@ -198,7 +202,7 @@ public final class ProgressSWING
     }
 
     @Override
-    public void reportDownloadFinished(final Download download, final DownloadResult result) {
+    public void reportDownloadFinished(@Nonnull final Download download, @Nonnull final DownloadResult result) {
         final DownloadDetailDisplay display = getDownloadDisplay(download, 0L, false);
         if (display != null) {
             currentlyDownloadedBytes += display.reportResult(result);
@@ -207,7 +211,7 @@ public final class ProgressSWING
     }
 
     @Override
-    public void reportDownloadProgress(final Download download, final long bytesDone, final long bytesTotal) {
+    public void reportDownloadProgress(@Nonnull final Download download, final long bytesDone, final long bytesTotal) {
         final DownloadDetailDisplay display = getDownloadDisplay(download, bytesTotal, true);
 
         currentlyDownloadedBytes += display.reportUpdate(bytesDone, bytesTotal);
@@ -264,7 +268,8 @@ public final class ProgressSWING
      * @param createNew  create a new instance of this class in case none was created yet
      * @return the display of the download
      */
-    private DownloadDetailDisplay getDownloadDisplay(final Download download, final long bytesTotal,
+    @Nullable
+    private DownloadDetailDisplay getDownloadDisplay(@Nonnull final Download download, final long bytesTotal,
                                                      final boolean createNew) {
         DownloadDetailDisplay display = null;
         if (downloadMap.containsKey(download)) {
@@ -290,7 +295,7 @@ public final class ProgressSWING
         return display;
     }
 
-    void moveDetailDisplayToFinishList(final AbstractProgressDetailDisplay display) {
+    void moveDetailDisplayToFinishList(@Nonnull final AbstractProgressDetailDisplay display) {
         if (display.getParent().equals(finishedDetailList)) {
             return;
         }
@@ -318,6 +323,7 @@ public final class ProgressSWING
      * @param createNew create a new instance in case none was created before
      * @return the display of the download
      */
+    @Nullable
     private UnpackDetailDisplay getUnpackDisplay(final Unpack unpack, final boolean createNew) {
         UnpackDetailDisplay display = null;
         if (unpackMap.containsKey(unpack)) {

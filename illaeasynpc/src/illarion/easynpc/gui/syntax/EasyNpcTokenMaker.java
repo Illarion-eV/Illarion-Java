@@ -25,6 +25,8 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.text.Segment;
 
 /**
@@ -33,6 +35,7 @@ import javax.swing.text.Segment;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class EasyNpcTokenMaker extends AbstractTokenMaker {
+    @Nonnull
     @Override
     public TokenMap getWordsToHighlight() {
         final TokenMap tokenMap = new TokenMap(true);
@@ -58,7 +61,7 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
     private int currentTokenType;
 
     @Override
-    public Token getTokenList(final Segment text, final int initialTokenType, final int startOffset) {
+    public Token getTokenList(@Nonnull final Segment text, final int initialTokenType, final int startOffset) {
         resetTokenList();
 
         final char[] array = text.array;
@@ -365,6 +368,7 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
      *
      * @return The start and end strings to add to a line to "comment" it out.
      */
+    @Nullable
     @Override
     public String[] getLineCommentStartAndEnd() {
         return new String[]{"--", null};

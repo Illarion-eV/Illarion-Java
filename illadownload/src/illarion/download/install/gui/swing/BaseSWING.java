@@ -22,6 +22,7 @@ import illarion.download.install.Installation;
 import illarion.download.install.resources.ResourceManager;
 import illarion.download.util.Lang;
 
+import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -175,11 +176,13 @@ public final class BaseSWING extends JFrame {
     /**
      * The panel that holds the buttons of the GUI.
      */
+    @Nonnull
     private final JPanel buttonPanel;
 
     /**
      * The main panel that fills the center of the GUI.
      */
+    @Nonnull
     private final JPanel mainPanel;
 
     /**
@@ -201,6 +204,7 @@ public final class BaseSWING extends JFrame {
     /**
      * The label that displays the title of the installer.
      */
+    @Nonnull
     private final JLabel title;
 
     /**
@@ -211,6 +215,7 @@ public final class BaseSWING extends JFrame {
     /**
      * The media tracker that tracks the graphics required for this GUI.
      */
+    @Nonnull
     private final MediaTracker tracker;
 
     /**
@@ -224,7 +229,7 @@ public final class BaseSWING extends JFrame {
         try {
             setIconImage(ImageIO.read(BaseSWING.class.getClassLoader()
                     .getResource("download.png")));
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             // ignore
         }
 
@@ -287,13 +292,13 @@ public final class BaseSWING extends JFrame {
                     break;
                 }
             }
-        } catch (final UnsupportedLookAndFeelException e) {
+        } catch (@Nonnull final UnsupportedLookAndFeelException e) {
             // handle exception
-        } catch (final ClassNotFoundException e) {
+        } catch (@Nonnull final ClassNotFoundException e) {
             // handle exception
-        } catch (final InstantiationException e) {
+        } catch (@Nonnull final InstantiationException e) {
             // handle exception
-        } catch (final IllegalAccessException e) {
+        } catch (@Nonnull final IllegalAccessException e) {
             // handle exception
         }
     }
@@ -303,6 +308,7 @@ public final class BaseSWING extends JFrame {
      *
      * @return the default cancel button
      */
+    @Nonnull
     @SuppressWarnings("nls")
     public JButton getCancelButton() {
         final JButton returnButton = getPanelButton();
@@ -319,6 +325,7 @@ public final class BaseSWING extends JFrame {
      *
      * @return the default continue button
      */
+    @Nonnull
     @SuppressWarnings("nls")
     public JButton getContinueButton() {
         final JButton returnButton = getPanelButton();
@@ -334,6 +341,7 @@ public final class BaseSWING extends JFrame {
      *
      * @return the default exit button
      */
+    @Nonnull
     @SuppressWarnings("nls")
     public JButton getExitButton() {
         final JButton returnButton = getPanelButton();
@@ -364,6 +372,7 @@ public final class BaseSWING extends JFrame {
      *
      * @return the button for the button panel
      */
+    @Nonnull
     public static JButton getPanelButton() {
         final JButton returnButton = new JButton();
         final Dimension size = new Dimension(120, 40);
@@ -420,7 +429,7 @@ public final class BaseSWING extends JFrame {
         while (!tracker.checkID(id)) {
             try {
                 tracker.waitForID(id);
-            } catch (final InterruptedException e) {
+            } catch (@Nonnull final InterruptedException e) {
                 return false;
             }
         }
@@ -434,7 +443,7 @@ public final class BaseSWING extends JFrame {
      * @param content the content to show
      */
     @SuppressWarnings("nls")
-    void showImpl(final AbstractContentSWING content) {
+    void showImpl(@Nonnull final AbstractContentSWING content) {
         mainPanel.removeAll();
         buttonPanel.removeAll();
         content.fillContent(this, mainPanel);

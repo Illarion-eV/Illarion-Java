@@ -24,6 +24,7 @@ import illarion.common.types.CharacterId;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -43,6 +44,7 @@ public final class CombatHandler {
     /**
      * The character that is currently under attack.
      */
+    @Nullable
     @GuardedBy("this")
     private Char attackedChar;
 
@@ -58,6 +60,7 @@ public final class CombatHandler {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static CombatHandler getInstance() {
         return INSTANCE;
     }
@@ -164,7 +167,7 @@ public final class CombatHandler {
      * @param character the character to check
      * @return {@code true} in case the character is not the player and not a NPC.
      */
-    public boolean canBeAttacked(final Char character) {
+    public boolean canBeAttacked(@Nonnull final Char character) {
         return !World.getPlayer().isPlayer(character.getCharId()) && !character.isNPC();
     }
 

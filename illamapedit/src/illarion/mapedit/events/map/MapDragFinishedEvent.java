@@ -18,6 +18,8 @@
  */
 package illarion.mapedit.events.map;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Tim
  */
@@ -50,6 +52,7 @@ public class MapDragFinishedEvent {
         return startX;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "MapDragFinishedEvent{" +

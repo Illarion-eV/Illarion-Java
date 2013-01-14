@@ -27,6 +27,8 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.openal.SoundStore;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is used to load the sound definitions from the resource table that
  * was created using the configuration tool. The class will create the required
@@ -77,13 +79,13 @@ public final class SoundLoader extends AbstractResourceLoader<IdWrapper<Sound>> 
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, final TableLoader loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
         final int clipID = loader.getInt(TB_ID);
         final String filename = loader.getString(TB_NAME);
 
         try {
             getTargetFactory().storeResource(new IdWrapper<Sound>(clipID, new Sound(SOUND_PATH + filename)));
-        } catch (final IllegalStateException ex) {
+        } catch (@Nonnull final IllegalStateException ex) {
             logger.error("Failed adding sound to internal factory. ID: "
                     + Integer.toString(clipID) + " - Filename: " + filename);
         } catch (SlickException e) {

@@ -1,64 +1,52 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.config.gui;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
-import javolution.lang.Reflection;
-import javolution.lang.Reflection.Constructor;
-import javolution.lang.Reflection.Method;
-import javolution.text.TextBuilder;
-import javolution.util.FastTable;
-
-import org.apache.log4j.Logger;
 
 import illarion.common.config.ConfigDialog;
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.config.gui.entries.SaveableEntry;
 import illarion.common.util.MessageSource;
+import javolution.lang.Reflection;
+import javolution.lang.Reflection.Constructor;
+import javolution.lang.Reflection.Method;
+import javolution.text.TextBuilder;
+import javolution.util.FastTable;
+import org.apache.log4j.Logger;
+
+import javax.annotation.Nonnull;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * This method implements the configuration dialog that uses the SWING (
  * {@link javax.swing}) to display the GUI for the configuration.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ConfigDialogSwing extends JDialog {
     /**
      * The listener of the cancel button for this dialog. It causes the dialog
      * to be closed.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class CancelButtonListener implements ActionListener {
@@ -72,9 +60,9 @@ public final class ConfigDialogSwing extends JDialog {
          * The public constructor of this class that allows the parent class to
          * create a proper instance and that takes all data needed for this
          * object to work properly.
-         * 
+         *
          * @param parent the parent dialog that is closed once this action is
-         *            performed
+         *               performed
          */
         public CancelButtonListener(final JDialog parent) {
             parentDialog = parent;
@@ -94,7 +82,7 @@ public final class ConfigDialogSwing extends JDialog {
     /**
      * The listener of the save button for this dialog. It causes all elements
      * to be saved and the dialog to be closed.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class SaveButtonListener implements ActionListener {
@@ -114,14 +102,14 @@ public final class ConfigDialogSwing extends JDialog {
          * The public constructor of this class that allows the parent class to
          * create a proper instance and that takes all data needed for this
          * object to work properly.
-         * 
+         *
          * @param saveList the list of objects saved in case this action is
-         *            performed
-         * @param parent the parent dialog that is closed once this action is
-         *            performed
+         *                 performed
+         * @param parent   the parent dialog that is closed once this action is
+         *                 performed
          */
         public SaveButtonListener(final List<SaveableEntry> saveList,
-            final JDialog parent) {
+                                  final JDialog parent) {
             todoList = saveList;
             parentDialog = parent;
         }
@@ -147,19 +135,19 @@ public final class ConfigDialogSwing extends JDialog {
      * configuration dialog.
      */
     @SuppressWarnings("nls")
-    private static final String[] KNOWN_ENTRIES = new String[] {
-        "illarion.common.config.gui.entries.swing.CheckEntrySwing",
-        "illarion.common.config.gui.entries.swing.TextEntrySwing",
-        "illarion.common.config.gui.entries.swing.SelectEntrySwing",
-        "illarion.common.config.gui.entries.swing.NumberEntrySwing",
-        "illarion.common.config.gui.entries.swing.FileEntrySwing",
-        "illarion.common.config.gui.entries.swing.DirectoryEntrySwing" };
+    private static final String[] KNOWN_ENTRIES = new String[]{
+            "illarion.common.config.gui.entries.swing.CheckEntrySwing",
+            "illarion.common.config.gui.entries.swing.TextEntrySwing",
+            "illarion.common.config.gui.entries.swing.SelectEntrySwing",
+            "illarion.common.config.gui.entries.swing.NumberEntrySwing",
+            "illarion.common.config.gui.entries.swing.FileEntrySwing",
+            "illarion.common.config.gui.entries.swing.DirectoryEntrySwing"};
 
     /**
      * The logger instance that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger
-        .getLogger(ConfigDialogSwing.class);
+            .getLogger(ConfigDialogSwing.class);
 
     /**
      * The serialization UID of this dialog.
@@ -169,37 +157,37 @@ public final class ConfigDialogSwing extends JDialog {
     /**
      * Constructor for this Swing GUI representation of the configuration
      * dialog.
-     * 
+     *
      * @param dialog the configuration dialog that is needed to be displayed
-     * @param msgs the source for the messages to be displayed
+     * @param msgs   the source for the messages to be displayed
      */
     @SuppressWarnings("nls")
-    public ConfigDialogSwing(final ConfigDialog dialog,
-        final MessageSource msgs) {
+    public ConfigDialogSwing(@Nonnull final ConfigDialog dialog,
+                             @Nonnull final MessageSource msgs) {
         super((JDialog) null, msgs
-            .getMessage("illarion.common.config.gui.Title"), true);
+                .getMessage("illarion.common.config.gui.Title"), true);
 
         final FastTable<SaveableEntry> contentList =
-            new FastTable<SaveableEntry>();
+                new FastTable<SaveableEntry>();
 
         final JPanel content = new JPanel(new BorderLayout(5, 5));
         add(content);
 
         {
             final JPanel buttonPanel =
-                new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
+                    new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
             content.add(buttonPanel, BorderLayout.SOUTH);
 
             final JButton saveButton =
-                new JButton(msgs.getMessage("illarion.common.config.gui.Save"));
+                    new JButton(msgs.getMessage("illarion.common.config.gui.Save"));
             saveButton.addActionListener(new SaveButtonListener(contentList
-                .unmodifiable(), this));
+                    .unmodifiable(), this));
             saveButton.setPreferredSize(new Dimension(100, 25));
             buttonPanel.add(saveButton);
 
             final JButton cancelButton =
-                new JButton(
-                    msgs.getMessage("illarion.common.config.gui.Cancel"));
+                    new JButton(
+                            msgs.getMessage("illarion.common.config.gui.Cancel"));
             cancelButton.addActionListener(new CancelButtonListener(this));
             cancelButton.setPreferredSize(new Dimension(100, 25));
             buttonPanel.add(cancelButton);
@@ -215,7 +203,7 @@ public final class ConfigDialogSwing extends JDialog {
             currentPage = dialog.getPage(i);
             currentPanel = new JPanel(new GridBagLayout());
             currentPanel
-                .setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                    .setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             tabs.addTab(msgs.getMessage(currentPage.getTitle()), currentPanel);
 
             final GridBagConstraints con = new GridBagConstraints();
@@ -233,7 +221,7 @@ public final class ConfigDialogSwing extends JDialog {
                 con.insets.top = 5;
                 con.weightx = 0.0;
                 currentPanel.add(
-                    new JLabel(msgs.getMessage(entry.getTitle())), con);
+                        new JLabel(msgs.getMessage(entry.getTitle())), con);
 
                 con.gridwidth = GridBagConstraints.REMAINDER;
                 con.gridheight = 1;
@@ -251,14 +239,14 @@ public final class ConfigDialogSwing extends JDialog {
                     builder.append(ConfigEntry.class.getName());
                     builder.append(')');
                     final Method testMethod =
-                        Reflection.getInstance().getMethod(builder.toString());
+                            Reflection.getInstance().getMethod(builder.toString());
                     if (testMethod == null) {
                         LOGGER.error("Configuration entry class not found: "
-                            + currentClass);
+                                + currentClass);
                         break;
                     }
                     if (Boolean.TRUE.equals(testMethod.invoke(null,
-                        entry.getConfigEntry()))) {
+                            entry.getConfigEntry()))) {
                         int parameters = 1;
                         builder.setLength(0);
                         builder.append(currentClass);
@@ -266,8 +254,8 @@ public final class ConfigDialogSwing extends JDialog {
                         builder.append(ConfigEntry.class.getName());
                         builder.append(')');
                         Constructor constructor =
-                            Reflection.getInstance().getConstructor(
-                                builder.toString());
+                                Reflection.getInstance().getConstructor(
+                                        builder.toString());
 
                         if (constructor == null) {
                             parameters = 2;
@@ -276,25 +264,25 @@ public final class ConfigDialogSwing extends JDialog {
                             builder.append(MessageSource.class.getName());
                             builder.append(')');
                             constructor =
-                                Reflection.getInstance().getConstructor(
-                                    builder.toString());
+                                    Reflection.getInstance().getConstructor(
+                                            builder.toString());
                         }
 
                         TextBuilder.recycle(builder);
                         if (constructor == null) {
                             LOGGER.error("Required constructor not found: "
-                                + currentClass);
+                                    + currentClass);
                             break;
                         }
                         Object object;
                         if (parameters == 1) {
                             object =
-                                constructor
-                                    .newInstance(entry.getConfigEntry());
+                                    constructor
+                                            .newInstance(entry.getConfigEntry());
                         } else {
                             object =
-                                constructor.newInstance(
-                                    entry.getConfigEntry(), msgs);
+                                    constructor.newInstance(
+                                            entry.getConfigEntry(), msgs);
                         }
 
                         currentPanel.add((JComponent) object, con);

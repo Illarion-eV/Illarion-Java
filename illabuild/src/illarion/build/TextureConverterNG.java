@@ -31,6 +31,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -109,6 +111,7 @@ public final class TextureConverterNG
          *
          * @return the newly created file construct
          */
+        @Nonnull
         public File getFile() {
             return new File(directory, fileName);
         }
@@ -128,6 +131,7 @@ public final class TextureConverterNG
          * @param stripDir the part of the directory to strip away
          * @return the new file entry
          */
+        @Nonnull
         public FileEntry stripDirectory(final String stripDir) {
             return new FileEntry(new File(directory, stripDir), fileName.replace(stripDir, "")); //$NON-NLS-1$
         }
@@ -136,26 +140,31 @@ public final class TextureConverterNG
     /**
      * The file names of the book files that were found but not handled yet.
      */
+    @Nonnull
     private final List<FileEntry> bookFiles;
 
     /**
      * Crypto instance used to crypt the table files.
      */
+    @Nonnull
     private final Crypto crypto;
 
     /**
      * The file lists that are supposed to be converted.
      */
+    @Nonnull
     private final List<FileList> filelists;
 
     /**
      * The filename of the file that is converted used in case the images are dumbed to the file system.
      */
+    @Nullable
     private String fileName = null;
 
     /**
      * The file sets that are supposed to be converted.
      */
+    @Nonnull
     private final List<FileSet> filesets;
 
     /**
@@ -166,6 +175,7 @@ public final class TextureConverterNG
     /**
      * The file names of the misc files that were found but not handled yet.
      */
+    @Nonnull
     private final List<FileEntry> miscFiles;
 
     /**
@@ -181,6 +191,7 @@ public final class TextureConverterNG
     /**
      * The file names of the table files that were found but not handled yet.
      */
+    @Nonnull
     private final List<FileEntry> tableFiles;
 
     /**
@@ -191,11 +202,13 @@ public final class TextureConverterNG
     /**
      * The file names of texture files that were found in the list and were not handled yet.
      */
+    @Nonnull
     private final List<FileEntry> textureFiles;
 
     /**
      * The file names of texture files that shall be get included into a texture pack and rather get a texture alone.
      */
+    @Nonnull
     private final List<FileEntry> textureNoPackFiles;
 
     /**
@@ -219,6 +232,7 @@ public final class TextureConverterNG
      * @param value the integer value that should be converted to a byte array
      * @return the byte array created
      */
+    @Nonnull
     public static final byte[] intToByteArray(final int value) {
         return new byte[]{(byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value};
     }
@@ -231,7 +245,7 @@ public final class TextureConverterNG
      *             that contains the new data.
      */
     @SuppressWarnings("nls")
-    public static void main(final String[] args) {
+    public static void main(@Nonnull final String[] args) {
         final TextureConverterNG converter = new TextureConverterNG();
         for (final String arg : args) {
             if (arg.contains("filelist")) {
@@ -334,7 +348,7 @@ public final class TextureConverterNG
      *
      * @param file target file
      */
-    public void setTarget(final File file) {
+    public void setTarget(@Nonnull final File file) {
         targetFile = file;
         fileName = file.getName().replace("raw_", "").replace("rsc_", "") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 // //$NON-NLS-4$
@@ -347,7 +361,7 @@ public final class TextureConverterNG
      * @param directory the directory of the file
      * @param filename  the name of the file
      */
-    private void analyseAndOrderFile(final File directory, final String filename) {
+    private void analyseAndOrderFile(final File directory, @Nonnull final String filename) {
         final String cleanFileName = filename.replace('\\', '/');
         final FileEntry entry = new FileEntry(directory, cleanFileName);
 
@@ -455,7 +469,7 @@ public final class TextureConverterNG
 
                 man.addConfiguredAttribute(new Attribute(Manifest.ATTRIBUTE_MANIFEST_VERSION,
                         Manifest.DEFAULT_MANIFEST_VERSION));
-            } catch (final ManifestException e) {
+            } catch (@Nonnull final ManifestException e) {
                 // ignore
             }
 
@@ -488,17 +502,17 @@ public final class TextureConverterNG
 
             writeBookFiles(outJar);
             System.out.println("Bookfiles done");
-        } catch (final FileNotFoundException e) {
+        } catch (@Nonnull final FileNotFoundException e) {
             System.out.println("ERROR: File " + targetFile.getAbsolutePath() + " was not found, stopping converter");
             return;
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             System.out.println("ERROR: File " + targetFile.getName() + " was not readable, stopping converter");
             return;
         } finally {
             if (outJar != null) {
                 try {
                     outJar.close();
-                } catch (final IOException e) {
+                } catch (@Nonnull final IOException e) {
                     // closing failed
                 }
             }
@@ -527,7 +541,7 @@ public final class TextureConverterNG
      * @throws IOException in case there is anything wrong with the input or the output file stream
      */
     @SuppressWarnings("nls")
-    private void writeBookFiles(final JarOutputStream outJar)
+    private void writeBookFiles(@Nonnull final JarOutputStream outJar)
             throws BuildException {
         if (bookFiles.isEmpty()) {
             return;
@@ -559,13 +573,13 @@ public final class TextureConverterNG
                     position += inChannel.transferTo(position, maxSize, outChannel);
                 }
                 outJar.closeEntry();
-            } catch (final Exception e) {
+            } catch (@Nonnull final Exception e) {
                 throw new BuildException(e);
             } finally {
                 if ((inChannel != null) && inChannel.isOpen()) {
                     try {
                         inChannel.close();
-                    } catch (final IOException e) {
+                    } catch (@Nonnull final IOException e) {
                         // nothing to do
                     }
                 }
@@ -581,7 +595,7 @@ public final class TextureConverterNG
      * @throws IOException in case there is anything wrong with the input or the output file stream
      */
     @SuppressWarnings("nls")
-    private void writeMiskFiles(final JarOutputStream outJar)
+    private void writeMiskFiles(@Nonnull final JarOutputStream outJar)
             throws BuildException {
         if (miscFiles.isEmpty()) {
             System.gc();
@@ -605,13 +619,13 @@ public final class TextureConverterNG
                     position += inChannel.transferTo(position, maxSize, outChannel);
                 }
                 outJar.closeEntry();
-            } catch (final IOException e) {
+            } catch (@Nonnull final IOException e) {
                 throw new BuildException(e);
             } finally {
                 if ((inChannel != null) && inChannel.isOpen()) {
                     try {
                         inChannel.close();
-                    } catch (final IOException e) {
+                    } catch (@Nonnull final IOException e) {
                         // nothing to do
                     }
                 }
@@ -626,7 +640,7 @@ public final class TextureConverterNG
      * @throws IOException in case there is anything wrong with the input or the output file stream
      */
     @SuppressWarnings("nls")
-    private void writeTableFiles(final JarOutputStream outJar)
+    private void writeTableFiles(@Nonnull final JarOutputStream outJar)
             throws BuildException {
 
         if (tableFiles.isEmpty()) {
@@ -636,7 +650,7 @@ public final class TextureConverterNG
         if (privateKeyFile != null) {
             try {
                 crypto.loadPrivateKey(new FileInputStream(privateKeyFile));
-            } catch (final FileNotFoundException e) {
+            } catch (@Nonnull final FileNotFoundException e) {
                 // did not work
             }
         }
@@ -668,13 +682,13 @@ public final class TextureConverterNG
                 outJar.write(outBuf);
                 outJar.closeEntry();
 
-            } catch (final Exception e) {
+            } catch (@Nonnull final Exception e) {
                 throw new BuildException(e);
             } finally {
                 if (in != null) {
                     try {
                         in.close();
-                    } catch (final IOException e) {
+                    } catch (@Nonnull final IOException e) {
                         // nothing
                     }
                 }
@@ -683,8 +697,8 @@ public final class TextureConverterNG
         tableFiles.clear();
     }
 
-    private static int packTextures(final JarOutputStream outJar, final String folder, final ImagePacker packer,
-                                    final String filename) {
+    private static int packTextures(@Nonnull final JarOutputStream outJar, final String folder, @Nonnull final ImagePacker packer,
+                                    @Nullable final String filename) {
         int atlasFiles = 0;
         String usedFileName;
         while (!packer.isEverythingDone()) {
@@ -721,10 +735,10 @@ public final class TextureConverterNG
                 outJar.closeEntry();
 
                 atlasFiles++;
-            } catch (final IOException e) {
+            } catch (@Nonnull final IOException e) {
                 e.printStackTrace();
                 throw new BuildException(e);
-            } catch (final Exception e) {
+            } catch (@Nonnull final Exception e) {
                 e.printStackTrace();
                 throw new BuildException(e);
             }
@@ -739,7 +753,7 @@ public final class TextureConverterNG
      * @param outJar the target archive the encrypted table files are written t
      */
     @SuppressWarnings("nls")
-    private void writeTextureFiles(final JarOutputStream outJar)
+    private void writeTextureFiles(@Nonnull final JarOutputStream outJar)
             throws BuildException {
         if (textureFiles.isEmpty()) {
             return;
@@ -763,10 +777,10 @@ public final class TextureConverterNG
             stream = new DataOutputStream(outJar);
             stream.writeInt(atlasFiles);
             stream.flush();
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             e.printStackTrace();
             throw new BuildException(e);
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             e.printStackTrace();
             throw new BuildException(e);
         } finally {
@@ -787,7 +801,7 @@ public final class TextureConverterNG
      * @throws BuildException In case anything goes wrong
      */
     @SuppressWarnings("nls")
-    private void writeTextureNoPackFiles(final JarOutputStream outJar)
+    private void writeTextureNoPackFiles(@Nonnull final JarOutputStream outJar)
             throws BuildException {
         if (textureNoPackFiles.isEmpty()) {
             return;

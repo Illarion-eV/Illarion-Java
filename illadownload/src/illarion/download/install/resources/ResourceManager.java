@@ -24,6 +24,8 @@ import illarion.download.install.resources.db.ResourceCheckLevel;
 import illarion.download.install.resources.db.ResourceDatabase;
 import illarion.download.tasks.download.DownloadManager;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,11 +54,13 @@ public final class ResourceManager {
     /**
      * The list of resources that are required to execute the main resource.
      */
+    @Nonnull
     private final List<Resource> dependingResources;
 
     /**
      * This variable contains the set resource of the application to launch.
      */
+    @Nullable
     private Resource mainResource;
 
     /**
@@ -81,6 +85,7 @@ public final class ResourceManager {
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static ResourceManager getInstance() {
         return INSTANCE;
     }
@@ -103,6 +108,7 @@ public final class ResourceManager {
      *
      * @return the main resource that was selected
      */
+    @Nullable
     public Resource getMainResource() {
         return mainResource;
     }
@@ -113,7 +119,7 @@ public final class ResourceManager {
      * @param resourceURL the URL of the resource this file is assigned to
      * @param file        the file itself
      */
-    public void reportFileInstalled(final URL resourceURL, final File file) {
+    public void reportFileInstalled(@Nonnull final URL resourceURL, @Nonnull final File file) {
         resourceDatabase.addFile(resourceURL, file);
         resourcesDirty = true;
     }
@@ -124,7 +130,7 @@ public final class ResourceManager {
      * @param url         the URL that was the source of this resource
      * @param lastChanged the time when this resource was last changed
      */
-    public void reportResourceInstalled(final URL url, final long lastChanged) {
+    public void reportResourceInstalled(@Nonnull final URL url, final long lastChanged) {
         resourceDatabase.addResource(url, lastChanged);
         resourcesDirty = true;
     }
@@ -151,16 +157,16 @@ public final class ResourceManager {
             out.writeObject(resourceDatabase);
             out.flush();
             resourcesDirty = false;
-        } catch (final FileNotFoundException e) {
+        } catch (@Nonnull final FileNotFoundException e) {
             // file not found, should not happen
-        } catch (final IOException e) {
+        } catch (@Nonnull final IOException e) {
             // failed, writing the file, its sad, but nothing to be done about
             // that
         } finally {
             if (out != null) {
                 try {
                     out.close();
-                } catch (final IOException e) {
+                } catch (@Nonnull final IOException e) {
                     // closing the file failed... ignore that.
                 }
                 out = null;
@@ -173,7 +179,7 @@ public final class ResourceManager {
      *
      * @param manager the manager that is supposed to receive the data
      */
-    public void scheduleDownloads(final DownloadManager manager) {
+    public void scheduleDownloads(@Nonnull final DownloadManager manager) {
         loadResourceDatabase();
         for (final URL url : mainResource.getRequiredResources()) {
             scheduleDownloadImpl(mainResource.getName(), mainResource.getSubDirectory(), url, manager);
@@ -205,7 +211,7 @@ public final class ResourceManager {
      * @throws IllegalArgumentException in case the resource is not start able
      */
     @SuppressWarnings("nls")
-    public void setMainResource(final Resource main) {
+    public void setMainResource(@Nullable final Resource main) {
         if (main == null) {
             throw new IllegalArgumentException("resource is null");
         }
@@ -223,7 +229,7 @@ public final class ResourceManager {
      *
      * @param res the resource thats dependencies are discovered
      */
-    private void discoverDependencies(final Resource res) {
+    private void discoverDependencies(@Nonnull final Resource res) {
         if (res.getDependencies() == null) {
             return;
         }
@@ -252,14 +258,14 @@ public final class ResourceManager {
             try {
                 in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(dbFile)));
                 resourceDatabase = (ResourceDatabase) in.readObject();
-            } catch (final Exception e) {
+            } catch (@Nonnull final Exception e) {
                 e.printStackTrace();
                 // file not found, should not happen, but if, it does not matter
             } finally {
                 if (in != null) {
                     try {
                         in.close();
-                    } catch (final IOException e) {
+                    } catch (@Nonnull final IOException e) {
                         // closing the stream failed, ignore that
                     }
                 }
@@ -280,8 +286,8 @@ public final class ResourceManager {
      * @param url     the URL that is supposed to be downloaded
      * @param manager the download manager that maintains the download
      */
-    private void scheduleDownloadImpl(final String name, final String dir, final URL url,
-                                      final DownloadManager manager) {
+    private void scheduleDownloadImpl(final String name, final String dir, @Nonnull final URL url,
+                                      @Nonnull final DownloadManager manager) {
         long lastModified = 0L;
         if (resourceDatabase.containsResource(url)) {
             final DBResource res = resourceDatabase.getResource(url);

@@ -32,6 +32,8 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import org.newdawn.slick.GameContainer;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -73,11 +75,13 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
     /**
      * The currently active popup.
      */
+    @Nullable
     private Element activePopup;
 
     /**
      * The callback assigned to the popup.
      */
+    @Nullable
     private NumberSelectPopupHandler.Callback activeCallback;
 
     /**
@@ -90,6 +94,7 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
      */
     private int minNumber;
 
+    @Nonnull
     private final Queue<Runnable> requestQueue;
 
     public NumberSelectPopupHandler() {
@@ -160,7 +165,7 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
 
         textField.setFormat(new TextFieldDisplayFormat() {
             @Override
-            public CharSequence getDisplaySequence(final CharSequence original, final int start, final int end) {
+            public CharSequence getDisplaySequence(@Nonnull final CharSequence original, final int start, final int end) {
                 if (original.length() == 0) {
                     return Integer.toString(minValue);
                 }
@@ -307,6 +312,7 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
      *
      * @return the text field of the popup
      */
+    @Nullable
     private TextField getTextField() {
         if (activePopup == null) {
             return null;

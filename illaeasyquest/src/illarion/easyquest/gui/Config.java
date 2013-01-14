@@ -1,28 +1,22 @@
 /*
  * This file is part of the Illarion easyQuest Editor.
  *
- * Copyright 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion easyQuest Editor is free software: you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion easyQuest Editor is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion easyQuest Editor. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion easyQuest Editor is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion easyQuest Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion easyQuest Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easyquest.gui;
-
-import java.io.File;
-
-import javax.swing.JOptionPane;
-
-import illarion.easyquest.Lang;
 
 import illarion.common.config.ConfigChangeListener;
 import illarion.common.config.ConfigDialog;
@@ -30,9 +24,15 @@ import illarion.common.config.ConfigSystem;
 import illarion.common.config.entries.DirectoryEntry;
 import illarion.common.config.entries.TextEntry;
 import illarion.common.util.DirectoryManager;
+import illarion.easyquest.Lang;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
+import java.io.File;
 
 public final class Config implements ConfigChangeListener {
-    
+
     /**
      * The amount of last opened files that shall be stored.
      */
@@ -67,18 +67,20 @@ public final class Config implements ConfigChangeListener {
      */
     @SuppressWarnings("nls")
     private static final String openFiles = "openFiles";
-    
+
     private static final String character = "character";
     private static final String password = "password";
-    
+
     /**
      * The properties that store the values of this configuration.
      */
+    @Nullable
     private ConfigSystem cfg;
 
     /**
      * The file that holds the configuration.
      */
+    @Nullable
     private File configFile = null;
 
     /**
@@ -86,6 +88,7 @@ public final class Config implements ConfigChangeListener {
      * <code>null</code> the list is generated fresh once its requested the next
      * time.
      */
+    @Nullable
     private File[] lastOpenedFilesBuffer;
 
     /**
@@ -98,9 +101,10 @@ public final class Config implements ConfigChangeListener {
 
     /**
      * Get the singleton instance of this class.
-     * 
+     *
      * @return the singleton instance
      */
+    @Nonnull
     public static Config getInstance() {
         return INSTANCE;
     }
@@ -109,7 +113,7 @@ public final class Config implements ConfigChangeListener {
      * This function determines the user data directory and requests the folder
      * to store the editor data in case it is needed. It also performs checks to
      * see if the folder is valid.
-     * 
+     *
      * @return a string with the path to the folder or null in case no folder is
      *         set
      */
@@ -117,27 +121,28 @@ public final class Config implements ConfigChangeListener {
     private static String checkFolder() {
         if (!DirectoryManager.getInstance().hasUserDirectory()) {
             JOptionPane.showMessageDialog(null,
-                "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
-                    + "Installation is corrupted, please run it again.",
-                "Error", JOptionPane.ERROR_MESSAGE);
+                    "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
+                            + "Installation is corrupted, please run it again.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
 
         return DirectoryManager.getInstance().getUserDirectory()
-            .getAbsolutePath();
+                .getAbsolutePath();
     }
 
     /**
      * Prepend this file to the list of last opened files.
-     * 
+     *
      * @param file the file to prepend
      */
-    public void addLastOpenedFile(final File file) {
+    public void addLastOpenedFile(@Nonnull final File file) {
         cfg.set(lastFilesKey, file.getAbsolutePath() + File.pathSeparator
-            + cfg.getString(lastFilesKey));
+                + cfg.getString(lastFilesKey));
         lastOpenedFilesBuffer = null;
     }
 
+    @Nonnull
     @SuppressWarnings("nls")
     public ConfigDialog createDialog() {
         final ConfigDialog dialog = new ConfigDialog();
@@ -148,20 +153,20 @@ public final class Config implements ConfigChangeListener {
         ConfigDialog.Page page;
         page = new ConfigDialog.Page("illarion.easyquest.gui.config.generalTab");
         page.addEntry(new ConfigDialog.Entry(
-            "illarion.easyquest.gui.config.easyQuestFolderLabel",
-            new DirectoryEntry(easyQuestFolder, null)));
+                "illarion.easyquest.gui.config.easyQuestFolderLabel",
+                new DirectoryEntry(easyQuestFolder, null)));
         page.addEntry(new ConfigDialog.Entry(
-            "illarion.easyquest.gui.config.exportFolderLabel", new DirectoryEntry(
+                "illarion.easyquest.gui.config.exportFolderLabel", new DirectoryEntry(
                 exportFolder, null)));
         dialog.addPage(page);
-        
+
         page = new ConfigDialog.Page("illarion.easyquest.gui.config.serverTab");
         page.addEntry(new ConfigDialog.Entry(
-            "illarion.easyquest.gui.config.characterLabel",
-            new TextEntry(character)));
+                "illarion.easyquest.gui.config.characterLabel",
+                new TextEntry(character)));
         page.addEntry(new ConfigDialog.Entry(
-            "illarion.easyquest.gui.config.passwordLabel",
-            new TextEntry(password)));
+                "illarion.easyquest.gui.config.passwordLabel",
+                new TextEntry(password)));
         dialog.addPage(page);
 
         return dialog;
@@ -171,22 +176,24 @@ public final class Config implements ConfigChangeListener {
         return cfg.getFile(easyQuestFolder).toString();
     }
 
+    @Nullable
     public illarion.common.config.Config getInternalCfg() {
         return cfg;
     }
 
+    @Nullable
     public File[] getLastOpenedFiles() {
         if (lastOpenedFilesBuffer != null) {
             return lastOpenedFilesBuffer;
         }
         final String[] fetchedList =
-            cfg.getString(lastFilesKey).split(File.pathSeparator);
+                cfg.getString(lastFilesKey).split(File.pathSeparator);
         final File[] returnList = new File[LAST_OPEN_FILES_COUNT];
         final String[] cleanList = new String[LAST_OPEN_FILES_COUNT];
 
         int entryPos = 0;
         for (int i = 0; (i < fetchedList.length)
-            && (i < LAST_OPEN_FILES_COUNT); i++) {
+                && (i < LAST_OPEN_FILES_COUNT); i++) {
             final String workString = fetchedList[i];
             if (workString.length() < 5) {
                 continue;
@@ -233,7 +240,7 @@ public final class Config implements ConfigChangeListener {
     /**
      * Get the list of files that were open the last time the editor was
      * running.
-     * 
+     *
      * @return the list of file paths
      */
     public String[] getOldFiles() {
@@ -252,7 +259,7 @@ public final class Config implements ConfigChangeListener {
 
         cfg.setDefault(lastFilesKey, "");
         cfg.setDefault(easyQuestFolder,
-            new File(System.getProperty("user.home")));
+                new File(System.getProperty("user.home")));
         cfg.setDefault(lastFilesKey, "");
         cfg.setDefault(exportFolder, System.getProperty("user.home"));
         cfg.setDefault(openFiles, "");
@@ -280,10 +287,10 @@ public final class Config implements ConfigChangeListener {
     /**
      * Set the list of files that shall be opened the next time the editor is
      * started.
-     * 
+     *
      * @param files the files to open
      */
-    public void setOldFiles(final String[] files) {
+    public void setOldFiles(@Nonnull final String[] files) {
         final StringBuffer buffer = new StringBuffer();
         for (final String file : files) {
             buffer.append(file);
@@ -293,24 +300,24 @@ public final class Config implements ConfigChangeListener {
         cfg.set(openFiles, buffer.toString());
     }
 
-	@Override
-	public void configChanged(illarion.common.config.Config cfg, String key) {
-		
-	}
-	
-	public void setCharacter(final String newCharacter) {
+    @Override
+    public void configChanged(illarion.common.config.Config cfg, String key) {
+
+    }
+
+    public void setCharacter(final String newCharacter) {
         cfg.set(character, newCharacter);
     }
-	
-	public void setPassword(final String newPassword) {
+
+    public void setPassword(final String newPassword) {
         cfg.set(password, newPassword);
     }
-	
-	public String getCharacter() {
+
+    public String getCharacter() {
         return cfg.getFile(character).toString();
     }
-	
-	public String getPassword() {
+
+    public String getPassword() {
         return cfg.getFile(password).toString();
     }
 }

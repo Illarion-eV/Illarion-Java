@@ -22,6 +22,8 @@ import illarion.client.graphics.TextTag;
 import illarion.common.util.RecycleFactory;
 import illarion.common.util.RecycleObject;
 
+import javax.annotation.Nonnull;
+
 /**
  * Factory class for game objects of all kinds. Created: 20.08.2005 22:41:23
  */
@@ -72,6 +74,7 @@ public final class GameFactory extends RecycleFactory<RecycleObject> {
      *
      * @return the instance of the Game Factory
      */
+    @Nonnull
     public static GameFactory getInstance() {
         return INSTANCE;
     }

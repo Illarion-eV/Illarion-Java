@@ -25,6 +25,8 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.*;
 import org.tukaani.xz.*;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -61,16 +63,19 @@ public final class ResourceCreator extends Task {
     /**
      * The file lists that are supposed to be included into the resource.
      */
+    @Nonnull
     private final List<FileList> filelists;
 
     /**
      * The file sets that are supposed to be included into the resource.
      */
+    @Nonnull
     private final List<AbstractFileSet> filesets;
 
     /**
      * The file sets that are supposed to be included into the resource.
      */
+    @Nonnull
     private final List<AbstractFileSet> nativeFilesets;
 
     /**
@@ -255,7 +260,7 @@ public final class ResourceCreator extends Task {
                                 nativeEntry = nativeIn.getNextEntry();
                             }
                             nativeIn.close();
-                        } catch (final Exception ex) {
+                        } catch (@Nonnull final Exception ex) {
                             System.out.println("Native resource " + fileName //$NON-NLS-1$
                                     + " not detected as such."); //$NON-NLS-1$
                             ex.printStackTrace();
@@ -267,15 +272,15 @@ public final class ResourceCreator extends Task {
                 zOut.finish();
 
                 useP200 = orgUseP200;
-            } catch (final FileNotFoundException e) {
+            } catch (@Nonnull final FileNotFoundException e) {
                 throw new BuildException(e);
-            } catch (final IOException e) {
+            } catch (@Nonnull final IOException e) {
                 throw new BuildException(e);
             } finally {
                 closeStream(zOut);
             }
 
-        } catch (final BuildException e) {
+        } catch (@Nonnull final BuildException e) {
             e.printStackTrace();
             throw e;
         }
@@ -300,11 +305,11 @@ public final class ResourceCreator extends Task {
         System.out.print("Creating " + targetFile.getName() + " is done."); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private static void closeStream(final Closeable outStream) {
+    private static void closeStream(@Nullable final Closeable outStream) {
         if (outStream != null) {
             try {
                 outStream.close();
-            } catch (final IOException e) {
+            } catch (@Nonnull final IOException e) {
                 // nothing
             }
         }
@@ -349,7 +354,7 @@ public final class ResourceCreator extends Task {
      * @throws IOException in case the file operations go wrong
      */
     private void handleStream(final InputStream sourceStream,
-                              final String fileName, final ZipOutputStream outputStream)
+                              final String fileName, @Nonnull final ZipOutputStream outputStream)
             throws IOException {
         if (fileList) {
             System.out.println("Added file: " + fileName); //$NON-NLS-1$
@@ -401,7 +406,7 @@ public final class ResourceCreator extends Task {
      * @param name the name to check
      * @return <code>true</code> if the name is valid
      */
-    private static boolean isNativeFilename(final String name) {
+    private static boolean isNativeFilename(@Nonnull final String name) {
         if (name.endsWith(".dll")) { //$NON-NLS-1$
             return true;
         }

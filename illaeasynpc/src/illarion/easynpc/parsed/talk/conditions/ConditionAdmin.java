@@ -22,6 +22,7 @@ import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.writer.LuaWriter;
 import javolution.lang.Immutable;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -46,6 +47,7 @@ public final class ConditionAdmin implements Immutable, TalkCondition {
     /**
      * Get the LUA module needed for this condition to work.
      */
+    @Nonnull
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
@@ -55,7 +57,7 @@ public final class ConditionAdmin implements Immutable, TalkCondition {
      * Write this talking state condition to its easyNPC shape.
      */
     @Override
-    public void writeEasyNpc(final Writer target) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         target.write("isAdmin"); //$NON-NLS-1$
     }
 
@@ -63,7 +65,7 @@ public final class ConditionAdmin implements Immutable, TalkCondition {
      * Write the LUA code needed for this race condition.
      */
     @Override
-    public void writeLua(final Writer target) throws IOException {
+    public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE));
     }
 }

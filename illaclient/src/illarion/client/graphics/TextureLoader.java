@@ -29,6 +29,8 @@ import org.newdawn.slick.XMLPackedSheet;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -57,6 +59,7 @@ public final class TextureLoader extends AbstractTextureLoader<SlickTextureAtlas
      *
      * @return the singleton instance of this class
      */
+    @Nonnull
     public static TextureLoader getInstance() {
         return INSTANCE;
     }
@@ -68,11 +71,12 @@ public final class TextureLoader extends AbstractTextureLoader<SlickTextureAtlas
     private TextureLoader() {
     }
 
+    @Nullable
     @Override
     protected SlickTextureAtlas createTextureAtlas(final String image, final String xmlDefinition) {
         try {
             return new SlickTextureAtlas(new XMLPackedSheet(image, xmlDefinition));
-        } catch (final SlickException e) {
+        } catch (@Nonnull final SlickException e) {
             LOGGER.error("Failed loading the texture atlas: " + image);
         }
         return null;
@@ -85,6 +89,7 @@ public final class TextureLoader extends AbstractTextureLoader<SlickTextureAtlas
         // clean unneeded data
     }
 
+    @Nonnull
     @Override
     public SlickRenderImage loadImage(final String filename,
                                       final boolean filterLinear) throws SlickLoadImageException {
@@ -115,6 +120,7 @@ public final class TextureLoader extends AbstractTextureLoader<SlickTextureAtlas
                 loadNextAtlas();
             }
 
+            @Nonnull
             @Override
             public String getDescription() {
                 return "Loading texture";

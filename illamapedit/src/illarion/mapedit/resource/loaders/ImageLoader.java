@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -84,11 +85,13 @@ public class ImageLoader implements Resource {
         }
     }
 
+    @Nonnull
     @Override
     public String getDescription() {
         return "Images";
     }
 
+    @Nonnull
     public static ImageLoader getInstance() {
         return INSTANCE;
     }
@@ -113,6 +116,7 @@ public class ImageLoader implements Resource {
         return resizeIcon;
     }
 
+    @Nonnull
     public static ImageIcon getImageIcon(final String key) {
         return new ImageIcon(getImage(key));
     }

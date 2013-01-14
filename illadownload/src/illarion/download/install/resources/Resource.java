@@ -18,6 +18,8 @@
  */
 package illarion.download.install.resources;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
@@ -50,6 +52,7 @@ public interface Resource {
      *
      * @return the list of needed jar files
      */
+    @Nullable
     Collection<File> getClassPath();
 
     /**
@@ -59,6 +62,7 @@ public interface Resource {
      * @return the collection of required dependencies or <code>null</code> in
      *         case there are no dependencies
      */
+    @Nullable
     Collection<Resource> getDependencies();
 
     /**
@@ -70,6 +74,7 @@ public interface Resource {
      * @throws IllegalStateException in case {@link #isStartable()} is set to
      *                               <code>false<code> for this resource
      */
+    @Nonnull
     String getLaunchClass();
 
     /**
@@ -85,6 +90,7 @@ public interface Resource {
      * @return a collection with one argument in each entry, or
      *         <code>null</code> in case no arguments are needed
      */
+    @Nullable
     Collection<String> getProgramArgument();
 
     /**
@@ -93,6 +99,7 @@ public interface Resource {
      *
      * @return the collection of URLs needed for this resource
      */
+    @Nullable
     Collection<URL> getRequiredResources();
 
     /**
@@ -110,6 +117,7 @@ public interface Resource {
      * @return a collection with one VM argument in each entry, or
      *         <code>null</code> in case no arguments are needed
      */
+    @Nullable
     Collection<String> getVMArguments();
 
     /**

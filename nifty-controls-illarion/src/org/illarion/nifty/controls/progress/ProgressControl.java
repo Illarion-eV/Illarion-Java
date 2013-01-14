@@ -30,6 +30,7 @@ import de.lessvoid.nifty.tools.SizeValue;
 import de.lessvoid.xml.xpp3.Attributes;
 import org.illarion.nifty.controls.Progress;
 
+import javax.annotation.Nonnull;
 import java.util.Properties;
 
 /**
@@ -47,7 +48,7 @@ public final class ProgressControl extends AbstractController implements Progres
     private double currentProgress;
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
+    public void bind(final Nifty nifty, final Screen screen, final Element element, @Nonnull final Properties parameter,
                      final Attributes controlDefinitionAttributes) {
         bind(element);
 

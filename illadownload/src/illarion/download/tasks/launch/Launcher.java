@@ -24,6 +24,8 @@ import illarion.download.install.resources.ResourceManager;
 import illarion.download.util.OSDetection;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,23 +51,28 @@ public final class Launcher implements ActionListener {
     /**
      * This set contains all arguments that need to be passed to the program once it was launched.
      */
+    @Nonnull
     private final Set<String> arguments;
 
     /**
      * The list of files that need to be added to the class path.
      */
+    @Nonnull
     private final Set<File> classPath;
 
     /**
      * This variable contains the resource to launch.
      */
+    @Nullable
     private final Resource resource;
 
     /**
      * This set contains all arguments that are passed to the virtual machine.
      */
+    @Nonnull
     private final Set<String> vmArguments;
 
+    @Nonnull
     private final Timer launchTimer;
 
     private boolean cancelExecution;
@@ -73,6 +80,7 @@ public final class Launcher implements ActionListener {
     /**
      * The reader that receives the console output of the launched application.
      */
+    @Nullable
     private BufferedReader outputReader;
 
     /**
@@ -93,7 +101,7 @@ public final class Launcher implements ActionListener {
      * @param resToLaunch the resource that is expected to be launched
      */
     @SuppressWarnings("nls")
-    public Launcher(final Resource resToLaunch) {
+    public Launcher(@Nullable final Resource resToLaunch) {
         if (resToLaunch == null) {
             throw new IllegalArgumentException("resToLaunch must not be NULL.");
         }
@@ -175,7 +183,7 @@ public final class Launcher implements ActionListener {
      *
      * @param currentRes the currently handled resource
      */
-    private void collectLaunchData(final Resource currentRes) {
+    private void collectLaunchData(@Nonnull final Resource currentRes) {
         if (currentRes.getClassPath() != null) {
             classPath.addAll(currentRes.getClassPath());
         }
@@ -200,6 +208,7 @@ public final class Launcher implements ActionListener {
      *
      * @return the string that represents the class path
      */
+    @Nonnull
     private String buildClassPathString() {
         if (classPath.isEmpty()) {
             return ""; //$NON-NLS-1$
@@ -220,7 +229,7 @@ public final class Launcher implements ActionListener {
      * @param orgPath the original plain path
      * @return the escaped path
      */
-    private static String escapePath(final String orgPath) {
+    private static String escapePath(@Nonnull final String orgPath) {
         if (OSDetection.isWindows()) {
             return '"' + orgPath + '"'; //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -232,7 +241,7 @@ public final class Launcher implements ActionListener {
      *
      * @param callList the call list to print
      */
-    private static void printCallList(final List<String> callList) {
+    private static void printCallList(@Nonnull final List<String> callList) {
         if (LOGGER.isDebugEnabled()) {
             final StringBuilder debugBuilder = new StringBuilder();
             debugBuilder.append("Calling: ");
@@ -281,7 +290,7 @@ public final class Launcher implements ActionListener {
                 outputBuffer.append(line);
                 outputBuffer.append('\n');
             }
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             final StringWriter sWriter = new StringWriter();
             final PrintWriter writer = new PrintWriter(sWriter);
             e.printStackTrace(writer);
@@ -292,7 +301,7 @@ public final class Launcher implements ActionListener {
             if (outputReader != null) {
                 try {
                     outputReader.close();
-                } catch (final IOException e) {
+                } catch (@Nonnull final IOException e) {
                     // nothing
                 }
             }

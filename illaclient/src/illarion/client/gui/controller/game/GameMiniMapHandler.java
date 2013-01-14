@@ -29,6 +29,8 @@ import illarion.client.world.World;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -49,7 +51,7 @@ public final class GameMiniMapHandler implements ScreenController, EventSubscrib
     private Element miniMapPanel;
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 

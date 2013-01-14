@@ -29,6 +29,7 @@ import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -54,7 +55,7 @@ public final class InformMsg extends AbstractReply {
     private String informText;
 
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         informType = reader.readUByte();
         informText = reader.readString();
     }
@@ -93,6 +94,7 @@ public final class InformMsg extends AbstractReply {
         return true;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         final TextBuilder builder = TextBuilder.newInstance();

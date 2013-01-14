@@ -22,6 +22,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.common.net.NetCommReader;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -61,6 +62,7 @@ public final class AttackMsg extends AbstractReply {
      * @return the string that contains the values that were decoded for this  message
      * @see AbstractReply#toString()
      */
+    @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {

@@ -22,6 +22,7 @@ import illarion.mapedit.data.Map;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 /**
@@ -52,6 +53,7 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
         return manager.getZoom();
     }
 
+    @Nonnull
     protected Shape getTilePolygon() {
         return TILE_POLYGON;
     }
@@ -120,7 +122,7 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      * @return
      */
     @Override
-    public final int compareTo(final AbstractMapRenderer o) {
+    public final int compareTo(@Nonnull final AbstractMapRenderer o) {
         final int i = getRenderPriority();
         final int j = o.getRenderPriority();
         if (i < j) {

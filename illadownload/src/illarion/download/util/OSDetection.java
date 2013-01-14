@@ -20,6 +20,8 @@ package illarion.download.util;
 
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 /**
  * This small utility class is used to detect the operating system and the
  * architecture of the current system and offer that information to the rest of
@@ -119,6 +121,7 @@ public final class OSDetection {
      *
      * @return the string identifier of the architecture
      */
+    @Nonnull
     public static String getArchValue() {
         switch (INSTANCE.arch) {
             case BIT32:
@@ -135,6 +138,7 @@ public final class OSDetection {
      *
      * @return the OS identifier of the operating system
      */
+    @Nonnull
     public static String getOsValue() {
         switch (INSTANCE.os) {
             case WINDOWS:

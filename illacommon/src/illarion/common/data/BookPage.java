@@ -21,6 +21,8 @@ package illarion.common.data;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +36,7 @@ public final class BookPage implements Iterable<BookPageEntry> {
     /**
      * The list of entries on this page.
      */
+    @Nonnull
     private final List<BookPageEntry> entries;
 
     /**
@@ -48,7 +51,7 @@ public final class BookPage implements Iterable<BookPageEntry> {
      *
      * @param source the XML node that supplies the data
      */
-    public BookPage(final Node source) {
+    public BookPage(@Nonnull final Node source) {
         this();
         final NodeList children = source.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -67,7 +70,7 @@ public final class BookPage implements Iterable<BookPageEntry> {
      * @param node the node
      * @return the value of the node or a empty string
      */
-    private static String getNodeValue(final Node node) {
+    private static String getNodeValue(@Nullable final Node node) {
         if (node == null) {
             return "";
         }
@@ -78,6 +81,7 @@ public final class BookPage implements Iterable<BookPageEntry> {
         return nodeValue;
     }
 
+    @Nonnull
     @Override
     public Iterator<BookPageEntry> iterator() {
         return entries.iterator();

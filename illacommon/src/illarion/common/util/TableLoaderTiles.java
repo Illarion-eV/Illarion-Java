@@ -20,6 +20,7 @@ package illarion.common.util;
 
 import illarion.common.graphics.TileInfo;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.InputStream;
 
@@ -88,27 +89,27 @@ public final class TableLoaderTiles extends TableLoader {
      */
     private static final int TB_SPEED = 4;
 
-    public TableLoaderTiles(final TableLoaderSink<TableLoaderTiles> callback) {
+    public TableLoaderTiles(@Nonnull final TableLoaderSink<TableLoaderTiles> callback) {
         super("Tiles", callback);
     }
 
-    public TableLoaderTiles(final File table, final TableLoaderSink<TableLoaderTiles> callback) {
+    public TableLoaderTiles(@Nonnull final File table, @Nonnull final TableLoaderSink<TableLoaderTiles> callback) {
         super(table, callback);
     }
 
-    public TableLoaderTiles(final String table, final TableLoaderSink<TableLoaderTiles> callback) {
+    public TableLoaderTiles(final String table, @Nonnull final TableLoaderSink<TableLoaderTiles> callback) {
         super(table, callback);
     }
 
-    public TableLoaderTiles(final File table, final TableLoaderSink<TableLoaderTiles> callback, final String tableDelim) {
+    public TableLoaderTiles(@Nonnull final File table, @Nonnull final TableLoaderSink<TableLoaderTiles> callback, final String tableDelim) {
         super(table, callback, tableDelim);
     }
 
-    public TableLoaderTiles(final InputStream resource, final boolean ndsc, final TableLoaderSink<TableLoaderTiles> callback, final String tableDelim) {
+    public TableLoaderTiles(final InputStream resource, final boolean ndsc, @Nonnull final TableLoaderSink<TableLoaderTiles> callback, final String tableDelim) {
         super(resource, ndsc, callback, tableDelim);
     }
 
-    public TableLoaderTiles(final String table, final boolean ndsc, final TableLoaderSink<TableLoaderTiles> callback, final String tableDelim) {
+    public TableLoaderTiles(final String table, final boolean ndsc, @Nonnull final TableLoaderSink<TableLoaderTiles> callback, final String tableDelim) {
         super(table, ndsc, callback, tableDelim);
     }
 

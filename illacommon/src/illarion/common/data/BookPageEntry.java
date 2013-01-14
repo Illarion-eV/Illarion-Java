@@ -18,6 +18,8 @@
  */
 package illarion.common.data;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class represents one entry of a book page.
  *
@@ -40,7 +42,7 @@ public class BookPageEntry {
      * @param headline {@code true} in case this entry is a headline
      * @param text     the text of this entry
      */
-    public BookPageEntry(final boolean headline, final String text) {
+    public BookPageEntry(final boolean headline, @Nonnull final String text) {
         this.headline = headline;
         this.text = text.trim().replaceAll("\\s+", " ");
     }

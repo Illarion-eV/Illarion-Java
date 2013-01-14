@@ -21,6 +21,7 @@ package illarion.client.loading;
 import illarion.client.graphics.SpriteBuffer;
 import org.newdawn.slick.loading.DeferredResource;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -42,6 +43,7 @@ public final class FinishLoading implements DeferredResource {
     /**
      * The human readable description of this task.
      */
+    @Nullable
     @Override
     public String getDescription() {
         return null;

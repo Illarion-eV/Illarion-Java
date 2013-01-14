@@ -1,59 +1,62 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.config.gui.entries.swt;
 
+import illarion.common.config.entries.ConfigEntry;
+import illarion.common.config.entries.TextEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import illarion.common.config.entries.ConfigEntry;
-import illarion.common.config.entries.TextEntry;
+import javax.annotation.Nonnull;
 
 /**
  * This is a special implementation for the text area that is initialized with a
  * configuration entry. Its sole purpose is the use along with the configuration
  * system.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TextEntrySwt implements SaveableEntrySwt {
     /**
      * The text entry used to initialize this instance.
      */
+    @Nonnull
     private final TextEntry entry;
 
     /**
      * The SWT widget used to display this entry.
      */
+    @Nonnull
     private final Text widget;
 
     /**
      * Create a instance of this text entry and set the configuration entry that
      * is used to setup this class.
-     * 
-     * @param usedEntry the entry used to setup this class, the entry needs to
-     *            pass the check with the static method
+     *
+     * @param usedEntry    the entry used to setup this class, the entry needs to
+     *                     pass the check with the static method
      * @param parentWidget the widget this widget is added to
      */
     @SuppressWarnings("nls")
     public TextEntrySwt(final ConfigEntry usedEntry,
-        final Composite parentWidget) {
+                        final Composite parentWidget) {
         if (!isUsableEntry(usedEntry)) {
             throw new IllegalArgumentException("ConfigEntry type illegal.");
         }
@@ -65,7 +68,7 @@ public final class TextEntrySwt implements SaveableEntrySwt {
 
     /**
      * Text a entry if it is usable with this class or not.
-     * 
+     *
      * @param entry the entry to test
      * @return <code>true</code> in case this entry is usable with this class
      */

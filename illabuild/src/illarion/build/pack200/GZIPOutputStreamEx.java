@@ -1,23 +1,24 @@
 /*
  * This file is part of the Illarion Build Utility.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Build Utility is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
+ * The Illarion Build Utility is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
  * The Illarion Build Utility is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Build Utility. If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Build Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.build.pack200;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.CRC32;
@@ -28,7 +29,7 @@ import java.util.zip.DeflaterOutputStream;
  * This class is basically a copy of the default GZIPOutputStream. It just adds
  * a option that allows to set the compression level that is applied to the
  * deflater.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GZIPOutputStreamEx extends DeflaterOutputStream {
@@ -40,13 +41,14 @@ public final class GZIPOutputStreamEx extends DeflaterOutputStream {
     /**
      * CRC-32 of uncompressed data.
      */
+    @Nonnull
     protected CRC32 crc = new CRC32();
 
     /**
      * Creates a new output stream with a default buffer size.
-     * 
+     *
      * @param output the output stream
-     * @exception IOException If an I/O error has occurred.
+     * @throws IOException If an I/O error has occurred.
      */
     public GZIPOutputStreamEx(final OutputStream output) throws IOException {
         this(output, 512, Deflater.DEFAULT_COMPRESSION);
@@ -54,27 +56,27 @@ public final class GZIPOutputStreamEx extends DeflaterOutputStream {
 
     /**
      * Creates a new output stream with a default buffer size.
-     * 
-     * @param output the output stream
+     *
+     * @param output      the output stream
      * @param compression the compression level that is passed to the deflater
-     * @exception IOException If an I/O error has occurred.
+     * @throws IOException If an I/O error has occurred.
      */
     public GZIPOutputStreamEx(final OutputStream output, final int compression)
-        throws IOException {
+            throws IOException {
         this(output, 512, compression);
     }
 
     /**
      * Creates a new output stream with the specified buffer size.
-     * 
-     * @param output the output stream
-     * @param size the output buffer size
+     *
+     * @param output      the output stream
+     * @param size        the output buffer size
      * @param compression the compression level that is passed to the deflater
-     * @exception IOException If an I/O error has occurred.
-     * @exception IllegalArgumentException if size is <= 0
+     * @throws IOException              If an I/O error has occurred.
+     * @throws IllegalArgumentException if size is <= 0
      */
     public GZIPOutputStreamEx(final OutputStream output, final int size,
-        final int compression) throws IOException {
+                              final int compression) throws IOException {
         super(output, new Deflater(compression, true), size);
         writeHeader();
         crc.reset();
@@ -83,8 +85,8 @@ public final class GZIPOutputStreamEx extends DeflaterOutputStream {
     /**
      * Writes remaining compressed data to the output stream and closes the
      * underlying stream.
-     * 
-     * @exception IOException if an I/O error has occurred
+     *
+     * @throws IOException if an I/O error has occurred
      */
     @Override
     public void close() throws IOException {
@@ -96,8 +98,8 @@ public final class GZIPOutputStreamEx extends DeflaterOutputStream {
      * Finishes writing compressed data to the output stream without closing the
      * underlying stream. Use this method when applying multiple filters in
      * succession to the same output stream.
-     * 
-     * @exception IOException if an I/O error has occurred
+     *
+     * @throws IOException if an I/O error has occurred
      */
     @Override
     public void finish() throws IOException {
@@ -113,15 +115,15 @@ public final class GZIPOutputStreamEx extends DeflaterOutputStream {
     /**
      * Writes array of bytes to the compressed output stream. This method will
      * block until all the bytes are written.
-     * 
+     *
      * @param buffer the data to be written
      * @param offset the start offset of the data
      * @param length the length of the data
-     * @exception IOException If an I/O error has occurred.
+     * @throws IOException If an I/O error has occurred.
      */
     @Override
     public synchronized void write(final byte[] buffer, final int offset,
-        final int length) throws IOException {
+                                   final int length) throws IOException {
         super.write(buffer, offset, length);
         crc.update(buffer, offset, length);
     }

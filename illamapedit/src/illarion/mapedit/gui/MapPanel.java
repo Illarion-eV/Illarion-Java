@@ -30,6 +30,7 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -41,7 +42,9 @@ import java.awt.event.*;
  */
 public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener, ComponentListener {
     private static final Logger LOGGER = Logger.getLogger(MapPanel.class);
+    @Nonnull
     private final RendererManager rendererManager;
+    @Nonnull
     private final Rectangle dirty;
     private boolean canDrag;
     private boolean isDragging;
@@ -49,6 +52,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     private int clickY;
     private int downClickX;
     private int downClickY;
+    @Nonnull
     private final ToolManager toolManager;
     private final GuiController controller;
 
@@ -81,7 +85,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     }
 
     @Override
-    public void mouseWheelMoved(final MouseWheelEvent e) {
+    public void mouseWheelMoved(@Nonnull final MouseWheelEvent e) {
         if (controller.isMapLoaded()) {
             if (e.getWheelRotation() < 0) {
                 rendererManager.zoomIn(new Vector2i(e.getX(), e.getY()));
@@ -92,7 +96,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     }
 
     @Override
-    public void mouseDragged(final MouseEvent e) {
+    public void mouseDragged(@Nonnull final MouseEvent e) {
         publishMapPosition(e);
         final Map selected = controller.getSelected();
         if (!canDrag || !controller.isMapLoaded() || (selected == null)) {
@@ -121,7 +125,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         clickY = e.getY();
     }
 
-    private void publishMapPosition(final MouseEvent e) {
+    private void publishMapPosition(@Nonnull final MouseEvent e) {
         final Map selectedMap = controller.getSelected();
         if (selectedMap == null) {
             return;
@@ -137,12 +141,12 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     }
 
     @Override
-    public void mouseMoved(final MouseEvent e) {
+    public void mouseMoved(@Nonnull final MouseEvent e) {
         publishMapPosition(e);
     }
 
     @Override
-    public void mouseClicked(final MouseEvent e) {
+    public void mouseClicked(@Nonnull final MouseEvent e) {
         final Map selected = controller.getSelected();
         if ((toolManager == null) || (selected == null)) {
             return;
@@ -161,7 +165,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     }
 
     @Override
-    public void mousePressed(final MouseEvent e) {
+    public void mousePressed(@Nonnull final MouseEvent e) {
         if (canDrag && controller.isMapLoaded()) {
             clickX = e.getX();
             clickY = e.getY();
@@ -171,7 +175,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     }
 
     @Override
-    public void mouseReleased(final MouseEvent e) {
+    public void mouseReleased(@Nonnull final MouseEvent e) {
         if (isDragging) {
             final int x1 = SwingLocation.mapCoordinateX(downClickX, downClickY, rendererManager.getTranslationX(),
                     rendererManager.getTranslationY(), rendererManager.getZoom());
@@ -198,6 +202,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         canDrag = false;
     }
 
+    @Nonnull
     public RendererManager getRenderManager() {
         return rendererManager;
     }
@@ -223,7 +228,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     }
 
     @EventSubscriber
-    public void onRepaintRequest(final RepaintRequestEvent e) {
+    public void onRepaintRequest(@Nonnull final RepaintRequestEvent e) {
         e.doRepaint(this);
     }
 }

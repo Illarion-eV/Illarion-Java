@@ -25,6 +25,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
@@ -81,6 +83,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
     /**
      * The color models that are used for the different kinds of textures.
      */
+    @Nonnull
     private static final ComponentColorModel[] COLOR_MODES;
 
     /**
@@ -138,6 +141,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * The executor service that runs the reading operation of the sprites
      * concurrent.
      */
+    @Nullable
     private ExecutorService execService;
 
     /**
@@ -169,6 +173,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
     /**
      * The list of sprite images that are loaded into the Image packer already.
      */
+    @Nonnull
     private final List<Sprite>[] images;
 
     /**
@@ -245,6 +250,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * @param colorSpace the texture type
      * @return the needed color model
      */
+    @Nullable
     public static ComponentColorModel getColorModel(final int colorSpace) {
         if ((colorSpace < 0) || (colorSpace >= COLOR_MODES.length)) {
             return null;
@@ -263,7 +269,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
     }
 
     @Override
-    public int compare(final TextureElement o1, final TextureElement o2) {
+    public int compare(@Nonnull final TextureElement o1, @Nonnull final TextureElement o2) {
         return FastMath.sign(o2.getHeight() - o1.getHeight());
     }
 
@@ -299,14 +305,15 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * @return The generated sprite sheet
      * @throws IOException Indicates a failure to write out files
      */
+    @Nullable
     @SuppressWarnings("nls")
-    public BufferedImage packImages(final Document targetDoc, final Node spriteDefTarget) throws IOException {
+    public BufferedImage packImages(@Nonnull final Document targetDoc, @Nonnull final Node spriteDefTarget) throws IOException {
         System.out.println("Generating new Texture");
         if (execService != null) {
             execService.shutdown();
             try {
                 execService.awaitTermination(2, TimeUnit.HOURS);
-            } catch (final InterruptedException e) {
+            } catch (@Nonnull final InterruptedException e) {
                 // error while waiting!
                 throw new BuildException(e);
             }
@@ -565,6 +572,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * @return integer array with 2 values, first is the width, second the
      *         height
      */
+    @Nonnull
     private int[] getOptimalDimensions(final int minWidth,
                                        final int minHeight, final int currType) {
         final int quadSideLength = (int) FastMath.sqrt(pixelCount[currType]);
@@ -634,9 +642,9 @@ public final class ImagePacker implements Comparator<TextureElement> {
      *                     bits per pixel are set up
      */
     @SuppressWarnings("nls")
-    private static void transferPixel(final ByteBuffer sourceImage,
+    private static void transferPixel(@Nonnull final ByteBuffer sourceImage,
                                       final int sourceWidth, final int sourceHeight, final int sourceType,
-                                      final byte[] targetImage, final int targetX, final int targetY,
+                                      @Nonnull final byte[] targetImage, final int targetX, final int targetY,
                                       final int targetWidth, final int targetHeight, final int targetType) {
         if ((targetX + sourceWidth) > targetWidth) {
             throw new IllegalArgumentException(
@@ -742,7 +750,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      *
      * @param spaceList the list of spaces
      */
-    private void reorderSpaces(final List<Space> spaceList) {
+    private void reorderSpaces(@Nonnull final List<Space> spaceList) {
         Collections.sort(spaceList, this);
     }
 
@@ -752,6 +760,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * @param type the type ID
      * @return the readable string
      */
+    @Nonnull
     @SuppressWarnings("nls")
     private static String typeToName(final int type) {
         switch (type) {
@@ -777,7 +786,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
             execService.shutdown();
             try {
                 execService.awaitTermination(2, TimeUnit.MINUTES);
-            } catch (final InterruptedException e) {
+            } catch (@Nonnull final InterruptedException e) {
                 e.printStackTrace();
                 throw new BuildException(e);
             }
@@ -805,7 +814,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      *
      * @param fileEntry the file entry to process
      */
-    void processAddImage(final TextureConverterNG.FileEntry fileEntry) {
+    void processAddImage(@Nonnull final TextureConverterNG.FileEntry fileEntry) {
         try {
             final Sprite sprite = new Sprite(fileEntry);
 
@@ -835,7 +844,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                     System.out.println(imageCount + " images read."); //$NON-NLS-1$
                 }
             }
-        } catch (final Exception e) {
+        } catch (@Nonnull final Exception e) {
             System.out.println("Failed reading image " //$NON-NLS-1$
                     + fileEntry.getFileName());
             e.printStackTrace();
@@ -847,6 +856,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      *
      * @return the executor service
      */
+    @Nullable
     private ExecutorService getExecService() {
         if (execService == null) {
             execService =

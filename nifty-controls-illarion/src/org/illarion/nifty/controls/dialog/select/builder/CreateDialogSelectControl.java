@@ -27,6 +27,8 @@ import de.lessvoid.nifty.loaderv2.types.ElementType;
 import de.lessvoid.nifty.screen.Screen;
 import org.illarion.nifty.controls.DialogSelect;
 
+import javax.annotation.Nonnull;
+
 /**
  * The control creator for the merchant dialog.
  *
@@ -64,7 +66,7 @@ public class CreateDialogSelectControl extends ControlAttributes {
      * @param parent the parent element of this dialog
      * @return the newly created input dialog
      */
-    public DialogSelect create(final Nifty nifty, final Screen screen, final Element parent) {
+    public DialogSelect create(@Nonnull final Nifty nifty, final Screen screen, @Nonnull final Element parent) {
         nifty.addControl(screen, parent, getStandardControl());
         nifty.addControlsWithoutStartScreen();
         return parent.findNiftyControl(attributes.get("id"), DialogSelect.class);
@@ -75,6 +77,7 @@ public class CreateDialogSelectControl extends ControlAttributes {
      *
      * @return the element type of the dialog
      */
+    @Nonnull
     @Override
     public ElementType createType() {
         return new ControlType(attributes);

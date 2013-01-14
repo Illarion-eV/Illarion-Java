@@ -24,6 +24,7 @@ import illarion.client.net.server.events.DateTimeUpdateEvent;
 import illarion.common.net.NetCommReader;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -77,7 +78,7 @@ public final class DateTimeMsg extends AbstractReply {
      *                     decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         hour = reader.readUByte();
         minute = reader.readUByte();
         day = reader.readUByte();
@@ -104,6 +105,7 @@ public final class DateTimeMsg extends AbstractReply {
      * @return the string that contains the values that were decoded for this
      *         message
      */
+    @Nonnull
     @Override
     public String toString() {
         return toString(String.format(TO_STRING_FORMAT,

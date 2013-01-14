@@ -28,6 +28,8 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.Collections;
@@ -46,6 +48,7 @@ public class RendererManager {
     private static final float MIN_ZOOM = 0.27f;
     public static final float ZOOM_STEP = .1f;
 
+    @Nonnull
     private final List<AbstractMapRenderer> renderers;
 
     private float zoom = DEFAULT_ZOOM;
@@ -73,7 +76,7 @@ public class RendererManager {
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    public void render(final Map map, final Rectangle viewport, final Graphics2D g) {
+    public void render(final Map map, @Nonnull final Rectangle viewport, @Nonnull final Graphics2D g) {
         final Rectangle renderViewport = new Rectangle(
                 (int) (viewport.x - (getTileWidth() * getZoom())),
                 (int) (viewport.y - (getTileHeight() * getZoom())),
@@ -97,7 +100,7 @@ public class RendererManager {
         return DEFAULT_TILE_WIDTH;
     }
 
-    public void setZoom(final float zoom, final Vector2i zoomPoint) {
+    public void setZoom(final float zoom, @Nullable final Vector2i zoomPoint) {
         if (zoomPoint == null) {
             setZoom(zoom);
             return;
@@ -186,7 +189,7 @@ public class RendererManager {
         return MIN_ZOOM;
     }
 
-    public void setPanelViewport(final Rectangle panelViewport) {
+    public void setPanelViewport(@Nullable final Rectangle panelViewport) {
         if (panelViewport == null) {
             LOGGER.warn("SetPanelViewport: panelViewport is null");
             return;
@@ -211,7 +214,7 @@ public class RendererManager {
     }
 
     @EventSubscriber
-    public void onZoom(final ZoomEvent e) {
+    public void onZoom(@Nonnull final ZoomEvent e) {
         if (e.isOriginal()) {
             setZoom(DEFAULT_ZOOM);
             setTranslationX(defaultTranslationX);
