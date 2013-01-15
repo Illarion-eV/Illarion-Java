@@ -102,26 +102,6 @@ public final class AvatarCloth extends AbstractEntity implements Resource {
     }
 
     /**
-     * Get the cloth that is used by default.
-     *
-     * @return the default cloth
-     */
-    @Nonnull
-    public static AvatarCloth getDefaultCloth() {
-        return new AvatarCloth();
-    }
-
-    /**
-     * The constructor to create the single default cloth.
-     */
-    private AvatarCloth() {
-        super(0, CLOTH_PATH, null, 0, 0, 0, 0, 0, Sprite.HAlign.center,
-                Sprite.VAlign.bottom, true, false, null);
-        avatar = 0;
-        locationId = 0;
-    }
-
-    /**
      * Copy constructor. Create a copy of this object.
      *
      * @param org the instance of AvatarCloth that shall be copied
@@ -168,7 +148,7 @@ public final class AvatarCloth extends AbstractEntity implements Resource {
     @Override
     public void recycle() {
         hide();
-        super.changeBaseColor(null);
+        changeBaseColor(null);
         parent.recycle(this);
     }
 
@@ -182,12 +162,12 @@ public final class AvatarCloth extends AbstractEntity implements Resource {
     }
 
     @Override
-    public final void show() {
+    public void show() {
         // do nothing
     }
 
     @Override
-    public final void hide() {
+    public void hide() {
         // do nothing
     }
 }

@@ -157,8 +157,8 @@ public final class ChatHandler {
     public void handleMessage(@Nonnull final String text, @Nonnull final Location location, @Nonnull final SpeechMode receivedMode) {
         final Char talkingChar = World.getPeople().getCharacterAt(location);
 
-        ChatHandler.SpeechMode mode = null;
-        String resultText = null;
+        ChatHandler.SpeechMode mode;
+        String resultText;
 
         switch (receivedMode) {
             case whisper:

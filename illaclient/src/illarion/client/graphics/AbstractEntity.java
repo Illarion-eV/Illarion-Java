@@ -283,7 +283,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @param baseCol      the base color of the image, the image will be always colored with this color,
      *                     set it to {@code null} in case there is not recoloring needed
      */
-    protected AbstractEntity(final int entityId, @Nonnull final String path, @Nullable final String name,
+    protected AbstractEntity(final int entityId, @Nonnull final String path, @Nonnull final String name,
                              final int frames, final int still, final int offX, final int offY,
                              final int shadowOffset, @Nonnull final Sprite.HAlign horz,
                              @Nonnull final Sprite.VAlign vert, final boolean smooth, final boolean mirror,

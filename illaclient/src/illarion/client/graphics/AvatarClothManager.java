@@ -206,7 +206,12 @@ public final class AvatarClothManager {
             refItem = ItemFactory.getInstance().getPrototype(itemID);
             refID = refItem.getPaperdollingId();
         }
-        final AvatarCloth ret = existingClothes[group].getCommand(refID);
+        final AvatarCloth ret;
+        try {
+            ret = existingClothes[group].getCommand(refID);
+        } catch (@Nonnull final IndexOutOfBoundsException ex) {
+            return null;
+        }
         if (ret.getId() == 0) {
             ret.recycle();
             return null;

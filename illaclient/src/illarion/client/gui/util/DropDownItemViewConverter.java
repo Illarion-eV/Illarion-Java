@@ -45,7 +45,7 @@ public class DropDownItemViewConverter<T extends DropDownItem> implements DropDo
     public int getWidth(@Nonnull Element itemElement, @Nullable T item) {
         TextRenderer renderer = itemElement.getRenderer(TextRenderer.class);
 
-        int width = 0;
+        int width;
         if (renderer != null && item != null) {
             width = itemElement.getRenderer(TextRenderer.class).getFont().getWidth(itemElement.getNifty()
                     .specialValuesReplace(item.getValue()));

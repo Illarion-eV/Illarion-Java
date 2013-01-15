@@ -441,7 +441,7 @@ public final class MapDisplayManager
             return;
         }
 
-        Graphics usedGraphics = g;
+        Graphics usedGraphics;
         if (gameScreenImage == null) {
             try {
                 gameScreenImage = new Image(c.getWidth(), c.getHeight(), SGL.GL_LINEAR);

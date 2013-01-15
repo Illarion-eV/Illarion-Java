@@ -130,9 +130,7 @@ public final class SpriteBuffer {
         retSprite.setMirror(mirror);
 
         if (frames == 1) {
-
-            retSprite.addImage(TextureLoader.getInstance().getTexture(path,
-                    name));
+            retSprite.addImage(TextureLoader.getInstance().getTexture(path, name));
         } else {
             nameBuilder.setLength(0);
             nameBuilder.append(name);

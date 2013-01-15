@@ -68,7 +68,7 @@ public final class TileLoader extends AbstractResourceLoader<Tile> implements
         final int id = loader.getTileId();
         final int mode = loader.getTileMode();
         final String name = loader.getResourceName();
-        Tile tile = null;
+        Tile tile;
         final TileInfo info =
                 new TileInfo(loader.getTileColor(), loader.getMovementCost(), loader.isOpaque());
         switch (mode) {

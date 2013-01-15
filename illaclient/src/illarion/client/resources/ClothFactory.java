@@ -42,11 +42,11 @@ public final class ClothFactory extends RecycleFactory<AvatarCloth> implements
     }
 
     /**
-     * Prepare this factory for receiving its elements.
+     * Initialize the factory.
      */
     @Override
     public void init() {
-        storeResource(AvatarCloth.getDefaultCloth());
+        // nothing
     }
 
     /**
@@ -54,7 +54,6 @@ public final class ClothFactory extends RecycleFactory<AvatarCloth> implements
      */
     @Override
     public void loadingFinished() {
-        mapDefault(0, 1);
         finish();
     }
 
@@ -63,7 +62,7 @@ public final class ClothFactory extends RecycleFactory<AvatarCloth> implements
      *
      * @param cloth the cloth instance that shall be added
      */
-    protected void registerCloth(final AvatarCloth cloth) {
+    void registerCloth(final AvatarCloth cloth) {
     }
 
     /**

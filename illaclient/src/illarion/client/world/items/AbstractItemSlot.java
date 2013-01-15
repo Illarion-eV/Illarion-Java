@@ -84,6 +84,7 @@ public abstract class AbstractItemSlot {
         if (!containsItem()) {
             return null;
         }
+        assert itemId != null;
         return ItemFactory.getInstance().getPrototype(itemId.getValue());
     }
 

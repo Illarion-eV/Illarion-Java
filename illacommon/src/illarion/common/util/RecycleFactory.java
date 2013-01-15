@@ -167,10 +167,6 @@ public abstract class RecycleFactory<T extends RecycleObject> {
         final int id = obj.getId();
 
         final PrototypeFactory<T> factory = getFactory(id);
-        if (factory == null) {
-            throw new IllegalArgumentException(
-                    "Failed to find a fitting recycle storage: " + Integer.toString(id));
-        }
 
         obj.reset();
         factory.recycle(obj);
