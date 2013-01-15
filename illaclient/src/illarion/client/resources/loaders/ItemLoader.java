@@ -40,7 +40,7 @@ public final class ItemLoader extends AbstractResourceLoader<Item> implements Ta
     /**
      * The logger that is used to report error messages.
      */
-    private final Logger logger = Logger.getLogger(ItemLoader.class);
+    private static final Logger logger = Logger.getLogger(ItemLoader.class);
 
     @Override
     public ResourceFactory<Item> call() {

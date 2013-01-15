@@ -23,6 +23,7 @@ import illarion.client.resources.SongFactory;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
 import org.newdawn.slick.Music;
@@ -176,8 +177,17 @@ public final class MusicBox implements Stoppable {
         }
 
         currentMusic = SongFactory.getInstance().getSong(id);
+        if (currentMusic == null) {
+            LOGGER.error("Requested music was not found: " + id);
+            return;
+        }
         currentMusic.loop(1.f, musicVolume);
     }
+
+    /**
+     * The logging instance that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(MusicBox.class);
 
     /**
      * Stop playing the fighting music and fall back to the last sound track played.

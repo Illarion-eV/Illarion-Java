@@ -40,7 +40,7 @@ public final class TileLoader extends AbstractResourceLoader<Tile> implements
     /**
      * The logger that is used to report error messages.
      */
-    private final Logger logger = Logger.getLogger(ItemLoader.class);
+    private static final Logger logger = Logger.getLogger(ItemLoader.class);
 
     /**
      * Trigger the loading sequence for this loader.

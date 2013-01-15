@@ -25,6 +25,7 @@ import illarion.client.world.items.InventorySlot;
 import illarion.client.world.items.MerchantList;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
+import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,15 +62,23 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
     }
 
     /**
+     * The logger instance that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(InteractiveInventorySlot.class);
+
+    /**
      * Drag the item in this inventory slot to another inventory slot.
      */
     @Override
     public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
         if (!isValidItem()) {
+            LOGGER.error("Tried dragging a invalid item!");
             return;
         }
+        final ItemId draggedItem = getItemId();
+        assert draggedItem != null;
 
-        if (!targetSlot.isAcceptingItem(getItemId())) {
+        if (!targetSlot.isAcceptingItem(draggedItem)) {
             return;
         }
 
@@ -124,12 +133,20 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * Send the command to the server to sell this item.
      */
     public void sell() {
-        final MerchantList merchantList = World.getPlayer().getMerchantList();
-        if (merchantList == null) {
+        if (!World.getPlayer().hasMerchantList()) {
             return;
         }
+        final MerchantList merchantList = World.getPlayer().getMerchantList();
+        assert merchantList != null;
 
-        World.getNet().sendCommand(new SellInventoryItemCmd(merchantList.getId(), getSlotId(), parentItem.getCount()));
+        final ItemCount count = parentItem.getCount();
+        if (!ItemCount.isGreaterZero(count)) {
+            LOGGER.error("Tried sell from a slot that contains no items!");
+            return;
+        }
+        assert count != null;
+
+        World.getNet().sendCommand(new SellInventoryItemCmd(merchantList.getId(), getSlotId(), count));
     }
 
     /**

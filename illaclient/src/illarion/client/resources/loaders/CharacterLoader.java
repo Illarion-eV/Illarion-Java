@@ -134,7 +134,7 @@ public final class CharacterLoader extends AbstractResourceLoader<Avatar> implem
     /**
      * The logger that is used to report error messages.
      */
-    private final Logger logger = Logger.getLogger(ItemLoader.class);
+    private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
 
     @Override
     public ResourceFactory<Avatar> call() {
@@ -184,7 +184,7 @@ public final class CharacterLoader extends AbstractResourceLoader<Avatar> implem
             getTargetFactory().storeResource(avatar);
             avatar.activate(avatarId);
         } catch (@Nonnull final IllegalStateException ex) {
-            logger.error("Failed adding avatar to internal factory. ID: "
+            LOGGER.error("Failed adding avatar to internal factory. ID: "
                     + Integer.toString(avatarId) + " - Filename: " + filename);
         }
 

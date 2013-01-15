@@ -334,12 +334,6 @@ public final class GameMapProcessor extends Thread {
         final Location playerLoc = World.getPlayer().getLocation();
         final Location tileLoc = tile.getLocation();
 
-        if (playerLoc == null) {
-            // something is very wrong. Put this entry back into the unchecked list and try it again later.
-            reportUnchecked(key);
-            return true;
-        }
-
         /*
          * And now we start with the inside check. In case the tile is below the level of the player its never hidden
          * for sure.

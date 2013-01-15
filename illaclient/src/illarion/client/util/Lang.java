@@ -25,6 +25,7 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -178,8 +179,8 @@ public final class Lang implements MessageSource {
     /**
      * Check if the language settings are still correct and reload the messages if needed.
      */
-    public void recheckLocale(@Nonnull final String key) {
-        if (key.equals(LOCALE_CFG_GERMAN)) {
+    public void recheckLocale(@Nullable final String key) {
+        if (LOCALE_CFG_GERMAN.equals(key)) {
             if (locale == Locale.GERMAN) {
                 return;
             }

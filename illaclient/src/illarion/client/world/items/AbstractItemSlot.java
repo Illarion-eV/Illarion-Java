@@ -81,7 +81,7 @@ public abstract class AbstractItemSlot {
      */
     @Nullable
     public Item getItemPrototype() {
-        if ((itemId == null) || (itemId.getValue() == 0)) {
+        if (!containsItem()) {
             return null;
         }
         return ItemFactory.getInstance().getPrototype(itemId.getValue());

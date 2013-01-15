@@ -85,7 +85,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         /**
          * The inventory slot that requires the reset.
          */
-        @Nullable
+        @Nonnull
         private final InventorySlot invSlot;
 
         /**
@@ -93,10 +93,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
          *
          * @param slot the inventory slot to reset
          */
-        EndOfDragOperation(@Nullable final InventorySlot slot) {
-            if (slot == null) {
-                throw new NullPointerException("slot");
-            }
+        EndOfDragOperation(@Nonnull final InventorySlot slot) {
             invSlot = slot;
         }
 
@@ -152,11 +149,12 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
                 case 2:
                     if (World.getPlayer().hasMerchantList()) {
                         slot.getInteractive().sell();
-                    } else if (slot.getItemPrototype().isContainer()) {
-                        slot.getInteractive().openContainer();
-                    } else {
-                        slot.getInteractive().use();
-                    }
+                    } else //noinspection ConstantConditions
+                        if (slot.getItemPrototype().isContainer()) {
+                            slot.getInteractive().openContainer();
+                        } else {
+                            slot.getInteractive().use();
+                        }
                     break;
             }
         }
@@ -456,8 +454,13 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         final int slotId = getSlotId(topic);
         final int containerId = getContainerId(topic);
 
-        final ItemCount amount = World.getInteractionManager().getMovedAmount();
         final InteractionManager iManager = World.getInteractionManager();
+        final ItemCount amount = iManager.getMovedAmount();
+        if (amount == null) {
+            LOGGER.error("Corrupted dropping detected.");
+            iManager.cancelDragging();
+            return;
+        }
         if (ItemCount.isGreaterOne(amount) && isShiftPressed()) {
             numberSelect.requestNewPopup(1, amount.getValue(), new NumberSelectPopupHandler.Callback() {
                 @Override
@@ -471,7 +474,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
                 }
             });
         } else {
-            iManager.dropAtContainer(containerId, slotId, World.getInteractionManager().getMovedAmount());
+            iManager.dropAtContainer(containerId, slotId, amount);
         }
     }
 
@@ -587,7 +590,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      * @param slot   the slot to update
      * @param itemId the item ID in this slot
      */
-    private void updateMerchantOverlay(@Nonnull final InventorySlot slot, final ItemId itemId) {
+    private void updateMerchantOverlay(@Nonnull final InventorySlot slot, @Nullable final ItemId itemId) {
         if (!ItemId.isValidItem(itemId)) {
             slot.hideMerchantOverlay();
             return;

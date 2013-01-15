@@ -107,9 +107,9 @@ public final class Login {
         IllaClient.getCfg().set("lastLogin", loginName);
         IllaClient.getCfg().set("savePassword", storePasswd);
         if (storePasswd) {
-            storePassword(true, password);
+            storePassword(password);
         } else {
-            storePassword(false, null);
+            deleteStoredPassword();
         }
         IllaClient.getCfg().save();
     }
@@ -368,21 +368,21 @@ public final class Login {
     }
 
     /**
-     * Store the password in the configuration file or remove the stored
-     * password from the configuration.
+     * Store the password in the configuration file or remove the stored password from the configuration.
      *
-     * @param store store the password or remove it, true means that the
-     *              password is stored, false that it is removed
-     * @param pw    the password that stall be stored to the configuration file
+     * @param pw the password that stall be stored to the configuration file
      */
     @SuppressWarnings("nls")
-    private void storePassword(final boolean store, @Nonnull final String pw) {
-        if (store) {
-            IllaClient.getCfg().set("savePassword", true);
-            IllaClient.getCfg().set("fingerprint", shufflePassword(pw, false));
-        } else {
-            IllaClient.getCfg().set("savePassword", false);
-            IllaClient.getCfg().remove("fingerprint");
-        }
+    private void storePassword(@Nonnull final String pw) {
+        IllaClient.getCfg().set("savePassword", true);
+        IllaClient.getCfg().set("fingerprint", shufflePassword(pw, false));
+    }
+
+    /**
+     * Remove the stored password.
+     */
+    private void deleteStoredPassword() {
+        IllaClient.getCfg().set("savePassword", false);
+        IllaClient.getCfg().remove("fingerprint");
     }
 }

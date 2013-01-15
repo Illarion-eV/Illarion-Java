@@ -80,7 +80,7 @@ public final class EffectLoader extends AbstractResourceLoader<Effect> implement
     /**
      * The logger that is used to report error messages.
      */
-    private final Logger logger = Logger.getLogger(ItemLoader.class);
+    private static final Logger logger = Logger.getLogger(ItemLoader.class);
 
     /**
      * Trigger the loading sequence for this loader.

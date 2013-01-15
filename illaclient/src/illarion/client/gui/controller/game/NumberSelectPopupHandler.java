@@ -30,6 +30,7 @@ import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -137,7 +138,7 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
      * @param callback the callback that is called in case the user interacts with the popup
      */
     private void internalCreateNewPopup(final int minValue, final int maxValue,
-                                        final NumberSelectPopupHandler.Callback callback) {
+                                        @Nonnull final NumberSelectPopupHandler.Callback callback) {
         cancelActivePopup();
 
         activePopup = parentNifty.createPopup("numberSelect");
@@ -148,6 +149,7 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
 
         final TextField textField = getTextField();
 
+        assert textField != null;
         textField.enableInputFilter(new TextFieldInputCharFilter() {
             @Override
             public boolean acceptInput(final int index, final char newChar) {
@@ -221,7 +223,9 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
             return;
         }
 
-        getTextField().setText(Integer.toString(currentValue + 1));
+        final TextField textField = getTextField();
+        assert textField != null;
+        textField.setText(Integer.toString(currentValue + 1));
         returnFocusToTextField();
     }
 
@@ -243,7 +247,9 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
             return;
         }
 
-        getTextField().setText(Integer.toString(currentValue - 1));
+        final TextField textField = getTextField();
+        assert textField != null;
+        textField.setText(Integer.toString(currentValue - 1));
         returnFocusToTextField();
     }
 
@@ -293,7 +299,9 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
             return 0;
         }
 
-        return Integer.parseInt(getTextField().getDisplayedText());
+        final TextField textField = getTextField();
+        assert textField != null;
+        return Integer.parseInt(textField.getDisplayedText());
     }
 
     /**
@@ -322,11 +330,20 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
     }
 
     /**
+     * The logging instance for this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(NumberSelectPopupHandler.class);
+
+    /**
      * Cancel and destroy the currently active popup. This sends a cancel to the callback and removes the active popup.
      */
     private void cancelActivePopup() {
         if (activePopup != null) {
-            activeCallback.popupCanceled();
+            if (activeCallback == null) {
+                LOGGER.error("Number select Callback gone missing!");
+            } else {
+                activeCallback.popupCanceled();
+            }
             parentNifty.closePopup(activePopup.getId());
             activePopup = null;
             activeCallback = null;
@@ -339,7 +356,11 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
      */
     private void confirmActivePopup() {
         if (activePopup != null) {
-            activeCallback.popupConfirmed(getCurrentValue());
+            if (activeCallback == null) {
+                LOGGER.error("Number select Callback gone missing!");
+            } else {
+                activeCallback.popupConfirmed(getCurrentValue());
+            }
             parentNifty.closePopup(activePopup.getId());
             activePopup = null;
             activeCallback = null;

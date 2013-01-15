@@ -19,6 +19,7 @@
 package illarion.client.graphics;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A frame animation is a animation based on different images.
@@ -74,7 +75,7 @@ final class FrameAnimation extends AbstractAnimation {
      *
      * @param target the first target of the animation
      */
-    protected FrameAnimation(final AnimatedFrame target) {
+    protected FrameAnimation(@Nullable final AnimatedFrame target) {
         super(target);
     }
 

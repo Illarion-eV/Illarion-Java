@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This event is generated once a character is talking on the map. Its produces by the chat handler and contains all
+ * This event is generated once a character is talking on the map. Its produces by the Chat handler and contains all
  * required information in order to display the talked text properly.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;

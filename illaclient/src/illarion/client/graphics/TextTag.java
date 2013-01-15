@@ -48,7 +48,7 @@ public class TextTag implements Drawable, RecycleObject {
      */
     @Nullable
     private static final SlickRenderFont TEXT_TAG_FONT = FontLoader
-            .getInstance().getFontSave(FontLoader.Fonts.small);
+            .getInstance().getFontSave(FontLoader.Fonts.Small);
 
     /**
      * This color is used as temporary color during the rendering process.
@@ -232,6 +232,10 @@ public class TextTag implements Drawable, RecycleObject {
             return;
         }
 
+        if (TEXT_TAG_FONT == null) {
+            throw new IllegalStateException("Font of the text tag was not loaded.");
+        }
+
         text = newText;
         width = TEXT_TAG_FONT.getWidth(newText);
         height = TEXT_TAG_FONT.getHeight();
@@ -243,6 +247,10 @@ public class TextTag implements Drawable, RecycleObject {
     public boolean draw(@Nonnull final Graphics g) {
         if (text == null) {
             return true;
+        }
+
+        if (TEXT_TAG_FONT == null) {
+            throw new IllegalStateException("Font of the text tag was not loaded.");
         }
 
         if (!Camera.getInstance().requiresUpdate(displayRect)) {

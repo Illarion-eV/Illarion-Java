@@ -435,21 +435,6 @@ public final class Avatar extends AbstractEntity implements Resource {
     }
 
     /**
-     * Get the description of the avatar. This description can be used for this
-     * name display above the avatar image. The returned string is already the
-     * localized version.
-     *
-     * @return the description text of the avatar, in German or English
-     *         regarding the localising settings the client runs with
-     */
-    public String getDescription() {
-        if (Lang.getInstance().isGerman()) {
-            return info.getGerman();
-        }
-        return info.getEnglish();
-    }
-
-    /**
      * Get the x offset of this avatar.
      *
      * @return the x offset of his avatar

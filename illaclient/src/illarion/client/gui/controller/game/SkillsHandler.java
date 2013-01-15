@@ -37,10 +37,12 @@ import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.net.server.events.SkillReceivedEvent;
 import illarion.client.util.Lang;
+import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.data.Skill;
 import illarion.common.data.SkillGroup;
 import illarion.common.data.SkillGroups;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -243,11 +245,18 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
 
         if (loginDone && skillChanged) {
             screen.findElementByName("openSkillsBtn").startEffect(EffectEventId.onCustom, null, "pulse");
-            World.getMap().getMapAt(World.getPlayer().getLocation()).showEffect(41);
+            final MapTile playerTile = World.getMap().getMapAt(World.getPlayer().getLocation());
+            if (playerTile == null) {
+                LOGGER.error("Tile below the player is NULL?!");
+            } else {
+                playerTile.showEffect(41);
+            }
         }
 
         layoutDirty = true;
     }
+
+    private static final Logger LOGGER = Logger.getLogger(SkillsHandler.class);
 
     private void updateVisibility() {
         final Element content = skillWindow.getElement().findElementByName("#textContent");

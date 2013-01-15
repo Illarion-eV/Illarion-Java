@@ -19,7 +19,6 @@
 package illarion.client.world;
 
 import illarion.client.graphics.AnimationManager;
-import illarion.client.graphics.Avatar;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.client.net.NetComm;
 import illarion.client.util.ChatHandler;
@@ -56,12 +55,15 @@ public final class World {
             StoppableStorage.getInstance().shutdown();
 
             if (INSTANCE.net != null) {
+                //noinspection ConstantConditions
                 INSTANCE.net.disconnect();
             }
             if (INSTANCE.player != null) {
+                //noinspection ConstantConditions
                 INSTANCE.player.shutdown();
             }
             if (INSTANCE.map != null) {
+                //noinspection ConstantConditions
                 INSTANCE.map.getMinimap().saveMap();
             }
 
@@ -80,6 +82,7 @@ public final class World {
             INSTANCE.clock = null;
 
             if (INSTANCE.executorService != null) {
+                //noinspection ConstantConditions
                 INSTANCE.executorService.shutdownNow();
             }
             INSTANCE.executorService = null;
@@ -90,29 +93,28 @@ public final class World {
     @Nonnull
     public static AnimationManager getAnimationManager() {
         INSTANCE.checkAniManager();
+        //noinspection ConstantConditions
         return INSTANCE.aniManager;
-    }
-
-    @Nonnull
-    public static Avatar getAvatar() {
-        return getPlayer().getCharacter().getAvatar();
     }
 
     @Nonnull
     public static Clock getClock() {
         INSTANCE.checkClock();
+        //noinspection ConstantConditions
         return INSTANCE.clock;
     }
 
     @Nonnull
     public static ChatHandler getChatHandler() {
         INSTANCE.checkChatHandler();
+        //noinspection ConstantConditions
         return INSTANCE.chatHandler;
     }
 
     @Nonnull
     public static LightTracer getLights() {
         INSTANCE.checkLights();
+        //noinspection ConstantConditions
         return INSTANCE.lights;
     }
 
@@ -124,6 +126,7 @@ public final class World {
     @Nonnull
     public static GameMap getMap() {
         INSTANCE.checkGameMap();
+        //noinspection ConstantConditions
         return INSTANCE.map;
     }
 
@@ -136,42 +139,49 @@ public final class World {
     @Nonnull
     public static MusicBox getMusicBox() {
         INSTANCE.checkMusicBox();
+        //noinspection ConstantConditions
         return INSTANCE.musicBox;
     }
 
     @Nonnull
     public static NetComm getNet() {
         INSTANCE.checkNet();
+        //noinspection ConstantConditions
         return INSTANCE.net;
     }
 
     @Nonnull
     public static People getPeople() {
         INSTANCE.checkPeople();
+        //noinspection ConstantConditions
         return INSTANCE.people;
     }
 
     @Nonnull
     public static Player getPlayer() {
         INSTANCE.checkPlayer();
+        //noinspection ConstantConditions
         return INSTANCE.player;
     }
 
     @Nonnull
     public static Weather getWeather() {
         INSTANCE.checkWeather();
+        //noinspection ConstantConditions
         return INSTANCE.weather;
     }
 
     @Nonnull
     public static InteractionManager getInteractionManager() {
         INSTANCE.checkInteractionManager();
+        //noinspection ConstantConditions
         return INSTANCE.interactionManager;
     }
 
     @Nonnull
     public static ExecutorService getExecutorService() {
         INSTANCE.checkExecutorService();
+        //noinspection ConstantConditions
         return INSTANCE.executorService;
     }
 
@@ -207,7 +217,7 @@ public final class World {
     private InteractionManager interactionManager;
 
     /**
-     * The class that handles the chat in and output.
+     * The class that handles the Chat in and output.
      */
     @Nullable
     private ChatHandler chatHandler;

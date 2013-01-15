@@ -550,7 +550,7 @@ public final class Player {
 
     /**
      * Set the ID of the players character. This also causes a introducing of the player character to the rest of the
-     * client, so the chat box for example is able to show the name of the character without additional affords.
+     * client, so the Chat box for example is able to show the name of the character without additional affords.
      *
      * @param newPlayerId the new ID of the player
      */

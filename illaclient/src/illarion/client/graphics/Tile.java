@@ -26,6 +26,7 @@ import illarion.client.world.World;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -281,8 +282,14 @@ public class Tile extends AbstractEntity implements Resource {
         }
     }
 
+    private static final Logger LOGGER = Logger.getLogger(Tile.class);
+
     @Override
     public boolean processEvent(@Nonnull final GameContainer container, final int delta, @Nonnull final MapInteractionEvent event) {
+        if (parentTile == null) {
+            LOGGER.error("Processing a tile without a assigned parent tile.");
+            return false;
+        }
         if (!parentTile.isAtPlayerLevel()) {
             return false;
         }

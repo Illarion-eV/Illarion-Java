@@ -52,7 +52,7 @@ public final class SongLoader extends AbstractResourceLoader<IdWrapper<Music>> i
     /**
      * The logger that is used to report error messages.
      */
-    private final Logger logger = Logger.getLogger(ItemLoader.class);
+    private static final Logger logger = Logger.getLogger(ItemLoader.class);
 
     private static final String SONG_DIR = "data/music/";
 

@@ -32,6 +32,7 @@ import illarion.common.graphics.MapVariance;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
+import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -67,7 +68,7 @@ public final class Item extends AbstractEntity implements Resource {
      * animation that needs to be played.
      */
     @Nullable
-    private transient final FrameAnimation ani;
+    private final FrameAnimation ani;
 
     /**
      * The amount of items that are represented by this item instance. So in case the number is larger then 1 this
@@ -126,6 +127,7 @@ public final class Item extends AbstractEntity implements Resource {
     /**
      * This sprite is used in case the item is used in the GUI.
      */
+    @Nonnull
     private final Image guiTexture;
 
     /**
@@ -133,6 +135,7 @@ public final class Item extends AbstractEntity implements Resource {
      *
      * @return the texture used in the GUI
      */
+    @Nonnull
     public Image getGuiTexture() {
         return guiTexture;
     }
@@ -163,7 +166,7 @@ public final class Item extends AbstractEntity implements Resource {
      */
     public Item(final int itemID, @Nonnull final String name, final int offX,
                 final int offY, final int offS, final int frames, final int speed,
-                @Nonnull final ItemInfo itemInfo, final Color baseColor,
+                @Nonnull final ItemInfo itemInfo, @Nullable final Color baseColor,
                 final int referenceID) {
         super(itemID, ITEM_PATH, name, frames, 0, offX, offY, offS,
                 Sprite.HAlign.center, Sprite.VAlign.bottom,
@@ -366,8 +369,17 @@ public final class Item extends AbstractEntity implements Resource {
 
     private int showHighlight;
 
+    /**
+     * The logging instance that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Item.class);
+
     @Override
     public boolean processEvent(@Nonnull final GameContainer container, final int delta, @Nonnull final MapInteractionEvent event) {
+        if (parentTile == null) {
+            LOGGER.error("Trying to progress a item that has no assigned parent tile!");
+            return false;
+        }
         if (!parentTile.isAtPlayerLevel()) {
             return false;
         }

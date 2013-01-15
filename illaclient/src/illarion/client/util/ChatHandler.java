@@ -34,7 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This chat handler fetches all texts send by the network interface and
+ * This Chat handler fetches all texts send by the network interface and
  * forwards the data to the required parts of the client. It takes care for
  * transforming the text properly for each part of the client.
  *
@@ -95,7 +95,7 @@ public final class ChatHandler {
          * Constructor for the speech mode that stores the color of the mode.
          *
          * @param modeColor  the color of the speech mode
-         * @param findRegexp the regular expression used to find out if the line is fits this chat type or not
+         * @param findRegexp the regular expression used to find out if the line is fits this Chat type or not
          * @param replace    the regular expression needed to isolate the actual text
          */
         SpeechMode(final Color modeColor, @Nullable @RegEx final String findRegexp,
@@ -143,7 +143,7 @@ public final class ChatHandler {
     }
 
     /**
-     * The logger that takes care of the logging output of the chat handler.
+     * The logger that takes care of the logging output of the Chat handler.
      */
     private static final Logger LOGGER = Logger.getLogger(ChatHandler.class);
 

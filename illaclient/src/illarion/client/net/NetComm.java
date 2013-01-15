@@ -313,15 +313,6 @@ public final class NetComm {
     }
 
     /**
-     * Check if the network interface received anything from the server since it started.
-     *
-     * @return true in case anything was received from the server.
-     */
-    public boolean receivedAnything() {
-        return messageHandler.hasReceivedAnything();
-    }
-
-    /**
      * Put command in send queue so its send at the next send loop.
      *
      * @param cmd the command that shall be added to the queue

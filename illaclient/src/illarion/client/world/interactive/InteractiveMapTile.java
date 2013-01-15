@@ -26,6 +26,7 @@ import illarion.client.world.items.ContainerSlot;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
+import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -78,26 +79,39 @@ public class InteractiveMapTile implements Draggable, DropTarget {
     }
 
     /**
+     * The logging instance that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(InteractiveMapTile.class);
+
+    /**
      * Drag something from a map tile to
      */
     @Override
     public void dragTo(@Nonnull final InteractiveChar targetChar, @Nonnull final ItemCount count) {
         if (!canDrag()) {
+            LOGGER.error("Finished dragging of tile that can't be dragged.");
             return;
         }
 
-        final InteractiveMapTile tile = World.getMap().getInteractive().getInteractiveTileOnMapLoc(
-                targetChar.getLocation());
-        dragTo(tile, count);
+        final MapTile tile = World.getMap().getMapAt(targetChar.getLocation());
+        if (tile == null) {
+            LOGGER.error("Dragged to a tile that does not exist.");
+            return;
+        }
+        dragTo(tile.getInteractive(), count);
     }
 
     @Override
     public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
         if (!canDrag()) {
+            LOGGER.error("Finished dragging of tile that can't be dragged.");
             return;
         }
 
-        if (!targetSlot.isAcceptingItem(getTopItemId())) {
+        final ItemId topItemId = getTopItemId();
+        assert topItemId != null;
+
+        if (!targetSlot.isAcceptingItem(topItemId)) {
             return;
         }
 
@@ -124,7 +138,10 @@ public class InteractiveMapTile implements Draggable, DropTarget {
             return;
         }
 
-        if (!targetSlot.acceptItem(getTopItemId())) {
+        final ItemId topItemId = getTopItemId();
+        assert topItemId != null;
+
+        if (!targetSlot.acceptItem(topItemId)) {
             return;
         }
 

@@ -119,9 +119,6 @@ public final class InteractionManager {
 
         try {
             final InteractiveInventorySlot targetSlot = World.getPlayer().getInventory().getItem(slot).getInteractive();
-            if (targetSlot == null) {
-                return;
-            }
             draggedObject.dragTo(targetSlot, count);
         } catch (@Nonnull final IndexOutOfBoundsException ex) {
             LOGGER.error("Tried to drop a item at a inventory slot that does not exist.", ex);

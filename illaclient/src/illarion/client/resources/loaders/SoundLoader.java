@@ -52,7 +52,7 @@ public final class SoundLoader extends AbstractResourceLoader<IdWrapper<Sound>> 
     /**
      * The logger that is used to report error messages.
      */
-    private final Logger logger = Logger.getLogger(ItemLoader.class);
+    private static final Logger logger = Logger.getLogger(ItemLoader.class);
 
     private static final String SOUND_PATH = "data/sounds/";
 

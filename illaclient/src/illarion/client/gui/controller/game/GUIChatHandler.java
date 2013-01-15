@@ -67,14 +67,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class takes care to receive chat input from the GUI and sends it to the server. Also it receives chat from the
+ * This class takes care to receive Chat input from the GUI and sends it to the server. Also it receives Chat from the
  * server and takes care for displaying it on the GUI.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class GUIChatHandler implements KeyInputHandler, ScreenController, UpdatableHandler {
     /**
-     * This utility class is used to store texts that get shown in the chat log.
+     * This utility class is used to store texts that get shown in the Chat log.
      */
     private class ChatBoxEntry implements Runnable {
         /**
@@ -169,12 +169,12 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     private static final Color COLOR_EMOTE = new Color("#ffcc33");
 
     /**
-     * The expanded height of the chat.
+     * The expanded height of the Chat.
      */
     private static final SizeValue CHAT_EXPANDED_HEIGHT = SizeValue.px(500);
 
     /**
-     * The collapsed size of the chat.
+     * The collapsed size of the Chat.
      */
     private static final SizeValue CHAT_COLLAPSED_HEIGHT = SizeValue.px(170);
 
@@ -189,7 +189,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     private TextField chatMsg;
 
     /**
-     * The layer used to show the chat bubbles.
+     * The layer used to show the Chat bubbles.
      */
     private Element chatLayer;
 
@@ -199,7 +199,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     private Screen screen;
 
     /**
-     * The nifty instance of this chat handler.
+     * The nifty instance of this Chat handler.
      */
     private Nifty nifty;
 
@@ -210,7 +210,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     private final Queue<Runnable> messageQueue;
 
     /**
-     * This flag shows of the chat log is dirty and needs to be cleaned up.
+     * This flag shows of the Chat log is dirty and needs to be cleaned up.
      */
     private boolean dirty;
 
@@ -339,7 +339,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     }
 
     /**
-     * Change the expanded or collapsed state of the chat.
+     * Change the expanded or collapsed state of the Chat.
      */
     private void toggleChatLog() {
         final Element chatScroll = screen.findElementByName("chatPanel");
@@ -512,7 +512,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     }
 
     /**
-     * Add a entry to the chat log.
+     * Add a entry to the Chat log.
      *
      * @param text  the text to add
      * @param color the color of the text to add
@@ -533,7 +533,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     }
 
     /**
-     * The the chat bubble of a character talking on the map.
+     * The the Chat bubble of a character talking on the map.
      *
      * @param character the character who is talking
      * @param message   the message to display
@@ -556,7 +556,10 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         final LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.style("nifty-label");
 
-        final SlickRenderFont font = FontLoader.getInstance().getFontSave(FontLoader.Fonts.text);
+        final SlickRenderFont font = FontLoader.getInstance().getFontSave(FontLoader.Fonts.Text);
+        if (font == null) {
+            throw new IllegalStateException("Font resources are missing!");
+        }
         final int textWidth = font.getWidth(message);
         if (textWidth > 300) {
             labelBuilder.width("300px");
@@ -565,7 +568,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             labelBuilder.width(SizeValue.px(textWidth).toString());
             labelBuilder.wrap(false);
         }
-        labelBuilder.font(FontLoader.Fonts.text.getFontName());
+        labelBuilder.font(FontLoader.Fonts.Text.getFontName());
         labelBuilder.color(color);
         labelBuilder.text(message);
 

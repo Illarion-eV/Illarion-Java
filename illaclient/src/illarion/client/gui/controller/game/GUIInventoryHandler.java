@@ -49,6 +49,7 @@ import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Rectangle;
+import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -57,6 +58,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -132,11 +134,12 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
                 case 2:
                     if (World.getPlayer().hasMerchantList()) {
                         slot.getInteractive().sell();
-                    } else if (slot.getItemPrototype().isContainer()) {
-                        slot.getInteractive().openContainer();
-                    } else {
-                        slot.getInteractive().use();
-                    }
+                    } else //noinspection ConstantConditions
+                        if (slot.getItemPrototype().isContainer()) {
+                            slot.getInteractive().openContainer();
+                        } else {
+                            slot.getInteractive().use();
+                        }
                     break;
             }
         }
@@ -186,8 +189,9 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
     private final Runnable updateMerchantOverlays = new Runnable() {
         @Override
         public void run() {
+            final Inventory inventory = World.getPlayer().getInventory();
             for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
-                updateMerchantOverlay(i, World.getPlayer().getInventory().getItem(i).getItemID());
+                updateMerchantOverlay(i, inventory.getItem(i).getItemID());
             }
         }
     };
@@ -360,12 +364,22 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         return (input != null) && (input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT));
     }
 
+    /**
+     * The logger that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(GUIInventoryHandler.class);
+
     @NiftyEventSubscriber(pattern = "invslot_.*")
     public void dropInInventory(@Nonnull final String topic, final DroppableDroppedEvent data) {
         final int slotId = getSlotNumber(topic);
 
-        final ItemCount amount = World.getInteractionManager().getMovedAmount();
         final InteractionManager iManager = World.getInteractionManager();
+        final ItemCount amount = iManager.getMovedAmount();
+        if (amount == null) {
+            LOGGER.error("Corrupted dragging detected.");
+            iManager.cancelDragging();
+            return;
+        }
         if (ItemCount.isGreaterOne(amount) && isShiftPressed()) {
             numberSelect.requestNewPopup(1, amount.getValue(), new NumberSelectPopupHandler.Callback() {
                 @Override
@@ -379,7 +393,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
                 }
             });
         } else {
-            iManager.dropAtInventory(slotId, World.getInteractionManager().getMovedAmount());
+            iManager.dropAtInventory(slotId, amount);
         }
 
         inventoryWindow.setFocus();
@@ -431,7 +445,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
      * @param itemId the ID of the item that shall be displayed in the slot
      * @param count  the amount of items displayed in this slot
      */
-    private void setSlotItem(final int slotId, final ItemId itemId, @Nonnull final ItemCount count) {
+    private void setSlotItem(final int slotId, @Nullable final ItemId itemId, @Nullable final ItemCount count) {
         if ((slotId < 0) || (slotId >= Inventory.SLOT_COUNT)) {
             throw new IllegalArgumentException("Slot ID out of valid range.");
         }
@@ -439,14 +453,16 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         final InventorySlot invSlot = invSlots[slotId].getNiftyControl(InventorySlot.class);
 
         if (ItemId.isValidItem(itemId)) {
+            assert itemId != null;
             final Item displayedItem = ItemFactory.getInstance().getPrototype(itemId);
 
             final NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
                     new EntitySlickRenderImage(displayedItem));
 
             invSlot.setImage(niftyImage);
-            invSlot.setLabelText(Integer.toString(count.getValue()));
             if (ItemCount.isGreaterOne(count)) {
+                assert count != null;
+                invSlot.setLabelText(Integer.toString(count.getValue()));
                 slotLabelVisibility[slotId] = true;
                 invSlot.showLabel();
             } else {
@@ -472,7 +488,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         invSlots[slotId].getParent().layoutElements();
     }
 
-    private void updateMerchantOverlay(final int slot, final ItemId itemId) {
+    private void updateMerchantOverlay(final int slot, @Nullable final ItemId itemId) {
         final InventorySlot control = invSlots[slot].getNiftyControl(InventorySlot.class);
 
         if (!ItemId.isValidItem(itemId)) {

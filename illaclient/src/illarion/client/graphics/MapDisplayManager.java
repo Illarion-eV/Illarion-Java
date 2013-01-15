@@ -239,8 +239,9 @@ public final class MapDisplayManager
         }
 
         // adjust Z-order after update
-        if (World.getAvatar() != null) {
-            readd(World.getAvatar());
+        final Avatar playerAvatar = World.getPlayer().getCharacter().getAvatar();
+        if (playerAvatar != null) {
+            readd(playerAvatar);
         }
     }
 
@@ -374,7 +375,7 @@ public final class MapDisplayManager
         final int offX = (centerX - origin.getDcX()) + dX;
         final int offY = (centerY - origin.getDcY()) + dY - dL;
 
-        final Avatar av = World.getAvatar();
+        final Avatar av = World.getPlayer().getCharacter().getAvatar();
         if (av != null) {
             glueAvatarToOrigin(av);
             corridor.setCorridor(av);
@@ -518,7 +519,7 @@ public final class MapDisplayManager
      * @param text
      * @param mode
      */
-    public void sayText(int x, int y, final String text, final int mode) {
+    public void sayText(final int x, final int y, final String text, final int mode) {
         //        x += (MAP_CENTER_X - origin.getDcX()) + dX;
         //        y += (MAP_CENTER_Y - origin.getDcY()) + dY;
 
@@ -557,9 +558,9 @@ public final class MapDisplayManager
         // origin.setSC(location.scX, location.scY, 0);
         origin.set(location);
         ani.stop();
-        final Avatar avatar = World.getAvatar();
-        if (avatar != null) {
-            avatar.animationFinished(false);
+        final Avatar playerAvatar = World.getPlayer().getCharacter().getAvatar();
+        if (playerAvatar != null) {
+            playerAvatar.animationFinished(false);
         }
         elevation = World.getMap().getElevationAt(origin);
         dX = 0;
@@ -606,14 +607,11 @@ public final class MapDisplayManager
     private void insertSorted(@Nonnull final DisplayItem item) {
         int currentStart = 0;
         int currentEnd = display.size() - 1;
-        int middle;
-        DisplayItem foundItem;
-        int compareResult;
 
         while (currentStart <= currentEnd) {
-            middle = currentStart + ((currentEnd - currentStart) >> 1);
-            foundItem = display.get(middle);
-            compareResult = displayListComperator.compare(foundItem, item);
+            final int middle = currentStart + ((currentEnd - currentStart) >> 1);
+            final DisplayItem foundItem = display.get(middle);
+            final int compareResult = displayListComperator.compare(foundItem, item);
 
             if (compareResult < 0) {
                 currentStart = middle + 1;

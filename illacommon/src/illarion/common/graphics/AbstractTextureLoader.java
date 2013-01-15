@@ -166,10 +166,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * @throws NullPointerException     in case the parameter is {@code null}
      * @throws IllegalArgumentException in case the directory searched is not listed as root directory
      */
-    private int getDirectoryIndex(@Nullable final String resourceDir) {
-        if (resourceDir == null) {
-            throw new NullPointerException("resourceDir must not be null");
-        }
+    private int getDirectoryIndex(@Nonnull final String resourceDir) {
         final int dirIndex = Arrays.binarySearch(rootDirectories, resourceDir);
         if (dirIndex < 0) {
             throw new IllegalArgumentException("Directory was not listed as root directory.");
@@ -244,10 +241,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * @return the index of the root directory or -1 in case the directory couldn't be identified
      * @throws NullPointerException in case the argument is {@code null}
      */
-    private int getResourceDirectory(@Nullable final String sheetName) {
-        if (sheetName == null) {
-            throw new NullPointerException("sheetName must not be null");
-        }
+    private int getResourceDirectory(@Nonnull final String sheetName) {
         for (int i = 0; i < rootDirectories.length; i++) {
             if (sheetName.startsWith(rootDirectories[i])) {
                 return i;
@@ -281,7 +275,8 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * @throws IllegalArgumentException in case the directory searched is not listed as root directory
      */
     @Nullable
-    public final I getTexture(final String resourceDir, final String resource, final String defaultResource) {
+    public final I getTexture(@Nonnull final String resourceDir, @Nonnull final String resource,
+                              @Nullable final String defaultResource) {
         return getTexture(getDirectoryIndex(resourceDir), resource, defaultResource);
     }
 
@@ -459,11 +454,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * @throws NullPointerException      in case the {@code resource} parameter is {@code null}
      */
     @Nonnull
-    private String buildSheetName(final int resourceDirIndex, @Nullable final String resource) {
-        if (resource == null) {
-            throw new NullPointerException("resource may not be NULL");
-        }
-
+    private String buildSheetName(final int resourceDirIndex, @Nonnull final String resource) {
         TextBuilder builder = null;
         try {
             builder = TextBuilder.newInstance();

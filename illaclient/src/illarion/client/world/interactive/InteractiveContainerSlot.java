@@ -24,6 +24,7 @@ import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.MerchantList;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
+import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,13 +58,24 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
     }
 
     /**
+     * The logger instance that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(InteractiveContainerSlot.class);
+
+    /**
      * Drag the item in this inventory slot to another inventory slot.
      *
      * @param targetSlot the slot to drag the item to
      */
     @Override
     public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
-        if (!targetSlot.isAcceptingItem(getItemId())) {
+        if (isValidItem()) {
+            LOGGER.error("Dragging of illegal item detected.");
+            return;
+        }
+        final ItemId draggedItemId = getItemId();
+        assert draggedItemId != null;
+        if (!targetSlot.isAcceptingItem(draggedItemId)) {
             return;
         }
 
@@ -96,7 +108,14 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
 
     @Override
     public void dragTo(@Nonnull final InteractiveContainerSlot targetSlot, @Nonnull final ItemCount count) {
-        if (!isValidItem() || !targetSlot.acceptItem(getItemId())) {
+        if (isValidItem()) {
+            LOGGER.error("Dragging of illegal item detected.");
+            return;
+        }
+        final ItemId draggedItemId = getItemId();
+        assert draggedItemId != null;
+
+        if (!targetSlot.acceptItem(draggedItemId)) {
             return;
         }
 
@@ -118,7 +137,8 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
     }
 
     public boolean isValidItem() {
-        return (getItemId() != null) && (getItemId().getValue() > 0);
+        final ItemId itemId = getItemId();
+        return (itemId != null) && (itemId.getValue() > 0);
     }
 
     public ContainerSlot getSlot() {
@@ -153,12 +173,17 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
         }
 
         final MerchantList merchantList = World.getPlayer().getMerchantList();
-        if (merchantList == null) {
+        assert merchantList != null;
+
+        final ItemCount count = parentSlot.getCount();
+        if (!ItemCount.isGreaterZero(count)) {
+            LOGGER.error("Tried sell from a slot that contains no items!");
             return;
         }
+        assert count != null;
 
         World.getNet().sendCommand(new SellContainerItemCmd(merchantList.getId(), getContainerId(), getSlotId(),
-                parentSlot.getCount()));
+                count));
     }
 
     public void use() {

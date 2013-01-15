@@ -37,6 +37,7 @@ import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Properties;
 
 /**
@@ -151,7 +152,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
      * {@inheritDoc}
      */
     @Override
-    public void setImage(@Nonnull final NiftyImage image) {
+    public void setImage(@Nullable final NiftyImage image) {
         draggedImage.getRenderer(ImageRenderer.class).setImage(image);
         backgroundImage.getRenderer(ImageRenderer.class).setImage(image);
 

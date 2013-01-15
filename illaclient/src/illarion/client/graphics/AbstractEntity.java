@@ -289,7 +289,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
                              @Nonnull final Sprite.VAlign vert, final boolean smooth, final boolean mirror,
                              @Nullable final Color baseCol) {
 
-        sprite = SpriteBuffer.getInstance().getSprite(path, name, frames, offX, offY, horz, vert, smooth, mirror);
+        sprite = SpriteBuffer.getInstance().getSprite(path, name, frames, offX, offY, horz, vert, mirror);
         stillFrame = still;
         currentFrame = still;
         if ((baseCol == null) || baseCol.equals(DEFAULT_LIGHT)) {

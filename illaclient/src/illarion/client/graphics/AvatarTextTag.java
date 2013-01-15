@@ -223,7 +223,7 @@ public final class AvatarTextTag implements Drawable {
 
         final SlickRenderFont font;
         try {
-            font = FontLoader.getInstance().getFont(FontLoader.Fonts.small);
+            font = FontLoader.getInstance().getFont(FontLoader.Fonts.Small);
         } catch (SlickLoadFontException e) {
             throw new RuntimeException(e);
         }
@@ -258,7 +258,7 @@ public final class AvatarTextTag implements Drawable {
         charNameOffsetY = 0;
 
         healthStateOffsetX = (width - healthWidth) / 2;
-        healthStateOffsetY = nameHeight + LINE_SPACE;
+        healthStateOffsetY = nameHeight;
 
         dirty = true;
     }
@@ -289,7 +289,7 @@ public final class AvatarTextTag implements Drawable {
 
         final SlickRenderFont font;
         try {
-            font = FontLoader.getInstance().getFont(FontLoader.Fonts.small);
+            font = FontLoader.getInstance().getFont(FontLoader.Fonts.Small);
         } catch (SlickLoadFontException e) {
             throw new RuntimeException(e);
         }

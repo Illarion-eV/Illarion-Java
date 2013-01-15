@@ -26,6 +26,7 @@ import de.lessvoid.nifty.controls.NiftyControl;
 import de.lessvoid.nifty.render.NiftyImage;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The interface to control a single slot of the inventory.
@@ -59,7 +60,7 @@ public interface InventorySlot extends NiftyControl {
      *
      * @param image the displayed image
      */
-    void setImage(@Nonnull NiftyImage image);
+    void setImage(@Nullable NiftyImage image);
 
     /**
      * Set the image that is displayed as background of this slot.

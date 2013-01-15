@@ -69,7 +69,7 @@ public final class GuiImageLoader extends AbstractResourceLoader<GuiImage> imple
     /**
      * The logger that is used to report error messages.
      */
-    private final Logger logger = Logger.getLogger(ItemLoader.class);
+    private static final Logger logger = Logger.getLogger(ItemLoader.class);
 
     /**
      * Trigger the loading sequence for this loader.
@@ -101,7 +101,7 @@ public final class GuiImageLoader extends AbstractResourceLoader<GuiImage> imple
                     new GuiImage(name, SpriteBuffer.getInstance().getSprite(PATH,
                             name, loader.getInt(TB_FRAME), loader.getInt(TB_OFFX),
                             loader.getInt(TB_OFFY), Sprite.HAlign.left,
-                            Sprite.VAlign.top, true, false)));
+                            Sprite.VAlign.top, false)));
         } catch (@Nonnull final IllegalStateException ex) {
             logger.error("Failed adding GUI image to internal factory. Filename: " + name);
         }

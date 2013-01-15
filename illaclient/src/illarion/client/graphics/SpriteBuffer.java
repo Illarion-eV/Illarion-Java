@@ -18,11 +18,9 @@
  */
 package illarion.client.graphics;
 
-import javolution.text.TextBuilder;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Iterator;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@ThreadSafe
 public final class SpriteBuffer {
     /**
      * The singleton instance of this object.
@@ -60,9 +59,6 @@ public final class SpriteBuffer {
      * Sprite buffer.
      */
     private SpriteBuffer() {
-        // final FastMap<String, Sprite> storageMap =
-        // new FastMap<String, Sprite>();
-        // //storageMap.setKeyComparator(FastComparator.STRING);
         storage = new ConcurrentHashMap<String, Sprite>();
     }
 
@@ -77,48 +73,6 @@ public final class SpriteBuffer {
     }
 
     /**
-     * Drop a sprite from the sprite buffer. A dropped sprite is not available
-     * anymore and maybe leads to removing the texture. Its not a good idea to
-     * remove sprites with textures that need to be used later.
-     *
-     * @param droppingSprite the sprite that shall be dropped
-     */
-    public void dropSprite(@Nonnull final Sprite droppingSprite) {
-        if (storage == null) {
-            droppingSprite.remove();
-            return;
-        }
-
-        if (storage.containsValue(droppingSprite)) {
-            final Iterator<Sprite> itr2 = storage.values().iterator();
-            while (itr2.hasNext()) {
-                final Sprite testSprite = itr2.next();
-                if (testSprite.equals(droppingSprite)) {
-                    itr2.remove();
-                    droppingSprite.remove();
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
-     * Shorted get Sprite call for textures that do not need a offset and are
-     * aligned in the upper left corner.
-     *
-     * @param path   the path the sprite file is located at
-     * @param name   the name of the sprite that is searched
-     * @param smooth true in case the picture needs to be smoothed due resizing
-     *               operations
-     * @return the sprite that was created or loaded from the cache
-     */
-    public Sprite getSprite(final String path, final String name,
-                            final boolean smooth) {
-        return getSprite(path, name, 1, 0, 0, Sprite.HAlign.left,
-                Sprite.VAlign.bottom, smooth, false);
-    }
-
-    /**
      * Get a sprite, either from the cache or generate a new one with the
      * parameters that are handed over here.
      *
@@ -129,23 +83,22 @@ public final class SpriteBuffer {
      * @param offY   the sprite picture offset in Y direction
      * @param horz   the horizontal alignment of the picture
      * @param vert   the vertical alignment of the picture
-     * @param smooth true in case the picture needs to be smoothed due resizing
-     *               operations
      * @param mirror show the sprite horizontal mirrored
      * @return the sprite that was created or loaded from the cache
      */
     @SuppressWarnings("nls")
-    public Sprite getSprite(final String path, @Nullable final String name,
-                            final int frames, final int offX, final int offY,
-                            @Nonnull final Sprite.HAlign horz, @Nonnull final Sprite.VAlign vert,
-                            final boolean smooth, final boolean mirror) {
-
-        if ((frames <= 0) && (name != null)) {
-            throw new IllegalArgumentException("Tried to get a sprite with "
-                    + "0 or less frames. Sprite source: " + path + "/" + name);
+    public Sprite getSprite(final String path, @Nonnull final String name, final int frames, final int offX,
+                            final int offY, @Nonnull final Sprite.HAlign horz, @Nonnull final Sprite.VAlign vert,
+                            final boolean mirror) {
+        if (storage == null) {
+            throw new IllegalStateException("Can't request sprites after the buffer got cleaned up.");
+        }
+        if (frames <= 0) {
+            throw new IllegalArgumentException("Tried to get a sprite with 0 or less frames. Sprite source: " + path
+                    + '/' + name);
         }
 
-        TextBuilder nameBuilder = TextBuilder.newInstance();
+        final StringBuilder nameBuilder = new StringBuilder();
         nameBuilder.setLength(0);
         nameBuilder.append(path);
         nameBuilder.append(name);
@@ -165,9 +118,6 @@ public final class SpriteBuffer {
         }
 
         final String spriteName = nameBuilder.toString();
-        TextBuilder.recycle(nameBuilder);
-        nameBuilder = null;
-
         if (storage.containsKey(spriteName)) {
             final Sprite returnSprite = storage.get(spriteName);
             // summTime += (System.currentTimeMillis() - startTime);
@@ -184,7 +134,7 @@ public final class SpriteBuffer {
             retSprite.addImage(TextureLoader.getInstance().getTexture(path,
                     name));
         } else {
-            nameBuilder = TextBuilder.newInstance();
+            nameBuilder.setLength(0);
             nameBuilder.append(name);
             nameBuilder.append('-');
             final int targetLength = nameBuilder.length();
@@ -194,11 +144,6 @@ public final class SpriteBuffer {
                 retSprite.addImage(TextureLoader.getInstance().getTexture(
                         path, nameBuilder.toString()));
             }
-            TextBuilder.recycle(nameBuilder);
-        }
-
-        if (spriteName == null) {
-            throw new NullPointerException("spriteName is null");
         }
 
         storage.put(spriteName, retSprite);

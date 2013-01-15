@@ -35,7 +35,7 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- * Class to handle the logging of the chat in the game to the logfile.
+ * Class to handle the logging of the Chat in the game to the logfile.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -60,7 +60,7 @@ public final class ChatLog {
      * Instance of the used logger.
      */
     @SuppressWarnings("nls")
-    private final Logger logger = Logger.getLogger("CHAT");
+    private static final Logger logger = Logger.getLogger("CHAT");
 
     /**
      * Stores the information if the logger is set up and working. Only in this case log files are written.
@@ -76,7 +76,7 @@ public final class ChatLog {
     }
 
     /**
-     * Get the singleton instance of the chat file logger.
+     * Get the singleton instance of the Chat file logger.
      *
      * @return the singleton instance of this class
      */

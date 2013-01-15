@@ -91,14 +91,18 @@ public final class TextureLoader extends AbstractTextureLoader<SlickTextureAtlas
 
     @Nonnull
     @Override
-    public SlickRenderImage loadImage(final String filename,
+    public SlickRenderImage loadImage(@Nonnull final String filename,
                                       final boolean filterLinear) throws SlickLoadImageException {
 
         return new TextureRenderImage(
                 AccessController.doPrivileged(new PrivilegedAction<Image>() {
                     @Override
                     public Image run() {
-                        return getTexture(filename);
+                        final Image resultImage = getTexture(filename);
+                        if (resultImage == null) {
+                            throw new IllegalStateException("Loading image: " + filename + " failed.");
+                        }
+                        return resultImage;
                     }
                 }));
     }

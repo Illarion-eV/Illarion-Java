@@ -32,6 +32,7 @@ import illarion.client.resources.loaders.SoundLoader;
 import illarion.client.util.ChatLog;
 import illarion.client.util.Lang;
 import illarion.client.world.MapDimensions;
+import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
@@ -54,6 +55,7 @@ import org.newdawn.slick.util.LogSystem;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -115,7 +117,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * files.
      */
     @Nonnull
-    private static Properties tempProps = new Properties();
+    private static final Properties tempProps = new Properties();
 
     /**
      * The configuration of the client settings.
@@ -141,7 +143,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * This is the reference to the Illarion Game instance.
      */
-    private illarion.client.Game game;
+    private Game game;
 
     /**
      * The container that is used to display the game.
@@ -167,6 +169,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         prepareConfig();
+        assert cfg != null;
         try {
             initLogfiles();
         } catch (IOException e) {
@@ -190,9 +193,20 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             LOGGER.error("Failed to load sounds and music!");
         }
 
-        game = new illarion.client.Game();
+        game = new Game();
 
-        final GraphicResolution res = new GraphicResolution(cfg.getString(CFG_RESOLUTION));
+        GraphicResolution res = null;
+        final String resolutionString = cfg.getString(CFG_RESOLUTION);
+        if (resolutionString != null) {
+            try {
+                res = new GraphicResolution(resolutionString);
+            } catch (@Nonnull final IllegalArgumentException ex) {
+                LOGGER.error("Failed to initialize screen resolution. Falling back.");
+            }
+        }
+        if (res == null) {
+            res = new GraphicResolution(800, 600, 32, 60);
+        }
 
         try {
             gameContainer = new AppGameContainer(game, res.getWidth(), res.getHeight(),
@@ -414,7 +428,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @return true in case the exit dialog is currently displayed
      */
-    protected static boolean getExitRequested() {
+    private static boolean getExitRequested() {
         return exitRequested;
     }
 
@@ -432,7 +446,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             System.exit(-1);
         }
 
-        return DirectoryManager.getInstance().getUserDirectory().getAbsolutePath();
+        final File userDirectory = DirectoryManager.getInstance().getUserDirectory();
+        assert userDirectory != null;
+        return userDirectory.getAbsolutePath();
     }
 
     /**
@@ -476,7 +492,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         System.out.println("Startup done.");
         LOGGER.info(getVersionText() + " started.");
         LOGGER.info("VM: " + System.getProperty("java.version"));
-        LOGGER.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System
+        LOGGER.info("OS: " + System.getProperty("os.name") + ' ' + System.getProperty("os.version") + ' ' + System
                 .getProperty("os.arch"));
 
         //java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(Level.SEVERE);
@@ -485,41 +501,41 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         JavaLogToLog4J.setup();
         StdOutToLog4J.setup();
         Log.setLogSystem(new LogSystem() {
-            private final Logger LOGGER = Logger.getLogger(IllaClient.class);
+            private final Logger log = Logger.getLogger(IllaClient.class);
 
             @Override
             public void error(final String s, final Throwable throwable) {
-                LOGGER.error(s, throwable);
+                log.error(s, throwable);
             }
 
             @Override
             public void error(final Throwable throwable) {
-                LOGGER.error("", throwable);
+                log.error("", throwable);
             }
 
             @Override
             public void error(final String s) {
-                LOGGER.error(s);
+                log.error(s);
             }
 
             @Override
             public void warn(final String s) {
-                LOGGER.warn(s);
+                log.warn(s);
             }
 
             @Override
             public void warn(final String s, final Throwable throwable) {
-                LOGGER.warn(s, throwable);
+                log.warn(s, throwable);
             }
 
             @Override
             public void info(final String s) {
-                LOGGER.info(s);
+                log.info(s);
             }
 
             @Override
             public void debug(final String s) {
-                LOGGER.debug(s);
+                log.debug(s);
             }
         });
     }
@@ -536,10 +552,10 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("debugLevel", 1);
         cfg.setDefault("showIDs", false);
         cfg.setDefault("soundOn", true);
-        cfg.setDefault("soundVolume", illarion.client.world.Player.MAX_CLIENT_VOL);
+        cfg.setDefault("soundVolume", Player.MAX_CLIENT_VOL);
         cfg.setDefault("musicOn", true);
-        cfg.setDefault("musicVolume", illarion.client.world.Player.MAX_CLIENT_VOL * 0.75f);
-        cfg.setDefault(illarion.client.util.ChatLog.CFG_TEXTLOG, true);
+        cfg.setDefault("musicVolume", Player.MAX_CLIENT_VOL * 0.75f);
+        cfg.setDefault(ChatLog.CFG_TEXTLOG, true);
         cfg.setDefault(CFG_FULLSCREEN, false);
         cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800, 600, 32, 60).toString());
         cfg.setDefault("savePassword", false);
@@ -552,7 +568,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("skillWindowPosX", "200px");
         cfg.setDefault("skillWindowPosY", "20px");
 
-        final java.awt.Toolkit awtDefaultToolkit = java.awt.Toolkit.getDefaultToolkit();
+        final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         cfg.setDefault("doubleClickInterval", (Integer) awtDefaultToolkit.getDesktopProperty("awt" +
                 ".multiClickInterval"));
 
@@ -571,14 +587,21 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                         Boolean.toString(cfg.getBoolean(CFG_FULLSCREEN)));
             }
         } else if (CFG_RESOLUTION.equals(topic)) {
-            final GraphicResolution res = new GraphicResolution(cfg.getString(CFG_RESOLUTION));
-            final boolean fullScreen = cfg.getBoolean(CFG_FULLSCREEN);
+            final String resolutionString = cfg.getString(CFG_RESOLUTION);
+            if (resolutionString == null) {
+                LOGGER.error("Failed reading new resolution.");
+                return;
+            }
             try {
+                final GraphicResolution res = new GraphicResolution(resolutionString);
+                final boolean fullScreen = cfg.getBoolean(CFG_FULLSCREEN);
                 gameContainer.setDisplayMode(res.getWidth(), res.getHeight(), fullScreen);
                 gameContainer.setTargetFrameRate(res.getRefreshRate());
                 MapDimensions.getInstance().reportScreenSize(gameContainer.getWidth(), gameContainer.getHeight());
-            } catch (SlickException e) {
-                LOGGER.error("Failed to apply graphic mode. New requested mode: " + res.toString());
+            } catch (@Nonnull final SlickException e) {
+                LOGGER.error("Failed to apply graphic mode: " + resolutionString);
+            } catch (@Nonnull final IllegalArgumentException ex) {
+                LOGGER.error("Failed to apply graphic mode: " + resolutionString);
             }
         }
     }

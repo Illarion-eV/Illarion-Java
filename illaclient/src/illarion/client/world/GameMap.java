@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -440,7 +440,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @param lowestLevel  the lowest level of tiles to add to the storage
      * @param highestLevel the highest level of tiles to add to the storage
      */
-    public void getTiles(@Nonnull final List<MapTile> storage, final int lowestLevel, final int highestLevel) {
+    public void getTiles(@Nonnull final Collection<MapTile> storage, final int lowestLevel, final int highestLevel) {
         mapLock.readLock().lock();
         try {
             tiles.forEachEntry(new TLongObjectProcedure<MapTile>() {
@@ -616,10 +616,6 @@ public final class GameMap implements LightingMap, Stoppable {
             if (newTile) {
                 //noinspection ReuseOfLocalVariable
                 tile = MapTile.create();
-            }
-
-            if (tile == null) {
-                throw new IllegalStateException("Failed updateing tile");
             }
 
             // update tile from update info

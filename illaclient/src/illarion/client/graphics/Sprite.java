@@ -598,7 +598,7 @@ public final class Sprite {
      */
     @SuppressWarnings("nls")
     public void draw(@Nonnull final Graphics g, final int x, final int y, final int w,
-                     final int h, final Color color, final int frame) {
+                     final int h, @Nullable final Color color, final int frame) {
 
         if (getFrames() == 0) {
             return;
@@ -645,7 +645,7 @@ public final class Sprite {
      * @param texture the image that is drawn
      * @param color   the color that is applied to the image
      */
-    private void drawImage(@Nonnull final Graphics g, final Image texture, final Color color) {
+    private void drawImage(@Nonnull final Graphics g, final Image texture, @Nullable final Color color) {
         final int xOff;
         final int yOff = getAlignOffsetY() - getOffsetY();
         if (isMirrored()) {
@@ -735,7 +735,7 @@ public final class Sprite {
      */
     @SuppressWarnings("nls")
     public void draw(@Nonnull final Graphics g, final int x, final int y,
-                     final Color color, final int frame, final float scale) {
+                     @Nullable final Color color, final int frame, final float scale) {
         if (getFrames() == 0) {
             return;
         }

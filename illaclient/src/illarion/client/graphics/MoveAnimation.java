@@ -1,22 +1,24 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute i and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- * 
- * The Illarion Client is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Client. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
+
+import org.apache.log4j.Logger;
 
 /**
  * Created: 23.08.2005 23:42:22
@@ -78,7 +80,7 @@ public class MoveAnimation extends AbstractAnimation {
 
     /**
      * Start a movement animation
-     * 
+     *
      * @param srcX
      * @param srcY
      * @param dstX
@@ -86,7 +88,7 @@ public class MoveAnimation extends AbstractAnimation {
      * @param speed
      */
     public void start(final int srcX, final int srcY, final int srcZ,
-        final int dstX, final int dstY, final int dstZ, final int speed) {
+                      final int dstX, final int dstY, final int dstZ, final int speed) {
         this.srcX = srcX;
         this.srcY = srcY;
         this.srcZ = srcZ;
@@ -111,14 +113,21 @@ public class MoveAnimation extends AbstractAnimation {
     }
 
     protected void start(final int srcX, final int srcY, final int dstX,
-        final int dstY, final int speed) {
+                         final int dstY, final int speed) {
         start(srcX, srcY, 0, dstX, dstY, 0, speed);
     }
+
+    private static final Logger LOGGER = Logger.getLogger(MoveAnimation.class);
 
     private void setPosition(final int x, final int y, final int z) {
         final int targetCnt = getTargetCount();
         for (int i = 0; i < targetCnt; i++) {
-            ((AnimatedMove) getAnimationTarget(i)).setPosition(x, y, z);
+            final AnimatedMove animation = (AnimatedMove) getAnimationTarget(i);
+            if (animation == null) {
+                LOGGER.error("Found NULL animation.");
+            } else {
+                animation.setPosition(x, y, z);
+            }
         }
     }
 }

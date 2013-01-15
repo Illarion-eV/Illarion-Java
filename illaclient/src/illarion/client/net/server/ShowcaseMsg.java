@@ -73,7 +73,6 @@ public final class ShowcaseMsg extends AbstractReply {
     @Override
     public boolean executeUpdate() {
         EventBus.publish(event);
-        event = null;
         return true;
     }
 
@@ -86,6 +85,6 @@ public final class ShowcaseMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("ItemContainer: " + event.getContainerId());
+        return toString("ItemContainer: " + ((event != null) ? event.getContainerId() : "NULL"));
     }
 }

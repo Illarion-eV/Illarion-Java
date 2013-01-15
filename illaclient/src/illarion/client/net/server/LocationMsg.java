@@ -82,14 +82,6 @@ public final class LocationMsg
     }
 
     /**
-     * Wait with processing this command until the game factory and the player is load for sure.
-     */
-    @Override
-    public boolean processNow() {
-        return World.getPlayer() != null;
-    }
-
-    /**
      * Get the data of this player location message as string.
      *
      * @return the string that contains the values that were decoded for this message

@@ -43,31 +43,35 @@ public final class FontLoader implements SlickRenderFontLoader {
     /**
      * The enumerator of available fonts.
      */
+    @SuppressWarnings("EnumeratedClassNamingConvention")
     public enum Fonts {
         /**
          * Menu font - a large font with fancy characters.
          */
-        menu("menuFont", "BlackChancery", 24.f, "normal"),
+        @SuppressWarnings("EnumeratedConstantNamingConvention")
+        Menu("menuFont", "BlackChancery", 24.f, "normal"),
 
         /**
          * Small font - a small font that is easily readable.
          */
-        small("smallFont", "Ubuntu", 14.f, "normal"),
+        Small("smallFont", "Ubuntu", 14.f, "normal"),
 
         /**
          * Text font - the default font for text, larger then the small font but also easily readable.
          */
-        text("textFont", "Ubuntu", 16.f, "normal"),
+        @SuppressWarnings("EnumeratedConstantNamingConvention")
+        Text("textFont", "Ubuntu", 16.f, "normal"),
 
         /**
-         * The font that is used for the chat log.
+         * The font that is used for the Chat log.
          */
-        chat("chatFont", "LiberationSansNarrow-Bold", 16.f, "normal"),
+        @SuppressWarnings("EnumeratedConstantNamingConvention")
+        Chat("chatFont", "LiberationSansNarrow-Bold", 16.f, "normal"),
 
         /**
          * Console font - mono-spaced font suiting console output.
          */
-        console("consoleFont", "Inconsolata", 14.f, "normal");
+        Console("consoleFont", "Inconsolata", 14.f, "normal");
 
         /**
          * The internal name of the font.
@@ -165,6 +169,7 @@ public final class FontLoader implements SlickRenderFontLoader {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
+    @SuppressWarnings("UnusedDeclaration")
     private static final Logger LOGGER = Logger.getLogger(FontLoader.class);
 
     /**
@@ -214,13 +219,16 @@ public final class FontLoader implements SlickRenderFontLoader {
      * @return the font itself
      * @throws SlickLoadFontException in case loading the font fails
      */
-    public SlickRenderFont getFont(@Nullable FontLoader.Fonts font) throws SlickLoadFontException {
+    public SlickRenderFont getFont(@Nullable final FontLoader.Fonts font) throws SlickLoadFontException {
+        final Fonts usedFont;
         if (font == null) {
-            font = FontLoader.Fonts.text;
+            usedFont = FontLoader.Fonts.Text;
+        } else {
+            usedFont = font;
         }
         SlickRenderFont renderableFont = fonts.get(font);
         if (renderableFont == null) {
-            renderableFont = loadFont(font);
+            renderableFont = loadFont(usedFont);
             fonts.put(font, renderableFont);
         }
 
@@ -287,22 +295,22 @@ public final class FontLoader implements SlickRenderFontLoader {
                             ResourceLoader.getResourceAsStream(FONT_ROOT
                                     + font.getFontTTFName()));
 
-            if (font.getFontStyle().equals("normal")) {
+            if ("normal".equals(font.getFontStyle())) {
                 javaFont = javaFont.deriveFont(Font.PLAIN, font.getFontSize());
-            } else if (font.getFontStyle().equals("italic")) {
+            } else if ("italic".equals(font.getFontStyle())) {
                 javaFont =
                         javaFont.deriveFont(Font.ITALIC, font.getFontSize());
-            } else if (font.getFontStyle().equals("bold")) {
+            } else if ("bold".equals(font.getFontStyle())) {
                 javaFont = javaFont.deriveFont(Font.BOLD, font.getFontSize());
             }
 
             final UnicodeFont uniFont = new UnicodeFont(javaFont);
             uniFont.addAsciiGlyphs();
             uniFont.addGlyphs("•");
+            //noinspection unchecked
             uniFont.getEffects().add(new ColorEffect());
             return new UnicodeSlickRenderFont(uniFont, javaFont);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new SlickLoadFontException(e);
         }
     }

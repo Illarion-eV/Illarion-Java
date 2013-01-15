@@ -52,6 +52,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -116,9 +117,12 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     private static class BuildWrapper {
         private final ControlBuilder builder;
         private final Element parent;
+
+        @Nullable
         private final DialogHandler.PostBuildTask task;
 
-        BuildWrapper(final ControlBuilder builder, final Element parent, final DialogHandler.PostBuildTask task) {
+        BuildWrapper(final ControlBuilder builder, final Element parent,
+                     @Nullable final DialogHandler.PostBuildTask task) {
             this.builder = builder;
             this.parent = parent;
             this.task = task;
@@ -221,7 +225,8 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
             return;
         }
 
-        if (craftingDialog.getSelectedCraftingItem().getItemIndex() == event.getSlot()) {
+        final CraftingItemEntry selectedEntry = craftingDialog.getSelectedCraftingItem();
+        if ((selectedEntry != null) && (selectedEntry.getItemIndex() == event.getSlot())) {
             final Element targetElement = craftingDialog.getCraftingItemDisplay();
             final Rectangle elementRectangle = new Rectangle();
             elementRectangle.set(targetElement.getX(), targetElement.getY(), targetElement.getWidth(),
@@ -236,7 +241,8 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
             return;
         }
 
-        if (craftingDialog.getSelectedCraftingItem().getItemIndex() == event.getSlot()) {
+        final CraftingItemEntry selectedEntry = craftingDialog.getSelectedCraftingItem();
+        if ((selectedEntry != null) && (selectedEntry.getItemIndex() == event.getSlot())) {
             final Element targetElement = craftingDialog.getIngredientItemDisplay(event.getSecondarySlot());
             final Rectangle elementRectangle = new Rectangle();
             elementRectangle.set(targetElement.getX(), targetElement.getY(), targetElement.getWidth(),
@@ -342,8 +348,13 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     @NiftyEventSubscriber(id = "merchantDialog")
     public void handleMerchantBuyEvent(final String topic, @Nonnull final DialogMerchantBuyEvent event) {
         final MerchantList list = World.getPlayer().getMerchantList();
-        final int index = event.getItem().getIndex();
 
+        if (list == null) {
+            LOGGER.error("Buying event received, but there is not merchant list.");
+            return;
+        }
+
+        final int index = event.getItem().getIndex();
         if (ItemCount.isGreaterOne(list.getItem(index).getBundleSize())) {
             list.buyItem(index);
         } else {
@@ -368,7 +379,12 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(id = "merchantDialog")
     public void handleMerchantCloseEvent(final String topic, final DialogMerchantCloseEvent event) {
-        World.getPlayer().getMerchantList().closeDialog();
+        final MerchantList list = World.getPlayer().getMerchantList();
+        if (list == null) {
+            LOGGER.error("Close merchant list received, but there is not opened merchant list.");
+        } else {
+            list.closeDialog();
+        }
     }
 
     @SuppressWarnings("MethodMayBeStatic")
@@ -463,12 +479,21 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
             updater.add(new Runnable() {
                 @Override
                 public void run() {
-                    final int selectedIndex = craftingDialog.getSelectedCraftingItem().getItemIndex();
+                    final CraftingItemEntry selectedItem = craftingDialog.getSelectedCraftingItem();
+
+                    final int selectedIndex;
+                    if (selectedItem != null) {
+                        selectedIndex = selectedItem.getItemIndex();
+                    } else {
+                        selectedIndex = 0;
+                    }
 
                     craftingDialog.clearItemList();
                     addCraftingItemsToDialog(event, craftingDialog);
 
-                    craftingDialog.selectItemByItemIndex(selectedIndex);
+                    if (selectedItem != null) {
+                        craftingDialog.selectItemByItemIndex(selectedIndex);
+                    }
                 }
             });
         } else {

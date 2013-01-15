@@ -546,20 +546,13 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      * @return true if the player can move the item around
      */
     public boolean canMoveItem() {
-        // only if items are present
-        if (items != null) {
-            final int top = items.size() - 1;
-            if (top >= 0) {
-                // only movable items
-                if (items.get(top).isMovable()) {
-                    // can only manipulate items around the character
-                    if (World.getPlayer().getLocation().isNeighbour(tileLocation)) {
-                        return true;
-                    }
-                }
-            }
+        if (World.getPlayer().getLocation().isNeighbour(tileLocation)) {
+            return false;
         }
-        return false;
+
+        final Item topItem = getTopItem();
+        return (topItem != null) && topItem.isMovable();
+
     }
 
     /**
