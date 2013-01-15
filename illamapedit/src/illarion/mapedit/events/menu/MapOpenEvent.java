@@ -29,7 +29,7 @@ public class MapOpenEvent {
     private final String path;
     private String name;
 
-    public MapOpenEvent(final String path, final String name) {
+    public MapOpenEvent(@Nullable final String path, final String name) {
 
         this.path = path;
         this.name = name;

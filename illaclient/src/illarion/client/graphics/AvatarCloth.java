@@ -24,6 +24,7 @@ import illarion.client.resources.Resource;
 import org.newdawn.slick.Color;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A avatar cloth definition stores all data about a cloth that are needed to
@@ -73,7 +74,7 @@ public final class AvatarCloth extends AbstractEntity implements Resource {
     public AvatarCloth(final int avatarId, final int itemID,
                        @Nonnull final String name, final int location, final int frames,
                        final int still, final int offX, final int offY, final boolean mirror,
-                       final Color baseCol) {
+                       @Nullable final Color baseCol) {
         super(itemID, CLOTH_PATH, name, frames, still, offX
                 + getAvatarOffsetX(avatarId), offY + getAvatarOffsetY(avatarId),
                 0, Sprite.HAlign.center, Sprite.VAlign.bottom, true, mirror,
@@ -88,11 +89,7 @@ public final class AvatarCloth extends AbstractEntity implements Resource {
         if (avatarId == 0) {
             return 0;
         }
-        final Avatar ava =
-                CharacterFactory.getInstance().getPrototype(avatarId);
-        if (ava == null) {
-            return 0;
-        }
+        final Avatar ava = CharacterFactory.getInstance().getPrototype(avatarId);
         return ava.getSprite().getOffsetX();
     }
 
@@ -100,11 +97,7 @@ public final class AvatarCloth extends AbstractEntity implements Resource {
         if (avatarId == 0) {
             return 0;
         }
-        final Avatar ava =
-                CharacterFactory.getInstance().getPrototype(avatarId);
-        if (ava == null) {
-            return 0;
-        }
+        final Avatar ava = CharacterFactory.getInstance().getPrototype(avatarId);
         return ava.getSprite().getOffsetY();
     }
 

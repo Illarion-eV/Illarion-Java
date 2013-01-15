@@ -29,6 +29,7 @@ import org.newdawn.slick.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.RegEx;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -94,13 +95,11 @@ public final class ChatHandler {
          * Constructor for the speech mode that stores the color of the mode.
          *
          * @param modeColor  the color of the speech mode
-         * @param findRegexp the regular expression used to find out if the line
-         *                   is fits this chat type or not
-         * @param replace    the regular expression needed to isolate the actual
-         *                   text
+         * @param findRegexp the regular expression used to find out if the line is fits this chat type or not
+         * @param replace    the regular expression needed to isolate the actual text
          */
-        private SpeechMode(final Color modeColor, @Nullable final String findRegexp,
-                           final String replace) {
+        SpeechMode(final Color modeColor, @Nullable @RegEx final String findRegexp,
+                   @Nullable final String replace) {
             color = modeColor;
             if (findRegexp == null) {
                 regexp = null;
@@ -163,6 +162,7 @@ public final class ChatHandler {
 
         switch (receivedMode) {
             case whisper:
+                @SuppressWarnings("ConstantConditions")
                 final Matcher oocMatcher = SpeechMode.ooc.getRegexp().matcher(text);
                 if (oocMatcher.find()) {
                     mode = SpeechMode.ooc;
@@ -177,6 +177,7 @@ public final class ChatHandler {
                 resultText = text.trim();
                 break;
             default:
+                @SuppressWarnings("ConstantConditions")
                 final Matcher emoteMatcher = SpeechMode.emote.getRegexp().matcher(text);
                 if (emoteMatcher.find()) {
                     mode = SpeechMode.emote;

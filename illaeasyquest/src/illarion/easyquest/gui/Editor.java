@@ -283,8 +283,8 @@ public final class Editor extends mxGraphComponent {
                     TriggerTemplates.getInstance().getTemplate(trigger.getType());
 
             final String scriptName = "trigger" + i;
-            final mxICell source = (mxCell) edge.getSource();
-            final mxICell target = (mxCell) edge.getTarget();
+            final mxICell source = edge.getSource();
+            final mxICell target = edge.getTarget();
             final Status sourceState = (Status) source.getValue();
             final Status targetState = (Status) target.getValue();
             final String sourceId = sourceState.isStart() ? "0" : source.getId();

@@ -18,36 +18,28 @@
  */
 package illarion.easyquest.quest;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.io.Serializable;
+import java.util.Arrays;
 
 @SuppressWarnings("serial")
 public class Condition implements Serializable {
-
-    @Nullable
-    private String type;
-    @Nullable
+    @Nonnull
+    private final String type;
+    @Nonnull
     private Object[] parameters;
 
-    public Condition() {
-        type = null;
-        parameters = null;
-    }
-
-    public void setType(String type) {
+    public Condition(@Nonnull final String type, @Nonnull final Object[] parameters) {
         this.type = type;
+        this.parameters = Arrays.copyOf(parameters, parameters.length);
     }
 
-    @Nullable
+    @Nonnull
     public String getType() {
         return type;
     }
 
-    public void setParameters(Object[] parameters) {
-        this.parameters = parameters;
-    }
-
-    @Nullable
+    @Nonnull
     public Object[] getParameters() {
         return parameters;
     }

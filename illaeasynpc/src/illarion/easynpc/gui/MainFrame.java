@@ -359,7 +359,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                 try {
                     SubstanceLookAndFeel.setSkin(Config.getInstance().getLookAndFeel());
                 } catch (@Nonnull final Exception e) {
-                    SubstanceLookAndFeel.setSkin(Config.defaultLookAndFeel);
+                    SubstanceLookAndFeel.setSkin(Config.DEFAULT_LOOK_AND_FEEL);
                 }
 
                 instance = new MainFrame();

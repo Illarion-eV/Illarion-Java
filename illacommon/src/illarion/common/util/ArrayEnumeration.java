@@ -35,7 +35,7 @@ public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {
     /**
      * The array this enumerator is using.
      */
-    @Nullable
+    @Nonnull
     private final T[] array;
 
     /**
@@ -69,12 +69,8 @@ public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {
      * @param length      the amount of elements this enumerator shall enumerate
      */
     @SuppressWarnings("nls")
-    public ArrayEnumeration(@Nullable final T[] targetArray, final int startIndex,
+    public ArrayEnumeration(@Nonnull final T[] targetArray, final int startIndex,
                             final int length) {
-        if (targetArray == null) {
-            throw new IllegalArgumentException(
-                    "The target array must not be NULL.");
-        }
         if ((startIndex < 0) || (startIndex >= targetArray.length)) {
             throw new IllegalArgumentException(
                     "The starting index is smaller then 0 or larger then the length of the array.");
@@ -91,7 +87,7 @@ public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {
 
     @Override
     public boolean hasMoreElements() {
-        return (currentIndex <= lastIndex);
+        return currentIndex <= lastIndex;
     }
 
     @Override
@@ -127,7 +123,6 @@ public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {
     @SuppressWarnings("nls")
     @Override
     public void remove() {
-        throw new UnsupportedOperationException(
-                "Removing array entries is not supported");
+        throw new UnsupportedOperationException("Removing array entries is not supported");
     }
 }

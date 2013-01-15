@@ -99,7 +99,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * set of information about the description of the characters avatar in
      * both languages and the visibility modifier information to other classes.
      */
-    @Nullable
+    @Nonnull
     private final transient AvatarInfo info;
 
     /**
@@ -144,14 +144,14 @@ public final class Avatar extends AbstractEntity implements Resource {
      * Stores if the name shall be rendered or not. It is checked at every
      * update if this flag is valid or not.
      */
-    private boolean renderName = false;
+    private boolean renderName;
 
     /**
      * The target light of this avatar. In case the light is set to be animated
      * the color this avatar is rendered with will approach this target light.
      */
-    @Nullable
-    private transient Color targetLight;
+    @Nonnull
+    private Color targetLight;
 
     /**
      * Create animated avatar for a character.
@@ -181,16 +181,12 @@ public final class Avatar extends AbstractEntity implements Resource {
     @SuppressWarnings("nls")
     public Avatar(final int avatarID, @Nonnull final String resName,
                   final int frames, final int still, final int offX, final int offY,
-                  final int shadowOffset, @Nullable final AvatarInfo avatarInfo,
+                  final int shadowOffset, @Nonnull final AvatarInfo avatarInfo,
                   final boolean mirror, final Color color, final int dir) {
         super(avatarID, CHAR_PATH, resName, frames, still, offX, offY, shadowOffset, Sprite.HAlign.center,
                 Sprite.VAlign.bottom, true, mirror, color);
-
-        if (avatarInfo == null) {
-            throw new IllegalArgumentException("Avatar informations may not be NULL");
-        }
-
         final Sprite attackMarkSprite = GuiImageFactory.getInstance().getObject("attackMarker");
+        assert attackMarkSprite != null;
         attackMarkSprite.setAlign(Sprite.HAlign.center, Sprite.VAlign.middle);
         attackMark = new AvatarMarker(5, attackMarkSprite, 0, Color.white);
 
@@ -364,7 +360,11 @@ public final class Avatar extends AbstractEntity implements Resource {
         }
 
         if (event.getKey() == 1) {
-            CombatHandler.getInstance().toggleAttackOnCharacter(parentChar);
+            if (parentChar == null) {
+                LOGGER.error("Processing event on avatar that is not linked to a real character.");
+            } else {
+                CombatHandler.getInstance().toggleAttackOnCharacter(parentChar);
+            }
             return true;
         }
         return false;
@@ -379,7 +379,7 @@ public final class Avatar extends AbstractEntity implements Resource {
     private boolean isMouseInInteractiveOrOnTag(@Nonnull final AbstractMouseLocationEvent event) {
         final int mouseXonDisplay = event.getX() + Camera.getInstance().getViewportOffsetX();
         final int mouseYonDisplay = event.getY() + Camera.getInstance().getViewportOffsetY();
-        if (renderName && (tag != null) && tag.getLastDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay)) {
+        if (renderName && tag.getLastDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay)) {
             return true;
         }
 
@@ -408,7 +408,7 @@ public final class Avatar extends AbstractEntity implements Resource {
         // draw the clothes
         clothRender.draw(g);
 
-        if (renderName && (tag != null)) {
+        if (renderName) {
             tag.draw(g);
         }
 
@@ -422,7 +422,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      * @return true in case the animation is available
      */
     public boolean getAnimationAvaiable(final int animationID) {
-        return info.animationAvaiable(animationID);
+        return info.isAnimationAvailable(animationID);
     }
 
     /**
@@ -686,7 +686,7 @@ public final class Avatar extends AbstractEntity implements Resource {
         clothRender.update(container, delta);
 
         final Color locLight = getLight();
-        if (animateLight && (locLight != null) && !AnimationUtility.approach(locLight, targetLight, delta)) {
+        if (animateLight && !AnimationUtility.approach(locLight, targetLight, delta)) {
             targetLight = locLight;
             animateLight = false;
         }
@@ -696,12 +696,12 @@ public final class Avatar extends AbstractEntity implements Resource {
         renderName = isMouseInInteractionRect(input) || (input.isKeyDown(Input.KEY_RALT) && (getAlpha() >
                 HIDE_NAME_ALPHA));
 
-        if ((tag != null) && renderName) {
+        if (renderName) {
             tag.setDisplayLocation(getDisplayX(), getDisplayY());
             tag.update(container, delta);
         }
 
-        if ((renderName != oldRenderName) && (tag != null)) {
+        if ((renderName != oldRenderName)) {
             Camera.getInstance().markAreaDirty(tag.getLastDisplayRect());
             oldRenderName = renderName;
         }

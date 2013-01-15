@@ -21,24 +21,22 @@ package illarion.client.resources;
 import illarion.client.graphics.Avatar;
 import illarion.client.graphics.AvatarCloth;
 import illarion.client.graphics.AvatarClothManager;
-import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class is not real resource factory. Its a relay that forwards the cloth
- * objects to the different factories that are assigned to the avatars.
+ * This class is not real resource factory. Its a relay that forwards the cloth objects to the different factories
+ * that are assigned to the avatars.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ClothFactoryRelay implements ResourceFactory<AvatarCloth> {
     /**
-     * This list stores the avatars that received clothes. This is needed to
-     * trigger the cleanup properly.
+     * This list stores the avatars that received clothes. This is needed to trigger the cleanup properly.
      */
-    @Nullable
+    @Nonnull
     private List<Avatar> usedAvatars;
 
     /**
@@ -46,7 +44,7 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarCloth> {
      */
     @Override
     public void init() {
-        usedAvatars = FastTable.newInstance();
+        usedAvatars = new ArrayList<Avatar>();
     }
 
     /**
@@ -58,19 +56,15 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarCloth> {
             ava.getClothes().finish();
         }
         usedAvatars.clear();
-        FastTable.recycle((FastTable<Avatar>) usedAvatars);
-        usedAvatars = null;
     }
 
     /**
-     * Store a resource in the factory. In this case the resource is forwarded
-     * to the factory that is actually in charge of maintaining this resource.
+     * Store a resource in the factory. In this case the resource is forwarded to the factory that is actually in
+     * charge of maintaining this resource.
      */
     @Override
     public void storeResource(@Nonnull final AvatarCloth resource) {
-        final Avatar parentAva =
-                CharacterFactory.getInstance()
-                        .getPrototype(resource.getAvatarId());
+        final Avatar parentAva = CharacterFactory.getInstance().getPrototype(resource.getAvatarId());
         final AvatarClothManager manager = parentAva.getClothes();
         manager.addCloth(resource.getLocationId(), resource);
 

@@ -70,7 +70,7 @@ final class MainMenu extends RibbonApplicationMenu {
         final RibbonApplicationMenuEntrySecondary[] workingEntries =
                 new RibbonApplicationMenuEntrySecondary[oldFiles.length];
         int entryIndex = 0;
-        for (final File openFile : oldFiles) {
+        for (@Nullable final File openFile : oldFiles) {
             if (openFile == null) {
                 continue;
             }

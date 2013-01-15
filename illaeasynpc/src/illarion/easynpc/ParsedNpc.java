@@ -617,7 +617,7 @@ public final class ParsedNpc {
      *
      * @param lang the language this character is speaking by default
      */
-    public void setDefaultLanguage(final CharacterLanguage lang) {
+    public void setDefaultLanguage(@Nullable final CharacterLanguage lang) {
         defaultLanguage = lang;
     }
 

@@ -22,6 +22,9 @@ import illarion.client.util.ChatHandler;
 import illarion.client.world.Char;
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This event is generated once a character is talking on the map. Its produces by the chat handler and contains all
  * required information in order to display the talked text properly.
@@ -29,14 +32,20 @@ import illarion.common.types.Location;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CharTalkingEvent {
+    @Nonnull
     private final ChatHandler.SpeechMode mode;
+    @Nullable
     private final Char character;
+    @Nonnull
     private final Location location;
+    @Nonnull
     private final String text;
+    @Nonnull
     private final String loggedText;
 
-    public CharTalkingEvent(final ChatHandler.SpeechMode talkingMode, final Char talkingCharacter,
-                            final Location talkingAt, final String talkingText, final String loggedTalkingText) {
+    public CharTalkingEvent(@Nonnull final ChatHandler.SpeechMode talkingMode, @Nullable final Char talkingCharacter,
+                            @Nonnull final Location talkingAt, @Nonnull final String talkingText,
+                            @Nonnull final String loggedTalkingText) {
         mode = talkingMode;
         character = talkingCharacter;
         location = talkingAt;
@@ -44,22 +53,27 @@ public final class CharTalkingEvent {
         loggedText = loggedTalkingText;
     }
 
+    @Nonnull
     public ChatHandler.SpeechMode getMode() {
         return mode;
     }
 
+    @Nullable
     public Char getCharacter() {
         return character;
     }
 
+    @Nonnull
     public Location getLocation() {
         return location;
     }
 
+    @Nonnull
     public String getText() {
         return text;
     }
 
+    @Nonnull
     public String getLoggedText() {
         return loggedText;
     }

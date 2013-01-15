@@ -33,7 +33,7 @@ public final class BookTitlePage {
     /**
      * The title that is displayed on this title page.
      */
-    @Nullable
+    @Nonnull
     private final String title;
 
     /**
@@ -48,7 +48,7 @@ public final class BookTitlePage {
      * @param title  the title of the book
      * @param author the author of the book
      */
-    public BookTitlePage(final String title, final String author) {
+    public BookTitlePage(@Nonnull final String title, @Nullable final String author) {
         this.title = title;
         this.author = author;
     }
@@ -70,6 +70,10 @@ public final class BookTitlePage {
             } else if ("author".equals(child.getNodeName())) {
                 author = getNodeValue(child.getFirstChild()).trim().replaceAll("\\s+", " ");
             }
+        }
+
+        if (title == null) {
+            throw new IllegalStateException("No title set.");
         }
 
         this.title = title;
@@ -98,7 +102,7 @@ public final class BookTitlePage {
      *
      * @return the book title
      */
-    @Nullable
+    @Nonnull
     public String getTitle() {
         return title;
     }

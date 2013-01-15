@@ -66,6 +66,7 @@ public final class NiftySelectItem extends SelectionItem implements SelectListEn
      *
      * @return the Nifty image
      */
+    @Nullable
     @Override
     public NiftyImage getItemImage() {
         return itemImage;

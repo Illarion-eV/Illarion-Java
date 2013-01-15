@@ -357,11 +357,8 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * @return the cleaned name of the resource
      * @throws NullPointerException in case the resource parameter is {@code null}
      */
-    @Nullable
-    private static String cleanResourceName(@Nullable final String resource) {
-        if (resource == null) {
-            throw new NullPointerException("resource must not be NULL");
-        }
+    @Nonnull
+    private static String cleanResourceName(@Nonnull final String resource) {
         if (resource.endsWith(".png") || resource.endsWith(".xml")) {
             return resource.substring(0, resource.length() - 4);
         }

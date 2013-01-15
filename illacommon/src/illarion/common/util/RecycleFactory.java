@@ -263,6 +263,7 @@ public abstract class RecycleFactory<T extends RecycleObject> {
      * @return the factory of the prototype
      */
     @SuppressWarnings("nls")
+    @Nonnull
     private PrototypeFactory<T> getFactory(final int id) {
         PrototypeFactory<T> factory = storage.get(id);
 

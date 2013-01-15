@@ -165,16 +165,13 @@ public final class CharacterLoader extends AbstractResourceLoader<Avatar> implem
         final int direction = loader.getInt(TB_DIRECTION);
         final int appearance = loader.getInt(TB_APPEARANCE);
         final int visibleMod = loader.getInt(TB_VISIBLE);
-        final String german = loader.getString(TB_GERMAN);
-        final String english = loader.getString(TB_ENGLISH);
         final int animationID = loader.getInt(TB_ANIMATION);
         final int skinRed = loader.getInt(TB_RED);
         final int skinGreen = loader.getInt(TB_GREEN);
         final int skinBlue = loader.getInt(TB_BLUE);
         // final int skinAlpha = loader.getInt(TB_ALPHA);
 
-        final AvatarInfo info =
-                AvatarInfo.get(appearance, visibleMod, german, english);
+        final AvatarInfo info = AvatarInfo.getInstance(appearance, visibleMod);
         info.reportAnimation(animationID);
 
         final Color tmp_color = new Color(skinRed, skinGreen, skinBlue, 255);

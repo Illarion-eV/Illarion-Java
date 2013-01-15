@@ -183,7 +183,7 @@ public final class TileUpdate {
      *
      * @param newMapTile the map tile that was created by this update
      */
-    public void setMapTile(final MapTile newMapTile) {
+    public void setMapTile(@Nullable final MapTile newMapTile) {
         mapTile = newMapTile;
     }
 

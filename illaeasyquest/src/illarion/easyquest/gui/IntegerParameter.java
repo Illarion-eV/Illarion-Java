@@ -53,6 +53,6 @@ public class IntegerParameter extends JFormattedTextField implements Parameter {
 
     @Nonnull
     public Object getParameter() {
-        return (Long) getValue();
+        return getValue();
     }
 }

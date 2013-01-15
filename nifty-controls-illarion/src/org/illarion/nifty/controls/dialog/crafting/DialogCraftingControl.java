@@ -59,9 +59,12 @@ import java.util.regex.Pattern;
  * @deprecated Use {@link DialogCrafting} to access the dialog
  */
 @Deprecated
-public class DialogCraftingControl extends WindowControl
-        implements DialogCrafting, EventTopicSubscriber<ButtonClickedEvent> {
+public class DialogCraftingControl extends WindowControl implements DialogCrafting,
+        EventTopicSubscriber<ButtonClickedEvent> {
 
+    /**
+     * The size of the slot to show the ingredient in pixels.
+     */
     private static final int INGREDIENT_IMAGE_SIZE = 32;
 
     /**
@@ -224,6 +227,8 @@ public class DialogCraftingControl extends WindowControl
         currentScreen = screen;
 
         dialogId = Integer.parseInt(controlDefinitionAttributes.getWithDefault("dialogId", "-1"));
+
+        nifty.subscribeAnnotations(this);
 
         getAmountTextField().enableInputFilter(new TextFieldInputCharFilter() {
             @Override

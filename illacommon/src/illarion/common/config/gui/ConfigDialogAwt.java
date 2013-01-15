@@ -217,8 +217,7 @@ public final class ConfigDialogAwt extends Dialog {
                 con.fill = GridBagConstraints.HORIZONTAL;
                 con.anchor = GridBagConstraints.WEST;
 
-                currentPanel.add(new Label(msgs.getMessage(entry.getTitle())),
-                        con);
+                currentPanel.add(new Label(msgs.getMessage(entry.getTitle())), con);
 
                 con.gridwidth = GridBagConstraints.REMAINDER;
                 con.gridheight = 1;

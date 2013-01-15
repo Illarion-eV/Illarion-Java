@@ -609,7 +609,7 @@ public final class Item extends AbstractEntity implements Resource {
      * @param color the instance of sprite color that is used as base color in
      *              case paperdolling is done with this item
      */
-    public void setPaperdollingColor(final Color color) {
+    public void setPaperdollingColor(@Nullable final Color color) {
         paperdollingColor = color;
     }
 

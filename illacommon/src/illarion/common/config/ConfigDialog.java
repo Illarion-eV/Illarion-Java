@@ -76,7 +76,7 @@ public final class ConfigDialog {
          * @param configEntry the configuration entry that defines what value is
          *                    controlled how
          */
-        public Entry(final String entryTitle, final ConfigEntry configEntry) {
+        public Entry(@Nullable final String entryTitle, @Nullable final ConfigEntry configEntry) {
             title = entryTitle;
             entry = configEntry;
         }
@@ -107,7 +107,7 @@ public final class ConfigDialog {
          *
          * @param configEntry the entry that is displayed
          */
-        public void setEntry(final ConfigEntry configEntry) {
+        public void setEntry(@Nullable final ConfigEntry configEntry) {
             entry = configEntry;
         }
 
@@ -116,7 +116,7 @@ public final class ConfigDialog {
          *
          * @param entryTitle the title of the entry
          */
-        public void setTitle(final String entryTitle) {
+        public void setTitle(@Nullable final String entryTitle) {
             title = entryTitle;
         }
     }

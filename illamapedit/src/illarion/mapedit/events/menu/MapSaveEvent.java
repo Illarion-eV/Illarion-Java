@@ -29,7 +29,7 @@ public class MapSaveEvent {
     @Nullable
     private final File path;
 
-    public MapSaveEvent(final File path) {
+    public MapSaveEvent(@Nullable final File path) {
 
         this.path = path;
     }

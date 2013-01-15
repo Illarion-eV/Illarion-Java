@@ -131,9 +131,7 @@ public class ConditionPanel extends JPanel {
             }
 
 
-            condition = new Condition();
-            condition.setType(template.getName());
-            condition.setParameters(parameters);
+            condition = new Condition(template.getName(), parameters);
         }
         return condition;
     }

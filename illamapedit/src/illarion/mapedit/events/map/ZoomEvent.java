@@ -33,7 +33,7 @@ public class ZoomEvent {
     @Nullable
     private final Vector2i pos;
 
-    public ZoomEvent(final float value, final Vector2i pos) {
+    public ZoomEvent(final float value, @Nullable final Vector2i pos) {
         this.pos = pos;
         original = false;
         this.value = value;
