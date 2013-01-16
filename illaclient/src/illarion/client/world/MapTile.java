@@ -158,6 +158,9 @@ public final class MapTile implements AlphaChangeListener {
      */
     @Nonnull
     public Color getLight() {
+        if (removedTile) {
+            LOGGER.warn("Fetching light of a removed tile.");
+        }
         return light;
     }
 
@@ -168,6 +171,10 @@ public final class MapTile implements AlphaChangeListener {
      */
     @Nullable
     public Item getTopItem() {
+        if (removedTile) {
+            LOGGER.warn("Requested top item of a removed tile.");
+            return null;
+        }
         final List<Item> localItems = items;
         if ((localItems == null) || localItems.isEmpty()) {
             return null;
@@ -182,18 +189,32 @@ public final class MapTile implements AlphaChangeListener {
      */
     @Override
     public void alphaChanged(final int from, final int to) {
+        if (removedTile) {
+            LOGGER.warn("Updating alpha of a changed tile");
+            return;
+        }
         if (((from == 255) && (to < from)) || ((from < to) && (to == 255))) {
             World.getMap().updateTile(this);
         }
     }
 
     /**
+     * Once this value is set {@code true} the tile is assumed to be removed.
+     */
+    private boolean removedTile;
+
+    /**
      * Remove the light source of this tile in case there is any.
      */
-    public void cleanupLight() {
+    public void markAsRemoved() {
+        removedTile = true;
         if (lightSrc != null) {
             World.getLights().remove(lightSrc);
             LightSource.releaseLight(lightSrc);
+        }
+        clampItems(0);
+        if (tile != null) {
+            tile.recycle();
         }
     }
 
@@ -219,6 +240,10 @@ public final class MapTile implements AlphaChangeListener {
     @SuppressWarnings("nls")
     public void changeTopItem(@Nonnull final ItemId oldItemId, @Nonnull final ItemId itemId,
                               @Nonnull final ItemCount count) {
+        if (removedTile) {
+            LOGGER.warn("Changing top item of removed tile requested.");
+            return;
+        }
         if (items == null) {
             LOGGER.warn("There are no items on this field. Change top impossible.");
             return;
@@ -242,14 +267,18 @@ public final class MapTile implements AlphaChangeListener {
      */
     @SuppressWarnings("nls")
     public void removeTopItem() {
+        if (removedTile) {
+            LOGGER.warn("Remove top item of removed tile requested.");
+            return;
+        }
         final List<Item> localItems = items;
         if (localItems == null) {
-            LOGGER.warn("error: remove top item on empty field");
+            LOGGER.warn("Remove top item on empty field");
             return;
         }
         final int pos = localItems.size() - 1;
         if (pos < 0) {
-            LOGGER.warn("error: remove top item on empty field");
+            LOGGER.warn("Remove top item on empty field");
             return;
         }
 
@@ -278,6 +307,10 @@ public final class MapTile implements AlphaChangeListener {
      * @param count  the count value of the item that is created
      */
     public void addItem(@Nonnull final ItemId itemId, @Nonnull final ItemCount count) {
+        if (removedTile) {
+            LOGGER.warn("Trying to add a item to a removed tile.");
+            return;
+        }
         int pos = 0;
         if (items != null) {
             pos = items.size();
@@ -350,7 +383,7 @@ public final class MapTile implements AlphaChangeListener {
                 throw new IllegalArgumentException("update behind end of items list");
             }
         }
-        // termporarily disable all numbers
+        // temporarily disable all numbers
         item.enableNumbers(false);
     }
 
@@ -389,6 +422,10 @@ public final class MapTile implements AlphaChangeListener {
      * @return true if the tile is hidden
      */
     public boolean isHidden() {
+        if (removedTile) {
+            LOGGER.warn("Checking hidden value of a removed tile.");
+            return false;
+        }
         return hidden;
     }
 
@@ -398,6 +435,10 @@ public final class MapTile implements AlphaChangeListener {
      * @return true if the tile is obstructed
      */
     public boolean isObstructed() {
+        if (removedTile) {
+            LOGGER.warn("Checking obstruction of a removed tile.");
+            return false;
+        }
         return obstructed;
     }
 
@@ -460,6 +501,10 @@ public final class MapTile implements AlphaChangeListener {
      * @param color the light that shall be added
      */
     public void addLight(@Nonnull final Color color) {
+        if (removedTile) {
+            LOGGER.warn("Adding light to a removed tile.");
+            return;
+        }
         tmpLight.add(color);
     }
 
@@ -469,6 +514,10 @@ public final class MapTile implements AlphaChangeListener {
      * @return true if the player can move the item around
      */
     public boolean canMoveItem() {
+        if (removedTile) {
+            LOGGER.warn("Checking a removed tile for a movable item.");
+            return false;
+        }
         if (!World.getPlayer().getLocation().isNeighbour(tileLocation)) {
             return false;
         }
@@ -484,6 +533,10 @@ public final class MapTile implements AlphaChangeListener {
      * @return identifier how much of the tile is hidden
      */
     public int getCoverage() {
+        if (removedTile) {
+            LOGGER.warn("Checking the coverage of a removed tile");
+            return 0;
+        }
         if (losDirty) {
             obstruction = 0;
             if (items != null) {
@@ -503,15 +556,22 @@ public final class MapTile implements AlphaChangeListener {
      * @return the elevation value
      */
     public int getElevation() {
+        if (removedTile) {
+            LOGGER.warn("Checking the elevation of a removed tile.");
+        }
         return elevation;
     }
 
     /**
-     * Check from what sides the tile acceps light.
+     * Check from what sides the tile accepts light.
      *
      * @return the identifier for the side the tile accepts light from
      */
     public int getFace() {
+        if (removedTile) {
+            LOGGER.warn("Checking the facing flag of a removed tile.");
+            return 0;
+        }
         // empty tile accept all light
         if ((items == null) || items.isEmpty()) {
             return 0;
@@ -528,6 +588,9 @@ public final class MapTile implements AlphaChangeListener {
      */
     @Nonnull
     public InteractiveMapTile getInteractive() {
+        if (removedTile) {
+            LOGGER.warn("Request a interactive reference to a removed tile.");
+        }
         return new InteractiveMapTile(this);
     }
 
@@ -537,6 +600,10 @@ public final class MapTile implements AlphaChangeListener {
      * @return the costs for moving over this tile
      */
     public int getMovementCost() {
+        if (removedTile) {
+            LOGGER.warn("Checking the movement costs on a removed tile.");
+            return Integer.MAX_VALUE;
+        }
         final Tile localTile = tile;
         if (localTile == null) {
             return Integer.MAX_VALUE;
@@ -550,6 +617,10 @@ public final class MapTile implements AlphaChangeListener {
      * @return the background music track for this tile
      */
     public int getTileMusic() {
+        if (removedTile) {
+            LOGGER.warn("Requested the music ID of a removed tile.");
+            return 0;
+        }
         return musicId;
     }
 
@@ -559,6 +630,10 @@ public final class MapTile implements AlphaChangeListener {
      * @return {@code true} in case the tile is on the same level as the player
      */
     public boolean isAtPlayerLevel() {
+        if (removedTile) {
+            LOGGER.warn("Checking if a removed tile is at the level of the player.");
+            return false;
+        }
         return World.getPlayer().isBaseLevel(getLocation());
     }
 
@@ -569,6 +644,9 @@ public final class MapTile implements AlphaChangeListener {
      */
     @Nonnull
     public Location getLocation() {
+        if (removedTile) {
+            LOGGER.warn("Requesting the location of a removed tile");
+        }
         return tileLocation;
     }
 
@@ -578,6 +656,10 @@ public final class MapTile implements AlphaChangeListener {
      * @return true in case it is not possible to walk over this tile
      */
     public boolean isBlocked() {
+        if (removedTile) {
+            LOGGER.warn("Checking a removed tile if its blocked.");
+            return true;
+        }
         if (isObstacle()) {
             return true;
         }
@@ -592,6 +674,10 @@ public final class MapTile implements AlphaChangeListener {
      * @return true if the tile is obstacle
      */
     public boolean isObstacle() {
+        if (removedTile) {
+            LOGGER.warn("Checking a removed tile if its a obstacle.");
+            return true;
+        }
         final Tile localTile = tile;
         if (localTile == null) {
             return true;
@@ -621,6 +707,9 @@ public final class MapTile implements AlphaChangeListener {
      * @return <code>true</code> in case the tile is opaque and everything below is hidden entirely.
      */
     public boolean isOpaque() {
+        if (removedTile) {
+            LOGGER.warn("Checking opaque value of a removed tile.");
+        }
         final Tile localTile = tile;
         return (localTile != null) && localTile.isOpapue();
     }
@@ -633,6 +722,10 @@ public final class MapTile implements AlphaChangeListener {
      * @param ambientLight the ambient light from the weather
      */
     public void renderLight(final float factor, @Nonnull final Color ambientLight) {
+        if (removedTile) {
+            LOGGER.warn("Render light of a removed tile.");
+            return;
+        }
         tmpLight.scale(factor);
         tmpLight.add(ambientLight);
         light.a = tmpLight.a;
@@ -647,6 +740,10 @@ public final class MapTile implements AlphaChangeListener {
      * @param hide true if the tile shall be hidden
      */
     public void setHidden(final boolean hide) {
+        if (removedTile) {
+            LOGGER.warn("Update hidden flag of a removed tile.");
+            return;
+        }
         if (hidden == hide) {
             return;
         }
@@ -699,6 +796,10 @@ public final class MapTile implements AlphaChangeListener {
      * @param obstruct true if the tile shall be marked as obstructed
      */
     public void setObstructed(final boolean obstruct) {
+        if (removedTile) {
+            LOGGER.warn("Update obstruction flag of a removed tile.");
+            return;
+        }
         if (obstructed == obstruct) {
             return;
         }
@@ -712,6 +813,10 @@ public final class MapTile implements AlphaChangeListener {
      * @param effectId the ID of the effect
      */
     public void showEffect(final int effectId) {
+        if (removedTile) {
+            LOGGER.warn("Show a graphics effect on a removed tile.");
+            return;
+        }
         final Effect effect = Effect.create(effectId);
         effect.show(tileLocation);
     }
@@ -722,6 +827,10 @@ public final class MapTile implements AlphaChangeListener {
      * @param update the update data the server send
      */
     public void update(@Nonnull final TileUpdate update) {
+        if (removedTile) {
+            LOGGER.warn("Process update of a removed tile.");
+            return;
+        }
         // update tile
         setTileId(update.getTileId());
 
@@ -741,6 +850,10 @@ public final class MapTile implements AlphaChangeListener {
      * @param id the new ID if the tile
      */
     public void setTileId(final int id) {
+        if (removedTile) {
+            LOGGER.warn("Change the ID of a removed tile.");
+            return;
+        }
         losDirty = true;
         resetLight();
 
@@ -774,6 +887,9 @@ public final class MapTile implements AlphaChangeListener {
      * Reset the light value back to 0.
      */
     public void resetLight() {
+        if (removedTile) {
+            LOGGER.warn("Resetting the light of a removed tile.");
+        }
         tmpLight.scale(0.f);
     }
 
@@ -817,7 +933,7 @@ public final class MapTile implements AlphaChangeListener {
         final List<Item> localItems = items;
         final int amount = localItems.size() - itemNumber;
         for (int i = 0; i < amount; i++) {
-            // recylce the removed items
+            // recycle the removed items
             final Item item = localItems.get(itemNumber);
             item.recycle();
 
@@ -841,6 +957,10 @@ public final class MapTile implements AlphaChangeListener {
      */
     public void updateItems(final int itemNumber, @Nonnull final List<ItemId> itemId,
                             @Nonnull final List<ItemCount> itemCount) {
+        if (removedTile) {
+            LOGGER.warn("Update items of a removed tile requested.");
+            return;
+        }
         updateItemList(itemNumber, itemId, itemCount);
         itemChanged();
     }

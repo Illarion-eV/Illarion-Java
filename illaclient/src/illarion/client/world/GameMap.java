@@ -447,7 +447,7 @@ public final class GameMap implements LightingMap, Stoppable {
         }
 
         if (removedTile != null) {
-            removedTile.cleanupLight();
+            removedTile.markAsRemoved();
         }
     }
 
@@ -581,7 +581,7 @@ public final class GameMap implements LightingMap, Stoppable {
                 } finally {
                     mapLock.writeLock().unlock();
                 }
-                tile.cleanupLight();
+                tile.markAsRemoved();
             }
         } else {
             final boolean newTile = tile == null;
