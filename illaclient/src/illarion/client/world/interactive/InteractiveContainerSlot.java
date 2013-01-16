@@ -69,7 +69,7 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
      */
     @Override
     public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
-        if (isValidItem()) {
+        if (!isValidItem()) {
             LOGGER.error("Dragging of illegal item detected.");
             return;
         }
@@ -108,7 +108,7 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
 
     @Override
     public void dragTo(@Nonnull final InteractiveContainerSlot targetSlot, @Nonnull final ItemCount count) {
-        if (isValidItem()) {
+        if (!isValidItem()) {
             LOGGER.error("Dragging of illegal item detected.");
             return;
         }
