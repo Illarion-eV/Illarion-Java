@@ -580,14 +580,14 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         if (event.isClosingDialogType(CloseDialogEvent.DialogType.Merchant)) {
             if (event.getDialogId() == merchantDialog.getDialogId()) {
                 merchantDialog.closeWindow();
+                return;
             }
-            return;
         }
         if (event.isClosingDialogType(CloseDialogEvent.DialogType.Crafting)) {
             if (event.getDialogId() == craftingDialog.getDialogId()) {
                 craftingDialog.closeWindow();
+                return;
             }
-            return;
         }
 
         for (final Element child : parentArea.getElements()) {
@@ -615,19 +615,14 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
                             wrongDialogType = true;
                         }
                         break;
-                    case Merchant:
-                        if (!"merchant".equals(type)) {
-                            wrongDialogType = true;
-                        }
                     case Selection:
                         if (!"select".equals(type)) {
                             wrongDialogType = true;
                         }
                         break;
                     case Crafting:
-                        if (!"crafting".equals(type)) {
-                            wrongDialogType = true;
-                        }
+                    case Merchant:
+                        wrongDialogType = true;
                         break;
                 }
 
