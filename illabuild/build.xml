@@ -46,7 +46,7 @@
             <classpath>
                 <fileset refid="twl"/>
                 <fileset refid="xz"/>
-                <fileset refid="jcip"/>
+                <fileset refid="jsr"/>
                 <pathelement location="${common.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>
