@@ -67,7 +67,7 @@ public interface InventorySlot extends NiftyControl {
      *
      * @param image the image in the background of this slot
      */
-    void setBackgroundImage(@Nonnull NiftyImage image);
+    void setBackgroundImage(@Nullable NiftyImage image);
 
     /**
      * Show the label in this inventory slot.

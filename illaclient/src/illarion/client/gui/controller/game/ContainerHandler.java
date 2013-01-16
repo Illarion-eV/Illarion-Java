@@ -438,9 +438,9 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         final int slotId = getSlotId(topic);
         final int containerId = getContainerId(topic);
 
+        final Element parentSlot = data.getSource().getElement().getParent();
         World.getInteractionManager().notifyDraggingContainer(containerId, slotId,
-                new ContainerHandler.EndOfDragOperation(
-                        data.getSource().getElement().getParent().getNiftyControl(InventorySlot.class)));
+                new ContainerHandler.EndOfDragOperation(parentSlot.getNiftyControl(InventorySlot.class)));
     }
 
     /**

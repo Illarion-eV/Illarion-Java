@@ -20,10 +20,7 @@ package org.illarion.nifty.controls.inventoryslot;
 
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.controls.AbstractController;
-import de.lessvoid.nifty.controls.DraggableDragCanceledEvent;
-import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
-import de.lessvoid.nifty.controls.Label;
+import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.controls.dragndrop.DraggableControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
@@ -191,7 +188,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
     }
 
     @Override
-    public void setBackgroundImage(@Nonnull final NiftyImage image) {
+    public void setBackgroundImage(@Nullable final NiftyImage image) {
         if (image == null) {
             staticBackgroundImage.getRenderer(ImageRenderer.class).setImage(null);
             staticBackgroundImage.setVisible(false);
@@ -252,13 +249,14 @@ public class InventorySlotControl extends AbstractController implements Inventor
     @Override
     public void retrieveDraggable() {
         if (draggable.getParent() == droppable) {
-            draggable.hide();
+            draggedImage.hide();
             return;
         }
 
         draggable.markForMove(droppable, new EndNotify() {
             @Override
             public void perform() {
+                draggable.getNiftyControl(Draggable.class).setDroppable(droppable.getNiftyControl(Droppable.class));
                 draggedImage.hide();
             }
         });
