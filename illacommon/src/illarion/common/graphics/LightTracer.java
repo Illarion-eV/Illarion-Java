@@ -392,7 +392,7 @@ public final class LightTracer extends Thread implements Stoppable {
                 doRestart = false;
             }
             LightSource light = null;
-            final boolean tidyLight = false;
+            boolean dirtyLight = false;
             synchronized (lightsListsLock) {
                 if (dirty && !pause) {
                     if (!tidyLights.isEmpty()
@@ -406,6 +406,7 @@ public final class LightTracer extends Thread implements Stoppable {
                             tidyLights.add(light);
                             lastTinyIndex++;
                         }
+                        dirtyLight = true;
                     } else {
                         lastTinyIndex = -1;
                     }
@@ -420,7 +421,7 @@ public final class LightTracer extends Thread implements Stoppable {
             }
 
             if (light != null) {
-                if (!tidyLight) {
+                if (dirtyLight) {
                     light.calculateShadows();
                 }
                 light.apply();
@@ -490,5 +491,16 @@ public final class LightTracer extends Thread implements Stoppable {
         running = true;
         super.start();
         StoppableStorage.getInstance().add(this);
+    }
+
+    /**
+     * Remove all lights.
+     */
+    public void clear() {
+        synchronized (lightsListsLock) {
+            tidyLights.clear();
+            dirtyLights.clear();
+            restart();
+        }
     }
 }

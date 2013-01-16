@@ -50,26 +50,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @ThreadSafe
 public final class GameMap implements LightingMap, Stoppable {
     /**
-     * The class that is used as helper class to clear all the tiles on the map. Executing this will cause every tile
-     * to be cleared. Once this is done they can be removed from the tile list.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class ClearHelper implements TObjectProcedure<MapTile> {
-        /**
-         * Executed for every tile on the map. It will trigger the recycle method for each tile.
-         *
-         * @param tile the tile to clear
-         * @return {@code true} in any case
-         */
-        @Override
-        public boolean execute(@Nonnull final MapTile tile) {
-            tile.recycle();
-            return true;
-        }
-    }
-
-    /**
      * This is a supporter class for the {@link GameMap#renderLights()} function and it triggers the renderLight
      * function on each tile its called on.
      *
@@ -174,12 +154,6 @@ public final class GameMap implements LightingMap, Stoppable {
      * The determines after how many remove operations the lists clean up on their own.
      */
     private static final float MAP_COMPACTION_FACTOR = 0.01f;
-
-    /**
-     * This is a helper object that triggers recycle for all tiles its called upon.
-     */
-    @Nonnull
-    private final TObjectProcedure<MapTile> clearHelper = new ClearHelper();
 
     /**
      * The interactive map that is used to handle the player interaction with the map.
@@ -306,11 +280,11 @@ public final class GameMap implements LightingMap, Stoppable {
     public void clear() {
         mapLock.writeLock().lock();
         try {
-            tiles.forEachValue(clearHelper);
             tiles.clear();
         } finally {
             mapLock.writeLock().unlock();
         }
+        World.getLights().clear();
     }
 
     /**
@@ -473,7 +447,7 @@ public final class GameMap implements LightingMap, Stoppable {
         }
 
         if (removedTile != null) {
-            removedTile.recycle();
+            removedTile.cleanupLight();
         }
     }
 
@@ -607,7 +581,7 @@ public final class GameMap implements LightingMap, Stoppable {
                 } finally {
                     mapLock.writeLock().unlock();
                 }
-                tile.recycle();
+                tile.cleanupLight();
             }
         } else {
             final boolean newTile = tile == null;
@@ -615,11 +589,10 @@ public final class GameMap implements LightingMap, Stoppable {
             // create a tile for this location if none was found
             if (newTile) {
                 //noinspection ReuseOfLocalVariable
-                tile = MapTile.create();
+                tile = new MapTile(updateData.getLocation());
             }
 
             // update tile from update info
-            tile.getLocation().set(updateData.getLocation());
             tile.update(updateData);
 
             if (newTile) {

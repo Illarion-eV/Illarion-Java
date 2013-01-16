@@ -24,8 +24,7 @@ import illarion.common.util.RecycleFactory;
 import javax.annotation.Nonnull;
 
 /**
- * The avatar factory loads and stores all graphical representations of
- * characters.
+ * The avatar factory loads and stores all graphical representations of characters.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
@@ -33,8 +32,7 @@ import javax.annotation.Nonnull;
 public final class CharacterFactory extends RecycleFactory<Avatar> implements
         ResourceFactory<Avatar> {
     /**
-     * The ID of the avatar that is loaded by default in case the requested
-     * avatar was not found.
+     * The ID of the avatar that is loaded by default in case the requested avatar was not found.
      */
     private static final int DEFAULT_ID = 10450;
 
@@ -54,9 +52,8 @@ public final class CharacterFactory extends RecycleFactory<Avatar> implements
     }
 
     /**
-     * Constructor for the avatar factory. This sets up all storage tables that
-     * are needed to store the instances of the avatars created by this function
-     * and it starts loading the avatar table.
+     * Constructor for the avatar factory. This sets up all storage tables that are needed to store the instances of
+     * the avatars created by this function and it starts loading the avatar table.
      */
     private CharacterFactory() {
         super();

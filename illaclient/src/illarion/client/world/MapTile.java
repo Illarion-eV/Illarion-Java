@@ -29,7 +29,6 @@ import illarion.common.graphics.LightSource;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
-import illarion.common.util.RecycleObject;
 import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
@@ -44,8 +43,9 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("ClassNamingConvention")
 @NotThreadSafe
-public final class MapTile implements AlphaChangeListener, RecycleObject {
+public final class MapTile implements AlphaChangeListener {
     /**
      * Default Tile ID for no tile at this position.
      */
@@ -138,25 +138,17 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     private final Color tmpLight = new Color(0);
 
     /**
-     * Default Constructor for a map tile. Generates the tooltip and sets up all initial values for the tile.
+     * Create a new instance of the map and assign its location.
+     *
+     * @param location the location of this tile
      */
     @SuppressWarnings("nls")
-    public MapTile() {
-        tileLocation = new Location();
+    public MapTile(@Nonnull final Location location) {
+        tileLocation = new Location(location);
         tileId = ID_NONE;
         tile = null;
         lightSrc = null;
         losDirty = true;
-    }
-
-    /**
-     * Create a new instance of a map tile using the GameFactory.
-     *
-     * @return the new instance of the map tile
-     */
-    @Nonnull
-    public static MapTile create() {
-        return (MapTile) GameFactory.getInstance().getCommand(GameFactory.OBJ_MAPTILE);
     }
 
     /**
@@ -184,16 +176,6 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Activate the tile and ready it for usage. This fetches the objects that are required for this instance to work
-     * properly.
-     *
-     * @param id parameter not in use
-     */
-    @Override
-    public void activate(final int id) {
-    }
-
-    /**
      * This function receives updates in case the alpha value of the tile changes. Its possible that this happens in
      * case the character is walking past this tile. The effect of this is that the map processor checks the tile again
      * and displays it, so the tile below the tile that got faded out is visible properly.
@@ -206,60 +188,13 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
     }
 
     /**
-     * Get the ID of this object type in the game factory.
-     *
-     * @return The ID of the object type for the game factory
+     * Remove the light source of this tile in case there is any.
      */
-    @Override
-    public int getId() {
-        return GameFactory.OBJ_MAPTILE;
-    }
-
-    /**
-     * Recycle the map tile and prepare it for reuse.
-     */
-    @Override
-    public void recycle() {
-        GameFactory.getInstance().recycle(this);
-    }
-
-    /**
-     * Clear the tile and recycle it. This also recycles all item and light sources on this tile.
-     */
-    @Override
-    public void reset() {
-        // recycle tile data
-        if (tile != null) {
-            tile.recycle();
-        }
-        tile = null;
-        tileId = 0;
-
-        // recycle item data
-        if (items != null) {
-            for (final Item item : items) {
-                item.recycle();
-            }
-            items.clear();
-            FastTable.recycle(items);
-            items = null;
-        }
-
-        elevation = 0;
-        elevationIndex = 0;
-        hidden = false;
-        obstructed = false;
-
-        lightValue = 0;
-
+    public void cleanupLight() {
         if (lightSrc != null) {
             World.getLights().remove(lightSrc);
             LightSource.releaseLight(lightSrc);
-            lightSrc = null;
         }
-
-        light.scale(0.f);
-        tmpLight.scale(0.f);
     }
 
     /**
@@ -334,18 +269,6 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
             items = null;
         }
         itemChanged();
-    }
-
-    /**
-     * Create a clone of the tile.
-     *
-     * @return the clone of this tile
-     */
-    @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneCallsConstructors"})
-    @Override
-    @Nonnull
-    public MapTile clone() {
-        return new MapTile();
     }
 
     /**
@@ -546,7 +469,7 @@ public final class MapTile implements AlphaChangeListener, RecycleObject {
      * @return true if the player can move the item around
      */
     public boolean canMoveItem() {
-        if (World.getPlayer().getLocation().isNeighbour(tileLocation)) {
+        if (!World.getPlayer().getLocation().isNeighbour(tileLocation)) {
             return false;
         }
 

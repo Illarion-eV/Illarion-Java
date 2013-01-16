@@ -562,10 +562,7 @@ public final class Item extends AbstractEntity implements Resource {
     public void reset() {
         super.reset();
         showNumber = false;
-        if (number != null) {
-            number.recycle();
-            number = null;
-        }
+        number = null;
         parentTile = null;
     }
 
@@ -600,16 +597,10 @@ public final class Item extends AbstractEntity implements Resource {
 
         // write number to text for display
         if (count.getValue() > 1) {
-            if (number == null) {
-                number = TextTag.create();
-            }
-
-            number.setColor(Color.yellow);
-            number.setText(Integer.toString(count.getValue()));
-            number.setOffset((MapConstants.TILE_W / 2) - number.getHeight()
-                    - number.getWidth(), -number.getHeight() / 2);
-        } else if (number != null) {
-            number.recycle();
+            number = new TextTag(Integer.toString(count.getValue()), Color.yellow);
+            number.setOffset((MapConstants.TILE_W / 2) - number.getHeight() - number.getWidth(),
+                    -number.getHeight() / 2);
+        } else {
             number = null;
         }
     }

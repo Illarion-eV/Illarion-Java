@@ -19,7 +19,6 @@
 package illarion.client.loading;
 
 import illarion.client.graphics.FontLoader;
-import illarion.client.world.GameFactory;
 import illarion.client.world.World;
 import org.newdawn.slick.loading.DeferredResource;
 
@@ -38,7 +37,6 @@ public final class GameEnvironmentLoading implements DeferredResource {
      */
     @Override
     public void load() throws IOException {
-        GameFactory.getInstance().init();
         World.initMissing();
         FontLoader.getInstance().prepareAllFonts();
     }

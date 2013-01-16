@@ -36,7 +36,6 @@ import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
-import illarion.common.util.RecycleObject;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -56,7 +55,7 @@ import java.util.Map;
  */
 @SuppressWarnings("ClassNamingConvention")
 @NotThreadSafe
-public final class Char implements RecycleObject, AnimatedMove {
+public final class Char implements AnimatedMove {
     /**
      * The speed a animation runs with on default.
      */
@@ -276,20 +275,8 @@ public final class Char implements RecycleObject, AnimatedMove {
         scale = 0;
         animation = CharAnimations.STAND;
         avatarId = -1;
-    }
 
-    /**
-     * Create a new character, using the GameFactory.
-     *
-     * @return the new character
-     */
-    @Nonnull
-    public static Char create() {
-        @Nullable final Char newChar = (Char) GameFactory.getInstance().getCommand(GameFactory.OBJ_CHARACTER);
-        if (newChar == null) {
-            throw new NullPointerException("GameFactory failed to deliver a character object.");
-        }
-        return newChar;
+        AnnotationProcessor.process(this);
     }
 
     static {
@@ -366,16 +353,6 @@ public final class Char implements RecycleObject, AnimatedMove {
                 avatar.changeClothColor(i, DEAD_COLOR);
             }
         }
-    }
-
-    /**
-     * Activate the character. That method is unused
-     *
-     * @param id parameter is not in use
-     */
-    @Override
-    public void activate(final int id) {
-        AnnotationProcessor.process(this);
     }
 
     /**
@@ -596,56 +573,22 @@ public final class Char implements RecycleObject, AnimatedMove {
     }
 
     /**
-     * Create a copy of this character.
-     *
-     * @return new character object
+     * Once this value is turned {@code true} the character is removed from the game.
      */
-    @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneCallsConstructors"})
-    @Override
-    @Nonnull
-    public Char clone() {
-        return new Char();
-    }
+    private boolean removedCharacter;
 
     /**
-     * Get the ID of the recycle object type.
-     *
-     * @return ID of the recycle object type
+     * Mark this character as removed. Calling this function will cause the instance to clean its dependency and then
+     * die gracefully.
      */
-    @Override
-    public int getId() {
-        return GameFactory.OBJ_CHARACTER;
-    }
+    public void markAsRemoved() {
+        removedCharacter = true;
 
-    /**
-     * Remove the character and put it back into the factory.
-     */
-    @Override
-    public void recycle() {
-        GameFactory.getInstance().recycle(this);
-    }
-
-    /**
-     * Reset the character object and free the resources.
-     */
-    @Override
-    public void reset() {
-        AnnotationProcessor.unprocess(this);
-        // stop animation
         move.stop();
-        resetAnimation();
         resetLight();
         releaseAvatar();
 
-        name = null;
-        dX = 0;
-        dY = 0;
-        appearance = 0;
-        direction = 0;
-        charId = null;
-        visible = false;
-        skinColor = null;
-        attributes.clear();
+        AnnotationProcessor.unprocess(this);
     }
 
     /**

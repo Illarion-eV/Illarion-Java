@@ -167,7 +167,7 @@ public final class Player {
 
         path = new File(DirectoryManager.getInstance().getUserDirectory(), charName);
 
-        character = Char.create();
+        character = new Char();
         validLocation = false;
 
         if (!path.isDirectory() && !path.mkdir()) {
@@ -565,7 +565,7 @@ public final class Player {
      * Then this instance of player is removed its content needs to removed correctly as well.
      */
     public void shutdown() {
-        character.recycle();
+        character.markAsRemoved();
         movementHandler.shutdown();
     }
 

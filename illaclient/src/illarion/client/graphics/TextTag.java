@@ -20,9 +20,7 @@ package illarion.client.graphics;
 
 import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
 import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
-import illarion.client.world.GameFactory;
 import illarion.common.types.Rectangle;
-import illarion.common.util.RecycleObject;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -37,7 +35,7 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public class TextTag implements Drawable, RecycleObject {
+public class TextTag implements Drawable {
     /**
      * The color of the background pane that is displayed behind the text.
      */
@@ -47,20 +45,19 @@ public class TextTag implements Drawable, RecycleObject {
      * The font that is used to render texts of the text tags.
      */
     @Nullable
-    private static final SlickRenderFont TEXT_TAG_FONT = FontLoader
-            .getInstance().getFontSave(FontLoader.Fonts.Small);
+    private static final SlickRenderFont TEXT_TAG_FONT = FontLoader.getInstance().getFontSave(FontLoader.Fonts.Small);
 
     /**
      * This color is used as temporary color during the rendering process.
      */
-    private static final de.lessvoid.nifty.tools.Color NIFTY_COLOR =
-            new de.lessvoid.nifty.tools.Color(0.f, 0.f, 0.f, 0.f);
+    private static final de.lessvoid.nifty.tools.Color NIFTY_COLOR = new de.lessvoid.nifty.tools.Color(0.f, 0.f, 0.f,
+            0.f);
 
     /**
      * The color implementation that is used to render the text.
      */
-    @Nullable
-    private transient Color color;
+    @Nonnull
+    private final Color color;
 
     /**
      * The x coordinate of the offset of this text tag.
@@ -85,35 +82,24 @@ public class TextTag implements Drawable, RecycleObject {
     /**
      * The actual text that is displayed by this tag.
      */
-    @Nullable
-    private String text;
+    @Nonnull
+    private final String text;
 
     /**
      * This flag is set {@code true} in case the tag got changed.
      */
     private boolean dirty;
 
-    /**
-     * Create a new instance of the text tag. This instance is created by the
-     * game factory. Its better to create the instance using this because in
-     * this case it gets activated properly.
-     *
-     * @return the new text tag instance created by the game factory
-     */
-    @Nonnull
-    public static TextTag create() {
-        return (TextTag) GameFactory.getInstance().getCommand(
-                GameFactory.OBJ_TAG);
-    }
+    public TextTag(@Nonnull final String text, @Nonnull final Color color) {
+        this.text = text;
+        this.color = color;
 
-    /**
-     * Activate the text tag and prepare the values of this tag.
-     *
-     * @param id the ID the tag got activated with
-     */
-    @Override
-    public void activate(final int id) {
-        // nothing to do
+        if (TEXT_TAG_FONT == null) {
+            throw new IllegalStateException("Font of the text tag was not loaded.");
+        }
+
+        width = TEXT_TAG_FONT.getWidth(text);
+        height = TEXT_TAG_FONT.getHeight();
     }
 
     public void addToCamera(final int x, final int y) {
@@ -124,16 +110,6 @@ public class TextTag implements Drawable, RecycleObject {
         displayX = x;
         displayY = y;
         dirty = true;
-    }
-
-    /**
-     * Create a duplicate of this text tag. That does not copy the actual
-     * content, it just creates a new instance of this class.
-     */
-    @Nonnull
-    @Override
-    public TextTag clone() {
-        return new TextTag();
     }
 
     /**
@@ -156,54 +132,12 @@ public class TextTag implements Drawable, RecycleObject {
     }
 
     /**
-     * Get the object ID of this class that was used to create this text tag in
-     * the game factory.
-     */
-    @Override
-    public int getId() {
-        return GameFactory.OBJ_TAG;
-    }
-
-    /**
      * Get the width of the text tag.
      *
      * @return the width of the text tag
      */
     public int getWidth() {
         return width;
-    }
-
-    /**
-     * Put the instance of the text tag back into the recycler for using again
-     * later. After this function was called the text tag should not be used or
-     * rendered anymore.
-     */
-    @Override
-    public void recycle() {
-        GameFactory.getInstance().recycle(this);
-    }
-
-    /**
-     * Clean up the text tag before put it back into the recycle factory.
-     */
-    @Override
-    public void reset() {
-        text = null;
-        color = null;
-    }
-
-    /**
-     * Set the color that is used to display the text tag.
-     *
-     * @param newColor the color that is used to render the text tag.
-     */
-    public void setColor(@Nullable final Color newColor) {
-        if ((newColor == null) || newColor.equals(color)) {
-            return;
-        }
-
-        color = newColor;
-        dirty = true;
     }
 
     /**
@@ -222,33 +156,8 @@ public class TextTag implements Drawable, RecycleObject {
         dirty = true;
     }
 
-    /**
-     * Set a new text that is shown from now on in the text tag.
-     *
-     * @param newText the new text that is displayed from now on
-     */
-    public void setText(@Nonnull final String newText) {
-        if (newText.equals(text)) {
-            return;
-        }
-
-        if (TEXT_TAG_FONT == null) {
-            throw new IllegalStateException("Font of the text tag was not loaded.");
-        }
-
-        text = newText;
-        width = TEXT_TAG_FONT.getWidth(newText);
-        height = TEXT_TAG_FONT.getHeight();
-
-        dirty = true;
-    }
-
     @Override
     public boolean draw(@Nonnull final Graphics g) {
-        if (text == null) {
-            return true;
-        }
-
         if (TEXT_TAG_FONT == null) {
             throw new IllegalStateException("Font of the text tag was not loaded.");
         }

@@ -191,7 +191,7 @@ public final class People {
         try {
             cleanRemovalList();
             for (final Char character : chars.values()) {
-                character.recycle();
+                character.markAsRemoved();
             }
             chars.clear();
         } finally {
@@ -226,7 +226,7 @@ public final class People {
      */
     @Nonnull
     private Char createNewCharacter(@Nonnull final CharacterId id) {
-        final Char chara = Char.create();
+        final Char chara = new Char();
         chara.setCharId(id);
 
         addCharacter(chara);
@@ -304,7 +304,7 @@ public final class People {
                     CombatHandler.getInstance().standDown();
                 }
                 chars.remove(id);
-                chara.recycle();
+                chara.markAsRemoved();
             }
         } finally {
             charsLock.writeLock().unlock();
