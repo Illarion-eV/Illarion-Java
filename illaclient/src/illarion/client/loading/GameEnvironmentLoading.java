@@ -26,8 +26,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * This loading task takes care for loading the components of the game
- * environment that still need to be loaded.
+ * This loading task takes care for loading the components of the game environment that still need to be loaded.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
