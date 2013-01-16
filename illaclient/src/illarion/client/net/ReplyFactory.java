@@ -63,6 +63,7 @@ public final class ReplyFactory {
         register(ChangeItemMsg.class);
         register(CharacterAnimationMsg.class);
         register(CloseShowcaseMsg.class);
+        register(CloseDialogMsg.class);
         register(DateTimeMsg.class);
         register(DialogCraftingMsg.class);
         register(DialogCraftingUpdateMsg.class);

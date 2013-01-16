@@ -348,10 +348,15 @@ public final class CommandList {
     /**
      * Server message that closes a showcase in the client window.
      */
-    public static final int MSG_CLOSE_SHOWCASE = 0xC4; //
+    public static final int MSG_CLOSE_SHOWCASE = 0xC4;
 
     /**
-     * Server message that contains the informations about the current date and time.
+     * Server message that closes a showcase in the client window.
+     */
+    public static final int MSG_CLOSE_DIALOG = 0x5F;
+
+    /**
+     * Server message that contains the information about the current date and time.
      */
     public static final int MSG_DATETIME = 0xB6;
 
