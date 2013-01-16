@@ -269,11 +269,12 @@ public final class FontLoader implements SlickRenderFontLoader {
      */
     @Nullable
     private static FontLoader.Fonts toFontEnum(final String name) {
-        for (FontLoader.Fonts font : FontLoader.Fonts.values()) {
+        for (final FontLoader.Fonts font : FontLoader.Fonts.values()) {
             if (font.getName().equals(name)) {
                 return font;
             }
         }
+        LOGGER.warn("Font name \"" + name + "\" could not be matched to a actual font.");
         return null;
     }
 
