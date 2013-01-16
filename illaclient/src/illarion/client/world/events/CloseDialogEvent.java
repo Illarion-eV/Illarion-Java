@@ -48,7 +48,12 @@ public final class CloseDialogEvent {
          */
         Merchant,
 
-        Crafting, /**
+        /**
+         * The event targets a crafting dialog that is supposed to be closed.
+         */
+        Crafting,
+
+        /**
          * This event targets a selection dialog that is supposed to be closed.
          */
         Selection
@@ -68,7 +73,7 @@ public final class CloseDialogEvent {
     /**
      * The type of the dialog that is supposed to be closed.
      */
-    private final CloseDialogEvent.DialogType dialogType;
+    private final DialogType dialogType;
 
     /**
      * The default constructor of this event.
@@ -76,7 +81,7 @@ public final class CloseDialogEvent {
      * @param id   the ID of the dialog that is supposed to be closed or {@link #ALL_DIALOGS}
      * @param type the type of the dialog that is supposed to be closed
      */
-    public CloseDialogEvent(final int id, final CloseDialogEvent.DialogType type) {
+    public CloseDialogEvent(final int id, final DialogType type) {
         dialogId = id;
         dialogType = type;
     }
@@ -95,7 +100,20 @@ public final class CloseDialogEvent {
      *
      * @return the dialog that is supposed to be closed
      */
-    public CloseDialogEvent.DialogType getDialogType() {
+    public DialogType getDialogType() {
         return dialogType;
+    }
+
+    /**
+     * Check if this event is closing the specified dialog type.
+     *
+     * @param type the type to test
+     * @return {@code true} in case the dialog is closing this kind of dialog
+     */
+    public boolean isClosingDialogType(final DialogType type) {
+        if (dialogType == DialogType.Any) {
+            return true;
+        }
+        return dialogType == type;
     }
 }

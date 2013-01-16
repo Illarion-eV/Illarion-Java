@@ -577,13 +577,13 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
     private void closeDialog(@Nonnull final CloseDialogEvent event) {
         final Element parentArea = screen.findElementByName("windows");
 
-        if (event.getDialogType() == CloseDialogEvent.DialogType.Merchant) {
+        if (event.isClosingDialogType(CloseDialogEvent.DialogType.Merchant)) {
             if (event.getDialogId() == merchantDialog.getDialogId()) {
                 merchantDialog.closeWindow();
             }
             return;
         }
-        if (event.getDialogType() == CloseDialogEvent.DialogType.Crafting) {
+        if (event.isClosingDialogType(CloseDialogEvent.DialogType.Crafting)) {
             if (event.getDialogId() == craftingDialog.getDialogId()) {
                 craftingDialog.closeWindow();
             }
@@ -606,26 +606,26 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
                     case Any:
                         break;
                     case Message:
-                        if (!type.equals("msg")) {
+                        if (!"msg".equals(type)) {
                             wrongDialogType = true;
                         }
                         break;
                     case Input:
-                        if (!type.equals("input")) {
+                        if (!"input".equals(type)) {
                             wrongDialogType = true;
                         }
                         break;
                     case Merchant:
-                        if (!type.equals("merchant")) {
+                        if (!"merchant".equals(type)) {
                             wrongDialogType = true;
                         }
                     case Selection:
-                        if (!type.equals("select")) {
+                        if (!"select".equals(type)) {
                             wrongDialogType = true;
                         }
                         break;
                     case Crafting:
-                        if (!type.equals("crafting")) {
+                        if (!"crafting".equals(type)) {
                             wrongDialogType = true;
                         }
                         break;

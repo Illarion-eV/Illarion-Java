@@ -244,7 +244,7 @@ public final class Player {
             return;
         }
 
-        if (event.getDialogType() == CloseDialogEvent.DialogType.Merchant) {
+        if (event.isClosingDialogType(CloseDialogEvent.DialogType.Merchant)) {
             if (event.getDialogId() == merchantDialog.getId()) {
                 final MerchantList oldList = merchantDialog;
                 merchantDialog = null;
