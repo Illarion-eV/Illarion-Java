@@ -220,16 +220,16 @@ public final class FontLoader implements SlickRenderFontLoader {
      * @throws SlickLoadFontException in case loading the font fails
      */
     public SlickRenderFont getFont(@Nullable final FontLoader.Fonts font) throws SlickLoadFontException {
-        final Fonts usedFont;
+        @Nonnull final Fonts usedFont;
         if (font == null) {
             usedFont = FontLoader.Fonts.Text;
         } else {
             usedFont = font;
         }
-        SlickRenderFont renderableFont = fonts.get(font);
+        SlickRenderFont renderableFont = fonts.get(usedFont);
         if (renderableFont == null) {
             renderableFont = loadFont(usedFont);
-            fonts.put(font, renderableFont);
+            fonts.put(usedFont, renderableFont);
         }
 
         return renderableFont;
