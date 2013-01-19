@@ -22,6 +22,7 @@ import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class represents a item container that is displayed currently by the character.
@@ -92,11 +93,13 @@ public final class ItemContainer {
      * @param count the new item count
      * @throws IndexOutOfBoundsException in case the {@code slot} parameter is too small or too large
      */
-    public void setItem(final int slot, @Nonnull final ItemId id, @Nonnull final ItemCount count) {
+    public void setItem(final int slot, @Nullable final ItemId id, @Nullable final ItemCount count) {
         if ((slot < 0) || (slot >= slots.length)) {
             throw new IndexOutOfBoundsException("Requested slot outside of allowed range: " + slot);
         }
-        if (ItemId.isValidItem(id)) {
+        if (ItemId.isValidItem(id) && ItemCount.isGreaterZero(count)) {
+            assert id != null;
+            assert count != null;
             slots[slot].setData(id, count);
         } else {
             slots[slot].clearSlot();

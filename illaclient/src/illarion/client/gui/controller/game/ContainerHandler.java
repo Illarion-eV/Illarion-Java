@@ -64,6 +64,7 @@ import org.newdawn.slick.Input;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
@@ -623,6 +624,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      * @param event the container event used to update the container
      */
     private void updateContainer(@Nonnull final OpenContainerEvent event) {
+        final long start = System.currentTimeMillis();
         final org.illarion.nifty.controls.ItemContainer conControl = itemContainerMap.get(event.getContainerId());
 
         final int slotCount = conControl.getSlotCount();
@@ -631,15 +633,13 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
             return;
         }
 
-        for (int i = 0; i < slotCount; i++) {
-            final InventorySlot conSlot = conControl.getSlot(i);
-            conSlot.setImage(null);
-            conSlot.hideLabel();
-        }
+        final boolean[] definedSlots = new boolean[slotCount];
+        Arrays.fill(definedSlots, false);
 
         final TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
         while (itr.hasNext()) {
             itr.advance();
+            definedSlots[itr.key()] = true;
             final InventorySlot conSlot = conControl.getSlot(itr.key());
             final ItemId itemId = itr.value().getItemId();
             final ItemCount count = itr.value().getCount();
@@ -664,6 +664,16 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
             }
         }
 
+        for (int i = 0; i < slotCount; i++) {
+            if (!definedSlots[i]) {
+                final InventorySlot conSlot = conControl.getSlot(i);
+                conSlot.setImage(null);
+                conSlot.hideLabel();
+            }
+        }
+
         conControl.getElement().getParent().layoutElements();
+
+        LOGGER.info("Updating the container took: " + Long.toString(System.currentTimeMillis() - start) + "ms");
     }
 }

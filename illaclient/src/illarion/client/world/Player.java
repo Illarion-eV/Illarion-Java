@@ -51,6 +51,7 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import java.awt.*;
 import java.io.File;
+import java.util.Arrays;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -195,26 +196,37 @@ public final class Player {
     @EventSubscriber
     public void onOpenContainerEvent(@Nonnull final OpenContainerEvent event) {
         final ItemContainer container;
+        final int slotCount = event.getSlotCount();
         if (hasContainer(event.getContainerId())) {
             container = getContainer(event.getContainerId());
             if (container == null) {
                 throw new IllegalStateException("Has container with ID but can't receive it. "
                         + "Internal state corrupted.");
             }
-            if (container.getSlotCount() != event.getSlotCount()) {
+            if (container.getSlotCount() != slotCount) {
                 LOGGER.error("Received container event for existing container but without fitting slot count!");
                 EventBus.publish(new CloseContainerEvent(event.getContainerId()));
                 EventBus.publish(event);
                 return;
             }
         } else {
-            container = createNewContainer(event.getContainerId(), event.getSlotCount());
+            container = createNewContainer(event.getContainerId(), slotCount);
         }
+
+        final boolean[] updatedSlot = new boolean[slotCount];
+        Arrays.fill(updatedSlot, false);
 
         final TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
         while (itr.hasNext()) {
             itr.advance();
+            updatedSlot[itr.key()] = true;
             container.setItem(itr.key(), itr.value().getItemId(), itr.value().getCount());
+        }
+
+        for (int i = 0; i < slotCount; i++) {
+            if (!updatedSlot[i]) {
+                container.setItem(i, null, null);
+            }
         }
     }
 

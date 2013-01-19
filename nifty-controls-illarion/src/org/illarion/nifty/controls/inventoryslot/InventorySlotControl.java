@@ -21,7 +21,6 @@ package org.illarion.nifty.controls.inventoryslot;
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.*;
-import de.lessvoid.nifty.controls.dragndrop.DraggableControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
@@ -150,8 +149,13 @@ public class InventorySlotControl extends AbstractController implements Inventor
      */
     @Override
     public void setImage(@Nullable final NiftyImage image) {
+        final NiftyImage oldImage = draggedImage.getRenderer(ImageRenderer.class).getImage();
         draggedImage.getRenderer(ImageRenderer.class).setImage(image);
         backgroundImage.getRenderer(ImageRenderer.class).setImage(image);
+
+        if (oldImage != null) {
+            oldImage.dispose();
+        }
 
         if (image != null) {
             float width = image.getWidth();
@@ -175,20 +179,25 @@ public class InventorySlotControl extends AbstractController implements Inventor
             backgroundImage.setVisible(true);
             backgroundImage.setConstraintHeight(heightSize);
             backgroundImage.setConstraintWidth(widthSize);
+            draggable.setVisible(true);
             draggedImage.setVisible(false);
             draggable.enable();
-            getElement().layoutElements();
         } else {
             backgroundImage.setVisible(false);
             backgroundImageLabel.setVisible(false);
             draggedImage.setVisible(false);
-            draggable.getControl(DraggableControl.class).setEnabled(false);
-            getElement().layoutElements();
+            draggable.setVisible(false);
+            draggable.disable();
         }
     }
 
     @Override
     public void setBackgroundImage(@Nullable final NiftyImage image) {
+        final NiftyImage oldImage = staticBackgroundImage.getRenderer(ImageRenderer.class).getImage();
+        if (oldImage != null) {
+            oldImage.dispose();
+        }
+
         if (image == null) {
             staticBackgroundImage.getRenderer(ImageRenderer.class).setImage(null);
             staticBackgroundImage.setVisible(false);
