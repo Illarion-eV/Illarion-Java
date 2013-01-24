@@ -32,14 +32,15 @@ import illarion.client.net.server.events.BroadcastInformReceivedEvent;
 import illarion.client.net.server.events.ScriptInformReceivedEvent;
 import illarion.client.net.server.events.ServerInformReceivedEvent;
 import illarion.client.net.server.events.TextToInformReceivedEvent;
+import illarion.client.util.UpdateTask;
+import illarion.client.world.World;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This handler is used to show and hide all the temporary inform messages on the screen. It provides the required
@@ -47,11 +48,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public final class InformHandler implements ScreenController, UpdatableHandler {
+public final class InformHandler implements ScreenController {
     /**
      * This task is created as storage for the creation on the information display.
      */
-    private static final class InformBuildTask {
+    private final class InformBuildTask implements UpdateTask {
         /**
          * The element builder that is executed to create the inform message.
          */
@@ -81,31 +82,16 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
             this.layoutParent = layoutParent;
         }
 
-        /**
-         * Get the element builder that will create the information line.
-         *
-         * @return the element builder of the inform
-         */
-        public ElementBuilder getBuilder() {
-            return builder;
-        }
+        @Override
+        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+            if (!parent.isVisible()) {
+                parent.showWithoutEffects();
+            }
 
-        /**
-         * Get the parent element. Inside this element the builder will be executed.
-         *
-         * @return the parent element
-         */
-        public Element getParent() {
-            return parent;
-        }
-
-        /**
-         * Get the parent element that needs to get a new layout.
-         *
-         * @return the layout parent element
-         */
-        public Element getLayoutParent() {
-            return layoutParent;
+            final Element msg = builder.build(parentNifty, parentScreen, parent);
+            msg.showWithoutEffects();
+            layoutParent.layoutElements();
+            msg.hide(new InformHandler.RemoveEndNotify(msg));
         }
     }
 
@@ -179,12 +165,6 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     private Screen parentScreen;
 
     /**
-     * This queue stores the builder of server inform labels until they are executed.
-     */
-    @Nonnull
-    private final Queue<InformHandler.InformBuildTask> builderQueue;
-
-    /**
      * This is the panel that will be parent to all broadcast messages.
      */
     private Element broadcastParentPanel;
@@ -203,13 +183,6 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
      * This is the panel that will be parent to all text-to messages.
      */
     private Element scriptParentPanel;
-
-    /**
-     * Default constructor.
-     */
-    public InformHandler() {
-        builderQueue = new ConcurrentLinkedQueue<InformHandler.InformBuildTask>();
-    }
 
     @Override
     public void bind(final Nifty nifty, @Nonnull final Screen screen) {
@@ -230,27 +203,6 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
     @Override
     public void onStartScreen() {
         AnnotationProcessor.process(this);
-    }
-
-    @Override
-    public void update(final GameContainer container, final int delta) {
-        while (true) {
-            final InformHandler.InformBuildTask task = builderQueue.poll();
-            if (task == null) {
-                return;
-            }
-
-            final Element parentPanel = task.getParent();
-
-            if (!parentPanel.isVisible()) {
-                parentPanel.show();
-            }
-
-            final Element msg = task.getBuilder().build(parentNifty, parentScreen, parentPanel);
-            msg.showWithoutEffects();
-            task.getLayoutParent().layoutElements();
-            msg.hide(new InformHandler.RemoveEndNotify(msg));
-        }
     }
 
     @EventSubscriber
@@ -382,6 +334,6 @@ public final class InformHandler implements ScreenController, UpdatableHandler {
      * @param layoutParent  the element that needs to get its layout recalculated
      */
     public void showInform(final ElementBuilder informBuilder, final Element parent, final Element layoutParent) {
-        builderQueue.offer(new InformHandler.InformBuildTask(informBuilder, parent, layoutParent));
+        World.getUpdateTaskManager().addTask(new InformBuildTask(informBuilder, parent, layoutParent));
     }
 }
