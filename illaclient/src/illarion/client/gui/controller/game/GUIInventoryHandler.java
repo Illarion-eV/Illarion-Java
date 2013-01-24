@@ -178,7 +178,7 @@ public final class GUIInventoryHandler implements ScreenController {
     private Screen activeScreen;
     private final NumberSelectPopupHandler numberSelect;
     private final TooltipHandler tooltip;
-    private Input input;
+    private final Input input;
 
     /**
      * The instance of the inventory click helper that is used in this instance of the GUI inventory handler.
@@ -195,7 +195,7 @@ public final class GUIInventoryHandler implements ScreenController {
         }
     };
 
-    public GUIInventoryHandler(final NumberSelectPopupHandler numberSelectPopupHandler,
+    public GUIInventoryHandler(final Input input, final NumberSelectPopupHandler numberSelectPopupHandler,
                                final TooltipHandler tooltipHandler) {
         slots = new String[Inventory.SLOT_COUNT];
         slots[0] = "invslot_bag";
@@ -223,6 +223,7 @@ public final class GUIInventoryHandler implements ScreenController {
 
         numberSelect = numberSelectPopupHandler;
         tooltip = tooltipHandler;
+        this.input = input;
     }
 
     @EventSubscriber

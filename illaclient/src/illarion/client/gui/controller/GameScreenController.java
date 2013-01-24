@@ -23,6 +23,7 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.gui.controller.game.*;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Input;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public final class GameScreenController implements ScreenController {
     @Nonnull
     private final Collection<UpdatableHandler> childUpdateControllers;
 
-    public GameScreenController() {
+    public GameScreenController(final Input input) {
         final NumberSelectPopupHandler numberPopupHandler = new NumberSelectPopupHandler();
         final TooltipHandler tooltipHandler = new TooltipHandler();
 
@@ -46,7 +47,7 @@ public final class GameScreenController implements ScreenController {
         addHandler(tooltipHandler);
         addHandler(new GUIChatHandler());
         addHandler(new BookHandler());
-        addHandler(new GUIInventoryHandler(numberPopupHandler, tooltipHandler));
+        addHandler(new GUIInventoryHandler(input, numberPopupHandler, tooltipHandler));
         addHandler(new DialogHandler(numberPopupHandler, tooltipHandler));
         addHandler(new ContainerHandler(numberPopupHandler, tooltipHandler));
         addHandler(new CloseGameHandler());

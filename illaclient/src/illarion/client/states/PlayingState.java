@@ -59,7 +59,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     @Override
     protected void prepareNifty(@Nonnull final Nifty nifty, final StateBasedGame game) {
         nifty.setLocale(Lang.getInstance().getLocale());
-        gameScreenController = new GameScreenController();
+        gameScreenController = new GameScreenController(game.getContainer().getInput());
         nifty.registerScreenController(gameScreenController);
 
         try {
