@@ -286,6 +286,11 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
             LOGGER.warn("Drawing a removed entity is not allowed.");
             return true;
         }
+
+        if (getAlpha() == 0) {
+            return true;
+        }
+
         final int renderLocX = displayX;
         final int renderLocY = displayY;
 
@@ -427,6 +432,8 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      */
     public void markAsRemoved() {
         hide();
+        getLight().a = 0.f;
+        setAlphaTarget(0);
         removedEntity = true;
     }
 
@@ -801,7 +808,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      */
     protected final void updateAlpha(final int delta) {
         if (getAlpha() != alphaTarget) {
-            setAlpha(AnimationUtility.translate(getAlpha(), alphaTarget, FADING_SPEED, FADE_OUT_ALPHA, 255, delta));
+            setAlpha(AnimationUtility.translate(getAlpha(), alphaTarget, FADING_SPEED, 0, 255, delta));
         }
     }
 

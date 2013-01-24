@@ -22,6 +22,7 @@ import illarion.client.input.ClickOnMapEvent;
 import illarion.client.resources.Resource;
 import illarion.client.resources.TileFactory;
 import illarion.client.resources.data.TileTemplate;
+import illarion.client.world.MapGroup;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.graphics.MapVariance;
@@ -108,6 +109,12 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
      */
     @Override
     public boolean draw(@Nonnull final Graphics g) {
+        final MapTile obstructingTile = parentTile.getObstructingTile();
+        if ((obstructingTile != null) && obstructingTile.isOpaque()) {
+            // do not render tiles that are not visible for sure
+            return true;
+        }
+
         if (!super.draw(g)) {
             return false;
         }
@@ -163,6 +170,13 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
 
     @Override
     public void update(@Nonnull final GameContainer container, final int delta) {
+        final MapGroup group = parentTile.getMapGroup();
+        if ((group != null) && group.isHidden()) {
+            setAlphaTarget(0);
+            setFadingCorridorEffectEnabled(false);
+        } else {
+            setFadingCorridorEffectEnabled(overlay == null);
+        }
         super.update(container, delta);
         if (overlay != null) {
             overlay.update(container, delta);

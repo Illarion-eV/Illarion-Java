@@ -24,8 +24,6 @@ import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
@@ -46,19 +44,6 @@ public final class GameMapProcessor extends Thread {
      */
     @Nonnull
     private static final Logger LOGGER = Logger.getLogger(GameMapProcessor.class);
-
-    /**
-     * This flag is {@code true} while the inside check is considered as done. Once its toggles to {@code false} the
-     * map processor will check again if the current location is really inside.
-     */
-    private boolean checkInsideDone;
-
-    /**
-     * The array of values if the character is inside or not. It stores the values for every level. So if the
-     * character is inside a 2 level high cave the second value will be true, but the first one false.
-     */
-    @Nonnull
-    private final boolean[] insideStates = new boolean[2];
 
     /**
      * The map that is handled by this processor instance.
@@ -119,70 +104,12 @@ public final class GameMapProcessor extends Thread {
     @Override
     public void run() {
         while (running) {
-            performInsideCheck();
-
             try {
                 hasAndProcessUnchecked();
             } catch (@Nonnull final InterruptedException e) {
                 LOGGER.info("Map processor got interrupted!");
             }
         }
-    }
-
-    /**
-     * Perform a check if the player character is inside a building. In case the inside status differs for any level
-     * from the state before the check, all tiles are added to the list of tiles that need to be checked once more.
-     */
-    private void performInsideCheck() {
-        if (checkInsideDone) {
-            return;
-        }
-
-        checkInsideDone = true;
-
-        final Location playerLoc = World.getPlayer().getLocation();
-        final int currX = playerLoc.getScX();
-        final int currY = playerLoc.getScY();
-        int currZ = playerLoc.getScZ();
-        boolean nowOutside = false;
-        boolean isInside = false;
-
-        int lowestNowOutside = Integer.MAX_VALUE;
-        int highestNowOutside = Integer.MIN_VALUE;
-
-        for (int i = 0; i < 2; ++i) {
-            currZ++;
-            if (isInside || parent.isMapAt(currX, currY, currZ)) {
-                if (!insideStates[i]) {
-                    insideStates[i] = true;
-                    synchronized (unchecked) {
-                        unchecked.add(Location.getKey(currX, currY, currZ));
-                    }
-                }
-                isInside = true;
-            } else {
-                if (insideStates[i]) {
-                    insideStates[i] = false;
-                    nowOutside = true;
-                    lowestNowOutside = Math.min(currZ, lowestNowOutside);
-                    highestNowOutside = Math.max(currZ, highestNowOutside);
-                }
-            }
-        }
-
-        /*
-         * If one of the values turned from inside to outside, all tiles are added to the list to be checked again.
-         */
-        if (nowOutside) {
-            unchecked.clear();
-            final List<MapTile> tileStorage = new LinkedList<MapTile>();
-            parent.getTiles(tileStorage, lowestNowOutside, highestNowOutside);
-            for (final MapTile tile : tileStorage) {
-                addLocationToUnchecked(tile.getLocation().getKey());
-            }
-        }
-
-        World.getWeather().setOutside(!isInside);
     }
 
     /**
@@ -208,14 +135,6 @@ public final class GameMapProcessor extends Thread {
         if (checkClipping(tile, key)) {
             return;
         }
-
-        // obstruction check
-        if (checkObstruction(tile, key)) {
-            return;
-        }
-
-        // hidden check
-        checkHidden(tile, key);
     }
 
     /**
@@ -278,169 +197,12 @@ public final class GameMapProcessor extends Thread {
     }
 
     /**
-     * Do the obstruction check of a tile. So this means that all tiles are hidden in case there is a tile above them
-     * and they are fully invisible anyway. Tiles below the level of the player are removed,
-     * since they won't be displayed ever anyway. The tiles at or above the players location are possibly shown in
-     * case the char steps into a building or something.
-     *
-     * @param tile the tile that is checked
-     * @param key  the location key of the checked tile
-     * @return {@code true} in case the tile got removed
-     */
-    private boolean checkObstruction(@Nonnull final MapTile tile, final long key) {
-        final Location playerLoc = World.getPlayer().getLocation();
-        final Location tileLoc = tile.getLocation();
-
-        final int topLimit = playerLoc.getScZ() + 2;
-
-        int currX = tileLoc.getScX();
-        int currY = tileLoc.getScY();
-        int currZ = tileLoc.getScZ();
-
-        while (currZ < topLimit) {
-            currX -= MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
-            currY += MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
-            currZ++;
-
-            final boolean remove = currZ < (topLimit - 2);
-            final MapTile foundTile = parent.getMapAt(currX, currY, currZ);
-
-            if ((foundTile != null) && foundTile.isOpaque()
-                    && !foundTile.isHidden()) {
-                if (remove) {
-                    parent.removeTile(key);
-                    return true;
-                }
-                tile.setObstructed(true);
-                return false;
-            }
-        }
-        if (tile.isObstructed()) {
-            tile.setObstructed(false);
-            addAllBelow(tileLoc, playerLoc.getScZ() - 2);
-        }
-        return false;
-    }
-
-    /**
-     * Check if the tile needs to be hidden because the player is inside a cave or a house or something like this.
-     *
-     * @param tile the tile that is checked
-     * @param key  the location key of the checked tile
-     * @return {@code true} in case the tile was handled
-     */
-    @SuppressWarnings("nls")
-    private boolean checkHidden(@Nonnull final MapTile tile, final long key) {
-        final Location playerLoc = World.getPlayer().getLocation();
-        final Location tileLoc = tile.getLocation();
-
-        /*
-         * And now we start with the inside check. In case the tile is below the level of the player its never hidden
-         * for sure.
-         */
-        if (tileLoc.getScZ() <= playerLoc.getScZ()) {
-            if (tile.isHidden()) {
-                tile.setHidden(false);
-
-                synchronized (unchecked) {
-                    addAllBelow(tileLoc, playerLoc.getScZ() - 2);
-                    addAllNeighbours(tileLoc);
-                }
-            }
-            return true;
-        }
-
-        /*
-         * Now generate the index in the list of inside states and check if the tile is on a level that is hidden or
-         * not. If the tile is on such a level it does not mean for sure that it really needs to be hidden.
-         */
-        final int insideIndex = tileLoc.getScZ() - playerLoc.getScZ() - 1;
-
-        if ((insideIndex < 0) || (insideIndex > 1)) {
-            LOGGER.warn("Invalid inside index: " + insideIndex);
-            return true;
-        }
-
-        /*
-         * Tile is not on a inside level. In case its hidden, show it again.
-         */
-        if (!insideStates[insideIndex]) {
-            if (tile.isHidden()) {
-                tile.setHidden(false);
-                synchronized (unchecked) {
-                    addAllBelow(tileLoc, playerLoc.getScZ() - 2);
-                    addAllAbove(tileLoc, playerLoc.getScZ() + 2);
-                    addAllNeighbours(tileLoc);
-                }
-            }
-            return true;
-        }
-
-        /*
-         * Now check if the tile is directly above the player. In this case it needs to be hidden.
-         */
-        if ((tileLoc.getScX() == playerLoc.getScX()) && (tileLoc.getScY() == playerLoc.getScY())
-                && (tileLoc.getScZ() > playerLoc.getScZ()) && !tile.isHidden()) {
-            tile.setHidden(true);
-            synchronized (unchecked) {
-                addAllBelow(tileLoc, playerLoc.getScZ() - 2);
-                addAllAbove(tileLoc, playerLoc.getScZ() + 2);
-                addAllNeighbours(tileLoc);
-            }
-            return true;
-        }
-
-        if (!tile.isHidden() && hasHiddenNeighbour(tileLoc)) {
-            tile.setHidden(true);
-            synchronized (unchecked) {
-                addAllBelow(tileLoc, playerLoc.getScZ() - 2);
-                addAllAbove(tileLoc, playerLoc.getScZ() + 2);
-                addAllNeighbours(tileLoc);
-            }
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Add a key of a map location to the processor that contains a location on the map that was yet unchecked.
      *
      * @param key the key of the location that needs to be checked
      */
     public void reportUnchecked(final long key) {
         addLocationToUnchecked(key);
-    }
-
-    /**
-     * Search all surrounding tiles and the tile below and look for a tile that is currently hidden.
-     *
-     * @param searchLoc the location where the search starts
-     * @return {@code true} in case a hidden tile was found
-     */
-    private boolean hasHiddenNeighbour(@Nonnull final Location searchLoc) {
-        for (int x = -1; x < 2; x++) {
-            for (int y = -1; y < 2; y++) {
-                if ((x == 0) && (y == 0)) {
-                    continue;
-                }
-                final MapTile foundTile = parent.getMapAt(searchLoc.getScX() + x, searchLoc.getScY() + y,
-                        searchLoc.getScZ());
-                if ((foundTile != null) && foundTile.isHidden()) {
-                    return true;
-                }
-            }
-        }
-
-        MapTile foundTile = parent.getMapAt(searchLoc.getScX(), searchLoc.getScY(), searchLoc.getScZ() + 1);
-        if ((foundTile != null) && foundTile.isHidden()) {
-            return true;
-        }
-
-        //noinspection ReuseOfLocalVariable
-        foundTile = parent.getMapAt(searchLoc.getScX(), searchLoc.getScY(), searchLoc.getScZ() - 1);
-
-        return (foundTile != null) && foundTile.isHidden();
     }
 
     /**
@@ -522,13 +284,6 @@ public final class GameMapProcessor extends Thread {
      */
     public synchronized void pause() {
         pauseLoop = true;
-    }
-
-    /**
-     * Do a inside check during the next run of the thread loop.
-     */
-    public void checkInside() {
-        checkInsideDone = false;
     }
 
     /**

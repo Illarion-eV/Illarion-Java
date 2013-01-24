@@ -401,8 +401,8 @@ public final class MapDisplayManager
                 }
                 publishEvent(c, delta, new CurrentMouseLocationEvent(c.getInput()));
 
-                // update the items
-                for (int i = 0, displaySize = display.size(); i < displaySize; i++) {
+                // update the items, backwards
+                for (int i = display.size() - 1; i >= 0; i--) {
                     display.get(i).update(c, delta);
                 }
             }

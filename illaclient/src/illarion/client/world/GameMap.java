@@ -142,29 +142,6 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     /**
-     * This class is used to reset the hiding state of each tile in order to reset the things the map processor did.
-     * This is needed in case the map processor is restarted after a error.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class ResetMapProcessorHelper implements TObjectProcedure<MapTile> {
-        /**
-         * The hiding values of the tile this method is called for receives a reset.
-         *
-         * @param tile the tile to reset
-         * @return {@code true} in all cases
-         */
-        @Override
-        public boolean execute(@Nullable final MapTile tile) {
-            if (tile != null) {
-                tile.setHidden(false);
-                tile.setObstructed(false);
-            }
-            return true;
-        }
-    }
-
-    /**
      * The lock that is hold in case the light is currently rendered. If that is done right now the map must not be
      * rendered.
      */
@@ -295,9 +272,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * cave or something else and start fading out that tiles.
      */
     public void checkInside() {
-        if (processor != null) {
-            processor.checkInside();
-        }
+        GameMapProcessor2.checkInside();
     }
 
     /**
@@ -530,17 +505,9 @@ public final class GameMap implements LightingMap, Stoppable {
             processor.clear();
             processor.saveShutdown();
             processor = null;
-
-            mapLock.readLock().lock();
-            try {
-                tiles.forEachValue(new ResetMapProcessorHelper());
-            } finally {
-                mapLock.readLock().unlock();
-            }
         }
         processor = new GameMapProcessor(this);
-        processor.setUncaughtExceptionHandler(MapProcessorCrashHandler
-                .getInstance());
+        processor.setUncaughtExceptionHandler(MapProcessorCrashHandler.getInstance());
         processor.start();
     }
 
@@ -626,9 +593,15 @@ public final class GameMap implements LightingMap, Stoppable {
             if (newTile) {
                 mapLock.writeLock().lock();
                 try {
-                    tiles.put(locKey, tile);
+                    try {
+                        tiles.put(locKey, tile);
+                    } finally {
+                        mapLock.readLock().lock();
+                        mapLock.writeLock().unlock();
+                    }
+                    GameMapProcessor2.processTile(tile);
                 } finally {
-                    mapLock.writeLock().unlock();
+                    mapLock.readLock().unlock();
                 }
             }
             World.getLights().notifyChange(updateData.getLocation());

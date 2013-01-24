@@ -36,6 +36,8 @@ import org.newdawn.slick.Color;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -66,11 +68,6 @@ public final class MapTile implements AlphaChangeListener {
      * Index of the tile with the highest elevation in the item array.
      */
     private int elevationIndex;
-
-    /**
-     * Flag if the tile is hidden or not.
-     */
-    private boolean hidden;
 
     /**
      * List of items on the tile.
@@ -112,11 +109,6 @@ public final class MapTile implements AlphaChangeListener {
     private int musicId;
 
     /**
-     * Flag if the tile is obstructed by upper levels or not.
-     */
-    private boolean obstructed;
-
-    /**
      * Value for partial obstruction.
      */
     private int obstruction;
@@ -136,6 +128,49 @@ public final class MapTile implements AlphaChangeListener {
      * The temporary light instance that is used for the calculations before its applied to the actual light.
      */
     private final Color tmpLight = new Color(0);
+
+    /**
+     * The reference to the tile that is obstructing this tile.
+     */
+    @Nullable
+    private Reference<MapTile> obstructingTileRef;
+
+    /**
+     * The map group this tile is assigned to.
+     */
+    @Nullable
+    private MapGroup group;
+
+    public void setObstructingTile(@Nonnull final MapTile tile) {
+        obstructingTileRef = new WeakReference<MapTile>(tile);
+    }
+
+    @Nullable
+    public MapTile getObstructingTile() {
+        if (obstructingTileRef == null) {
+            return null;
+        }
+        final MapTile obstructingTile = obstructingTileRef.get();
+        if (obstructingTile == null) {
+            obstructingTileRef = null;
+            return null;
+        }
+
+        if (obstructingTile.removedTile) {
+            obstructingTileRef = null;
+            return null;
+        }
+        return obstructingTile;
+    }
+
+    public void setMapGroup(@Nonnull final MapGroup group) {
+        this.group = group;
+    }
+
+    @Nullable
+    public MapGroup getMapGroup() {
+        return group;
+    }
 
     /**
      * Create a new instance of the map and assign its location.
@@ -372,11 +407,7 @@ public final class MapTile implements AlphaChangeListener {
             updateItem(item, itemCount, index);
             // display on screen
 
-            if (isHidden() || isObstructed()) {
-                item.hide();
-            } else {
-                item.show();
-            }
+            item.show();
 
             // add it to list
             if (index < items.size()) {
@@ -418,32 +449,6 @@ public final class MapTile implements AlphaChangeListener {
                 elevationIndex = index;
             }
         }
-    }
-
-    /**
-     * Get the hidden flag of the tile.
-     *
-     * @return true if the tile is hidden
-     */
-    public boolean isHidden() {
-        if (removedTile) {
-            LOGGER.warn("Checking hidden value of a removed tile.");
-            return false;
-        }
-        return hidden;
-    }
-
-    /**
-     * Get the obstructed flag of the tile.
-     *
-     * @return true if the tile is obstructed
-     */
-    public boolean isObstructed() {
-        if (removedTile) {
-            LOGGER.warn("Checking obstruction of a removed tile.");
-            return false;
-        }
-        return obstructed;
     }
 
     /**
@@ -745,79 +750,6 @@ public final class MapTile implements AlphaChangeListener {
     }
 
     /**
-     * Set the hidden flag for tiles that are hidden to show building interiors. Hidden tiles are completely hidden.
-     *
-     * @param hide true if the tile shall be hidden
-     */
-    public void setHidden(final boolean hide) {
-        if (removedTile) {
-            LOGGER.warn("Update hidden flag of a removed tile.");
-            return;
-        }
-        if (hidden == hide) {
-            return;
-        }
-        setInvisible(hide, obstructed);
-        hidden = hide;
-    }
-
-    /**
-     * Adjust visiblitiy to match hidden and obstructed flag.
-     *
-     * @param hide     the target hide flag
-     * @param obstruct the target obstruct flag
-     * @see MapTile#setHidden(boolean)
-     * @see MapTile#setObstructed(boolean)
-     */
-    private void setInvisible(final boolean hide, final boolean obstruct) {
-        final boolean showOld = !hidden && !obstructed;
-        final boolean show = !hide && !obstruct;
-
-        if (show != showOld) {
-            if (show) {
-                if (tile != null) {
-                    tile.show();
-                }
-
-                final List<Item> localItems = items;
-                if (localItems != null) {
-                    for (final Item localItem : localItems) {
-                        localItem.show();
-                    }
-                }
-            } else {
-                if (tile != null) {
-                    tile.hide();
-                }
-
-                final List<Item> localItems = items;
-                if (localItems != null) {
-                    for (final Item localItem : localItems) {
-                        localItem.hide();
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Set the obstructed flag for tiles that are obstructed by upper levels.
-     *
-     * @param obstruct true if the tile shall be marked as obstructed
-     */
-    public void setObstructed(final boolean obstruct) {
-        if (removedTile) {
-            LOGGER.warn("Update obstruction flag of a removed tile.");
-            return;
-        }
-        if (obstructed == obstruct) {
-            return;
-        }
-        setInvisible(hidden, obstruct);
-        obstructed = obstruct;
-    }
-
-    /**
      * Show a graphical effect on the tile.
      *
      * @param effectId the ID of the effect
@@ -892,6 +824,7 @@ public final class MapTile implements AlphaChangeListener {
             tile.show();
         }
     }
+
 
     @Nullable
     public Tile getTile() {
@@ -979,5 +912,9 @@ public final class MapTile implements AlphaChangeListener {
         }
         updateItemList(itemNumber, itemId, itemCount);
         itemChanged();
+    }
+
+    public boolean isHidden() {
+        return (group != null) && group.isHidden();
     }
 }
