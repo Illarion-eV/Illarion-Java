@@ -19,7 +19,7 @@
 package illarion.client.gui;
 
 import de.lessvoid.nifty.slick2d.render.image.ImageSlickRenderImage;
-import illarion.client.graphics.Item;
+import illarion.client.resources.data.ItemTemplate;
 import org.newdawn.slick.Image;
 
 /**
@@ -32,14 +32,14 @@ public class EntitySlickRenderImage extends ImageSlickRenderImage {
     /**
      * The entity that is supposed to be displayed.
      */
-    private final Item entity;
+    private final ItemTemplate entity;
 
     /**
      * Create this render image that refers to a specified entity.
      *
      * @param entity the entity the image refers to
      */
-    public EntitySlickRenderImage(final Item entity) {
+    public EntitySlickRenderImage(final ItemTemplate entity) {
         super(null);
         this.entity = entity;
     }

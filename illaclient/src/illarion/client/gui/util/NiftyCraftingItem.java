@@ -46,12 +46,12 @@ public class NiftyCraftingItem extends CraftingItem implements CraftingItemEntry
         super(org);
 
         craftImage = new NiftyImage(nifty.getRenderEngine(),
-                new EntitySlickRenderImage(ItemFactory.getInstance().getPrototype(getItemId())));
+                new EntitySlickRenderImage(ItemFactory.getInstance().getTemplate(getItemId().getValue())));
 
         ingredientImages = new NiftyImage[getIngredientCount()];
         for (int i = 0; i < ingredientImages.length; i++) {
             ingredientImages[i] = new NiftyImage(nifty.getRenderEngine(),
-                    new EntitySlickRenderImage(ItemFactory.getInstance().getPrototype(getIngredientItemId(i))));
+                    new EntitySlickRenderImage(ItemFactory.getInstance().getTemplate(getIngredientItemId(i).getValue())));
         }
     }
 

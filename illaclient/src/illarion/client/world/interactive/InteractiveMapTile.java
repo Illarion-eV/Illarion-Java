@@ -158,7 +158,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
         }
 
         final Item topItem = getTopItem();
-        if ((topItem != null) && topItem.isContainer()) {
+        if ((topItem != null) && topItem.getTemplate().getItemInfo().isContainer()) {
             World.getNet().sendCommand(new OpenOnMapCmd(getLocation()));
             return;
         }

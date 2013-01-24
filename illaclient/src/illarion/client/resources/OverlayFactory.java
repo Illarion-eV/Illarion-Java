@@ -18,8 +18,7 @@
  */
 package illarion.client.resources;
 
-import illarion.client.graphics.Overlay;
-import illarion.common.util.RecycleFactory;
+import illarion.client.resources.data.OverlayTemplate;
 
 import javax.annotation.Nonnull;
 
@@ -30,8 +29,7 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class OverlayFactory extends RecycleFactory<Overlay> implements
-        ResourceFactory<Overlay> {
+public final class OverlayFactory extends AbstractTemplateFactory<OverlayTemplate> {
     /**
      * The singleton instance of this class.
      */
@@ -55,35 +53,10 @@ public final class OverlayFactory extends RecycleFactory<Overlay> implements
     }
 
     /**
-     * Activate the winter mode and apply the mapping that will turn the map
-     * into a winter look and feel.
-     */
-    public final void activateWinter() {
-        forceMap(11, 10);
-    }
-
-    /**
      * The initialization function to prepare the class for loading the
      * resources.
      */
     @Override
     public void init() {
-    }
-
-    /**
-     * Finish the loading sequence for this factory and prepare it for normal
-     * operation.
-     */
-    @Override
-    public void loadingFinished() {
-        finish();
-    }
-
-    /**
-     * Store a new resource in this factory.
-     */
-    @Override
-    public void storeResource(final Overlay resource) {
-        register(resource);
     }
 }

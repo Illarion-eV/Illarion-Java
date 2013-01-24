@@ -20,6 +20,7 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
@@ -27,6 +28,8 @@ import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -38,8 +41,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_MOVE)
-public final class MoveMsg
-        extends AbstractReply {
+public final class MoveMsg extends AbstractReply implements UpdateTask {
     /**
      * The instance of the logger that is used to write out the data.
      */
@@ -102,19 +104,8 @@ public final class MoveMsg
         speed = reader.readUByte();
     }
 
-    /**
-     * Execute the character move message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
-     */
-    @SuppressWarnings("nls")
     @Override
-    public boolean executeUpdate() {
-        if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE) && (mode != MODE_PUSH) && (mode != MODE_RUN)) {
-            LOGGER.warn("Move char message called in unknown mode " + mode);
-            return true;
-        }
-
+    public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
         if (World.getPlayer().isPlayer(charId)) {
             final CharMovementMode moveMode;
             if (mode == MODE_MOVE) {
@@ -127,13 +118,13 @@ public final class MoveMsg
                 moveMode = CharMovementMode.None;
             }
             World.getPlayer().getMovementHandler().acknowledgeMove(moveMode, loc, speed);
-            return true;
+            return;
         }
 
         // other char not on screen, just remove it.
         if (!World.getPlayer().isOnScreen(loc, 1)) {
             World.getPeople().removeCharacter(charId);
-            return true;
+            return;
         }
 
         final Char chara = World.getPeople().accessCharacter(charId);
@@ -150,7 +141,22 @@ public final class MoveMsg
             default:
                 chara.moveTo(loc, CharMovementMode.Push, 0);
         }
+    }
 
+    /**
+     * Execute the character move message and send the decoded data to the rest of the client.
+     *
+     * @return true if the execution is done, false if it shall be called again
+     */
+    @SuppressWarnings("nls")
+    @Override
+    public boolean executeUpdate() {
+        if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE) && (mode != MODE_PUSH) && (mode != MODE_RUN)) {
+            LOGGER.warn("Move char message called in unknown mode " + mode);
+            return true;
+        }
+
+        World.getUpdateTaskManager().addTask(this);
         return true;
     }
 

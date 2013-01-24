@@ -28,6 +28,20 @@ import javolution.lang.Immutable;
  */
 public final class TileInfo implements Immutable {
     /**
+     * The mask value used to fetch the base tile ID.
+     */
+    private static final int BASE_MASK = 0x001F;
+
+    /**
+     * The mask value used to fetch the overlay tile ID.
+     */
+    private static final int OVERLAY_MASK = 0x03E0;
+
+    /**
+     * The mask value used to fetch the mask ID.
+     */
+    private static final int SHAPE_MASK = 0xFC00;
+    /**
      * The color of the tile on the map.
      */
     private final int mapColor;
@@ -55,6 +69,52 @@ public final class TileInfo implements Immutable {
         mapColor = color;
         movementCost = cost;
         opaque = isOpaque;
+    }
+
+    /**
+     * Get the base tile ID from a tile ID.
+     *
+     * @param id the full tile ID
+     * @return the base tile ID
+     */
+    public static int getBaseID(final int id) {
+        if ((id & SHAPE_MASK) > 0) {
+            return id & BASE_MASK;
+        }
+        return id;
+    }
+
+    /**
+     * Get the overlay tile ID from a tile ID.
+     *
+     * @param id the full tile ID
+     * @return the overlay tile ID
+     */
+    public static int getOverlayID(final int id) {
+        if ((id & SHAPE_MASK) > 0) {
+            return (id & OVERLAY_MASK) >> 5;
+        }
+        return 0;
+    }
+
+    /**
+     * Check if there is a overlay tile and a shape encoded in this tile ID.
+     *
+     * @param id the full tile ID
+     * @return {@code true} in case there is a overlay encoded in the tile ID
+     */
+    public static boolean hasOverlay(final int id) {
+        return getShapeId(id) > 0;
+    }
+
+    /**
+     * Get the shape ID from a tile ID.
+     *
+     * @param id the full tile ID
+     * @return the shape ID
+     */
+    public static int getShapeId(final int id) {
+        return (id & SHAPE_MASK) >> 10;
     }
 
     /**

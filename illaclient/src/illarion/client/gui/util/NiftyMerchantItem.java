@@ -52,7 +52,7 @@ public final class NiftyMerchantItem extends MerchantItem implements MerchantLis
         super(org);
 
         itemImage = new NiftyImage(nifty.getRenderEngine(),
-                new EntitySlickRenderImage(ItemFactory.getInstance().getPrototype(org.getItemId())));
+                new EntitySlickRenderImage(ItemFactory.getInstance().getTemplate(org.getItemId().getValue())));
     }
 
     /**

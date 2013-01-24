@@ -31,8 +31,8 @@ public interface ResourceFactory<T extends Resource> {
     void init();
 
     /**
-     * This function is called once loading the data is finished. It can be used
-     * to optimize the storages to the current amount of data.
+     * This function is called once loading the data is finished. It can be used to optimize the storage to the
+     * current amount of data.
      */
     void loadingFinished();
 

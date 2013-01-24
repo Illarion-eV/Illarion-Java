@@ -30,7 +30,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -145,10 +145,10 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Nullable
     public Book getBook(final int id) {
-        final Reference<Book> weakRefBook = bookMap.get(id);
+        final Reference<Book> bookReference = bookMap.get(id);
         Book requestedBook = null;
-        if (weakRefBook != null) {
-            requestedBook = weakRefBook.get();
+        if (bookReference != null) {
+            requestedBook = bookReference.get();
         }
 
         if (requestedBook == null) {
@@ -166,7 +166,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
             try {
                 final Document document = docBuilderFactory.newDocumentBuilder().parse(bookUrl.openStream());
                 requestedBook = new Book(document);
-                bookMap.put(id, new WeakReference<Book>(requestedBook));
+                bookMap.put(id, new SoftReference<Book>(requestedBook));
             } catch (@Nonnull final ParserConfigurationException e) {
                 LOGGER.error("Setting up XML parser failed!", e);
             } catch (@Nonnull final SAXException e) {

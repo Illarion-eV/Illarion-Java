@@ -18,8 +18,7 @@
  */
 package illarion.client.resources;
 
-import illarion.client.graphics.Avatar;
-import illarion.common.util.RecycleFactory;
+import illarion.client.resources.data.AvatarTemplate;
 
 import javax.annotation.Nonnull;
 
@@ -29,12 +28,11 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class CharacterFactory extends RecycleFactory<Avatar> implements
-        ResourceFactory<Avatar> {
+public final class CharacterFactory extends AbstractTemplateFactory<AvatarTemplate> {
     /**
      * The ID of the avatar that is loaded by default in case the requested avatar was not found.
      */
-    private static final int DEFAULT_ID = 10450;
+    private static final int DEFAULT_AVATAR_ID = 10450;
 
     /**
      * The singleton instance of this class.
@@ -56,34 +54,6 @@ public final class CharacterFactory extends RecycleFactory<Avatar> implements
      * the avatars created by this function and it starts loading the avatar table.
      */
     private CharacterFactory() {
-        super();
-    }
-
-    /**
-     * The initialization function.
-     */
-    @Override
-    @SuppressWarnings("nls")
-    public void init() {
-    }
-
-    /**
-     * Prepare the factory for normal operation after the loading is done.
-     */
-    @Override
-    public void loadingFinished() {
-        mapDefault(DEFAULT_ID, 1);
-
-        finish();
-    }
-
-    /**
-     * Store a resource in this factory.
-     *
-     * @param resource the resource to store
-     */
-    @Override
-    public void storeResource(final Avatar resource) {
-        register(resource);
+        super(DEFAULT_AVATAR_ID);
     }
 }

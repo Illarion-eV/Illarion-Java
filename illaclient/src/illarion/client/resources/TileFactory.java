@@ -18,8 +18,7 @@
  */
 package illarion.client.resources;
 
-import illarion.client.graphics.Tile;
-import illarion.common.util.RecycleFactory;
+import illarion.client.resources.data.TileTemplate;
 
 import javax.annotation.Nonnull;
 
@@ -30,12 +29,16 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class TileFactory extends RecycleFactory<Tile> implements
-        ResourceFactory<Tile> {
+public final class TileFactory extends AbstractTemplateFactory<TileTemplate> {
     /**
      * The singleton instance of this class.
      */
     private static final TileFactory INSTANCE = new TileFactory();
+
+    /**
+     * The ID of the tile that is supposed to be displayed by default.
+     */
+    public static final int DEFAULT_TILE_ID = 0;
 
     /**
      * Get the singleton instance of this class.
@@ -52,55 +55,6 @@ public final class TileFactory extends RecycleFactory<Tile> implements
      * operation.
      */
     private TileFactory() {
-        super();
-    }
-
-    /**
-     * Apply the mappings that are needed to turn the map into a winter look.
-     */
-    public final void activateWinter() {
-        forceMap(11, 10);
-        forceMap(41, 10);
-        forceMap(43, 10);
-    }
-
-    /**
-     * Query the factory for the map color of a certain tile
-     *
-     * @param id
-     * @return
-     */
-    public int getMapColor(int id) {
-        id = Tile.baseID(id);
-
-        // no mapping to replacement to ingore winter mode for mini-map
-        return getPrototype(id).getMapColor();
-
-    }
-
-    /**
-     * The initialize function that can be used to prepare this factory to take
-     * the data from the resource loader.
-     */
-    @Override
-    public void init() {
-    }
-
-    /**
-     * Finish the loading sequence and prepare the factory for normal operation
-     * and distribution of the load data.
-     */
-    @Override
-    public void loadingFinished() {
-        mapDefault(0, 1);
-        finish();
-    }
-
-    /**
-     * Store a resource inside that factory.
-     */
-    @Override
-    public void storeResource(final Tile resource) {
-        register(resource);
+        super(DEFAULT_TILE_ID);
     }
 }

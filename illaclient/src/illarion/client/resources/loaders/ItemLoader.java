@@ -18,8 +18,10 @@
  */
 package illarion.client.resources.loaders;
 
-import illarion.client.graphics.Item;
+import illarion.client.graphics.Sprite;
+import illarion.client.graphics.SpriteBuffer;
 import illarion.client.resources.ResourceFactory;
+import illarion.client.resources.data.ItemTemplate;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.util.TableLoaderItems;
 import illarion.common.util.TableLoaderSink;
@@ -29,29 +31,35 @@ import org.newdawn.slick.Color;
 import javax.annotation.Nonnull;
 
 /**
- * This class is used to load the item definitions from the resource table that
- * was created using the configuration tool. The class will create the required
- * item objects and send them to the item factory that takes care for
+ * This class is used to load the item definitions from the resource table that was created using the configuration
+ * tool. The class will create the required item objects and send them to the item factory that takes care for
  * distributing those objects.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ItemLoader extends AbstractResourceLoader<Item> implements TableLoaderSink<TableLoaderItems> {
+public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> implements TableLoaderSink<TableLoaderItems> {
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger logger = Logger.getLogger(ItemLoader.class);
+    private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
+
+    /**
+     * The resource path to the item graphics. All graphics need to be located
+     * at this path within the JAR-resource files.
+     */
+    @SuppressWarnings("nls")
+    private static final String ITEM_PATH = "data/items/";
 
     @Override
-    public ResourceFactory<Item> call() {
+    public ResourceFactory<ItemTemplate> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<Item> factory = getTargetFactory();
+        final ResourceFactory<ItemTemplate> factory = getTargetFactory();
 
         factory.init();
-        new TableLoaderItems("Items", this);
+        new TableLoaderItems(this);
         factory.loadingFinished();
         ItemInfo.cleanup();
 
@@ -67,10 +75,11 @@ public final class ItemLoader extends AbstractResourceLoader<Item> implements Ta
         final int colorBlue = loader.getColorModBlue();
         final int colorAlpha = loader.getColorModAlpha();
 
-        Color baseColor = null;
-        if ((colorRed >= 0) && (colorGreen >= 0) && (colorBlue >= 0)
-                && (colorAlpha >= 0)) {
-            baseColor = new Color(colorRed, colorGreen, colorBlue, colorAlpha);
+        final Color paperdollingColor;
+        if ((colorRed >= 0) && (colorGreen >= 0) && (colorBlue >= 0) && (colorAlpha >= 0)) {
+            paperdollingColor = new Color(colorRed, colorGreen, colorBlue, colorAlpha);
+        } else {
+            paperdollingColor = null;
         }
 
         final int mode = loader.getItemMode();
@@ -93,8 +102,8 @@ public final class ItemLoader extends AbstractResourceLoader<Item> implements Ta
                 ItemInfo.create(face, moveable, specialFlag, obstacle, variance,
                         opacity, surfaceLevel, itemLight);
 
-        int frames;
-        int speed;
+        final int frames;
+        final int speed;
 
         if (mode == TableLoaderItems.ITEM_MODE_ANIMATION) {
             frames = loader.getFrameCount();
@@ -107,20 +116,18 @@ public final class ItemLoader extends AbstractResourceLoader<Item> implements Ta
             speed = 0;
         }
 
-        final Item item =
-                new Item(itemID, name, offsetX, offsetY, offsetShadow, frames,
-                        speed, info, null, paperdollingRef);
-        item.setPaperdollingColor(baseColor);
+        final Sprite itemSprite = SpriteBuffer.getInstance().getSprite(ITEM_PATH, name, frames, offsetX, offsetY,
+                Sprite.HAlign.center, Sprite.VAlign.bottom, false);
+
+        final ItemTemplate template = new ItemTemplate(itemID, name, itemSprite, frames, offsetShadow, speed,
+                info, paperdollingRef, paperdollingColor);
 
         // register item with factory
         try {
-            getTargetFactory().storeResource(item);
+            getTargetFactory().storeResource(template);
         } catch (@Nonnull final IllegalStateException e) {
-            logger.error("Failed to register item " + name + "in factory due"
-                    + " a dublicated ID: " + Integer.toString(itemID));
+            LOGGER.error("Failed to register item " + name + "in factory due" + " a dublicated ID: " + itemID);
         }
-
-        item.activate(itemID);
 
         return true;
     }

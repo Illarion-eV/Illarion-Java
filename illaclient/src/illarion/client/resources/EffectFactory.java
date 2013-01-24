@@ -18,25 +18,21 @@
  */
 package illarion.client.resources;
 
-import illarion.client.graphics.Effect;
-import illarion.common.util.RecycleFactory;
+import illarion.client.resources.data.EffectTemplate;
 
 import javax.annotation.Nonnull;
 
 /**
- * The effect factory creates and stores the effect objects and keeps them for
- * reuse.
+ * The effect factory that stores the effect templates.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class EffectFactory extends RecycleFactory<Effect> implements
-        ResourceFactory<Effect> {
+public final class EffectFactory extends AbstractTemplateFactory<EffectTemplate> {
     /**
-     * The ID of the effect that is shown in case the requested effect is not
-     * defined.
+     * The ID of the effect that is shown in case the requested effect is not defined.
      */
-    private static final int DEFAULT_EFFECT = 12;
+    private static final int DEFAULT_EFFECT_ID = 12;
 
     /**
      * The singleton instance of the effect factory.
@@ -58,31 +54,6 @@ public final class EffectFactory extends RecycleFactory<Effect> implements
      * singleton instance is created.
      */
     private EffectFactory() {
-        super();
-    }
-
-    /**
-     * The initialization function prepares this factory to load data.
-     */
-    @Override
-    @SuppressWarnings("nls")
-    public void init() {
-    }
-
-    /**
-     * Optimize the factory once the loading finished.
-     */
-    @Override
-    public void loadingFinished() {
-        mapDefault(DEFAULT_EFFECT, 1);
-        finish();
-    }
-
-    /**
-     * Store a loaded resource in this factory.
-     */
-    @Override
-    public void storeResource(final Effect resource) {
-        register(resource);
+        super(DEFAULT_EFFECT_ID);
     }
 }

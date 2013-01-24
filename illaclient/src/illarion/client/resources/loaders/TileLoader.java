@@ -18,8 +18,10 @@
  */
 package illarion.client.resources.loaders;
 
-import illarion.client.graphics.Tile;
+import illarion.client.graphics.Sprite;
+import illarion.client.graphics.SpriteBuffer;
 import illarion.client.resources.ResourceFactory;
+import illarion.client.resources.data.TileTemplate;
 import illarion.common.graphics.TileInfo;
 import illarion.common.util.TableLoaderSink;
 import illarion.common.util.TableLoaderTiles;
@@ -28,37 +30,38 @@ import org.apache.log4j.Logger;
 import javax.annotation.Nonnull;
 
 /**
- * This class is used to load the tile definitions from the resource table that
- * was created using the configuration tool. The class will create the required
- * tile objects and send them to the tile factory that takes care for
+ * This class is used to load the tile definitions from the resource table that was created using the configuration
+ * tool. The class will create the required tile objects and send them to the tile factory that takes care for
  * distributing those objects.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class TileLoader extends AbstractResourceLoader<Tile> implements
+public final class TileLoader extends AbstractResourceLoader<TileTemplate> implements
         TableLoaderSink<TableLoaderTiles> {
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger logger = Logger.getLogger(ItemLoader.class);
+    private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
 
     /**
      * Trigger the loading sequence for this loader.
      */
     @Override
-    public ResourceFactory<Tile> call() {
+    public ResourceFactory<TileTemplate> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<Tile> factory = getTargetFactory();
+        final ResourceFactory<TileTemplate> factory = getTargetFactory();
 
         factory.init();
-        new TableLoaderTiles("Tiles", this);
+        new TableLoaderTiles(this);
         factory.loadingFinished();
 
         return factory;
     }
+
+    private static final String TILE_PATH = "data/tiles/";
 
     /**
      * Handle a single line of the resource table.
@@ -68,31 +71,35 @@ public final class TileLoader extends AbstractResourceLoader<Tile> implements
         final int id = loader.getTileId();
         final int mode = loader.getTileMode();
         final String name = loader.getResourceName();
-        Tile tile;
-        final TileInfo info =
-                new TileInfo(loader.getTileColor(), loader.getMovementCost(), loader.isOpaque());
+        final TileInfo info = new TileInfo(loader.getTileColor(), loader.getMovementCost(), loader.isOpaque());
+
+        final int frames;
+        final int speed;
         switch (mode) {
             case TableLoaderTiles.TILE_MODE_ANIMATED:
-                tile =
-                        new Tile(id, name, loader.getFrameCount(), loader.getAnimationSpeed(), info);
+                frames = loader.getFrameCount();
+                speed = loader.getAnimationSpeed();
                 break;
 
             case TableLoaderTiles.TILE_MODE_VARIANT:
-                tile = new Tile(id, name, loader.getFrameCount(), 0, info);
+                frames = loader.getFrameCount();
+                speed = 0;
                 break;
 
             default:
-                tile = new Tile(id, name, info);
+                frames = 1;
+                speed = 0;
                 break;
-
         }
 
+        final Sprite tileSprite = SpriteBuffer.getInstance().getSprite(TILE_PATH, name, frames, 0,
+                0, Sprite.HAlign.center, Sprite.VAlign.middle, false);
+        final TileTemplate template = new TileTemplate(id, tileSprite, frames, speed, info);
+
         try {
-            getTargetFactory().storeResource(tile);
-            tile.activate(id);
+            getTargetFactory().storeResource(template);
         } catch (@Nonnull final IllegalStateException ex) {
-            logger.error("Failed adding tile to internal factory. ID: "
-                    + Integer.toString(id) + " - Filename: " + name);
+            LOGGER.error("Failed adding tile to internal factory. ID: " + id + " - Filename: " + name);
         }
 
         return true;

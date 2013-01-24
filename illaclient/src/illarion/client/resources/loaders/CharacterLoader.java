@@ -18,10 +18,12 @@
  */
 package illarion.client.resources.loaders;
 
-import illarion.client.graphics.Avatar;
 import illarion.client.graphics.AvatarInfo;
+import illarion.client.graphics.Sprite;
+import illarion.client.graphics.SpriteBuffer;
 import illarion.client.resources.ResourceFactory;
-import illarion.common.util.TableLoader;
+import illarion.client.resources.data.AvatarTemplate;
+import illarion.common.util.TableLoaderCharacters;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
@@ -29,163 +31,73 @@ import org.newdawn.slick.Color;
 import javax.annotation.Nonnull;
 
 /**
- * This class is used to load the character definitions from the resource table
- * that was created using the configuration tool. The class will create the
- * required character objects and send them to the character factory that takes
- * care for distributing those objects.
+ * This class is used to load the character definitions from the resource table that was created using the
+ * configuration tool. The class will create the required character objects and send them to the character factory
+ * that takes care for distributing those objects.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class CharacterLoader extends AbstractResourceLoader<Avatar> implements
-        TableLoaderSink {
-    /**
-     * The table index that stores the id of the animation this avatar shows.
-     */
-    private static final int TB_ANIMATION = 15;
-
-    /**
-     * The table index that stores the appearance of the avatar that is send by
-     * the server to request the client to show this avatar.
-     */
-    private static final int TB_APPEARANCE = 6;
-
-    /**
-     * The table intex that stores the blue value of the avatar.
-     */
-    private static final int TB_BLUE = 18;
-
-    /**
-     * The table index that stores the direction the avatar is looking at.
-     */
-    private static final int TB_DIRECTION = 7;
-
-    /**
-     * The table index that stores the English description of the avatar.
-     */
-    private static final int TB_ENGLISH = 13;
-
-    /**
-     * The table index that stores the amount of frames of this avatar.
-     */
-    private static final int TB_FRAME = 2;
-
-    /**
-     * The table index that stores the German description of the avatar.
-     */
-    private static final int TB_GERMAN = 12;
-
-    /**
-     * The table intex that stores the green value of the avatar.
-     */
-    private static final int TB_GREEN = 17;
-
-    /**
-     * The table index of the character ID.
-     */
-    private static final int TB_ID = 0;
-
-    /**
-     * The table index that stores if the graphic should be horizontal mirrored
-     * or not.
-     */
-    private static final int TB_MIRROR = 14;
-
-    /**
-     * The table index of the name base of the files of the avatar.
-     */
-    private static final int TB_NAME = 1;
-
-    /**
-     * The table index that stores the x offset of the avatar graphic.
-     */
-    private static final int TB_OFFX = 4;
-
-    /**
-     * The table index that stores the y offset of the avatar graphic.
-     */
-    private static final int TB_OFFY = 5;
-
-    /**
-     * The table intex that stores the red value of the avatar.
-     */
-    private static final int TB_RED = 16;
-
-    /**
-     * The table index that stores the length of the shadow of this avatar
-     * graphic.
-     */
-    private static final int TB_SHADOW = 9;
-
-    /**
-     * The table index that stores the first and the last frame of a animation.
-     */
-    private static final int TB_STILL = 3;
-
-    /**
-     * The table index that stores the visibility bonus of this avatar.
-     */
-    private static final int TB_VISIBLE = 10;
-
-    // /**
-    // * The table intex that stores the alpha value of the avatar.
-    // */
-    // private static final int TB_ALPHA = 19;
-
+public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate> implements
+        TableLoaderSink<TableLoaderCharacters> {
     /**
      * The logger that is used to report error messages.
      */
     private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
 
     @Override
-    public ResourceFactory<Avatar> call() {
+    public ResourceFactory<AvatarTemplate> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<Avatar> factory = getTargetFactory();
+        final ResourceFactory<AvatarTemplate> factory = getTargetFactory();
 
         factory.init();
-        new TableLoader("Chars", this);
+        new TableLoaderCharacters(this);
         factory.loadingFinished();
         AvatarInfo.cleanup();
 
         return factory;
     }
 
+    /**
+     * The resource path to the avatar graphics. All graphics need to be located at this path within the JAR-resource
+     * files.
+     */
+    private static final String CHAR_PATH = "data/chars/";
+
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
-        final int avatarId = loader.getInt(TB_ID);
-        final String filename = loader.getString(TB_NAME);
-        final int frameCount = loader.getInt(TB_FRAME);
-        final int stillFrame = loader.getInt(TB_STILL);
-        final int offsetX = loader.getInt(TB_OFFX);
-        final int offsetY = loader.getInt(TB_OFFY);
-        final int shadowOffset = loader.getInt(TB_SHADOW);
-        final boolean mirror = loader.getBoolean(TB_MIRROR);
-        final int direction = loader.getInt(TB_DIRECTION);
-        final int appearance = loader.getInt(TB_APPEARANCE);
-        final int visibleMod = loader.getInt(TB_VISIBLE);
-        final int animationID = loader.getInt(TB_ANIMATION);
-        final int skinRed = loader.getInt(TB_RED);
-        final int skinGreen = loader.getInt(TB_GREEN);
-        final int skinBlue = loader.getInt(TB_BLUE);
-        // final int skinAlpha = loader.getInt(TB_ALPHA);
+    public boolean processRecord(final int line, @Nonnull final TableLoaderCharacters loader) {
+        final int avatarId = loader.getAvatarId();
+        final String name = loader.getResourceName();
+        final int frames = loader.getFrameCount();
+        final int stillFrame = loader.getStillFrame();
+        final int offsetX = loader.getOffsetX();
+        final int offsetY = loader.getOffsetY();
+        final int shadowOffset = loader.getShadowOffset();
+        final boolean mirror = loader.isMirrored();
+        final int direction = loader.getDirection();
+        final int appearance = loader.getAppearance();
+        final int visibleMod = loader.getVisibilityMod();
+        final int animationID = loader.getAnimationId();
+        final int skinRed = loader.getSkinColorRed();
+        final int skinGreen = loader.getSkinColorGreen();
+        final int skinBlue = loader.getSkinColorBlue();
 
         final AvatarInfo info = AvatarInfo.getInstance(appearance, visibleMod);
         info.reportAnimation(animationID);
 
-        final Color tmp_color = new Color(skinRed, skinGreen, skinBlue, 255);
+        final Color defaultColor = new Color(skinRed, skinGreen, skinBlue, 255);
 
-        final Avatar avatar =
-                new Avatar(avatarId, filename, frameCount, stillFrame, offsetX,
-                        offsetY, shadowOffset, info, mirror, tmp_color, direction);
+        final Sprite avatarSprite = SpriteBuffer.getInstance().getSprite(CHAR_PATH, name, frames, offsetX,
+                offsetY, Sprite.HAlign.center, Sprite.VAlign.bottom, mirror);
+        final AvatarTemplate template = new AvatarTemplate(avatarId, avatarSprite, frames, stillFrame, defaultColor,
+                shadowOffset, direction, info);
 
         try {
-            getTargetFactory().storeResource(avatar);
-            avatar.activate(avatarId);
+            getTargetFactory().storeResource(template);
         } catch (@Nonnull final IllegalStateException ex) {
-            LOGGER.error("Failed adding avatar to internal factory. ID: "
-                    + Integer.toString(avatarId) + " - Filename: " + filename);
+            LOGGER.error("Failed adding avatar to internal factory. ID: " + avatarId + " - Filename: " + name);
         }
 
         return true;

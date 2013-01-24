@@ -18,8 +18,8 @@
  */
 package illarion.client.world.items;
 
-import illarion.client.graphics.Item;
 import illarion.client.resources.ItemFactory;
+import illarion.client.resources.data.ItemTemplate;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
@@ -75,17 +75,17 @@ public abstract class AbstractItemSlot {
     }
 
     /**
-     * Get the prototype of the item that is located in this slot.
+     * Get the template of the item that is located in this slot.
      *
      * @return the item or {@code null} in case there is not item in this slot
      */
     @Nullable
-    public Item getItemPrototype() {
+    public ItemTemplate getItemTemplate() {
         if (!containsItem()) {
             return null;
         }
         assert itemId != null;
-        return ItemFactory.getInstance().getPrototype(itemId.getValue());
+        return ItemFactory.getInstance().getTemplate(itemId.getValue());
     }
 
     /**

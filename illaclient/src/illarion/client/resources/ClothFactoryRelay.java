@@ -18,9 +18,9 @@
  */
 package illarion.client.resources;
 
-import illarion.client.graphics.Avatar;
-import illarion.client.graphics.AvatarCloth;
 import illarion.client.graphics.AvatarClothManager;
+import illarion.client.resources.data.AvatarClothTemplate;
+import illarion.client.resources.data.AvatarTemplate;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -32,19 +32,19 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ClothFactoryRelay implements ResourceFactory<AvatarCloth> {
+public final class ClothFactoryRelay implements ResourceFactory<AvatarClothTemplate> {
     /**
      * This list stores the avatars that received clothes. This is needed to trigger the cleanup properly.
      */
     @Nonnull
-    private List<Avatar> usedAvatars;
+    private List<AvatarTemplate> usedAvatars;
 
     /**
      * Initialize the factory for loading the resources.
      */
     @Override
     public void init() {
-        usedAvatars = new ArrayList<Avatar>();
+        usedAvatars = new ArrayList<AvatarTemplate>();
     }
 
     /**
@@ -52,7 +52,7 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarCloth> {
      */
     @Override
     public void loadingFinished() {
-        for (final Avatar ava : usedAvatars) {
+        for (final AvatarTemplate ava : usedAvatars) {
             ava.getClothes().finish();
         }
         usedAvatars.clear();
@@ -63,13 +63,13 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarCloth> {
      * charge of maintaining this resource.
      */
     @Override
-    public void storeResource(@Nonnull final AvatarCloth resource) {
-        final Avatar parentAva = CharacterFactory.getInstance().getPrototype(resource.getAvatarId());
-        final AvatarClothManager manager = parentAva.getClothes();
-        manager.addCloth(resource.getLocationId(), resource);
+    public void storeResource(@Nonnull final AvatarClothTemplate resource) {
+        final AvatarTemplate avatarTemplate = CharacterFactory.getInstance().getTemplate(resource.getAvatarId());
+        final AvatarClothManager manager = avatarTemplate.getClothes();
+        manager.addCloth(resource.getClothSlot(), resource);
 
-        if (!usedAvatars.contains(parentAva)) {
-            usedAvatars.add(parentAva);
+        if (!usedAvatars.contains(avatarTemplate)) {
+            usedAvatars.add(avatarTemplate);
         }
     }
 

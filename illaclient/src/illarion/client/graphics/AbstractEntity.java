@@ -21,11 +21,11 @@ package illarion.client.graphics;
 import illarion.client.graphics.shader.HighlightShader;
 import illarion.client.graphics.shader.Shader;
 import illarion.client.graphics.shader.ShaderManager;
+import illarion.client.resources.data.AbstractEntityTemplate;
 import illarion.client.world.World;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;
-import illarion.common.util.RecycleObject;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -48,7 +48,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  */
 @SuppressWarnings("nls")
 @NotThreadSafe
-public abstract class AbstractEntity implements RecycleObject, DisplayItem, AlphaHandler, AnimatedFrame {
+public abstract class AbstractEntity<T extends AbstractEntityTemplate> implements DisplayItem, AlphaHandler, AnimatedFrame {
     /**
      * This class is used in case more then one alpha change listener is added. It forwards a alpha change message to
      * two other handlers. This way its possible to create a infinite amount of listeners on one entity.
@@ -97,17 +97,12 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     /**
      * The speed value for fading the alpha values by default.
      */
-    private static final int FADING_SPEED = 600;
+    private static final int FADING_SPEED = 25;
 
     /**
      * The color value of the alpha when the object is faded out fully.
      */
     private static final int FADE_OUT_ALPHA = (int) (0.4f * 255);
-
-    /**
-     * The current alpha value of the sprite. This is used for fading the entity in and out.
-     */
-    private int alpha;
 
     /**
      * The alpha listener that is supposed to receive a message in case the alpha value of this entity changed.
@@ -144,11 +139,6 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     private int displayY;
 
     /**
-     * The ID of the entity. This is the ID the entity is stored in the recycle factory with.
-     */
-    private int entityID;
-
-    /**
      * The z order of the item, so the layer of the item that determines the position of the object in the display
      * list.
      */
@@ -176,12 +166,6 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     private final Color lastRenderLight = new Color(Color.white);
 
     /**
-     * The shadow offset of the entity. This offset marks the area that does not apply to the fading corridor. This
-     * is used to avoid that objects fade out when the player character walks into their shadow.
-     */
-    private final int offS;
-
-    /**
      * The color that is used to overwrite the real color of this entity.
      */
     @Nullable
@@ -198,152 +182,39 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     private boolean shown;
 
     /**
-     * The sprite that is the actual graphical representation of the entity.
-     */
-    @Nonnull
-    private final Sprite sprite;
-
-    /**
-     * The start and end frame of the animation of this entity.
-     */
-    private final int stillFrame;
-
-    /**
      * This flag is used to determine if the scaling value is used at the rendering or not. Not using the scaling
      * value has a positive impact on the performance.
      */
     private boolean useScale;
 
     /**
-     * Copy constructor to duplicate the object. This creates a copy of a entity that is able to render in exactly
-     * the same way.
-     *
-     * @param org the original entity that shall be copied
+     * The template of this instance.
      */
-    protected AbstractEntity(@Nonnull final AbstractEntity org) {
-        // use same sprite as other entity
-        sprite = org.sprite;
+    private final T template;
 
-        stillFrame = org.stillFrame;
-        entityID = org.entityID;
-        offS = org.offS;
-        baseColor = org.baseColor;
-        fadingCorridorEffect = org.fadingCorridorEffect;
-    }
-
-    /**
-     * Construct a entity based on a sprite image and a location.
-     *
-     * @param entityId     the ID of the entity
-     * @param path         the path where the entity shall load the resources from
-     * @param name         the base name of the image that shall be loaded in the sprite
-     *                     of this entity
-     * @param frames       the amount of frames of this entity
-     * @param still        the first and the last frame of the frame animation
-     * @param offX         the x offset of the entity sprite
-     * @param offY         the y offset of the entity sprite
-     * @param shadowOffset the shadow offset if the entity image, so the space
-     *                     that does not apply to the fading corridor
-     * @param horz         the horizontal alignment of the entity sprite, so the
-     *                     horizontal position of the origin of the sprite
-     * @param vert         the vertical alignment of the entity sprite, so the vertical
-     *                     position of the origin of the sprite
-     * @param smooth       true in case the entity graphic shall be smoothed, use this
-     *                     in case the sprite needs to scale up and down
-     * @deprecated Better use the function that offers the possibility to mirror the image and setting a base color
-     */
-    @Deprecated
-    protected AbstractEntity(final int entityId, @Nonnull final String path, @Nonnull final String name,
-                             final int frames, final int still, final int offX, final int offY,
-                             final int shadowOffset, @Nonnull final Sprite.HAlign horz,
-                             @Nonnull final Sprite.VAlign vert, final boolean smooth) {
-        this(entityId, path, name, frames, still, offX, offY, shadowOffset,
-                horz, vert, smooth, false, null);
-    }
-
-    /**
-     * Construct a entity based on a sprite image and a location.
-     *
-     * @param entityId     the ID of the entity
-     * @param path         the path where the entity shall load the resources from
-     * @param name         the base name of the image that shall be loaded in the sprite of this entity
-     * @param frames       the amount of frames of this entity
-     * @param still        the first and the last frame of the frame animation
-     * @param offX         the x offset of the entity sprite
-     * @param offY         the y offset of the entity sprite
-     * @param shadowOffset the shadow offset if the entity image, so the space that does not apply to the fading
-     *                     corridor
-     * @param horz         the horizontal alignment of the entity sprite, so the horizontal position of the origin of
-     *                     the sprite
-     * @param vert         the vertical alignment of the entity sprite, so the vertical position of the origin of the
-     *                     sprite
-     * @param smooth       true in case the entity graphic shall be smoothed, use this in case the sprite needs to
-     *                     scale up and down
-     * @param mirror       true in case the image of this entity has to be mirrored horizontal
-     * @param baseCol      the base color of the image, the image will be always colored with this color,
-     *                     set it to {@code null} in case there is not recoloring needed
-     */
-    protected AbstractEntity(final int entityId, @Nonnull final String path, @Nonnull final String name,
-                             final int frames, final int still, final int offX, final int offY,
-                             final int shadowOffset, @Nonnull final Sprite.HAlign horz,
-                             @Nonnull final Sprite.VAlign vert, final boolean smooth, final boolean mirror,
-                             @Nullable final Color baseCol) {
-
-        sprite = SpriteBuffer.getInstance().getSprite(path, name, frames, offX, offY, horz, vert, mirror);
-        stillFrame = still;
-        currentFrame = still;
-        if ((baseCol == null) || baseCol.equals(DEFAULT_LIGHT)) {
-            baseColor = null;
+    protected AbstractEntity(final T template) {
+        this.template = template;
+        baseColor = template.getDefaultColor();
+        if (baseColor == null) {
+            alphaTarget = 255;
+            localLight = new Color(Color.white);
         } else {
-            baseColor = baseCol;
+            localLight = new Color(baseColor);
+            alphaTarget = baseColor.getAlpha();
         }
-
-        entityID = entityId;
-        offS = shadowOffset;
     }
 
-    /**
-     * Construct a entity based on a sprite image and a location.
-     *
-     * @param entityId        the ID of the entity
-     * @param displayedSprite the sprite that is displayed in this entity
-     * @param still           the first and the last frame of the frame animation
-     * @param shadowOffset    the shadow offset if the entity image, so the space that does not apply to the fading
-     *                        corridor
-     * @param baseCol         the base color of the image, the image will be always colored with this color,
-     *                        set it to {@code null} in case there is not recoloring needed
-     */
-    protected AbstractEntity(final int entityId, @Nonnull final Sprite displayedSprite, final int still,
-                             final int shadowOffset, @Nullable final Color baseCol) {
-
-        sprite = displayedSprite;
-        stillFrame = still;
-        currentFrame = still;
-        if ((baseCol == null) || baseCol.equals(DEFAULT_LIGHT)) {
-            baseColor = null;
-        } else {
-            baseColor = baseCol;
-        }
-
-        entityID = entityId;
-        offS = shadowOffset;
-    }
-
-    /**
-     * Activate this entity. The entity may be requested with a new ID due some
-     * mappings of the recycle factory. So set the new ID of the entity on this
-     * entity instance.
-     * <p>
-     * In case this must not be done, overwrite this method.
-     * </p>
-     */
-    @Override
-    public void activate(final int requestID) {
-        entityID = requestID;
+    @Nonnull
+    public T getTemplate() {
+        return template;
     }
 
     @Override
     public void addAlphaChangeListener(@Nonnull final AlphaChangeListener listener) {
+        if (removedEntity) {
+            LOGGER.warn("Adding a alpha listener to a removed entity is not allowed.");
+            return;
+        }
         if (alphaListener == null) {
             alphaListener = listener;
             return;
@@ -369,6 +240,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @param newBaseColor the new base color of the entity, {@code null} to get the default color
      */
     public void changeBaseColor(@Nullable final Color newBaseColor) {
+        if (removedEntity) {
+            LOGGER.warn("Changing the baseColor of a entity is not allowed after the entity was removed.");
+            return;
+        }
         if (newBaseColor == null) {
             overWriteBaseColor = null;
             return;
@@ -380,12 +255,6 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
             copyLightValues(newBaseColor, overWriteBaseColor);
         }
     }
-
-    /**
-     * The clone operation creates a copy of the entity in case it is needed.
-     */
-    @Override
-    public abstract AbstractEntity clone();
 
     /**
      * Get the frame that is currently displayed.
@@ -413,6 +282,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      */
     @Override
     public boolean draw(@Nonnull final Graphics g) {
+        if (removedEntity) {
+            LOGGER.warn("Drawing a removed entity is not allowed.");
+            return true;
+        }
         final int renderLocX = displayX;
         final int renderLocY = displayY;
 
@@ -442,6 +315,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
             }
         }
 
+        final Sprite sprite = template.getSprite();
         if (useScale) {
             sprite.draw(g, renderLocX, renderLocY, renderLight, currentFrame, scale);
         } else {
@@ -468,7 +342,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      */
     @Override
     public int getAlpha() {
-        return alpha;
+        return getLight().getAlpha();
     }
 
     /**
@@ -492,39 +366,11 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     }
 
     /**
-     * Get the amount of frames this entity contains.
-     *
-     * @return the amount of frames
-     */
-    public final int getFrames() {
-        return sprite.getFrames();
-    }
-
-    /**
-     * Get the height of the entity graphic.
-     *
-     * @return the height of the entity image
-     */
-    public final int getHeight() {
-        return sprite.getHeight();
-    }
-
-    /**
-     * Get the ID of the entity.
-     *
-     * @return the ID of the entity
-     */
-    @Override
-    public final int getId() {
-        return entityID;
-    }
-
-    /**
      * Get the current light instance that is used by this entity.
      *
      * @return the light this entity uses at the rendering functions
      */
-    @Nullable
+    @Nonnull
     public final Color getLight() {
         return localLight;
     }
@@ -539,31 +385,12 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     }
 
     /**
-     * Get the sprite of this entity.
-     *
-     * @return the sprite of the entity
-     */
-    @Nonnull
-    public final Sprite getSprite() {
-        return sprite;
-    }
-
-    /**
      * Get the current target of the alpha approaching.
      *
      * @return the current alpha target value
      */
     public final int getTargetAlpha() {
         return alphaTarget;
-    }
-
-    /**
-     * Get the width of the entity graphic.
-     *
-     * @return the width of the entity image
-     */
-    public final int getWidth() {
-        return sprite.getWidth();
     }
 
     /**
@@ -589,26 +416,27 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
     }
 
     /**
+     * Once this value is set {@code true} the entity can be assumed to be removed. It must not be added to the
+     * display again once this was done.
+     */
+    private boolean removedEntity;
+
+    /**
+     * Calling this function marks the entity to be removed from the client for good. Once this function was called
+     * its not allowed to do anything anymore with this entity.
+     */
+    public void markAsRemoved() {
+        hide();
+        removedEntity = true;
+    }
+
+    /**
      * Check if the entity is visible.
      *
      * @return true in case the entity is visible
      */
     public final boolean isVisible() {
-        return (alphaTarget > 0) || (alpha > 0);
-    }
-
-    /**
-     * Clean up the entity. This sets all colors and animations.
-     */
-    @Override
-    public void reset() {
-        // start as opaque
-        alpha = 255;
-        alphaTarget = 255;
-        currentFrame = stillFrame;
-        setLight(sprite.getDefaultLight());
-        overWriteBaseColor = null;
-        alphaListener = null;
+        return (alphaTarget > 0) || (getLight().getAlpha() > 0);
     }
 
     /**
@@ -619,11 +447,15 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      */
     @Override
     public void setAlpha(final int newAlpha) {
-        if (alpha != newAlpha) {
-            final int oldAlpha = alpha;
-            alpha = newAlpha;
+        if (removedEntity) {
+            LOGGER.warn("Changing the alpha value of a removed entity is not allowed.");
+            return;
+        }
+        if (getLight().getAlpha() != newAlpha) {
+            final int oldAlpha = getLight().getAlpha();
+            getLight().a = newAlpha / 255.f;
             if (alphaListener != null) {
-                alphaListener.alphaChanged(oldAlpha, alpha);
+                alphaListener.alphaChanged(oldAlpha, getLight().getAlpha());
             }
             wentDirty = true;
         }
@@ -638,6 +470,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      */
     @Override
     public final void setAlphaTarget(final int newAlphaTarget) {
+        if (removedEntity) {
+            LOGGER.warn("Changing the alpha animation target of a entity is not allowed.");
+            return;
+        }
         alphaTarget = newAlphaTarget;
     }
 
@@ -647,6 +483,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @param newBaseColor the new base color of the entity
      */
     public void setBaseColor(@Nullable final Color newBaseColor) {
+        if (removedEntity) {
+            LOGGER.warn("Changing the base color of a entity is not allowed once the entity was removed.");
+            return;
+        }
         baseColor = newBaseColor;
     }
 
@@ -657,6 +497,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      */
     @Override
     public void setFrame(final int frame) {
+        if (removedEntity) {
+            LOGGER.warn("Changing the frame of a removed entity is not allowed.");
+            return;
+        }
         if (currentFrame != frame) {
             currentFrame = frame;
             wentDirty = true;
@@ -670,6 +514,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @param light the new light that shall be used by this entity
      */
     public void setLight(@Nonnull final Color light) {
+        if (removedEntity) {
+            LOGGER.warn("Changing the light of a removed entity is not allowed.");
+            return;
+        }
         localLight = light;
     }
 
@@ -679,6 +527,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @param newScale the new scaling value applied to this entity
      */
     public void setScale(final float newScale) {
+        if (removedEntity) {
+            LOGGER.warn("Changing the scale of a removed entity is not allowed.");
+            return;
+        }
         if (scale != newScale) {
             scale = newScale;
             useScale = FastMath.abs(1.f - newScale) > FastMath.FLT_EPSILON;
@@ -695,6 +547,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @param typeLayer the global layer of this type of entity.
      */
     public void setScreenPos(final int dispX, final int dispY, final int zLayer, final int typeLayer) {
+        if (removedEntity) {
+            LOGGER.warn("Changing the screen position of a removed entity is not allowed.");
+            return;
+        }
         if ((dispX != displayX) || (dispY != displayY)) {
             wentDirty = true;
         }
@@ -748,6 +604,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
 
     @Override
     public void show() {
+        if (removedEntity) {
+            LOGGER.warn("Adding a entity to the display list is not allowed after the entity was removed.");
+            return;
+        }
         if (shown) {
             LOGGER.error("Added entity twice.");
         } else {
@@ -761,6 +621,10 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * Update the position of this entity in the display list.
      */
     public void updateDisplayPosition() {
+        if (removedEntity) {
+            LOGGER.warn("Updating the display position is not allowed once the entity was removed.");
+            return;
+        }
         if (shown) {
             World.getMapDisplay().readd(this);
             wentDirty = true;
@@ -771,6 +635,13 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
 
     @Override
     public void update(@Nonnull final GameContainer container, final int delta) {
+        if (removedEntity) {
+            LOGGER.warn("Updating a removed entity is not allowed.");
+            return;
+        }
+        final Sprite sprite = template.getSprite();
+        final int offS = template.getShadowOffset();
+
         int xOffset = sprite.getOffsetX() + sprite.getAlignOffsetX();
         int yOffset = sprite.getOffsetY() - sprite.getAlignOffsetY();
 
@@ -805,15 +676,13 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
 
         updateAlpha(delta);
 
-        localLight.a = getAlpha() / 255.f;
+        renderLight = getLocalLight();
 
-        if ((baseColor == null) && (overWriteBaseColor == null)) {
-            copyLightValues(localLight, renderLight);
-        } else {
+        if ((baseColor != null) || (overWriteBaseColor != null)) {
             if (overWriteBaseColor != null) {
-                renderLight = localLight.multiply(overWriteBaseColor);
+                renderLight = renderLight.multiply(overWriteBaseColor);
             } else {
-                renderLight = localLight.multiply(baseColor);
+                renderLight = renderLight.multiply(baseColor);
             }
         }
 
@@ -823,6 +692,20 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
         }
 
         setEntityAreaDirty();
+    }
+
+    /**
+     * Get the light local to this tile.
+     *
+     * @return the local light of this entity
+     */
+    @Nonnull
+    public Color getLocalLight() {
+        final Color parentLight = getParentLight();
+        if (parentLight == null) {
+            return new Color(getLight());
+        }
+        return parentLight.multiply(getLight());
     }
 
     private static void copyLightValues(@Nonnull final Color source, @Nonnull final Color target) {
@@ -847,6 +730,7 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      */
     @Nonnull
     public final Rectangle getInteractionRect() {
+        final int offS = template.getShadowOffset();
         if (offS == 0) {
             return displayRect;
         }
@@ -905,8 +789,8 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @return <code>true</code> in case the graphic is turned transparent due
      *         its color
      */
-    protected boolean isTransparent() {
-        return alpha < 255;
+    public boolean isTransparent() {
+        return getAlpha() < 255;
     }
 
     /**
@@ -916,8 +800,8 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      * @param delta the time in milliseconds since the last update
      */
     protected final void updateAlpha(final int delta) {
-        if (alpha != alphaTarget) {
-            setAlpha(AnimationUtility.translate(alpha, alphaTarget, FADING_SPEED, FADE_OUT_ALPHA, 255, delta));
+        if (getAlpha() != alphaTarget) {
+            setAlpha(AnimationUtility.translate(getAlpha(), alphaTarget, FADING_SPEED, FADE_OUT_ALPHA, 255, delta));
         }
     }
 
@@ -929,5 +813,16 @@ public abstract class AbstractEntity implements RecycleObject, DisplayItem, Alph
      */
     protected boolean usingScale() {
         return useScale;
+    }
+
+    /**
+     * Get the parent light of this entity. This is the light value that is supplied by some other object. The value of
+     * this color is never altered by this class. The value can be {@code null} to assume the default light.
+     *
+     * @return the parent light
+     */
+    @Nullable
+    protected Color getParentLight() {
+        return null;
     }
 }

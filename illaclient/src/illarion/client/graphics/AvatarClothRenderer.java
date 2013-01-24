@@ -272,7 +272,7 @@ final class AvatarClothRenderer {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
                 final AvatarCloth currentCloth = currentClothes[i];
                 if (currentCloth != null) {
-                    final int currentFrames = currentCloth.getFrames();
+                    final int currentFrames = currentCloth.getTemplate().getFrames();
                     if (currentFrames == parentFrames) {
                         currentCloth.setFrame(frame);
                     } else if (currentFrames > 1) {
@@ -347,24 +347,6 @@ final class AvatarClothRenderer {
     }
 
     /**
-     * Clean up this cloth renderer. This will put all current clothes stored in
-     * this renderer back into their factory.
-     */
-    protected void clear() {
-        clothLock.writeLock().lock();
-        try {
-            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                if (currentClothes[i] != null) {
-                    currentClothes[i].recycle();
-                }
-                currentClothes[i] = null;
-            }
-        } finally {
-            clothLock.writeLock().unlock();
-        }
-    }
-
-    /**
      * Render all clothes in the correct order.
      */
     protected void draw(@Nonnull final Graphics g) {
@@ -411,10 +393,9 @@ final class AvatarClothRenderer {
         clothLock.writeLock().lock();
         try {
             if (currentClothes[group] != null) {
-                if ((item != null) && (currentClothes[group].getId() == item.getId())) {
+                if ((item != null) && (currentClothes[group].getTemplate().getId() == item.getTemplate().getId())) {
                     return;
                 }
-                currentClothes[group].recycle();
             }
             currentClothes[group] = item;
 

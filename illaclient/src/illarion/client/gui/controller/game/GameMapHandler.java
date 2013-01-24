@@ -230,8 +230,8 @@ public final class GameMapHandler implements ScreenController, UpdatableHandler 
         if ((activeScreen != null) && (activeNifty != null)) {
             final Item movedItem = targetTile.getTopItem();
             assert movedItem != null;
-            final int width = movedItem.getGuiTexture().getWidth();
-            final int height = movedItem.getGuiTexture().getHeight();
+            final int width = movedItem.getTemplate().getGuiTexture().getWidth();
+            final int height = movedItem.getTemplate().getGuiTexture().getHeight();
 
             draggedGraphic.resetLayout();
             draggedGraphic.setConstraintWidth(SizeValue.px(width));
@@ -245,7 +245,7 @@ public final class GameMapHandler implements ScreenController, UpdatableHandler 
             draggedImage.setHeight(height);
 
             final ImageRenderer imgRender = draggedImage.getRenderer(ImageRenderer.class);
-            imgRender.setImage(new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem)));
+            imgRender.setImage(new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem.getTemplate())));
 
             gamePanel.layoutElements();
             event.getForwardingControl().releaseExclusiveMouse();

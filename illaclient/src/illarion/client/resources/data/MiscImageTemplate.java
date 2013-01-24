@@ -16,17 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.resources;
+package illarion.client.resources.data;
 
-import illarion.client.resources.data.AvatarClothTemplate;
+import illarion.client.graphics.Sprite;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * The factory that handles all clothes of one group in relationship to the item
- * IDs they are assigned to. If needed it creates further instances of the
- * avatar cloth instances to ensure that all can be drawn properly.
+ * This is the template that contains the required data to create the graphical representation of a utility or GUI
+ * graphic.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("EmptyClass")
-public final class ClothFactory extends AbstractTemplateFactory<AvatarClothTemplate> {
+@Immutable
+@ThreadSafe
+public class MiscImageTemplate extends AbstractMultiFrameEntityTemplate {
+    /**
+     * The constructor of this class.
+     *
+     * @param id     the identification number of the entity
+     * @param sprite the sprite used to render the entity
+     * @param frames the total amount of frames
+     */
+    public MiscImageTemplate(final int id, @Nonnull final Sprite sprite, final int frames) {
+        super(id, sprite, frames, 0, null, 0);
+    }
 }

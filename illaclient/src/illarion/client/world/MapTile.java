@@ -214,7 +214,9 @@ public final class MapTile implements AlphaChangeListener {
         }
         clampItems(0);
         if (tile != null) {
-            tile.recycle();
+            tile.hide();
+            tile.markAsRemoved();
+            tile = null;
         }
     }
 
@@ -257,7 +259,7 @@ public final class MapTile implements AlphaChangeListener {
         if (items.get(pos).getItemId().equals(oldItemId)) {
             setItem(pos, itemId, count);
         } else {
-            LOGGER.warn("change top item mismatch. Expected " + oldItemId + " found " + items.get(pos).getId());
+            LOGGER.warn("change top item mismatch. Expected " + oldItemId + " found " + items.get(pos).getItemId().getValue());
         }
         itemChanged();
     }
@@ -288,7 +290,9 @@ public final class MapTile implements AlphaChangeListener {
             elevationIndex = 0;
         }
 
-        localItems.get(pos).recycle();
+        final Item removedItem = localItems.get(pos);
+        removedItem.hide();
+        removedItem.markAsRemoved();
         localItems.remove(pos);
         // enable numbers for next top item
         if ((pos - 1) >= 0) {
@@ -345,7 +349,8 @@ public final class MapTile implements AlphaChangeListener {
                     updateItem(item, itemCount, index);
                 } else {
                     // different item: clear old item
-                    item.recycle();
+                    item.hide();
+                    item.markAsRemoved();
                     item = null;
 
                     // carrying item was removed
@@ -363,7 +368,6 @@ public final class MapTile implements AlphaChangeListener {
         if (item == null) {
             // create new item
             item = Item.create(itemId, tileLocation, this);
-            item.setLight(light);
 
             updateItem(item, itemCount, index);
             // display on screen
@@ -406,7 +410,7 @@ public final class MapTile implements AlphaChangeListener {
         item.setScreenPos(tileLocation.getDcX(), tileLocation.getDcY() - objectOffset, tileLocation.getDcZ() - index, Layers.ITEM);
 
         // set the elevation for items that can carry
-        final int level = item.getLevel();
+        final int level = item.getTemplate().getItemInfo().getLevel();
         if (level > 0) {
             // Set elevation only for first suitable item
             if ((elevation == 0) || (elevationIndex == index)) {
@@ -470,8 +474,8 @@ public final class MapTile implements AlphaChangeListener {
         final List<Item> localItems = items;
         if (localItems != null) {
             for (final Item item : localItems) {
-                if (item.isLight()) {
-                    newLightValue = item.getItemLight();
+                if (item.getTemplate().getItemInfo().isLight()) {
+                    newLightValue = item.getTemplate().getItemInfo().getLight();
                     break;
                 }
             }
@@ -523,7 +527,7 @@ public final class MapTile implements AlphaChangeListener {
         }
 
         final Item topItem = getTopItem();
-        return (topItem != null) && topItem.isMovable();
+        return (topItem != null) && topItem.getTemplate().getItemInfo().isMovable();
 
     }
 
@@ -541,7 +545,7 @@ public final class MapTile implements AlphaChangeListener {
             obstruction = 0;
             if (items != null) {
                 for (final Item item : items) {
-                    obstruction += item.getCoverage();
+                    obstruction += item.getTemplate().getItemInfo().getOpacity();
                 }
             }
             losDirty = false;
@@ -578,7 +582,7 @@ public final class MapTile implements AlphaChangeListener {
         }
 
         // non-movable items are only lit from the front
-        return items.get(0).getFace();
+        return items.get(0).getTemplate().getItemInfo().getFace();
     }
 
     /**
@@ -608,7 +612,7 @@ public final class MapTile implements AlphaChangeListener {
         if (localTile == null) {
             return Integer.MAX_VALUE;
         }
-        return localTile.getMovementCost();
+        return localTile.getTemplate().getTileInfo().getMovementCost();
     }
 
     /**
@@ -683,16 +687,16 @@ public final class MapTile implements AlphaChangeListener {
             return true;
         }
 
-        boolean obstacle = localTile.isObstacle();
+        boolean obstacle = localTile.getTemplate().getTileInfo().getMovementCost() == 0;
 
         // check items
         final List<Item> localItems = items;
         if (localItems != null) {
             for (final Item item : localItems) {
-                if (item.isObstacle()) {
+                if (item.getTemplate().getItemInfo().isObstacle()) {
                     return true;
                 }
-                if (item.isJesus()) {
+                if (item.getTemplate().getItemInfo().isJesus()) {
                     obstacle = false;
                 }
             }
@@ -711,7 +715,13 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Checking opaque value of a removed tile.");
         }
         final Tile localTile = tile;
-        return (localTile != null) && localTile.isOpapue();
+        if (tile == null) {
+            return false;
+        }
+
+        final boolean opaqueFlag = localTile.getTemplate().getTileInfo().isOpaque();
+        final boolean transparentFlag = localTile.isTransparent();
+        return opaqueFlag && !transparentFlag;
     }
 
     /**
@@ -728,7 +738,7 @@ public final class MapTile implements AlphaChangeListener {
         }
         tmpLight.scale(factor);
         tmpLight.add(ambientLight);
-        light.a = tmpLight.a;
+        light.a = 1.f;
         light.r = tmpLight.r;
         light.g = tmpLight.g;
         light.b = tmpLight.b;
@@ -867,7 +877,8 @@ public final class MapTile implements AlphaChangeListener {
 
         // free old tile to factory
         if (tile != null) {
-            tile.recycle();
+            tile.hide();
+            tile.markAsRemoved();
             tile = null;
         }
 
@@ -878,9 +889,13 @@ public final class MapTile implements AlphaChangeListener {
 
             tile.addAlphaChangeListener(this);
             tile.setScreenPos(tileLocation, Layers.TILE);
-            tile.setLight(light);
             tile.show();
         }
+    }
+
+    @Nullable
+    public Tile getTile() {
+        return tile;
     }
 
     /**
@@ -935,7 +950,8 @@ public final class MapTile implements AlphaChangeListener {
         for (int i = 0; i < amount; i++) {
             // recycle the removed items
             final Item item = localItems.get(itemNumber);
-            item.recycle();
+            item.hide();
+            item.markAsRemoved();
 
             // keep deleting in the same place as the list becomes shorter
             localItems.remove(itemNumber);

@@ -27,19 +27,19 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-final class FrameAnimation extends AbstractAnimation {
+public final class FrameAnimation extends AbstractAnimation {
     /**
      * Run animation backwards.
      */
-    protected static final int BACKWARDS = 1;
+    public static final int BACKWARDS = 1;
     /**
      * End animation with same frame as it started.
      */
-    protected static final int CYCLIC = 4;
+    public static final int CYCLIC = 4;
     /**
      * Keep running in an endless loop.
      */
-    protected static final int LOOPED = 2;
+    public static final int LOOPED = 2;
 
     /**
      * The amount of frames of this animation.
@@ -68,6 +68,15 @@ final class FrameAnimation extends AbstractAnimation {
     private int stillFrame;
 
     /**
+     * Create a new frame animation with the default parameters. Note that a animation created by this can't be
+     * started with {@link #restart()}. It first needs it running data set with {@link #start(int, int, int,
+     * int)} or {@link #setup(int, int, int, int)}.
+     */
+    public FrameAnimation() {
+        this(null);
+    }
+
+    /**
      * Create a new frame animation with the default parameters and a first
      * target. Note that a animation created by this can't be started with
      * {@link #restart()}. It first needs it running data set with
@@ -75,7 +84,7 @@ final class FrameAnimation extends AbstractAnimation {
      *
      * @param target the first target of the animation
      */
-    protected FrameAnimation(@Nullable final AnimatedFrame target) {
+    public FrameAnimation(@Nullable final AnimatedFrame target) {
         super(target);
     }
 
@@ -87,8 +96,8 @@ final class FrameAnimation extends AbstractAnimation {
      * @param source the frame animation that supplies the data for the new
      *               animation
      */
-    protected FrameAnimation(final AnimatedFrame target,
-                             @Nonnull final FrameAnimation source) {
+    public FrameAnimation(final AnimatedFrame target,
+                          @Nonnull final FrameAnimation source) {
         super(target);
         setup(source.frames, source.stillFrame, source.speed, source.mode);
     }
@@ -184,8 +193,8 @@ final class FrameAnimation extends AbstractAnimation {
      *                       the slower the animation
      * @param animMode       the mode of the animation
      */
-    protected void setup(final int animFrames, final int animStillFrame,
-                         final int animSpeed, final int animMode) {
+    public void setup(final int animFrames, final int animStillFrame,
+                      final int animSpeed, final int animMode) {
         frames = animFrames;
         stillFrame = animStillFrame;
         mode = animMode;

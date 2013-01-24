@@ -373,7 +373,7 @@ public final class Player {
         int visibility = Char.VISIBILITY_MAX;
         final Avatar avatar = chara.getAvatar();
         if (avatar != null) {
-            visibility = avatar.getVisibility();
+            visibility = avatar.getTemplate().getAvatarInfo().getVisibility();
         }
         visibility += chara.getVisibilityBonus();
 

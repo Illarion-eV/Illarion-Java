@@ -57,7 +57,7 @@ public final class NiftySelectItem extends SelectionItem implements SelectListEn
             itemImage = null;
         } else {
             itemImage = new NiftyImage(nifty.getRenderEngine(),
-                    new EntitySlickRenderImage(ItemFactory.getInstance().getPrototype(id)));
+                    new EntitySlickRenderImage(ItemFactory.getInstance().getTemplate(id)));
         }
     }
 

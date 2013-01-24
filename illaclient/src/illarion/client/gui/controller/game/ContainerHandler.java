@@ -33,7 +33,6 @@ import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
 import illarion.client.IllaClient;
-import illarion.client.graphics.Item;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.net.server.events.CloseContainerEvent;
@@ -41,6 +40,7 @@ import illarion.client.net.server.events.ContainerItemLookAtEvent;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.resources.ItemFactory;
+import illarion.client.resources.data.ItemTemplate;
 import illarion.client.util.LookAtTracker;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
@@ -151,7 +151,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
                     if (World.getPlayer().hasMerchantList()) {
                         slot.getInteractive().sell();
                     } else //noinspection ConstantConditions
-                        if (slot.getItemPrototype().isContainer()) {
+                        if (slot.getItemTemplate().getItemInfo().isContainer()) {
                             slot.getInteractive().openContainer();
                         } else {
                             slot.getInteractive().use();
@@ -645,7 +645,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
             final ItemCount count = itr.value().getCount();
 
             if (ItemId.isValidItem(itemId)) {
-                final Item displayedItem = ItemFactory.getInstance().getPrototype(itemId.getValue());
+                final ItemTemplate displayedItem = ItemFactory.getInstance().getTemplate(itemId.getValue());
 
                 final NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
                         new EntitySlickRenderImage(displayedItem));

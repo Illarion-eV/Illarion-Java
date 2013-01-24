@@ -18,87 +18,50 @@
  */
 package illarion.client.resources.loaders;
 
-import illarion.client.graphics.AvatarCloth;
+import illarion.client.graphics.Sprite;
+import illarion.client.graphics.SpriteBuffer;
+import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.ResourceFactory;
-import illarion.common.util.TableLoader;
+import illarion.client.resources.data.AvatarClothTemplate;
+import illarion.client.resources.data.AvatarTemplate;
+import illarion.common.util.TableLoaderClothes;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
 /**
- * This class takes care for loading the avatar clothes, sorts them to the
- * avatars and prepares to render them.
+ * This class takes care for loading the avatar clothes, sorts them to the avatars and prepares to render them.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ClothLoader extends AbstractResourceLoader<AvatarCloth> implements
-        TableLoaderSink {
+public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplate> implements
+        TableLoaderSink<TableLoaderClothes> {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(ClothLoader.class);
 
-    /**
-     * The table index that stores the number of frames of the animation.
-     */
-    private static final int TB_FRAME = 1;
-
-    /**
-     * The table index that stores the body location of the graphic.
-     */
-    private static final int TB_LOCATION = 5;
-
-    /**
-     * The table index that stores if the graphic shall be mirrored.
-     */
-    private static final int TB_MIRROR = 11;
-
-    /**
-     * The table index of the file name of the cloth that shall be displayed.
-     */
-    private static final int TB_NAME = 0;
-
-    /**
-     * The table index that stores the x offset of the graphic.
-     */
-    private static final int TB_OFFSET_X = 3;
-
-    /**
-     * The table index that stores the y offset of the graphic.
-     */
-    private static final int TB_OFFSET_Y = 4;
-
-    /**
-     * The table index that stores the avatar ID this cloth is assigned to.
-     */
-    private static final int TB_REF_CHAR_ID = 10;
-
-    /**
-     * The table index that stores the item ID this cloth is assigned to.
-     */
-    private static final int TB_REF_ITEM_ID = 6;
-
-    /**
-     * The table index that stores the number of the first and last frame of the
-     * animation.
-     */
-    private static final int TB_STILL = 2;
-
     @Override
-    public ResourceFactory<AvatarCloth> call() {
+    public ResourceFactory<AvatarClothTemplate> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<AvatarCloth> factory = getTargetFactory();
+        final ResourceFactory<AvatarClothTemplate> factory = getTargetFactory();
 
         factory.init();
-        new TableLoader("Cloth", this);
+        new TableLoaderClothes(this);
         factory.loadingFinished();
 
         return factory;
     }
+
+    /**
+     * The resource path to the avatar graphics. All graphics need to be located at this path within the JAR-resource
+     * files.
+     */
+    private static final String CLOTH_PATH = "data/chars/";
 
     /**
      * Handle one record from the table that is loaded by this function. This
@@ -112,25 +75,25 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarCloth> imple
      */
     @SuppressWarnings("nls")
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
-        final int avatarID = loader.getInt(TB_REF_CHAR_ID);
-        final int itemID = loader.getInt(TB_REF_ITEM_ID);
-        final int location = loader.getInt(TB_LOCATION);
+    public boolean processRecord(final int line, @Nonnull final TableLoaderClothes loader) {
+        final int avatarID = loader.getReferenceCharacterId();
+        final int itemID = loader.getReferenceItemId();
+        final int location = loader.getClothSlot();
 
-        final AvatarCloth cloth =
-                new AvatarCloth(avatarID, itemID, loader.getString(TB_NAME),
-                        location, loader.getInt(TB_FRAME), loader.getInt(TB_STILL),
-                        loader.getInt(TB_OFFSET_X), loader.getInt(TB_OFFSET_Y),
-                        loader.getBoolean(TB_MIRROR), null);
+        final AvatarTemplate avatarTemplate = CharacterFactory.getInstance().getTemplate(avatarID);
+
+        final Sprite clothSprite = SpriteBuffer.getInstance().getSprite(CLOTH_PATH, loader.getResourceName(),
+                loader.getFrameCount(), loader.getOffsetX() + avatarTemplate.getSprite().getOffsetX(),
+                loader.getOffsetY() + avatarTemplate.getSprite().getOffsetY(), Sprite.HAlign.center,
+                Sprite.VAlign.bottom, loader.isMirrored());
+        final AvatarClothTemplate template = new AvatarClothTemplate(itemID, clothSprite, loader.getFrameCount(),
+                avatarID, location);
 
         try {
-            getTargetFactory().storeResource(cloth);
-            cloth.activate(itemID);
+            getTargetFactory().storeResource(template);
         } catch (@Nonnull final IllegalStateException e) {
-            LOGGER.error("Error adding paperdolling item to avatar: "
-                    + Integer.toString(avatarID) + " in group: "
-                    + Integer.toString(location) + " to item: "
-                    + Integer.toString(itemID));
+            LOGGER.error("Error adding paperdolling item to avatar: " + avatarID + " in group: " + location + " to " +
+                    "item: " + itemID);
         }
         return true;
     }

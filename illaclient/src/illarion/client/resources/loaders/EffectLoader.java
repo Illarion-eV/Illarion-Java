@@ -18,83 +18,50 @@
  */
 package illarion.client.resources.loaders;
 
-import illarion.client.graphics.Effect;
+import illarion.client.graphics.Sprite;
+import illarion.client.graphics.SpriteBuffer;
 import illarion.client.resources.ResourceFactory;
-import illarion.common.util.TableLoader;
+import illarion.client.resources.data.EffectTemplate;
+import illarion.common.util.TableLoaderEffects;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
 /**
- * This class is used to load the effect definitions from the resource table
- * that was created using the configuration tool. The class will create the
- * required effect objects and send them to the effect factory that takes care
- * for distributing those objects.
+ * This class is used to load the effect definitions from the resource table that was created using the configuration
+ * tool. The class will create the required effect objects and send them to the effect factory that takes care for
+ * distributing those objects.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class EffectLoader extends AbstractResourceLoader<Effect> implements
-        TableLoaderSink {
-    /**
-     * The table index of the column that stores the amount of frames of the
-     * effect animation.
-     */
-    private static final int TB_FRAME = 2;
-
-    /**
-     * The table index of the column that stores the effect ID.
-     */
-    private static final int TB_ID = 0;
-
-    /**
-     * The table index of the column that stores the encoded light value that is
-     * emitted by the effect.
-     */
-    private static final int TB_LIGHT = 7;
-
-    /**
-     * The table index of the column that stores the base filename of the effect
-     * graphics.
-     */
-    private static final int TB_NAME = 1;
-
-    /**
-     * The table index of the column that stores the x offset of the effect
-     * graphic.
-     */
-    private static final int TB_OFFX = 3;
-
-    /**
-     * The table index of the column that stores the y offset of the effect
-     * graphic.
-     */
-    private static final int TB_OFFY = 4;
-
-    /**
-     * The table index of the column that stores the speed of the effect
-     * animation.
-     */
-    private static final int TB_SPEED = 5;
-
+public final class EffectLoader extends AbstractResourceLoader<EffectTemplate> implements
+        TableLoaderSink<TableLoaderEffects> {
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger logger = Logger.getLogger(ItemLoader.class);
+    private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
+
+    /**
+     * The resource path to the effect graphics. All graphics need to be located at this path within the JAR-resource
+     * files.
+     */
+    @SuppressWarnings("nls")
+    private static final String EFFECTS_PATH = "data/effects/";
 
     /**
      * Trigger the loading sequence for this loader.
      */
     @Override
-    public ResourceFactory<Effect> call() {
+    public ResourceFactory<EffectTemplate> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<Effect> factory = getTargetFactory();
+        final ResourceFactory<EffectTemplate> factory = getTargetFactory();
 
         factory.init();
-        new TableLoader("Effects", this);
+        new TableLoaderEffects(this);
         factory.loadingFinished();
 
         return factory;
@@ -104,24 +71,22 @@ public final class EffectLoader extends AbstractResourceLoader<Effect> implement
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
-        final int effectID = loader.getInt(TB_ID);
-        final String fileName = loader.getString(TB_NAME);
-        final int frameCount = loader.getInt(TB_FRAME);
-        final int offsetX = loader.getInt(TB_OFFX);
-        final int offsetY = loader.getInt(TB_OFFY);
-        final int animSpeed = loader.getInt(TB_SPEED);
-        final int light = loader.getInt(TB_LIGHT);
+    public boolean processRecord(final int line, @Nonnull final TableLoaderEffects loader) {
+        final int effectID = loader.getEffectId();
+        final String name = loader.getResourceName();
+        final int frames = loader.getFrameCount();
+        final int offsetX = loader.getOffsetX();
+        final int offsetY = loader.getOffsetY();
+        final int speed = loader.getAnimationSpeed();
+        final int light = loader.getEffectLight();
 
-        final Effect effect =
-                new Effect(effectID, fileName, frameCount, offsetX, offsetY,
-                        animSpeed, light);
+        final Sprite effectSprite = SpriteBuffer.getInstance().getSprite(EFFECTS_PATH, name, frames, offsetX,
+                offsetY, Sprite.HAlign.center, Sprite.VAlign.middle, false);
+        final EffectTemplate template = new EffectTemplate(effectID, effectSprite, frames, speed, light);
         try {
-            getTargetFactory().storeResource(effect);
-            effect.activate(effectID);
+            getTargetFactory().storeResource(template);
         } catch (@Nonnull final IllegalStateException ex) {
-            logger.error("Failed adding effect to internal factory. ID: "
-                    + Integer.toString(effectID) + " - Filename: " + fileName);
+            LOGGER.error("Failed adding effect to internal factory. ID: " + effectID + " - Filename: " + name);
         }
 
         return true;

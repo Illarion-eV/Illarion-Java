@@ -22,6 +22,7 @@ import illarion.client.graphics.AnimationManager;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.client.net.NetComm;
 import illarion.client.util.ChatHandler;
+import illarion.client.util.UpdateTaskManager;
 import illarion.client.world.interactive.InteractionManager;
 import illarion.common.graphics.LightTracer;
 import illarion.common.util.StoppableStorage;
@@ -74,7 +75,6 @@ public final class World {
             INSTANCE.musicBox = null;
             INSTANCE.lights = null;
 
-
             INSTANCE.player = null;
             INSTANCE.people = null;
             INSTANCE.net = null;
@@ -86,6 +86,7 @@ public final class World {
                 INSTANCE.executorService.shutdownNow();
             }
             INSTANCE.executorService = null;
+            INSTANCE.updateManager = null;
 
         }
     }
@@ -185,6 +186,13 @@ public final class World {
         return INSTANCE.executorService;
     }
 
+    @Nonnull
+    public static UpdateTaskManager getUpdateTaskManager() {
+        INSTANCE.checkUpdateManager();
+        //noinspection ConstantConditions
+        return INSTANCE.updateManager;
+    }
+
     /**
      * Initialize all components of the world.
      */
@@ -202,6 +210,7 @@ public final class World {
         getWeather();
         getInteractionManager();
         getExecutorService();
+        getUpdateTaskManager();
     }
 
     /**
@@ -283,16 +292,34 @@ public final class World {
     private ExecutorService executorService;
 
     /**
+     * This update manager takes care for executing tasks in sync with the main loop.
+     */
+    @Nullable
+    private UpdateTaskManager updateManager;
+
+    /**
      * Private constructor to ensure the sole instance is the singleton
      * instance.
      */
     private World() {
     }
 
+    private void checkUpdateManager() {
+        if (updateManager == null) {
+            synchronized (this) {
+                if (updateManager == null) {
+                    updateManager = new UpdateTaskManager();
+                }
+            }
+        }
+    }
+
     private void checkAniManager() {
         if (aniManager == null) {
             synchronized (this) {
-                aniManager = new AnimationManager();
+                if (aniManager == null) {
+                    aniManager = new AnimationManager();
+                }
             }
         }
     }
@@ -300,7 +327,9 @@ public final class World {
     private void checkChatHandler() {
         if (chatHandler == null) {
             synchronized (this) {
-                chatHandler = new ChatHandler();
+                if (chatHandler == null) {
+                    chatHandler = new ChatHandler();
+                }
             }
         }
     }
@@ -308,7 +337,9 @@ public final class World {
     private void checkClock() {
         if (clock == null) {
             synchronized (this) {
-                clock = new Clock();
+                if (clock == null) {
+                    clock = new Clock();
+                }
             }
         }
     }
@@ -316,7 +347,9 @@ public final class World {
     private void checkGameMap() {
         if (map == null) {
             synchronized (this) {
-                map = new GameMap();
+                if (map == null) {
+                    map = new GameMap();
+                }
             }
         }
     }
@@ -324,8 +357,10 @@ public final class World {
     private void checkLights() {
         if (lights == null) {
             synchronized (this) {
-                lights = new LightTracer(getMap());
-                lights.start();
+                if (lights == null) {
+                    lights = new LightTracer(getMap());
+                    lights.start();
+                }
             }
         }
     }
@@ -333,7 +368,9 @@ public final class World {
     private void checkMapDisplay() {
         if (mapDisplay == null) {
             synchronized (this) {
-                mapDisplay = new MapDisplayManager();
+                if (mapDisplay == null) {
+                    mapDisplay = new MapDisplayManager();
+                }
             }
         }
     }
@@ -341,7 +378,9 @@ public final class World {
     private void checkMusicBox() {
         if (musicBox == null) {
             synchronized (this) {
-                musicBox = new MusicBox();
+                if (musicBox == null) {
+                    musicBox = new MusicBox();
+                }
             }
         }
     }
@@ -349,7 +388,9 @@ public final class World {
     private void checkNet() {
         if (net == null) {
             synchronized (this) {
-                net = new NetComm();
+                if (net == null) {
+                    net = new NetComm();
+                }
             }
         }
     }
@@ -357,7 +398,9 @@ public final class World {
     private void checkPeople() {
         if (people == null) {
             synchronized (this) {
-                people = new People();
+                if (people == null) {
+                    people = new People();
+                }
             }
         }
     }
@@ -365,7 +408,9 @@ public final class World {
     private void checkPlayer() {
         if (player == null) {
             synchronized (this) {
-                player = new Player();
+                if (player == null) {
+                    player = new Player();
+                }
             }
         }
     }
@@ -373,7 +418,9 @@ public final class World {
     private void checkWeather() {
         if (weather == null) {
             synchronized (this) {
-                weather = new Weather();
+                if (weather == null) {
+                    weather = new Weather();
+                }
             }
         }
     }
@@ -381,7 +428,9 @@ public final class World {
     private void checkInteractionManager() {
         if (interactionManager == null) {
             synchronized (this) {
-                interactionManager = new InteractionManager();
+                if (interactionManager == null) {
+                    interactionManager = new InteractionManager();
+                }
             }
         }
     }
@@ -389,7 +438,9 @@ public final class World {
     private void checkExecutorService() {
         if (executorService == null) {
             synchronized (this) {
-                executorService = Executors.newCachedThreadPool();
+                if (executorService == null) {
+                    executorService = Executors.newCachedThreadPool();
+                }
             }
         }
     }

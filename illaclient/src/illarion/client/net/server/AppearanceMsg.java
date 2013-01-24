@@ -22,6 +22,7 @@ import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
@@ -32,8 +33,11 @@ import illarion.common.types.ItemId;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -43,7 +47,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_APPEARANCE)
-public final class AppearanceMsg extends AbstractReply {
+public final class AppearanceMsg extends AbstractReply implements UpdateTask {
     /**
      * The instance of the logger that is used to write out the data.
      */
@@ -179,6 +183,52 @@ public final class AppearanceMsg extends AbstractReply {
         deadFlag = reader.readUByte() == 1;
     }
 
+
+    @Override
+    public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+        @Nullable final Char character = World.getPeople().getCharacter(charId);
+
+        // Character not found.
+        if (character == null) {
+            return;
+        }
+
+        character.setScale(size / SCALE_MOD);
+        character.setName(name);
+        character.setAppearance(appearance);
+        character.resetLight();
+        character.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
+        character.setWearingItem(AvatarClothManager.GROUP_BEARD, beardID);
+
+        for (int i = 0; i < itemSlots.length; i++) {
+            character.setInventoryItem(i, itemSlots[i]);
+        }
+        character.updatePaperdoll();
+
+        TEMP_COLOR.r = skinColorRed / 255.f;
+        TEMP_COLOR.g = skinColorGreen / 255.f;
+        TEMP_COLOR.b = skinColorBlue / 255.f;
+        TEMP_COLOR.a = 1.f;
+
+        if ((skinColorRed != 255) || (skinColorGreen != 255) || (skinColorBlue != 255)) {
+            character.setSkinColor(TEMP_COLOR);
+        } else {
+            character.setSkinColor(null);
+        }
+
+        TEMP_COLOR.r = hairColorRed / 255.f;
+        TEMP_COLOR.g = hairColorGreen / 255.f;
+        TEMP_COLOR.b = hairColorBlue / 255.f;
+        character.setClothColor(AvatarClothManager.GROUP_HAIR, TEMP_COLOR);
+        character.setClothColor(AvatarClothManager.GROUP_BEARD, TEMP_COLOR);
+        character.setAlive(!deadFlag);
+        character.updateLight();
+
+        character.setVisible(World.getPlayer().canSee(character));
+
+        EventBus.publish(new AttributeUpdateReceivedEvent(charId, CharacterAttribute.HitPoints, hitPoints));
+    }
+
     /**
      * Execute the message and send the decoded appearance data to the rest of
      * the client.
@@ -188,47 +238,7 @@ public final class AppearanceMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public boolean executeUpdate() {
-        final Char ch = World.getPeople().getCharacter(charId);
-
-        // Character not found.
-        if (ch == null) {
-            return true;
-        }
-
-        ch.setScale(size / SCALE_MOD);
-        ch.setName(name);
-        ch.setAppearance(appearance);
-        ch.resetLight();
-        ch.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
-        ch.setWearingItem(AvatarClothManager.GROUP_BEARD, beardID);
-
-        for (int i = 0; i < itemSlots.length; i++) {
-            ch.setInventoryItem(i, itemSlots[i]);
-        }
-        ch.updatePaperdoll();
-
-        TEMP_COLOR.r = skinColorRed / 255.f;
-        TEMP_COLOR.g = skinColorGreen / 255.f;
-        TEMP_COLOR.b = skinColorBlue / 255.f;
-        TEMP_COLOR.a = 1.f;
-
-        if ((skinColorRed != 255) || (skinColorGreen != 255) || (skinColorBlue != 255)) {
-            ch.setSkinColor(TEMP_COLOR);
-        } else {
-            ch.setSkinColor(null);
-        }
-
-        TEMP_COLOR.r = hairColorRed / 255.f;
-        TEMP_COLOR.g = hairColorGreen / 255.f;
-        TEMP_COLOR.b = hairColorBlue / 255.f;
-        ch.setClothColor(AvatarClothManager.GROUP_HAIR, TEMP_COLOR);
-        ch.setClothColor(AvatarClothManager.GROUP_BEARD, TEMP_COLOR);
-        ch.setAlive(!deadFlag);
-        ch.updateLight();
-
-        ch.setVisible(World.getPlayer().canSee(ch));
-
-        EventBus.publish(new AttributeUpdateReceivedEvent(charId, CharacterAttribute.HitPoints, hitPoints));
+        World.getUpdateTaskManager().addTask(this);
         return true;
     }
 

@@ -20,7 +20,6 @@ package illarion.client.world;
 
 import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
 import de.lessvoid.nifty.slick2d.render.image.SlickRenderImage;
-import illarion.client.graphics.Tile;
 import illarion.client.graphics.shader.MiniMapShader;
 import illarion.client.graphics.shader.Shader;
 import illarion.client.graphics.shader.ShaderManager;
@@ -28,6 +27,7 @@ import illarion.client.gui.events.HideMiniMap;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.resources.TileFactory;
 import illarion.common.graphics.MapColor;
+import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
 import org.apache.log4j.Logger;
@@ -499,12 +499,12 @@ public final class GameMiniMap {
             final byte tileOverlayID = (byte) ((tileData >> SHIFT_OVERLAY) & TILE_OVERLAY_MASK);
             final boolean tileBlocked = (tileData >> SHIFT_BLOCKED) > 0;
 
-            final Color tileColor = MapColor.getColor(TileFactory.getInstance().getMapColor(tileID));
+            final Color tileColor = getMapColor(tileID);
 
             drawColor = new Color(tileColor);
 
             if (tileOverlayID > 0) {
-                final Color overlayTileColor = MapColor.getColor(TileFactory.getInstance().getMapColor(tileOverlayID));
+                final Color overlayTileColor = getMapColor(tileOverlayID);
 
                 drawColor.r += (overlayTileColor.r - tileColor.r) / 2.f;
                 drawColor.g += (overlayTileColor.g - tileColor.g) / 2.f;
@@ -518,6 +518,11 @@ public final class GameMiniMap {
 
         graphics.setColor(drawColor);
         graphics.fillRect(0.f, 0.f, 1.f, 1.f);
+    }
+
+    private static Color getMapColor(final int tileID) {
+        final int colorValue = TileFactory.getInstance().getTemplate(tileID).getTileInfo().getMapColor();
+        return MapColor.getColor(colorValue);
     }
 
     /**
@@ -756,8 +761,8 @@ public final class GameMiniMap {
             return true;
         }
 
-        short encodedTileValue = (short) Tile.baseID(tileID);
-        encodedTileValue += Tile.overlayID(tileID) << SHIFT_OVERLAY;
+        short encodedTileValue = (short) TileInfo.getBaseID(tileID);
+        encodedTileValue += TileInfo.getOverlayID(tileID) << SHIFT_OVERLAY;
         if (blocked) {
             encodedTileValue += 1 << SHIFT_BLOCKED;
         }

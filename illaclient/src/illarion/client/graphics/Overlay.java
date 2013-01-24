@@ -20,83 +20,74 @@ package illarion.client.graphics;
 
 import illarion.client.resources.OverlayFactory;
 import illarion.client.resources.Resource;
-import illarion.common.util.RecycleObject;
+import illarion.client.resources.data.OverlayTemplate;
 import org.apache.log4j.Logger;
+import org.newdawn.slick.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Created: 20.08.2005 17:39:11
+ * This class represents one overlay over a tile on the screen.
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
+ * @author Nop
  */
-public class Overlay extends AbstractEntity implements RecycleObject, Resource {
-    public static final String TILE_PATH = "data/tiles/";
-
+@SuppressWarnings("ClassNamingConvention")
+public class Overlay extends AbstractEntity<OverlayTemplate> implements Resource {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = Logger.getLogger(Overlay.class);
 
     /**
-     * Create tile with animation or variants
+     * The parent tile of this overlay.
      */
-    public Overlay(final int id, @Nonnull final String name) {
-        super(id, TILE_PATH, name, 28, 0, 0, 0, 0, Sprite.HAlign.center,
-                Sprite.VAlign.middle, false, false, null);
-        reset();
-    }
+    private final Tile parentTile;
 
     /**
-     * Copy constructor for duplicates
+     * The default constructor for this class.
      *
-     * @param org
+     * @param template the template of the overlay this instance will refer to
+     * @param shape    the shape of the overlay, this value will be set as frame
      */
-    public Overlay(@Nonnull final Overlay org) {
-        super(org);
-        reset();
+    public Overlay(final OverlayTemplate template, final int shape, final Tile parentTile) {
+        super(template);
+        setFrame(shape);
+        this.parentTile = parentTile;
     }
 
     /**
      * Create a new instance of a overlay.
      *
-     * @param id
-     * @param shape
-     * @return
+     * @param id    the ID of the overlay tile
+     * @param shape the shape of the overlay ({@code 1} is the first shape
+     * @return the newly created overlay or {@code null} in case the creation of the overlay failed
      */
     @Nullable
-    public static Overlay create(final int id, final int shape) {
+    public static Overlay create(final int id, final int shape, final Tile parentTile) {
         try {
-            final Overlay overlay =
-                    OverlayFactory.getInstance().getCommand(id);
-            overlay.setFrame(shape - 1);
-            return overlay;
+            final OverlayTemplate template = OverlayFactory.getInstance().getTemplate(id);
+            return new Overlay(template, shape - 1, parentTile);
         } catch (@Nonnull final IndexOutOfBoundsException ex) {
-            LOGGER.error("Failed to create overlay with ID "
-                    + Integer.toString(id));
-            return null;
+            LOGGER.error("Failed to create overlay with ID " + id, ex);
+        } catch (@Nonnull IllegalStateException ex) {
+            LOGGER.error("Template was not found for overlay " + id, ex);
         }
+        return null;
     }
 
+    @Override
     public void show() {
-        // nothing to do
+        LOGGER.warn("SHOW was called for a overlay. That should not happen!");
     }
 
+    @Override
     public void hide() {
-        // nothing to do
     }
 
     @Override
-    public void activate(final int id) {
-    }
-
-    @Nonnull
-    @Override
-    public Overlay clone() {
-        return new Overlay(this);
-    }
-
-    @Override
-    public void recycle() {
-        OverlayFactory.getInstance().recycle(this);
+    public Color getParentLight() {
+        return parentTile.getLocalLight();
     }
 }

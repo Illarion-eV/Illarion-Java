@@ -374,6 +374,9 @@ public final class Char implements AnimatedMove {
      */
     @Override
     public void animationFinished(final boolean ok) {
+        if (Thread.currentThread().getName().equals("NetComm MessageExecutor")) {
+            LOGGER.warn("Strange thread access.");
+        }
         resetAnimation();
     }
 
@@ -463,7 +466,8 @@ public final class Char implements AnimatedMove {
 
         newAvatar.show();
         if (avatar != null) {
-            avatar.recycle();
+            avatar.hide();
+            avatar.markAsRemoved();
         }
 
         avatarId = newAvatarId;
@@ -521,12 +525,12 @@ public final class Char implements AnimatedMove {
             return false;
         }
 
-        return (id != 0) && ((avatar == null) || avatar.clothItemExist(slot, id));
+        return (id != 0) && ((avatar == null) || avatar.getTemplate().getClothes().doesClothExists(slot, id));
 
     }
 
     private void applyLightValue(final int itemId) {
-        final int light = ItemFactory.getInstance().getPrototype(itemId).getItemLight();
+        final int light = ItemFactory.getInstance().getTemplate(itemId).getItemInfo().getLight();
 
         if (light > lightValue) {
             lightValue = light;
@@ -639,7 +643,8 @@ public final class Char implements AnimatedMove {
      */
     private void releaseAvatar() {
         if (avatar != null) {
-            avatar.recycle();
+            avatar.hide();
+            avatar.markAsRemoved();
             avatar = null;
             avatarId = -1;
         }
@@ -941,7 +946,9 @@ public final class Char implements AnimatedMove {
      */
     public void setDirection(final int newDirection) {
         direction = newDirection;
-        resetAnimation();
+        if (!move.isRunning()) {
+            resetAnimation();
+        }
     }
 
     /**
@@ -960,7 +967,7 @@ public final class Char implements AnimatedMove {
         if (avatar == null) {
             return; // avatar not ready, discard animation
         }
-        if (!avatar.getAnimationAvaiable(newAnimation)) {
+        if (!avatar.getTemplate().getAvatarInfo().isAnimationAvailable(newAnimation)) {
             final MapTile tile = World.getMap().getMapAt(getLocation());
             if (tile == null) {
                 return;

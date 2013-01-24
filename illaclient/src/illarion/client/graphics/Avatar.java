@@ -21,8 +21,9 @@ package illarion.client.graphics;
 import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.resources.CharacterFactory;
-import illarion.client.resources.GuiImageFactory;
+import illarion.client.resources.MiscImageFactory;
 import illarion.client.resources.Resource;
+import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.CombatHandler;
@@ -37,38 +38,24 @@ import javax.annotation.Nullable;
 
 
 /**
- * Class for the avatar of a characters. The avatar is the visual representation
- * of a character on a map. All characters, including monsters and NPCs have a
- * avatar.
+ * Class for the avatar of a characters. The avatar is the visual representation of a character on a map. All
+ * characters, including monsters and NPCs have a avatar.
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class Avatar extends AbstractEntity implements Resource {
+@SuppressWarnings("ClassNamingConvention")
+public final class Avatar extends AbstractEntity<AvatarTemplate> implements Resource {
     /**
-     * The resource path to the avatar graphics. All graphics need to be located
-     * at this path within the JAR-resource files.
-     */
-    private static final String CHAR_PATH = "data/chars/"; //$NON-NLS-1$
-
-    /**
-     * The minimal alpha value of a avatar that is needed to show the name tag
-     * above the avatar graphic.
+     * The minimal alpha value of a avatar that is needed to show the name tag above the avatar graphic.
      */
     private static final float HIDE_NAME_ALPHA = 0.5f;
-
-    /**
-     * The minimal illumination that is still needed to show the name of a
-     * character above the avatar. If the illumination is lower then this value,
-     * the name is hidden.
-     */
-    private static final float HIDE_NAME_LUM = 0.25f;
 
     /**
      * The frame animation that handles the animation of this avatar.
      */
     @Nullable
-    private final transient FrameAnimation ani;
+    private final FrameAnimation animation;
 
     /**
      * In case the light shall be animated this value is set to true. In special
@@ -76,11 +63,6 @@ public final class Avatar extends AbstractEntity implements Resource {
      * and the sudden appearance of characters on the map. In such cases
      */
     private boolean animateLight;
-
-    /**
-     * The clothes this avatar can wear.
-     */
-    private final transient AvatarClothManager clothes;
 
     /**
      * The render system for the clothes of this avatar.
@@ -95,37 +77,17 @@ public final class Avatar extends AbstractEntity implements Resource {
     private final AvatarMarker attackMark;
 
     /**
-     * The information data of the avatar. This offers the possibility to send a
-     * set of information about the description of the characters avatar in
-     * both languages and the visibility modifier information to other classes.
-     */
-    @Nonnull
-    private final transient AvatarInfo info;
-
-    /**
      * The text tag is the small text box shown above the avatar that contains
      * the name of the avatar.
      */
     @Nonnull
-    private final AvatarTextTag tag;
-
-    /**
-     * The x offset value for the image of this avatar. This values are needed
-     * to calculate the relative offsets for the clothes.
-     */
-    private final int offsetX;
-
-    /**
-     * The y offset value for the image of this avatar. This values are needed
-     * to calculate the relative offsets for the clothes.
-     */
-    private final int offsetY;
+    private final AvatarTextTag avatarTextTag;
 
     /**
      * The character that created this avatar.
      */
-    @Nullable
-    private Char parentChar;
+    @Nonnull
+    private final Char parentChar;
 
     public boolean isAttackMarkerVisible() {
         return attackMarkerVisible;
@@ -153,121 +115,46 @@ public final class Avatar extends AbstractEntity implements Resource {
     @Nonnull
     private Color targetLight;
 
-    /**
-     * Create animated avatar for a character.
-     *
-     * @param avatarID     the id of the avatar, the id needs to by unique per
-     *                     race/sex/direction combination
-     * @param resName      the name of the avatar, needs to fit to the name of the
-     *                     resource files with the images for this avatar
-     * @param frames       the count of frames for the animation of the character
-     * @param still        the still frame, so the frame that is shown in case the
-     *                     character does not move
-     * @param offX         the offset in x direction in pixels, so the amount of pixels
-     *                     the graphic is moved from its origin
-     * @param offY         the offset in y direction in pixels, so the amount of pixels
-     *                     the graphic is moved from its origin
-     * @param shadowOffset the shadow offset so the amount of pixels the width
-     *                     of the image is lowered so the image does not fade out in case
-     *                     someone steps into its shadow
-     * @param avatarInfo   the avatar information data, such as the name of the
-     *                     avatar in German and English and the visibility modifier of
-     *                     the avatar
-     * @param mirror       show the avatar graphic horizontal mirrored
-     * @param color        the color that local light is by default modified with in
-     *                     order to get the proper render color of the Avatar
-     * @param dir          the direction the avatar is looking at
-     */
-    @SuppressWarnings("nls")
-    public Avatar(final int avatarID, @Nonnull final String resName,
-                  final int frames, final int still, final int offX, final int offY,
-                  final int shadowOffset, @Nonnull final AvatarInfo avatarInfo,
-                  final boolean mirror, final Color color, final int dir) {
-        super(avatarID, CHAR_PATH, resName, frames, still, offX, offY, shadowOffset, Sprite.HAlign.center,
-                Sprite.VAlign.bottom, true, mirror, color);
-        final Sprite attackMarkSprite = GuiImageFactory.getInstance().getObject("attackMarker");
-        assert attackMarkSprite != null;
-        attackMarkSprite.setAlign(Sprite.HAlign.center, Sprite.VAlign.middle);
-        attackMark = new AvatarMarker(5, attackMarkSprite, 0, Color.white);
+    private Avatar(@Nonnull final AvatarTemplate template, @Nonnull final Char parentChar) {
+        super(template);
+        attackMark = new AvatarMarker(MiscImageFactory.ATTACK_MARKER);
+
+        clothRender = new AvatarClothRenderer(template.getDirection(), template.getFrames());
+        clothRender.setLight(getLight());
+        clothRender.setFrame(0);
 
         targetLight = DEFAULT_LIGHT;
         animateLight = false;
-        info = avatarInfo;
-        clothes = new AvatarClothManager();
-        clothRender = new AvatarClothRenderer(dir, frames);
-        clothRender.setLight(getLight());
-        clothRender.setFrame(0);
-        tag = new AvatarTextTag();
-        tag.setAvatarHeight(getHeight());
-        offsetX = offX;
-        offsetY = offY;
-        if (frames > 1) {
-            ani = new FrameAnimation(this);
-            ani.setup(frames, still, 1, 0);
+
+        avatarTextTag = new AvatarTextTag();
+        avatarTextTag.setAvatarHeight(template.getSprite().getHeight());
+
+        if (template.getFrames() > 1) {
+            animation = new FrameAnimation(this);
+            animation.setup(template.getFrames(), template.getStillFrame(), 1, 0);
         } else {
-            ani = null;
+            animation = null;
         }
-        reset();
+        this.parentChar = parentChar;
     }
 
     /**
-     * Copy constructor. Create a copy of the current instance of the avatar
-     * into a new avatar object.
+     * Create a avatar from the avatar factory. This either creates a new instance of the avatar class or it takes a
+     * existing instance from the list of currently unused instances.
      *
-     * @param org the avatar object that shall be copied
-     */
-    private Avatar(@Nonnull final Avatar org) {
-        super(org);
-        info = org.info;
-        attackMark = new AvatarMarker(org.attackMark);
-        clothes = org.clothes;
-        clothRender = new AvatarClothRenderer(org.clothRender);
-        clothRender.setLight(getLight());
-        clothRender.setFrame(0);
-        tag = new AvatarTextTag();
-        tag.setAvatarHeight(getHeight());
-        offsetX = org.offsetX;
-        offsetY = org.offsetY;
-
-        if (org.ani == null) {
-            ani = null;
-        } else {
-            ani = new FrameAnimation(this, org.ani);
-        }
-        reset();
-    }
-
-    /**
-     * Create a avatar from the avatar factory. This either creates a new
-     * instance of the avatar class or it takes a existing instance from the
-     * list of currently unused instances.
-     *
-     * @param avatarID the ID of the character that identifies the name and the
-     *                 sex and the direction of the avatar that is needed
+     * @param avatarID the ID of the character that identifies the name and the sex and the direction of the avatar
+     *                 that is needed
      * @return a instance of the needed avatar type
      */
     @Nullable
-    public static Avatar create(final int avatarID, final Char parent) {
+    public static Avatar create(final int avatarID, @Nonnull final Char parent) {
         try {
-            final Avatar avatar = CharacterFactory.getInstance().getCommand(avatarID);
-            avatar.parentChar = parent;
-            return avatar;
+            final AvatarTemplate template = CharacterFactory.getInstance().getTemplate(avatarID);
+            return new Avatar(template, parent);
         } catch (@Nonnull final IndexOutOfBoundsException ex) {
             // ignored
         }
         return null;
-    }
-
-    /**
-     * Activate the avatar instance for usage. This needs to be done right after
-     * the avatar instance got created.
-     *
-     * @param newID doesn't do anything since the ID of this object is related
-     *              to other things that can't be change
-     */
-    @Override
-    public void activate(final int newID) {
-        // nothing needs to be done
     }
 
     /**
@@ -279,30 +166,27 @@ public final class Avatar extends AbstractEntity implements Resource {
      *              forever
      */
     public void animate(final int speed, final boolean loop) {
-        if (ani == null) {
+        if (animation == null) {
             return;
         }
 
-        ani.updateSpeed(speed);
+        animation.updateSpeed(speed);
         if (loop) {
-            ani.updateMode(FrameAnimation.LOOPED);
+            animation.updateMode(FrameAnimation.LOOPED | FrameAnimation.CYCLIC);
         } else {
-            ani.updateMode(FrameAnimation.CYCLIC);
+            animation.updateMode(FrameAnimation.CYCLIC);
         }
-        ani.restart();
+        animation.restart();
     }
 
     /**
-     * This function is triggered in case a animation that is not looped
-     * finished.
+     * This function is triggered in case a animation that is not looped finished.
      *
      * @param finished set true in case the animation is really done
      */
     @Override
     public void animationFinished(final boolean finished) {
-        if (parentChar != null) {
-            parentChar.animationFinished(true);
-        }
+        parentChar.animationFinished(true);
     }
 
     /**
@@ -313,29 +197,6 @@ public final class Avatar extends AbstractEntity implements Resource {
      */
     public void changeClothColor(final int slot, final Color color) {
         clothRender.changeBaseColor(slot, color);
-    }
-
-    /**
-     * Create a duplicate of this avatar instance. The returned object is a
-     * exact copy of the current avatar instance.
-     *
-     * @return the copy of the current avatar instance
-     */
-    @Nonnull
-    @Override
-    public Avatar clone() {
-        return new Avatar(this);
-    }
-
-    /**
-     * Check if a cloth item is defined in a specified group.
-     *
-     * @param group  the group where the item shall be searched in
-     * @param itemID the item id that shall be checked
-     * @return <code>true</code> in case the item is defined and renderable
-     */
-    public boolean clothItemExist(final int group, final int itemID) {
-        return clothes.doesClothExists(group, itemID);
     }
 
     @Override
@@ -349,22 +210,19 @@ public final class Avatar extends AbstractEntity implements Resource {
     /**
      * This function handles click events on the avatars.
      *
-     * @param c     the game container
-     * @param delta the time since the last update
-     * @param event the event that actually happened
+     * @param container the game container
+     * @param delta     the time since the last update
+     * @param event     the event that actually happened
      * @return {@code true} in case the event was handled
      */
-    private boolean processEvent(final GameContainer c, final int delta, @Nonnull final ClickOnMapEvent event) {
+    @SuppressWarnings({"BooleanMethodNameMustStartWithQuestion", "UnusedParameters"})
+    private boolean processEvent(final GameContainer container, final int delta, @Nonnull final ClickOnMapEvent event) {
         if (!isMouseInInteractiveOrOnTag(event)) {
             return false;
         }
 
         if (event.getKey() == 1) {
-            if (parentChar == null) {
-                LOGGER.error("Processing event on avatar that is not linked to a real character.");
-            } else {
-                CombatHandler.getInstance().toggleAttackOnCharacter(parentChar);
-            }
+            CombatHandler.getInstance().toggleAttackOnCharacter(parentChar);
             return true;
         }
         return false;
@@ -379,13 +237,14 @@ public final class Avatar extends AbstractEntity implements Resource {
     private boolean isMouseInInteractiveOrOnTag(@Nonnull final AbstractMouseLocationEvent event) {
         final int mouseXonDisplay = event.getX() + Camera.getInstance().getViewportOffsetX();
         final int mouseYonDisplay = event.getY() + Camera.getInstance().getViewportOffsetY();
-        if (renderName && tag.getLastDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay)) {
+        if (renderName && avatarTextTag.getLastDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay)) {
             return true;
         }
 
         return isMouseInInteractionRect(event.getX(), event.getY());
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     private static final Logger LOGGER = Logger.getLogger(Avatar.class);
 
     /**
@@ -409,57 +268,10 @@ public final class Avatar extends AbstractEntity implements Resource {
         clothRender.draw(g);
 
         if (renderName) {
-            tag.draw(g);
+            avatarTextTag.draw(g);
         }
 
         return true;
-    }
-
-    /**
-     * Check if the avatar is able to show a special animation.
-     *
-     * @param animationID the ID of the animation that shall be checked
-     * @return true in case the animation is available
-     */
-    public boolean getAnimationAvaiable(final int animationID) {
-        return info.isAnimationAvailable(animationID);
-    }
-
-    /**
-     * Get the manager that holds all clothes this avatar can wear.
-     *
-     * @return the cloth manager with all clothes the avatar can wear
-     */
-    public AvatarClothManager getClothes() {
-        return clothes;
-    }
-
-    /**
-     * Get the x offset of this avatar.
-     *
-     * @return the x offset of his avatar
-     */
-    public int getOffsetX() {
-        return offsetX;
-    }
-
-    /**
-     * Get the y offset of this avatar.
-     *
-     * @return the y offset of his avatar
-     */
-    public int getOffsetY() {
-        return offsetY;
-    }
-
-    /**
-     * Get the visibility modifier of the avatar.
-     *
-     * @return the visibility modifier of the avatar, the value is handled as
-     *         percent value
-     */
-    public int getVisibility() {
-        return info.getVisibility();
     }
 
     /**
@@ -472,20 +284,14 @@ public final class Avatar extends AbstractEntity implements Resource {
         return animateLight;
     }
 
-    /**
-     * Recycle the avatar object. This causes that the animations of this avatar
-     * are stopped and the name tag gets recycled as well. The object is cleaned
-     * up for later reuse. After calling this function, do not use this avatar
-     * instance anymore.
-     */
     @Override
-    public void recycle() {
-        hide();
-        parentChar = null;
-        attackMarkerVisible = false;
-        stopAnimation();
-        CharacterFactory.getInstance().recycle(this);
+    public void hide() {
+        if (animation != null) {
+            animation.stop();
+        }
+        super.hide();
     }
+
 
     /**
      * Remove a item from the list of items that are shown as clothes.
@@ -497,37 +303,19 @@ public final class Avatar extends AbstractEntity implements Resource {
     }
 
     /**
-     * Clean up the avatar instance. That needs to be done before the avatar is
-     * removed from the time and put back into the factory for later reuse.
-     * <p>
-     * This function is called automatically in case the avatar object is
-     * recycled.
-     * </p>
-     */
-    @Override
-    public void reset() {
-        super.reset();
-        clothRender.clear();
-        clothRender.setLight(getLight());
-        animateLight = false;
-        attackMarkerVisible = false;
-    }
-
-    /**
-     * Set a item as a clothing item to a specified body location. In case its
-     * defined the cloth renderer will try to show the cloth on the avatar.
+     * Set a item as a clothing item to a specified body location. In case its defined the cloth renderer will try to
+     * show the cloth on the avatar.
      *
-     * @param group  the group of the item, so the location of the item, where it
-     *               shall be displayed
+     * @param group  the group of the item, so the location of the item, where it shall be displayed
      * @param itemID the ID of the item that shall be displayed
      */
     public void setClothItem(final int group, final int itemID) {
-        clothRender.setCloth(group, clothes.getCloth(group, itemID));
+        clothRender.setCloth(group, getTemplate().getClothes().getCloth(group, itemID));
     }
 
     /**
-     * Set the current frame of the avatar. This forwards the frame to the
-     * Entity super function but sends it also to the cloth render.
+     * Set the current frame of the avatar. This forwards the frame to the Entity super function but sends it also to
+     * the cloth render.
      *
      * @param frame the index of the frame that shall be rendered next
      */
@@ -554,9 +342,8 @@ public final class Avatar extends AbstractEntity implements Resource {
     }
 
     /**
-     * Set the light this avatar is colored with. Setting the light with this
-     * function will enable the smooth change of the light and so the light
-     * color of the avatar will slowly approach the color of the light set with
+     * Set the light this avatar is colored with. Setting the light with this function will enable the smooth change
+     * of the light and so the light color of the avatar will slowly approach the color of the light set with
      * this function.
      *
      * @param light the target light color for this avatar
@@ -575,11 +362,11 @@ public final class Avatar extends AbstractEntity implements Resource {
      */
     public void setName(@Nonnull final String charName) {
         if (charName.isEmpty()) {
-            tag.setCharacterName("unknown");
+            avatarTextTag.setCharacterName("unknown");
         } else {
-            tag.setCharacterName(charName);
+            avatarTextTag.setCharacterName(charName);
         }
-        tag.setCharNameColor(Color.yellow);
+        avatarTextTag.setCharNameColor(Color.yellow);
     }
 
     /**
@@ -589,11 +376,7 @@ public final class Avatar extends AbstractEntity implements Resource {
      *              shown above the character and shows the name of the character
      */
     public void setNameColor(final Color color) {
-        tag.setCharNameColor(color);
-    }
-
-    public void hideHealthPoints() {
-        tag.setHealthState(null);
+        avatarTextTag.setCharNameColor(color);
     }
 
     private static final Color COLOR_UNHARMED = new Color(0, 255, 0);
@@ -603,51 +386,35 @@ public final class Avatar extends AbstractEntity implements Resource {
     private static final Color COLOR_NEAR_DEATH = new Color(255, 0, 0);
     private static final Color COLOR_DEAD = new Color(173, 173, 173);
 
-    public void setHealthPoints(int value) {
+    public void setHealthPoints(final int value) {
+        //noinspection IfStatementWithTooManyBranches
         if (value == 10000) {
-            tag.setHealthState(Lang.getMsg("char.health.unharmed"));
-            tag.setHealthStateColor(COLOR_UNHARMED);
+            avatarTextTag.setHealthState(Lang.getMsg("char.health.unharmed"));
+            avatarTextTag.setHealthStateColor(COLOR_UNHARMED);
         } else if (value > 8000) {
-            tag.setHealthState(Lang.getMsg("char.health.slightlyHarmed"));
-            tag.setHealthStateColor(COLOR_SLIGHTLY_HARMED);
+            avatarTextTag.setHealthState(Lang.getMsg("char.health.slightlyHarmed"));
+            avatarTextTag.setHealthStateColor(COLOR_SLIGHTLY_HARMED);
         } else if (value > 5000) {
-            tag.setHealthState(Lang.getMsg("char.health.harmed"));
-            tag.setHealthStateColor(COLOR_HARMED);
+            avatarTextTag.setHealthState(Lang.getMsg("char.health.harmed"));
+            avatarTextTag.setHealthStateColor(COLOR_HARMED);
         } else if (value > 2000) {
-            tag.setHealthState(Lang.getMsg("char.health.badlyHarmed"));
-            tag.setHealthStateColor(COLOR_BADLY_HARMED);
+            avatarTextTag.setHealthState(Lang.getMsg("char.health.badlyHarmed"));
+            avatarTextTag.setHealthStateColor(COLOR_BADLY_HARMED);
         } else if (value > 0) {
-            tag.setHealthState(Lang.getMsg("char.health.nearDead"));
-            tag.setHealthStateColor(COLOR_NEAR_DEATH);
+            avatarTextTag.setHealthState(Lang.getMsg("char.health.nearDead"));
+            avatarTextTag.setHealthStateColor(COLOR_NEAR_DEATH);
         } else {
-            tag.setHealthState(Lang.getMsg("char.health.dead"));
-            tag.setHealthStateColor(COLOR_DEAD);
+            avatarTextTag.setHealthState(Lang.getMsg("char.health.dead"));
+            avatarTextTag.setHealthStateColor(COLOR_DEAD);
         }
     }
 
-    /**
-     * Set the scaling value of the avatar. Possible values are between 0.5f and
-     * 1.2f. The size is applied to the height and the width of the avatar
-     * images since scaling height and width independent from each other would
-     * look crap.
-     *
-     * @param newScale the new scale value of the avatar image. Values between
-     *                 0.5f and 1.2f are valid
-     */
     @Override
     public void setScale(final float newScale) {
         super.setScale(newScale);
         clothRender.setScale(newScale);
     }
 
-    /**
-     * Set the location on the screen.
-     *
-     * @param posX       the x coordinate of the location on the screen
-     * @param posY       the y coordinate of the location on the screen
-     * @param layerZ     the z coordinate, so the layer on the screen
-     * @param groupLayer the global layer value of the graphic type
-     */
     @Override
     public void setScreenPos(final int posX, final int posY, final int layerZ,
                              final int groupLayer) {
@@ -656,13 +423,6 @@ public final class Avatar extends AbstractEntity implements Resource {
         attackMark.setScreenPos(posX, posY, layerZ, groupLayer);
     }
 
-    /**
-     * Update the values of this avatar entity. The light values, the alpha
-     * values as well as the name display is checked using this function.
-     *
-     * @param container
-     * @param delta     the time since the last update in milliseconds
-     */
     @Override
     public void update(@Nonnull final GameContainer container, final int delta) {
         super.update(container, delta);
@@ -682,12 +442,12 @@ public final class Avatar extends AbstractEntity implements Resource {
                 HIDE_NAME_ALPHA));
 
         if (renderName) {
-            tag.setDisplayLocation(getDisplayX(), getDisplayY());
-            tag.update(container, delta);
+            avatarTextTag.setDisplayLocation(getDisplayX(), getDisplayY());
+            avatarTextTag.update(container, delta);
         }
 
-        if ((renderName != oldRenderName)) {
-            Camera.getInstance().markAreaDirty(tag.getLastDisplayRect());
+        if (renderName != oldRenderName) {
+            Camera.getInstance().markAreaDirty(avatarTextTag.getLastDisplayRect());
             oldRenderName = renderName;
         }
 
@@ -703,14 +463,4 @@ public final class Avatar extends AbstractEntity implements Resource {
 
     private boolean oldAttackMarkVisible;
     private boolean oldRenderName;
-
-    /**
-     * Cause the current animation of the avatar to stop instantly. The parent
-     * character is removed and not notified.
-     */
-    private void stopAnimation() {
-        if (ani != null) {
-            ani.stop();
-        }
-    }
 }
