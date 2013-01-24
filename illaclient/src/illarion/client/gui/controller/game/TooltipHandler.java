@@ -27,16 +27,17 @@ import de.lessvoid.nifty.tools.Color;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.gui.events.TooltipsRemovedEvent;
 import illarion.client.net.server.events.AbstractItemLookAtEvent;
+import illarion.client.util.UpdateTask;
+import illarion.client.world.World;
 import illarion.common.types.Rectangle;
 import org.bushe.swing.event.EventBus;
 import org.illarion.nifty.controls.tooltip.builder.ToolTipBuilder;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This tooltip handler takes care of showing and hiding the item tooltips on the screen.
@@ -44,12 +45,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TooltipHandler implements ScreenController, UpdatableHandler {
-    /**
-     * The queue that contains the tasks for the tooltips that need to be executed upon the next update.
-     */
-    @Nonnull
-    private final Queue<Runnable> toolTipTasks;
-
     /**
      * The Nifty that is the parent to this handler.
      */
@@ -85,9 +80,9 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * The task that will clean all opened tooltip.
      */
     @Nonnull
-    private Runnable cleanToolTips = new Runnable() {
+    private UpdateTask cleanToolTips = new UpdateTask() {
         @Override
-        public void run() {
+        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
             for (final Element element : toolTipLayer.getElements()) {
                 element.hide(new EndNotify() {
                     @Override
@@ -99,13 +94,6 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
             }
         }
     };
-
-    /**
-     * The default constructor.
-     */
-    public TooltipHandler() {
-        toolTipTasks = new ConcurrentLinkedQueue<Runnable>();
-    }
 
     @Override
     public void bind(final Nifty nifty, @Nonnull final Screen screen) {
@@ -122,20 +110,11 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
 
     @Override
     public void onEndScreen() {
-        cleanToolTips.run();
+        hideToolTip();
     }
 
     @Override
     public void update(@Nonnull final GameContainer container, final int delta) {
-        while (true) {
-            final Runnable task = toolTipTasks.poll();
-            if (task == null) {
-                break;
-            }
-
-            task.run();
-        }
-
         final Input input = container.getInput();
         lastMouseX = input.getMouseX();
         lastMouseY = input.getMouseY();
@@ -151,7 +130,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * Hide all current tooltips.
      */
     public void hideToolTip() {
-        toolTipTasks.offer(cleanToolTips);
+        World.getUpdateTaskManager().addTask(cleanToolTips);
     }
 
     /**
@@ -168,9 +147,9 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
             return;
         }
 
-        toolTipTasks.offer(new Runnable() {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void run() {
+            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
                 showToolTipImpl(location, event);
                 activeTooltipArea = location;
             }
