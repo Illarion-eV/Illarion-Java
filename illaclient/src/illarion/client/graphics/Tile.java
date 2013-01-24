@@ -118,10 +118,11 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
         return true;
     }
 
+    @Override
     public void markAsRemoved() {
         super.markAsRemoved();
         if (overlay != null) {
-            markAsRemoved();
+            overlay.markAsRemoved();
         }
     }
 
