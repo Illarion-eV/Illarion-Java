@@ -30,20 +30,21 @@ import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.util.UpdateTask;
+import illarion.client.world.World;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This class takes care for displaying and controlling the number select popup properly.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class NumberSelectPopupHandler implements ScreenController, UpdatableHandler {
+public final class NumberSelectPopupHandler implements ScreenController {
 
     /**
      * This is the callback interface for this class. Once the number select popup is closed for confirmed this one
@@ -95,13 +96,6 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
      */
     private int minNumber;
 
-    @Nonnull
-    private final Queue<Runnable> requestQueue;
-
-    public NumberSelectPopupHandler() {
-        requestQueue = new ConcurrentLinkedQueue<Runnable>();
-    }
-
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
         parentNifty = nifty;
@@ -122,9 +116,9 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
      */
     public void requestNewPopup(final int minValue, final int maxValue,
                                 final NumberSelectPopupHandler.Callback callback) {
-        requestQueue.offer(new Runnable() {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void run() {
+            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
                 internalCreateNewPopup(minValue, maxValue, callback);
             }
         });
@@ -195,14 +189,6 @@ public final class NumberSelectPopupHandler implements ScreenController, Updatab
         });
 
         textField.setText("");
-    }
-
-    @Override
-    public void update(final GameContainer container, final int delta) {
-        while (!requestQueue.isEmpty()) {
-            final Runnable task = requestQueue.poll();
-            task.run();
-        }
     }
 
     /**
