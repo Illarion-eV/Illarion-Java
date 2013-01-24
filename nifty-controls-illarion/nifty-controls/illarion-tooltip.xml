@@ -68,6 +68,7 @@
             <panel childLayout="horizontal" style="#gemBonusLine" id="#gemBonusLine">
                 <control name="label" style="#gemBonusTitle" text="${illarion-tooltip-bundle.gemBonus}"/>
                 <control name="label" style="#gemBonusText" id="#gemBonusText"/>
+                <control name="label" style="#gemBonusUnit" text="${illarion-tooltip-bundle.gemBonusUnit}"/>
             </panel>
         </panel>
     </controlDefinition>
