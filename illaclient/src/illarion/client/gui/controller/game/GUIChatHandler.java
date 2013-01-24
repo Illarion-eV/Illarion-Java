@@ -48,6 +48,7 @@ import illarion.client.net.server.events.ScriptInformReceivedEvent;
 import illarion.client.net.server.events.TextToInformReceivedEvent;
 import illarion.client.util.ChatHandler;
 import illarion.client.util.Lang;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.client.world.events.CharTalkingEvent;
@@ -58,11 +59,10 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,7 +76,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     /**
      * This utility class is used to store texts that get shown in the Chat log.
      */
-    private class ChatBoxEntry implements Runnable {
+    private class ChatBoxEntry implements UpdateTask {
         /**
          * The text of the entry.
          */
@@ -98,13 +98,13 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             color = msgColor;
         }
 
-        @Override
-        public void run() {
-            addChatLogText(text, color);
-        }
-
         protected Color getColor() {
             return color;
+        }
+
+        @Override
+        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+            addChatLogText(text, color);
         }
     }
 
@@ -124,8 +124,8 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         }
 
         @Override
-        public void run() {
-            super.run();
+        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+            super.onUpdateGame(container, game, delta);
             final String message;
             if (talkingEvent.getMode() == ChatHandler.SpeechMode.emote) {
                 final Char talkingChar = talkingEvent.getCharacter();
@@ -204,12 +204,6 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     private Nifty nifty;
 
     /**
-     * The Queue of strings that yet need to be written to the GUI.
-     */
-    @Nonnull
-    private final Queue<Runnable> messageQueue;
-
-    /**
      * This flag shows of the Chat log is dirty and needs to be cleaned up.
      */
     private boolean dirty;
@@ -239,13 +233,6 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      */
     private final Pattern oocPattern = Pattern.compile("^\\s*[/#]o(oc)?\\s*(.*)\\s*$", Pattern.CASE_INSENSITIVE);
 
-    /**
-     * The default constructor.
-     */
-    public GUIChatHandler() {
-        messageQueue = new ConcurrentLinkedQueue<Runnable>();
-    }
-
     @EventSubscriber
     public void onBroadcastInformReceived(@Nonnull final BroadcastInformReceivedEvent data) {
         final TextBuilder textBuilder = TextBuilder.newInstance();
@@ -254,7 +241,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             textBuilder.append(": ");
             textBuilder.append(data.getMessage());
 
-            messageQueue.offer(new ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
+            World.getUpdateTaskManager().addTask(new ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
         } finally {
             TextBuilder.recycle(textBuilder);
         }
@@ -281,7 +268,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
                 break;
         }
 
-        messageQueue.offer(new CharTalkEntry(data, usedColor));
+        World.getUpdateTaskManager().addTask(new CharTalkEntry(data, usedColor));
     }
 
     @EventSubscriber
@@ -304,7 +291,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             textBuilder.append(": ");
             textBuilder.append(data.getMessage());
 
-            messageQueue.offer(new ChatBoxEntry(textBuilder.toString(), usedColor));
+            World.getUpdateTaskManager().addTask(new ChatBoxEntry(textBuilder.toString(), usedColor));
         } finally {
             TextBuilder.recycle(textBuilder);
         }
@@ -318,7 +305,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             textBuilder.append(": ");
             textBuilder.append(data.getMessage());
 
-            messageQueue.offer(new ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
+            World.getUpdateTaskManager().addTask(new ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
         } finally {
             TextBuilder.recycle(textBuilder);
         }
@@ -453,9 +440,9 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     @Override
     public void onStartScreen() {
         toggleChatLog();
-        messageQueue.add(new Runnable() {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void run() {
+            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
                 keyEvent(NiftyStandardInputEvent.SubmitText);
                 keyEvent(NiftyStandardInputEvent.SubmitText);
             }
@@ -466,15 +453,6 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
 
     @Override
     public void update(final GameContainer container, final int delta) {
-        while (true) {
-            final Runnable task = messageQueue.poll();
-            if (task == null) {
-                break;
-            }
-
-            task.run();
-        }
-
         cleanupChatLog();
     }
 
