@@ -141,4 +141,8 @@
     <style id="illarion-tooltip#gemBonusText" base="nifty-label">
         <attributes font="textFont"/>
     </style>
+
+    <style id="illarion-tooltip#gemBonusUnit" base="nifty-label">
+        <attributes font="textFont"/>
+    </style>
 </nifty-styles>

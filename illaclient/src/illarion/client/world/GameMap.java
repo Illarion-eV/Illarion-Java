@@ -46,9 +46,30 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * optimization is done by the GameMapProcessor.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
+ * @author Andreas Grob &lt;vilarion@illarion.org&gt;
  */
 @ThreadSafe
 public final class GameMap implements LightingMap, Stoppable {
+    /**
+     * This class is used to mark map tiles for removal. Only after all tiles are marked for removed the tiles
+     * container can be emptied.
+     *
+     * @author Andreas Grob &lt;vilarion@illarion.org&gt;
+     */
+    private static final class RemoveHelper implements TObjectProcedure<MapTile> {
+        /**
+         * Executed for the given tile on the map. It will trigger the markAsRemoved method for that tile.
+         *
+         * @param tile the tile to remove
+         * @return {@code true} always
+         */
+        @Override
+        public boolean execute(final MapTile tile) {
+            tile.markAsRemoved();
+            return true;
+        }
+    }
+
     /**
      * This is a supporter class for the {@link GameMap#renderLights()} function and it triggers the renderLight
      * function on each tile its called on.
@@ -154,6 +175,12 @@ public final class GameMap implements LightingMap, Stoppable {
      * The determines after how many remove operations the lists clean up on their own.
      */
     private static final float MAP_COMPACTION_FACTOR = 0.01f;
+
+    /**
+     * This is a helper object that triggers markAsRemoved for all tiles it is called for.
+     */
+    @Nonnull
+    private final TObjectProcedure<MapTile> removeHelper = new RemoveHelper();
 
     /**
      * The interactive map that is used to handle the player interaction with the map.
@@ -280,6 +307,7 @@ public final class GameMap implements LightingMap, Stoppable {
     public void clear() {
         mapLock.writeLock().lock();
         try {
+            tiles.forEachValue(removeHelper);
             tiles.clear();
         } finally {
             mapLock.writeLock().unlock();
