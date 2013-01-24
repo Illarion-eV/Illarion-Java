@@ -20,10 +20,13 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.graphics.LightTracer;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -35,8 +38,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_LOCATION)
-public final class LocationMsg
-        extends AbstractReply {
+public final class LocationMsg extends AbstractReply implements UpdateTask {
     /**
      * The location of the player.
      */
@@ -61,6 +63,12 @@ public final class LocationMsg
      */
     @Override
     public boolean executeUpdate() {
+        World.getUpdateTaskManager().addTask(this);
+        return true;
+    }
+
+    @Override
+    public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
         World.getMapDisplay().setActive(false);
 
         // drop the whole map and expect update
@@ -77,8 +85,6 @@ public final class LocationMsg
 
         World.getPlayer().getCharacter().relistLight();
         World.getPlayer().getCharacter().updateLight(loc);
-
-        return true;
     }
 
     /**
@@ -92,5 +98,4 @@ public final class LocationMsg
     public String toString() {
         return toString("to " + loc.toString());
     }
-
 }
