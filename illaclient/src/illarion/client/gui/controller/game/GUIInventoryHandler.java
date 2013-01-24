@@ -39,6 +39,7 @@ import illarion.client.net.server.events.InventoryUpdateEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.data.ItemTemplate;
 import illarion.client.util.LookAtTracker;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.interactive.InteractionManager;
@@ -56,12 +57,11 @@ import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This handler takes care for showing and hiding objects in the inventory. Also it monitors all dropping operations on
@@ -69,7 +69,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GUIInventoryHandler implements ScreenController, UpdatableHandler {
+public final class GUIInventoryHandler implements ScreenController {
     /**
      * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
      * so the server can send the commands to clean everything up.
@@ -154,7 +154,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         }
     }
 
-    private final class InventorySlotUpdate implements Runnable {
+    private final class InventorySlotUpdate implements UpdateTask {
         private final InventoryUpdateEvent event;
 
         InventorySlotUpdate(final InventoryUpdateEvent updateEvent) {
@@ -162,7 +162,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         }
 
         @Override
-        public void run() {
+        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
             setSlotItem(event.getSlotId(), event.getItemId(), event.getCount());
         }
     }
@@ -185,10 +185,9 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
      */
     private final InventoryClickActionHelper inventoryClickActionHelper = new InventoryClickActionHelper();
 
-    private final Queue<Runnable> updateQueue = new ConcurrentLinkedQueue<Runnable>();
-    private final Runnable updateMerchantOverlays = new Runnable() {
+    private final UpdateTask updateMerchantOverlays = new UpdateTask() {
         @Override
-        public void run() {
+        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
             final Inventory inventory = World.getPlayer().getInventory();
             for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
                 updateMerchantOverlay(i, inventory.getItem(i).getItemID());
@@ -228,7 +227,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
 
     @EventSubscriber
     public void onInventoryUpdateEvent(final InventoryUpdateEvent event) {
-        updateQueue.offer(new GUIInventoryHandler.InventorySlotUpdate(event));
+        World.getUpdateTaskManager().addTask(new GUIInventoryHandler.InventorySlotUpdate(event));
     }
 
     @EventSubscriber
@@ -236,7 +235,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
         switch (event.getDialogType()) {
             case Any:
             case Merchant:
-                updateQueue.offer(updateMerchantOverlays);
+                World.getUpdateTaskManager().addTask(updateMerchantOverlays);
 
             case Message:
                 break;
@@ -247,7 +246,7 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
 
     @EventSubscriber
     public void onMerchantDialogReceivedHandler(final DialogMerchantReceivedEvent event) {
-        updateQueue.offer(updateMerchantOverlays);
+        World.getUpdateTaskManager().addTask(updateMerchantOverlays);
     }
 
     @EventSubscriber
@@ -515,19 +514,6 @@ public final class GUIInventoryHandler implements ScreenController, UpdatableHan
             }
         }
         control.hideMerchantOverlay();
-    }
-
-    @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
-        input = container.getInput();
-        while (true) {
-            final Runnable task = updateQueue.poll();
-            if (task == null) {
-                return;
-            }
-
-            task.run();
-        }
     }
 
     public void hideInventory() {
