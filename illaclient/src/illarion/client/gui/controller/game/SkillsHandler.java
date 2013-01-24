@@ -37,6 +37,7 @@ import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.net.server.events.SkillReceivedEvent;
 import illarion.client.util.Lang;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.data.Skill;
@@ -47,10 +48,9 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This handler controls the skill window.
@@ -74,22 +74,9 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
     private Window skillWindow;
 
     /**
-     * The Queue of updates that need to be executed for the GUI..
-     */
-    @Nonnull
-    private final Queue<Runnable> updateQueue;
-
-    /**
      * This flag is set {@code true} once the login to the server is done.
      */
     private boolean loginDone;
-
-    /**
-     * The default constructor.
-     */
-    public SkillsHandler() {
-        updateQueue = new ConcurrentLinkedQueue<Runnable>();
-    }
 
     @Override
     public void bind(final Nifty nifty, @Nonnull final Screen screen) {
@@ -275,15 +262,6 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
 
     @Override
     public void update(final GameContainer container, final int delta) {
-        while (true) {
-            final Runnable task = updateQueue.poll();
-            if (task == null) {
-                break;
-            }
-
-            task.run();
-        }
-
         if (layoutDirty) {
             layoutDirty = false;
 
@@ -299,9 +277,9 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
      */
     @EventSubscriber
     public void onSkillUpdateReceived(@Nonnull final SkillReceivedEvent data) {
-        updateQueue.add(new Runnable() {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void run() {
+            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
                 updateSkill(data);
             }
         });
@@ -331,9 +309,9 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
     @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
     public void onInputEvent(final String topic, final String data) {
         if ("ToggleCharacterWindow".equals(data)) {
-            updateQueue.add(new Runnable() {
+            World.getUpdateTaskManager().addTask(new UpdateTask() {
                 @Override
-                public void run() {
+                public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
                     toggleSkillWindow();
                 }
             });
