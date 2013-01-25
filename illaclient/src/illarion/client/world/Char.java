@@ -417,9 +417,11 @@ public final class Char implements AnimatedMove {
         }
 
         int oldAlpha = 0;
+        int oldAlphaTarget = 255;
 
         if (avatar != null) {
             oldAlpha = avatar.getAlpha();
+            oldAlphaTarget = avatar.getTargetAlpha();
         }
 
         @Nullable final Avatar newAvatar = Avatar.create(newAvatarId, this);
@@ -455,6 +457,7 @@ public final class Char implements AnimatedMove {
 
         newAvatar.setScale(scale);
         newAvatar.setAlpha(oldAlpha);
+        newAvatar.setAlphaTarget(oldAlphaTarget);
         newAvatar.setAttackMarkerVisible(CombatHandler.getInstance().isAttacking(this));
         if (name != null) {
             newAvatar.setName(name);

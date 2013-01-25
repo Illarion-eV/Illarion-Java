@@ -257,6 +257,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      */
     @Override
     public boolean draw(@Nonnull final Graphics g) {
+        if (getAlpha() == 0) {
+            return true;
+        }
+
         if (isAttackMarkerVisible()) {
             attackMark.draw(g);
         }
@@ -334,10 +338,9 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      */
     @Override
     public void setLight(@Nonnull final Color light) {
-        final Color localLight = new Color(light);
-        super.setLight(localLight);
-        clothRender.setLight(localLight);
-        attackMark.setLight(localLight);
+        super.setLight(light);
+        clothRender.setLight(light);
+        attackMark.setLight(light);
         animateLight = false;
     }
 

@@ -525,7 +525,9 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
             LOGGER.warn("Changing the light of a removed entity is not allowed.");
             return;
         }
-        localLight = light;
+        final float oldAlpha = localLight.a;
+        localLight = new Color(light);
+        localLight.a = oldAlpha;
     }
 
     /**
