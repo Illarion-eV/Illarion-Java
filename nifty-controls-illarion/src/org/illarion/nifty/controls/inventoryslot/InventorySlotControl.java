@@ -187,7 +187,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
             backgroundImageLabel.setVisible(false);
             draggedImage.setVisible(false);
             draggable.setVisible(false);
-            draggable.disable();
+            draggable.getNiftyControl(Draggable.class).disable(true);
         }
     }
 
@@ -259,6 +259,11 @@ public class InventorySlotControl extends AbstractController implements Inventor
     public void retrieveDraggable() {
         if (draggable.getParent() == droppable) {
             draggedImage.hide();
+            return;
+        }
+
+        if (screen.isActivePopup(draggable)) {
+            LOGGER.error("Trying to retrieve a draggable that is currently dragged!");
             return;
         }
 
