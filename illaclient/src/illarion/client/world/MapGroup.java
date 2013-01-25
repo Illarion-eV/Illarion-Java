@@ -20,6 +20,8 @@ package illarion.client.world;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is used to organise the maps into groups. This is done to show and hide whole groups of maps.
@@ -40,19 +42,33 @@ public final class MapGroup {
     private MapGroup parent;
 
     /**
+     * This list contains a list of groups that will overwrite the hidden state of the group. In case one of the
+     * groups in this list is hidden, this group will be assumed hidden as well.
+     */
+    @Nullable
+    private List<MapGroup> overwritingGroups;
+
+    /**
+     * This list stores the children of this map group.
+     */
+    @Nullable
+    private List<MapGroup> children;
+
+    /**
      * Check if this map group is currently hidden.
      *
      * @return {@code in case the map group is hidden}
      */
     public boolean isHidden() {
-        MapGroup other = this;
-        while (true) {
-            assert other != null;
-            if (other.parent == null) {
-                return other.hidden;
+        if (overwritingGroups != null) {
+            for (int i = 0; i < overwritingGroups.size(); i++) {
+                final MapGroup group = overwritingGroups.get(i);
+                if (group.isHidden()) {
+                    return true;
+                }
             }
-            other = other.parent;
         }
+        return hidden;
     }
 
     /**
@@ -66,9 +82,29 @@ public final class MapGroup {
             assert other != null;
             if (other.parent == null) {
                 other.hidden = hidden;
+                other.sendHiddenToChildren();
                 return;
             }
             other = other.parent;
+        }
+    }
+
+    private void sendHiddenToChildren() {
+        if (children == null) {
+            return;
+        }
+
+        for (int i = 0; i < children.size(); i++) {
+            children.get(i).hidden = hidden;
+        }
+    }
+
+    private void addChild(@Nonnull final MapGroup child) {
+        if (children == null) {
+            children = new ArrayList<MapGroup>();
+        }
+        if (!children.contains(child)) {
+            children.add(child);
         }
     }
 
@@ -77,9 +113,27 @@ public final class MapGroup {
      *
      * @param parent the parent of this group
      */
-    public void setParent(@Nullable final MapGroup parent) {
+    public void setParent(@Nonnull final MapGroup parent) {
+        if (parent.parent != null) {
+            throw new IllegalArgumentException("Set a parent group that is not a root group is not allowed.");
+        }
         this.parent = parent;
-        setHidden(hidden);
+        parent.addChild(this);
+
+        if (children != null) {
+            for (int i = 0; i < children.size(); i++) {
+                parent.addChild(children.get(i));
+            }
+            children = null;
+        }
+
+        if (overwritingGroups != null) {
+            for (int i = 0; i < overwritingGroups.size(); i++) {
+                final MapGroup group = overwritingGroups.get(i);
+                parent.addOverwritingGroup(group);
+            }
+            overwritingGroups = null;
+        }
     }
 
     @Nonnull
@@ -91,6 +145,23 @@ public final class MapGroup {
                 return currentGroup;
             }
             currentGroup = currentGroup.parent;
+        }
+    }
+
+    /**
+     * Add a group to the list of overwriting groups.
+     *
+     * @param group the group to add to the list of overwriting groups
+     */
+    public void addOverwritingGroup(@Nonnull final MapGroup group) {
+        if (parent != null) {
+            throw new IllegalStateException("Adding overwriting groups no non-root groups is not allowed.");
+        }
+        if (overwritingGroups == null) {
+            overwritingGroups = new ArrayList<MapGroup>();
+        }
+        if (!overwritingGroups.contains(group)) {
+            overwritingGroups.add(group);
         }
     }
 }

@@ -21,7 +21,6 @@ package illarion.client.world;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.common.types.Location;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,40 +56,57 @@ public class GameMapProcessor2 {
         }
 
         final List<MapGroup> groups = getSurroundingMapGroups(tile.getLocation());
+        final MapGroup tileGroup;
         if (groups.isEmpty()) {
-            tile.setMapGroup(new MapGroup());
+            tileGroup = new MapGroup();
+            tile.setMapGroup(tileGroup);
         } else {
-            final MapGroup assignedGroup = groups.get(0);
-            tile.setMapGroup(assignedGroup);
+            tileGroup = groups.get(0);
+            tile.setMapGroup(tileGroup);
             for (int i = 1; i < groups.size(); i++) {
-                groups.get(i).setParent(assignedGroup);
+                groups.get(i).setParent(tileGroup);
+            }
+        }
+        if (tileAbove != null) {
+            final MapGroup tileAboveGroup = tileAbove.getMapGroup();
+            if (tileAboveGroup != null) {
+                tileAboveGroup.addOverwritingGroup(tileGroup);
+            }
+        }
+        if (tileBelow != null) {
+            final MapGroup tileBelowGroup = tileBelow.getMapGroup();
+            if (tileBelowGroup != null) {
+                tileGroup.addOverwritingGroup(tileBelowGroup);
             }
         }
     }
 
-    @Nonnull
-    private static List<MapGroup> lastInsideGroups = new ArrayList<MapGroup>();
+    @Nullable
+    private static MapGroup lastInsideGroup;
 
     public static void checkInside() {
         final Location playerLocation = World.getPlayer().getCharacter().getLocation();
 
-        final List<MapTile> tileList = getAllTilesAbove(playerLocation, playerLocation.getScZ() + 2, false);
-        for (final MapGroup oldGroup : lastInsideGroups) {
-            oldGroup.setHidden(false);
-        }
-        lastInsideGroups.clear();
+        final MapTile tileAbove = getFirstTileAbove(playerLocation, playerLocation.getScZ() + 2, false);
+        final MapGroup realTileAboveGroup = (tileAbove == null) ? null : tileAbove.getMapGroup();
+        final MapGroup tileAboveGroup = (realTileAboveGroup == null) ? null : realTileAboveGroup.getRootGroup();
 
-        if (tileList.isEmpty()) {
-            World.getWeather().setOutside(true);
-        } else {
-            for (final MapTile tile : tileList) {
-                final MapGroup currentGroup = tile.getMapGroup();
-                if (currentGroup != null) {
-                    currentGroup.setHidden(true);
-                    lastInsideGroups.add(currentGroup);
-                }
+        if (tileAboveGroup == null) {
+            if (lastInsideGroup != null) {
+                lastInsideGroup.setHidden(false);
+                lastInsideGroup = null;
             }
             World.getWeather().setOutside(false);
+        } else {
+            if (lastInsideGroup != null) {
+                if (lastInsideGroup == tileAboveGroup) {
+                    return;
+                }
+                lastInsideGroup.setHidden(false);
+            }
+            tileAboveGroup.setHidden(true);
+            lastInsideGroup = tileAboveGroup;
+            World.getWeather().setOutside(true);
         }
     }
 

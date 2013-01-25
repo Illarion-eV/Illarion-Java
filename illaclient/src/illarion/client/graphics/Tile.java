@@ -154,6 +154,14 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
 
     @Override
     public void show() {
+        final MapGroup group = parentTile.getMapGroup();
+        if ((group != null) && group.isHidden()) {
+            setAlphaTarget(0);
+            setAlpha(0);
+            setFadingCorridorEffectEnabled(false);
+        } else {
+            setFadingCorridorEffectEnabled(overlay == null);
+        }
         super.show();
         if (animation != null) {
             animation.addTarget(this, true);
