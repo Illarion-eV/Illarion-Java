@@ -55,11 +55,40 @@ public final class MapGroup {
     private List<MapGroup> children;
 
     /**
+     * Get the root group. This could either be this group or a parent group that has not further parent.
+     *
+     * @return the root group
+     */
+    @Nonnull
+    public MapGroup getRootGroup() {
+        MapGroup currentGroup = this;
+        while (true) {
+            assert currentGroup != null;
+            if (currentGroup.parent == null) {
+                return currentGroup;
+            }
+            currentGroup = currentGroup.parent;
+        }
+    }
+
+    /**
      * Check if this map group is currently hidden.
      *
      * @return {@code in case the map group is hidden}
      */
     public boolean isHidden() {
+        if (getRootGroup().isOverwritingGroupHidden()) {
+            return true;
+        }
+        return hidden;
+    }
+
+    /**
+     * Check if one of the overwriting groups of this map group is flagged as hidden.
+     *
+     * @return {@code true} in case one of the overwriting groups is hidden
+     */
+    private boolean isOverwritingGroupHidden() {
         if (overwritingGroups != null) {
             for (int i = 0; i < overwritingGroups.size(); i++) {
                 final MapGroup group = overwritingGroups.get(i);
@@ -68,7 +97,7 @@ public final class MapGroup {
                 }
             }
         }
-        return hidden;
+        return false;
     }
 
     /**
@@ -89,6 +118,9 @@ public final class MapGroup {
         }
     }
 
+    /**
+     * Send the hidden flag to all children.
+     */
     private void sendHiddenToChildren() {
         if (children == null) {
             return;
@@ -96,15 +128,6 @@ public final class MapGroup {
 
         for (int i = 0; i < children.size(); i++) {
             children.get(i).hidden = hidden;
-        }
-    }
-
-    private void addChild(@Nonnull final MapGroup child) {
-        if (children == null) {
-            children = new ArrayList<MapGroup>();
-        }
-        if (!children.contains(child)) {
-            children.add(child);
         }
     }
 
@@ -116,6 +139,9 @@ public final class MapGroup {
     public void setParent(@Nonnull final MapGroup parent) {
         if (parent.parent != null) {
             throw new IllegalArgumentException("Set a parent group that is not a root group is not allowed.");
+        }
+        if (this.parent != null) {
+            throw new IllegalArgumentException("Setting a parent to a group that already has a parent is not allows");
         }
         this.parent = parent;
         parent.addChild(this);
@@ -136,15 +162,17 @@ public final class MapGroup {
         }
     }
 
-    @Nonnull
-    public MapGroup getRootGroup() {
-        MapGroup currentGroup = this;
-        while (true) {
-            assert currentGroup != null;
-            if (currentGroup.parent == null) {
-                return currentGroup;
-            }
-            currentGroup = currentGroup.parent;
+    /**
+     * Add a child to the list of children of this map group.
+     *
+     * @param child the child to add
+     */
+    private void addChild(@Nonnull final MapGroup child) {
+        if (children == null) {
+            children = new ArrayList<MapGroup>();
+        }
+        if (!children.contains(child)) {
+            children.add(child);
         }
     }
 
