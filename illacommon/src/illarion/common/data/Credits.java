@@ -107,6 +107,7 @@ public final class Credits {
         CreditsPerson.create("Martin", "Polak", chiefGraphics, gameplay, client, graphics, website, easyNPC,
                 easyQuest, server, qualityAssurance);
         CreditsPerson.create("Oganalp", "Canatan", chiefMusic);
+        CreditsPerson.create("Marvin", "Kopp", chiefMusic);
         CreditsPerson.create("Zot", chiefMap, content, graphics, maps, gameMaster, qualityAssurance);
         CreditsPerson.create("Merung", gameplay, content, qualityAssurance);
         CreditsPerson.create("Ardian", gameplay);

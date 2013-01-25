@@ -45,7 +45,8 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param lastName  the last name of the person
      * @param lists     the lists this member is supposed to be added to
      */
-    public static void create(@Nonnull final String firstName, @Nonnull final String lastName, final CreditsList... lists) {
+    public static void create(@Nonnull final String firstName, @Nonnull final String lastName,
+                              @Nonnull final CreditsList... lists) {
         create(firstName, null, lastName, lists);
     }
 
@@ -55,7 +56,7 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param nickName the nick name of the person
      * @param lists    the lists this member is supposed to be added to
      */
-    public static void create(@Nonnull final String nickName, final CreditsList... lists) {
+    public static void create(@Nonnull final String nickName, @Nonnull final CreditsList... lists) {
         create(null, nickName, null, lists);
     }
 
@@ -67,7 +68,7 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param lastName  the last name of the person
      * @param lists     the lists this member is supposed to be added to
      */
-    public static void create(@Nonnull final String firstName, @Nonnull final String nickName, @Nonnull final String lastName,
+    public static void create(@Nullable final String firstName, @Nullable final String nickName, @Nullable final String lastName,
                               @Nonnull final CreditsList... lists) {
         final CreditsPerson person = new CreditsPerson(firstName, nickName, lastName);
         for (final CreditsList list : lists) {
@@ -82,22 +83,29 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param nickName  the nick name of the person
      * @param lastName  the last name of the person
      */
-    private CreditsPerson(@Nonnull final String firstName, @Nonnull final String nickName, @Nonnull final String lastName) {
+    private CreditsPerson(@Nullable final String firstName, @Nullable final String nickName, @Nullable final String lastName) {
         if ((isNullOrWhitespace(firstName) || isNullOrWhitespace(lastName)) && isNullOrWhitespace(nickName)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("No valid name supplied.");
         }
 
         if (!isNullOrWhitespace(nickName)) {
+            assert nickName != null;
             if (!isNullOrWhitespace(firstName) && !isNullOrWhitespace(lastName)) {
+                assert firstName != null;
+                assert lastName != null;
                 name = firstName.trim() + " \"" + nickName.trim() + "\" " + lastName.trim();
                 compareName = lastName.trim() + firstName.trim();
             } else {
-                name = "\"" + nickName.trim() + "\"";
+                name = '"' + nickName.trim() + '"';
                 compareName = nickName.trim();
             }
-        } else {
-            name = firstName.trim() + " " + lastName.trim();
+        } else if (!isNullOrWhitespace(firstName) && !isNullOrWhitespace(lastName)) {
+            assert firstName != null;
+            assert lastName != null;
+            name = firstName.trim() + ' ' + lastName.trim();
             compareName = lastName.trim() + firstName.trim();
+        } else {
+            throw new IllegalArgumentException("No valid name supplied.");
         }
     }
 
@@ -130,5 +138,19 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
     @Override
     public int compareTo(@Nonnull final CreditsPerson o) {
         return compareName.compareTo(o.compareName);
+    }
+
+    @Override
+    public boolean equals(@Nullable final Object other) {
+        if (super.equals(other)) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+        if (other instanceof CreditsPerson) {
+            return name.equals(((CreditsPerson) other).name);
+        }
+        return false;
     }
 }
