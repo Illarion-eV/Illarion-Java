@@ -96,7 +96,7 @@ public class GameMapProcessor2 {
                 lastInsideGroup.setHidden(false);
                 lastInsideGroup = null;
             }
-            World.getWeather().setOutside(false);
+            World.getWeather().setOutside(true);
         } else {
             if (lastInsideGroup != null) {
                 if (lastInsideGroup == tileAboveGroup) {
@@ -106,7 +106,7 @@ public class GameMapProcessor2 {
             }
             tileAboveGroup.setHidden(true);
             lastInsideGroup = tileAboveGroup;
-            World.getWeather().setOutside(true);
+            World.getWeather().setOutside(false);
         }
     }
 
