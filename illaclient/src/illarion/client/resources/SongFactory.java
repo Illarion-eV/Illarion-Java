@@ -74,10 +74,10 @@ public final class SongFactory implements ResourceFactory<IdWrapper<Music>> {
      */
     @Nullable
     public Music getSong(final int id) {
-        if ((songs != null) && (songs.contains(id))) {
+        if ((songs != null) && songs.contains(id)) {
             // select a variant at random
             final List<Music> clipList = songs.get(id);
-            final int variant = FastMath.nextRandomInt(0, clipList.size() - 1);
+            final int variant = FastMath.nextRandomInt(0, clipList.size());
             return songs.get(id).get(variant);
         }
         return null;
