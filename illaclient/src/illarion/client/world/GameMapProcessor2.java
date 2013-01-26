@@ -69,14 +69,16 @@ public class GameMapProcessor2 {
         }
         if (tileAbove != null) {
             final MapGroup tileAboveGroup = tileAbove.getMapGroup();
-            if (tileAboveGroup != null) {
-                tileAboveGroup.addOverwritingGroup(tileGroup);
+            final MapGroup tileAboveGroupRoot = (tileAboveGroup == null) ? null : tileAboveGroup.getRootGroup();
+            if (tileAboveGroupRoot != null) {
+                tileAboveGroupRoot.addOverwritingGroup(tileGroup);
             }
         }
         if (tileBelow != null) {
             final MapGroup tileBelowGroup = tileBelow.getMapGroup();
-            if (tileBelowGroup != null) {
-                tileGroup.addOverwritingGroup(tileBelowGroup);
+            final MapGroup tileBelowGroupRoot = (tileBelowGroup == null) ? null : tileBelowGroup.getRootGroup();
+            if (tileBelowGroupRoot != null) {
+                tileGroup.addOverwritingGroup(tileBelowGroupRoot);
             }
         }
     }
