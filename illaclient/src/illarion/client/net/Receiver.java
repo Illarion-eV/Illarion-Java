@@ -26,6 +26,7 @@ import illarion.common.net.NetCommReader;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -35,12 +36,13 @@ import java.nio.charset.CharsetDecoder;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * The Receiver class handles all data that is send from the server, decodes the
- * messages and prepares them for execution.
+ * The Receiver class handles all data that is send from the server, decodes the messages and prepares them for
+ * execution.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@NotThreadSafe
 final class Receiver extends Thread implements NetCommReader {
     /**
      * Length of the byte buffer used to store the data from the server.
@@ -48,50 +50,50 @@ final class Receiver extends Thread implements NetCommReader {
     private static final int BUFFER_LENGTH = 10000;
 
     /**
-     * The XOR mask the command ID is masked with to decode the checking ID and
-     * ensure that the start of a command was found.
+     * The XOR mask the command ID is masked with to decode the checking ID and ensure that the start of a command
+     * was found.
      */
     private static final int COMMAND_XOR_MASK = 0xFF;
 
     /**
      * The instance of the logger that is used to write out the data.
      */
+    @Nonnull
     private static final Logger LOGGER = Logger.getLogger(Receiver.class);
 
     /**
-     * Time the receiver waits for more data before throwing away the incomplete
-     * things it already got.
+     * Time the receiver waits for more data before throwing away the incomplete things it already got.
      */
     private static final int RECEIVER_TIMEOUT = 1000;
 
     /**
-     * The buffer that stores the byte that we received from the server for
-     * decoding.
+     * The buffer that stores the byte that we received from the server for decoding.
      */
+    @Nonnull
     private final ByteBuffer buffer;
 
     /**
-     * The decoder that is used to decode the strings that are send to the
-     * client by the server.
+     * The decoder that is used to decode the strings that are send to the client by the server.
      */
+    @Nonnull
     private final CharsetDecoder decoder;
 
     /**
-     * The buffer that is used to temporary store the decoded characters that
-     * were send to the player.
+     * The buffer that is used to temporary store the decoded characters that were send to the player.
      */
+    @Nonnull
     private final CharBuffer decodingBuffer = CharBuffer.allocate(65535);
 
     /**
-     * The input stream of the connection socket of the connection to the
-     * server.
+     * The input stream of the connection socket of the connection to the server.
      */
+    @Nonnull
     private final ReadableByteChannel inChannel;
 
     /**
-     * The list that stores the commands there were decoded and prepared for the
-     * NetComm for execution.
+     * The list that stores the commands there were decoded and prepared for the NetComm for execution.
      */
+    @Nonnull
     private final BlockingQueue<AbstractReply> queue;
 
     /**
@@ -107,14 +109,12 @@ final class Receiver extends Thread implements NetCommReader {
     /**
      * The basic constructor for the receiver that sets up all needed data.
      *
-     * @param inputQueue the list of decoded server messages that need to be
-     *                   executed by NetComm
-     * @param in         the input stream of the socket connection to the server that
-     *                   contains the data that needs to be decoded
+     * @param inputQueue the list of decoded server messages that need to be executed by NetComm
+     * @param in         the input stream of the socket connection to the server that contains the data that needs to
+     *                   be decoded
      */
     @SuppressWarnings("nls")
-    public Receiver(final BlockingQueue<AbstractReply> inputQueue,
-                    final ReadableByteChannel in) {
+    Receiver(@Nonnull final BlockingQueue<AbstractReply> inputQueue, @Nonnull final ReadableByteChannel in) {
         super("Illarion input thread");
 
         queue = inputQueue;
@@ -277,12 +277,11 @@ final class Receiver extends Thread implements NetCommReader {
 
                         // valid command id
                         if (id != (xor ^ COMMAND_XOR_MASK)) {
-                            // delete only first byte from buffer, scanning for
-                            // valid command
+                            // delete only first byte from buffer, scanning for valid command
                             buffer.position(1);
                             buffer.compact();
 
-                            LOGGER.warn("Skipping invalid data [" + id + "]");
+                            LOGGER.warn("Skipping invalid data [" + id + ']');
 
                             continue;
                         }
@@ -292,7 +291,7 @@ final class Receiver extends Thread implements NetCommReader {
                         final int crc = readUShort();
 
                         // wait for complete data
-                        if (!dataComplete(len)) {
+                        if (!isDataComplete(len)) {
                             // scroll the cursor back and wait for more.
                             buffer.position(0);
                             minRequiredData = len + CommandList.HEADER_SIZE;
@@ -332,8 +331,7 @@ final class Receiver extends Thread implements NetCommReader {
                                 buffer.position(len + CommandList.HEADER_SIZE);
                             }
                         } catch (@Nonnull final IllegalArgumentException ex) {
-                            LOGGER.error("Invalid command id received "
-                                    + Integer.toHexString(id));
+                            LOGGER.error("Invalid command id received " + Integer.toHexString(id));
                         }
 
                         buffer.compact();
@@ -375,7 +373,7 @@ final class Receiver extends Thread implements NetCommReader {
      * @return true in case the command is complete, false if not
      */
     @SuppressWarnings("nls")
-    private boolean dataComplete(final int len) {
+    private boolean isDataComplete(final int len) {
         if (len <= buffer.remaining()) {
             timeOut = 0;
             return true;
@@ -401,23 +399,22 @@ final class Receiver extends Thread implements NetCommReader {
     /**
      * Read data from the input stream of the socket and store it in the buffer.
      *
-     * @param neededDataInBuffer The data that is needed at least before the
-     *                           method has to return in order to parse the values correctly
+     * @param neededDataInBuffer The data that is needed at least before the method has to return in order to parse
+     *                           the values correctly
      * @return true in case there is any data to be decoded in the buffer
-     * @throws IOException In case there is something wrong with the input
-     *                     stream
+     * @throws IOException In case there is something wrong with the input stream
      */
     @SuppressWarnings("nls")
     private boolean receiveData(final int neededDataInBuffer)
             throws IOException {
 
         int data = buffer.remaining();
-        int newData = 0;
 
         final int appPos = buffer.limit();
         buffer.clear();
         buffer.position(appPos);
 
+        int newData = 0;
         while (true) {
             if (inChannel.isOpen()) {
                 newData = inChannel.read(buffer);
