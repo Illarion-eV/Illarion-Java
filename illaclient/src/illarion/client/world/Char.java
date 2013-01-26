@@ -644,7 +644,7 @@ public final class Char implements AnimatedMove {
     /**
      * Release the current avatar and free the resources.
      */
-    private void releaseAvatar() {
+    private synchronized void releaseAvatar() {
         if (avatar != null) {
             avatar.hide();
             avatar.markAsRemoved();
