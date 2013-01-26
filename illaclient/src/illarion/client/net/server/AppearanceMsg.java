@@ -22,7 +22,6 @@ import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
@@ -33,8 +32,6 @@ import illarion.common.types.ItemId;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,7 +44,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_APPEARANCE)
-public final class AppearanceMsg extends AbstractReply implements UpdateTask {
+public final class AppearanceMsg extends AbstractReply {
     /**
      * The instance of the logger that is used to write out the data.
      */
@@ -183,14 +180,20 @@ public final class AppearanceMsg extends AbstractReply implements UpdateTask {
         deadFlag = reader.readUByte() == 1;
     }
 
-
+    /**
+     * Execute the message and send the decoded appearance data to the rest of
+     * the client.
+     *
+     * @return true if the execution is done, false if it shall be called again
+     */
+    @SuppressWarnings("nls")
     @Override
-    public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+    public boolean executeUpdate() {
         @Nullable final Char character = World.getPeople().getCharacter(charId);
 
         // Character not found.
         if (character == null) {
-            return;
+            return true;
         }
 
         character.setScale(size / SCALE_MOD);
@@ -227,18 +230,6 @@ public final class AppearanceMsg extends AbstractReply implements UpdateTask {
         character.setVisible(World.getPlayer().canSee(character));
 
         EventBus.publish(new AttributeUpdateReceivedEvent(charId, CharacterAttribute.HitPoints, hitPoints));
-    }
-
-    /**
-     * Execute the message and send the decoded appearance data to the rest of
-     * the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public boolean executeUpdate() {
-        World.getUpdateTaskManager().addTask(this);
         return true;
     }
 

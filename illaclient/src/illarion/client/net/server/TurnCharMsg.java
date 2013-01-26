@@ -20,14 +20,11 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -40,7 +37,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_TURN_CHAR)
-public final class TurnCharMsg extends AbstractReply implements UpdateTask {
+public final class TurnCharMsg extends AbstractReply {
     /**
      * The ID of the character that is turned.
      */
@@ -78,13 +75,6 @@ public final class TurnCharMsg extends AbstractReply implements UpdateTask {
             return true;
         }
 
-        World.getUpdateTaskManager().addTask(this);
-
-        return true;
-    }
-
-    @Override
-    public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
         if (World.getPlayer().isPlayer(charId)) { // turn player
             World.getPlayer().getMovementHandler().acknowledgeTurn(dir);
         } else { // turn char
@@ -93,6 +83,8 @@ public final class TurnCharMsg extends AbstractReply implements UpdateTask {
                 chara.setDirection(dir);
             }
         }
+
+        return true;
     }
 
     /**
