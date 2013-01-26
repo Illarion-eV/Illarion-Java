@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  */
 public final class NpcTradeSimple implements NpcType {
     @Nonnull
-    private static String BASE_PATTERN = "^\\s*(%1$s)\\s*=\\s*([0-9\\s,]+)[\\s;]*";
+    private static String BASE_PATTERN = "^\\s*(%1$s)\\s*=\\s*([0-9]+[\\s,]*)[\\s;]*";
     /**
      * The pattern to fetch the items the NPC sells.
      */
