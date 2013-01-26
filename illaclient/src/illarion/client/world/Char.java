@@ -644,12 +644,13 @@ public final class Char implements AnimatedMove {
     /**
      * Release the current avatar and free the resources.
      */
-    private synchronized void releaseAvatar() {
-        if (avatar != null) {
-            avatar.hide();
-            avatar.markAsRemoved();
-            avatar = null;
-            avatarId = -1;
+    private void releaseAvatar() {
+        final Avatar localAvatar = avatar;
+        avatar = null;
+        avatarId = -1;
+        if (localAvatar != null) {
+            localAvatar.hide();
+            localAvatar.markAsRemoved();
         }
     }
 
