@@ -24,6 +24,7 @@ import illarion.client.net.client.MapDimensionCmd;
 import illarion.client.util.Lang;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
+import illarion.common.data.IllarionSSLSocketFactory;
 import illarion.common.util.Base64;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -36,6 +37,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
+import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.OutputStreamWriter;
@@ -160,12 +162,12 @@ public final class Login {
     private void requestCharacterListInternal(@Nonnull final Login.RequestCharListCallback resultCallback) {
         final String serverURI = IllaClient.DEFAULT_SERVER.getServerHost();
         try {
+            final URL requestURL = new URL("https://" + serverURI + "/account/xml_charlist.php");
 
-            final URL requestURL = new URL("http://" + serverURI + "/community/account/xml_charlist.php");
-
-            final HttpURLConnection conn = (HttpURLConnection) requestURL.openConnection();
+            final HttpsURLConnection conn = (HttpsURLConnection) requestURL.openConnection();
             conn.setDoOutput(true);
             conn.setDoInput(true);
+            conn.setSSLSocketFactory(IllarionSSLSocketFactory.getFactory());
 
             final StringBuilder queryBuilder = new StringBuilder();
             queryBuilder.append("name=");

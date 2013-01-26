@@ -20,6 +20,7 @@
       <entry name="?*.frag" />
       <entry name="?*.vert" />
       <entry name="*.txt" />
+      <entry name="*.jks" />
     </wildcardResourcePatterns>
     <annotationProcessing>
       <profile default="true" name="Default" enabled="false">
