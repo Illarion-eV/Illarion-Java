@@ -511,43 +511,12 @@ public final class MapDisplayManager
         g.popTransform();
     }
 
-    /**
-     * Display spoken text. Temporary solution.
-     *
-     * @param x
-     * @param y
-     * @param text
-     * @param mode
-     */
-    public void sayText(final int x, final int y, final String text, final int mode) {
-        //        x += (MAP_CENTER_X - origin.getDcX()) + dX;
-        //        y += (MAP_CENTER_Y - origin.getDcY()) + dY;
-
-        // Tooltip tip = Tooltip.create();
-        // tip.initText(text);
-        // tip.show(x, y);
-        // tip.setColor(SpeechMode.getColor(mode));
-        // todo: layout the spoken text properly
-        // Gui.getInstance().addToolTip(tip);
-    }
-
     public void setActive(final boolean active) {
         if (!active) {
             fadeOutColor.a = 1.f;
         }
         this.active = active;
     }
-
-    /*
-     * public int getScreenX(int x) { return x + MAP_CENTER_X - origin.dcX + dX;
-     * } public int getScreenY(int y) { return y + MAP_CENTER_Y - origin.dcY +
-     * dY; }
-     */
-
-    /*
-     * public void showMarker(int x, int y, int z) { showMarker = marker;
-     * //marker. }
-     */
 
     /**
      * Move the map origin to a new location
@@ -588,20 +557,6 @@ public final class MapDisplayManager
         Camera.getInstance().markEverythingDirty();
 
         // Gui.getInstance().getManager().notifyMovement();
-    }
-
-    /**
-     * Show spoken text as tooltip
-     *
-     * @param text
-     * @param mode
-     */
-    public void showText(final String text, final int mode, final int x, final int y) {
-        // convert to screen coordinates
-        final Location tempLoc = new Location();
-        tempLoc.setSC(x, y, origin.getScZ());
-
-        sayText(tempLoc.getDcX(), tempLoc.getDcY(), text, mode);
     }
 
     private void insertSorted(@Nonnull final DisplayItem item) {
