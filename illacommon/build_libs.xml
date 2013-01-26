@@ -34,13 +34,17 @@
             depends="init_libs,get_buildtool,check_libs_compiled_uptodate"
             unless="libs.compiled.uptodate">
 
+        <antcall target="prepare_axis"/>
+        <antcall target="prepare_commons"/>
         <antcall target="prepare_eventbus"/>
-        <antcall target="prepare_javolution"/>
         <antcall target="prepare_rsyntaxtextarea"/>
         <antcall target="prepare_jgraph"/>
         <antcall target="prepare_log4j"/>
         <antcall target="prepare_lwjgl"/>
+        <antcall target="prepare_javolution"/>
+        <antcall target="prepare_jaxrpc"/>
         <antcall target="prepare_jsr"/>
+        <antcall target="prepare_mantisconnect"/>
         <antcall target="prepare_nifty"/>
         <antcall target="prepare_slick"/>
         <antcall target="prepare_substance"/>
@@ -52,6 +56,7 @@
         <antcall target="prepare_tabsplitter"/>
         <antcall target="prepare_trove"/>
         <antcall target="prepare_vorbisspi"/>
+        <antcall target="prepare_wsdl4j"/>
         <antcall target="prepare_xpp3"/>
 
         <copy file="${common}/libs-all.zip" tofile="${common}/libs-all-compiled.zip" failonerror="no"
@@ -87,6 +92,161 @@
         <resourcebuild target="${setuplib}/eventbus.illares" usepack200="true">
             <fileset dir="${signedlibs}">
                 <patternset refid="eventbus.pattern"/>
+            </fileset>
+        </resourcebuild>
+    </target>
+
+    <target name="prepare_mantisconnect" description="prepare the MANTISCONNECT bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="mantisconnect"/>
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}"
+                 storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="mantisconnect.pattern"/>
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="mantisconnect.pattern"/>
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/mantisconnect.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="mantisconnect.pattern"/>
+            </fileset>
+        </resourcebuild>
+    </target>
+
+    <target name="prepare_axis" description="prepare the APACHE AXIS bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="axis"/>
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}"
+                 storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="axis.pattern"/>
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="axis.pattern"/>
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/axis.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="axis.pattern"/>
+            </fileset>
+        </resourcebuild>
+    </target>
+
+    <target name="prepare_commons" description="prepare the APACHE COMMONS bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="commons"/>
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}"
+                 storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="commons.pattern"/>
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="commons.pattern"/>
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/commons.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="commons.pattern"/>
+            </fileset>
+        </resourcebuild>
+    </target>
+
+    <target name="prepare_jaxrpc" description="prepare the JAX-RPC bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="jaxrpc"/>
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}"
+                 storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="jaxrpc.pattern"/>
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="jaxrpc.pattern"/>
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/jaxrpc.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="jaxrpc.pattern"/>
+            </fileset>
+        </resourcebuild>
+    </target>
+
+    <target name="prepare_wsdl4j" description="prepare the WSDL4J bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="wsdl4j"/>
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}"
+                 storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="wsdl4j.pattern"/>
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="wsdl4j.pattern"/>
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/jaxrpc.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="wsdl4j.pattern"/>
             </fileset>
         </resourcebuild>
     </target>

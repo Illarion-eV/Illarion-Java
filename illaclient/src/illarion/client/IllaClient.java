@@ -180,6 +180,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         Lang.getInstance().recheckLocale(cfg.getString(Lang.LOCALE_CFG));
         CrashReporter.getInstance().setConfig(getCfg());
 
+        // Disable error reporting for the testserver
+        if (DEFAULT_SERVER == Servers.testserver) {
+            CrashReporter.getInstance().setMode(CrashReporter.MODE_NEVER);
+        }
+
         Renderer.setRenderer(Renderer.IMMEDIATE_RENDERER);
 
         SlickRenderImageLoaders.getInstance().addLoader(TextureLoader.getInstance(), SlickAddLoaderLocation.first);

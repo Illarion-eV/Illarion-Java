@@ -18,6 +18,11 @@
     <orderEntry type="library" name="Nifty-GUI" level="project" />
     <orderEntry type="library" name="Slick" level="project" />
     <orderEntry type="library" name="JSR" level="project" />
+    <orderEntry type="library" name="MantisConnect" level="project" />
+    <orderEntry type="library" name="Java API for XML-based RPC" level="project" />
+    <orderEntry type="library" name="Apache Axis" level="project" />
+    <orderEntry type="library" name="Apache Commons" level="project" />
+    <orderEntry type="library" name="wsdl4j" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

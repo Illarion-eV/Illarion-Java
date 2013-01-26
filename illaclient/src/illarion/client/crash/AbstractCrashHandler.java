@@ -124,7 +124,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * @param e the reason of the crash
      */
     private void reportError(final Thread t, final Throwable e) {
-        CrashReporter.getInstance().dumpCrash(
+        CrashReporter.getInstance().reportCrash(
                 new CrashData(IllaClient.APPLICATION, IllaClient.VERSION,
                         getCrashMessage(), t, e));
     }

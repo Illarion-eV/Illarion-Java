@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.download.install.resources.dev;
+package illarion.download.install.resources.libs;
 
 import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.libs.*;
 import illarion.download.util.Lang;
 
 import javax.annotation.Nonnull;
@@ -30,17 +29,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * This resource contains the Illarion Common Library.
+ * This resource contains the Apache Commons
  *
  * @author Martin Karing
- * @version 1.00
- * @since 1.00
  */
-public final class Common implements DevelopmentResource {
+public final class Commons
+        implements LibraryResource {
     /**
      * The singleton instance of this class.
      */
-    private static final Common INSTANCE = new Common();
+    private static final Commons INSTANCE = new Commons();
 
     /**
      * The files that are needed to be added to the class path for this
@@ -49,19 +47,20 @@ public final class Common implements DevelopmentResource {
     private Collection<File> classpath;
 
     /**
-     * The dependencies of this resource.
-     */
-    private Collection<Resource> dependencies;
-
-    /**
      * The resources that are needed to be downloaded for this class.
      */
     private Collection<URL> resources;
 
     /**
+     * The arguments that are passed to the virtual machine in case this
+     * resource is part of the application.
+     */
+    private Collection<String> vmArguments;
+
+    /**
      * Private constructor to avoid instances but the singleton instance.
      */
-    private Common() {
+    private Commons() {
         // nothing to do
     }
 
@@ -83,8 +82,9 @@ public final class Common implements DevelopmentResource {
     public Collection<File> getClassPath() {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
-            cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                    "illarion_common.jar")); //$NON-NLS-1$
+            final String dir = LibraryDirectory.getInstance().getDirectory();
+            cp.add(new File(dir, "commons-discovery-0.2.jar")); //$NON-NLS-1$
+            cp.add(new File(dir, "commons-logging-1.0.4.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -92,22 +92,13 @@ public final class Common implements DevelopmentResource {
     }
 
     /**
-     * Get the dependencies of this resource.
+     * This resource does not depend on anything else. So this function returns
+     * <code>null</code> at all times
      */
+    @Nullable
     @Override
     public Collection<Resource> getDependencies() {
-        if (dependencies == null) {
-            final Collection<Resource> dep = new ArrayList<Resource>();
-            dep.add(Javolution.getInstance());
-            dep.add(Log4j.getInstance());
-            dep.add(Trove.getInstance());
-            dep.add(EventBus.getInstance());
-            dep.add(JSR.getInstance());
-            dep.add(MantisConnect.getInstance());
-
-            dependencies = dep;
-        }
-        return dependencies;
+        return null;
     }
 
     /**
@@ -122,7 +113,7 @@ public final class Common implements DevelopmentResource {
 
     @Override
     public String getName() {
-        return Lang.getMsg(Common.class.getName());
+        return Lang.getMsg(Commons.class.getName());
     }
 
     /**
@@ -144,8 +135,7 @@ public final class Common implements DevelopmentResource {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {
-                res.add(new URL(ONLINE_PATH
-                        + "illarion_common" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                res.add(new URL(ONLINE_PATH + "commons" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (@Nonnull final Exception e) {
                 // Catch everything and do nothing!
             }
@@ -167,10 +157,16 @@ public final class Common implements DevelopmentResource {
      * Generate and return the list of virtual machine arguments that are passed
      * to java when the function is called.
      */
-    @Nullable
     @Override
     public Collection<String> getVMArguments() {
-        return null;
+        if (vmArguments == null) {
+            final Collection<String> vmArgs = new ArrayList<String>();
+            vmArgs.add("-Dillarion.components.avaiable.commons=true"); //$NON-NLS-1$
+
+            vmArguments = vmArgs;
+        }
+
+        return vmArguments;
     }
 
     /**

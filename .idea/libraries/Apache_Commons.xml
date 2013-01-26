@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Apache Commons">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/commons" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/commons" recursive="false" />
+  </library>
+</component>

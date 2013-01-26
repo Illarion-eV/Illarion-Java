@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="wsdl4j">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/wsdl4j" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/wsdl4j" recursive="false" />
+  </library>
+</component>

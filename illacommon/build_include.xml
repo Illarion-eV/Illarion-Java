@@ -185,6 +185,47 @@
         <patternset refid="javolution.pattern"/>
     </fileset>
 
+    <!-- Mantis Connect 1.1.1 -->
+    <patternset id="mantisconnect.pattern">
+        <include name="mantisconnect-client-api-1.1.1.1.jar"/>
+    </patternset>
+    <fileset id="mantisconnect" dir="${common}/lib/mantisconnect">
+        <patternset refid="mantisconnect.pattern"/>
+    </fileset>
+
+    <!-- Apache AXIS REV609819 -->
+    <patternset id="axis.pattern">
+        <include name="axis-REV609819.jar"/>
+    </patternset>
+    <fileset id="axis" dir="${common}/lib/axis">
+        <patternset refid="axis.pattern"/>
+    </fileset>
+
+    <!-- Apache Commons -->
+    <patternset id="commons.pattern">
+        <include name="commons-discovery-0.2.jar"/>
+        <include name="commons-logging-1.0.4.jar"/>
+    </patternset>
+    <fileset id="commons" dir="${common}/lib/commons">
+        <patternset refid="commons.pattern"/>
+    </fileset>
+
+    <!-- JAX-RPC -->
+    <patternset id="jaxrpc.pattern">
+        <include name="jaxrpc.jar"/>
+    </patternset>
+    <fileset id="jaxrpc" dir="${common}/lib/jaxrpc">
+        <patternset refid="jaxrpc.pattern"/>
+    </fileset>
+
+    <!-- WSDL4J 1.5.1 -->
+    <patternset id="wsdl4j.pattern">
+        <include name="wsdl4j-1.5.1.jar"/>
+    </patternset>
+    <fileset id="wsdl4j" dir="${common}/lib/wsdl4j">
+        <patternset refid="wsdl4j.pattern"/>
+    </fileset>
+
     <!-- LWJGL 2.6 -->    <!-- http://www.lwjgl.org/ -->
     <property name="lwjgl.dir" location="${common}/lib/lwjgl"/>
     <patternset id="lwjgl.pattern">
