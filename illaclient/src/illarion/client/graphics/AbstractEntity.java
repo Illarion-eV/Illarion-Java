@@ -431,10 +431,8 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      * its not allowed to do anything anymore with this entity.
      */
     public void markAsRemoved() {
-        hide();
-        getLight().a = 0.f;
-        setAlphaTarget(0);
         removedEntity = true;
+        hide();
     }
 
     /**
