@@ -72,18 +72,18 @@ public final class MoveMsg extends AbstractReply {
     /**
      * The new location of the character.
      */
-    private transient Location loc;
+    private Location loc;
 
     /**
      * The moving mode of the character. Valid values are {@link #MODE_NO_MOVE}, {@link #MODE_MOVE}, {@link
      * #MODE_PUSH}.
      */
-    private short mode;
+    private int mode;
 
     /**
      * The moving speed of the character.
      */
-    private short speed;
+    private int speed;
 
     /**
      * Decode the character move data the receiver got and prepare it for the execution.
@@ -116,14 +116,18 @@ public final class MoveMsg extends AbstractReply {
 
         if (World.getPlayer().isPlayer(charId)) {
             final CharMovementMode moveMode;
-            if (mode == MODE_MOVE) {
-                moveMode = CharMovementMode.Walk;
-            } else if (mode == MODE_PUSH) {
-                moveMode = CharMovementMode.Push;
-            } else if (mode == MODE_RUN) {
-                moveMode = CharMovementMode.Run;
-            } else {
-                moveMode = CharMovementMode.None;
+            switch (mode) {
+                case MODE_MOVE:
+                    moveMode = CharMovementMode.Walk;
+                    break;
+                case MODE_PUSH:
+                    moveMode = CharMovementMode.Push;
+                    break;
+                case MODE_RUN:
+                    moveMode = CharMovementMode.Run;
+                    break;
+                default:
+                    moveMode = CharMovementMode.None;
             }
             World.getPlayer().getMovementHandler().acknowledgeMove(moveMode, loc, speed);
             return true;
