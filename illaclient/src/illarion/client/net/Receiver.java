@@ -327,6 +327,9 @@ final class Receiver extends Thread implements NetCommReader {
 
                                 // put decoded command in input queue
                                 queue.put(rpl);
+                            } else {
+                                // throw away the command that was incorrectly decoded
+                                buffer.position(len + CommandList.HEADER_SIZE);
                             }
                         } catch (@Nonnull final IllegalArgumentException ex) {
                             LOGGER.error("Invalid command id received "
@@ -381,8 +384,6 @@ final class Receiver extends Thread implements NetCommReader {
         // set timeout for data
         if (timeOut == 0) {
             timeOut = System.currentTimeMillis() + RECEIVER_TIMEOUT;
-            LOGGER.warn("Waiting for missing data "
-                    + ((CommandList.HEADER_SIZE + len) - buffer.remaining()));
         }
 
         // timeout exceeded
