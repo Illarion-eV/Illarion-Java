@@ -374,9 +374,6 @@ public final class Char implements AnimatedMove {
      */
     @Override
     public void animationFinished(final boolean ok) {
-        if (Thread.currentThread().getName().equals("NetComm MessageExecutor")) {
-            LOGGER.warn("Strange thread access.");
-        }
         resetAnimation();
     }
 
@@ -951,7 +948,7 @@ public final class Char implements AnimatedMove {
     public void setDirection(final int newDirection) {
         direction = newDirection;
         if (!move.isRunning()) {
-            resetAnimation();
+            updateAvatar();
         }
     }
 
