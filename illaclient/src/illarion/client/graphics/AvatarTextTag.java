@@ -38,7 +38,7 @@ public final class AvatarTextTag implements Drawable {
     /**
      * The color of the background pane that is displayed behind the characterName.
      */
-    private static final Color BACK_COLOR = new Color(0.f, 0.f, 0.f, 0.3f);
+    private static final Color BACK_COLOR = new Color(0.f, 0.f, 0.f, 0.58f);
 
     /**
      * This color is used as temporary color during the rendering process.

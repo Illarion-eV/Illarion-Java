@@ -54,7 +54,7 @@ public final class FontLoader implements SlickRenderFontLoader {
         /**
          * Small font - a small font that is easily readable.
          */
-        Small("smallFont", "Ubuntu", 14.f, "normal"),
+        Small("smallFont", "Ubuntu", 14.f, "bold"),
 
         /**
          * Text font - the default font for text, larger then the small font but also easily readable.

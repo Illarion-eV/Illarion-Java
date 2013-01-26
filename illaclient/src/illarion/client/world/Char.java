@@ -124,10 +124,10 @@ public final class Char implements AnimatedMove {
      * This color is used to display the name in case the character is a NPC.
      */
     @Nonnull
-    private static final Color NAME_COLOR_NPC = new Color(0, 128, 128);
+    private static final Color NAME_COLOR_NPC = new Color(128, 179, 255);
 
     /**
-     * The alive state of the character. <code>true</code> in caes the character is alive.
+     * The alive state of the character. <code>true</code> in case the character is alive.
      */
     private boolean alive;
 
