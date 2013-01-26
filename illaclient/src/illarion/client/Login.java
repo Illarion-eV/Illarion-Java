@@ -41,7 +41,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
@@ -164,18 +163,22 @@ public final class Login {
         try {
             final URL requestURL = new URL("https://" + serverURI + "/account/xml_charlist.php");
 
-            final HttpsURLConnection conn = (HttpsURLConnection) requestURL.openConnection();
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setSSLSocketFactory(IllarionSSLSocketFactory.getFactory());
-
             final StringBuilder queryBuilder = new StringBuilder();
             queryBuilder.append("name=");
             queryBuilder.append(URLEncoder.encode(getLoginName(), "UTF-8"));
             queryBuilder.append("&passwd=");
             queryBuilder.append(URLEncoder.encode(getPassword(), "UTF-8"));
-
             final String query = queryBuilder.toString();
+
+            final HttpsURLConnection conn = (HttpsURLConnection) requestURL.openConnection();
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("charset", "utf-8");
+            conn.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes().length));
+            conn.setUseCaches(false);
+            conn.setSSLSocketFactory(IllarionSSLSocketFactory.getFactory());
 
             conn.connect();
 
