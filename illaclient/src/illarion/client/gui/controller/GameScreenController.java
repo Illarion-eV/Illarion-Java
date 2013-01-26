@@ -49,7 +49,7 @@ public final class GameScreenController implements ScreenController {
         addHandler(new BookHandler());
         addHandler(new GUIInventoryHandler(input, numberPopupHandler, tooltipHandler));
         addHandler(new DialogHandler(numberPopupHandler, tooltipHandler));
-        addHandler(new ContainerHandler(numberPopupHandler, tooltipHandler));
+        addHandler(new ContainerHandler(input, numberPopupHandler, tooltipHandler));
         addHandler(new CloseGameHandler());
         addHandler(new CharStatusHandler());
         addHandler(new SkillsHandler());

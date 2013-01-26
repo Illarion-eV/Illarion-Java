@@ -50,7 +50,7 @@ public final class ShowcaseMsg extends AbstractReply {
      */
     @Override
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
-        final int containerId = reader.readByte();
+        final int containerId = reader.readUByte();
         final int containerSize = reader.readUShort();
         final int itemAmount = reader.readUShort();
 

@@ -242,7 +242,7 @@ public final class ContainerHandler implements ScreenController {
     /**
      * The input system that is used to query the state of the keyboard.
      */
-    private Input input;
+    private final Input input;
 
     /**
      * Constructor of this handler.
@@ -250,10 +250,12 @@ public final class ContainerHandler implements ScreenController {
      * @param numberSelectPopupHandler the number select handler
      * @param tooltip                  the tooltip handler
      */
-    public ContainerHandler(final NumberSelectPopupHandler numberSelectPopupHandler, final TooltipHandler tooltip) {
+    public ContainerHandler(final Input input, final NumberSelectPopupHandler numberSelectPopupHandler,
+                            final TooltipHandler tooltip) {
         itemContainerMap = new TIntObjectHashMap<org.illarion.nifty.controls.ItemContainer>();
         numberSelect = numberSelectPopupHandler;
         tooltipHandler = tooltip;
+        this.input = input;
     }
 
     @EventSubscriber
@@ -518,12 +520,14 @@ public final class ContainerHandler implements ScreenController {
 
     @Override
     public void onEndScreen() {
+        LOGGER.info("Container Handler - End Screen");
         AnnotationProcessor.unprocess(this);
         activeNifty.unsubscribeAnnotations(this);
     }
 
     @Override
     public void onStartScreen() {
+        LOGGER.info("Container Handler - Start Screen");
         AnnotationProcessor.process(this);
         activeNifty.subscribeAnnotations(this);
     }
@@ -607,7 +611,6 @@ public final class ContainerHandler implements ScreenController {
      * @param event the container event used to update the container
      */
     private void updateContainer(@Nonnull final OpenContainerEvent event) {
-        final long start = System.currentTimeMillis();
         final org.illarion.nifty.controls.ItemContainer conControl = itemContainerMap.get(event.getContainerId());
 
         final int slotCount = conControl.getSlotCount();
@@ -656,7 +659,5 @@ public final class ContainerHandler implements ScreenController {
         }
 
         conControl.getElement().getParent().layoutElements();
-
-        LOGGER.info("Updating the container took: " + Long.toString(System.currentTimeMillis() - start) + "ms");
     }
 }

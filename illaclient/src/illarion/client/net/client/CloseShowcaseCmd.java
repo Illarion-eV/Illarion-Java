@@ -35,7 +35,7 @@ public final class CloseShowcaseCmd extends AbstractCommand {
     /**
      * The ID of the container.
      */
-    private final int showcaseId;
+    private final short showcaseId;
 
     /**
      * Default constructor for the open bag command.
@@ -45,12 +45,12 @@ public final class CloseShowcaseCmd extends AbstractCommand {
     public CloseShowcaseCmd(final int showcaseId) {
         super(CommandList.CMD_CLOSE_SHOWCASE);
 
-        this.showcaseId = showcaseId;
+        this.showcaseId = (short) showcaseId;
     }
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeByte((byte) showcaseId);
+        writer.writeUByte(showcaseId);
     }
 
     @Nonnull
