@@ -42,6 +42,7 @@ import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.data.ItemTemplate;
 import illarion.client.util.LookAtTracker;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.interactive.InteractionManager;
@@ -61,12 +62,11 @@ import org.illarion.nifty.controls.ItemContainerCloseEvent;
 import org.illarion.nifty.controls.itemcontainer.builder.ItemContainerBuilder;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,7 +75,7 @@ import java.util.regex.Pattern;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ContainerHandler implements ScreenController, UpdatableHandler {
+public final class ContainerHandler implements ScreenController {
     /**
      * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
      * so the server can send the commands to clean everything up.
@@ -172,7 +172,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         }
     }
 
-    private final class UpdateContainerTask implements Runnable {
+    private final class UpdateContainerTask implements UpdateTask {
         private final OpenContainerEvent event;
 
         UpdateContainerTask(final OpenContainerEvent updateEvent) {
@@ -180,7 +180,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         }
 
         @Override
-        public void run() {
+        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
             if (!isContainerCreated(event.getContainerId())) {
                 createNewContainer(event);
             }
@@ -202,10 +202,6 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      * The pattern to fetch the ID of a container name.
      */
     private static final Pattern containerPattern = Pattern.compile("container([0-9]+)");
-    /**
-     * The list of tasks that need to be executed upon the next call of the update loop.
-     */
-    private final Queue<Runnable> updateTasks = new ConcurrentLinkedQueue<Runnable>();
 
     /**
      * The Nifty-GUI instance that is handling the GUI display currently.
@@ -236,9 +232,9 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
     /**
      * The task that is executed to update the merchant overlays.
      */
-    private final Runnable updateMerchantOverlays = new Runnable() {
+    private final UpdateTask updateMerchantOverlays = new UpdateTask() {
         @Override
-        public void run() {
+        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
             updateAllMerchantOverlays();
         }
     };
@@ -317,7 +313,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
         switch (event.getDialogType()) {
             case Any:
             case Merchant:
-                updateTasks.offer(updateMerchantOverlays);
+                World.getUpdateTaskManager().addTask(updateMerchantOverlays);
 
             case Message:
                 break;
@@ -336,7 +332,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      */
     @EventSubscriber
     public void onMerchantDialogReceivedHandler(final DialogMerchantReceivedEvent event) {
-        updateTasks.offer(updateMerchantOverlays);
+        World.getUpdateTaskManager().addTask(updateMerchantOverlays);
     }
 
     /**
@@ -346,7 +342,7 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
      */
     @EventSubscriber
     public void onOpenContainerEvent(final OpenContainerEvent event) {
-        updateTasks.offer(new ContainerHandler.UpdateContainerTask(event));
+        World.getUpdateTaskManager().addTask(new ContainerHandler.UpdateContainerTask(event));
     }
 
     /**
@@ -530,19 +526,6 @@ public final class ContainerHandler implements ScreenController, UpdatableHandle
     public void onStartScreen() {
         AnnotationProcessor.process(this);
         activeNifty.subscribeAnnotations(this);
-    }
-
-    @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
-        input = container.getInput();
-        while (true) {
-            final Runnable task = updateTasks.poll();
-            if (task == null) {
-                break;
-            }
-
-            task.run();
-        }
     }
 
     /**
