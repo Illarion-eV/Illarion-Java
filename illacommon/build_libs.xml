@@ -244,7 +244,7 @@
             </path>
         </verifyjar>
 
-        <resourcebuild target="${setuplib}/jaxrpc.illares" usepack200="true">
+        <resourcebuild target="${setuplib}/wsdl4j.illares" usepack200="true">
             <fileset dir="${signedlibs}">
                 <patternset refid="wsdl4j.pattern"/>
             </fileset>
