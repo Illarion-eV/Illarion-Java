@@ -95,6 +95,7 @@
                 <fileset refid="nifty"/>
                 <fileset refid="jsr"/>
                 <fileset refid="eventbus"/>
+                <fileset refid="mantisconnect"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>
         </javac>
