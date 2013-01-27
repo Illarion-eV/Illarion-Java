@@ -174,7 +174,7 @@ public final class CrashReporter {
         LOGGER.fatal("Fatal error occured: " + crash.getDescription());
         LOGGER.fatal("Fatal error exception: " + crash.getExceptionName());
         LOGGER.fatal("Fatal error thread: " + crash.getThreadName());
-        LOGGER.fatal("Fatal error backgrace: " + crash.getStackBacktrace());
+        LOGGER.fatal("Fatal error backtrace: " + crash.getStackBacktrace());
         LOGGER.fatal(crash.getApplicationName() + " is going down. Brace for impact.");
         final Calendar cal = Calendar.getInstance();
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -228,6 +228,15 @@ public final class CrashReporter {
                     reportCrash(crash, false);
                 }
             }).start();
+        }
+
+        if ("NoClassDefFoundError".equals(crash.getExceptionName())) {
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                new File(DirectoryManager.getInstance().getDataDirectory(), "corrupted").createNewFile();
+            } catch (@Nonnull final IOException e) {
+                LOGGER.error("Failed to mark data as corrupted.");
+            }
         }
 
         waitForReport();
