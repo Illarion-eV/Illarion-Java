@@ -307,7 +307,6 @@ public final class CrashReporter {
         if (config != null) {
             setMode(config.getInteger(CFG_KEY));
         }
-        setMode(MODE_ALWAYS);
     }
 
     /**
