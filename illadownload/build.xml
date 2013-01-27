@@ -156,6 +156,7 @@
             <libraryjar refid="nifty"/>
             <libraryjar refid="slick"/>
             <libraryjar refid="tabsplitter"/>
+            <libraryjar refid="mantisconnect"/>
             <libraryjar path="${java.home}/lib/rt.jar"/>
             <libraryjar path="${java.home}/lib/jce.jar"/>
             <keep name="org.apache.log4j.ConsoleAppender"/>
