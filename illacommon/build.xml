@@ -115,5 +115,6 @@
         </jar>
         <jar jarfile="${jar}" basedir="${src}" includes="public.key" update="true" index="${build.index}"/>
         <jar jarfile="${jar}" basedir="${src}" includes="skills.xml" update="true" index="${build.index}"/>
+        <jar jarfile="${jar}" basedir="${src}" includes="keystore.jks" update="true" index="${build.index}"/>
     </target>
 </project>
