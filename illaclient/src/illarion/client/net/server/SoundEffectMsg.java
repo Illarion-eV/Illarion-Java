@@ -21,9 +21,14 @@ package illarion.client.net.server;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.resources.SoundFactory;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
+import org.apache.log4j.Logger;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Sound;
+import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -35,8 +40,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_SOUND_FX)
-public final class SoundEffectMsg
-        extends AbstractReply {
+public final class SoundEffectMsg extends AbstractReply implements UpdateTask {
     /**
      * ID of the effect that shall be shown.
      */
@@ -61,17 +65,32 @@ public final class SoundEffectMsg
     }
 
     /**
+     * The logging instance of this class..
+     */
+    private static final Logger LOGGER = Logger.getLogger(SoundEffectMsg.class);
+
+    /**
      * Execute the effect message and send the decoded data to the rest of the client.
      *
      * @return true if the execution is done, false if it shall be called again
      */
     @Override
     public boolean executeUpdate() {
-        final Location plyLoc = World.getPlayer().getLocation();
-        SoundFactory.getInstance().getSound(effectId).playAt(loc.getScX() - plyLoc.getScX(),
-                loc.getScY() - plyLoc.getScY(),
-                loc.getScZ() - plyLoc.getScZ());
+        World.getUpdateTaskManager().addTask(this);
         return true;
+    }
+
+    @Override
+    public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+        final Location plyLoc = World.getPlayer().getLocation();
+        final Sound sound = SoundFactory.getInstance().getSound(effectId);
+
+        try {
+            sound.playAt(loc.getScX() - plyLoc.getScX(), loc.getScY() - plyLoc.getScY(),
+                    loc.getScZ() - plyLoc.getScZ());
+        } catch (@Nonnull final Exception e) {
+            LOGGER.error("Sound playback failed!", e);
+        }
     }
 
     /**
