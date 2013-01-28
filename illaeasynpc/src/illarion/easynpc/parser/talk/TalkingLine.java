@@ -91,12 +91,12 @@ public final class TalkingLine {
         condPar.add(new illarion.easynpc.parser.talk.conditions.Language());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Chance());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Town());
-        condPar.add(new illarion.easynpc.parser.talk.conditions.Number());
         condPar.add(new illarion.easynpc.parser.talk.conditions.TalkMode());
-        condPar.add(new illarion.easynpc.parser.talk.conditions.Talkstate());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Sex());
-        condPar.add(new illarion.easynpc.parser.talk.conditions.Admin());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Trigger());
+        condPar.add(new illarion.easynpc.parser.talk.conditions.Admin());
+        condPar.add(new illarion.easynpc.parser.talk.conditions.Talkstate());
+        condPar.add(new illarion.easynpc.parser.talk.conditions.Number());
 
         consPar.add(new illarion.easynpc.parser.talk.consequences.Inform());
         consPar.add(new illarion.easynpc.parser.talk.consequences.State());
@@ -110,12 +110,12 @@ public final class TalkingLine {
         consPar.add(new illarion.easynpc.parser.talk.consequences.Rankpoints());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Talkstate());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Town());
-        consPar.add(new illarion.easynpc.parser.talk.consequences.Trade());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Treasure());
-        consPar.add(new illarion.easynpc.parser.talk.consequences.Introduce());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Warp());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Gemcraft());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Answer());
+        consPar.add(new illarion.easynpc.parser.talk.consequences.Trade());
+        consPar.add(new illarion.easynpc.parser.talk.consequences.Introduce());
 
         final List<ConditionParser> conditionsList = condPar;
         final List<ConsequenceParser> consequenceList = consPar;
