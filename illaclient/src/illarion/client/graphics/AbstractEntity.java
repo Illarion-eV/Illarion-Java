@@ -644,6 +644,14 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     public void update(@Nonnull final GameContainer container, final int delta) {
         if (removedEntity) {
             LOGGER.warn("Updating a removed entity is not allowed.");
+            shown = true;
+            hide();
+            return;
+        }
+        if (!shown) {
+            LOGGER.warn("Entity that is not shown received update.");
+            shown = true;
+            hide();
             return;
         }
         final Sprite sprite = template.getSprite();
