@@ -520,14 +520,12 @@ public final class ContainerHandler implements ScreenController {
 
     @Override
     public void onEndScreen() {
-        LOGGER.info("Container Handler - End Screen");
         AnnotationProcessor.unprocess(this);
         activeNifty.unsubscribeAnnotations(this);
     }
 
     @Override
     public void onStartScreen() {
-        LOGGER.info("Container Handler - Start Screen");
         AnnotationProcessor.process(this);
         activeNifty.subscribeAnnotations(this);
     }
