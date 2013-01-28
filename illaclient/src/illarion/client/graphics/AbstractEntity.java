@@ -640,6 +640,15 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         }
     }
 
+    /**
+     * Check if this entity is currently displayed on the screen.
+     *
+     * @return {@code true} in case this entity is currently displayed on the screen
+     */
+    protected boolean isShown() {
+        return shown;
+    }
+
     @Override
     public void update(@Nonnull final GameContainer container, final int delta) {
         if (removedEntity) {
@@ -648,7 +657,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
             hide();
             return;
         }
-        if (!shown) {
+        if (!isShown()) {
             LOGGER.warn("Entity that is not shown received update.");
             shown = true;
             hide();

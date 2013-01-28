@@ -314,7 +314,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * @param itemID the ID of the item that shall be displayed
      */
     public void setClothItem(final int group, final int itemID) {
-        clothRender.setCloth(group, getTemplate().getClothes().getCloth(group, itemID));
+        clothRender.setCloth(group, getTemplate().getClothes().getCloth(group, itemID, this));
     }
 
     /**

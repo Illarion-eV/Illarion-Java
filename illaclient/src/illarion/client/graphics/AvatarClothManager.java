@@ -179,14 +179,15 @@ public final class AvatarClothManager {
     /**
      * Get a item from the storage.
      *
-     * @param group  the group the requested item is assigned to
-     * @param itemID the item id of the requested item
+     * @param group        the group the requested item is assigned to
+     * @param itemID       the item id of the requested item
+     * @param parentAvatar the avatar the cloth will belong to
      * @return the item that was found regarding the parameters or {@code null} in case the requested item was not
      *         defined in this storage
      */
     @Nullable
     @SuppressWarnings("nls")
-    public AvatarCloth getCloth(final int group, final int itemID) {
+    public AvatarCloth getCloth(final int group, final int itemID, @Nonnull final Avatar parentAvatar) {
         if ((group < 0) || (group >= GROUP_COUNT)) {
             throw new IllegalArgumentException("Group needs to be between 0 and " + GROUP_COUNT);
         }
@@ -212,7 +213,7 @@ public final class AvatarClothManager {
         if (template.getId() == 0) {
             return null;
         }
-        final AvatarCloth ret = new AvatarCloth(template);
+        final AvatarCloth ret = new AvatarCloth(template, parentAvatar);
         if (refItem != null) {
             ret.setBaseColor(refItem.getPaperdollingColor());
         }

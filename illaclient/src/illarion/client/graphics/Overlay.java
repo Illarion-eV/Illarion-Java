@@ -38,11 +38,13 @@ public class Overlay extends AbstractEntity<OverlayTemplate> implements Resource
     /**
      * The logger instance that takes care for the logging output of this class.
      */
+    @Nonnull
     private static final Logger LOGGER = Logger.getLogger(Overlay.class);
 
     /**
      * The parent tile of this overlay.
      */
+    @Nonnull
     private final Tile parentTile;
 
     /**
@@ -51,7 +53,7 @@ public class Overlay extends AbstractEntity<OverlayTemplate> implements Resource
      * @param template the template of the overlay this instance will refer to
      * @param shape    the shape of the overlay, this value will be set as frame
      */
-    public Overlay(final OverlayTemplate template, final int shape, final Tile parentTile) {
+    public Overlay(@Nonnull final OverlayTemplate template, final int shape, @Nonnull final Tile parentTile) {
         super(template);
         setFrame(shape);
         this.parentTile = parentTile;
@@ -75,6 +77,16 @@ public class Overlay extends AbstractEntity<OverlayTemplate> implements Resource
             LOGGER.error("Template was not found for overlay " + id, ex);
         }
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * Overlay always inherit the shown state of the tile they are signed to
+     */
+    @Override
+    public boolean isShown() {
+        return parentTile.isShown();
     }
 
     @Override
