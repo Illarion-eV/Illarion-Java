@@ -63,7 +63,7 @@ public final class MapDisplayManager
         /**
          * Public constructor to allow the parent class creating instances.
          */
-        public DisplayListComparator() {
+        DisplayListComparator() {
             // nothing to do
         }
 
@@ -73,7 +73,7 @@ public final class MapDisplayManager
          */
         @Override
         public boolean areEqual(final DisplayItem o1, final DisplayItem o2) {
-            return (o1 == o2);
+            return o1 == o2;
         }
 
         /**
@@ -100,8 +100,6 @@ public final class MapDisplayManager
      * Offset of the tiles due the perspective of the map view.
      */
     public static final int TILE_PERSPECTIVE_OFFSET = 3;
-
-    boolean displayListDirty = false;
 
     private boolean active;
 
@@ -167,15 +165,10 @@ public final class MapDisplayManager
     /**
      * Make item visible on screen
      *
-     * @param item
+     * @param item the item that needs to be added to the screen
      */
     @SuppressWarnings("nls")
-    public void add(@Nullable final DisplayItem item) {
-        if (item == null) {
-            assert false : "Trying to add NULL displayItem";
-            return;
-        }
-
+    public void add(@Nonnull final DisplayItem item) {
         synchronized (display) {
             insertSorted(item);
         }
@@ -326,32 +319,41 @@ public final class MapDisplayManager
         }
 
         synchronized (display) {
-            display.remove(item);
-            insertSorted(item);
-            final Rectangle displayRect = item.getLastDisplayRect();
-            if (!displayRect.isEmpty()) {
-                removedAreaList.add(new Rectangle(displayRect));
+            if (display.remove(item)) {
+                insertSorted(item);
+            } else {
+                LOGGER.warn("Adding the item " + item + " to the display list again failed.");
             }
         }
     }
 
+    /**
+     * The list of areas that became dirty because the display item in this area got removed.
+     */
+    @Nonnull
     private final List<Rectangle> removedAreaList = new ArrayList<Rectangle>();
 
     /**
      * Remove item from screen
      *
-     * @param item
+     * @param item remove one display item from the list of items
      */
     public void remove(@Nonnull final DisplayItem item) {
         synchronized (display) {
-            display.remove(item);
-            final Rectangle displayRect = item.getLastDisplayRect();
-            if (!displayRect.isEmpty()) {
-                removedAreaList.add(new Rectangle(displayRect));
+            if (display.remove(item)) {
+                final Rectangle displayRect = item.getLastDisplayRect();
+                if (!displayRect.isEmpty()) {
+                    removedAreaList.add(new Rectangle(displayRect));
+                }
+            } else {
+                LOGGER.error("Removing display item " + item + " failed.");
             }
         }
     }
 
+    /**
+     * The queue of interactive events that need to be send to the display components at the next update.
+     */
     @Nonnull
     private Queue<MapInteractionEvent> eventQueue = new ConcurrentLinkedQueue<MapInteractionEvent>();
 
@@ -364,13 +366,19 @@ public final class MapDisplayManager
         eventQueue.offer(event);
     }
 
-    public void update(@Nonnull final GameContainer c, final int delta) {
+    /**
+     * Update the display entries.
+     *
+     * @param container the container that holds the game
+     * @param delta     the time in milliseconds since the last update
+     */
+    public void update(@Nonnull final GameContainer container, final int delta) {
         if (!active) {
             return;
         }
 
-        final int centerX = c.getWidth() >> 1;
-        final int centerY = c.getHeight() >> 1;
+        final int centerX = container.getWidth() >> 1;
+        final int centerY = container.getHeight() >> 1;
 
         final int offX = (centerX - origin.getDcX()) + dX;
         final int offY = (centerY - origin.getDcY()) + dY - dL;
@@ -381,7 +389,7 @@ public final class MapDisplayManager
             corridor.setCorridor(av);
         }
 
-        Camera.getInstance().setViewport(-offX, -offY, c.getWidth(), c.getHeight());
+        Camera.getInstance().setViewport(-offX, -offY, container.getWidth(), container.getHeight());
         Camera.getInstance().clearDirtyAreas();
 
         synchronized (display) {
@@ -397,27 +405,35 @@ public final class MapDisplayManager
                         break;
                     }
 
-                    publishEvent(c, delta, event);
+                    publishEvent(container, delta, event);
                 }
-                publishEvent(c, delta, new CurrentMouseLocationEvent(c.getInput()));
+                publishEvent(container, delta, new CurrentMouseLocationEvent(container.getInput()));
 
                 // update the items, backwards
                 for (int i = display.size() - 1; i >= 0; i--) {
-                    display.get(i).update(c, delta);
+                    display.get(i).update(container, delta);
                 }
             }
         }
 
-        weatherRenderer.update(c, delta);
+        weatherRenderer.update(container, delta);
 
         if (fadeOutColor.getAlpha() > 0) {
             fadeOutColor.a = AnimationUtility.approach(fadeOutColor.getAlpha(), 0, 0, 255, delta) / 255.f;
         }
     }
 
-    private void publishEvent(final GameContainer c, final int delta, @Nonnull final MapInteractionEvent event) {
+    /**
+     * Send a event to all displayed items.
+     *
+     * @param container the container that displays the game
+     * @param delta     the time since the last update
+     * @param event     the event that needs to be processed
+     */
+    private void publishEvent(final GameContainer container, final int delta,
+                              @Nonnull final MapInteractionEvent event) {
         for (int i = display.size() - 1; i >= 0; i--) {
-            if (display.get(i).processEvent(c, delta, event)) {
+            if (display.get(i).processEvent(container, delta, event)) {
                 return;
             }
         }
@@ -441,7 +457,6 @@ public final class MapDisplayManager
             return;
         }
 
-        Graphics usedGraphics;
         if (gameScreenImage == null) {
             try {
                 gameScreenImage = new Image(c.getWidth(), c.getHeight(), SGL.GL_LINEAR);
@@ -451,6 +466,7 @@ public final class MapDisplayManager
             }
         }
 
+        final Graphics usedGraphics;
         try {
             usedGraphics = gameScreenImage.getGraphics();
         } catch (SlickException e) {
