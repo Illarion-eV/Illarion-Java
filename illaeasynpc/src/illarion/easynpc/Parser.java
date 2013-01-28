@@ -55,7 +55,7 @@ public final class Parser implements DocuEntry {
      * The version and name of this parser.
      */
     @SuppressWarnings("nls")
-    public static final String VERSION = "1.22";
+    public static final String VERSION = "1.23";
 
     /**
      * The full name of the application. (Name and Version)
