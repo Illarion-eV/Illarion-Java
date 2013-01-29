@@ -20,6 +20,9 @@ package illarion.client.graphics;
 
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.resources.data.MiscImageTemplate;
+import org.apache.log4j.Logger;
+
+import javax.annotation.Nonnull;
 
 /**
  * This class is used to store the markers that are displayed below a avatar.
@@ -27,13 +30,46 @@ import illarion.client.resources.data.MiscImageTemplate;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class AvatarMarker extends AbstractEntity<MiscImageTemplate> {
-    public AvatarMarker(final int markerId) {
+    /**
+     * The logging instance of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(AvatarMarker.class);
+
+    /**
+     * The avatar that is the parent of this class.
+     */
+    @Nonnull
+    private final Avatar parent;
+
+    /**
+     * The default constructor of this avatar marker.
+     *
+     * @param markerId     the image ID of this marker
+     * @param parentAvatar the parent avatar
+     */
+    public AvatarMarker(final int markerId, @Nonnull final Avatar parentAvatar) {
         super(MiscImageFactory.getInstance().getTemplate(markerId));
+        parent = parentAvatar;
+    }
+
+    @Override
+    protected boolean isShown() {
+        return parent.isShown();
+    }
+
+    @Override
+    public void hide() {
+        // nothing to do
     }
 
     @Override
     public void setAlpha(final int alpha) {
         super.setAlpha(alpha);
         setAlphaTarget(alpha);
+    }
+
+    @Override
+    public void show() {
+        LOGGER.warn("Show was called for a avatar marker. This shouldn't happen.");
     }
 }

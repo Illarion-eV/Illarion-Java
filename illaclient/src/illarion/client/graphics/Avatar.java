@@ -117,7 +117,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
     private Avatar(@Nonnull final AvatarTemplate template, @Nonnull final Char parentChar) {
         super(template);
-        attackMark = new AvatarMarker(MiscImageFactory.ATTACK_MARKER);
+        attackMark = new AvatarMarker(MiscImageFactory.ATTACK_MARKER, this);
 
         clothRender = new AvatarClothRenderer(template.getDirection(), template.getFrames());
         clothRender.setLight(getLight());
