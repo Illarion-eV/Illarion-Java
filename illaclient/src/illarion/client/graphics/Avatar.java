@@ -180,13 +180,22 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     }
 
     /**
+     * Stop the execution of the current animation.
+     */
+    public void stopAnimation() {
+        if (animation != null) {
+            animation.stop();
+        }
+    }
+
+    /**
      * This function is triggered in case a animation that is not looped finished.
      *
      * @param finished set true in case the animation is really done
      */
     @Override
     public void animationFinished(final boolean finished) {
-        parentChar.animationFinished(true);
+        parentChar.resetAnimation();
     }
 
     /**

@@ -644,6 +644,13 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     }
 
     /**
+     * Stop the move animation that is currently in progress.
+     */
+    public void stopAnimation() {
+        moveAnimation.stop();
+    }
+
+    /**
      * Perform a move of the player character. This function does not perform any checks. It just does the move no
      * matter what the status of everything is.
      *

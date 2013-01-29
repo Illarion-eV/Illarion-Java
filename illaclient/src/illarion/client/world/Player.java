@@ -551,6 +551,8 @@ public final class Player {
         movementHandler.cancelAutoWalk();
         updateLocation(newLoc);
         character.setLocation(newLoc);
+        character.stopAnimation();
+        movementHandler.stopAnimation();
 
         // clear away invisible characters
         if (levelChange) {

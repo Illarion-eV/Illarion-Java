@@ -374,13 +374,26 @@ public final class Char implements AnimatedMove {
      */
     @Override
     public void animationFinished(final boolean ok) {
-        resetAnimation();
+        dX = 0;
+        dY = 0;
+        dZ = 0;
+        updatePosition(elevation);
+    }
+
+    /**
+     * Stop the execution of the current avatar animation.
+     */
+    public void stopAnimation() {
+        if (avatar != null) {
+            avatar.stopAnimation();
+        }
+        move.stop();
     }
 
     /**
      * Set the current animation back to its parent, update the avatar and invoke the needed animations.
      */
-    private void resetAnimation() {
+    public void resetAnimation() {
         animation = CharAnimations.STAND;
         updateAvatar();
         if (avatar != null) {

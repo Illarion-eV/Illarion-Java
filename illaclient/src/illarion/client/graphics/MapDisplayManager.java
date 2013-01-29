@@ -543,10 +543,7 @@ public final class MapDisplayManager
         // origin.setSC(location.scX, location.scY, 0);
         origin.set(location);
         ani.stop();
-        final Avatar playerAvatar = World.getPlayer().getCharacter().getAvatar();
-        if (playerAvatar != null) {
-            playerAvatar.animationFinished(false);
-        }
+        levelAni.stop();
         elevation = World.getMap().getElevationAt(origin);
         dX = 0;
         dY = 0;
