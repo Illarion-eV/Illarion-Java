@@ -572,6 +572,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("bookDisplayPosY", "15px");
         cfg.setDefault("skillWindowPosX", "200px");
         cfg.setDefault("skillWindowPosY", "20px");
+        cfg.setDefault("runAutoAvoid", true);
 
         final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         cfg.setDefault("doubleClickInterval", (Integer) awtDefaultToolkit.getDesktopProperty("awt" +

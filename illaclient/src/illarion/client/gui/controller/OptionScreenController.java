@@ -48,7 +48,9 @@ public final class OptionScreenController implements ScreenController {
 
     //private DropDown<String> charNameLength;
     //private CheckBox showCharId;
+    private CheckBox runAutoAvoid;
     private DropDown<String> sendCrashReports;
+
     private DropDown<String> resolutions;
     private CheckBox fullscreen;
 
@@ -67,6 +69,8 @@ public final class OptionScreenController implements ScreenController {
         //charNameLength.addItem("${options-bundle.charNameDisplay.long}");
 
         //showCharId = screen.findNiftyControl("showCharId", CheckBox.class);
+
+        runAutoAvoid = screen.findNiftyControl("runAutoAvoid", CheckBox.class);
 
         sendCrashReports = screen.findNiftyControl("sendCrashReports", DropDown.class);
         sendCrashReports.addItem("${options-bundle.report.ask}");
@@ -88,6 +92,7 @@ public final class OptionScreenController implements ScreenController {
     public void onStartScreen() {
         //charNameLength.selectItemByIndex(IllaClient.getCfg().getInteger(People.CFG_NAMEMODE_KEY) - 1);
         //showCharId.setChecked(IllaClient.getCfg().getBoolean(People.CFG_SHOWID_KEY));
+        runAutoAvoid.setChecked(IllaClient.getCfg().getBoolean("runAutoAvoid"));
         sendCrashReports.selectItemByIndex(IllaClient.getCfg().getInteger(CrashReporter.CFG_KEY));
         resolutions.selectItem(IllaClient.getCfg().getString(IllaClient.CFG_RESOLUTION));
         fullscreen.setChecked(IllaClient.getCfg().getBoolean(IllaClient.CFG_FULLSCREEN));
@@ -105,6 +110,7 @@ public final class OptionScreenController implements ScreenController {
 
         //configSystem.set(People.CFG_NAMEMODE_KEY, charNameLength.getSelectedIndex() + 1);
         //configSystem.set(People.CFG_SHOWID_KEY, showCharId.isChecked());
+        configSystem.set("runAutoAvoid", runAutoAvoid.isChecked());
         configSystem.set(CrashReporter.CFG_KEY, sendCrashReports.getSelectedIndex());
         configSystem.set(IllaClient.CFG_RESOLUTION, resolutions.getSelection());
         configSystem.set(IllaClient.CFG_FULLSCREEN, fullscreen.isChecked());

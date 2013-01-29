@@ -18,6 +18,7 @@
  */
 package illarion.client.world;
 
+import illarion.client.IllaClient;
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.input.InputReceiver;
@@ -318,6 +319,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         }
     }
 
+    private boolean allowRunPathModification = IllaClient.getCfg().getBoolean("runAutoAvoid");
+
     /**
      * Request a move of the player character. This function will check if there is already a move or not. In case
      * there
@@ -347,7 +350,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
                 if (!moving || (moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME)) {
                     lastMoveRequest = direction;
                     timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
-                    if ((mode == CharMovementMode.Run) && runPathModification) {
+                    if ((mode == CharMovementMode.Run) && runPathModification && allowRunPathModification) {
                         performNextRunningStep(direction);
                     } else {
                         resetRunPathModification();

@@ -36,6 +36,11 @@
                    childLayout="vertical" visibleToMouse="true">
                 <control id="tabRoot" name="tabGroup" width="100%" height="100%">
                     <control id="#generalTab" caption="General" name="tab" childLayout="vertical">
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.runAutoAvoid}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="runAutoAvoid"/>
+                        </panel>
                         <!--
                         <panel width="100%" childLayout="horizontal">
                             <control name="label" text="${options-bundle.charNameDisplay}"/>
