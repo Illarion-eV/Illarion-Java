@@ -166,6 +166,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      *              forever
      */
     public void animate(final int speed, final boolean loop) {
+        if (isMarkedAsRemoved()) {
+            LOGGER.warn("Animating a removed avatar is illegal.");
+            return;
+        }
         if (animation == null) {
             return;
         }

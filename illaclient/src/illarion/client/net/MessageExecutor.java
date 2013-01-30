@@ -22,10 +22,11 @@ import illarion.client.Debug;
 import illarion.client.IllaClient;
 import illarion.client.net.server.AbstractReply;
 import illarion.common.util.Stoppable;
-import javolution.util.FastList;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -33,9 +34,7 @@ import java.util.concurrent.BlockingQueue;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-final class MessageExecutor
-        extends Thread
-        implements Stoppable {
+final class MessageExecutor extends Thread implements Stoppable {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
@@ -45,7 +44,7 @@ final class MessageExecutor
      * This queue contains all tasks that were executed already once and need to be executed a second time.
      */
     @Nonnull
-    private final FastList<AbstractReply> delayedQueue;
+    private final Queue<AbstractReply> delayedQueue;
 
     /**
      * The queue that contains all the tasks that were received from the server and still need to be executed.
@@ -65,7 +64,7 @@ final class MessageExecutor
     /**
      * The running flag. The loop of this thread will keep running until this flag is set to <code>false</code>.
      */
-    private volatile boolean running = true;
+    private volatile boolean running;
 
     /**
      * Default constructor for a message executor.
@@ -76,7 +75,13 @@ final class MessageExecutor
     public MessageExecutor(final BlockingQueue<AbstractReply> inputQueue) {
         super("NetComm MessageExecutor");
         input = inputQueue;
-        delayedQueue = new FastList<AbstractReply>();
+        delayedQueue = new LinkedList<AbstractReply>();
+    }
+
+    @Override
+    public synchronized void start() {
+        super.start();
+        running = true;
     }
 
     /**
@@ -99,8 +104,8 @@ final class MessageExecutor
              * First we handle the delayed stuff in case there is any and it
              * does not block from executing.
              */
-            if (!delayedQueue.isEmpty() && delayedQueue.getFirst().processNow()) {
-                final AbstractReply rpl = delayedQueue.removeFirst();
+            if (!delayedQueue.isEmpty() && delayedQueue.peek().processNow()) {
+                final AbstractReply rpl = delayedQueue.poll();
                 rpl.executeUpdate();
                 continue;
             }
@@ -140,7 +145,7 @@ final class MessageExecutor
                     repeatReply = rpl;
                 }
             } else {
-                delayedQueue.addLast(rpl);
+                delayedQueue.offer(rpl);
             }
         }
     }
@@ -154,5 +159,4 @@ final class MessageExecutor
         running = false;
         interrupt();
     }
-
 }

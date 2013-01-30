@@ -264,7 +264,6 @@ public final class MapTile implements AlphaChangeListener {
         }
         clampItems(0);
         if (tile != null) {
-            tile.hide();
             tile.markAsRemoved();
             tile = null;
         }
@@ -354,7 +353,6 @@ public final class MapTile implements AlphaChangeListener {
             }
 
             final Item removedItem = items.remove(pos);
-            removedItem.hide();
             removedItem.markAsRemoved();
             // enable numbers for next top item
             if ((pos - 1) >= 0) {
@@ -419,7 +417,6 @@ public final class MapTile implements AlphaChangeListener {
                         updateItem(item, itemCount, index);
                     } else {
                         // different item: clear old item
-                        item.hide();
                         item.markAsRemoved();
                         item = null;
 
@@ -864,7 +861,6 @@ public final class MapTile implements AlphaChangeListener {
 
         // free old tile to factory
         if (tile != null) {
-            tile.hide();
             tile.markAsRemoved();
             tile = null;
         }
@@ -949,7 +945,6 @@ public final class MapTile implements AlphaChangeListener {
             for (int i = 0; i < amount; i++) {
                 // recycle the removed items
                 final Item item = items.get(itemNumber);
-                item.hide();
                 item.markAsRemoved();
 
                 // keep deleting in the same place as the list becomes shorter

@@ -283,7 +283,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     @Override
     public boolean draw(@Nonnull final Graphics g) {
         if (removedEntity) {
-            LOGGER.warn("Drawing a removed entity is not allowed.");
+            LOGGER.warn("Drawing a removed " + toString() + " entity is not allowed.");
             return true;
         }
 
@@ -431,8 +431,12 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      * its not allowed to do anything anymore with this entity.
      */
     public void markAsRemoved() {
-        removedEntity = true;
         hide();
+        removedEntity = true;
+    }
+
+    public boolean isMarkedAsRemoved() {
+        return removedEntity;
     }
 
     /**
@@ -652,13 +656,12 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     @Override
     public void update(@Nonnull final GameContainer container, final int delta) {
         if (removedEntity) {
-            LOGGER.warn("Updating a removed entity is not allowed.");
             shown = true;
             hide();
             return;
         }
         if (!isShown()) {
-            LOGGER.warn("Entity that is not shown received update.");
+            LOGGER.warn(toString() + " Entity that is not shown received update.");
             shown = true;
             hide();
             return;

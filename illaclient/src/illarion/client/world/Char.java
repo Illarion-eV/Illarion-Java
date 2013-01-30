@@ -478,13 +478,13 @@ public final class Char implements AnimatedMove {
         }
 
         newAvatar.show();
-        if (avatar != null) {
-            avatar.hide();
-            avatar.markAsRemoved();
-        }
 
+        final Avatar oldAvatar = avatar;
         avatarId = newAvatarId;
         avatar = newAvatar;
+        if (oldAvatar != null) {
+            oldAvatar.markAsRemoved();
+        }
     }
 
     /**
@@ -659,7 +659,6 @@ public final class Char implements AnimatedMove {
         avatar = null;
         avatarId = -1;
         if (localAvatar != null) {
-            localAvatar.hide();
             localAvatar.markAsRemoved();
         }
     }
