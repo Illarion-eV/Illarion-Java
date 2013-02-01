@@ -20,7 +20,7 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.world.CombatHandler;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 
 import javax.annotation.Nonnull;
@@ -57,7 +57,7 @@ public final class TargetLostMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public boolean executeUpdate() {
-        CombatHandler.getInstance().targetLost();
+        World.getPlayer().getCombatHandler().targetLost();
         return true;
     }
 

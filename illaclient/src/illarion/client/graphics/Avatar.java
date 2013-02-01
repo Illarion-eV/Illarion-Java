@@ -26,7 +26,7 @@ import illarion.client.resources.Resource;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
-import illarion.client.world.CombatHandler;
+import illarion.client.world.World;
 import org.apache.log4j.Logger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -235,7 +235,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         if (event.getKey() == 1) {
-            CombatHandler.getInstance().toggleAttackOnCharacter(parentChar);
+            World.getPlayer().getCombatHandler().toggleAttackOnCharacter(parentChar);
             return true;
         }
         return false;

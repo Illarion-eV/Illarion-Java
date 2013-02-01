@@ -468,7 +468,7 @@ public final class Char implements AnimatedMove {
         newAvatar.setScale(scale);
         newAvatar.setAlpha(oldAlpha);
         newAvatar.setAlphaTarget(oldAlphaTarget);
-        newAvatar.setAttackMarkerVisible(CombatHandler.getInstance().isAttacking(this));
+        newAvatar.setAttackMarkerVisible(World.getPlayer().getCombatHandler().isAttacking(this));
         if (name != null) {
             newAvatar.setName(name);
         }

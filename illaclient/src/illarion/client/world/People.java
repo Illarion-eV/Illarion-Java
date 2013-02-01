@@ -184,8 +184,8 @@ public final class People {
      * Clear the list of characters and recycle all of them.
      */
     public void clear() {
-        if (CombatHandler.getInstance().isAttacking()) {
-            CombatHandler.getInstance().standDown();
+        if (World.getPlayer().getCombatHandler().isAttacking()) {
+            World.getPlayer().getCombatHandler().standDown();
         }
         charsLock.writeLock().lock();
         try {
@@ -300,8 +300,8 @@ public final class People {
             if (chara != null) {
                 EventBus.publish(new CharRemovedEvent(id));
                 // cancel attack when character is removed
-                if (CombatHandler.getInstance().isAttacking(chara)) {
-                    CombatHandler.getInstance().standDown();
+                if (World.getPlayer().getCombatHandler().isAttacking(chara)) {
+                    World.getPlayer().getCombatHandler().standDown();
                 }
                 chars.remove(id);
                 chara.markAsRemoved();

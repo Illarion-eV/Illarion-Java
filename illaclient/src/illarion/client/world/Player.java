@@ -133,6 +133,12 @@ public final class Player {
     private boolean validLocation;
 
     /**
+     * The instance of the combat handler that maintains the attack targets of this player.
+     */
+    @Nonnull
+    private final CombatHandler combatHandler;
+
+    /**
      * This map contains the containers that are known for the player.
      */
     @Nonnull
@@ -178,7 +184,7 @@ public final class Player {
 
         character.setName(charName);
 
-        // followed = null;
+        combatHandler = new CombatHandler();
         movementHandler = new PlayerMovement(this);
         inventory = new Inventory();
         containers = new TIntObjectHashMap<ItemContainer>();
@@ -192,6 +198,16 @@ public final class Player {
      * The instance of the logger used by this class.
      */
     private static final Logger LOGGER = Logger.getLogger(Player.class);
+
+    /**
+     * Get the instance of the combat handler.
+     *
+     * @return the combat handler of this player
+     */
+    @Nonnull
+    public CombatHandler getCombatHandler() {
+        return combatHandler;
+    }
 
     @EventSubscriber
     public void onOpenContainerEvent(@Nonnull final OpenContainerEvent event) {

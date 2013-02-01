@@ -20,7 +20,6 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.world.CombatHandler;
 import illarion.client.world.World;
 import illarion.common.graphics.LightTracer;
 import illarion.common.net.NetCommReader;
@@ -67,7 +66,7 @@ public final class LocationMsg extends AbstractReply {
         World.getMap().clear();
 
         // stop the attack in case there is any
-        CombatHandler.getInstance().standDown();
+        World.getPlayer().getCombatHandler().standDown();
 
         // logical location
         World.getPlayer().setLocation(loc);

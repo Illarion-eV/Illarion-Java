@@ -37,11 +37,6 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public final class CombatHandler {
     /**
-     * The singleton instance of this class.
-     */
-    private static final CombatHandler INSTANCE = new CombatHandler();
-
-    /**
      * The character that is currently under attack.
      */
     @Nullable
@@ -51,18 +46,8 @@ public final class CombatHandler {
     /**
      * Private constructor to ensure that only the singleton instance is created.
      */
-    private CombatHandler() {
+    public CombatHandler() {
         // nothing to do
-    }
-
-    /**
-     * Get the singleton instance of this class.
-     *
-     * @return the singleton instance of this class
-     */
-    @Nonnull
-    public static CombatHandler getInstance() {
-        return INSTANCE;
     }
 
     /**
