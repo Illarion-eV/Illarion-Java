@@ -20,9 +20,8 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.ShowBookEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -46,7 +45,7 @@ public final class BookMsg extends AbstractReply {
 
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new ShowBookEvent(bookId));
+        World.getGameGui().getBookGui().showBook(bookId);
         return true;
     }
 

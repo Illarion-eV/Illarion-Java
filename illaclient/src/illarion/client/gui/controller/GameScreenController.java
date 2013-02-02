@@ -21,6 +21,7 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.gui.BookGui;
 import illarion.client.gui.GameGui;
 import illarion.client.gui.controller.game.*;
 import org.newdawn.slick.GameContainer;
@@ -37,6 +38,8 @@ public final class GameScreenController implements GameGui, ScreenController {
     @Nonnull
     private final Collection<UpdatableHandler> childUpdateControllers;
 
+    private final BookHandler bookHandler;
+
     public GameScreenController(final Input input) {
         final NumberSelectPopupHandler numberPopupHandler = new NumberSelectPopupHandler();
         final TooltipHandler tooltipHandler = new TooltipHandler();
@@ -44,10 +47,12 @@ public final class GameScreenController implements GameGui, ScreenController {
         childControllers = new ArrayList<ScreenController>();
         childUpdateControllers = new ArrayList<UpdatableHandler>();
 
+        bookHandler = new BookHandler();
+
         addHandler(numberPopupHandler);
         addHandler(tooltipHandler);
         addHandler(new GUIChatHandler());
-        addHandler(new BookHandler());
+        addHandler(bookHandler);
         addHandler(new GUIInventoryHandler(input, numberPopupHandler, tooltipHandler));
         addHandler(new DialogHandler(numberPopupHandler, tooltipHandler));
         addHandler(new ContainerHandler(input, numberPopupHandler, tooltipHandler));
@@ -94,6 +99,11 @@ public final class GameScreenController implements GameGui, ScreenController {
         for (final UpdatableHandler childController : childUpdateControllers) {
             childController.update(container, delta);
         }
+    }
+
+    @Override
+    public BookGui getBookGui() {
+        return bookHandler;
     }
 
     @Override

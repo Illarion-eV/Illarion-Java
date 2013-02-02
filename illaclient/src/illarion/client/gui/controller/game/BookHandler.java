@@ -27,12 +27,10 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
-import illarion.client.net.server.events.ShowBookEvent;
+import illarion.client.gui.BookGui;
 import illarion.client.resources.BookFactory;
 import illarion.client.util.Lang;
 import illarion.common.data.*;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.newdawn.slick.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -43,7 +41,7 @@ import javax.annotation.Nullable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class BookHandler implements ScreenController, UpdatableHandler {
+public final class BookHandler implements BookGui, ScreenController, UpdatableHandler {
 
     private boolean dirty;
     private int showPage;
@@ -75,13 +73,11 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
 
     @Override
     public void onStartScreen() {
-        AnnotationProcessor.process(this);
         nifty.subscribeAnnotations(this);
     }
 
     @Override
     public void onEndScreen() {
-        AnnotationProcessor.unprocess(this);
         nifty.unsubscribeAnnotations(this);
 
         IllaClient.getCfg().set("bookDisplayPosX", Integer.toString(bookDisplay.getElement().getX()) + "px");
@@ -186,18 +182,6 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
         bookScrollArea.setAutoScroll(ScrollPanel.AutoScroll.OFF);
     }
 
-    @EventSubscriber
-    public void onBookReceivedEvent(@Nonnull final ShowBookEvent data) {
-        final Book book = BookFactory.getInstance().getBook(data.getBookId());
-        if (book != null) {
-            showBook = book.getLocalisedBook(Lang.getInstance().getLocale());
-            showPage = 0;
-        } else {
-            showBook = null;
-        }
-        dirty = true;
-    }
-
     private int getTotalPageCount() {
         if (showBook == null) {
             return 0;
@@ -227,6 +211,28 @@ public final class BookHandler implements ScreenController, UpdatableHandler {
 
     @NiftyEventSubscriber(id = "book")
     public void onHideWindow(final String topic, final WindowClosedEvent data) {
+        hideBook();
+    }
+
+    /**
+     * Show the book with the specified ID.
+     *
+     * @param id the id of the book to show
+     */
+    @Override
+    public void showBook(final int id) {
+        final Book book = BookFactory.getInstance().getBook(id);
+        if (book != null) {
+            showBook = book.getLocalisedBook(Lang.getInstance().getLocale());
+            showPage = 0;
+        } else {
+            showBook = null;
+        }
+        dirty = true;
+    }
+
+    @Override
+    public void hideBook() {
         showBook = null;
         dirty = true;
     }

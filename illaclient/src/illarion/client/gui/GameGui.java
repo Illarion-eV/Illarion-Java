@@ -34,5 +34,18 @@ public interface GameGui {
      */
     ScreenController getScreenController();
 
+    /**
+     * Update the GUI. This should be called once during the update cycle.
+     *
+     * @param container the container of the game
+     * @param delta     the time since the last update in milliseconds
+     */
     void onUpdateGame(GameContainer container, int delta);
+
+    /**
+     * Get the book GUI control.
+     *
+     * @return the controller of the book display
+     */
+    BookGui getBookGui();
 }

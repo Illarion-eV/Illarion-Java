@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,34 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.net.server.events;
+package illarion.client.gui;
 
 /**
- * This event is published in case a book is supposed to be displayed.
+ * This class is used to control the GUI that shows books.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ShowBookEvent implements ServerEvent {
+public interface BookGui {
     /**
-     * The ID of the book.
+     * Show the book with the specified ID.
+     *
+     * @param id the id of the book to show
      */
-    private final int bookId;
+    void showBook(int id);
 
     /**
-     * Constructor of the show book event.
-     *
-     * @param bookId the Id of the book to show.
+     * Hide the currently shown book.
      */
-    public ShowBookEvent(final int bookId) {
-        this.bookId = bookId;
-    }
-
-    /**
-     * Get the ID of the book.
-     *
-     * @return the book ID
-     */
-    public int getBookId() {
-        return bookId;
-    }
+    void hideBook();
 }
