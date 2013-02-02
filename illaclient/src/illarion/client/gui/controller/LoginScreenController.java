@@ -33,8 +33,9 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 import illarion.client.Login;
+import illarion.client.resources.SongFactory;
 import illarion.client.util.Lang;
-import illarion.client.world.World;
+import org.newdawn.slick.Music;
 
 import javax.annotation.Nonnull;
 
@@ -130,8 +131,10 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     @Override
     public void onStartScreen() {
-        World.getMusicBox().playMusicTrack(0);
-        World.getMusicBox().update();
+        final Music creditsMusic = SongFactory.getInstance().getSong(2);
+        if ((creditsMusic != null) && creditsMusic.playing()) {
+            creditsMusic.fade(500, 0.f, true);
+        }
     }
 
     @Override

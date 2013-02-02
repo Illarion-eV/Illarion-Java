@@ -23,7 +23,6 @@ import de.lessvoid.nifty.slick2d.NiftyOverlayBasicGameState;
 import de.lessvoid.nifty.slick2d.input.SlickSlickInputSystem;
 import illarion.client.Game;
 import illarion.client.Login;
-import illarion.client.gui.controller.GameScreenController;
 import illarion.client.input.InputReceiver;
 import illarion.client.util.Lang;
 import illarion.client.world.World;
@@ -40,11 +39,6 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class PlayingState extends NiftyOverlayBasicGameState {
-    private GameScreenController gameScreenController;
-
-    /* (non-Javadoc)
-    * @see org.newdawn.slick.state.BasicGameState#getID()
-    */
     @Override
     public int getID() {
         return Game.STATE_PLAYING;
@@ -59,8 +53,8 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     @Override
     protected void prepareNifty(@Nonnull final Nifty nifty, final StateBasedGame game) {
         nifty.setLocale(Lang.getInstance().getLocale());
-        gameScreenController = new GameScreenController(game.getContainer().getInput());
-        nifty.registerScreenController(gameScreenController);
+        World.initGui(game.getContainer());
+        nifty.registerScreenController(World.getGameGui().getScreenController());
 
         try {
             nifty.validateXml("illarion/client/gui/xml/gamescreen.xml");
@@ -82,7 +76,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     protected void updateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta)
             throws SlickException {
         World.getUpdateTaskManager().onUpdateGame(container, game, delta);
-        gameScreenController.onUpdateGame(container, delta);
+        World.getGameGui().onUpdateGame(container, delta);
         World.getWeather().update(delta);
         World.getMapDisplay().update(container, delta);
         World.getAnimationManager().animate(delta);

@@ -21,6 +21,7 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.gui.GameGui;
 import illarion.client.gui.controller.game.*;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
@@ -29,7 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public final class GameScreenController implements ScreenController {
+public final class GameScreenController implements GameGui, ScreenController {
 
     @Nonnull
     private final Collection<ScreenController> childControllers;
@@ -100,5 +101,10 @@ public final class GameScreenController implements ScreenController {
         for (final ScreenController childController : childControllers) {
             childController.onEndScreen();
         }
+    }
+
+    @Override
+    public ScreenController getScreenController() {
+        return this;
     }
 }
