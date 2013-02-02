@@ -21,6 +21,7 @@ package illarion.client;
 import illarion.client.net.NetComm;
 import illarion.client.net.client.LoginCmd;
 import illarion.client.net.client.MapDimensionCmd;
+import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
@@ -155,7 +156,7 @@ public final class Login {
     }
 
     public void requestCharacterList(final Login.RequestCharListCallback resultCallback) {
-        World.getExecutorService().submit(new Login.RequestCharacterListTask(resultCallback));
+        GlobalExecutorService.getService().submit(new Login.RequestCharacterListTask(resultCallback));
     }
 
     private void requestCharacterListInternal(@Nonnull final Login.RequestCharListCallback resultCallback) {

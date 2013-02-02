@@ -8,7 +8,6 @@
     <SOURCES>
       <root url="file://$PROJECT_DIR$/illacommon/lib/gdx" />
       <root url="file://$PROJECT_DIR$/illacommon/lib/gdx" />
-      <root url="intellijad://intellijad" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/gdx" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/gdx" recursive="false" type="SOURCES" />

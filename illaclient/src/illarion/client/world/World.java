@@ -30,8 +30,6 @@ import illarion.common.util.StoppableStorage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * This class is used to unify the access to the different components of the game and to ensure a proper
@@ -80,12 +78,6 @@ public final class World {
             INSTANCE.net = null;
             INSTANCE.weather = null;
             INSTANCE.clock = null;
-
-            if (INSTANCE.executorService != null) {
-                //noinspection ConstantConditions
-                INSTANCE.executorService.shutdownNow();
-            }
-            INSTANCE.executorService = null;
             INSTANCE.updateManager = null;
 
         }
@@ -180,13 +172,6 @@ public final class World {
     }
 
     @Nonnull
-    public static ExecutorService getExecutorService() {
-        INSTANCE.checkExecutorService();
-        //noinspection ConstantConditions
-        return INSTANCE.executorService;
-    }
-
-    @Nonnull
     public static UpdateTaskManager getUpdateTaskManager() {
         INSTANCE.checkUpdateManager();
         //noinspection ConstantConditions
@@ -209,7 +194,6 @@ public final class World {
         getClock();
         getWeather();
         getInteractionManager();
-        getExecutorService();
         getUpdateTaskManager();
     }
 
@@ -284,12 +268,6 @@ public final class World {
      */
     @Nullable
     private Weather weather;
-
-    /**
-     * The executor service that is used for the execution of all concurrent tasks.
-     */
-    @Nullable
-    private ExecutorService executorService;
 
     /**
      * This update manager takes care for executing tasks in sync with the main loop.
@@ -430,16 +408,6 @@ public final class World {
             synchronized (this) {
                 if (interactionManager == null) {
                     interactionManager = new InteractionManager();
-                }
-            }
-        }
-    }
-
-    private void checkExecutorService() {
-        if (executorService == null) {
-            synchronized (this) {
-                if (executorService == null) {
-                    executorService = Executors.newCachedThreadPool();
                 }
             }
         }

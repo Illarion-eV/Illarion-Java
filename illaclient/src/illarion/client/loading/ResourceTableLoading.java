@@ -21,7 +21,7 @@ package illarion.client.loading;
 import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.resources.*;
 import illarion.client.resources.loaders.*;
-import illarion.client.world.World;
+import illarion.client.util.GlobalExecutorService;
 import org.newdawn.slick.loading.DeferredResource;
 
 import javax.annotation.Nonnull;
@@ -54,7 +54,7 @@ public final class ResourceTableLoading implements DeferredResource {
         taskList.add(new BookLoader().setTarget(BookFactory.getInstance()));
 
         try {
-            World.getExecutorService().invokeAll(taskList);
+            GlobalExecutorService.getService().invokeAll(taskList);
         } catch (@Nonnull final InterruptedException e) {
             throw new IOException(e);
         }

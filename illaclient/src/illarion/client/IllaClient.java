@@ -30,6 +30,7 @@ import illarion.client.resources.SoundFactory;
 import illarion.client.resources.loaders.SongLoader;
 import illarion.client.resources.loaders.SoundLoader;
 import illarion.client.util.ChatLog;
+import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.Player;
@@ -246,6 +247,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             quitGame();
             World.cleanEnvironment();
             cfg.save();
+            GlobalExecutorService.shutdown();
         }
 
         LOGGER.info("Cleanup done.");

@@ -6,7 +6,6 @@
     <JAVADOC />
     <SOURCES>
       <root url="file://$PROJECT_DIR$/illacommon/lib/mantisconnect" />
-      <root url="intellijad://intellijad" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/mantisconnect" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/mantisconnect" recursive="false" type="SOURCES" />
