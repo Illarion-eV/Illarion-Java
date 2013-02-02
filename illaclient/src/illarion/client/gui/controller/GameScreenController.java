@@ -22,6 +22,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.gui.BookGui;
+import illarion.client.gui.DialogMessageGui;
 import illarion.client.gui.GameGui;
 import illarion.client.gui.controller.game.*;
 import org.newdawn.slick.GameContainer;
@@ -39,6 +40,7 @@ public final class GameScreenController implements GameGui, ScreenController {
     private final Collection<UpdatableHandler> childUpdateControllers;
 
     private final BookHandler bookHandler;
+    private final DialogHandler dialogHandler;
 
     public GameScreenController(final Input input) {
         final NumberSelectPopupHandler numberPopupHandler = new NumberSelectPopupHandler();
@@ -48,13 +50,14 @@ public final class GameScreenController implements GameGui, ScreenController {
         childUpdateControllers = new ArrayList<UpdatableHandler>();
 
         bookHandler = new BookHandler();
+        dialogHandler = new DialogHandler(numberPopupHandler, tooltipHandler);
 
         addHandler(numberPopupHandler);
         addHandler(tooltipHandler);
         addHandler(new GUIChatHandler());
         addHandler(bookHandler);
         addHandler(new GUIInventoryHandler(input, numberPopupHandler, tooltipHandler));
-        addHandler(new DialogHandler(numberPopupHandler, tooltipHandler));
+        addHandler(dialogHandler);
         addHandler(new ContainerHandler(input, numberPopupHandler, tooltipHandler));
         addHandler(new CloseGameHandler());
         addHandler(new CharStatusHandler());
@@ -104,6 +107,11 @@ public final class GameScreenController implements GameGui, ScreenController {
     @Override
     public BookGui getBookGui() {
         return bookHandler;
+    }
+
+    @Override
+    public DialogMessageGui getDialogMessageGui() {
+        return dialogHandler;
     }
 
     @Override

@@ -48,4 +48,11 @@ public interface GameGui {
      * @return the controller of the book display
      */
     BookGui getBookGui();
+
+    /**
+     * Get the GUI controller that is used to display message dialogs.
+     *
+     * @return the message dialog GUI control
+     */
+    DialogMessageGui getDialogMessageGui();
 }

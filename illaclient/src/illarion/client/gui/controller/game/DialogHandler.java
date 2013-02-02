@@ -26,6 +26,7 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.gui.DialogMessageGui;
 import illarion.client.gui.events.TooltipsRemovedEvent;
 import illarion.client.gui.util.NiftyCraftingCategory;
 import illarion.client.gui.util.NiftyCraftingItem;
@@ -66,7 +67,7 @@ import java.util.regex.Pattern;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogHandler implements ScreenController, UpdatableHandler {
+public final class DialogHandler implements DialogMessageGui, ScreenController, UpdatableHandler {
     /**
      * The input control that is used in this dialog handler.
      */
@@ -175,11 +176,6 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
 
         merchantDialog = screen.findNiftyControl("merchantDialog", DialogMerchant.class);
         craftingDialog = screen.findNiftyControl("craftingDialog", DialogCrafting.class);
-    }
-
-    @EventSubscriber
-    public void handleMessageDialogEvent(@Nonnull final DialogMessageReceivedEvent event) {
-        showDialogMessage(event.getId(), event.getTitle(), event.getMessage());
     }
 
     @EventSubscriber
@@ -413,7 +409,8 @@ public final class DialogHandler implements ScreenController, UpdatableHandler {
         nifty.unsubscribeAnnotations(this);
     }
 
-    private void showDialogMessage(final int id, final String title, final String message) {
+    @Override
+    public void showMessageDialog(final int id, final String title, final String message) {
         final Element parentArea = screen.findElementByName("windows");
         final DialogMessageBuilder builder = new DialogMessageBuilder("msgDialog" + Integer.toString(id), title);
         builder.text(message);
