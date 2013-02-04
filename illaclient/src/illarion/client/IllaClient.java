@@ -55,6 +55,7 @@ import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.LogSystem;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -576,9 +577,13 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("skillWindowPosY", "20px");
         cfg.setDefault("runAutoAvoid", true);
 
-        final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
-        cfg.setDefault("doubleClickInterval", (Integer) awtDefaultToolkit.getDesktopProperty("awt" +
-                ".multiClickInterval"));
+        @Nonnull final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
+        @Nullable final Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");
+        if (doubleClick instanceof Number) {
+            cfg.setDefault("doubleClickInterval", ((Number) doubleClick).intValue());
+        } else {
+            cfg.setDefault("doubleClickInterval", 500);
+        }
 
         final Crypto crypt = new Crypto();
         crypt.loadPublicKey();
