@@ -473,7 +473,7 @@
             <fileset dir="${native}/macosx">
                 <include name="liblwjgl.jnilib"/>
                 <include name="openal.jnilib"/>
-                <include name="libjinput-osx.so"/>
+                <include name="libjinput-osx.jnilib"/>
             </fileset>
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
