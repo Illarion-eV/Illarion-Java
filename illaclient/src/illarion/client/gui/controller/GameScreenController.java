@@ -22,6 +22,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.gui.BookGui;
+import illarion.client.gui.DialogInputGui;
 import illarion.client.gui.DialogMessageGui;
 import illarion.client.gui.GameGui;
 import illarion.client.gui.controller.game.*;
@@ -111,6 +112,11 @@ public final class GameScreenController implements GameGui, ScreenController {
 
     @Override
     public DialogMessageGui getDialogMessageGui() {
+        return dialogHandler;
+    }
+
+    @Override
+    public DialogInputGui getDialogInputGui() {
         return dialogHandler;
     }
 

@@ -55,4 +55,11 @@ public interface GameGui {
      * @return the message dialog GUI control
      */
     DialogMessageGui getDialogMessageGui();
+
+    /**
+     * Get the GUI controller that is used to display the input dialoges.
+     *
+     * @return the input dialog GUI control
+     */
+    DialogInputGui getDialogInputGui();
 }

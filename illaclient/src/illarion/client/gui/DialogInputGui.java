@@ -19,17 +19,19 @@
 package illarion.client.gui;
 
 /**
- * This interface defines the access to the GUI used to display message dialogs.
+ * This interface defines the access to the GUI used to display input dialogs.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface DialogMessageGui {
+public interface DialogInputGui {
     /**
-     * Show a message dialog on the GUI.
+     * Show a input dialog on the GUI.
      *
-     * @param dialogId the ID of the message dialog
-     * @param title    the title of the message dialog
-     * @param message  the message that is displayed in the dialog
+     * @param dialogId  the ID of the input dialog
+     * @param title     the title of the input dialog
+     * @param message   the message that is displayed in the dialog
+     * @param maxLength the amount of characters that are maximal allowed in this dialog
+     * @param multiLine {@code true} in case the input of multiple lines should be allowed
      */
-    void showMessageDialog(int dialogId, String title, String message);
+    void showInputDialog(int dialogId, String title, String message, int maxLength, boolean multiLine);
 }

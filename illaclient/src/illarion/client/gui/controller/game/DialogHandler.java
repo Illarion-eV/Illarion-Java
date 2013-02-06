@@ -26,6 +26,7 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.gui.DialogInputGui;
 import illarion.client.gui.DialogMessageGui;
 import illarion.client.gui.events.TooltipsRemovedEvent;
 import illarion.client.gui.util.NiftyCraftingCategory;
@@ -67,7 +68,7 @@ import java.util.regex.Pattern;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogHandler implements DialogMessageGui, ScreenController, UpdatableHandler {
+public final class DialogHandler implements DialogMessageGui, DialogInputGui, ScreenController, UpdatableHandler {
     /**
      * The input control that is used in this dialog handler.
      */
@@ -176,12 +177,6 @@ public final class DialogHandler implements DialogMessageGui, ScreenController, 
 
         merchantDialog = screen.findNiftyControl("merchantDialog", DialogMerchant.class);
         craftingDialog = screen.findNiftyControl("craftingDialog", DialogCrafting.class);
-    }
-
-    @EventSubscriber
-    public void handleInputDialogEvent(@Nonnull final DialogInputReceivedEvent event) {
-        showDialogInput(event.getId(), event.getTitle(), event.getDescription(), event.getMaxLength(),
-                event.hasMultipleLines());
     }
 
     @EventSubscriber
@@ -419,8 +414,9 @@ public final class DialogHandler implements DialogMessageGui, ScreenController, 
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, null));
     }
 
-    private void showDialogInput(final int id, final String title, final String description, final int maxCharacters,
-                                 final boolean multipleLines) {
+    @Override
+    public void showInputDialog(final int id, final String title, final String description, final int maxCharacters,
+                                final boolean multipleLines) {
         final Element parentArea = screen.findElementByName("windows");
         final DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + Integer.toString(id), title);
         builder.description(description);

@@ -20,10 +20,9 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.DialogInputReceivedEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import javolution.text.TextBuilder;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -84,7 +83,7 @@ public final class DialogInputMsg
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new DialogInputReceivedEvent(requestId, title, description, maxCharacters, multiLine));
+        World.getGameGui().getDialogInputGui().showInputDialog(requestId, title, description, maxCharacters, multiLine);
 
         return true;
     }
