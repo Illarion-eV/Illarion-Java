@@ -35,6 +35,8 @@ public class MusicPanel extends JPanel {
     private final JSpinner spinner;
     @Nonnull
     private final JCheckBox delCheckBox;
+    @Nonnull
+    private final JSpinner radiusSpinner;
 
     public MusicPanel() {
         setLayout(new BorderLayout());
@@ -42,6 +44,7 @@ public class MusicPanel extends JPanel {
         final JPanel northPanel = new JPanel(new GridLayout(0, 2));
 
         spinner = new JSpinner(new SpinnerNumberModel(0, 0, 9000, 1));
+        radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
         delCheckBox = new JCheckBox();
 
         delCheckBox.addActionListener(new ActionListener() {
@@ -53,15 +56,23 @@ public class MusicPanel extends JPanel {
 
         northPanel.add(new JLabel(Lang.getMsg("tools.MusicTool.MusicID")));
         northPanel.add(spinner);
+        northPanel.add(new JLabel(Lang.getMsg("tools.MusicTool.Radius")));
+        northPanel.add(radiusSpinner);
         northPanel.add(new JLabel(Lang.getMsg("tools.MusicTool.Delete")));
         northPanel.add(delCheckBox);
         add(northPanel, BorderLayout.NORTH);
     }
 
     public int getMusicID() {
-        if (delCheckBox.isEnabled()) {
-            return (Integer) spinner.getValue();
+        Integer musicID = 0;
+
+        if (delCheckBox.isSelected()) {
+            musicID = (Integer) spinner.getValue();
         }
-        return 0;
+        return musicID;
+    }
+
+    public int getRadius() {
+        return (Integer) radiusSpinner.getValue();
     }
 }
