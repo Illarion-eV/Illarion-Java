@@ -78,10 +78,11 @@ final class MessageExecutor extends Thread implements Stoppable {
         delayedQueue = new LinkedList<AbstractReply>();
     }
 
+
     @Override
     public synchronized void start() {
-        super.start();
         running = true;
+        super.start();
     }
 
     /**
