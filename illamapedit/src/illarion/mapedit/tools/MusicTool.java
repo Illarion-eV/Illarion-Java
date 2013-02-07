@@ -21,6 +21,7 @@ package illarion.mapedit.tools;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.MusicIDChangedAction;
 import illarion.mapedit.tools.panel.MusicPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -49,12 +50,20 @@ public class MusicTool extends AbstractTool {
     @Override
     public void clickedAt(final int x, final int y, @Nonnull final Map map) {
         final int musicID = panel.getMusicID();
-        System.out.println(x + "  " + y);
-        if (map.getTileAt(x, y).getMusicID() == musicID) {
-            return;
+        final int radius = panel.getRadius();
+        final GroupAction action = new GroupAction();
+        for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
+            for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
+                if (map.getTileAt(i, j).getMusicID() != musicID) {
+                    action.addAction(new MusicIDChangedAction(i, j, map.getTileAt(i, j).getMusicID(), musicID, map));
+                    map.setTileAt(i, j, MapTile.MapTileFactory.setMusicId(musicID, map.getTileAt(i, j)));
+
+                }
+            }
         }
-        getHistory().addEntry(new MusicIDChangedAction(x, y, map.getTileAt(x, y).getMusicID(), musicID, map));
-        map.setTileAt(x, y, MapTile.MapTileFactory.setMusicId(musicID, map.getTileAt(x, y)));
+        if (!action.isEmpty()) {
+            getHistory().addEntry(action);
+        }
     }
 
     @Override
