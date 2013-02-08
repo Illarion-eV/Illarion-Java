@@ -112,6 +112,16 @@ public final class MapDimensions {
     private int stripesWidth;
 
     /**
+     * The last width that was reported as map width to the server.
+     */
+    private int serverMapDimensionWidth;
+
+    /**
+     * The last height that was reported as map height to the server.
+     */
+    private int serverMapDimensionHeight;
+
+    /**
      * The private constructor to ensure that no further instances are created.
      */
     private MapDimensions() {
@@ -253,9 +263,15 @@ public final class MapDimensions {
         offScreenWidth = (stripesWidth * MapConstants.TILE_W) / 2;
         offScreenHeight = (stripesHeight * MapConstants.TILE_H) / 2;
 
-        World.getNet().sendCommand(new MapDimensionCmd(stripesWidth >> 2, stripesHeight >> 2));
-        World.getMapDisplay().reportChangedDisplaySize();
+        final int serverMapDimWidth = stripesWidth >> 2;
+        final int serverMapDimHeight = stripesHeight >> 2;
 
-        System.out.println("Update map dimensions!");
+        if ((serverMapDimHeight != serverMapDimensionHeight) ||
+                (serverMapDimWidth != serverMapDimensionWidth)) {
+            serverMapDimensionHeight = serverMapDimHeight;
+            serverMapDimensionWidth = serverMapDimWidth;
+            World.getNet().sendCommand(new MapDimensionCmd(serverMapDimWidth, serverMapDimHeight));
+        }
+        World.getMapDisplay().reportChangedDisplaySize();
     }
 }
