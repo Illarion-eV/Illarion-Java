@@ -221,7 +221,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             } else {
                 final int windowedWidth = cfg.getInteger("windowWidth");
                 final int windowedHeight = cfg.getInteger("windowHeight");
-                gameContainer = new AppGameContainer(game, windowedWidth, windowedHeight, false);
+                gameContainer = new AppGameContainer(game, (windowedWidth < 0) ? res.getWidth() : windowedWidth,
+                        (windowedHeight < 0) ? res.getHeight() : windowedHeight, false);
             }
         } catch (SlickException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
@@ -576,8 +577,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault(ChatLog.CFG_TEXTLOG, true);
         cfg.setDefault(CFG_FULLSCREEN, false);
         cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800, 600, 32, 60).toString());
-        cfg.setDefault("windowWidth", 800);
-        cfg.setDefault("windowHeight", 600);
+        cfg.setDefault("windowWidth", -1);
+        cfg.setDefault("windowHeight", -1);
         cfg.setDefault("savePassword", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
         cfg.setDefault(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
@@ -604,14 +605,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     @Override
     public void onEvent(final String topic, final ConfigChangedEvent data) {
-        if (CFG_FULLSCREEN.equals(topic)) {
-            try {
-                gameContainer.setFullscreen(cfg.getBoolean(CFG_FULLSCREEN));
-            } catch (SlickException e) {
-                LOGGER.error("Failed to apply fullscreen mode. New requested mode: " +
-                        Boolean.toString(cfg.getBoolean(CFG_FULLSCREEN)));
-            }
-        } else if (CFG_RESOLUTION.equals(topic)) {
+        if (CFG_RESOLUTION.equals(topic) || CFG_FULLSCREEN.equals(topic)) {
             final String resolutionString = cfg.getString(CFG_RESOLUTION);
             if (resolutionString == null) {
                 LOGGER.error("Failed reading new resolution.");
@@ -622,6 +616,10 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                 final boolean fullScreen = cfg.getBoolean(CFG_FULLSCREEN);
                 gameContainer.setDisplayMode(res.getWidth(), res.getHeight(), fullScreen);
                 gameContainer.setTargetFrameRate(res.getRefreshRate());
+                if (!fullScreen) {
+                    cfg.set("windowHeight", res.getHeight());
+                    cfg.set("windowWidth", res.getWidth());
+                }
                 MapDimensions.getInstance().reportScreenSize(gameContainer.getWidth(), gameContainer.getHeight());
             } catch (@Nonnull final SlickException e) {
                 LOGGER.error("Failed to apply graphic mode: " + resolutionString);
