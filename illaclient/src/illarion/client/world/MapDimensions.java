@@ -18,6 +18,7 @@
  */
 package illarion.client.world;
 
+import illarion.client.net.client.MapDimensionCmd;
 import illarion.common.graphics.MapConstants;
 import illarion.common.util.FastMath;
 
@@ -251,5 +252,10 @@ public final class MapDimensions {
 
         offScreenWidth = (stripesWidth * MapConstants.TILE_W) / 2;
         offScreenHeight = (stripesHeight * MapConstants.TILE_H) / 2;
+
+        World.getNet().sendCommand(new MapDimensionCmd(stripesWidth >> 2, stripesHeight >> 2));
+        World.getMapDisplay().reportChangedDisplaySize();
+
+        System.out.println("Update map dimensions!");
     }
 }

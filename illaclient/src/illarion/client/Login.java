@@ -20,10 +20,8 @@ package illarion.client;
 
 import illarion.client.net.NetComm;
 import illarion.client.net.client.LoginCmd;
-import illarion.client.net.client.MapDimensionCmd;
 import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
-import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
 import illarion.common.data.IllarionSSLSocketFactory;
 import illarion.common.util.Base64;
@@ -290,8 +288,6 @@ public final class Login {
 
         World.getNet().sendCommand(new LoginCmd(loginCharacter, password,
                 IllaClient.DEFAULT_SERVER.getClientVersion()));
-        World.getNet().sendCommand(new MapDimensionCmd(MapDimensions.getInstance().getStripesWidth() >> 2,
-                MapDimensions.getInstance().getStripesHeight() >> 2));
         return true;
     }
 

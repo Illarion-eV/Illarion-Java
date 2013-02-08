@@ -218,7 +218,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         try {
             gameContainer = new AppGameContainer(game, res.getWidth(), res.getHeight(),
                     cfg.getBoolean(CFG_FULLSCREEN));
-            MapDimensions.getInstance().reportScreenSize(gameContainer.getWidth(), gameContainer.getHeight());
         } catch (SlickException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
             System.exit(-1);
@@ -226,7 +225,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         gameContainer.setAlwaysRender(true);
         gameContainer.setUpdateOnlyWhenVisible(false);
-        gameContainer.setResizable(false);
+        gameContainer.setMultiSample(2);
+        gameContainer.setVerbose(true);
+        gameContainer.setResizable(true);
         gameContainer.setTargetFrameRate(res.getRefreshRate());
         gameContainer.setForceExit(false);
         if (DEFAULT_SERVER == Servers.realserver) {
@@ -472,7 +473,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * End the game by user request and send the logout command to the server.
      */
     public void quitGame() {
-        World.getNet().sendCommand(new LogoutCmd());
+        try {
+            World.getNet().sendCommand(new LogoutCmd());
+        } catch (@Nonnull final IllegalStateException ex) {
+            // the NET was not launched up yet. This does not really matter.
+        }
     }
 
     /**

@@ -21,6 +21,7 @@ package illarion.client.graphics;
 import illarion.client.IllaClient;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.world.GameMap;
+import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
@@ -447,6 +448,18 @@ public final class MapDisplayManager
     private Image gameScreenImage;
 
     /**
+     * This value is set true in case the display size is changed.
+     */
+    private boolean changedDisplaySize;
+
+    /**
+     * This reports to the GUI that the display size got changed.
+     */
+    public void reportChangedDisplaySize() {
+        changedDisplaySize = true;
+    }
+
+    /**
      * Render all visible map items
      *
      * @param g the graphics component that is used to render the screen
@@ -457,12 +470,30 @@ public final class MapDisplayManager
             return;
         }
 
-        if (gameScreenImage == null) {
-            try {
-                gameScreenImage = new Image(c.getWidth(), c.getHeight(), SGL.GL_LINEAR);
-            } catch (SlickException e) {
-                LOGGER.error("Rendering to texture fails.", e);
-                return;
+        if ((gameScreenImage == null) || changedDisplaySize) {
+            changedDisplaySize = false;
+            final int width = MapDimensions.getInstance().getOnScreenWidth();
+            final int height = MapDimensions.getInstance().getOnScreenHeight();
+            if (gameScreenImage != null) {
+                if ((gameScreenImage.getTextureHeight() >= height) && (gameScreenImage.getTextureWidth() >= width)) {
+                    gameScreenImage = gameScreenImage.getSubImage(0, 0, width, height);
+                } else {
+                    try {
+                        gameScreenImage.destroy();
+                        gameScreenImage = null;
+                    } catch (SlickException e) {
+                        LOGGER.warn("Destruction of old backing image failed.");
+                    }
+                }
+            }
+            if (gameScreenImage == null) {
+                try {
+                    gameScreenImage = Image.createOffscreenImage(MapDimensions.getInstance().getOnScreenWidth(),
+                            MapDimensions.getInstance().getOnScreenHeight(), SGL.GL_LINEAR);
+                } catch (SlickException e) {
+                    LOGGER.error("Rendering to texture fails.", e);
+                    return;
+                }
             }
         }
 

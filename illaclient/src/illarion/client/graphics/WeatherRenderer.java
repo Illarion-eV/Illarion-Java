@@ -30,6 +30,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class takes care for applying the weather effects to the screen.
@@ -93,17 +94,27 @@ public final class WeatherRenderer {
 
     private Image getNextProcessImage(final int width, final int height) throws SlickException {
         if (lastImage == 1) {
-            if (processImage0 == null) {
-                processImage0 = Image.createOffscreenImage(width, height);
-            }
+            processImage0 = validateImage(width, height, processImage0);
             lastImage = 0;
             return processImage0;
         }
-        if (processImage1 == null) {
-            processImage1 = Image.createOffscreenImage(width, height);
-        }
+        processImage1 = validateImage(width, height, processImage1);
         lastImage = 1;
         return processImage1;
+    }
+
+    private static Image validateImage(final int width, final int height, @Nullable final Image original) throws SlickException {
+        if (original == null) {
+            return Image.createOffscreenImage(width, height);
+        }
+        if ((original.getHeight() == height) && (original.getWidth() == width)) {
+            return original;
+        }
+        if ((original.getTextureHeight() >= height) && (original.getTextureWidth() >= width)) {
+            return original.getSubImage(0, 0, width, height);
+        }
+        original.destroy();
+        return Image.createOffscreenImage(width, height);
     }
 
 

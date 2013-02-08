@@ -25,6 +25,7 @@ import illarion.client.Game;
 import illarion.client.Login;
 import illarion.client.input.InputReceiver;
 import illarion.client.util.Lang;
+import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -75,6 +76,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     @Override
     protected void updateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta)
             throws SlickException {
+        MapDimensions.getInstance().reportScreenSize(container.getWidth(), container.getHeight());
         World.getUpdateTaskManager().onUpdateGame(container, game, delta);
         World.getGameGui().onUpdateGame(container, delta);
         World.getWeather().update(delta);
@@ -88,7 +90,9 @@ public class PlayingState extends NiftyOverlayBasicGameState {
             throws SlickException {
         getNifty().gotoScreen("gamescreen");
 
-        Login.getInstance().login();
+        if (Login.getInstance().login()) {
+            MapDimensions.getInstance().reportScreenSize(container.getWidth(), container.getHeight());
+        }
     }
 
     @Override
