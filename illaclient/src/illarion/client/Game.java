@@ -24,6 +24,7 @@ import illarion.client.states.PlayingState;
 import illarion.client.world.events.CloseGameEvent;
 import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 /**
@@ -58,7 +59,7 @@ public final class Game
      * Create the game with the fitting title, showing the name of the application and its version.
      */
     public Game() {
-        super(IllaClient.APPLICATION + " " + IllaClient.VERSION, true);
+        super(IllaClient.APPLICATION + ' ' + IllaClient.VERSION, true);
     }
 
     /**
@@ -71,6 +72,21 @@ public final class Game
         addState(new LoadingState());
         addState(new PlayingState());
         addState(new EndState());
+    }
+
+    private int lastWidth;
+    private int lastHeight;
+
+    @Override
+    protected void preRenderState(final GameContainer gamecontainer, final Graphics graphics) {
+        final int containerWidth = gamecontainer.getWidth();
+        final int containerHeight = gamecontainer.getHeight();
+        if ((containerHeight != lastHeight) || (containerWidth != lastWidth)) {
+            lastHeight = containerHeight;
+            lastWidth = containerWidth;
+            IllaClient.getCfg().set("windowHeight", lastHeight);
+            IllaClient.getCfg().set("windowWidth", lastWidth);
+        }
     }
 
     /**

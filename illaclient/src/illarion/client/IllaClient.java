@@ -216,8 +216,13 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         try {
-            gameContainer = new AppGameContainer(game, res.getWidth(), res.getHeight(),
-                    cfg.getBoolean(CFG_FULLSCREEN));
+            if (cfg.getBoolean(CFG_FULLSCREEN)) {
+                gameContainer = new AppGameContainer(game, res.getWidth(), res.getHeight(), true);
+            } else {
+                final int windowedWidth = cfg.getInteger("windowWidth");
+                final int windowedHeight = cfg.getInteger("windowHeight");
+                gameContainer = new AppGameContainer(game, windowedWidth, windowedHeight, false);
+            }
         } catch (SlickException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
             System.exit(-1);
@@ -571,6 +576,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault(ChatLog.CFG_TEXTLOG, true);
         cfg.setDefault(CFG_FULLSCREEN, false);
         cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800, 600, 32, 60).toString());
+        cfg.setDefault("windowWidth", 800);
+        cfg.setDefault("windowHeight", 600);
         cfg.setDefault("savePassword", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
         cfg.setDefault(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
