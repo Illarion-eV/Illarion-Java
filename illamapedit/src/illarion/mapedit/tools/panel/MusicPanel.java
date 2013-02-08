@@ -19,6 +19,7 @@
 package illarion.mapedit.tools.panel;
 
 import illarion.mapedit.Lang;
+import illarion.mapedit.tools.ToolManager;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
@@ -44,7 +45,7 @@ public class MusicPanel extends JPanel {
         final JPanel northPanel = new JPanel(new GridLayout(0, 2));
 
         spinner = new JSpinner(new SpinnerNumberModel(0, 0, 9000, 1));
-        radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
+        radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, ToolManager.TOOL_RADIUS, 1));
         delCheckBox = new JCheckBox();
 
         delCheckBox.addActionListener(new ActionListener() {
@@ -63,10 +64,15 @@ public class MusicPanel extends JPanel {
         add(northPanel, BorderLayout.NORTH);
     }
 
+    /**
+     * Get selected musicID
+     *
+     * @return musicID or 0 if eraser is selected
+     */
     public int getMusicID() {
         Integer musicID = 0;
 
-        if (delCheckBox.isSelected()) {
+        if (!delCheckBox.isSelected()) {
             musicID = (Integer) spinner.getValue();
         }
         return musicID;

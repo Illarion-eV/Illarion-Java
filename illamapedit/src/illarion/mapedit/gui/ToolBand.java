@@ -48,7 +48,7 @@ public class ToolBand extends JRibbonBand {
         final CommandToggleButtonGroup group = new CommandToggleButtonGroup();
 
         tools.add(new TileBrushTool());
-        tools.add(new SingleItemTool());
+        tools.add(new ItemBrushTool());
         tools.add(new MusicTool());
         tools.add(new TileEraserTool());
         tools.add(new ItemEraserTool());

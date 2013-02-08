@@ -54,9 +54,10 @@ public class MusicTool extends AbstractTool {
         final GroupAction action = new GroupAction();
         for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
             for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
-                if (map.getTileAt(i, j).getMusicID() != musicID) {
-                    action.addAction(new MusicIDChangedAction(i, j, map.getTileAt(i, j).getMusicID(), musicID, map));
-                    map.setTileAt(i, j, MapTile.MapTileFactory.setMusicId(musicID, map.getTileAt(i, j)));
+                final MapTile tile = map.getTileAt(i, j);
+                if ((tile != null) && (tile.getMusicID() != musicID)) {
+                    action.addAction(new MusicIDChangedAction(i, j, tile.getMusicID(), musicID, map));
+                    map.setTileAt(i, j, MapTile.MapTileFactory.setMusicId(musicID, tile));
 
                 }
             }
