@@ -33,9 +33,9 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
+import illarion.client.gui.SkillGui;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.LoginFinishedEvent;
-import illarion.client.net.server.events.SkillReceivedEvent;
 import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.MapTile;
@@ -57,7 +57,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class SkillsHandler implements ScreenController, UpdatableHandler {
+public final class SkillsHandler implements SkillGui, ScreenController, UpdatableHandler {
     /**
      * The Nifty-GUI instance this handler is bound to.
      */
@@ -199,17 +199,28 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
      */
     private boolean layoutDirty;
 
+    @Override
+    public void updateSkill(@Nonnull final Skill skill, final int value, final int minor) {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+                internalUpdateSkill(skill, value);
+            }
+        });
+    }
+
     /**
      * This function will update the data of a single skill.
      *
-     * @param updateData the information needed to perform the update
+     * @param skill the skill that receives the update
+     * @param value the new value of the skill
      */
-    private void updateSkill(@Nonnull final SkillReceivedEvent updateData) {
+    private void internalUpdateSkill(@Nonnull final Skill skill, final int value) {
         final Element skillPanel = skillWindow.getElement().findElementByName("#skill" +
-                Integer.toString(updateData.getSkill().getId()));
+                Integer.toString(skill.getId()));
 
         boolean skillChanged = false;
-        if (updateData.getValue() == 0) {
+        if (value == 0) {
             skillPanel.setConstraintHeight(SizeValue.px(0));
         } else {
             skillPanel.getParent().setConstraintHeight(SizeValue.wildcard());
@@ -220,7 +231,7 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
             final Element valueLabel = skillPanel.findElementByName("#value");
             final TextRenderer valueTextRenderer = valueLabel.getRenderer(TextRenderer.class);
 
-            final String newValue = Integer.toString(updateData.getValue());
+            final String newValue = Integer.toString(value);
             skillChanged = !valueTextRenderer.getOriginalText().equals(newValue);
             valueTextRenderer.setText(newValue);
             valueLabel.setConstraintHeight(SizeValue.px(18));
@@ -268,21 +279,6 @@ public final class SkillsHandler implements ScreenController, UpdatableHandler {
             updateVisibility();
             skillWindow.getElement().layoutElements();
         }
-    }
-
-    /**
-     * The event handler for new skills that are received from the server.
-     *
-     * @param data the skill data
-     */
-    @EventSubscriber
-    public void onSkillUpdateReceived(@Nonnull final SkillReceivedEvent data) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
-                updateSkill(data);
-            }
-        });
     }
 
     /**

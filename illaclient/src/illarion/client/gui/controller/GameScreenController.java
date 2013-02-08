@@ -21,10 +21,7 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import illarion.client.gui.BookGui;
-import illarion.client.gui.DialogInputGui;
-import illarion.client.gui.DialogMessageGui;
-import illarion.client.gui.GameGui;
+import illarion.client.gui.*;
 import illarion.client.gui.controller.game.*;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
@@ -42,6 +39,7 @@ public final class GameScreenController implements GameGui, ScreenController {
 
     private final BookHandler bookHandler;
     private final DialogHandler dialogHandler;
+    private final SkillsHandler skillsHandler;
 
     public GameScreenController(final Input input) {
         final NumberSelectPopupHandler numberPopupHandler = new NumberSelectPopupHandler();
@@ -52,6 +50,7 @@ public final class GameScreenController implements GameGui, ScreenController {
 
         bookHandler = new BookHandler();
         dialogHandler = new DialogHandler(numberPopupHandler, tooltipHandler);
+        skillsHandler = new SkillsHandler();
 
         addHandler(numberPopupHandler);
         addHandler(tooltipHandler);
@@ -62,7 +61,7 @@ public final class GameScreenController implements GameGui, ScreenController {
         addHandler(new ContainerHandler(input, numberPopupHandler, tooltipHandler));
         addHandler(new CloseGameHandler());
         addHandler(new CharStatusHandler());
-        addHandler(new SkillsHandler());
+        addHandler(skillsHandler);
 
         addHandler(new GameMapHandler(numberPopupHandler, tooltipHandler));
         addHandler(new GameMiniMapHandler());
@@ -99,25 +98,35 @@ public final class GameScreenController implements GameGui, ScreenController {
      * @param container the container that displays the game
      * @param delta     the time since the last update call
      */
+    @Override
     public void onUpdateGame(final GameContainer container, final int delta) {
         for (final UpdatableHandler childController : childUpdateControllers) {
             childController.update(container, delta);
         }
     }
 
+    @Nonnull
     @Override
     public BookGui getBookGui() {
         return bookHandler;
     }
 
+    @Nonnull
     @Override
     public DialogMessageGui getDialogMessageGui() {
         return dialogHandler;
     }
 
+    @Nonnull
     @Override
     public DialogInputGui getDialogInputGui() {
         return dialogHandler;
+    }
+
+    @Nonnull
+    @Override
+    public SkillGui getSkillGui() {
+        return skillsHandler;
     }
 
     @Override
@@ -127,6 +136,7 @@ public final class GameScreenController implements GameGui, ScreenController {
         }
     }
 
+    @Nonnull
     @Override
     public ScreenController getScreenController() {
         return this;

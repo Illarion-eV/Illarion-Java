@@ -21,6 +21,8 @@ package illarion.client.gui;
 import de.lessvoid.nifty.screen.ScreenController;
 import org.newdawn.slick.GameContainer;
 
+import javax.annotation.Nonnull;
+
 /**
  * This interface is the global accessor to the GUI of the game.
  *
@@ -32,6 +34,7 @@ public interface GameGui {
      *
      * @return the GUI screen controller
      */
+    @Nonnull
     ScreenController getScreenController();
 
     /**
@@ -47,6 +50,7 @@ public interface GameGui {
      *
      * @return the controller of the book display
      */
+    @Nonnull
     BookGui getBookGui();
 
     /**
@@ -54,6 +58,7 @@ public interface GameGui {
      *
      * @return the message dialog GUI control
      */
+    @Nonnull
     DialogMessageGui getDialogMessageGui();
 
     /**
@@ -61,5 +66,14 @@ public interface GameGui {
      *
      * @return the input dialog GUI control
      */
+    @Nonnull
     DialogInputGui getDialogInputGui();
+
+    /**
+     * Get the GUI that controls the skill display in the GUI.
+     *
+     * @return the skill GUI controller
+     */
+    @Nonnull
+    SkillGui getSkillGui();
 }

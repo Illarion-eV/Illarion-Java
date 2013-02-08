@@ -20,12 +20,11 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.SkillReceivedEvent;
+import illarion.client.world.World;
 import illarion.common.data.Skill;
 import illarion.common.data.Skills;
 import illarion.common.net.NetCommReader;
 import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -86,7 +85,7 @@ public final class SkillMsg extends AbstractReply {
             return true;
         }
 
-        EventBus.publish(new SkillReceivedEvent(skill, value, minor));
+        World.getGameGui().getSkillGui().updateSkill(skill, value, minor);
 
         return true;
     }
