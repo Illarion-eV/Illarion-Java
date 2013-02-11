@@ -46,7 +46,7 @@ import java.awt.event.WindowListener;
  * @author Tim
  */
 public class MainFrame extends JRibbonFrame {
-    private static final Dimension WINDOW_SIZE = new Dimension(900, 700);
+    private static final Dimension WINDOW_SIZE = new Dimension(1000, 700);
     private static MainFrame instance;
 
     @Nonnull
@@ -67,7 +67,7 @@ public class MainFrame extends JRibbonFrame {
 
     public void initialize(final WindowListener controller) {
         addWindowListener(controller);
-        setTitle(Lang.getMsg("application.Name") + MapEditor.getVersion());
+        setTitle(String.format("%s %s", Lang.getMsg("application.Name"), MapEditor.getVersion()));
         setSize(getSavedDimension());
         getRibbon().setApplicationMenu(new MainMenu());
         getRibbon().configureHelp(ImageLoader.getResizableIcon("help"), new ActionEventPublisher(new ShowHelpDialogEvent()));

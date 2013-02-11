@@ -18,20 +18,37 @@
  */
 package illarion.mapedit.tools.panel;
 
+import illarion.mapedit.Lang;
+import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.tools.panel.components.ItemTree;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * @author Tim
  */
-public class SingleItemPanel extends JPanel {
+public class ItemBrushPanel extends JPanel {
 
-    public SingleItemPanel() {
+    @Nonnull
+    private final JSpinner radiusSpinner;
+
+    public ItemBrushPanel() {
         super(new BorderLayout());
-        //final ItemList list = new ItemList();
-        final ItemTree list = new ItemTree();
-        add(list, BorderLayout.CENTER);
+
+        add(new ItemTree(), BorderLayout.CENTER);
+
+        final JPanel brushSizePanel = new JPanel(new BorderLayout(5, 0));
+        final JLabel radiusLabel = new JLabel(Lang.getMsg("tools.ItemBrushTool.Radius"));
+        radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, ToolManager.TOOL_RADIUS, 1));
+        brushSizePanel.add(radiusLabel, BorderLayout.WEST);
+        brushSizePanel.add(radiusSpinner, BorderLayout.CENTER);
+
+        add(brushSizePanel, BorderLayout.SOUTH);
+    }
+
+    public int getRadius() {
+        return (Integer) radiusSpinner.getValue();
     }
 }

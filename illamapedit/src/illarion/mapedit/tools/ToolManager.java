@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
  */
 public final class ToolManager implements Disposable {
     private static final Logger LOGGER = Logger.getLogger(ToolManager.class);
-
+    public static final int TOOL_RADIUS = 10000;
     private final GuiController controller;
     private final RendererManager renderer;
 
@@ -58,7 +58,7 @@ public final class ToolManager implements Disposable {
         this.controller = controller;
         this.renderer = renderer;
         AnnotationProcessor.process(this);
-        setTool(new SingleTileTool());
+        setTool(new TileBrushTool());
     }
 
     public void setTool(@Nullable final AbstractTool tool) {
@@ -101,7 +101,7 @@ public final class ToolManager implements Disposable {
 
     @EventSubscriber
     public void onMapDragged(@Nonnull final MapDraggedEvent e) {
-        if (e.getButton() == MouseButton.LeftButton) {
+        if ((actualTool != null) && e.getButton() == MouseButton.LeftButton) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
             controller.setSaved(false);

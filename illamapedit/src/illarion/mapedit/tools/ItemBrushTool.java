@@ -21,9 +21,10 @@ package illarion.mapedit.tools;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
+import illarion.mapedit.data.MapTile;
 import illarion.mapedit.history.ItemPlacedAction;
 import illarion.mapedit.resource.ItemImg;
-import illarion.mapedit.tools.panel.SingleItemPanel;
+import illarion.mapedit.tools.panel.ItemBrushPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
@@ -34,34 +35,39 @@ import java.util.List;
 /**
  * @author Tim
  */
-public class SingleItemTool extends AbstractTool {
+public class ItemBrushTool extends AbstractTool {
 
     @Nonnull
-    public final SingleItemPanel panel;
+    private final ItemBrushPanel panel;
 
-    public SingleItemTool() {
-        panel = new SingleItemPanel();
+    public ItemBrushTool() {
+        panel = new ItemBrushPanel();
     }
 
-    @Override
+@Override
     public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        if (!map.contains(x, y)) {
-            return;
-        }
         final ItemImg item = getManager().getSelectedItem();
+        final int radius = panel.getRadius();
         if (item != null) {
-            final List<MapItem> items = map.getTileAt(x, y).getMapItems();
-            final MapItem i = new MapItem(item.getItemId(), "", 0);
-            if (!items.contains(i)) {
-                getHistory().addEntry(new ItemPlacedAction(x, y, null, i, map));
-                items.add(i);
+            for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
+                for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
+                    final MapTile tile = map.getTileAt(i, j);
+                    if (tile != null) {
+                        final List<MapItem> items = tile.getMapItems();
+                        final MapItem itm = new MapItem(item.getItemId(), "", 0);
+                        if (!items.contains(itm)) {
+                            getHistory().addEntry(new ItemPlacedAction(i, j, itm, map));
+                            items.add(itm);
+                        }
+                    }
+                }
             }
         }
     }
 
     @Override
     public String getLocalizedName() {
-        return Lang.getMsg("tools.SingleItemTool");
+        return Lang.getMsg("tools.ItemBrushTool");
     }
 
     @Nullable
