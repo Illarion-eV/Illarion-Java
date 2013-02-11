@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("InterfaceNamingConvention")
 public interface GameGui {
     /**
      * Get the book GUI control.
@@ -91,6 +92,14 @@ public interface GameGui {
      * @return {@code true} in case the GUI is ready
      */
     boolean isReady();
+
+    /**
+     * Get the GUI that controls the display of the inventory.
+     *
+     * @return the inventory gui controller
+     */
+    @Nonnull
+    InventoryGui getInventoryGui();
 
     /**
      * Update the GUI. This should be called once during the update cycle.

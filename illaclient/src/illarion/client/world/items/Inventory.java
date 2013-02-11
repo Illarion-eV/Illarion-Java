@@ -18,11 +18,9 @@
  */
 package illarion.client.world.items;
 
-import illarion.client.net.server.events.InventoryUpdateEvent;
+import illarion.client.world.World;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
 
 import javax.annotation.Nonnull;
 
@@ -31,7 +29,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class Inventory implements EventSubscriber<InventoryUpdateEvent> {
+public final class Inventory {
     /**
      * The amount of available inventory slots.
      */
@@ -52,7 +50,6 @@ public final class Inventory implements EventSubscriber<InventoryUpdateEvent> {
         for (int i = 0; i < SLOT_COUNT; i++) {
             slots[i] = new InventorySlot(i);
         }
-        EventBus.subscribe(InventoryUpdateEvent.class, this);
     }
 
     /**
@@ -76,14 +73,6 @@ public final class Inventory implements EventSubscriber<InventoryUpdateEvent> {
      */
     public void setItem(final int slot, @Nonnull final ItemId id, @Nonnull final ItemCount count) {
         slots[slot].setData(id, count);
-    }
-
-    /**
-     * Handle the update inventory update event that is published on the event
-     * bus.
-     */
-    @Override
-    public void onEvent(@Nonnull final InventoryUpdateEvent event) {
-        setItem(event.getSlotId(), event.getItemId(), event.getCount());
+        World.getGameGui().getInventoryGui().setItemSlot(slot, id, count);
     }
 }

@@ -20,11 +20,10 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.InventoryUpdateEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -77,7 +76,7 @@ public final class InventoryMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new InventoryUpdateEvent(itemId, location, count));
+        World.getPlayer().getInventory().setItem(location, itemId, count);
         return true;
     }
 

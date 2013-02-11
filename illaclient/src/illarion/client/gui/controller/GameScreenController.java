@@ -41,6 +41,7 @@ public final class GameScreenController implements GameGui, ScreenController {
     private final SkillsHandler skillsHandler;
     private final InformHandler informHandler;
     private final GUIChatHandler chatHandler;
+    private final GUIInventoryHandler inventoryHandler;
 
     private boolean ready;
 
@@ -56,12 +57,13 @@ public final class GameScreenController implements GameGui, ScreenController {
         dialogHandler = new DialogHandler(numberPopupHandler, tooltipHandler);
         skillsHandler = new SkillsHandler();
         informHandler = new InformHandler();
+        inventoryHandler = new GUIInventoryHandler(input, numberPopupHandler, tooltipHandler);
 
         addHandler(numberPopupHandler);
         addHandler(tooltipHandler);
         addHandler(chatHandler);
         addHandler(bookHandler);
-        addHandler(new GUIInventoryHandler(input, numberPopupHandler, tooltipHandler));
+        addHandler(inventoryHandler);
         addHandler(dialogHandler);
         addHandler(new ContainerHandler(input, numberPopupHandler, tooltipHandler));
         addHandler(new CloseGameHandler());
@@ -89,6 +91,12 @@ public final class GameScreenController implements GameGui, ScreenController {
 
     @Nonnull
     @Override
+    public ChatGui getChatGui() {
+        return chatHandler;
+    }
+
+    @Nonnull
+    @Override
     public DialogInputGui getDialogInputGui() {
         return dialogHandler;
     }
@@ -107,6 +115,12 @@ public final class GameScreenController implements GameGui, ScreenController {
 
     @Nonnull
     @Override
+    public InventoryGui getInventoryGui() {
+        return inventoryHandler;
+    }
+
+    @Nonnull
+    @Override
     public ScreenController getScreenController() {
         return this;
     }
@@ -120,12 +134,6 @@ public final class GameScreenController implements GameGui, ScreenController {
     @Override
     public boolean isReady() {
         return ready;
-    }
-
-    @Nonnull
-    @Override
-    public ChatGui getChatGui() {
-        return chatHandler;
     }
 
     @Override
