@@ -67,7 +67,7 @@ public final class WhisperMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.whisper);
+        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.Whisper);
         return true;
     }
 

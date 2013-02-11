@@ -40,23 +40,17 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.Avatar;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.FontLoader;
+import illarion.client.gui.ChatGui;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.client.IntroduceCmd;
 import illarion.client.net.client.SayCmd;
-import illarion.client.net.server.events.BroadcastInformReceivedEvent;
-import illarion.client.net.server.events.ScriptInformReceivedEvent;
-import illarion.client.net.server.events.TextToInformReceivedEvent;
 import illarion.client.util.ChatHandler;
-import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.World;
-import illarion.client.world.events.CharTalkingEvent;
 import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;
-import javolution.text.TextBuilder;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.state.StateBasedGame;
@@ -72,11 +66,91 @@ import java.util.regex.Pattern;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GUIChatHandler implements KeyInputHandler, ScreenController, UpdatableHandler {
+public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenController, UpdatableHandler {
+    @Override
+    public void activateChatBox() {
+        if (chatMsg != null) {
+            chatMsg.setFocus();
+        }
+    }
+
+    @Override
+    public void deactivateChatBox(final boolean clear) {
+        if (chatMsg != null) {
+            if (chatMsg.hasFocus()) {
+                assert screen != null;
+                screen.getFocusHandler().setKeyFocus(null);
+            }
+            if (clear) {
+                chatMsg.setText("");
+            }
+        }
+    }
+
+    /**
+     * Add a entry to the chat box.
+     *
+     * @param message the message to add to the chat box
+     * @param color   the color of the message
+     */
+    @Override
+    public void addChatMessage(@Nonnull final String message, @Nonnull final Color color) {
+        World.getUpdateTaskManager().addTask(new ChatBoxEntry(message, color));
+    }
+
+    /**
+     * Display a chat bubble on the screen.
+     *
+     * @param character the character this chat message is assigned to
+     * @param message   the message that is displayed
+     * @param color     the color of the message
+     */
+    @Override
+    public void showChatBubble(@Nullable final Char character, @Nonnull final String message, @Nonnull final Color color) {
+        World.getUpdateTaskManager().addTask(new CharTalkEntry(character, message, color));
+    }
+
     /**
      * This utility class is used to store texts that get shown in the Chat log.
      */
     private class ChatBoxEntry implements UpdateTask {
+        /**
+         * The text of the entry.
+         */
+        @Nonnull
+        private final String text;
+
+        /**
+         * The color of the entry.
+         */
+        @Nonnull
+        private final Color color;
+
+        /**
+         * Constructor for the entry.
+         *
+         * @param msgText  the text stored in the entry
+         * @param msgColor the color of the entry
+         */
+        ChatBoxEntry(@Nonnull final String msgText, @Nonnull final Color msgColor) {
+            text = msgText;
+            color = msgColor;
+        }
+
+        @Nonnull
+        protected Color getColor() {
+            return color;
+        }
+
+        @Override
+        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+            addChatLogText(text, color);
+        }
+    }
+
+    private class CharTalkEntry implements UpdateTask {
+        @Nullable
+        private final Char targetChar;
         /**
          * The text of the entry.
          */
@@ -90,117 +164,68 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         /**
          * Constructor for the entry.
          *
-         * @param msgText  the text stored in the entry
-         * @param msgColor the color of the entry
+         * @param character the character that spoke this text
+         * @param message   the text stored in the entry
+         * @param msgColor  the color of the entry
          */
-        ChatBoxEntry(final String msgText, final Color msgColor) {
-            text = msgText;
+        CharTalkEntry(@Nullable final Char character, @Nonnull final String message, final Color msgColor) {
+            text = message;
             color = msgColor;
-        }
-
-        protected Color getColor() {
-            return color;
+            targetChar = character;
         }
 
         @Override
         public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
-            addChatLogText(text, color);
-        }
-    }
-
-    private class CharTalkEntry extends ChatBoxEntry {
-        @Nonnull
-        private final CharTalkingEvent talkingEvent;
-
-        /**
-         * Constructor for the entry.
-         *
-         * @param event    the event data
-         * @param msgColor the color of the entry
-         */
-        CharTalkEntry(@Nonnull final CharTalkingEvent event, final Color msgColor) {
-            super(event.getLoggedText(), msgColor);
-            talkingEvent = event;
-        }
-
-        @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
-            super.onUpdateGame(container, game, delta);
-            final String message;
-            if (talkingEvent.getMode() == ChatHandler.SpeechMode.emote) {
-                final Char talkingChar = talkingEvent.getCharacter();
-                if (talkingChar == null) {
-                    message = Lang.getMsg("chat.someone") + talkingEvent.getText();
-                } else {
-                    message = talkingChar.getName() + talkingEvent.getText();
-                }
-            } else if (talkingEvent.getMode() == ChatHandler.SpeechMode.ooc) {
-                message = "((" + talkingEvent.getText() + "))";
-            } else {
-                message = talkingEvent.getText();
-            }
-            addMessageBubble(talkingEvent.getCharacter(), message, getColor());
+            addMessageBubble(targetChar, text, color);
         }
     }
 
     /**
      * This pattern is used to clean the text before its send to the server.
      */
+    @Nonnull
     private static final Pattern REPEATED_SPACE_PATTERN = Pattern.compile("\\s+");
-
-    /**
-     * The default color of text entries.
-     */
-    private static final Color COLOR_DEFAULT = new Color("#ffffff");
-
-    /**
-     * The color of shouted or important messages
-     */
-    private static final Color COLOR_SHOUT = new Color("#ff0000");
-
-    /**
-     * The color of whispered text.
-     */
-    private static final Color COLOR_WHISPER = new Color("#c0c0c0");
-
-    /**
-     * The color of emoted.
-     */
-    private static final Color COLOR_EMOTE = new Color("#ffcc33");
 
     /**
      * The expanded height of the Chat.
      */
+    @Nonnull
     private static final SizeValue CHAT_EXPANDED_HEIGHT = SizeValue.px(500);
 
     /**
      * The collapsed size of the Chat.
      */
+    @Nonnull
     private static final SizeValue CHAT_COLLAPSED_HEIGHT = SizeValue.px(170);
 
     /**
      * The log that is used to display the text.
      */
+    @Nullable
     private ScrollPanel chatLog;
 
     /**
      * The input field that holds the text that is yet to be send.
      */
+    @Nullable
     private TextField chatMsg;
 
     /**
      * The layer used to show the Chat bubbles.
      */
+    @Nullable
     private Element chatLayer;
 
     /**
      * The screen that displays the GUI.
      */
+    @Nullable
     private Screen screen;
 
     /**
      * The nifty instance of this Chat handler.
      */
+    @Nullable
     private Nifty nifty;
 
     /**
@@ -233,89 +258,11 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      */
     private final Pattern oocPattern = Pattern.compile("^\\s*[/#]o(oc)?\\s*(.*)\\s*$", Pattern.CASE_INSENSITIVE);
 
-    @EventSubscriber
-    public void onBroadcastInformReceived(@Nonnull final BroadcastInformReceivedEvent data) {
-        final TextBuilder textBuilder = TextBuilder.newInstance();
-        try {
-            textBuilder.append(Lang.getMsg("chat.broadcast"));
-            textBuilder.append(": ");
-            textBuilder.append(data.getMessage());
-
-            World.getUpdateTaskManager().addTask(new ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
-        } finally {
-            TextBuilder.recycle(textBuilder);
-        }
-    }
-
-    @EventSubscriber
-    public void onCharTalkingEvent(@Nonnull final CharTalkingEvent data) {
-        Color usedColor = null;
-        switch (data.getMode()) {
-            case emote:
-                usedColor = COLOR_EMOTE;
-                break;
-            case normal:
-                usedColor = COLOR_DEFAULT;
-                break;
-            case ooc:
-                usedColor = COLOR_WHISPER;
-                break;
-            case shout:
-                usedColor = COLOR_SHOUT;
-                break;
-            case whisper:
-                usedColor = COLOR_WHISPER;
-                break;
-        }
-
-        World.getUpdateTaskManager().addTask(new CharTalkEntry(data, usedColor));
-    }
-
-    @EventSubscriber
-    public void onScriptInformReceived(@Nonnull final ScriptInformReceivedEvent data) {
-        if (data.getInformPriority() == 0) {
-            return;
-        }
-
-        final TextBuilder textBuilder = TextBuilder.newInstance();
-        try {
-            final Color usedColor;
-            if (data.getInformPriority() == 1) {
-                usedColor = COLOR_DEFAULT;
-            } else {
-                usedColor = COLOR_SHOUT;
-            }
-
-
-            textBuilder.append(Lang.getMsg("chat.scriptInform"));
-            textBuilder.append(": ");
-            textBuilder.append(data.getMessage());
-
-            World.getUpdateTaskManager().addTask(new ChatBoxEntry(textBuilder.toString(), usedColor));
-        } finally {
-            TextBuilder.recycle(textBuilder);
-        }
-    }
-
-    @EventSubscriber
-    public void onTextToInformReceived(@Nonnull final TextToInformReceivedEvent data) {
-        final TextBuilder textBuilder = TextBuilder.newInstance();
-        try {
-            textBuilder.append(Lang.getMsg("chat.textto"));
-            textBuilder.append(": ");
-            textBuilder.append(data.getMessage());
-
-            World.getUpdateTaskManager().addTask(new ChatBoxEntry(textBuilder.toString(), COLOR_DEFAULT));
-        } finally {
-            TextBuilder.recycle(textBuilder);
-        }
-    }
-
     @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
     public void onInputEventReceived(@Nonnull final String topic, final String event) {
         if (topic.equals(InputReceiver.EB_TOPIC)) {
             if ("SelectChat".equals(event)) {
-                chatMsg.setFocus();
+                activateChatBox();
             }
         }
     }
@@ -329,6 +276,10 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      * Change the expanded or collapsed state of the Chat.
      */
     private void toggleChatLog() {
+        if (screen == null) {
+            return;
+        }
+
         final Element chatScroll = screen.findElementByName("chatPanel");
 
         if (chatScroll.getConstraintHeight().equals(CHAT_COLLAPSED_HEIGHT)) {
@@ -360,8 +311,10 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
     @Override
     public boolean keyEvent(final NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.SubmitText) {
+            assert chatMsg != null;
             if (chatMsg.hasFocus()) {
                 if (chatMsg.getDisplayedText().isEmpty()) {
+                    assert screen != null;
                     screen.getFocusHandler().setKeyFocus(null);
                 } else {
                     sendText(chatMsg.getDisplayedText());
@@ -389,30 +342,30 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
 
         final Matcher shoutMatcher = shoutPattern.matcher(text);
         if (shoutMatcher.find()) {
-            cleanAndSendText("", shoutMatcher.group(2), ChatHandler.SpeechMode.shout);
+            cleanAndSendText("", shoutMatcher.group(2), ChatHandler.SpeechMode.Shout);
             return;
         }
 
         final Matcher whisperMatcher = whisperPattern.matcher(text);
         if (whisperMatcher.find()) {
-            cleanAndSendText("", whisperMatcher.group(2), ChatHandler.SpeechMode.whisper);
+            cleanAndSendText("", whisperMatcher.group(2), ChatHandler.SpeechMode.Whisper);
             return;
         }
 
         final Matcher emoteMatcher = emotePattern.matcher(text);
         if (emoteMatcher.find()) {
             final String cleanMe = REPEATED_SPACE_PATTERN.matcher(emoteMatcher.group(1)).replaceAll(" ").toLowerCase();
-            cleanAndSendText("#" + cleanMe, emoteMatcher.group(2), ChatHandler.SpeechMode.normal);
+            cleanAndSendText("#" + cleanMe, emoteMatcher.group(2), ChatHandler.SpeechMode.Normal);
             return;
         }
 
         final Matcher oocMatcher = oocPattern.matcher(text);
         if (oocMatcher.find()) {
-            cleanAndSendText("#o ", oocMatcher.group(2), ChatHandler.SpeechMode.whisper);
+            cleanAndSendText("#o ", oocMatcher.group(2), ChatHandler.SpeechMode.Whisper);
             return;
         }
 
-        cleanAndSendText("", text, ChatHandler.SpeechMode.normal);
+        cleanAndSendText("", text, ChatHandler.SpeechMode.Normal);
     }
 
     /**
@@ -433,6 +386,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
 
     @Override
     public void onEndScreen() {
+        assert nifty != null;
         nifty.unsubscribeAnnotations(this);
         AnnotationProcessor.unprocess(this);
     }
@@ -448,6 +402,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
             }
         });
         AnnotationProcessor.process(this);
+        assert nifty != null;
         nifty.subscribeAnnotations(this);
     }
 
@@ -461,7 +416,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      * position.
      */
     private void cleanupChatLog() {
-        if (!dirty) {
+        if (!dirty || (chatLog == null)) {
             return;
         }
 
@@ -496,6 +451,9 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
      * @param color the color of the text to add
      */
     private void addChatLogText(final String text, final Color color) {
+        if (chatLog == null) {
+            return;
+        }
         final Element contentPane = chatLog.getElement().findElementByName("chatLog");
 
         final LabelBuilder label = new LabelBuilder();
@@ -505,7 +463,7 @@ public final class GUIChatHandler implements KeyInputHandler, ScreenController, 
         label.textHAlign(ElementBuilder.Align.Left);
         label.wrap(true);
         label.width(contentPane.getConstraintWidth().toString());
-        label.build(contentPane.getNifty(), screen, contentPane);
+        label.build(nifty, screen, contentPane);
 
         dirty = true;
     }

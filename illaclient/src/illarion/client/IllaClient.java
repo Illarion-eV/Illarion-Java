@@ -385,10 +385,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         return (INSTANCE.debugLevel & (1 << flag.ordinal())) > 0;
     }
 
-    public static void initChatLog() {
-        ChatLog.getInstance().init(tempProps);
-    }
-
     /**
      * Main function starts the client and sets up all data.
      *

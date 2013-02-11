@@ -19,20 +19,18 @@
 package illarion.client.util;
 
 import illarion.client.IllaClient;
-import illarion.client.world.World;
-import illarion.client.world.events.CharTalkingEvent;
 import illarion.common.config.ConfigChangedEvent;
+import org.apache.log4j.DailyRollingFileAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.PatternLayout;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
 
 /**
  * Class to handle the logging of the Chat in the game to the logfile.
@@ -44,11 +42,6 @@ public final class ChatLog {
      * The key used for the configuration to store if the text log is enabled or not.
      */
     public static final String CFG_TEXTLOG = "textLog"; //$NON-NLS-1$
-
-    /**
-     * Singleton instance of the ChatLog class.
-     */
-    private static final ChatLog INSTANCE = new ChatLog();
 
     /**
      * Constant value to determine if the logger is active in general or not. In case the logging is disabled by the
@@ -69,35 +62,19 @@ public final class ChatLog {
 
     /**
      * Private constructor to avoid that any instance but the singleton instance is created.
+     *
+     * @param playerPath the path this chat log is supposed to be stored at
      */
-    private ChatLog() {
+    public ChatLog(final File playerPath) {
         logActive = IllaClient.getCfg().getBoolean(CFG_TEXTLOG);
-        AnnotationProcessor.process(this);
-    }
 
-    /**
-     * Get the singleton instance of the Chat file logger.
-     *
-     * @return the singleton instance of this class
-     */
-    @Nonnull
-    public static ChatLog getInstance() {
-        return INSTANCE;
-    }
+        final DailyRollingFileAppender appender = new DailyRollingFileAppender();
+        appender.setDatePattern("'.'yyyy-MM'.log'");
+        appender.setFile(new File(playerPath, "illarion.log").getAbsolutePath());
+        appender.setLayout(new PatternLayout("%m%n"));
 
-    /**
-     * Set up the logger and all needed settings so everything is fine and
-     * reading for the logging actions.
-     *
-     * @param loggingProps the properties that are used to setup the loggers. These need to be modified in order to
-     *                     set the correct paths to the log files
-     */
-    @SuppressWarnings("nls")
-    public void init(@Nonnull final Properties loggingProps) {
-        loggingProps.put("log4j.appender.ChatAppender.file", new File(World.getPlayer().getPath(),
-                "illarion.log").getAbsolutePath());
-        new PropertyConfigurator().doConfigure(loggingProps,
-                logger.getLoggerRepository());
+        logger.setLevel(Level.INFO);
+        logger.addAppender(appender);
 
         loggerWorking = true;
 
@@ -106,19 +83,25 @@ public final class ChatLog {
 
         logger.info("");
         logger.info(Lang.getMsg("log.newSession") + " - " + sdf.format(new Date()));
+
+        AnnotationProcessor.process(this);
+    }
+
+    /**
+     * Write some text to the chat log in case its enabled.
+     *
+     * @param text the text to log
+     */
+    public void logText(final CharSequence text) {
+        if (loggerWorking && logActive) {
+            logger.info(text);
+        }
     }
 
     @EventTopicSubscriber(topic = CFG_TEXTLOG)
     public void onConfigChangedEvent(@Nonnull final String topic, @Nonnull final ConfigChangedEvent data) {
         if (topic.equals(CFG_TEXTLOG)) {
             logActive = data.getConfig().getBoolean(topic);
-        }
-    }
-
-    @EventSubscriber
-    public void onCharTalkingEvent(@Nonnull final CharTalkingEvent event) {
-        if (loggerWorking && logActive) {
-            logger.info(event.getLoggedText());
         }
     }
 }

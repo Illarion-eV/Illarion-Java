@@ -27,6 +27,7 @@ import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.net.server.events.CloseContainerEvent;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
+import illarion.client.util.ChatLog;
 import illarion.client.util.Lang;
 import illarion.client.world.characters.CharacterAttribute;
 import illarion.client.world.events.CloseDialogEvent;
@@ -65,6 +66,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @ThreadSafe
 public final class Player {
     /**
+     * Maximal value for the volume of the sound.
+     */
+    public static final float MAX_CLIENT_VOL = 100.f;
+    /**
      * The key in the configuration for the sound on/off flag.
      */
     @Nonnull
@@ -77,11 +82,6 @@ public final class Player {
     private static final String CFG_SOUND_VOL = "soundVolume"; //$NON-NLS-1$
 
     /**
-     * Maximal value for the volume of the sound.
-     */
-    public static final float MAX_CLIENT_VOL = 100.f;
-
-    /**
      * Average value for the perception attribute.
      */
     private static final int PERCEPTION_AVERAGE = 8;
@@ -90,6 +90,11 @@ public final class Player {
      * Share of one perception point on the coverage of a tile.
      */
     private static final int PERCEPTION_COVER_SHARE = 4;
+
+    /**
+     * The instance of the logger used by this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Player.class);
 
     /**
      * The graphical representation of the character.
@@ -158,6 +163,12 @@ public final class Player {
     private MerchantList merchantDialog;
 
     /**
+     * The chat log instance that takes care for logging the text that is spoken in the game.
+     */
+    @Nonnull
+    private final ChatLog chatLog;
+
+    /**
      * Constructor for the player that receives the character name from the login data automatically.
      */
     public Player() {
@@ -171,8 +182,8 @@ public final class Player {
      */
     @SuppressWarnings("nls")
     public Player(@Nonnull final String charName) {
-
         path = new File(DirectoryManager.getInstance().getUserDirectory(), charName);
+        chatLog = new ChatLog(path);
 
         character = new Char();
         validLocation = false;
@@ -195,18 +206,64 @@ public final class Player {
     }
 
     /**
-     * The instance of the logger used by this class.
+     * Update the sound listener of this player.
      */
-    private static final Logger LOGGER = Logger.getLogger(Player.class);
+    private static void updateListener() {
+        if (IllaClient.getCfg().getBoolean(CFG_SOUND_ON)) {
+            final float effVol = IllaClient.getCfg().getFloat(CFG_SOUND_VOL) / MAX_CLIENT_VOL;
+            SoundStore.get().setSoundsOn(true);
+            SoundStore.get().setSoundVolume(effVol);
+        } else {
+            SoundStore.get().setSoundsOn(false);
+        }
+    }
+
+    @EventSubscriber
+    public void onContainerClosedEvent(@Nonnull final CloseContainerEvent event) {
+        removeContainer(event.getContainerId());
+    }
 
     /**
-     * Get the instance of the combat handler.
+     * Remove a container that is assigned to a specified key.
      *
-     * @return the combat handler of this player
+     * @param id the key of the parameter to remove
      */
-    @Nonnull
-    public CombatHandler getCombatHandler() {
-        return combatHandler;
+    public void removeContainer(final int id) {
+        synchronized (containers) {
+            if (containers.containsKey(id)) {
+                containers.remove(id);
+            }
+        }
+    }
+
+    @EventSubscriber
+    public void onDialogClosedEvent(@Nonnull final CloseDialogEvent event) {
+        if (merchantDialog == null) {
+            return;
+        }
+
+        if (event.isClosingDialogType(CloseDialogEvent.DialogType.Merchant)) {
+            if (event.getDialogId() == merchantDialog.getId()) {
+                final MerchantList oldList = merchantDialog;
+                merchantDialog = null;
+                oldList.closeDialog();
+            }
+        }
+    }
+
+    @EventSubscriber
+    public void onMerchantDialogOpenedEvent(@Nonnull final DialogMerchantReceivedEvent event) {
+        final MerchantList list = new MerchantList(event.getId(), event.getItemCount());
+        for (int i = 0; i < event.getItemCount(); i++) {
+            list.setItem(i, event.getItem(i));
+        }
+
+        final MerchantList oldList = merchantDialog;
+        merchantDialog = list;
+
+        if (oldList != null) {
+            EventBus.publish(new CloseDialogEvent(oldList.getId(), CloseDialogEvent.DialogType.Merchant));
+        }
     }
 
     @EventSubscriber
@@ -246,47 +303,19 @@ public final class Player {
         }
     }
 
-    @EventSubscriber
-    public void onMerchantDialogOpenedEvent(@Nonnull final DialogMerchantReceivedEvent event) {
-        final MerchantList list = new MerchantList(event.getId(), event.getItemCount());
-        for (int i = 0; i < event.getItemCount(); i++) {
-            list.setItem(i, event.getItem(i));
-        }
-
-        final MerchantList oldList = merchantDialog;
-        merchantDialog = list;
-
-        if (oldList != null) {
-            EventBus.publish(new CloseDialogEvent(oldList.getId(), CloseDialogEvent.DialogType.Merchant));
-        }
-    }
-
-    @EventSubscriber
-    public void onContainerClosedEvent(@Nonnull final CloseContainerEvent event) {
-        removeContainer(event.getContainerId());
-    }
-
-    @EventSubscriber
-    public void onDialogClosedEvent(@Nonnull final CloseDialogEvent event) {
-        if (merchantDialog == null) {
-            return;
-        }
-
-        if (event.isClosingDialogType(CloseDialogEvent.DialogType.Merchant)) {
-            if (event.getDialogId() == merchantDialog.getId()) {
-                final MerchantList oldList = merchantDialog;
-                merchantDialog = null;
-                oldList.closeDialog();
-            }
-        }
-    }
-
     /**
-     * The monitor function that is notified in case the configuration changes and triggers the required updates.
+     * Check if there is currently a container with the specified ID open.
+     *
+     * @param id the ID of the container
+     * @return {@code true} in case this container exists
      */
-    @EventTopicPatternSubscriber(topicPattern = "sound((On)|(Volume))")
-    public void onConfigChangedEvent(@Nonnull final String topic, @Nonnull final ConfigChangedEvent event) {
-        updateListener();
+    public boolean hasContainer(final int id) {
+        containerLock.readLock().lock();
+        try {
+            return containers.containsKey(id);
+        } finally {
+            containerLock.readLock().unlock();
+        }
     }
 
     /**
@@ -329,80 +358,11 @@ public final class Player {
     }
 
     /**
-     * Check if there is currently a container with the specified ID open.
-     *
-     * @param id the ID of the container
-     * @return {@code true} in case this container exists
+     * The monitor function that is notified in case the configuration changes and triggers the required updates.
      */
-    public boolean hasContainer(final int id) {
-        containerLock.readLock().lock();
-        try {
-            return containers.containsKey(id);
-        } finally {
-            containerLock.readLock().unlock();
-        }
-    }
-
-    /**
-     * Get the merchant list.
-     *
-     * @return the merchant list
-     */
-    @Nullable
-    public MerchantList getMerchantList() {
-        return merchantDialog;
-    }
-
-    /**
-     * Check if there is currently a merchant list active.
-     *
-     * @return {@code true} in case a merchant list is active
-     */
-    public boolean hasMerchantList() {
-        return merchantDialog != null;
-    }
-
-    /**
-     * Remove a container that is assigned to a specified key.
-     *
-     * @param id the key of the parameter to remove
-     */
-    public void removeContainer(final int id) {
-        synchronized (containers) {
-            if (containers.containsKey(id)) {
-                containers.remove(id);
-            }
-        }
-    }
-
-    /**
-     * Check how good the player character is able to see the target character.
-     *
-     * @param chara The character that is checked
-     * @return the visibility of the character in percent
-     */
-    public int canSee(@Nonnull final Char chara) {
-        if (isPlayer(chara.getCharId())) {
-            return Char.VISIBILITY_MAX;
-        }
-
-        int visibility = Char.VISIBILITY_MAX;
-        final Avatar avatar = chara.getAvatar();
-        if (avatar != null) {
-            visibility = avatar.getTemplate().getAvatarInfo().getVisibility();
-        }
-        visibility += chara.getVisibilityBonus();
-
-        return getVisibility(chara.getLocation(), visibility);
-    }
-
-    /**
-     * Get the map level the player character is currently standing on.
-     *
-     * @return The level the player character is currently standing on
-     */
-    public int getBaseLevel() {
-        return playerLocation.getScZ();
+    @EventTopicPatternSubscriber(topicPattern = "sound((On)|(Volume))")
+    public void onConfigChangedEvent(@Nonnull final String topic, @Nonnull final ConfigChangedEvent event) {
+        updateListener();
     }
 
     /**
@@ -413,6 +373,26 @@ public final class Player {
     @Nonnull
     public Char getCharacter() {
         return character;
+    }
+
+    /**
+     * Get the chat log that is active for this player.
+     *
+     * @return the chat log of this player
+     */
+    @Nonnull
+    public ChatLog getChatLog() {
+        return chatLog;
+    }
+
+    /**
+     * Get the instance of the combat handler.
+     *
+     * @return the combat handler of this player
+     */
+    @Nonnull
+    public CombatHandler getCombatHandler() {
+        return combatHandler;
     }
 
     /**
@@ -456,6 +436,16 @@ public final class Player {
     }
 
     /**
+     * Get the merchant list.
+     *
+     * @return the merchant list
+     */
+    @Nullable
+    public MerchantList getMerchantList() {
+        return merchantDialog;
+    }
+
+    /**
      * Get the current ID of the players character.
      *
      * @return The ID of the player character
@@ -463,6 +453,47 @@ public final class Player {
     @Nullable
     public CharacterId getPlayerId() {
         return playerId;
+    }
+
+    /**
+     * Check if a location is at the same level as the player.
+     *
+     * @param checkLoc The location that shall be checked
+     * @return true if the location is at the same level as the player
+     */
+    boolean isBaseLevel(@Nonnull final Location checkLoc) {
+        return getLocation().getScZ() == checkLoc.getScZ();
+    }
+
+    /**
+     * Check how good the player character is able to see the target character.
+     *
+     * @param chara The character that is checked
+     * @return the visibility of the character in percent
+     */
+    public int canSee(@Nonnull final Char chara) {
+        if (isPlayer(chara.getCharId())) {
+            return Char.VISIBILITY_MAX;
+        }
+
+        int visibility = Char.VISIBILITY_MAX;
+        final Avatar avatar = chara.getAvatar();
+        if (avatar != null) {
+            visibility = avatar.getTemplate().getAvatarInfo().getVisibility();
+        }
+        visibility += chara.getVisibilityBonus();
+
+        return getVisibility(chara.getLocation(), visibility);
+    }
+
+    /**
+     * Check if a ID is the ID of the player.
+     *
+     * @param checkId the ID to be checked
+     * @return true if it is the player, false if not
+     */
+    public boolean isPlayer(@Nullable final CharacterId checkId) {
+        return (playerId != null) && playerId.equals(checkId);
     }
 
     /**
@@ -510,18 +541,26 @@ public final class Player {
         return 0;
     }
 
-    public boolean hasValidLocation() {
-        return validLocation;
+    /**
+     * Get the map level the player character is currently standing on.
+     *
+     * @return The level the player character is currently standing on
+     */
+    public int getBaseLevel() {
+        return playerLocation.getScZ();
     }
 
     /**
-     * Check if a location is at the same level as the player.
+     * Check if there is currently a merchant list active.
      *
-     * @param checkLoc The location that shall be checked
-     * @return true if the location is at the same level as the player
+     * @return {@code true} in case a merchant list is active
      */
-    boolean isBaseLevel(@Nonnull final Location checkLoc) {
-        return getLocation().getScZ() == checkLoc.getScZ();
+    public boolean hasMerchantList() {
+        return merchantDialog != null;
+    }
+
+    public boolean hasValidLocation() {
+        return validLocation;
     }
 
     /**
@@ -537,16 +576,6 @@ public final class Player {
         final int limit = (Math.max(width, height) + tolerance) - 2;
 
         return (Math.abs(playerLocation.getScX() - testLoc.getScX()) + Math.abs(playerLocation.getScY() - testLoc.getScY())) < limit;
-    }
-
-    /**
-     * Check if a ID is the ID of the player.
-     *
-     * @param checkId the ID to be checked
-     * @return true if it is the player, false if not
-     */
-    public boolean isPlayer(@Nullable final CharacterId checkId) {
-        return (playerId != null) && playerId.equals(checkId);
     }
 
     /**
@@ -579,6 +608,21 @@ public final class Player {
     }
 
     /**
+     * Update the location that is bound to this player. This does not have any side effects but the location of the
+     * player and the sound listener changed.
+     *
+     * @param newLoc the new location of the player
+     */
+    public void updateLocation(@Nonnull final Location newLoc) {
+        if (playerLocation.equals(newLoc)) {
+            return;
+        }
+
+        playerLocation.set(newLoc);
+        World.getMusicBox().updatePlayerLocation();
+    }
+
+    /**
      * Set the ID of the players character. This also causes a introducing of the player character to the rest of the
      * client, so the Chat box for example is able to show the name of the character without additional affords.
      *
@@ -597,33 +641,5 @@ public final class Player {
     public void shutdown() {
         character.markAsRemoved();
         movementHandler.shutdown();
-    }
-
-    /**
-     * Update the sound listener of this player.
-     */
-    private static void updateListener() {
-        if (IllaClient.getCfg().getBoolean(CFG_SOUND_ON)) {
-            final float effVol = IllaClient.getCfg().getFloat(CFG_SOUND_VOL) / MAX_CLIENT_VOL;
-            SoundStore.get().setSoundsOn(true);
-            SoundStore.get().setSoundVolume(effVol);
-        } else {
-            SoundStore.get().setSoundsOn(false);
-        }
-    }
-
-    /**
-     * Update the location that is bound to this player. This does not have any side effects but the location of the
-     * player and the sound listener changed.
-     *
-     * @param newLoc the new location of the player
-     */
-    public void updateLocation(@Nonnull final Location newLoc) {
-        if (playerLocation.equals(newLoc)) {
-            return;
-        }
-
-        playerLocation.set(newLoc);
-        World.getMusicBox().updatePlayerLocation();
     }
 }

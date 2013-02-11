@@ -284,8 +284,6 @@ public final class Login {
             return false;
         }
 
-        IllaClient.initChatLog();
-
         World.getNet().sendCommand(new LoginCmd(loginCharacter, password,
                 IllaClient.DEFAULT_SERVER.getClientVersion()));
         return true;

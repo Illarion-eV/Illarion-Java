@@ -30,22 +30,6 @@ import javax.annotation.Nonnull;
  */
 public interface GameGui {
     /**
-     * Get the main screen controller of the GUI.
-     *
-     * @return the GUI screen controller
-     */
-    @Nonnull
-    ScreenController getScreenController();
-
-    /**
-     * Update the GUI. This should be called once during the update cycle.
-     *
-     * @param container the container of the game
-     * @param delta     the time since the last update in milliseconds
-     */
-    void onUpdateGame(GameContainer container, int delta);
-
-    /**
      * Get the book GUI control.
      *
      * @return the controller of the book display
@@ -54,12 +38,12 @@ public interface GameGui {
     BookGui getBookGui();
 
     /**
-     * Get the GUI controller that is used to display message dialogs.
+     * Get the GUI that controls the display of the chat window and the display of the chat on the screen.
      *
-     * @return the message dialog GUI control
+     * @return the chat GUI controller
      */
     @Nonnull
-    DialogMessageGui getDialogMessageGui();
+    ChatGui getChatGui();
 
     /**
      * Get the GUI controller that is used to display the input dialoges.
@@ -70,10 +54,49 @@ public interface GameGui {
     DialogInputGui getDialogInputGui();
 
     /**
+     * Get the GUI controller that is used to display message dialogs.
+     *
+     * @return the message dialog GUI control
+     */
+    @Nonnull
+    DialogMessageGui getDialogMessageGui();
+
+    /**
+     * Get the GUI that controls the display of the inform messages.
+     *
+     * @return the inform GUI controller
+     */
+    @Nonnull
+    InformGui getInformGui();
+
+    /**
+     * Get the main screen controller of the GUI.
+     *
+     * @return the GUI screen controller
+     */
+    @Nonnull
+    ScreenController getScreenController();
+
+    /**
      * Get the GUI that controls the skill display in the GUI.
      *
      * @return the skill GUI controller
      */
     @Nonnull
     SkillGui getSkillGui();
+
+    /**
+     * Check if the GUI is ready to work.
+     *
+     * @return {@code true} in case the GUI is ready
+     */
+    boolean isReady();
+
+    /**
+     * Update the GUI. This should be called once during the update cycle.
+     *
+     * @param container the container of the game
+     * @param delta     the time since the last update in milliseconds
+     */
+    void onUpdateGame(GameContainer container, int delta);
 }

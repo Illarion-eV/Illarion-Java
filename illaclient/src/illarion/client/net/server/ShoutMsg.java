@@ -67,7 +67,7 @@ public final class ShoutMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.shout);
+        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.Shout);
         return true;
     }
 

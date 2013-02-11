@@ -67,7 +67,7 @@ public final class SayMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.normal);
+        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.Normal);
         return true;
     }
 

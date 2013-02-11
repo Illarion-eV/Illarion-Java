@@ -18,13 +18,11 @@
  */
 package illarion.client.util;
 
+import illarion.client.gui.ChatGui;
 import illarion.client.world.Char;
 import illarion.client.world.World;
-import illarion.client.world.events.CharTalkingEvent;
 import illarion.common.types.Location;
-import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
 import org.newdawn.slick.Color;
 
 import javax.annotation.Nonnull;
@@ -49,30 +47,30 @@ public final class ChatHandler {
          * Speech mode for emotes.
          */
         @SuppressWarnings("nls")
-        emote(Color.yellow, "^\\s*[/#]me(.*)\\s*$", "$1"),
+        Emote(Color.yellow, "^\\s*[/#]me(.*)\\s*$", "$1"),
 
         /**
          * Speech mode for normal spoken text.
          */
-        normal(Color.white, null, null),
+        Normal(Color.white, null, null),
 
         /**
          * Speech mode for OOC messages.
          */
         @SuppressWarnings("nls")
-        ooc(Color.gray, "^\\s*[/#]o(oc)?\\s*(.*)\\s*$", "$2"),
+        Ooc(Color.gray, "^\\s*[/#]o(oc)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for shouted text.
          */
         @SuppressWarnings("nls")
-        shout(Color.red, "^\\s*[/#]s(hout)?\\s*(.*)\\s*$", "$2"),
+        Shout(Color.red, "^\\s*[/#]s(hout)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for whispered text.
          */
         @SuppressWarnings("nls")
-        whisper(Color.gray, "^\\s*[/#]w(hisper)?\\s*(.*)\\s*$", "$2");
+        Whisper(Color.gray, "^\\s*[/#]w(hisper)?\\s*(.*)\\s*$", "$2");
 
         /**
          * The color of this speech mode.
@@ -123,7 +121,7 @@ public final class ChatHandler {
          * Get the regular expression pattern to find out if this speech type is
          * the one used in the text.
          *
-         * @return the pattern with the regular expression or <code>null</code>
+         * @return the pattern with the regular expression or {@code null}
          *         in case none applies
          */
         @Nullable
@@ -157,83 +155,107 @@ public final class ChatHandler {
     public void handleMessage(@Nonnull final String text, @Nonnull final Location location, @Nonnull final SpeechMode receivedMode) {
         final Char talkingChar = World.getPeople().getCharacterAt(location);
 
-        ChatHandler.SpeechMode mode;
-        String resultText;
+        final ChatHandler.SpeechMode mode;
+        final String resultText;
 
         switch (receivedMode) {
-            case whisper:
+            case Whisper:
                 @SuppressWarnings("ConstantConditions")
-                final Matcher oocMatcher = SpeechMode.ooc.getRegexp().matcher(text);
+                final Matcher oocMatcher = SpeechMode.Ooc.getRegexp().matcher(text);
                 if (oocMatcher.find()) {
-                    mode = SpeechMode.ooc;
-                    resultText = oocMatcher.replaceAll(SpeechMode.ooc.getReplacement()).trim();
+                    mode = SpeechMode.Ooc;
+                    resultText = oocMatcher.replaceAll(SpeechMode.Ooc.getReplacement()).trim();
                 } else {
-                    mode = SpeechMode.whisper;
+                    mode = SpeechMode.Whisper;
                     resultText = text.trim();
                 }
                 break;
-            case shout:
-                mode = SpeechMode.shout;
+            case Shout:
+                mode = SpeechMode.Shout;
                 resultText = text.trim();
                 break;
             default:
                 @SuppressWarnings("ConstantConditions")
-                final Matcher emoteMatcher = SpeechMode.emote.getRegexp().matcher(text);
+                final Matcher emoteMatcher = SpeechMode.Emote.getRegexp().matcher(text);
                 if (emoteMatcher.find()) {
-                    mode = SpeechMode.emote;
-                    resultText = emoteMatcher.replaceAll(SpeechMode.emote.getReplacement());
+                    mode = SpeechMode.Emote;
+                    resultText = emoteMatcher.replaceAll(SpeechMode.Emote.getReplacement());
                 } else {
-                    mode = SpeechMode.normal;
+                    mode = SpeechMode.Normal;
                     resultText = text.trim();
                 }
         }
 
-        final TextBuilder textBuilder = TextBuilder.newInstance();
-        try {
-            if (mode == ChatHandler.SpeechMode.emote) {
-                // we need some kind of name
-                if (talkingChar == null) {
-                    textBuilder.append(Lang.getMsg("chat.someone"));
-                } else {
-                    textBuilder.append(talkingChar.getName());
-                }
+        final StringBuilder textBuilder = new StringBuilder();
 
-                textBuilder.append(resultText);
+        if (mode == ChatHandler.SpeechMode.Emote) {
+            // we need some kind of name
+            if (talkingChar == null) {
+                textBuilder.append(Lang.getMsg("chat.someone"));
             } else {
-                if (talkingChar == null) {
-                    textBuilder.append(Lang.getMsg("chat.distantShout"));
-                } else {
-                    textBuilder.append(talkingChar.getName());
+                textBuilder.append(talkingChar.getName());
+            }
 
-                    switch (mode) {
-                        case shout:
-                            textBuilder.append(' ').append(Lang.getMsg("log.shout"));
-                            break;
-                        case whisper:
-                            textBuilder.append(' ').append(Lang.getMsg("log.whisper"));
-                            break;
-                        case normal:
-                        case ooc:
-                            textBuilder.append(' ').append(Lang.getMsg("log.say"));
-                            break;
-                        case emote:
-                            break;
-                    }
-                }
+            textBuilder.append(resultText);
 
-                textBuilder.append(':').append(' ');
-                if (mode == SpeechMode.ooc) {
-                    textBuilder.append("((");
-                }
-                textBuilder.append(resultText);
-                if (mode == SpeechMode.ooc) {
-                    textBuilder.append("))");
+            final String emoteText = textBuilder.toString();
+            World.getPlayer().getChatLog().logText(emoteText);
+            World.getGameGui().getChatGui().addChatMessage(emoteText, ChatGui.COLOR_EMOTE);
+            World.getGameGui().getChatGui().showChatBubble(talkingChar, emoteText, ChatGui.COLOR_EMOTE);
+        } else {
+            if (talkingChar == null) {
+                textBuilder.append(Lang.getMsg("chat.distantShout"));
+            } else {
+                textBuilder.append(talkingChar.getName());
+
+                switch (mode) {
+                    case Shout:
+                        textBuilder.append(' ').append(Lang.getMsg("log.shout"));
+                        break;
+                    case Whisper:
+                        textBuilder.append(' ').append(Lang.getMsg("log.whisper"));
+                        break;
+                    case Normal:
+                    case Ooc:
+                        textBuilder.append(' ').append(Lang.getMsg("log.say"));
+                        break;
+                    case Emote:
+                        break;
                 }
             }
 
-            EventBus.publish(new CharTalkingEvent(mode, talkingChar, location, resultText, textBuilder.toString()));
-        } finally {
-            TextBuilder.recycle(textBuilder);
+            textBuilder.append(':').append(' ');
+
+            final String bubbleText;
+            if (mode == SpeechMode.Ooc) {
+                bubbleText = "((" + resultText + "))";
+            } else {
+                bubbleText = resultText;
+            }
+            textBuilder.append(bubbleText);
+
+            final de.lessvoid.nifty.tools.Color color;
+            switch (mode) {
+                case Shout:
+                    color = ChatGui.COLOR_SHOUT;
+                    break;
+                case Whisper:
+                    color = ChatGui.COLOR_WHISPER;
+                    break;
+                case Normal:
+                    color = ChatGui.COLOR_DEFAULT;
+                    break;
+                case Ooc:
+                    color = ChatGui.COLOR_WHISPER;
+                    break;
+                default:
+                    color = ChatGui.COLOR_DEFAULT;
+            }
+
+            final String talkText = textBuilder.toString();
+            World.getPlayer().getChatLog().logText(talkText);
+            World.getGameGui().getChatGui().addChatMessage(talkText, color);
+            World.getGameGui().getChatGui().showChatBubble(talkingChar, bubbleText, color);
         }
     }
 }

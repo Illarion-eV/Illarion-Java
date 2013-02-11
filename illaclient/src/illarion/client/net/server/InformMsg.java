@@ -18,18 +18,18 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.gui.ChatGui;
+import illarion.client.gui.GameGui;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.BroadcastInformReceivedEvent;
-import illarion.client.net.server.events.ScriptInformReceivedEvent;
-import illarion.client.net.server.events.ServerInformReceivedEvent;
-import illarion.client.net.server.events.TextToInformReceivedEvent;
+import illarion.client.util.Lang;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -42,6 +42,7 @@ public final class InformMsg extends AbstractReply {
     /**
      * The logger that is used for the log output of this class.
      */
+    @Nonnull
     private static final Logger LOGGER = Logger.getLogger(InformMsg.class);
 
     /**
@@ -52,7 +53,21 @@ public final class InformMsg extends AbstractReply {
     /**
      * The text of the inform.
      */
+    @Nullable
     private String informText;
+
+    @Nonnull
+    @Override
+    public String toString() {
+        final TextBuilder builder = TextBuilder.newInstance();
+        try {
+            builder.append("Type: ").append(informType);
+            builder.append(" Text: ").append(informText);
+            return toString(builder.toString());
+        } finally {
+            TextBuilder.recycle(builder);
+        }
+    }
 
     @Override
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
@@ -62,20 +77,37 @@ public final class InformMsg extends AbstractReply {
 
     @Override
     public boolean executeUpdate() {
+        if (informText == null) {
+            throw new IllegalStateException("Executing a inform message while the inform text is not set.");
+        }
+
+        final GameGui gui = World.getGameGui();
         switch (informType) {
             case 0:
-                EventBus.publish(new ServerInformReceivedEvent(informText));
+                gui.getInformGui().showServerInform(informText);
+                gui.getChatGui().addChatMessage(Lang.getMsg("chat.broadcast") + ": " + informText,
+                        ChatGui.COLOR_DEFAULT);
                 break;
             case 1:
-                EventBus.publish(new BroadcastInformReceivedEvent(informText));
+                gui.getInformGui().showBroadcastInform(informText);
                 break;
             case 2:
-                EventBus.publish(new TextToInformReceivedEvent(informText));
+                gui.getInformGui().showTextToInform(informText);
+                gui.getChatGui().addChatMessage(Lang.getMsg("chat.textto") + ": " + informText,
+                        ChatGui.COLOR_DEFAULT);
                 break;
             case 100:
+                gui.getInformGui().showScriptInform(0, informText);
+                break;
             case 101:
+                gui.getInformGui().showScriptInform(1, informText);
+                gui.getChatGui().addChatMessage(Lang.getMsg("chat.scriptInform") + ": " + informText,
+                        ChatGui.COLOR_DEFAULT);
+                break;
             case 102:
-                EventBus.publish(new ScriptInformReceivedEvent(informType - 100, informText));
+                gui.getInformGui().showScriptInform(2, informText);
+                gui.getChatGui().addChatMessage(Lang.getMsg("chat.scriptInform") + ": " + informText,
+                        ChatGui.COLOR_SHOUT);
                 break;
 
             default:
@@ -92,18 +124,5 @@ public final class InformMsg extends AbstractReply {
                 }
         }
         return true;
-    }
-
-    @Nonnull
-    @Override
-    public String toString() {
-        final TextBuilder builder = TextBuilder.newInstance();
-        try {
-            builder.append("Type: ").append(informType);
-            builder.append(" Text: ").append(informText);
-            return toString(builder.toString());
-        } finally {
-            TextBuilder.recycle(builder);
-        }
     }
 }

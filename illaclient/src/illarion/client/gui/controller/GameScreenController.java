@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public final class GameScreenController implements GameGui, ScreenController {
-
     @Nonnull
     private final Collection<ScreenController> childControllers;
     @Nonnull
@@ -40,6 +39,10 @@ public final class GameScreenController implements GameGui, ScreenController {
     private final BookHandler bookHandler;
     private final DialogHandler dialogHandler;
     private final SkillsHandler skillsHandler;
+    private final InformHandler informHandler;
+    private final GUIChatHandler chatHandler;
+
+    private boolean ready;
 
     public GameScreenController(final Input input) {
         final NumberSelectPopupHandler numberPopupHandler = new NumberSelectPopupHandler();
@@ -48,13 +51,15 @@ public final class GameScreenController implements GameGui, ScreenController {
         childControllers = new ArrayList<ScreenController>();
         childUpdateControllers = new ArrayList<UpdatableHandler>();
 
+        chatHandler = new GUIChatHandler();
         bookHandler = new BookHandler();
         dialogHandler = new DialogHandler(numberPopupHandler, tooltipHandler);
         skillsHandler = new SkillsHandler();
+        informHandler = new InformHandler();
 
         addHandler(numberPopupHandler);
         addHandler(tooltipHandler);
-        addHandler(new GUIChatHandler());
+        addHandler(chatHandler);
         addHandler(bookHandler);
         addHandler(new GUIInventoryHandler(input, numberPopupHandler, tooltipHandler));
         addHandler(dialogHandler);
@@ -66,7 +71,7 @@ public final class GameScreenController implements GameGui, ScreenController {
         addHandler(new GameMapHandler(numberPopupHandler, tooltipHandler));
         addHandler(new GameMiniMapHandler());
 
-        addHandler(new InformHandler());
+        addHandler(informHandler);
     }
 
     private void addHandler(final ScreenController handler) {
@@ -76,11 +81,57 @@ public final class GameScreenController implements GameGui, ScreenController {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @Nonnull
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public BookGui getBookGui() {
+        return bookHandler;
+    }
+
+    @Nonnull
+    @Override
+    public DialogInputGui getDialogInputGui() {
+        return dialogHandler;
+    }
+
+    @Nonnull
+    @Override
+    public DialogMessageGui getDialogMessageGui() {
+        return dialogHandler;
+    }
+
+    @Nonnull
+    @Override
+    public InformGui getInformGui() {
+        return informHandler;
+    }
+
+    @Nonnull
+    @Override
+    public ScreenController getScreenController() {
+        return this;
+    }
+
+    @Nonnull
+    @Override
+    public SkillGui getSkillGui() {
+        return skillsHandler;
+    }
+
+    @Override
+    public boolean isReady() {
+        return ready;
+    }
+
+    @Nonnull
+    @Override
+    public ChatGui getChatGui() {
+        return chatHandler;
+    }
+
+    @Override
+    public void onEndScreen() {
         for (final ScreenController childController : childControllers) {
-            childController.bind(nifty, screen);
+            childController.onEndScreen();
         }
     }
 
@@ -105,40 +156,12 @@ public final class GameScreenController implements GameGui, ScreenController {
         }
     }
 
-    @Nonnull
+    @SuppressWarnings("unchecked")
     @Override
-    public BookGui getBookGui() {
-        return bookHandler;
-    }
-
-    @Nonnull
-    @Override
-    public DialogMessageGui getDialogMessageGui() {
-        return dialogHandler;
-    }
-
-    @Nonnull
-    @Override
-    public DialogInputGui getDialogInputGui() {
-        return dialogHandler;
-    }
-
-    @Nonnull
-    @Override
-    public SkillGui getSkillGui() {
-        return skillsHandler;
-    }
-
-    @Override
-    public void onEndScreen() {
+    public void bind(final Nifty nifty, final Screen screen) {
         for (final ScreenController childController : childControllers) {
-            childController.onEndScreen();
+            childController.bind(nifty, screen);
         }
-    }
-
-    @Nonnull
-    @Override
-    public ScreenController getScreenController() {
-        return this;
+        ready = true;
     }
 }

@@ -72,7 +72,7 @@ public final class LookAtTileMsg
         //            .showText(text, null, loc, ChatHandler.SpeechMode.normal);
 
         // for testing lookat only
-        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.normal);
+        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.Normal);
 
         return true;
     }

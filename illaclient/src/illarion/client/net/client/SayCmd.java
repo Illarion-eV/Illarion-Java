@@ -54,16 +54,16 @@ public final class SayCmd extends AbstractCommand {
      *
      * @param mode the speech mode
      * @return the command id
-     * @throws IllegalArgumentException in case {@code mode} is not {@link ChatHandler.SpeechMode#normal} or
-     *                                  {@link ChatHandler.SpeechMode#shout} or {@link ChatHandler.SpeechMode#whisper}
+     * @throws IllegalArgumentException in case {@code mode} is not {@link ChatHandler.SpeechMode#Normal} or
+     *                                  {@link ChatHandler.SpeechMode#Shout} or {@link ChatHandler.SpeechMode#Whisper}
      */
     private static int getCommandId(@Nonnull final ChatHandler.SpeechMode mode) {
         switch (mode) {
-            case normal:
+            case Normal:
                 return CommandList.CMD_SAY;
-            case shout:
+            case Shout:
                 return CommandList.CMD_SHOUT;
-            case whisper:
+            case Whisper:
                 return CommandList.CMD_WHISPER;
             default:
                 throw new IllegalArgumentException("Illegal speech mode supplied.");

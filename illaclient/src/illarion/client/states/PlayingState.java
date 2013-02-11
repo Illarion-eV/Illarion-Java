@@ -77,7 +77,9 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     protected void updateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta)
             throws SlickException {
         MapDimensions.getInstance().reportScreenSize(container.getWidth(), container.getHeight());
-        World.getUpdateTaskManager().onUpdateGame(container, game, delta);
+        if (World.getGameGui().isReady()) {
+            World.getUpdateTaskManager().onUpdateGame(container, game, delta);
+        }
         World.getGameGui().onUpdateGame(container, delta);
         World.getWeather().update(delta);
         World.getMapDisplay().update(container, delta);
