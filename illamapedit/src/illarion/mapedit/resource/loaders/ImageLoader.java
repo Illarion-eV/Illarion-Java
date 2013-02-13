@@ -65,6 +65,7 @@ public class ImageLoader implements Resource {
             "redo.png",
             "close.png",
             "help.png",
+            "player_play.png",
     };
 
     private ImageLoader() {
