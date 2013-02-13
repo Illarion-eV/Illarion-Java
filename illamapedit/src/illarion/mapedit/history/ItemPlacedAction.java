@@ -31,6 +31,14 @@ public class ItemPlacedAction extends HistoryAction {
     private final MapItem old;
     private final MapItem newt;
 
+    public ItemPlacedAction(final int x, final int y, final MapItem newt, final Map map) {
+        super(map);
+        this.x = x;
+        this.y = y;
+        this.old = null;
+        this.newt = newt;
+    }
+
     public ItemPlacedAction(final int x, final int y, final MapItem old, final MapItem newt, final Map map) {
         super(map);
         this.x = x;

@@ -22,72 +22,47 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.gui.util.ToolMenuButton;
 import illarion.mapedit.tools.*;
 import javolution.util.FastList;
-import org.pushingpixels.flamingo.api.common.JCommandButton;
-import org.pushingpixels.flamingo.api.common.popup.JCommandPopupMenu;
-import org.pushingpixels.flamingo.api.common.popup.JPopupPanel;
-import org.pushingpixels.flamingo.api.common.popup.PopupPanelCallback;
+import org.pushingpixels.flamingo.api.common.CommandToggleButtonGroup;
+import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 
 /**
  * @author Tim
+ * @author Fredrik K
  */
 public class ToolBand extends JRibbonBand {
 
-
+    /**
+     * Default constructor for ToolBand
+     */
     public ToolBand() {
         super(Lang.getMsg("gui.toolband.Name"), null);
 
-        final JCommandButton toolButton = new JCommandButton(
-                Lang.getMsg("gui.toolband.Name"),
-                null
-        );
-        final JCommandPopupMenu menu = new JCommandPopupMenu();
-
-
         final Collection<AbstractTool> tools = new FastList<AbstractTool>();
+        final CommandToggleButtonGroup group = new CommandToggleButtonGroup();
 
-
-        //TOOLS HERE
-        tools.add(new SingleItemTool());
-        tools.add(new SingleTileTool());
         tools.add(new TileBrushTool());
-        tools.add(new ItemEraserTool());
-        tools.add(new TileEraserTool());
+        tools.add(new ItemBrushTool());
         tools.add(new MusicTool());
+        tools.add(new TileEraserTool());
+        tools.add(new ItemEraserTool());
         tools.add(new WarpTool());
 
-        for (final AbstractTool t : tools) {
-            menu.addMenuButton(new ToolMenuButton(
-                    t, t.getLocalizedName(), t.getToolIcon()
-            ));
+        for (final AbstractTool tool : tools) {
+            final JCommandToggleButton button =new ToolMenuButton(tool);
+            addCommandButton(button, RibbonElementPriority.MEDIUM);
+            group.add(button);
         }
-
-
-        toolButton.setCommandButtonKind(JCommandButton.CommandButtonKind.POPUP_ONLY);
-        toolButton.setPopupCallback(new PopupPanelCallback() {
-            @Nonnull
-            @Override
-            public JPopupPanel getPopupPanel(final JCommandButton commandButton) {
-                return menu;
-            }
-        });
-
-        addCommandButton(toolButton, RibbonElementPriority.TOP);
 
         final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
-        resize.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
-        resize.add(new CoreRibbonResizePolicies.High2Low(getControlPanel()));
 
         setResizePolicies(resize);
     }
-
-
 }

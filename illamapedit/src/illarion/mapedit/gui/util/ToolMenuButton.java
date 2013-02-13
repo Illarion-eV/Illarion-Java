@@ -21,8 +21,7 @@ package illarion.mapedit.gui.util;
 import illarion.mapedit.events.ToolSelectedEvent;
 import illarion.mapedit.tools.AbstractTool;
 import org.bushe.swing.event.EventBus;
-import org.pushingpixels.flamingo.api.common.JCommandMenuButton;
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,15 +29,14 @@ import java.awt.event.ActionListener;
 /**
  * @author Tim
  */
-public class ToolMenuButton extends JCommandMenuButton {
+public class ToolMenuButton extends JCommandToggleButton {
     /**
      * Creates a new command menu button.
      *
-     * @param title Command menu button title.
-     * @param icon  Command menu button icon.
+     * @param tool Command menu button for tool.
      */
-    public ToolMenuButton(final AbstractTool tool, final String title, ResizableIcon icon) {
-        super(title, icon);
+    public ToolMenuButton(final AbstractTool tool) {
+        super(tool.getLocalizedName(), tool.getToolIcon());
 
         addActionListener(new ActionListener() {
             @Override
