@@ -26,21 +26,6 @@ package illarion.client.net;
  */
 public final class CommandList {
     /**
-     * Client command that informs the server that a message dialog was closed.
-     */
-    public static final int CMD_CLOSE_DIALOG_MSG = 0x51;
-
-    /**
-     * Client command that allows interaction with a trading dialog.
-     */
-    public static final int CMD_TRADE_ITEM = 0x52;
-
-    /**
-     * Client command that allows interaction with a trading dialog.
-     */
-    public static final int CMD_CRAFT_ITEM = 0x54;
-
-    /**
      * Client command to start attacking another character.
      */
     public static final int CMD_ATTACK = 0xFA;
@@ -51,9 +36,28 @@ public final class CommandList {
     public static final int CMD_CAST = 0xFD;
 
     /**
+     * Client command that is used to answer a text request.
+     */
+    public static final int CMD_CLOSE_DIALOG_INPUT = 0x50;
+    /**
+     * Client command that informs the server that a message dialog was closed.
+     */
+    public static final int CMD_CLOSE_DIALOG_MSG = 0x51;
+
+    /**
+     * Client command that is used to answer a text request.
+     */
+    public static final int CMD_CLOSE_DIALOG_SELECTION = 0x53;
+
+    /**
      * Client command to close one of the showcases.
      */
     public static final int CMD_CLOSE_SHOWCASE = 0xE9;
+
+    /**
+     * Client command that allows interaction with a trading dialog.
+     */
+    public static final int CMD_CRAFT_ITEM = 0x54;
 
     /**
      * Client command to drag a item from a inventory slot to another inventory slot.
@@ -166,6 +170,11 @@ public final class CommandList {
     public static final int CMD_LOOKAT_CHAR = 0x18;
 
     /**
+     * Client command to look at a item in a showcase.
+     */
+    public static final int CMD_LOOKAT_CONTAINER = 0xE0;
+
+    /**
      * Client command to look at a item in the inventory.
      */
     public static final int CMD_LOOKAT_INV = 0xDF;
@@ -174,11 +183,6 @@ public final class CommandList {
      * Client command to look at a item in the menu.
      */
     public static final int CMD_LOOKAT_MENU = 0xDC;
-
-    /**
-     * Client command to look at a item in a showcase.
-     */
-    public static final int CMD_LOOKAT_CONTAINER = 0xE0;
 
     /**
      * Client command to look at a item on a tile.
@@ -231,6 +235,11 @@ public final class CommandList {
     public static final int CMD_STAND_DOWN = 0xDE;
 
     /**
+     * Client command that allows interaction with a trading dialog.
+     */
+    public static final int CMD_TRADE_ITEM = 0x52;
+
+    /**
      * Client command to turn the player character east.
      */
     public static final int CMD_TURN_E = 0x42; // NO_UCD
@@ -271,16 +280,6 @@ public final class CommandList {
     public static final int CMD_TURN_W = 0x46; // NO_UCD
 
     /**
-     * Client command that is used to answer a text request.
-     */
-    public static final int CMD_CLOSE_DIALOG_INPUT = 0x50;
-
-    /**
-     * Client command that is used to answer a text request.
-     */
-    public static final int CMD_CLOSE_DIALOG_SELECTION = 0x53;
-
-    /**
      * Client command to perform a use action of one or two items on different locations.
      */
     public static final int CMD_USE = 0xFE;
@@ -289,31 +288,6 @@ public final class CommandList {
      * Client command to send a whispered text.
      */
     public static final int CMD_WHISPER = 0xF3;
-
-    /**
-     * Server message that contains the data of a message dialog.
-     */
-    public static final int MSG_DIALOG_MSG = 0x51;
-
-    /**
-     * Server message that contains the data of a merchant dialog.
-     */
-    public static final int MSG_DIALOG_MERCHANT = 0x52;
-
-    /**
-     * Server message that contains the data of a selection dialog.
-     */
-    public static final int MSG_DIALOG_SELECTION = 0x53;
-
-    /**
-     * Server message that contains the data of a crafting dialog.
-     */
-    public static final int MSG_DIALOG_CRAFTING = 0x54;
-
-    /**
-     * Server message that contains the update of a crafting dialog.
-     */
-    public static final int MSG_DIALOG_CRAFTING_UPDATE = 0x55;
 
     /**
      * Server message that contains the appearance data of a character.
@@ -348,17 +322,47 @@ public final class CommandList {
     /**
      * Server message that closes a showcase in the client window.
      */
-    public static final int MSG_CLOSE_SHOWCASE = 0xC4;
+    public static final int MSG_CLOSE_DIALOG = 0x5F;
 
     /**
      * Server message that closes a showcase in the client window.
      */
-    public static final int MSG_CLOSE_DIALOG = 0x5F;
+    public static final int MSG_CLOSE_SHOWCASE = 0xC4;
 
     /**
      * Server message that contains the information about the current date and time.
      */
     public static final int MSG_DATETIME = 0xB6;
+
+    /**
+     * Server message that contains the data of a crafting dialog.
+     */
+    public static final int MSG_DIALOG_CRAFTING = 0x54;
+
+    /**
+     * Server message that contains the update of a crafting dialog.
+     */
+    public static final int MSG_DIALOG_CRAFTING_UPDATE = 0x55;
+
+    /**
+     * Server message to request a text from the player.
+     */
+    public static final int MSG_DIALOG_INPUT = 0x50;
+
+    /**
+     * Server message that contains the data of a merchant dialog.
+     */
+    public static final int MSG_DIALOG_MERCHANT = 0x52;
+
+    /**
+     * Server message that contains the data of a message dialog.
+     */
+    public static final int MSG_DIALOG_MSG = 0x51;
+
+    /**
+     * Server message that contains the data of a selection dialog.
+     */
+    public static final int MSG_DIALOG_SELECTION = 0x53;
 
     /**
      * Server message that current connection get canceled.
@@ -369,6 +373,11 @@ public final class CommandList {
      * Server message that contains the data of a graphical effect that shall be played instantly.
      */
     public static final int MSG_GRAPHIC_FX = 0xC9; // NO_UCD
+
+    /**
+     * Server message that contains a information text for the player.
+     */
+    public static final int MSG_INFORM = 0xD8;
 
     /**
      * Server message that contains the name another character introduced with.
@@ -391,9 +400,19 @@ public final class CommandList {
     public static final int MSG_LOOKAT_CHAR = 0x18;
 
     /**
+     * Client command to look at a dialog item.
+     */
+    public static final int MSG_LOOKAT_DIALOG_ITEM = 0xB5;
+
+    /**
      * Server message that contains the data of a lookat event on a inventory slot.
      */
     public static final int MSG_LOOKAT_INV = 0xBE;
+
+    /**
+     * Server message that contains the data of a lookat event on a map tile.
+     */
+    public static final int MSG_LOOKAT_MAPITEM = 0xC0;
 
     /**
      * Server message that contains the data of a lookat event on a showcase slot.
@@ -403,17 +422,7 @@ public final class CommandList {
     /**
      * Server message that contains the data of a lookat event on a map tile.
      */
-    public static final int MSG_LOOKAT_MAPITEM = 0xC0;
-
-    /**
-     * Server message that contains the data of a lookat event on a map tile.
-     */
     public static final int MSG_LOOKAT_TILE = 0xBC;
-
-    /**
-     * Client command to look at a dialog item.
-     */
-    public static final int MSG_LOOKAT_DIALOG_ITEM = 0xB5;
 
     /**
      * Server message that contains the magic flags of the player character.
@@ -452,6 +461,11 @@ public final class CommandList {
     public static final int MSG_PUT_ITEM = 0xC2;
 
     /**
+     * Server message that contains the information about a quest.
+     */
+    public static final int MSG_QUEST = 0x40;
+
+    /**
      * Server message to remove a character from the screen.
      */
     public static final int MSG_REMOVE_CHAR = 0xE2;
@@ -465,11 +479,6 @@ public final class CommandList {
      * Server message that contains a spoken text or a emote.
      */
     public static final int MSG_SAY = 0xD7;
-
-    /**
-     * Server message that contains a information text for the player.
-     */
-    public static final int MSG_INFORM = 0xD8;
 
     /**
      * Server message that contains a shouted text.
@@ -501,11 +510,6 @@ public final class CommandList {
      * Server message to turn the character into a specified direction.
      */
     public static final int MSG_TURN_CHAR = 0xE0;
-
-    /**
-     * Server message to request a text from the player.
-     */
-    public static final int MSG_DIALOG_INPUT = 0x50;
 
     /**
      * Server message that contains a full updated list of all items on a tile.

@@ -91,6 +91,7 @@ public final class ReplyFactory {
         register(MusicMsg.class);
         register(PlayerIdMsg.class);
         register(PutItemMsg.class);
+        register(QuestMsg.class);
         register(RemoveCharMsg.class);
         register(RemoveItemMsg.class);
         register(SayMsg.class);
