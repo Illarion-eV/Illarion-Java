@@ -47,7 +47,23 @@ public interface GameGui {
     ChatGui getChatGui();
 
     /**
-     * Get the GUI controller that is used to display the input dialoges.
+     * Get the GUI that controls the display of item containers in the game.
+     *
+     * @return the item container gui controller
+     */
+    @Nonnull
+    ContainerGui getContainerGui();
+
+    /**
+     * Get the GUI controller that is used to display the crafting dialogs.
+     *
+     * @return the crafting dialog GUI control
+     */
+    @Nonnull
+    DialogCraftingGui getDialogCraftingGui();
+
+    /**
+     * Get the GUI controller that is used to display the input dialogs.
      *
      * @return the input dialog GUI control
      */
@@ -63,12 +79,28 @@ public interface GameGui {
     DialogMessageGui getDialogMessageGui();
 
     /**
+     * Get the controller that displays the elements that are directly related to the game game.
+     *
+     * @return the game map gui controller
+     */
+    @Nonnull
+    GameMapGui getGameMapGui();
+
+    /**
      * Get the GUI that controls the display of the inform messages.
      *
      * @return the inform GUI controller
      */
     @Nonnull
     InformGui getInformGui();
+
+    /**
+     * Get the GUI that controls the display of the inventory.
+     *
+     * @return the inventory gui controller
+     */
+    @Nonnull
+    InventoryGui getInventoryGui();
 
     /**
      * Get the main screen controller of the GUI.
@@ -92,14 +124,6 @@ public interface GameGui {
      * @return {@code true} in case the GUI is ready
      */
     boolean isReady();
-
-    /**
-     * Get the GUI that controls the display of the inventory.
-     *
-     * @return the inventory gui controller
-     */
-    @Nonnull
-    InventoryGui getInventoryGui();
 
     /**
      * Update the GUI. This should be called once during the update cycle.

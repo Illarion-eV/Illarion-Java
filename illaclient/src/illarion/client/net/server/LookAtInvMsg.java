@@ -18,12 +18,11 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.gui.Tooltip;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.InventoryItemLookAtEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Money;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -35,11 +34,16 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_INV)
-public final class LookAtInvMsg extends AbstractItemLookAtMsg {
+public final class LookAtInvMsg extends AbstractReply {
     /**
      * Inventory slot that message is related to.
      */
     private short slot;
+
+    /**
+     * The tooltip that is supposed to be displayed at the inventory slot.
+     */
+    private Tooltip tooltip;
 
     /**
      * Decode the inventory item look at text data the receiver got and prepare
@@ -53,7 +57,7 @@ public final class LookAtInvMsg extends AbstractItemLookAtMsg {
     @Override
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
         slot = reader.readUByte();
-        decodeLookAt(reader);
+        tooltip = new Tooltip(reader);
     }
 
     /**
@@ -63,10 +67,7 @@ public final class LookAtInvMsg extends AbstractItemLookAtMsg {
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new InventoryItemLookAtEvent(slot, name, rareness, description, craftedBy, new Money(worth),
-                weight, qualityText, durabilityText, durabilityValue, amethystLevel, diamondLevel, emeraldLevel,
-                rubyLevel, obsidianLevel, sapphireLevel, topazLevel, bonus));
-
+        World.getGameGui().getInventoryGui().showTooltip(slot, tooltip);
         return true;
     }
 
@@ -79,8 +80,6 @@ public final class LookAtInvMsg extends AbstractItemLookAtMsg {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Slot: ").append(slot);
-        return toString(builder);
+        return toString("Slot: " + slot + ' ' + tooltip);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,34 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.net.server.events;
+package illarion.client.gui;
+
+import illarion.common.types.Location;
+
+import javax.annotation.Nonnull;
 
 /**
- * This event is raised in case the server caused the client to close a item container.
+ * This is the GUI controller that manages the GUI elements that are directly related to the elements on the GUI.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class CloseContainerEvent implements ServerEvent {
+public interface GameMapGui {
     /**
-     * Get the ID of the container.
+     * Show a item tooltip in the GUI.
      *
-     * @return the container ID
+     * @param location the location of the item on the map
+     * @param tooltip  the tooltip of the item that is supposed to be displayed
      */
-    public int getContainerId() {
-        return conId;
-    }
-
-    /**
-     * The ID of the container.
-     */
-    private final int conId;
-
-    /**
-     * Constructor of the container close event.
-     *
-     * @param containerId the ID of the container
-     */
-    public CloseContainerEvent(final int containerId) {
-        conId = containerId;
-    }
+    void showItemTooltip(@Nonnull Location location, @Nonnull Tooltip tooltip);
 }

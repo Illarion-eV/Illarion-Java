@@ -20,16 +20,14 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.CloseContainerEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Close a container (
- * {@link illarion.client.net.CommandList#MSG_CLOSE_SHOWCASE}).
+ * Servermessage: Close a container ({@link CommandList#MSG_CLOSE_SHOWCASE}).
  *
  * @author Blay09
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -40,31 +38,27 @@ public final class CloseShowcaseMsg extends AbstractReply {
     /**
      * The container that shall be closed.
      */
-    private short sc;
+    private short containerId;
 
     /**
-     * Decode the close container data the receiver got and prepare it for the
-     * execution.
+     * Decode the close container data the receiver got and prepare it for the execution.
      *
-     * @param reader the receiver that got the data from the server that needs
-     *               to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     *                     decode the full message
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
-        sc = reader.readUByte();
+        containerId = reader.readUByte();
     }
 
     /**
-     * Execute the close container message and send the decoded data to the rest
-     * of the client.
+     * Execute the close container message and send the decoded data to the rest of the client.
      *
      * @return true if the execution is done, false if it shall be called again
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new CloseContainerEvent(sc));
+        World.getPlayer().removeContainer(containerId);
         return true;
     }
 
@@ -78,6 +72,6 @@ public final class CloseShowcaseMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Showcase: " + sc);
+        return toString("ID: " + containerId);
     }
 }

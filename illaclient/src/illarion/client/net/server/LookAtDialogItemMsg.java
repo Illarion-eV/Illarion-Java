@@ -18,14 +18,12 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.gui.Tooltip;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.DialogItemLookAtEvent;
-import illarion.client.net.server.events.DialogSecondaryItemLookAtEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Money;
 import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -36,11 +34,12 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_DIALOG_ITEM)
-public final class LookAtDialogItemMsg extends AbstractItemLookAtMsg {
+public final class LookAtDialogItemMsg extends AbstractReply {
     private int dialogId;
     private int type;
     private int slotId;
     private int secondarySlotId;
+    private Tooltip tooltip;
 
     private static final Logger LOGGER = Logger.getLogger(LookAtDialogItemMsg.class);
 
@@ -48,7 +47,7 @@ public final class LookAtDialogItemMsg extends AbstractItemLookAtMsg {
      * Decode the tile look at text data the receiver got and prepare it for the execution.
      *
      * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws java.io.IOException thrown in case there was not enough data received to decode the full message
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
     public void decode(@Nonnull final NetCommReader reader)
@@ -68,7 +67,7 @@ public final class LookAtDialogItemMsg extends AbstractItemLookAtMsg {
                 return;
         }
 
-        decodeLookAt(reader);
+        tooltip = new Tooltip(reader);
     }
 
     /**
@@ -80,15 +79,11 @@ public final class LookAtDialogItemMsg extends AbstractItemLookAtMsg {
     public boolean executeUpdate() {
         switch (type) {
             case 0:
-                EventBus.publish(new DialogItemLookAtEvent(dialogId, slotId, name, rareness, description, craftedBy,
-                        new Money(worth), weight, qualityText, durabilityText, durabilityValue, amethystLevel,
-                        diamondLevel, emeraldLevel, rubyLevel, obsidianLevel, sapphireLevel, topazLevel, bonus));
+                World.getGameGui().getDialogCraftingGui().showCraftItemTooltip(dialogId, slotId, tooltip);
                 break;
             case 1:
-                EventBus.publish(new DialogSecondaryItemLookAtEvent(dialogId, slotId, secondarySlotId, name,
-                        rareness, description, craftedBy, new Money(worth), weight, qualityText, durabilityText,
-                        durabilityValue, amethystLevel, diamondLevel, emeraldLevel, rubyLevel, obsidianLevel,
-                        sapphireLevel, topazLevel, bonus));
+                World.getGameGui().getDialogCraftingGui().showCraftIngredientTooltip(dialogId, slotId,
+                        secondarySlotId, tooltip);
                 break;
             default:
                 LOGGER.error("Illegal type ID " + Integer.toString(type));

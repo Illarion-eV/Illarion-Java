@@ -18,40 +18,43 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.gui.Tooltip;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.MapItemLookAtEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
-import illarion.common.types.Money;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Look at description of a map item ( {@link CommandList#MSG_LOOKAT_MAPITEM}).
+ * Servermessage: Look at description of a map item ({@link CommandList#MSG_LOOKAT_MAPITEM}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_MAPITEM)
-public final class LookAtMapItemMsg extends AbstractItemLookAtMsg {
+public final class LookAtMapItemMsg extends AbstractReply {
     /**
      * The location of the tile on the server map.
      */
-    private transient Location loc;
+    private Location location;
+
+    /**
+     * The tooltip that is displayed for the item on the specified location.
+     */
+    private Tooltip tooltip;
 
     /**
      * Decode the tile look at text data the receiver got and prepare it for the execution.
      *
      * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws java.io.IOException thrown in case there was not enough data received to decode the full message
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader)
-            throws IOException {
-        loc = decodeLocation(reader);
-        decodeLookAt(reader);
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+        location = decodeLocation(reader);
+        tooltip = new Tooltip(reader);
     }
 
     /**
@@ -61,10 +64,7 @@ public final class LookAtMapItemMsg extends AbstractItemLookAtMsg {
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new MapItemLookAtEvent(loc, name, rareness, description, craftedBy, new Money(worth),
-                weight, qualityText, durabilityText, durabilityValue, amethystLevel, diamondLevel, emeraldLevel,
-                rubyLevel, obsidianLevel, sapphireLevel, topazLevel, bonus));
-
+        World.getGameGui().getGameMapGui().showItemTooltip(location, tooltip);
         return true;
     }
 
@@ -77,6 +77,6 @@ public final class LookAtMapItemMsg extends AbstractItemLookAtMsg {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Location: " + loc.toString());
+        return toString(location.toString() + ' ' + tooltip);
     }
 }

@@ -24,7 +24,6 @@ import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.graphics.Avatar;
 import illarion.client.net.client.RequestAppearanceCmd;
-import illarion.client.net.server.events.CloseContainerEvent;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.util.ChatLog;
@@ -218,13 +217,8 @@ public final class Player {
         }
     }
 
-    @EventSubscriber
-    public void onContainerClosedEvent(@Nonnull final CloseContainerEvent event) {
-        removeContainer(event.getContainerId());
-    }
-
     /**
-     * Remove a container that is assigned to a specified key.
+     * Remove a container that is assigned to a specified key. This also removes the container from the GUI.
      *
      * @param id the key of the parameter to remove
      */
@@ -234,6 +228,7 @@ public final class Player {
                 containers.remove(id);
             }
         }
+        World.getGameGui().getContainerGui().closeContainer(id);
     }
 
     @EventSubscriber
@@ -278,7 +273,7 @@ public final class Player {
             }
             if (container.getSlotCount() != slotCount) {
                 LOGGER.error("Received container event for existing container but without fitting slot count!");
-                EventBus.publish(new CloseContainerEvent(event.getContainerId()));
+                removeContainer(event.getContainerId());
                 EventBus.publish(event);
                 return;
             }
@@ -301,6 +296,8 @@ public final class Player {
                 container.setItem(i, null, null);
             }
         }
+
+        World.getGameGui().getContainerGui().showContainer(container);
     }
 
     /**

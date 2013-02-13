@@ -46,8 +46,7 @@ public abstract class AbstractReply {
      *                     thrown
      */
     @Nonnull
-    protected static Location decodeLocation(@Nonnull final NetCommReader reader)
-            throws IOException {
+    protected static Location decodeLocation(@Nonnull final NetCommReader reader) throws IOException {
         final Location loc = new Location();
         loc.setSC(reader.readShort(), reader.readShort(), reader.readShort());
         return loc;

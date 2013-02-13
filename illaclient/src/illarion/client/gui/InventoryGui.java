@@ -22,6 +22,7 @@ import illarion.client.world.items.Inventory;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -59,4 +60,14 @@ public interface InventoryGui {
      * Show the inventory.
      */
     void show();
+
+    /**
+     * Show a tooltip for a specified slot on the inventory. This tooltip will only become visible in case the mouse
+     * cursor is inside the interactive area of the slot. It will be displayed as long as the mouse cursor stays
+     * inside this area.
+     *
+     * @param slotId  the ID of the slot
+     * @param tooltip the tooltip
+     */
+    void showTooltip(int slotId, @Nonnull Tooltip tooltip);
 }

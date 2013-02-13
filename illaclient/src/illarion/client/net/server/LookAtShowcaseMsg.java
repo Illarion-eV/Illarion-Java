@@ -18,12 +18,11 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.gui.Tooltip;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.ContainerItemLookAtEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Money;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -35,11 +34,11 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_SHOWCASE)
-public final class LookAtShowcaseMsg extends AbstractItemLookAtMsg {
+public final class LookAtShowcaseMsg extends AbstractReply {
     /**
      * Showcase this message is related to.
      */
-    private short sc;
+    private short containerId;
 
     /**
      * The slot in the showcase that message is related to.
@@ -47,50 +46,44 @@ public final class LookAtShowcaseMsg extends AbstractItemLookAtMsg {
     private short slot;
 
     /**
-     * Decode the showcase item look at text data the receiver got and prepare
-     * it for the execution.
+     * The tooltip that is supposed to be displayed.
+     */
+    @Nonnull
+    private Tooltip tooltip;
+
+    /**
+     * Decode the showcase item look at text data the receiver got and prepare it for the execution.
      *
-     * @param reader the receiver that got the data from the server that needs
-     *               to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     *                     decode the full message
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
-        sc = reader.readUByte();
+        containerId = reader.readUByte();
         slot = reader.readUByte();
-        decodeLookAt(reader);
+        tooltip = new Tooltip(reader);
     }
 
     /**
-     * Execute the showcase item look at text message and send the decoded data
-     * to the rest of the client.
+     * Execute the showcase item look at text message and send the decoded data to the rest of the client.
      *
      * @return true if the execution is done, false if it shall be called again
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new ContainerItemLookAtEvent(sc, slot, name, rareness, description, craftedBy,
-                new Money(worth), weight, qualityText, durabilityText, durabilityValue, amethystLevel, diamondLevel,
-                emeraldLevel, rubyLevel, obsidianLevel, sapphireLevel, topazLevel, bonus));
+        World.getGameGui().getContainerGui().showTooltip(containerId, slot, tooltip);
         return true;
     }
 
     /**
      * Get the data of this showcase item look at text message as string.
      *
-     * @return the string that contains the values that were decoded for this
-     *         message
+     * @return the string that contains the values that were decoded for this message
      */
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Showcase: ");
-        builder.append(sc);
-        builder.append(" Slot: ");
-        builder.append(slot);
-        return toString(builder);
+        return toString("Container; " + containerId + " Slot: " + slot + ' ' + tooltip);
     }
 }

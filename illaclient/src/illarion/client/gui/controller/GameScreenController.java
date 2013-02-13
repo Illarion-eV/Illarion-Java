@@ -42,6 +42,8 @@ public final class GameScreenController implements GameGui, ScreenController {
     private final InformHandler informHandler;
     private final GUIChatHandler chatHandler;
     private final GUIInventoryHandler inventoryHandler;
+    private final ContainerHandler containerHandler;
+    private final GameMapHandler gameMapHandler;
 
     private boolean ready;
 
@@ -58,6 +60,8 @@ public final class GameScreenController implements GameGui, ScreenController {
         skillsHandler = new SkillsHandler();
         informHandler = new InformHandler();
         inventoryHandler = new GUIInventoryHandler(input, numberPopupHandler, tooltipHandler);
+        containerHandler = new ContainerHandler(input, numberPopupHandler, tooltipHandler);
+        gameMapHandler = new GameMapHandler(input, numberPopupHandler, tooltipHandler);
 
         addHandler(numberPopupHandler);
         addHandler(tooltipHandler);
@@ -65,12 +69,12 @@ public final class GameScreenController implements GameGui, ScreenController {
         addHandler(bookHandler);
         addHandler(inventoryHandler);
         addHandler(dialogHandler);
-        addHandler(new ContainerHandler(input, numberPopupHandler, tooltipHandler));
+        addHandler(containerHandler);
         addHandler(new CloseGameHandler());
         addHandler(new CharStatusHandler());
         addHandler(skillsHandler);
 
-        addHandler(new GameMapHandler(numberPopupHandler, tooltipHandler));
+        addHandler(gameMapHandler);
         addHandler(new GameMiniMapHandler());
 
         addHandler(informHandler);
@@ -97,6 +101,18 @@ public final class GameScreenController implements GameGui, ScreenController {
 
     @Nonnull
     @Override
+    public ContainerGui getContainerGui() {
+        return containerHandler;
+    }
+
+    @Nonnull
+    @Override
+    public DialogCraftingGui getDialogCraftingGui() {
+        return dialogHandler;
+    }
+
+    @Nonnull
+    @Override
     public DialogInputGui getDialogInputGui() {
         return dialogHandler;
     }
@@ -105,6 +121,12 @@ public final class GameScreenController implements GameGui, ScreenController {
     @Override
     public DialogMessageGui getDialogMessageGui() {
         return dialogHandler;
+    }
+
+    @Nonnull
+    @Override
+    public GameMapGui getGameMapGui() {
+        return gameMapHandler;
     }
 
     @Nonnull

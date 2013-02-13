@@ -29,16 +29,14 @@ import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
 import illarion.client.IllaClient;
+import illarion.client.gui.ContainerGui;
 import illarion.client.gui.EntitySlickRenderImage;
+import illarion.client.gui.Tooltip;
 import illarion.client.net.client.CloseShowcaseCmd;
-import illarion.client.net.server.events.CloseContainerEvent;
-import illarion.client.net.server.events.ContainerItemLookAtEvent;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
-import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.data.ItemTemplate;
 import illarion.client.util.LookAtTracker;
@@ -66,7 +64,6 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,7 +72,7 @@ import java.util.regex.Pattern;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ContainerHandler implements ScreenController {
+public final class ContainerHandler implements ContainerGui, ScreenController {
     /**
      * This class is used as drag end operation and used to move a object that was dragged out of the inventory back in
      * so the server can send the commands to clean everything up.
@@ -173,18 +170,18 @@ public final class ContainerHandler implements ScreenController {
     }
 
     private final class UpdateContainerTask implements UpdateTask {
-        private final OpenContainerEvent event;
+        private final ItemContainer itemContainer;
 
-        UpdateContainerTask(final OpenContainerEvent updateEvent) {
-            event = updateEvent;
+        UpdateContainerTask(final ItemContainer container) {
+            itemContainer = container;
         }
 
         @Override
         public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
-            if (!isContainerCreated(event.getContainerId())) {
-                createNewContainer(event);
+            if (!isContainerCreated(itemContainer.getContainerId())) {
+                createNewContainer(itemContainer);
             }
-            updateContainer(event);
+            updateContainer(itemContainer);
         }
     }
 
@@ -202,6 +199,8 @@ public final class ContainerHandler implements ScreenController {
      * The pattern to fetch the ID of a container name.
      */
     private static final Pattern containerPattern = Pattern.compile("container([0-9]+)");
+
+    private static final Logger LOGGER = Logger.getLogger(ContainerHandler.class);
 
     /**
      * The Nifty-GUI instance that is handling the GUI display currently.
@@ -258,53 +257,6 @@ public final class ContainerHandler implements ScreenController {
         this.input = input;
     }
 
-    @EventSubscriber
-    public void onContainerClosedEvent(@Nonnull final CloseContainerEvent event) {
-        if (isContainerCreated(event.getContainerId())) {
-            removeItemContainer(event.getContainerId());
-        }
-    }
-
-    private void removeItemContainer(final int id) {
-        final org.illarion.nifty.controls.ItemContainer container = itemContainerMap.remove(id);
-        if (container == null) {
-            return;
-        }
-
-        container.closeWindow();
-    }
-
-    /**
-     * This event is received in case the server sends a tooltip for a container.
-     *
-     * @param event the container tooltip
-     */
-    @EventSubscriber
-    public void onContainerItemLookAtHandler(@Nonnull final ContainerItemLookAtEvent event) {
-        if (!isContainerCreated(event.getContainerId())) {
-            return;
-        }
-
-        final org.illarion.nifty.controls.ItemContainer container = itemContainerMap.get(event.getContainerId());
-        final InventorySlot slot = container.getSlot(event.getSlot());
-        final Element slotElement = slot.getElement();
-
-        final Rectangle rect = new Rectangle();
-        rect.set(slotElement.getX(), slotElement.getY(), slotElement.getWidth(), slotElement.getHeight());
-
-        tooltipHandler.showToolTip(rect, event);
-    }
-
-    /**
-     * Check if a container with a specified ID is already created.
-     *
-     * @param containerId the container ID
-     * @return {@code true} in case the container is already created
-     */
-    private boolean isContainerCreated(final int containerId) {
-        return itemContainerMap.containsKey(containerId);
-    }
-
     /**
      * Close the container as needed.
      *
@@ -338,13 +290,37 @@ public final class ContainerHandler implements ScreenController {
     }
 
     /**
-     * This event is received in case the server sends a new container.
+     * This event is received in case a container is closed.
      *
-     * @param event the event data of the new container
+     * @param topic the topic of the event
+     * @param data  the event data
      */
-    @EventSubscriber
-    public void onOpenContainerEvent(final OpenContainerEvent event) {
-        World.getUpdateTaskManager().addTask(new ContainerHandler.UpdateContainerTask(event));
+    @NiftyEventSubscriber(pattern = ".*container[0-9]+.*")
+    public void onItemContainerClose(final String topic, @Nonnull final ItemContainerCloseEvent data) {
+        World.getPlayer().removeContainer(data.getContainerId());
+        if (isContainerCreated(data.getContainerId())) {
+            removeItemContainer(data.getContainerId());
+            World.getNet().sendCommand(new CloseShowcaseCmd(data.getContainerId()));
+        }
+    }
+
+    /**
+     * Check if a container with a specified ID is already created.
+     *
+     * @param containerId the container ID
+     * @return {@code true} in case the container is already created
+     */
+    private boolean isContainerCreated(final int containerId) {
+        return itemContainerMap.containsKey(containerId);
+    }
+
+    private void removeItemContainer(final int id) {
+        final org.illarion.nifty.controls.ItemContainer container = itemContainerMap.remove(id);
+        if (container == null) {
+            return;
+        }
+
+        container.closeWindow();
     }
 
     /**
@@ -371,21 +347,6 @@ public final class ContainerHandler implements ScreenController {
 
         clickHelper.setData(slotId, containerId);
         clickHelper.pulse();
-    }
-
-    /**
-     * This event is received in case a container is closed.
-     *
-     * @param topic the topic of the event
-     * @param data  the event data
-     */
-    @NiftyEventSubscriber(pattern = ".*container[0-9]+.*")
-    public void onItemContainerClose(final String topic, @Nonnull final ItemContainerCloseEvent data) {
-        World.getPlayer().removeContainer(data.getContainerId());
-        if (isContainerCreated(data.getContainerId())) {
-            removeItemContainer(data.getContainerId());
-            World.getNet().sendCommand(new CloseShowcaseCmd(data.getContainerId()));
-        }
     }
 
     /**
@@ -477,7 +438,14 @@ public final class ContainerHandler implements ScreenController {
         }
     }
 
-    private static final Logger LOGGER = Logger.getLogger(ContainerHandler.class);
+    /**
+     * Check if the shift key is pressed on the keyboard.
+     *
+     * @return {@code true} in case the shift key on the keyboard
+     */
+    private boolean isShiftPressed() {
+        return (input != null) && (input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT));
+    }
 
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
     public void onMouseMoveOverSlot(final String topic, final NiftyMouseMovedEvent event) {
@@ -500,22 +468,29 @@ public final class ContainerHandler implements ScreenController {
             LookAtTracker.setLookAtObject(slot);
             slot.getInteractive().lookAt();
         }
-
-    }
-
-    /**
-     * Check if the shift key is pressed on the keyboard.
-     *
-     * @return {@code true} in case the shift key on the keyboard
-     */
-    private boolean isShiftPressed() {
-        return (input != null) && (input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT));
     }
 
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
         activeNifty = nifty;
         activeScreen = screen;
+    }
+
+    @Override
+    public void closeContainer(final int containerId) {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+                if (isContainerCreated(containerId)) {
+                    removeItemContainer(containerId);
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean isVisible(final int containerId) {
+        return isContainerCreated(containerId);
     }
 
     @Override
@@ -530,22 +505,42 @@ public final class ContainerHandler implements ScreenController {
         activeNifty.subscribeAnnotations(this);
     }
 
+    @Override
+    public void showContainer(@Nonnull final ItemContainer container) {
+        World.getUpdateTaskManager().addTask(new ContainerHandler.UpdateContainerTask(container));
+    }
+
+    @Override
+    public void showTooltip(final int containerId, final int slotId, @Nonnull final Tooltip tooltip) {
+        @Nullable final org.illarion.nifty.controls.ItemContainer container = itemContainerMap.get(containerId);
+        if (container == null) {
+            return;
+        }
+        final InventorySlot slot = container.getSlot(slotId);
+        final Element slotElement = slot.getElement();
+
+        final Rectangle rect = new Rectangle();
+        rect.set(slotElement.getX(), slotElement.getY(), slotElement.getWidth(), slotElement.getHeight());
+
+        tooltipHandler.showToolTip(rect, tooltip);
+    }
+
     /**
      * Create a new container.
      *
-     * @param event the event that contains the data for the new container
+     * @param itemContainer the item container the GUI is supposed to display
      */
-    private void createNewContainer(@Nonnull final OpenContainerEvent event) {
-        final ItemContainerBuilder builder = new ItemContainerBuilder("container" + event.getContainerId(),
+    private void createNewContainer(@Nonnull final ItemContainer itemContainer) {
+        final ItemContainerBuilder builder = new ItemContainerBuilder("container" + itemContainer.getContainerId(),
                 "${gamescreen-bundle.bag}");
-        builder.slots(event.getSlotCount());
+        builder.slots(itemContainer.getSlotCount());
         builder.slotDim(35, 35);
-        builder.containerId(event.getContainerId());
+        builder.containerId(itemContainer.getContainerId());
 
         final Element container = builder.build(activeNifty, activeScreen, activeScreen.findElementByName("windows"));
         final org.illarion.nifty.controls.ItemContainer conControl = container.getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
 
-        itemContainerMap.put(event.getContainerId(), conControl);
+        itemContainerMap.put(itemContainer.getContainerId(), conControl);
     }
 
     /**
@@ -606,29 +601,31 @@ public final class ContainerHandler implements ScreenController {
     /**
      * Update the items inside the container.
      *
-     * @param event the container event used to update the container
+     * @param itemContainer the item container that contains the new data of the container
      */
-    private void updateContainer(@Nonnull final OpenContainerEvent event) {
-        final org.illarion.nifty.controls.ItemContainer conControl = itemContainerMap.get(event.getContainerId());
+    private void updateContainer(@Nonnull final ItemContainer itemContainer) {
+        @Nullable final org.illarion.nifty.controls.ItemContainer conControl =
+                itemContainerMap.get(itemContainer.getContainerId());
+        if (conControl == null) {
+            LOGGER.warn("Updating a container that does not exist.");
+            return;
+        }
 
         final int slotCount = conControl.getSlotCount();
-        if (event.getSlotCount() != slotCount) {
+        if (itemContainer.getSlotCount() != slotCount) {
             // something is badly wrong. The player class will handle this issue.
             return;
         }
 
-        final boolean[] definedSlots = new boolean[slotCount];
-        Arrays.fill(definedSlots, false);
+        for (int i = 0; i < slotCount; i++) {
+            final ContainerSlot containerSlot = itemContainer.getSlot(i);
+            final InventorySlot conSlot = conControl.getSlot(i);
+            final ItemId itemId = containerSlot.getItemID();
+            final ItemCount count = containerSlot.getCount();
 
-        final TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
-        while (itr.hasNext()) {
-            itr.advance();
-            definedSlots[itr.key()] = true;
-            final InventorySlot conSlot = conControl.getSlot(itr.key());
-            final ItemId itemId = itr.value().getItemId();
-            final ItemCount count = itr.value().getCount();
-
-            if (ItemId.isValidItem(itemId)) {
+            if (ItemId.isValidItem(itemId) && ItemCount.isGreaterZero(count)) {
+                assert itemId != null;
+                assert count != null;
                 final ItemTemplate displayedItem = ItemFactory.getInstance().getTemplate(itemId.getValue());
 
                 final NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
@@ -643,14 +640,6 @@ public final class ContainerHandler implements ScreenController {
                 }
                 updateMerchantOverlay(conSlot, itemId);
             } else {
-                conSlot.setImage(null);
-                conSlot.hideLabel();
-            }
-        }
-
-        for (int i = 0; i < slotCount; i++) {
-            if (!definedSlots[i]) {
-                final InventorySlot conSlot = conControl.getSlot(i);
                 conSlot.setImage(null);
                 conSlot.hideLabel();
             }

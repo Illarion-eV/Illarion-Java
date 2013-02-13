@@ -32,18 +32,19 @@ import illarion.client.graphics.Camera;
 import illarion.client.graphics.Item;
 import illarion.client.graphics.MapInteractionEvent;
 import illarion.client.gui.EntitySlickRenderImage;
+import illarion.client.gui.GameMapGui;
+import illarion.client.gui.Tooltip;
 import illarion.client.input.*;
-import illarion.client.net.server.events.MapItemLookAtEvent;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.common.types.ItemCount;
+import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
-import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
 import javax.annotation.Nonnull;
@@ -55,15 +56,7 @@ import javax.annotation.Nullable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GameMapHandler implements ScreenController, UpdatableHandler {
-
-    private Input input;
-
-    @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
-        input = container.getInput();
-    }
-
+public final class GameMapHandler implements GameMapGui, ScreenController {
     /**
      * This class is used as end operation to the dragging that started on the map. It takes care that the elements
      * used
@@ -102,8 +95,14 @@ public final class GameMapHandler implements ScreenController, UpdatableHandler 
             drag.setVisible(false);
             drag.markForMove(returnTo);
         }
-
     }
+
+    /**
+     * The logging instance that handles the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(GameMapHandler.class);
+    @Nonnull
+    private final Input input;
 
     /**
      * The Nifty-GUI instance that is handling the GUI display currently.
@@ -144,77 +143,75 @@ public final class GameMapHandler implements ScreenController, UpdatableHandler 
     private Runnable endOfDragOp;
     private final NumberSelectPopupHandler numberSelect;
 
+    private final TooltipHandler tooltipHandler;
+
     /**
      * Default constructor that takes care to initialize the variables required for this class to work.
      */
-    public GameMapHandler(final NumberSelectPopupHandler numberSelectPopupHandler, final TooltipHandler tooltip) {
+    public GameMapHandler(@Nonnull final Input input, final NumberSelectPopupHandler numberSelectPopupHandler,
+                          final TooltipHandler tooltip) {
         mouseEvent = new NiftyMouseInputEvent();
         numberSelect = numberSelectPopupHandler;
         tooltipHandler = tooltip;
-    }
-
-    @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
-        activeNifty = nifty;
-        activeScreen = screen;
-        gamePanel = screen.findElementByName("gamePanel");
-        draggedGraphic = gamePanel.findElementByName("mapDragObject");
-        draggedImage = draggedGraphic.findElementByName("mapDragImage");
-        endOfDragOp = new GameMapDragEndOperation(draggedGraphic, gamePanel);
-    }
-
-    @Override
-    public void onStartScreen() {
-        activeNifty.subscribeAnnotations(this);
-        AnnotationProcessor.process(this);
-    }
-
-    @Override
-    public void onEndScreen() {
-        activeNifty.unsubscribeAnnotations(this);
-        AnnotationProcessor.unprocess(this);
-    }
-
-    private boolean isShiftPressed() {
-        return (input != null) && (input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT));
+        this.input = input;
     }
 
     /**
-     * The logging instance that handles the logging output of this class.
+     * Handle a input event that was published.
      */
-    private static final Logger LOGGER = Logger.getLogger(GameMapHandler.class);
+    @EventSubscriber(eventClass = ClickOnMapEvent.class)
+    public void handleClickEvent(final MapInteractionEvent data) {
+        World.getMapDisplay().publishInteractionEvent(data);
+    }
 
     /**
-     * Called in case something is dropped on the game map.
+     * Handle a input event that was published.
      */
-    @NiftyEventSubscriber(id = "mapDropTarget")
-    public void dropOnMap(final String topic, @Nonnull final DroppableDroppedEvent data) {
-        final Element droppedElement = data.getDraggable().getElement();
-        final int dropSpotX = droppedElement.getX() + (droppedElement.getWidth() / 2);
-        final int dropSpotY = droppedElement.getY() + (droppedElement.getHeight() / 2);
+    @EventSubscriber(eventClass = DoubleClickOnMapEvent.class)
+    public void handleDoubleClick(final MapInteractionEvent data) {
+        World.getMapDisplay().publishInteractionEvent(data);
+    }
 
-        final ItemCount amount = World.getInteractionManager().getMovedAmount();
-        final InteractionManager iManager = World.getInteractionManager();
-        if (amount == null) {
-            LOGGER.error("Corrupted drag detected!");
-            iManager.cancelDragging();
+    /**
+     * Handle a input event that was published.
+     */
+    @EventSubscriber(eventClass = DragOnMapEvent.class)
+    public void handleDragging(@Nonnull final DragOnMapEvent data) {
+        if (World.getInteractionManager().isDragging()) {
             return;
         }
-        if (ItemCount.isGreaterOne(amount) && isShiftPressed()) {
-            numberSelect.requestNewPopup(1, amount.getValue(), new NumberSelectPopupHandler.Callback() {
+
+        switch (data.getKey()) {
+            case 0:
+                handlePrimaryKeyDrag(data);
+                break;
+        }
+    }
+
+    /**
+     * Handle dragging events from the primary mouse key.
+     *
+     * @param data the event data
+     */
+    public void handlePrimaryKeyDrag(@Nonnull final DragOnMapEvent data) {
+        if (!World.getPlayer().getMovementHandler().isMouseMovementActive()) {
+            final MapInteractionEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
                 @Override
-                public void popupCanceled() {
-                    // nothing
+                public boolean startDraggingItemFromTile(@Nonnull final PrimaryKeyMapDrag event, final MapTile tile) {
+                    return handleDragOnMap(event, tile);
                 }
 
                 @Override
-                public void popupConfirmed(final int value) {
-                    iManager.dropAtMap(dropSpotX, dropSpotY, ItemCount.getInstance(value));
+                public void notHandled(@Nonnull final PrimaryKeyMapDrag event) {
+                    moveTowardsMouse(event);
                 }
             });
-        } else {
-            iManager.dropAtMap(dropSpotX, dropSpotY, amount);
+            World.getMapDisplay().publishInteractionEvent(newEvent);
+            return;
         }
+
+
+        moveTowardsMouse(data);
     }
 
     public boolean handleDragOnMap(@Nonnull final PrimaryKeyMapDrag event, @Nullable final MapTile mapTile) {
@@ -273,54 +270,16 @@ public final class GameMapHandler implements ScreenController, UpdatableHandler 
         event.getForwardingControl().requestExclusiveMouse();
     }
 
-    /**
-     * Handle a input event that was published.
-     */
-    @EventSubscriber(eventClass = DragOnMapEvent.class)
-    public void handleDragging(@Nonnull final DragOnMapEvent data) {
+    @EventSubscriber(eventClass = MoveOnMapEvent.class)
+    public void handleMouseMove(final MapInteractionEvent event) {
         if (World.getInteractionManager().isDragging()) {
             return;
         }
-
-        switch (data.getKey()) {
-            case 0:
-                handlePrimaryKeyDrag(data);
-                break;
-        }
-    }
-
-    /**
-     * Handle dragging events from the primary mouse key.
-     *
-     * @param data the event data
-     */
-    public void handlePrimaryKeyDrag(@Nonnull final DragOnMapEvent data) {
-        if (!World.getPlayer().getMovementHandler().isMouseMovementActive()) {
-            final MapInteractionEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
-                @Override
-                public boolean startDraggingItemFromTile(@Nonnull final PrimaryKeyMapDrag event, final MapTile tile) {
-                    return handleDragOnMap(event, tile);
-                }
-
-                @Override
-                public void notHandled(@Nonnull final PrimaryKeyMapDrag event) {
-                    moveTowardsMouse(event);
-                }
-            });
-            World.getMapDisplay().publishInteractionEvent(newEvent);
+        if (World.getPlayer().getMovementHandler().isMouseMovementActive()) {
             return;
         }
 
-
-        moveTowardsMouse(data);
-    }
-
-    /**
-     * Handle a input event that was published.
-     */
-    @EventSubscriber(eventClass = ClickOnMapEvent.class)
-    public void handleClickEvent(final MapInteractionEvent data) {
-        World.getMapDisplay().publishInteractionEvent(data);
+        World.getMapDisplay().publishInteractionEvent(event);
     }
 
     @EventSubscriber(eventClass = PointOnMapEvent.class)
@@ -335,31 +294,68 @@ public final class GameMapHandler implements ScreenController, UpdatableHandler 
         World.getMapDisplay().publishInteractionEvent(event);
     }
 
-    @EventSubscriber(eventClass = MoveOnMapEvent.class)
-    public void handleMouseMove(final MapInteractionEvent event) {
-        if (World.getInteractionManager().isDragging()) {
-            return;
-        }
-        if (World.getPlayer().getMovementHandler().isMouseMovementActive()) {
-            return;
-        }
-
-        World.getMapDisplay().publishInteractionEvent(event);
-    }
-
     /**
-     * Handle a input event that was published.
+     * Called in case something is dropped on the game map.
      */
-    @EventSubscriber(eventClass = DoubleClickOnMapEvent.class)
-    public void handleDoubleClick(final MapInteractionEvent data) {
-        World.getMapDisplay().publishInteractionEvent(data);
+    @NiftyEventSubscriber(id = "mapDropTarget")
+    public void dropOnMap(final String topic, @Nonnull final DroppableDroppedEvent data) {
+        final Element droppedElement = data.getDraggable().getElement();
+        final int dropSpotX = droppedElement.getX() + (droppedElement.getWidth() / 2);
+        final int dropSpotY = droppedElement.getY() + (droppedElement.getHeight() / 2);
+
+        final ItemCount amount = World.getInteractionManager().getMovedAmount();
+        final InteractionManager iManager = World.getInteractionManager();
+        if (amount == null) {
+            LOGGER.error("Corrupted drag detected!");
+            iManager.cancelDragging();
+            return;
+        }
+        if (ItemCount.isGreaterOne(amount) && isShiftPressed()) {
+            numberSelect.requestNewPopup(1, amount.getValue(), new NumberSelectPopupHandler.Callback() {
+                @Override
+                public void popupCanceled() {
+                    // nothing
+                }
+
+                @Override
+                public void popupConfirmed(final int value) {
+                    iManager.dropAtMap(dropSpotX, dropSpotY, ItemCount.getInstance(value));
+                }
+            });
+        } else {
+            iManager.dropAtMap(dropSpotX, dropSpotY, amount);
+        }
     }
 
-    private final TooltipHandler tooltipHandler;
+    private boolean isShiftPressed() {
+        return input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT);
+    }
 
-    @EventSubscriber(eventClass = MapItemLookAtEvent.class)
-    public void onMapItemLookAtEvent(@Nonnull final MapItemLookAtEvent event) {
-        final MapTile targetTile = World.getMap().getMapAt(event.getLocation());
+    @Override
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+        activeNifty = nifty;
+        activeScreen = screen;
+        gamePanel = screen.findElementByName("gamePanel");
+        draggedGraphic = gamePanel.findElementByName("mapDragObject");
+        draggedImage = draggedGraphic.findElementByName("mapDragImage");
+        endOfDragOp = new GameMapDragEndOperation(draggedGraphic, gamePanel);
+    }
+
+    @Override
+    public void onEndScreen() {
+        activeNifty.unsubscribeAnnotations(this);
+        AnnotationProcessor.unprocess(this);
+    }
+
+    @Override
+    public void onStartScreen() {
+        activeNifty.subscribeAnnotations(this);
+        AnnotationProcessor.process(this);
+    }
+
+    @Override
+    public void showItemTooltip(@Nonnull final Location location, @Nonnull final Tooltip tooltip) {
+        final MapTile targetTile = World.getMap().getMapAt(location);
         if (targetTile == null) {
             return;
         }
@@ -372,6 +368,6 @@ public final class GameMapHandler implements ScreenController, UpdatableHandler 
         final Rectangle originalDisplayRect = targetItem.getInteractionRect();
         final Rectangle fixedRectangle = new Rectangle(originalDisplayRect);
         fixedRectangle.move(-Camera.getInstance().getViewportOffsetX(), -Camera.getInstance().getViewportOffsetY());
-        tooltipHandler.showToolTip(fixedRectangle, event);
+        tooltipHandler.showToolTip(fixedRectangle, tooltip);
     }
 }

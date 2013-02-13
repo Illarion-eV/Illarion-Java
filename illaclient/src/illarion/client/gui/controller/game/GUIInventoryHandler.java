@@ -33,9 +33,9 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.InventoryGui;
+import illarion.client.gui.Tooltip;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
-import illarion.client.net.server.events.InventoryItemLookAtEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.data.ItemTemplate;
 import illarion.client.util.LookAtTracker;
@@ -188,7 +188,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     private Nifty activeNifty;
     private Screen activeScreen;
     private final NumberSelectPopupHandler numberSelect;
-    private final TooltipHandler tooltip;
+    private final TooltipHandler tooltipHandler;
     private final Input input;
 
     /**
@@ -233,7 +233,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         Arrays.fill(slotLabelVisibility, false);
 
         numberSelect = numberSelectPopupHandler;
-        tooltip = tooltipHandler;
+        this.tooltipHandler = tooltipHandler;
         this.input = input;
     }
 
@@ -249,15 +249,6 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
             case Input:
                 break;
         }
-    }
-
-    @EventSubscriber
-    public void onInventoryItemLookAtHandler(@Nonnull final InventoryItemLookAtEvent event) {
-        final Element slot = invSlots[event.getSlot()];
-        final Rectangle rect = new Rectangle();
-        rect.set(slot.getX(), slot.getY(), slot.getWidth(), slot.getHeight());
-
-        tooltip.showToolTip(rect, event);
     }
 
     @EventSubscriber
@@ -336,12 +327,27 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         inventoryClickActionHelper.pulse();
     }
 
+    /**
+     * Get the number of a slot based on the name.
+     *
+     * @param name the name of the slot
+     * @return the number of the slot fitting the name
+     */
+    private int getSlotNumber(@Nonnull final String name) {
+        for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
+            if (name.startsWith(slots[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     @NiftyEventSubscriber(pattern = "invslot_.*")
     public void dragFromInventory(@Nonnull final String topic, final DraggableDragStartedEvent data) {
         final int slotId = getSlotNumber(topic);
         World.getInteractionManager().notifyDraggingInventory(slotId,
                 new GUIInventoryHandler.EndOfDragOperation(invSlots[slotId].getNiftyControl(InventorySlot.class)));
-        tooltip.hideToolTip();
+        tooltipHandler.hideToolTip();
     }
 
     @NiftyEventSubscriber(pattern = "invslot_.*")
@@ -392,21 +398,6 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
             LookAtTracker.setLookAtObject(slot);
             fetchLookAt(slot);
         }
-    }
-
-    /**
-     * Get the number of a slot based on the name.
-     *
-     * @param name the name of the slot
-     * @return the number of the slot fitting the name
-     */
-    private int getSlotNumber(@Nonnull final String name) {
-        for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
-            if (name.startsWith(slots[i])) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     /**
@@ -548,5 +539,14 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
             throw new IllegalArgumentException("Slot ID out of valid range.");
         }
         World.getUpdateTaskManager().addTask(new InventorySlotUpdate(slotId, itemId, count));
+    }
+
+    @Override
+    public void showTooltip(final int slotId, @Nonnull final Tooltip tooltip) {
+        final Element slot = invSlots[slotId];
+        final Rectangle rect = new Rectangle();
+        rect.set(slot.getX(), slot.getY(), slot.getWidth(), slot.getHeight());
+
+        tooltipHandler.showToolTip(rect, tooltip);
     }
 }
