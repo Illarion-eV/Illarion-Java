@@ -166,6 +166,7 @@ public final class MapEditor {
                 TextureLoaderAwt.getInstance(),
                 TileLoader.getInstance(),
                 ItemLoader.getInstance(),
+                SongLoader.getInstance(),
                 ItemGroupLoader.getInstance(),
                 OverlayLoader.getInstance(),
                 DocuLoader.getInstance()
