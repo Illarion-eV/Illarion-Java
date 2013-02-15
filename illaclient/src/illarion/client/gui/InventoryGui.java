@@ -34,7 +34,7 @@ public interface InventoryGui {
     /**
      * Hide the inventory.
      */
-    void hide();
+    void hideInventory();
 
     /**
      * Check if the inventory is visible.
@@ -59,7 +59,7 @@ public interface InventoryGui {
     /**
      * Show the inventory.
      */
-    void show();
+    void showInventory();
 
     /**
      * Show a tooltip for a specified slot on the inventory. This tooltip will only become visible in case the mouse

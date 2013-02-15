@@ -266,22 +266,22 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     public void toggleInventory() {
         if (inventoryWindow != null) {
             if (inventoryWindow.isVisible()) {
-                hide();
+                hideInventory();
             } else {
-                show();
+                showInventory();
             }
         }
     }
 
     @Override
-    public void hide() {
+    public void hideInventory() {
         if (inventoryWindow != null) {
             inventoryWindow.hide();
         }
     }
 
     @Override
-    public void show() {
+    public void showInventory() {
         if (inventoryWindow != null) {
             inventoryWindow.show(new EndNotify() {
                 @Override
