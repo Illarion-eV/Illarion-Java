@@ -24,6 +24,7 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -62,10 +63,10 @@ public final class QuestMsg extends AbstractReply {
      * Decode data from server receive buffer. And store the data for later execution.
      *
      * @param reader the receiver that stores the data that shall be decoded in this function
-     * @throws java.io.IOException In case the function reads over the buffer of the receiver this exception is thrown
+     * @throws IOException In case the function reads over the buffer of the receiver this exception is thrown
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         questId = reader.readUShort();
         title = reader.readString();
         description = reader.readString();
@@ -87,6 +88,7 @@ public final class QuestMsg extends AbstractReply {
      * @return String that contains the simple class name of this reply class instance
      */
     @Override
+    @Nonnull
     public String toString() {
         return toString("ID: " + questId + " Title: \"" + title + '"' + (finished ? " (finished)" : ""));
     }
