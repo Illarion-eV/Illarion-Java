@@ -62,15 +62,16 @@ public final class ProgressControl extends AbstractController implements Progres
 
     @Override
     public void onStartScreen() {
-        maxWidth = getElement().findElementByName("#fillArea").getWidth();
-        final double oldCurrentProgress = currentProgress;
-        currentProgress = 2.f;
-        setProgress(oldCurrentProgress);
+        layoutCallback();
     }
 
     @Override
     public void layoutCallback() {
+        final int oldWidth = maxWidth;
         maxWidth = getElement().findElementByName("#fillArea").getWidth();
+        if (maxWidth != oldWidth) {
+            setProgress(currentProgress, true);
+        }
     }
 
     @Override
@@ -81,10 +82,11 @@ public final class ProgressControl extends AbstractController implements Progres
     /**
      * Set the value of the progress. All values will be clamped to {@code 0.f} and {@code 1.f}.
      *
-     * @param value the progress value
+     * @param value  the progress value
+     * @param forced {@code true} in case the values are supposed to be updated event if the old and the new progress
+     *               value are equal
      */
-    @Override
-    public void setProgress(final double value) {
+    private void setProgress(final double value, final boolean forced) {
         final Element wrapper = getElement().findElementByName("#fillWrapper");
         final Element fill = getElement().findElementByName("#fill");
 
@@ -97,7 +99,7 @@ public final class ProgressControl extends AbstractController implements Progres
             usedValue = value;
         }
 
-        if (Math.abs(currentProgress - usedValue) < 0.001) {
+        if (!forced && (Math.abs(currentProgress - usedValue) < 0.001)) {
             return;
         }
 
@@ -117,5 +119,15 @@ public final class ProgressControl extends AbstractController implements Progres
         }
 
         getElement().layoutElements();
+    }
+
+    /**
+     * Set the value of the progress. All values will be clamped to {@code 0.f} and {@code 1.f}.
+     *
+     * @param value the progress value
+     */
+    @Override
+    public void setProgress(final double value) {
+        setProgress(value, false);
     }
 }
