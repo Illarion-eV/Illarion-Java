@@ -18,11 +18,6 @@
  */
 package illarion.client.world;
 
-import illarion.client.net.server.events.DateTimeUpdateEvent;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
-
-import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -64,25 +59,21 @@ public final class Clock {
     private long lastSync;
 
     /**
-     * The default constructor of this class.
-     */
-    public Clock() {
-        AnnotationProcessor.process(this);
-    }
-
-    /**
-     * This event subscriber is used to receive the time updates send by the server.
+     * Set the current date and time.
      *
-     * @param event the event data
+     * @param year   the year of the new date
+     * @param month  the month of the new date
+     * @param day    the day of the new date
+     * @param hour   the hour of the new date
+     * @param minute the minute of the new date
      */
-    @EventSubscriber
-    public void onDateTimeEventReceived(@Nonnull final DateTimeUpdateEvent event) {
+    public void setDateTime(final int year, final int month, final int day, final int hour, final int minute) {
         lastSync = System.currentTimeMillis();
-        day = event.getDay();
-        month = event.getMonth();
-        year = event.getYear();
-        hour = event.getHour();
-        minute = event.getMinute();
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.hour = hour;
+        this.minute = minute;
     }
 
     /**

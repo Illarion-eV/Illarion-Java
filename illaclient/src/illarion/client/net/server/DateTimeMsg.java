@@ -20,16 +20,14 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.DateTimeUpdateEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Current date and time (
- * {@link illarion.client.net.CommandList#MSG_DATETIME}).
+ * Servermessage: Current date and time ({@link CommandList#MSG_DATETIME}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
@@ -94,8 +92,7 @@ public final class DateTimeMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new DateTimeUpdateEvent(year, month, day, hour,
-                minute));
+        World.getClock().setDateTime(year, month, day, hour, minute);
         return true;
     }
 
