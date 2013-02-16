@@ -584,6 +584,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("bookDisplayPosY", "15px");
         cfg.setDefault("skillWindowPosX", "200px");
         cfg.setDefault("skillWindowPosY", "20px");
+        cfg.setDefault("questWindowPosX", "100px");
+        cfg.setDefault("questWindowPosY", "100px");
+        cfg.setDefault("questShowFinished", false);
         cfg.setDefault("runAutoAvoid", true);
 
         @Nonnull final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();

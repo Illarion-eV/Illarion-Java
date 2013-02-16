@@ -59,12 +59,6 @@ public final class QuestMsg extends AbstractReply {
      */
     private Location[] targetLocations;
 
-    /**
-     * Decode data from server receive buffer. And store the data for later execution.
-     *
-     * @param reader the receiver that stores the data that shall be decoded in this function
-     * @throws IOException In case the function reads over the buffer of the receiver this exception is thrown
-     */
     @Override
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
         questId = reader.readUShort();
@@ -78,15 +72,16 @@ public final class QuestMsg extends AbstractReply {
     }
 
     @Override
-    public boolean executeUpdate() {
+    public boolean processNow() {
         return World.getGameGui().isReady();
     }
 
-    /**
-     * Get the string representation of this reply object.
-     *
-     * @return String that contains the simple class name of this reply class instance
-     */
+    @Override
+    public boolean executeUpdate() {
+        World.getGameGui().getQuestGui().setQuest(questId, title, description, finished);
+        return true;
+    }
+
     @Override
     @Nonnull
     public String toString() {

@@ -103,6 +103,14 @@ public interface GameGui {
     InventoryGui getInventoryGui();
 
     /**
+     * Get the GUI that control the display of the quests in the GUI.
+     *
+     * @return the quest GUI controller
+     */
+    @Nonnull
+    QuestGui getQuestGui();
+
+    /**
      * Get the main screen controller of the GUI.
      *
      * @return the GUI screen controller
