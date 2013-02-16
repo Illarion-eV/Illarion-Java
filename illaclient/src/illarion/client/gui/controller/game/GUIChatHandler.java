@@ -504,7 +504,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             labelBuilder.width(SizeValue.px(textWidth).toString());
             labelBuilder.wrap(false);
         }
-        labelBuilder.font(FontLoader.Fonts.Text.getFontName());
+        labelBuilder.font(FontLoader.Fonts.Text.getName());
         labelBuilder.color(color);
         labelBuilder.text(message);
 
