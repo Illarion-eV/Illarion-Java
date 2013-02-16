@@ -24,6 +24,7 @@ import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.ElementBuilder;
 import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
+import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -32,9 +33,11 @@ import illarion.client.IllaClient;
 import illarion.client.graphics.FontLoader;
 import illarion.client.gui.QuestGui;
 import illarion.client.input.InputReceiver;
+import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.state.StateBasedGame;
@@ -196,10 +199,25 @@ public final class QuestHandler implements QuestGui, ScreenController {
     private Screen screen;
 
     /**
+     * This value is turned true once the login sequence is done.
+     */
+    private boolean loginDone;
+
+    /**
      * Default constructor.
      */
     public QuestHandler() {
         hiddenList = new ArrayList<QuestEntry>();
+    }
+
+    /**
+     * This event handler waits for the login done event.
+     *
+     * @param data the event data
+     */
+    @EventSubscriber
+    public void onLoginDoneReceived(final LoginFinishedEvent data) {
+        loginDone = true;
     }
 
     /**
@@ -346,6 +364,36 @@ public final class QuestHandler implements QuestGui, ScreenController {
         }
     }
 
+    /**
+     * This function is used to insert a quest into the GUI list. This takes  are to apply the required order to the
+     * quest.
+     *
+     * @param entry the entry to add
+     */
+    private void insertToGuiList(final QuestEntry entry) {
+        final ListBox<QuestEntry> guiList = getQuestList();
+        final List<QuestEntry> questEntries = guiList.getItems();
+        int currentStart = 0;
+        int currentEnd = questEntries.size() - 1;
+
+        while (currentStart <= currentEnd) {
+            final int middle = currentStart + ((currentEnd - currentStart) >> 1);
+            final QuestEntry foundItem = questEntries.get(middle);
+            final int compareResult = foundItem.compareTo(entry);
+
+            if (compareResult < 0) {
+                currentStart = middle + 1;
+            } else if (compareResult > 0) {
+                currentEnd = middle - 1;
+            } else {
+                guiList.insertItem(entry, middle);
+                return;
+            }
+        }
+
+        guiList.insertItem(entry, currentStart);
+    }
+
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
         this.nifty = nifty;
@@ -423,6 +471,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             final QuestEntry newEntry = new QuestEntry(questId, name, description, finished);
             if (!finished || showFinishedQuests) {
                 insertToGuiList(newEntry);
+                pulseQuestButton();
             } else {
                 hiddenList.add(newEntry);
             }
@@ -430,6 +479,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             final boolean changeOrder = (oldEntry.isFinished() != finished) || !oldEntry.getName().equals(name);
             final boolean wasFinished = oldEntry.isFinished();
             oldEntry.updateData(name, description, finished);
+            pulseQuestButton();
             if (changeOrder) {
                 if (!wasFinished || showFinishedQuests) {
                     getQuestList().removeItem(oldEntry);
@@ -469,32 +519,14 @@ public final class QuestHandler implements QuestGui, ScreenController {
     }
 
     /**
-     * This function is used to insert a quest into the GUI list. This takes  are to apply the required order to the
-     * quest.
-     *
-     * @param entry the entry to add
+     * Show the pulsing animation of the quest button.
      */
-    private void insertToGuiList(final QuestEntry entry) {
-        final ListBox<QuestEntry> guiList = getQuestList();
-        final List<QuestEntry> questEntries = guiList.getItems();
-        int currentStart = 0;
-        int currentEnd = questEntries.size() - 1;
-
-        while (currentStart <= currentEnd) {
-            final int middle = currentStart + ((currentEnd - currentStart) >> 1);
-            final QuestEntry foundItem = questEntries.get(middle);
-            final int compareResult = foundItem.compareTo(entry);
-
-            if (compareResult < 0) {
-                currentStart = middle + 1;
-            } else if (compareResult > 0) {
-                currentEnd = middle - 1;
-            } else {
-                guiList.insertItem(entry, middle);
-                return;
+    private void pulseQuestButton() {
+        if (loginDone && (screen != null)) {
+            @Nullable final Element questBtn = screen.findElementByName("openQuestBtn");
+            if (questBtn != null) {
+                questBtn.startEffect(EffectEventId.onCustom, null, "pulse");
             }
         }
-
-        guiList.insertItem(entry, currentStart);
     }
 }
