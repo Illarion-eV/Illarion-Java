@@ -38,8 +38,7 @@ public final class DateTimeMsg extends AbstractReply {
      * The format of the string used in the {@link #toString()} function.
      */
     @SuppressWarnings("nls")
-    private static final String TO_STRING_FORMAT =
-            "Date: %1$s/%2$s/%3$s - Time: %4$s:%5$s";
+    private static final String TO_STRING_FORMAT = "Date: %1$d/%2$d/%3$d - Time: %4$d:%5$d";
 
     /**
      * Day of the current IG time.
@@ -66,15 +65,6 @@ public final class DateTimeMsg extends AbstractReply {
      */
     private int year;
 
-    /**
-     * Decode the date and time data the receiver got and prepare it for the
-     * execution.
-     *
-     * @param reader the receiver that got the data from the server that needs
-     *               to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     *                     decode the full message
-     */
     @Override
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
         hour = reader.readUByte();
@@ -84,30 +74,15 @@ public final class DateTimeMsg extends AbstractReply {
         year = reader.readUShort();
     }
 
-    /**
-     * Execute the date and time message and send the decoded data to the rest
-     * of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
-     */
     @Override
     public boolean executeUpdate() {
         World.getClock().setDateTime(year, month, day, hour, minute);
         return true;
     }
 
-    /**
-     * Get the data of this date and time message as string.
-     *
-     * @return the string that contains the values that were decoded for this
-     *         message
-     */
     @Nonnull
     @Override
     public String toString() {
-        return toString(String.format(TO_STRING_FORMAT,
-                Integer.toString(month), Integer.toString(day),
-                Integer.toString(year), Integer.toString(hour),
-                Integer.toString(minute)));
+        return toString(String.format(TO_STRING_FORMAT, month, day, year, hour, minute));
     }
 }
