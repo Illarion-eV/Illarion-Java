@@ -394,6 +394,16 @@ public final class QuestHandler implements QuestGui, ScreenController {
         guiList.insertItem(entry, currentStart);
     }
 
+    /**
+     * Fetch the reference to the quest list.
+     *
+     * @return the quest list
+     */
+    private ListBox<QuestEntry> getQuestList() {
+        //noinspection unchecked
+        return (ListBox<QuestEntry>) questWindow.getElement().findNiftyControl("#questList", ListBox.class);
+    }
+
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
         this.nifty = nifty;
@@ -425,6 +435,37 @@ public final class QuestHandler implements QuestGui, ScreenController {
     }
 
     @Override
+    public void removeQuest(final int questId) {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game,
+                                     final int delta) {
+                removeQuestInternal(questId);
+            }
+        });
+    }
+
+    /**
+     * Remove a quest from the quest list.
+     *
+     * @param questId the ID of the quest
+     */
+    private void removeQuestInternal(final int questId) {
+        for (final QuestEntry entry : hiddenList) {
+            if (entry.getQuestId() == questId) {
+                hiddenList.remove(entry);
+                return;
+            }
+        }
+        for (final QuestEntry entry : getQuestList().getItems()) {
+            if (entry.getQuestId() == questId) {
+                getQuestList().removeItem(entry);
+                return;
+            }
+        }
+    }
+
+    @Override
     public void setDisplayedQuest(final int questId) {
         final ListBox<QuestEntry> guiList = getQuestList();
         for (final QuestEntry guiListEntry : guiList.getItems()) {
@@ -432,16 +473,6 @@ public final class QuestHandler implements QuestGui, ScreenController {
                 guiList.selectItem(guiListEntry);
             }
         }
-    }
-
-    /**
-     * Fetch the reference to the quest list.
-     *
-     * @return the quest list
-     */
-    private ListBox<QuestEntry> getQuestList() {
-        //noinspection unchecked
-        return (ListBox<QuestEntry>) questWindow.getElement().findNiftyControl("#questList", ListBox.class);
     }
 
     @Override

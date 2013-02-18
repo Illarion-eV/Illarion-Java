@@ -39,6 +39,13 @@ public interface QuestGui {
     boolean isQuestLogVisible();
 
     /**
+     * Remove a quest from the log.
+     *
+     * @param questId the ID of the quest
+     */
+    void removeQuest(int questId);
+
+    /**
      * Set the quest that is currently shown in the quest log.
      *
      * @param questId the ID of the quest that is shown in the log

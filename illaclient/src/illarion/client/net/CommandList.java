@@ -466,6 +466,11 @@ public final class CommandList {
     public static final int MSG_QUEST = 0x40;
 
     /**
+     * Server message causes a quest entry to be deleted from the quest log.
+     */
+    public static final int MSG_QUEST_DELETE = 0x41;
+
+    /**
      * Server message to remove a character from the screen.
      */
     public static final int MSG_REMOVE_CHAR = 0xE2;
