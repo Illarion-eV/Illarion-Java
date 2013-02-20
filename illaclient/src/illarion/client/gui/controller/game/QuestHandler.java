@@ -281,17 +281,27 @@ public final class QuestHandler implements QuestGui, ScreenController {
     @NiftyEventSubscriber(id = "questLog#questList")
     public void onSelectedQuestChanged(@Nonnull final String topic,
                                        @Nonnull final ListBoxSelectionChangedEvent<QuestEntry> event) {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+                updateDisplayedQuest();
+            }
+        });
+    }
+
+    /**
+     * Update the quest that is currently displayed in the dialog.
+     */
+    private void updateDisplayedQuest() {
         final Element descriptionArea = getDescriptionArea();
         for (final Element oldChildren : descriptionArea.getElements()) {
             oldChildren.markForRemoval();
         }
 
-        final List<QuestEntry> selectedEntries = event.getSelection();
-        if ((selectedEntries == null) || selectedEntries.isEmpty()) {
+        final QuestEntry selectedEntry = getSelectedQuest();
+        if (selectedEntry == null) {
             return;
         }
-
-        final QuestEntry selectedEntry = selectedEntries.get(0);
 
         final LabelBuilder titleLabel = new LabelBuilder();
         titleLabel.label(selectedEntry.getName());
@@ -336,6 +346,21 @@ public final class QuestHandler implements QuestGui, ScreenController {
      */
     private Element getDescriptionArea() {
         return questWindow.getElement().findElementByName("#questDescription");
+    }
+
+    /**
+     * Fetch the quest that is currently selected.
+     *
+     * @return the currently selected quest or {@code null} in case no quest is selected
+     */
+    @Nullable
+    private QuestEntry getSelectedQuest() {
+        final List<QuestEntry> selectedEntries = getQuestList().getSelection();
+        if ((selectedEntries == null) || selectedEntries.isEmpty()) {
+            return null;
+        }
+
+        return selectedEntries.get(0);
     }
 
     /**
@@ -522,6 +547,14 @@ public final class QuestHandler implements QuestGui, ScreenController {
                     insertToGuiList(oldEntry);
                 }
             }
+        }
+
+        final QuestEntry selectedEntry = getSelectedQuest();
+        if (selectedEntry == null) {
+            return;
+        }
+        if (selectedEntry.getQuestId() == questId) {
+            updateDisplayedQuest();
         }
     }
 
