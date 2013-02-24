@@ -54,6 +54,11 @@ public class TileRenderer extends AbstractMapRenderer {
     };
 
     /**
+     * Render Empty tiles
+     */
+    private boolean renderEmpty;
+
+    /**
      * Creates a new map renderer
      */
     public TileRenderer(final RendererManager manager) {
@@ -62,54 +67,53 @@ public class TileRenderer extends AbstractMapRenderer {
 
     @Override
     public void renderMap(@Nonnull final Map map, @Nonnull final Rectangle viewport, final int level, @Nonnull final Graphics2D g) {
-        final int width = map.getWidth();
-        final int height = map.getHeight();
         final int z = map.getZ() - level;
         final AffineTransform transform = g.getTransform();
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < map.getWidth(); ++x) {
+            for (int y = 0; y < map.getHeight(); ++y) {
                 final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
                 final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
                 if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                         (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
-
                     final MapTile mt = map.getTileAt(x, y);
-                    final TileImg t = TileLoader.getInstance().getTileFromId(mt.getId());
-                    final Overlay o = OverlayLoader.getInstance().getOverlayFromId(mt.getOverlayID());
-                    if (t != null) {
-                        final AffineTransform tr = g.getTransform();
-                        if (getZoom() > getMinZoom()) {
-                            final Image img = t.getImg()[0];
-                            if (img != null) {
-                                g.translate(xdisp, ydisp);
-                                g.drawImage(img,
-                                        0,
-                                        0, null);
-                            }
-                            if (o != null) {
-                                final Image ovlimg = o.getImgs()[mt.getShapeID() - 1];
-                                if (ovlimg != null) {
-                                    g.drawImage(ovlimg,
-                                            0,
-                                            0, null);
+                    if (renderEmpty || (mt != null && mt.getId() != 0)) {
+                        final TileImg t = TileLoader.getInstance().getTileFromId(mt.getId());
+                        if (t != null) {
+                            final AffineTransform tr = g.getTransform();
+                            if (getZoom() > getMinZoom()) {
+                                renderTile(xdisp, ydisp, g, t.getImg()[0]);
+                                renderOverlay(g, mt);
+                            } else {
+                                if (t.getInfo().getMapColor() != 0) {
+                                    g.translate(xdisp, ydisp);
+                                    g.setColor(TILE_COLORS[t.getInfo().getMapColor()]);
+                                    g.fill(getTilePolygon());
                                 }
                             }
-                        } else {
-                            if (t.getInfo().getMapColor() != 0) {
-                                g.translate(xdisp, ydisp);
-                                g.setColor(TILE_COLORS[t.getInfo().getMapColor()]);
-                                g.fill(getTilePolygon());
-                            }
+                            g.setTransform(tr);
                         }
-                        g.setTransform(tr);
                     }
                 }
             }
         }
 
-
         g.setTransform(transform);
+    }
+
+    private void renderTile(final int xDisp, final int yDisp, final Graphics2D graphics, @Nonnull final Image image) {
+        graphics.translate(xDisp, yDisp);
+        graphics.drawImage(image, 0, 0, null);
+    }
+
+    private void renderOverlay(final Graphics2D graphics, final MapTile mapTile) {
+        final Overlay o = OverlayLoader.getInstance().getOverlayFromId(mapTile.getOverlayID());
+        if (o != null) {
+            final Image imageOverlay = o.getImgs()[mapTile.getShapeID() - 1];
+            if (imageOverlay != null) {
+                graphics.drawImage(imageOverlay, 0, 0, null);
+            }
+        }
     }
 
     @Override
@@ -135,6 +139,26 @@ public class TileRenderer extends AbstractMapRenderer {
     @Nonnull
     @Override
     public RibbonElementPriority getPriority() {
+        return RibbonElementPriority.TOP;
+    }
+
+    public String getEmptyTileLocalizedName() {
+        return Lang.getMsg("renderer.EmptyTile");
+    }
+
+    public ResizableIcon getEmptyTileRendererIcon() {
+        return ImageLoader.getResizableIcon("file_tiles");
+    }
+
+    public boolean isEmptyTileDefaultOn() {
+        return true;
+    }
+
+    public void setRenderEmptyTiles(final boolean renderEmptyTiles) {
+        renderEmpty = renderEmptyTiles;
+    }
+
+    public RibbonElementPriority getEmptyTilePriority() {
         return RibbonElementPriority.TOP;
     }
 }

@@ -37,8 +37,6 @@ import java.awt.event.ActionListener;
 public class MusicPanel extends JPanel {
 
     @Nonnull
-    private final JSpinner spinner;
-    @Nonnull
     private final JCheckBox delCheckBox;
     @Nonnull
     private final JSpinner radiusSpinner;
@@ -56,19 +54,12 @@ public class MusicPanel extends JPanel {
 
         final JPanel northPanel = new JPanel(new GridLayout(0, 2));
 
-        spinner = new JSpinner(new SpinnerNumberModel(0, 0, 9000, 1));
         radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, ToolManager.TOOL_RADIUS, 1));
         delCheckBox = new JCheckBox();
-        ResizableIcon icon =  ImageLoader.getResizableIcon("player_play") ;
-        icon.setDimension(new Dimension(16,16));
-        JButton playButton = new JButton(icon);
+        final ResizableIcon icon =  ImageLoader.getResizableIcon("player_play") ;
+        icon.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
+        final JButton playButton = new JButton(icon);
 
-        delCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                spinner.setEnabled(!delCheckBox.isSelected());
-            }
-        });
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
