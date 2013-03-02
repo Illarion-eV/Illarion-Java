@@ -31,11 +31,14 @@ import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.Game;
 import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.resources.SongFactory;
 import illarion.client.util.Lang;
 import org.newdawn.slick.Music;
+import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import javax.annotation.Nonnull;
 
@@ -96,6 +99,15 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * any larger value in case there is a error.
      */
     private int lastErrorCode;
+
+    /**
+     * The game that is the parent of this class.
+     */
+    private final StateBasedGame game;
+
+    public LoginScreenController(final StateBasedGame game) {
+        this.game = game;
+    }
 
     /**
      * Get the text that describes a error code.
@@ -206,15 +218,19 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
         login.storeData(savePassword.isChecked());
 
-        login.requestCharacterList(new Login.RequestCharListCallback() {
-            @Override
-            public void finishedRequest(final int errorCode) {
-                lastErrorCode = errorCode;
-                receivedLoginResponse = true;
+        if (login.isCharacterListRequired()) {
+            login.requestCharacterList(new Login.RequestCharListCallback() {
+                @Override
+                public void finishedRequest(final int errorCode) {
+                    lastErrorCode = errorCode;
+                    receivedLoginResponse = true;
 
-                nifty.closePopup(popupReceiveChars.getId());
-            }
-        });
+                    nifty.closePopup(popupReceiveChars.getId());
+                }
+            });
+        } else {
+            game.enterState(Game.STATE_LOADING, new FadeOutTransition(), null);
+        }
     }
 
     /**

@@ -20,13 +20,12 @@ package illarion.client.gui.controller;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.controls.ButtonClickedEvent;
-import de.lessvoid.nifty.controls.CheckBox;
-import de.lessvoid.nifty.controls.DropDown;
-import de.lessvoid.nifty.controls.Slider;
+import de.lessvoid.nifty.controls.*;
+import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
+import illarion.client.Servers;
 import illarion.client.graphics.DisplayModeSorter;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
@@ -59,10 +58,18 @@ public final class OptionScreenController implements ScreenController {
     private CheckBox musicOn;
     private Slider musicVolume;
 
+    private TextField serverAddress;
+    private TextField serverPort;
+    private TextField clientVersion;
+    private CheckBox serverAccountLogin;
+    private CheckBox serverResetSettings;
+
     @Override
     public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
+
+        final Element tabRoot = screen.findElementByName("tabRoot");
 
         //charNameLength = screen.findNiftyControl("charNameLength", DropDown.class);
         //charNameLength.addItem("${options-bundle.charNameDisplay.short}");
@@ -70,22 +77,36 @@ public final class OptionScreenController implements ScreenController {
 
         //showCharId = screen.findNiftyControl("showCharId", CheckBox.class);
 
-        runAutoAvoid = screen.findNiftyControl("runAutoAvoid", CheckBox.class);
+        runAutoAvoid = tabRoot.findNiftyControl("runAutoAvoid", CheckBox.class);
 
-        sendCrashReports = screen.findNiftyControl("sendCrashReports", DropDown.class);
+        sendCrashReports = tabRoot.findNiftyControl("sendCrashReports", DropDown.class);
         sendCrashReports.addItem("${options-bundle.report.ask}");
         sendCrashReports.addItem("${options-bundle.report.always}");
         sendCrashReports.addItem("${options-bundle.report.never}");
 
-        resolutions = screen.findNiftyControl("resolutions", DropDown.class);
+        resolutions = tabRoot.findNiftyControl("resolutions", DropDown.class);
         resolutions.addAllItems(getResolutionList());
 
-        fullscreen = screen.findNiftyControl("fullscreen", CheckBox.class);
+        fullscreen = tabRoot.findNiftyControl("fullscreen", CheckBox.class);
 
-        soundOn = screen.findNiftyControl("soundOn", CheckBox.class);
-        soundVolume = screen.findNiftyControl("soundVolume", Slider.class);
-        musicOn = screen.findNiftyControl("musicOn", CheckBox.class);
-        musicVolume = screen.findNiftyControl("musicVolume", Slider.class);
+        soundOn = tabRoot.findNiftyControl("soundOn", CheckBox.class);
+        soundVolume = tabRoot.findNiftyControl("soundVolume", Slider.class);
+        musicOn = tabRoot.findNiftyControl("musicOn", CheckBox.class);
+        musicVolume = tabRoot.findNiftyControl("musicVolume", Slider.class);
+
+        final Element serverTab = tabRoot.findElementByName("#serverTab");
+        if (serverTab == null) {
+            return;
+        }
+        if (IllaClient.DEFAULT_SERVER == Servers.realserver) {
+            tabRoot.getNiftyControl(TabGroup.class).removeTab(serverTab);
+        } else {
+            serverAddress = serverTab.findNiftyControl("serverAddress", TextField.class);
+            serverPort = serverTab.findNiftyControl("serverPort", TextField.class);
+            clientVersion = serverTab.findNiftyControl("clientVersion", TextField.class);
+            serverAccountLogin = serverTab.findNiftyControl("serverAccountLogin", CheckBox.class);
+            serverResetSettings = serverTab.findNiftyControl("resetServerSettings", CheckBox.class);
+        }
     }
 
     @Override
@@ -101,6 +122,14 @@ public final class OptionScreenController implements ScreenController {
         soundVolume.setValue(IllaClient.getCfg().getFloat("soundVolume"));
         musicOn.setChecked(IllaClient.getCfg().getBoolean("musicOn"));
         musicVolume.setValue(IllaClient.getCfg().getFloat("musicVolume"));
+
+        if (serverAddress != null) {
+            serverAddress.setText(IllaClient.getCfg().getString("serverAddress"));
+            serverPort.setText(Integer.toString(IllaClient.getCfg().getInteger("serverPort")));
+            clientVersion.setText(Integer.toString(IllaClient.getCfg().getInteger("clientVersion")));
+            serverAccountLogin.setChecked(IllaClient.getCfg().getBoolean("serverAccountLogin"));
+            serverResetSettings.setChecked(false);
+        }
     }
 
     @NiftyEventSubscriber(id = "saveButton")
@@ -119,6 +148,20 @@ public final class OptionScreenController implements ScreenController {
         configSystem.set("soundVolume", soundVolume.getValue());
         configSystem.set("musicOn", musicOn.isChecked());
         configSystem.set("musicVolume", musicVolume.getValue());
+
+        if (serverAddress != null) {
+            if (serverResetSettings.isChecked()) {
+                configSystem.set("serverAddress", Servers.testserver.getServerHost());
+                configSystem.set("serverPort", Servers.testserver.getServerPort());
+                configSystem.set("clientVersion", Servers.testserver.getClientVersion());
+                configSystem.set("serverAccountLogin", true);
+            } else {
+                configSystem.set("serverAddress", serverAddress.getRealText());
+                configSystem.set("serverPort", Integer.parseInt(serverPort.getRealText()));
+                configSystem.set("clientVersion", Integer.parseInt(clientVersion.getRealText()));
+                configSystem.set("serverAccountLogin", serverAccountLogin.isChecked());
+            }
+        }
 
         configSystem.save();
     }

@@ -153,6 +153,11 @@ public final class Login {
         }
     }
 
+    public boolean isCharacterListRequired() {
+        return (IllaClient.DEFAULT_SERVER != Servers.testserver)
+                || IllaClient.getCfg().getBoolean("serverAccountLogin");
+    }
+
     public void requestCharacterList(final Login.RequestCharListCallback resultCallback) {
         GlobalExecutorService.getService().submit(new Login.RequestCharacterListTask(resultCallback));
     }
@@ -284,8 +289,19 @@ public final class Login {
             return false;
         }
 
-        World.getNet().sendCommand(new LoginCmd(loginCharacter, password,
-                IllaClient.DEFAULT_SERVER.getClientVersion()));
+        final int clientVersion;
+        if (IllaClient.DEFAULT_SERVER == Servers.testserver) {
+            clientVersion = IllaClient.getCfg().getInteger("clientVersion");
+        } else {
+            clientVersion = IllaClient.DEFAULT_SERVER.getClientVersion();
+        }
+
+        if (isCharacterListRequired()) {
+            World.getNet().sendCommand(new LoginCmd(loginCharacter, password, clientVersion));
+        } else {
+            World.getNet().sendCommand(new LoginCmd(loginName, password, clientVersion));
+        }
+
         return true;
     }
 

@@ -588,6 +588,10 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("questWindowPosY", "100px");
         cfg.setDefault("questShowFinished", false);
         cfg.setDefault("runAutoAvoid", true);
+        cfg.setDefault("serverAddress", Servers.testserver.getServerHost());
+        cfg.setDefault("serverPort", Servers.testserver.getServerPort());
+        cfg.setDefault("clientVersion", Servers.testserver.getClientVersion());
+        cfg.setDefault("serverAccountLogin", true);
 
         @Nonnull final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable final Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");

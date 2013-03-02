@@ -217,8 +217,17 @@ public final class NetComm {
         try {
             final Servers usedServer = IllaClient.getInstance().getUsedServer();
 
-            final InetSocketAddress address = new InetSocketAddress(usedServer.getServerHost(),
-                    usedServer.getServerPort());
+            final String serverAddress;
+            final int serverPort;
+            if (usedServer == Servers.testserver) {
+                serverAddress = IllaClient.getCfg().getString("serverAddress");
+                serverPort = IllaClient.getCfg().getInteger("serverPort");
+            } else {
+                serverAddress = usedServer.getServerHost();
+                serverPort = usedServer.getServerPort();
+            }
+
+            final InetSocketAddress address = new InetSocketAddress(serverAddress, serverPort);
             socket = SelectorProvider.provider().openSocketChannel();
             socket.configureBlocking(true);
             socket.socket().setPerformancePreferences(0, 2, 1);

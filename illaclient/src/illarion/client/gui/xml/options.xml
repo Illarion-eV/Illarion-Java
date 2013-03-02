@@ -93,6 +93,35 @@
                             <control name="horizontalSlider" min="0" max="100" id="musicVolume" width="220px"/>
                         </panel>
                     </control>
+                    <control id="#serverTab" caption="Server" name="tab" childLayout="vertical">
+                        <control width="100%" name="label" text="${options-bundle.serverWarning}" wrap="true"
+                                 marginBottom="10px" textHAlign="left"/>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.serverAddress}"/>
+                            <panel width="*"/>
+                            <control name="textfield" id="serverAddress" width="220px"/>
+                        </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.serverPort}"/>
+                            <panel width="*"/>
+                            <control name="textfield" filter="digits" id="serverPort" width="220px"/>
+                        </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.clientVersion}"/>
+                            <panel width="*"/>
+                            <control name="textfield" filter="digits" id="clientVersion" width="220px"/>
+                        </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.serverAccountLogin}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="serverAccountLogin"/>
+                        </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.serverReset}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="resetServerSettings"/>
+                        </panel>
+                    </control>
                 </control>
 
                 <panel width="100%" childLayout="center" height="35px">
