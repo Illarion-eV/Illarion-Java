@@ -280,6 +280,9 @@ public final class Login {
     }
 
     public String getLoginCharacter() {
+        if (!isCharacterListRequired()) {
+            return loginName;
+        }
         return loginCharacter;
     }
 
@@ -295,11 +298,7 @@ public final class Login {
         } else {
             clientVersion = IllaClient.DEFAULT_SERVER.getClientVersion();
         }
-
-        if (!isCharacterListRequired()) {
-            loginCharacter = loginName;
-        }
-        World.getNet().sendCommand(new LoginCmd(loginCharacter, password, clientVersion));
+        World.getNet().sendCommand(new LoginCmd(getLoginCharacter(), password, clientVersion));
 
         return true;
     }
