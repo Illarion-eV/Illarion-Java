@@ -19,8 +19,10 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
+import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.render.*;
 import javolution.util.FastList;
+import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
@@ -39,34 +41,18 @@ public class ViewBand extends JRibbonBand {
     public ViewBand(@Nonnull final RendererManager manager) {
         super(Lang.getMsg("gui.viewband.Name"), null);
 
-        final List<AbstractMapRenderer> r = new FastList<AbstractMapRenderer>();
+        final TileRenderer tileRenderer = new TileRenderer(manager);
+        final ItemRenderer itemRenderer = new ItemRenderer(manager);
+        final GridRenderer gridRenderer = new GridRenderer(manager);
+        final MusicRenderer musicRenderer = new MusicRenderer(manager);
+        final WarpRenderer warpRenderer = new WarpRenderer(manager);
 
-        r.add(new TileRenderer(manager));
-        r.add(new ItemRenderer(manager));
-        r.add(new GridRenderer(manager));
-        r.add(new MusicRenderer(manager));
-        r.add(new WarpRenderer(manager));
-
-        for (final AbstractMapRenderer re : r) {
-            final JCommandToggleButton btn = new JCommandToggleButton(
-                    re.getLocalizedName(), re.getRendererIcon()
-            );
-            btn.getActionModel().setSelected(re.isDefaultOn());
-            btn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    if (btn.getActionModel().isSelected()) {
-                        manager.addRenderer(re);
-                    } else {
-                        manager.removeRenderer(re);
-                    }
-                }
-            });
-            if (re.isDefaultOn()) {
-                manager.addRenderer(re);
-            }
-            addCommandButton(btn, re.getPriority());
-        }
+        newRenderButton(manager, tileRenderer);
+        newRenderButton(manager, itemRenderer);
+        renderEmptyTilesButton(tileRenderer);
+        newRenderButton(manager, gridRenderer);
+        newRenderButton(manager, musicRenderer);
+        newRenderButton(manager, warpRenderer);
 
         final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
@@ -74,5 +60,44 @@ public class ViewBand extends JRibbonBand {
         resize.add(new CoreRibbonResizePolicies.High2Low(getControlPanel()));
 
         setResizePolicies(resize);
+    }
+
+    private void newRenderButton(final RendererManager manager, final AbstractMapRenderer renderer) {
+        final JCommandToggleButton btn = new JCommandToggleButton(
+                renderer.getLocalizedName(), renderer.getRendererIcon()
+        );
+        btn.getActionModel().setSelected(renderer.isDefaultOn());
+        btn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                if (btn.getActionModel().isSelected()) {
+                    manager.addRenderer(renderer);
+                } else {
+                    manager.removeRenderer(renderer);
+                }
+            }
+        });
+        if (renderer.isDefaultOn()) {
+            manager.addRenderer(renderer);
+        }
+        addCommandButton(btn, renderer.getPriority());
+    }
+
+    private void renderEmptyTilesButton(final TileRenderer renderer)   {
+        final JCommandToggleButton btn = new JCommandToggleButton(
+                renderer.getEmptyTileLocalizedName(), renderer.getEmptyTileRendererIcon()
+        );
+        btn.getActionModel().setSelected(renderer.isEmptyTileDefaultOn());
+        btn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                renderer.setRenderEmptyTiles(btn.getActionModel().isSelected());
+                EventBus.publish(new RepaintRequestEvent());
+            }
+        });
+        if (renderer.isEmptyTileDefaultOn()) {
+            renderer.setRenderEmptyTiles(true);
+        }
+        addCommandButton(btn, renderer.getEmptyTilePriority());
     }
 }

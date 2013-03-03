@@ -46,6 +46,8 @@ import javax.annotation.Nullable;
 public final class ToolManager implements Disposable {
     private static final Logger LOGGER = Logger.getLogger(ToolManager.class);
     public static final int TOOL_RADIUS = 10000;
+    public static final int ICON_SIZE = 16;
+
     private final GuiController controller;
     private final RendererManager renderer;
 
