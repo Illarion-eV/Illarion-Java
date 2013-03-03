@@ -296,11 +296,10 @@ public final class Login {
             clientVersion = IllaClient.DEFAULT_SERVER.getClientVersion();
         }
 
-        if (isCharacterListRequired()) {
-            World.getNet().sendCommand(new LoginCmd(loginCharacter, password, clientVersion));
-        } else {
-            World.getNet().sendCommand(new LoginCmd(loginName, password, clientVersion));
+        if (!isCharacterListRequired()) {
+            loginCharacter = loginName;
         }
+        World.getNet().sendCommand(new LoginCmd(loginCharacter, password, clientVersion));
 
         return true;
     }
