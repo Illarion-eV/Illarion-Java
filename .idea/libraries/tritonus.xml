@@ -2,7 +2,6 @@
   <library name="tritonus">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/illacommon/lib/tritonus" />
-      <root url="file://$PROJECT_DIR$/illacommon/lib/tritonus" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
