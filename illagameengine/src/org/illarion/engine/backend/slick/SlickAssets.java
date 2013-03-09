@@ -16,33 +16,34 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine;
+package org.illarion.engine.backend.slick;
 
 import org.illarion.engine.assets.Assets;
-import org.illarion.engine.graphic.Graphics;
+import org.illarion.engine.assets.TextureAssetManager;
 
 import javax.annotation.Nonnull;
 
 /**
- * This interfaces defines the access to the actual game engine elements. This interface is implemented by the
- * different library dependant implementations, providing unified access to all the implementations.
+ * The asset provider for the Slick2D backend.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Engine {
+public class SlickAssets implements Assets {
     /**
-     * Get the graphics component of the engine.
-     *
-     * @return the graphics component
+     * The instance of the texture manager used by this backend.
      */
-    @Nonnull
-    Graphics getGraphics();
+    private final SlickTextureManager textureManager;
 
     /**
-     * Get the assets that are maintained by this engine.
-     *
-     * @return the asset component of the engine
+     * Constructor of this assets handler.
      */
+    public SlickAssets() {
+        textureManager = new SlickTextureManager();
+    }
+
     @Nonnull
-    Assets getAssets();
+    @Override
+    public TextureAssetManager getTextureManager() {
+        return textureManager;
+    }
 }

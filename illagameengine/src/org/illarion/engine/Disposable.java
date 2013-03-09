@@ -18,31 +18,15 @@
  */
 package org.illarion.engine;
 
-import org.illarion.engine.assets.Assets;
-import org.illarion.engine.graphic.Graphics;
-
-import javax.annotation.Nonnull;
-
 /**
- * This interfaces defines the access to the actual game engine elements. This interface is implemented by the
- * different library dependant implementations, providing unified access to all the implementations.
+ * This interface is implemented by all classes that require to be disposed. Those are usually objects with native
+ * references or that hold any kind of memory that is not cleaned by the garbage collector of java.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Engine {
+public interface Disposable {
     /**
-     * Get the graphics component of the engine.
-     *
-     * @return the graphics component
+     * Calling this function renders the object unusable and cleans this object up to make it ready for disposal.
      */
-    @Nonnull
-    Graphics getGraphics();
-
-    /**
-     * Get the assets that are maintained by this engine.
-     *
-     * @return the asset component of the engine
-     */
-    @Nonnull
-    Assets getAssets();
+    void dispose();
 }

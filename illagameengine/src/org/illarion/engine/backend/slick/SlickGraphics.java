@@ -16,33 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine;
+package org.illarion.engine.backend.slick;
 
-import org.illarion.engine.assets.Assets;
 import org.illarion.engine.graphic.Graphics;
 
-import javax.annotation.Nonnull;
-
 /**
- * This interfaces defines the access to the actual game engine elements. This interface is implemented by the
- * different library dependant implementations, providing unified access to all the implementations.
- *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Engine {
-    /**
-     * Get the graphics component of the engine.
-     *
-     * @return the graphics component
-     */
-    @Nonnull
-    Graphics getGraphics();
-
-    /**
-     * Get the assets that are maintained by this engine.
-     *
-     * @return the asset component of the engine
-     */
-    @Nonnull
-    Assets getAssets();
+public class SlickGraphics implements Graphics {
+    @Override
+    public void clear() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

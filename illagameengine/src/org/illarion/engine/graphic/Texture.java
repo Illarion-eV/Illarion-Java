@@ -16,33 +16,45 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine;
+package org.illarion.engine.graphic;
 
-import org.illarion.engine.assets.Assets;
-import org.illarion.engine.graphic.Graphics;
+import org.illarion.engine.Disposable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
- * This interfaces defines the access to the actual game engine elements. This interface is implemented by the
- * different library dependant implementations, providing unified access to all the implementations.
+ * This class represents a single texture.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Engine {
+@Immutable
+@NotThreadSafe
+public interface Texture extends Disposable {
     /**
-     * Get the graphics component of the engine.
+     * Get a new texture object that points to a part of this original texture.
      *
-     * @return the graphics component
+     * @param x      the x coordinate of the new texture
+     * @param y      the y coordinate of the new texture
+     * @param width  the width of the new texture
+     * @param height the height of the new texture
+     * @return the new sub-texture instance
      */
     @Nonnull
-    Graphics getGraphics();
+    Texture getSubTexture(int x, int y, int width, int height);
 
     /**
-     * Get the assets that are maintained by this engine.
+     * Get the height of the texture.
      *
-     * @return the asset component of the engine
+     * @return the height of this texture in pixel.
      */
-    @Nonnull
-    Assets getAssets();
+    int getHeight();
+
+    /**
+     * Get the width of the texture.
+     *
+     * @return the width of this texture in pixel.
+     */
+    int getWidth();
 }

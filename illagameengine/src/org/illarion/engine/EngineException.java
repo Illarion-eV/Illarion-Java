@@ -18,31 +18,27 @@
  */
 package org.illarion.engine;
 
-import org.illarion.engine.assets.Assets;
-import org.illarion.engine.graphic.Graphics;
-
 import javax.annotation.Nonnull;
 
 /**
- * This interfaces defines the access to the actual game engine elements. This interface is implemented by the
- * different library dependant implementations, providing unified access to all the implementations.
+ * This is the exception thrown in case something goes wrong inside the engine.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Engine {
-    /**
-     * Get the graphics component of the engine.
-     *
-     * @return the graphics component
-     */
-    @Nonnull
-    Graphics getGraphics();
+public class EngineException extends Exception {
+    public EngineException() {
+        super();
+    }
 
-    /**
-     * Get the assets that are maintained by this engine.
-     *
-     * @return the asset component of the engine
-     */
-    @Nonnull
-    Assets getAssets();
+    public EngineException(@Nonnull final String message) {
+        super(message);
+    }
+
+    public EngineException(@Nonnull final String message, @Nonnull final Throwable cause) {
+        super(message, cause);
+    }
+
+    public EngineException(@Nonnull final Throwable cause) {
+        super(cause);
+    }
 }

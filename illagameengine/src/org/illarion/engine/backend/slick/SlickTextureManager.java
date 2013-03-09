@@ -16,33 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine;
+package org.illarion.engine.backend.slick;
 
-import org.illarion.engine.assets.Assets;
-import org.illarion.engine.graphic.Graphics;
+import org.illarion.engine.backend.shared.AbstractTextureManager;
+import org.illarion.engine.graphic.Texture;
+import org.newdawn.slick.SlickException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * This interfaces defines the access to the actual game engine elements. This interface is implemented by the
- * different library dependant implementations, providing unified access to all the implementations.
+ * The texture manager that takes care for loading and providing the texture data for the Slick 2D backend.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Engine {
-    /**
-     * Get the graphics component of the engine.
-     *
-     * @return the graphics component
-     */
-    @Nonnull
-    Graphics getGraphics();
-
-    /**
-     * Get the assets that are maintained by this engine.
-     *
-     * @return the asset component of the engine
-     */
-    @Nonnull
-    Assets getAssets();
+public class SlickTextureManager extends AbstractTextureManager {
+    @Nullable
+    @Override
+    protected Texture loadTexture(@Nonnull final String resource) {
+        try {
+            return new SlickTexture(resource);
+        } catch (@Nonnull final SlickException ignored) {
+            return null;
+        }
+    }
 }

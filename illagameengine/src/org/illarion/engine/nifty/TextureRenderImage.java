@@ -16,33 +16,46 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine;
+package org.illarion.engine.nifty;
 
-import org.illarion.engine.assets.Assets;
-import org.illarion.engine.graphic.Graphics;
+import de.lessvoid.nifty.spi.render.RenderImage;
+import org.illarion.engine.graphic.Texture;
 
 import javax.annotation.Nonnull;
 
 /**
- * This interfaces defines the access to the actual game engine elements. This interface is implemented by the
- * different library dependant implementations, providing unified access to all the implementations.
+ * This is the render image implementation that uses a texture that is rendered to the screen.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Engine {
+public class TextureRenderImage implements RenderImage {
     /**
-     * Get the graphics component of the engine.
-     *
-     * @return the graphics component
+     * The texture that is rendered with this image.
      */
     @Nonnull
-    Graphics getGraphics();
+    private final Texture texture;
 
     /**
-     * Get the assets that are maintained by this engine.
+     * Create a new instance of this render image that points to a specific image.
      *
-     * @return the asset component of the engine
+     * @param texture the texture that is rendered by this render image
      */
-    @Nonnull
-    Assets getAssets();
+    public TextureRenderImage(@Nonnull final Texture texture) {
+        this.texture = texture;
+    }
+
+    @Override
+    public int getWidth() {
+        return texture.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return texture.getHeight();
+    }
+
+    @Override
+    public void dispose() {
+        texture.dispose();
+    }
 }

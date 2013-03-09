@@ -16,33 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine;
-
-import org.illarion.engine.assets.Assets;
-import org.illarion.engine.graphic.Graphics;
+package org.illarion.engine.assets;
 
 import javax.annotation.Nonnull;
 
 /**
- * This interfaces defines the access to the actual game engine elements. This interface is implemented by the
- * different library dependant implementations, providing unified access to all the implementations.
+ * This interface defines how the assets that need to be managed by the game engine can be accessed.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Engine {
+public interface Assets {
     /**
-     * Get the graphics component of the engine.
+     * Get the manager for the texture assets.
      *
-     * @return the graphics component
+     * @return the texture asset manager
      */
     @Nonnull
-    Graphics getGraphics();
-
-    /**
-     * Get the assets that are maintained by this engine.
-     *
-     * @return the asset component of the engine
-     */
-    @Nonnull
-    Assets getAssets();
+    TextureAssetManager getTextureManager();
 }

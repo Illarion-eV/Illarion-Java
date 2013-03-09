@@ -16,33 +16,29 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine;
-
-import org.illarion.engine.assets.Assets;
-import org.illarion.engine.graphic.Graphics;
+package org.illarion.engine.backend.slick;
 
 import javax.annotation.Nonnull;
 
 /**
- * This interfaces defines the access to the actual game engine elements. This interface is implemented by the
- * different library dependant implementations, providing unified access to all the implementations.
+ * This is the exception thrown in case the Slick Backend causes a problem.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Engine {
-    /**
-     * Get the graphics component of the engine.
-     *
-     * @return the graphics component
-     */
-    @Nonnull
-    Graphics getGraphics();
+public class SlickEngineException extends Exception {
+    public SlickEngineException() {
+        super();
+    }
 
-    /**
-     * Get the assets that are maintained by this engine.
-     *
-     * @return the asset component of the engine
-     */
-    @Nonnull
-    Assets getAssets();
+    public SlickEngineException(@Nonnull final String message) {
+        super(message);
+    }
+
+    public SlickEngineException(@Nonnull final String message, @Nonnull final Throwable cause) {
+        super(message, cause);
+    }
+
+    public SlickEngineException(@Nonnull final Throwable cause) {
+        super(cause);
+    }
 }
