@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class TextureRenderImage implements RenderImage {
+class IgeRenderImage implements RenderImage {
     /**
      * The texture that is rendered with this image.
      */
@@ -40,7 +40,7 @@ public class TextureRenderImage implements RenderImage {
      *
      * @param texture the texture that is rendered by this render image
      */
-    public TextureRenderImage(@Nonnull final Texture texture) {
+    IgeRenderImage(@Nonnull final Texture texture) {
         this.texture = texture;
     }
 
@@ -52,6 +52,11 @@ public class TextureRenderImage implements RenderImage {
     @Override
     public int getHeight() {
         return texture.getHeight();
+    }
+
+    @Nonnull
+    public Texture getTexture() {
+        return texture;
     }
 
     @Override

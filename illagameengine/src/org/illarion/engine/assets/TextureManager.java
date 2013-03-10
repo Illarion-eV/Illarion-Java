@@ -31,7 +31,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @NotThreadSafe
-public interface TextureAssetManager {
+public interface TextureManager {
     /**
      * Add a directory that provides texture data.
      *

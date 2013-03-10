@@ -19,6 +19,7 @@
 package org.illarion.engine;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 /**
@@ -65,4 +66,11 @@ public interface GameContainer {
      * @param title the title of the game
      */
     void setTitle(@Nonnull String title);
+
+    /**
+     * Set the mouse cursor that should be applied to the mouse.
+     *
+     * @param cursor the cursor to display or {@code null} to revert to the default cursor
+     */
+    void setMouseCursor(@Nullable MouseCursor cursor);
 }

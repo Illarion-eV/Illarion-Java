@@ -27,10 +27,7 @@ import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
+import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -92,7 +89,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      * The default light that is used in the client.
      */
     @Nonnull
-    protected static final Color DEFAULT_LIGHT = new Color(1.f, 1.f, 1.f, 1.f);
+    protected static final Color DEFAULT_LIGHT = Color.WHITE;
 
     /**
      * The speed value for fading the alpha values by default.
@@ -156,14 +153,14 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      * The light value that is used to render this entity during the next render loop.
      */
     @Nonnull
-    private Color renderLight = new Color(Color.white);
+    private Color renderLight = new Color(Color.WHITE);
 
     /**
      * This color is the color that was used last time to render the entity. Its used to check if the color changed
      * and the entity needs to be rendered again.
      */
     @Nonnull
-    private final Color lastRenderLight = new Color(Color.white);
+    private final Color lastRenderLight = new Color(Color.WHITE);
 
     /**
      * The color that is used to overwrite the real color of this entity.
@@ -197,7 +194,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         baseColor = template.getDefaultColor();
         if (baseColor == null) {
             alphaTarget = 255;
-            localLight = new Color(Color.white);
+            localLight = new Color(Color.WHITE);
         } else {
             localLight = new Color(baseColor);
             alphaTarget = baseColor.getAlpha();
@@ -707,15 +704,15 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
 
         if ((baseColor != null) || (overWriteBaseColor != null)) {
             if (overWriteBaseColor != null) {
-                renderLight = renderLight.multiply(overWriteBaseColor);
+                renderLight.multiply(overWriteBaseColor);
             } else {
-                renderLight = renderLight.multiply(baseColor);
+                renderLight.multiply(baseColor);
             }
         }
 
         if (!renderLight.equals(lastRenderLight)) {
             wentDirty = true;
-            copyLightValues(renderLight, lastRenderLight);
+            lastRenderLight.setColor(renderLight);
         }
 
         setEntityAreaDirty();
@@ -732,14 +729,9 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         if (parentLight == null) {
             return new Color(getLight());
         }
-        return parentLight.multiply(getLight());
-    }
-
-    private static void copyLightValues(@Nonnull final Color source, @Nonnull final Color target) {
-        target.r = source.r;
-        target.g = source.g;
-        target.b = source.b;
-        target.a = source.a;
+        final Color localLight = new Color(parentLight);
+        localLight.multiply(getLight());
+        return localLight;
     }
 
     @Nonnull

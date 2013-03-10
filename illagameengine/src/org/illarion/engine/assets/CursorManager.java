@@ -18,35 +18,26 @@
  */
 package org.illarion.engine.assets;
 
+import org.illarion.engine.MouseCursor;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * This interface defines how the assets that need to be managed by the game engine can be accessed.
+ * This interfaces defines the mouse cursor manager. Its able to load and store the mouse cursors.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Assets {
+public interface CursorManager {
     /**
-     * Get the manager for the texture assets.
+     * Fetch a mouse cursor. This either loads a new cursor or retrieves one that was load before from the internal
+     * storage.
      *
-     * @return the texture asset manager
+     * @param ref      the cursor reference
+     * @param hotspotX the X coordinate of the cursor hotspot
+     * @param hotspotY the Y coordinate of the cursor hotspot
+     * @return the mouse cursor or {@code null} in case loading the required mouse cursor is not possible
      */
-    @Nonnull
-    TextureManager getTextureManager();
-
-    /**
-     * Get the manager for the font assets.
-     *
-     * @return the font asset manager
-     */
-    @Nonnull
-    FontManager getFontManager();
-
-    /**
-     * Get the manager for the mouse cursor assets.
-     *
-     * @return the mouse cursor asset manager
-     */
-    @Nonnull
-    CursorManager getCursorManager();
+    @Nullable
+    MouseCursor getCursor(@Nonnull String ref, int hotspotX, int hotspotY);
 }

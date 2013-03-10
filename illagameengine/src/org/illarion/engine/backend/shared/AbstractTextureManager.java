@@ -19,7 +19,7 @@
 package org.illarion.engine.backend.shared;
 
 import org.apache.log4j.Logger;
-import org.illarion.engine.assets.TextureAssetManager;
+import org.illarion.engine.assets.TextureManager;
 import org.illarion.engine.graphic.Texture;
 import org.xmlpull.mxp1.MXParserFactory;
 import org.xmlpull.v1.XmlPullParser;
@@ -42,7 +42,7 @@ import java.util.Map;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-public abstract class AbstractTextureManager implements TextureAssetManager {
+public abstract class AbstractTextureManager implements TextureManager {
     /**
      * The base name of the atlas files.
      */

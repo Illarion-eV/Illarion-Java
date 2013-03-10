@@ -16,37 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine.assets;
-
-import javax.annotation.Nonnull;
+package org.illarion.engine.graphic;
 
 /**
- * This interface defines how the assets that need to be managed by the game engine can be accessed.
+ * The blending modes that can be applied to the graphics device for the rendering operations.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Assets {
+public enum BlendingMode {
     /**
-     * Get the manager for the texture assets.
-     *
-     * @return the texture asset manager
+     * Blend by the alpha value of the colors rendered on top of each other.
      */
-    @Nonnull
-    TextureManager getTextureManager();
+    AlphaBlend,
 
     /**
-     * Get the manager for the font assets.
-     *
-     * @return the font asset manager
+     * Multiply all color components of the two colors rendered on top of each other.
      */
-    @Nonnull
-    FontManager getFontManager();
-
-    /**
-     * Get the manager for the mouse cursor assets.
-     *
-     * @return the mouse cursor asset manager
-     */
-    @Nonnull
-    CursorManager getCursorManager();
+    Multiply
 }

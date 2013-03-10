@@ -45,11 +45,11 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.bushe.swing.event.*;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.backend.slick.ApplicationGameContainer;
 import org.lwjgl.Sys;
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.LogSystem;
@@ -150,7 +150,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * The container that is used to display the game.
      */
-    private AppGameContainer gameContainer;
+    private GameContainer gameContainer;
 
     /**
      * The default empty constructor used to create the singleton instance of this class.
@@ -187,8 +187,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             CrashReporter.getInstance().setMode(CrashReporter.MODE_NEVER);
         }
 
-        Renderer.setRenderer(Renderer.IMMEDIATE_RENDERER);
-
         SlickRenderImageLoaders.getInstance().addLoader(TextureLoader.getInstance(), SlickAddLoaderLocation.first);
         SlickRenderFontLoaders.getInstance().addLoader(FontLoader.getInstance(), SlickAddLoaderLocation.first);
 
@@ -217,6 +215,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         try {
             if (cfg.getBoolean(CFG_FULLSCREEN)) {
+                gameContainer = new ApplicationGameContainer(game);
                 gameContainer = new AppGameContainer(game, res.getWidth(), res.getHeight(), true);
             } else {
                 final int windowedWidth = cfg.getInteger("windowWidth");

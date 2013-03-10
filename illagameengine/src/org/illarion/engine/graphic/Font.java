@@ -16,37 +16,37 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine.assets;
+package org.illarion.engine.graphic;
+
+import org.illarion.engine.Disposable;
 
 import javax.annotation.Nonnull;
 
 /**
- * This interface defines how the assets that need to be managed by the game engine can be accessed.
- *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Assets {
+public interface Font extends Disposable {
     /**
-     * Get the manager for the texture assets.
+     * Get the line height of the font.
      *
-     * @return the texture asset manager
+     * @return the line height of the font
      */
-    @Nonnull
-    TextureManager getTextureManager();
+    int getLineHeight();
 
     /**
-     * Get the manager for the font assets.
+     * Get the width of the specified text.
      *
-     * @return the font asset manager
+     * @param text the text
+     * @return the width of the line needed to place the text in
      */
-    @Nonnull
-    FontManager getFontManager();
+    int getWidth(@Nonnull CharSequence text);
 
     /**
-     * Get the manager for the mouse cursor assets.
+     * Get the advance value between two characters.
      *
-     * @return the mouse cursor asset manager
+     * @param current the current character
+     * @param next    the next character
+     * @return the amount of pixels the cursor needs to be moved before drawing the next glyph
      */
-    @Nonnull
-    CursorManager getCursorManager();
+    int getAdvance(char current, char next);
 }

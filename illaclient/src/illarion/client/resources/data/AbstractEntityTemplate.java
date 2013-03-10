@@ -18,8 +18,9 @@
  */
 package illarion.client.resources.data;
 
+import illarion.client.graphics.AbstractEntity;
 import illarion.client.graphics.Sprite;
-import org.newdawn.slick.Color;
+import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,8 +28,7 @@ import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * This template in general stores the data required to create any class that inherits
- * {@link illarion.client.graphics.AbstractEntity}.
+ * This template in general stores the data required to create any class that inherits {@link AbstractEntity}.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */

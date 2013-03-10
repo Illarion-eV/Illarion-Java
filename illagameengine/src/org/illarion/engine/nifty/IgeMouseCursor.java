@@ -16,37 +16,45 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine.assets;
+package org.illarion.engine.nifty;
+
+import de.lessvoid.nifty.spi.render.MouseCursor;
 
 import javax.annotation.Nonnull;
 
 /**
- * This interface defines how the assets that need to be managed by the game engine can be accessed.
+ * This is the mouse cursor implementation that uses the mouse cursors of the game engine.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Assets {
+class IgeMouseCursor implements MouseCursor {
     /**
-     * Get the manager for the texture assets.
-     *
-     * @return the texture asset manager
+     * This is the cursor that is wrapped by this mouse cursor implementation.
      */
     @Nonnull
-    TextureManager getTextureManager();
+    private final org.illarion.engine.MouseCursor cursor;
 
     /**
-     * Get the manager for the font assets.
+     * Create a new mouse cursor that wraps the mouse cursor of the engine.
      *
-     * @return the font asset manager
+     * @param cursor the wrapped cursor
      */
-    @Nonnull
-    FontManager getFontManager();
+    IgeMouseCursor(@Nonnull final org.illarion.engine.MouseCursor cursor) {
+        this.cursor = cursor;
+    }
 
     /**
-     * Get the manager for the mouse cursor assets.
+     * Get the mouse cursor that is wrapped in this class.
      *
-     * @return the mouse cursor asset manager
+     * @return the wrapped mouse cursor
      */
     @Nonnull
-    CursorManager getCursorManager();
+    public org.illarion.engine.MouseCursor getCursor() {
+        return cursor;
+    }
+
+    @Override
+    public void dispose() {
+        cursor.dispose();
+    }
 }

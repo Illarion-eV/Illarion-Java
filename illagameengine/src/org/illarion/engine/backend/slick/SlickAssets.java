@@ -19,7 +19,7 @@
 package org.illarion.engine.backend.slick;
 
 import org.illarion.engine.assets.Assets;
-import org.illarion.engine.assets.TextureAssetManager;
+import org.illarion.engine.assets.TextureManager;
 
 import javax.annotation.Nonnull;
 
@@ -43,7 +43,7 @@ public class SlickAssets implements Assets {
 
     @Nonnull
     @Override
-    public TextureAssetManager getTextureManager() {
+    public TextureManager getTextureManager() {
         return textureManager;
     }
 }
