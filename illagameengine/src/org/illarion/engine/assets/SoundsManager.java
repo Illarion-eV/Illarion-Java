@@ -16,42 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine;
+package org.illarion.engine.assets;
 
-import org.illarion.engine.assets.Assets;
-import org.illarion.engine.graphic.Graphics;
-import org.illarion.engine.sound.Sounds;
+import org.illarion.engine.sound.Music;
+import org.illarion.engine.sound.Sound;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * This interfaces defines the access to the actual game engine elements. This interface is implemented by the
- * different library dependant implementations, providing unified access to all the implementations.
+ * This manager loads and maintains references to the sound and music objects that were load.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Engine {
+public interface SoundsManager {
     /**
-     * Get the graphics component of the engine.
+     * Get a sound effect.
      *
-     * @return the graphics component
+     * @param ref the reference to this sound effect that is used to load it
+     * @return the sound effect or {@code null} if this sound is unknown
      */
-    @Nonnull
-    Graphics getGraphics();
+    @Nullable
+    Sound getSound(@Nonnull String ref);
 
     /**
-     * Get the sounds component of the engine.
+     * Get a background music track.
      *
-     * @return the sounds component
+     * @param ref the identifier of this track
+     * @return the track or {@code null} in case the track is unknown
      */
-    @Nonnull
-    Sounds getSounds();
-
-    /**
-     * Get the assets that are maintained by this engine.
-     *
-     * @return the asset component of the engine
-     */
-    @Nonnull
-    Assets getAssets();
+    @Nullable
+    Music getMusic(@Nonnull String ref);
 }

@@ -5,7 +5,6 @@
       <value>
         <option name="GENERATE_FINAL_LOCALS" value="true" />
         <option name="GENERATE_FINAL_PARAMETERS" value="true" />
-        <option name="USE_EXTERNAL_ANNOTATIONS" value="true" />
         <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="true" />
         <option name="JD_KEEP_INVALID_TAGS" value="false" />
         <XML>

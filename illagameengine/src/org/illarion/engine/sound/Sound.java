@@ -16,45 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine.assets;
+package org.illarion.engine.sound;
 
-import javax.annotation.Nonnull;
+import org.illarion.engine.Disposable;
 
 /**
- * This interface defines how the assets that need to be managed by the game engine can be accessed.
+ * This interface defines a sound effect.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface Assets {
-    /**
-     * Get the manager for the texture assets.
-     *
-     * @return the texture asset manager
-     */
-    @Nonnull
-    TextureManager getTextureManager();
-
-    /**
-     * Get the manager for the font assets.
-     *
-     * @return the font asset manager
-     */
-    @Nonnull
-    FontManager getFontManager();
-
-    /**
-     * Get the manager for the mouse cursor assets.
-     *
-     * @return the mouse cursor asset manager
-     */
-    @Nonnull
-    CursorManager getCursorManager();
-
-    /**
-     * Get the manager for the sound assets.
-     *
-     * @return the sound asset manager
-     */
-    @Nonnull
-    SoundsManager getSoundsManager();
+public interface Sound extends Disposable {
 }
