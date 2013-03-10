@@ -53,21 +53,6 @@ public interface GameContainer {
     Engine getEngine();
 
     /**
-     * Set the application icons of this game container. This function has no effect in case the game container does
-     * not support icons.
-     *
-     * @param icons the icons (in different sizes) to load as application icons
-     */
-    void setIcons(@Nonnull String[] icons);
-
-    /**
-     * Set the title of the game. This text is displayed in the title bar of the application.
-     *
-     * @param title the title of the game
-     */
-    void setTitle(@Nonnull String title);
-
-    /**
      * Set the mouse cursor that should be applied to the mouse.
      *
      * @param cursor the cursor to display or {@code null} to revert to the default cursor

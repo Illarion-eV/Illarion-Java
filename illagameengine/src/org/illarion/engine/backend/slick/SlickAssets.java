@@ -18,8 +18,7 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.illarion.engine.assets.Assets;
-import org.illarion.engine.assets.TextureManager;
+import org.illarion.engine.assets.*;
 
 import javax.annotation.Nonnull;
 
@@ -28,22 +27,46 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class SlickAssets implements Assets {
+class SlickAssets implements Assets {
     /**
      * The instance of the texture manager used by this backend.
      */
     private final SlickTextureManager textureManager;
 
     /**
+     * The instance of the cursor manager used by this backend.
+     */
+    private final SlickCursorManager cursorManager;
+
+    /**
      * Constructor of this assets handler.
      */
-    public SlickAssets() {
+    SlickAssets() {
         textureManager = new SlickTextureManager();
+        cursorManager = new SlickCursorManager();
     }
 
     @Nonnull
     @Override
     public TextureManager getTextureManager() {
         return textureManager;
+    }
+
+    @Nonnull
+    @Override
+    public FontManager getFontManager() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Nonnull
+    @Override
+    public CursorManager getCursorManager() {
+        return cursorManager;
+    }
+
+    @Nonnull
+    @Override
+    public SoundsManager getSoundsManager() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

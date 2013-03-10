@@ -18,6 +18,8 @@
  */
 package org.illarion.engine.backend.slick;
 
+import org.illarion.engine.EngineException;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -25,7 +27,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class SlickEngineException extends Exception {
+public class SlickEngineException extends EngineException {
     public SlickEngineException() {
         super();
     }

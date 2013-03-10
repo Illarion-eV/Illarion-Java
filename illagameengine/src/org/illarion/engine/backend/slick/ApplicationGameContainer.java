@@ -19,20 +19,20 @@
 package org.illarion.engine.backend.slick;
 
 import org.apache.log4j.Logger;
-import org.illarion.engine.Engine;
-import org.illarion.engine.GameContainer;
-import org.illarion.engine.GameListener;
+import org.illarion.engine.*;
+import org.lwjgl.input.Cursor;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is the application game container that is using the Slick2D backend to render the graphics.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class ApplicationGameContainer implements GameContainer {
+public class ApplicationGameContainer implements DesktopGameContainer {
     /**
      * The logger instance for this class.
      */
@@ -63,6 +63,25 @@ public class ApplicationGameContainer implements GameContainer {
         }
     }
 
+    /**
+     * Create a new instance of this container.
+     *
+     * @param gameListener the listener
+     * @param width        the width of the window
+     * @param height       the height of the window
+     * @param fullScreen   {@code true} in case this application is supposed to show up as full screen application
+     * @throws SlickEngineException This exception is thrown in case creating the container failed badly
+     */
+    public ApplicationGameContainer(final GameListener gameListener, final int width,
+                                    final int height, final boolean fullScreen) throws SlickEngineException {
+        try {
+            slickContainer = new AppGameContainer(new ListenerGame(gameListener), width, height, fullScreen);
+            engine = new SlickEngine();
+        } catch (@Nonnull final SlickException e) {
+            throw new SlickEngineException("Failed to create the application container.", e);
+        }
+    }
+
     @Override
     public int getHeight() {
         return slickContainer.getHeight();
@@ -80,7 +99,7 @@ public class ApplicationGameContainer implements GameContainer {
     }
 
     @Override
-    public void setIcons(@Nonnull String[] icons) {
+    public void setIcons(@Nonnull final String[] icons) {
         try {
             slickContainer.setIcons(icons);
         } catch (@Nonnull final SlickException e) {
@@ -91,5 +110,53 @@ public class ApplicationGameContainer implements GameContainer {
     @Override
     public void setTitle(@Nonnull final String title) {
         slickContainer.setTitle(title);
+    }
+
+    @Override
+    public void setSize(final int width, final int height) throws EngineException {
+        try {
+            slickContainer.setDisplayMode(width, height, slickContainer.isFullscreen());
+        } catch (@Nonnull final SlickException e) {
+            throw new SlickEngineException(e);
+        }
+    }
+
+    @Override
+    public boolean isResizeable() {
+        return slickContainer.isResizable();
+    }
+
+    @Override
+    public void setResizeable(final boolean resizeable) throws EngineException {
+        slickContainer.setResizable(resizeable);
+    }
+
+    @Override
+    public boolean isFullScreen() {
+        return slickContainer.isFullscreen();
+    }
+
+    @Override
+    public void setFullScreen(final boolean fullScreen) throws EngineException {
+        try {
+            slickContainer.setDisplayMode(getWidth(), getHeight(), fullScreen);
+        } catch (@Nonnull final SlickException e) {
+            throw new SlickEngineException(e);
+        }
+    }
+
+    @Override
+    public void setMouseCursor(@Nullable final MouseCursor cursor) {
+        try {
+            if (cursor instanceof SlickMouseCursor) {
+                final SlickMouseCursor slickCursor = (SlickMouseCursor) cursor;
+                slickContainer.setMouseCursor(slickCursor.getCursor(), slickCursor.getHotspotX(),
+                        slickCursor.getHotspotY());
+            } else {
+                slickContainer.setMouseCursor((Cursor) null, 0, 0);
+            }
+        } catch (@Nonnull final SlickException ignored) {
+            // ignore
+        }
     }
 }
