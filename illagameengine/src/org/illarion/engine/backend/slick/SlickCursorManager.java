@@ -60,7 +60,7 @@ class SlickCursorManager implements CursorManager {
             try {
                 data.loadImage(ResourceLoader.getResourceAsStream(ref), true, true, null);
                 final Cursor lwjglCursor = CursorLoader.get().getCursor(data, hotspotX, hotspotY);
-                final SlickMouseCursor slickCursor = new SlickMouseCursor(lwjglCursor);
+                final SlickMouseCursor slickCursor = new SlickMouseCursor(lwjglCursor, hotspotX, hotspotY);
                 loadedCursors.put(ref, slickCursor);
                 return slickCursor;
             } catch (@Nonnull final IOException ignored) {
