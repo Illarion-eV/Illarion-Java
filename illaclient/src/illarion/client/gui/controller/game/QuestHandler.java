@@ -540,7 +540,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
                 if (!wasFinished || showFinishedQuests) {
                     getQuestList().removeItem(oldEntry);
                 }
-                if (finished || showFinishedQuests) {
+                if (!finished || showFinishedQuests) {
                     if (wasFinished) {
                         hiddenList.remove(oldEntry);
                     }

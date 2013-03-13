@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/illaclient/Illarion Client.iml" filepath="$PROJECT_DIR$/illaclient/Illarion Client.iml" />
       <module fileurl="file://$PROJECT_DIR$/illacommon/Illarion Common Library.iml" filepath="$PROJECT_DIR$/illacommon/Illarion Common Library.iml" />
       <module fileurl="file://$PROJECT_DIR$/illadownload/Illarion Download Utility.iml" filepath="$PROJECT_DIR$/illadownload/Illarion Download Utility.iml" />
-      <module fileurl="file://$PROJECT_DIR$/illagameengine/Illarion Game Engine.iml" filepath="$PROJECT_DIR$/illagameengine/Illarion Game Engine.iml" />
       <module fileurl="file://$PROJECT_DIR$/illamapedit/Illarion Mapeditor.iml" filepath="$PROJECT_DIR$/illamapedit/Illarion Mapeditor.iml" />
       <module fileurl="file://$PROJECT_DIR$/nifty-controls-illarion/Illarion Nifty-GUI Controls.iml" filepath="$PROJECT_DIR$/nifty-controls-illarion/Illarion Nifty-GUI Controls.iml" />
       <module fileurl="file://$PROJECT_DIR$/nifty-style-illarion/Illarion Nifty-GUI Style.iml" filepath="$PROJECT_DIR$/nifty-style-illarion/Illarion Nifty-GUI Style.iml" />
