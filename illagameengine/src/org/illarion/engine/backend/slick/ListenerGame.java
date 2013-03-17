@@ -38,6 +38,9 @@ class ListenerGame implements Game {
     @Nonnull
     private final GameListener listener;
 
+    @Nonnull
+    private org.illarion.engine.GameContainer engineContainer;
+
     /**
      * Create a new implementation of this game and set the listener that receives the game lifecycle.
      *
@@ -47,21 +50,23 @@ class ListenerGame implements Game {
         listener = gameListener;
     }
 
+    public void setEngineContainer(@Nonnull final org.illarion.engine.GameContainer engineContainer) {
+        this.engineContainer = engineContainer;
+    }
+
     @Override
     public void init(final GameContainer gameContainer) throws SlickException {
-        listener.create();
+        listener.create(engineContainer);
     }
 
     @Override
     public void update(final GameContainer gameContainer, final int delta) throws SlickException {
-        assert gameContainer instanceof org.illarion.engine.GameContainer;
-        listener.update((org.illarion.engine.GameContainer) gameContainer, delta);
+        listener.update(engineContainer, delta);
     }
 
     @Override
     public void render(final GameContainer gameContainer, final Graphics graphics) throws SlickException {
-        assert gameContainer instanceof org.illarion.engine.GameContainer;
-        listener.render((org.illarion.engine.GameContainer) gameContainer);
+        listener.render(engineContainer);
     }
 
     @Override
@@ -71,6 +76,6 @@ class ListenerGame implements Game {
 
     @Override
     public String getTitle() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return engineContainer.getTitle();
     }
 }

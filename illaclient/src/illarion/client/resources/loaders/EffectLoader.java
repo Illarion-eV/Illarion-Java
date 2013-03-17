@@ -60,9 +60,12 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate> i
 
         final ResourceFactory<EffectTemplate> factory = getTargetFactory();
 
+        assert factory != null;
         factory.init();
         new TableLoaderEffects(this);
         factory.loadingFinished();
+
+        loadingDone();
 
         return factory;
     }

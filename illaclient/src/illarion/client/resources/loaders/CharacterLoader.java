@@ -52,10 +52,13 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
 
         final ResourceFactory<AvatarTemplate> factory = getTargetFactory();
 
+        assert factory != null;
         factory.init();
         new TableLoaderCharacters(this);
         factory.loadingFinished();
         AvatarInfo.cleanup();
+
+        loadingDone();
 
         return factory;
     }

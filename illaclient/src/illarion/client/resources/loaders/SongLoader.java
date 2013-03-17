@@ -67,10 +67,13 @@ public final class SongLoader extends AbstractResourceLoader<IdWrapper<Music>> i
 
         final ResourceFactory<IdWrapper<Music>> factory = getTargetFactory();
 
+        assert factory != null;
         factory.init();
         SoundStore.get().setDeferredLoading(true);
         new TableLoader("Songs", this);
         factory.loadingFinished();
+
+        loadingDone();
 
         return factory;
     }

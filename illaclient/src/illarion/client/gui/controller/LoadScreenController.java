@@ -23,8 +23,6 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.Game;
 import org.illarion.nifty.controls.Progress;
-import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import javax.annotation.Nonnull;
 
@@ -33,9 +31,9 @@ public final class LoadScreenController
 
     private Progress progress;
 
-    private final StateBasedGame game;
+    private final Game game;
 
-    public LoadScreenController(final StateBasedGame game) {
+    public LoadScreenController(@Nonnull final Game game) {
         this.game = game;
     }
 
@@ -57,7 +55,7 @@ public final class LoadScreenController
         }
         loadingDoneCalled = true;
 
-        game.enterState(Game.STATE_PLAYING, new FadeOutTransition(), null);
+        game.enterState(Game.STATE_PLAYING);
     }
 
     public void setProgress(final float progressValue) {

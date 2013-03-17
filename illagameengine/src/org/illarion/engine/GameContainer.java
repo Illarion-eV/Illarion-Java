@@ -58,4 +58,25 @@ public interface GameContainer {
      * @param cursor the cursor to display or {@code null} to revert to the default cursor
      */
     void setMouseCursor(@Nullable MouseCursor cursor);
+
+    /**
+     * Calling this function will activate the game, starting the lifecycle of the game,
+     * creating the required window and so on.
+     *
+     * @throws EngineException in case the launch of the application fails
+     */
+    void startGame() throws EngineException;
+
+    /**
+     * Shut the game down.
+     */
+    void exitGame();
+
+    /**
+     * Get the title of the game.
+     *
+     * @return the games title
+     */
+    @Nonnull
+    String getTitle();
 }

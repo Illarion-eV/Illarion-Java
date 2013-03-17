@@ -29,8 +29,10 @@ import javax.annotation.Nonnull;
 public interface GameListener {
     /**
      * This function is called once the game is created.
+     *
+     * @param container the game container
      */
-    void create();
+    void create(@Nonnull GameContainer container);
 
     /**
      * This function is called at the destruction of the game. (Should be used for cleanups before the shutdown itself)

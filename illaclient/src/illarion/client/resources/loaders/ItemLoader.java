@@ -58,10 +58,13 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
 
         final ResourceFactory<ItemTemplate> factory = getTargetFactory();
 
+        assert factory != null;
         factory.init();
         new TableLoaderItems(this);
         factory.loadingFinished();
         ItemInfo.cleanup();
+
+        loadingDone();
 
         return factory;
     }

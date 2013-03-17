@@ -49,9 +49,12 @@ public final class BookLoader extends AbstractResourceLoader<IdWrapper<String>> 
 
         final ResourceFactory<IdWrapper<String>> factory = getTargetFactory();
 
+        assert factory != null;
         factory.init();
         new TableLoader("Books", this);
         factory.loadingFinished();
+
+        loadingDone();
 
         return factory;
     }

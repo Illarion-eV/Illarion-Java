@@ -46,6 +46,7 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
 
         final ResourceFactory<MiscImageTemplate> factory = getTargetFactory();
 
+        assert factory != null;
         factory.init();
 
         final Sprite attackMarkerSprite = SpriteBuffer.getInstance().getSprite(GUI_PATH, "attackMarker", 1, 0, 0,
@@ -53,6 +54,8 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
         getTargetFactory().storeResource(new MiscImageTemplate(MiscImageFactory.ATTACK_MARKER, attackMarkerSprite, 1));
 
         factory.loadingFinished();
+
+        loadingDone();
 
         return factory;
     }

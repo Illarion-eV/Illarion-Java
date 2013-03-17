@@ -57,6 +57,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     public ApplicationGameContainer(final GameListener gameListener) throws SlickEngineException {
         try {
             slickContainer = new AppGameContainer(new ListenerGame(gameListener));
+            slickContainer.setForceExit(false);
             engine = new SlickEngine();
         } catch (@Nonnull final SlickException e) {
             throw new SlickEngineException("Failed to create the application container.", e);
@@ -107,8 +108,15 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         }
     }
 
+    /**
+     * The last applied title of the game.
+     */
+    @Nonnull
+    private String title;
+
     @Override
     public void setTitle(@Nonnull final String title) {
+        this.title = title;
         slickContainer.setTitle(title);
     }
 
@@ -158,5 +166,25 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         } catch (@Nonnull final SlickException ignored) {
             // ignore
         }
+    }
+
+    @Override
+    public void startGame() throws SlickEngineException {
+        try {
+            slickContainer.start();
+        } catch (@Nonnull final SlickException e) {
+            throw new SlickEngineException(e);
+        }
+    }
+
+    @Override
+    public void exitGame() {
+        slickContainer.exit();
+    }
+
+    @Nonnull
+    @Override
+    public String getTitle() {
+        return title;
     }
 }

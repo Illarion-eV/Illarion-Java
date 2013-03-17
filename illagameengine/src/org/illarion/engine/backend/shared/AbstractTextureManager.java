@@ -358,4 +358,21 @@ public abstract class AbstractTextureManager implements TextureManager {
         LOGGER.warn("Reached unexptected loading state.");
         return 1.f;
     }
+
+    @Override
+    public boolean isLoadingDone() {
+        final int directories = rootDirectories.size();
+
+        int totalAtlasTextures = 0;
+        int loadAtlasTextures = 0;
+        for (int i = 0; i < directories; i++) {
+            totalAtlasTextures += getAtlasCount(i);
+            loadAtlasTextures += lastAtlasIndex.get(i) + 1;
+        }
+
+        if (totalAtlasTextures <= loadAtlasTextures) {
+            return true;
+        }
+        return false;
+    }
 }

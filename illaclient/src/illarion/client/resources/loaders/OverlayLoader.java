@@ -53,9 +53,12 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
 
         final ResourceFactory<OverlayTemplate> factory = getTargetFactory();
 
+        assert factory != null;
         factory.init();
         new TableLoaderOverlay(this);
         factory.loadingFinished();
+
+        loadingDone();
 
         return factory;
     }

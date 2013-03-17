@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,37 +18,55 @@
  */
 package illarion.client.loading;
 
-import illarion.client.world.World;
 import illarion.common.util.ProgressMonitor;
+import org.illarion.engine.Engine;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
 /**
- * This loading task takes care for loading the components of the game environment that still need to be loaded.
+ * The purpose of this class is to load the texture resources that are required for the game.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @NotThreadSafe
-public final class GameEnvironmentLoading implements LoadingTask {
+public final class TextureLoadingTask implements LoadingTask {
     /**
-     * This is set {@code true} once the loading of the game components is done.
+     * The engine used to load the data.
      */
-    private boolean loadingDone;
-
     @Nonnull
-    private final ProgressMonitor monitor = new ProgressMonitor();
+    private final Engine usedEngine;
+
+    /**
+     * The progress monitor that tracks the progress of the texture loading.
+     */
+    @Nonnull
+    private final ProgressMonitor monitor;
+
+    /**
+     * Create a new texture loading task.
+     *
+     * @param engine the engine used to load the textures
+     */
+    public TextureLoadingTask(@Nonnull final Engine engine) {
+        usedEngine = engine;
+        //noinspection MagicNumber
+        monitor = new ProgressMonitor(4.f);
+    }
+
 
     @Override
     public void load() {
-        World.initWorldComponents();
-        loadingDone = true;
-        monitor.setProgress(1.f);
+        if (isLoadingDone()) {
+            monitor.setProgress(1.f);
+        } else {
+            monitor.setProgress(usedEngine.getAssets().getTextureManager().loadRemaining());
+        }
     }
 
     @Override
     public boolean isLoadingDone() {
-        return loadingDone;
+        return usedEngine.getAssets().getTextureManager().isLoadingDone();
     }
 
     @Nonnull

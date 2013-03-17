@@ -67,6 +67,6 @@ class SlickAssets implements Assets {
     @Nonnull
     @Override
     public SoundsManager getSoundsManager() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return
     }
 }

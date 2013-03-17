@@ -65,4 +65,11 @@ public interface TextureManager {
      *         {@code 1.f} once the loading progress is done
      */
     float loadRemaining();
+
+    /**
+     * Check if the loading of the atlas textures is done now.
+     *
+     * @return {@code true} if the loading is done
+     */
+    boolean isLoadingDone();
 }

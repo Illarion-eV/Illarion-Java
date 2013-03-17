@@ -36,9 +36,6 @@ import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.resources.SongFactory;
 import illarion.client.util.Lang;
-import org.newdawn.slick.Music;
-import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import javax.annotation.Nonnull;
 
@@ -103,9 +100,9 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     /**
      * The game that is the parent of this class.
      */
-    private final StateBasedGame game;
+    private final Game game;
 
-    public LoginScreenController(final StateBasedGame game) {
+    public LoginScreenController(final Game game) {
         this.game = game;
     }
 
@@ -229,7 +226,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
                 }
             });
         } else {
-            game.enterState(Game.STATE_LOADING, new FadeOutTransition(), null);
+            game.enterState(Game.STATE_LOADING);
         }
     }
 

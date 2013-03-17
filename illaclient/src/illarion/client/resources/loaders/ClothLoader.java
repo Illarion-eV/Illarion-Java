@@ -50,9 +50,12 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
 
         final ResourceFactory<AvatarClothTemplate> factory = getTargetFactory();
 
+        assert factory != null;
         factory.init();
         new TableLoaderClothes(this);
         factory.loadingFinished();
+
+        loadingDone();
 
         return factory;
     }

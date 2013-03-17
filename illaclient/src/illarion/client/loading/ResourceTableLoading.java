@@ -22,53 +22,97 @@ import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.resources.*;
 import illarion.client.resources.loaders.*;
 import illarion.client.util.GlobalExecutorService;
-import org.newdawn.slick.loading.DeferredResource;
+import illarion.common.util.ProgressMonitor;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class is used to allow the loading sequence of the client to load
- * the resource tables.
+ * This class is used to allow the loading sequence of the client to load the resource tables.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ResourceTableLoading implements DeferredResource {
+@NotThreadSafe
+public final class ResourceTableLoading implements LoadingTask {
     /**
-     * Perform the loading.
+     * The progress monitor that tracks the loading activity of this task.
      */
+    @Nonnull
+    private final ProgressMonitor progressMonitor;
+
+    /**
+     * The list of tasks that need to be finished during the resource table loading.
+     */
+    @Nonnull
+    private final List<AbstractResourceLoader<? extends Resource>> taskList;
+
+    /**
+     * This is set {@code true} once the loading was triggered.
+     */
+    private boolean loadingTriggered;
+
+    /**
+     * Create a new resource table loading task and enlist all the sub-tasks.
+     */
+    public ResourceTableLoading() {
+        taskList = new ArrayList<AbstractResourceLoader<? extends Resource>>();
+        progressMonitor = new ProgressMonitor();
+
+        addTask(new TileLoader(), TileFactory.getInstance());
+        addTask(new OverlayLoader(), OverlayFactory.getInstance());
+        addTask(new ItemLoader(), ItemFactory.getInstance());
+        addTask(new CharacterLoader(), CharacterFactory.getInstance());
+        addTask(new ClothLoader(), new ClothFactoryRelay());
+        addTask(new EffectLoader(), EffectFactory.getInstance());
+        addTask(new MiscImageLoader(), MiscImageFactory.getInstance());
+        addTask(new BookLoader(), BookFactory.getInstance());
+    }
+
+    /**
+     * Add a task to the list of tasks and to the progress monitor.
+     *
+     * @param loader  the loader of this task
+     * @param factory the factory that is supposed to be filled
+     * @param <T>     the resource type that is load in this case
+     */
+    private <T extends Resource> void addTask(@Nonnull final AbstractResourceLoader<T> loader,
+                                              @Nonnull final ResourceFactory<T> factory) {
+        loader.setTarget(factory);
+        progressMonitor.addChild(loader.getProgressMonitor());
+        taskList.add(loader);
+    }
+
     @Override
-    public void load() throws IOException {
-        final List<AbstractResourceLoader<? extends Resource>> taskList = new ArrayList<AbstractResourceLoader<? extends Resource>>();
+    public void load() {
+        if (loadingTriggered) {
+            return;
+        }
+        loadingTriggered = true;
 
-        taskList.add(new TileLoader().setTarget(TileFactory.getInstance()));
-        taskList.add(new OverlayLoader().setTarget(OverlayFactory.getInstance()));
-        taskList.add(new ItemLoader().setTarget(ItemFactory.getInstance()));
-        taskList.add(new CharacterLoader().setTarget(CharacterFactory.getInstance()));
-        taskList.add(new ClothLoader().setTarget(new ClothFactoryRelay()));
-        taskList.add(new EffectLoader().setTarget(EffectFactory.getInstance()));
-        taskList.add(new MiscImageLoader().setTarget(MiscImageFactory.getInstance()));
-        taskList.add(new BookLoader().setTarget(BookFactory.getInstance()));
-
-        try {
-            GlobalExecutorService.getService().invokeAll(taskList);
-        } catch (@Nonnull final InterruptedException e) {
-            throw new IOException(e);
+        for (final AbstractResourceLoader<? extends Resource> loader : taskList) {
+            GlobalExecutorService.getService().submit(loader);
         }
 
         ShaderManager.getInstance().load();
     }
 
-    /**
-     * Get a human readable description for this task.
-     */
-    @Nullable
     @Override
-    public String getDescription() {
-        return null;
+    public boolean isLoadingDone() {
+        for (final AbstractResourceLoader<? extends Resource> loader : taskList) {
+            if (!loader.isLoadingDone()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Nonnull
+    @Override
+    public ProgressMonitor getProgressMonitor() {
+        return progressMonitor;
     }
 
 }

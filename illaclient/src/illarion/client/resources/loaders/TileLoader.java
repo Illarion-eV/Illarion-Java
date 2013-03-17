@@ -54,9 +54,12 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate> imple
 
         final ResourceFactory<TileTemplate> factory = getTargetFactory();
 
+        assert factory != null;
         factory.init();
         new TableLoaderTiles(this);
         factory.loadingFinished();
+
+        loadingDone();
 
         return factory;
     }

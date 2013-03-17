@@ -19,10 +19,10 @@
 package illarion.client.loading;
 
 import illarion.client.graphics.SpriteBuffer;
-import org.newdawn.slick.loading.DeferredResource;
+import illarion.common.util.ProgressMonitor;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * The finishing task for the loading sequence. This one should be called as
@@ -30,23 +30,34 @@ import java.io.IOException;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class FinishLoading implements DeferredResource {
+@NotThreadSafe
+public final class FinishLoading implements LoadingTask {
     /**
-     * Perform the finishing tasks of the texture loading.
+     * The progress monitor of this class.
      */
+    @Nonnull
+    private final ProgressMonitor monitor = new ProgressMonitor();
+
+    /**
+     * This is set to {@code true} once the loading is done
+     */
+    private boolean loadingDone;
+
     @Override
-    public void load() throws IOException {
-        //FontLoader.getInstance().prepareAllFonts();
+    public void load() {
         SpriteBuffer.getInstance().cleanup();
+        monitor.setProgress(1.f);
+        loadingDone = true;
     }
 
-    /**
-     * The human readable description of this task.
-     */
-    @Nullable
     @Override
-    public String getDescription() {
-        return null;
+    public boolean isLoadingDone() {
+        return loadingDone;
     }
 
+    @Nonnull
+    @Override
+    public ProgressMonitor getProgressMonitor() {
+        return monitor;
+    }
 }

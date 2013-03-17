@@ -35,8 +35,6 @@ import illarion.client.util.Lang;
 import illarion.common.config.ConfigChangedEvent;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
-import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import javax.annotation.Nonnull;
 
@@ -47,7 +45,7 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
 
     private ListBox<String> listBox;
 
-    private final StateBasedGame game;
+    private final Game game;
     private Label statusLabel;
     private boolean showLanguageChangedPopup;
 
@@ -56,7 +54,7 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
      */
     private Element popupLanguageChange;
 
-    public CharScreenController(StateBasedGame game) {
+    public CharScreenController(Game game) {
         this.game = game;
         AnnotationProcessor.process(this);
     }
@@ -118,7 +116,7 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
         }
 
         Login.getInstance().setLoginCharacter(listBox.getSelection().get(0));
-        game.enterState(Game.STATE_LOADING, new FadeOutTransition(), null);
+        game.enterState(Game.STATE_LOADING);
     }
 
     public void logout() {
