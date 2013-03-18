@@ -72,8 +72,10 @@ public final class ChatLog {
         appender.setDatePattern("'.'yyyy-MM'.log'");
         appender.setFile(new File(playerPath, "illarion.log").getAbsolutePath());
         appender.setLayout(new PatternLayout("%m%n"));
+        appender.setAppend(true);
+        appender.activateOptions();
 
-        logger.setLevel(Level.INFO);
+        logger.setLevel(Level.ALL);
         logger.addAppender(appender);
 
         loggerWorking = true;
