@@ -146,6 +146,9 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
             final String groupId = content.getId() + "#group" + Integer.toString(groupCnt++);
             final PanelBuilder groupPanel = new PanelBuilder(groupId);
             groupPanel.childLayoutVertical();
+            groupPanel.height("0px");
+            groupPanel.alignCenter();
+            groupPanel.valignTop();
 
             final LabelBuilder headline = new LabelBuilder(groupId + "#headline");
             headline.font("menuFont");
@@ -223,7 +226,8 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         if (value == 0) {
             skillPanel.setConstraintHeight(SizeValue.px(0));
         } else {
-            skillPanel.getParent().setConstraintHeight(SizeValue.wildcard());
+            skillPanel.getParent().getParent().setConstraintHeight(null);
+            skillPanel.getParent().setConstraintHeight(null);
             skillPanel.getParent().setMarginBottom(SizeValue.px(5));
             skillPanel.getParent().findElementByName("#headline").setConstraintHeight(SizeValue.px(24));
             skillPanel.setConstraintHeight(SizeValue.px(18));
@@ -262,7 +266,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     }
 
     private static void updateVisibilityOfElement(@Nonnull final Element target) {
-        if ("0px".equals(target.getConstraintHeight().toString())) {
+        if ((target.getConstraintHeight() != null) && "0px".equals(target.getConstraintHeight().toString())) {
             target.setVisible(false);
         } else {
             for (final Element child : target.getElements()) {
