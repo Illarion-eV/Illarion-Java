@@ -18,26 +18,44 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.illarion.engine.backend.shared.AbstractTextureManager;
-import org.illarion.engine.graphic.Texture;
+import org.illarion.engine.sound.Sound;
 import org.newdawn.slick.SlickException;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
- * The texture manager that takes care for loading and providing the texture data for the Slick 2D backend.
+ * This is the implementation of a sound effect of the Slick2D backend.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class SlickTextureManager extends AbstractTextureManager {
-    @Nullable
+class SlickSound implements Sound {
+    /**
+     * The slick sound implementation.
+     */
+    @Nonnull
+    private final org.newdawn.slick.Sound slickSound;
+
+    /**
+     * Create a new sound implementation for Slick.
+     *
+     * @param ref the path used to load the sound
+     * @throws SlickException in case loading fails
+     */
+    SlickSound(@Nonnull final String ref) throws SlickException {
+        slickSound = new org.newdawn.slick.Sound(ref);
+    }
+
+    /**
+     * Get the internal instance of the Slick2D sound.
+     *
+     * @return the slick sound instance
+     */
+    public org.newdawn.slick.Sound getInternalSound() {
+        return slickSound;
+    }
+
     @Override
-    protected Texture loadTexture(@Nonnull final String resource) {
-        try {
-            return new SlickTexture(resource);
-        } catch (@Nonnull final SlickException ignored) {
-            return null;
-        }
+    public void dispose() {
+        slickSound.release();
     }
 }

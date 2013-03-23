@@ -16,28 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine.backend.slick;
-
-import org.illarion.engine.backend.shared.AbstractTextureManager;
-import org.illarion.engine.graphic.Texture;
-import org.newdawn.slick.SlickException;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+package org.illarion.engine.input;
 
 /**
- * The texture manager that takes care for loading and providing the texture data for the Slick 2D backend.
+ * This enumerator defines the valid keyboard keys.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class SlickTextureManager extends AbstractTextureManager {
-    @Nullable
-    @Override
-    protected Texture loadTexture(@Nonnull final String resource) {
-        try {
-            return new SlickTexture(resource);
-        } catch (@Nonnull final SlickException ignored) {
-            return null;
-        }
-    }
+public enum Key {
+    A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+    LeftShift, RightShift,
+    LeftAlt, RightAlt,
+    LeftCtrl, RightCtrl,
+    CursorLeft, CursorRight, CursorUp, CursorDown,
+    Enter, Backspace,
+    NumPad0, NumPad1, NumPad2, NumPad3, NumPad4, NumPad5, NumPad6, NumPad7, NumPad8, NumPad9, NumLock
 }

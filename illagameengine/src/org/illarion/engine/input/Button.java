@@ -16,28 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine.backend.slick;
-
-import org.illarion.engine.backend.shared.AbstractTextureManager;
-import org.illarion.engine.graphic.Texture;
-import org.newdawn.slick.SlickException;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+package org.illarion.engine.input;
 
 /**
- * The texture manager that takes care for loading and providing the texture data for the Slick 2D backend.
+ * This enumerator defines the valid values for mouse buttons.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class SlickTextureManager extends AbstractTextureManager {
-    @Nullable
-    @Override
-    protected Texture loadTexture(@Nonnull final String resource) {
-        try {
-            return new SlickTexture(resource);
-        } catch (@Nonnull final SlickException ignored) {
-            return null;
-        }
-    }
+public enum Button {
+    /**
+     * The constant for the left mouse button.
+     */
+    Left,
+
+    /**
+     * The constant for the middle mouse button.
+     */
+    Middle,
+
+    /**
+     * The constant for the right mouse button.
+     */
+    Right
 }

@@ -18,25 +18,36 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.illarion.engine.backend.shared.AbstractTextureManager;
-import org.illarion.engine.graphic.Texture;
+import org.illarion.engine.backend.shared.AbstractSoundsManager;
+import org.illarion.engine.sound.Music;
+import org.illarion.engine.sound.Sound;
 import org.newdawn.slick.SlickException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * The texture manager that takes care for loading and providing the texture data for the Slick 2D backend.
+ * This is the manager used to load sound and background music.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class SlickTextureManager extends AbstractTextureManager {
+class SlickSoundsManager extends AbstractSoundsManager {
     @Nullable
     @Override
-    protected Texture loadTexture(@Nonnull final String resource) {
+    protected Sound loadSound(@Nonnull final String ref) {
         try {
-            return new SlickTexture(resource);
-        } catch (@Nonnull final SlickException ignored) {
+            return new SlickSound(ref);
+        } catch (@Nonnull final SlickException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    @Override
+    protected Music loadMusic(@Nonnull final String ref) {
+        try {
+            return new SlickMusic(ref);
+        } catch (SlickException e) {
             return null;
         }
     }

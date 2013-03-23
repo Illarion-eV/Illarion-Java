@@ -20,6 +20,7 @@ package org.illarion.engine;
 
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.graphic.Graphics;
+import org.illarion.engine.input.Input;
 import org.illarion.engine.sound.Sounds;
 
 import javax.annotation.Nonnull;
@@ -54,4 +55,12 @@ public interface Engine {
      */
     @Nonnull
     Assets getAssets();
+
+    /**
+     * Get the input component of the engine.
+     *
+     * @return the input component
+     */
+    @Nonnull
+    Input getInput();
 }

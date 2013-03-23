@@ -57,4 +57,12 @@ public interface Assets {
      */
     @Nonnull
     SoundsManager getSoundsManager();
+
+    /**
+     * Get the factory that is used to create sprites.
+     *
+     * @return the sprite factory
+     */
+    @Nonnull
+    SpriteFactory getSpriteFacotry();
 }

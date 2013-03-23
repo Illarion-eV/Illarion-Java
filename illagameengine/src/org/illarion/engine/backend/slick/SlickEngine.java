@@ -21,6 +21,8 @@ package org.illarion.engine.backend.slick;
 import org.illarion.engine.Engine;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.graphic.Graphics;
+import org.illarion.engine.input.Input;
+import org.illarion.engine.sound.Sounds;
 
 import javax.annotation.Nonnull;
 
@@ -30,17 +32,19 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class SlickEngine implements Engine {
+class SlickEngine implements Engine {
     @Nonnull
     private final SlickGraphics graphics;
     @Nonnull
     private final SlickAssets assets;
+    @Nonnull
+    private final SlickSounds sounds;
 
-    public SlickEngine() {
+    SlickEngine() {
         graphics = new SlickGraphics();
         assets = new SlickAssets();
+        sounds = new SlickSounds();
     }
-
 
     @Nonnull
     @Override
@@ -50,7 +54,19 @@ public class SlickEngine implements Engine {
 
     @Nonnull
     @Override
+    public Sounds getSounds() {
+        return sounds;
+    }
+
+    @Nonnull
+    @Override
     public Assets getAssets() {
         return assets;
+    }
+
+    @Nonnull
+    @Override
+    public Input getInput() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

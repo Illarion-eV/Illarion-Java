@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class SlickEngineException extends EngineException {
+class SlickEngineException extends EngineException {
     public SlickEngineException() {
         super();
     }

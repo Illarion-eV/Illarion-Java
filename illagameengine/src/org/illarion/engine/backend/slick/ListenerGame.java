@@ -66,7 +66,10 @@ class ListenerGame implements Game {
 
     @Override
     public void render(final GameContainer gameContainer, final Graphics graphics) throws SlickException {
+        final SlickGraphics slickGraphics = (SlickGraphics) engineContainer.getEngine().getGraphics();
+        slickGraphics.setSlickGraphicsImpl(graphics);
         listener.render(engineContainer);
+        slickGraphics.clearSlickGraphicsImpl();
     }
 
     @Override

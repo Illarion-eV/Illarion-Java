@@ -18,26 +18,44 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.illarion.engine.backend.shared.AbstractTextureManager;
-import org.illarion.engine.graphic.Texture;
+import org.illarion.engine.sound.Music;
 import org.newdawn.slick.SlickException;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
- * The texture manager that takes care for loading and providing the texture data for the Slick 2D backend.
+ * This is the implementation of a background music track for Slick2D.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class SlickTextureManager extends AbstractTextureManager {
-    @Nullable
+class SlickMusic implements Music {
+    /**
+     * The slick music track.
+     */
+    @Nonnull
+    private final org.newdawn.slick.Music slickMusic;
+
+    /**
+     * Create a new instance of a slick music track.
+     *
+     * @param ref the reference to the slick music track
+     * @throws SlickException in case loading the track fails
+     */
+    SlickMusic(@Nonnull final String ref) throws SlickException {
+        slickMusic = new org.newdawn.slick.Music(ref);
+    }
+
+    /**
+     * Get the internal instance of the slick music.
+     *
+     * @return the internal slick music instance
+     */
+    public org.newdawn.slick.Music getInternalMusic() {
+        return slickMusic;
+    }
+
     @Override
-    protected Texture loadTexture(@Nonnull final String resource) {
-        try {
-            return new SlickTexture(resource);
-        } catch (@Nonnull final SlickException ignored) {
-            return null;
-        }
+    public void dispose() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

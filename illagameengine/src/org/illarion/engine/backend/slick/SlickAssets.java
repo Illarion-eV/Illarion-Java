@@ -31,12 +31,32 @@ class SlickAssets implements Assets {
     /**
      * The instance of the texture manager used by this backend.
      */
+    @Nonnull
     private final SlickTextureManager textureManager;
 
     /**
      * The instance of the cursor manager used by this backend.
      */
+    @Nonnull
     private final SlickCursorManager cursorManager;
+
+    /**
+     * The sprite factory of the Slick2D backend
+     */
+    @Nonnull
+    private final SlickSpriteFactory spriteFactory;
+
+    /**
+     * The font manager of the Slick2D backend.
+     */
+    @Nonnull
+    private final SlickFontManager fontManager;
+
+    /**
+     * The sounds manager of the Slick2D backend.
+     */
+    @Nonnull
+    private final SlickSoundsManager soundsManager;
 
     /**
      * Constructor of this assets handler.
@@ -44,6 +64,9 @@ class SlickAssets implements Assets {
     SlickAssets() {
         textureManager = new SlickTextureManager();
         cursorManager = new SlickCursorManager();
+        spriteFactory = new SlickSpriteFactory();
+        fontManager = new SlickFontManager();
+        soundsManager = new SlickSoundsManager();
     }
 
     @Nonnull
@@ -55,7 +78,7 @@ class SlickAssets implements Assets {
     @Nonnull
     @Override
     public FontManager getFontManager() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return fontManager;
     }
 
     @Nonnull
@@ -67,6 +90,12 @@ class SlickAssets implements Assets {
     @Nonnull
     @Override
     public SoundsManager getSoundsManager() {
-        return
+        return soundsManager;
+    }
+
+    @Nonnull
+    @Override
+    public SpriteFactory getSpriteFacotry() {
+        return spriteFactory;
     }
 }

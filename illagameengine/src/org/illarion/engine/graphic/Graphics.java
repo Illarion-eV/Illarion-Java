@@ -34,6 +34,20 @@ public interface Graphics {
     void clear();
 
     /**
+     * Draw a sprite to the screen.
+     *
+     * @param sprite   the sprite
+     * @param posX     the x coordinate on the screen the sprite is supposed to appear at
+     * @param posY     the y coordinate on the screen the sprite is supposed to appear at
+     * @param color    the color that is supposed to be applied to the sprite
+     * @param frame    the frame of the sprite that should be rendered
+     * @param scale    the scaling that should be applied to the sprite
+     * @param rotation the rotation that should be applied to the sprite
+     */
+    void drawSprite(@Nonnull Sprite sprite, int posX, int posY, @Nonnull Color color, int frame, float scale,
+                    float rotation);
+
+    /**
      * Set the method used to blend the colors of overlapping areas.
      *
      * @param mode the blending mode

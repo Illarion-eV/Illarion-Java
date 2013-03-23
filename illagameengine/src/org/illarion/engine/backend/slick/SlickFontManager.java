@@ -18,26 +18,25 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.illarion.engine.backend.shared.AbstractTextureManager;
-import org.illarion.engine.graphic.Texture;
-import org.newdawn.slick.SlickException;
+import org.illarion.engine.backend.shared.AbstractFontManager;
+import org.illarion.engine.graphic.Font;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.io.IOException;
 
 /**
- * The texture manager that takes care for loading and providing the texture data for the Slick 2D backend.
+ * This is the font manager implementation for Slick.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class SlickTextureManager extends AbstractTextureManager {
-    @Nullable
+class SlickFontManager extends AbstractFontManager {
+    @Nonnull
     @Override
-    protected Texture loadTexture(@Nonnull final String resource) {
+    protected Font buildFont(@Nonnull final String ttfRef, final float size, final int style, @Nonnull final String fntRef) throws IOException {
         try {
-            return new SlickTexture(resource);
-        } catch (@Nonnull final SlickException ignored) {
-            return null;
+            return new SlickFont(fntRef, fntRef.replace(".fnt", "_0.png"));
+        } catch (@Nonnull final SlickEngineException e) {
+            throw new IOException(e);
         }
     }
 }

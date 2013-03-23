@@ -18,26 +18,18 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.illarion.engine.backend.shared.AbstractTextureManager;
-import org.illarion.engine.graphic.Texture;
-import org.newdawn.slick.SlickException;
+import org.illarion.engine.backend.shared.AbstractSprite;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
- * The texture manager that takes care for loading and providing the texture data for the Slick 2D backend.
+ * This is the sprite implementation of Slick2D.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class SlickTextureManager extends AbstractTextureManager {
-    @Nullable
-    @Override
-    protected Texture loadTexture(@Nonnull final String resource) {
-        try {
-            return new SlickTexture(resource);
-        } catch (@Nonnull final SlickException ignored) {
-            return null;
-        }
+class SlickSprite extends AbstractSprite<SlickTexture> {
+    SlickSprite(@Nonnull final SlickTexture[] textures, final int offsetX, final int offsetY, final float centerX,
+                final float centerY, final boolean mirror) {
+        super(textures, offsetX, offsetY, centerX, centerY, mirror);
     }
 }

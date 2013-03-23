@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class SlickTexture implements Texture {
+class SlickTexture implements Texture {
     private final Image backingImage;
 
     /**
@@ -50,6 +50,11 @@ public class SlickTexture implements Texture {
      */
     private SlickTexture(@Nonnull final Image image) {
         backingImage = image;
+    }
+
+    @Nonnull
+    public Image getBackingImage() {
+        return backingImage;
     }
 
     @Override
