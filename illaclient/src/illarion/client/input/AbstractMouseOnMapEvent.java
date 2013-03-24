@@ -18,7 +18,7 @@
  */
 package illarion.client.input;
 
-import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
+import org.illarion.engine.input.Button;
 
 import javax.annotation.Nonnull;
 
@@ -31,26 +31,18 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
     /**
      * The mouse key that was clicked.
      */
-    private final int key;
-
-    /**
-     * The controls used to override the default forwarding behaviour of the Slick renderer.
-     */
-    private final ForwardingInputSystem forwardingControl;
+    private final Button key;
 
     /**
      * Create and initialize such an event.
      *
-     * @param key                    the mouse key that was clicked
-     * @param x                      the x coordinate of the click
-     * @param y                      the y coordinate of the click
-     * @param inputForwardingControl the control class to change the forwarding behaviour
+     * @param key the mouse key that was clicked
+     * @param x   the x coordinate of the click
+     * @param y   the y coordinate of the click
      */
-    protected AbstractMouseOnMapEvent(final int key, final int x, final int y, final ForwardingInputSystem
-            inputForwardingControl) {
+    protected AbstractMouseOnMapEvent(final Button key, final int x, final int y) {
         super(x, y);
         this.key = key;
-        forwardingControl = inputForwardingControl;
     }
 
     /**
@@ -61,7 +53,6 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
     protected AbstractMouseOnMapEvent(@Nonnull final AbstractMouseOnMapEvent org) {
         super(org);
         key = org.key;
-        forwardingControl = org.forwardingControl;
     }
 
     /**
@@ -69,16 +60,7 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
      *
      * @return the key that was clicked
      */
-    public int getKey() {
+    public Button getKey() {
         return key;
-    }
-
-    /**
-     * Get the input forwarding control that applies to the input event source this event originates from.
-     *
-     * @return the forwarding control
-     */
-    public ForwardingInputSystem getForwardingControl() {
-        return forwardingControl;
     }
 }

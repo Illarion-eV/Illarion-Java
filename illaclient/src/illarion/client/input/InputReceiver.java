@@ -18,26 +18,20 @@
  */
 package illarion.client.input;
 
-import de.lessvoid.nifty.slick2d.NiftyInputForwarding;
-import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import illarion.client.IllaClient;
 import illarion.client.world.World;
 import illarion.common.gui.AbstractMultiActionHelper;
 import org.bushe.swing.event.EventBus;
-import org.lwjgl.input.Mouse;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.util.InputAdapter;
+import org.illarion.engine.input.*;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 
 /**
  * This class is used to receive and forward all user input.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class InputReceiver
-        extends InputAdapter {
+public final class InputReceiver implements InputListener {
     private static final int MOVE_KEY = 1;
 
     /**
@@ -60,12 +54,7 @@ public final class InputReceiver
         /**
          * The key that is used.
          */
-        private int key;
-
-        /**
-         * The input forwarding system that is published along with the click events.
-         */
-        private ForwardingInputSystem fwdInputSystem;
+        private Button key;
 
         /**
          * The constructor that sets the used timeout interval to the system default double click interval.
@@ -77,27 +66,24 @@ public final class InputReceiver
         /**
          * Update the data that is needed to report the state of the last click properly.
          *
-         * @param mouseKey   the key that was clicked
-         * @param posX       the x coordinate where the click happened
-         * @param posY       the y coordinate where the click happened
-         * @param forwarding the input forwarding system required to be published with the events
+         * @param mouseKey the key that was clicked
+         * @param posX     the x coordinate where the click happened
+         * @param posY     the y coordinate where the click happened
          */
-        public void setInputData(final int mouseKey, final int posX, final int posY,
-                                 final ForwardingInputSystem forwarding) {
+        public void setInputData(@Nonnull final Button mouseKey, final int posX, final int posY) {
             x = posX;
             y = posY;
             key = mouseKey;
-            fwdInputSystem = forwarding;
         }
 
         @Override
         public void executeAction(final int count) {
             switch (count) {
                 case 1:
-                    EventBus.publish(new ClickOnMapEvent(key, x, y, fwdInputSystem));
+                    EventBus.publish(new ClickOnMapEvent(key, x, y));
                     break;
                 case 2:
-                    EventBus.publish(new DoubleClickOnMapEvent(key, x, y, fwdInputSystem));
+                    EventBus.publish(new DoubleClickOnMapEvent(key, x, y));
                     break;
             }
         }
@@ -152,11 +138,6 @@ public final class InputReceiver
     private final KeyMapper keyMapper = new KeyMapper();
 
     /**
-     * This forwarding control input system is used to control the input forwarding of the Nifty-GUI.
-     */
-    private final NiftyInputForwarding forwardingControl;
-
-    /**
      * The instance of the button multi-click helper that is used in this instance of the input receiver.
      */
     private final ButtonMultiClickHelper buttonMultiClickHelper = new ButtonMultiClickHelper();
@@ -166,76 +147,63 @@ public final class InputReceiver
      */
     private final PointAtHelper pointAtHelper = new PointAtHelper();
 
-    /**
-     * This arrays stores the last received changes of the mouse buttons. This is done to avoid handling drags that
-     * did not start on the map.
-     */
-    @Nonnull
-    private final boolean[] buttonDownReceived;
+    private final Input input;
 
     /**
      * Create a new instance of the input receiver.
      *
-     * @param forwardingInputSystem the forwarding system for the Nifty input
+     * @param input the input system this class is receiving its data from
      */
-    public InputReceiver(final NiftyInputForwarding forwardingInputSystem) {
-        forwardingControl = forwardingInputSystem;
-        buttonDownReceived = new boolean[Mouse.getButtonCount()];
-        Arrays.fill(buttonDownReceived, false);
+    public InputReceiver(final Input input) {
+        this.input = input;
     }
 
     @Override
-    public void keyPressed(final int key, final char c) {
+    public void keyDown(@Nonnull final Key key) {
         keyMapper.handleKeyInput(key);
     }
 
     @Override
-    public void mouseMoved(final int oldX, final int oldY, final int newX, final int newY) {
-        pointAtHelper.setInputData(newX, newY);
-        pointAtHelper.pulse();
-        EventBus.publish(new MoveOnMapEvent(newX, newY));
+    public void keyUp(@Nonnull final Key key) {
+        // nothing
     }
 
-    /**
-     * @see org.newdawn.slick.InputListener#mouseClicked(int, int, int, int)
-     */
     @Override
-    public void mouseClicked(final int button, final int x, final int y, final int clickCount) {
-        buttonMultiClickHelper.setInputData(button, x, y, forwardingControl.getInputForwardingControl());
+    public void keyTyped(final char character) {
+        // nothing
+    }
+
+    @Override
+    public void buttonDown(final int mouseX, final int mouseY, @Nonnull final Button button) {
+        // nothing
+    }
+
+    @Override
+    public void buttonUp(final int mouseX, final int mouseY, @Nonnull final Button button) {
+        World.getPlayer().getMovementHandler().stopWalkTowards();
+        input.disableForwarding(ForwardingTarget.Mouse);
+    }
+
+    @Override
+    public void buttonClicked(final int mouseX, final int mouseY, @Nonnull final Button button, final int count) {
+        buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
         buttonMultiClickHelper.pulse();
     }
 
     @Override
-    public void mouseDragged(final int oldx, final int oldy, final int newx, final int newy) {
-        buttonMultiClickHelper.reset();
-        for (int i = 0; i < Mouse.getButtonCount(); i++) {
-            if (buttonDownReceived[i]) {
-                EventBus.publish(new DragOnMapEvent(oldx, oldy, newx, newy, i,
-                        forwardingControl.getInputForwardingControl()));
-                return;
-            }
-        }
+    public void mouseMoved(final int mouseX, final int mouseY) {
+        pointAtHelper.setInputData(mouseX, mouseY);
+        pointAtHelper.pulse();
+        EventBus.publish(new MoveOnMapEvent(mouseX, mouseY));
     }
 
     @Override
-    public void setInput(final Input input) {
+    public void mouseDragged(@Nonnull final Button button, final int fromX, final int fromY, final int toX, final int toY) {
+        EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button));
     }
 
     @Override
-    public void mousePressed(final int button, final int x, final int y) {
-        if ((button >= 0) && (button < buttonDownReceived.length)) {
-            buttonDownReceived[button] = true;
-        }
-    }
-
-    @Override
-    public void mouseReleased(final int button, final int x, final int y) {
-        if ((button >= 0) && (button < buttonDownReceived.length)) {
-            buttonDownReceived[button] = false;
-        }
-        World.getPlayer().getMovementHandler().stopWalkTowards();
-        if (forwardingControl.isInputForwardingSupported()) {
-            forwardingControl.getInputForwardingControl().releaseExclusiveMouse();
-        }
+    public void mouseWheelMoved(final int mouseX, final int mouseY, final int delta) {
+        // nothing
     }
 }

@@ -18,7 +18,7 @@
  */
 package illarion.client.input;
 
-import org.newdawn.slick.Input;
+import org.illarion.engine.input.Input;
 
 import javax.annotation.Nonnull;
 
@@ -44,6 +44,6 @@ public final class CurrentMouseLocationEvent extends AbstractMouseLocationEvent 
      * @param input the input handler supplying the data
      */
     public CurrentMouseLocationEvent(@Nonnull final Input input) {
-        super(input.getMouseX(), input.getMouseY());
+        this(input.getMouseX(), input.getMouseY());
     }
 }
