@@ -65,8 +65,10 @@ public interface Scene {
      * function.
      *
      * @param graphics the graphics instance that is supposed to be used to render the element
+     * @param offsetX  the x coordinate of the offset that is applied to all rendered elements
+     * @param offsetY  the y coordinate of the offset that is applied to all rendered elements
      */
-    void render(@Nonnull Graphics graphics);
+    void render(@Nonnull Graphics graphics, int offsetX, int offsetY);
 
     /**
      * This function publishes events to the scene. The actual publishing is done during the call of the

@@ -36,7 +36,17 @@ class SlickScene extends AbstractScene {
     }
 
     @Override
-    public void render(@Nonnull final Graphics graphics) {
-        renderScene(graphics);
+    public void render(@Nonnull final Graphics graphics, final int offsetX, final int offsetY) {
+        if (graphics instanceof SlickGraphics) {
+            final SlickGraphics slickGraphics = (SlickGraphics) graphics;
+            final org.newdawn.slick.Graphics slickGraphicsImpl = slickGraphics.getSlickGraphicsImpl();
+            if (slickGraphicsImpl == null) {
+                throw new IllegalStateException("Rendering outside the render loop is not allowed.");
+            }
+            slickGraphicsImpl.pushTransform();
+            slickGraphicsImpl.translate(offsetX, offsetY);
+            renderScene(graphics);
+            slickGraphicsImpl.popTransform();
+        }
     }
 }

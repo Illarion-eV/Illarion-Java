@@ -18,6 +18,8 @@
  */
 package org.illarion.engine.graphic;
 
+import illarion.common.types.Rectangle;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
@@ -89,6 +91,14 @@ public interface Graphics {
      * @param color  the color of the rectangle
      */
     void drawRectangle(int x, int y, int width, int height, @Nonnull Color color);
+
+    /**
+     * Draw a rectangle with a solid color.
+     *
+     * @param rectangle the rectangle that is supposed to be rendered
+     * @param color     the color of the rectangle
+     */
+    void drawRectangle(@Nonnull Rectangle rectangle, @Nonnull Color color);
 
     /**
      * Draw a rectangle with a different color in each corner.

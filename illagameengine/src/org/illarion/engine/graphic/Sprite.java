@@ -20,6 +20,7 @@ package org.illarion.engine.graphic;
 
 import illarion.common.types.Rectangle;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
@@ -30,6 +31,16 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 public interface Sprite {
+    /**
+     * Get one of the sprites frames.
+     *
+     * @param index the index of the frame to receive
+     * @return the texture assigned to the frame index
+     * @throws IndexOutOfBoundsException in case index is less then zero or larger or equal then the amount of frames
+     */
+    @Nonnull
+    Texture getFrame(int index);
+
     /**
      * Get the amount of frames of the sprite.
      *
@@ -49,4 +60,18 @@ public interface Sprite {
      * @return the rectangle of the covered area
      */
     Rectangle getDisplayArea(int x, int y, float scale, float rotation, @Nullable Rectangle storage);
+
+    /**
+     * Get the height of the sprite.
+     *
+     * @return the height of the sprite
+     */
+    int getHeight();
+
+    /**
+     * Get the width of the sprite.
+     *
+     * @return the width of the sprite
+     */
+    int getWidth();
 }

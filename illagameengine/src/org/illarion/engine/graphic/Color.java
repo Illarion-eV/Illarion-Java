@@ -38,6 +38,12 @@ public class Color {
      * A fully opaque white color. This color is immutable.
      */
     public static final Color WHITE = new ImmutableColor(1.f, 1.f, 1.f);
+
+    /**
+     * A fully opaque yellow color. This color is immutable.
+     */
+    public static final Color YELLOW = new ImmutableColor(1.f, 1.f, 0.f);
+
     /**
      * The alpha component of the color.
      */

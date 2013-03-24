@@ -96,10 +96,12 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
         this.mirror = mirror;
     }
 
+    @Override
     public int getWidth() {
         return textures[0].getWidth();
     }
 
+    @Override
     public int getHeight() {
         return textures[0].getHeight();
     }
@@ -109,6 +111,8 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
         return textures.length;
     }
 
+    @Override
+    @Nonnull
     public T getFrame(final int frame) {
         if ((frame < 0) || (frame >= textures.length)) {
             throw new IndexOutOfBoundsException("Frame out of bounds: " + frame);

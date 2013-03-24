@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class IgeRenderImage implements RenderImage {
+public class IgeRenderImage implements RenderImage {
     /**
      * The texture that is rendered with this image.
      */
