@@ -42,8 +42,8 @@ public class IgeInputSystem implements InputSystem, InputListener {
             listener.keyDown(key);
         } else {
             final int keyCode = getNiftyKeyId(key);
-            final boolean shiftDown = input.isKeyDown(Key.LeftShift) || input.isKeyDown(Key.RightShift);
-            final boolean controlDown = input.isKeyDown(Key.LeftCtrl) || input.isKeyDown(Key.RightCtrl);
+            final boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
+            final boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
             final KeyboardInputEvent event = new KeyboardInputEvent(keyCode, Character.MIN_VALUE, true, shiftDown,
                     controlDown);
 
@@ -62,8 +62,8 @@ public class IgeInputSystem implements InputSystem, InputListener {
             listener.keyUp(key);
         } else {
             final int keyCode = getNiftyKeyId(key);
-            final boolean shiftDown = input.isKeyDown(Key.LeftShift) || input.isKeyDown(Key.RightShift);
-            final boolean controlDown = input.isKeyDown(Key.LeftCtrl) || input.isKeyDown(Key.RightCtrl);
+            final boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
+            final boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
             final KeyboardInputEvent event = new KeyboardInputEvent(keyCode, Character.MIN_VALUE, false, shiftDown,
                     controlDown);
 
@@ -82,8 +82,8 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (input.isForwardingEnabled(ForwardingTarget.Keyboard)) {
             listener.keyTyped(character);
         } else {
-            final boolean shiftDown = input.isKeyDown(Key.LeftShift) || input.isKeyDown(Key.RightShift);
-            final boolean controlDown = input.isKeyDown(Key.LeftCtrl) || input.isKeyDown(Key.RightCtrl);
+            final boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
+            final boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
             final KeyboardInputEvent event = new KeyboardInputEvent(-1, character, true, shiftDown, controlDown);
 
             if (!currentConsumer.processKeyboardEvent(event)) {

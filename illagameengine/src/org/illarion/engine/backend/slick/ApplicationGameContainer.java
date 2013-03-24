@@ -20,12 +20,17 @@ package org.illarion.engine.backend.slick;
 
 import org.apache.log4j.Logger;
 import org.illarion.engine.*;
+import org.illarion.engine.graphic.GraphicResolution;
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
+import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.util.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 /**
  * This is the application game container that is using the Slick2D backend to render the graphics.
@@ -62,6 +67,9 @@ public class ApplicationGameContainer implements DesktopGameContainer {
             slickContainer = new AppGameContainer(new ListenerGame(gameListener));
             slickContainer.setForceExit(false);
             engine = new SlickEngine(slickContainer);
+            windowHeight = slickContainer.getHeight();
+            windowWidth = slickContainer.getWidth();
+            fullScreenResolution = new GraphicResolution(windowWidth, windowHeight, -1, -1);
         } catch (@Nonnull final SlickException e) {
             throw new SlickEngineException("Failed to create the application container.", e);
         }
@@ -82,6 +90,9 @@ public class ApplicationGameContainer implements DesktopGameContainer {
             slickContainer = new AppGameContainer(new ListenerGame(gameListener), width, height, fullScreen);
             slickContainer.setForceExit(false);
             engine = new SlickEngine(slickContainer);
+            windowHeight = slickContainer.getHeight();
+            windowWidth = slickContainer.getWidth();
+            fullScreenResolution = new GraphicResolution(windowWidth, windowHeight, -1, -1);
         } catch (@Nonnull final SlickException e) {
             throw new SlickEngineException("Failed to create the application container.", e);
         }
@@ -128,7 +139,12 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     @Override
     public void setFullScreen(final boolean fullScreen) throws EngineException {
         try {
-            slickContainer.setDisplayMode(getWidth(), getHeight(), fullScreen);
+            if (fullScreen) {
+                slickContainer.setDisplayMode(fullScreenResolution.getWidth(), fullScreenResolution.getHeight(), true);
+                slickContainer.setTargetFrameRate(fullScreenResolution.getRefreshRate());
+            } else {
+                slickContainer.setDisplayMode(windowWidth, windowHeight, false);
+            }
         } catch (@Nonnull final SlickException e) {
             throw new SlickEngineException(e);
         }
@@ -168,13 +184,70 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         }
     }
 
+    /**
+     * The height of the window (while its in the windowed mode.
+     */
+    private int windowHeight;
+
+    /**
+     * The width of the window.
+     */
+    private int windowWidth;
+
+    /**
+     * The full screen graphics resolution.
+     */
+    private GraphicResolution fullScreenResolution;
+
     @Override
-    public void setSize(final int width, final int height) throws EngineException {
+    public void setWindowSize(final int width, final int height) throws EngineException {
         try {
-            slickContainer.setDisplayMode(width, height, slickContainer.isFullscreen());
+            if (!slickContainer.isFullscreen()) {
+                slickContainer.setDisplayMode(width, height, false);
+            }
+            windowHeight = height;
+            windowWidth = width;
         } catch (@Nonnull final SlickException e) {
             throw new SlickEngineException(e);
         }
+    }
+
+    @Override
+    public void setFullScreenResolution(@Nonnull final GraphicResolution resolution) throws EngineException {
+        try {
+            if (slickContainer.isFullscreen()) {
+                slickContainer.setDisplayMode(resolution.getWidth(), resolution.getHeight(), true);
+                slickContainer.setTargetFrameRate(resolution.getRefreshRate());
+            }
+            fullScreenResolution = resolution;
+        } catch (@Nonnull final SlickException e) {
+            throw new SlickEngineException(e);
+        }
+    }
+
+    @Nonnull
+    @Override
+    public GraphicResolution[] getFullScreenResolutions() {
+        DisplayMode[] displayModes;
+        try {
+            displayModes = Display.getAvailableDisplayModes(800, 600, slickContainer.getScreenWidth(),
+                    slickContainer.getScreenHeight(), 24, 32, 40, 120);
+        } catch (@Nonnull final LWJGLException exc) {
+            displayModes = new DisplayMode[1];
+            displayModes[0] = new DisplayMode(800, 600);
+        }
+
+        Arrays.sort(displayModes, new DisplayModeSorter());
+
+        final GraphicResolution[] result = new GraphicResolution[displayModes.length];
+
+        for (int i = 0, displayModesLength = displayModes.length; i < displayModesLength; i++) {
+            final DisplayMode mode = displayModes[i];
+            result[i] = new GraphicResolution(mode.getWidth(), mode.getHeight(), mode.getBitsPerPixel(),
+                    mode.getFrequency());
+        }
+
+        return result;
     }
 
     @Override

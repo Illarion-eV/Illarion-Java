@@ -1,22 +1,22 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion Game Engine.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * The Illarion Game Engine is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * The Illarion Game Engine is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
+ * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.common.graphics;
+package org.illarion.engine.graphic;
 
 import javax.annotation.Nonnull;
 import java.util.regex.Matcher;
@@ -105,7 +105,6 @@ public final class GraphicResolution {
             width = Integer.parseInt(matcher.group(1));
             height = Integer.parseInt(matcher.group(2));
             bpp = Integer.parseInt(matcher.group(3));
-            ;
             refreshRate = -1;
             return;
         }
@@ -127,11 +126,11 @@ public final class GraphicResolution {
      * Compare the resolution with another resolution object.
      *
      * @param compRes the object this one is compared to
-     * @return <code>true</code> in case all values of the resolutions are equal
+     * @return {@code true} in case all values of the resolutions are equal
      */
     public boolean equals(@Nonnull final GraphicResolution compRes) {
-        return ((height == compRes.height) && (width == compRes.width)
-                && (bpp == compRes.bpp) && (refreshRate == compRes.refreshRate));
+        return (height == compRes.height) && (width == compRes.width)
+                && (bpp == compRes.bpp) && (refreshRate == compRes.refreshRate);
     }
 
     /**
@@ -141,12 +140,12 @@ public final class GraphicResolution {
      * @param compHeight  the height to compare with
      * @param compBpp     the bits per point to compare with
      * @param compRefresh the fresh rate to compare with
-     * @return <code>true</code> in case all values equal with this instance
+     * @return {@code true} in case all values equal with this instance
      */
     public boolean equals(final int compWidth, final int compHeight,
                           final int compBpp, final int compRefresh) {
-        return ((height == compHeight) && (width == compWidth)
-                && (bpp == compBpp) && (refreshRate == compRefresh));
+        return (height == compHeight) && (width == compWidth)
+                && (bpp == compBpp) && (refreshRate == compRefresh);
     }
 
     /**
@@ -155,7 +154,7 @@ public final class GraphicResolution {
      * GraphicResolution object.
      *
      * @param compObj the object this resolution is to be compared with
-     * @return <code>true</code> in case both objects are equal
+     * @return {@code true} in case both objects are equal
      */
     @Override
     public boolean equals(final Object compObj) {
@@ -173,7 +172,7 @@ public final class GraphicResolution {
      * created with another instance of this class.
      *
      * @param compString the string to compare with
-     * @return <code>true</code> if this object and the string represent the
+     * @return {@code true} if this object and the string represent the
      *         same resolution
      */
     public boolean equals(final String compString) {
@@ -200,7 +199,7 @@ public final class GraphicResolution {
     }
 
     /**
-     * Get the refresh reate of this resolution in Hz.
+     * Get the refresh rate of this resolution in Hz.
      *
      * @return the refresh rate in Hz
      */
@@ -220,7 +219,7 @@ public final class GraphicResolution {
     /**
      * Generate a hash code for this graphic resolution object.
      *
-     * @return the hashcode of this object
+     * @return the hash code of this object
      */
     @Override
     public int hashCode() {

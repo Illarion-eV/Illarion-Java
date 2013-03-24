@@ -18,6 +18,8 @@
  */
 package org.illarion.engine;
 
+import org.illarion.engine.graphic.GraphicResolution;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
@@ -51,7 +53,23 @@ public interface DesktopGameContainer extends GameContainer {
      * @param height the height of the window
      * @throws EngineException in case setting the size of the window fails
      */
-    void setSize(int width, int height) throws EngineException;
+    void setWindowSize(int width, int height) throws EngineException;
+
+    /**
+     * Set the resolution that applies to the full screen mode.
+     *
+     * @param resolution the resolution
+     * @throws EngineException in case setting the resolution fails
+     */
+    void setFullScreenResolution(@Nonnull GraphicResolution resolution) throws EngineException;
+
+    /**
+     * Get a array of valid full screen resolutions.
+     *
+     * @return the list of full screen resolutions
+     */
+    @Nonnull
+    GraphicResolution[] getFullScreenResolutions();
 
     /**
      * Check if the user is allowed to change the size of the window.

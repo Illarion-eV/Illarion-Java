@@ -501,6 +501,36 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
     }
 
     @Override
+    public boolean isAnyButtonDown() {
+        return isAnyButtonDown(Button.values());
+    }
+
+    @Override
+    public boolean isAnyButtonDown(@Nonnull final Button... buttons) {
+        for (@Nonnull final Button button : buttons) {
+            if (isButtonDown(button)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAnyKeyDown() {
+        return isAnyKeyDown(Key.values());
+    }
+
+    @Override
+    public boolean isAnyKeyDown(@Nonnull final Key... keys) {
+        for (@Nonnull final Key key : keys) {
+            if (isKeyDown(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void keyPressed(final int i, final char c) {
         final Key key = getIgeKeyId(i);
         if (key != null) {

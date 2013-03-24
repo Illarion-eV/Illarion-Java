@@ -55,6 +55,36 @@ public interface Input {
     boolean isKeyDown(@Nonnull Key key);
 
     /**
+     * Check if any mouse button is currently pressed.
+     *
+     * @return {@code true} if any mouse button is pressed
+     */
+    boolean isAnyButtonDown();
+
+    /**
+     * Check if any of the listed mouse buttons is pressed.
+     *
+     * @param buttons the list of mouse buttons to check
+     * @return {@code true} if at least one of the buttons is pressed
+     */
+    boolean isAnyButtonDown(@Nonnull Button... buttons);
+
+    /**
+     * Check if any keyboard key is pressed.
+     *
+     * @return {@code true} in case any keyboard key is pressed
+     */
+    boolean isAnyKeyDown();
+
+    /**
+     * Check if one of the listed keyboard keys is pressed.
+     *
+     * @param keys the keys to check
+     * @return {@code true} in case one of those keys is pressed
+     */
+    boolean isAnyKeyDown(@Nonnull Key... keys);
+
+    /**
      * Get the X coordinate of the current mouse location.
      *
      * @return the X coordinate of the current mouse location
