@@ -192,6 +192,44 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
                 return Key.NumPad9;
             case Input.KEY_NUMLOCK:
                 return Key.NumLock;
+            case Input.KEY_ESCAPE:
+                return Key.Escape;
+            case Input.KEY_F1:
+                return Key.F1;
+            case Input.KEY_F2:
+                return Key.F2;
+            case Input.KEY_F3:
+                return Key.F3;
+            case Input.KEY_F4:
+                return Key.F4;
+            case Input.KEY_F5:
+                return Key.F5;
+            case Input.KEY_F6:
+                return Key.F6;
+            case Input.KEY_F7:
+                return Key.F7;
+            case Input.KEY_F8:
+                return Key.F8;
+            case Input.KEY_F9:
+                return Key.F9;
+            case Input.KEY_F10:
+                return Key.F10;
+            case Input.KEY_F11:
+                return Key.F11;
+            case Input.KEY_F12:
+                return Key.F12;
+            case Input.KEY_INSERT:
+                return Key.Insert;
+            case Input.KEY_DELETE:
+                return Key.Delete;
+            case Input.KEY_HOME:
+                return Key.Home;
+            case Input.KEY_END:
+                return Key.End;
+            case Input.KEY_PRIOR:
+                return Key.PageUp;
+            case Input.KEY_NEXT:
+                return Key.PageDown;
             default:
                 return null;
         }
@@ -322,6 +360,44 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
                 return Input.KEY_NUMPAD9;
             case NumLock:
                 return Input.KEY_NUMLOCK;
+            case Escape:
+                return Input.KEY_ESCAPE;
+            case F1:
+                return Input.KEY_F1;
+            case F2:
+                return Input.KEY_F2;
+            case F3:
+                return Input.KEY_F3;
+            case F4:
+                return Input.KEY_F4;
+            case F5:
+                return Input.KEY_F5;
+            case F6:
+                return Input.KEY_F6;
+            case F7:
+                return Input.KEY_F7;
+            case F8:
+                return Input.KEY_F8;
+            case F9:
+                return Input.KEY_F9;
+            case F10:
+                return Input.KEY_F10;
+            case F11:
+                return Input.KEY_F11;
+            case F12:
+                return Input.KEY_F12;
+            case Insert:
+                return Input.KEY_INSERT;
+            case Delete:
+                return Input.KEY_DELETE;
+            case Home:
+                return Input.KEY_HOME;
+            case End:
+                return Input.KEY_END;
+            case PageUp:
+                return Input.KEY_PRIOR;
+            case PageDown:
+                return Input.KEY_NEXT;
         }
         return -1;
     }

@@ -311,6 +311,44 @@ public class IgeInputSystem implements InputSystem, InputListener {
                 return KeyboardInputEvent.KEY_NUMPAD9;
             case NumLock:
                 return KeyboardInputEvent.KEY_NUMLOCK;
+            case Escape:
+                return KeyboardInputEvent.KEY_ESCAPE;
+            case F1:
+                return KeyboardInputEvent.KEY_F1;
+            case F2:
+                return KeyboardInputEvent.KEY_F2;
+            case F3:
+                return KeyboardInputEvent.KEY_F3;
+            case F4:
+                return KeyboardInputEvent.KEY_F4;
+            case F5:
+                return KeyboardInputEvent.KEY_F5;
+            case F6:
+                return KeyboardInputEvent.KEY_F6;
+            case F7:
+                return KeyboardInputEvent.KEY_F7;
+            case F8:
+                return KeyboardInputEvent.KEY_F8;
+            case F9:
+                return KeyboardInputEvent.KEY_F9;
+            case F10:
+                return KeyboardInputEvent.KEY_F10;
+            case F11:
+                return KeyboardInputEvent.KEY_F11;
+            case F12:
+                return KeyboardInputEvent.KEY_F12;
+            case Insert:
+                return KeyboardInputEvent.KEY_INSERT;
+            case Delete:
+                return KeyboardInputEvent.KEY_DELETE;
+            case Home:
+                return KeyboardInputEvent.KEY_HOME;
+            case End:
+                return KeyboardInputEvent.KEY_END;
+            case PageUp:
+                return KeyboardInputEvent.KEY_PRIOR;
+            case PageDown:
+                return KeyboardInputEvent.KEY_NEXT;
         }
         return -1;
     }
