@@ -18,10 +18,13 @@
  */
 package org.illarion.engine.backend.shared;
 
+import illarion.common.types.Rectangle;
 import org.illarion.engine.graphic.Sprite;
 import org.illarion.engine.graphic.Texture;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 import java.util.Arrays;
 
 /**
@@ -30,14 +33,48 @@ import java.util.Arrays;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Immutable
 public abstract class AbstractSprite<T extends Texture> implements Sprite {
+    /**
+     * The textures assigned to this sprite.
+     */
     private final T[] textures;
+
+    /**
+     * The X offset applied to the texture when rendering.
+     */
     private final int offsetX;
+
+    /**
+     * The Y offset applied to the sprite when rendering.
+     */
     private final int offsetY;
+
+    /**
+     * The X coordinate of the center coordinate of the sprite.
+     */
     private final float centerX;
+
+    /**
+     * The Y coordinate of the center coordinate of the sprite.
+     */
     private final float centerY;
+
+    /**
+     * This mirror flag. In case its set {@code true} the sprite will be rendered vertically mirrored.
+     */
     private final boolean mirror;
 
+    /**
+     * Create a abstract sprite.
+     *
+     * @param textures the textures that are the frames of this sprite
+     * @param offsetX  the x offset of the sprite
+     * @param offsetY  the y offset of the sprite
+     * @param centerX  the offset of the center point long the x coordinate
+     * @param centerY  the offset of the center point long the y coordinate
+     * @param mirror   the mirrored flag
+     */
     protected AbstractSprite(@Nonnull final T[] textures, final int offsetX, final int offsetY,
                              final float centerX, final float centerY, final boolean mirror) {
         if (textures.length == 0) {
@@ -59,8 +96,24 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
         this.mirror = mirror;
     }
 
+    public int getWidth() {
+        return textures[0].getWidth();
+    }
+
+    public int getHeight() {
+        return textures[0].getHeight();
+    }
+
+    @Override
     public int getFrames() {
         return textures.length;
+    }
+
+    public T getFrame(final int frame) {
+        if ((frame < 0) || (frame >= textures.length)) {
+            throw new IndexOutOfBoundsException("Frame out of bounds: " + frame);
+        }
+        return textures[frame];
     }
 
     public int getOffsetX() {
@@ -81,5 +134,24 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
 
     public boolean isMirrored() {
         return mirror;
+    }
+
+    @Override
+    public Rectangle getDisplayArea(final int x, final int y, final float scale, final float rotation,
+                                    @Nullable final Rectangle storage) {
+        @Nonnull final Rectangle targetRectangle;
+        if (storage == null) {
+            targetRectangle = new Rectangle();
+        } else {
+            targetRectangle = storage;
+        }
+
+        final int displayX = (int) (x + ((offsetX + (getWidth() * centerX)) * scale));
+        final int displayY = (int) (y + ((offsetY + (getHeight() * centerY)) * scale));
+        final int displayWidth = (int) (getWidth() * scale);
+        final int displayHeight = (int) (getHeight() * scale);
+        targetRectangle.set(displayX, displayY, displayWidth, displayHeight);
+
+        return targetRectangle;
     }
 }

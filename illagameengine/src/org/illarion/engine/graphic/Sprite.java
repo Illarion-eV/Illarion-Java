@@ -18,6 +18,9 @@
  */
 package org.illarion.engine.graphic;
 
+import illarion.common.types.Rectangle;
+
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -27,4 +30,23 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 public interface Sprite {
+    /**
+     * Get the amount of frames of the sprite.
+     *
+     * @return the amount of frames
+     */
+    int getFrames();
+
+    /**
+     * Get the area that is covered on the screen in case the sprite is rendered.
+     *
+     * @param x        the x coordinate of the location the sprite is rendered to
+     * @param y        the y coordinate of the location the sprite is rendered to
+     * @param scale    the scale of the sprite
+     * @param rotation the rotation applied to the sprite
+     * @param storage  the rectangle instance that is supposed to be used to store the data,
+     *                 in case this is {@code null} there will be a new instance created and returned
+     * @return the rectangle of the covered area
+     */
+    Rectangle getDisplayArea(int x, int y, float scale, float rotation, @Nullable Rectangle storage);
 }

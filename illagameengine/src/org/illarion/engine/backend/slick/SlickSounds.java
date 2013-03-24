@@ -31,6 +31,7 @@ import java.util.Map;
 
 /**
  * This is the implementation of the sounds engine for the Slick2D backend.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class SlickSounds implements MusicListener, Sounds {
@@ -111,7 +112,13 @@ class SlickSounds implements MusicListener, Sounds {
 
     @Override
     public void playMusic(@Nonnull final Music music, final int fadeOutTime, final int fadeInTime) {
-        if (currentMusic != null) {
+        if (currentMusic == null) {
+            if (music instanceof SlickMusic) {
+                startMusic((SlickMusic) music, fadeInTime);
+            }
+            nextMusic = null;
+            nextFadeInTime = 0;
+        } else {
             stopMusic(fadeOutTime);
             if (music instanceof SlickMusic) {
                 nextMusic = (SlickMusic) music;
@@ -119,12 +126,6 @@ class SlickSounds implements MusicListener, Sounds {
             } else {
                 nextMusic = null;
             }
-        } else {
-            if (music instanceof SlickMusic) {
-                startMusic((SlickMusic) music, fadeInTime);
-            }
-            nextMusic = null;
-            nextFadeInTime = 0;
         }
     }
 

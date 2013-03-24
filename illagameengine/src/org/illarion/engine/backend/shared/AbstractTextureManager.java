@@ -48,9 +48,8 @@ public abstract class AbstractTextureManager implements TextureManager {
      */
     @SuppressWarnings("nls")
     private static final String ATLAS_BASE_NAME = "atlas-";
-
-    private static final String IMAGE_EXTENSION = ".png";
     private static final String ATLAS_DEF_EXTENSION = ".xml";
+    private static final String IMAGE_EXTENSION = ".png";
 
     /**
      * The logger that provides the logging output of this class.
@@ -58,16 +57,16 @@ public abstract class AbstractTextureManager implements TextureManager {
     private static final Logger LOGGER = Logger.getLogger(AbstractTextureManager.class);
 
     /**
-     * The index of the last atlas that was load. One list entry for each root directory.
-     */
-    @Nonnull
-    private final List<Integer> lastAtlasIndex;
-
-    /**
      * This list stores the amount of atlas textures expected for each root directory.
      */
     @Nonnull
     private final List<Integer> expectedAtlasCount;
+
+    /**
+     * The index of the last atlas that was load. One list entry for each root directory.
+     */
+    @Nonnull
+    private final List<Integer> lastAtlasIndex;
 
     /**
      * The list of known root directories. This list is used to locate
@@ -91,6 +90,45 @@ public abstract class AbstractTextureManager implements TextureManager {
         textures = new HashMap<String, Texture>();
     }
 
+    @Nonnull
+    private static String cleanTextureName(@Nonnull final String name) {
+        if (name.endsWith(".png")) {
+            return name.substring(0, name.length() - 4);
+        }
+        return name;
+    }
+
+    /**
+     * Close a stream no matter what. This function works even with {@code null} arguments. It will never crash, but it
+     * will close the closeable in case its possible.
+     *
+     * @param closeable the object to close
+     */
+    private static void closeQuietly(@Nullable @WillClose final Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (@Nonnull final IOException ignored) {
+                // ignore
+            }
+        }
+    }
+
+    /**
+     * Combine the path from a directory and the name.
+     *
+     * @param directory the directory
+     * @param name      the name of the new path element
+     * @return the full path, properly merged
+     */
+    @Nonnull
+    private static String mergePath(@Nonnull final String directory, @Nonnull final String name) {
+        if (directory.endsWith("/")) {
+            return directory + name;
+        }
+        return directory + '/' + name;
+    }
+
     @Override
     public final void addTextureDirectory(@Nonnull final String directory) {
         lastAtlasIndex.add(-1);
@@ -100,6 +138,54 @@ public abstract class AbstractTextureManager implements TextureManager {
         } else {
             rootDirectories.add(directory + '/');
         }
+    }
+
+    /**
+     * Get the amount of atlas texture files the loader expects to find in a specified directory.
+     *
+     * @param directoryIndex the index of the directory in the list or root directories
+     * @return the amount of atlas textures that will be load from this root directory
+     * @throws IndexOutOfBoundsException in case the index value is less then 0 or greater or equal to the amount of
+     *                                   texture root directories set
+     */
+    protected int getAtlasCount(final int directoryIndex) {
+        if ((directoryIndex < 0) || (directoryIndex >= rootDirectories.size())) {
+            throw new IndexOutOfBoundsException("Directory index is not within valid range");
+        }
+        if (expectedAtlasCount.get(directoryIndex) >= 0) {
+            return expectedAtlasCount.get(directoryIndex);
+        }
+
+        final String directory = rootDirectories.get(directoryIndex);
+
+        InputStream in = null;
+        int result = 0;
+        try {
+            in = Thread.currentThread().getContextClassLoader().getResourceAsStream(directory + "atlas.count");
+            if (in == null) {
+                return 0;
+            }
+
+            final DataInputStream dIn = new DataInputStream(in);
+            result = dIn.readInt();
+        } catch (@Nonnull final IOException e) {
+            expectedAtlasCount.set(directoryIndex, 0);
+        } finally {
+            closeQuietly(in);
+        }
+        expectedAtlasCount.set(directoryIndex, result);
+        return result;
+    }
+
+    /**
+     * Get the index of a root directory.
+     *
+     * @param directory the directory
+     * @return the index of the root directory or {@code -1} in case the directory could not be assigned to a root
+     *         directory
+     */
+    private int getDirectoryIndex(@Nonnull final String directory) {
+        return rootDirectories.indexOf(directory);
     }
 
     @Nullable
@@ -142,48 +228,35 @@ public abstract class AbstractTextureManager implements TextureManager {
         return null;
     }
 
-    @Nonnull
-    private static String cleanTextureName(@Nonnull final String name) {
-        if (name.endsWith(".png")) {
-            return name.substring(0, name.length() - 4);
-        }
-        return name;
-    }
-
-    @Nonnull
-    private static String mergePath(@Nonnull final String directory, @Nonnull final String name) {
-        if (directory.endsWith("/")) {
-            return directory + name;
-        }
-        return directory + '/' + name;
-    }
-
     @Nullable
     @Override
     public Texture getTexture(@Nonnull final String directory, @Nonnull final String name) {
         return getTexture(getDirectoryIndex(directory), mergePath(directory, name));
     }
 
-    /**
-     * Load the texture from a specific resource.
-     *
-     * @param resource the path to the resource
-     * @return the texture loaded or {@code null} in case loading is impossible
-     */
-    @Nullable
-    protected abstract Texture loadTexture(@Nonnull String resource);
+    @Override
+    public boolean isLoadingDone() {
+        final int directories = rootDirectories.size();
 
-    /**
-     * Get the index of a root directory.
-     *
-     * @param directory the directory
-     * @return the index of the root directory or {@code -1} in case the directory could not be assigned to a root
-     *         directory
-     */
-    private int getDirectoryIndex(@Nonnull final String directory) {
-        return rootDirectories.indexOf(directory);
+        int totalAtlasTextures = 0;
+        int loadAtlasTextures = 0;
+        for (int i = 0; i < directories; i++) {
+            totalAtlasTextures += getAtlasCount(i);
+            loadAtlasTextures += lastAtlasIndex.get(i) + 1;
+        }
+
+        if (totalAtlasTextures <= loadAtlasTextures) {
+            return true;
+        }
+        return false;
     }
 
+    /**
+     * Load the next texture atlas inside a root directory.
+     *
+     * @param directoryIndex the index of the root directory
+     * @return {@code true} in case the atlas was load, {@code false} in case there are no atlas files left to load
+     */
     private boolean loadNextTextureAtlas(final int directoryIndex) {
         if ((directoryIndex < 0) || (directoryIndex >= rootDirectories.size())) {
             throw new IndexOutOfBoundsException("Directory index is not within valid range");
@@ -200,6 +273,50 @@ public abstract class AbstractTextureManager implements TextureManager {
         return false;
     }
 
+    @Override
+    public float loadRemaining() {
+        final int directories = rootDirectories.size();
+
+        int totalAtlasTextures = 0;
+        int loadAtlasTextures = 0;
+        for (int i = 0; i < directories; i++) {
+            totalAtlasTextures += getAtlasCount(i);
+            loadAtlasTextures += lastAtlasIndex.get(i) + 1;
+        }
+
+        if (totalAtlasTextures <= loadAtlasTextures) {
+            return 1.f;
+        }
+
+        for (int i = 0; i < directories; i++) {
+            if (lastAtlasIndex.get(i) < (getAtlasCount(i) - 1)) {
+                if (loadNextTextureAtlas(i)) {
+                    return (float) (loadAtlasTextures + 1) / (float) totalAtlasTextures;
+                }
+                lastAtlasIndex.set(i, getAtlasCount(i) - 1);
+                LOGGER.warn("Inconsistent resources. Found less texture atlas files then expected.");
+            }
+        }
+
+        LOGGER.warn("Reached unexptected loading state.");
+        return 1.f;
+    }
+
+    /**
+     * Load the texture from a specific resource.
+     *
+     * @param resource the path to the resource
+     * @return the texture loaded or {@code null} in case loading is impossible
+     */
+    @Nullable
+    protected abstract Texture loadTexture(@Nonnull String resource);
+
+    /**
+     * Load a texture atlas.
+     *
+     * @param directoryIndex the index of the root directory the atlas belongs to
+     * @param atlasIndex     the index of the atlas
+     */
     private void loadTextureAtlas(final int directoryIndex, final int atlasIndex) {
         if ((directoryIndex < 0) || (directoryIndex >= rootDirectories.size())) {
             throw new IndexOutOfBoundsException("Directory index is not within valid range");
@@ -275,104 +392,5 @@ public abstract class AbstractTextureManager implements TextureManager {
             }
 
         }
-    }
-
-    /**
-     * Get the amount of atlas texture files the loader expects to find in a specified directory.
-     *
-     * @param directoryIndex the index of the directory in the list or root directories
-     * @return the amount of atlas textures that will be load from this root directory
-     * @throws IndexOutOfBoundsException in case the index value is less then 0 or greater or equal to the amount of
-     *                                   texture root directories set
-     */
-    protected int getAtlasCount(final int directoryIndex) {
-        if ((directoryIndex < 0) || (directoryIndex >= rootDirectories.size())) {
-            throw new IndexOutOfBoundsException("Directory index is not within valid range");
-        }
-        if (expectedAtlasCount.get(directoryIndex) >= 0) {
-            return expectedAtlasCount.get(directoryIndex);
-        }
-
-        final String directory = rootDirectories.get(directoryIndex);
-
-        InputStream in = null;
-        int result = 0;
-        try {
-            in = Thread.currentThread().getContextClassLoader().getResourceAsStream(directory + "atlas.count");
-            if (in == null) {
-                return 0;
-            }
-
-            final DataInputStream dIn = new DataInputStream(in);
-            result = dIn.readInt();
-        } catch (@Nonnull final IOException e) {
-            expectedAtlasCount.set(directoryIndex, 0);
-        } finally {
-            closeQuietly(in);
-        }
-        expectedAtlasCount.set(directoryIndex, result);
-        return result;
-    }
-
-    /**
-     * Close a stream no matter what. This function works even with {@code null} arguments. It will never crash, but it
-     * will close the closeable in case its possible.
-     *
-     * @param closeable the object to close
-     */
-    private static void closeQuietly(@Nullable @WillClose final Closeable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (@Nonnull final IOException ignored) {
-                // ignore
-            }
-        }
-    }
-
-    @Override
-    public float loadRemaining() {
-        final int directories = rootDirectories.size();
-
-        int totalAtlasTextures = 0;
-        int loadAtlasTextures = 0;
-        for (int i = 0; i < directories; i++) {
-            totalAtlasTextures += getAtlasCount(i);
-            loadAtlasTextures += lastAtlasIndex.get(i) + 1;
-        }
-
-        if (totalAtlasTextures <= loadAtlasTextures) {
-            return 1.f;
-        }
-
-        for (int i = 0; i < directories; i++) {
-            if (lastAtlasIndex.get(i) < (getAtlasCount(i) - 1)) {
-                if (loadNextTextureAtlas(i)) {
-                    return (float) (loadAtlasTextures + 1) / (float) totalAtlasTextures;
-                }
-                lastAtlasIndex.set(i, getAtlasCount(i) - 1);
-                LOGGER.warn("Inconsistent resources. Found less texture atlas files then expected.");
-            }
-        }
-
-        LOGGER.warn("Reached unexptected loading state.");
-        return 1.f;
-    }
-
-    @Override
-    public boolean isLoadingDone() {
-        final int directories = rootDirectories.size();
-
-        int totalAtlasTextures = 0;
-        int loadAtlasTextures = 0;
-        for (int i = 0; i < directories; i++) {
-            totalAtlasTextures += getAtlasCount(i);
-            loadAtlasTextures += lastAtlasIndex.get(i) + 1;
-        }
-
-        if (totalAtlasTextures <= loadAtlasTextures) {
-            return true;
-        }
-        return false;
     }
 }

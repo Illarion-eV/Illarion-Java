@@ -19,6 +19,7 @@
 package org.illarion.engine.backend.slick;
 
 import org.illarion.engine.assets.*;
+import org.illarion.engine.graphic.Scene;
 
 import javax.annotation.Nonnull;
 
@@ -95,7 +96,13 @@ class SlickAssets implements Assets {
 
     @Nonnull
     @Override
-    public SpriteFactory getSpriteFacotry() {
+    public SpriteFactory getSpriteFactory() {
         return spriteFactory;
+    }
+
+    @Nonnull
+    @Override
+    public Scene createNewScene() {
+        return new SlickScene();
     }
 }

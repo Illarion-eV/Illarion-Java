@@ -23,6 +23,7 @@ import org.illarion.engine.assets.Assets;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.sound.Sounds;
+import org.newdawn.slick.GameContainer;
 
 import javax.annotation.Nonnull;
 
@@ -33,17 +34,23 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class SlickEngine implements Engine {
+    /**
+     * The graphics component of the Slick engine.
+     */
     @Nonnull
     private final SlickGraphics graphics;
     @Nonnull
     private final SlickAssets assets;
     @Nonnull
     private final SlickSounds sounds;
+    @Nonnull
+    private final SlickInput input;
 
-    SlickEngine() {
+    SlickEngine(final GameContainer container) {
         graphics = new SlickGraphics();
         assets = new SlickAssets();
         sounds = new SlickSounds();
+        input = new SlickInput(container.getInput());
     }
 
     @Nonnull
@@ -67,6 +74,6 @@ class SlickEngine implements Engine {
     @Nonnull
     @Override
     public Input getInput() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return input;
     }
 }

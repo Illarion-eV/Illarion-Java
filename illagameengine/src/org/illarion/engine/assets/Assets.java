@@ -18,6 +18,8 @@
  */
 package org.illarion.engine.assets;
 
+import org.illarion.engine.graphic.Scene;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -64,5 +66,13 @@ public interface Assets {
      * @return the sprite factory
      */
     @Nonnull
-    SpriteFactory getSpriteFacotry();
+    SpriteFactory getSpriteFactory();
+
+    /**
+     * Create a new scene instance that should be used for rendering the game.
+     *
+     * @return the newly created scene
+     */
+    @Nonnull
+    Scene createNewScene();
 }

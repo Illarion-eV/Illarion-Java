@@ -37,16 +37,19 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * The logger instance for this class.
      */
     private static final Logger LOGGER = Logger.getLogger(ApplicationGameContainer.class);
-
-    /**
-     * The Slick2D implementation of the application container.
-     */
-    private final AppGameContainer slickContainer;
-
     /**
      * The engine instance for the Slick2D backend.
      */
     private final SlickEngine engine;
+    /**
+     * The Slick2D implementation of the application container.
+     */
+    private final AppGameContainer slickContainer;
+    /**
+     * The last applied title of the game.
+     */
+    @Nonnull
+    private String title;
 
     /**
      * Create a new instance of this container.
@@ -58,7 +61,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         try {
             slickContainer = new AppGameContainer(new ListenerGame(gameListener));
             slickContainer.setForceExit(false);
-            engine = new SlickEngine();
+            engine = new SlickEngine(slickContainer);
         } catch (@Nonnull final SlickException e) {
             throw new SlickEngineException("Failed to create the application container.", e);
         }
@@ -77,20 +80,16 @@ public class ApplicationGameContainer implements DesktopGameContainer {
                                     final int height, final boolean fullScreen) throws SlickEngineException {
         try {
             slickContainer = new AppGameContainer(new ListenerGame(gameListener), width, height, fullScreen);
-            engine = new SlickEngine();
+            slickContainer.setForceExit(false);
+            engine = new SlickEngine(slickContainer);
         } catch (@Nonnull final SlickException e) {
             throw new SlickEngineException("Failed to create the application container.", e);
         }
     }
 
     @Override
-    public int getHeight() {
-        return slickContainer.getHeight();
-    }
-
-    @Override
-    public int getWidth() {
-        return slickContainer.getWidth();
+    public void exitGame() {
+        slickContainer.exit();
     }
 
     @Nonnull
@@ -100,19 +99,15 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
-    public void setIcons(@Nonnull final String[] icons) {
-        try {
-            slickContainer.setIcons(icons);
-        } catch (@Nonnull final SlickException e) {
-            LOGGER.error("Failed to set the application icons.", e);
-        }
+    public int getHeight() {
+        return slickContainer.getHeight();
     }
 
-    /**
-     * The last applied title of the game.
-     */
     @Nonnull
-    private String title;
+    @Override
+    public String getTitle() {
+        return title;
+    }
 
     @Override
     public void setTitle(@Nonnull final String title) {
@@ -121,9 +116,19 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
-    public void setSize(final int width, final int height) throws EngineException {
+    public int getWidth() {
+        return slickContainer.getWidth();
+    }
+
+    @Override
+    public boolean isFullScreen() {
+        return slickContainer.isFullscreen();
+    }
+
+    @Override
+    public void setFullScreen(final boolean fullScreen) throws EngineException {
         try {
-            slickContainer.setDisplayMode(width, height, slickContainer.isFullscreen());
+            slickContainer.setDisplayMode(getWidth(), getHeight(), fullScreen);
         } catch (@Nonnull final SlickException e) {
             throw new SlickEngineException(e);
         }
@@ -140,16 +145,11 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
-    public boolean isFullScreen() {
-        return slickContainer.isFullscreen();
-    }
-
-    @Override
-    public void setFullScreen(final boolean fullScreen) throws EngineException {
+    public void setIcons(@Nonnull final String[] icons) {
         try {
-            slickContainer.setDisplayMode(getWidth(), getHeight(), fullScreen);
+            slickContainer.setIcons(icons);
         } catch (@Nonnull final SlickException e) {
-            throw new SlickEngineException(e);
+            LOGGER.error("Failed to set the application icons.", e);
         }
     }
 
@@ -169,22 +169,20 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
-    public void startGame() throws SlickEngineException {
+    public void setSize(final int width, final int height) throws EngineException {
         try {
-            slickContainer.start();
+            slickContainer.setDisplayMode(width, height, slickContainer.isFullscreen());
         } catch (@Nonnull final SlickException e) {
             throw new SlickEngineException(e);
         }
     }
 
     @Override
-    public void exitGame() {
-        slickContainer.exit();
-    }
-
-    @Nonnull
-    @Override
-    public String getTitle() {
-        return title;
+    public void startGame() throws SlickEngineException {
+        try {
+            slickContainer.start();
+        } catch (@Nonnull final SlickException e) {
+            throw new SlickEngineException(e);
+        }
     }
 }

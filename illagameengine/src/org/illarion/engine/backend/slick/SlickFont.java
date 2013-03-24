@@ -56,6 +56,16 @@ class SlickFont implements Font {
         // nothing to do
     }
 
+    /**
+     * Get the internal font instance.
+     *
+     * @return the internal font
+     */
+    @Nonnull
+    public AngelCodeFont getInternalFont() {
+        return internalFont;
+    }
+
     @Override
     public int getLineHeight() {
         return internalFont.getLineHeight();

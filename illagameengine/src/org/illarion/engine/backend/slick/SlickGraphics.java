@@ -20,6 +20,7 @@ package org.illarion.engine.backend.slick;
 
 import org.illarion.engine.graphic.*;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.ShapeFill;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
@@ -30,6 +31,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
+ * This is the graphics engine implementation for Slick2D.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class SlickGraphics implements Graphics {
@@ -47,18 +50,42 @@ class SlickGraphics implements Graphics {
         slickGraphicsImpl.clear();
     }
 
+    /**
+     * Set the instance of the graphics that is supposed to be used to render graphics.
+     *
+     * @param graphics the slick graphics instance
+     */
     @SuppressWarnings("NullableProblems")
     void setSlickGraphicsImpl(@Nonnull final org.newdawn.slick.Graphics graphics) {
         slickGraphicsImpl = graphics;
     }
 
+    /**
+     * Clear the graphics instance. This should be done after the rendering loop.
+     */
     void clearSlickGraphicsImpl() {
         slickGraphicsImpl = null;
     }
 
     @Override
-    public void drawSprite(@Nonnull final Sprite sprite, final int posX, final int posY, @Nonnull final Color color, final int frame, final float scale, final float rotation) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void drawSprite(@Nonnull final Sprite sprite, final int posX, final int posY, @Nonnull final Color color,
+                           final int frame, final float scale, final float rotation) {
+        if (slickGraphicsImpl == null) {
+            throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
+        }
+        if (sprite instanceof SlickSprite) {
+            final SlickSprite slickSprite = (SlickSprite) sprite;
+
+            slickGraphicsImpl.pushTransform();
+            slickGraphicsImpl.translate(posX, posY);
+            slickGraphicsImpl.translate(slickSprite.getWidth() * slickSprite.getCenterX(),
+                    slickSprite.getHeight() * slickSprite.getCenterY());
+            slickGraphicsImpl.scale(scale, scale);
+            slickGraphicsImpl.rotate(0, 0, rotation);
+            transferColor(color, tempSlickColor1);
+            slickGraphicsImpl.drawImage(slickSprite.getFrame(frame).getBackingImage(), 0, 0, tempSlickColor1);
+            slickGraphicsImpl.popTransform();
+        }
     }
 
     @Override
@@ -79,16 +106,47 @@ class SlickGraphics implements Graphics {
 
     @Override
     public void drawText(@Nonnull final Font font, @Nonnull final CharSequence text, @Nonnull final Color color, final int x, final int y) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        if (slickGraphicsImpl == null) {
+            throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
+        }
+        if (font instanceof SlickFont) {
+            final AngelCodeFont internalFont = ((SlickFont) font).getInternalFont();
+            org.newdawn.slick.Graphics.setCurrent(slickGraphicsImpl);
+            transferColor(color, tempSlickColor1);
+            internalFont.drawString(x, y, text, tempSlickColor1);
+        }
     }
 
     @Override
-    public void drawText(@Nonnull final Font font, @Nonnull final CharSequence text, @Nonnull final Color color, final int x, final int y, final float scaleX, final float scaleY) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void drawText(@Nonnull final Font font, @Nonnull final CharSequence text, @Nonnull final Color color,
+                         final int x, final int y, final float scaleX, final float scaleY) {
+        if (slickGraphicsImpl == null) {
+            throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
+        }
+        if (font instanceof SlickFont) {
+            final AngelCodeFont internalFont = ((SlickFont) font).getInternalFont();
+            org.newdawn.slick.Graphics.setCurrent(slickGraphicsImpl);
+            slickGraphicsImpl.pushTransform();
+            slickGraphicsImpl.translate(x, y);
+            slickGraphicsImpl.scale(scaleX, scaleY);
+            transferColor(color, tempSlickColor1);
+            internalFont.drawString(0, 0, text, tempSlickColor1);
+            slickGraphicsImpl.popTransform();
+        }
     }
 
+    /**
+     * This is a temporary color instance of slick that is used to transfer the color data from the engines color
+     * objects to the Slick rendering functions.
+     */
     private final org.newdawn.slick.Color tempSlickColor1 = new org.newdawn.slick.Color(org.newdawn.slick.Color.white);
 
+    /**
+     * This function is used to transfer the color values from the engines color instances to a slick color instance.
+     *
+     * @param source the source color
+     * @param target the target color
+     */
     private static void transferColor(@Nonnull final Color source, @Nonnull final org.newdawn.slick.Color target) {
         target.r = source.getRedf();
         target.g = source.getGreenf();

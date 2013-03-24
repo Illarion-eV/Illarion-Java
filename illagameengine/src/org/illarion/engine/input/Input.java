@@ -67,4 +67,12 @@ public interface Input {
      * @return the Y coordinate of the current mouse location
      */
     int getMouseY();
+
+    /**
+     * Set the location of the mouse cursor.
+     *
+     * @param x the x coordinate of the mouse cursor
+     * @param y the y coordinate of the mouse cursor
+     */
+    void setMouseLocation(int x, int y);
 }
