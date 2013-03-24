@@ -18,10 +18,11 @@
  */
 package org.illarion.engine.backend.slick;
 
+import org.illarion.engine.backend.shared.AbstractForwardingInput;
 import org.illarion.engine.input.Button;
-import org.illarion.engine.input.Input;
 import org.illarion.engine.input.InputListener;
 import org.illarion.engine.input.Key;
+import org.newdawn.slick.Input;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,12 +34,12 @@ import java.util.Queue;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class SlickInput implements Input, org.newdawn.slick.InputListener {
+class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.InputListener {
     /**
      * The instance of the slick input that is used by this input engine implementation for Slick2D.
      */
     @Nonnull
-    private final org.newdawn.slick.Input input;
+    private final Input input;
 
     /**
      * The queue of input events that are published once the polling function is called.
@@ -57,7 +58,7 @@ class SlickInput implements Input, org.newdawn.slick.InputListener {
      *
      * @param slickInput the slick input provider
      */
-    SlickInput(@Nonnull final org.newdawn.slick.Input slickInput) {
+    SlickInput(@Nonnull final Input slickInput) {
         input = slickInput;
         pollingQueue = new LinkedList<Runnable>();
         input.addListener(this);
@@ -72,11 +73,11 @@ class SlickInput implements Input, org.newdawn.slick.InputListener {
     @Nullable
     private static Button getIgeButtonId(final int slickButton) {
         switch (slickButton) {
-            case org.newdawn.slick.Input.MOUSE_LEFT_BUTTON:
+            case Input.MOUSE_LEFT_BUTTON:
                 return Button.Left;
-            case org.newdawn.slick.Input.MOUSE_RIGHT_BUTTON:
+            case Input.MOUSE_RIGHT_BUTTON:
                 return Button.Right;
-            case org.newdawn.slick.Input.MOUSE_MIDDLE_BUTTON:
+            case Input.MOUSE_MIDDLE_BUTTON:
                 return Button.Middle;
             default:
                 return null;
@@ -93,103 +94,103 @@ class SlickInput implements Input, org.newdawn.slick.InputListener {
     @Nullable
     private static Key getIgeKeyId(final int slickKey) {
         switch (slickKey) {
-            case org.newdawn.slick.Input.KEY_A:
+            case Input.KEY_A:
                 return Key.A;
-            case org.newdawn.slick.Input.KEY_B:
+            case Input.KEY_B:
                 return Key.B;
-            case org.newdawn.slick.Input.KEY_C:
+            case Input.KEY_C:
                 return Key.C;
-            case org.newdawn.slick.Input.KEY_D:
+            case Input.KEY_D:
                 return Key.D;
-            case org.newdawn.slick.Input.KEY_E:
+            case Input.KEY_E:
                 return Key.E;
-            case org.newdawn.slick.Input.KEY_F:
+            case Input.KEY_F:
                 return Key.F;
-            case org.newdawn.slick.Input.KEY_G:
+            case Input.KEY_G:
                 return Key.G;
-            case org.newdawn.slick.Input.KEY_H:
+            case Input.KEY_H:
                 return Key.H;
-            case org.newdawn.slick.Input.KEY_I:
+            case Input.KEY_I:
                 return Key.I;
-            case org.newdawn.slick.Input.KEY_J:
+            case Input.KEY_J:
                 return Key.J;
-            case org.newdawn.slick.Input.KEY_K:
+            case Input.KEY_K:
                 return Key.K;
-            case org.newdawn.slick.Input.KEY_L:
+            case Input.KEY_L:
                 return Key.L;
-            case org.newdawn.slick.Input.KEY_M:
+            case Input.KEY_M:
                 return Key.M;
-            case org.newdawn.slick.Input.KEY_N:
+            case Input.KEY_N:
                 return Key.N;
-            case org.newdawn.slick.Input.KEY_O:
+            case Input.KEY_O:
                 return Key.O;
-            case org.newdawn.slick.Input.KEY_P:
+            case Input.KEY_P:
                 return Key.P;
-            case org.newdawn.slick.Input.KEY_Q:
+            case Input.KEY_Q:
                 return Key.Q;
-            case org.newdawn.slick.Input.KEY_R:
+            case Input.KEY_R:
                 return Key.R;
-            case org.newdawn.slick.Input.KEY_S:
+            case Input.KEY_S:
                 return Key.S;
-            case org.newdawn.slick.Input.KEY_T:
+            case Input.KEY_T:
                 return Key.T;
-            case org.newdawn.slick.Input.KEY_U:
+            case Input.KEY_U:
                 return Key.U;
-            case org.newdawn.slick.Input.KEY_V:
+            case Input.KEY_V:
                 return Key.V;
-            case org.newdawn.slick.Input.KEY_W:
+            case Input.KEY_W:
                 return Key.W;
-            case org.newdawn.slick.Input.KEY_X:
+            case Input.KEY_X:
                 return Key.X;
-            case org.newdawn.slick.Input.KEY_Y:
+            case Input.KEY_Y:
                 return Key.Y;
-            case org.newdawn.slick.Input.KEY_Z:
+            case Input.KEY_Z:
                 return Key.Z;
-            case org.newdawn.slick.Input.KEY_LSHIFT:
+            case Input.KEY_LSHIFT:
                 return Key.LeftShift;
-            case org.newdawn.slick.Input.KEY_RSHIFT:
+            case Input.KEY_RSHIFT:
                 return Key.RightShift;
-            case org.newdawn.slick.Input.KEY_LALT:
+            case Input.KEY_LALT:
                 return Key.LeftAlt;
-            case org.newdawn.slick.Input.KEY_RALT:
+            case Input.KEY_RALT:
                 return Key.RightAlt;
-            case org.newdawn.slick.Input.KEY_LCONTROL:
+            case Input.KEY_LCONTROL:
                 return Key.LeftCtrl;
-            case org.newdawn.slick.Input.KEY_RCONTROL:
+            case Input.KEY_RCONTROL:
                 return Key.RightCtrl;
-            case org.newdawn.slick.Input.KEY_LEFT:
+            case Input.KEY_LEFT:
                 return Key.CursorLeft;
-            case org.newdawn.slick.Input.KEY_RIGHT:
+            case Input.KEY_RIGHT:
                 return Key.CursorRight;
-            case org.newdawn.slick.Input.KEY_UP:
+            case Input.KEY_UP:
                 return Key.CursorUp;
-            case org.newdawn.slick.Input.KEY_DOWN:
+            case Input.KEY_DOWN:
                 return Key.CursorDown;
-            case org.newdawn.slick.Input.KEY_ENTER:
+            case Input.KEY_ENTER:
                 return Key.Enter;
-            case org.newdawn.slick.Input.KEY_BACK:
+            case Input.KEY_BACK:
                 return Key.Backspace;
-            case org.newdawn.slick.Input.KEY_NUMPAD0:
+            case Input.KEY_NUMPAD0:
                 return Key.NumPad0;
-            case org.newdawn.slick.Input.KEY_NUMPAD1:
+            case Input.KEY_NUMPAD1:
                 return Key.NumPad1;
-            case org.newdawn.slick.Input.KEY_NUMPAD2:
+            case Input.KEY_NUMPAD2:
                 return Key.NumPad2;
-            case org.newdawn.slick.Input.KEY_NUMPAD3:
+            case Input.KEY_NUMPAD3:
                 return Key.NumPad3;
-            case org.newdawn.slick.Input.KEY_NUMPAD4:
+            case Input.KEY_NUMPAD4:
                 return Key.NumPad4;
-            case org.newdawn.slick.Input.KEY_NUMPAD5:
+            case Input.KEY_NUMPAD5:
                 return Key.NumPad5;
-            case org.newdawn.slick.Input.KEY_NUMPAD6:
+            case Input.KEY_NUMPAD6:
                 return Key.NumPad6;
-            case org.newdawn.slick.Input.KEY_NUMPAD7:
+            case Input.KEY_NUMPAD7:
                 return Key.NumPad7;
-            case org.newdawn.slick.Input.KEY_NUMPAD8:
+            case Input.KEY_NUMPAD8:
                 return Key.NumPad8;
-            case org.newdawn.slick.Input.KEY_NUMPAD9:
+            case Input.KEY_NUMPAD9:
                 return Key.NumPad9;
-            case org.newdawn.slick.Input.KEY_NUMLOCK:
+            case Input.KEY_NUMLOCK:
                 return Key.NumLock;
             default:
                 return null;
@@ -205,11 +206,11 @@ class SlickInput implements Input, org.newdawn.slick.InputListener {
     private static int getSlickButtonId(@Nonnull final Button button) {
         switch (button) {
             case Left:
-                return org.newdawn.slick.Input.MOUSE_LEFT_BUTTON;
+                return Input.MOUSE_LEFT_BUTTON;
             case Right:
-                return org.newdawn.slick.Input.MOUSE_RIGHT_BUTTON;
+                return Input.MOUSE_RIGHT_BUTTON;
             case Middle:
-                return org.newdawn.slick.Input.MOUSE_MIDDLE_BUTTON;
+                return Input.MOUSE_MIDDLE_BUTTON;
         }
         return -1;
     }
@@ -224,103 +225,103 @@ class SlickInput implements Input, org.newdawn.slick.InputListener {
     private static int getSlickKeyId(@Nonnull final Key key) {
         switch (key) {
             case A:
-                return org.newdawn.slick.Input.KEY_A;
+                return Input.KEY_A;
             case B:
-                return org.newdawn.slick.Input.KEY_B;
+                return Input.KEY_B;
             case C:
-                return org.newdawn.slick.Input.KEY_C;
+                return Input.KEY_C;
             case D:
-                return org.newdawn.slick.Input.KEY_D;
+                return Input.KEY_D;
             case E:
-                return org.newdawn.slick.Input.KEY_E;
+                return Input.KEY_E;
             case F:
-                return org.newdawn.slick.Input.KEY_F;
+                return Input.KEY_F;
             case G:
-                return org.newdawn.slick.Input.KEY_G;
+                return Input.KEY_G;
             case H:
-                return org.newdawn.slick.Input.KEY_H;
+                return Input.KEY_H;
             case I:
-                return org.newdawn.slick.Input.KEY_I;
+                return Input.KEY_I;
             case J:
-                return org.newdawn.slick.Input.KEY_J;
+                return Input.KEY_J;
             case K:
-                return org.newdawn.slick.Input.KEY_K;
+                return Input.KEY_K;
             case L:
-                return org.newdawn.slick.Input.KEY_L;
+                return Input.KEY_L;
             case M:
-                return org.newdawn.slick.Input.KEY_M;
+                return Input.KEY_M;
             case N:
-                return org.newdawn.slick.Input.KEY_N;
+                return Input.KEY_N;
             case O:
-                return org.newdawn.slick.Input.KEY_O;
+                return Input.KEY_O;
             case P:
-                return org.newdawn.slick.Input.KEY_P;
+                return Input.KEY_P;
             case Q:
-                return org.newdawn.slick.Input.KEY_Q;
+                return Input.KEY_Q;
             case R:
-                return org.newdawn.slick.Input.KEY_R;
+                return Input.KEY_R;
             case S:
-                return org.newdawn.slick.Input.KEY_S;
+                return Input.KEY_S;
             case T:
-                return org.newdawn.slick.Input.KEY_T;
+                return Input.KEY_T;
             case U:
-                return org.newdawn.slick.Input.KEY_U;
+                return Input.KEY_U;
             case V:
-                return org.newdawn.slick.Input.KEY_V;
+                return Input.KEY_V;
             case W:
-                return org.newdawn.slick.Input.KEY_W;
+                return Input.KEY_W;
             case X:
-                return org.newdawn.slick.Input.KEY_X;
+                return Input.KEY_X;
             case Y:
-                return org.newdawn.slick.Input.KEY_Y;
+                return Input.KEY_Y;
             case Z:
-                return org.newdawn.slick.Input.KEY_Z;
+                return Input.KEY_Z;
             case LeftShift:
-                return org.newdawn.slick.Input.KEY_LSHIFT;
+                return Input.KEY_LSHIFT;
             case RightShift:
-                return org.newdawn.slick.Input.KEY_RSHIFT;
+                return Input.KEY_RSHIFT;
             case LeftAlt:
-                return org.newdawn.slick.Input.KEY_LALT;
+                return Input.KEY_LALT;
             case RightAlt:
-                return org.newdawn.slick.Input.KEY_RALT;
+                return Input.KEY_RALT;
             case LeftCtrl:
-                return org.newdawn.slick.Input.KEY_LCONTROL;
+                return Input.KEY_LCONTROL;
             case RightCtrl:
-                return org.newdawn.slick.Input.KEY_RCONTROL;
+                return Input.KEY_RCONTROL;
             case CursorLeft:
-                return org.newdawn.slick.Input.KEY_LEFT;
+                return Input.KEY_LEFT;
             case CursorRight:
-                return org.newdawn.slick.Input.KEY_RIGHT;
+                return Input.KEY_RIGHT;
             case CursorUp:
-                return org.newdawn.slick.Input.KEY_UP;
+                return Input.KEY_UP;
             case CursorDown:
-                return org.newdawn.slick.Input.KEY_DOWN;
+                return Input.KEY_DOWN;
             case Enter:
-                return org.newdawn.slick.Input.KEY_ENTER;
+                return Input.KEY_ENTER;
             case Backspace:
-                return org.newdawn.slick.Input.KEY_BACK;
+                return Input.KEY_BACK;
             case NumPad0:
-                return org.newdawn.slick.Input.KEY_NUMPAD0;
+                return Input.KEY_NUMPAD0;
             case NumPad1:
-                return org.newdawn.slick.Input.KEY_NUMPAD1;
+                return Input.KEY_NUMPAD1;
             case NumPad2:
-                return org.newdawn.slick.Input.KEY_NUMPAD2;
+                return Input.KEY_NUMPAD2;
             case NumPad3:
-                return org.newdawn.slick.Input.KEY_NUMPAD3;
+                return Input.KEY_NUMPAD3;
             case NumPad4:
-                return org.newdawn.slick.Input.KEY_NUMPAD4;
+                return Input.KEY_NUMPAD4;
             case NumPad5:
-                return org.newdawn.slick.Input.KEY_NUMPAD5;
+                return Input.KEY_NUMPAD5;
             case NumPad6:
-                return org.newdawn.slick.Input.KEY_NUMPAD6;
+                return Input.KEY_NUMPAD6;
             case NumPad7:
-                return org.newdawn.slick.Input.KEY_NUMPAD7;
+                return Input.KEY_NUMPAD7;
             case NumPad8:
-                return org.newdawn.slick.Input.KEY_NUMPAD8;
+                return Input.KEY_NUMPAD8;
             case NumPad9:
-                return org.newdawn.slick.Input.KEY_NUMPAD9;
+                return Input.KEY_NUMPAD9;
             case NumLock:
-                return org.newdawn.slick.Input.KEY_NUMLOCK;
+                return Input.KEY_NUMLOCK;
         }
         return -1;
     }
@@ -555,7 +556,7 @@ class SlickInput implements Input, org.newdawn.slick.InputListener {
     }
 
     @Override
-    public void setInput(@Nonnull final org.newdawn.slick.Input input) {
+    public void setInput(@Nonnull final Input input) {
         // not needed
     }
 

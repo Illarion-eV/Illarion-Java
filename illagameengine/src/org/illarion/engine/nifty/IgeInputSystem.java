@@ -22,10 +22,7 @@ import de.lessvoid.nifty.NiftyInputConsumer;
 import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
 import de.lessvoid.nifty.spi.input.InputSystem;
 import de.lessvoid.nifty.tools.resourceloader.NiftyResourceLoader;
-import org.illarion.engine.input.Button;
-import org.illarion.engine.input.Input;
-import org.illarion.engine.input.InputListener;
-import org.illarion.engine.input.Key;
+import org.illarion.engine.input.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,12 +38,18 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
-        final int keyCode = getNiftyKeyId(key);
-        final boolean shiftDown = input.isKeyDown(Key.LeftShift) || input.isKeyDown(Key.RightShift);
-        final boolean controlDown = input.isKeyDown(Key.LeftCtrl) || input.isKeyDown(Key.RightCtrl);
-        if (!currentConsumer.processKeyboardEvent(new KeyboardInputEvent(keyCode, Character.MIN_VALUE, true,
-                shiftDown, controlDown))) {
+        if (input.isForwardingEnabled(ForwardingTarget.Keyboard)) {
             listener.keyDown(key);
+        } else {
+            final int keyCode = getNiftyKeyId(key);
+            final boolean shiftDown = input.isKeyDown(Key.LeftShift) || input.isKeyDown(Key.RightShift);
+            final boolean controlDown = input.isKeyDown(Key.LeftCtrl) || input.isKeyDown(Key.RightCtrl);
+            final KeyboardInputEvent event = new KeyboardInputEvent(keyCode, Character.MIN_VALUE, true, shiftDown,
+                    controlDown);
+
+            if (!currentConsumer.processKeyboardEvent(event)) {
+                listener.keyDown(key);
+            }
         }
     }
 
@@ -55,12 +58,18 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
-        final int keyCode = getNiftyKeyId(key);
-        final boolean shiftDown = input.isKeyDown(Key.LeftShift) || input.isKeyDown(Key.RightShift);
-        final boolean controlDown = input.isKeyDown(Key.LeftCtrl) || input.isKeyDown(Key.RightCtrl);
-        if (!currentConsumer.processKeyboardEvent(new KeyboardInputEvent(keyCode, Character.MIN_VALUE, false,
-                shiftDown, controlDown))) {
+        if (input.isForwardingEnabled(ForwardingTarget.Keyboard)) {
             listener.keyUp(key);
+        } else {
+            final int keyCode = getNiftyKeyId(key);
+            final boolean shiftDown = input.isKeyDown(Key.LeftShift) || input.isKeyDown(Key.RightShift);
+            final boolean controlDown = input.isKeyDown(Key.LeftCtrl) || input.isKeyDown(Key.RightCtrl);
+            final KeyboardInputEvent event = new KeyboardInputEvent(keyCode, Character.MIN_VALUE, false, shiftDown,
+                    controlDown);
+
+            if (!currentConsumer.processKeyboardEvent(event)) {
+                listener.keyUp(key);
+            }
         }
     }
 
@@ -69,27 +78,37 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
-        final boolean shiftDown = input.isKeyDown(Key.LeftShift) || input.isKeyDown(Key.RightShift);
-        final boolean controlDown = input.isKeyDown(Key.LeftCtrl) || input.isKeyDown(Key.RightCtrl);
-        if (!currentConsumer.processKeyboardEvent(new KeyboardInputEvent(-1, character, true, shiftDown,
-                controlDown))) {
+
+        if (input.isForwardingEnabled(ForwardingTarget.Keyboard)) {
             listener.keyTyped(character);
+        } else {
+            final boolean shiftDown = input.isKeyDown(Key.LeftShift) || input.isKeyDown(Key.RightShift);
+            final boolean controlDown = input.isKeyDown(Key.LeftCtrl) || input.isKeyDown(Key.RightCtrl);
+            final KeyboardInputEvent event = new KeyboardInputEvent(-1, character, true, shiftDown, controlDown);
+
+            if (!currentConsumer.processKeyboardEvent(event)) {
+                listener.keyTyped(character);
+            }
         }
     }
 
     /**
      * The amount of mouse click events that should be consumed by the Nifty-GUI.
      */
-    private int consumeClicks = 0;
+    private int consumeClicks;
 
     @Override
     public void buttonDown(final int mouseX, final int mouseY, @Nonnull final Button button) {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
-        final int buttonKey = getNiftyButtonKey(button);
-        if (!currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, true)) {
+        if (input.isForwardingEnabled(ForwardingTarget.Mouse)) {
             listener.buttonDown(mouseX, mouseY, button);
+        } else {
+            final int buttonKey = getNiftyButtonKey(button);
+            if (!currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, true)) {
+                listener.buttonDown(mouseX, mouseY, button);
+            }
         }
     }
 
@@ -98,11 +117,15 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
-        final int buttonKey = getNiftyButtonKey(button);
-        if (currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, false)) {
-            consumeClicks++;
+        if (input.isForwardingEnabled(ForwardingTarget.Mouse)) {
+            listener.buttonUp(mouseX, mouseY, button);
         } else {
-            listener.buttonDown(mouseX, mouseY, button);
+            final int buttonKey = getNiftyButtonKey(button);
+            if (currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, false)) {
+                consumeClicks++;
+            } else {
+                listener.buttonUp(mouseX, mouseY, button);
+            }
         }
     }
 
@@ -111,7 +134,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
-        if (consumeClicks == 0) {
+        if ((consumeClicks == 0) || input.isForwardingEnabled(ForwardingTarget.Mouse)) {
             listener.buttonClicked(mouseX, mouseY, button, count);
         } else {
             consumeClicks--;
@@ -126,7 +149,8 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
-        if (!currentConsumer.processMouseEvent(mouseX, mouseY, 0, -1, false)) {
+        if (input.isForwardingEnabled(ForwardingTarget.Mouse) ||
+                !currentConsumer.processMouseEvent(mouseX, mouseY, 0, -1, false)) {
             listener.mouseMoved(mouseX, mouseY);
         }
         consumeClicks = 0;
@@ -137,13 +161,17 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
-        final int buttonKey = getNiftyButtonKey(button);
-        final boolean startUsed = currentConsumer.processMouseEvent(fromX, fromY, 0, buttonKey, true);
-        final boolean endUsed = currentConsumer.processMouseEvent(toX, toY, 0, buttonKey, true);
-        if (!(startUsed || endUsed)) {
+        if (input.isForwardingEnabled(ForwardingTarget.Mouse)) {
             listener.mouseDragged(button, fromX, fromY, toX, toY);
+        } else {
+            final int buttonKey = getNiftyButtonKey(button);
+            final boolean startUsed = currentConsumer.processMouseEvent(fromX, fromY, 0, buttonKey, true);
+            final boolean endUsed = currentConsumer.processMouseEvent(toX, toY, 0, buttonKey, true);
+            if (!(startUsed || endUsed)) {
+                listener.mouseDragged(button, fromX, fromY, toX, toY);
+            }
+            consumeClicks = 0;
         }
-        consumeClicks = 0;
     }
 
     @Override
@@ -151,7 +179,8 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
-        if (!currentConsumer.processMouseEvent(mouseX, mouseY, delta, -1, false)) {
+        if (input.isForwardingEnabled(ForwardingTarget.Mouse) ||
+                !currentConsumer.processMouseEvent(mouseX, mouseY, delta, -1, false)) {
             listener.mouseWheelMoved(mouseX, mouseY, delta);
         }
         consumeClicks = 0;

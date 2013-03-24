@@ -75,4 +75,26 @@ public interface Input {
      * @param y the y coordinate of the mouse cursor
      */
     void setMouseLocation(int x, int y);
+
+    /**
+     * Check if forwarding is enabled for the specified target.
+     *
+     * @param target the forwarding target
+     * @return {@code true} in case forwarding is enabled for this target
+     */
+    boolean isForwardingEnabled(@Nonnull ForwardingTarget target);
+
+    /**
+     * Enable forwarding for the specified target.
+     *
+     * @param target the forwarding target that is supposed to be enabled
+     */
+    void enableForwarding(@Nonnull ForwardingTarget target);
+
+    /**
+     * Disable the forwarding for the specified target.
+     *
+     * @param target the forwarding target that is supposed to be disabled
+     */
+    void disableForwarding(@Nonnull ForwardingTarget target);
 }
