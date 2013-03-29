@@ -18,7 +18,10 @@
  */
 package org.illarion.engine.assets;
 
+import org.illarion.engine.EngineException;
 import org.illarion.engine.graphic.Scene;
+import org.illarion.engine.graphic.WorldMap;
+import org.illarion.engine.graphic.WorldMapDataProvider;
 
 import javax.annotation.Nonnull;
 
@@ -75,4 +78,23 @@ public interface Assets {
      */
     @Nonnull
     Scene createNewScene();
+
+    /**
+     * Create a new world map instance. This class is then used to create the world map texture that is displayed in
+     * the game.
+     *
+     * @param provider the provider that will supply the world map with the required data
+     * @return the newly created world map texture creator
+     * @throws EngineException in case creating the world map fails for some reason
+     */
+    @Nonnull
+    WorldMap createWorldMap(@Nonnull WorldMapDataProvider provider) throws EngineException;
+
+    /**
+     * Get the manager for the graphical effects.
+     *
+     * @return the graphic effect manager
+     */
+    @Nonnull
+    EffectManager getEffectManager();
 }

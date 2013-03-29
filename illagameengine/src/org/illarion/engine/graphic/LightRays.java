@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.common.graphics;
+package org.illarion.engine.graphic;
 
 import illarion.common.util.Bresenham;
 
@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class LightRays {
+final class LightRays {
     /**
      * The root node. This node is placed exactly on the light source with the
      * size created in this class. From this ray node all other precalculated
@@ -66,7 +66,7 @@ public final class LightRays {
      * Apply a light source to the root node. This causes that the root node is
      * set to the location of the lightsource and the rays are used for this
      * light source. With knowing the real location there are the checks down
-     * with the {@link illarion.common.graphics.LightingMap} of the lightray
+     * with the {@link LightingMap} of the lightray
      * gets over the tiles correctly and with the results the light rays are
      * modified to the shadow by the objects on the map applys correctly.
      *

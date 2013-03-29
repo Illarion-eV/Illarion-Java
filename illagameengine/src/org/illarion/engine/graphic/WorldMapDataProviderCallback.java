@@ -16,23 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine.nifty;
-
-import de.lessvoid.nifty.spi.render.RenderImage;
-import org.illarion.engine.graphic.Color;
-import org.illarion.engine.graphic.Graphics;
-
-import javax.annotation.Nonnull;
+package org.illarion.engine.graphic;
 
 /**
- * This is the general interface for a render image for the Nifty-GUI implementation on this engine.
+ * This interface defines a callback the world map data provider is using to report the requested map data.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface IgeRenderImage extends RenderImage {
-
-    void renderImage(@Nonnull Graphics g, int x, int y, int width, int height, @Nonnull Color color, float imageScale);
-
-    void renderImage(@Nonnull Graphics g, int x, int y, int w, int h, int srcX, int srcY, int srcW, int srcH,
-                     @Nonnull Color color, float scale, int centerX, int centerY);
+public interface WorldMapDataProviderCallback {
+    /**
+     * Set the data of the tile that was requested.
+     *
+     * @param tileId    the map ID of the tile (this is not the tile ID)
+     * @param overlayId the map ID of the overlay (this is not the tile ID)
+     * @param blocked   {@code true} in case the player can't step onto this tile
+     */
+    void setTile(int tileId, int overlayId, boolean blocked);
 }

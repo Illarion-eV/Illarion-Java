@@ -120,10 +120,12 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
         return textures[frame];
     }
 
+    @Override
     public int getOffsetX() {
         return offsetX;
     }
 
+    @Override
     public int getOffsetY() {
         return offsetY;
     }

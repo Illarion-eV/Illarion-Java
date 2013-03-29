@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.common.graphics;
+package org.illarion.engine.graphic;
 
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
 
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
@@ -35,7 +34,7 @@ public final class MapColor {
      * are not used in the client.
      */
     @SuppressWarnings("nls")
-    public static final String[] COLOR_NAMES = new String[]{"Black",
+    public static final String[] COLOR_NAMES = {"Black",
             "Green", "Brown", "Gray", "Blue", "Yellow", "Red", "White",
             "Dark green"};
 
@@ -47,16 +46,16 @@ public final class MapColor {
     /**
      * The RGBA Color values that are used on the map.
      */
-    private static final Color[] COLORS = new Color[]{
-            new Color(0, 0, 0), // black
-            new Color(182, 214, 158), // green
-            new Color(155, 120, 90), // brown
-            new Color(175, 183, 165), // gray
-            new Color(126, 193, 238), // blue
-            new Color(255, 255, 204), // yellow
-            new Color(205, 101, 101), // red
-            new Color(255, 255, 255), // white
-            new Color(140, 160, 100) // dark green
+    private static final Color[] COLORS = {
+            new ImmutableColor(0, 0, 0), // black
+            new ImmutableColor(182, 214, 158), // green
+            new ImmutableColor(155, 120, 90), // brown
+            new ImmutableColor(175, 183, 165), // gray
+            new ImmutableColor(126, 193, 238), // blue
+            new ImmutableColor(255, 255, 204), // yellow
+            new ImmutableColor(205, 101, 101), // red
+            new ImmutableColor(255, 255, 255), // white
+            new ImmutableColor(140, 160, 100) // dark green
     };
 
     /**
@@ -93,9 +92,9 @@ public final class MapColor {
 
         // draw pixel
         map.position(pos);
-        map.put((byte) COLORS[color].getRedByte());
-        map.put((byte) COLORS[color].getGreenByte());
-        map.put((byte) COLORS[color].getBlueByte());
+        map.put((byte) COLORS[color].getRed());
+        map.put((byte) COLORS[color].getGreen());
+        map.put((byte) COLORS[color].getBlue());
         map.put((byte) alpha);
     }
 

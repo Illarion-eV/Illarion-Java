@@ -16,23 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine.nifty;
+package org.illarion.engine.backend.slick;
 
-import de.lessvoid.nifty.spi.render.RenderImage;
-import org.illarion.engine.graphic.Color;
-import org.illarion.engine.graphic.Graphics;
+import org.newdawn.slick.Graphics;
 
 import javax.annotation.Nonnull;
 
 /**
- * This is the general interface for a render image for the Nifty-GUI implementation on this engine.
+ * This is the interface implemented by all texture effects implemented by the Slick2D render backend.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface IgeRenderImage extends RenderImage {
+interface SlickTextureEffect {
+    /**
+     * Activate this effect.
+     */
+    void activateEffect(@Nonnull Graphics graphics);
 
-    void renderImage(@Nonnull Graphics g, int x, int y, int width, int height, @Nonnull Color color, float imageScale);
-
-    void renderImage(@Nonnull Graphics g, int x, int y, int w, int h, int srcX, int srcY, int srcW, int srcH,
-                     @Nonnull Color color, float scale, int centerX, int centerY);
+    /**
+     * Disable the effect.
+     */
+    void disableEffect(@Nonnull Graphics graphics);
 }

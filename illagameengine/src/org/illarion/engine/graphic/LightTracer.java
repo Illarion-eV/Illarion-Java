@@ -16,16 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.common.graphics;
+package org.illarion.engine.graphic;
 
 import illarion.common.types.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
-import javolution.util.FastList;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Manager class that handles the light. It stores the pre-calculated light rays
@@ -117,7 +118,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * list contains all lights that still require calculations.
      */
     @Nonnull
-    private final FastList<LightSource> dirtyLights;
+    private final List<LightSource> dirtyLights;
 
     /**
      * If this variable is set to <code>true</code> the light calculations are
@@ -157,7 +158,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * contains all lights that currently do not require any calculations.
      */
     @Nonnull
-    private final FastList<LightSource> tidyLights;
+    private final List<LightSource> tidyLights;
 
     /**
      * Default constructor of the light tracer. This tracer handles all light
@@ -170,8 +171,8 @@ public final class LightTracer extends Thread implements Stoppable {
         super("LightTracer Thread");
 
         mapSource = tracerMapSource;
-        dirtyLights = new FastList<LightSource>();
-        tidyLights = new FastList<LightSource>();
+        dirtyLights = new ArrayList<LightSource>();
+        tidyLights = new ArrayList<LightSource>();
         pause = false;
         running = false;
     }
@@ -305,7 +306,7 @@ public final class LightTracer extends Thread implements Stoppable {
     public void refresh() {
         synchronized (lightsListsLock) {
             while (!tidyLights.isEmpty()) {
-                dirtyLights.add(tidyLights.removeLast());
+                dirtyLights.add(tidyLights.remove(tidyLights.size() - 1));
             }
         }
         restart();
@@ -400,7 +401,7 @@ public final class LightTracer extends Thread implements Stoppable {
                         lastTinyIndex++;
                         light = tidyLights.get(lastTinyIndex);
                     } else if (!dirtyLights.isEmpty()) {
-                        light = dirtyLights.removeLast();
+                        light = dirtyLights.remove(dirtyLights.size() - 1);
 
                         if (light != null) {
                             tidyLights.add(light);

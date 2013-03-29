@@ -40,6 +40,11 @@ public class Color {
     public static final Color WHITE = new ImmutableColor(1.f, 1.f, 1.f);
 
     /**
+     * A fully opaque red color. This color is immutable.
+     */
+    public static final Color RED = new ImmutableColor(1.f, 0.f, 0.f);
+
+    /**
      * A fully opaque yellow color. This color is immutable.
      */
     public static final Color YELLOW = new ImmutableColor(1.f, 1.f, 0.f);
@@ -288,5 +293,35 @@ public class Color {
         green = (green * mul.green) / MAX_INT_VALUE;
         blue = (blue * mul.blue) / MAX_INT_VALUE;
         alpha = (alpha * mul.alpha) / MAX_INT_VALUE;
+    }
+
+    /**
+     * Scale all components of the color with a single value.
+     *
+     * @param value the value multiplied to each color component
+     */
+    public void multiply(final float value) {
+        red *= value;
+        green *= value;
+        blue *= value;
+        alpha *= value;
+    }
+
+    /**
+     * Get the luminance level of the color.
+     *
+     * @return the luminance of the color
+     */
+    public int getLuminance() {
+        return (red + green + blue) / 3;
+    }
+
+    /**
+     * Get the luminance level of the color.
+     *
+     * @return the luminance level of the color
+     */
+    public float getLuminancef() {
+        return (red + green + blue) / (float) MAX_INT_VALUE / 3.f;
     }
 }

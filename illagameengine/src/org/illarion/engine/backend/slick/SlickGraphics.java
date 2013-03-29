@@ -19,6 +19,7 @@
 package org.illarion.engine.backend.slick;
 
 import org.illarion.engine.graphic.*;
+import org.illarion.engine.graphic.effects.TextureEffect;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.ShapeFill;
@@ -134,7 +135,7 @@ class SlickGraphics implements Graphics {
      * @param source the source color
      * @param target the target color
      */
-    private static void transferColor(@Nonnull final Color source, @Nonnull final org.newdawn.slick.Color target) {
+    static void transferColor(@Nonnull final Color source, @Nonnull final org.newdawn.slick.Color target) {
         target.r = source.getRedf();
         target.g = source.getGreenf();
         target.b = source.getBluef();
@@ -184,7 +185,8 @@ class SlickGraphics implements Graphics {
 
     @Override
     public void drawSprite(@Nonnull final Sprite sprite, final int posX, final int posY, @Nonnull final Color color,
-                           final int frame, final float scale, final float rotation) {
+                           final int frame, final float scale, final float rotation,
+                           @Nonnull final TextureEffect... effects) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
         }
@@ -198,7 +200,21 @@ class SlickGraphics implements Graphics {
             slickGraphicsImpl.scale(scale, scale);
             slickGraphicsImpl.rotate(0, 0, rotation);
             transferColor(color, tempSlickColor1);
+
+            @Nullable SlickTextureEffect usedEffect = null;
+            if ((effects.length > 0) && (effects[0] instanceof SlickTextureEffect)) {
+                usedEffect = (SlickTextureEffect) effects[0];
+            }
+
+            if (usedEffect != null) {
+                usedEffect.activateEffect(slickGraphicsImpl);
+            }
+
             slickGraphicsImpl.drawImage(slickSprite.getFrame(frame).getBackingImage(), 0, 0, tempSlickColor1);
+
+            if (usedEffect != null) {
+                usedEffect.disableEffect(slickGraphicsImpl);
+            }
             slickGraphicsImpl.popTransform();
         }
     }
@@ -235,25 +251,87 @@ class SlickGraphics implements Graphics {
     }
 
     @Override
-    public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width, final int height, @Nonnull final Color color) {
+    public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
+                            final int height, @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
         }
         final SlickTexture slickTexture = (SlickTexture) texture;
         transferColor(color, tempSlickColor1);
+
+        @Nullable SlickTextureEffect usedEffect = null;
+        if ((effects.length > 0) && (effects[0] instanceof SlickTextureEffect)) {
+            usedEffect = (SlickTextureEffect) effects[0];
+        }
+
+        if (usedEffect != null) {
+            usedEffect.activateEffect(slickGraphicsImpl);
+        }
         slickGraphicsImpl.drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, 0, 0,
                 slickTexture.getWidth(), slickTexture.getHeight(), tempSlickColor1);
+
+        if (usedEffect != null) {
+            usedEffect.disableEffect(slickGraphicsImpl);
+        }
     }
 
     @Override
-    public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width, final int height, final int texX, final int texY, final int texWidth, final int texHeight, @Nonnull final Color color) {
+    public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
+                            final int height, final int texX, final int texY, final int texWidth,
+                            final int texHeight, @Nonnull final Color color,
+                            @Nonnull final TextureEffect... effects) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
         }
         final SlickTexture slickTexture = (SlickTexture) texture;
+
         transferColor(color, tempSlickColor1);
+        @Nullable SlickTextureEffect usedEffect = null;
+        if ((effects.length > 0) && (effects[0] instanceof SlickTextureEffect)) {
+            usedEffect = (SlickTextureEffect) effects[0];
+        }
+
+        if (usedEffect != null) {
+            usedEffect.activateEffect(slickGraphicsImpl);
+        }
         slickGraphicsImpl.drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, texX, texY,
                 texX + texWidth, texX + texHeight, tempSlickColor1);
+
+        if (usedEffect != null) {
+            usedEffect.disableEffect(slickGraphicsImpl);
+        }
+    }
+
+    @Override
+    public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
+                            final int height, final int texX, final int texY, final int texWidth,
+                            final int texHeight, final int centerX, final int centerY, final float rotate,
+                            @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
+        if (slickGraphicsImpl == null) {
+            throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
+        }
+        final SlickTexture slickTexture = (SlickTexture) texture;
+
+        transferColor(color, tempSlickColor1);
+        @Nullable SlickTextureEffect usedEffect = null;
+        if ((effects.length > 0) && (effects[0] instanceof SlickTextureEffect)) {
+            usedEffect = (SlickTextureEffect) effects[0];
+        }
+
+        slickGraphicsImpl.pushTransform();
+        slickGraphicsImpl.translate(centerX, centerY);
+        slickGraphicsImpl.rotate(0, 0, rotate);
+        slickGraphicsImpl.translate(-centerX, -centerY);
+        if (usedEffect != null) {
+            usedEffect.activateEffect(slickGraphicsImpl);
+        }
+        slickGraphicsImpl.drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, texX, texY,
+                texX + texWidth, texX + texHeight, tempSlickColor1);
+
+        if (usedEffect != null) {
+            usedEffect.disableEffect(slickGraphicsImpl);
+        }
+        slickGraphicsImpl.popTransform();
     }
 
     /**

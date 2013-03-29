@@ -16,23 +16,29 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine.nifty;
+package org.illarion.engine.graphic.effects;
 
-import de.lessvoid.nifty.spi.render.RenderImage;
-import org.illarion.engine.graphic.Color;
-import org.illarion.engine.graphic.Graphics;
+import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
 
 /**
- * This is the general interface for a render image for the Nifty-GUI implementation on this engine.
+ * This effect is used to render the mini map properly.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface IgeRenderImage extends RenderImage {
+public interface MiniMapEffect extends TextureEffect {
+    /**
+     * Set the center location
+     *
+     * @param location the center location, this should be the location where the player is located.
+     */
+    void setCenter(@Nonnull Location location);
 
-    void renderImage(@Nonnull Graphics g, int x, int y, int width, int height, @Nonnull Color color, float imageScale);
-
-    void renderImage(@Nonnull Graphics g, int x, int y, int w, int h, int srcX, int srcY, int srcW, int srcH,
-                     @Nonnull Color color, float scale, int centerX, int centerY);
+    /**
+     * Set the radius of the rendered texture.
+     *
+     * @param x the radius
+     */
+    void setRadius(int x);
 }

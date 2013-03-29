@@ -19,6 +19,7 @@
 package org.illarion.engine.graphic;
 
 import illarion.common.types.Rectangle;
+import org.illarion.engine.graphic.effects.TextureEffect;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -45,9 +46,10 @@ public interface Graphics {
      * @param frame    the frame of the sprite that should be rendered
      * @param scale    the scaling that should be applied to the sprite
      * @param rotation the rotation that should be applied to the sprite
+     * @param effects  the effects that are supposed to be applied to this sprite while drawing
      */
     void drawSprite(@Nonnull Sprite sprite, int posX, int posY, @Nonnull Color color, int frame, float scale,
-                    float rotation);
+                    float rotation, @Nonnull TextureEffect... effects);
 
     /**
      * Set the method used to blend the colors of overlapping areas.
@@ -124,8 +126,10 @@ public interface Graphics {
      * @param width   the width of the area to render the texture in
      * @param height  the height of the area to render the texture in
      * @param color   the color to be applied to the rendered texture
+     * @param effects the effects that are supposed to be applied to this texture while drawing
      */
-    void drawTexture(@Nonnull Texture texture, int x, int y, int width, int height, @Nonnull Color color);
+    void drawTexture(@Nonnull Texture texture, int x, int y, int width, int height, @Nonnull Color color,
+                     @Nonnull TextureEffect... effects);
 
     /**
      * Draw a part of a texture to the screen.
@@ -140,9 +144,32 @@ public interface Graphics {
      * @param texWidth  the width of the area on the texture that is drawn into the rectangle
      * @param texHeight the height of the area on the texture that is drawn into the rectangle
      * @param color     the color to be applied to the rendered texture
+     * @param effects   the effects that are supposed to be applied to this texture while drawing
      */
     void drawTexture(@Nonnull Texture texture, int x, int y, int width, int height, int texX, int texY, int texWidth,
-                     int texHeight, @Nonnull Color color);
+                     int texHeight, @Nonnull Color color, @Nonnull TextureEffect... effects);
+
+    /**
+     * Draw a part of a texture to the screen.
+     *
+     * @param texture   the texture to draw
+     * @param x         the x coordinate of the location of the texture
+     * @param y         the y coordinate of the location of the texture
+     * @param width     the width of the area to render the texture in
+     * @param height    the height of the area to render the texture in
+     * @param texX      the x coordinate on the texture that is mapped to the x coordinate of the render rectangle
+     * @param texY      the y coordinate on the texture that is mapped to the y coordinate of the render rectangle
+     * @param texWidth  the width of the area on the texture that is drawn into the rectangle
+     * @param texHeight the height of the area on the texture that is drawn into the rectangle
+     * @param centerX   the x coordinate of the texture center location
+     * @param centerY   the y coordinate of the texture center location
+     * @param rotate    the amount of degrees the texture is supposed to be rotated
+     * @param color     the color to be applied to the rendered texture
+     * @param effects   the effects that are supposed to be applied to this texture while drawing
+     */
+    void drawTexture(@Nonnull Texture texture, int x, int y, int width, int height, int texX, int texY, int texWidth,
+                     int texHeight, int centerX, int centerY, float rotate, @Nonnull Color color,
+                     @Nonnull TextureEffect... effects);
 
     /**
      * Set a clipping area. Outside of this area, render operations don't have any effect.

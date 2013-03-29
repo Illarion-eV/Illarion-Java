@@ -16,23 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine.nifty;
+package org.illarion.engine.graphic;
 
-import de.lessvoid.nifty.spi.render.RenderImage;
-import org.illarion.engine.graphic.Color;
-import org.illarion.engine.graphic.Graphics;
+import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
 
 /**
- * This is the general interface for a render image for the Nifty-GUI implementation on this engine.
+ * This interface defines a class that is able to provide the world map texture creator with the actual map data.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface IgeRenderImage extends RenderImage {
-
-    void renderImage(@Nonnull Graphics g, int x, int y, int width, int height, @Nonnull Color color, float imageScale);
-
-    void renderImage(@Nonnull Graphics g, int x, int y, int w, int h, int srcX, int srcY, int srcW, int srcH,
-                     @Nonnull Color color, float scale, int centerX, int centerY);
+public interface WorldMapDataProvider {
+    /**
+     * Request the tile data of a specific tile.
+     *
+     * @param location the location of the requested tile
+     * @param callback the callback class that is supposed to receive the tile data
+     */
+    void requestTile(@Nonnull Location location, @Nonnull WorldMapDataProviderCallback callback);
 }

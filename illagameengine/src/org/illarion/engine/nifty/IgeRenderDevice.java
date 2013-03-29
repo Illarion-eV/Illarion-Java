@@ -74,7 +74,7 @@ public class IgeRenderDevice implements RenderDevice {
         if (targetTexture == null) {
             return null;
         }
-        return new IgeRenderImage(targetTexture);
+        return new IgeTextureRenderImage(targetTexture);
     }
 
     @Nullable
@@ -143,23 +143,23 @@ public class IgeRenderDevice implements RenderDevice {
     }
 
     @Override
-    public void renderImage(final RenderImage image, final int x, final int y, final int width, final int height, final Color color, final float imageScale) {
+    public void renderImage(final RenderImage image, final int x, final int y, final int width, final int height,
+                            final Color color, final float imageScale) {
         if (image instanceof IgeRenderImage) {
-            final Texture texture = ((IgeRenderImage) image).getTexture();
-            final Graphics g = container.getEngine().getGraphics();
             transferColor(color, tempColor1);
-            g.drawTexture(texture, x, y, Math.round(width * imageScale), Math.round(height * imageScale), tempColor1);
+            ((IgeRenderImage) image).renderImage(container.getEngine().getGraphics(), x, y, width, height,
+                    tempColor1, imageScale);
         }
     }
 
     @Override
-    public void renderImage(final RenderImage image, final int x, final int y, final int w, final int h, final int srcX, final int srcY, final int srcW, final int srcH, final Color color, final float scale, final int centerX, final int centerY) {
+    public void renderImage(final RenderImage image, final int x, final int y, final int w, final int h,
+                            final int srcX, final int srcY, final int srcW, final int srcH, final Color color,
+                            final float scale, final int centerX, final int centerY) {
         if (image instanceof IgeRenderImage) {
-            final Texture texture = ((IgeRenderImage) image).getTexture();
-            final Graphics g = container.getEngine().getGraphics();
             transferColor(color, tempColor1);
-            g.drawTexture(texture, x, y, Math.round(w * scale), Math.round(h * scale), srcX, srcY, srcW, srcH,
-                    tempColor1);
+            ((IgeRenderImage) image).renderImage(container.getEngine().getGraphics(), x, y, w, h, srcX, srcY, srcW,
+                    srcH, tempColor1, scale, centerX, centerY);
         }
     }
 

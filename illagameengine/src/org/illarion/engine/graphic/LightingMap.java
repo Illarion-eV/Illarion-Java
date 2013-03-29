@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.common.graphics;
+package org.illarion.engine.graphic;
 
 import illarion.common.types.Location;
-import org.newdawn.slick.Color;
 
 /**
  * The lightmap interface is used to handle the light effects on the map. It

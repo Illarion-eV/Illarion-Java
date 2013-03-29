@@ -31,6 +31,9 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class SlickTexture implements Texture {
+    /**
+     * The image that is actually rendered as this picture.
+     */
     private final Image backingImage;
 
     /**
@@ -48,10 +51,15 @@ class SlickTexture implements Texture {
      *
      * @param image the image that is drawn
      */
-    private SlickTexture(@Nonnull final Image image) {
+    SlickTexture(@Nonnull final Image image) {
         backingImage = image;
     }
 
+    /**
+     * Get the image wrapped by this texture.
+     *
+     * @return the backing image
+     */
     @Nonnull
     public Image getBackingImage() {
         return backingImage;

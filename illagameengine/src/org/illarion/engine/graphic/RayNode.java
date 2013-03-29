@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.common.graphics;
+package org.illarion.engine.graphic;
 
 import illarion.common.types.Location;
 import org.apache.log4j.Logger;
@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class RayNode {
+final class RayNode {
     /**
      * The string builder used to create the string texts in this class.
      */
@@ -152,14 +152,13 @@ public final class RayNode {
 
             // search matching point
             RayNode next = null;
-            if (children != null) {
-                for (final RayNode node : children) {
-                    if (node == null) {
-                        break;
-                    } else if ((node.x == nx) && (node.y == ny)) {
-                        next = node;
-                        break;
-                    }
+            for (final RayNode node : children) {
+                if (node == null) {
+                    break;
+                }
+                if ((node.x == nx) && (node.y == ny)) {
+                    next = node;
+                    break;
                 }
             }
 
@@ -200,7 +199,7 @@ public final class RayNode {
             blocked = 0;
         }
 
-        if ((children != null) && (blocked < LightingMap.BLOCKED_VIEW)) {
+        if (blocked < LightingMap.BLOCKED_VIEW) {
             if (blocked > 0) {
                 newIntensity -= blocked / (float) LightingMap.BLOCKED_VIEW;
             }
@@ -221,13 +220,11 @@ public final class RayNode {
      */
     public void dump() {
         LOGGER.debug(toString());
-        if (children != null) {
-            for (final RayNode node : children) {
-                if (node == null) {
-                    break;
-                }
-                node.dump();
+        for (final RayNode node : children) {
+            if (node == null) {
+                break;
             }
+            node.dump();
         }
     }
 

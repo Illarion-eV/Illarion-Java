@@ -16,23 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.illarion.engine.nifty;
-
-import de.lessvoid.nifty.spi.render.RenderImage;
-import org.illarion.engine.graphic.Color;
-import org.illarion.engine.graphic.Graphics;
-
-import javax.annotation.Nonnull;
+package org.illarion.engine.graphic.effects;
 
 /**
- * This is the general interface for a render image for the Nifty-GUI implementation on this engine.
+ * This is the general interface to a effect.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface IgeRenderImage extends RenderImage {
-
-    void renderImage(@Nonnull Graphics g, int x, int y, int width, int height, @Nonnull Color color, float imageScale);
-
-    void renderImage(@Nonnull Graphics g, int x, int y, int w, int h, int srcX, int srcY, int srcW, int srcH,
-                     @Nonnull Color color, float scale, int centerX, int centerY);
+public interface Effect {
 }

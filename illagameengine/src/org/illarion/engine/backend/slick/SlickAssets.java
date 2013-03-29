@@ -20,6 +20,8 @@ package org.illarion.engine.backend.slick;
 
 import org.illarion.engine.assets.*;
 import org.illarion.engine.graphic.Scene;
+import org.illarion.engine.graphic.WorldMap;
+import org.illarion.engine.graphic.WorldMapDataProvider;
 
 import javax.annotation.Nonnull;
 
@@ -60,6 +62,12 @@ class SlickAssets implements Assets {
     private final SlickSoundsManager soundsManager;
 
     /**
+     * The effect manager of the Slick2D backend.
+     */
+    @Nonnull
+    private final SlickEffectManager effectMAnager;
+
+    /**
      * Constructor of this assets handler.
      */
     SlickAssets() {
@@ -68,6 +76,7 @@ class SlickAssets implements Assets {
         spriteFactory = new SlickSpriteFactory();
         fontManager = new SlickFontManager();
         soundsManager = new SlickSoundsManager();
+        effectMAnager = new SlickEffectManager();
     }
 
     @Nonnull
@@ -104,5 +113,17 @@ class SlickAssets implements Assets {
     @Override
     public Scene createNewScene() {
         return new SlickScene();
+    }
+
+    @Nonnull
+    @Override
+    public WorldMap createWorldMap(@Nonnull final WorldMapDataProvider provider) throws SlickEngineException {
+        return new SlickWorldMap(provider);
+    }
+
+    @Nonnull
+    @Override
+    public EffectManager getEffectManager() {
+        return effectMAnager;
     }
 }

@@ -16,14 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.common.graphics;
+package org.illarion.engine.graphic;
 
 import illarion.common.types.Location;
-import javolution.util.FastList;
-import org.newdawn.slick.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class handles a light source and contains its rays, the location and the
@@ -38,8 +38,7 @@ public final class LightSource {
      * given size and are currently not in use, so they can be reused later.
      */
     @SuppressWarnings("unchecked")
-    private static final FastList<LightSource>[] CACHE =
-            new FastList[LightTracer.MAX_RADIUS];
+    private static final List<LightSource>[] CACHE = new List[LightTracer.MAX_RADIUS];
 
     /**
      * Retrieve a light from the cache or create a new one.
@@ -68,7 +67,7 @@ public final class LightSource {
         LightSource light = null;
         synchronized (CACHE[size]) {
             if (!CACHE[size].isEmpty()) {
-                light = CACHE[size].removeLast();
+                light = CACHE[size].remove(CACHE[size].size() - 1);
             }
         }
 
@@ -91,7 +90,7 @@ public final class LightSource {
         final int size = light.size - 1;
 
         if (CACHE[size] == null) {
-            CACHE[size] = new FastList<LightSource>();
+            CACHE[size] = new ArrayList<LightSource>();
         }
         synchronized (CACHE[size]) {
             if (!CACHE[size].contains(light)) {
@@ -178,7 +177,7 @@ public final class LightSource {
         final int newSize = (encoding / 10000) % 10;
         rays = LightTracer.getRays(newSize);
         intensity = new float[(newSize * 2) + 1][(newSize * 2) + 1];
-        color = new Color(0);
+        color = new Color(Color.WHITE);
 
         init(location, encoding);
     }
@@ -211,11 +210,10 @@ public final class LightSource {
 
                 final float factor = locIntensity * bright;
 
-                Color tempColor = color.scaleCopy(factor);
+                Color tempColor = new Color(color);
+                tempColor.multiply(factor);
                 if (invert) {
-                    tempColor.r -= 1.f;
-                    tempColor.g -= 1.f;
-                    tempColor.b -= 1.f;
+                    tempColor.multiply(-1.f);
                 }
 
                 // set the light on the map
@@ -284,9 +282,9 @@ public final class LightSource {
         remEnc /= 10;
         final float red = (remEnc % 10) / 9.f;
         remEnc /= 10;
-        color.r = red;
-        color.g = green;
-        color.b = blue;
+        color.setRedf(red);
+        color.setGreenf(green);
+        color.setBluef(blue);
 
         bright = (remEnc % 10) / 9.f;
         remEnc /= 10;

@@ -69,6 +69,20 @@ public interface Sprite {
     int getHeight();
 
     /**
+     * Get the X offset of this sprite.
+     *
+     * @return the x offset
+     */
+    int getOffsetX();
+
+    /**
+     * Get the Y offset of this sprite.
+     *
+     * @return the y offset
+     */
+    int getOffsetY();
+
+    /**
      * Get the width of the sprite.
      *
      * @return the width of the sprite
