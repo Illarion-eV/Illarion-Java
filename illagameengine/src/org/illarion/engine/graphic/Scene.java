@@ -19,6 +19,7 @@
 package org.illarion.engine.graphic;
 
 import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.effects.SceneEffect;
 
 import javax.annotation.Nonnull;
 
@@ -77,4 +78,23 @@ public interface Scene {
      * @param event the event to publish
      */
     void publishEvent(@Nonnull SceneEvent event);
+
+    /**
+     * Add a effect to the scene.
+     *
+     * @param effect the effect applied to the scene
+     */
+    void addEffect(@Nonnull SceneEffect effect);
+
+    /**
+     * Remove a effect from the scene.
+     *
+     * @param effect the effect to remove
+     */
+    void removeEffect(@Nonnull SceneEffect effect);
+
+    /**
+     * Remove all effects from the scene.
+     */
+    void clearEffects();
 }

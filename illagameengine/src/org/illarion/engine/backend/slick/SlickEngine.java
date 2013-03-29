@@ -46,9 +46,9 @@ class SlickEngine implements Engine {
     @Nonnull
     private final SlickInput input;
 
-    SlickEngine(final GameContainer container) {
+    SlickEngine(@Nonnull final GameContainer container) {
         graphics = new SlickGraphics();
-        assets = new SlickAssets();
+        assets = new SlickAssets(container);
         sounds = new SlickSounds();
         input = new SlickInput(container.getInput());
     }

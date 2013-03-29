@@ -21,6 +21,7 @@ package org.illarion.engine.backend.slick;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.assets.EffectManager;
 import org.illarion.engine.graphic.WorldMap;
+import org.illarion.engine.graphic.effects.FogEffect;
 import org.illarion.engine.graphic.effects.HighlightEffect;
 import org.illarion.engine.graphic.effects.MiniMapEffect;
 
@@ -45,6 +46,12 @@ class SlickEffectManager implements EffectManager {
     @Nullable
     private HighlightEffect highlightEffect;
 
+    /**
+     * The shared instance of the fog effect.
+     */
+    @Nullable
+    private FogEffect fogEffect;
+
     @Nonnull
     @Override
     public MiniMapEffect getMiniMapEffect(@Nonnull final WorldMap worldMap,
@@ -58,6 +65,7 @@ class SlickEffectManager implements EffectManager {
         return new SlickMiniMapEffect(worldMap);
     }
 
+    @Nonnull
     @Override
     public HighlightEffect getHighlightEffect(final boolean sharedInstance) throws EngineException {
         if (sharedInstance) {
@@ -67,5 +75,17 @@ class SlickEffectManager implements EffectManager {
             return highlightEffect;
         }
         return new SlickHighlightEffect();
+    }
+
+    @Nonnull
+    @Override
+    public FogEffect getFogEffect(final boolean sharedInstance) throws EngineException {
+        if (sharedInstance) {
+            if (fogEffect == null) {
+                fogEffect = new SlickFogEffect();
+            }
+            return fogEffect;
+        }
+        return new SlickFogEffect();
     }
 }

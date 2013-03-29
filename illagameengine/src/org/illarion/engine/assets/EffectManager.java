@@ -20,6 +20,7 @@ package org.illarion.engine.assets;
 
 import org.illarion.engine.EngineException;
 import org.illarion.engine.graphic.WorldMap;
+import org.illarion.engine.graphic.effects.FogEffect;
 import org.illarion.engine.graphic.effects.HighlightEffect;
 import org.illarion.engine.graphic.effects.MiniMapEffect;
 
@@ -49,5 +50,16 @@ public interface EffectManager {
      * @return the highlight effect
      * @throws EngineException in case creating the effect fails
      */
+    @Nonnull
     HighlightEffect getHighlightEffect(boolean sharedInstance) throws EngineException;
+
+    /**
+     * Get the effect that is used to render the fog on the entire scene.
+     *
+     * @param sharedInstance {@code true} to receive the shared instance, {@code false} to create a new one
+     * @return the fog effect
+     * @throws EngineException in case creating the effect fails
+     */
+    @Nonnull
+    FogEffect getFogEffect(boolean sharedInstance) throws EngineException;
 }

@@ -23,13 +23,11 @@ import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.Scene;
 import org.illarion.engine.graphic.SceneElement;
 import org.illarion.engine.graphic.SceneEvent;
+import org.illarion.engine.graphic.effects.SceneEffect;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Queue;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -38,7 +36,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractScene implements Scene {
+public abstract class AbstractScene<T extends SceneEffect> implements Scene {
     /**
      * This sorted set contains the elements of the scene in their natural order.
      */
@@ -52,6 +50,12 @@ public abstract class AbstractScene implements Scene {
     private final Queue<SceneEvent> eventQueue;
 
     /**
+     * The list of effects applied to this scene.
+     */
+    @Nonnull
+    private final List<T> sceneEffects;
+
+    /**
      * Create a new scene and setup the internal structures.
      */
     protected AbstractScene() {
@@ -62,6 +66,7 @@ public abstract class AbstractScene implements Scene {
             }
         });
         eventQueue = new ConcurrentLinkedDeque<SceneEvent>();
+        sceneEffects = new ArrayList<T>();
     }
 
     @Override
@@ -125,5 +130,51 @@ public abstract class AbstractScene implements Scene {
     @Override
     public final void publishEvent(@Nonnull final SceneEvent event) {
         eventQueue.offer(event);
+    }
+
+    @Override
+    public void addEffect(@Nonnull final SceneEffect effect) {
+        try {
+            @SuppressWarnings("unchecked") final T sceneEffect = (T) effect;
+            if (!sceneEffects.contains(sceneEffect)) {
+                sceneEffects.add(sceneEffect);
+            }
+        } catch (@Nonnull final ClassCastException e) {
+            // illegal type
+        }
+    }
+
+    @Override
+    public void removeEffect(@Nonnull final SceneEffect effect) {
+        try {
+            @SuppressWarnings("unchecked") final T sceneEffect = (T) effect;
+            sceneEffects.remove(sceneEffect);
+        } catch (@Nonnull final ClassCastException e) {
+            // illegal type
+        }
+    }
+
+    @Override
+    public void clearEffects() {
+        sceneEffects.clear();
+    }
+
+    /**
+     * Get a scene effect applied to a specific image.
+     *
+     * @param index the index of the effect
+     * @return the scene effect
+     */
+    protected final T getEffect(final int index) {
+        return sceneEffects.get(index);
+    }
+
+    /**
+     * Get the amount of scene effects allowed.
+     *
+     * @return the scene effects
+     */
+    protected final int getEffectCount() {
+        return sceneEffects.size();
     }
 }

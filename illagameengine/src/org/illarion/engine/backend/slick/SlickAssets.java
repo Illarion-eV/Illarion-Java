@@ -22,6 +22,7 @@ import org.illarion.engine.assets.*;
 import org.illarion.engine.graphic.Scene;
 import org.illarion.engine.graphic.WorldMap;
 import org.illarion.engine.graphic.WorldMapDataProvider;
+import org.newdawn.slick.GameContainer;
 
 import javax.annotation.Nonnull;
 
@@ -65,18 +66,27 @@ class SlickAssets implements Assets {
      * The effect manager of the Slick2D backend.
      */
     @Nonnull
-    private final SlickEffectManager effectMAnager;
+    private final SlickEffectManager effectManager;
+
+    /**
+     * The Slick2D game container that displays the game.
+     */
+    @Nonnull
+    private final GameContainer container;
 
     /**
      * Constructor of this assets handler.
+     *
+     * @param container the slick game container
      */
-    SlickAssets() {
+    SlickAssets(@Nonnull final GameContainer container) {
         textureManager = new SlickTextureManager();
         cursorManager = new SlickCursorManager();
         spriteFactory = new SlickSpriteFactory();
         fontManager = new SlickFontManager();
         soundsManager = new SlickSoundsManager();
-        effectMAnager = new SlickEffectManager();
+        effectManager = new SlickEffectManager();
+        this.container = container;
     }
 
     @Nonnull
@@ -112,7 +122,7 @@ class SlickAssets implements Assets {
     @Nonnull
     @Override
     public Scene createNewScene() {
-        return new SlickScene();
+        return new SlickScene(container);
     }
 
     @Nonnull
@@ -124,6 +134,6 @@ class SlickAssets implements Assets {
     @Nonnull
     @Override
     public EffectManager getEffectManager() {
-        return effectMAnager;
+        return effectManager;
     }
 }
