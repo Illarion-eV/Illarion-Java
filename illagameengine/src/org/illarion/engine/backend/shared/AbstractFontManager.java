@@ -55,8 +55,9 @@ public abstract class AbstractFontManager implements FontManager {
     @Nonnull
     @Override
     public final Font createFont(@Nonnull final Object identifier, @Nonnull final String ttfRef, final float size,
-                                 final int style, @Nonnull final String fntRef) throws IOException {
-        final Font font = buildFont(ttfRef, size, style, fntRef);
+                                 final int style, @Nonnull final String fntRef,
+                                 @Nonnull final String imageRoot) throws IOException {
+        final Font font = buildFont(ttfRef, size, style, fntRef, imageRoot);
         loadedFonts.put(identifier, font);
         return font;
     }
@@ -64,16 +65,17 @@ public abstract class AbstractFontManager implements FontManager {
     /**
      * Build a font.
      *
-     * @param ttfRef the reference to the ttf font file
-     * @param size   the requested size of the font
-     * @param style  the requested style of the font
-     * @param fntRef the reference to the angelcode font file
+     * @param ttfRef    the reference to the ttf font file
+     * @param size      the requested size of the font
+     * @param style     the requested style of the font
+     * @param fntRef    the reference to the angelcode font file
+     * @param imageRoot the root directory of the image file
      * @return the created font
      * @throws IOException in case loading the font fails
      */
     @Nonnull
     protected abstract Font buildFont(@Nonnull String ttfRef, float size, int style,
-                                      @Nonnull String fntRef) throws IOException;
+                                      @Nonnull String fntRef, @Nonnull String imageRoot) throws IOException;
 
     @Nullable
     @Override

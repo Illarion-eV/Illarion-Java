@@ -21,6 +21,8 @@ package illarion.client.resources.loaders;
 import illarion.client.resources.Resource;
 import illarion.client.resources.ResourceFactory;
 import illarion.common.util.ProgressMonitor;
+import org.illarion.engine.assets.TextureManager;
+import org.illarion.engine.graphic.Texture;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -64,9 +66,13 @@ public abstract class AbstractResourceLoader<T extends Resource> implements Call
      * Get the target factory that is set.
      *
      * @return the target factory of this loader
+     * @throws IllegalStateException in case the target factory was not set before
      */
-    @Nullable
+    @Nonnull
     protected final ResourceFactory<T> getTargetFactory() {
+        if (targetFactory == null) {
+            throw new IllegalStateException("Requested target factory before it was set.");
+        }
         return targetFactory;
     }
 
@@ -103,14 +109,51 @@ public abstract class AbstractResourceLoader<T extends Resource> implements Call
         return monitor;
     }
 
+    /**
+     * This variable is set {@code true} once the loading is done.
+     */
     private boolean loadingDone;
 
+    /**
+     * Report the loading progress as done.
+     */
     protected void loadingDone() {
         monitor.setProgress(1.f);
         loadingDone = true;
     }
 
+    /**
+     * Check if the loading progress is done.
+     *
+     * @return {@code true} if the loading is done
+     */
     public boolean isLoadingDone() {
         return loadingDone;
+    }
+
+    /**
+     * Get the textures that are needed for a single object. This function is a utility to all the loaders that need
+     * to create sprite objects.
+     *
+     * @param textureManager the texture manager that supplies the textures
+     * @param path           the root path of the textures
+     * @param name           the name of the texture
+     * @param frames         the amount of frames
+     * @return a array with the length equal to the frames that contains the load textures
+     */
+    protected static Texture[] getTextures(@Nonnull final TextureManager textureManager, @Nonnull final String path,
+                                           @Nonnull final String name, final int frames) {
+        final Texture[] resultTextures = new Texture[frames];
+        if (frames == 1) {
+            resultTextures[0] = textureManager.getTexture(path, name);
+            if (resultTextures[0] == null) {
+                System.err.println("Problem loading texture!");
+            }
+        } else {
+            for (int i = 0; i < frames; i++) {
+                resultTextures[i] = textureManager.getTexture(path, name + '-' + i);
+            }
+        }
+        return resultTextures;
     }
 }

@@ -33,7 +33,6 @@ import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantList;
-import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.Bresenham;
@@ -42,8 +41,7 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
-import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
-import org.newdawn.slick.openal.SoundStore;
+import org.illarion.engine.Engine;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -170,8 +168,8 @@ public final class Player {
     /**
      * Constructor for the player that receives the character name from the login data automatically.
      */
-    public Player() {
-        this(Login.getInstance().getLoginCharacter());
+    public Player(@Nonnull final Engine engine) {
+        this(engine, Login.getInstance().getLoginCharacter());
     }
 
     /**
@@ -180,7 +178,7 @@ public final class Player {
      * @param charName the character name of the player playing this game
      */
     @SuppressWarnings("nls")
-    public Player(@Nonnull final String charName) {
+    public Player(@Nonnull final Engine engine, @Nonnull final String charName) {
         path = new File(DirectoryManager.getInstance().getUserDirectory(), charName);
         chatLog = new ChatLog(path);
 
@@ -195,26 +193,12 @@ public final class Player {
         character.setName(charName);
 
         combatHandler = new CombatHandler();
-        movementHandler = new PlayerMovement(this);
+        movementHandler = new PlayerMovement(engine.getInput(), this);
         inventory = new Inventory();
         containers = new TIntObjectHashMap<ItemContainer>();
         containerLock = new ReentrantReadWriteLock();
 
-        updateListener();
         AnnotationProcessor.process(this);
-    }
-
-    /**
-     * Update the sound listener of this player.
-     */
-    private static void updateListener() {
-        if (IllaClient.getCfg().getBoolean(CFG_SOUND_ON)) {
-            final float effVol = IllaClient.getCfg().getFloat(CFG_SOUND_VOL) / MAX_CLIENT_VOL;
-            SoundStore.get().setSoundsOn(true);
-            SoundStore.get().setSoundVolume(effVol);
-        } else {
-            SoundStore.get().setSoundsOn(false);
-        }
     }
 
     /**
@@ -352,14 +336,6 @@ public final class Player {
         } finally {
             containerLock.writeLock().unlock();
         }
-    }
-
-    /**
-     * The monitor function that is notified in case the configuration changes and triggers the required updates.
-     */
-    @EventTopicPatternSubscriber(topicPattern = "sound((On)|(Volume))")
-    public void onConfigChangedEvent(@Nonnull final String topic, @Nonnull final ConfigChangedEvent event) {
-        updateListener();
     }
 
     /**

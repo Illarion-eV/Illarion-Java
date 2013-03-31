@@ -27,14 +27,12 @@ import illarion.client.resources.loaders.SoundLoader;
 import illarion.client.util.ChatLog;
 import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
-import illarion.client.world.MapDimensions;
 import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.config.ConfigSystem;
-import illarion.common.graphics.GraphicResolution;
 import illarion.common.util.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -42,9 +40,8 @@ import org.apache.log4j.PropertyConfigurator;
 import org.bushe.swing.event.*;
 import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.EngineException;
-import org.illarion.engine.GameContainer;
 import org.illarion.engine.backend.slick.ApplicationGameContainer;
-import org.newdawn.slick.state.GameState;
+import org.illarion.engine.graphic.GraphicResolution;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -151,10 +148,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     }
 
-    public GameState getGameState(int id) {
-        return game.getState(id);
-    }
-
     private void init() {
         try {
             EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, new ThreadSafeEventService());
@@ -245,7 +238,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @return the are used to display the game inside
      */
-    public GameContainer getContainer() {
+    public DesktopGameContainer getContainer() {
         return gameContainer;
     }
 
@@ -557,13 +550,17 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             try {
                 final GraphicResolution res = new GraphicResolution(resolutionString);
                 final boolean fullScreen = cfg.getBoolean(CFG_FULLSCREEN);
-                gameContainer.setSize(res.getWidth(), res.getHeight());
-                gameContainer.setFullScreen(fullScreen);
-                if (!cfg.getBoolean(CFG_FULLSCREEN)) {
+                if (fullScreen) {
+                    gameContainer.setFullScreenResolution(res);
+                    gameContainer.setFullScreen(true);
+                } else {
+                    gameContainer.setWindowSize(res.getWidth(), res.getHeight());
+                    gameContainer.setFullScreen(false);
+                }
+                if (!fullScreen) {
                     cfg.set("windowHeight", res.getHeight());
                     cfg.set("windowWidth", res.getWidth());
                 }
-                MapDimensions.getInstance().reportScreenSize(gameContainer.getWidth(), gameContainer.getHeight());
             } catch (@Nonnull final EngineException e) {
                 LOGGER.error("Failed to apply graphic mode: " + resolutionString);
             } catch (@Nonnull final IllegalArgumentException ex) {

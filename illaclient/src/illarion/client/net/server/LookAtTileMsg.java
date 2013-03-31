@@ -67,11 +67,6 @@ public final class LookAtTileMsg
      */
     @Override
     public boolean executeUpdate() {
-        World.getMapDisplay().lookAt(loc.getDcX(), loc.getDcY(), text);
-        //        GUI.getInstance().getChatText()
-        //            .showText(text, null, loc, ChatHandler.SpeechMode.normal);
-
-        // for testing lookat only
         World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.Normal);
 
         return true;

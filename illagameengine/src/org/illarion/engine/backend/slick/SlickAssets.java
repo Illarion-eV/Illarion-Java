@@ -83,7 +83,7 @@ class SlickAssets implements Assets {
         textureManager = new SlickTextureManager();
         cursorManager = new SlickCursorManager();
         spriteFactory = new SlickSpriteFactory();
-        fontManager = new SlickFontManager();
+        fontManager = new SlickFontManager(textureManager);
         soundsManager = new SlickSoundsManager();
         effectManager = new SlickEffectManager();
         this.container = container;

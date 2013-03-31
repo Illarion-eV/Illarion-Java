@@ -42,7 +42,12 @@ class SlickSounds implements MusicListener, Sounds {
 
     @Override
     public void setMusicVolume(final float volume) {
-        SoundStore.get().setMusicVolume(volume);
+        if (volume > 0.001f) {
+            SoundStore.get().setMusicOn(true);
+            SoundStore.get().setMusicVolume(volume);
+        } else {
+            SoundStore.get().setMusicOn(false);
+        }
     }
 
     @Override
@@ -52,7 +57,12 @@ class SlickSounds implements MusicListener, Sounds {
 
     @Override
     public void setSoundVolume(final float volume) {
-        SoundStore.get().setSoundVolume(volume);
+        if (volume > 0.001f) {
+            SoundStore.get().setSoundsOn(true);
+            SoundStore.get().setSoundVolume(volume);
+        } else {
+            SoundStore.get().setSoundsOn(false);
+        }
     }
 
     @Override
@@ -140,7 +150,19 @@ class SlickSounds implements MusicListener, Sounds {
     public int playSound(@Nonnull final Sound sound, final float volume, final float pitch) {
         if (sound instanceof SlickSound) {
             @Nonnull final org.newdawn.slick.Sound slickSound = ((SlickSound) sound).getInternalSound();
-            slickSound.play();
+            slickSound.play(pitch, SoundStore.get().getSoundVolume() * volume);
+            lastHandle++;
+            activeSoundsMap.put(lastHandle, (SlickSound) sound);
+            return lastHandle;
+        }
+        return Integer.MIN_VALUE;
+    }
+
+    @Override
+    public int playSound(@Nonnull final Sound sound, final float volume, final int offsetX, final int offsetY, final int offsetZ) {
+        if (sound instanceof SlickSound) {
+            @Nonnull final org.newdawn.slick.Sound slickSound = ((SlickSound) sound).getInternalSound();
+            slickSound.playAt(0.f, SoundStore.get().getSoundVolume() * volume, offsetX, offsetY, offsetZ);
             lastHandle++;
             activeSoundsMap.put(lastHandle, (SlickSound) sound);
             return lastHandle;

@@ -31,7 +31,7 @@ import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
-import org.newdawn.slick.Color;
+import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,7 +59,7 @@ public final class AppearanceMsg extends AbstractReply {
      * The sprite color instance that is used to send the color values to the
      * other parts of the client.
      */
-    private static final Color TEMP_COLOR = new Color(0);
+    private static final Color TEMP_COLOR = new Color(Color.WHITE);
 
     /**
      * Appearance of the character. This value contains the race and the gender
@@ -208,20 +208,22 @@ public final class AppearanceMsg extends AbstractReply {
         }
         character.updatePaperdoll();
 
-        TEMP_COLOR.r = skinColorRed / 255.f;
-        TEMP_COLOR.g = skinColorGreen / 255.f;
-        TEMP_COLOR.b = skinColorBlue / 255.f;
-        TEMP_COLOR.a = 1.f;
 
-        if ((skinColorRed != 255) || (skinColorGreen != 255) || (skinColorBlue != 255)) {
+        if ((skinColorRed != Color.MAX_INT_VALUE) || (skinColorGreen != Color.MAX_INT_VALUE) ||
+                (skinColorBlue != Color.MAX_INT_VALUE)) {
+            TEMP_COLOR.setRed(skinColorRed);
+            TEMP_COLOR.setGreen(skinColorGreen);
+            TEMP_COLOR.setBluef(skinColorBlue);
+            TEMP_COLOR.setAlpha(Color.MAX_INT_VALUE);
             character.setSkinColor(TEMP_COLOR);
         } else {
             character.setSkinColor(null);
         }
 
-        TEMP_COLOR.r = hairColorRed / 255.f;
-        TEMP_COLOR.g = hairColorGreen / 255.f;
-        TEMP_COLOR.b = hairColorBlue / 255.f;
+        TEMP_COLOR.setRed(hairColorRed);
+        TEMP_COLOR.setGreen(hairColorGreen);
+        TEMP_COLOR.setBluef(hairColorBlue);
+        TEMP_COLOR.setAlpha(Color.MAX_INT_VALUE);
         character.setClothColor(AvatarClothManager.GROUP_HAIR, TEMP_COLOR);
         character.setClothColor(AvatarClothManager.GROUP_BEARD, TEMP_COLOR);
         character.setAlive(!deadFlag);

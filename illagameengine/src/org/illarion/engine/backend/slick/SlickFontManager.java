@@ -30,11 +30,32 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class SlickFontManager extends AbstractFontManager {
+    /**
+     * The texture manager used to fetch the images.
+     */
+    @Nonnull
+    private final SlickTextureManager texManager;
+
+    /**
+     * Create a new instance of the font manager.
+     *
+     * @param textureManager the texture manager used to fetch the required images
+     */
+    SlickFontManager(@Nonnull final SlickTextureManager textureManager) {
+        texManager = textureManager;
+    }
+
     @Nonnull
     @Override
-    protected Font buildFont(@Nonnull final String ttfRef, final float size, final int style, @Nonnull final String fntRef) throws IOException {
+    protected Font buildFont(@Nonnull final String ttfRef, final float size, final int style,
+                             @Nonnull final String fntRef, @Nonnull final String imageRoot) throws IOException {
         try {
-            return new SlickFont(fntRef, fntRef.replace(".fnt", "_0.png"));
+            final String imageName = fntRef.substring(fntRef.lastIndexOf('/') + 1).replace(".fnt", "_0.png");
+            final SlickTexture texture = (SlickTexture) texManager.getTexture(imageRoot, imageName);
+            if (texture == null) {
+                throw new IOException("Failed to load required image: " + imageRoot + imageName);
+            }
+            return new SlickFont(fntRef, texture);
         } catch (@Nonnull final SlickEngineException e) {
             throw new IOException(e);
         }

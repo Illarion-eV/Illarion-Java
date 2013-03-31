@@ -101,6 +101,18 @@ public interface Sounds {
     int playSound(@Nonnull Sound sound, float volume, float pitch);
 
     /**
+     * Play a sound with a offset to the listener in 3D space.
+     *
+     * @param sound   the sound to play
+     * @param volume  the default volume
+     * @param offsetX the X offset
+     * @param offsetY the Y offset
+     * @param offsetZ the Z offset
+     * @return the reference handle to the played sound effect
+     */
+    int playSound(@Nonnull Sound sound, float volume, int offsetX, int offsetY, int offsetZ);
+
+    /**
      * This function should be called once during the update run of the game, to allow the sound engine to process
      * their internal tasks.
      * <p/>

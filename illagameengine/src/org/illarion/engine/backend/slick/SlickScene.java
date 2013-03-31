@@ -136,6 +136,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                     slickGraphics.setSlickGraphicsImpl(sceneTarget.getGraphics());
                     slickGraphicsImpl.pushTransform();
                     slickGraphicsImpl.translate(offsetX, offsetY);
+                    slickGraphicsImpl.clear();
                     renderScene(graphics);
                     slickGraphicsImpl.popTransform();
 

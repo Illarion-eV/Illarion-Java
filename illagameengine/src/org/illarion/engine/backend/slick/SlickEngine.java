@@ -19,10 +19,6 @@
 package org.illarion.engine.backend.slick;
 
 import org.illarion.engine.Engine;
-import org.illarion.engine.assets.Assets;
-import org.illarion.engine.graphic.Graphics;
-import org.illarion.engine.input.Input;
-import org.illarion.engine.sound.Sounds;
 import org.newdawn.slick.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -50,30 +46,30 @@ class SlickEngine implements Engine {
         graphics = new SlickGraphics();
         assets = new SlickAssets(container);
         sounds = new SlickSounds();
-        input = new SlickInput(container.getInput());
+        input = new SlickInput();
     }
 
     @Nonnull
     @Override
-    public Graphics getGraphics() {
+    public SlickGraphics getGraphics() {
         return graphics;
     }
 
     @Nonnull
     @Override
-    public Sounds getSounds() {
+    public SlickSounds getSounds() {
         return sounds;
     }
 
     @Nonnull
     @Override
-    public Assets getAssets() {
+    public SlickAssets getAssets() {
         return assets;
     }
 
     @Nonnull
     @Override
-    public Input getInput() {
+    public SlickInput getInput() {
         return input;
     }
 }

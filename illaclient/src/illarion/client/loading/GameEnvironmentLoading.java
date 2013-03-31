@@ -18,8 +18,12 @@
  */
 package illarion.client.loading;
 
+import illarion.client.IllaClient;
 import illarion.client.world.World;
 import illarion.common.util.ProgressMonitor;
+import org.apache.log4j.Logger;
+import org.illarion.engine.Engine;
+import org.illarion.engine.EngineException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -36,12 +40,42 @@ public final class GameEnvironmentLoading implements LoadingTask {
      */
     private boolean loadingDone;
 
+    /**
+     * The monitor for the loading progress.
+     */
     @Nonnull
-    private final ProgressMonitor monitor = new ProgressMonitor();
+    private final ProgressMonitor monitor;
+
+    /**
+     * The game engine instance that is used.
+     */
+    @Nonnull
+    private final Engine usedEngine;
+
+    /**
+     * The logger of this class.
+     */
+    @Nonnull
+    private final Logger logger = Logger.getLogger(GameEnvironmentLoading.class);
+
+    /**
+     * The constructor of this loading task.
+     *
+     * @param engine the engine that is used to load the game
+     */
+    public GameEnvironmentLoading(@Nonnull final Engine engine) {
+        usedEngine = engine;
+        monitor = new ProgressMonitor();
+    }
 
     @Override
     public void load() {
-        World.initWorldComponents();
+        try {
+            World.initWorldComponents(usedEngine);
+        } catch (@Nonnull final EngineException e) {
+            logger.error("Failed to init the components of the world.", e);
+            IllaClient.errorExit("World init failed!");
+        }
         loadingDone = true;
         monitor.setProgress(1.f);
     }

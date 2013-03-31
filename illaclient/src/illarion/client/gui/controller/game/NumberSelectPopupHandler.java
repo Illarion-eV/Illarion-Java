@@ -33,8 +33,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.state.StateBasedGame;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -118,7 +117,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
                                 final NumberSelectPopupHandler.Callback callback) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                 internalCreateNewPopup(minValue, maxValue, callback);
             }
         });

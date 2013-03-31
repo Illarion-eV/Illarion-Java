@@ -23,6 +23,7 @@ import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.SlickException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is the implementation of the font interface for Slick2D.
@@ -43,10 +44,12 @@ class SlickFont implements Font {
      * @param imgFile the image file
      * @throws SlickEngineException in case loading the font fails
      */
-    SlickFont(@Nonnull final String fntFile, @Nonnull final String imgFile) throws SlickEngineException {
+    SlickFont(@Nonnull final String fntFile, @Nonnull final SlickTexture imgFile) throws SlickEngineException {
         try {
-            internalFont = new AngelCodeFont(fntFile, imgFile);
+            internalFont = new AngelCodeFont(fntFile, imgFile.getBackingImage());
         } catch (@Nonnull final SlickException e) {
+            throw new SlickEngineException(e);
+        } catch (@Nonnull final RuntimeException e) {
             throw new SlickEngineException(e);
         }
     }
@@ -78,6 +81,10 @@ class SlickFont implements Font {
 
     @Override
     public int getAdvance(final char current, final char next) {
-        return internalFont.getGlyph(current).getKerning(next);
+        @Nullable final AngelCodeFont.Glyph glypth = internalFont.getGlyph(current);
+        if (glypth == null) {
+            return 0;
+        }
+        return glypth.getKerning(next);
     }
 }

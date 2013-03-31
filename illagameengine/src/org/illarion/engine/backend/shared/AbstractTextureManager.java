@@ -349,13 +349,16 @@ public abstract class AbstractTextureManager implements TextureManager {
                 if ((currentEvent == XmlPullParser.START_TAG) && "sprite".equals(parser.getName())) {
                     parseXmlTag(directory, atlasTexture, parser);
                 }
+                if ((currentEvent == XmlPullParser.END_TAG) && "sprites".equals(parser.getName())) {
+                    break;
+                }
                 currentEvent = parser.nextTag();
             }
 
         } catch (@Nonnull final XmlPullParserException e) {
-            LOGGER.error("Failed to create a new instance of the pull parser.");
+            LOGGER.error("Failed to create a new instance of the pull parser for atlas: " + atlasTextureRes, e);
         } catch (@Nonnull final IOException e) {
-            LOGGER.error("Error while reading the XML definition of the atlas.");
+            LOGGER.error("Error while reading the XML definition of the atlas.", e);
         } finally {
             closeQuietly(xmlStream);
         }

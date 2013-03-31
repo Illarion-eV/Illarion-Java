@@ -24,13 +24,14 @@ import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.crash.MapProcessorCrashHandler;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMap;
-import illarion.common.graphics.ColorHelper;
 import illarion.common.graphics.ItemInfo;
-import illarion.common.graphics.LightingMap;
 import illarion.common.types.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
-import org.newdawn.slick.Color;
+import org.illarion.engine.Engine;
+import org.illarion.engine.EngineException;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.LightingMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -206,14 +207,14 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * Default constructor of the map handler.
      */
-    public GameMap() {
+    public GameMap(@Nonnull final Engine engine) throws EngineException {
         tiles = new TLongObjectHashMap<MapTile>(1000);
         tiles.setAutoCompactionFactor(MAP_COMPACTION_FACTOR);
         interactive = new InteractiveMap(this);
 
         mapLock = new ReentrantReadWriteLock();
 
-        minimap = new GameMiniMap();
+        minimap = new GameMiniMap(engine);
         restartMapProcessor();
 
         StoppableStorage.getInstance().add(this);
@@ -389,7 +390,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * Check if there is a tile at one location on the map.
      *
      * @param loc the location on the map
-     * @return <code>true</code> in case there is a tile at this position
+     * @return {@code true} in case there is a tile at this position
      */
     public boolean isMapAt(@Nonnull final Location loc) {
         return isMapAt(loc.getKey());
@@ -399,7 +400,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * Check if there is a tile at one location on the map.
      *
      * @param key the key to the location on the map
-     * @return <code>true</code> in case there is a tile at this position
+     * @return {@code true} in case there is a tile at this position
      */
     public boolean isMapAt(final long key) {
         mapLock.readLock().lock();
@@ -468,7 +469,7 @@ public final class GameMap implements LightingMap, Stoppable {
      */
     @Override
     public void renderLights() {
-        final float factor = 1.f - ColorHelper.getLuminationf(World.getWeather().getAmbientLight());
+        final float factor = 1.f - World.getWeather().getAmbientLight().getLuminancef();
 
         renderLightsHelper.setup(factor, World.getWeather().getAmbientLight());
 

@@ -20,57 +20,39 @@ package illarion.client.resources.loaders;
 
 import illarion.client.resources.ResourceFactory;
 import illarion.client.util.IdWrapper;
-import illarion.common.util.TableLoader;
+import illarion.common.util.TableLoaderMusic;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Music;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.openal.SoundStore;
 
 import javax.annotation.Nonnull;
 
 /**
- * This class is used to load the song definitions from the resource table that
- * was created using the configuration tool. The class will create the required
- * song objects and send them to the song factory that takes care for
+ * This class is used to load the song definitions from the resource table that was created using the configuration
+ * tool. The class will create the required song objects and send them to the song factory that takes care for
  * distributing those objects.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class SongLoader extends AbstractResourceLoader<IdWrapper<Music>> implements
-        TableLoaderSink {
-    /**
-     * The index in the table record of the sound id.
-     */
-    private static final int TB_ID = 0;
-
-    /**
-     * The index in the table record of the sound filename.
-     */
-    private static final int TB_NAME = 1;
-
+public final class SongLoader extends AbstractResourceLoader<IdWrapper<String>> implements
+        TableLoaderSink<TableLoaderMusic> {
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger logger = Logger.getLogger(ItemLoader.class);
-
-    private static final String SONG_DIR = "data/music/";
+    private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
 
     /**
      * Trigger the loading sequence for this loader.
      */
     @Override
-    public ResourceFactory<IdWrapper<Music>> call() {
+    public ResourceFactory<IdWrapper<String>> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<IdWrapper<Music>> factory = getTargetFactory();
+        final ResourceFactory<IdWrapper<String>> factory = getTargetFactory();
 
-        assert factory != null;
         factory.init();
-        SoundStore.get().setDeferredLoading(true);
-        new TableLoader("Songs", this);
+        new TableLoaderMusic(this);
         factory.loadingFinished();
 
         loadingDone();
@@ -82,18 +64,14 @@ public final class SongLoader extends AbstractResourceLoader<IdWrapper<Music>> i
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
-        final int clipID = loader.getInt(TB_ID);
-        final String filename = loader.getString(TB_NAME);
+    public boolean processRecord(final int line, @Nonnull final TableLoaderMusic loader) {
+        final int clipID = loader.getSongId();
+        final String filename = loader.getSongFile();
 
         try {
-            getTargetFactory().storeResource(new IdWrapper<Music>(clipID, new Music(SONG_DIR + filename, true)));
+            getTargetFactory().storeResource(new IdWrapper<String>(clipID, filename));
         } catch (@Nonnull final IllegalStateException ex) {
-            logger.error("Failed adding song to internal factory. ID: "
-                    + Integer.toString(clipID) + " - Filename: " + filename);
-        } catch (SlickException e) {
-            logger.error("Failed adding song to internal factory. ID: "
-                    + Integer.toString(clipID) + " - Filename: " + filename);
+            LOGGER.error("Failed adding song to internal factory. ID: " + clipID + " - Filename: " + filename);
         }
 
         return true;

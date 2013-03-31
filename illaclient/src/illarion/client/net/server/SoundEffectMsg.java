@@ -26,9 +26,9 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Sound;
-import org.newdawn.slick.state.StateBasedGame;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.sound.Sound;
+import org.illarion.engine.sound.Sounds;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -81,16 +81,15 @@ public final class SoundEffectMsg extends AbstractReply implements UpdateTask {
     }
 
     @Override
-    public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+    public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
         final Location plyLoc = World.getPlayer().getLocation();
-        final Sound sound = SoundFactory.getInstance().getSound(effectId);
-
-        try {
-            sound.playAt(loc.getScX() - plyLoc.getScX(), loc.getScY() - plyLoc.getScY(),
-                    loc.getScZ() - plyLoc.getScZ());
-        } catch (@Nonnull final Exception e) {
-            LOGGER.error("Sound playback failed!", e);
+        final Sound sound = SoundFactory.getInstance().getSound(effectId, container.getEngine().getAssets().getSoundsManager());
+        if (sound == null) {
+            return;
         }
+        final Sounds sounds = container.getEngine().getSounds();
+        sounds.playSound(sound, sounds.getSoundVolume(), loc.getScX() - plyLoc.getScX(),
+                loc.getScY() - plyLoc.getScY(), loc.getScZ() - plyLoc.getScZ());
     }
 
     /**

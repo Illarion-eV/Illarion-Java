@@ -18,15 +18,14 @@
  */
 package illarion.client.graphics;
 
-import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
-import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
 import illarion.common.types.Rectangle;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Font;
+import org.illarion.engine.graphic.Graphics;
+import org.illarion.engine.graphic.ImmutableColor;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * The text tags are the small texts over the heads of characters that display
@@ -35,23 +34,17 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public class TextTag implements Drawable {
+public class TextTag {
     /**
      * The color of the background pane that is displayed behind the text.
      */
-    private static final Color BACK_COLOR = new Color(0.f, 0.f, 0.f, 0.3f);
+    private static final Color BACK_COLOR = new ImmutableColor(0.f, 0.f, 0.f, 0.3f);
 
     /**
      * The font that is used to render texts of the text tags.
      */
-    @Nullable
-    private static final SlickRenderFont TEXT_TAG_FONT = FontLoader.getInstance().getFontSave(FontLoader.Fonts.Small);
-
-    /**
-     * This color is used as temporary color during the rendering process.
-     */
-    private static final de.lessvoid.nifty.tools.Color NIFTY_COLOR = new de.lessvoid.nifty.tools.Color(0.f, 0.f, 0.f,
-            0.f);
+    @Nonnull
+    private final Font font;
 
     /**
      * The color implementation that is used to render the text.
@@ -93,13 +86,10 @@ public class TextTag implements Drawable {
     public TextTag(@Nonnull final String text, @Nonnull final Color color) {
         this.text = text;
         this.color = color;
+        font = FontLoader.getInstance().getFont(FontLoader.SMALL_FONT);
 
-        if (TEXT_TAG_FONT == null) {
-            throw new IllegalStateException("Font of the text tag was not loaded.");
-        }
-
-        width = TEXT_TAG_FONT.getWidth(text);
-        height = TEXT_TAG_FONT.getHeight();
+        width = font.getWidth(text);
+        height = font.getLineHeight();
     }
 
     public void addToCamera(final int x, final int y) {
@@ -156,55 +146,26 @@ public class TextTag implements Drawable {
         dirty = true;
     }
 
-    @Override
-    public boolean draw(@Nonnull final Graphics g) {
-        if (TEXT_TAG_FONT == null) {
-            throw new IllegalStateException("Font of the text tag was not loaded.");
-        }
-
+    public void render(@Nonnull final Graphics g) {
         if (!Camera.getInstance().requiresUpdate(displayRect)) {
-            return true;
+            return;
         }
 
-        final Rectangle parentDirtyArea = Camera.getInstance().getDirtyArea(displayRect);
-        if (parentDirtyArea != null) {
-            g.setWorldClip(parentDirtyArea.getX(), parentDirtyArea.getY(),
-                    parentDirtyArea.getWidth(), parentDirtyArea.getHeight());
-        }
-
-        g.setColor(BACK_COLOR);
-        g.fillRect(displayRect.getX(), displayRect.getY(), displayRect.getWidth(), displayRect.getHeight());
-        TEXT_TAG_FONT.renderText(g, text, displayX - dX, displayY - dY,
-                SlickRenderUtils.convertColorSlickNifty(color, NIFTY_COLOR), 1.f, 1.f);
-
-
-        if (parentDirtyArea != null) {
-            g.clearWorldClip();
-        }
-
-        Camera.getInstance().markAreaRendered(displayRect);
-
-        return true;
+        g.drawRectangle(displayRect, BACK_COLOR);
+        g.drawText(font, text, color, displayX - dX, displayY - dY);
     }
 
     private final Rectangle displayRect = new Rectangle();
-    private final Rectangle oldDisplayRect = new Rectangle();
 
     @Nonnull
-    @Override
-    public Rectangle getLastDisplayRect() {
-        return oldDisplayRect;
+    public Rectangle getDisplayRect() {
+        return displayRect;
     }
 
-    @Override
     public void update(@Nonnull final GameContainer container, final int delta) {
         if (dirty) {
             dirty = false;
-            oldDisplayRect.set(displayRect);
             displayRect.set(displayX - dX - 1, displayY - dY - 1, width + 2, height + 2);
-
-            Camera.getInstance().markAreaDirty(oldDisplayRect);
-            Camera.getInstance().markAreaDirty(displayRect);
         }
     }
 }

@@ -31,7 +31,7 @@ import illarion.client.gui.BookGui;
 import illarion.client.resources.BookFactory;
 import illarion.client.util.Lang;
 import illarion.common.data.*;
-import org.newdawn.slick.GameContainer;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -195,10 +195,13 @@ class SlickGraphics implements Graphics {
 
             slickGraphicsImpl.pushTransform();
             slickGraphicsImpl.translate(posX, posY);
-            slickGraphicsImpl.translate(slickSprite.getWidth() * slickSprite.getCenterX(),
-                    slickSprite.getHeight() * slickSprite.getCenterY());
+
+            final float centerTransX = slickSprite.getWidth() * slickSprite.getCenterX();
+            final float centerTransY = slickSprite.getHeight() * slickSprite.getCenterY();
+            slickGraphicsImpl.translate(centerTransX, centerTransY);
             slickGraphicsImpl.scale(scale, scale);
             slickGraphicsImpl.rotate(0, 0, rotation);
+            slickGraphicsImpl.translate(-centerTransX, -centerTransY);
             transferColor(color, tempSlickColor1);
 
             @Nullable SlickTextureEffect usedEffect = null;
@@ -295,7 +298,7 @@ class SlickGraphics implements Graphics {
             usedEffect.activateEffect(slickGraphicsImpl);
         }
         slickGraphicsImpl.drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, texX, texY,
-                texX + texWidth, texX + texHeight, tempSlickColor1);
+                texX + texWidth, texY + texHeight, tempSlickColor1);
 
         if (usedEffect != null) {
             usedEffect.disableEffect(slickGraphicsImpl);
@@ -326,7 +329,7 @@ class SlickGraphics implements Graphics {
             usedEffect.activateEffect(slickGraphicsImpl);
         }
         slickGraphicsImpl.drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, texX, texY,
-                texX + texWidth, texX + texHeight, tempSlickColor1);
+                texX + texWidth, texY + texHeight, tempSlickColor1);
 
         if (usedEffect != null) {
             usedEffect.disableEffect(slickGraphicsImpl);

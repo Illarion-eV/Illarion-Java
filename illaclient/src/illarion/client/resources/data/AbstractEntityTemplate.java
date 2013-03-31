@@ -19,8 +19,8 @@
 package illarion.client.resources.data;
 
 import illarion.client.graphics.AbstractEntity;
-import illarion.client.graphics.Sprite;
 import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

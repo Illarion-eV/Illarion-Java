@@ -20,7 +20,7 @@ package illarion.client.resources.loaders;
 
 import illarion.client.resources.ResourceFactory;
 import illarion.client.util.IdWrapper;
-import illarion.common.util.TableLoader;
+import illarion.common.util.TableLoaderBooks;
 import illarion.common.util.TableLoaderSink;
 
 import javax.annotation.Nonnull;
@@ -30,28 +30,17 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class BookLoader extends AbstractResourceLoader<IdWrapper<String>> implements TableLoaderSink {
-    /**
-     * The book file name of the table entry.
-     */
-    private static final int TB_BOOK_FILE = 1;
-
-    /**
-     * The book ID of the table entry.
-     */
-    private static final int TB_ID = 0;
-
+public final class BookLoader extends AbstractResourceLoader<IdWrapper<String>> implements TableLoaderSink<TableLoaderBooks> {
     @Override
-    public ResourceFactory<IdWrapper<String>> call() throws Exception {
+    public ResourceFactory<IdWrapper<String>> call() {
         if (!hasTargetFactory()) {
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
         final ResourceFactory<IdWrapper<String>> factory = getTargetFactory();
 
-        assert factory != null;
         factory.init();
-        new TableLoader("Books", this);
+        new TableLoaderBooks(this);
         factory.loadingFinished();
 
         loadingDone();
@@ -60,9 +49,9 @@ public final class BookLoader extends AbstractResourceLoader<IdWrapper<String>> 
     }
 
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
-        final int id = loader.getInt(TB_ID);
-        final String bookFile = loader.getString(TB_BOOK_FILE);
+    public boolean processRecord(final int line, @Nonnull final TableLoaderBooks loader) {
+        final int id = loader.getBookId();
+        final String bookFile = loader.getBookFile();
 
         getTargetFactory().storeResource(new IdWrapper<String>(id, bookFile));
 

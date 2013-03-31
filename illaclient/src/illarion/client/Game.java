@@ -17,18 +17,22 @@
 package illarion.client;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.nulldevice.NullInputSystem;
 import de.lessvoid.nifty.spi.time.impl.AccurateTimeProvider;
 import illarion.client.graphics.FontLoader;
+import illarion.client.input.InputReceiver;
 import illarion.client.states.*;
 import illarion.client.util.Lang;
+import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.GameListener;
+import org.illarion.engine.assets.TextureManager;
+import org.illarion.engine.nifty.IgeInputSystem;
 import org.illarion.engine.nifty.IgeRenderDevice;
 import org.illarion.engine.nifty.IgeSoundDevice;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 
 /**
  * This is the game Illarion. This class takes care for actually building up Illarion. It will maintain the different
@@ -73,17 +77,14 @@ public final class Game implements GameListener {
      */
     public Game() {
         gameStates = new GameState[4];
-        gameStates[STATE_LOGIN] = new LoginState();
-        gameStates[STATE_LOADING] = new LoadingState();
-        gameStates[STATE_PLAYING] = new PlayingState();
-        gameStates[STATE_ENDING] = new EndState();
     }
 
     public void enterState(final int stateId) {
         if ((stateId >= -1) && (stateId < gameStates.length)) {
             targetListener = stateId;
+        } else {
+            throw new IllegalArgumentException("Illegal stateId: " + stateId);
         }
-        throw new IllegalArgumentException("Illegal stateId: " + stateId);
     }
 
     @Nullable
@@ -94,18 +95,38 @@ public final class Game implements GameListener {
         return null;
     }
 
+    private static final Logger LOGGER = Logger.getLogger(Game.class);
+
     @Override
     public void create(@Nonnull final GameContainer container) {
+        final TextureManager texManager = container.getEngine().getAssets().getTextureManager();
+        texManager.addTextureDirectory("data/gui/");
+        texManager.addTextureDirectory("data/chars/");
+        texManager.addTextureDirectory("data/items/");
+        texManager.addTextureDirectory("data/tiles/");
+        texManager.addTextureDirectory("data/effects/");
 
-        FontLoader.getInstance().prepareAllFonts();
+        try {
+            FontLoader.getInstance().prepareAllFonts(container.getEngine().getAssets());
+        } catch (@Nonnull final IOException e) {
+            LOGGER.error("Error while loading fonts!", e);
+        }
 
+        final InputReceiver inputReceiver = new InputReceiver(container.getEngine().getInput());
         nifty = new Nifty(new IgeRenderDevice(container, "data/gui/"), new IgeSoundDevice(container.getEngine()),
-                new NullInputSystem(), new AccurateTimeProvider());
+                new IgeInputSystem(container.getEngine().getInput(), inputReceiver), new AccurateTimeProvider());
         nifty.setLocale(Lang.getInstance().getLocale());
+
+        gameStates[STATE_LOGIN] = new LoginState();
+        gameStates[STATE_LOADING] = new LoadingState();
+        gameStates[STATE_PLAYING] = new PlayingState(inputReceiver);
+        gameStates[STATE_ENDING] = new EndState();
 
         for (@Nonnull final GameState listener : gameStates) {
             listener.create(this, container, nifty);
         }
+
+        enterState(STATE_LOGIN);
     }
 
     @Override
@@ -138,12 +159,12 @@ public final class Game implements GameListener {
         if (targetListener != activeListener) {
             final GameState activeState = getCurrentState();
             if (activeState != null) {
-                activeState.leaveState();
+                activeState.leaveState(container);
             }
             activeListener = targetListener;
             final GameState newState = getCurrentState();
             if (newState != null) {
-                newState.enterState(nifty);
+                newState.enterState(container, nifty);
             }
         }
 
@@ -158,12 +179,12 @@ public final class Game implements GameListener {
     @Override
     public void render(@Nonnull final GameContainer container) {
         assert nifty != null;
-        nifty.render(false);
 
         final GameState activeListener = getCurrentState();
         if (activeListener != null) {
             activeListener.render(container);
         }
+        nifty.render(false);
     }
 
     @Override

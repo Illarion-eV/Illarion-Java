@@ -19,18 +19,14 @@
 package illarion.client.states;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.slick2d.NiftyOverlayBasicGameState;
-import de.lessvoid.nifty.slick2d.input.SlickSlickInputSystem;
 import illarion.client.Game;
 import illarion.client.Login;
 import illarion.client.input.InputReceiver;
-import illarion.client.util.Lang;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
+import illarion.client.world.events.CloseGameEvent;
+import org.bushe.swing.event.EventBus;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 
@@ -39,46 +35,38 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class PlayingState extends NiftyOverlayBasicGameState {
-    @Override
-    public int getID() {
-        return Game.STATE_PLAYING;
+public class PlayingState implements GameState {
+    /**
+     * The input receiver of the game.
+     */
+    @Nonnull
+    private final InputReceiver receiver;
+
+    public PlayingState(@Nonnull final InputReceiver inputReceiver) {
+        receiver = inputReceiver;
     }
 
     @Override
-    protected void initGameAndGUI(final GameContainer container, final StateBasedGame game)
-            throws SlickException {
-        initNifty(container, game, new SlickSlickInputSystem(new InputReceiver(this)));
-    }
-
-    @Override
-    protected void prepareNifty(@Nonnull final Nifty nifty, final StateBasedGame game) {
-        nifty.setLocale(Lang.getInstance().getLocale());
-        World.initGui(game.getContainer());
+    public void create(@Nonnull final Game game, @Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+        World.initGui(container.getEngine());
         nifty.registerScreenController(World.getGameGui().getScreenController());
 
-        try {
-            nifty.validateXml("illarion/client/gui/xml/gamescreen.xml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        nifty.addXml("illarion/client/gui/xml/gamescreen.xml");
+        Util.loadXML(nifty, "illarion/client/gui/xml/gamescreen.xml");
     }
 
     @Override
-    protected void renderGame(@Nonnull final GameContainer container, final StateBasedGame game, @Nonnull final Graphics g)
-            throws SlickException {
-        World.getMap().getMinimap().render();
-        World.getMapDisplay().render(g, container);
-        World.getWeather().render(g, container);
+    public void dispose() {
     }
 
     @Override
-    protected void updateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta)
-            throws SlickException {
-        MapDimensions.getInstance().reportScreenSize(container.getWidth(), container.getHeight());
+    public void resize(@Nonnull final GameContainer container, final int width, final int height) {
+        MapDimensions.getInstance().reportScreenSize(width, height);
+    }
+
+    @Override
+    public void update(@Nonnull final GameContainer container, final int delta) {
         if (World.getGameGui().isReady()) {
-            World.getUpdateTaskManager().onUpdateGame(container, game, delta);
+            World.getUpdateTaskManager().onUpdateGame(container, delta);
         }
         World.getGameGui().onUpdateGame(container, delta);
         World.getWeather().update(delta);
@@ -88,9 +76,21 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     }
 
     @Override
-    protected void enterState(final GameContainer container, final StateBasedGame game)
-            throws SlickException {
-        getNifty().gotoScreen("gamescreen");
+    public void render(@Nonnull final GameContainer container) {
+        World.getMap().getMinimap().render(container);
+        World.getMapDisplay().render(container);
+    }
+
+    @Override
+    public boolean isClosingGame() {
+        EventBus.publish(new CloseGameEvent());
+        return false;
+    }
+
+    @Override
+    public void enterState(@Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+        nifty.gotoScreen("gamescreen");
+        receiver.setEnabled(true);
 
         if (Login.getInstance().login()) {
             MapDimensions.getInstance().reportScreenSize(container.getWidth(), container.getHeight());
@@ -98,10 +98,7 @@ public class PlayingState extends NiftyOverlayBasicGameState {
     }
 
     @Override
-    protected void leaveState(final GameContainer container, final StateBasedGame game)
-            throws SlickException {
-        // TODO Auto-generated method stub
-
+    public void leaveState(@Nonnull final GameContainer container) {
+        receiver.setEnabled(false);
     }
-
 }

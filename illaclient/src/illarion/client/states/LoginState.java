@@ -21,6 +21,7 @@ package illarion.client.states;
 import de.lessvoid.nifty.Nifty;
 import illarion.client.Game;
 import illarion.client.gui.controller.CharScreenController;
+import illarion.client.gui.controller.CreditsStartScreenController;
 import illarion.client.gui.controller.LoginScreenController;
 import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
@@ -46,8 +47,9 @@ public class LoginState implements GameState {
 
     @Override
     public void create(@Nonnull final Game game, @Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
-        loginScreenController = new LoginScreenController(game);
-        nifty.registerScreenController(loginScreenController, new CharScreenController(game));
+        loginScreenController = new LoginScreenController(game, container.getEngine());
+        nifty.registerScreenController(loginScreenController, new CharScreenController(game),
+                new CreditsStartScreenController(container.getEngine()));
 
         Util.loadXML(nifty, "illarion/client/gui/xml/login.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/charselect.xml");

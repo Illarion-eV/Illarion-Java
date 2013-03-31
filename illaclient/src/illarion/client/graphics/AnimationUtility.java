@@ -19,7 +19,7 @@
 package illarion.client.graphics;
 
 import illarion.common.util.FastMath;
-import org.newdawn.slick.Color;
+import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
 
@@ -84,21 +84,13 @@ public final class AnimationUtility {
      * @return {@code true} in case the colors got changed
      */
     public static boolean approach(@Nonnull final Color workingColor, @Nonnull final Color targetColor, final int delta) {
-        if (FastMath.equals(workingColor.r, targetColor.r, 1.f / 254.f)
-                && FastMath.equals(workingColor.g, targetColor.g, 1.f / 254.f)
-                && FastMath.equals(workingColor.b, targetColor.b, 1.f / 254.f)
-                && FastMath.equals(workingColor.a, targetColor.a, 1.f / 254.f)) {
-
-            workingColor.r = targetColor.r;
-            workingColor.g = targetColor.g;
-            workingColor.b = targetColor.b;
-            workingColor.a = targetColor.a;
+        if (workingColor.equals(targetColor)) {
             return false;
         }
-        workingColor.r = approach(workingColor.getRed(), targetColor.getRed(), 0, 255, delta) / 255.f;
-        workingColor.g = approach(workingColor.getGreen(), targetColor.getGreen(), 0, 255, delta) / 255.f;
-        workingColor.b = approach(workingColor.getBlue(), targetColor.getBlue(), 0, 255, delta) / 255.f;
-        workingColor.a = approach(workingColor.getAlpha(), targetColor.getAlpha(), 0, 255, delta) / 255.f;
+        workingColor.setRed(approach(workingColor.getRed(), targetColor.getRed(), 0, Color.MAX_INT_VALUE, delta));
+        workingColor.setGreen(approach(workingColor.getGreen(), targetColor.getGreen(), 0, Color.MAX_INT_VALUE, delta));
+        workingColor.setBlue(approach(workingColor.getBlue(), targetColor.getBlue(), 0, Color.MAX_INT_VALUE, delta));
+        workingColor.setAlpha(approach(workingColor.getAlpha(), targetColor.getAlpha(), 0, Color.MAX_INT_VALUE, delta));
 
         return true;
     }

@@ -38,8 +38,8 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
     /**
      * The instance of the slick input that is used by this input engine implementation for Slick2D.
      */
-    @Nonnull
-    private final Input input;
+    @Nullable
+    private Input input;
 
     /**
      * The queue of input events that are published once the polling function is called.
@@ -55,13 +55,9 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
 
     /**
      * Create a new instance of the slick input.
-     *
-     * @param slickInput the slick input provider
      */
-    SlickInput(@Nonnull final Input slickInput) {
-        input = slickInput;
+    SlickInput() {
         pollingQueue = new LinkedList<Runnable>();
-        input.addListener(this);
     }
 
     /**
@@ -454,11 +450,17 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
 
     @Override
     public int getMouseX() {
+        if (input == null) {
+            return 0;
+        }
         return input.getMouseX();
     }
 
     @Override
     public int getMouseY() {
+        if (input == null) {
+            return 0;
+        }
         return input.getMouseY();
     }
 
@@ -484,6 +486,9 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
 
     @Override
     public boolean isButtonDown(@Nonnull final Button button) {
+        if (input == null) {
+            return false;
+        }
         final int buttonId = getSlickButtonId(button);
         if (buttonId > 0) {
             return input.isMouseButtonDown(buttonId);
@@ -493,6 +498,9 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
 
     @Override
     public boolean isKeyDown(@Nonnull final Key key) {
+        if (input == null) {
+            return false;
+        }
         final int slickKey = getSlickKeyId(key);
         if (slickKey > -1) {
             return input.isKeyDown(slickKey);
@@ -662,8 +670,18 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
     }
 
     @Override
-    public void setInput(@Nonnull final Input input) {
-        // not needed
+    public void setInput(@Nullable final Input input) {
+        if (this.input != input) {
+            if (this.input != null) {
+                this.input.removeListener(this);
+            }
+            this.input = null;
+            if (input != null) {
+                input.enableKeyRepeat();
+                this.input = input;
+                input.addListener(this);
+            }
+        }
     }
 
     @Override

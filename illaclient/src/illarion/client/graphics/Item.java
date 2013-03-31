@@ -33,9 +33,10 @@ import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Graphics;
+import org.illarion.engine.graphic.SceneEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -162,32 +163,21 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return showHighlight;
     }
 
-    /**
-     * Draw the item on the screen on a specified location. In case the item has
-     * to fade out in order to free the view on the player character this is
-     * done here also. And it case the item needs to draw a number, this is done
-     * as well.
-     *
-     * @return <code>true</code> in case the render operation is done
-     *         successfully
-     */
     @Override
-    public boolean draw(@Nonnull final Graphics g) {
-        super.draw(g);
+    public void render(@Nonnull final Graphics g) {
+        super.render(g);
 
         if (showNumber && (number != null)) {
-            number.draw(g);
+            number.render(g);
         }
 
         showHighlight = 0;
-
-        return true;
     }
 
     /**
      * Enable the display of numbers for stacked items.
      *
-     * @param newShowNumber <code>true</code> to show the number at this item
+     * @param newShowNumber {@code true} to show the number at this item
      */
     public void enableNumbers(final boolean newShowNumber) {
         showNumber = newShowNumber && getTemplate().getItemInfo().isMovable();
@@ -224,7 +214,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     private static final Logger LOGGER = Logger.getLogger(Item.class);
 
     @Override
-    public boolean processEvent(@Nonnull final GameContainer container, final int delta, @Nonnull final MapInteractionEvent event) {
+    public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
+                                    @Nonnull final SceneEvent event) {
         if (!parentTile.isAtPlayerLevel()) {
             return false;
         }
@@ -289,7 +280,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         // write number to text for display
         if (count.getValue() > 1) {
-            number = new TextTag(Integer.toString(count.getValue()), Color.yellow);
+            number = new TextTag(Integer.toString(count.getValue()), Color.YELLOW);
             number.setOffset((MapConstants.TILE_W / 2) - number.getHeight() - number.getWidth(),
                     -number.getHeight() / 2);
         } else {

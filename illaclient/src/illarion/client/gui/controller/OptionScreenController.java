@@ -26,18 +26,13 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 import illarion.client.Servers;
-import illarion.client.graphics.DisplayModeSorter;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
-import illarion.common.graphics.GraphicResolution;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.util.Display;
-import org.newdawn.slick.GameContainer;
+import org.illarion.engine.DesktopGameContainer;
+import org.illarion.engine.graphic.GraphicResolution;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public final class OptionScreenController implements ScreenController {
@@ -79,11 +74,13 @@ public final class OptionScreenController implements ScreenController {
 
         runAutoAvoid = tabRoot.findNiftyControl("runAutoAvoid", CheckBox.class);
 
+        //noinspection unchecked
         sendCrashReports = tabRoot.findNiftyControl("sendCrashReports", DropDown.class);
         sendCrashReports.addItem("${options-bundle.report.ask}");
         sendCrashReports.addItem("${options-bundle.report.always}");
         sendCrashReports.addItem("${options-bundle.report.never}");
 
+        //noinspection unchecked
         resolutions = tabRoot.findNiftyControl("resolutions", DropDown.class);
         resolutions.addAllItems(getResolutionList());
 
@@ -177,24 +174,14 @@ public final class OptionScreenController implements ScreenController {
 
     @Nonnull
     public static List<String> getResolutionList() {
-        final GameContainer container = IllaClient.getInstance().getContainer();
+        final DesktopGameContainer container = IllaClient.getInstance().getContainer();
 
-        DisplayMode[] displayModes;
-        try {
-            displayModes = Display.getAvailableDisplayModes(800, 600, container.getScreenWidth(),
-                    container.getScreenHeight(), 24, 32, 40, 120);
-        } catch (LWJGLException exc) {
-            displayModes = new DisplayMode[1];
-            displayModes[0] = new DisplayMode(800, 600);
-        }
-
-        Arrays.sort(displayModes, new DisplayModeSorter());
+        final GraphicResolution[] resolutions = container.getFullScreenResolutions();
 
         final List<String> resList = new ArrayList<String>();
 
-        for (final DisplayMode mode : displayModes) {
-            resList.add(new GraphicResolution(mode.getWidth(), mode.getHeight(), mode.getBitsPerPixel(),
-                    mode.getFrequency()).toString());
+        for (final GraphicResolution resolution : resolutions) {
+            resList.add(resolution.toString());
         }
 
         return resList;

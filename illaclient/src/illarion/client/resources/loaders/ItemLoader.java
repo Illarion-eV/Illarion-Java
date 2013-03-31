@@ -18,15 +18,17 @@
  */
 package illarion.client.resources.loaders;
 
-import illarion.client.graphics.Sprite;
-import illarion.client.graphics.SpriteBuffer;
 import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.ItemTemplate;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.util.TableLoaderItems;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
+import org.illarion.engine.assets.Assets;
+import org.illarion.engine.assets.SpriteFactory;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Sprite;
+import org.illarion.engine.graphic.Texture;
 
 import javax.annotation.Nonnull;
 
@@ -44,11 +46,33 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
     private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
 
     /**
-     * The resource path to the item graphics. All graphics need to be located
-     * at this path within the JAR-resource files.
+     * The resource path to the item graphics. All graphics need to be located at this path within the JAR-resource
+     * files.
      */
     @SuppressWarnings("nls")
     private static final String ITEM_PATH = "data/items/";
+
+    /**
+     * The resource path to the GUI graphics. All graphics need to be located at this path within the JAR-resource
+     * files.
+     */
+    @SuppressWarnings("nls")
+    private static final String GUI_PATH = "data/gui/";
+
+    /**
+     * The assets of the game engine that are required to load the data needed for the items.
+     */
+    @Nonnull
+    private final Assets assets;
+
+    /**
+     * Create a new item loader.
+     *
+     * @param assets the assets instance of the game engine that is used to load the data
+     */
+    public ItemLoader(@Nonnull final Assets assets) {
+        this.assets = assets;
+    }
 
     @Override
     public ResourceFactory<ItemTemplate> call() {
@@ -58,7 +82,6 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
 
         final ResourceFactory<ItemTemplate> factory = getTargetFactory();
 
-        assert factory != null;
         factory.init();
         new TableLoaderItems(this);
         factory.loadingFinished();
@@ -119,10 +142,18 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
             speed = 0;
         }
 
-        final Sprite itemSprite = SpriteBuffer.getInstance().getSprite(ITEM_PATH, name, frames, offsetX, offsetY,
-                Sprite.HAlign.center, Sprite.VAlign.bottom, false);
+        final Sprite itemSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
+                ITEM_PATH, name, frames), offsetX, offsetY, SpriteFactory.CENTER, SpriteFactory.BOTTOM, false);
 
-        final ItemTemplate template = new ItemTemplate(itemID, name, itemSprite, frames, offsetShadow, speed,
+        final Texture guiTexture = assets.getTextureManager().getTexture(GUI_PATH, "items/" + name);
+        final Texture usedGuiTexture;
+        if (guiTexture == null) {
+            usedGuiTexture = itemSprite.getFrame(0);
+        } else {
+            usedGuiTexture = guiTexture;
+        }
+
+        final ItemTemplate template = new ItemTemplate(itemID, itemSprite, usedGuiTexture, frames, offsetShadow, speed,
                 info, paperdollingRef, paperdollingColor);
 
         // register item with factory

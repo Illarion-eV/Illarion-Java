@@ -68,11 +68,10 @@ public final class Loading {
         progressMonitor = new ProgressMonitor();
         if (!loadingDone) {
             addToTaskList(new TextureLoadingTask(gameEngine));
-            addToTaskList(new ResourceTableLoading());
-            addToTaskList(new GameEnvironmentLoading());
+            addToTaskList(new ResourceTableLoading(gameEngine));
+            addToTaskList(new GameEnvironmentLoading(gameEngine));
             loadingDone = true;
         }
-        addToTaskList(new FinishLoading());
     }
 
     /**

@@ -18,8 +18,7 @@
  */
 package illarion.client.util;
 
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.state.StateBasedGame;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 
@@ -33,8 +32,7 @@ public interface UpdateTask {
      * This function is called during the text run of the update loop.
      *
      * @param container the container that displays the game
-     * @param game      the reference to the game itself
      * @param delta     the time since the last update in milliseconds
      */
-    void onUpdateGame(@Nonnull GameContainer container, StateBasedGame game, int delta);
+    void onUpdateGame(@Nonnull GameContainer container, int delta);
 }

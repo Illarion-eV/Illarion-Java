@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Hamcrest">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/hamcrest" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/hamcrest" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/hamcrest" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/hamcrest" recursive="false" type="SOURCES" />
+  </library>
+</component>

@@ -47,8 +47,7 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.state.StateBasedGame;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 
@@ -203,7 +202,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     public void updateSkill(@Nonnull final Skill skill, final int value, final int minor) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                 internalUpdateSkill(skill, value);
             }
         });
@@ -307,7 +306,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         if ("ToggleCharacterWindow".equals(data)) {
             World.getUpdateTaskManager().addTask(new UpdateTask() {
                 @Override
-                public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+                public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                     toggleSkillWindow();
                 }
             });

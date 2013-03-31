@@ -18,9 +18,8 @@
  */
 package illarion.client.gui;
 
-import de.lessvoid.nifty.slick2d.render.image.ImageSlickRenderImage;
 import illarion.client.resources.data.ItemTemplate;
-import org.newdawn.slick.Image;
+import org.illarion.engine.nifty.IgeTextureRenderImage;
 
 /**
  * This implementation of a slick render image is used to show a image that is usually used in the game graphics,
@@ -28,24 +27,13 @@ import org.newdawn.slick.Image;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class EntitySlickRenderImage extends ImageSlickRenderImage {
-    /**
-     * The entity that is supposed to be displayed.
-     */
-    private final ItemTemplate entity;
-
+public class EntitySlickRenderImage extends IgeTextureRenderImage {
     /**
      * Create this render image that refers to a specified entity.
      *
      * @param entity the entity the image refers to
      */
     public EntitySlickRenderImage(final ItemTemplate entity) {
-        super(null);
-        this.entity = entity;
-    }
-
-    @Override
-    protected Image getImage() {
-        return entity.getGuiTexture();
+        super(entity.getGuiTexture());
     }
 }

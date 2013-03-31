@@ -43,7 +43,7 @@
 
                     <panel childLayout="horizontal" marginBottom="15px">
                         <control name="label" text="${login-bundle.password}" textHAlign="left" width="130px"/>
-                        <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="•" marginLeft="10px"/>
+                        <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="*" marginLeft="10px"/>
                     </panel>
 
                     <panel childLayout="horizontal" marginBottom="30px">

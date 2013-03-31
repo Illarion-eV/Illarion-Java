@@ -18,7 +18,7 @@
  */
 package illarion.client.graphics;
 
-import org.newdawn.slick.GameContainer;
+import org.illarion.engine.graphic.SceneElement;
 
 /**
  * Interface for a object that can be rendered on the screen.
@@ -26,15 +26,7 @@ import org.newdawn.slick.GameContainer;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public interface DisplayItem extends Drawable {
-    /**
-     * Get the z order of the item. This order is used to sort the display items
-     * in a proper order to be rendered.
-     *
-     * @return the z layer coordinate of the display item
-     */
-    int getZOrder();
-
+public interface DisplayItem extends SceneElement {
     /**
      * Remove object from display list.
      */
@@ -44,14 +36,4 @@ public interface DisplayItem extends Drawable {
      * Show object by adding it to the display list.
      */
     void show();
-
-    /**
-     * Handle the event.
-     *
-     * @param c
-     * @param delta
-     * @param event the event to process  @return {@code true} in case the event was processed,
-     *              false in case it was not
-     */
-    boolean processEvent(final GameContainer c, final int delta, MapInteractionEvent event);
 }

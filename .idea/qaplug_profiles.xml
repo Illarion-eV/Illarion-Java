@@ -12,7 +12,7 @@
         <option name="myLocal" value="false" />
         <coding_rule class="AM_CREATES_EMPTY_JAR_FILE_ENTRY" level="WARNING" enabled="true" />
         <coding_rule class="AM_CREATES_EMPTY_ZIP_FILE_ENTRY" level="WARNING" enabled="true" />
-        <coding_rule class="AbstractClassNameCheck" level="WARNING" enabled="true">
+        <coding_rule class="AbstractClassNameCheck" level="WARNING" enabled="false">
           <param name="ignoreModifier" value="false" />
           <param name="ignoreName" value="false" />
         </coding_rule>
@@ -31,7 +31,7 @@
         <coding_rule class="ArrayTrailingCommaCheck" level="WARNING" enabled="true" />
         <coding_rule class="ArrayTypeStyleCheck" level="INFO" enabled="true" />
         <coding_rule class="AssignmentInsideConditionalInspector" level="WARNING" enabled="true" />
-        <coding_rule class="AvoidInlineConditionalsCheck" level="INFO" enabled="true" />
+        <coding_rule class="AvoidInlineConditionalsCheck" level="INFO" enabled="false" />
         <coding_rule class="AvoidNestedBlocksCheck" level="WARNING" enabled="true" />
         <coding_rule class="AvoidStarImportCheck" level="INFO" enabled="false">
           <param name="allowClassImports" value="false" />
@@ -559,7 +559,7 @@
         <coding_rule class="MissingDeprecatedCheck" level="WARNING" enabled="true" />
         <coding_rule class="MissingOverrideCheck" level="WARNING" enabled="true" />
         <coding_rule class="MissingPackageDeclarationInspector" level="WARNING" enabled="true" />
-        <coding_rule class="MissingSwitchDefaultCheck" level="WARNING" enabled="true" />
+        <coding_rule class="MissingSwitchDefaultCheck" level="WARNING" enabled="false" />
         <coding_rule class="ModifiedControlVariableCheck" level="WARNING" enabled="true" />
         <coding_rule class="ModifierOrderCheck" level="INFO" enabled="true" />
         <coding_rule class="ModifiersOrderInspector" level="WARNING" enabled="true" />
@@ -855,7 +855,7 @@
         <coding_rule class="SuperFinalizeCheck" level="WARNING" enabled="true" />
         <coding_rule class="SuppressWarningsCheck" level="WARNING" enabled="true" />
         <coding_rule class="SwitchCaseBreakInspector" level="WARNING" enabled="true" />
-        <coding_rule class="SwitchDefaultInspector" level="WARNING" enabled="true" />
+        <coding_rule class="SwitchDefaultInspector" level="WARNING" enabled="false" />
         <coding_rule class="SynchronizedInspector" level="WARNING" enabled="true" />
         <coding_rule class="SystemGcMisuseInspector" level="WARNING" enabled="true" />
         <coding_rule class="SystemPrintlnLoggingInspector" level="WARNING" enabled="true" />
@@ -923,7 +923,7 @@
         <coding_rule class="UpperEllCheck" level="INFO" enabled="true" />
         <coding_rule class="UpperLInspector" level="WARNING" enabled="true" />
         <coding_rule class="UseBigDecimalInsteadOfFloatAndDoubleInspector" level="WARNING" enabled="true" />
-        <coding_rule class="UseCollectionsInsteadOfArraysInspector" level="WARNING" enabled="true" />
+        <coding_rule class="UseCollectionsInsteadOfArraysInspector" level="WARNING" enabled="false" />
         <coding_rule class="UseEqualsInsteadOfCompareToInspector" level="WARNING" enabled="true" />
         <coding_rule class="UselessOperationOnImmutableInspector" level="WARNING" enabled="true">
           <param name="immutables" value="java.lang.Object,java.lang.String,java.math.BigDecimal,java.math.BigInteger,java.lang.Number,java.lang.Byte,java.lang.Double,java.lang.Float,java.lang.Integer,java.lang.Long,java.lang.Short,java.lang.Boolean,java.lang.Character" />

@@ -64,7 +64,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      */
     public ApplicationGameContainer(final GameListener gameListener) throws SlickEngineException {
         try {
-            slickContainer = new AppGameContainer(new ListenerGame(gameListener));
+            slickContainer = new AppGameContainer(new ListenerGame(gameListener, this));
             slickContainer.setForceExit(false);
             engine = new SlickEngine(slickContainer);
             windowHeight = slickContainer.getHeight();
@@ -87,7 +87,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     public ApplicationGameContainer(final GameListener gameListener, final int width,
                                     final int height, final boolean fullScreen) throws SlickEngineException {
         try {
-            slickContainer = new AppGameContainer(new ListenerGame(gameListener), width, height, fullScreen);
+            slickContainer = new AppGameContainer(new ListenerGame(gameListener, this), width, height, fullScreen);
             slickContainer.setForceExit(false);
             engine = new SlickEngine(slickContainer);
             windowHeight = slickContainer.getHeight();

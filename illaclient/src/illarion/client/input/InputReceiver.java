@@ -147,7 +147,16 @@ public final class InputReceiver implements InputListener {
      */
     private final PointAtHelper pointAtHelper = new PointAtHelper();
 
+    /**
+     * The input engine.
+     */
     private final Input input;
+
+    /**
+     * In case this value is set {@code true} this receiver is active and working. If not will discard all events
+     * received.
+     */
+    private boolean enabled;
 
     /**
      * Create a new instance of the input receiver.
@@ -156,11 +165,23 @@ public final class InputReceiver implements InputListener {
      */
     public InputReceiver(final Input input) {
         this.input = input;
+        enabled = false;
+    }
+
+    /**
+     * Set the enabled flag of this input receiver.
+     *
+     * @param value the new enabled flag
+     */
+    public void setEnabled(final boolean value) {
+        enabled = value;
     }
 
     @Override
     public void keyDown(@Nonnull final Key key) {
-        keyMapper.handleKeyInput(key);
+        if (enabled) {
+            keyMapper.handleKeyInput(key);
+        }
     }
 
     @Override
@@ -180,26 +201,35 @@ public final class InputReceiver implements InputListener {
 
     @Override
     public void buttonUp(final int mouseX, final int mouseY, @Nonnull final Button button) {
-        World.getPlayer().getMovementHandler().stopWalkTowards();
-        input.disableForwarding(ForwardingTarget.Mouse);
+        if (enabled) {
+            World.getPlayer().getMovementHandler().stopWalkTowards();
+            input.disableForwarding(ForwardingTarget.Mouse);
+        }
     }
 
     @Override
     public void buttonClicked(final int mouseX, final int mouseY, @Nonnull final Button button, final int count) {
-        buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
-        buttonMultiClickHelper.pulse();
+        if (enabled) {
+            buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
+            buttonMultiClickHelper.pulse();
+        }
     }
 
     @Override
     public void mouseMoved(final int mouseX, final int mouseY) {
-        pointAtHelper.setInputData(mouseX, mouseY);
-        pointAtHelper.pulse();
-        EventBus.publish(new MoveOnMapEvent(mouseX, mouseY));
+        if (enabled) {
+            pointAtHelper.setInputData(mouseX, mouseY);
+            pointAtHelper.pulse();
+            EventBus.publish(new MoveOnMapEvent(mouseX, mouseY));
+        }
     }
 
     @Override
-    public void mouseDragged(@Nonnull final Button button, final int fromX, final int fromY, final int toX, final int toY) {
-        EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button));
+    public void mouseDragged(@Nonnull final Button button, final int fromX, final int fromY, final int toX,
+                             final int toY) {
+        if (enabled) {
+            EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button));
+        }
     }
 
     @Override

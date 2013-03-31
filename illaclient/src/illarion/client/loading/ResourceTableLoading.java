@@ -18,11 +18,10 @@
  */
 package illarion.client.loading;
 
-import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.resources.*;
 import illarion.client.resources.loaders.*;
-import illarion.client.util.GlobalExecutorService;
 import illarion.common.util.ProgressMonitor;
+import org.illarion.engine.Engine;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -55,18 +54,20 @@ public final class ResourceTableLoading implements LoadingTask {
 
     /**
      * Create a new resource table loading task and enlist all the sub-tasks.
+     *
+     * @param gameEngine the engine of the game
      */
-    public ResourceTableLoading() {
+    public ResourceTableLoading(@Nonnull final Engine gameEngine) {
         taskList = new ArrayList<AbstractResourceLoader<? extends Resource>>();
         progressMonitor = new ProgressMonitor();
 
-        addTask(new TileLoader(), TileFactory.getInstance());
-        addTask(new OverlayLoader(), OverlayFactory.getInstance());
-        addTask(new ItemLoader(), ItemFactory.getInstance());
-        addTask(new CharacterLoader(), CharacterFactory.getInstance());
-        addTask(new ClothLoader(), new ClothFactoryRelay());
-        addTask(new EffectLoader(), EffectFactory.getInstance());
-        addTask(new MiscImageLoader(), MiscImageFactory.getInstance());
+        addTask(new TileLoader(gameEngine.getAssets()), TileFactory.getInstance());
+        addTask(new OverlayLoader(gameEngine.getAssets()), OverlayFactory.getInstance());
+        addTask(new ItemLoader(gameEngine.getAssets()), ItemFactory.getInstance());
+        addTask(new CharacterLoader(gameEngine.getAssets()), CharacterFactory.getInstance());
+        addTask(new ClothLoader(gameEngine.getAssets()), new ClothFactoryRelay());
+        addTask(new EffectLoader(gameEngine.getAssets()), EffectFactory.getInstance());
+        addTask(new MiscImageLoader(gameEngine.getAssets()), MiscImageFactory.getInstance());
         addTask(new BookLoader(), BookFactory.getInstance());
     }
 
@@ -86,16 +87,22 @@ public final class ResourceTableLoading implements LoadingTask {
 
     @Override
     public void load() {
-        if (loadingTriggered) {
-            return;
+        if (!taskList.isEmpty()) {
+            final AbstractResourceLoader<? extends Resource> loader = taskList.remove(0);
+            try {
+                loader.call();
+            } catch (Exception e) {
+                e.printStackTrace(System.err);
+            }
         }
-        loadingTriggered = true;
+        //if (loadingTriggered) {
+        //    return;
+        //}
+        //loadingTriggered = true;
 
-        for (final AbstractResourceLoader<? extends Resource> loader : taskList) {
-            GlobalExecutorService.getService().submit(loader);
-        }
-
-        ShaderManager.getInstance().load();
+        //for (final AbstractResourceLoader<? extends Resource> loader : taskList) {
+        //    GlobalExecutorService.getService().submit(loader);
+        //}
     }
 
     @Override

@@ -19,26 +19,18 @@
 package illarion.client.graphics;
 
 import illarion.client.IllaClient;
-import illarion.client.input.CurrentMouseLocationEvent;
-import illarion.client.world.GameMap;
-import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 import illarion.common.types.Location;
-import illarion.common.types.Rectangle;
-import javolution.util.FastComparator;
-import javolution.util.FastTable;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.*;
-import org.newdawn.slick.opengl.renderer.SGL;
+import org.illarion.engine.Engine;
+import org.illarion.engine.EngineException;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Scene;
+import org.illarion.engine.graphic.effects.FogEffect;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * The map display manager stores and manages all objects displayed on the map. It takes care for rendering the objects
@@ -49,53 +41,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public final class MapDisplayManager
         implements AnimatedMove {
-    /**
-     * This comparator is used to order the display list in case it is needed.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class DisplayListComparator
-            extends FastComparator<DisplayItem> {
-        /**
-         * The serialization UID.
-         */
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * Public constructor to allow the parent class creating instances.
-         */
-        DisplayListComparator() {
-            // nothing to do
-        }
-
-        /**
-         * Test of two objects are equal. This returns <code>true</code> also in case both objects are
-         * <code>null</code>.
-         */
-        @Override
-        public boolean areEqual(final DisplayItem o1, final DisplayItem o2) {
-            return o1 == o2;
-        }
-
-        /**
-         * Compare two instances of the object and there relative offset that is needed for ordering this objects.
-         */
-        @Override
-        public int compare(@Nonnull final DisplayItem o1, @Nonnull final DisplayItem o2) {
-            return o2.getZOrder() - o1.getZOrder();
-        }
-
-        /**
-         * Get the hash code of a object.
-         */
-        @Override
-        public int hashCodeOf(@Nullable final DisplayItem obj) {
-            if (obj == null) {
-                return 0;
-            }
-            return obj.hashCode();
-        }
-    }
 
     /**
      * Offset of the tiles due the perspective of the map view.
@@ -110,20 +55,12 @@ public final class MapDisplayManager
 
     @Nonnull
     private final FadingCorridor corridor;
-    @Nonnull
-    private final FastTable<DisplayItem> display;
-    @Nonnull
-    private final DisplayListComparator displayListComperator;
-    @Nonnull
-    private final WeatherRenderer weatherRenderer;
 
     private int dL;
     private int dX;
     private int dY;
 
     private int elevation;
-
-    private final Color fadeOutColor = new Color(0);
 
     @Nonnull
     private final MoveAnimation levelAni;
@@ -133,17 +70,20 @@ public final class MapDisplayManager
 
     private static final Logger LOGGER = Logger.getLogger(MapDisplayManager.class);
 
-    public MapDisplayManager() {
+    /**
+     * The scene the game is displayed in.
+     */
+    @Nonnull
+    private final Scene gameScene;
+
+    public MapDisplayManager(@Nonnull final Engine engine) {
         active = false;
         ani = new MoveAnimation(this);
 
-        display = new FastTable<DisplayItem>();
-        displayListComperator = new DisplayListComparator();
-        display.setValueComparator(displayListComperator);
         corridor = FadingCorridor.getInstance();
         origin = new Location();
 
-        weatherRenderer = new WeatherRenderer();
+        gameScene = engine.getAssets().createNewScene();
 
         dX = 0;
         dY = 0;
@@ -164,15 +104,13 @@ public final class MapDisplayManager
     }
 
     /**
-     * Make item visible on screen
+     * Get the game scene that is managed by this display manager.
      *
-     * @param item the item that needs to be added to the screen
+     * @return the game scene
      */
-    @SuppressWarnings("nls")
-    public void add(@Nonnull final DisplayItem item) {
-        synchronized (display) {
-            insertSorted(item);
-        }
+    @Nonnull
+    public Scene getGameScene() {
+        return gameScene;
     }
 
     /**
@@ -235,7 +173,7 @@ public final class MapDisplayManager
         // adjust Z-order after update
         final Avatar playerAvatar = World.getPlayer().getCharacter().getAvatar();
         if (playerAvatar != null) {
-            readd(playerAvatar);
+            gameScene.updateElementLocation(playerAvatar);
         }
     }
 
@@ -289,85 +227,6 @@ public final class MapDisplayManager
     }
 
     /**
-     * Display lookat text
-     *
-     * @param x    screen coordinates
-     * @param y
-     * @param text
-     */
-    public void lookAt(int x, int y, final String text) {
-        x += (getMapCenterX() - origin.getDcX()) + dX;
-        y += (getMapCenterY() - origin.getDcY()) + dY;
-        // y += MAP_CENTER_Y + dY;
-
-        // Tooltip tip = Tooltip.create();
-        // tip.initText(text);
-        // tip.show(x, y + MapConstants.TILE_H);
-        // tip.setColor(Colors.white);
-        // Gui.getInstance().addToolTip(tip);
-
-    }
-
-    /**
-     * Remove and add a item again. This has to be done in case the value of a item changed.
-     *
-     * @param item the display item to remove and add again
-     */
-    public void readd(@Nullable final DisplayItem item) {
-        if (item == null) {
-            assert false : "Trying to add NULL displayItem";
-            return;
-        }
-
-        synchronized (display) {
-            if (display.remove(item)) {
-                insertSorted(item);
-            } else {
-                LOGGER.warn("Adding the item " + item + " to the display list again failed.");
-            }
-        }
-    }
-
-    /**
-     * The list of areas that became dirty because the display item in this area got removed.
-     */
-    @Nonnull
-    private final List<Rectangle> removedAreaList = new ArrayList<Rectangle>();
-
-    /**
-     * Remove item from screen
-     *
-     * @param item remove one display item from the list of items
-     */
-    public void remove(@Nonnull final DisplayItem item) {
-        synchronized (display) {
-            if (display.remove(item)) {
-                final Rectangle displayRect = item.getLastDisplayRect();
-                if (!displayRect.isEmpty()) {
-                    removedAreaList.add(new Rectangle(displayRect));
-                }
-            } else {
-                LOGGER.error("Removing display item " + item + " failed.");
-            }
-        }
-    }
-
-    /**
-     * The queue of interactive events that need to be send to the display components at the next update.
-     */
-    @Nonnull
-    private Queue<MapInteractionEvent> eventQueue = new ConcurrentLinkedQueue<MapInteractionEvent>();
-
-    /**
-     * Publish a event to the event queue that is send to all entries on the map display.
-     *
-     * @param event the event to publish
-     */
-    public void publishInteractionEvent(final MapInteractionEvent event) {
-        eventQueue.offer(event);
-    }
-
-    /**
      * Update the display entries.
      *
      * @param container the container that holds the game
@@ -391,177 +250,49 @@ public final class MapDisplayManager
         }
 
         Camera.getInstance().setViewport(-offX, -offY, container.getWidth(), container.getHeight());
-        Camera.getInstance().clearDirtyAreas();
 
-        synchronized (display) {
-            for (int i1 = 0; i1 < removedAreaList.size(); i1++) {
-                final Rectangle rect = removedAreaList.get(i1);
-                Camera.getInstance().markAreaDirty(rect);
-            }
-            removedAreaList.clear();
-            synchronized (GameMap.LIGHT_LOCK) {
-                while (true) {
-                    final MapInteractionEvent event = eventQueue.poll();
-                    if (event == null) {
-                        break;
-                    }
-
-                    publishEvent(container, delta, event);
-                }
-                publishEvent(container, delta, new CurrentMouseLocationEvent(container.getInput()));
-
-                // update the items, backwards
-                for (int i = display.size() - 1; i >= 0; i--) {
-                    display.get(i).update(container, delta);
-                }
-            }
-        }
-
-        weatherRenderer.update(container, delta);
-
-        if (fadeOutColor.getAlpha() > 0) {
-            fadeOutColor.a = AnimationUtility.approach(fadeOutColor.getAlpha(), 0, 0, 255, delta) / 255.f;
-        }
+        gameScene.update(container, delta);
     }
 
-    /**
-     * Send a event to all displayed items.
-     *
-     * @param container the container that displays the game
-     * @param delta     the time since the last update
-     * @param event     the event that needs to be processed
-     */
-    private void publishEvent(final GameContainer container, final int delta,
-                              @Nonnull final MapInteractionEvent event) {
-        for (int i = display.size() - 1; i >= 0; i--) {
-            if (display.get(i).processEvent(container, delta, event)) {
-                return;
-            }
-        }
-        event.eventNotHandled();
-    }
-
-    /**
-     * This image is used to render the game screen on. It holds the texture that holds the current graphics of the
-     * game. This will contain {@code null} in case render-to-texture is not supported by the host system.
-     */
-    private Image gameScreenImage;
-
-    /**
-     * This value is set true in case the display size is changed.
-     */
-    private boolean changedDisplaySize;
-
-    /**
-     * This reports to the GUI that the display size got changed.
-     */
-    public void reportChangedDisplaySize() {
-        changedDisplaySize = true;
-    }
+    private boolean fogEnabled;
 
     /**
      * Render all visible map items
      *
-     * @param g the graphics component that is used to render the screen
      * @param c the game container the map is rendered in
      */
-    public void render(@Nonnull final Graphics g, @Nonnull final GameContainer c) {
+    public void render(@Nonnull final GameContainer c) {
         if (!active) {
             return;
         }
 
-        if ((gameScreenImage == null) || changedDisplaySize) {
-            changedDisplaySize = false;
-            final int width = MapDimensions.getInstance().getOnScreenWidth();
-            final int height = MapDimensions.getInstance().getOnScreenHeight();
-            if (gameScreenImage != null) {
-                if ((gameScreenImage.getTextureHeight() >= height) && (gameScreenImage.getTextureWidth() >= width)) {
-                    gameScreenImage = gameScreenImage.getSubImage(0, 0, width, height);
-                } else {
-                    try {
-                        gameScreenImage.destroy();
-                        gameScreenImage = null;
-                    } catch (SlickException e) {
-                        LOGGER.warn("Destruction of old backing image failed.");
-                    }
+        final float fog = World.getWeather().getFog();
+        if (fog > 0.f) {
+            try {
+                final FogEffect effect = c.getEngine().getAssets().getEffectManager().getFogEffect(true);
+                effect.setDensity(fog);
+                if (!fogEnabled) {
+                    gameScene.addEffect(effect);
+                    fogEnabled = true;
                 }
+            } catch (EngineException e) {
+                // error activating fog
             }
-            if (gameScreenImage == null) {
-                try {
-                    gameScreenImage = Image.createOffscreenImage(MapDimensions.getInstance().getOnScreenWidth(),
-                            MapDimensions.getInstance().getOnScreenHeight(), SGL.GL_LINEAR);
-                } catch (SlickException e) {
-                    LOGGER.error("Rendering to texture fails.", e);
-                    return;
-                }
+        } else if (fogEnabled) {
+            try {
+                final FogEffect effect = c.getEngine().getAssets().getEffectManager().getFogEffect(true);
+                gameScene.removeEffect(effect);
+                fogEnabled = false;
+            } catch (EngineException e) {
+                // error activating fog
             }
         }
 
-        final Graphics usedGraphics;
-        try {
-            usedGraphics = gameScreenImage.getGraphics();
-        } catch (SlickException e) {
-            LOGGER.warn("Fetching render to texture context failed.", e);
-            return;
-        }
-
-        renderImpl(usedGraphics);
-
-        Image resultImage;
-        try {
-            resultImage = weatherRenderer.postProcess(gameScreenImage);
-        } catch (SlickException e) {
-            LOGGER.error("Postprocessing the output image failed!", e);
-            resultImage = gameScreenImage;
-        }
-        g.drawImage(resultImage, 0, 0);
-
-        Camera.getInstance().renderDebug(g);
-
-        if (fadeOutColor.getAlpha() > 0) {
-            g.setColor(fadeOutColor);
-            g.setLineWidth(3.f);
-            g.fillRect(0, 0, c.getWidth(), c.getHeight());
-        }
-    }
-
-    public int getHeightOffset() {
-        if (gameScreenImage == null) {
-            return 0;
-        }
-        return gameScreenImage.getTexture().getTextureHeight() - gameScreenImage.getHeight();
-    }
-
-    /**
-     * Implementation of the core rendering function that just renders the map to the assigned graphic context.
-     *
-     * @param g the graphics context used for the render operation
-     */
-    private void renderImpl(@Nonnull final Graphics g) {
         final Camera camera = Camera.getInstance();
-
-        Graphics.setCurrent(g);
-        g.pushTransform();
-
-        g.translate(-camera.getViewportOffsetX(), -camera.getViewportOffsetY());
-        Camera.getInstance().clearDirtyAreas(g);
-
-        synchronized (display) {
-            synchronized (GameMap.LIGHT_LOCK) {
-                // draw all items
-                for (int i = 0, displaySize = display.size(); i < displaySize; i++) {
-                    display.get(i).draw(g);
-                }
-            }
-        }
-
-        g.popTransform();
+        gameScene.render(c.getEngine().getGraphics(), -camera.getViewportOffsetX(), -camera.getViewportOffsetY());
     }
 
     public void setActive(final boolean active) {
-        if (!active) {
-            fadeOutColor.a = 1.f;
-        }
         this.active = active;
     }
 
@@ -579,7 +310,6 @@ public final class MapDisplayManager
         dX = 0;
         dY = 0;
         dL = -elevation;
-        Camera.getInstance().markEverythingDirty();
     }
 
     /**
@@ -597,31 +327,5 @@ public final class MapDisplayManager
         dX = x;
         dY = y;
         dL = z;
-
-        Camera.getInstance().markEverythingDirty();
-
-        // Gui.getInstance().getManager().notifyMovement();
-    }
-
-    private void insertSorted(@Nonnull final DisplayItem item) {
-        int currentStart = 0;
-        int currentEnd = display.size() - 1;
-
-        while (currentStart <= currentEnd) {
-            final int middle = currentStart + ((currentEnd - currentStart) >> 1);
-            final DisplayItem foundItem = display.get(middle);
-            final int compareResult = displayListComperator.compare(foundItem, item);
-
-            if (compareResult < 0) {
-                currentStart = middle + 1;
-            } else if (compareResult > 0) {
-                currentEnd = middle - 1;
-            } else {
-                display.add(middle, item);
-                return;
-            }
-        }
-
-        display.add(currentStart, item);
     }
 }

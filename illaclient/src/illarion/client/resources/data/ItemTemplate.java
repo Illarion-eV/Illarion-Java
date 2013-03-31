@@ -19,11 +19,10 @@
 package illarion.client.resources.data;
 
 import illarion.client.graphics.FrameAnimation;
-import illarion.client.graphics.Sprite;
-import illarion.client.graphics.TextureLoader;
 import illarion.common.graphics.ItemInfo;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Image;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Sprite;
+import org.illarion.engine.graphic.Texture;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -64,7 +63,7 @@ public class ItemTemplate extends AbstractAnimatedEntityTemplate {
      * The GUI texture of this item.
      */
     @Nonnull
-    private final Image guiTexture;
+    private final Texture guiTexture;
 
     /**
      * The sharedAnimation instance all the items share.
@@ -76,8 +75,8 @@ public class ItemTemplate extends AbstractAnimatedEntityTemplate {
      * The constructor of this class.
      *
      * @param id                the identification number of the entity
-     * @param name              the name of the item graphic (used to check for a GUI graphic
      * @param sprite            the sprite used to render the entity
+     * @param guiTexture        the texture for that item that is shown in case this item is used for GUI interaction
      * @param frames            the total amount of frames
      * @param shadowOffset      the offset of the shadow
      * @param speed             the animation speed
@@ -85,7 +84,8 @@ public class ItemTemplate extends AbstractAnimatedEntityTemplate {
      * @param paperdollingId    the referenced paperdolling id
      * @param paperdollingColor the color that is applied to the paperdolling item
      */
-    public ItemTemplate(final int id, @Nonnull final String name, @Nonnull final Sprite sprite, final int frames,
+    public ItemTemplate(final int id, @Nonnull final Sprite sprite,
+                        @Nonnull final Texture guiTexture, final int frames,
                         final int shadowOffset, final int speed, @Nonnull final ItemInfo itemInfo,
                         final int paperdollingId, @Nullable final Color paperdollingColor) {
         super(id, sprite, frames, 0, speed, null, shadowOffset);
@@ -95,13 +95,7 @@ public class ItemTemplate extends AbstractAnimatedEntityTemplate {
         this.paperdollingColor = paperdollingColor;
         sharedAnimation = new FrameAnimation();
         sharedAnimation.setup(frames, 0, speed, FrameAnimation.LOOPED);
-
-        final Image guiTexture = TextureLoader.getInstance().getTexture("data/gui/", "items/" + name, null);
-        if (guiTexture == null) {
-            this.guiTexture = getSprite().getTexture(0);
-        } else {
-            this.guiTexture = guiTexture;
-        }
+        this.guiTexture = guiTexture;
     }
 
     @Nonnull
@@ -119,7 +113,7 @@ public class ItemTemplate extends AbstractAnimatedEntityTemplate {
     }
 
     @Nonnull
-    public Image getGuiTexture() {
+    public Texture getGuiTexture() {
         return guiTexture;
     }
 

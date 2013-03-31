@@ -39,24 +39,23 @@ class ListenerGame implements Game {
     private final GameListener listener;
 
     @Nonnull
-    private org.illarion.engine.GameContainer engineContainer;
+    private final org.illarion.engine.GameContainer engineContainer;
 
     /**
      * Create a new implementation of this game and set the listener that receives the game lifecycle.
      *
      * @param gameListener the game listener that receives the updates
      */
-    ListenerGame(@Nonnull final GameListener gameListener) {
+    ListenerGame(@Nonnull final GameListener gameListener,
+                 @Nonnull final org.illarion.engine.GameContainer engineContainer) {
         listener = gameListener;
-    }
-
-    public void setEngineContainer(@Nonnull final org.illarion.engine.GameContainer engineContainer) {
         this.engineContainer = engineContainer;
     }
 
     @Override
     public void init(final GameContainer gameContainer) throws SlickException {
         listener.create(engineContainer);
+        ((SlickEngine) engineContainer.getEngine()).getInput().setInput(gameContainer.getInput());
     }
 
     @Override

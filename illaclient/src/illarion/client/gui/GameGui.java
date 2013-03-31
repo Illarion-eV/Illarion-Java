@@ -19,7 +19,7 @@
 package illarion.client.gui;
 
 import de.lessvoid.nifty.screen.ScreenController;
-import org.newdawn.slick.GameContainer;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 
@@ -139,5 +139,5 @@ public interface GameGui {
      * @param container the container of the game
      * @param delta     the time since the last update in milliseconds
      */
-    void onUpdateGame(GameContainer container, int delta);
+    void onUpdateGame(@Nonnull GameContainer container, int delta);
 }

@@ -18,13 +18,14 @@
  */
 package illarion.client.resources.loaders;
 
-import illarion.client.graphics.Sprite;
-import illarion.client.graphics.SpriteBuffer;
 import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.OverlayTemplate;
 import illarion.common.util.TableLoaderOverlay;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
+import org.illarion.engine.assets.Assets;
+import org.illarion.engine.assets.SpriteFactory;
+import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
 
@@ -43,6 +44,21 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
     private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
 
     /**
+     * The assets of the game engine that are required to load the data needed for the overlays.
+     */
+    @Nonnull
+    private final Assets assets;
+
+    /**
+     * Create a new overlay loader.
+     *
+     * @param assets the assets instance of the game engine that is used to load the data
+     */
+    public OverlayLoader(@Nonnull final Assets assets) {
+        this.assets = assets;
+    }
+
+    /**
      * Trigger the loading sequence for this loader.
      */
     @Override
@@ -53,7 +69,6 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
 
         final ResourceFactory<OverlayTemplate> factory = getTargetFactory();
 
-        assert factory != null;
         factory.init();
         new TableLoaderOverlay(this);
         factory.loadingFinished();
@@ -75,8 +90,9 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
         final int id = loader.getTileId();
         final String name = loader.getOverlayFile();
 
-        final Sprite overlaySprite = SpriteBuffer.getInstance().getSprite(OVERLAY_PATH, name, OVERLAY_VARIATIONS, 0,
-                0, Sprite.HAlign.center, Sprite.VAlign.middle, false);
+        final Sprite overlaySprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
+                OVERLAY_PATH, name, OVERLAY_VARIATIONS), 0, 0, SpriteFactory.CENTER, SpriteFactory.CENTER, false);
+
         final OverlayTemplate template = new OverlayTemplate(id, overlaySprite);
 
         try {

@@ -272,6 +272,5 @@ public final class MapDimensions {
             serverMapDimensionWidth = serverMapDimWidth;
             World.getNet().sendCommand(new MapDimensionCmd(serverMapDimWidth, serverMapDimHeight));
         }
-        World.getMapDisplay().reportChangedDisplaySize();
     }
 }

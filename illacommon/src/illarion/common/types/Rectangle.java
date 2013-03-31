@@ -106,7 +106,7 @@ public final class Rectangle implements Serializable {
      * Test this rectangle and another object for being equal.
      *
      * @param o the object this Rectangle shall be compared with
-     * @return <code>true</code> in case this rectangle and the other one descripe the same rectangle
+     * @return {@code true} in case this rectangle and the other one descripe the same rectangle
      */
     @Override
     public boolean equals(@Nullable final Object o) {
@@ -268,7 +268,7 @@ public final class Rectangle implements Serializable {
      * Check the two rectangles for intersection.
      *
      * @param other the second rectangle
-     * @return <code>true</code> in case there is an intersection
+     * @return {@code true} in case there is an intersection
      */
     public boolean intersects(@Nonnull final Rectangle other) {
         if ((x0 > other.x1) || (x1 < other.x0)) {
@@ -283,7 +283,7 @@ public final class Rectangle implements Serializable {
     /**
      * Check if the rectangle covers no area.
      *
-     * @return <code>true</code> if the rectangle covers no area
+     * @return {@code true} if the rectangle covers no area
      */
     public boolean isEmpty() {
         return (x0 == x1) || (y0 == y1);
@@ -294,7 +294,7 @@ public final class Rectangle implements Serializable {
      *
      * @param x the x coordinate to check
      * @param y the y coordinate of check
-     * @return <code>true</code> in case the coordinates are inside the the rectangle
+     * @return {@code true} in case the coordinates are inside the the rectangle
      */
     public boolean isInside(final int x, final int y) {
         return (x >= x0) && (y >= y0) && (x < x1) && (y < y1);
@@ -354,6 +354,11 @@ public final class Rectangle implements Serializable {
         return new java.awt.Rectangle(x0, y0, x1 - x0, y1 - y0);
     }
 
+    /**
+     * Get the size of the area covered by this rectangle.
+     *
+     * @return the size of the area
+     */
     public int getArea() {
         return getWidth() * getHeight();
     }

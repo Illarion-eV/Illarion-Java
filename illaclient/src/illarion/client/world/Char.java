@@ -31,7 +31,6 @@ import illarion.client.world.events.CharVisibilityEvent;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
 import illarion.common.graphics.Layers;
-import illarion.common.graphics.LightSource;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
@@ -40,7 +39,8 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
-import org.newdawn.slick.Color;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.LightSource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -112,13 +112,13 @@ public final class Char implements AnimatedMove {
      * This color is used to display the name in case the character is a player character.
      */
     @Nonnull
-    private static final Color NAME_COLOR_HUMAN = Color.yellow;
+    private static final Color NAME_COLOR_HUMAN = Color.YELLOW;
 
     /**
      * This color is used to display the name in case the character is a monster.
      */
     @Nonnull
-    private static final Color NAME_COLOR_MONSTER = Color.red;
+    private static final Color NAME_COLOR_MONSTER = Color.RED;
 
     /**
      * This color is used to display the name in case the character is a NPC.

@@ -56,6 +56,15 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene {
     private final List<T> sceneEffects;
 
     /**
+     * This is the snapshot array that is taken and filled shortly before the update calls. Is then used to render
+     * and update the scene.
+     */
+    @Nonnull
+    private SceneElement[] workingArray = new SceneElement[0];
+
+    private int workingArraySize;
+
+    /**
      * Create a new scene and setup the internal structures.
      */
     protected AbstractScene() {
@@ -71,18 +80,24 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene {
 
     @Override
     public final void addElement(@Nonnull final SceneElement element) {
-        sceneElements.add(element);
+        synchronized (sceneElements) {
+            sceneElements.add(element);
+        }
     }
 
     @Override
     public final void updateElementLocation(@Nonnull final SceneElement element) {
-        sceneElements.remove(element);
-        sceneElements.add(element);
+        synchronized (sceneElements) {
+            sceneElements.remove(element);
+            sceneElements.add(element);
+        }
     }
 
     @Override
     public final void removeElement(@Nonnull final SceneElement element) {
-        sceneElements.remove(element);
+        synchronized (sceneElements) {
+            sceneElements.remove(element);
+        }
     }
 
     /**
@@ -92,7 +107,25 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene {
      * @param delta     the time since the last update that is reported to the elements
      */
     protected final void updateScene(@Nonnull final GameContainer container, final int delta) {
-        for (@Nonnull final SceneElement element : sceneElements) {
+        Arrays.fill(workingArray, null);
+        synchronized (sceneElements) {
+            workingArray = sceneElements.toArray(workingArray);
+            workingArraySize = sceneElements.size();
+        }
+
+        @Nullable SceneEvent event = eventQueue.poll();
+        while (event != null) {
+            for (int i = workingArraySize - 1; i >= 0; i--) {
+                final SceneElement element = workingArray[i];
+                if (element.isEventProcessed(container, delta, event)) {
+                    break;
+                }
+            }
+            event = eventQueue.poll();
+        }
+
+        for (int i = 0; i < workingArraySize; i++) {
+            final SceneElement element = workingArray[i];
             element.update(container, delta);
         }
     }
@@ -103,27 +136,9 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene {
      * @param graphics the graphics instance that is used to render the game
      */
     protected final void renderScene(@Nonnull final Graphics graphics) {
-        for (@Nonnull final SceneElement element : sceneElements) {
+        for (int i = 0; i < workingArraySize; i++) {
+            final SceneElement element = workingArray[i];
             element.render(graphics);
-        }
-    }
-
-    /**
-     * This function processes all the events that were queued up until now.
-     *
-     * @param container the game container that is reported to the scene elements
-     * @param delta     the time since the last update that is reported to the scene elements
-     */
-    protected final void processEvents(@Nonnull final GameContainer container, final int delta) {
-        @Nullable SceneEvent event = eventQueue.poll();
-        while (event != null) {
-            @Nonnull final Iterator<SceneElement> itr = sceneElements.descendingIterator();
-            while (itr.hasNext()) {
-                if (itr.next().isEventProcessed(container, delta, event)) {
-                    break;
-                }
-            }
-            event = eventQueue.poll();
         }
     }
 

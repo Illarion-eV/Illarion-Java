@@ -30,7 +30,6 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.Item;
-import illarion.client.graphics.MapInteractionEvent;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.GameMapGui;
 import illarion.client.gui.Tooltip;
@@ -45,7 +44,10 @@ import illarion.common.types.Rectangle;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
-import org.newdawn.slick.Input;
+import org.illarion.engine.graphic.SceneEvent;
+import org.illarion.engine.input.ForwardingTarget;
+import org.illarion.engine.input.Input;
+import org.illarion.engine.input.Key;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -141,6 +143,10 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * This operation is executed once a dragging operation is done.
      */
     private Runnable endOfDragOp;
+
+    /**
+     * The handler for the number selection popup.
+     */
     private final NumberSelectPopupHandler numberSelect;
 
     private final TooltipHandler tooltipHandler;
@@ -160,16 +166,16 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * Handle a input event that was published.
      */
     @EventSubscriber(eventClass = ClickOnMapEvent.class)
-    public void handleClickEvent(final MapInteractionEvent data) {
-        World.getMapDisplay().publishInteractionEvent(data);
+    public void handleClickEvent(final SceneEvent event) {
+        World.getMapDisplay().getGameScene().publishEvent(event);
     }
 
     /**
      * Handle a input event that was published.
      */
     @EventSubscriber(eventClass = DoubleClickOnMapEvent.class)
-    public void handleDoubleClick(final MapInteractionEvent data) {
-        World.getMapDisplay().publishInteractionEvent(data);
+    public void handleDoubleClick(final SceneEvent event) {
+        World.getMapDisplay().getGameScene().publishEvent(event);
     }
 
     /**
@@ -182,7 +188,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         }
 
         switch (data.getKey()) {
-            case 0:
+            case Left:
                 handlePrimaryKeyDrag(data);
                 break;
         }
@@ -195,18 +201,13 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      */
     public void handlePrimaryKeyDrag(@Nonnull final DragOnMapEvent data) {
         if (!World.getPlayer().getMovementHandler().isMouseMovementActive()) {
-            final MapInteractionEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
+            final SceneEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
                 @Override
                 public boolean startDraggingItemFromTile(@Nonnull final PrimaryKeyMapDrag event, final MapTile tile) {
                     return handleDragOnMap(event, tile);
                 }
-
-                @Override
-                public void notHandled(@Nonnull final PrimaryKeyMapDrag event) {
-                    moveTowardsMouse(event);
-                }
             });
-            World.getMapDisplay().publishInteractionEvent(newEvent);
+            World.getMapDisplay().getGameScene().publishEvent(newEvent);
             return;
         }
 
@@ -245,7 +246,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
             imgRender.setImage(new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem.getTemplate())));
 
             gamePanel.layoutElements();
-            event.getForwardingControl().releaseExclusiveMouse();
+            input.disableForwarding(ForwardingTarget.Mouse);
 
             mouseEvent.initialize(event.getOldX(), event.getOldY(), 0, true, false, false);
             mouseEvent.setButton0InitialDown(true);
@@ -265,13 +266,13 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      *
      * @param event the event that contains the data for the move
      */
-    private static void moveTowardsMouse(@Nonnull final DragOnMapEvent event) {
+    private void moveTowardsMouse(@Nonnull final DragOnMapEvent event) {
         World.getPlayer().getMovementHandler().walkTowards(event.getNewX(), event.getNewY());
-        event.getForwardingControl().requestExclusiveMouse();
+        input.enableForwarding(ForwardingTarget.Mouse);
     }
 
     @EventSubscriber(eventClass = MoveOnMapEvent.class)
-    public void handleMouseMove(final MapInteractionEvent event) {
+    public void handleMouseMove(final SceneEvent event) {
         if (World.getInteractionManager().isDragging()) {
             return;
         }
@@ -279,11 +280,11 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
             return;
         }
 
-        World.getMapDisplay().publishInteractionEvent(event);
+        World.getMapDisplay().getGameScene().publishEvent(event);
     }
 
     @EventSubscriber(eventClass = PointOnMapEvent.class)
-    public void handlePointAt(final MapInteractionEvent event) {
+    public void handlePointAt(final SceneEvent event) {
         if (World.getInteractionManager().isDragging()) {
             return;
         }
@@ -291,7 +292,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
             return;
         }
 
-        World.getMapDisplay().publishInteractionEvent(event);
+        World.getMapDisplay().getGameScene().publishEvent(event);
     }
 
     /**
@@ -328,7 +329,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     }
 
     private boolean isShiftPressed() {
-        return input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT);
+        return input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
     }
 
     @Override

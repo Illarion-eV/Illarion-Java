@@ -28,10 +28,14 @@ import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Graphics;
+import org.illarion.engine.graphic.ImmutableColor;
+import org.illarion.engine.graphic.SceneEvent;
+import org.illarion.engine.input.Button;
+import org.illarion.engine.input.Input;
+import org.illarion.engine.input.Key;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -213,11 +217,12 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     }
 
     @Override
-    public boolean processEvent(@Nonnull final GameContainer container, final int delta, @Nonnull final MapInteractionEvent event) {
+    public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
+                                    @Nonnull final SceneEvent event) {
         if (event instanceof ClickOnMapEvent) {
-            return processEvent(container, delta, (ClickOnMapEvent) event);
+            return isEventProcessed(container, delta, (ClickOnMapEvent) event);
         }
-        return super.processEvent(container, delta, event);
+        return super.isEventProcessed(container, delta, event);
     }
 
     /**
@@ -229,12 +234,12 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * @return {@code true} in case the event was handled
      */
     @SuppressWarnings({"BooleanMethodNameMustStartWithQuestion", "UnusedParameters"})
-    private boolean processEvent(final GameContainer container, final int delta, @Nonnull final ClickOnMapEvent event) {
+    private boolean isEventProcessed(final GameContainer container, final int delta, @Nonnull final ClickOnMapEvent event) {
         if (!isMouseInInteractiveOrOnTag(event)) {
             return false;
         }
 
-        if (event.getKey() == 1) {
+        if (event.getKey() == Button.Right) {
             World.getPlayer().getCombatHandler().toggleAttackOnCharacter(parentChar);
             return true;
         }
@@ -250,7 +255,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     private boolean isMouseInInteractiveOrOnTag(@Nonnull final AbstractMouseLocationEvent event) {
         final int mouseXonDisplay = event.getX() + Camera.getInstance().getViewportOffsetX();
         final int mouseYonDisplay = event.getY() + Camera.getInstance().getViewportOffsetY();
-        if (renderName && avatarTextTag.getLastDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay)) {
+        if (renderName && avatarTextTag.getDisplayRect().isInside(mouseXonDisplay, mouseYonDisplay)) {
             return true;
         }
 
@@ -269,26 +274,26 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * @return true at all times
      */
     @Override
-    public boolean draw(@Nonnull final Graphics g) {
+    public void render(@Nonnull final Graphics g) {
         if (getAlpha() == 0) {
-            return true;
+            return;
         }
 
         if (isAttackMarkerVisible()) {
-            attackMark.draw(g);
+            attackMark.render(g);
         }
 
         // draw the avatar, naked!! :O
-        super.draw(g);
+        super.render(g);
 
         // draw the clothes
-        clothRender.draw(g);
+        clothRender.render(g);
 
         if (renderName) {
-            avatarTextTag.draw(g);
+            avatarTextTag.render(g);
         }
 
-        return true;
+        return;
     }
 
     /**
@@ -382,7 +387,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         } else {
             avatarTextTag.setCharacterName(charName);
         }
-        avatarTextTag.setCharNameColor(Color.yellow);
+        avatarTextTag.setCharNameColor(Color.YELLOW);
     }
 
     /**
@@ -395,12 +400,12 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         avatarTextTag.setCharNameColor(color);
     }
 
-    private static final Color COLOR_UNHARMED = new Color(0, 255, 0);
-    private static final Color COLOR_SLIGHTLY_HARMED = new Color(127, 255, 0);
-    private static final Color COLOR_HARMED = new Color(255, 255, 0);
-    private static final Color COLOR_BADLY_HARMED = new Color(255, 127, 0);
-    private static final Color COLOR_NEAR_DEATH = new Color(255, 0, 0);
-    private static final Color COLOR_DEAD = new Color(173, 173, 173);
+    private static final Color COLOR_UNHARMED = new ImmutableColor(0, 255, 0);
+    private static final Color COLOR_SLIGHTLY_HARMED = new ImmutableColor(127, 255, 0);
+    private static final Color COLOR_HARMED = new ImmutableColor(255, 255, 0);
+    private static final Color COLOR_BADLY_HARMED = new ImmutableColor(255, 127, 0);
+    private static final Color COLOR_NEAR_DEATH = new ImmutableColor(255, 0, 0);
+    private static final Color COLOR_DEAD = new ImmutableColor(173, 173, 173);
 
     public void setHealthPoints(final int value) {
         //noinspection IfStatementWithTooManyBranches
@@ -452,9 +457,9 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             animateLight = false;
         }
 
-        final Input input = container.getInput();
+        final Input input = container.getEngine().getInput();
 
-        renderName = isMouseInInteractionRect(input) || (input.isKeyDown(Input.KEY_RALT) && (getAlpha() >
+        renderName = isMouseInInteractionRect(input) || (input.isKeyDown(Key.RightAlt) && (getAlpha() >
                 HIDE_NAME_ALPHA));
 
         if (renderName) {
@@ -462,21 +467,9 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             avatarTextTag.update(container, delta);
         }
 
-        if (renderName != oldRenderName) {
-            Camera.getInstance().markAreaDirty(avatarTextTag.getLastDisplayRect());
-            oldRenderName = renderName;
-        }
-
         if (isAttackMarkerVisible()) {
             attackMark.setAlpha(getAlpha());
             attackMark.update(container, delta);
-        } else if (oldAttackMarkVisible) {
-            Camera.getInstance().markAreaDirty(attackMark.getLastDisplayRect());
         }
-
-        oldAttackMarkVisible = isAttackMarkerVisible();
     }
-
-    private boolean oldAttackMarkVisible;
-    private boolean oldRenderName;
 }

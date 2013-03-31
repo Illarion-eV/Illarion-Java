@@ -50,6 +50,11 @@ public class Color {
     public static final Color YELLOW = new ImmutableColor(1.f, 1.f, 0.f);
 
     /**
+     * A fully opaque gray color. This color is immutable.
+     */
+    public static final Color GRAY = new ImmutableColor(0.5f, 0.5f, 0.5f);
+
+    /**
      * The alpha component of the color.
      */
     private int alpha;
@@ -125,6 +130,18 @@ public class Color {
      */
     public Color(@Nonnull final Color org) {
         this(org.red, org.green, org.blue, org.alpha);
+    }
+
+    /**
+     * Add the values of a color to this one.
+     *
+     * @param color the color that supplies the new values
+     */
+    public void add(@Nonnull final Color color) {
+        red += color.red;
+        green += color.green;
+        blue += color.blue;
+        alpha += color.alpha;
     }
 
     /**

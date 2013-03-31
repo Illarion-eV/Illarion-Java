@@ -18,8 +18,7 @@
  */
 package illarion.client.util;
 
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.state.StateBasedGame;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,14 +43,14 @@ public final class UpdateTaskManager {
         taskQueue = new ConcurrentLinkedQueue<UpdateTask>();
     }
 
-    public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+    public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
         while (true) {
             @Nullable final UpdateTask task = taskQueue.poll();
             if (task == null) {
                 return;
             }
 
-            task.onUpdateGame(container, game, delta);
+            task.onUpdateGame(container, delta);
         }
     }
 

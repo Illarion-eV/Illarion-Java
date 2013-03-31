@@ -38,6 +38,8 @@ class SlickTextureManager extends AbstractTextureManager {
             return new SlickTexture(resource);
         } catch (@Nonnull final SlickException ignored) {
             return null;
+        } catch (@Nonnull final RuntimeException ignored) {
+            return null;
         }
     }
 }

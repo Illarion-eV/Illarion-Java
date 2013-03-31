@@ -32,8 +32,7 @@ import illarion.client.gui.InformGui;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.state.StateBasedGame;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 
@@ -78,7 +77,7 @@ public final class InformHandler implements InformGui, ScreenController {
         }
 
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
             if (!parent.isVisible()) {
                 parent.showWithoutEffects();
             }
