@@ -235,6 +235,9 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
             }
 
             if (!dirtyTiles.isEmpty()) {
+                if (offScreenGraphics == null) {
+                    offScreenGraphics = worldMapImage.getGraphics();
+                }
                 Location dirtyLocation = dirtyTiles.poll();
                 while (dirtyLocation != null) {
                     lastRequestedLocation.set(dirtyLocation);
