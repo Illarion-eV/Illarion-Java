@@ -18,6 +18,7 @@
  */
 package org.illarion.engine.backend.shared;
 
+import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.Scene;
@@ -38,10 +39,16 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  */
 public abstract class AbstractScene<T extends SceneEffect> implements Scene {
     /**
-     * This sorted set contains the elements of the scene in their natural order.
+     * This list of elements in the scene. This list is kept sorted.
      */
     @Nonnull
-    private final TreeSet<SceneElement> sceneElements;
+    private final List<SceneElement> sceneElements;
+
+    /**
+     * The comparator used to keep the scene elements in order.
+     */
+    @Nonnull
+    private final Comparator<SceneElement> sceneElementComparator;
 
     /**
      * This is the queue of events that are published during the updates.
@@ -56,6 +63,11 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene {
     private final List<T> sceneEffects;
 
     /**
+     * The logger of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(AbstractScene.class);
+
+    /**
      * This is the snapshot array that is taken and filled shortly before the update calls. Is then used to render
      * and update the scene.
      */
@@ -68,12 +80,13 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene {
      * Create a new scene and setup the internal structures.
      */
     protected AbstractScene() {
-        sceneElements = new TreeSet<SceneElement>(new Comparator<SceneElement>() {
+        sceneElements = new ArrayList<SceneElement>();
+        sceneElementComparator = new Comparator<SceneElement>() {
             @Override
             public int compare(final SceneElement o1, final SceneElement o2) {
                 return o2.getOrder() - o1.getOrder();
             }
-        });
+        };
         eventQueue = new ConcurrentLinkedDeque<SceneEvent>();
         sceneEffects = new ArrayList<T>();
     }
@@ -81,15 +94,20 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene {
     @Override
     public final void addElement(@Nonnull final SceneElement element) {
         synchronized (sceneElements) {
-            sceneElements.add(element);
+            final int insertIndex = Collections.binarySearch(sceneElements, element, sceneElementComparator);
+            if (insertIndex < 0) {
+                sceneElements.add(-insertIndex - 1, element);
+            } else {
+                sceneElements.add(insertIndex, element);
+            }
         }
     }
 
     @Override
     public final void updateElementLocation(@Nonnull final SceneElement element) {
         synchronized (sceneElements) {
-            sceneElements.remove(element);
-            sceneElements.add(element);
+            removeElement(element);
+            addElement(element);
         }
     }
 
