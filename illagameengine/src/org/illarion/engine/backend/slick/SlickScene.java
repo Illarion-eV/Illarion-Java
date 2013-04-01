@@ -18,6 +18,7 @@
  */
 package org.illarion.engine.backend.slick;
 
+import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.backend.shared.AbstractScene;
 import org.illarion.engine.graphic.Graphics;
@@ -50,6 +51,11 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
      */
     @Nullable
     private Image processImage1;
+
+    /**
+     * The logger of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(SlickScene.class);
 
     /**
      * The last image that was requested. This variable is required to flip-flop the textures.
@@ -126,6 +132,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                 // No full screen effects. Just render it
                 slickGraphicsImpl.pushTransform();
                 slickGraphicsImpl.translate(offsetX, offsetY);
+                slickGraphicsImpl.clear();
                 renderScene(graphics);
                 slickGraphicsImpl.popTransform();
             } else {
@@ -133,12 +140,15 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                 final int width = slickContainer.getWidth();
                 try {
                     final Image sceneTarget = getNextProcessImage(width, height);
-                    slickGraphics.setSlickGraphicsImpl(sceneTarget.getGraphics());
-                    slickGraphicsImpl.pushTransform();
-                    slickGraphicsImpl.translate(offsetX, offsetY);
-                    slickGraphicsImpl.clear();
+                    final org.newdawn.slick.Graphics currentGraphics = sceneTarget.getGraphics();
+                    org.newdawn.slick.Graphics.setCurrent(currentGraphics);
+                    slickGraphics.setSlickGraphicsImpl(currentGraphics);
+                    currentGraphics.pushTransform();
+                    currentGraphics.translate(offsetX, offsetY);
+                    currentGraphics.clear();
                     renderScene(graphics);
-                    slickGraphicsImpl.popTransform();
+                    currentGraphics.popTransform();
+                    currentGraphics.flush();
 
                     Image lastProcessedImage = sceneTarget;
                     for (int i = 0; i < effectCount; i++) {
@@ -151,6 +161,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                                 nextImage.getTexture().getTextureHeight());
                         nextGraphics.drawImage(lastProcessedImage, 0, 0);
                         effect.disableEffect();
+                        currentGraphics.flush();
 
                         lastProcessedImage = nextImage;
                     }
