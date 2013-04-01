@@ -42,20 +42,43 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     /**
      * The logger instance for this class.
      */
+    @Nonnull
     private static final Logger LOGGER = Logger.getLogger(ApplicationGameContainer.class);
+
     /**
      * The engine instance for the Slick2D backend.
      */
+    @Nonnull
     private final SlickEngine engine;
+
     /**
      * The Slick2D implementation of the application container.
      */
+    @Nonnull
     private final AppGameContainer slickContainer;
+
     /**
      * The last applied title of the game.
      */
     @Nonnull
     private String title;
+
+    /**
+     * The height of the window (while its in the windowed mode.
+     */
+    private int windowHeight;
+
+    /**
+     * The width of the window.
+     */
+    private int windowWidth;
+
+    /**
+     * The full screen graphics resolution.
+     */
+    @Nonnull
+    private GraphicResolution fullScreenResolution;
+
 
     /**
      * Create a new instance of this container.
@@ -93,6 +116,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
             throw new SlickEngineException("Failed to create the application container.", e);
         }
     }
+
 
     @Override
     public void exitGame() {
@@ -179,21 +203,6 @@ public class ApplicationGameContainer implements DesktopGameContainer {
             // ignore
         }
     }
-
-    /**
-     * The height of the window (while its in the windowed mode.
-     */
-    private int windowHeight;
-
-    /**
-     * The width of the window.
-     */
-    private int windowWidth;
-
-    /**
-     * The full screen graphics resolution.
-     */
-    private GraphicResolution fullScreenResolution;
 
     @Override
     public void setWindowSize(final int width, final int height) throws EngineException {

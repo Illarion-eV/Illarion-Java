@@ -38,9 +38,10 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.bushe.swing.event.*;
+import org.illarion.engine.Backend;
 import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.EngineException;
-import org.illarion.engine.backend.slick.ApplicationGameContainer;
+import org.illarion.engine.EngineManager;
 import org.illarion.engine.graphic.GraphicResolution;
 
 import javax.annotation.Nonnull;
@@ -71,7 +72,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * The version information of this client. This version is shows at multiple positions within the client.
      */
-    public static final String VERSION = "2.0.14"; //$NON-NLS-1$
+    public static final String VERSION = "2.1.0"; //$NON-NLS-1$
 
     /**
      * The default server the client connects too. The client will always connect to this server.
@@ -197,11 +198,13 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         try {
             if (cfg.getBoolean(CFG_FULLSCREEN)) {
-                gameContainer = new ApplicationGameContainer(game, res.getWidth(), res.getHeight(), true);
+                gameContainer = EngineManager.createDesktopGame(Backend.Slick2D, game, res.getWidth(),
+                        res.getHeight(), true);
             } else {
                 final int windowedWidth = cfg.getInteger("windowWidth");
                 final int windowedHeight = cfg.getInteger("windowHeight");
-                gameContainer = new ApplicationGameContainer(game, (windowedWidth < 0) ? res.getWidth() : windowedWidth,
+                gameContainer = EngineManager.createDesktopGame(Backend.Slick2D, game,
+                        (windowedWidth < 0) ? res.getWidth() : windowedWidth,
                         (windowedHeight < 0) ? res.getHeight() : windowedHeight, false);
             }
         } catch (@Nonnull final EngineException e) {

@@ -23,6 +23,7 @@ import org.newdawn.slick.Game;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.shader.ShaderProgram;
 
 import javax.annotation.Nonnull;
 
@@ -54,6 +55,9 @@ class ListenerGame implements Game {
 
     @Override
     public void init(final GameContainer gameContainer) throws SlickException {
+        if (!ShaderProgram.isSupported()) {
+            throw new SlickException("Shader not supported.");
+        }
         listener.create(engineContainer);
         ((SlickEngine) engineContainer.getEngine()).getInput().setInput(gameContainer.getInput());
     }
