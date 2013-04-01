@@ -34,7 +34,7 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @NotThreadSafe
-public final class ResourceTableLoading implements LoadingTask {
+final class ResourceTableLoading implements LoadingTask {
     /**
      * The progress monitor that tracks the loading activity of this task.
      */
@@ -57,7 +57,7 @@ public final class ResourceTableLoading implements LoadingTask {
      *
      * @param gameEngine the engine of the game
      */
-    public ResourceTableLoading(@Nonnull final Engine gameEngine) {
+    ResourceTableLoading(@Nonnull final Engine gameEngine) {
         taskList = new ArrayList<AbstractResourceLoader<? extends Resource>>();
         progressMonitor = new ProgressMonitor();
 

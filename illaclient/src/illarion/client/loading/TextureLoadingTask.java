@@ -30,7 +30,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @NotThreadSafe
-public final class TextureLoadingTask implements LoadingTask {
+final class TextureLoadingTask implements LoadingTask {
     /**
      * The engine used to load the data.
      */
@@ -48,7 +48,7 @@ public final class TextureLoadingTask implements LoadingTask {
      *
      * @param engine the engine used to load the textures
      */
-    public TextureLoadingTask(@Nonnull final Engine engine) {
+    TextureLoadingTask(@Nonnull final Engine engine) {
         usedEngine = engine;
         //noinspection MagicNumber
         monitor = new ProgressMonitor(4.f);

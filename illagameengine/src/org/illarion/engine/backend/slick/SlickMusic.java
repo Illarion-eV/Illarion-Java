@@ -42,7 +42,7 @@ class SlickMusic implements Music {
      * @throws SlickException in case loading the track fails
      */
     SlickMusic(@Nonnull final String ref) throws SlickException {
-        slickMusic = new org.newdawn.slick.Music(ref);
+        slickMusic = new org.newdawn.slick.Music(ref, true);
     }
 
     /**

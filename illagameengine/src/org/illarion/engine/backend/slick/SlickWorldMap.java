@@ -19,6 +19,8 @@
 package org.illarion.engine.backend.slick;
 
 import illarion.common.types.Location;
+import illarion.common.types.Rectangle;
+import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.*;
 import org.newdawn.slick.Color;
@@ -90,15 +92,25 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
     private final Color tempDrawingColor;
 
     /**
-     * This parameter is set {@code true} in case a update of the entire map was requested.
-     */
-    private boolean fullMapUpdate;
-
-    /**
      * The tiles that were marked as dirty and did not receive a update yet.
      */
     @Nonnull
-    private final Queue<Location> dirtyTiles;
+    private final Queue<Rectangle> dirtyTiles;
+
+    /**
+     * The height and width in pixels that is updated at once.
+     */
+    private static final int MAX_UPDATE_SIZE = 64;
+
+    /**
+     * The area in pixels that is allowed to be updated during one render step.
+     */
+    private static final int MAX_UPDATE_AREA = MAX_UPDATE_SIZE * MAX_UPDATE_SIZE;
+
+    /**
+     * The logger of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(SlickWorldMap.class);
 
     /**
      * Create a new instance of the Slick2D implementation of the world map.
@@ -118,7 +130,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
         playerLocation = new Location();
         lastRequestedLocation = new Location();
         tempDrawingColor = new Color(Color.black);
-        dirtyTiles = new LinkedList<Location>();
+        dirtyTiles = new LinkedList<Rectangle>();
     }
 
     /**
@@ -126,6 +138,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
      *
      * @return the maps origin location
      */
+    @Override
     @Nonnull
     public Location getMapOrigin() {
         return mapOrigin;
@@ -153,9 +166,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
             return;
         }
 
-        if (tileId == NO_TILE) {
-            SlickGraphics.transferColor(MapColor.getColor(NO_TILE), tempDrawingColor);
-        } else {
+        if (tileId != NO_TILE) {
             SlickGraphics.transferColor(MapColor.getColor(tileId), tempDrawingColor);
             if (overlayId != NO_TILE) {
                 final org.illarion.engine.graphic.Color mapColor = MapColor.getColor(tileId);
@@ -167,22 +178,27 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
             if (blocked) {
                 tempDrawingColor.scale(0.7f);
             }
-        }
-        tempDrawingColor.a = 1.f;
+            tempDrawingColor.a = 1.f;
 
-        offScreenGraphics.setColor(tempDrawingColor);
-        offScreenGraphics.fillRect(texPosX, texPosY, 1, 1);
+            offScreenGraphics.setColor(tempDrawingColor);
+            offScreenGraphics.fillRect(texPosX, texPosY, 1, 1);
+        }
     }
 
     @Override
     public void setTileChanged(@Nonnull final Location location) {
-        dirtyTiles.offer(new Location(location));
+        dirtyTiles.offer(new Rectangle(location.getScX(), location.getScY(), 1, 1));
     }
 
     @Override
     public void setMapChanged() {
         clear();
-        fullMapUpdate = true;
+        for (int x = 0; x < WORLD_MAP_WIDTH; x += MAX_UPDATE_SIZE) {
+            for (int y = 0; y < WORLD_MAP_HEIGHT; y += MAX_UPDATE_SIZE) {
+                dirtyTiles.offer(new Rectangle(x + mapOrigin.getScX(), y + mapOrigin.getScY(),
+                        MAX_UPDATE_SIZE, MAX_UPDATE_SIZE));
+            }
+        }
     }
 
     @Override
@@ -216,34 +232,33 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
                 if (offScreenGraphics == null) {
                     offScreenGraphics = worldMapImage.getGraphics();
                 }
-                offScreenGraphics.setColor(Color.black);
-                offScreenGraphics.fillRect(0, 0, WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT);
-            }
-
-            if (fullMapUpdate) {
-                fullMapUpdate = false;
-                if (offScreenGraphics == null) {
-                    offScreenGraphics = worldMapImage.getGraphics();
-                }
-                for (int x = 0; x < WORLD_MAP_WIDTH; x++) {
-                    for (int y = 0; y < WORLD_MAP_HEIGHT; y++) {
-                        lastRequestedLocation.set(mapOrigin);
-                        lastRequestedLocation.addSC(x, y, 0);
-                        provider.requestTile(lastRequestedLocation, this);
-                    }
-                }
+                offScreenGraphics.setBackground(Color.black);
+                offScreenGraphics.clear();
             }
 
             if (!dirtyTiles.isEmpty()) {
                 if (offScreenGraphics == null) {
                     offScreenGraphics = worldMapImage.getGraphics();
                 }
-                Location dirtyLocation = dirtyTiles.poll();
-                while (dirtyLocation != null) {
-                    lastRequestedLocation.set(dirtyLocation);
-                    provider.requestTile(lastRequestedLocation, this);
-                    dirtyLocation = dirtyTiles.poll();
+                Rectangle dirtyArea = dirtyTiles.poll();
+                int updatedArea = 0;
+                int updateCount = 0;
+                while (dirtyArea != null) {
+                    updatedArea += dirtyArea.getArea();
+                    updateCount++;
+                    for (int x = dirtyArea.getLeft(); x < dirtyArea.getRight(); x++) {
+                        for (int y = dirtyArea.getBottom(); y < dirtyArea.getTop(); y++) {
+                            lastRequestedLocation.setSC(x, y, mapOrigin.getScZ());
+                            provider.requestTile(lastRequestedLocation, this);
+                        }
+                    }
+                    if (updatedArea >= MAX_UPDATE_AREA) {
+                        break;
+                    }
+                    dirtyArea = dirtyTiles.poll();
                 }
+
+                LOGGER.info("Updated " + updateCount + " areas with a total of " + updatedArea + " tiles");
             }
 
             if (offScreenGraphics != null) {

@@ -43,12 +43,12 @@ public interface SpriteFactory {
     /**
      * Center location value for the y coordinate. This places the center point at the top of the sprite.
      */
-    float TOP = 1.f;
+    float TOP = 0.f;
 
     /**
      * Center location value for the y coordinate. This places the center point at the bottom of the sprite.
      */
-    float BOTTOM = 0.f;
+    float BOTTOM = 1.f;
     /**
      * Center location value for the x coordinate. This places the center point at the right side of the sprite.
      */

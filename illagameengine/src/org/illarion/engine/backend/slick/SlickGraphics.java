@@ -22,6 +22,7 @@ import org.illarion.engine.graphic.*;
 import org.illarion.engine.graphic.effects.TextureEffect;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.AngelCodeFont;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.ShapeFill;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
@@ -183,6 +184,13 @@ class SlickGraphics implements Graphics {
         slickGraphicsImpl.fill(fourColorRect, fourColorRect);
     }
 
+    /**
+     * The rectangle used to exchange data with the drawn components. Its only used inside a single drawing function,
+     * never beyond that.
+     */
+    @Nonnull
+    private final illarion.common.types.Rectangle tempRect = new illarion.common.types.Rectangle();
+
     @Override
     public void drawSprite(@Nonnull final Sprite sprite, final int posX, final int posY, @Nonnull final Color color,
                            final int frame, final float scale, final float rotation,
@@ -196,13 +204,15 @@ class SlickGraphics implements Graphics {
             slickGraphicsImpl.pushTransform();
             slickGraphicsImpl.translate(posX, posY);
 
+            if (slickSprite.isMirrored()) {
+                slickGraphicsImpl.scale(-scale, scale);
+            } else {
+                slickGraphicsImpl.scale(scale, scale);
+            }
             final float centerTransX = slickSprite.getWidth() * slickSprite.getCenterX();
             final float centerTransY = slickSprite.getHeight() * slickSprite.getCenterY();
-            slickGraphicsImpl.translate(centerTransX, centerTransY);
-            slickGraphicsImpl.scale(scale, scale);
-            slickGraphicsImpl.rotate(0, 0, rotation);
-            slickGraphicsImpl.translate(-centerTransX, -centerTransY);
             transferColor(color, tempSlickColor1);
+            slickSprite.getDisplayArea(0, 0, 1.f, 0.f, tempRect);
 
             @Nullable SlickTextureEffect usedEffect = null;
             if ((effects.length > 0) && (effects[0] instanceof SlickTextureEffect)) {
@@ -213,7 +223,10 @@ class SlickGraphics implements Graphics {
                 usedEffect.activateEffect(slickGraphicsImpl);
             }
 
-            slickGraphicsImpl.drawImage(slickSprite.getFrame(frame).getBackingImage(), 0, 0, tempSlickColor1);
+            final Image slickImage = slickSprite.getFrame(frame).getBackingImage();
+            slickImage.setCenterOfRotation(centerTransX, centerTransY);
+            slickImage.setRotation(rotation);
+            slickGraphicsImpl.drawImage(slickImage, tempRect.getX(), tempRect.getY(), tempSlickColor1);
 
             if (usedEffect != null) {
                 usedEffect.disableEffect(slickGraphicsImpl);

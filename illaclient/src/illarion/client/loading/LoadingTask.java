@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface LoadingTask {
+interface LoadingTask {
     /**
      * Perform the next step of the loading operation.
      */

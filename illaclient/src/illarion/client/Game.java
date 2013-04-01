@@ -29,6 +29,7 @@ import org.illarion.engine.assets.TextureManager;
 import org.illarion.engine.nifty.IgeInputSystem;
 import org.illarion.engine.nifty.IgeRenderDevice;
 import org.illarion.engine.nifty.IgeSoundDevice;
+import org.illarion.engine.sound.Sounds;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -121,6 +122,18 @@ public final class Game implements GameListener {
         gameStates[STATE_LOADING] = new LoadingState();
         gameStates[STATE_PLAYING] = new PlayingState(inputReceiver);
         gameStates[STATE_ENDING] = new EndState();
+
+        final Sounds sounds = container.getEngine().getSounds();
+        if (IllaClient.getCfg().getBoolean("musicOn")) {
+            sounds.setMusicVolume(IllaClient.getCfg().getInteger("musicVolume") / 100.f);
+        } else {
+            sounds.setMusicVolume(0.f);
+        }
+        if (IllaClient.getCfg().getBoolean("soundOn")) {
+            sounds.setSoundVolume(IllaClient.getCfg().getInteger("soundVolume") / 100.f);
+        } else {
+            sounds.setSoundVolume(0.f);
+        }
 
         for (@Nonnull final GameState listener : gameStates) {
             listener.create(this, container, nifty);

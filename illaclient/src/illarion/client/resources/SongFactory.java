@@ -19,6 +19,7 @@
 package illarion.client.resources;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.util.IdWrapper;
 import illarion.common.util.FastMath;
 import org.illarion.engine.assets.SoundsManager;
@@ -121,5 +122,33 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
             songs.put(clipID, clipList);
         }
         clipList.add(SONG_DIR + music);
+    }
+
+    /**
+     * Get a list of all the song names present.
+     *
+     * @return a newly created list that contains the list
+     */
+    @Nonnull
+    public List<String> getSongNames() {
+        final List<String> result = new ArrayList<String>();
+        songs.forEachValue(new TObjectProcedure<List<String>>() {
+            @Override
+            public boolean execute(final List<String> object) {
+                result.addAll(object);
+                return true;
+            }
+        });
+        return result;
+    }
+
+    /**
+     * Load a specific music track.
+     *
+     * @param manager the manager used to load the track
+     * @param song    the name of the song to load
+     */
+    public void loadSong(@Nonnull final SoundsManager manager, @Nonnull final String song) {
+        manager.getMusic(song);
     }
 }

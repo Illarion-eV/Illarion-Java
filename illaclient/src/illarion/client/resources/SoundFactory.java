@@ -26,6 +26,9 @@ import org.illarion.engine.sound.Sound;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This factory provides access to all known sound files.
@@ -119,5 +122,27 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
     public void storeResource(@Nonnull final IdWrapper<String> resource) {
         final String sound = resource.getObject();
         sounds.put(resource.getId(), SOUND_PATH + sound);
+    }
+
+    /**
+     * Get a list of all the sound names present.
+     *
+     * @return a newly created list that contains the list
+     */
+    @Nonnull
+    public List<String> getSoundNames() {
+        final List<String> result = new ArrayList<String>();
+        Collections.addAll(result, sounds.values());
+        return result;
+    }
+
+    /**
+     * Load a specific sound effect.
+     *
+     * @param manager the manager used to load the sound
+     * @param sound   the name of the sound to load
+     */
+    public void loadSound(@Nonnull final SoundsManager manager, @Nonnull final String sound) {
+        manager.getSound(sound);
     }
 }

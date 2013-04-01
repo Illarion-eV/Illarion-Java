@@ -69,6 +69,7 @@ public final class Loading {
         if (!loadingDone) {
             addToTaskList(new TextureLoadingTask(gameEngine));
             addToTaskList(new ResourceTableLoading(gameEngine));
+            addToTaskList(new SoundLoadingTask(gameEngine));
             addToTaskList(new GameEnvironmentLoading(gameEngine));
             loadingDone = true;
         }

@@ -66,6 +66,12 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
     private final boolean mirror;
 
     /**
+     * The rectangle that defines the area the sprite is displayed in.
+     */
+    @Nonnull
+    private final Rectangle displayRectangle;
+
+    /**
      * Create a abstract sprite.
      *
      * @param textures the textures that are the frames of this sprite
@@ -94,6 +100,18 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
         this.centerX = centerX;
         this.centerY = centerY;
         this.mirror = mirror;
+
+        final float centerTransX = getWidth() * getCenterX();
+        final float centerTransY = getHeight() * getCenterY();
+
+        final int realOffsetX;
+        if (isMirrored()) {
+            realOffsetX = Math.round(-centerTransX - getOffsetX());
+        } else {
+            realOffsetX = Math.round(-centerTransX + getOffsetX());
+        }
+        final int realOffsetY = Math.round(-centerTransY - getOffsetY());
+        displayRectangle = new Rectangle(realOffsetX, realOffsetY, getWidth(), getHeight());
     }
 
     @Override
@@ -152,10 +170,10 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
             targetRectangle = storage;
         }
 
-        final int displayX = (int) (x + ((offsetX + (getWidth() * centerX)) * scale));
-        final int displayY = (int) (y + ((offsetY + (getHeight() * centerY)) * scale));
-        final int displayWidth = (int) (getWidth() * scale);
-        final int displayHeight = (int) (getHeight() * scale);
+        final int displayX = Math.round(x + (displayRectangle.getX() * scale));
+        final int displayY = Math.round(y + (displayRectangle.getY() * scale));
+        final int displayWidth = Math.round(displayRectangle.getWidth() * scale);
+        final int displayHeight = Math.round(displayRectangle.getHeight() * scale);
         targetRectangle.set(displayX, displayY, displayWidth, displayHeight);
 
         return targetRectangle;

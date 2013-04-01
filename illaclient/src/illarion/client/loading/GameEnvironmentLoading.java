@@ -34,7 +34,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @NotThreadSafe
-public final class GameEnvironmentLoading implements LoadingTask {
+final class GameEnvironmentLoading implements LoadingTask {
     /**
      * This is set {@code true} once the loading of the game components is done.
      */
@@ -63,7 +63,7 @@ public final class GameEnvironmentLoading implements LoadingTask {
      *
      * @param engine the engine that is used to load the game
      */
-    public GameEnvironmentLoading(@Nonnull final Engine engine) {
+    GameEnvironmentLoading(@Nonnull final Engine engine) {
         usedEngine = engine;
         monitor = new ProgressMonitor();
     }

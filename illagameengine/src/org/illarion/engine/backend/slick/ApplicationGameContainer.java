@@ -27,6 +27,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.renderer.Renderer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,16 +64,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * @throws SlickEngineException This exception is thrown in case creating the container failed badly
      */
     public ApplicationGameContainer(final GameListener gameListener) throws SlickEngineException {
-        try {
-            slickContainer = new AppGameContainer(new ListenerGame(gameListener, this));
-            slickContainer.setForceExit(false);
-            engine = new SlickEngine(slickContainer);
-            windowHeight = slickContainer.getHeight();
-            windowWidth = slickContainer.getWidth();
-            fullScreenResolution = new GraphicResolution(windowWidth, windowHeight, -1, -1);
-        } catch (@Nonnull final SlickException e) {
-            throw new SlickEngineException("Failed to create the application container.", e);
-        }
+        this(gameListener, 800, 600, false);
     }
 
     /**
@@ -89,6 +81,10 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         try {
             slickContainer = new AppGameContainer(new ListenerGame(gameListener, this), width, height, fullScreen);
             slickContainer.setForceExit(false);
+            slickContainer.setAlwaysRender(true);
+            slickContainer.setUpdateOnlyWhenVisible(false);
+            Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
+            Renderer.setLineStripRenderer(Renderer.QUAD_BASED_LINE_STRIP_RENDERER);
             engine = new SlickEngine(slickContainer);
             windowHeight = slickContainer.getHeight();
             windowWidth = slickContainer.getWidth();
