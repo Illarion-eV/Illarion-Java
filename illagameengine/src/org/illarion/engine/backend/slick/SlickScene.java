@@ -25,6 +25,7 @@ import org.illarion.engine.graphic.Graphics;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.renderer.SGL;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -97,7 +98,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
      */
     private static Image validateImage(final int width, final int height, @Nullable final Image original) throws SlickException {
         if (original == null) {
-            return Image.createOffscreenImage(width, height);
+            return Image.createOffscreenImage(width, height, SGL.GL_LINEAR);
         }
         if ((original.getHeight() == height) && (original.getWidth() == width)) {
             return original;
@@ -106,7 +107,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
             return original.getSubImage(0, 0, width, height);
         }
         original.destroy();
-        return Image.createOffscreenImage(width, height);
+        return Image.createOffscreenImage(width, height, SGL.GL_LINEAR);
     }
 
     @Override
@@ -137,6 +138,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                 slickGraphicsImpl.clear();
                 renderScene(graphics);
                 slickGraphicsImpl.popTransform();
+                slickGraphicsImpl.flush();
             } else {
                 final int height = slickContainer.getHeight();
                 final int width = slickContainer.getWidth();
@@ -147,8 +149,6 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                     slickGraphics.setSlickGraphicsImpl(currentGraphics);
                     currentGraphics.pushTransform();
                     currentGraphics.translate(offsetX, offsetY);
-                    currentGraphics.setBackground(Color.transparent);
-                    currentGraphics.clear();
                     renderScene(graphics);
                     currentGraphics.popTransform();
                     currentGraphics.flush();
@@ -162,17 +162,17 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
 
                         effect.activateEffect(width, height, nextImage.getTexture().getTextureWidth(),
                                 nextImage.getTexture().getTextureHeight());
-                        nextGraphics.setBackground(Color.transparent);
-                        nextGraphics.clear();
                         nextGraphics.drawImage(lastProcessedImage, 0, 0);
                         effect.disableEffect();
-                        currentGraphics.flush();
+                        nextGraphics.flush();
 
                         lastProcessedImage = nextImage;
                     }
 
                     org.newdawn.slick.Graphics.setCurrent(slickGraphicsImpl);
+                    slickGraphics.setSlickGraphicsImpl(slickGraphicsImpl);
                     slickGraphicsImpl.drawImage(lastProcessedImage, 0, 0);
+                    slickGraphicsImpl.flush();
                 } catch (@Nonnull final SlickException e) {
                     // postprocessing failed
                 }

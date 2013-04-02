@@ -368,6 +368,7 @@ class SlickGraphics implements Graphics {
     @SuppressWarnings("NullableProblems")
     void setSlickGraphicsImpl(@Nonnull final org.newdawn.slick.Graphics graphics) {
         slickGraphicsImpl = graphics;
+        setBlendingMode(BlendingMode.AlphaBlend);
     }
 
     @Override
@@ -378,9 +379,10 @@ class SlickGraphics implements Graphics {
         switch (mode) {
             case AlphaBlend:
                 slickGraphicsImpl.setDrawMode(org.newdawn.slick.Graphics.MODE_NORMAL);
+                Renderer.get().glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 break;
             case Multiply:
-                slickGraphicsImpl.setDrawMode(org.newdawn.slick.Graphics.MODE_COLOR_MULTIPLY);
+                slickGraphicsImpl.setDrawMode(org.newdawn.slick.Graphics.MODE_NORMAL);
                 Renderer.get().glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_ZERO);
                 break;
         }
