@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.backend.shared.AbstractScene;
 import org.illarion.engine.graphic.Graphics;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
@@ -132,6 +133,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                 // No full screen effects. Just render it
                 slickGraphicsImpl.pushTransform();
                 slickGraphicsImpl.translate(offsetX, offsetY);
+                slickGraphicsImpl.setBackground(Color.transparent);
                 slickGraphicsImpl.clear();
                 renderScene(graphics);
                 slickGraphicsImpl.popTransform();
@@ -145,6 +147,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                     slickGraphics.setSlickGraphicsImpl(currentGraphics);
                     currentGraphics.pushTransform();
                     currentGraphics.translate(offsetX, offsetY);
+                    currentGraphics.setBackground(Color.transparent);
                     currentGraphics.clear();
                     renderScene(graphics);
                     currentGraphics.popTransform();
@@ -159,6 +162,8 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
 
                         effect.activateEffect(width, height, nextImage.getTexture().getTextureWidth(),
                                 nextImage.getTexture().getTextureHeight());
+                        nextGraphics.setBackground(Color.transparent);
+                        nextGraphics.clear();
                         nextGraphics.drawImage(lastProcessedImage, 0, 0);
                         effect.disableEffect();
                         currentGraphics.flush();
