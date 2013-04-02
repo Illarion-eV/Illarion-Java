@@ -43,6 +43,16 @@ class ListenerGame implements Game {
     private final org.illarion.engine.GameContainer engineContainer;
 
     /**
+     * The last recorded height value of the game container.
+     */
+    private int lastHeight;
+
+    /**
+     * The last recorded width value of the game container.
+     */
+    private int lastWidth;
+
+    /**
      * Create a new implementation of this game and set the listener that receives the game lifecycle.
      *
      * @param gameListener the game listener that receives the updates
@@ -60,10 +70,19 @@ class ListenerGame implements Game {
         }
         listener.create(engineContainer);
         ((SlickEngine) engineContainer.getEngine()).getInput().setInput(gameContainer.getInput());
+        lastHeight = gameContainer.getHeight();
+        lastWidth = gameContainer.getWidth();
     }
 
     @Override
     public void update(final GameContainer gameContainer, final int delta) throws SlickException {
+        final int currentHeight = gameContainer.getHeight();
+        final int currentWidth = gameContainer.getWidth();
+        if ((lastHeight != currentHeight) || (lastWidth != currentWidth)) {
+            listener.resize(engineContainer, currentWidth, currentHeight);
+            lastHeight = currentHeight;
+            lastWidth = currentWidth;
+        }
         listener.update(engineContainer, delta);
     }
 
