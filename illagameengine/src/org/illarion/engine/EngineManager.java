@@ -44,6 +44,7 @@ public class EngineManager {
      * @return the container that displays the desktop game
      * @throws EngineException in case the creation of the game container fails
      */
+    @Nonnull
     public static DesktopGameContainer createDesktopGame(@Nonnull final Backend backend,
                                                          @Nonnull final GameListener gameListener, final int width,
                                                          final int height, final boolean fullScreen) throws
