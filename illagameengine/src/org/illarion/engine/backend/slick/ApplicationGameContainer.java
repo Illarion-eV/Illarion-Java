@@ -106,6 +106,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
             slickContainer.setForceExit(false);
             slickContainer.setAlwaysRender(true);
             slickContainer.setUpdateOnlyWhenVisible(false);
+            slickContainer.setShowFPS(false);
             Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
             Renderer.setLineStripRenderer(Renderer.QUAD_BASED_LINE_STRIP_RENDERER);
             engine = new SlickEngine(slickContainer);
