@@ -65,7 +65,7 @@ class SoundSoundHandle implements SoundHandle {
 
     @Override
     public void play() {
-        handle = soundsEngine.playSound(sound, 1.f, 0.f);
+        handle = soundsEngine.playSound(sound, 1.f);
         validHandle = true;
     }
 

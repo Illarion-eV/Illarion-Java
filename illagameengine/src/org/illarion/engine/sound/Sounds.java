@@ -95,10 +95,9 @@ public interface Sounds {
      *
      * @param sound  the sound effect to play
      * @param volume the volume of the sound effect, this volume is multiplied with the global sound effect volume
-     * @param pitch  the pitch of the sound effect, {@code -1.f} is left, {@code 1.f} is right and {@code 0.f} is center
      * @return the reference handle to the played sound effect
      */
-    int playSound(@Nonnull Sound sound, float volume, float pitch);
+    int playSound(@Nonnull Sound sound, float volume);
 
     /**
      * Play a sound with a offset to the listener in 3D space.

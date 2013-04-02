@@ -125,12 +125,12 @@ public final class Game implements GameListener {
 
         final Sounds sounds = container.getEngine().getSounds();
         if (IllaClient.getCfg().getBoolean("musicOn")) {
-            sounds.setMusicVolume(IllaClient.getCfg().getInteger("musicVolume") / 100.f);
+            sounds.setMusicVolume(IllaClient.getCfg().getFloat("musicVolume") / 100.f);
         } else {
             sounds.setMusicVolume(0.f);
         }
         if (IllaClient.getCfg().getBoolean("soundOn")) {
-            sounds.setSoundVolume(IllaClient.getCfg().getInteger("soundVolume") / 100.f);
+            sounds.setSoundVolume(IllaClient.getCfg().getFloat("soundVolume") / 100.f);
         } else {
             sounds.setSoundVolume(0.f);
         }
@@ -182,6 +182,7 @@ public final class Game implements GameListener {
         }
 
         nifty.update();
+        container.getEngine().getSounds().poll(delta);
 
         final GameState activeListener = getCurrentState();
         if (activeListener != null) {

@@ -35,6 +35,11 @@ import java.util.Map;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class SlickSounds implements MusicListener, Sounds {
+    /**
+     * The default value for the pitch of the music.
+     */
+    private static final float DEFAULT_PITCH = 1.f;
+
     @Override
     public float getMusicVolume() {
         return SoundStore.get().getMusicVolume();
@@ -142,15 +147,15 @@ class SlickSounds implements MusicListener, Sounds {
     private void startMusic(@Nonnull final SlickMusic music, final int fadeInTime) {
         currentMusic = music;
         currentMusic.getInternalMusic().addListener(this);
-        currentMusic.getInternalMusic().play(0.f, 0.f);
+        currentMusic.getInternalMusic().loop(DEFAULT_PITCH, 0.f);
         currentMusic.getInternalMusic().fade(fadeInTime, getMusicVolume(), false);
     }
 
     @Override
-    public int playSound(@Nonnull final Sound sound, final float volume, final float pitch) {
+    public int playSound(@Nonnull final Sound sound, final float volume) {
         if (sound instanceof SlickSound) {
             @Nonnull final org.newdawn.slick.Sound slickSound = ((SlickSound) sound).getInternalSound();
-            slickSound.play(pitch, SoundStore.get().getSoundVolume() * volume);
+            slickSound.play(DEFAULT_PITCH, SoundStore.get().getSoundVolume() * volume);
             lastHandle++;
             activeSoundsMap.put(lastHandle, (SlickSound) sound);
             return lastHandle;
@@ -162,7 +167,7 @@ class SlickSounds implements MusicListener, Sounds {
     public int playSound(@Nonnull final Sound sound, final float volume, final int offsetX, final int offsetY, final int offsetZ) {
         if (sound instanceof SlickSound) {
             @Nonnull final org.newdawn.slick.Sound slickSound = ((SlickSound) sound).getInternalSound();
-            slickSound.playAt(0.f, SoundStore.get().getSoundVolume() * volume, offsetX, offsetY, offsetZ);
+            slickSound.playAt(1.f, SoundStore.get().getSoundVolume() * volume, offsetX, offsetY, offsetZ);
             lastHandle++;
             activeSoundsMap.put(lastHandle, (SlickSound) sound);
             return lastHandle;
@@ -172,7 +177,7 @@ class SlickSounds implements MusicListener, Sounds {
 
     @Override
     public void poll(final int delta) {
-        // polling is not needed
+        SoundStore.get().poll(delta);
     }
 
     @Override
