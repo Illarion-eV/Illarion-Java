@@ -76,4 +76,9 @@ public abstract class AbstractMouseLocationEvent implements SceneEvent {
     public int getY() {
         return y;
     }
+
+    @Override
+    public void notHandled() {
+        // nothing
+    }
 }

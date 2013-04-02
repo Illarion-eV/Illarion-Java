@@ -24,4 +24,8 @@ package org.illarion.engine.graphic;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface SceneEvent {
+    /**
+     * This function is called in case event was not processed by any of the entries in the scene.
+     */
+    void notHandled();
 }

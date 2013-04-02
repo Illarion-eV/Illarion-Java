@@ -32,6 +32,8 @@ import javax.annotation.Nonnull;
 public final class PrimaryKeyMapDrag extends DragOnMapEvent {
     public interface PrimaryKeyMapDragCallback {
         boolean startDraggingItemFromTile(PrimaryKeyMapDrag event, MapTile tile);
+
+        void notHandled();
     }
 
     private final PrimaryKeyMapDragCallback callback;
@@ -60,5 +62,10 @@ public final class PrimaryKeyMapDrag extends DragOnMapEvent {
 
     public boolean startDraggingItemFromTile(final MapTile tile) {
         return callback.startDraggingItemFromTile(this, tile);
+    }
+
+    @Override
+    public void notHandled() {
+        callback.notHandled();
     }
 }

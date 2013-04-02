@@ -133,11 +133,16 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene {
 
         @Nullable SceneEvent event = eventQueue.poll();
         while (event != null) {
+            boolean notProcessed = true;
             for (int i = workingArraySize - 1; i >= 0; i--) {
                 final SceneElement element = workingArray[i];
                 if (element.isEventProcessed(container, delta, event)) {
+                    notProcessed = false;
                     break;
                 }
+            }
+            if (notProcessed) {
+                event.notHandled();
             }
             event = eventQueue.poll();
         }

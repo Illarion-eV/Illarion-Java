@@ -199,23 +199,27 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      *
      * @param data the event data
      */
-    public void handlePrimaryKeyDrag(@Nonnull final DragOnMapEvent data) {
+    private void handlePrimaryKeyDrag(@Nonnull final DragOnMapEvent data) {
         if (!World.getPlayer().getMovementHandler().isMouseMovementActive()) {
             final SceneEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
                 @Override
                 public boolean startDraggingItemFromTile(@Nonnull final PrimaryKeyMapDrag event, final MapTile tile) {
                     return handleDragOnMap(event, tile);
                 }
+
+                @Override
+                public void notHandled() {
+                    moveTowardsMouse(data);
+                }
             });
             World.getMapDisplay().getGameScene().publishEvent(newEvent);
             return;
         }
 
-
         moveTowardsMouse(data);
     }
 
-    public boolean handleDragOnMap(@Nonnull final PrimaryKeyMapDrag event, @Nullable final MapTile mapTile) {
+    private boolean handleDragOnMap(@Nonnull final PrimaryKeyMapDrag event, @Nullable final MapTile mapTile) {
         if (mapTile == null) {
             return false;
         }
