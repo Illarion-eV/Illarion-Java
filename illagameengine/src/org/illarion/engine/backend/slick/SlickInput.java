@@ -490,7 +490,7 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
             return false;
         }
         final int buttonId = getSlickButtonId(button);
-        if (buttonId > 0) {
+        if (buttonId > -1) {
             return input.isMouseButtonDown(buttonId);
         }
         return false;
