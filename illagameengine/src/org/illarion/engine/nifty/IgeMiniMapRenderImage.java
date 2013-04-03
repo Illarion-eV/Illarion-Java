@@ -34,10 +34,29 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class IgeMiniMapRenderImage implements IgeRenderImage {
+    /**
+     * The world map that supplies the data to this render image.
+     */
     private final WorldMap map;
+
+    /**
+     * The radius of the mini map.
+     */
     private final int radius;
+
+    /**
+     * The effect that is applied ot make the mini map round.
+     */
     private final MiniMapEffect effect;
 
+    /**
+     * Create a new render engine that shows the mini map.
+     *
+     * @param engine the used instance of the game engine
+     * @param map    the world map that supplied the data
+     * @param radius the radius of the mini map
+     * @throws EngineException in case the creation of this image fails for any reason
+     */
     public IgeMiniMapRenderImage(@Nonnull final Engine engine, @Nonnull final WorldMap map,
                                  final int radius) throws EngineException {
         this.map = map;
@@ -67,14 +86,13 @@ public class IgeMiniMapRenderImage implements IgeRenderImage {
         final int fixedX = Math.round(x + ((w - scaledWidth) * ((float) centerX / (float) w)));
         final int fixedY = Math.round(y + ((h - scaledHeight) * ((float) centerY / (float) h)));
         g.drawTexture(map.getWorldMap(), fixedX, fixedY, scaledWidth, scaledHeight, srcX + miniMapOriginX,
-                srcY + miniMapOriginY, srcW, srcH, centerX, centerY, -45.f,
-                color, effect);
+                srcY + miniMapOriginY, srcW, srcH, centerX, centerY, -45.f, color, effect);
     }
 
     /**
      * Setup the parameters of the effect required to render the graphic.
      */
-    void setupEffect() {
+    private void setupEffect() {
         effect.setRadius(radius);
         effect.setCenter(map.getPlayerLocation());
     }
