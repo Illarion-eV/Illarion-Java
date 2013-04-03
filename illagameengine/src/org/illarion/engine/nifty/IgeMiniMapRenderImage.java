@@ -62,8 +62,13 @@ public class IgeMiniMapRenderImage implements IgeRenderImage {
         final int miniMapOriginX = playerLoc.getScX() - origin.getScX() - radius;
         final int miniMapOriginY = playerLoc.getScY() - origin.getScY() - radius;
 
-        g.drawTexture(map.getWorldMap(), x, y, Math.round(w * scale), Math.round(h * scale), srcX + miniMapOriginX,
-                srcY + miniMapOriginY, srcW, srcH, color, effect);
+        final int scaledWidth = Math.round(w * scale);
+        final int scaledHeight = Math.round(h * scale);
+        final int fixedX = Math.round(x + ((w - scaledWidth) * ((float) centerX / (float) w)));
+        final int fixedY = Math.round(y + ((h - scaledHeight) * ((float) centerY / (float) h)));
+        g.drawTexture(map.getWorldMap(), fixedX, fixedY, scaledWidth, scaledHeight, srcX + miniMapOriginX,
+                srcY + miniMapOriginY, srcW, srcH, centerX, centerY, -45.f,
+                color, effect);
     }
 
     /**

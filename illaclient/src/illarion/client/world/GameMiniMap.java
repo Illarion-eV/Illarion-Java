@@ -302,6 +302,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
             newMapOriginX = ((playerLoc.getScX() / WORLDMAP_WIDTH) * WORLDMAP_WIDTH) - WORLDMAP_WIDTH;
         }
 
+
         final int newMapOriginY;
         if (playerLoc.getScY() >= 0) {
             newMapOriginY = (playerLoc.getScY() / WORLDMAP_HEIGHT) * WORLDMAP_HEIGHT;
@@ -317,9 +318,11 @@ public final class GameMiniMap implements WorldMapDataProvider {
             mapOriginX = newMapOriginX;
             mapOriginY = newMapOriginY;
 
+            worldMap.setMapOrigin(new Location(mapOriginX, mapOriginY, mapLevel));
 
             loadMap();
         }
+        worldMap.setPlayerLocation(playerLoc);
     }
 
     /**
