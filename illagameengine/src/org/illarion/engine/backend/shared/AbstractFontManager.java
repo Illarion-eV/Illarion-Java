@@ -91,4 +91,15 @@ public abstract class AbstractFontManager implements FontManager {
     public final void setDefaultFont(@Nullable final Object identifier) {
         defaultFontIdentifier = identifier;
     }
+
+    /**
+     * Get the name of the image file fitting the specified font file.
+     *
+     * @param fntRef the reference to the font file
+     * @return the name of the image
+     */
+    @Nonnull
+    protected static String getImageName(@Nonnull final String fntRef) {
+        return fntRef.substring(fntRef.lastIndexOf('/') + 1).replace(".fnt", "_0.png");
+    }
 }

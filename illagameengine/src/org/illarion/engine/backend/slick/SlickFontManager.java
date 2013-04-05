@@ -50,7 +50,7 @@ class SlickFontManager extends AbstractFontManager {
     protected Font buildFont(@Nonnull final String ttfRef, final float size, final int style,
                              @Nonnull final String fntRef, @Nonnull final String imageRoot) throws IOException {
         try {
-            final String imageName = fntRef.substring(fntRef.lastIndexOf('/') + 1).replace(".fnt", "_0.png");
+            final String imageName = getImageName(fntRef);
             final SlickTexture texture = (SlickTexture) texManager.getTexture(imageRoot, imageName);
             if (texture == null) {
                 throw new IOException("Failed to load required image: " + imageRoot + imageName);
