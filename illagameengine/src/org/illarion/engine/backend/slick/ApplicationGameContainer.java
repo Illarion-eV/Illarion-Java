@@ -79,17 +79,6 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     @Nonnull
     private GraphicResolution fullScreenResolution;
 
-
-    /**
-     * Create a new instance of this container.
-     *
-     * @param gameListener the listener
-     * @throws SlickEngineException This exception is thrown in case creating the container failed badly
-     */
-    public ApplicationGameContainer(final GameListener gameListener) throws SlickEngineException {
-        this(gameListener, 800, 600, false);
-    }
-
     /**
      * Create a new instance of this container.
      *

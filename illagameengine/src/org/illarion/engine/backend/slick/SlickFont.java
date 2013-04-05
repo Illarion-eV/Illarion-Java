@@ -81,10 +81,17 @@ class SlickFont implements Font {
 
     @Override
     public int getAdvance(final char current, final char next) {
-        @Nullable final AngelCodeFont.Glyph glypth = internalFont.getGlyph(current);
-        if (glypth == null) {
+        @Nullable final AngelCodeFont.Glyph currentGlypth = internalFont.getGlyph(current);
+        @Nullable final AngelCodeFont.Glyph nextGlypth = internalFont.getGlyph(current);
+        if (currentGlypth == null) {
             return 0;
         }
-        return glypth.getKerning(next);
+        final int advance;
+        if (nextGlypth == null) {
+            advance = 0;
+        } else {
+            advance = nextGlypth.xadvance;
+        }
+        return currentGlypth.getKerning(next) + advance;
     }
 }
