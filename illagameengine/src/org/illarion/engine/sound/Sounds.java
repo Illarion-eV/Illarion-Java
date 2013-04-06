@@ -57,10 +57,11 @@ public interface Sounds {
     /**
      * Get the sound effects volume of a sound that is currently playing.
      *
-     * @param handle the handle of the sound effect that is returned by {@link #playSound(Sound, float, float)}
+     * @param sound  the sound the handle belong to
+     * @param handle the handle of the sound effect that is returned by {@link #playSound(Sound, float)}
      * @return the volume of the sound effect
      */
-    float getSoundVolume(int handle);
+    float getSoundVolume(@Nonnull Sound sound, int handle);
 
     /**
      * Check if a specific music track is currently playing.
@@ -73,10 +74,11 @@ public interface Sounds {
     /**
      * Check if a sound effect is currently playing.
      *
-     * @param handle the handle of the sound effect that is returned by {@link #playSound(Sound, float, float)}
+     * @param sound  the sound that should be checked
+     * @param handle the handle of the sound effect that is returned by {@link #playSound(Sound, float)}
      * @return {@code true} in case this sound effect is currently played
      */
-    boolean isSoundPlaying(int handle);
+    boolean isSoundPlaying(@Nonnull Sound sound, int handle);
 
     /**
      * Start playing some background music.
@@ -124,10 +126,11 @@ public interface Sounds {
     /**
      * Set the volume of a sound effect that is currently playing.
      *
-     * @param handle the handle of the sound effect that is returned by {@link #playSound(Sound, float, float)}
+     * @param sound  the sound the handle belong to
+     * @param handle the handle of the sound effect that is returned by {@link #playSound(Sound, float)}
      * @param volume the volume of the sound effects
      */
-    void setSoundVolume(int handle, float volume);
+    void setSoundVolume(@Nonnull Sound sound, int handle, float volume);
 
     /**
      * Stop any currently played music.
@@ -143,7 +146,15 @@ public interface Sounds {
     /**
      * Stop the playback of a sound effect
      *
-     * @param handle the handle of the sound effect that is returned by {@link #playSound(Sound, float, float)}
+     * @param sound  the sound that should be stopped
+     * @param handle the handle of the sound effect that is returned by {@link #playSound(Sound, float)}
      */
-    void stopSound(int handle);
+    void stopSound(@Nonnull Sound sound, int handle);
+
+    /**
+     * Stop the playback of all instances of a sound effect.
+     *
+     * @param sound the sound that should be stopped
+     */
+    void stopSound(@Nonnull Sound sound);
 }

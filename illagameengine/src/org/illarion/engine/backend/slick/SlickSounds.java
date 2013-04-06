@@ -71,7 +71,7 @@ class SlickSounds implements MusicListener, Sounds {
     }
 
     @Override
-    public float getSoundVolume(final int handle) {
+    public float getSoundVolume(@Nonnull final Sound sound, final int handle) {
         return getSoundVolume();
     }
 
@@ -96,9 +96,12 @@ class SlickSounds implements MusicListener, Sounds {
     private int lastHandle = Integer.MIN_VALUE;
 
     @Override
-    public boolean isSoundPlaying(final int handle) {
+    public boolean isSoundPlaying(@Nonnull final Sound sound, final int handle) {
+        if (!(sound instanceof SlickSound)) {
+            return false;
+        }
         @Nullable final SlickSound checkedSound = activeSoundsMap.get(handle);
-        if (checkedSound == null) {
+        if ((checkedSound == null) || !checkedSound.equals(sound)) {
             return false;
         }
         if (checkedSound.getInternalSound().playing()) {
@@ -181,7 +184,7 @@ class SlickSounds implements MusicListener, Sounds {
     }
 
     @Override
-    public void setSoundVolume(final int handle, final float volume) {
+    public void setSoundVolume(@Nonnull final Sound sound, final int handle, final float volume) {
         // not suppoted
     }
 
@@ -207,11 +210,19 @@ class SlickSounds implements MusicListener, Sounds {
     }
 
     @Override
-    public void stopSound(final int handle) {
+    public void stopSound(@Nonnull final Sound sound, final int handle) {
+        if (!(sound instanceof SlickSound)) {
+            return;
+        }
         @Nullable final SlickSound checkedSound = activeSoundsMap.get(handle);
-        if (checkedSound != null) {
+        if ((checkedSound != null) && checkedSound.equals(sound)) {
             checkedSound.getInternalSound().stop();
             activeSoundsMap.remove(handle);
         }
+    }
+
+    @Override
+    public void stopSound(@Nonnull final Sound sound) {
+        ((SlickSound) sound).getInternalSound().stop();
     }
 }

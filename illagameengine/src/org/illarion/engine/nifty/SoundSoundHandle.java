@@ -72,7 +72,7 @@ class SoundSoundHandle implements SoundHandle {
     @Override
     public void stop() {
         if (validHandle) {
-            soundsEngine.stopSound(handle);
+            soundsEngine.stopSound(sound, handle);
             validHandle = false;
         }
     }
@@ -80,14 +80,14 @@ class SoundSoundHandle implements SoundHandle {
     @Override
     public void setVolume(final float volume) {
         if (validHandle) {
-            soundsEngine.setSoundVolume(handle, volume);
+            soundsEngine.setSoundVolume(sound, handle, volume);
         }
     }
 
     @Override
     public float getVolume() {
         if (validHandle) {
-            return soundsEngine.getSoundVolume(handle);
+            return soundsEngine.getSoundVolume(sound, handle);
         }
         return 1.f;
     }
@@ -95,7 +95,7 @@ class SoundSoundHandle implements SoundHandle {
     @Override
     public boolean isPlaying() {
         if (validHandle) {
-            return soundsEngine.isSoundPlaying(handle);
+            return soundsEngine.isSoundPlaying(sound, handle);
         }
         return false;
     }
