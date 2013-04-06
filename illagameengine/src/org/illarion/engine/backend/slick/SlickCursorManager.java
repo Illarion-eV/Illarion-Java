@@ -19,7 +19,7 @@
 package org.illarion.engine.backend.slick;
 
 import org.illarion.engine.MouseCursor;
-import org.illarion.engine.assets.CursorManager;
+import org.illarion.engine.backend.shared.AbstractCursorManager;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
 import org.newdawn.slick.opengl.CursorLoader;
@@ -30,45 +30,25 @@ import org.newdawn.slick.util.ResourceLoader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is the mouse cursor manager that stores the cursors for Slick2D.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class SlickCursorManager implements CursorManager {
-    /**
-     * This map stores the cursors that were already load.
-     */
-    private final Map<String, SlickMouseCursor> loadedCursors;
-
-    /**
-     * Create a new instance of this manager.
-     */
-    SlickCursorManager() {
-        loadedCursors = new HashMap<String, SlickMouseCursor>();
-    }
-
+class SlickCursorManager extends AbstractCursorManager {
     @Nullable
     @Override
-    public MouseCursor getCursor(@Nonnull final String ref, final int hotspotX, final int hotspotY) {
-        @Nullable final SlickMouseCursor loadedCursor = loadedCursors.get(ref);
-        if (loadedCursor == null) {
-            final LoadableImageData data = ImageDataFactory.getImageDataFor(ref);
-            try {
-                data.loadImage(ResourceLoader.getResourceAsStream(ref), true, true, null);
-                final Cursor lwjglCursor = CursorLoader.get().getCursor(data, hotspotX, hotspotY);
-                final SlickMouseCursor slickCursor = new SlickMouseCursor(lwjglCursor, hotspotX, hotspotY);
-                loadedCursors.put(ref, slickCursor);
-                return slickCursor;
-            } catch (@Nonnull final IOException ignored) {
-                return null;
-            } catch (@Nonnull final LWJGLException ignored) {
-                return null;
-            }
+    protected MouseCursor loadCursor(@Nonnull final String ref, final int hotspotX, final int hotspotY) {
+        final LoadableImageData data = ImageDataFactory.getImageDataFor(ref);
+        try {
+            data.loadImage(ResourceLoader.getResourceAsStream(ref), true, true, null);
+            final Cursor lwjglCursor = CursorLoader.get().getCursor(data, hotspotX, hotspotY);
+            return new SlickMouseCursor(lwjglCursor, hotspotX, hotspotY);
+        } catch (@Nonnull final IOException ignored) {
+            return null;
+        } catch (@Nonnull final LWJGLException ignored) {
+            return null;
         }
-        return loadedCursor;
     }
 }
