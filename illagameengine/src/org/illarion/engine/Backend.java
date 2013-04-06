@@ -29,7 +29,13 @@ public enum Backend {
     /**
      * The Slick2D backend.
      */
-    Slick2D("org.illarion.engine.backend.slick.ApplicationGameContainer");
+    Slick2D("org.illarion.engine.backend.slick.ApplicationGameContainer"),
+
+    /**
+     * The libGDX backend.
+     */
+    @SuppressWarnings("EnumeratedConstantNamingConvention")
+    libGDX("org.illarion.engine.backend.gdx.ApplicationGameContainer");
 
     /**
      * The class that stores the desktop container.

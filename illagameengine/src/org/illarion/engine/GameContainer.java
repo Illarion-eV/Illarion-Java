@@ -48,6 +48,7 @@ public interface GameContainer {
      * Get the backing engine that is used to operate the capabilities of the container.
      *
      * @return the backing engine
+     * @throws IllegalStateException in case the game was not launched yet
      */
     @Nonnull
     Engine getEngine();

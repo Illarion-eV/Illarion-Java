@@ -198,12 +198,12 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         try {
             if (cfg.getBoolean(CFG_FULLSCREEN)) {
-                gameContainer = EngineManager.createDesktopGame(Backend.Slick2D, game, res.getWidth(),
+                gameContainer = EngineManager.createDesktopGame(Backend.libGDX, game, res.getWidth(),
                         res.getHeight(), true);
             } else {
                 final int windowedWidth = cfg.getInteger("windowWidth");
                 final int windowedHeight = cfg.getInteger("windowHeight");
-                gameContainer = EngineManager.createDesktopGame(Backend.Slick2D, game,
+                gameContainer = EngineManager.createDesktopGame(Backend.libGDX, game,
                         (windowedWidth < 0) ? res.getWidth() : windowedWidth,
                         (windowedHeight < 0) ? res.getHeight() : windowedHeight, false);
             }
@@ -225,15 +225,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             LOGGER.info("Client shutdown initiated.");
         } catch (@Nonnull final Exception e) {
             LOGGER.fatal("Exception while launching game.", e);
-        } finally {
-            quitGame();
-            World.cleanEnvironment();
-            cfg.save();
-            GlobalExecutorService.shutdown();
+            exitGameContainer();
         }
-
-        LOGGER.info("Cleanup done.");
-        startFinalKiller();
     }
 
     /**
@@ -259,6 +252,14 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     public static void exitGameContainer() {
         INSTANCE.gameContainer.exitGame();
+
+        getInstance().quitGame();
+        World.cleanEnvironment();
+        getCfg().save();
+        GlobalExecutorService.shutdown();
+
+        LOGGER.info("Cleanup done.");
+        startFinalKiller();
     }
 
     /**

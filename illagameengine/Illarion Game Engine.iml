@@ -8,12 +8,12 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="JSR" level="project" />
-    <orderEntry type="library" name="LWJGL" level="project" />
     <orderEntry type="library" name="Slick" level="project" />
     <orderEntry type="library" name="log4j" level="project" />
     <orderEntry type="library" name="XPP3" level="project" />
     <orderEntry type="library" name="Nifty-GUI" level="project" />
     <orderEntry type="module" module-name="Illarion Common Library" />
+    <orderEntry type="library" name="libGDX" level="project" />
   </component>
 </module>
 
