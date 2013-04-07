@@ -22,6 +22,7 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import illarion.common.util.FastMath;
 import org.illarion.engine.MouseCursor;
 import org.illarion.engine.backend.shared.AbstractCursorManager;
 import org.lwjgl.LWJGLException;
@@ -59,10 +60,20 @@ class GdxLwjglCursorManager extends AbstractCursorManager {
     protected MouseCursor loadCursor(@Nonnull final String ref, final int hotspotX, final int hotspotY) {
         try {
             Pixmap cursorPixels = new Pixmap(files.internal(ref));
-            if (!MathUtils.isPowerOfTwo(cursorPixels.getWidth()) || !MathUtils.isPowerOfTwo(cursorPixels.getHeight()) ||
+
+            int cursorHeight = cursorPixels.getHeight();
+            int cursorWidth = cursorPixels.getWidth();
+
+            cursorHeight = FastMath.clamp(cursorHeight, Cursor.getMinCursorSize(), Cursor.getMaxCursorSize());
+            cursorWidth = FastMath.clamp(cursorWidth, Cursor.getMinCursorSize(), Cursor.getMaxCursorSize());
+
+            cursorHeight = MathUtils.nextPowerOfTwo(cursorHeight);
+            cursorWidth = MathUtils.nextPowerOfTwo(cursorWidth);
+
+            if ((cursorHeight != cursorPixels.getHeight()) || (cursorWidth != cursorPixels.getWidth()) ||
                     (cursorPixels.getFormat() != Pixmap.Format.RGBA8888)) {
-                final Pixmap tempPixMap = new Pixmap(MathUtils.nextPowerOfTwo(cursorPixels.getWidth()),
-                        MathUtils.nextPowerOfTwo(cursorPixels.getHeight()), Pixmap.Format.RGBA8888);
+
+                final Pixmap tempPixMap = new Pixmap(cursorHeight, cursorHeight, Pixmap.Format.RGBA8888);
                 tempPixMap.drawPixmap(cursorPixels, 0, 0);
                 cursorPixels.dispose();
                 cursorPixels = tempPixMap;
