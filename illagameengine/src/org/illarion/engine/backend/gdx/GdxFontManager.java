@@ -65,6 +65,6 @@ class GdxFontManager extends AbstractFontManager {
             throw new IOException("Failed to load required image: " + imageRoot + imageName);
         }
 
-        return new GdxFont(new BitmapFont(files.internal(fntRef), imageTexture.getTextureRegion(), false));
+        return new GdxFont(new BitmapFont(files.internal(fntRef), imageTexture.getTextureRegion(), true));
     }
 }

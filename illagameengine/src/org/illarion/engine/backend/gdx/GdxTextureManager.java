@@ -36,7 +36,10 @@ class GdxTextureManager extends AbstractTextureManager {
     @Override
     protected Texture loadTexture(@Nonnull final String resource) {
         try {
-            return new GdxTexture(new TextureRegion(new com.badlogic.gdx.graphics.Texture(resource)));
+            final com.badlogic.gdx.graphics.Texture tex = new com.badlogic.gdx.graphics.Texture(resource);
+            final TextureRegion region = new TextureRegion(tex);
+            region.flip(false, false);
+            return new GdxTexture(region);
         } catch (@Nonnull final GdxRuntimeException e) {
             return null;
         }

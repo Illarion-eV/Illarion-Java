@@ -26,6 +26,8 @@ import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.GameListener;
 import org.illarion.engine.assets.TextureManager;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Font;
 import org.illarion.engine.nifty.IgeInputSystem;
 import org.illarion.engine.nifty.IgeRenderDevice;
 import org.illarion.engine.nifty.IgeSoundDevice;
@@ -199,7 +201,17 @@ public final class Game implements GameListener {
             activeListener.render(container);
         }
         nifty.render(false);
+
+        if (showFPS) {
+            final Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
+            if (fpsFont != null) {
+                container.getEngine().getGraphics().drawText(fpsFont, "FPS: " + container.getFPS(), Color.WHITE, 10,
+                        10);
+            }
+        }
     }
+
+    private boolean showFPS = true;
 
     @Override
     public boolean isClosingGame() {

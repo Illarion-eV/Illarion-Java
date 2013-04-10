@@ -18,6 +18,7 @@
  */
 package org.illarion.engine.backend.shared;
 
+import illarion.common.util.FastMath;
 import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Graphics;
@@ -37,18 +38,12 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractScene<T extends SceneEffect> implements Scene {
+public abstract class AbstractScene<T extends SceneEffect> implements Scene, Comparator<SceneElement> {
     /**
      * This list of elements in the scene. This list is kept sorted.
      */
     @Nonnull
     private final List<SceneElement> sceneElements;
-
-    /**
-     * The comparator used to keep the scene elements in order.
-     */
-    @Nonnull
-    private final Comparator<SceneElement> sceneElementComparator;
 
     /**
      * This is the queue of events that are published during the updates.
@@ -74,6 +69,9 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene {
     @Nonnull
     private SceneElement[] workingArray = new SceneElement[0];
 
+    /**
+     * The amount of elements in the array that are currently valid.
+     */
     private int workingArraySize;
 
     /**
@@ -81,20 +79,19 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene {
      */
     protected AbstractScene() {
         sceneElements = new ArrayList<SceneElement>();
-        sceneElementComparator = new Comparator<SceneElement>() {
-            @Override
-            public int compare(final SceneElement o1, final SceneElement o2) {
-                return o2.getOrder() - o1.getOrder();
-            }
-        };
         eventQueue = new ConcurrentLinkedDeque<SceneEvent>();
         sceneEffects = new ArrayList<T>();
     }
 
     @Override
+    public int compare(final SceneElement o1, final SceneElement o2) {
+        return FastMath.sign(o2.getOrder() - o1.getOrder());
+    }
+
+    @Override
     public final void addElement(@Nonnull final SceneElement element) {
         synchronized (sceneElements) {
-            final int insertIndex = Collections.binarySearch(sceneElements, element, sceneElementComparator);
+            final int insertIndex = Collections.binarySearch(sceneElements, element, this);
             if (insertIndex < 0) {
                 sceneElements.add(-insertIndex - 1, element);
             } else {

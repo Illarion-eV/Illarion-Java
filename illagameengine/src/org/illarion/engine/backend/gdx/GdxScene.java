@@ -18,6 +18,7 @@
  */
 package org.illarion.engine.backend.gdx;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -64,6 +65,11 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
     private int lastFrameBuffer = 1;
 
     /**
+     * The camera that is used to render the scene.
+     */
+    private final OrthographicCamera camera;
+
+    /**
      * Create a new render scene for libGDX.
      *
      * @param container the container that displays the scene
@@ -71,6 +77,8 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
     GdxScene(@Nonnull final GameContainer container) {
         this.container = container;
         renderBatch = new SpriteBatch();
+        camera = new OrthographicCamera();
+        camera.setToOrtho(true);
     }
 
     @Override
@@ -81,6 +89,8 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
         for (int i = 0; i < effectCount; i++) {
             getEffect(i).update(delta);
         }
+
+        camera.update();
     }
 
     @Override
@@ -93,7 +103,7 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
 
         final int effectCount = getEffectCount();
         if (effectCount == 0) {
-            gdxGraphics.applyOffset(offsetX, offsetY);
+            gdxGraphics.applyOffset(-offsetX, -offsetY);
             renderScene(graphics);
             gdxGraphics.resetOffset();
         } else {
@@ -101,12 +111,14 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
             FrameBuffer currentFrameBuffer = getNextFrameBuffer(container.getWidth(), container.getHeight());
             currentFrameBuffer.begin();
             gdxGraphics.beginFrame();
-            gdxGraphics.applyOffset(offsetX, offsetY);
+            gdxGraphics.applyOffset(-offsetX, -offsetY);
             renderScene(graphics);
             gdxGraphics.resetOffset();
             gdxGraphics.endFrame();
             currentFrameBuffer.end();
 
+            renderBatch.setProjectionMatrix(camera.projection);
+            renderBatch.setTransformMatrix(camera.view);
             FrameBuffer lastFrameBuffer = currentFrameBuffer;
             for (int i = 0; i < effectCount; i++) {
                 currentFrameBuffer = getNextFrameBuffer(container.getWidth(), container.getHeight());

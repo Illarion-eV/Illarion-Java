@@ -59,7 +59,6 @@ class GdxHighlightEffect implements HighlightEffect, GdxTextureEffect {
     @Override
     public void activateEffect(@Nonnull final SpriteBatch batch) {
         batch.setShader(shader);
-        shader.setUniformi("tex0", 0);
         shader.setUniformf("highlight", highlightColor);
     }
 

@@ -5,16 +5,16 @@ precision mediump float;
 #endif
 
 // the texture to render
-uniform sampler2D tex0;
+uniform sampler2D u_texture;
 
 // the coordinates of the center
-uniform vec2 center;
+uniform vec2 u_center;
 
 // the radius distance
-uniform float radius;
+uniform float u_radius;
 
 // center marker size
-uniform float markerSize;
+uniform float u_markerSize;
 
 // transparent color
 const vec4 transparentColor = vec4(0.0);
@@ -27,17 +27,17 @@ const vec4 backgroundColor = vec4(0.0, 0.0, 0.0, 1.0);
 
 void main() {
     // get the distance to the origin
-    float distance = distance(center, gl_TexCoord[0].xy);
+    float distance = distance(u_center, gl_TexCoord[0].xy);
 
-    if (distance < markerSize) {
+    if (distance < u_markerSize) {
         gl_FragColor = markerColor;
-    } else if (distance > radius) {
+    } else if (distance > u_radius) {
         gl_FragColor = transparentColor;
     } else if (gl_TexCoord[0].s < 0.0 || gl_TexCoord[0].s >= 1.0) {
         gl_FragColor = backgroundColor;
     } else if (gl_TexCoord[0].t < 0.0 || gl_TexCoord[0].t >= 1.0) {
         gl_FragColor = backgroundColor;
     } else {
-        gl_FragColor = texture2D(tex0, gl_TexCoord[0].st);
+        gl_FragColor = texture2D(u_texture, gl_TexCoord[0].st);
     }
 }

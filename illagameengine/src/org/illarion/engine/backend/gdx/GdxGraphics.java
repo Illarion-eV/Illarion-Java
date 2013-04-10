@@ -19,11 +19,11 @@
 package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix4;
 import illarion.common.types.Rectangle;
 import org.illarion.engine.graphic.*;
 import org.illarion.engine.graphic.effects.TextureEffect;
@@ -89,27 +89,31 @@ class GdxGraphics implements Graphics {
      * A temporary rectangle used for some calculations.
      */
     @Nonnull
-    private final com.badlogic.gdx.math.Rectangle tempGdxRectangle;
-
-    /**
-     * A temporary rectangle used for some calculations.
-     */
-    @Nonnull
     private final Rectangle tempEngineRectangle;
 
     /**
-     * The transformation matrix that is applied to all render operations.
+     * The camera that views the scene.
      */
     @Nonnull
-    private final Matrix4 transformationMatrix;
+    private final OrthographicCamera camera;
+
+    /**
+     * The blank background texture used to render rectangles.
+     */
+    @Nullable
+    private Texture blankBackground;
+
+    @Nonnull
+    private final GdxEngine engine;
 
     /**
      * Create a new instance of the graphics engine that is using libGDX to render.
      *
      * @param gdxGraphics the libGDX graphics instance that is used
      */
-    GdxGraphics(@Nonnull final com.badlogic.gdx.Graphics gdxGraphics) {
+    GdxGraphics(@Nonnull final GdxEngine engine, @Nonnull final com.badlogic.gdx.Graphics gdxGraphics) {
         this.gdxGraphics = gdxGraphics;
+        this.engine = engine;
         shapeRenderer = new ShapeRenderer();
         spriteBatch = new SpriteBatch();
         tempColor1 = new com.badlogic.gdx.graphics.Color();
@@ -117,12 +121,11 @@ class GdxGraphics implements Graphics {
         tempColor3 = new com.badlogic.gdx.graphics.Color();
         tempColor4 = new com.badlogic.gdx.graphics.Color();
         tempRegion = new TextureRegion();
-        tempGdxRectangle = new com.badlogic.gdx.math.Rectangle();
         tempEngineRectangle = new Rectangle();
-        transformationMatrix = new Matrix4();
 
-        shapeRenderer.setTransformMatrix(transformationMatrix);
-        spriteBatch.setTransformMatrix(transformationMatrix);
+        camera = new OrthographicCamera();
+        camera.zoom = 1.f;
+        camera.setToOrtho(true);
     }
 
     /**
@@ -130,7 +133,49 @@ class GdxGraphics implements Graphics {
      */
     void beginFrame() {
         clear();
+
+        resetOffset();
+
+        lastBlendingMode = null;
+        setBlendingMode(BlendingMode.AlphaBlend);
+
+        if (blankBackground == null) {
+            blankBackground = engine.getAssets().getTextureManager().getTexture("data/gui/", "blank.png");
+        }
+    }
+
+    private boolean spriteBatchActive;
+
+    private void activateSpriteBatch() {
+        if (spriteBatchActive) {
+            return;
+        }
+
+        if (shapeRenderer.getCurrentType() != null) {
+            shapeRenderer.end();
+        }
         spriteBatch.begin();
+        spriteBatchActive = true;
+    }
+
+    private void activateShapeRenderer() {
+        if (shapeRenderer.getCurrentType() != null) {
+            return;
+        }
+        if (spriteBatchActive) {
+            spriteBatch.end();
+            spriteBatchActive = false;
+        }
+
+        gdxGraphics.getGLCommon().glEnable(GL10.GL_BLEND);
+        switch (lastBlendingMode) {
+            case AlphaBlend:
+                gdxGraphics.getGLCommon().glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+                break;
+            case Multiply:
+                gdxGraphics.getGLCommon().glBlendFunc(GL10.GL_DST_COLOR, GL10.GL_ZERO);
+                break;
+        }
         shapeRenderer.begin(ShapeRenderer.ShapeType.FilledRectangle);
     }
 
@@ -138,15 +183,19 @@ class GdxGraphics implements Graphics {
      * This function needs to be called after rendering a frame.
      */
     void endFrame() {
-        spriteBatch.end();
-        shapeRenderer.end();
+        if (shapeRenderer.getCurrentType() != null) {
+            shapeRenderer.end();
+        }
+        if (spriteBatchActive) {
+            spriteBatch.end();
+            spriteBatchActive = false;
+        }
     }
-
 
     @Override
     public void clear() {
         gdxGraphics.getGLCommon().glClearColor(0.f, 0.f, 0.f, 0.f);
-        gdxGraphics.getGLCommon().glClear(GL10.GL_COLOR_BUFFER_BIT);
+        gdxGraphics.getGLCommon().glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
     }
 
     @Override
@@ -160,14 +209,23 @@ class GdxGraphics implements Graphics {
             final int centerTransX = Math.round(gdxSprite.getWidth() * gdxSprite.getCenterX());
             final int centerTransY = Math.round(gdxSprite.getHeight() * gdxSprite.getCenterY());
 
-            drawTexture(gdxSprite.getFrame(frame), tempEngineRectangle.getX(), tempEngineRectangle.getY(),
-                    tempEngineRectangle.getWidth(), tempEngineRectangle.getHeight(), 0, 0, gdxSprite.getWidth(),
-                    gdxSprite.getHeight(), centerTransX, centerTransY, rotation, color, effects);
+            drawTexture(gdxSprite.getFrame(frame), tempEngineRectangle.getX(),
+                    tempEngineRectangle.getY(), tempEngineRectangle.getWidth(), tempEngineRectangle.getHeight(),
+                    0, 0, gdxSprite.getWidth(), gdxSprite.getHeight(),
+                    centerTransX, centerTransY, rotation, color, effects);
         }
     }
 
+    /**
+     * The blending mode that was applied last.
+     */
+    private BlendingMode lastBlendingMode;
+
     @Override
     public void setBlendingMode(@Nonnull final BlendingMode mode) {
+        if (lastBlendingMode == mode) {
+            return;
+        }
         switch (mode) {
             case AlphaBlend:
                 spriteBatch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -176,19 +234,14 @@ class GdxGraphics implements Graphics {
                 spriteBatch.setBlendFunction(GL10.GL_DST_COLOR, GL10.GL_ZERO);
                 break;
         }
+        spriteBatch.enableBlending();
+        lastBlendingMode = mode;
     }
 
     @Override
     public void drawText(@Nonnull final Font font, @Nonnull final CharSequence text, @Nonnull final Color color,
                          final int x, final int y) {
-        if (font instanceof GdxFont) {
-            shapeRenderer.flush();
-            transferColor(color, tempColor1);
-            spriteBatch.setColor(tempColor1);
-            final BitmapFont bitmapFont = ((GdxFont) font).getBitmapFont();
-            bitmapFont.setScale(1.f);
-            bitmapFont.draw(spriteBatch, text, x, fixY(y));
-        }
+        drawText(font, text, color, x, y, 1.f, 1.f);
     }
 
     /**
@@ -205,21 +258,23 @@ class GdxGraphics implements Graphics {
     public void drawText(@Nonnull final Font font, @Nonnull final CharSequence text, @Nonnull final Color color,
                          final int x, final int y, final float scaleX, final float scaleY) {
         if (font instanceof GdxFont) {
-            shapeRenderer.flush();
+            activateSpriteBatch();
             transferColor(color, tempColor1);
-            spriteBatch.setColor(tempColor1);
             final BitmapFont bitmapFont = ((GdxFont) font).getBitmapFont();
             bitmapFont.setScale(scaleX, scaleY);
-            bitmapFont.draw(spriteBatch, text, x, fixY(y));
+            bitmapFont.setColor(tempColor1);
+            bitmapFont.draw(spriteBatch, text, x, y - bitmapFont.getAscent());
         }
     }
 
     @Override
     public void drawRectangle(final int x, final int y, final int width, final int height, @Nonnull final Color color) {
-        spriteBatch.flush();
-        transferColor(color, tempColor1);
-        shapeRenderer.setColor(tempColor1);
-        shapeRenderer.filledRect(x, fixY(y), width, height);
+        activateSpriteBatch();
+        if (blankBackground == null) {
+            return;
+        }
+
+        drawTexture(blankBackground, x, y, width, height, color);
     }
 
     @Override
@@ -231,19 +286,21 @@ class GdxGraphics implements Graphics {
     public void drawRectangle(final int x, final int y, final int width, final int height,
                               @Nonnull final Color topLeftColor, @Nonnull final Color topRightColor,
                               @Nonnull final Color bottomLeftColor, @Nonnull final Color bottomRightColor) {
-        spriteBatch.flush();
+        activateShapeRenderer();
         transferColor(topLeftColor, tempColor1);
         transferColor(topRightColor, tempColor2);
         transferColor(bottomLeftColor, tempColor3);
         transferColor(bottomRightColor, tempColor4);
-        shapeRenderer.filledRect(x, fixY(y), width, height, tempColor3, tempColor4, tempColor2, tempColor1);
+        shapeRenderer.filledRect(x, y, width, height, tempColor3, tempColor4, tempColor2, tempColor1);
+        shapeRenderer.end();
+        gdxGraphics.getGLCommon().glDisable(GL10.GL_BLEND);
     }
 
     @Override
     public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
                             final int height, @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
         if (texture instanceof GdxTexture) {
-            shapeRenderer.flush();
+            activateSpriteBatch();
             transferColor(color, tempColor1);
 
             @Nullable final GdxTextureEffect usedEffect;
@@ -256,7 +313,11 @@ class GdxGraphics implements Graphics {
                 usedEffect.activateEffect(spriteBatch);
             }
             spriteBatch.setColor(tempColor1);
-            spriteBatch.draw(((GdxTexture) texture).getTextureRegion(), x, fixY(y), width, height);
+            tempRegion.setRegion(((GdxTexture) texture).getTextureRegion());
+            if (!tempRegion.isFlipY()) {
+                tempRegion.flip(false, true);
+            }
+            spriteBatch.draw(tempRegion, x, y, width, height);
 
             if (usedEffect != null) {
                 usedEffect.disableEffect(spriteBatch);
@@ -269,7 +330,7 @@ class GdxGraphics implements Graphics {
                             final int height, final int texX, final int texY, final int texWidth,
                             final int texHeight, @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
         if (texture instanceof GdxTexture) {
-            shapeRenderer.flush();
+            activateSpriteBatch();
             transferColor(color, tempColor1);
 
             @Nullable final GdxTextureEffect usedEffect;
@@ -283,7 +344,10 @@ class GdxGraphics implements Graphics {
             }
             spriteBatch.setColor(tempColor1);
             tempRegion.setRegion(((GdxTexture) texture).getTextureRegion(), texX, texY, texWidth, texHeight);
-            spriteBatch.draw(tempRegion, x, fixY(y), width, height);
+            if (!tempRegion.isFlipY()) {
+                tempRegion.flip(false, true);
+            }
+            spriteBatch.draw(tempRegion, x, y, width, height);
 
             if (usedEffect != null) {
                 usedEffect.disableEffect(spriteBatch);
@@ -297,7 +361,7 @@ class GdxGraphics implements Graphics {
                             final int texHeight, final int centerX, final int centerY, final float rotate,
                             @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
         if (texture instanceof GdxTexture) {
-            shapeRenderer.flush();
+            activateSpriteBatch();
             transferColor(color, tempColor1);
 
             @Nullable final GdxTextureEffect usedEffect;
@@ -312,7 +376,10 @@ class GdxGraphics implements Graphics {
 
             spriteBatch.setColor(tempColor1);
             tempRegion.setRegion(((GdxTexture) texture).getTextureRegion(), texX, texY, texWidth, texHeight);
-            spriteBatch.draw(tempRegion, x, fixY(y), centerX, centerY, width, height, 1.f, 1.f, rotate, true);
+            if (!tempRegion.isFlipY()) {
+                tempRegion.flip(false, true);
+            }
+            spriteBatch.draw(tempRegion, x, y, centerX, centerY, width, height, 1.f, 1.f, rotate, true);
 
             if (usedEffect != null) {
                 usedEffect.disableEffect(spriteBatch);
@@ -321,7 +388,7 @@ class GdxGraphics implements Graphics {
     }
 
     private int fixY(final int y) {
-        return gdxGraphics.getHeight() - y;
+        return /*gdxGraphics.getHeight() - */y;
     }
 
     @Override
@@ -342,17 +409,21 @@ class GdxGraphics implements Graphics {
      * @param offsetY the y component of the offset
      */
     void applyOffset(final int offsetX, final int offsetY) {
-        transformationMatrix.translate(offsetX, offsetY, 0.f);
-        spriteBatch.setTransformMatrix(transformationMatrix);
-        shapeRenderer.setTransformMatrix(transformationMatrix);
+        camera.position.set((camera.viewportWidth / 2.f) + offsetX, (camera.viewportHeight / 2.f) + offsetY,
+                0.f);
+        camera.update();
+
+        spriteBatch.setProjectionMatrix(camera.projection);
+        shapeRenderer.setProjectionMatrix(camera.projection);
+
+        spriteBatch.setTransformMatrix(camera.view);
+        shapeRenderer.setTransformMatrix(camera.view);
     }
 
     /**
      * Reset any global offset applied.
      */
     void resetOffset() {
-        transformationMatrix.idt();
-        spriteBatch.setTransformMatrix(transformationMatrix);
-        shapeRenderer.setTransformMatrix(transformationMatrix);
+        applyOffset(0, 0);
     }
 }

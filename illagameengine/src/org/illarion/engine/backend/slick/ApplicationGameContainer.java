@@ -131,6 +131,11 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
+    public int getFPS() {
+        return slickContainer.getFPS();
+    }
+
+    @Override
     public void setTitle(@Nonnull final String title) {
         this.title = title;
         slickContainer.setTitle(title);

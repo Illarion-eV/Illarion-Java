@@ -5,7 +5,7 @@ precision mediump float;
 #endif
 
 // the texture to render
-uniform sampler2D tex0;
+uniform sampler2D u_texture;
 
 // the coordinates of the center
 uniform vec2 center;
@@ -21,7 +21,7 @@ void main() {
     float distance = abs(length((center - gl_TexCoord[0].xy) * vec2(1.0, 1.0)));
 
 	// get the unaltered color of the fragment
-	vec4 color = texture2D(tex0, gl_TexCoord[0].st);
+	vec4 color = texture2D(u_texture, gl_TexCoord[0].st);
 
 	float fragmentFogDensity = clamp(density * distance, 0.0, 0.98);
 

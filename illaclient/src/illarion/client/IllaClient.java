@@ -197,16 +197,24 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         try {
+            final int requestedWidth;
+            final int requestedHeight;
+            final boolean fullScreenMode;
+
             if (cfg.getBoolean(CFG_FULLSCREEN)) {
-                gameContainer = EngineManager.createDesktopGame(Backend.libGDX, game, res.getWidth(),
-                        res.getHeight(), true);
+                fullScreenMode = true;
+                requestedHeight = res.getHeight();
+                requestedWidth = res.getWidth();
             } else {
+                fullScreenMode = false;
                 final int windowedWidth = cfg.getInteger("windowWidth");
                 final int windowedHeight = cfg.getInteger("windowHeight");
-                gameContainer = EngineManager.createDesktopGame(Backend.libGDX, game,
-                        (windowedWidth < 0) ? res.getWidth() : windowedWidth,
-                        (windowedHeight < 0) ? res.getHeight() : windowedHeight, false);
+                requestedHeight = (windowedHeight < 0) ? res.getHeight() : windowedHeight;
+                requestedWidth = (windowedWidth < 0) ? res.getWidth() : windowedWidth;
             }
+
+            gameContainer = EngineManager.createDesktopGame(Backend.libGDX, game,
+                    requestedWidth, requestedHeight, fullScreenMode);
         } catch (@Nonnull final EngineException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
             System.exit(-1);
@@ -222,7 +230,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         try {
             gameContainer.setResizeable(true);
             gameContainer.startGame();
-            LOGGER.info("Client shutdown initiated.");
         } catch (@Nonnull final Exception e) {
             LOGGER.fatal("Exception while launching game.", e);
             exitGameContainer();
@@ -252,6 +259,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     public static void exitGameContainer() {
         INSTANCE.gameContainer.exitGame();
+
+        LOGGER.info("Client shutdown initiated.");
 
         getInstance().quitGame();
         World.cleanEnvironment();

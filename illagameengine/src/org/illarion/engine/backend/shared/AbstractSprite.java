@@ -19,6 +19,7 @@
 package org.illarion.engine.backend.shared;
 
 import illarion.common.types.Rectangle;
+import illarion.common.util.FastMath;
 import org.illarion.engine.graphic.Sprite;
 import org.illarion.engine.graphic.Texture;
 
@@ -170,10 +171,10 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
             targetRectangle = storage;
         }
 
-        final int displayX = Math.round(x + (displayRectangle.getX() * scale));
-        final int displayY = Math.round(y + (displayRectangle.getY() * scale));
-        final int displayWidth = Math.round(displayRectangle.getWidth() * scale);
-        final int displayHeight = Math.round(displayRectangle.getHeight() * scale);
+        final int displayX = FastMath.floor(x + (displayRectangle.getX() * scale));
+        final int displayY = FastMath.floor(y + (displayRectangle.getY() * scale));
+        final int displayWidth = FastMath.floor(displayRectangle.getWidth() * scale);
+        final int displayHeight = FastMath.floor(displayRectangle.getHeight() * scale);
         targetRectangle.set(displayX, displayY, displayWidth, displayHeight);
 
         return targetRectangle;

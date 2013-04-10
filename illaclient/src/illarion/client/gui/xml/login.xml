@@ -27,7 +27,7 @@
     <resourceBundle id="login-bundle" filename="login"/>
 
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
-        <layer id="layer" backgroundColor="#0000" childLayout="center">
+        <layer id="layer" childLayout="center">
             <effect>
                 <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
                 <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>

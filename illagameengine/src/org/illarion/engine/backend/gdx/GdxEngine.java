@@ -63,7 +63,7 @@ class GdxEngine implements Engine {
     GdxEngine(@Nonnull final Application gdxApplication, @Nonnull final GameContainer container) {
         assets = new GdxAssets(gdxApplication, container);
         sounds = new GdxSounds();
-        graphics = new GdxGraphics(gdxApplication.getGraphics());
+        graphics = new GdxGraphics(this, gdxApplication.getGraphics());
         input = new GdxInput(gdxApplication.getInput());
     }
 

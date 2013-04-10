@@ -80,4 +80,11 @@ public interface GameContainer {
      */
     @Nonnull
     String getTitle();
+
+    /**
+     * Get the current amount of frames that are rendered per second.
+     *
+     * @return the current FPS
+     */
+    int getFPS();
 }

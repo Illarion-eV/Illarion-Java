@@ -90,6 +90,8 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         config.width = width;
         config.fullscreen = fullScreen;
         config.useGL20 = true;
+        config.vSyncEnabled = false;
+        config.useCPUSynch = false;
 
         windowHeight = height;
         windowWidth = width;
@@ -158,6 +160,14 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     @Override
     public String getTitle() {
         return config.title;
+    }
+
+    @Override
+    public int getFPS() {
+        if (gdxApplication == null) {
+            return 0;
+        }
+        return gdxApplication.getGraphics().getFramesPerSecond();
     }
 
     @Override

@@ -59,10 +59,10 @@ class GdxMiniMapEffect implements MiniMapEffect, GdxTextureEffect {
      */
     GdxMiniMapEffect(@Nonnull final Files files) {
         //noinspection SpellCheckingInspection
-        shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/highlight.vert"),
-                files.internal("org/illarion/engine/backend/gdx/shaders/highlight.frag"));
-    }
+        shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/minimap.vert"),
+                files.internal("org/illarion/engine/backend/gdx/shaders/minimap.frag"));
 
+    }
 
     @Override
     public void activateEffect(@Nonnull final SpriteBatch batch) {
@@ -70,10 +70,8 @@ class GdxMiniMapEffect implements MiniMapEffect, GdxTextureEffect {
         final float miniMapCenterY = (float) centerY / (float) WorldMap.WORLD_MAP_HEIGHT;
 
         batch.setShader(shader);
-        shader.setUniformf("center", miniMapCenterX, miniMapCenterY);
-        shader.setUniformf("radius", (float) radius / (float) WorldMap.WORLD_MAP_HEIGHT);
-        shader.setUniformf("markerSize", 2.f / (float) WorldMap.WORLD_MAP_HEIGHT);
-        shader.setUniformi("tex0", 0);
+        shader.setUniformf("u_radius", (float) radius / (float) WorldMap.WORLD_MAP_HEIGHT);
+        shader.setUniformf("u_markerSize", 2.f / (float) WorldMap.WORLD_MAP_HEIGHT);
     }
 
     @Override
