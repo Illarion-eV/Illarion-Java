@@ -133,7 +133,7 @@ public final class Credits {
         CreditsPerson.create("Dandelion", graphics, communityManager);
         CreditsPerson.create("Drakon Gerwulf", graphics);
         CreditsPerson.create("Karl", "Salameh", graphics);
-        CreditsPerson.create("Raelith", website);
+        CreditsPerson.create("Matt", "Raelith", "Hollier", website);
         CreditsPerson.create("Zak", gameMaster);
         CreditsPerson.create("Face", gameMaster);
         CreditsPerson.create("Arien Edhel", gameMaster);
