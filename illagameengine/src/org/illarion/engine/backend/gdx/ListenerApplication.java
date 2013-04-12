@@ -77,6 +77,15 @@ class ListenerApplication implements ApplicationListener {
         graphics.endFrame();
     }
 
+    /**
+     * This function is called to check if closing the game directly is allowed at this point.
+     *
+     * @return {@code true} in case the game may be closed now
+     */
+    public boolean isExitAllowed() {
+        return listener.isClosingGame();
+    }
+
     @Override
     public void pause() {
         // nothing

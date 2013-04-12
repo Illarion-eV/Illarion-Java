@@ -18,10 +18,8 @@
  */
 package org.illarion.engine.backend.gdx;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.Engine;
@@ -47,7 +45,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * The libGDX application that contains the game.
      */
     @Nullable
-    private Application gdxApplication;
+    private GdxLwjglApplication gdxApplication;
 
     /**
      * The configuration used to create the application.
@@ -141,7 +139,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
 
     @Override
     public void startGame() throws GdxEngineException {
-        gdxApplication = new LwjglApplication(new ListenerApplication(gameListener, this), config);
+        gdxApplication = new GdxLwjglApplication(new ListenerApplication(gameListener, this), config);
     }
 
     void createEngine() {
@@ -152,7 +150,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     @Override
     public void exitGame() {
         if (gdxApplication != null) {
-            gdxApplication.exit();
+            gdxApplication.shutdownGame();
         }
     }
 
