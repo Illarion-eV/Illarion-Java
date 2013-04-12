@@ -209,10 +209,29 @@ class GdxGraphics implements Graphics {
             final int centerTransX = Math.round(gdxSprite.getWidth() * gdxSprite.getCenterX());
             final int centerTransY = Math.round(gdxSprite.getHeight() * gdxSprite.getCenterY());
 
-            drawTexture(gdxSprite.getFrame(frame), tempEngineRectangle.getX(),
-                    tempEngineRectangle.getY(), tempEngineRectangle.getWidth(), tempEngineRectangle.getHeight(),
-                    0, 0, gdxSprite.getWidth(), gdxSprite.getHeight(),
-                    centerTransX, centerTransY, rotation, color, effects);
+            activateSpriteBatch();
+            transferColor(color, tempColor1);
+
+            @Nullable final GdxTextureEffect usedEffect;
+            if ((effects.length > 0) && (effects[0] instanceof GdxTextureEffect)) {
+                usedEffect = (GdxTextureEffect) effects[0];
+            } else {
+                usedEffect = null;
+            }
+            if (usedEffect != null) {
+                usedEffect.activateEffect(spriteBatch);
+            }
+            spriteBatch.setColor(tempColor1);
+            tempRegion.setRegion(gdxSprite.getFrame(frame).getTextureRegion());
+            tempRegion.flip(gdxSprite.isMirrored(), true);
+            spriteBatch.draw(tempRegion, tempEngineRectangle.getX(), tempEngineRectangle.getY(),
+                    centerTransX, centerTransY,
+                    tempEngineRectangle.getWidth(), tempEngineRectangle.getHeight(),
+                    1.f, 1.f, rotation);
+
+            if (usedEffect != null) {
+                usedEffect.disableEffect(spriteBatch);
+            }
         }
     }
 
@@ -379,7 +398,7 @@ class GdxGraphics implements Graphics {
             if (!tempRegion.isFlipY()) {
                 tempRegion.flip(false, true);
             }
-            spriteBatch.draw(tempRegion, x, y, centerX, centerY, width, height, 1.f, 1.f, rotate, true);
+            spriteBatch.draw(tempRegion, x, y, centerX, centerY, width, height, 1.f, 1.f, rotate);
 
             if (usedEffect != null) {
                 usedEffect.disableEffect(spriteBatch);

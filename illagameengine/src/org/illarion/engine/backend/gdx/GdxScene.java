@@ -18,6 +18,7 @@
  */
 package org.illarion.engine.backend.gdx;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -101,7 +102,7 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
 
         final GdxGraphics gdxGraphics = (GdxGraphics) graphics;
 
-        final int effectCount = getEffectCount();
+        final int effectCount = 0;//getEffectCount();
         if (effectCount == 0) {
             gdxGraphics.applyOffset(-offsetX, -offsetY);
             renderScene(graphics);
@@ -119,6 +120,7 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
 
             renderBatch.setProjectionMatrix(camera.projection);
             renderBatch.setTransformMatrix(camera.view);
+            renderBatch.setColor(Color.WHITE);
             FrameBuffer lastFrameBuffer = currentFrameBuffer;
             for (int i = 0; i < effectCount; i++) {
                 currentFrameBuffer = getNextFrameBuffer(container.getWidth(), container.getHeight());

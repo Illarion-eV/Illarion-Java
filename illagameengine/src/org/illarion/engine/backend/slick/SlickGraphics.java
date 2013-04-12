@@ -226,7 +226,13 @@ class SlickGraphics implements Graphics {
             final Image slickImage = slickSprite.getFrame(frame).getBackingImage();
             slickImage.setCenterOfRotation(centerTransX, centerTransY);
             slickImage.setRotation(rotation);
-            slickGraphicsImpl.drawImage(slickImage, tempRect.getX(), tempRect.getY(), tempSlickColor1);
+
+            if (slickSprite.isMirrored()) {
+                slickGraphicsImpl.drawImage(slickImage, -tempRect.getX() + tempRect.getWidth(), tempRect.getY(),
+                        tempSlickColor1);
+            } else {
+                slickGraphicsImpl.drawImage(slickImage, tempRect.getX(), tempRect.getY(), tempSlickColor1);
+            }
 
             if (usedEffect != null) {
                 usedEffect.disableEffect(slickGraphicsImpl);

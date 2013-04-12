@@ -171,10 +171,15 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
             targetRectangle = storage;
         }
 
-        final int displayX = FastMath.floor(x + (displayRectangle.getX() * scale));
-        final int displayY = FastMath.floor(y + (displayRectangle.getY() * scale));
         final int displayWidth = FastMath.floor(displayRectangle.getWidth() * scale);
         final int displayHeight = FastMath.floor(displayRectangle.getHeight() * scale);
+        final int displayX;
+        if (isMirrored()) {
+            displayX = FastMath.floor(x - (displayRectangle.getX() * scale) - displayWidth);
+        } else {
+            displayX = FastMath.floor(x + (displayRectangle.getX() * scale));
+        }
+        final int displayY = FastMath.floor(y + (displayRectangle.getY() * scale));
         targetRectangle.set(displayX, displayY, displayWidth, displayHeight);
 
         return targetRectangle;
